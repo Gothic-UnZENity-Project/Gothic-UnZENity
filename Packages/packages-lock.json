@@ -274,19 +274,22 @@
       },
       "url": "https://packages.unity.com"
     },
+    "com.unity.xr.openxr.picoxr": {
+      "version": "https://github.com/Gothic-UnZENity-Project/pico-openxr-sdk.git",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {
+        "com.unity.xr.core-utils": "2.2.0",
+        "com.unity.xr.openxr": "1.7.0"
+      },
+      "hash": "96e2d8c4eac1e71eae1e66c8a4879e39d8cd503b"
+    },
     "com.unzenity.core.binaries": {
       "version": "https://github.com/Gothic-UnZENity-Project/binary-dependencies.git?path=/Gothic-UnZENity-Core",
       "depth": 0,
       "source": "git",
       "dependencies": {},
       "hash": "5d7c367114e737e325ad2d58d33e256c6ea655d1"
-    },
-    "com.unzenity.vr.binaries": {
-      "version": "https://github.com/Gothic-UnZENity-Project/binary-dependencies.git?path=/Gothic-UnZENity-VR",
-      "depth": 0,
-      "source": "git",
-      "dependencies": {},
-      "hash": "2027976d758249644c9371d9e0e2c3e851f365c4"
     },
     "com.unity.modules.ai": {
       "version": "1.0.0",
