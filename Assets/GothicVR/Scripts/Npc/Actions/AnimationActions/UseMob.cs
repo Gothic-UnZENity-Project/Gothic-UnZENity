@@ -58,10 +58,6 @@ namespace GVR.Npc.Actions.AnimationActions
             Props.currentInteractable = mobGo;
             Props.currentInteractableSlot = slotGo;
             Props.bodyState = VmGothicEnums.BodyState.BS_MOBINTERACT;
-
-            // Fix - If NPC is spawned directly in front of the Mob, we start transition immediately (otherwise trigger/collider won't be called).
-            if (Vector3.Distance(NpcGo.transform.position, slotGo.transform.position) < 0.5f)
-                StartMobUseAnimation();
         }
 
         [CanBeNull]
@@ -83,14 +79,8 @@ namespace GVR.Npc.Actions.AnimationActions
             return slot;
         }
 
-        public override void OnTriggerEnter(Collider coll)
+        protected override void OnDestinationReached()
         {
-            if (walkState != WalkState.Walk)
-                return;
-
-            if (coll.gameObject != slotGo)
-                return;
-
             StartMobUseAnimation();
         }
 

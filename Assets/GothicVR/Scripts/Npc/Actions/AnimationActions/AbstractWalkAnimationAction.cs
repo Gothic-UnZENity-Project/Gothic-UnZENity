@@ -1,6 +1,7 @@
 using System;
 using GVR.Creator;
 using GVR.Data.ZkEvents;
+using GVR.Globals;
 using GVR.Manager;
 using GVR.Vm;
 using UnityEngine;
@@ -22,6 +23,8 @@ namespace GVR.Npc.Actions.AnimationActions
 
         protected AbstractWalkAnimationAction(AnimationAction action, GameObject npcGo) : base(action, npcGo)
         { }
+
+        protected abstract void OnDestinationReached();
         
         /// <summary>
         /// We need to define the final destination spot within overriding class.
@@ -35,9 +38,9 @@ namespace GVR.Npc.Actions.AnimationActions
             PhysicsHelper.EnablePhysicsForNpc(Props);
         }
 
-        public override void Tick(Transform transform)
+        public override void Tick()
         {
-            base.Tick(transform);
+            base.Tick();
 
             if (IsFinishedFlag)
                 return;
@@ -46,16 +49,16 @@ namespace GVR.Npc.Actions.AnimationActions
             {
                 case WalkState.Initial:
                     walkState = WalkState.Rotate;
-                    HandleRotation(transform, GetWalkDestination(), false);
+                    HandleRotation(NpcGo.transform, GetWalkDestination(), false);
                     return;
                 case WalkState.Rotate:
-                    HandleRotation(transform, GetWalkDestination(), false);
+                    HandleRotation(NpcGo.transform, GetWalkDestination(), false);
                     return;
                 case WalkState.Walk:
-                    HandleWalk(transform);
+                    HandleWalk(Props.colliderRootMotion.transform);
                     return;
                 case WalkState.WalkAndRotate:
-                    HandleRotation(transform, GetWalkDestination(), true);
+                    HandleRotation(NpcGo.transform, GetWalkDestination(), true);
                     return;
                 case WalkState.Done:
                     return; // NOP
@@ -89,7 +92,15 @@ namespace GVR.Npc.Actions.AnimationActions
 
         private void HandleWalk(Transform transform)
         {
-            // NOP
+            var npcPos = transform.position;
+            var walkPos = GetWalkDestination();
+            var npcDistPos = new Vector3(npcPos.x, walkPos.y, npcPos.z);
+
+            var distance = Vector3.Distance(npcDistPos, walkPos);
+
+            // FIXME - Scorpio is above FP, but values don't represent it.
+            if (distance < Constants.CloseToThreshold)
+                OnDestinationReached();
         }
 
         private void HandleRotation(Transform transform, Vector3 destination, bool includesWalking)
