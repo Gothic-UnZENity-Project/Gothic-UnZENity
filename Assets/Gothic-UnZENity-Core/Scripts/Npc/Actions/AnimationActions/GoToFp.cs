@@ -1,10 +1,10 @@
-using GVR.Data.ZkEvents;
-using GVR.GothicVR.Scripts.Manager;
-using GVR.Manager;
-using GVR.Vob.WayNet;
+using GUZ.Core.Data.ZkEvents;
+using GUZ.Core.Manager;
+using GUZ.Core.Vob.WayNet;
+using GUZ.Core.GothicVR.Scripts.Manager;
 using UnityEngine;
 
-namespace GVR.Npc.Actions.AnimationActions
+namespace GUZ.Core.Npc.Actions.AnimationActions
 {
     public class GoToFp : AbstractWalkAnimationAction
     {

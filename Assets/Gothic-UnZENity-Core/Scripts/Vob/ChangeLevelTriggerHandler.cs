@@ -1,7 +1,7 @@
-using GVR.Manager;
+using GUZ.Core.Manager;
 using UnityEngine;
 
-namespace GVR.Vob
+namespace GUZ.Core.Vob
 {
     public class ChangeLevelTriggerHandler : MonoBehaviour
     {

@@ -1,9 +1,9 @@
-using GVR.Globals;
-using GVR.Npc.Actions;
-using GVR.Vm;
+using GUZ.Core.Globals;
+using GUZ.Core.Npc.Actions;
+using GUZ.Core.Vm;
 using UnityEngine;
 
-namespace GVR.Lab.AnimationActionMocks
+namespace GUZ.Core.Lab.AnimationActionMocks
 {
     public class LabCreateInventoryItem : AbstractLabAnimationAction
     {

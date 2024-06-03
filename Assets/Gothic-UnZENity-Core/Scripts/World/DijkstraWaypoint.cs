@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace GVR.World
+namespace GUZ.Core.World
 {
     public class DijkstraWaypoint
     {

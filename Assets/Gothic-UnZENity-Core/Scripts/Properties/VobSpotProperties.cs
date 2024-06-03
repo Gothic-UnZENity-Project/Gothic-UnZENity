@@ -1,6 +1,6 @@
-using GVR.Vob.WayNet;
+using GUZ.Core.Vob.WayNet;
 
-namespace GVR.Properties
+namespace GUZ.Core.Properties
 {
     public class VobSpotProperties : VobProperties
     {

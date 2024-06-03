@@ -1,7 +1,7 @@
-using GVR.Data.ZkEvents;
+using GUZ.Core.Data.ZkEvents;
 using UnityEngine;
 
-namespace GVR.Npc.Actions.AnimationActions
+namespace GUZ.Core.Npc.Actions.AnimationActions
 {
     public class StandUp : AbstractAnimationAction
     {

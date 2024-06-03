@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-namespace GVR.Caches
+namespace GUZ.Core.Caches
 {
     public static class PrefabCache
     {

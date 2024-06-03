@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using GVR.Editor.Tools;
+using GUZ.Core.Editor.Tools;
 using UnityEditor;
 using UnityEditor.Build.Reporting;
 using UnityEditor.SceneManagement;
@@ -12,7 +12,7 @@ using UnityEngine.XR.OpenXR.Features.MetaQuestSupport;
 using Pico;
 using Unity.XR.OpenXR.Features.PICOSupport;
 
-namespace GVR.Editor.Builds.UnityBuildTools
+namespace GUZ.Core.Editor.Builds.UnityBuildTools
 {
 	public class UnityBuilderAction
     {

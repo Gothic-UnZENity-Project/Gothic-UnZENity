@@ -1,10 +1,10 @@
 using System;
-using GVR.Creator;
-using GVR.Data.ZkEvents;
-using GVR.Vm;
+using GUZ.Core.Creator;
+using GUZ.Core.Data.ZkEvents;
+using GUZ.Core.Vm;
 using UnityEngine;
 
-namespace GVR.Npc.Actions.AnimationActions
+namespace GUZ.Core.Npc.Actions.AnimationActions
 {
     public abstract class AbstractRotateAnimationAction : AbstractAnimationAction
     {

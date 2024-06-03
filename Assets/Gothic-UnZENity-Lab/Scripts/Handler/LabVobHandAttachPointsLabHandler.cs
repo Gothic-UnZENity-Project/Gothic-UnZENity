@@ -3,21 +3,21 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using GVR.Caches;
-using GVR.Creator;
-using GVR.Creator.Meshes.V2;
-using GVR.Data;
-using GVR.Extensions;
-using GVR.Globals;
-using GVR.Vm;
-using GVR.Vob;
+using GUZ.Core.Caches;
+using GUZ.Core.Creator.Meshes.V2;
+using GUZ.Core.Data;
+using GUZ.Core.Globals;
+using GUZ.Core.Vm;
+using GUZ.Core.Vob;
+using GUZ.Core.Creator;
+using GUZ.Core.Extensions;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.XR.Interaction.Toolkit;
 using ZenKit.Daedalus;
 
-namespace GVR.Lab.Handler
+namespace GUZ.Core.Lab.Handler
 {
     public class LabVobHandAttachPointsLabHandler: MonoBehaviour, ILabHandler
     {

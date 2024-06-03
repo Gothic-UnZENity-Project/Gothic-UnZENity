@@ -2,7 +2,7 @@ using System.Linq;
 using UnityEngine;
 using ZenKit.Vobs;
 
-namespace GVR.Properties
+namespace GUZ.Core.Properties
 {
     public class VobProperties : AbstractProperties
     {

@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using System.Linq;
-using GVR.Caches;
-using GVR.Extensions;
-using GVR.Globals;
+using GUZ.Core.Caches;
+using GUZ.Core.Globals;
+using GUZ.Core.Extensions;
 using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -11,7 +11,7 @@ using Material = UnityEngine.Material;
 using TextureFormat = UnityEngine.TextureFormat;
 using Mesh = UnityEngine.Mesh;
 
-namespace GVR.Creator.Meshes.V2.Builder
+namespace GUZ.Core.Creator.Meshes.V2.Builder
 {
     public abstract class AbstractMeshBuilder
     {

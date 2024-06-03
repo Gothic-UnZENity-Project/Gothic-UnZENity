@@ -1,21 +1,21 @@
 using System;
 using System.Linq;
-using GVR.Caches;
-using GVR.Debugging;
-using GVR.Extensions;
-using GVR.Globals;
-using GVR.GothicVR.Scripts.Manager;
-using GVR.Npc;
-using GVR.Npc.Actions;
-using GVR.Npc.Actions.AnimationActions;
-using GVR.Npc.Routines;
-using GVR.Properties;
-using GVR.Vm;
+using GUZ.Core.Caches;
+using GUZ.Core.Debugging;
+using GUZ.Core.Globals;
+using GUZ.Core.GothicVR.Scripts.Manager;
+using GUZ.Core.Npc;
+using GUZ.Core.Npc.Actions.AnimationActions;
+using GUZ.Core.Npc.Routines;
+using GUZ.Core.Properties;
+using GUZ.Core.Vm;
+using GUZ.Core.Extensions;
+using GUZ.Core.Npc.Actions;
 using JetBrains.Annotations;
 using UnityEngine;
 using ZenKit.Daedalus;
 
-namespace GVR.Manager
+namespace GUZ.Core.Manager
 {
     public static class NpcHelper
     {

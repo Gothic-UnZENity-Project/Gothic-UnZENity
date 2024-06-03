@@ -1,4 +1,4 @@
-using GVR.Globals;
+using GUZ.Core.Globals;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.XR.Interaction.Toolkit;

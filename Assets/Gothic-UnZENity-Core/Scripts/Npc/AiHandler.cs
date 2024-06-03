@@ -1,15 +1,15 @@
-﻿using GVR.Creator;
-using GVR.Data.ZkEvents;
-using GVR.Extensions;
-using GVR.Globals;
-using GVR.Manager;
-using GVR.Npc.Actions;
-using GVR.Npc.Actions.AnimationActions;
-using GVR.Properties;
+﻿using GUZ.Core.Creator;
+using GUZ.Core.Data.ZkEvents;
+using GUZ.Core.Globals;
+using GUZ.Core.Npc.Actions;
+using GUZ.Core.Npc.Actions.AnimationActions;
+using GUZ.Core.Properties;
+using GUZ.Core.Extensions;
+using GUZ.Core.Manager;
 using UnityEngine;
 using ZenKit;
 
-namespace GVR.Npc
+namespace GUZ.Core.Npc
 {
     public class AiHandler : BasePlayerBehaviour, IAnimationCallbacks
     {

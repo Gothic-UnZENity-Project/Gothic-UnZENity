@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace GVR.Data
+namespace GUZ.Core.Data
 {
     public class SkyLayerData
     {

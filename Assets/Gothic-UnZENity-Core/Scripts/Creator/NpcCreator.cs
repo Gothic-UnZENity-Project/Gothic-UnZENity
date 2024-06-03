@@ -1,21 +1,22 @@
 using System.Linq;
-using GVR.Caches;
-using GVR.Creator.Meshes.V2;
-using GVR.Debugging;
-using GVR.Extensions;
-using GVR.Globals;
-using GVR.Manager;
-using GVR.Npc.Routines;
-using GVR.Properties;
-using GVR.Vm;
-using GVR.Vob.WayNet;
+using GUZ.Core.Caches;
+using GUZ.Core.Creator.Meshes.V2;
+using GUZ.Core.Debugging;
+using GUZ.Core.Globals;
+using GUZ.Core.Manager;
+using GUZ.Core.Npc.Routines;
+using GUZ.Core.Properties;
+using GUZ.Core.Vm;
+using GUZ.Core.Vob.WayNet;
+using GUZ.Core.Extensions;
 using UnityEngine;
 using ZenKit;
 using ZenKit.Daedalus;
 using Object = UnityEngine.Object;
-using WayPoint = GVR.Vob.WayNet.WayPoint;
+using WayNet_WayPoint = GUZ.Core.Vob.WayNet.WayPoint;
+using WayPoint = GUZ.Core.Vob.WayNet.WayPoint;
 
-namespace GVR.Creator
+namespace GUZ.Core.Creator
 {
     public static class NpcCreator
     {
@@ -138,7 +139,7 @@ namespace GVR.Creator
             if (initialSpawnPoint.IsFreePoint())
                 npcGo.GetComponent<NpcProperties>().CurrentFreePoint = (FreePoint)initialSpawnPoint;
             else
-                npcGo.GetComponent<NpcProperties>().CurrentWayPoint = (WayPoint)initialSpawnPoint;
+                npcGo.GetComponent<NpcProperties>().CurrentWayPoint = (WayNet_WayPoint)initialSpawnPoint;
         }
 
         public static void ExtTaMin(NpcInstance npcInstance, int startH, int startM, int stopH, int stopM, int action, string waypoint)

@@ -1,4 +1,4 @@
-﻿namespace GVR.Npc.Actions
+﻿namespace GUZ.Core.Npc.Actions
 {
     public interface IAnimationCallbacks
     {

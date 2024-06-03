@@ -1,11 +1,11 @@
 using System.Linq;
-using GVR.Caches;
-using GVR.Debugging;
-using GVR.Globals;
-using GVR.Util;
+using GUZ.Core.Caches;
+using GUZ.Core.Debugging;
+using GUZ.Core.Globals;
+using GUZ.Core.Util;
 using UnityEngine.SceneManagement;
 
-namespace GVR.Manager
+namespace GUZ.Core.Manager
 {
     public class XRDeviceSimulatorManager: SingletonBehaviour<XRDeviceSimulatorManager>
     {

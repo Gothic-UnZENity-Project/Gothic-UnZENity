@@ -1,4 +1,4 @@
-namespace GVR.Vob.WayNet
+namespace GUZ.Core.Vob.WayNet
 {
     public class WayPoint : WayNetPoint
     {

@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using GVR.Vm;
+using GUZ.Core.Vm;
 using UnityEngine;
 using ZenKit;
 using ZenKit.Daedalus;
 using ZenKit.Util;
 using TextureFormat = UnityEngine.TextureFormat;
 
-namespace GVR.Extensions
+namespace GUZ.Core.Extensions
 {
     public static class ZenKitExtension
     {

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace GVR.Npc.Routines
+namespace GUZ.Core.Npc.Routines
 {
     public class RoutineData
     {

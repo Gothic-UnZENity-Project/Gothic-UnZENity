@@ -1,11 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using GVR.Manager;
-using GVR.World;
+using GUZ.Core.Manager;
+using GUZ.Core.World;
 using UnityEngine;
 
-namespace GVR.Npc.Routines
+namespace GUZ.Core.Npc.Routines
 {
     public class Routine : MonoBehaviour
     {

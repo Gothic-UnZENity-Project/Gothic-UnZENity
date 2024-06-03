@@ -1,4 +1,4 @@
-using GVR.Properties;
+using GUZ.Core.Properties;
 using ZenKit.Vobs;
 
 namespace GothicVR.Vob

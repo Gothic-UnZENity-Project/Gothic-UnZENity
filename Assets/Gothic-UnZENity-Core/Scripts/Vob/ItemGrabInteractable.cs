@@ -1,8 +1,8 @@
-using GVR.Manager.Culling;
+using GUZ.Core.Manager.Culling;
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
 
-namespace GVR.Vob
+namespace GUZ.Core.Vob
 {
     [RequireComponent(typeof(Rigidbody))]
     public class ItemGrabInteractable : MonoBehaviour

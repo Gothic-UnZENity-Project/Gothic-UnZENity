@@ -2,16 +2,16 @@ using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
-using GVR.Creator;
-using GVR.Debugging;
-using GVR.Extensions;
-using GVR.Globals;
-using GVR.Util;
+using GUZ.Core.Creator;
+using GUZ.Core.Debugging;
+using GUZ.Core.Globals;
+using GUZ.Core.Util;
+using GUZ.Core.Extensions;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Debug = UnityEngine.Debug;
 
-namespace GVR.Manager
+namespace GUZ.Core.Manager
 {
     public class GvrSceneManager : SingletonBehaviour<GvrSceneManager>
     {

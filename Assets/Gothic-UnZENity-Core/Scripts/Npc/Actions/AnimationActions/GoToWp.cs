@@ -1,12 +1,12 @@
 using System.Collections.Generic;
 using System.Linq;
-using GVR.Data.ZkEvents;
-using GVR.Manager;
-using GVR.Vob.WayNet;
-using GVR.World;
+using GUZ.Core.Data.ZkEvents;
+using GUZ.Core.Manager;
+using GUZ.Core.Vob.WayNet;
+using GUZ.Core.World;
 using UnityEngine;
 
-namespace GVR.Npc.Actions.AnimationActions
+namespace GUZ.Core.Npc.Actions.AnimationActions
 {
     public class GoToWp : AbstractWalkAnimationAction
     {

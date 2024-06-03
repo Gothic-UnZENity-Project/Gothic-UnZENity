@@ -1,12 +1,12 @@
 using System.Collections.Generic;
 using System.Linq;
-using GVR.Debugging;
-using GVR.Globals;
-using GVR.Util;
+using GUZ.Core.Debugging;
+using GUZ.Core.Globals;
+using GUZ.Core.Util;
 using JetBrains.Annotations;
 using UnityEngine;
 
-namespace GVR.Manager.Culling
+namespace GUZ.Core.Manager.Culling
 {
     public class VobSoundCullingManager : SingletonBehaviour<VobSoundCullingManager>
     {

@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using GVR.Debugging;
+using GUZ.Core.Debugging;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -9,7 +9,7 @@ using UnityEngine.SceneManagement;
 using ZenKit;
 using ZenKit.Vobs;
 
-namespace GVR.Editor.Tools
+namespace GUZ.Core.Editor.Tools
 {
     public class FeatureFlagTool : EditorWindow
     {

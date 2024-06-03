@@ -1,12 +1,12 @@
 using System;
 using System.Collections.Generic;
-using GVR.Debugging;
-using GVR.Globals;
-using GVR.Npc.Routines;
-using GVR.Util;
+using GUZ.Core.Debugging;
+using GUZ.Core.Globals;
+using GUZ.Core.Npc.Routines;
+using GUZ.Core.Util;
 using UnityEngine;
 
-namespace GVR.Manager
+namespace GUZ.Core.Manager
 {
     /// <summary>
     /// Manages the Routines in a central spot. Routines Subscribe here. Calls the Routines when they are due.

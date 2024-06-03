@@ -1,17 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using GVR.Caches;
-using GVR.Data;
-using GVR.Globals;
-using GVR.Npc;
-using GVR.Npc.Actions;
-using GVR.Npc.Actions.AnimationActions;
-using GVR.Properties;
+using GUZ.Core.Caches;
+using GUZ.Core.Data;
+using GUZ.Core.Globals;
+using GUZ.Core.Npc;
+using GUZ.Core.Npc.Actions.AnimationActions;
+using GUZ.Core.Properties;
+using GUZ.Core.Npc.Actions;
 using UnityEngine;
 using ZenKit.Daedalus;
 
-namespace GVR.GothicVR.Scripts.Manager
+namespace GUZ.Core.GothicVR.Scripts.Manager
 {
     public static class DialogHelper
     {

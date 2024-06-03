@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace GVR.Npc.Actions.AnimationActions
+namespace GUZ.Core.Npc.Actions.AnimationActions
 {
     public class AlignToWp : AbstractRotateAnimationAction
     {

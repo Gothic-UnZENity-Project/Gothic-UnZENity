@@ -2,16 +2,16 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using GVR.Creator.Sounds;
-using GVR.Data;
-using GVR.Globals;
+using GUZ.Core.Creator.Sounds;
+using GUZ.Core.Data;
+using GUZ.Core.Globals;
 using JetBrains.Annotations;
 using ZenKit;
 using ZenKit.Daedalus;
 using Font = ZenKit.Font;
 using Mesh = ZenKit.Mesh;
 
-namespace GVR.Caches
+namespace GUZ.Core.Caches
 {
     public static class AssetCache
     {

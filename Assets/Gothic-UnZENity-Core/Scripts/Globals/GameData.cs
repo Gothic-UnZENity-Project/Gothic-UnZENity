@@ -1,17 +1,18 @@
 ﻿using System.Collections.Generic;
-using GVR.Data;
-using GVR.Extensions;
-using GVR.Npc.Routines;
-using GVR.Properties;
-using GVR.Vob.WayNet;
-using GVR.World;
+using GUZ.Core.Data;
+using GUZ.Core.Npc.Routines;
+using GUZ.Core.Properties;
+using GUZ.Core.Vob.WayNet;
+using GUZ.Core.World;
+using GUZ.Core.Extensions;
 using Unity.Collections.LowLevel.Unsafe;
 using UnityEngine.SceneManagement;
 using ZenKit;
 using ZenKit.Daedalus;
-using WayPoint = GVR.Vob.WayNet.WayPoint;
+using WayNet_WayPoint = GUZ.Core.Vob.WayNet.WayPoint;
+using WayPoint = GUZ.Core.Vob.WayNet.WayPoint;
 
-namespace GVR.Globals
+namespace GUZ.Core.Globals
 {
     public static class GameData
     {
@@ -24,7 +25,7 @@ namespace GVR.Globals
         public static WorldData World;
 
         // Lookup optimized WayNet data
-        public static readonly Dictionary<string, WayPoint> WayPoints = new();
+        public static readonly Dictionary<string, WayNet_WayPoint> WayPoints = new();
         public static readonly Dictionary<string, FreePoint> FreePoints = new();
 
         // Reorganized waypoints from world data.

@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
-using GVR.Caches;
+using GUZ.Core.Caches;
 using UnityEngine;
 using ZenKit;
 using ZenKit.Vobs;
 
-namespace GVR.World
+namespace GUZ.Core.World
 {
     /// <summary>
     /// Parsed ZenKit World data is arranged in a way to easily be usable by Unity objects.

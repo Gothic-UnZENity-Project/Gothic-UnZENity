@@ -1,11 +1,11 @@
 using System.Collections.Generic;
 using System.Linq;
-using GVR.Globals;
-using GVR.Util;
+using GUZ.Core.Globals;
+using GUZ.Core.Util;
 using TMPro;
 using UnityEngine;
 
-namespace GVR.Player.Menu
+namespace GUZ.Core.Player.Menu
 {
     public class WorldSelectorDropdownController : SingletonBehaviour<WorldSelectorDropdownController>
     {

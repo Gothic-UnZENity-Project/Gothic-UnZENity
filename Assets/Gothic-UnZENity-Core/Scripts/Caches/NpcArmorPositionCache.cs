@@ -1,9 +1,9 @@
 using System.Collections.Generic;
-using GVR.Extensions;
+using GUZ.Core.Extensions;
 using UnityEngine;
 using ZenKit;
 
-namespace GVR.Caches
+namespace GUZ.Core.Caches
 {
     public static class NpcArmorPositionCache
     {

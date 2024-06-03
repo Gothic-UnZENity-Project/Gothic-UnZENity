@@ -1,16 +1,16 @@
 using System;
 using System.Threading.Tasks;
-using GVR.Caches;
-using GVR.Extensions;
-using GVR.Globals;
-using GVR.Manager;
-using GVR.World;
+using GUZ.Core.Caches;
+using GUZ.Core.Globals;
+using GUZ.Core.Manager;
+using GUZ.Core.World;
+using GUZ.Core.Extensions;
 using UnityEditor;
 using UnityEngine;
 using ZenKit;
 using Mesh = UnityEngine.Mesh;
 
-namespace GVR.Creator.Meshes.V2.Builder
+namespace GUZ.Core.Creator.Meshes.V2.Builder
 {
     public class WorldMeshBuilder : AbstractMeshBuilder
     {

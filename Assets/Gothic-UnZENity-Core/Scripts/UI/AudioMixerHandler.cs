@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.UI;
 
-namespace GVR.GothicVR.Scripts.UI
+namespace GUZ.Core.GothicVR.Scripts.UI
 {
     public class AudioMixerHandler : MonoBehaviour
     {

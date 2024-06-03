@@ -1,9 +1,9 @@
-using GVR.Globals;
-using GVR.Npc.Actions;
-using GVR.Npc.Actions.AnimationActions;
+using GUZ.Core.Globals;
+using GUZ.Core.Npc.Actions;
+using GUZ.Core.Npc.Actions.AnimationActions;
 using UnityEngine;
 
-namespace GVR.Lab.AnimationActionMocks
+namespace GUZ.Core.Lab.AnimationActionMocks
 {
     public class LabUseItemToState : UseItemToState
     {

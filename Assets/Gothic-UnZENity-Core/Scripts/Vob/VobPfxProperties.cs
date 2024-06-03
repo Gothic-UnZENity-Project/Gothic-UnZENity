@@ -1,7 +1,7 @@
-using GVR.Properties;
+using GUZ.Core.Properties;
 using ZenKit.Daedalus;
 
-namespace GVR.Vob
+namespace GUZ.Core.Vob
 {
     public class VobPfxProperties : VobProperties
     {

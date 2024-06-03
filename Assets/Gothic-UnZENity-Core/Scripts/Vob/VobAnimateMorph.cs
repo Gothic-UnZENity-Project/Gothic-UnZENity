@@ -1,6 +1,6 @@
-﻿using GVR.Morph;
+﻿using GUZ.Core.Morph;
 
-namespace GVR.Vob
+namespace GUZ.Core.Vob
 {
     // Currently no difference from AbstractMorphAnimation. But you never know. ;-)
     public class VobAnimateMorph : AbstractMorphAnimation

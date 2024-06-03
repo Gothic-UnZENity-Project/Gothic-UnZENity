@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using GVR.Caches;
-using GVR.Extensions;
+using GUZ.Core.Caches;
+using GUZ.Core.Extensions;
 using JetBrains.Annotations;
 using UnityEngine;
 using ZenKit;
 using Mesh = UnityEngine.Mesh;
 using Random = UnityEngine.Random;
 
-namespace GVR.Morph
+namespace GUZ.Core.Morph
 {
     /// <summary>
     ///

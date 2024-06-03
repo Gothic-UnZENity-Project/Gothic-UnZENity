@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using ZenKit.Daedalus;
 
-namespace GVR.Data
+namespace GUZ.Core.Data
 {
     /// <summary>
     /// Gothic handles Dialogs with two parts:

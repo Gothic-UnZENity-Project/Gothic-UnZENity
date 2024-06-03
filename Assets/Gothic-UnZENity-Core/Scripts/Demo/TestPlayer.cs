@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace GVR.Demo
+namespace GUZ.Core.Demo
 {
     public class Hero : MonoBehaviour
     {

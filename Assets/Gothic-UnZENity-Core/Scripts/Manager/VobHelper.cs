@@ -1,15 +1,15 @@
 using System.Linq;
-using GVR.Caches;
-using GVR.Creator;
-using GVR.Creator.Sounds;
-using GVR.Data;
-using GVR.Extensions;
-using GVR.Globals;
-using GVR.Properties;
+using GUZ.Core.Caches;
+using GUZ.Core.Creator;
+using GUZ.Core.Creator.Sounds;
+using GUZ.Core.Data;
+using GUZ.Core.Globals;
+using GUZ.Core.Properties;
+using GUZ.Core.Extensions;
 using JetBrains.Annotations;
 using UnityEngine;
 
-namespace GVR.GothicVR.Scripts.Manager
+namespace GUZ.Core.GothicVR.Scripts.Manager
 {
     public static class VobHelper
     {

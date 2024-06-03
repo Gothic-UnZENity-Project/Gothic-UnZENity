@@ -1,7 +1,7 @@
-using GVR.Caches;
-using GVR.Extensions;
-using GVR.Globals;
-using GVR.Util;
+using GUZ.Core.Caches;
+using GUZ.Core.Extensions;
+using GUZ.Core.Globals;
+using GUZ.Core.Util;
 using UnityEngine;
 
 public class TextureManager : SingletonBehaviour<TextureManager>

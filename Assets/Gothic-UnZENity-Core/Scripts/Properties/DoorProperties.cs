@@ -1,6 +1,6 @@
 using ZenKit.Vobs;
 
-namespace GVR.Properties
+namespace GUZ.Core.Properties
 {
     public class DoorProperties : InteractiveProperties
     {

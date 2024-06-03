@@ -1,18 +1,18 @@
 using System;
 using System.Linq;
-using GVR.Creator;
-using GVR.Data.ZkEvents;
-using GVR.Extensions;
-using GVR.GothicVR.Scripts.Manager;
-using GVR.Manager;
-using GVR.Properties;
-using GVR.Vm;
+using GUZ.Core.Creator;
+using GUZ.Core.Data.ZkEvents;
+using GUZ.Core.GothicVR.Scripts.Manager;
+using GUZ.Core.Manager;
+using GUZ.Core.Properties;
+using GUZ.Core.Vm;
+using GUZ.Core.Extensions;
 using JetBrains.Annotations;
 using UnityEngine;
 using ZenKit.Vobs;
 using EventType = ZenKit.EventType;
 
-namespace GVR.Npc.Actions.AnimationActions
+namespace GUZ.Core.Npc.Actions.AnimationActions
 {
     public class UseMob : AbstractWalkAnimationAction
     {

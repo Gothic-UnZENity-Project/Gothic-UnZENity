@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace GVR.Npc.Actions.AnimationActions
+namespace GUZ.Core.Npc.Actions.AnimationActions
 {
     public class Wait : AbstractAnimationAction
     {

@@ -1,7 +1,7 @@
 using System;
-using GVR.Debugging;
-using GVR.Globals;
-using GVR.World;
+using GUZ.Core.Debugging;
+using GUZ.Core.Globals;
+using GUZ.Core.World;
 using UnityEngine;
 
 public class SunMover : MonoBehaviour

@@ -1,15 +1,15 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using GVR.Extensions;
-using GVR.Globals;
-using GVR.Vob.WayNet;
-using GVR.World;
+using GUZ.Core.Globals;
+using GUZ.Core.Vob.WayNet;
+using GUZ.Core.World;
+using GUZ.Core.Extensions;
 using JetBrains.Annotations;
 using UnityEngine;
 using Debug = UnityEngine.Debug;
 
-namespace GVR.Manager
+namespace GUZ.Core.Manager
 {
     public static class WayNetHelper
     {

@@ -1,10 +1,10 @@
 using System;
-using GVR.Extensions;
+using GUZ.Core.Extensions;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.XR.Interaction.Toolkit;
 
-namespace GVR.Player.Climb
+namespace GUZ.Core.Player.Climb
 {
     public class ClimbProvider : MonoBehaviour
     {

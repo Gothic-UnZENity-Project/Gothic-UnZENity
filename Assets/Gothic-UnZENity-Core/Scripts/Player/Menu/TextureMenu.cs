@@ -1,7 +1,7 @@
-using GVR.Manager;
+using GUZ.Core.Manager;
 using UnityEngine;
 
-namespace GVR.Player.Menu
+namespace GUZ.Core.Player.Menu
 {
     public class TextureMenu : MonoBehaviour
     {

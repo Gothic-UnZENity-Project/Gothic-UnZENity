@@ -1,10 +1,10 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using GVR.Extensions;
+using GUZ.Core.Extensions;
 using UnityEngine;
 
-namespace GVR.Caches
+namespace GUZ.Core.Caches
 {
     /// <summary>
     /// We need to store various mappings and vertex data for MorphMeshes to work properly.

@@ -1,9 +1,9 @@
-using GVR.Globals;
+using GUZ.Core.Globals;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.XR.Interaction.Toolkit;
 
-namespace GVR.Player.Climb
+namespace GUZ.Core.Player.Climb
 {
     /// <summary>
     /// @see https://medium.com/@dnwesdman/climbing-in-vr-with-the-xr-interaction-toolkit-164f6b381ed9

@@ -1,7 +1,7 @@
 using System.Linq;
 using UnityEngine;
 
-namespace GVR.Extensions
+namespace GUZ.Core.Extensions
 {
     public static class GameObjectExtension
     {

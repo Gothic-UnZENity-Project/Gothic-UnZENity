@@ -1,12 +1,12 @@
-using GVR.Caches;
-using GVR.Creator;
-using GVR.Creator.Meshes.V2;
-using GVR.Debugging;
-using GVR.Extensions;
-using GVR.Util;
+using GUZ.Core.Caches;
+using GUZ.Core.Creator.Meshes.V2;
+using GUZ.Core.Debugging;
+using GUZ.Core.Util;
+using GUZ.Core.Creator;
+using GUZ.Core.Extensions;
 using UnityEngine;
 
-namespace GVR.GothicVR.Scripts.Manager
+namespace GUZ.Core.GothicVR.Scripts.Manager
 {
     public class BarrierManager : SingletonBehaviour<BarrierManager>
     {

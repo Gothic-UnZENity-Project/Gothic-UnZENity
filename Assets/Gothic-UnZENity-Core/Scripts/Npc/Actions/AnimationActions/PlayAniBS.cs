@@ -1,8 +1,8 @@
-using GVR.Creator;
-using GVR.Vm;
+using GUZ.Core.Creator;
+using GUZ.Core.Vm;
 using UnityEngine;
 
-namespace GVR.Npc.Actions.AnimationActions
+namespace GUZ.Core.Npc.Actions.AnimationActions
 {
     public class PlayAniBS : AbstractAnimationAction
     {

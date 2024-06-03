@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace GVR.Util
+namespace GUZ.Core.Util
 { 
     public class SingletonBehaviour<T> : MonoBehaviour where T : SingletonBehaviour<T>
     {

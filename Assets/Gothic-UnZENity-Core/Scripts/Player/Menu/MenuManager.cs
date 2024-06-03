@@ -1,9 +1,9 @@
-using GVR.Globals;
-using GVR.GothicVR.Scripts.UI;
-using GVR.Manager;
+using GUZ.Core.Globals;
+using GUZ.Core.GothicVR.Scripts.UI;
+using GUZ.Core.Manager;
 using UnityEngine;
 
-namespace GVR.Player.Menu
+namespace GUZ.Core.Player.Menu
 {
     public class MenuManager : MonoBehaviour
     {

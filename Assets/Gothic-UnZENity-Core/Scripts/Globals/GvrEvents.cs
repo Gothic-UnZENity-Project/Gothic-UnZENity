@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine.Events;
 
-namespace GVR.Globals
+namespace GUZ.Core.Globals
 {
     /// <summary>
     /// Loading/Unloading order of scenes:

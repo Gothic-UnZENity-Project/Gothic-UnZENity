@@ -2,12 +2,12 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using GVR.Debugging;
-using GVR.Globals;
-using GVR.Util;
+using GUZ.Core.Debugging;
+using GUZ.Core.Globals;
+using GUZ.Core.Util;
 using UnityEngine;
 
-namespace GVR.Manager.Culling
+namespace GUZ.Core.Manager.Culling
 {
     /// <summary>
     /// CullingGroups are a way for objects inside a scene to be handled by frustum culling and occlusion culling.

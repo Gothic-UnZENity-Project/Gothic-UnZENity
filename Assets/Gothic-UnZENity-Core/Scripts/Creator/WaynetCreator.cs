@@ -1,17 +1,17 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using GVR.Caches;
-using GVR.Debugging;
-using GVR.Extensions;
-using GVR.Globals;
-using GVR.Manager;
-using GVR.Vob.WayNet;
-using GVR.World;
+using GUZ.Core.Caches;
+using GUZ.Core.Debugging;
+using GUZ.Core.Globals;
+using GUZ.Core.World;
+using GUZ.Core.Extensions;
+using GUZ.Core.Manager;
+using GUZ.Core.Vob.WayNet;
 using UnityEngine;
 using ZenKit;
 using Material = UnityEngine.Material;
 
-namespace GVR.Creator
+namespace GUZ.Core.Creator
 {
     public static class WaynetCreator
     {

@@ -1,9 +1,9 @@
 using System.Collections.Generic;
-using GVR.Util;
+using GUZ.Core.Util;
 using UnityEngine;
 using UnityEngine.Profiling;
 
-namespace GVR.Manager
+namespace GUZ.Core.Manager
 {
     public class StationaryLightsManager : SingletonBehaviour<StationaryLightsManager>
     {

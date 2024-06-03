@@ -1,14 +1,14 @@
 using System;
 using System.Collections.Generic;
-using GVR.Extensions;
-using GVR.Globals;
-using GVR.World;
+using GUZ.Core.Globals;
+using GUZ.Core.World;
+using GUZ.Core.Extensions;
 using UnityEngine;
 using ZenKit;
 using Material = UnityEngine.Material;
 using Mesh = UnityEngine.Mesh;
 
-namespace GVR.Creator.Meshes.V2.Builder
+namespace GUZ.Core.Creator.Meshes.V2.Builder
 {
     public class BarrierMeshBuilder : AbstractMeshBuilder
     {

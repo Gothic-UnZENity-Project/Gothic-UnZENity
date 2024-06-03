@@ -1,11 +1,11 @@
-using GVR.Caches;
-using GVR.Creator;
-using GVR.Data.ZkEvents;
-using GVR.Manager;
+using GUZ.Core.Caches;
+using GUZ.Core.Creator;
+using GUZ.Core.Data.ZkEvents;
+using GUZ.Core.Manager;
 using UnityEngine;
 using ZenKit.Daedalus;
 
-namespace GVR.Npc.Actions.AnimationActions
+namespace GUZ.Core.Npc.Actions.AnimationActions
 {
     public class UseItemToState : AbstractAnimationAction
     {

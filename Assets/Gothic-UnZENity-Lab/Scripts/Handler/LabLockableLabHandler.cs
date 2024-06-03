@@ -1,10 +1,10 @@
-using GVR.Caches;
-using GVR.Creator;
-using GVR.Creator.Meshes;
-using GVR.Creator.Meshes.V2;
+using GUZ.Core.Caches;
+using GUZ.Core.Creator.Meshes.V2;
+using GUZ.Core.Creator;
+using GUZ.Core.Creator.Meshes;
 using UnityEngine;
 
-namespace GVR.Lab.Handler
+namespace GUZ.Core.Lab.Handler
 {
     public class LabLockableLabHandler : MonoBehaviour, ILabHandler
     {

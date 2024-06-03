@@ -1,8 +1,8 @@
-using GVR.Extensions;
-using GVR.Properties;
+using GUZ.Core.Extensions;
+using GUZ.Core.Properties;
 using UnityEngine;
 
-namespace GVR.Npc
+namespace GUZ.Core.Npc
 {
     public class RootCollisionHandler : BasePlayerBehaviour
     {

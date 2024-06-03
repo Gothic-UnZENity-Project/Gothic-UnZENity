@@ -1,7 +1,7 @@
-using GVR.Creator;
+using GUZ.Core.Creator;
 using UnityEngine;
 
-namespace GVR.Npc.Actions.AnimationActions
+namespace GUZ.Core.Npc.Actions.AnimationActions
 {
     public class PlayAni : AbstractAnimationAction
     {

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace GVR.Manager.Settings
+namespace GUZ.Core.Manager.Settings
 {
     [System.Serializable]
     public class GameSettings

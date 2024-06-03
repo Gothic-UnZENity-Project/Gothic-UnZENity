@@ -1,7 +1,7 @@
-using GVR.Properties;
+using GUZ.Core.Properties;
 using UnityEngine;
 
-namespace GVR.Manager
+namespace GUZ.Core.Manager
 {
     public static class PhysicsHelper
     {

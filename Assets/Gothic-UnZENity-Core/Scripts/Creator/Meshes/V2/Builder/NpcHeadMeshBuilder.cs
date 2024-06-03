@@ -1,10 +1,10 @@
 using System.Text.RegularExpressions;
-using GVR.Extensions;
-using GVR.Npc;
-using GVR.Properties;
+using GUZ.Core.Npc;
+using GUZ.Core.Properties;
+using GUZ.Core.Extensions;
 using UnityEngine;
 
-namespace GVR.Creator.Meshes.V2.Builder
+namespace GUZ.Core.Creator.Meshes.V2.Builder
 {
     public class NpcHeadMeshBuilder : NpcMeshBuilder
     {

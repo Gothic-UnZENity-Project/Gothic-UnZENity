@@ -1,14 +1,14 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using GVR.Extensions;
-using GVR.Globals;
-using GVR.Manager;
+using GUZ.Core.Globals;
+using GUZ.Core.Manager;
+using GUZ.Core.Extensions;
 using JetBrains.Annotations;
 using UnityEngine;
 using Debug = UnityEngine.Debug;
 
-namespace GVR.Debugging
+namespace GUZ.Core.Debugging
 {
     public class DijkstraPathRendererDebug : MonoBehaviour
     {

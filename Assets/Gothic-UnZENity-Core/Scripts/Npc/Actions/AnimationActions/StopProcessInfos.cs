@@ -1,7 +1,7 @@
-using GVR.GothicVR.Scripts.Manager;
+using GUZ.Core.GothicVR.Scripts.Manager;
 using UnityEngine;
 
-namespace GVR.Npc.Actions.AnimationActions
+namespace GUZ.Core.Npc.Actions.AnimationActions
 {
     /// <summary>
     /// Close dialog menu immediately.

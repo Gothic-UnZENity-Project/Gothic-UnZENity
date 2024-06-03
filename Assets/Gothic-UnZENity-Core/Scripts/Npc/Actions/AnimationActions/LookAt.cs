@@ -1,7 +1,7 @@
-using GVR.Manager;
+using GUZ.Core.Manager;
 using UnityEngine;
 
-namespace GVR.Npc.Actions.AnimationActions
+namespace GUZ.Core.Npc.Actions.AnimationActions
 {
     public class LookAt : AbstractRotateAnimationAction
     {

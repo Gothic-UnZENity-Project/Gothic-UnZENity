@@ -5,21 +5,21 @@ using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using GothicVR.Vob;
-using GVR.Caches;
-using GVR.Creator.Meshes.V2;
-using GVR.Debugging;
-using GVR.Demo;
-using GVR.Extensions;
-using GVR.Globals;
-using GVR.GothicVR.Scripts.Manager;
-using GVR.Manager;
-using GVR.Manager.Culling;
-using GVR.Npc;
-using GVR.Player.Interactive;
-using GVR.Properties;
-using GVR.Vob;
-using GVR.Vob.WayNet;
-using GVR.World;
+using GUZ.Core.Caches;
+using GUZ.Core.Creator.Meshes.V2;
+using GUZ.Core.Debugging;
+using GUZ.Core.Demo;
+using GUZ.Core.Globals;
+using GUZ.Core.GothicVR.Scripts.Manager;
+using GUZ.Core.Manager;
+using GUZ.Core.Manager.Culling;
+using GUZ.Core.Player.Interactive;
+using GUZ.Core.Properties;
+using GUZ.Core.Vob;
+using GUZ.Core.Vob.WayNet;
+using GUZ.Core.World;
+using GUZ.Core.Extensions;
+using GUZ.Core.Npc;
 using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -34,7 +34,7 @@ using LightType = ZenKit.Vobs.LightType;
 using Material = UnityEngine.Material;
 using Vector3 = System.Numerics.Vector3;
 
-namespace GVR.Creator
+namespace GUZ.Core.Creator
 {
     public static class VobCreator
     {

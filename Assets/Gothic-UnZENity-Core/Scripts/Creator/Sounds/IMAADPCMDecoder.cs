@@ -4,7 +4,7 @@ using System.IO;
 using System.Text;
 using JetBrains.Annotations;
 
-namespace GVR.Creator.Sounds
+namespace GUZ.Core.Creator.Sounds
 {
     public static class IMAADPCMDecoder
     {

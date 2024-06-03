@@ -1,13 +1,13 @@
 using System;
 using System.Collections.Generic;
-using GVR.Extensions;
-using GVR.Util;
+using GUZ.Core.Util;
+using GUZ.Core.Extensions;
 using UnityEngine;
 using UnityEngine.Serialization;
 using ZenKit;
 using ZenKit.Vobs;
 
-namespace GVR.Debugging
+namespace GUZ.Core.Debugging
 {
     public class FeatureFlags: SingletonBehaviour<FeatureFlags>
     {

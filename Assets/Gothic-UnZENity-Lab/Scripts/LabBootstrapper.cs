@@ -1,11 +1,11 @@
-using GVR.Caches;
-using GVR.Globals;
-using GVR.Lab.Handler;
-using GVR.Manager;
-using GVR.Manager.Settings;
+using GUZ.Core.Caches;
+using GUZ.Core.Globals;
+using GUZ.Core.Lab.Handler;
+using GUZ.Core.Manager;
+using GUZ.Core.Manager.Settings;
 using UnityEngine;
 
-namespace GVR.GothicVR_Lab.Scripts
+namespace GUZ.Core.GothicVR_Lab.Scripts
 {
     public class LabBootstrapper : MonoBehaviour
     {

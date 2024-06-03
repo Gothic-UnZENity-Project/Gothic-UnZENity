@@ -1,10 +1,10 @@
 using System.Linq;
-using GVR.Extensions;
-using GVR.Globals;
-using GVR.GothicVR.Scripts.Manager;
+using GUZ.Core.Globals;
+using GUZ.Core.GothicVR.Scripts.Manager;
+using GUZ.Core.Extensions;
 using UnityEngine;
 
-namespace GVR.Npc.Actions.AnimationActions
+namespace GUZ.Core.Npc.Actions.AnimationActions
 {
     public class StartProcessInfos: AbstractAnimationAction
     {

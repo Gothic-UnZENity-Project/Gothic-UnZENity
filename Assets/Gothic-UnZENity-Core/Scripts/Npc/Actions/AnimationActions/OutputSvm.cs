@@ -1,10 +1,10 @@
-﻿using GVR.Caches;
-using GVR.Extensions;
-using GVR.Globals;
+﻿using GUZ.Core.Caches;
+using GUZ.Core.Extensions;
+using GUZ.Core.Globals;
 using UnityEngine;
 using ZenKit.Daedalus;
 
-namespace GVR.Npc.Actions.AnimationActions
+namespace GUZ.Core.Npc.Actions.AnimationActions
 {
     public class OutputSvm : Output
     {

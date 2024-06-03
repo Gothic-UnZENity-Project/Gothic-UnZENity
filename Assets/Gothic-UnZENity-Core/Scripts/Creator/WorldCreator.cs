@@ -4,15 +4,15 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using GVR.Caches;
-using GVR.Creator.Meshes;
-using GVR.Creator.Meshes.V2;
-using GVR.Debugging;
-using GVR.Extensions;
-using GVR.Globals;
-using GVR.GothicVR.Scripts.Manager;
-using GVR.Manager;
-using GVR.World;
+using GUZ.Core.Caches;
+using GUZ.Core.Creator.Meshes.V2;
+using GUZ.Core.Debugging;
+using GUZ.Core.Globals;
+using GUZ.Core.GothicVR.Scripts.Manager;
+using GUZ.Core.Manager;
+using GUZ.Core.World;
+using GUZ.Core.Creator.Meshes;
+using GUZ.Core.Extensions;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.XR.Interaction.Toolkit;
@@ -20,7 +20,7 @@ using ZenKit;
 using ZenKit.Vobs;
 using Debug = UnityEngine.Debug;
 
-namespace GVR.Creator
+namespace GUZ.Core.Creator
 {
     public static class WorldCreator
     {

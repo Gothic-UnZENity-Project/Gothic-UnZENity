@@ -1,11 +1,11 @@
 using System;
 using System.Collections;
-using GVR.Debugging;
-using GVR.Globals;
-using GVR.Util;
+using GUZ.Core.Debugging;
+using GUZ.Core.Globals;
+using GUZ.Core.Util;
 using UnityEngine;
 
-namespace GVR.World
+namespace GUZ.Core.World
 {
     public class GameTime : SingletonBehaviour<GameTime>
     {

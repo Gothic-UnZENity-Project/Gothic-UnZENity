@@ -1,15 +1,15 @@
 using System.Linq;
-using GVR.Caches;
-using GVR.Creator.Meshes.V2;
-using GVR.Extensions;
-using GVR.Globals;
-using GVR.Properties;
-using GVR.Vm;
+using GUZ.Core.Caches;
+using GUZ.Core.Creator.Meshes.V2;
+using GUZ.Core.Globals;
+using GUZ.Core.Properties;
+using GUZ.Core.Vm;
+using GUZ.Core.Extensions;
 using TMPro;
 using UnityEngine;
 using ZenKit.Daedalus;
 
-namespace GVR.Lab.Handler
+namespace GUZ.Core.Lab.Handler
 {
     public class LabNpcDialogHandler : MonoBehaviour, ILabHandler
     {

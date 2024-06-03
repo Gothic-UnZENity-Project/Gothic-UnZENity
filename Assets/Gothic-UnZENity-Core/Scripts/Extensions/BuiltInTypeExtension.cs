@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace GVR.Extensions
+namespace GUZ.Core.Extensions
 {
     public static class BuiltInTypeExtension
     {

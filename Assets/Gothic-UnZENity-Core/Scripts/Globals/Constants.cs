@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace GVR.Globals
+namespace GUZ.Core.Globals
 {
     public static class Constants
     {

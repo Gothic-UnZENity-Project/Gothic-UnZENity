@@ -1,8 +1,8 @@
-using GVR.Caches;
-using GVR.Data.ZkEvents;
+using GUZ.Core.Data.ZkEvents;
+using GUZ.Core.Caches;
 using UnityEngine;
 
-namespace GVR.Npc.Actions.AnimationActions
+namespace GUZ.Core.Npc.Actions.AnimationActions
 {
     public class LookAtNpc : AbstractRotateAnimationAction
     {

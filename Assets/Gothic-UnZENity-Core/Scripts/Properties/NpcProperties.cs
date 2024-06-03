@@ -1,12 +1,12 @@
 using System.Collections.Generic;
-using GVR.Npc;
-using GVR.Npc.Actions.AnimationActions;
-using GVR.Vm;
-using GVR.Vob.WayNet;
+using GUZ.Core.Npc;
+using GUZ.Core.Npc.Actions.AnimationActions;
+using GUZ.Core.Vm;
+using GUZ.Core.Vob.WayNet;
 using UnityEngine;
 using ZenKit.Daedalus;
 
-namespace GVR.Properties
+namespace GUZ.Core.Properties
 {
     public class NpcProperties : AbstractProperties
     {

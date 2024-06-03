@@ -1,12 +1,12 @@
 using System;
-using GVR.Creator;
-using GVR.Data.ZkEvents;
-using GVR.Globals;
-using GVR.Manager;
-using GVR.Vm;
+using GUZ.Core.Creator;
+using GUZ.Core.Data.ZkEvents;
+using GUZ.Core.Globals;
+using GUZ.Core.Manager;
+using GUZ.Core.Vm;
 using UnityEngine;
 
-namespace GVR.Npc.Actions.AnimationActions
+namespace GUZ.Core.Npc.Actions.AnimationActions
 {
     public abstract class AbstractWalkAnimationAction : AbstractAnimationAction
     {

@@ -1,13 +1,13 @@
 using System;
 using System.Collections.Generic;
-using GVR.Caches;
-using GVR.Creator;
-using GVR.Creator.Meshes;
-using GVR.Creator.Meshes.V2;
-using GVR.Extensions;
+using GUZ.Core.Caches;
+using GUZ.Core.Creator.Meshes.V2;
+using GUZ.Core.Creator;
+using GUZ.Core.Creator.Meshes;
+using GUZ.Core.Extensions;
 using UnityEngine;
 
-namespace GVR.Demo
+namespace GUZ.Core.Demo
 {
 	public class DemoContainerLoot : MonoBehaviour
 	{

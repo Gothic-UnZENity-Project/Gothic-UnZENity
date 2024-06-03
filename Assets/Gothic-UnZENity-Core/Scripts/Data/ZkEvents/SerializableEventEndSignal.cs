@@ -1,6 +1,6 @@
 using JetBrains.Annotations;
 
-namespace GVR.Data.ZkEvents
+namespace GUZ.Core.Data.ZkEvents
 {
     /// <summary>
     /// UnityEngine.JsonUtility doesn't serialize CachedEventTag. We therefore use this class to JSON-ify the data.

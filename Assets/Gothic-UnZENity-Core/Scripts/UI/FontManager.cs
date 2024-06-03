@@ -1,13 +1,14 @@
 using System;
 using System.Reflection;
-using GVR.Caches;
-using GVR.Util;
+using GUZ.Core.Caches;
+using GUZ.Core.Globals;
+using GUZ.Core.Util;
 using TMPro;
 using UnityEngine;
 using UnityEngine.TextCore;
-using Constants = GVR.Globals.Constants;
+using Constants = GUZ.Core.Globals.Constants;
 
-namespace GVR.Manager
+namespace GUZ.Core.Manager
 {
     public class FontManager : SingletonBehaviour<FontManager>
     {

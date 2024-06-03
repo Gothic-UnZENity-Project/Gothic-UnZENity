@@ -1,13 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using GUZ.Core.Globals;
+using GUZ.Core.Player.Camera;
 using Unity.XR.CoreUtils;
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
-using GVR.Player.Camera;
-using GVR.Globals;
 
-namespace GVR.Player.Interactive
+namespace GUZ.Core.Player.Interactive
 {
     public class Seat : MonoBehaviour
     {

@@ -1,14 +1,14 @@
 using System.Linq;
-using GVR.Caches;
-using GVR.Creator;
-using GVR.Creator.Sounds;
-using GVR.Extensions;
-using GVR.Globals;
-using GVR.Manager;
+using GUZ.Core.Caches;
+using GUZ.Core.Creator;
+using GUZ.Core.Creator.Sounds;
+using GUZ.Core.Globals;
+using GUZ.Core.Manager;
+using GUZ.Core.Extensions;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-namespace GVR.Npc.Actions.AnimationActions
+namespace GUZ.Core.Npc.Actions.AnimationActions
 {
     public class Output: AbstractAnimationAction
     {

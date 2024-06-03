@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace GVR.Properties
+namespace GUZ.Core.Properties
 {
     public abstract class AbstractProperties : MonoBehaviour
     {

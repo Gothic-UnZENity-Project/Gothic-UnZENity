@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace GVR.Npc.Actions
+namespace GUZ.Core.Npc.Actions
 {
     public class AnimationAction
     {

@@ -4,7 +4,7 @@ using System.IO;
 using UnityEngine;
 using UnityEngine.Networking;
 
-namespace GVR.Manager.Settings
+namespace GUZ.Core.Manager.Settings
 {
     public class SettingsManager : MonoBehaviour
     {

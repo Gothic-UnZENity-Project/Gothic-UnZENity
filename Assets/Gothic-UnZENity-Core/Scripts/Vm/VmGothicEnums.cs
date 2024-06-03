@@ -1,6 +1,6 @@
 using System;
 
-namespace GVR.Vm
+namespace GUZ.Core.Vm
 {
     public static class VmGothicEnums
     {

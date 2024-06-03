@@ -1,20 +1,20 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using GVR.Caches;
-using GVR.Creator.Sounds;
-using GVR.Data;
-using GVR.Debugging;
-using GVR.Extensions;
-using GVR.Globals;
-using GVR.Manager.Settings;
-using GVR.Util;
-using GVR.World;
+using GUZ.Core.Caches;
+using GUZ.Core.Creator.Sounds;
+using GUZ.Core.Data;
+using GUZ.Core.Debugging;
+using GUZ.Core.Globals;
+using GUZ.Core.Manager.Settings;
+using GUZ.Core.Util;
+using GUZ.Core.World;
+using GUZ.Core.Extensions;
 using UnityEngine;
 using UnityEngine.Rendering;
 using Random = UnityEngine.Random;
 
-namespace GVR.GothicVR.Scripts.Manager
+namespace GUZ.Core.GothicVR.Scripts.Manager
 {
     public class SkyManager : SingletonBehaviour<SkyManager>
     {

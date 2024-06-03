@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Numerics;
 
-namespace GVR.Extensions
+namespace GUZ.Core.Extensions
 {
     public static class NumericsExtension
     {

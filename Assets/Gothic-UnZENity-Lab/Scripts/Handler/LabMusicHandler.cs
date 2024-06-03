@@ -1,13 +1,13 @@
 using System;
 using System.Linq;
-using GVR.Caches;
-using GVR.Debugging;
-using GVR.Globals;
-using GVR.Manager;
+using GUZ.Core.Caches;
+using GUZ.Core.Debugging;
+using GUZ.Core.Globals;
+using GUZ.Core.Manager;
 using TMPro;
 using UnityEngine;
 
-namespace GVR.Lab.Handler
+namespace GUZ.Core.Lab.Handler
 {
     public class LabMusicHandler : MonoBehaviour, ILabHandler
     {

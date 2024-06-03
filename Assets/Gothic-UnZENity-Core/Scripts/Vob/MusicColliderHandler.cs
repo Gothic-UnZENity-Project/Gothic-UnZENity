@@ -1,9 +1,9 @@
-using GVR.Debugging;
-using GVR.Globals;
-using GVR.Manager;
+using GUZ.Core.Debugging;
+using GUZ.Core.Globals;
+using GUZ.Core.Manager;
 using UnityEngine;
 
-namespace GVR.Vob
+namespace GUZ.Core.Vob
 {
     public class MusicCollisionHandler : MonoBehaviour
     {

@@ -1,12 +1,12 @@
 using System;
-using GVR.Creator;
-using GVR.Globals;
-using GVR.Manager;
-using GVR.Manager.Settings;
+using GUZ.Core.Creator;
+using GUZ.Core.Globals;
+using GUZ.Core.Manager;
+using GUZ.Core.Manager.Settings;
 using UnityEditor;
 using UnityEngine;
 
-namespace GVR.Editor.Tools
+namespace GUZ.Core.Editor.Tools
 {
     /// HOW TO USE:
     /// 1. LOAD THE SCENE FOR WHICH YOU WANT OCCULUSION CULLING

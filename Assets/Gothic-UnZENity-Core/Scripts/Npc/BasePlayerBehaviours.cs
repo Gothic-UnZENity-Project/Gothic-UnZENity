@@ -1,7 +1,7 @@
-﻿using GVR.Properties;
+﻿using GUZ.Core.Properties;
 using UnityEngine;
 
-namespace GVR.Npc
+namespace GUZ.Core.Npc
 {
     public abstract class BasePlayerBehaviour: MonoBehaviour
     {

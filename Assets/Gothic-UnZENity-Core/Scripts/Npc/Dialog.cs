@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using GVR.Globals;
-using GVR.GothicVR.Scripts.Manager;
+using GUZ.Core.GothicVR.Scripts.Manager;
+using GUZ.Core.Globals;
 using UnityEngine;
 using ZenKit.Daedalus;
 
-namespace GVR.Npc
+namespace GUZ.Core.Npc
 {
     public class Dialog: BasePlayerBehaviour
     {

@@ -1,11 +1,11 @@
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
-using GVR.Caches;
-using GVR.Vm;
+using GUZ.Core.Caches;
+using GUZ.Core.Vm;
 using UnityEngine;
 using ZenKit;
 
-namespace GVR.Creator.Meshes.V2.Builder
+namespace GUZ.Core.Creator.Meshes.V2.Builder
 {
     public class NpcMeshBuilder : AbstractMeshBuilder
     {

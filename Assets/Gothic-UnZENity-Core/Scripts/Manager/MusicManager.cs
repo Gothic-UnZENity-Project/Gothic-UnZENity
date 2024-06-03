@@ -4,10 +4,10 @@ using System.IO;
 using System.Linq;
 using DirectMusic;
 using GothicVR.Vob;
-using GVR.Caches;
-using GVR.Debugging;
-using GVR.Globals;
-using GVR.Manager.Settings;
+using GUZ.Core.Caches;
+using GUZ.Core.Debugging;
+using GUZ.Core.Globals;
+using GUZ.Core.Manager.Settings;
 using UnityEngine;
 using ZenKit;
 using ZenKit.Daedalus;
@@ -16,7 +16,7 @@ using Logger = DirectMusic.Logger;
 using LogLevel = DirectMusic.LogLevel;
 using Object = UnityEngine.Object;
 
-namespace GVR.Manager
+namespace GUZ.Core.Manager
 {
     public static class MusicManager
     {

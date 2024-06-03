@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace GVR.Data
+namespace GUZ.Core.Data
 {
     /// <summary>
     /// This class is serialized via JsonUtility.

@@ -1,13 +1,13 @@
-using GVR.Caches;
-using GVR.Creator;
-using GVR.Creator.Meshes;
-using GVR.Creator.Meshes.V2;
-using GVR.Globals;
+using GUZ.Core.Caches;
+using GUZ.Core.Creator.Meshes.V2;
+using GUZ.Core.Globals;
+using GUZ.Core.Creator;
+using GUZ.Core.Creator.Meshes;
 using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.XR.Interaction.Toolkit;
 
-namespace GVR.Lab.Handler
+namespace GUZ.Core.Lab.Handler
 {
     public class LabLadderLabHandler : MonoBehaviour, ILabHandler
     {

@@ -1,10 +1,10 @@
 using System.Linq;
-using GVR.Extensions;
-using GVR.Globals;
+using GUZ.Core.Globals;
+using GUZ.Core.Extensions;
 using Unity.VisualScripting;
 using UnityEngine;
 
-namespace GVR.Creator.Meshes.V2.Builder
+namespace GUZ.Core.Creator.Meshes.V2.Builder
 {
     public class VobMeshBuilder : AbstractMeshBuilder
     {

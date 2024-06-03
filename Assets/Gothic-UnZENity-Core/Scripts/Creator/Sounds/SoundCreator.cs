@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Text;
-using GVR.Data;
-using GVR.Globals;
+using GUZ.Core.Data;
+using GUZ.Core.Globals;
 using JetBrains.Annotations;
 using UnityEngine;
 
-namespace GVR.Creator.Sounds
+namespace GUZ.Core.Creator.Sounds
 {
     public static class SoundCreator
     {

@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using GVR.Caches;
-using GVR.Globals;
+using GUZ.Core.Caches;
+using GUZ.Core.Globals;
 using UnityEngine;
 using UnityEngine.Rendering;
 using ZenKit;
@@ -10,7 +10,7 @@ using Material = UnityEngine.Material;
 using Texture = UnityEngine.Texture;
 using TextureFormat = UnityEngine.TextureFormat;
 
-namespace GVR.Creator.Meshes.V2.Builder.Textures
+namespace GUZ.Core.Creator.Meshes.V2.Builder.Textures
 {
     /// <summary>
     /// Create texture array for vob meshes. Basically no MeshBuilder,

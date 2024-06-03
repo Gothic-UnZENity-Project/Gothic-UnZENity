@@ -1,10 +1,10 @@
-using GVR.Creator;
-using GVR.Data.ZkEvents;
-using GVR.Extensions;
+using GUZ.Core.Creator;
+using GUZ.Core.Data.ZkEvents;
+using GUZ.Core.Extensions;
 using UnityEngine;
 using EventType = ZenKit.EventType;
 
-namespace GVR.Npc.Actions.AnimationActions
+namespace GUZ.Core.Npc.Actions.AnimationActions
 {
     public class DrawWeapon : AbstractAnimationAction
     {

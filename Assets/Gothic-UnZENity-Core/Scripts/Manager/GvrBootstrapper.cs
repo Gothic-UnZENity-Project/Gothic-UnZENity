@@ -1,19 +1,19 @@
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using GVR.Caches;
-using GVR.Debugging;
-using GVR.Globals;
-using GVR.Manager.Settings;
-using GVR.Util;
-using GVR.Vm;
+using GUZ.Core.Caches;
+using GUZ.Core.Debugging;
+using GUZ.Core.Globals;
+using GUZ.Core.Manager.Settings;
+using GUZ.Core.Util;
+using GUZ.Core.Vm;
 using UnityEngine;
 using ZenKit;
 using ZenKit.Daedalus;
 using Debug = UnityEngine.Debug;
 using Logger = ZenKit.Logger;
 
-namespace GVR.Manager
+namespace GUZ.Core.Manager
 {
     public class GvrBootstrapper : SingletonBehaviour<GvrBootstrapper>
     {

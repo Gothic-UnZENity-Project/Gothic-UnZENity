@@ -1,20 +1,20 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using GVR.Caches;
-using GVR.Creator.Meshes.V2;
-using GVR.Extensions;
-using GVR.Globals;
-using GVR.Lab.AnimationActionMocks;
-using GVR.Npc.Actions;
-using GVR.Npc.Actions.AnimationActions;
-using GVR.Properties;
-using GVR.Vm;
+using GUZ.Core.Caches;
+using GUZ.Core.Creator.Meshes.V2;
+using GUZ.Core.Globals;
+using GUZ.Core.Lab.AnimationActionMocks;
+using GUZ.Core.Npc.Actions;
+using GUZ.Core.Npc.Actions.AnimationActions;
+using GUZ.Core.Properties;
+using GUZ.Core.Vm;
+using GUZ.Core.Extensions;
 using TMPro;
 using UnityEngine;
 using ZenKit.Daedalus;
 
-namespace GVR.Lab.Handler
+namespace GUZ.Core.Lab.Handler
 {
     public class LabNpcAnimationHandler : MonoBehaviour, ILabHandler
     {

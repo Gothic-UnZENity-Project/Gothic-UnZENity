@@ -1,10 +1,10 @@
 using System.Collections.Generic;
-using GVR.Globals;
-using GVR.Properties;
+using GUZ.Core.Globals;
+using GUZ.Core.Properties;
 using TMPro;
 using UnityEngine;
 
-namespace GVR.Caches
+namespace GUZ.Core.Caches
 {
     /// <summary>
     /// Contains lookup caches for GameObjects for faster use.

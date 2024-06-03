@@ -1,8 +1,8 @@
 using System.IO;
-using GVR.Manager.Settings;
+using GUZ.Core.Manager.Settings;
 using UnityEngine;
 
-namespace GVR.Debugging
+namespace GUZ.Core.Debugging
 {
     public class FileLoggingHandler : MonoBehaviour
     {

@@ -1,11 +1,11 @@
 using System;
-using GVR.Debugging;
-using GVR.Extensions;
-using GVR.Morph;
+using GUZ.Core.Debugging;
+using GUZ.Core.Morph;
+using GUZ.Core.Extensions;
 using UnityEngine;
 using UnityEngine.Serialization;
 
-namespace GVR.Npc
+namespace GUZ.Core.Npc
 {
     public class HeadMorph : AbstractMorphAnimation
     {

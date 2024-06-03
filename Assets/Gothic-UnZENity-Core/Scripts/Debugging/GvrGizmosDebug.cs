@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace GVR.Debugging
+namespace GUZ.Core.Debugging
 {
     /// <summary>
     /// Add it to an object where you want to draw some information.

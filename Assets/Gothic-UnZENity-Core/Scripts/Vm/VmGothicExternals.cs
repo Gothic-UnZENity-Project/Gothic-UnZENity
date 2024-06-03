@@ -1,19 +1,19 @@
 ﻿using System;
 using System.Globalization;
 using AOT;
-using GVR.Caches;
-using GVR.Creator;
-using GVR.Debugging;
-using GVR.Globals;
-using GVR.GothicVR.Scripts.Manager;
-using GVR.Manager;
-using GVR.World;
+using GUZ.Core.Caches;
+using GUZ.Core.Creator;
+using GUZ.Core.Debugging;
+using GUZ.Core.Globals;
+using GUZ.Core.GothicVR.Scripts.Manager;
+using GUZ.Core.Manager;
+using GUZ.Core.World;
 using UnityEngine;
 using ZenKit;
 using ZenKit.Daedalus;
 using Random = UnityEngine.Random;
 
-namespace GVR.Vm
+namespace GUZ.Core.Vm
 {
     /// <summary>
     /// Contains basic methods only available in Gothic Daedalus module.

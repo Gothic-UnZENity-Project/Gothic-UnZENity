@@ -1,4 +1,4 @@
-﻿namespace GVR.Lab.Handler
+﻿namespace GUZ.Core.Lab.Handler
 {
     public interface ILabHandler
     {

@@ -1,10 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
+using GUZ.Core.Util;
 using UnityEngine;
 using UnityEngine.UI;
-using GVR.Util;
 
-namespace GVR.Player.Camera
+namespace GUZ.Core.Player.Camera
 {
     public class CameraFade : SingletonBehaviour<CameraFade>
     {

@@ -1,4 +1,4 @@
-namespace GVR.Data
+namespace GUZ.Core.Data
 {
     public class SkyStateRain :SkyState
     {

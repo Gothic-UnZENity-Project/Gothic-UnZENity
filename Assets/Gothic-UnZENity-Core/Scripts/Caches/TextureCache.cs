@@ -4,8 +4,8 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using GVR.Extensions;
-using GVR.World;
+using GUZ.Core.World;
+using GUZ.Core.Extensions;
 using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -15,7 +15,7 @@ using Object = UnityEngine.Object;
 using Texture = UnityEngine.Texture;
 using TextureFormat = ZenKit.TextureFormat;
 
-namespace GVR.Caches
+namespace GUZ.Core.Caches
 {
     public static class TextureCache
     {

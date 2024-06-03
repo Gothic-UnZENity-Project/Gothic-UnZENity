@@ -1,14 +1,14 @@
 using System;
 using System.Threading.Tasks;
-using GVR.Caches;
-using GVR.Globals;
-using GVR.World;
+using GUZ.Core.Caches;
+using GUZ.Core.Globals;
+using GUZ.Core.World;
 using UnityEngine;
 using UnityEngine.Rendering;
 using ZenKit;
 using Material = UnityEngine.Material;
 
-namespace GVR.Creator.Meshes.V2.Builder.Textures
+namespace GUZ.Core.Creator.Meshes.V2.Builder.Textures
 {
     /// <summary>
     /// Create texture array for world meshes. Basically no MeshBuilder,

@@ -1,10 +1,10 @@
-using GVR.Extensions;
-using GVR.Globals;
+using GUZ.Core.Globals;
+using GUZ.Core.Extensions;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.XR.Interaction.Toolkit;
 
-namespace GVR.Player.Climb
+namespace GUZ.Core.Player.Climb
 {
     public class RayTeleportClimb : MonoBehaviour
     {

@@ -1,10 +1,10 @@
 
-using GVR.Caches;
-using GVR.Extensions;
-using GVR.Globals;
+using GUZ.Core.Caches;
+using GUZ.Core.Globals;
+using GUZ.Core.Extensions;
 using UnityEngine;
 
-namespace GVR.Creator.Meshes.V2.Builder
+namespace GUZ.Core.Creator.Meshes.V2.Builder
 {
     public class PolyStripMeshBuilder : AbstractMeshBuilder
     {

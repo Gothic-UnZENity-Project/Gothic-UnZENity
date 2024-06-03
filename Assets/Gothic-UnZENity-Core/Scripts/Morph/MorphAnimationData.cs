@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using ZenKit;
 
-namespace GVR.Morph
+namespace GUZ.Core.Morph
 {
     public class MorphAnimationData
     {

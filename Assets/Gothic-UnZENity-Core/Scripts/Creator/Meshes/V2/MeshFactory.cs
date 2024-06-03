@@ -1,16 +1,16 @@
 using System.Linq;
 using System.Threading.Tasks;
-using GVR.Creator.Meshes.V2.Builder;
-using GVR.Creator.Meshes.V2.Builder.Textures;
-using GVR.Extensions;
-using GVR.Vm;
-using GVR.World;
+using GUZ.Core.Creator.Meshes.V2.Builder;
+using GUZ.Core.Creator.Meshes.V2.Builder.Textures;
+using GUZ.Core.Vm;
+using GUZ.Core.World;
+using GUZ.Core.Extensions;
 using UnityEngine;
 using ZenKit;
 using ZenKit.Daedalus;
 using ZenKit.Vobs;
 
-namespace GVR.Creator.Meshes.V2
+namespace GUZ.Core.Creator.Meshes.V2
 {
     public static class MeshFactory
     {

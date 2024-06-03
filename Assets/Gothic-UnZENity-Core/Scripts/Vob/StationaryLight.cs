@@ -1,11 +1,11 @@
-using GVR.Manager;
 using System;
 using System.Collections.Generic;
-using GVR.Extensions;
+using GUZ.Core.Manager;
+using GUZ.Core.Extensions;
 using UnityEngine;
 using UnityEngine.Profiling;
 
-namespace GVR
+namespace GUZ.Core
 {
     [RequireComponent(typeof(Light))]
     public class StationaryLight : MonoBehaviour

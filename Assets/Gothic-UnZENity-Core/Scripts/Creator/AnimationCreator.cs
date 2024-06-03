@@ -2,17 +2,17 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using GVR.Caches;
-using GVR.Data.ZkEvents;
-using GVR.Extensions;
-using GVR.Npc;
-using GVR.Npc.Actions;
-using GVR.Properties;
+using GUZ.Core.Caches;
+using GUZ.Core.Data.ZkEvents;
+using GUZ.Core.Npc;
+using GUZ.Core.Npc.Actions;
+using GUZ.Core.Properties;
+using GUZ.Core.Extensions;
 using UnityEngine;
 using ZenKit;
 using Animation = UnityEngine.Animation;
 
-namespace GVR.Creator
+namespace GUZ.Core.Creator
 {
     public static class AnimationCreator
     {

@@ -1,9 +1,9 @@
-using GVR.Extensions;
-using GVR.Vm;
+using GUZ.Core.Vm;
+using GUZ.Core.Extensions;
 using UnityEngine;
 using ZenKit.Daedalus;
 
-namespace GVR.Creator.Meshes.V2.Builder
+namespace GUZ.Core.Creator.Meshes.V2.Builder
 {
     public class NpcWeaponMeshBuilder : AbstractMeshBuilder
     {

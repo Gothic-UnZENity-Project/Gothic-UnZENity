@@ -1,7 +1,7 @@
 using System;
 using System.Collections;
-using GVR.Globals;
-using GVR.World;
+using GUZ.Core.Globals;
+using GUZ.Core.World;
 using UnityEngine;
 using ZenKit.Vobs;
 using Random = UnityEngine.Random;

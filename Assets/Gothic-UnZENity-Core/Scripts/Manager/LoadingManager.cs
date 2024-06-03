@@ -1,14 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using GVR.Extensions;
-using GVR.Globals;
-using GVR.Util;
+using GUZ.Core.Globals;
+using GUZ.Core.Util;
+using GUZ.Core.Extensions;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-namespace GVR.Manager
+namespace GUZ.Core.Manager
 {
     public class LoadingManager : SingletonBehaviour<LoadingManager>
     {

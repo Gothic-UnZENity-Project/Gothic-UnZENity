@@ -1,7 +1,7 @@
-using GVR.Npc.Routines;
+using GUZ.Core.Npc.Routines;
 using UnityEngine;
 
-namespace GVR.Npc.Actions.AnimationActions
+namespace GUZ.Core.Npc.Actions.AnimationActions
 {
     public class ContinueRoutine : AbstractAnimationAction
     {
