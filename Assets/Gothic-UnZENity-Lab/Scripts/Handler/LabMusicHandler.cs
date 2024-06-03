@@ -7,7 +7,7 @@ using GUZ.Core.Manager;
 using TMPro;
 using UnityEngine;
 
-namespace GUZ.Core.Lab.Handler
+namespace GUZ.Lab.Handler
 {
     public class LabMusicHandler : MonoBehaviour, ILabHandler
     {

@@ -1,17 +1,18 @@
 using GUZ.Core.Caches;
 using GUZ.Core.Globals;
-using GUZ.Core.Lab.Handler;
 using GUZ.Core.Manager;
 using GUZ.Core.Manager.Settings;
+using GUZ.Lab.Handler;
 using UnityEngine;
+using UnityEngine.Serialization;
 
-namespace GUZ.Core.GothicVR_Lab.Scripts
+namespace GUZ.Lab.GothicVR_Lab.Scripts
 {
     public class LabBootstrapper : MonoBehaviour
     {
         public LabMusicHandler labMusicHandler;
         public LabNpcDialogHandler npcDialogHandler;
-        public LabLockableLabHandler lockableLabHandler;
+        public LabLockableHandler lockableHandler;
         public LabLadderLabHandler ladderLabHandler;
         public LabVobHandAttachPointsLabHandler vobHandAttachPointsLabHandler;
         public LabNpcAnimationHandler labNpcAnimationHandler;
@@ -33,7 +34,7 @@ namespace GUZ.Core.GothicVR_Lab.Scripts
             labNpcAnimationHandler.Bootstrap();
             labMusicHandler.Bootstrap();
             npcDialogHandler.Bootstrap();
-            lockableLabHandler.Bootstrap();
+            lockableHandler.Bootstrap();
             ladderLabHandler.Bootstrap();
             vobHandAttachPointsLabHandler.Bootstrap();
         }

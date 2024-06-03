@@ -9,7 +9,7 @@ using TMPro;
 using UnityEngine;
 using ZenKit.Daedalus;
 
-namespace GUZ.Core.Lab.Handler
+namespace GUZ.Lab.Handler
 {
     public class LabNpcDialogHandler : MonoBehaviour, ILabHandler
     {

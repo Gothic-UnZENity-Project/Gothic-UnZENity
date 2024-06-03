@@ -17,7 +17,7 @@ using UnityEngine.UI;
 using UnityEngine.XR.Interaction.Toolkit;
 using ZenKit.Daedalus;
 
-namespace GUZ.Core.Lab.Handler
+namespace GUZ.Lab.Handler
 {
     public class LabVobHandAttachPointsLabHandler: MonoBehaviour, ILabHandler
     {

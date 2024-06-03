@@ -3,7 +3,7 @@ using GUZ.Core.Npc.Actions;
 using GUZ.Core.Vm;
 using UnityEngine;
 
-namespace GUZ.Core.Lab.AnimationActionMocks
+namespace GUZ.Lab.AnimationActionMocks
 {
     public class LabCreateInventoryItem : AbstractLabAnimationAction
     {

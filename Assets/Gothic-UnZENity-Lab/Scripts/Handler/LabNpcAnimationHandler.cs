@@ -3,18 +3,18 @@ using System.Collections.Generic;
 using System.Linq;
 using GUZ.Core.Caches;
 using GUZ.Core.Creator.Meshes.V2;
+using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
-using GUZ.Core.Lab.AnimationActionMocks;
 using GUZ.Core.Npc.Actions;
 using GUZ.Core.Npc.Actions.AnimationActions;
 using GUZ.Core.Properties;
 using GUZ.Core.Vm;
-using GUZ.Core.Extensions;
+using GUZ.Lab.AnimationActionMocks;
 using TMPro;
 using UnityEngine;
 using ZenKit.Daedalus;
 
-namespace GUZ.Core.Lab.Handler
+namespace GUZ.Lab.Handler
 {
     public class LabNpcAnimationHandler : MonoBehaviour, ILabHandler
     {

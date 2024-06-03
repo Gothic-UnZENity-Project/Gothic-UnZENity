@@ -2,7 +2,7 @@ using GUZ.Core.Npc.Actions;
 using GUZ.Core.Npc.Actions.AnimationActions;
 using UnityEngine;
 
-namespace GUZ.Core.Lab.AnimationActionMocks
+namespace GUZ.Lab.AnimationActionMocks
 {
     /// <summary>
     /// Gothic has two types of External calls:

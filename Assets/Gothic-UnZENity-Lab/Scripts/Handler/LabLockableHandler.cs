@@ -1,12 +1,10 @@
 using GUZ.Core.Caches;
 using GUZ.Core.Creator.Meshes.V2;
-using GUZ.Core.Creator;
-using GUZ.Core.Creator.Meshes;
 using UnityEngine;
 
-namespace GUZ.Core.Lab.Handler
+namespace GUZ.Lab.Handler
 {
-    public class LabLockableLabHandler : MonoBehaviour, ILabHandler
+    public class LabLockableHandler : MonoBehaviour, ILabHandler
     {
         public GameObject chestsGo;
         public GameObject doorsGo;

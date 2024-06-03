@@ -1,13 +1,10 @@
 using GUZ.Core.Caches;
 using GUZ.Core.Creator.Meshes.V2;
 using GUZ.Core.Globals;
-using GUZ.Core.Creator;
-using GUZ.Core.Creator.Meshes;
 using UnityEngine;
-using UnityEngine.Serialization;
 using UnityEngine.XR.Interaction.Toolkit;
 
-namespace GUZ.Core.Lab.Handler
+namespace GUZ.Lab.Handler
 {
     public class LabLadderLabHandler : MonoBehaviour, ILabHandler
     {
