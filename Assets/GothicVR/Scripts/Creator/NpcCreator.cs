@@ -5,7 +5,6 @@ using GVR.Debugging;
 using GVR.Extensions;
 using GVR.Globals;
 using GVR.Manager;
-using GVR.Npc;
 using GVR.Npc.Routines;
 using GVR.Properties;
 using GVR.Vm;
@@ -115,6 +114,13 @@ namespace GVR.Creator
             {
                 var routineSpawnPointName = npcGo.GetComponent<Routine>().CurrentRoutine.waypoint;
                 initialSpawnPoint = WayNetHelper.GetWayNetPoint(routineSpawnPointName);
+
+                // Fallback: No WP found? Try one more time with the previous (most likely "earlier") routine waypoint.
+                if (initialSpawnPoint == null)
+                {
+                    routineSpawnPointName = npcGo.GetComponent<Routine>().GetPreviousRoutine().waypoint;
+                    initialSpawnPoint = WayNetHelper.GetWayNetPoint(routineSpawnPointName);
+                }
             }
             else
             {
@@ -126,7 +132,7 @@ namespace GVR.Creator
                 Debug.LogWarning($"spawnPoint={spawnPoint} couldn't be found.");
                 return;
             }
-            
+
             npcGo.transform.position = initialSpawnPoint.Position;
 
             if (initialSpawnPoint.IsFreePoint())
@@ -134,11 +140,11 @@ namespace GVR.Creator
             else
                 npcGo.GetComponent<NpcProperties>().CurrentWayPoint = (WayPoint)initialSpawnPoint;
         }
-        
+
         public static void ExtTaMin(NpcInstance npcInstance, int startH, int startM, int stopH, int stopM, int action, string waypoint)
         {
             var npc = GetNpcGo(npcInstance);
-            
+
             RoutineData routine = new()
             {
                 startH = startH,
@@ -157,7 +163,7 @@ namespace GVR.Creator
             GameData.npcRoutines.TryAdd(npcInstance.Index, new());
             GameData.npcRoutines[npcInstance.Index].Add(routine);
         }
-        
+
         public static void ExtMdlSetVisual(NpcInstance npc, string visual)
         {
             var props = GetProperties(npc);
@@ -181,7 +187,7 @@ namespace GVR.Creator
             var props = GetProperties(data.Npc);
 
             props.BodyData = data;
-            
+
             if (data.Armor >= 0)
             {
                 var armorData = AssetCache.TryGetItemData(data.Armor);
@@ -207,7 +213,7 @@ namespace GVR.Creator
             var npcGo = GetNpcGo(npc);
             var oldScale = npcGo.transform.localScale;
             var bonusFat = fatness * fatnessScale;
-            
+
             npcGo.transform.localScale = new(oldScale.x + bonusFat, oldScale.y, oldScale.z + bonusFat);
         }
 
@@ -234,7 +240,8 @@ namespace GVR.Creator
         {
             var props = GetProperties(npc);
             props.Perceptions[perception] = function;
-        }      
+        }
+        
         public static void ExtNpcPerceptionDisable(NpcInstance npc, VmGothicEnums.PerceptionType perception)
         {
             var props = GetProperties(npc);
@@ -260,7 +267,7 @@ namespace GVR.Creator
             props.Items.TryAdd(itemId, amount);
             props.Items[itemId] += amount;
         }
-        
+
         public static void ExtEquipItem(NpcInstance npc, int itemId)
         {
             var props = GetProperties(npc);

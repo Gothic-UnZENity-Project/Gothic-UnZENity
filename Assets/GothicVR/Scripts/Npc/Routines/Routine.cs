@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using GVR.Debugging;
 using GVR.Manager;
 using GVR.World;
 using UnityEngine;
@@ -80,6 +79,12 @@ namespace GVR.Npc.Routines
             CurrentRoutine = newRoutine;
 
             return changed;
+        }
+
+        public RoutineData GetPreviousRoutine()
+        {
+            var currentRoutineIndex = Routines.IndexOf(CurrentRoutine);
+            return currentRoutineIndex == 0 ? Routines.Last() : Routines[currentRoutineIndex - 1];
         }
     }
 }
