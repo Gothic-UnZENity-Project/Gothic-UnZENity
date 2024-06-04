@@ -24,7 +24,7 @@ We use GitHub to host code, to track issues and feature requests, as well as acc
 ### All Code Changes Happen Through Pull Requests
 Pull requests are the best way to propose changes to the codebase. We welcome your pull requests:
 
-1. Try to align with current status of the project and team member's work (Discord)
+1. Try to align with current status of the project and team member's work (Discord).
 2. Fork the repo and create your branch from `main`.
 3. Issue your pull request with extensive information about what changed and how to test it.
 
