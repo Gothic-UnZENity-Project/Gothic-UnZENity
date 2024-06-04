@@ -22,9 +22,8 @@ For instructions on playing the game or adding contributions, please check our [
 4. We will adopt all of Piranha Bytes' ZenGine games - But first things first. Let's start with a full playable Gothic 1 port, followed by Gothic 2 and it's addon NotR.
 5. We just can't get enough! - Once done with the original experiences we will add own VR game modes and support for mods, and total conversions. How about a coop Scavenger hunt with your friends? Wouldn't this be amazing? And how about re-experiencing a few of your most beloved community mods in VR? Yes. We feel the same. <3
 
-
 ## How to contribute
-If you're interested in Core Unity and C# development or seasoned with VR game development, feel free to leave us a message at Discord (#JaXt0r).
+If you're interested in Core Unity development, C# coding, or you're seasoned with VR game mechanics development, feel free to look at [CONTRIBUTING.md](./CONTRIBUTING.md). There you find information on how to create fixes, features, or join us as a core maintainer.
 
 ## Workflow/Gameflow
 
