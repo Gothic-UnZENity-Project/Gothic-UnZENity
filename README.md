@@ -24,7 +24,7 @@ For instructions on playing the game or adding contributions, please check our [
 
 
 ## How to contribute
-If you're interested in Core Unity and C# development or seasoned with VR game development, feel free to leave us a message at Discord (#jaxt0r).
+If you're interested in Core Unity and C# development or seasoned with VR game development, feel free to leave us a message at Discord (#JaXt0r).
 
 ## Workflow/Gameflow
 
