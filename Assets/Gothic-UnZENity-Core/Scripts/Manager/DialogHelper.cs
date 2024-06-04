@@ -7,11 +7,10 @@ using GUZ.Core.Globals;
 using GUZ.Core.Npc;
 using GUZ.Core.Npc.Actions.AnimationActions;
 using GUZ.Core.Properties;
-using GUZ.Core.Npc.Actions;
 using UnityEngine;
 using ZenKit.Daedalus;
 
-namespace GUZ.Core.GothicVR.Scripts.Manager
+namespace GUZ.Core.Scripts.Manager
 {
     public static class DialogHelper
     {

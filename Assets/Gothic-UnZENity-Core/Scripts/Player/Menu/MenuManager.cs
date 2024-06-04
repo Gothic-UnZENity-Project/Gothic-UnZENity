@@ -1,6 +1,6 @@
 using GUZ.Core.Globals;
-using GUZ.Core.GothicVR.Scripts.UI;
 using GUZ.Core.Manager;
+using GUZ.Core.UI;
 using UnityEngine;
 
 namespace GUZ.Core.Player.Menu

@@ -14,7 +14,7 @@ using UnityEngine;
 using UnityEngine.Rendering;
 using Random = UnityEngine.Random;
 
-namespace GUZ.Core.GothicVR.Scripts.Manager
+namespace GUZ.Core.Manager
 {
     public class SkyManager : SingletonBehaviour<SkyManager>
     {

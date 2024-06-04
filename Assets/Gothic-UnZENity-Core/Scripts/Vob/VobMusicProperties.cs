@@ -1,7 +1,7 @@
 using GUZ.Core.Properties;
 using ZenKit.Vobs;
 
-namespace GothicVR.Vob
+namespace GUZ.Core.Vob
 {
     public class VobMusicProperties : VobProperties
     {

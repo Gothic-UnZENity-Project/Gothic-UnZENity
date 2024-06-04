@@ -22,7 +22,7 @@ namespace GUZ.Core.Debugging
         {
 			Application.logMessageReceived += HandleLog;
 
-			fileWriter = new(Application.persistentDataPath + "/gothicvr_log.txt", false);
+			fileWriter = new(Application.persistentDataPath + "/gothic-unzenity_log.txt", false);
 			fileWriter.WriteLine("DeviceModel: " + SystemInfo.deviceModel);
 			fileWriter.WriteLine("DeviceType: " + SystemInfo.deviceType);
 			fileWriter.WriteLine("OperatingSystem: " + SystemInfo.operatingSystem);

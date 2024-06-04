@@ -1,4 +1,4 @@
-using GUZ.Core.GothicVR.Scripts.Manager;
+using GUZ.Core.Scripts.Manager;
 using UnityEngine;
 
 namespace GUZ.Core.Npc.Actions.AnimationActions

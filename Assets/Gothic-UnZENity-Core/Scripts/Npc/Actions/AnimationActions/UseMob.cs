@@ -2,15 +2,13 @@ using System;
 using System.Linq;
 using GUZ.Core.Creator;
 using GUZ.Core.Data.ZkEvents;
-using GUZ.Core.GothicVR.Scripts.Manager;
+using GUZ.Core.Extensions;
 using GUZ.Core.Manager;
 using GUZ.Core.Properties;
 using GUZ.Core.Vm;
-using GUZ.Core.Extensions;
 using JetBrains.Annotations;
 using UnityEngine;
 using ZenKit.Vobs;
-using EventType = ZenKit.EventType;
 
 namespace GUZ.Core.Npc.Actions.AnimationActions
 {

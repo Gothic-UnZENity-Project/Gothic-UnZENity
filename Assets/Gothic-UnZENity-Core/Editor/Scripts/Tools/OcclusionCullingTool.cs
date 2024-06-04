@@ -10,7 +10,7 @@ namespace GUZ.Core.Editor.Tools
 {
     /// HOW TO USE:
     /// 1. LOAD THE SCENE FOR WHICH YOU WANT OCCULUSION CULLING
-    /// 2. RUN GothicVR/Tools/Load world meshes in editor
+    /// 2. RUN Gothic-UnZENity/Tools/Load world meshes in editor
     /// 3. Window/Rendering/Occlusion Culling
     /// 4. BAKE THE OCCULUSION CULLING
     /// 5. SAVE THE SCENE
@@ -18,14 +18,14 @@ namespace GUZ.Core.Editor.Tools
     {
         private static IntPtr _vfsPtr = IntPtr.Zero;
 
-        [MenuItem("GothicVR/Tools/Load world meshes in editor", true)]
+        [MenuItem("Gothic-UnZENity/Tools/Load world meshes in editor", true)]
         private static bool ValidateMyMenuItem()
         {
             // If game is in playmode, disable button.
             return !EditorApplication.isPlaying;
         }
 
-        [MenuItem("GothicVR/Tools/Load world meshes in editor")]
+        [MenuItem("Gothic-UnZENity/Tools/Load world meshes in editor")]
         public static void ShowWindow()
         {
             // Do not show Window when game is started.
@@ -35,8 +35,8 @@ namespace GUZ.Core.Editor.Tools
             if (SettingsManager.GameSettings == null)
                 SettingsManager.LoadGameSettings();
 
-            GvrBootstrapper.SetLanguage();
-            GvrBootstrapper.MountVfs(SettingsManager.GameSettings.GothicIPath);
+            GuzBootstrapper.SetLanguage();
+            GuzBootstrapper.MountVfs(SettingsManager.GameSettings.GothicIPath);
 
             WorldCreator.LoadEditorWorld();
         }

@@ -7,12 +7,10 @@ using System.Threading.Tasks;
 using GUZ.Core.Caches;
 using GUZ.Core.Creator.Meshes.V2;
 using GUZ.Core.Debugging;
+using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
-using GUZ.Core.GothicVR.Scripts.Manager;
 using GUZ.Core.Manager;
 using GUZ.Core.World;
-using GUZ.Core.Creator.Meshes;
-using GUZ.Core.Extensions;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.XR.Interaction.Toolkit;
@@ -470,16 +468,19 @@ namespace GUZ.Core.Creator
         /// </summary>
         public static async void LoadEditorWorld()
         {
-            Scene worldScene = SceneManager.GetActiveScene();
-            if (Path.GetDirectoryName(worldScene.path) != "Assets\\GothicVR\\Scenes\\Worlds")
-            {
-                Debug.LogWarning($"Open a world scene, from Assets/GothicVR/Scenes/Worlds.");
-                return;
-            }
+            throw new Exception(
+                "World scenes and their OC data are now fetched from a package. We need to rework this lookup before using it.");
 
-            LoadWorld(worldScene.name);
-
-            await MeshFactory.CreateWorld(GameData.World, new GameObject("World"), Constants.MeshPerFrame);
+            // Scene worldScene = SceneManager.GetActiveScene();
+            // if (Path.GetDirectoryName(worldScene.path) != "Assets\\Gothic-UnZENity-Core\\Scenes\\Worlds")
+            // {
+            //     Debug.LogWarning($"Open a world scene, from Assets/Gothic-UnZENity-Core/Scenes/Worlds.");
+            //     return;
+            // }
+            //
+            // LoadWorld(worldScene.name);
+            //
+            // await MeshFactory.CreateWorld(GameData.World, new GameObject("World"), Constants.MeshPerFrame);
         }
 #endif
     }

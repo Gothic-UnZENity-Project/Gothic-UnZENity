@@ -241,7 +241,7 @@ namespace GUZ.Lab.Handler
             }
 
             var content = JsonUtility.ToJson(attachPoints, true);
-            File.WriteAllText($"{Application.dataPath}/GothicVR/Resources/Configuration/VobItemAttachPoints.json", content);
+            File.WriteAllText($"{Application.dataPath}/Gothic-UnZENity-Core/Resources/Configuration/VobItemAttachPoints.json", content);
         }
     }
 }
