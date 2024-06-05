@@ -1,4 +1,4 @@
-# Contributing to Gothic UnZENity
+# Contributing to Gothic-UnZENity
 We love your input! We want to make contributing to this project as easy and transparent as possible, whether it's:
 
 For gamers:
@@ -14,7 +14,7 @@ For developers:
 We currently have no Discord server, therefore feel free to reach out to #JaXt0r on Discord for questions.
 
 ## For developers
-We're mainly building Gothic UnZENity by leveraging C# classes and build core Unity magic.
+We're mainly building Gothic-UnZENity by leveraging C# classes and build core Unity magic.
 Less 2D/3D designs are needed (as we load _everything_ from original assets at runtime).
 To all coders and VR developers: Welcome, you're at the right spot.
 
@@ -28,7 +28,7 @@ Pull requests are the best way to propose changes to the codebase. We welcome yo
 2. Fork the repo and create your branch from `main`.
 3. Issue your pull request with extensive information about what changed and how to test it.
 
-### Report bugs using Github's [issues](https://github.com/Gothic-UnZENity-Project/Gothic-UnZENity/issues)
+### Report bugs using GitHub's [issues](https://github.com/Gothic-UnZENity-Project/Gothic-UnZENity/issues)
 We use GitHub issues to track public bugs. Report a bug by [opening a new issue](https://github.com/Gothic-UnZENity-Project/Gothic-UnZENity/issues/new); it's that easy!
 
 ### Write bug reports with detail, background, and sample code
@@ -51,4 +51,4 @@ Easiest way is to check on some sample classes and reuse their style.
 By contributing, you agree that your contributions will be licensed under its GPL-3.0 License.
 
 ### Becoming a maintainer
-If you want to build Gothic UnZENity together, then you're encouraged to join our active developer base. Feel free to reach out to #JaXt0r on Discord.
+If you want to build Gothic-UnZENity together, then you're encouraged to join our active developer base. Feel free to reach out to #JaXt0r on Discord.

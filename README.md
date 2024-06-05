@@ -1,4 +1,4 @@
-# Gothic UnZENity
+# Gothic-UnZENity
 
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 ![Platforms](https://img.shields.io/static/v1?label=Platforms&message=PCVR%20|%20Quest2%20|%20Pico4&color=darkgreen)
@@ -32,14 +32,14 @@ If you're interested in Core Unity development, C# coding, or you're seasoned wi
 ![data flow](Docs/development/diagrams/data-flow.drawio.png)
 
 
-1. Gothic UnZENity requests data from ZenKit.dll (.net standard 2.1 shared library which is cross-OS compatibel).
+1. Gothic-UnZENity requests data from ZenKit.dll (.net standard 2.1 shared library which is cross-OS compatibel).
 2. The dll itself forwards request to libzenkitcapi.dll/.so as it includes the original ZenKit parser library.
 3. ZenKitCAPI loads the file system data.
 4. The data is then returned to Unity to build Unity C# objects like Meshes.
 
 
 ## Dependencies
-Gothic UnZENity is using the following projects:
+Gothic-UnZENity is using the following projects:
 * [ZenKit](https://github.com/GothicKit/ZenKit) (Gothic asset parser)
 * [ZenKitCAPI](https://github.com/GothicKit/ZenKitCAPI) (C++ -> C interface)
 * [ZenKitCS](https://github.com/GothicKit/ZenKitCS) (C# endpoint for C interface)
@@ -60,5 +60,5 @@ A: ZenKit is a full Gothic asset parser and already used by OpenGothic. It is fe
 A: As ZenKit is written in C++, we need a way to communicate with C#. The way to go is shared libraries as they can be used within C# via _DllImport_.
 
 **Q: What an interesting project name...**  
-A: We're glad you asked! We chose the name _Gothic UnZENity_ as our goal is to preserve Gothic in its classical form for modern systems and play types.
+A: We're glad you asked! We chose the name _Gothic-UnZENity_ as our goal is to preserve Gothic in its classical form for modern systems and play types.
 It's a combination of Gothic, Unity, Zen (original 3D engine for Gothic I/II Classic), unleash, and a grain of insanity. ;-)

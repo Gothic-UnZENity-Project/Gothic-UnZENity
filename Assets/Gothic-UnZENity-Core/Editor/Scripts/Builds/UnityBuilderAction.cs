@@ -18,7 +18,7 @@ namespace GUZ.Core.Editor.Builds.UnityBuildTools
     {
         static string[] SCENES = FindEnabledEditorScenes();
     
-        static readonly string APP_NAME = "Gothic UnZENity";
+        static readonly string APP_NAME = "Gothic-UnZENity";
         static readonly string TARGET_DIR = "build";
 
 
