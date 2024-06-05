@@ -6,6 +6,8 @@
 
 Fan project recreating Piranha Bytes' evergreens Gothic I and Gothic II in Unity Engine. Currently focussing on VR.
 
+![Project Gothic-UnZENity logo](./Docs/development/images/Gothic-UnZENity-logo.png)
+
 ## Usage
 For instructions on playing the game or adding contributions, please check our [Docs](Docs).
 
