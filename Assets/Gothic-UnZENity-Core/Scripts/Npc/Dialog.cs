@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using GUZ.Core.GothicVR.Scripts.Manager;
-using GUZ.Core.Globals;
+﻿using GUZ.Core.Scripts.Manager;
 using UnityEngine;
-using ZenKit.Daedalus;
 
 namespace GUZ.Core.Npc
 {

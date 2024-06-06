@@ -18,7 +18,7 @@ namespace GUZ.Core.Editor.Builds.UnityBuildTools
     {
         static string[] SCENES = FindEnabledEditorScenes();
     
-        static readonly string APP_NAME = "GothicVR";
+        static readonly string APP_NAME = "Gothic-UnZENity";
         static readonly string TARGET_DIR = "build";
 
 
@@ -26,7 +26,7 @@ namespace GUZ.Core.Editor.Builds.UnityBuildTools
 		/// Perform Quest Build
 		/// </summary>
 
-		[MenuItem("GothicVR/Build/Build Quest")]
+		[MenuItem("Gothic-UnZENity/Build/Build Quest")]
 		static void PerformLocalQuestBuild()
 		{
 			bool buildProductionReady = ShowConfirmationPopup("Should the feature flags be set to Production Ready?");
@@ -58,7 +58,7 @@ namespace GUZ.Core.Editor.Builds.UnityBuildTools
 		/// Perform Quest Build
 		/// </summary>
 
-		[MenuItem("GothicVR/Build/Build Pico4")]
+		[MenuItem("Gothic-UnZENity/Build/Build Pico4")]
 		static void PerformLocalPicoBuild()
 		{
 			bool buildProductionReady = ShowConfirmationPopup("Should the feature flags be set to Production Ready?");
@@ -89,7 +89,7 @@ namespace GUZ.Core.Editor.Builds.UnityBuildTools
 		/// Perform Quest Build
 		/// </summary>
 
-		[MenuItem("GothicVR/Build/Build PCVR")]
+		[MenuItem("Gothic-UnZENity/Build/Build PCVR")]
 		static void PerformLocalWindows64Build()
 		{
 			bool buildProductionReady = ShowConfirmationPopup("Should the feature flags be set to Production Ready?");

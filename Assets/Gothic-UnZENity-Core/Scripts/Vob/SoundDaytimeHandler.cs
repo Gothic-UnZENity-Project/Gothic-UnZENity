@@ -6,7 +6,7 @@ using UnityEngine;
 using ZenKit.Vobs;
 using Random = UnityEngine.Random;
 
-namespace GothicVR.Vob
+namespace GUZ.Core.Vob
 {
     public class SoundDaytimeHandler : MonoBehaviour
     {

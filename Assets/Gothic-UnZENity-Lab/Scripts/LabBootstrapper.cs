@@ -6,7 +6,7 @@ using GUZ.Lab.Handler;
 using UnityEngine;
 using UnityEngine.Serialization;
 
-namespace GUZ.Lab.GothicVR_Lab.Scripts
+namespace GUZ.Lab
 {
     public class LabBootstrapper : MonoBehaviour
     {
@@ -27,7 +27,7 @@ namespace GUZ.Lab.GothicVR_Lab.Scripts
                 return;
             _isBooted = true;
             
-            GvrBootstrapper.BootGothicVR(SettingsManager.GameSettings.GothicIPath);
+            GuzBootstrapper.BootGothicUnZENity(SettingsManager.GameSettings.GothicIPath);
 
             BootLab();
 

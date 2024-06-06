@@ -6,7 +6,7 @@ using GUZ.Core.Creator;
 using GUZ.Core.Extensions;
 using UnityEngine;
 
-namespace GUZ.Core.GothicVR.Scripts.Manager
+namespace GUZ.Core.Manager
 {
     public class BarrierManager : SingletonBehaviour<BarrierManager>
     {

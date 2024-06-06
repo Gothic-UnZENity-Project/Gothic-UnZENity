@@ -9,7 +9,7 @@ using GUZ.Core.Extensions;
 using JetBrains.Annotations;
 using UnityEngine;
 
-namespace GUZ.Core.GothicVR.Scripts.Manager
+namespace GUZ.Core.Manager
 {
     public static class VobHelper
     {

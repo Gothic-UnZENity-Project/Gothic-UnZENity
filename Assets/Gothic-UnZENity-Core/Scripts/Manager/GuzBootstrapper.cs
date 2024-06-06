@@ -15,7 +15,7 @@ using Logger = ZenKit.Logger;
 
 namespace GUZ.Core.Manager
 {
-    public class GvrBootstrapper : SingletonBehaviour<GvrBootstrapper>
+    public class GuzBootstrapper : SingletonBehaviour<GuzBootstrapper>
     {
         private bool isBootstrapped;
         public GameObject invalidInstallationDirMessage;
@@ -49,7 +49,7 @@ namespace GUZ.Core.Manager
 
             if (SettingsManager.CheckIfGothic1InstallationExists())
             {
-                BootGothicVR(g1Dir);
+                BootGothicUnZENity(g1Dir);
                 
 #pragma warning disable CS4014 // It's intended, that this async call is not awaited.
                 GvrSceneManager.I.LoadStartupScenes();
@@ -62,7 +62,7 @@ namespace GUZ.Core.Manager
             }
         }
         
-        public static void BootGothicVR(string g1Dir)
+        public static void BootGothicUnZENity(string g1Dir)
         {
             var watch = Stopwatch.StartNew();
             

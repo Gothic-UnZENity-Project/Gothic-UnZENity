@@ -12,8 +12,8 @@ PlayerSettings:
   targetDevice: 2
   useOnDemandResources: 0
   accelerometerFrequency: 60
-  companyName: GothicVRProject
-  productName: GothicVR
+  companyName: Gothic-UnZENity Project
+  productName: Gothic-UnZENity
   defaultCursor: {fileID: 0}
   cursorHotspot: {x: 0, y: 0}
   m_SplashScreenBackgroundColor: {r: 0.13725491, g: 0.12156863, b: 0.1254902, a: 1}
@@ -76,6 +76,7 @@ PlayerSettings:
   androidMinimumWindowWidth: 400
   androidMinimumWindowHeight: 300
   androidFullscreenMode: 1
+  androidAutoRotationBehavior: 1
   defaultIsNativeResolution: 1
   macRetinaSupport: 1
   runInBackground: 1
@@ -136,10 +137,13 @@ PlayerSettings:
   vulkanEnableLateAcquireNextImage: 0
   vulkanEnableCommandBufferRecycling: 1
   loadStoreDebugModeEnabled: 0
+  visionOSBundleVersion: 1.0
+  tvOSBundleVersion: 1.0
   bundleVersion: 0.1
   preloadedAssets:
-  - {fileID: 1935565065551831612, guid: ea302bef6e5dfab4abc884c353c0926d, type: 2}
-  - {fileID: 768825316882791465, guid: af3964d8a6279b54a9254cbe6379b9d1, type: 2}
+  - {fileID: 0}
+  - {fileID: -5702201265392082154, guid: ea302bef6e5dfab4abc884c353c0926d, type: 2}
+  - {fileID: -4025324464342380442, guid: af3964d8a6279b54a9254cbe6379b9d1, type: 2}
   metroInputSource: 0
   wsaTransparentSwapchain: 0
   m_HolographicPauseOnTrackingLoss: 1
@@ -160,8 +164,8 @@ PlayerSettings:
   androidSupportedAspectRatio: 1
   androidMaxAspectRatio: 2.1
   applicationIdentifier:
-    Android: com.GothicVRProject.GothicVR
-    Standalone: com.GothicVRProject.GothicVR
+    Android: com.Gothic-UnZENity-Project.Gothic-UnZENity
+    Standalone: com.Gothic-UnZENity-Project.Gothic-UnZENity
   buildNumber:
     Standalone: 0
     VisionOS: 0
@@ -233,6 +237,7 @@ PlayerSettings:
   iOSMetalForceHardShadows: 0
   metalEditorSupport: 1
   metalAPIValidation: 1
+  metalCompileShaderBinary: 0
   iOSRenderExtraFrameOnPause: 0
   iosCopyPluginsCodeInsteadOfSymlink: 0
   appleDeveloperTeamID: 
@@ -286,7 +291,7 @@ PlayerSettings:
   - m_BuildTarget: 
     m_Icons:
     - serializedVersion: 2
-      m_Icon: {fileID: 2800000, guid: c6dd4369feff5754e97a05140a31cae1, type: 3}
+      m_Icon: {fileID: 2800000, guid: f50abd15a2875434986b7a1c54be0f23, type: 3}
       m_Width: 128
       m_Height: 128
       m_Kind: 0
@@ -603,7 +608,6 @@ PlayerSettings:
   switchScreenResolutionBehavior: 2
   switchUseCPUProfiler: 0
   switchEnableFileSystemTrace: 0
-  switchUseGOLDLinker: 0
   switchLTOSetting: 0
   switchApplicationID: 0x01004b9000490000
   switchNSODependencies: 
@@ -864,16 +868,16 @@ PlayerSettings:
   apiCompatibilityLevelPerPlatform: {}
   m_RenderingPath: 1
   m_MobileRenderingPath: 1
-  metroPackageName: GothicVR
+  metroPackageName: Gothic-UnZENity
   metroPackageVersion: 1.0.0.0
   metroCertificatePath: 
   metroCertificatePassword: 
   metroCertificateSubject: 
   metroCertificateIssuer: 
   metroCertificateNotAfter: 0000000000000000
-  metroApplicationDescription: GothicVR
+  metroApplicationDescription: Gothic-UnZENity
   wsaImages: {}
-  metroTileShortName: GothicVR
+  metroTileShortName: Gothic-UnZENity
   metroTileShowName: 0
   metroMediumTileShowName: 0
   metroLargeTileShowName: 0
@@ -885,6 +889,7 @@ PlayerSettings:
   metroTileBackgroundColor: {r: 0.13333334, g: 0.17254902, b: 0.21568628, a: 0}
   metroSplashScreenBackgroundColor: {r: 0.12941177, g: 0.17254902, b: 0.21568628, a: 1}
   metroSplashScreenUseBackgroundColor: 0
+  syncCapabilities: 0
   platformCapabilities: {}
   metroTargetDeviceFamilies: {}
   metroFTAName: 

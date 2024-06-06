@@ -5,7 +5,7 @@ namespace GUZ.Core.Globals
 {
     /// <summary>
     /// Loading/Unloading order of scenes:
-    /// https://github.com/GothicVRProject/GothicVR/blob/main/Docs/development/diagrams/SceneLoading.drawio.png
+    /// https://github.com/Gothic-UnZENity-Project/Gothic-UnZENity/blob/main/Docs/development/diagrams/SceneLoading.drawio.png
     /// </summary>
     public static class GvrEvents
     {

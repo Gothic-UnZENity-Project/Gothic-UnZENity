@@ -52,7 +52,7 @@ namespace GUZ.Core.Editor.Tools
         };
 
 
-        [MenuItem("GothicVR/Tools/FeatureFlags - Set Production ready state", priority = 1)]
+        [MenuItem("Gothic-UnZENity/Tools/FeatureFlags - Set Production ready state", priority = 1)]
         public static void SetFeatureFlags()
         {
             var scene = SceneManager.GetSceneByName("Bootstrap");
