@@ -12,7 +12,7 @@ namespace GUZ.Lab.Handler
 
         public void Bootstrap()
         {
-            var itemPrefab = PrefabCache.TryGetObject(PrefabCache.PrefabType.Ladder);
+            var itemPrefab = PrefabCache.TryGetObject(PrefabCache.PrefabType.VobLadder);
             var ladderName = "LADDER_3.MDL";
             var mdl = AssetCache.TryGetMdl(ladderName);
 
