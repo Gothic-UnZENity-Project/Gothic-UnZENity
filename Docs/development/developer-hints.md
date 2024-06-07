@@ -84,3 +84,27 @@ We work with async-await for scene loading. It provides us a way to skip frames 
 Hint: async is _*not!*_ async as another thread. The way we use it, it's nearly the same as Coroutine. i.e. we just define synchronously when to skip to the next frame.
 
 ![SceneLoading](./diagrams/SceneLoading.drawio.png)
+
+
+## Prefab usage
+We load all Gothic assets at runtime. Nevertheless, Prefabs can come in handy at some times.
+Therefore, we implemented a logic to merge GameObject structure including their components via Regex.
+Especially used for Vobs.
+
+Example for merging GameObjects from source code documentation at
+_AbstractMeshBuilder.TryGetExistingGoInsideNodeHierarchy()_
+```c#
+/// Example GOs (from a Prefab):
+/// BIP01
+///   |- BIP01 CHEST_.*_1
+
+/// Example node hierarchy:
+/// BIP01
+///   |- BIP01 CHESTLOCK
+///   |- BIP01 CHEST_SMALL_1
+
+/// Merged GOs:
+/// BIP01
+///   |- BIP01 CHEST_SMALL_1 - from prefab; but the order changed later, when glued together with new GOs. No issue on that so far.
+///   |- BIP01 CHESTLOCK     - from nodes; new
+```

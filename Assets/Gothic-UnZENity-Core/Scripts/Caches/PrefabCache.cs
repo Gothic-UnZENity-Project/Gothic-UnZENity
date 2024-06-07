@@ -25,6 +25,7 @@ namespace GUZ.Core.Caches
             VobMusic,
             VobSound,
             VobSoundDaytime,
+            VobLadder,
             XRDeviceSimulator
         }
 
@@ -46,6 +47,7 @@ namespace GUZ.Core.Caches
                 PrefabType.VobMusic => "Prefabs/Vobs/oCZoneMusic",
                 PrefabType.VobSound => "Prefabs/Vobs/zCVobSound",
                 PrefabType.VobSoundDaytime => "Prefabs/Vobs/zCVobSoundDaytime",
+                PrefabType.VobLadder => "Prefabs/Vobs/oCMobLadder",
                 PrefabType.XRDeviceSimulator => "Prefabs/XR Device Simulator",
                 _ => throw new Exception($"Enum value {type} not yet defined.")
             };

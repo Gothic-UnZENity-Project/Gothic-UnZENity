@@ -1,8 +1,9 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using GUZ.Core.Caches;
-using GUZ.Core.Globals;
 using GUZ.Core.Extensions;
+using GUZ.Core.Globals;
 using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -151,8 +152,8 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
 
         protected void BuildViaMrm()
         {
-            MeshFilter meshFilter = RootGo.AddComponent<MeshFilter>();
-            MeshRenderer meshRenderer = RootGo.AddComponent<MeshRenderer>();
+            MeshFilter meshFilter = RootGo.TryAddComponent<MeshFilter>();
+            MeshRenderer meshRenderer = RootGo.TryAddComponent<MeshRenderer>();
             meshRenderer.material = Constants.LoadingMaterial;
             PrepareMeshFilter(meshFilter, Mrm, meshRenderer);
 
@@ -180,22 +181,23 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
                 for (var i = 0; i < Mdh.Nodes.Count; i++)
                 {
                     var node = Mdh.Nodes[i];
-                    // We attached some Components to root of bones. Therefore reusing it.
-                    if (node.Name.EqualsIgnoreCase("BIP01"))
+                    var nodeName = node.Name;
+
+                    if (TryGetExistingGoInsideNodeHierarchy(Mdh.Nodes, node, out var foundGo))
                     {
-                        var bip01 = RootGo.FindChildRecursively("BIP01");
-                        if (bip01 != null)
-                            nodeObjects[i] = RootGo.FindChildRecursively("BIP01");
-                        else
-                            nodeObjects[i] = new GameObject(Mdh.Nodes[i].Name);
+                        nodeObjects[i] = foundGo;
+                        // Whenever we found a GameObject inside a prefab (pre-existing GameObject),
+                        // we rename it as it could potentially contain a regex based name.
+                        foundGo!.name = nodeName;
                     }
                     else
                     {
-                        nodeObjects[i] = new GameObject(Mdh.Nodes[i].Name);
+                        nodeObjects[i] = new GameObject(node.Name);
                     }
                 }
 
                 // Now set parents
+                // HINT: If we found pre-existing nodes, it might be, that the merge between new nodes and existing GOs will reorder them. No issue found so far.
                 for (var i = 0; i < Mdh.Nodes.Count; i++)
                 {
                     var node = Mdh.Nodes[i];
@@ -247,8 +249,8 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
             foreach (KeyValuePair<string, IMultiResolutionMesh> subMesh in attachments)
             {
                 GameObject meshObj = nodeObjects.First(bone => bone.name == subMesh.Key);
-                MeshFilter meshFilter = meshObj.AddComponent<MeshFilter>();
-                MeshRenderer meshRenderer = meshObj.AddComponent<MeshRenderer>();
+                MeshFilter meshFilter = meshObj.TryAddComponent<MeshFilter>();
+                MeshRenderer meshRenderer = meshObj.TryAddComponent<MeshRenderer>();
                 meshRenderer.material = Constants.LoadingMaterial;
 
                 PrepareMeshFilter(meshFilter, subMesh.Value, meshRenderer);
@@ -271,8 +273,8 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
 
         protected GameObject BuildViaMmb()
         {
-            var meshFilter = RootGo.AddComponent<MeshFilter>();
-            var meshRenderer = RootGo.AddComponent<MeshRenderer>();
+            var meshFilter = RootGo.TryAddComponent<MeshFilter>();
+            var meshRenderer = RootGo.TryAddComponent<MeshRenderer>();
             
             PrepareMeshFilter(meshFilter, Mmb.Mesh, meshRenderer);
             PrepareMeshRenderer(meshRenderer, Mmb.Mesh);
@@ -536,7 +538,7 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
 
         protected Collider PrepareMeshCollider(GameObject obj, Mesh mesh)
         {
-            var meshCollider = obj.AddComponent<MeshCollider>();
+            var meshCollider = obj.TryAddComponent<MeshCollider>();
             meshCollider.sharedMesh = mesh;
             return meshCollider;
         }
@@ -651,6 +653,86 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
         protected void SetPosAndRot(GameObject obj, Vector3 position, Quaternion rotation)
         {
             obj.transform.SetLocalPositionAndRotation(position, rotation);
+        }
+
+        /// <summary>
+        /// Check if the current node already exists inside the existing GameObject starting with RootGO.
+        ///
+        /// Lookup order:
+        /// Nodes: from bottom to top, then compared with GOs in reverse order (top to bottom)
+        /// GameObjects: From top to bottom
+        ///
+        /// Example GOs (from a Prefab):
+        /// BIP01
+        ///   |- BIP01 CHEST_.*_1
+        ///
+        /// Example node hierarchy:
+        /// BIP01
+        ///   |- BIP01 CHESTLOCK
+        ///   |- BIP01 CHEST_SMALL_1
+        ///
+        /// Merged GOs:
+        /// BIP01
+        ///   |- BIP01 CHEST_SMALL_1 - from prefab; but the order changed later, when glued together with new GOs. No issue on that so far.
+        ///   |- BIP01 CHESTLOCK     - from nodes; new
+        /// </summary>
+        private bool TryGetExistingGoInsideNodeHierarchy(List<IModelHierarchyNode> nodes, IModelHierarchyNode currentNode, [CanBeNull] out GameObject foundGo)
+        {
+            // We use a stack to have LI-FO approach. When we loop, we need to start from root (last entry), not bottom (first entry).
+            var loopHierarchy = new Stack<IModelHierarchyNode>();
+            loopHierarchy.Push(currentNode);
+
+            // Fetch nodes all the way up.
+            {
+                var walkedNode = currentNode;
+                while (walkedNode.ParentIndex != -1)
+                {
+                    walkedNode = nodes[walkedNode.ParentIndex];
+                    loopHierarchy.Push(walkedNode);
+                }
+            }
+
+            var currentGo = RootGo; // Start from top to bottom
+            var childFound = false;
+
+            // Loop through the nodes from top to bottom and check if there's always a matching GO.
+            while (!loopHierarchy.IsEmpty())
+            {
+                foreach (var childGo in currentGo.GetAllDirectChildren())
+                {
+                    // Fast comparison - If name is already matching NodeName from Gothic data, we are fine.
+                    if (childGo.name.Equals(loopHierarchy.Peek().Name))
+                    {
+                        currentGo = childGo;
+                        childFound = true;
+                        break;
+                    }
+
+                    // Second comparison - We need to check if the name of this GO is matching a regex pattern for NodeName
+                    // e.g. BIP01 CHEST_.*_1 --> matches --> BIP01 CHEST_SMALL_1
+                    var regex = new Regex(childGo.name, RegexOptions.IgnoreCase);
+                    if(regex.IsMatch(loopHierarchy.Peek().Name))
+                    {
+                        currentGo = childGo;
+                        childFound = true;
+                        break;
+                    }
+                }
+
+                // If - at some point - the loop ended
+                if (!childFound)
+                {
+                    foundGo = null;
+                    return false;
+                }
+
+                childFound = false; // We are not done yet and need to check next iteration again.
+                loopHierarchy.Pop();
+            }
+
+            // We looped all the way from root to leaf and every time, we got a matching element from existing GameObjects.
+            foundGo = currentGo;
+            return true;
         }
     }
 }
