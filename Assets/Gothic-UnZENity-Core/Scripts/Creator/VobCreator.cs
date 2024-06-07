@@ -406,6 +406,9 @@ namespace GUZ.Core.Creator
                 case VirtualObjectType.oCMobContainer:
                     go = PrefabCache.TryGetObject(PrefabCache.PrefabType.VobContainer);
                     break;
+                case VirtualObjectType.oCMobLadder:
+                    go = PrefabCache.TryGetObject(PrefabCache.PrefabType.VobLadder);
+                    break;
                 case VirtualObjectType.zCVobAnimate:
                     go = PrefabCache.TryGetObject(PrefabCache.PrefabType.VobAnimate);
                     break;

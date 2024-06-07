@@ -12,11 +12,12 @@ namespace GUZ.Lab.Handler
 
         public void Bootstrap()
         {
+            var itemPrefab = PrefabCache.TryGetObject(PrefabCache.PrefabType.Ladder);
             var ladderName = "LADDER_3.MDL";
             var mdl = AssetCache.TryGetMdl(ladderName);
 
             var vobObj = MeshFactory.CreateVob(ladderName, mdl, Vector3.zero, Quaternion.Euler(0, 270, 0),
-                ladderSlot, useTextureArray: false);
+                ladderSlot, rootGo: itemPrefab, useTextureArray: false);
 
 
             // Data taken from VobCreator.CreateLadder()
