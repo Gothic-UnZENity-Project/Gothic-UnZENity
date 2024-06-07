@@ -151,8 +151,8 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
 
         protected void BuildViaMrm()
         {
-            MeshFilter meshFilter = RootGo.AddComponent<MeshFilter>();
-            MeshRenderer meshRenderer = RootGo.AddComponent<MeshRenderer>();
+            MeshFilter meshFilter = RootGo.TryAddComponent<MeshFilter>();
+            MeshRenderer meshRenderer = RootGo.TryAddComponent<MeshRenderer>();
             meshRenderer.material = Constants.LoadingMaterial;
             PrepareMeshFilter(meshFilter, Mrm, meshRenderer);
 
@@ -247,8 +247,8 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
             foreach (KeyValuePair<string, IMultiResolutionMesh> subMesh in attachments)
             {
                 GameObject meshObj = nodeObjects.First(bone => bone.name == subMesh.Key);
-                MeshFilter meshFilter = meshObj.AddComponent<MeshFilter>();
-                MeshRenderer meshRenderer = meshObj.AddComponent<MeshRenderer>();
+                MeshFilter meshFilter = meshObj.TryAddComponent<MeshFilter>();
+                MeshRenderer meshRenderer = meshObj.TryAddComponent<MeshRenderer>();
                 meshRenderer.material = Constants.LoadingMaterial;
 
                 PrepareMeshFilter(meshFilter, subMesh.Value, meshRenderer);
@@ -271,8 +271,8 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
 
         protected GameObject BuildViaMmb()
         {
-            var meshFilter = RootGo.AddComponent<MeshFilter>();
-            var meshRenderer = RootGo.AddComponent<MeshRenderer>();
+            var meshFilter = RootGo.TryAddComponent<MeshFilter>();
+            var meshRenderer = RootGo.TryAddComponent<MeshRenderer>();
             
             PrepareMeshFilter(meshFilter, Mmb.Mesh, meshRenderer);
             PrepareMeshRenderer(meshRenderer, Mmb.Mesh);
@@ -536,7 +536,7 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
 
         protected Collider PrepareMeshCollider(GameObject obj, Mesh mesh)
         {
-            var meshCollider = obj.AddComponent<MeshCollider>();
+            var meshCollider = obj.TryAddComponent<MeshCollider>();
             meshCollider.sharedMesh = mesh;
             return meshCollider;
         }
