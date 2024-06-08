@@ -23,13 +23,13 @@ namespace GUZ.XRIT
 
             if (Constants.SceneMainMenu == scene.name)
             {
-                prefabName = "OXR/Prefabs/VRPlayer-MainMenu";
-                goName = "VRPlayer - OpenXR - (legacy) - MainMenu";
+                prefabName = $"{CONTEXT_NAME}/Prefabs/VRPlayer/VRPlayer-MainMenu";
+                goName = "VRPlayer - XRIT - MainMenu";
             }
             else
             {
-                prefabName = "OXR/Prefabs/VRPlayer";
-                goName = "VRPlayer - OpenXR - (legacy)";
+                prefabName = $"{CONTEXT_NAME}/Prefabs/VRPlayer/VRPlayer";
+                goName = "VRPlayer - XRIT";
             }
 
             var newPrefab = Resources.Load<GameObject>(prefabName);
