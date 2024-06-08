@@ -9,7 +9,7 @@ namespace GUZ.XRIT
 {
     public class XRITInteractionAdapter : IInteractionAdapter
     {
-        private const string CONTEXT_NAME = "OXR";
+        private const string CONTEXT_NAME = "XRIT"; // XR Interaction Toolkit
 
         public string GetContextName()
         {

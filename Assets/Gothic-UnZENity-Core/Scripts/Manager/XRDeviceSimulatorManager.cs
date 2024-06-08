@@ -14,19 +14,19 @@ namespace GUZ.Core.Manager
         {
             GUZEvents.GeneralSceneLoaded.AddListener(delegate(GameObject playerGo)
             {
-                WorldLoaded();
+                AddXRDeviceSimulator();
             });
-            GUZEvents.MainMenuSceneLoaded.AddListener(WorldLoaded);
+            GUZEvents.MainMenuSceneLoaded.AddListener(AddXRDeviceSimulator);
         }
 
-        private void WorldLoaded()
+        public void AddXRDeviceSimulator()
         {
             if (!FeatureFlags.I.useXRDeviceSimulator)
                 return;
 
             var simulator = PrefabCache.TryGetObject(PrefabCache.PrefabType.XRDeviceSimulator);
+            simulator.name = "XRDeviceSimulator - XRIT";
             SceneManager.GetActiveScene().GetRootGameObjects().Append(simulator);
         }
-        
     }
 }

@@ -44,6 +44,7 @@ namespace GUZ.Lab
         private void BootLab()
         {
             var playerGo = GUZContext.InteractionAdapter.CreatePlayerController(SceneManager.GetActiveScene());
+            XRDeviceSimulatorManager.I.AddXRDeviceSimulator();
             NpcHelper.CacheHero(playerGo);
         }
 
