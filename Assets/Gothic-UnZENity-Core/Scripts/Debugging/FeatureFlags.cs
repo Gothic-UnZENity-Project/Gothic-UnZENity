@@ -26,7 +26,6 @@ namespace GUZ.Core.Debugging
         [Header("__________World__________")]
         public bool createWorldMesh;
         [Tooltip("True will render all pickables with dynamic attach points")]
-        public bool vobItemsDynamicAttach;
         public bool showBarrier;
 
         [Header("__________WayNet - Developer__________")]
