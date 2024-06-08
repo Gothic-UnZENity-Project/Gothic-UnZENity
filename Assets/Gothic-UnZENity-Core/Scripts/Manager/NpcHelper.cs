@@ -21,7 +21,7 @@ namespace GUZ.Core.Manager
 
         static NpcHelper()
         {
-            GvrEvents.GeneralSceneLoaded.AddListener(GeneralSceneLoaded);
+            GuzEvents.GeneralSceneLoaded.AddListener(GeneralSceneLoaded);
         }
 
         private static void GeneralSceneLoaded()

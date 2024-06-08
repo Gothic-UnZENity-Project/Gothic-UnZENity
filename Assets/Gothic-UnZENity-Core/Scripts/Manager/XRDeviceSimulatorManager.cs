@@ -11,8 +11,8 @@ namespace GUZ.Core.Manager
     {
         private void Start()
         {
-            GvrEvents.GeneralSceneLoaded.AddListener(WorldLoaded);
-            GvrEvents.MainMenuSceneLoaded.AddListener(WorldLoaded);
+            GuzEvents.GeneralSceneLoaded.AddListener(WorldLoaded);
+            GuzEvents.MainMenuSceneLoaded.AddListener(WorldLoaded);
         }
 
         private void WorldLoaded()

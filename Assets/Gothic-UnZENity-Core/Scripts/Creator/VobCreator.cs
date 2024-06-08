@@ -57,7 +57,7 @@ namespace GUZ.Core.Creator
 
         static VobCreator()
         {
-            GvrEvents.GeneralSceneLoaded.AddListener(PostWorldLoaded);
+            GuzEvents.GeneralSceneLoaded.AddListener(PostWorldLoaded);
         }
 
         private static void PostWorldLoaded()

@@ -152,7 +152,7 @@ namespace GUZ.Core.Vm
         
         public static void DefaultExternal(DaedalusVm vm, DaedalusSymbol sym)
         {
-            // FIXME: Once GVR is fully released, we can safely throw an exception as it tells us: The game will not work until you implement this missing function.
+            // FIXME: Once GUZ is fully released, we can safely throw an exception as it tells us: The game will not work until you implement this missing function.
             //throw new NotImplementedException("External >" + value + "< not registered but required by DaedalusVM.");
             try
             {

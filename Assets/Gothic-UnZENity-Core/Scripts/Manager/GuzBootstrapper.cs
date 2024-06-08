@@ -52,7 +52,7 @@ namespace GUZ.Core.Manager
                 BootGothicUnZENity(g1Dir);
                 
 #pragma warning disable CS4014 // It's intended, that this async call is not awaited.
-                GvrSceneManager.I.LoadStartupScenes();
+                GuzSceneManager.I.LoadStartupScenes();
 #pragma warning restore CS4014
             }
             else
@@ -79,7 +79,7 @@ namespace GUZ.Core.Manager
             watch.Stop();
             Debug.Log($"Time spent for Bootstrapping ZenKit: {watch.Elapsed}");
 
-            GvrEvents.ZenKitBootstrapped.Invoke();
+            GuzEvents.ZenKitBootstrapped.Invoke();
         }
 
         public static void ZenKitLoggerCallback(LogLevel level, string name, string message)

@@ -18,13 +18,13 @@ public class SunMover : MonoBehaviour
         switch (sunPerformanceSetting)
         {
             case FeatureFlags.SunMovementPerformance.EveryIngameSecond:
-                GvrEvents.GameTimeSecondChangeCallback.AddListener(RotateSun);
+                GuzEvents.GameTimeSecondChangeCallback.AddListener(RotateSun);
                 break;
             case FeatureFlags.SunMovementPerformance.EveryIngameMinute:
-                GvrEvents.GameTimeMinuteChangeCallback.AddListener(RotateSun);
+                GuzEvents.GameTimeMinuteChangeCallback.AddListener(RotateSun);
                 break;
             case FeatureFlags.SunMovementPerformance.EveryIngameHour:
-                GvrEvents.GameTimeHourChangeCallback.AddListener(RotateSun);
+                GuzEvents.GameTimeHourChangeCallback.AddListener(RotateSun);
                 break;
             default:
                 Debug.LogError($"{sunPerformanceSetting} isn't handled correctly. Therefore SunMover.cs won't move the sun.");

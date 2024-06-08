@@ -7,7 +7,7 @@ namespace GUZ.Core.Globals
     /// Loading/Unloading order of scenes:
     /// https://github.com/Gothic-UnZENity-Project/Gothic-UnZENity/blob/main/Docs/development/diagrams/SceneLoading.drawio.png
     /// </summary>
-    public static class GvrEvents
+    public static class GuzEvents
     {
         public static readonly UnityEvent ZenKitBootstrapped = new();
 

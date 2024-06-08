@@ -14,7 +14,7 @@ namespace GUZ.Core.Vob
                 return;
             
 #pragma warning disable CS4014  // It's intended, that this async call is not awaited.
-            GvrSceneManager.I.LoadWorld(levelName, startVob.Trim());
+            GuzSceneManager.I.LoadWorld(levelName, startVob.Trim());
 #pragma warning restore CS4014
         }
 

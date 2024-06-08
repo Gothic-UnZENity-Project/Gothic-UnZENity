@@ -29,7 +29,7 @@ namespace GUZ.Core.Creator
 
         static WorldCreator()
         {
-            GvrEvents.GeneralSceneLoaded.AddListener(WorldLoaded);
+            GuzEvents.GeneralSceneLoaded.AddListener(WorldLoaded);
         }
 
         public static async Task CreateAsync(string worldName)
@@ -447,7 +447,7 @@ namespace GUZ.Core.Creator
             // As we already added stored world mesh and waypoints in Unity GOs, we can safely remove them to free MBs.
             GameData.World.SubMeshes = null;
 
-            var interactionManager = GvrSceneManager.I.interactionManager.GetComponent<XRInteractionManager>();
+            var interactionManager = GuzSceneManager.I.interactionManager.GetComponent<XRInteractionManager>();
 
             // If we load a new scene, just remove the existing one.
             if (_worldGo.TryGetComponent(out TeleportationArea teleportArea))

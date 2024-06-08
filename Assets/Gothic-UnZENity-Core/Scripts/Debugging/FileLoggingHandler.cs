@@ -28,7 +28,7 @@ namespace GUZ.Core.Debugging
 			fileWriter.WriteLine("OperatingSystem: " + SystemInfo.operatingSystem);
 			fileWriter.WriteLine("OperatingSystemFamily: " + SystemInfo.operatingSystemFamily);
 			fileWriter.WriteLine("MemorySize: " + SystemInfo.systemMemorySize);
-			fileWriter.WriteLine("GVR Version: " + Application.version);
+			fileWriter.WriteLine("GUZ Version: " + Application.version);
             fileWriter.WriteLine();
             fileWriter.Flush();
 		}
