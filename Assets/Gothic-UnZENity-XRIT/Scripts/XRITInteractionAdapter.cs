@@ -1,4 +1,5 @@
-using GUZ.Context;
+using System;
+using GUZ.Core.Context;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -8,22 +9,22 @@ namespace GUZ.XRIT
     {
         public string GetContextName()
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public GameObject CreatePlayerController(Scene scene)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public void AddClimbingComponent(GameObject go)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public void AddItemComponent(GameObject go, bool isLab = false)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
     }
 }

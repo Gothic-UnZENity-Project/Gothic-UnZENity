@@ -3,12 +3,12 @@ using GUZ.XRIT;
 using UnityEngine;
 
 #if GUZ_HVR_INSTALLED
-using
+using GUZ.HVR;
 #endif
 
-namespace GUZ.Context
+namespace GUZ.Core.Context
 {
-    public class GUZContext
+    public static class GUZContext
     {
         public static IInteractionAdapter InteractionAdapter { get; private set; }
 

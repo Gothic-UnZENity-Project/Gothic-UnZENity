@@ -2,6 +2,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using GUZ.Core.Caches;
+using GUZ.Core.Context;
 using GUZ.Core.Debugging;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager.Settings;
@@ -65,7 +66,9 @@ namespace GUZ.Core.Manager
         public static void BootGothicUnZENity(string g1Dir)
         {
             var watch = Stopwatch.StartNew();
-            
+
+            GUZContext.SetContext(FeatureFlags.I.controls);
+
             MountVfs(g1Dir);
             SetLanguage();
             LoadGothicVm(g1Dir);

@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
-using GUZ.Core.Util;
+using GUZ.Core.Context;
 using GUZ.Core.Extensions;
+using GUZ.Core.Util;
 using UnityEngine;
-using UnityEngine.Serialization;
 using ZenKit;
 using ZenKit.Vobs;
 
@@ -19,6 +19,7 @@ namespace GUZ.Core.Debugging
         };
 
         [Header("__________Developer__________")]
+        public GUZContext.Controls controls;
         public bool skipMainMenu;
         public bool useXRDeviceSimulator;
 
