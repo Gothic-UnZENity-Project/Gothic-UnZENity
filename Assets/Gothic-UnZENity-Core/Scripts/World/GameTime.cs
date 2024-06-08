@@ -36,7 +36,7 @@ namespace GUZ.Core.World
             GUZEvents.GeneralSceneUnloaded.AddListener(WorldUnloaded);
         }
 
-        private void WorldLoaded()
+        private void WorldLoaded(GameObject playerGo)
         {
             timeTickCoroutineHandler = StartCoroutine(TimeTick());
         }

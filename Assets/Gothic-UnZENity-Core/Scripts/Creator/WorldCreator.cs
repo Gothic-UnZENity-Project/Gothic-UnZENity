@@ -442,7 +442,7 @@ namespace GUZ.Core.Creator
             return mergedChunks;
         }
 
-        private static void WorldLoaded()
+        private static void WorldLoaded(GameObject playerGo)
         {
             // As we already added stored world mesh and waypoints in Unity GOs, we can safely remove them to free MBs.
             GameData.World.SubMeshes = null;

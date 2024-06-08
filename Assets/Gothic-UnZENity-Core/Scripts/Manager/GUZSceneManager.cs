@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using GUZ.Core.Context;
 using GUZ.Core.Creator;
 using GUZ.Core.Debugging;
 using GUZ.Core.Globals;
@@ -17,7 +18,7 @@ namespace GUZ.Core.Manager
     {
         public GameObject interactionManager;
         
-        private const string generalSceneName = "General";
+        private static readonly string generalSceneName = Constants.SceneGeneral;
         private const int ensureLoadingBarDelayMilliseconds = 5;
 
         private string newWorldName;
@@ -83,7 +84,6 @@ namespace GUZ.Core.Manager
             if (worldName == newWorldName)
             {
                 SetSpawnPoint(SceneManager.GetSceneByName(newWorldName));
-                TeleportPlayerToSpot();
                 return;
             }
             
@@ -176,8 +176,10 @@ namespace GUZ.Core.Manager
                 case Constants.SceneGeneral:
                     SceneManager.MoveGameObjectToScene(interactionManager, generalScene);
 
-                    TeleportPlayerToSpot();
-                    GUZEvents.GeneralSceneLoaded.Invoke();
+                    var playerGo = GUZContext.InteractionAdapter.CreatePlayerController(scene);
+
+                    TeleportPlayerToSpot(playerGo);
+                    GUZEvents.GeneralSceneLoaded.Invoke(playerGo);
 
                     break;
                 case Constants.SceneMainMenu:
@@ -236,13 +238,9 @@ namespace GUZ.Core.Manager
             startPoint = startPoint2;
         }
 
-        public void TeleportPlayerToSpot()
+        public void TeleportPlayerToSpot(GameObject playerGo)
         {
-            if (startPoint == null)
-                return;
-
-            var player = GameObject.FindWithTag(Constants.PlayerTag);
-            player.transform.SetPositionAndRotation(startPoint.transform.position, startPoint.transform.rotation);
+            playerGo.transform.SetPositionAndRotation(startPoint.transform.position, startPoint.transform.rotation);
         }
     }
 }

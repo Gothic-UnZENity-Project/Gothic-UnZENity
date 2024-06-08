@@ -11,6 +11,7 @@ using GUZ.Core.Vm;
 using GUZ.Core.Vob;
 using GUZ.Core.Creator;
 using GUZ.Core.Extensions;
+using GUZ.XRIT.Components.Vobs;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -83,7 +84,6 @@ namespace GUZ.Lab.Handler
             var mrm = AssetCache.TryGetMrm(item.Visual);
             var itemGo = MeshFactory.CreateVob(item.Visual, mrm, default, default, true, rootGo: itemPrefab, parent: itemSpawnSlot);
 
-            var itemGrabComp = itemGo.GetComponent<ItemGrabInteractable>();
             var colliderComp = itemGo.GetComponent<MeshCollider>();
 
             colliderComp.convex = true;

@@ -1,9 +1,11 @@
 using GUZ.Core.Caches;
+using GUZ.Core.Context;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
 using GUZ.Core.Manager.Settings;
 using GUZ.Lab.Handler;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.Serialization;
 
 namespace GUZ.Lab
@@ -41,7 +43,8 @@ namespace GUZ.Lab
 
         private void BootLab()
         {
-            NpcHelper.CacheHero();
+            var playerGo = GUZContext.InteractionAdapter.CreatePlayerController(SceneManager.GetActiveScene());
+            NpcHelper.CacheHero(playerGo);
         }
 
         private void OnDestroy()

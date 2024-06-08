@@ -3,6 +3,7 @@ using GUZ.Core.Caches;
 using GUZ.Core.Debugging;
 using GUZ.Core.Globals;
 using GUZ.Core.Util;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 
 namespace GUZ.Core.Manager
@@ -11,7 +12,10 @@ namespace GUZ.Core.Manager
     {
         private void Start()
         {
-            GUZEvents.GeneralSceneLoaded.AddListener(WorldLoaded);
+            GUZEvents.GeneralSceneLoaded.AddListener(delegate(GameObject playerGo)
+            {
+                WorldLoaded();
+            });
             GUZEvents.MainMenuSceneLoaded.AddListener(WorldLoaded);
         }
 

@@ -76,7 +76,7 @@ namespace GUZ.Core.Manager.Culling
         /// Set main camera once world is loaded fully.
         /// Doesn't work at loading time as we change scenes etc.
         /// </summary>
-        public void PostWorldCreate()
+        public void PostWorldCreate(GameObject playerGo)
         {
             var mainCamera = Camera.main!;
             soundCullingGroup.targetCamera = mainCamera;
