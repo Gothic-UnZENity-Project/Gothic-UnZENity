@@ -27,7 +27,7 @@ namespace GUZ.Lab
                 return;
             _isBooted = true;
             
-            GuzBootstrapper.BootGothicUnZENity(SettingsManager.GameSettings.GothicIPath);
+            GUZBootstrapper.BootGothicUnZENity(SettingsManager.GameSettings.GothicIPath);
 
             BootLab();
 

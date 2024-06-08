@@ -26,14 +26,14 @@ namespace GUZ.Core.Vob
             HourEventCallback(GameTime.I.GetCurrentDateTime());
 
             StartCoroutineInternal();
-            GuzEvents.GameTimeHourChangeCallback.AddListener(HourEventCallback);
+            GUZEvents.GameTimeHourChangeCallback.AddListener(HourEventCallback);
         }
 
         private void OnDisable()
         {
             // Coroutines are stopped when GameObject gets disabled. But we need to restart during OnEnable() manually.
             isCoroutineRunning = false;
-            GuzEvents.GameTimeHourChangeCallback.RemoveListener(HourEventCallback);
+            GUZEvents.GameTimeHourChangeCallback.RemoveListener(HourEventCallback);
         }
 
         public void PrepareSoundHandling()

@@ -5,7 +5,7 @@ namespace GUZ.Core.Debugging
     /// <summary>
     /// Add it to an object where you want to draw some information.
     /// </summary>
-    public class GuzGizmosDebug : MonoBehaviour
+    public class GUZGizmosDebug : MonoBehaviour
     {
         private void OnDrawGizmos()
         {

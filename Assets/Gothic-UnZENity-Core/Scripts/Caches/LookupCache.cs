@@ -34,7 +34,7 @@ namespace GUZ.Core.Caches
 
         static LookupCache()
         {
-            GuzEvents.GeneralSceneUnloaded.AddListener(delegate
+            GUZEvents.GeneralSceneUnloaded.AddListener(delegate
             {
                 NpcCache.Clear();
                 vobSoundsAndDayTime.Clear();

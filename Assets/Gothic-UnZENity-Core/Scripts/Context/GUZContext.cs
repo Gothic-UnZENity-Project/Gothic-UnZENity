@@ -8,7 +8,7 @@ using
 
 namespace GUZ.Context
 {
-    public class GuzContext
+    public class GUZContext
     {
         public static IInteractionAdapter InteractionAdapter { get; private set; }
 

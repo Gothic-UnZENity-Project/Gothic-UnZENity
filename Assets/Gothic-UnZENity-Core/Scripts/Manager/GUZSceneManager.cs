@@ -13,7 +13,7 @@ using Debug = UnityEngine.Debug;
 
 namespace GUZ.Core.Manager
 {
-    public class GuzSceneManager : SingletonBehaviour<GuzSceneManager>
+    public class GUZSceneManager : SingletonBehaviour<GUZSceneManager>
     {
         public GameObject interactionManager;
         
@@ -135,7 +135,7 @@ namespace GUZ.Core.Manager
                 SceneManager.MoveGameObjectToScene(interactionManager, SceneManager.GetSceneByName(Constants.SceneBootstrap));
                 SceneManager.UnloadSceneAsync(generalScene);
 
-                GuzEvents.GeneralSceneUnloaded.Invoke();
+                GUZEvents.GeneralSceneUnloaded.Invoke();
                 generalSceneLoaded = false;
             }
 
@@ -171,13 +171,13 @@ namespace GUZ.Core.Manager
                 case Constants.SceneBootstrap:
                     break;
                 case Constants.SceneLoading:
-                    GuzEvents.LoadingSceneLoaded.Invoke();
+                    GUZEvents.LoadingSceneLoaded.Invoke();
                     break;
                 case Constants.SceneGeneral:
                     SceneManager.MoveGameObjectToScene(interactionManager, generalScene);
 
                     TeleportPlayerToSpot();
-                    GuzEvents.GeneralSceneLoaded.Invoke();
+                    GUZEvents.GeneralSceneLoaded.Invoke();
 
                     break;
                 case Constants.SceneMainMenu:
@@ -185,12 +185,12 @@ namespace GUZ.Core.Manager
                     sphere.GetComponent<MeshRenderer>().material = TextureManager.I.loadingSphereMaterial;
                     SceneManager.SetActiveScene(scene);
 
-                    GuzEvents.MainMenuSceneLoaded.Invoke();
+                    GUZEvents.MainMenuSceneLoaded.Invoke();
                     break;
                 // any World
                 default:
                     SceneManager.SetActiveScene(scene);
-                    GuzEvents.WorldSceneLoaded.Invoke();
+                    GUZEvents.WorldSceneLoaded.Invoke();
                     break;
             }
         }
