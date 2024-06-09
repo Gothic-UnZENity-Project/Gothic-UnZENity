@@ -8,7 +8,7 @@ public class HandPresence : MonoBehaviour
 
     public bool showController = false;
     public InputDeviceCharacteristics controllerCharacteristics;
-    public List<GameObject> controllerPrefabs;
+    public GameObject defaultController;
     public GameObject handModelPrefab;
 
     private InputDevice targetDevice;
@@ -60,18 +60,7 @@ public class HandPresence : MonoBehaviour
 
         if (devices.Count > 0)
         {
-            targetDevice = devices[0];
-            GameObject prefab = controllerPrefabs.Find(controller => controller.name == targetDevice.name);
-            if (prefab)
-            {
-                spawnedController = Instantiate(prefab, transform);
-            }
-            else
-            {
-                Debug.LogWarning("Did not find prefab for corresponding controller name");
-                spawnedController = Instantiate(controllerPrefabs[0], transform);
-            }
-
+            spawnedController = Instantiate(defaultController, transform);
             spawnedHandModel = Instantiate(handModelPrefab, transform);
             handAnimator = spawnedHandModel.GetComponent<Animator>();
         }
