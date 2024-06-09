@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using GUZ.Core.Caches;
+using GUZ.Core.Context;
 using GUZ.Core.Creator.Meshes.V2;
 using GUZ.Core.Data;
 using GUZ.Core.Globals;
@@ -82,11 +83,10 @@ namespace GUZ.Lab.Handler
             var itemPrefab = PrefabCache.TryGetObject(PrefabCache.PrefabType.VobItem);
             var item = AssetCache.TryGetItemData(itemName);
             var mrm = AssetCache.TryGetMrm(item.Visual);
-            var itemGo = MeshFactory.CreateVob(item.Visual, mrm, default, default, true, rootGo: itemPrefab, parent: itemSpawnSlot);
+            var itemGo = MeshFactory.CreateVob(item.Visual, mrm, default, default, true,
+                rootGo: itemPrefab, parent: itemSpawnSlot, useTextureArray: false);
 
-            var colliderComp = itemGo.GetComponent<MeshCollider>();
-
-            colliderComp.convex = true;
+            GUZContext.InteractionAdapter.AddItemComponent(itemGo, true);
 
             return gameObject;
         }
