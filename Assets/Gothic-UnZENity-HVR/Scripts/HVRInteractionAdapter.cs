@@ -39,11 +39,7 @@ namespace GUZ.HVR
 
         public void AddItemComponent(GameObject go, bool isLab = false)
         {
-            var colliderComp = go.GetComponent<MeshCollider>();
-            colliderComp.convex = true;
-
-            HVRGrabbable grabbable = go.AddComponent<HVRGrabbable>();
-            grabbable.PoseType = PoseType.PhysicPoser;
+            // TODO - Hack for Lab.scene - Better way to get something thrown. Needs to be removed soon.
             Rigidbody rb = go.GetComponent<Rigidbody>();
             rb.isKinematic = false;
 

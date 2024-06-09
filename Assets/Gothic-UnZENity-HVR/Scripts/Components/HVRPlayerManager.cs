@@ -27,14 +27,15 @@ namespace GVR
             }
 
             // Teleport to start position.
-            StartCoroutine(TeleportToStartPos());
+            // StartCoroutine(TeleportToStartPos());
         }
 
-        private IEnumerator TeleportToStartPos()
-        {
-            yield return new WaitForSeconds(0.5f);
-            GUZSceneManager.I.TeleportPlayerToSpot(playerController.gameObject);
-        }
+        // FIXME Throws exceptions inside lab. Ignore it from there.
+        // private IEnumerator TeleportToStartPos()
+        // {
+        //     yield return new WaitForSeconds(0.5f);
+        //     GUZSceneManager.I.TeleportPlayerToSpot(playerController.gameObject);
+        // }
     }
 }
 #endif
