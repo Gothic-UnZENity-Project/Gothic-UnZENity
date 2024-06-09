@@ -4,6 +4,7 @@ using GUZ.Core.Context;
 using GUZ.Core.Extensions;
 using GUZ.Core.Util;
 using UnityEngine;
+using UnityEngine.Serialization;
 using ZenKit;
 using ZenKit.Vobs;
 
@@ -18,10 +19,12 @@ namespace GUZ.Core.Debugging
             EveryIngameHour
         };
 
-        [Header("__________Developer__________")]
-        public GUZContext.Controls controls;
-        public bool skipMainMenu;
+        [Header("__________Controls__________")]
+        public GUZContext.Controls gameControls;
         public bool useXRDeviceSimulator;
+
+        [Header("__________Developer__________")]
+        public bool skipMainMenu;
 
         [Header("__________World__________")]
         public bool createWorldMesh;

@@ -67,7 +67,7 @@ namespace GUZ.Core.Manager
         {
             var watch = Stopwatch.StartNew();
 
-            GUZContext.SetContext(FeatureFlags.I.controls);
+            GUZContext.SetContext(FeatureFlags.I.gameControls);
 
             MountVfs(g1Dir);
             SetLanguage();

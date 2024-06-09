@@ -1,6 +1,8 @@
 #if GUZ_HVR_INSTALLED
-using System;
 using GUZ.Core.Context;
+using HurricaneVR.Framework.Components;
+using HurricaneVR.Framework.Core;
+using HurricaneVR.Framework.Shared;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -32,7 +34,7 @@ namespace GUZ.HVR
         {
             go.AddComponent<HVRClimbable>();
             HVRGrabbable grabbable = go.AddComponent<HVRGrabbable>();
-            grabbable.PoseType = HurricaneVR.Framework.Shared.PoseType.PhysicPoser;
+            grabbable.PoseType = PoseType.PhysicPoser;
         }
 
         public void AddItemComponent(GameObject go, bool isLab = false)
@@ -41,7 +43,7 @@ namespace GUZ.HVR
             colliderComp.convex = true;
 
             HVRGrabbable grabbable = go.AddComponent<HVRGrabbable>();
-            grabbable.PoseType = HurricaneVR.Framework.Shared.PoseType.PhysicPoser;
+            grabbable.PoseType = PoseType.PhysicPoser;
             Rigidbody rb = go.GetComponent<Rigidbody>();
             rb.isKinematic = false;
 

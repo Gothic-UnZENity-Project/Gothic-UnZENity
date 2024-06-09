@@ -35,7 +35,7 @@ namespace GUZ.Core.Editor.Tools
         {
             // Change controls in FeatureFlags
             var featureFlags = GameObject.FindObjectOfType<FeatureFlags>();
-            featureFlags.controls = GUZContext.Controls.VR_HVR;
+            featureFlags.gameControls = GUZContext.Controls.VR_HVR;
 
             // Change compile flag in PlayerSettings
             var settings = PlayerSettings.GetScriptingDefineSymbols(NamedBuildTarget.Standalone)
@@ -57,7 +57,7 @@ namespace GUZ.Core.Editor.Tools
         {
             // Change controls in FeatureFlags
             var featureFlags = GameObject.FindObjectOfType<FeatureFlags>();
-            featureFlags.controls = GUZContext.Controls.VR_XRIT;
+            featureFlags.gameControls = GUZContext.Controls.VR_XRIT;
 
             // Change compile flag in PlayerSettings
             var settings = PlayerSettings.GetScriptingDefineSymbols(NamedBuildTarget.Standalone)
