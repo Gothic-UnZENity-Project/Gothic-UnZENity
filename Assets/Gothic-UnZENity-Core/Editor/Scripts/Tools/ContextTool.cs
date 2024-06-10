@@ -19,10 +19,12 @@ namespace GUZ.Core.Editor.Tools
             var hvrFolder = Application.dataPath + "/HurricaneVR";
             var hvrExists = Directory.Exists(hvrFolder) && Directory.EnumerateFiles(hvrFolder).Count() != 0;
             var hvrCompilerSettingExists = PlayerSettings.GetScriptingDefineSymbols(NamedBuildTarget.Standalone).Contains(HVR_COMPILER_FLAG);
+            bool hvrSceneSetting = GameObject.FindObjectOfType<FeatureFlags>()?.gameControls == GUZContext.Controls.VR_HVR;
 
             var message =
                 $"Plugin installed: {hvrExists}\n" +
-                $"Include in Build: {hvrCompilerSettingExists}\n";
+                $"Include in Build: {hvrCompilerSettingExists}\n" +
+                $"Include in Scene: {hvrSceneSetting}";
 
             EditorUtility.DisplayDialog("Hurricane VR - Status", message, "Close");
         }
@@ -35,7 +37,9 @@ namespace GUZ.Core.Editor.Tools
         {
             // Change controls in FeatureFlags
             var featureFlags = GameObject.FindObjectOfType<FeatureFlags>();
-            featureFlags.gameControls = GUZContext.Controls.VR_HVR;
+
+            if (featureFlags != null)
+                featureFlags.gameControls = GUZContext.Controls.VR_HVR;
 
             // Change compile flag in PlayerSettings
             var settings = PlayerSettings.GetScriptingDefineSymbols(NamedBuildTarget.Standalone)
@@ -57,7 +61,9 @@ namespace GUZ.Core.Editor.Tools
         {
             // Change controls in FeatureFlags
             var featureFlags = GameObject.FindObjectOfType<FeatureFlags>();
-            featureFlags.gameControls = GUZContext.Controls.VR_XRIT;
+
+            if (featureFlags != null)
+                featureFlags.gameControls = GUZContext.Controls.VR_XRIT;
 
             // Change compile flag in PlayerSettings
             var settings = PlayerSettings.GetScriptingDefineSymbols(NamedBuildTarget.Standalone)
