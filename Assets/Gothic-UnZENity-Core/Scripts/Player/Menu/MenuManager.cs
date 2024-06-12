@@ -1,11 +1,12 @@
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
 using GUZ.Core.UI;
+using GUZ.Core.Util;
 using UnityEngine;
 
 namespace GUZ.Core.Player.Menu
 {
-    public class MenuManager : MonoBehaviour
+    public class MenuManager : SingletonBehaviour<MenuManager>
     {
         public GameObject MainMenu;
         public GameObject LoadMenu;
@@ -26,8 +27,6 @@ namespace GUZ.Core.Player.Menu
         void Awake()
         {
             SetSettingsValues();
-
-            LoadSaveGameValues();
         }
 
         public void SetSettingsValues()
@@ -39,14 +38,6 @@ namespace GUZ.Core.Player.Menu
             turnSettingDropdownController.DropdownItemSelected(PlayerPrefs.GetInt(Constants.turnSettingPlayerPref));
             musicVolumeHandler.SliderUpdate(PlayerPrefs.GetFloat(Constants.musicVolumePlayerPref, 1f));
             soundEffectsVolumeHandler.SliderUpdate(PlayerPrefs.GetFloat(Constants.soundEffectsVolumePlayerPref, 1f));
-        }
-
-        /// <summary>
-        /// Pre-fill the Load Game entries with names and textures (if existing)
-        /// </summary>
-        private void LoadSaveGameValues()
-        {
-            // TBD
         }
 
         public void PlayFunction()
@@ -64,11 +55,6 @@ namespace GUZ.Core.Player.Menu
             TeleportMenu.SetActive(menu == TeleportMenu);
             MovementMenu.SetActive(menu == MovementMenu);
             SoundMenu.SetActive(menu == SoundMenu);
-        }
-
-        public void OnLoadGameSlotClicked(int id)
-        {
-
         }
 
         public void QuitGameFunction()
