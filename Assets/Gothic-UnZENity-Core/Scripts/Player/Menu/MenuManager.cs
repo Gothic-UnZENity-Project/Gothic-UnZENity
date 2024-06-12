@@ -8,6 +8,7 @@ namespace GUZ.Core.Player.Menu
     public class MenuManager : MonoBehaviour
     {
         public GameObject MainMenu;
+        public GameObject LoadMenu;
         public GameObject SettingsMenu;
         public GameObject TeleportMenu;
         public GameObject MovementMenu;
@@ -25,6 +26,8 @@ namespace GUZ.Core.Player.Menu
         void Awake()
         {
             SetSettingsValues();
+
+            LoadSaveGameValues();
         }
 
         public void SetSettingsValues()
@@ -38,6 +41,14 @@ namespace GUZ.Core.Player.Menu
             soundEffectsVolumeHandler.SliderUpdate(PlayerPrefs.GetFloat(Constants.soundEffectsVolumePlayerPref, 1f));
         }
 
+        /// <summary>
+        /// Pre-fill the Load Game entries with names and textures (if existing)
+        /// </summary>
+        private void LoadSaveGameValues()
+        {
+            // TBD
+        }
+
         public void PlayFunction()
         {
 #pragma warning disable CS4014 // It's intended, that this async call is not awaited.
@@ -48,10 +59,16 @@ namespace GUZ.Core.Player.Menu
         public void SwitchMenu(GameObject menu)
         {
             MainMenu.SetActive(menu == MainMenu);
+            LoadMenu.SetActive(menu == LoadMenu);
             SettingsMenu.SetActive(menu == SettingsMenu);
             TeleportMenu.SetActive(menu == TeleportMenu);
             MovementMenu.SetActive(menu == MovementMenu);
             SoundMenu.SetActive(menu == SoundMenu);
+        }
+
+        public void OnLoadGameSlotClicked(int id)
+        {
+
         }
 
         public void QuitGameFunction()
