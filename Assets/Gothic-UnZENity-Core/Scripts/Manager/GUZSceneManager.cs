@@ -46,10 +46,21 @@ namespace GUZ.Core.Manager
         {
             try
             {
-                if (FeatureFlags.I.skipMainMenu)
-                    await LoadWorld(Constants.selectedWorld, Constants.selectedWaypoint, true);
-                else
+                if (!FeatureFlags.I.skipMainMenu)
+                {
                     await LoadMainMenu();
+                }
+
+                if (!FeatureFlags.I.useSaveSlot)
+                {
+                    await LoadWorld(Constants.selectedWorld, Constants.selectedWaypoint, true);
+                }
+                else
+                {
+                    var saveSlot = FeatureFlags.I.saveSlot;
+                    // FIXME - Provide savegame information as well!
+                    await LoadWorld(Constants.selectedWorld, Constants.selectedWaypoint, false);
+                }
             }
             catch (Exception e)
             {
@@ -78,6 +89,9 @@ namespace GUZ.Core.Manager
 
         public async Task LoadWorld(string worldName, string startVob, bool newGame = false)
         {
+            // Our scenes are named *.zen - We therefore need to ensure the pattern of world name matches.
+            worldName += worldName.EndsWithIgnoreCase(".zen") ? "" : ".zen";
+
             startVobAfterLoading = startVob;
             worldName = worldName.ToLower();
             

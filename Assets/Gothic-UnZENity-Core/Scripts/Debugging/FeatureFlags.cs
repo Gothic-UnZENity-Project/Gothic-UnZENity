@@ -25,6 +25,8 @@ namespace GUZ.Core.Debugging
 
         [Header("__________Developer__________")]
         public bool skipMainMenu;
+        public bool useSaveSlot;
+        [Range(1, 15)] public int saveSlot;
 
         [Header("__________World__________")]
         public bool createWorldMesh;

@@ -1,6 +1,8 @@
 using System.IO;
 using GUZ.Core.Caches;
 using GUZ.Core.Extensions;
+using GUZ.Core.Globals;
+using GUZ.Core.Manager;
 using GUZ.Core.Manager.Settings;
 using GUZ.Core.Util;
 using TMPro;
@@ -19,7 +21,7 @@ namespace GUZ.Core.Player.Menu
         public TMP_Text gameTime;
         public TMP_Text version;
 
-        private SaveGame[] _save = new SaveGame[15];
+        private readonly SaveGame[] _saves = new SaveGame[15];
 
         /// <summary>
         /// Pre-fill the Load Game entries with names and textures (if existing)
@@ -46,7 +48,7 @@ namespace GUZ.Core.Player.Menu
                 // Load metadata
                 var save = new SaveGame(GameVersion.Gothic1);
                 save.Load(fullPath);
-                _save[saveId] = save;
+                _saves[saveId] = save;
 
                 // Set metadata to slot
                 var saveSlotGo = SaveSlots[saveId];
@@ -56,7 +58,7 @@ namespace GUZ.Core.Player.Menu
 
         public void OnLoadGameSlotPointerEnter(int id)
         {
-            var save = _save[id];
+            var save = _saves[id];
 
             if (save == null)
             {
@@ -83,7 +85,16 @@ namespace GUZ.Core.Player.Menu
 
         public void OnLoadGameSlotClick(int id)
         {
-            // TBD
+            var save = _saves[id];
+
+            if (save == null)
+            {
+                return;
+            }
+
+#pragma warning disable CS4014 // It's intended, that this async call is not awaited.
+            GUZSceneManager.I.LoadWorld(save.Metadata.World, Constants.selectedWaypoint, false);
+#pragma warning restore CS4014
         }
     }
 }

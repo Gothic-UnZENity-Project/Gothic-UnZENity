@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using GUZ.Core.Context;
 using GUZ.Core.Debugging;
 using UnityEditor;
 using UnityEditor.SceneManagement;
@@ -97,6 +98,9 @@ namespace GUZ.Core.Editor.Tools
                             field.SetValue(featureFlags, DirectMusic.LogLevel.Error);
                         else
                             Debug.LogError($"Unsupported field type >{field.FieldType.Name}< for >{field.Name}<");
+                        break;
+                    case "Controls":
+                        field.SetValue(featureFlags, GUZContext.Controls.VR_XRIT);
                         break;
                     case "String":
                             field.SetValue(featureFlags, "");
