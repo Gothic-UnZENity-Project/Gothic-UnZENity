@@ -54,18 +54,24 @@ namespace GUZ.Core.Caches
         [CanBeNull]
         public static Texture2D TryGetTexture(string key)
         {
-            string preparedKey = GetPreparedKey(key);
+            var preparedKey = GetPreparedKey(key);
             if (Texture2DCache.TryGetValue(preparedKey, out var cachedTexture))
             {
                 return cachedTexture;
             }
 
-            ITexture zkTexture = AssetCache.TryGetTexture(key);
+            return TryGetTexture(AssetCache.TryGetTexture(preparedKey), preparedKey);
+        }
+
+        public static Texture2D TryGetTexture(ITexture zkTexture, string key)
+        {
             if (zkTexture == null)
             {
                 return null;
             }
             Texture2D texture;
+
+            var preparedKey = GetPreparedKey(key);
 
             // Workaround for Unity and DXT1 Mipmaps.
             if (zkTexture.Format == TextureFormat.Dxt1 && zkTexture.MipmapCount == 1)

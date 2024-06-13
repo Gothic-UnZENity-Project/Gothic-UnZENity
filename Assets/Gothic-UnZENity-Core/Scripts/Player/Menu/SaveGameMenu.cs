@@ -1,4 +1,6 @@
 using System.IO;
+using GUZ.Core.Caches;
+using GUZ.Core.Extensions;
 using GUZ.Core.Manager.Settings;
 using GUZ.Core.Util;
 using TMPro;
@@ -16,7 +18,6 @@ namespace GUZ.Core.Player.Menu
         public TMP_Text savedAt;
         public TMP_Text gameTime;
         public TMP_Text version;
-        public TMP_Text loadHint;
 
         private SaveGame[] _save = new SaveGame[15];
 
@@ -25,6 +26,8 @@ namespace GUZ.Core.Player.Menu
         /// </summary>
         private void Start()
         {
+            thumbnail.GetComponent<MeshRenderer>().material = TextureManager.I.GetEmptyMaterial(MaterialExtension.BlendMode.Opaque);
+
             var g1Dir = SettingsManager.GameSettings.GothicIPath;
             var saveGameListPath = Path.GetFullPath(Path.Join(g1Dir, "Saves"));
 
@@ -46,8 +49,8 @@ namespace GUZ.Core.Player.Menu
                 _save[saveId] = save;
 
                 // Set metadata to slot
-                var saveSlotGO = SaveSlots[saveId];
-                saveSlotGO.GetComponentInChildren<TMP_Text>().text = save.Metadata.Title;
+                var saveSlotGo = SaveSlots[saveId];
+                saveSlotGo.GetComponentInChildren<TMP_Text>().text = save.Metadata.Title;
             }
         }
 
@@ -60,20 +63,22 @@ namespace GUZ.Core.Player.Menu
                 return;
             }
 
+            thumbnail.GetComponent<MeshRenderer>().material.mainTexture
+                = TextureCache.TryGetTexture(save.Thumbnail, "savegame_"+save.Metadata.Title);
+            thumbnail.SetActive(true);
             world.text = save.Metadata.World;
             savedAt.text = save.Metadata.SaveDate;
-            gameTime.text = save.Metadata.PlayTime.ToString();
+            gameTime.text = $"{save.Metadata.TimeDay} - {save.Metadata.TimeHour}:{save.Metadata.TimeMinute}";
             version.text = save.Metadata.VersionAppName;
-            loadHint.text = "DEBUG - Slot X - RETURN zum Laden des gespeicherten Spielstandes!";
         }
 
         public void OnLoadGameSlotPointerExit()
         {
+            thumbnail.SetActive(false);
             world.text = "";
             savedAt.text = "";
             gameTime.text = "";
             version.text = "";
-            loadHint.text = "";
         }
 
         public void OnLoadGameSlotClick(int id)

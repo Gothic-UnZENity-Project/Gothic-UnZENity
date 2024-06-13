@@ -16,11 +16,8 @@ namespace GUZ.Core.Player.Menu
         public GameObject MovementMenu;
         public GameObject SoundMenu;
 
-        [SerializeField]
-        private MoveSpeedController moveSpeedController;
-
+        public MoveSpeedController MoveSpeedController;
         public TurnSettingDropdownController TurnSettingDropdownController;
-
         public AudioMixerHandler MusicVolumeHandler;
         public AudioMixerHandler SoundEffectsVolumeHandler;
 
@@ -47,10 +44,10 @@ namespace GUZ.Core.Player.Menu
 
         public void SetSettingsValues()
         {
-            if (moveSpeedController == null || TurnSettingDropdownController == null)
+            if (MoveSpeedController == null || TurnSettingDropdownController == null)
                 return;
 
-            moveSpeedController.ChangeMoveSpeed(PlayerPrefs.GetFloat(Constants.moveSpeedPlayerPref));
+            MoveSpeedController.ChangeMoveSpeed(PlayerPrefs.GetFloat(Constants.moveSpeedPlayerPref));
             TurnSettingDropdownController.DropdownItemSelected(PlayerPrefs.GetInt(Constants.turnSettingPlayerPref));
             MusicVolumeHandler.SliderUpdate(PlayerPrefs.GetFloat(Constants.musicVolumePlayerPref, 1f));
             SoundEffectsVolumeHandler.SliderUpdate(PlayerPrefs.GetFloat(Constants.soundEffectsVolumePlayerPref, 1f));
@@ -71,6 +68,9 @@ namespace GUZ.Core.Player.Menu
             TeleportMenu.SetActive(menu == TeleportMenu);
             MovementMenu.SetActive(menu == MovementMenu);
             SoundMenu.SetActive(menu == SoundMenu);
+
+            MainMenuBackground.SetActive(menu != LoadMenu);
+            MainMenuSaveLoadBackground.SetActive(menu == LoadMenu);
         }
 
         public void QuitGameFunction()

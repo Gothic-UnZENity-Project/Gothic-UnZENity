@@ -64,7 +64,7 @@ public class TextureManager : SingletonBehaviour<TextureManager>
         material.mainTexture = TextureCache.TryGetTexture(texture);
     }
 
-    private Material GetEmptyMaterial(MaterialExtension.BlendMode blendMode)
+    public Material GetEmptyMaterial(MaterialExtension.BlendMode blendMode)
     {
         var standardShader = Constants.ShaderUnlit;
         var material = new Material(standardShader);
