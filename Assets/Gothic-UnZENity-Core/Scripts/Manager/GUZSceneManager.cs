@@ -50,8 +50,7 @@ namespace GUZ.Core.Manager
                 {
                     await LoadMainMenu();
                 }
-
-                if (!FeatureFlags.I.useSaveSlot)
+                else if (!FeatureFlags.I.useSaveSlot)
                 {
                     await LoadWorld(Constants.selectedWorld, Constants.selectedWaypoint, true);
                 }
