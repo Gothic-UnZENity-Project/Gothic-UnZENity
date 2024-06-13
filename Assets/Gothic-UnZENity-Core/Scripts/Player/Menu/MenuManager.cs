@@ -3,6 +3,7 @@ using GUZ.Core.Manager;
 using GUZ.Core.UI;
 using GUZ.Core.Util;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace GUZ.Core.Player.Menu
 {
@@ -18,26 +19,41 @@ namespace GUZ.Core.Player.Menu
         [SerializeField]
         private MoveSpeedController moveSpeedController;
 
-        [SerializeField]
-        private TurnSettingDropdownController turnSettingDropdownController;
+        public TurnSettingDropdownController TurnSettingDropdownController;
 
-        [SerializeField] private AudioMixerHandler musicVolumeHandler;
-        [SerializeField] private AudioMixerHandler soundEffectsVolumeHandler;
+        public AudioMixerHandler MusicVolumeHandler;
+        public AudioMixerHandler SoundEffectsVolumeHandler;
 
-        void Awake()
+        public GameObject MainMenuImageBackground;
+        public GameObject MainMenuBackground;
+        public GameObject MainMenuSaveLoadBackground;
+        public GameObject MainMenuText;
+
+
+        private void Start()
         {
             SetSettingsValues();
+            SetMaterials();
+        }
+
+        public void SetMaterials()
+        {
+            MainMenuImageBackground.GetComponent<MeshRenderer>().material = TextureManager.I.mainMenuImageBackgroundMaterial;
+            MainMenuSaveLoadBackground.GetComponent<MeshRenderer>().material =
+                TextureManager.I.mainMenuSaveLoadBackgroundMaterial;
+            MainMenuBackground.GetComponent<MeshRenderer>().material = TextureManager.I.mainMenuBackgroundMaterial;
+            MainMenuText.GetComponent<MeshRenderer>().material = TextureManager.I.mainMenuTextImageMaterial;
         }
 
         public void SetSettingsValues()
         {
-            if (moveSpeedController == null || turnSettingDropdownController == null)
+            if (moveSpeedController == null || TurnSettingDropdownController == null)
                 return;
 
             moveSpeedController.ChangeMoveSpeed(PlayerPrefs.GetFloat(Constants.moveSpeedPlayerPref));
-            turnSettingDropdownController.DropdownItemSelected(PlayerPrefs.GetInt(Constants.turnSettingPlayerPref));
-            musicVolumeHandler.SliderUpdate(PlayerPrefs.GetFloat(Constants.musicVolumePlayerPref, 1f));
-            soundEffectsVolumeHandler.SliderUpdate(PlayerPrefs.GetFloat(Constants.soundEffectsVolumePlayerPref, 1f));
+            TurnSettingDropdownController.DropdownItemSelected(PlayerPrefs.GetInt(Constants.turnSettingPlayerPref));
+            MusicVolumeHandler.SliderUpdate(PlayerPrefs.GetFloat(Constants.musicVolumePlayerPref, 1f));
+            SoundEffectsVolumeHandler.SliderUpdate(PlayerPrefs.GetFloat(Constants.soundEffectsVolumePlayerPref, 1f));
         }
 
         public void PlayFunction()
