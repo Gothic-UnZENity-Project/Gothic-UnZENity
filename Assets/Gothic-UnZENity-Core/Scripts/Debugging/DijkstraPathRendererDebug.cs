@@ -4,6 +4,7 @@ using System.Linq;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
 using GUZ.Core.Extensions;
+using GUZ.Core.World.WayNet;
 using JetBrains.Annotations;
 using UnityEngine;
 using Debug = UnityEngine.Debug;

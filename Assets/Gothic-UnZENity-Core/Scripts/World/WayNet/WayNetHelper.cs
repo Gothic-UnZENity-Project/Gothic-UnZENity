@@ -2,14 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using GUZ.Core.Globals;
-using GUZ.Core.Vob.WayNet;
-using GUZ.Core.World;
 using GUZ.Core.Extensions;
 using JetBrains.Annotations;
 using UnityEngine;
 using Debug = UnityEngine.Debug;
 
-namespace GUZ.Core.Manager
+namespace GUZ.Core.World.WayNet
 {
     public static class WayNetHelper
     {

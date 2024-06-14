@@ -2,8 +2,8 @@ using System.Collections.Generic;
 using System.Linq;
 using GUZ.Core.Data.ZkEvents;
 using GUZ.Core.Manager;
-using GUZ.Core.Vob.WayNet;
 using GUZ.Core.World;
+using GUZ.Core.World.WayNet;
 using UnityEngine;
 
 namespace GUZ.Core.Npc.Actions.AnimationActions

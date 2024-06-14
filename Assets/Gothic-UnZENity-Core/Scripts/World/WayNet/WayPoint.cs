@@ -1,4 +1,4 @@
-namespace GUZ.Core.Vob.WayNet
+namespace GUZ.Core.World.WayNet
 {
     public class WayPoint : WayNetPoint
     {

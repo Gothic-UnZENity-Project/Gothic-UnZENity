@@ -3,15 +3,13 @@ using System.Linq;
 using GUZ.Core.Caches;
 using GUZ.Core.Debugging;
 using GUZ.Core.Globals;
-using GUZ.Core.World;
 using GUZ.Core.Extensions;
 using GUZ.Core.Manager;
-using GUZ.Core.Vob.WayNet;
 using UnityEngine;
 using ZenKit;
 using Material = UnityEngine.Material;
 
-namespace GUZ.Core.Creator
+namespace GUZ.Core.World.WayNet.Creator
 {
     public static class WaynetCreator
     {
@@ -33,7 +31,7 @@ namespace GUZ.Core.Creator
 
             foreach (var wp in wayNet.Points)
             {
-                GameData.WayPoints.Add(wp.Name, new Vob.WayNet.WayPoint
+                GameData.WayPoints.Add(wp.Name, new WayPoint
                 {
                     Name = wp.Name,
                     Position = wp.Position.ToUnityVector(),

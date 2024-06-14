@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using GUZ.Core.Npc;
 using GUZ.Core.Npc.Actions.AnimationActions;
 using GUZ.Core.Vm;
-using GUZ.Core.Vob.WayNet;
+using GUZ.Core.World.WayNet;
 using UnityEngine;
 using ZenKit.Daedalus;
 

@@ -7,14 +7,14 @@ using GUZ.Core.Manager;
 using GUZ.Core.Npc.Routines;
 using GUZ.Core.Properties;
 using GUZ.Core.Vm;
-using GUZ.Core.Vob.WayNet;
 using GUZ.Core.Extensions;
+using GUZ.Core.World.WayNet;
 using UnityEngine;
 using ZenKit;
 using ZenKit.Daedalus;
 using Object = UnityEngine.Object;
-using WayNet_WayPoint = GUZ.Core.Vob.WayNet.WayPoint;
-using WayPoint = GUZ.Core.Vob.WayNet.WayPoint;
+using WayNet_WayPoint = GUZ.Core.World.WayNet.WayPoint;
+using WayPoint = GUZ.Core.World.WayNet.WayPoint;
 
 namespace GUZ.Core.Creator
 {

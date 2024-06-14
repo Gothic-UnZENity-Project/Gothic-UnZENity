@@ -8,6 +8,7 @@ using GUZ.Core.Debugging;
 using GUZ.Core.Globals;
 using GUZ.Core.Util;
 using GUZ.Core.Extensions;
+using GUZ.Core.World.WayNet;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Debug = UnityEngine.Debug;

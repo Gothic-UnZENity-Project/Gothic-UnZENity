@@ -1,4 +1,4 @@
-using GUZ.Core.Vob.WayNet;
+using GUZ.Core.World.WayNet;
 
 namespace GUZ.Core.Properties
 {

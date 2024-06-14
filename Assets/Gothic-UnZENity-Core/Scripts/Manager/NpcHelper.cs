@@ -9,6 +9,7 @@ using GUZ.Core.Npc.Actions.AnimationActions;
 using GUZ.Core.Npc.Routines;
 using GUZ.Core.Properties;
 using GUZ.Core.Vm;
+using GUZ.Core.World.WayNet;
 using JetBrains.Annotations;
 using UnityEngine;
 using ZenKit.Daedalus;
