@@ -3,7 +3,6 @@ using GUZ.Core.Manager;
 using GUZ.Core.UI;
 using GUZ.Core.Util;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace GUZ.Core.Player.Menu
 {
@@ -56,7 +55,8 @@ namespace GUZ.Core.Player.Menu
         public void PlayFunction()
         {
 #pragma warning disable CS4014 // It's intended, that this async call is not awaited.
-            GUZSceneManager.I.LoadWorld(Constants.selectedWorld, Constants.selectedWaypoint, true);
+            SaveGameManager.LoadNewGame();
+            GUZSceneManager.I.LoadWorld(Constants.selectedWorld, Constants.selectedWaypoint);
 #pragma warning restore CS4014
         }
 

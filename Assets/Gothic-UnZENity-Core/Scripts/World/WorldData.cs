@@ -12,12 +12,19 @@ namespace GUZ.Core.World
     /// </summary>
     public class WorldData
     {
+        public string WorldName;
+
         // We need to store it as we need the pointer to it for load+save of un-cached vobs.
-        public IWorld World;
+        public IWorld RawWorld;
         public List<IVirtualObject> Vobs;
-        public IWayNet WayNet;
-        
+
+        // Cached objects - For performance reasons we only allow them cached. Otherwise every loop and getter will load them again.
+        public CachedMesh Mesh;
+        public CachedBspTree BspTree;
+        public CachedWayNet WayNet;
+
         public List<SubMeshData> SubMeshes;
+
 
         public class SubMeshData
         {

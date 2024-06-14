@@ -32,9 +32,8 @@ namespace GUZ.Core.Creator
             GUZEvents.GeneralSceneLoaded.AddListener(WorldLoaded);
         }
 
-        public static async Task CreateAsync(string worldName)
+        public static async Task CreateAsync()
         {
-            LoadWorld(worldName);
             _worldGo = new GameObject("World");
 
             // Interactable Vobs (item, ladder, ...) have their own collider Components
@@ -48,15 +47,16 @@ namespace GUZ.Core.Creator
             // We need to start creating Vobs as we need to calculate world slicing based on amount of lights at a certain space afterwards.
             if (FeatureFlags.I.createVobs)
             {
-                await VobCreator.CreateAsync(_teleportGo, _nonTeleportGo, GameData.World, Constants.VObPerFrame);
+                await VobCreator.CreateAsync(_teleportGo, _nonTeleportGo, SaveGameManager.CurrentWorldData, Constants.VObPerFrame);
                 await MeshFactory.CreateVobTextureArray();
             }
 
             if (FeatureFlags.I.createWorldMesh)
             {
-                GameData.World.SubMeshes = await BuildBspTree(GameData.World.World.Mesh.Cache(), GameData.World.World.BspTree.Cache());
+                SaveGameManager.CurrentWorldData.SubMeshes =
+                    await BuildBspTree(SaveGameManager.CurrentWorldData.Mesh.Cache(), SaveGameManager.CurrentWorldData.BspTree);
 
-                await MeshFactory.CreateWorld(GameData.World, _teleportGo, Constants.MeshPerFrame);
+                await MeshFactory.CreateWorld(SaveGameManager.CurrentWorldData, _teleportGo, Constants.MeshPerFrame);
                 await MeshFactory.CreateWorldTextureArray();
             }
 
@@ -68,32 +68,10 @@ namespace GUZ.Core.Creator
                 BarrierManager.I.CreateBarrier();
             }
 
-            WaynetCreator.Create(_worldGo, GameData.World);
+            WaynetCreator.Create(_worldGo, SaveGameManager.CurrentWorldData);
 
             // Set the global variable to the result of the coroutine
             LoadingManager.I.SetProgress(LoadingManager.LoadingProgressType.NPC, 1f);
-        }
-
-        private static void LoadWorld(string worldName)
-        {
-            var zkWorld = new ZenKit.World(GameData.Vfs, worldName);
-            var zkMesh = zkWorld.Mesh.Cache();
-            var zkBspTree = zkWorld.BspTree.Cache();
-            var zkWayNet = zkWorld.WayNet.Cache();
-
-            if (zkWorld.RootObjects.IsEmpty())
-                throw new ArgumentException($"World >{worldName}< couldn't be found.");
-            if (zkMesh.Polygons.IsEmpty())
-                throw new ArgumentException($"No mesh in world >{worldName}< found.");
-
-            WorldData world = new()
-            {
-                World = zkWorld,
-                Vobs = zkWorld.RootObjects,
-                WayNet = (CachedWayNet)zkWayNet
-            };
-
-            GameData.World = world;
         }
 
         private static async Task<List<WorldData.SubMeshData>> BuildBspTree(IMesh zkMesh, IBspTree zkBspTree)
@@ -445,7 +423,7 @@ namespace GUZ.Core.Creator
         private static void WorldLoaded(GameObject playerGo)
         {
             // As we already added stored world mesh and waypoints in Unity GOs, we can safely remove them to free MBs.
-            GameData.World.SubMeshes = null;
+            SaveGameManager.CurrentWorldData.SubMeshes = null;
 
             var interactionManager = GUZSceneManager.I.interactionManager.GetComponent<XRInteractionManager>();
 

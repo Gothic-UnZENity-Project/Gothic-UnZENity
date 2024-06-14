@@ -46,8 +46,7 @@ namespace GUZ.Core.Player.Menu
                 var saveId = int.Parse(saveGameFolderName.Remove(0, "savegame".Length)) - 1;
 
                 // Load metadata
-                var save = new SaveGame(GameVersion.Gothic1);
-                save.Load(fullPath);
+                var save = SaveGameManager.GetSaveGame(saveId);
                 _saves[saveId] = save;
 
                 // Set metadata to slot
@@ -93,7 +92,8 @@ namespace GUZ.Core.Player.Menu
             }
 
 #pragma warning disable CS4014 // It's intended, that this async call is not awaited.
-            GUZSceneManager.I.LoadWorld(save.Metadata.World, Constants.selectedWaypoint, false);
+            SaveGameManager.LoadSavedGame(id, save);
+            GUZSceneManager.I.LoadWorld(save.Metadata.World, Constants.selectedWaypoint);
 #pragma warning restore CS4014
         }
     }

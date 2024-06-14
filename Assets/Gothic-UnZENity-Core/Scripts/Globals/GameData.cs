@@ -22,8 +22,6 @@ namespace GUZ.Core.Globals
         public static DaedalusVm PfxVm; // Particle FX
         public static DaedalusVm MusicVm;
 
-        public static WorldData World;
-
         // Lookup optimized WayNet data
         public static readonly Dictionary<string, WayNet_WayPoint> WayPoints = new();
         public static readonly Dictionary<string, FreePoint> FreePoints = new();
@@ -60,7 +58,6 @@ namespace GUZ.Core.Globals
 
         public static void Reset()
         {
-            World = null;
             WayPoints.Clear();
             FreePoints.Clear();
             VobsInteractable.Clear();
@@ -70,7 +67,6 @@ namespace GUZ.Core.Globals
         {
             // Needs to be reset as Unity won't clear static variables when closing game in EditorMode.
             Vfs = null;
-            World = null;
             GothicVm = null;
             SfxVm = null;
             MusicVm = null;

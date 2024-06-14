@@ -52,13 +52,14 @@ namespace GUZ.Core.Manager
                 }
                 else if (!FeatureFlags.I.useSaveSlot)
                 {
-                    await LoadWorld(Constants.selectedWorld, Constants.selectedWaypoint, true);
+                    SaveGameManager.LoadNewGame();
+                    await LoadWorld(Constants.selectedWorld, Constants.selectedWaypoint);
                 }
                 else
                 {
-                    var saveSlot = FeatureFlags.I.saveSlot;
-                    // FIXME - Provide savegame information as well!
-                    await LoadWorld(Constants.selectedWorld, Constants.selectedWaypoint, false);
+                    SaveGameManager.LoadSavedGame(FeatureFlags.I.saveSlot);
+
+                    await LoadWorld(Constants.selectedWorld, Constants.selectedWaypoint);
                 }
             }
             catch (Exception e)
@@ -68,7 +69,6 @@ namespace GUZ.Core.Manager
         }
 
         // Outsourced after async Task LoadStartupScenes() as async makes Debugging way harder
-        // (Breakpoints won't be caught during exceptions)
         private void Update()
         {
             if (!debugFreshlyDoneLoading)
@@ -86,14 +86,14 @@ namespace GUZ.Core.Manager
             await LoadNewWorldScene(Constants.SceneMainMenu);
         }
 
-        public async Task LoadWorld(string worldName, string startVob, bool newGame = false)
+        public async Task LoadWorld(string worldName, string startVob)
         {
             // Our scenes are named *.zen - We therefore need to ensure the pattern of world name matches.
-            worldName += worldName.EndsWithIgnoreCase(".zen") ? "" : ".zen";
+            worldName = worldName.ToLower();
+            worldName += worldName.EndsWith(".zen") ? "" : ".zen";
 
             startVobAfterLoading = startVob;
-            worldName = worldName.ToLower();
-            
+
             if (worldName == newWorldName)
             {
                 SetSpawnPoint(SceneManager.GetSceneByName(newWorldName));
@@ -102,13 +102,15 @@ namespace GUZ.Core.Manager
             
             newWorldName = worldName;
 
+            SaveGameManager.ChangeWorld(worldName);
+
             var watch = Stopwatch.StartNew();
 
             GameData.Reset();
             
-            await ShowLoadingScene(worldName, newGame);
+            await ShowLoadingScene(worldName);
             var newWorldScene = await LoadNewWorldScene(newWorldName);
-            await WorldCreator.CreateAsync(newWorldName);
+            await WorldCreator.CreateAsync();
             SetSpawnPoint(newWorldScene);
 
             HideLoadingScene();
@@ -138,7 +140,7 @@ namespace GUZ.Core.Manager
         /// Create loading scene and wait for a few milliseconds to go on, ensuring loading bar is selectable.
         /// Async: execute in sync, but whole process can be paused for x amount of frames.
         /// </summary>
-        private async Task ShowLoadingScene(string worldName = null, bool newGame = false)
+        private async Task ShowLoadingScene(string worldName = null)
         {
             TextureManager.I.LoadLoadingDefaultTextures();
 
@@ -152,7 +154,7 @@ namespace GUZ.Core.Manager
                 generalSceneLoaded = false;
             }
 
-            SetLoadingTextureForWorld(worldName, newGame);
+            SetLoadingTextureForWorld(worldName);
 
             SceneManager.LoadScene(Constants.SceneLoading, new LoadSceneParameters(LoadSceneMode.Additive));
 
@@ -161,12 +163,12 @@ namespace GUZ.Core.Manager
             await Task.Delay(ensureLoadingBarDelayMilliseconds);
         }
 
-        private void SetLoadingTextureForWorld(string worldName, bool newGame = false)
+        private void SetLoadingTextureForWorld(string worldName)
         {
             if (worldName == null)
                 return;
 
-            string textureString = newGame ? "LOADING.TGA" : $"LOADING_{worldName.Split('.')[0].ToUpper()}.TGA";
+            string textureString = SaveGameManager.IsNewGame ? "LOADING.TGA" : $"LOADING_{worldName.Split('.')[0].ToUpper()}.TGA";
             TextureManager.I.SetTexture(textureString, TextureManager.I.gothicLoadingMenuMaterial);
         }
 
