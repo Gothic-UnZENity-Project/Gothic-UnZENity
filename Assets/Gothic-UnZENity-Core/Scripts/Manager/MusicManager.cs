@@ -8,6 +8,7 @@ using GUZ.Core.Debugging;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager.Settings;
 using GUZ.Core.Vob;
+using GVR.Core;
 using UnityEngine;
 using ZenKit;
 using ZenKit.Daedalus;
@@ -32,7 +33,6 @@ namespace GUZ.Core.Manager
         }
 
         private static Performance _dxPerformance;
-        private static Loader _dxLoader;
         private static AudioSource _audioSourceComp;
         private static AudioReverbFilter _reverbFilterComp;
 
@@ -57,7 +57,6 @@ namespace GUZ.Core.Manager
             _dxPerformance = Performance.Create(FREQUENCY_RATE);
 
             InitializeUnity();
-            InitializeZenKit();
             InitializeDxMusic();
 
             GvrEvents.MainMenuSceneLoaded.AddListener(OnMainMenuLoaded);
@@ -129,29 +128,9 @@ namespace GUZ.Core.Manager
             _musicZones.Remove(newMusicZoneGo);
         }
 
-        private static void InitializeZenKit()
-        {
-            // Load all music files into vfs.
-            GameData.Vfs.Mount(Path.Combine(SettingsManager.GameSettings.GothicIPath, "_work"), "/", VfsOverwriteBehavior.All);
-        }
-
         private static void InitializeDxMusic()
         {
             Logger.Set(FeatureFlags.I.dxMusicLogLevel, LoggerCallback);
-
-            _dxLoader = Loader.Create(LoaderOptions.Download);
-            _dxLoader.AddResolver(name =>
-            {
-                try
-                {
-                    return GameData.Vfs.Find(name).Buffer.Bytes;
-                }
-                catch (Exception)
-                {
-                    // No audio file found. Return null for now as it seems sufficient.
-                    return null;
-                }
-            });
         }
 
         private static void LoggerCallback(LogLevel level, string message)
@@ -218,7 +197,7 @@ namespace GUZ.Core.Manager
             if (_currentTheme != null && theme.File == _currentTheme.File)
                 return;
 
-            var segment = _dxLoader.GetSegment(theme.File);
+            var segment = ResourceLoader.TryGetSegment(theme.File);
 
             var timing = ToTiming(theme.TransSubType);
             var embellishment = ToEmbellishment(theme.TransType);

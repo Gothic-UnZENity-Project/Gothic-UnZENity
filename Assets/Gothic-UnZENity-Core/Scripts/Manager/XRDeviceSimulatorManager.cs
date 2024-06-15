@@ -3,6 +3,7 @@ using GUZ.Core.Caches;
 using GUZ.Core.Debugging;
 using GUZ.Core.Globals;
 using GUZ.Core.Util;
+using GVR.Core;
 using UnityEngine.SceneManagement;
 
 namespace GUZ.Core.Manager
@@ -20,7 +21,7 @@ namespace GUZ.Core.Manager
             if (!FeatureFlags.I.useXRDeviceSimulator)
                 return;
 
-            var simulator = PrefabCache.TryGetObject(PrefabCache.PrefabType.XRDeviceSimulator);
+            var simulator = ResourceLoader.TryGetPrefabObject(PrefabType.XRDeviceSimulator);
             SceneManager.GetActiveScene().GetRootGameObjects().Append(simulator);
         }
         

@@ -5,6 +5,7 @@ using GUZ.Core.Creator.Sounds;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
 using GUZ.Core.Extensions;
+using GVR.Core;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -22,7 +23,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
 
         public override void Start()
         {
-            var soundData = AssetCache.TryGetSound(outputName);
+            var soundData = ResourceLoader.TryGetSound(outputName);
             var audioClip = SoundCreator.ToAudioClip(soundData);
             audioPlaySeconds = audioClip.length;
 
@@ -59,7 +60,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             {
                 // FIXME - We might need to check overlayMds and baseMds
                 // FIXME - We might need to save amount of gestures based on mds names (if they differ for e.g. humans and orcs)
-                var mds = AssetCache.TryGetMds(Props.baseMdsName);
+                var mds = ResourceLoader.TryGetModelScript(Props.baseMdsName);
 
                 GameData.Dialogs.GestureCount = mds.Animations
                     .Count(anim => anim.Name.StartsWithIgnoreCase("T_DIALOGGESTURE_"));

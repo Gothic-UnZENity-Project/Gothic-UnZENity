@@ -7,6 +7,7 @@ using GUZ.Core.World;
 using GUZ.Core.Extensions;
 using GUZ.Core.Manager;
 using GUZ.Core.Vob.WayNet;
+using GVR.Core;
 using UnityEngine;
 using ZenKit;
 using Material = UnityEngine.Material;
@@ -104,7 +105,7 @@ namespace GUZ.Core.Creator
 
             foreach (var waypoint in world.WayNet.Points)
             {
-                var wpObject = PrefabCache.TryGetObject(PrefabCache.PrefabType.WayPoint);
+                var wpObject = ResourceLoader.TryGetPrefabObject(PrefabType.WayPoint);
 
                 // We remove the Renderer only if not wanted.
                 // TODO - Can be outsourced to a different Prefab-variant without Renderer for a fractal of additional performance. ;-)

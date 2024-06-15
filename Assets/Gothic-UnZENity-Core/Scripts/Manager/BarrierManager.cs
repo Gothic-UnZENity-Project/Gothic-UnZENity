@@ -4,6 +4,7 @@ using GUZ.Core.Debugging;
 using GUZ.Core.Util;
 using GUZ.Core.Creator;
 using GUZ.Core.Extensions;
+using GVR.Core;
 using UnityEngine;
 
 namespace GUZ.Core.Manager
@@ -45,7 +46,7 @@ namespace GUZ.Core.Manager
 
         public void CreateBarrier()
         {
-            var barrierMesh = AssetCache.TryGetMsh("MAGICFRONTIER_OUT.MSH");
+            var barrierMesh = ResourceLoader.TryGetMesh("MAGICFRONTIER_OUT.MSH");
             barrier = MeshFactory.CreateBarrier("Barrier", barrierMesh)
                 .GetAllDirectChildren()[0];
 

@@ -5,6 +5,7 @@ using GUZ.Core.Globals;
 using GUZ.Core.Properties;
 using GUZ.Core.Vm;
 using GUZ.Core.Extensions;
+using GVR.Core;
 using TMPro;
 using UnityEngine;
 using ZenKit.Daedalus;
@@ -34,7 +35,7 @@ namespace GUZ.Lab.Handler
 
         private void BootstrapBloodwyn()
         {
-            var newNpc = PrefabCache.TryGetObject(PrefabCache.PrefabType.Npc);
+            var newNpc = ResourceLoader.TryGetPrefabObject(PrefabType.Npc);
             newNpc.SetParent(bloodwynSlotGo);
 
             var npcSymbol = GameData.GothicVm.GetSymbolByName(bloodwynInstanceId);

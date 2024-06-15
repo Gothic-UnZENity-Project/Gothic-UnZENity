@@ -50,7 +50,6 @@ namespace GUZ.Lab
             AssetCache.Dispose();
             TextureCache.Dispose();
             LookupCache.Dispose();
-            PrefabCache.Dispose();
             MorphMeshCache.Dispose();
         }
     }

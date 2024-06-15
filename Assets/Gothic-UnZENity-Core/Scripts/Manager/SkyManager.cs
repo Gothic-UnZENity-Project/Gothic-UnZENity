@@ -10,6 +10,7 @@ using GUZ.Core.Manager.Settings;
 using GUZ.Core.Util;
 using GUZ.Core.World;
 using GUZ.Core.Extensions;
+using GVR.Core;
 using UnityEngine;
 using UnityEngine.Rendering;
 using Random = UnityEngine.Random;
@@ -273,7 +274,7 @@ namespace GUZ.Core.Manager
             rainParticleSystem.Stop();
 
             rainParticleSound = rainParticlesGameObject.GetComponentInChildren<AudioSource>();
-            rainParticleSound.clip = SoundCreator.ToAudioClip(AssetCache.TryGetSound("RAIN_01.WAV"));
+            rainParticleSound.clip = SoundCreator.ToAudioClip(ResourceLoader.TryGetSound("RAIN_01.WAV"));
             rainParticleSound.volume = 0;
             rainParticleSound.Stop();
         }

@@ -10,6 +10,7 @@ using GUZ.Core.Npc.Actions.AnimationActions;
 using GUZ.Core.Properties;
 using GUZ.Core.Vm;
 using GUZ.Lab.AnimationActionMocks;
+using GVR.Core;
 using TMPro;
 using UnityEngine;
 using ZenKit.Daedalus;
@@ -95,7 +96,7 @@ namespace GUZ.Lab.Handler
             var npcInstanceName = npcDropdown.options[npcDropdown.value].text;
             var npcData = npcs[npcInstanceName];
 
-            var newNpc = PrefabCache.TryGetObject(PrefabCache.PrefabType.Npc);
+            var newNpc = ResourceLoader.TryGetPrefabObject(PrefabType.Npc);
             newNpc.SetParent(npcSlotGo);
             newNpc.name = npcData.Name;
 

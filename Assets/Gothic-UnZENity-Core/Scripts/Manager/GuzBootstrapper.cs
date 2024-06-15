@@ -7,6 +7,7 @@ using GUZ.Core.Globals;
 using GUZ.Core.Manager.Settings;
 using GUZ.Core.Util;
 using GUZ.Core.Vm;
+using GVR.Core;
 using UnityEngine;
 using ZenKit;
 using ZenKit.Daedalus;
@@ -34,7 +35,6 @@ namespace GUZ.Core.Manager
             AssetCache.Dispose();
             TextureCache.Dispose();
             LookupCache.Dispose();
-            PrefabCache.Dispose();
             MorphMeshCache.Dispose();
         }
 
@@ -65,6 +65,8 @@ namespace GUZ.Core.Manager
         public static void BootGothicUnZENity(string g1Dir)
         {
             var watch = Stopwatch.StartNew();
+            
+            ResourceLoader.Init(g1Dir);
             
             MountVfs(g1Dir);
             SetLanguage();
@@ -146,8 +148,7 @@ namespace GUZ.Core.Manager
         
         private static void LoadGothicVm(string g1Dir)
         {
-            var fullPath = Path.GetFullPath(Path.Join(g1Dir, "/_work/DATA/scripts/_compiled/GOTHIC.DAT"));
-            GameData.GothicVm = new DaedalusVm(fullPath);
+            GameData.GothicVm = ResourceLoader.TryGetDaedalusVm("GOTHIC");
             
             NpcHelper.LoadHero();
 
@@ -168,20 +169,18 @@ namespace GUZ.Core.Manager
 
         private static void LoadSfxVm(string g1Dir)
         {
-            var fullPath = Path.GetFullPath(Path.Join(g1Dir, "/_work/DATA/scripts/_compiled/SFX.DAT"));
-            GameData.SfxVm = new DaedalusVm(fullPath);
+            GameData.SfxVm = ResourceLoader.TryGetDaedalusVm("SFX");
         }
 
         private static void LoadPfxVm(string g1Dir)
         {
-            var fullPath = Path.GetFullPath(Path.Join(g1Dir, "/_work/DATA/scripts/_compiled/PARTICLEFX.DAT"));
-            GameData.PfxVm = new DaedalusVm(fullPath);
+            
+            GameData.PfxVm = ResourceLoader.TryGetDaedalusVm("PARTICLEFX");
         }
 
         private static void LoadMusicVm(string g1Dir)
         {
-            var fullPath = Path.GetFullPath(Path.Join(g1Dir, "/_work/DATA/scripts/_compiled/MUSIC.DAT"));
-            GameData.MusicVm = new DaedalusVm(fullPath);
+            GameData.MusicVm = ResourceLoader.TryGetDaedalusVm("MUSIC");
         }
 
         private static void LoadMusic()

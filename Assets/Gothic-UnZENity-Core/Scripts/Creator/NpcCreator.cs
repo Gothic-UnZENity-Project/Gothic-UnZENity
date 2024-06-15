@@ -9,6 +9,7 @@ using GUZ.Core.Properties;
 using GUZ.Core.Vm;
 using GUZ.Core.Vob.WayNet;
 using GUZ.Core.Extensions;
+using GVR.Core;
 using UnityEngine;
 using ZenKit;
 using ZenKit.Daedalus;
@@ -56,7 +57,7 @@ namespace GUZ.Core.Creator
         /// </summary>
         public static void ExtWldInsertNpc(int npcInstance, string spawnPoint)
         {
-            var newNpc = PrefabCache.TryGetObject(PrefabCache.PrefabType.Npc);
+            var newNpc = ResourceLoader.TryGetPrefabObject(PrefabType.Npc);
             var props = newNpc.GetComponent<NpcProperties>();
             var npcSymbol = vm.GetSymbolByIndex(npcInstance);
             

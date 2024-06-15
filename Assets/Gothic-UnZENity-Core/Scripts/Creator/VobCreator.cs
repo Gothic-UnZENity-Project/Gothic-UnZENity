@@ -17,6 +17,7 @@ using GUZ.Core.Properties;
 using GUZ.Core.Vob;
 using GUZ.Core.Vob.WayNet;
 using GUZ.Core.World;
+using GVR.Core;
 using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -375,42 +376,42 @@ namespace GUZ.Core.Creator
             switch (vob.Type)
             {
                 case VirtualObjectType.oCItem:
-                    go = PrefabCache.TryGetObject(PrefabCache.PrefabType.VobItem);
+                    go = ResourceLoader.TryGetPrefabObject(PrefabType.VobItem);
                     break;
                 case VirtualObjectType.zCVobSpot:
                 case VirtualObjectType.zCVobStartpoint:
-                    go = PrefabCache.TryGetObject(PrefabCache.PrefabType.VobSpot);
+                    go = ResourceLoader.TryGetPrefabObject(PrefabType.VobSpot);
                     break;
                 case VirtualObjectType.zCVobSound:
-                    go = PrefabCache.TryGetObject(PrefabCache.PrefabType.VobSound);
+                    go = ResourceLoader.TryGetPrefabObject(PrefabType.VobSound);
                     break;
                 case VirtualObjectType.zCVobSoundDaytime:
-                    go = PrefabCache.TryGetObject(PrefabCache.PrefabType.VobSoundDaytime);
+                    go = ResourceLoader.TryGetPrefabObject(PrefabType.VobSoundDaytime);
                     break;
                 case VirtualObjectType.oCZoneMusic:
-                    go = PrefabCache.TryGetObject(PrefabCache.PrefabType.VobMusic);
+                    go = ResourceLoader.TryGetPrefabObject(PrefabType.VobMusic);
                     break;
                 case VirtualObjectType.oCMOB:
-                    go = PrefabCache.TryGetObject(PrefabCache.PrefabType.Vob);
+                    go = ResourceLoader.TryGetPrefabObject(PrefabType.Vob);
                     break;
                 case VirtualObjectType.oCMobFire:
                 case VirtualObjectType.oCMobInter:
                 case VirtualObjectType.oCMobBed:
                 case VirtualObjectType.oCMobWheel:
                 case VirtualObjectType.oCMobSwitch:
-                    go = PrefabCache.TryGetObject(PrefabCache.PrefabType.VobInteractable);
+                    go = ResourceLoader.TryGetPrefabObject(PrefabType.VobInteractable);
                     break;
                 case VirtualObjectType.oCMobDoor:
-                    go = PrefabCache.TryGetObject(PrefabCache.PrefabType.VobDoor);
+                    go = ResourceLoader.TryGetPrefabObject(PrefabType.VobDoor);
                     break;
                 case VirtualObjectType.oCMobContainer:
-                    go = PrefabCache.TryGetObject(PrefabCache.PrefabType.VobContainer);
+                    go = ResourceLoader.TryGetPrefabObject(PrefabType.VobContainer);
                     break;
                 case VirtualObjectType.oCMobLadder:
-                    go = PrefabCache.TryGetObject(PrefabCache.PrefabType.VobLadder);
+                    go = ResourceLoader.TryGetPrefabObject(PrefabType.VobLadder);
                     break;
                 case VirtualObjectType.zCVobAnimate:
-                    go = PrefabCache.TryGetObject(PrefabCache.PrefabType.VobAnimate);
+                    go = ResourceLoader.TryGetPrefabObject(PrefabType.VobAnimate);
                     break;
                 default:
                     return new GameObject(name);
@@ -637,7 +638,7 @@ namespace GUZ.Core.Creator
             if (!FeatureFlags.I.enableSounds)
                 return null;
 
-            var go = PrefabCache.TryGetObject(PrefabCache.PrefabType.VobSoundDaytime);
+            var go = ResourceLoader.TryGetPrefabObject(PrefabType.VobSoundDaytime);
             go.name = $"{vob.SoundName}-{vob.SoundNameDaytime}";
             go.SetActive(false); // We don't want to have sound when we boot the game async for 30 seconds in non-spatial blend mode.
             go.SetParent(parent ?? parentGosNonTeleport[vob.Type], true, true);
@@ -670,7 +671,7 @@ namespace GUZ.Core.Creator
 
         private static GameObject CreateZoneMusic(ZoneMusic vob, GameObject parent = null)
         {
-            var go = PrefabCache.TryGetObject(PrefabCache.PrefabType.VobMusic);
+            var go = ResourceLoader.TryGetPrefabObject(PrefabType.VobMusic);
             go.SetParent(parent ?? parentGosNonTeleport[vob.Type], true, true);
             go.name = vob.Name;
 
@@ -791,14 +792,14 @@ namespace GUZ.Core.Creator
 
         private static GameObject CreateItemMesh(Item vob, ItemInstance item, GameObject go, GameObject parent = null)
         {
-            var mrm = AssetCache.TryGetMrm(item.Visual);
+            var mrm = ResourceLoader.TryGetMultiResolutionMesh(item.Visual);
             return MeshFactory.CreateVob(item.Visual, mrm, vob.Position.ToUnityVector(), vob.Rotation.ToUnityQuaternion(),
                 true, parent ?? parentGosNonTeleport[vob.Type], go, useTextureArray: false);
         }
 
         private static GameObject CreateItemMesh(ItemInstance item, GameObject parentGo, UnityEngine.Vector3 position = default)
         {
-            var mrm = AssetCache.TryGetMrm(item.Visual);
+            var mrm = ResourceLoader.TryGetMultiResolutionMesh(item.Visual);
             return MeshFactory.CreateVob(item.Visual, mrm, position, default, false, parent: parentGo, useTextureArray: false);
         }
 
@@ -819,7 +820,7 @@ namespace GUZ.Core.Creator
             if (!FeatureFlags.I.enableVobParticles)
                 return null;
 
-            var pfxGo = PrefabCache.TryGetObject(PrefabCache.PrefabType.VobPfx);
+            var pfxGo = ResourceLoader.TryGetPrefabObject(PrefabType.VobPfx);
             pfxGo.name = vob.Visual!.Name;
 
             // if parent exists then set rotation before parent (for correct rotation vob trees)
@@ -1038,7 +1039,7 @@ namespace GUZ.Core.Creator
             var go = GetPrefab(vob);
 
             // MDL
-            var mdl = AssetCache.TryGetMdl(meshName);
+            var mdl = ResourceLoader.TryGetModel(meshName);
             if (mdl != null)
             {
                 var ret = MeshFactory.CreateVob(meshName, mdl, vob.Position.ToUnityVector(), vob.Rotation.ToUnityQuaternion(), parent ?? parentGo, go);
@@ -1051,8 +1052,8 @@ namespace GUZ.Core.Creator
             }
 
             // MDH+MDM (without MDL as wrapper)
-            var mdh = AssetCache.TryGetMdh(meshName);
-            var mdm = AssetCache.TryGetMdm(meshName);
+            var mdh = ResourceLoader.TryGetModelHierarchy(meshName);
+            var mdm = ResourceLoader.TryGetModelMesh(meshName);
             if (mdh != null && mdm != null)
             {
                 var ret = MeshFactory.CreateVob(meshName, mdm, mdh, vob.Position.ToUnityVector(),
@@ -1066,7 +1067,7 @@ namespace GUZ.Core.Creator
             }
             
             // MMB
-            var mmb = AssetCache.TryGetMmb(meshName);
+            var mmb = ResourceLoader.TryGetMorphMesh(meshName);
             if (mmb != null)
             {
                 var ret = MeshFactory.CreateVob(meshName, mmb, vob.Position.ToUnityVector(),
@@ -1082,7 +1083,7 @@ namespace GUZ.Core.Creator
             }
 
             // MRM
-            var mrm = AssetCache.TryGetMrm(meshName);
+            var mrm = ResourceLoader.TryGetMultiResolutionMesh(meshName);
             if (mrm != null)
             {
                 // If the object is a dynamic one, it will collide.
