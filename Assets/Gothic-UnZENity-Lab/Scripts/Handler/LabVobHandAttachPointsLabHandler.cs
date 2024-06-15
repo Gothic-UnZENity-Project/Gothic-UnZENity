@@ -55,7 +55,7 @@ namespace GUZ.Lab.Handler
             var itemNames = GameData.GothicVm.GetInstanceSymbols("C_Item").Select(i => i.Name).ToList();
 
             items = itemNames
-                .ToDictionary(itemName => itemName, AssetCache.TryGetItemData);
+                .ToDictionary(itemName => itemName, VmInstanceManager.TryGetItemData);
 
             vobCategoryDropdown.options = items
                 .Select(item => ((VmGothicEnums.ItemFlags)item.Value.MainFlag).ToString())
@@ -102,7 +102,7 @@ namespace GUZ.Lab.Handler
         private GameObject CreateItem(string itemName)
         {
             var itemPrefab = ResourceLoader.TryGetPrefabObject(PrefabType.VobItem);
-            var item = AssetCache.TryGetItemData(itemName);
+            var item = VmInstanceManager.TryGetItemData(itemName);
             var mrm = ResourceLoader.TryGetMultiResolutionMesh(item.Visual);
             var itemGo = MeshFactory.CreateVob(item.Visual, mrm, default, default, true, rootGo: itemPrefab, parent: itemSpawnSlot);
 

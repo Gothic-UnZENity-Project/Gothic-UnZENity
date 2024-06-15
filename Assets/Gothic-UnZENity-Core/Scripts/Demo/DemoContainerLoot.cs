@@ -5,6 +5,7 @@ using GUZ.Core.Creator.Meshes.V2;
 using GUZ.Core.Creator;
 using GUZ.Core.Creator.Meshes;
 using GUZ.Core.Extensions;
+using GUZ.Core.Vm;
 using GVR.Core;
 using UnityEngine;
 
@@ -68,7 +69,7 @@ namespace GUZ.Core.Demo
 			
 			foreach (var item in content)
 			{
-				var itemInstance = AssetCache.TryGetItemData(item.name);
+				var itemInstance = VmInstanceManager.TryGetItemData(item.name);
 
 				var mrm = ResourceLoader.TryGetMultiResolutionMesh(itemInstance.Visual);
 				var itemObj = MeshFactory.CreateVob(item.name, mrm, default, default, true, itemsObj);

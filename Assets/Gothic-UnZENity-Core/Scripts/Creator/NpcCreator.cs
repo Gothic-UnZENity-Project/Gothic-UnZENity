@@ -192,8 +192,8 @@ namespace GUZ.Core.Creator
 
             if (data.Armor >= 0)
             {
-                var armorData = AssetCache.TryGetItemData(data.Armor);
-                props.EquippedItems.Add(AssetCache.TryGetItemData(data.Armor));
+                var armorData = VmInstanceManager.TryGetItemData(data.Armor);
+                props.EquippedItems.Add(VmInstanceManager.TryGetItemData(data.Armor));
                 props.mdmName = armorData.VisualChange;
             }
             else
@@ -273,7 +273,7 @@ namespace GUZ.Core.Creator
         public static void ExtEquipItem(NpcInstance npc, int itemId)
         {
             var props = GetProperties(npc);
-            var itemData = AssetCache.TryGetItemData(itemId);
+            var itemData = VmInstanceManager.TryGetItemData(itemId);
 
             props.EquippedItems.Add(itemData);
         }

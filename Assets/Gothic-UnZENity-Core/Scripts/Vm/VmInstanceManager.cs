@@ -6,9 +6,9 @@ using GUZ.Core.Globals;
 using JetBrains.Annotations;
 using ZenKit.Daedalus;
 
-namespace GUZ.Core.Caches
+namespace GUZ.Core.Vm
 {
-    public static class AssetCache
+    public static class VmInstanceManager
     {
         private static readonly Dictionary<string, ItemInstance> ItemDataCache = new();
         private static readonly Dictionary<int, SvmInstance> SvmDataCache = new();

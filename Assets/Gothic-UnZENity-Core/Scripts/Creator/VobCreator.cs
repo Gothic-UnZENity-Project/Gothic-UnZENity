@@ -14,6 +14,7 @@ using GUZ.Core.Manager;
 using GUZ.Core.Manager.Culling;
 using GUZ.Core.Player.Interactive;
 using GUZ.Core.Properties;
+using GUZ.Core.Vm;
 using GUZ.Core.Vob;
 using GUZ.Core.Vob.WayNet;
 using GUZ.Core.World;
@@ -484,14 +485,14 @@ namespace GUZ.Core.Creator
         /// </summary>
         public static void CreateItem(int itemId, GameObject go)
         {
-            var item = AssetCache.TryGetItemData(itemId);
+            var item = VmInstanceManager.TryGetItemData(itemId);
 
             CreateItemMesh(item, go);
         }
 
         public static void CreateItem(int itemId, string spawnpoint, GameObject go)
         {
-            var item = AssetCache.TryGetItemData(itemId);
+            var item = VmInstanceManager.TryGetItemData(itemId);
 
             var position = WayNetHelper.GetWayNetPoint(spawnpoint).Position;
 
@@ -503,7 +504,7 @@ namespace GUZ.Core.Creator
             if (itemName == "")
                 return;
 
-            var item = AssetCache.TryGetItemData(itemName);
+            var item = VmInstanceManager.TryGetItemData(itemName);
 
             CreateItemMesh(item, go);
         }
@@ -520,7 +521,7 @@ namespace GUZ.Core.Creator
             else
                 throw new Exception("Vob Item -> no usable name found.");
 
-            var item = AssetCache.TryGetItemData(itemName);
+            var item = VmInstanceManager.TryGetItemData(itemName);
 
             if (item == null)
                 return null;
@@ -835,7 +836,7 @@ namespace GUZ.Core.Creator
                 SetPosAndRot(pfxGo, vob.Position, vob.Rotation);
             }
 
-            var pfx = AssetCache.TryGetPfxData(vob.Visual.Name);
+            var pfx = VmInstanceManager.TryGetPfxData(vob.Visual.Name);
             var particleSystem = pfxGo.GetComponent<ParticleSystem>();
 
             pfxGo.GetComponent<VobPfxProperties>().pfxData = pfx;

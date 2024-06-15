@@ -32,7 +32,7 @@ namespace GUZ.Core.Manager
         private void OnApplicationQuit()
         {
             GameData.Dispose();
-            AssetCache.Dispose();
+            VmInstanceManager.Dispose();
             TextureCache.Dispose();
             LookupCache.Dispose();
             MorphMeshCache.Dispose();

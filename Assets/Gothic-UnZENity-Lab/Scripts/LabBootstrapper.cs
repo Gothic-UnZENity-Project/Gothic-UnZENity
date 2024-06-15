@@ -2,6 +2,7 @@ using GUZ.Core.Caches;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
 using GUZ.Core.Manager.Settings;
+using GUZ.Core.Vm;
 using GUZ.Lab.Handler;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -47,7 +48,7 @@ namespace GUZ.Lab
         private void OnDestroy()
         {
             GameData.Dispose();
-            AssetCache.Dispose();
+            VmInstanceManager.Dispose();
             TextureCache.Dispose();
             LookupCache.Dispose();
             MorphMeshCache.Dispose();

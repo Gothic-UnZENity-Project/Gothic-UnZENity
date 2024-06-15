@@ -129,7 +129,7 @@ namespace GUZ.Lab.Handler
             if (npcData.sword != null)
             {
                 var swordIndex = GameData.GothicVm.GetSymbolByName(npcData.sword)!.Index;
-                var sword = AssetCache.TryGetItemData(swordIndex);
+                var sword = VmInstanceManager.TryGetItemData(swordIndex);
 
                 MeshFactory.CreateNpcWeapon(newNpc, sword, (VmGothicEnums.ItemFlags)sword.MainFlag, (VmGothicEnums.ItemFlags)sword.Flags);
             }
