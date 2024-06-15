@@ -26,7 +26,7 @@ namespace GUZ.Core.Globals
         public static readonly Dictionary<string, WayPoint> FreePoints = new();
 
         // Reorganized waypoints from world data.
-        public static Dictionary<string, DijkstraWaypoint> DijkstraWaypoints = new();
+        public static Dictionary<string, DijkstraWayPoint> DijkstraWaypoints = new();
         public static readonly List<VobProperties> VobsInteractable = new();
 
         public static class Dialogs

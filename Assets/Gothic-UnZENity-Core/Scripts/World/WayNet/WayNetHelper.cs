@@ -64,14 +64,14 @@ namespace GUZ.Core.World.WayNet
         }
 
 
-        public static DijkstraWaypoint[] FindFastestPath(string startWaypoint, string endWaypoint)
+        public static DijkstraWayPoint[] FindFastestPath(string startWaypoint, string endWaypoint)
         {
             // Get the start and end waypoints from the DijkstraWaypoints dictionary
             var startDijkstraWaypoint = GameData.DijkstraWaypoints[startWaypoint];
             var endDijkstraWaypoint = GameData.DijkstraWaypoints[endWaypoint];
 
             // Initialize the previousNodes dictionary to keep track of the path
-            var previousNodes = new Dictionary<string, DijkstraWaypoint>();
+            var previousNodes = new Dictionary<string, DijkstraWayPoint>();
             // Initialize the unvisited priority queue to keep track of waypoints to be visited
             var unvisited = new PriorityQueue();
 
@@ -136,7 +136,7 @@ namespace GUZ.Core.World.WayNet
             }
 
             // Construct the shortest path
-            var path = new List<DijkstraWaypoint>();
+            var path = new List<DijkstraWayPoint>();
             var waypoint = endDijkstraWaypoint;
             while (waypoint != null)
             {
@@ -152,15 +152,15 @@ namespace GUZ.Core.World.WayNet
 
         private class PriorityQueue
         {
-            private List<KeyValuePair<DijkstraWaypoint, double>> data = new();
+            private List<KeyValuePair<DijkstraWayPoint, double>> data = new();
 
-            public bool Contains(DijkstraWaypoint item)
+            public bool Contains(DijkstraWayPoint item)
             {
                 // Check if the queue contains the item by comparing the names of the waypoints
                 return data.Select(x => x.Key.Name == item.Name).Count() > 0;
             }
 
-            public void UpdatePriority(DijkstraWaypoint item, double priority)
+            public void UpdatePriority(DijkstraWayPoint item, double priority)
             {
                 // Find the index of the item
                 var index = data.FindIndex(pair => pair.Key.Name == item.Name);
@@ -173,7 +173,7 @@ namespace GUZ.Core.World.WayNet
                 // Get the old priority of the item
                 double oldPriority = data[index].Value;
                 // Update the priority of the item in the queue
-                data[index] = new KeyValuePair<DijkstraWaypoint, double>(item, priority);
+                data[index] = new KeyValuePair<DijkstraWayPoint, double>(item, priority);
 
                 // If the new priority is less than the old priority, sift up
                 if (priority < oldPriority)
@@ -234,9 +234,9 @@ namespace GUZ.Core.World.WayNet
                 (data[index1], data[index2]) = (data[index2], data[index1]);
             }
 
-            public void Enqueue(DijkstraWaypoint waypoint, double priority)
+            public void Enqueue(DijkstraWayPoint waypoint, double priority)
             {
-                data.Add(new KeyValuePair<DijkstraWaypoint, double>(waypoint, priority));
+                data.Add(new KeyValuePair<DijkstraWayPoint, double>(waypoint, priority));
                 var currentIndex = data.Count - 1;
 
                 while (currentIndex > 0)
@@ -254,7 +254,7 @@ namespace GUZ.Core.World.WayNet
                 }
             }
 
-            public DijkstraWaypoint Dequeue()
+            public DijkstraWayPoint Dequeue()
             {
                 var lastIndex = data.Count - 1;
                 var frontItem = data[0].Key;
@@ -287,7 +287,7 @@ namespace GUZ.Core.World.WayNet
 
             public int count => data.Count;
 
-            public void Remove(DijkstraWaypoint waypoint)
+            public void Remove(DijkstraWayPoint waypoint)
             {
                 var index = data.FindIndex(pair => pair.Key.Name == waypoint.Name);
                 if (index == -1)

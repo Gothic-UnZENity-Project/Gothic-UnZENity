@@ -10,11 +10,11 @@ using Material = UnityEngine.Material;
 
 namespace GUZ.Core.World.WayNet.Creator
 {
-    public static class WaynetCreator
+    public static class WayNetCreator
     {
         public static void Create(GameObject root, WorldData world)
         {
-            var waynetObj = new GameObject(string.Format("Waynet"));
+            var waynetObj = new GameObject("Waynet");
             waynetObj.SetParent(root);
 
 
@@ -48,7 +48,7 @@ namespace GUZ.Core.World.WayNet.Creator
 
         private static void CreateDijkstraWaypointEntries(IWayNet wayNet)
         {
-            Dictionary<string, DijkstraWaypoint> dijkstraWaypoints = new();
+            Dictionary<string, DijkstraWayPoint> dijkstraWaypoints = new();
             var wayEdges = wayNet.Edges;
             var wayPoints = wayNet.Points;
 
@@ -61,7 +61,7 @@ namespace GUZ.Core.World.WayNet.Creator
                     new { a = wayPoints[edge.B], b = wayPoints[edge.A] }
                 })
                 .GroupBy(x => x.a.Name) // Group the entries by the name of the source waypoint.
-                .ToDictionary(g => g.Key, g => new DijkstraWaypoint(g.Key) // Transform each group into a DijkstraWaypoint.
+                .ToDictionary(g => g.Key, g => new DijkstraWayPoint(g.Key) // Transform each group into a DijkstraWaypoint.
                 {
                     // The neighbors of the DijkstraWaypoint are the names of the destination waypoints in the group.
                     Neighbors = g.Select(x => x.b.Name).ToList()

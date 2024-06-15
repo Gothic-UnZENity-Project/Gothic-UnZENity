@@ -12,7 +12,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
     {
         private string destination => Action.String0;
 
-        private Stack<DijkstraWaypoint> route;
+        private Stack<DijkstraWayPoint> route;
             
         public GoToWp(AnimationAction action, GameObject npcGo) : base(action, npcGo)
         { }
@@ -34,7 +34,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
                 return;
             }
 
-            route = new Stack<DijkstraWaypoint>(WayNetHelper.FindFastestPath(currentWaypoint.Name,
+            route = new Stack<DijkstraWayPoint>(WayNetHelper.FindFastestPath(currentWaypoint.Name,
                 destinationWaypoint.Name));
         }
 

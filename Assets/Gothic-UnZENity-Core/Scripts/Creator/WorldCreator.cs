@@ -69,7 +69,7 @@ namespace GUZ.Core.Creator
                 BarrierManager.I.CreateBarrier();
             }
 
-            WaynetCreator.Create(_worldGo, GameData.World);
+            WayNetCreator.Create(_worldGo, GameData.World);
 
             // Set the global variable to the result of the coroutine
             LoadingManager.I.SetProgress(LoadingManager.LoadingProgressType.NPC, 1f);
