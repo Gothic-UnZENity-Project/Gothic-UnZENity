@@ -13,7 +13,6 @@ using UnityEngine;
 using ZenKit;
 using ZenKit.Daedalus;
 using Object = UnityEngine.Object;
-using WayNet_WayPoint = GUZ.Core.World.WayNet.WayPoint;
 using WayPoint = GUZ.Core.World.WayNet.WayPoint;
 
 namespace GUZ.Core.Creator
@@ -110,7 +109,7 @@ namespace GUZ.Core.Creator
         
         private static void SetSpawnPoint(GameObject npcGo, string spawnPoint)
         {
-            WayNetPoint initialSpawnPoint;
+            WayPoint initialSpawnPoint;
             if (npcGo.GetComponent<Routine>().Routines.Any() && FeatureFlags.I.enableNpcRoutines)
             {
                 var routineSpawnPointName = npcGo.GetComponent<Routine>().CurrentRoutine.waypoint;
@@ -136,10 +135,10 @@ namespace GUZ.Core.Creator
 
             npcGo.transform.position = initialSpawnPoint.Position;
 
-            if (initialSpawnPoint.IsFreePoint())
-                npcGo.GetComponent<NpcProperties>().CurrentFreePoint = (FreePoint)initialSpawnPoint;
+            if (initialSpawnPoint.IsFree)
+                npcGo.GetComponent<NpcProperties>().CurrentFreePoint = initialSpawnPoint;
             else
-                npcGo.GetComponent<NpcProperties>().CurrentWayPoint = (WayNet_WayPoint)initialSpawnPoint;
+                npcGo.GetComponent<NpcProperties>().CurrentWayPoint = initialSpawnPoint;
         }
 
         public static void ExtTaMin(NpcInstance npcInstance, int startH, int startM, int stopH, int stopM, int action, string waypoint)

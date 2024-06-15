@@ -1,5 +1,4 @@
 using GUZ.Core.Data.ZkEvents;
-using GUZ.Core.Manager;
 using GUZ.Core.World.WayNet;
 using UnityEngine;
 
@@ -7,11 +6,11 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
 {
     public class GoToFp : AbstractWalkAnimationAction
     {
-        private FreePoint fp;
+        private WayPoint fp;
 
         private string destination => Action.String0;
 
-        private FreePoint freePoint;
+        private WayPoint freePoint;
 
         public GoToFp(AnimationAction action, GameObject npcGo) : base(action, npcGo)
         { }

@@ -31,6 +31,7 @@ using Light = ZenKit.Vobs.Light;
 using LightType = ZenKit.Vobs.LightType;
 using Material = UnityEngine.Material;
 using Vector3 = System.Numerics.Vector3;
+using WayPoint = GUZ.Core.World.WayNet.WayPoint;
 
 namespace GUZ.Core.Creator
 {
@@ -713,11 +714,12 @@ namespace GUZ.Core.Creator
             vobObj.name = fpName;
             vobObj.SetParent(parent ?? parentGosTeleport[vob.Type], true, true);
 
-            var freePointData = new FreePoint
+            var freePointData = new WayPoint
             {
                 Name = fpName,
                 Position = vob.Position.ToUnityVector(),
-                Direction = vob.Rotation.ToUnityQuaternion().eulerAngles
+                Direction = vob.Rotation.ToUnityQuaternion().eulerAngles,
+                IsFree = true,
             };
             vobObj.GetComponent<VobSpotProperties>().fp = freePointData;
             GameData.FreePoints.Add(fpName, freePointData);

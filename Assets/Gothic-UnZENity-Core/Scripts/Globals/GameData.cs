@@ -3,13 +3,10 @@ using GUZ.Core.Data;
 using GUZ.Core.Npc.Routines;
 using GUZ.Core.Properties;
 using GUZ.Core.World;
-using GUZ.Core.Extensions;
 using GUZ.Core.World.WayNet;
-using Unity.Collections.LowLevel.Unsafe;
 using UnityEngine.SceneManagement;
 using ZenKit;
 using ZenKit.Daedalus;
-using WayNet_WayPoint = GUZ.Core.World.WayNet.WayPoint;
 using WayPoint = GUZ.Core.World.WayNet.WayPoint;
 
 namespace GUZ.Core.Globals
@@ -25,8 +22,8 @@ namespace GUZ.Core.Globals
         public static WorldData World;
 
         // Lookup optimized WayNet data
-        public static readonly Dictionary<string, WayNet_WayPoint> WayPoints = new();
-        public static readonly Dictionary<string, FreePoint> FreePoints = new();
+        public static readonly Dictionary<string, WayPoint> WayPoints = new();
+        public static readonly Dictionary<string, WayPoint> FreePoints = new();
 
         // Reorganized waypoints from world data.
         public static Dictionary<string, DijkstraWaypoint> DijkstraWaypoints = new();

@@ -19,7 +19,7 @@ namespace GUZ.Core.Properties
         public HeadMorph headMorph;
 
         public WayPoint CurrentWayPoint;
-        public FreePoint CurrentFreePoint;
+        public WayPoint CurrentFreePoint;
 
         public List<InfoInstance> Dialogs = new();
             

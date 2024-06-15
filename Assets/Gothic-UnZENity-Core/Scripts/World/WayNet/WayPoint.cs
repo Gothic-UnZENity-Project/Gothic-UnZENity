@@ -1,10 +1,17 @@
+using UnityEngine;
+
 namespace GUZ.Core.World.WayNet
 {
-    public class WayPoint : WayNetPoint
+    /// <summary>
+    /// Gothic handles WayNet in WayPoints (WP) and FreePoints (FP).
+    /// Sometimes there are functions which need to check both and requires this superclass as response.
+    /// </summary>
+    public class WayPoint
     {
-        public override bool IsFreePoint()
-        {
-            return false;
-        }
+        public string Name;
+        public Vector3 Position;
+        public Vector3 Direction;
+        public bool IsLocked;
+        public bool IsFree;
     }
 }

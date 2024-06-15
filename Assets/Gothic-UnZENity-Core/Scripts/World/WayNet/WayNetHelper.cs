@@ -17,7 +17,7 @@ namespace GUZ.Core.World.WayNet
         /// <param name="pointName"></param>
         /// <returns></returns>
         [CanBeNull]
-        public static WayNetPoint GetWayNetPoint(string pointName)
+        public static WayPoint GetWayNetPoint(string pointName)
         {
             var wayPoint = GameData.WayPoints
                 .FirstOrDefault(item => item.Key.Equals(pointName, StringComparison.OrdinalIgnoreCase))
@@ -31,10 +31,10 @@ namespace GUZ.Core.World.WayNet
             return freePoint;
         }
         
-        public static List<FreePoint> FindFreePointsWithName(Vector3 lookupPosition, string namePart, float maxDistance)
+        public static List<WayPoint> FindFreePointsWithName(Vector3 lookupPosition, string namePart, float maxDistance)
         {
             var matchingFreePoints = GameData.FreePoints
-                .Where(pair => pair.Key.Contains(namePart))
+                .Where(pair => pair.Value.IsFree && pair.Key.Contains(namePart))
                 .Where(pair => Vector3.Distance(lookupPosition, pair.Value.Position) <= maxDistance) // PF is in range
                 .OrderBy(pair => Vector3.Distance(lookupPosition, pair.Value.Position)) // order from nearest to farthest
                 .Select(pair => pair.Value);
@@ -45,6 +45,7 @@ namespace GUZ.Core.World.WayNet
         public static WayPoint FindNearestWayPoint(Vector3 lookupPosition, bool findSecondNearest = false)
         {
             var wayPoint = GameData.WayPoints
+                .Where(v => !v.Value.IsFree)
                 .OrderBy(pair => Vector3.Distance(pair.Value.Position, lookupPosition))
                 .Skip(findSecondNearest ? 1 : 0)
                 .FirstOrDefault();
@@ -53,10 +54,10 @@ namespace GUZ.Core.World.WayNet
         }
 
         [CanBeNull]
-        public static FreePoint FindNearestFreePoint(Vector3 lookupPosition, string fpNamePart)
+        public static WayPoint FindNearestFreePoint(Vector3 lookupPosition, string fpNamePart)
         {
             return GameData.FreePoints
-                .Where(pair => pair.Value.Name.ContainsIgnoreCase(fpNamePart) && !pair.Value.IsLocked)
+                .Where(pair => pair.Value.IsFree && !pair.Value.IsLocked && pair.Value.Name.ContainsIgnoreCase(fpNamePart))
                 .OrderBy(pair => Vector3.Distance(pair.Value.Position, lookupPosition))
                 .Select(pair => pair.Value)
                 .FirstOrDefault();
