@@ -74,7 +74,6 @@ namespace GUZ.Core.Manager
             LoadDialogs();
             LoadSfxVm(g1Dir);
             LoadPfxVm(g1Dir);
-            LoadMusicVm(g1Dir);
             LoadMusic();
             LoadFonts();
             
@@ -176,11 +175,6 @@ namespace GUZ.Core.Manager
         {
             
             GameData.PfxVm = ResourceLoader.TryGetDaedalusVm("PARTICLEFX");
-        }
-
-        private static void LoadMusicVm(string g1Dir)
-        {
-            GameData.MusicVm = ResourceLoader.TryGetDaedalusVm("MUSIC");
         }
 
         private static void LoadMusic()

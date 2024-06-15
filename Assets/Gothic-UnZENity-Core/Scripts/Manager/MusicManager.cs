@@ -36,6 +36,9 @@ namespace GUZ.Core.Manager
         private static AudioSource _audioSourceComp;
         private static AudioReverbFilter _reverbFilterComp;
 
+        private static Dictionary<string, MusicThemeInstance> _themes = new();
+        private static DaedalusVm _vm;
+        
         private static MusicThemeInstance _currentTheme;
         /// <summary>
         /// Whenever we collide with a musicZoneVobGO, it's entry will be added to the list and the most important theme will be played.
@@ -131,6 +134,13 @@ namespace GUZ.Core.Manager
         private static void InitializeDxMusic()
         {
             Logger.Set(FeatureFlags.I.dxMusicLogLevel, LoggerCallback);
+
+            // Load the VM and initialize all music theme instances
+            _vm = ResourceLoader.TryGetDaedalusVm("MUSIC");
+            _vm.GetInstanceSymbols("C_MUSICTHEME").ForEach(v =>
+            {
+                _themes[v.Name] = _vm.InitInstance<MusicThemeInstance>(v);
+            });
         }
 
         private static void LoggerCallback(LogLevel level, string message)
@@ -183,7 +193,7 @@ namespace GUZ.Core.Manager
 
         public static void Play(string musicInstanceName)
         {
-            var music = AssetCache.TryGetMusic(musicInstanceName);
+            var music = _themes[musicInstanceName];
             Play(music);
         }
 

@@ -20,7 +20,6 @@ namespace GUZ.Core.Globals
         public static DaedalusVm GothicVm;
         public static DaedalusVm SfxVm; // Sound FX
         public static DaedalusVm PfxVm; // Particle FX
-        public static DaedalusVm MusicVm;
 
         public static WorldData World;
 
@@ -73,7 +72,6 @@ namespace GUZ.Core.Globals
             World = null;
             GothicVm = null;
             SfxVm = null;
-            MusicVm = null;
             WayPoints.Clear();
             FreePoints.Clear();
             VobsInteractable.Clear();
