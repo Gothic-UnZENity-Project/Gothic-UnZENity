@@ -14,7 +14,9 @@ namespace GUZ.Core
 	public class GameConfiguration : ScriptableObject
 	{
 		[Header("### Culling ###")] [SerializeField]
-		public bool enableMeshCulling = true;
+		public bool enableSoundCulling = true;
+
+		[SerializeField] public bool enableMeshCulling = true;
 
 		[SerializeField] public bool showMeshCullingGizmos = true;
 
