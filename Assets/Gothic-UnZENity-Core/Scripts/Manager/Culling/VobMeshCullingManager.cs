@@ -2,9 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using GUZ.Core.Debugging;
 using GUZ.Core.Globals;
-using GUZ.Core.Util;
 using UnityEngine;
 
 namespace GUZ.Core.Manager.Culling
@@ -14,8 +12,11 @@ namespace GUZ.Core.Manager.Culling
     /// With this set up, VOBs are handled by camera's view and culling behaviour, so that the StateChanged() event disables/enables VOB GameObjects.
     /// @see https://docs.unity3d.com/Manual/CullingGroupAPI.html
     /// </summary>
-    public class VobMeshCullingManager : SingletonBehaviour<VobMeshCullingManager>
+    public class VobMeshCullingManager
     {
+        [Obsolete]
+        public static VobMeshCullingManager I;
+        
         // Stored for resetting after world switch
         private CullingGroup vobCullingGroupSmall;
         private CullingGroup vobCullingGroupMedium;
@@ -39,11 +40,30 @@ namespace GUZ.Core.Manager.Culling
         }
 
         // Grabbed Vobs will be ignored from Culling until Grabbing stopped and velocity = 0
-        private readonly Dictionary<GameObject, Tuple<VobList, int>> pausedVobs = new();
-        private readonly Dictionary<GameObject, Rigidbody> pausedVobsToReenable = new();
-        private readonly Dictionary<GameObject, Coroutine> pausedVobsToReenableCoroutine = new();
+        private Dictionary<GameObject, Tuple<VobList, int>> pausedVobs = new();
+        private Dictionary<GameObject, Rigidbody> pausedVobsToReenable = new();
+        private Dictionary<GameObject, Coroutine> pausedVobsToReenableCoroutine = new();
 
-        private void Start()
+        private readonly CoroutineManager _coroutineManager;
+        private readonly bool _featureEnableCulling;
+        private readonly bool _featureDrawGizmos;
+        private readonly MeshCullingGroup _featureSmallCullingGroup;
+        private readonly MeshCullingGroup _featureMediumCullingGroup;
+        private readonly MeshCullingGroup _featureLargeCullingGroup;
+
+        public VobMeshCullingManager(GameConfiguration config, CoroutineManager coroutineManager)
+        {
+            I = this;
+            
+            _coroutineManager = coroutineManager;
+            _featureEnableCulling = config.enableMeshCulling;
+            _featureDrawGizmos = config.showMeshCullingGizmos;
+            _featureSmallCullingGroup = config.smallMeshCullingGroup;
+            _featureMediumCullingGroup = config.mediumMeshCullingGroup;
+            _featureLargeCullingGroup = config.largeMeshCullingGroup;
+        }
+
+        public void Init()
         {
             GUZEvents.GeneralSceneUnloaded.AddListener(PreWorldCreate);
             GUZEvents.GeneralSceneLoaded.AddListener(PostWorldCreate);
@@ -53,15 +73,15 @@ namespace GUZ.Core.Manager.Culling
             vobCullingGroupMedium = new();
             vobCullingGroupLarge = new();
 
-            StartCoroutine(StopVobTrackingBasedOnVelocity());
+            _coroutineManager.StartCoroutine(StopVobTrackingBasedOnVelocity());
         }
 
         /// <summary>
         /// This method will only be called within EditorMode. It's tested to not being executed within Standalone mode.
         /// </summary>
-        private void OnDrawGizmos()
+        public void OnDrawGizmos()
         {
-            if (!Application.isPlaying || !FeatureFlags.I.drawVobCullingGizmos)
+            if (!Application.isPlaying || !_featureDrawGizmos)
             {
                 return;
             }
@@ -156,11 +176,13 @@ namespace GUZ.Core.Manager.Culling
         /// </summary>
         public void PrepareVobCulling(List<GameObject> objects)
         {
-            if (!FeatureFlags.I.vobCulling)
+            if (!_featureEnableCulling)
+            {
                 return;
+            }
 
-            var smallDim = FeatureFlags.I.vobCullingSmall.maxObjectSize;
-            var mediumDim = FeatureFlags.I.vobCullingMedium.maxObjectSize;
+            var smallDim = _featureSmallCullingGroup.maximumObjectSize;
+            var mediumDim = _featureMediumCullingGroup.maximumObjectSize;
             var spheresSmall = new List<BoundingSphere>();
             var spheresMedium = new List<BoundingSphere>();
             var spheresLarge = new List<BoundingSphere>();
@@ -206,9 +228,9 @@ namespace GUZ.Core.Manager.Culling
             vobCullingGroupMedium.onStateChanged = VobMediumChanged;
             vobCullingGroupLarge.onStateChanged = VobLargeChanged;
 
-            vobCullingGroupSmall.SetBoundingDistances(new[] { FeatureFlags.I.vobCullingSmall.cullingDistance });
-            vobCullingGroupMedium.SetBoundingDistances(new[] { FeatureFlags.I.vobCullingMedium.cullingDistance });
-            vobCullingGroupLarge.SetBoundingDistances(new[] { FeatureFlags.I.vobCullingLarge.cullingDistance });
+            vobCullingGroupSmall.SetBoundingDistances(new[] { _featureSmallCullingGroup.cullingDistance });
+            vobCullingGroupMedium.SetBoundingDistances(new[] { _featureMediumCullingGroup.cullingDistance });
+            vobCullingGroupLarge.SetBoundingDistances(new[] { _featureLargeCullingGroup.cullingDistance });
 
             vobSpheresSmall = spheresSmall.ToArray();
             vobSpheresMedium = spheresMedium.ToArray();
@@ -308,7 +330,7 @@ namespace GUZ.Core.Manager.Culling
             if (pausedVobsToReenableCoroutine.ContainsKey(go))
                 return;
 
-            pausedVobsToReenableCoroutine.Add(go, StartCoroutine(StopTrackVobPositionUpdatesDelayed(go)));
+            pausedVobsToReenableCoroutine.Add(go, _coroutineManager.StartCoroutine(StopTrackVobPositionUpdatesDelayed(go)));
         }
 
         /// <summary>
@@ -319,7 +341,7 @@ namespace GUZ.Core.Manager.Culling
         {
             if (pausedVobsToReenableCoroutine.ContainsKey(go))
             {
-                StopCoroutine(pausedVobsToReenableCoroutine[go]);
+                _coroutineManager.StopCoroutine(pausedVobsToReenableCoroutine[go]);
                 pausedVobsToReenableCoroutine.Remove(go);
             }
 
@@ -381,7 +403,7 @@ namespace GUZ.Core.Manager.Culling
             sphereList[index].position = go.transform.position;
         }
 
-        private void OnDestroy()
+        public void Destroy()
         {
             vobCullingGroupSmall.Dispose();
             vobCullingGroupMedium.Dispose();
