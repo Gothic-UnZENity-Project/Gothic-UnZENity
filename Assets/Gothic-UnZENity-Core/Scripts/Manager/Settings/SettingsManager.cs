@@ -84,7 +84,7 @@ namespace GUZ.Core.Manager.Settings
                 return Application.streamingAssetsPath;
         }
 
-        public static bool CheckIfGothic1InstallationExists()
+        public bool CheckIfGothic1InstallationExists()
         {
             var g1DataPath = Path.GetFullPath(Path.Join(GameSettings.GothicIPath, "Data"));
 			var g1WorkPath = Path.GetFullPath(Path.Join(GameSettings.GothicIPath, "_work"));

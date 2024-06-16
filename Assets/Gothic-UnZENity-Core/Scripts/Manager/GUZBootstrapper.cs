@@ -12,7 +12,6 @@ using UnityEngine;
 using ZenKit;
 using ZenKit.Daedalus;
 using Debug = UnityEngine.Debug;
-using Logger = ZenKit.Logger;
 
 namespace GUZ.Core.Manager
 {
@@ -20,14 +19,6 @@ namespace GUZ.Core.Manager
     {
         private bool isBootstrapped;
         public GameObject invalidInstallationDirMessage;
-
-        private void Start()
-        {
-            Logger.Set(FeatureFlags.I.zenKitLogLevel, ZenKitLoggerCallback);
-
-            // Just in case we forgot to disable it in scene view. ;-)
-            invalidInstallationDirMessage.SetActive(false);
-        }
 
         private void OnApplicationQuit()
         {
@@ -37,30 +28,6 @@ namespace GUZ.Core.Manager
             LookupCache.Dispose();
             PrefabCache.Dispose();
             MorphMeshCache.Dispose();
-        }
-
-        private void Update()
-        {
-            // Load after Start() so that other MonoBehaviours can subscribe to DaedalusVM events.
-            if (isBootstrapped)
-                return;
-            isBootstrapped = true;
-
-            var g1Dir = SettingsManager.GameSettings.GothicIPath;
-
-            if (SettingsManager.CheckIfGothic1InstallationExists())
-            {
-                BootGothicUnZENity(g1Dir);
-                
-#pragma warning disable CS4014 // It's intended, that this async call is not awaited.
-                GUZSceneManager.I.LoadStartupScenes();
-#pragma warning restore CS4014
-            }
-            else
-            {
-                // Show the startup config message.
-                invalidInstallationDirMessage.SetActive(true);
-            }
         }
         
         public static void BootGothicUnZENity(string g1Dir)
@@ -83,25 +50,6 @@ namespace GUZ.Core.Manager
             Debug.Log($"Time spent for Bootstrapping ZenKit: {watch.Elapsed}");
 
             GUZEvents.ZenKitBootstrapped.Invoke();
-        }
-
-        public static void ZenKitLoggerCallback(LogLevel level, string name, string message)
-        {
-            // Using fastest string concatenation as we might have a lot of logs here.
-            var messageString = string.Concat("level=", level, ", name=", name, ", message=", message);
-            
-            switch (level)
-            {
-                case LogLevel.Error:
-                    Debug.LogError(messageString);
-                    break;
-                case LogLevel.Warning:
-                    Debug.LogWarning(messageString);
-                    break;
-                default:
-                    Debug.Log(messageString);
-                    break;
-            }
         }
 
         /// <summary>

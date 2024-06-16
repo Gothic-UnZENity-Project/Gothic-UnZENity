@@ -47,5 +47,11 @@ namespace GUZ.Core
 
 		[SerializeField]
 		public MeshCullingGroup largeMeshCullingGroup = new() { maximumObjectSize = 100, cullingDistance = 200 };
+
+		[Header("### Logging ###")] [SerializeField] [InspectorName("ZenKit Log Level")]
+		public ZenKit.LogLevel zenkitLogLevel = ZenKit.LogLevel.Warning;
+		
+		[SerializeField] [InspectorName("DirectMusic Log Level")]
+		public DirectMusic.LogLevel directMusicLogLevel = DirectMusic.LogLevel.Warning;
 	}
 }

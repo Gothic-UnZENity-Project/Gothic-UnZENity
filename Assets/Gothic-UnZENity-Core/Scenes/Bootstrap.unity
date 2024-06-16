@@ -238,6 +238,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   config: {fileID: 11400000, guid: ecb29865eb799e819a55bb2545e90d80, type: 2}
+  invalidInstallationPathMessage: {fileID: 1623647995}
 --- !u!4 &583338018
 Transform:
   m_ObjectHideFlags: 0

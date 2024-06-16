@@ -1,13 +1,60 @@
 using GUZ.Core.Manager;
 using GUZ.Core.Manager.Culling;
+using GUZ.Core.Manager.Settings;
 using GUZ.Core.World;
 using UnityEngine;
 
 namespace GUZ.Core
 {
+	internal static class Logging
+	{
+		public static void OnZenKitLogMessage(ZenKit.LogLevel level, string name, string message)
+		{
+			// Using the fastest string concatenation as we might have a lot of logs here.
+			var messageString = string.Concat("level=", level, ", name=", name, ", message=", message);
+
+			switch (level)
+			{
+				case ZenKit.LogLevel.Error:
+					Debug.LogError(messageString);
+					break;
+				case ZenKit.LogLevel.Warning:
+					Debug.LogWarning(messageString);
+					break;
+				case ZenKit.LogLevel.Info:
+				case ZenKit.LogLevel.Debug:
+				case ZenKit.LogLevel.Trace:
+					Debug.Log(messageString);
+					break;
+			}
+		}
+
+		public static void OnDirectMusicLogMessage(DirectMusic.LogLevel level, string message)
+		{
+			// Using the fastest string concatenation as we might have a lot of logs here.
+			var messageString = string.Concat("level=", level, ", message=", message);
+
+			switch (level)
+			{
+				case DirectMusic.LogLevel.Error:
+					Debug.LogError(messageString);
+					break;
+				case DirectMusic.LogLevel.Warning:
+					Debug.LogWarning(messageString);
+					break;
+				case DirectMusic.LogLevel.Info:
+				case DirectMusic.LogLevel.Debug:
+				case DirectMusic.LogLevel.Trace:
+					Debug.Log(messageString);
+					break;
+			}
+		}
+	}
+
 	public class GameManager : MonoBehaviour, CoroutineManager
 	{
 		public GameConfiguration config;
+		public GameObject invalidInstallationPathMessage;
 
 		private SettingsManager _gameSettingsManager;
 		private VobMeshCullingManager _meshCullingManager;
@@ -18,6 +65,22 @@ namespace GUZ.Core
 		private XRDeviceSimulatorManager _xrSimulatorManager;
 		private GameTime _gameTimeManager;
 
+		private bool _isInitialised = false;
+
+		// ReSharper disable Unity.PerformanceAnalysis
+		private void Load()
+		{
+			// If the Gothic installation directory is not set, show an error message and exit.
+			if (!_gameSettingsManager.CheckIfGothic1InstallationExists())
+			{
+				invalidInstallationPathMessage.SetActive(true);
+				return;
+			}
+
+			// Otherwise, continue loading Gothic.
+			GUZBootstrapper.BootGothicUnZENity(SettingsManager.GameSettings.GothicIPath);
+			GUZSceneManager.I.LoadStartupScenes();
+		}
 
 		private void Awake()
 		{
@@ -29,17 +92,33 @@ namespace GUZ.Core
 			_stationaryLightsManager = new StationaryLightsManager();
 			_xrSimulatorManager = new XRDeviceSimulatorManager(config);
 			_gameTimeManager = new GameTime(config, this);
+		}
+
+		private void Start()
+		{
+			ZenKit.Logger.Set(config.zenkitLogLevel, Logging.OnZenKitLogMessage);
+			DirectMusic.Logger.Set(config.directMusicLogLevel, Logging.OnDirectMusicLogMessage);
 
 			_gameSettingsManager.Init();
 			_meshCullingManager.Init();
 			_soundCullingManager.Init();
 			_gameTimeManager.Init();
-		}
-
-		private void Start()
-		{
 			_skyVisualManager.Init();
 			_xrSimulatorManager.Init();
+
+			// Just in case we forgot to disable it in scene view. ;-)
+			invalidInstallationPathMessage.SetActive(false);
+		}
+
+		private void Update()
+		{
+			if (_isInitialised)
+			{
+				return;
+			}
+
+			_isInitialised = true;
+			Load();
 		}
 
 		private void FixedUpdate()
