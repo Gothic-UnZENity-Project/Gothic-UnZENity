@@ -6,22 +6,17 @@ using GUZ.Core.Context;
 using GUZ.Core.Debugging;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager.Settings;
-using GUZ.Core.Util;
 using GUZ.Core.Vm;
 using GVR.Core;
-using UnityEngine;
 using ZenKit;
 using ZenKit.Daedalus;
 using Debug = UnityEngine.Debug;
 
 namespace GUZ.Core.Manager
 {
-    public class GUZBootstrapper : SingletonBehaviour<GUZBootstrapper>
+    public class GUZBootstrapper
     {
-        private bool isBootstrapped;
-        public GameObject invalidInstallationDirMessage;
-
-        private void OnApplicationQuit()
+        public static void OnApplicationQuit()
         {
             GameData.Dispose();
             VmInstanceManager.Dispose();

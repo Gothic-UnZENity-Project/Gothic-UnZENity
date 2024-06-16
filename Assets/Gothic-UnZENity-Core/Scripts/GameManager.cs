@@ -173,6 +173,24 @@ namespace GUZ.Core
 		{
 			_meshCullingManager.Destroy();
 			_soundCullingManager.Destroy();
+
+			_gameLoadingManager = null;
+			_gameSettingsManager = null;
+			_meshCullingManager = null;
+			_soundCullingManager = null;
+			_barrierManager = null;
+			_stationaryLightsManager = null;
+			_xrSimulatorManager = null;
+			_gameTimeManager = null;
+			_skyVisualManager = null;
+			_gameMusicManager = null;
+			_gameSceneManager = null;
+			_npcRoutineManager = null;
+		}
+
+		private void OnApplicationQuit()
+		{
+			GUZBootstrapper.OnApplicationQuit();
 		}
 	}
 }
