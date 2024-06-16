@@ -16,6 +16,7 @@ namespace GUZ.Core
 		private BarrierManager _barrierManager;
 		private SkyManager _skyVisualManager;
 		private StationaryLightsManager _stationaryLightsManager;
+		private XRDeviceSimulatorManager _xrSimulatorManager;
 
 
 		private void Awake()
@@ -25,6 +26,7 @@ namespace GUZ.Core
 			_barrierManager = new BarrierManager();
 			_skyVisualManager = new SkyManager(config);
 			_stationaryLightsManager = new StationaryLightsManager();
+			_xrSimulatorManager = new XRDeviceSimulatorManager(config);
 
 			_meshCullingManager.Init();
 			_soundCullingManager.Init();
@@ -33,6 +35,7 @@ namespace GUZ.Core
 		private void Start()
 		{
 			_skyVisualManager.Init();
+			_xrSimulatorManager.Init();
 		}
 
 		private void FixedUpdate()

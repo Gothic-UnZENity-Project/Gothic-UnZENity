@@ -1,16 +1,25 @@
+using System;
 using System.Linq;
 using GUZ.Core.Caches;
-using GUZ.Core.Debugging;
 using GUZ.Core.Globals;
-using GUZ.Core.Util;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 namespace GUZ.Core.Manager
 {
-    public class XRDeviceSimulatorManager: SingletonBehaviour<XRDeviceSimulatorManager>
+    public class XRDeviceSimulatorManager
     {
-        private void Start()
+        [Obsolete] public static XRDeviceSimulatorManager I;
+
+        private readonly bool _featureEnable;
+
+        public XRDeviceSimulatorManager(GameConfiguration config)
+        {
+            I = this;
+            _featureEnable = config.enableDeviceSimulator;
+        }
+
+        public void Init()
         {
             GUZEvents.GeneralSceneLoaded.AddListener(delegate(GameObject playerGo)
             {
@@ -21,8 +30,7 @@ namespace GUZ.Core.Manager
 
         public void AddXRDeviceSimulator()
         {
-            if (!FeatureFlags.I.useXRDeviceSimulator)
-                return;
+            if (!_featureEnable) return;
 
             var simulator = PrefabCache.TryGetObject(PrefabCache.PrefabType.XRDeviceSimulator);
             simulator.name = "XRDeviceSimulator - XRIT";

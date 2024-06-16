@@ -13,6 +13,9 @@ namespace GUZ.Core
 	[CreateAssetMenu(fileName = "Data", menuName = "ScriptableObjects/GameConfiguration", order = 1)]
 	public class GameConfiguration : ScriptableObject
 	{
+		[Header("### Controls ###")]
+		public bool enableDeviceSimulator = false;
+		
 		[Header("### Lighting ###")] [SerializeField]
 		public Quaternion sunLightDirection = new(x: 0.45451945f, y: 0.54167527f, z: -0.45451945f, w: 0.54167527f);
 
