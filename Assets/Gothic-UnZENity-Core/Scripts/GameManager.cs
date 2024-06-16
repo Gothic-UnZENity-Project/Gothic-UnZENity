@@ -105,10 +105,10 @@ namespace GUZ.Core
 			_meshCullingManager = new VobMeshCullingManager(config, this);
 			_soundCullingManager = new VobSoundCullingManager(config);
 			_barrierManager = new BarrierManager();
-			_skyVisualManager = new SkyManager(config);
 			_stationaryLightsManager = new StationaryLightsManager();
 			_xrSimulatorManager = new XRDeviceSimulatorManager(config);
 			_gameTimeManager = new GameTime(config, this);
+			_skyVisualManager = new SkyManager(config, _gameTimeManager);
 			_gameMusicManager = new MusicManager(config);
 			_gameSceneManager = new GUZSceneManager(config, xrInteractionManager);
 		}

@@ -26,8 +26,9 @@ namespace GUZ.Core.Manager
         private bool IsRaining;
 
         private float masterTime;
-        private bool noSky = true;
+        private bool noSky;
         private List<SkyState> stateList = new();
+        private GameTime gameTime;
 
         private static readonly int SunDirectionShaderId = Shader.PropertyToID("_SunDirection");
         private static readonly int SunColorShaderId = Shader.PropertyToID("_SunColor");
@@ -59,12 +60,15 @@ namespace GUZ.Core.Manager
         private static readonly int DomeColor1ShaderId = Shader.PropertyToID("_DomeColor1");
         private static readonly int DomeColor2ShaderId = Shader.PropertyToID("_DomeColor2");
 
-        public SkyManager(GameConfiguration config)
+        public SkyManager(GameConfiguration config, GameTime time)
         {
+            gameTime = time;
+
             SunDirection = config.sunLightDirection;
             SunColor = config.sunLightColor;
             AmbientColor = config.ambientLightColor;
             PointLightIntensity = config.sunLightIntensity;
+            noSky = !config.enableSkyVisual;
         }
 
         public void OnValidate()
@@ -95,7 +99,6 @@ namespace GUZ.Core.Manager
             RenderSettings.fogMode = FogMode.Linear;
             RenderSettings.ambientMode = AmbientMode.Flat;
             InitRainState();
-            noSky = true;
 
             Interpolate(new DateTime());
         }
@@ -104,7 +107,7 @@ namespace GUZ.Core.Manager
         {
             if (SettingsManager.GameSettings.GothicINISettings.ContainsKey("SKY_OUTDOOR"))
             {
-                var currentDay = GameTime.I.GetDay();
+                var currentDay = gameTime.GetDay();
                 var day = (currentDay + 1);
 
                 float[] colorValues;
@@ -142,7 +145,7 @@ namespace GUZ.Core.Manager
 
         private void Interpolate(DateTime _)
         {
-            masterTime = GameTime.I.GetSkyTime(); // Current time
+            masterTime = gameTime.GetSkyTime(); // Current time
 
             var (previousIndex, currentIndex) = FindNextStateIndex();
 
@@ -280,7 +283,7 @@ namespace GUZ.Core.Manager
         private void UpdateRainTime(DateTime _)
         {
             if (masterTime > 0.02f || // This function is called every hour but is run only once a day at 12:00 pm
-                GameTime.I.GetDay() == 1) // Dont update if it is the first day 
+                gameTime.GetDay() == 1) // Dont update if it is the first day 
                 return;
 
             rainState.time = Random.Range(0f, 1f);
