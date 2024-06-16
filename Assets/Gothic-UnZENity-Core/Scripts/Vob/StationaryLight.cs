@@ -153,7 +153,7 @@ namespace GUZ.Core
             Profiler.BeginSample("Stationary light enabled");
             for (int i = 0; i < _affectedRenderers.Count; i++)
             {
-                StationaryLightsManager.AddLightOnRenderer(this, _affectedRenderers[i]);
+                StationaryLightsManager.I.AddLightOnRenderer(this, _affectedRenderers[i]);
             }
             Profiler.EndSample();
         }
@@ -163,7 +163,7 @@ namespace GUZ.Core
             Profiler.BeginSample("Stationary light disable");
             for (int i = 0; i < _affectedRenderers.Count; i++)
             {
-                StationaryLightsManager.RemoveLightOnRenderer(this, _affectedRenderers[i]);
+                StationaryLightsManager.I.RemoveLightOnRenderer(this, _affectedRenderers[i]);
             }
             Profiler.EndSample();
         }

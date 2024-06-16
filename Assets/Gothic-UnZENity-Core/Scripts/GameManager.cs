@@ -15,6 +15,7 @@ namespace GUZ.Core
 		private VobSoundCullingManager _soundCullingManager;
 		private BarrierManager _barrierManager;
 		private SkyManager _skyVisualManager;
+		private StationaryLightsManager _stationaryLightsManager;
 
 
 		private void Awake()
@@ -23,6 +24,7 @@ namespace GUZ.Core
 			_soundCullingManager = new VobSoundCullingManager(config);
 			_barrierManager = new BarrierManager();
 			_skyVisualManager = new SkyManager(config);
+			_stationaryLightsManager = new StationaryLightsManager();
 
 			_meshCullingManager.Init();
 			_soundCullingManager.Init();
@@ -36,6 +38,11 @@ namespace GUZ.Core
 		private void FixedUpdate()
 		{
 			_barrierManager.FixedUpdate();
+		}
+
+		private void LateUpdate()
+		{
+			_stationaryLightsManager.LateUpdate();
 		}
 
 		private void OnValidate()

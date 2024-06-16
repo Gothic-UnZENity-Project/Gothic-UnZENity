@@ -1,17 +1,25 @@
+using System;
 using System.Collections.Generic;
-using GUZ.Core.Util;
 using UnityEngine;
 using UnityEngine.Profiling;
 
 namespace GUZ.Core.Manager
 {
-    public class StationaryLightsManager : SingletonBehaviour<StationaryLightsManager>
+    public class StationaryLightsManager
     {
-        private static readonly HashSet<MeshRenderer> DirtiedMeshes = new();
-        private static readonly Dictionary<MeshRenderer, List<StationaryLight>> LightsPerRenderer = new();
-        private static readonly List<Material> NonAllocMaterials = new();
+        [Obsolete]
+        public static StationaryLightsManager I;
+        
+        private readonly HashSet<MeshRenderer> DirtiedMeshes = new();
+        private readonly Dictionary<MeshRenderer, List<StationaryLight>> LightsPerRenderer = new();
+        private readonly List<Material> NonAllocMaterials = new();
 
-        private void LateUpdate()
+        public StationaryLightsManager()
+        {
+            I = this;
+        }
+
+        public void LateUpdate()
         {
             // Update the renderer once for all updated lights.
             if (DirtiedMeshes.Count > 0)
@@ -25,7 +33,7 @@ namespace GUZ.Core.Manager
                 Profiler.EndSample();
             }
         }
-        public static void AddLightOnRenderer(StationaryLight light, MeshRenderer renderer)
+        public void AddLightOnRenderer(StationaryLight light, MeshRenderer renderer)
         {
             if (!LightsPerRenderer.ContainsKey(renderer))
             {
@@ -36,7 +44,7 @@ namespace GUZ.Core.Manager
             DirtiedMeshes.Add(renderer);
         }
 
-        public static void RemoveLightOnRenderer(StationaryLight light, MeshRenderer renderer)
+        public void RemoveLightOnRenderer(StationaryLight light, MeshRenderer renderer)
         {
             if (!LightsPerRenderer.ContainsKey(renderer))
             {
