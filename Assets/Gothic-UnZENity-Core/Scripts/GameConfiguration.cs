@@ -16,6 +16,14 @@ namespace GUZ.Core
 		[Header("### Controls ###")]
 		public bool enableDeviceSimulator = false;
 
+		[Header("### Developer ###")]
+		[SerializeField] public bool enableMainMenu = true;
+		
+		[SerializeField] 
+		public bool spawnOldCampNpcs = false;
+
+		[SerializeField] public string spawnAtWaypoint = string.Empty;
+ 
 		[Header("### Audio ###")] [SerializeField]
 		public bool enableGameMusic = true;
 		

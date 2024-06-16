@@ -238,6 +238,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   config: {fileID: 11400000, guid: ecb29865eb799e819a55bb2545e90d80, type: 2}
+  xrInteractionManager: {fileID: 1300502570}
   invalidInstallationPathMessage: {fileID: 1623647995}
 --- !u!4 &583338018
 Transform:
@@ -1177,7 +1178,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1896514214}
-  - component: {fileID: 1896514215}
   - component: {fileID: 1896514231}
   - component: {fileID: 1896514217}
   - component: {fileID: 1896514218}
@@ -1205,19 +1205,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1896514215
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1896514212}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 943ded366cc83b447a209cb52b2d3209, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  interactionManager: {fileID: 1300502570}
 --- !u!114 &1896514217
 MonoBehaviour:
   m_ObjectHideFlags: 0

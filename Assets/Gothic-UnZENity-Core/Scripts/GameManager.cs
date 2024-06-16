@@ -5,6 +5,7 @@ using GUZ.Core.Manager.Settings;
 using GUZ.Core.World;
 using GVR.Core;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace GUZ.Core
 {
@@ -56,6 +57,7 @@ namespace GUZ.Core
 	public class GameManager : MonoBehaviour, CoroutineManager
 	{
 		public GameConfiguration config;
+		public GameObject xrInteractionManager;
 		public GameObject invalidInstallationPathMessage;
 
 		private SettingsManager _gameSettingsManager;
@@ -67,6 +69,7 @@ namespace GUZ.Core
 		private XRDeviceSimulatorManager _xrSimulatorManager;
 		private GameTime _gameTimeManager;
 		private MusicManager _gameMusicManager;
+		private GUZSceneManager _gameSceneManager;
 
 		private bool _isInitialised = false;
 
@@ -86,7 +89,7 @@ namespace GUZ.Core
             _gameMusicManager.Init();
             
 			GUZBootstrapper.BootGothicUnZENity(SettingsManager.GameSettings.GothicIPath);
-			GUZSceneManager.I.LoadStartupScenes();
+			_gameSceneManager.LoadStartupScenes();
 		}
 
 		private void Awake()
@@ -102,6 +105,7 @@ namespace GUZ.Core
 			_xrSimulatorManager = new XRDeviceSimulatorManager(config);
 			_gameTimeManager = new GameTime(config, this);
 			_gameMusicManager = new MusicManager(config);
+			_gameSceneManager = new GUZSceneManager(config, xrInteractionManager);
 		}
 
 		private void Start()
@@ -115,6 +119,7 @@ namespace GUZ.Core
 			_gameTimeManager.Init();
 			_skyVisualManager.Init();
 			_xrSimulatorManager.Init();
+			_gameSceneManager.Init();
 
 			// Just in case we forgot to disable it in scene view. ;-)
 			invalidInstallationPathMessage.SetActive(false);
@@ -122,6 +127,8 @@ namespace GUZ.Core
 
 		private void Update()
 		{
+			_gameSceneManager.Update();
+
 			if (_isInitialised)
 			{
 				return;

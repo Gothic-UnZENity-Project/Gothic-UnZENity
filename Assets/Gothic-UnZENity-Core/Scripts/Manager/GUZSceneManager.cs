@@ -4,9 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using GUZ.Core.Context;
 using GUZ.Core.Creator;
-using GUZ.Core.Debugging;
 using GUZ.Core.Globals;
-using GUZ.Core.Util;
 using GUZ.Core.Extensions;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -14,8 +12,11 @@ using Debug = UnityEngine.Debug;
 
 namespace GUZ.Core.Manager
 {
-    public class GUZSceneManager : SingletonBehaviour<GUZSceneManager>
+    public class GUZSceneManager
     {
+        [Obsolete]
+        public static GUZSceneManager I;
+        
         public GameObject interactionManager;
         
         private static readonly string generalSceneName = Constants.SceneGeneral;
@@ -30,10 +31,22 @@ namespace GUZ.Core.Manager
 
         private bool debugFreshlyDoneLoading;
         
-        protected override void Awake()
-        {
-            base.Awake();
+        private readonly bool _featureSkipMenu;
+        private readonly bool _featureSpawnNpcs;
+        private readonly string _featureSpawnWaypoint;
 
+        public GUZSceneManager(GameConfiguration config, GameObject interactionManagerObject)
+        {
+            I = this;
+            interactionManager = interactionManagerObject;
+
+            _featureSkipMenu = !config.enableMainMenu;
+            _featureSpawnWaypoint = config.spawnAtWaypoint;
+            _featureSpawnNpcs = config.spawnOldCampNpcs;
+        }
+        
+        public void Init()
+        {
             SceneManager.sceneLoaded += OnSceneLoaded;
             SceneManager.sceneUnloaded += OnSceneUnloaded;
         }
@@ -46,7 +59,7 @@ namespace GUZ.Core.Manager
         {
             try
             {
-                if (FeatureFlags.I.skipMainMenu)
+                if (_featureSkipMenu)
                     await LoadWorld(Constants.selectedWorld, Constants.selectedWaypoint, true);
                 else
                     await LoadMainMenu();
@@ -59,15 +72,19 @@ namespace GUZ.Core.Manager
 
         // Outsourced after async Task LoadStartupScenes() as async makes Debugging way harder
         // (Breakpoints won't be caught during exceptions)
-        private void Update()
+        public void Update()
         {
             if (!debugFreshlyDoneLoading)
+            {
                 return;
-            else
-                debugFreshlyDoneLoading = false;
+            }
 
-            if (FeatureFlags.I.createOcNpcs)
+            debugFreshlyDoneLoading = false;
+
+            if (_featureSpawnNpcs)
+            {
                 GameData.GothicVm.Call("STARTUP_SUB_OLDCAMP");
+            }
         }
 
         private async Task LoadMainMenu()
@@ -208,7 +225,7 @@ namespace GUZ.Core.Manager
 
         private void SetSpawnPoint(Scene worldScene)
         {
-            var debugSpawnPoint = FeatureFlags.I.spawnAtSpecificWayNetPoint;
+            var debugSpawnPoint = _featureSpawnWaypoint;
             // DEBUG - Spawn at specifically named point.
             if (debugSpawnPoint.Any())
             {
