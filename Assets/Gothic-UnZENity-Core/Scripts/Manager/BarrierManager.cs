@@ -1,15 +1,18 @@
+using System;
 using GUZ.Core.Caches;
 using GUZ.Core.Creator.Meshes.V2;
 using GUZ.Core.Debugging;
-using GUZ.Core.Util;
-using GUZ.Core.Creator;
 using GUZ.Core.Extensions;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace GUZ.Core.Manager
 {
-    public class BarrierManager : SingletonBehaviour<BarrierManager>
+    public class BarrierManager
     {
+        [Obsolete]
+        public static BarrierManager I;
+        
         private GameObject barrier;
 
         private Material material1;
@@ -42,6 +45,10 @@ namespace GUZ.Core.Manager
         private const float TimeToStayHidden = 1200;
         private const float TimeStepToUpdateFade = 0.001f;
 
+        public BarrierManager()
+        {
+            I = this;
+        }
 
         public void CreateBarrier()
         {
