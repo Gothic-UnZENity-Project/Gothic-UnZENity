@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using GUZ.Core.Extensions;
+using GVR.Core;
 using UnityEngine;
 
 namespace GUZ.Core.Caches
@@ -99,7 +100,7 @@ namespace GUZ.Core.Caches
                 return data;
 
             // Create logic
-            var mmb = AssetCache.TryGetMmb(mmbName);
+            var mmb = ResourceLoader.TryGetMorphMesh(mmbName);
             var anim = mmb.Animations.First(anim => anim.Name.EqualsIgnoreCase(animationName));
 
             var originalVertexMapping = VertexMapping[preparedMmbKey];

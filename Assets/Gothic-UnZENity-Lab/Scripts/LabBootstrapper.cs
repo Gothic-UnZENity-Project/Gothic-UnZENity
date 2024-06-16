@@ -3,6 +3,7 @@ using GUZ.Core.Context;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
 using GUZ.Core.Manager.Settings;
+using GUZ.Core.Vm;
 using GUZ.Lab.Handler;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -51,10 +52,9 @@ namespace GUZ.Lab
         private void OnDestroy()
         {
             GameData.Dispose();
-            AssetCache.Dispose();
+            VmInstanceManager.Dispose();
             TextureCache.Dispose();
             LookupCache.Dispose();
-            PrefabCache.Dispose();
             MorphMeshCache.Dispose();
         }
     }

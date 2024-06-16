@@ -1,6 +1,6 @@
-using GUZ.Core.Caches;
 using GUZ.Core.Context;
 using GUZ.Core.Creator.Meshes.V2;
+using GVR.Core;
 using UnityEngine;
 
 namespace GUZ.Lab.Handler
@@ -11,9 +11,9 @@ namespace GUZ.Lab.Handler
 
         public void Bootstrap()
         {
-            var itemPrefab = PrefabCache.TryGetObject(PrefabCache.PrefabType.VobLadder);
+            var itemPrefab = ResourceLoader.TryGetPrefabObject(PrefabType.VobLadder);
             var ladderName = "LADDER_3.MDL";
-            var mdl = AssetCache.TryGetMdl(ladderName);
+            var mdl = ResourceLoader.TryGetModel(ladderName);
 
             var vobObj = MeshFactory.CreateVob(ladderName, mdl, Vector3.zero, Quaternion.Euler(0, 270, 0),
                 ladderSlot, rootGo: itemPrefab, useTextureArray: false);

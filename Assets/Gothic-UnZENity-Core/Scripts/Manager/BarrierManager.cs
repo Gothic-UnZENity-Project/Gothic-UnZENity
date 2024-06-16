@@ -3,6 +3,7 @@ using GUZ.Core.Caches;
 using GUZ.Core.Creator.Meshes.V2;
 using GUZ.Core.Debugging;
 using GUZ.Core.Extensions;
+using GVR.Core;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -52,7 +53,7 @@ namespace GUZ.Core.Manager
 
         public void CreateBarrier()
         {
-            var barrierMesh = AssetCache.TryGetMsh("MAGICFRONTIER_OUT.MSH");
+            var barrierMesh = ResourceLoader.TryGetMesh("MAGICFRONTIER_OUT.MSH");
             barrier = MeshFactory.CreateBarrier("Barrier", barrierMesh)
                 .GetAllDirectChildren()[0];
 

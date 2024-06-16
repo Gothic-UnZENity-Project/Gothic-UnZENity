@@ -1,8 +1,8 @@
 using System;
 using System.Linq;
-using GUZ.Core.Caches;
 using GUZ.Core.Globals;
 using UnityEngine;
+using GVR.Core;
 using UnityEngine.SceneManagement;
 
 namespace GUZ.Core.Manager
@@ -32,7 +32,7 @@ namespace GUZ.Core.Manager
         {
             if (!_featureEnable) return;
 
-            var simulator = PrefabCache.TryGetObject(PrefabCache.PrefabType.XRDeviceSimulator);
+            var simulator = ResourceLoader.TryGetPrefabObject(PrefabType.XRDeviceSimulator);
             simulator.name = "XRDeviceSimulator - XRIT";
             SceneManager.GetActiveScene().GetRootGameObjects().Append(simulator);
         }

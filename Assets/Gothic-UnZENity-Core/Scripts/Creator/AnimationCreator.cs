@@ -8,6 +8,7 @@ using GUZ.Core.Npc;
 using GUZ.Core.Npc.Actions;
 using GUZ.Core.Properties;
 using GUZ.Core.Extensions;
+using GVR.Core;
 using UnityEngine;
 using ZenKit;
 using Animation = UnityEngine.Animation;
@@ -37,15 +38,15 @@ namespace GUZ.Core.Creator
             // For animations: mdhName == mdsName (with different file ending of course ;-))
             var mdhName = mdsName;
 
-            var modelAnimation = AssetCache.TryGetAnimation(mdsName, animationName);
+            var modelAnimation = ResourceLoader.TryGetModelAnimation(mdsName, animationName);
             if (modelAnimation == null)
                 return false;
 
             var mdsAnimationKeyName = GetCombinedAnimationKey(mdsName, animationName);
             var animationComp = go.GetComponent<Animation>();
 
-            var mds = AssetCache.TryGetMds(mdsName);
-            var mdh = AssetCache.TryGetMdh(mdhName);
+            var mds = ResourceLoader.TryGetModelScript(mdsName);
+            var mdh = ResourceLoader.TryGetModelHierarchy(mdhName);
             var anim = mds.Animations.First(i => i.Name.EqualsIgnoreCase(animationName));
 
             // If we create empty animations with only one frame, Unity will complain. We therefore skip it for now.

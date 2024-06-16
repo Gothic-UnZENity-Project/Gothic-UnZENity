@@ -8,6 +8,7 @@ using GUZ.Core.Debugging;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager.Settings;
 using GUZ.Core.Vob;
+using GVR.Core;
 using UnityEngine;
 using ZenKit;
 using ZenKit.Daedalus;
@@ -32,10 +33,12 @@ namespace GUZ.Core.Manager
         }
 
         private static Performance _dxPerformance;
-        private static Loader _dxLoader;
         private static AudioSource _audioSourceComp;
         private static AudioReverbFilter _reverbFilterComp;
 
+        private static Dictionary<string, MusicThemeInstance> _themes = new();
+        private static DaedalusVm _vm;
+        
         private static MusicThemeInstance _currentTheme;
         /// <summary>
         /// Whenever we collide with a musicZoneVobGO, it's entry will be added to the list and the most important theme will be played.
@@ -57,7 +60,6 @@ namespace GUZ.Core.Manager
             _dxPerformance = Performance.Create(FREQUENCY_RATE);
 
             InitializeUnity();
-            InitializeZenKit();
             InitializeDxMusic();
 
             GUZEvents.MainMenuSceneLoaded.AddListener(OnMainMenuLoaded);
@@ -129,28 +131,15 @@ namespace GUZ.Core.Manager
             _musicZones.Remove(newMusicZoneGo);
         }
 
-        private static void InitializeZenKit()
-        {
-            // Load all music files into vfs.
-            GameData.Vfs.Mount(Path.Combine(SettingsManager.GameSettings.GothicIPath, "_work"), "/", VfsOverwriteBehavior.All);
-        }
-
         private static void InitializeDxMusic()
         {
             Logger.Set(FeatureFlags.I.dxMusicLogLevel, LoggerCallback);
 
-            _dxLoader = Loader.Create(LoaderOptions.Download);
-            _dxLoader.AddResolver(name =>
+            // Load the VM and initialize all music theme instances
+            _vm = ResourceLoader.TryGetDaedalusVm("MUSIC");
+            _vm.GetInstanceSymbols("C_MUSICTHEME").ForEach(v =>
             {
-                try
-                {
-                    return GameData.Vfs.Find(name).Buffer.Bytes;
-                }
-                catch (Exception)
-                {
-                    // No audio file found. Return null for now as it seems sufficient.
-                    return null;
-                }
+                _themes[v.Name] = _vm.InitInstance<MusicThemeInstance>(v);
             });
         }
 
@@ -204,7 +193,7 @@ namespace GUZ.Core.Manager
 
         public static void Play(string musicInstanceName)
         {
-            var music = AssetCache.TryGetMusic(musicInstanceName);
+            var music = _themes[musicInstanceName];
             Play(music);
         }
 
@@ -218,7 +207,7 @@ namespace GUZ.Core.Manager
             if (_currentTheme != null && theme.File == _currentTheme.File)
                 return;
 
-            var segment = _dxLoader.GetSegment(theme.File);
+            var segment = ResourceLoader.TryGetSegment(theme.File);
 
             var timing = ToTiming(theme.TransSubType);
             var embellishment = ToEmbellishment(theme.TransType);

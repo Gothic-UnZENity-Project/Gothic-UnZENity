@@ -8,6 +8,7 @@ using GUZ.Core.Globals;
 using GUZ.Core.Manager.Settings;
 using GUZ.Core.Util;
 using GUZ.Core.Vm;
+using GVR.Core;
 using UnityEngine;
 using ZenKit;
 using ZenKit.Daedalus;
@@ -23,10 +24,9 @@ namespace GUZ.Core.Manager
         private void OnApplicationQuit()
         {
             GameData.Dispose();
-            AssetCache.Dispose();
+            VmInstanceManager.Dispose();
             TextureCache.Dispose();
             LookupCache.Dispose();
-            PrefabCache.Dispose();
             MorphMeshCache.Dispose();
         }
         
@@ -35,14 +35,14 @@ namespace GUZ.Core.Manager
             var watch = Stopwatch.StartNew();
 
             GUZContext.SetContext(FeatureFlags.I.gameControls);
-
+            ResourceLoader.Init(g1Dir);
+            
             MountVfs(g1Dir);
             SetLanguage();
             LoadGothicVm(g1Dir);
             LoadDialogs();
             LoadSfxVm(g1Dir);
             LoadPfxVm(g1Dir);
-            LoadMusicVm(g1Dir);
             LoadMusic();
             LoadFonts();
             
@@ -97,8 +97,7 @@ namespace GUZ.Core.Manager
         
         private static void LoadGothicVm(string g1Dir)
         {
-            var fullPath = Path.GetFullPath(Path.Join(g1Dir, "/_work/DATA/scripts/_compiled/GOTHIC.DAT"));
-            GameData.GothicVm = new DaedalusVm(fullPath);
+            GameData.GothicVm = ResourceLoader.TryGetDaedalusVm("GOTHIC");
             
             NpcHelper.LoadHero();
 
@@ -119,20 +118,13 @@ namespace GUZ.Core.Manager
 
         private static void LoadSfxVm(string g1Dir)
         {
-            var fullPath = Path.GetFullPath(Path.Join(g1Dir, "/_work/DATA/scripts/_compiled/SFX.DAT"));
-            GameData.SfxVm = new DaedalusVm(fullPath);
+            GameData.SfxVm = ResourceLoader.TryGetDaedalusVm("SFX");
         }
 
         private static void LoadPfxVm(string g1Dir)
         {
-            var fullPath = Path.GetFullPath(Path.Join(g1Dir, "/_work/DATA/scripts/_compiled/PARTICLEFX.DAT"));
-            GameData.PfxVm = new DaedalusVm(fullPath);
-        }
-
-        private static void LoadMusicVm(string g1Dir)
-        {
-            var fullPath = Path.GetFullPath(Path.Join(g1Dir, "/_work/DATA/scripts/_compiled/MUSIC.DAT"));
-            GameData.MusicVm = new DaedalusVm(fullPath);
+            
+            GameData.PfxVm = ResourceLoader.TryGetDaedalusVm("PARTICLEFX");
         }
 
         private static void LoadMusic()

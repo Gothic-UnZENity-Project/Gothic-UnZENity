@@ -9,6 +9,7 @@ using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager.Settings;
 using GUZ.Core.World;
+using GVR.Core;
 using UnityEngine;
 using UnityEngine.Rendering;
 using Object = UnityEngine.Object;
@@ -271,7 +272,7 @@ namespace GUZ.Core.Manager
             rainParticleSystem.Stop();
 
             rainParticleSound = rainParticlesGameObject.GetComponentInChildren<AudioSource>();
-            rainParticleSound.clip = SoundCreator.ToAudioClip(AssetCache.TryGetSound("RAIN_01.WAV"));
+            rainParticleSound.clip = SoundCreator.ToAudioClip(ResourceLoader.TryGetSound("RAIN_01.WAV"));
             rainParticleSound.volume = 0;
             rainParticleSound.Stop();
         }

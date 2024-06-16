@@ -9,6 +9,7 @@ using GUZ.Core.Properties;
 using GUZ.Core.Vm;
 using GUZ.Core.Vob.WayNet;
 using GUZ.Core.Extensions;
+using GVR.Core;
 using UnityEngine;
 using ZenKit;
 using ZenKit.Daedalus;
@@ -56,7 +57,7 @@ namespace GUZ.Core.Creator
         /// </summary>
         public static void ExtWldInsertNpc(int npcInstance, string spawnPoint)
         {
-            var newNpc = PrefabCache.TryGetObject(PrefabCache.PrefabType.Npc);
+            var newNpc = ResourceLoader.TryGetPrefabObject(PrefabType.Npc);
             var props = newNpc.GetComponent<NpcProperties>();
             var npcSymbol = vm.GetSymbolByIndex(npcInstance);
             
@@ -191,8 +192,8 @@ namespace GUZ.Core.Creator
 
             if (data.Armor >= 0)
             {
-                var armorData = AssetCache.TryGetItemData(data.Armor);
-                props.EquippedItems.Add(AssetCache.TryGetItemData(data.Armor));
+                var armorData = VmInstanceManager.TryGetItemData(data.Armor);
+                props.EquippedItems.Add(VmInstanceManager.TryGetItemData(data.Armor));
                 props.mdmName = armorData.VisualChange;
             }
             else
@@ -272,7 +273,7 @@ namespace GUZ.Core.Creator
         public static void ExtEquipItem(NpcInstance npc, int itemId)
         {
             var props = GetProperties(npc);
-            var itemData = AssetCache.TryGetItemData(itemId);
+            var itemData = VmInstanceManager.TryGetItemData(itemId);
 
             props.EquippedItems.Add(itemData);
         }

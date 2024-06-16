@@ -15,30 +15,6 @@ namespace GUZ.Core.Creator.Sounds
             BIT16 = 16
         }
 
-        [CanBeNull]
-        public static SoundData GetSoundArrayFromVfs(string name)
-        {
-            if (GameData.Vfs == null)
-                return null;
-
-            var node = GameData.Vfs.Find(name);
-            if (node == null)
-                return null;
-
-            try
-            {
-                var wavFile = node.Buffer.Bytes;
-
-                var soundData = ConvertWavByteArrayToFloatArray(wavFile);
-                return soundData;
-            }
-            catch (Exception e)
-            {
-                Debug.LogError(e);
-                return null;
-            }
-        }
-
         public static AudioClip ToAudioClip(SoundData wavFile)
         {
             AudioClip audioClip;
@@ -60,7 +36,7 @@ namespace GUZ.Core.Creator.Sounds
             return audioClip;
         }
 
-        private static SoundData ConvertWavByteArrayToFloatArray(byte[] fileBytes)
+        public static SoundData ConvertWavByteArrayToFloatArray(byte[] fileBytes)
         {
             var riff = Encoding.ASCII.GetString(fileBytes, 0, 4);
             var wave = Encoding.ASCII.GetString(fileBytes, 8, 4);

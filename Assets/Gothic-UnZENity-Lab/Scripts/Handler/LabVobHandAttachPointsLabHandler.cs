@@ -12,6 +12,7 @@ using GUZ.Core.Vm;
 using GUZ.Core.Vob;
 using GUZ.Core.Creator;
 using GUZ.Core.Extensions;
+using GVR.Core;
 using GUZ.XRIT.Components.Vobs;
 using TMPro;
 using UnityEngine;
@@ -42,7 +43,7 @@ namespace GUZ.Lab.Handler
             var itemNames = GameData.GothicVm.GetInstanceSymbols("C_Item").Select(i => i.Name).ToList();
 
             items = itemNames
-                .ToDictionary(itemName => itemName, AssetCache.TryGetItemData);
+                .ToDictionary(itemName => itemName, VmInstanceManager.TryGetItemData);
 
             vobCategoryDropdown.options = items
                 .Select(item => ((VmGothicEnums.ItemFlags)item.Value.MainFlag).ToString())
@@ -80,9 +81,9 @@ namespace GUZ.Lab.Handler
 
         private GameObject CreateItem(string itemName)
         {
-            var itemPrefab = PrefabCache.TryGetObject(PrefabCache.PrefabType.VobItem);
-            var item = AssetCache.TryGetItemData(itemName);
-            var mrm = AssetCache.TryGetMrm(item.Visual);
+            var itemPrefab = ResourceLoader.TryGetPrefabObject(PrefabType.VobItem);
+            var item = VmInstanceManager.TryGetItemData(itemName);
+            var mrm = ResourceLoader.TryGetMultiResolutionMesh(item.Visual);
             var itemGo = MeshFactory.CreateVob(item.Visual, mrm, default, default, true,
                 rootGo: itemPrefab, parent: itemSpawnSlot, useTextureArray: false);
 

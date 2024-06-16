@@ -4,6 +4,7 @@ using System.Text.RegularExpressions;
 using GUZ.Core.Caches;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
+using GVR.Core;
 using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -71,7 +72,7 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
 
         public void SetMdh(string mdhName)
         {
-            Mdh = AssetCache.TryGetMdh(mdhName);
+            Mdh = ResourceLoader.TryGetModelHierarchy(mdhName);
 
             if (Mdh == null)
             {
@@ -86,7 +87,7 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
 
         public void SetMdm(string mdmName)
         {
-            Mdm = AssetCache.TryGetMdm(mdmName);
+            Mdm = ResourceLoader.TryGetModelMesh(mdmName);
 
             if (Mdm == null)
             {
@@ -111,7 +112,7 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
 
         public void SetMrm(string mrmName)
         {
-            Mrm = AssetCache.TryGetMrm(mrmName);
+            Mrm = ResourceLoader.TryGetMultiResolutionMesh(mrmName);
 
             if (Mrm == null)
             {
@@ -124,7 +125,7 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
         /// </summary>
         public void SetMmb(string mmbName)
         {
-            Mmb = AssetCache.TryGetMmb(mmbName);
+            Mmb = ResourceLoader.TryGetMorphMesh(mmbName);
 
             if (Mmb == null)
             {
