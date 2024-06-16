@@ -74,9 +74,9 @@ namespace GUZ.Core.Manager
 
         public void Init()
         {
-            GUZEvents.GameTimeSecondChangeCallback.AddListener(Interpolate);
-            GUZEvents.GameTimeHourChangeCallback.AddListener(UpdateRainTime);
-            GUZEvents.GeneralSceneLoaded.AddListener(GeneralSceneLoaded);
+            GlobalEventDispatcher.GameTimeSecondChangeCallback.AddListener(Interpolate);
+            GlobalEventDispatcher.GameTimeHourChangeCallback.AddListener(UpdateRainTime);
+            GlobalEventDispatcher.GeneralSceneLoaded.AddListener(GeneralSceneLoaded);
 
             stateList.AddRange(new[]
             {

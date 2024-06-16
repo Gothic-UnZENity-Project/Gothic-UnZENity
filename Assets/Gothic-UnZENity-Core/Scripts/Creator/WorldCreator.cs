@@ -30,7 +30,7 @@ namespace GUZ.Core.Creator
 
         static WorldCreator()
         {
-            GUZEvents.GeneralSceneLoaded.AddListener(WorldLoaded);
+            GlobalEventDispatcher.GeneralSceneLoaded.AddListener(WorldLoaded);
         }
 
         public static async Task CreateAsync(string worldName)

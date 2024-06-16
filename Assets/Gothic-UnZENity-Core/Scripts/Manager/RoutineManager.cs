@@ -17,12 +17,12 @@ namespace GUZ.Core.Manager
 
         private void OnEnable()
         {
-            GUZEvents.GameTimeMinuteChangeCallback.AddListener(Invoke);
+            GlobalEventDispatcher.GameTimeMinuteChangeCallback.AddListener(Invoke);
         }
 
         private void OnDisable()
         {
-            GUZEvents.GameTimeMinuteChangeCallback.RemoveListener(Invoke);
+            GlobalEventDispatcher.GameTimeMinuteChangeCallback.RemoveListener(Invoke);
         }
 
         private void Start()
@@ -31,7 +31,7 @@ namespace GUZ.Core.Manager
             if (!FeatureFlags.I.enableNpcRoutines)
                 return;
             
-            GUZEvents.GeneralSceneLoaded.AddListener(WorldLoadedEvent);
+            GlobalEventDispatcher.GeneralSceneLoaded.AddListener(WorldLoadedEvent);
         }
 
         private void WorldLoadedEvent(GameObject playerGo)

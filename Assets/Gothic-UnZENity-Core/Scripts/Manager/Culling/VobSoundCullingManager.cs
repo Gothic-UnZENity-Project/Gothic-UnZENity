@@ -29,8 +29,8 @@ namespace GUZ.Core.Manager.Culling
 
         public void Init()
         {
-            GUZEvents.GeneralSceneUnloaded.AddListener(PreWorldCreate);
-            GUZEvents.GeneralSceneLoaded.AddListener(PostWorldCreate);
+            GlobalEventDispatcher.GeneralSceneUnloaded.AddListener(PreWorldCreate);
+            GlobalEventDispatcher.GeneralSceneLoaded.AddListener(PostWorldCreate);
 
             // Unity demands CullingGroups to be created in Awake() or Start() earliest.
             soundCullingGroup = new();

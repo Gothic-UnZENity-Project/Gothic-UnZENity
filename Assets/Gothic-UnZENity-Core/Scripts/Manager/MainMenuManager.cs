@@ -12,7 +12,7 @@ namespace GUZ.Core.Manager
     {
         private void Start()
         {
-            GUZEvents.MainMenuSceneLoaded.AddListener(delegate
+            GlobalEventDispatcher.MainMenuSceneLoaded.AddListener(delegate
             {
                 GUZContext.InteractionAdapter.CreatePlayerController(SceneManager.GetActiveScene());
             });

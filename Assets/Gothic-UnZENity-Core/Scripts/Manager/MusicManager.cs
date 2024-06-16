@@ -70,9 +70,9 @@ namespace GUZ.Core.Manager
             InitializeUnity();
             InitializeDxMusic();
 
-            GUZEvents.MainMenuSceneLoaded.AddListener(OnMainMenuLoaded);
-            GUZEvents.LoadingSceneLoaded.AddListener(OnLoadingSceneLoaded);
-            GUZEvents.GeneralSceneLoaded.AddListener(OnWorldLoaded);
+            GlobalEventDispatcher.MainMenuSceneLoaded.AddListener(OnMainMenuLoaded);
+            GlobalEventDispatcher.LoadingSceneLoaded.AddListener(OnLoadingSceneLoaded);
+            GlobalEventDispatcher.GeneralSceneLoaded.AddListener(OnWorldLoaded);
         }
 
         private void InitializeUnity()

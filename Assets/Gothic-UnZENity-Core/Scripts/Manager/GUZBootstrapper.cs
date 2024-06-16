@@ -46,7 +46,7 @@ namespace GUZ.Core.Manager
             watch.Stop();
             Debug.Log($"Time spent for Bootstrapping ZenKit: {watch.Elapsed}");
 
-            GUZEvents.ZenKitBootstrapped.Invoke();
+            GlobalEventDispatcher.ZenKitBootstrapped.Invoke();
         }
 
         public static void SetLanguage()

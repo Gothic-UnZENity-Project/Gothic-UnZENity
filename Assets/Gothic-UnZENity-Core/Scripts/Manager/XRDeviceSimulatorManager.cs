@@ -21,11 +21,11 @@ namespace GUZ.Core.Manager
 
         public void Init()
         {
-            GUZEvents.GeneralSceneLoaded.AddListener(delegate(GameObject playerGo)
+            GlobalEventDispatcher.GeneralSceneLoaded.AddListener(delegate(GameObject playerGo)
             {
                 AddXRDeviceSimulator();
             });
-            GUZEvents.MainMenuSceneLoaded.AddListener(AddXRDeviceSimulator);
+            GlobalEventDispatcher.MainMenuSceneLoaded.AddListener(AddXRDeviceSimulator);
         }
 
         public void AddXRDeviceSimulator()

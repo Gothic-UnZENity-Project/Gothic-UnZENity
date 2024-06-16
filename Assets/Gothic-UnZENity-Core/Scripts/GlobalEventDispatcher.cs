@@ -2,13 +2,13 @@
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace GUZ.Core.Globals
+namespace GUZ.Core
 {
     /// <summary>
     /// Loading/Unloading order of scenes:
     /// https://github.com/Gothic-UnZENity-Project/Gothic-UnZENity/blob/main/Docs/development/diagrams/SceneLoading.drawio.png
     /// </summary>
-    public static class GUZEvents
+    public static class GlobalEventDispatcher
     {
         public static readonly UnityEvent ZenKitBootstrapped = new();
 

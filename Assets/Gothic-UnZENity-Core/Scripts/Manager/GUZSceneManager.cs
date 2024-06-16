@@ -135,7 +135,7 @@ namespace GUZ.Core.Manager
                 SceneManager.MoveGameObjectToScene(interactionManager, SceneManager.GetSceneByName(Constants.SceneBootstrap));
                 SceneManager.UnloadSceneAsync(generalScene);
 
-                GUZEvents.GeneralSceneUnloaded.Invoke();
+                GlobalEventDispatcher.GeneralSceneUnloaded.Invoke();
                 generalSceneLoaded = false;
             }
 
@@ -171,7 +171,7 @@ namespace GUZ.Core.Manager
                 case Constants.SceneBootstrap:
                     break;
                 case Constants.SceneLoading:
-                    GUZEvents.LoadingSceneLoaded.Invoke();
+                    GlobalEventDispatcher.LoadingSceneLoaded.Invoke();
                     break;
                 case Constants.SceneGeneral:
                     SceneManager.MoveGameObjectToScene(interactionManager, generalScene);
@@ -179,7 +179,7 @@ namespace GUZ.Core.Manager
                     var playerGo = GUZContext.InteractionAdapter.CreatePlayerController(scene);
 
                     TeleportPlayerToSpot(playerGo);
-                    GUZEvents.GeneralSceneLoaded.Invoke(playerGo);
+                    GlobalEventDispatcher.GeneralSceneLoaded.Invoke(playerGo);
 
                     break;
                 case Constants.SceneMainMenu:
@@ -187,12 +187,12 @@ namespace GUZ.Core.Manager
                     sphere.GetComponent<MeshRenderer>().material = TextureManager.I.loadingSphereMaterial;
                     SceneManager.SetActiveScene(scene);
 
-                    GUZEvents.MainMenuSceneLoaded.Invoke();
+                    GlobalEventDispatcher.MainMenuSceneLoaded.Invoke();
                     break;
                 // any World
                 default:
                     SceneManager.SetActiveScene(scene);
-                    GUZEvents.WorldSceneLoaded.Invoke();
+                    GlobalEventDispatcher.WorldSceneLoaded.Invoke();
                     break;
             }
         }

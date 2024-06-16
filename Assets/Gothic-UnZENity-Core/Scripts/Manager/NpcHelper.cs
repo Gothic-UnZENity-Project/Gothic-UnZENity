@@ -21,7 +21,7 @@ namespace GUZ.Core.Manager
 
         static NpcHelper()
         {
-            GUZEvents.GeneralSceneLoaded.AddListener((GameObject playerGo) =>
+            GlobalEventDispatcher.GeneralSceneLoaded.AddListener((GameObject playerGo) =>
             {
                 CacheHero(playerGo);
             });

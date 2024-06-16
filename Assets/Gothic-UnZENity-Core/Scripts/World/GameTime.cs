@@ -44,8 +44,8 @@ namespace GUZ.Core.World
             time = new DateTime(time.Year, time.Month, time.Day, _featureStartHour, _featureStartMinute, time.Second);
             minutesInHour = _featureStartMinute;
 
-            GUZEvents.GeneralSceneLoaded.AddListener(WorldLoaded);
-            GUZEvents.GeneralSceneUnloaded.AddListener(WorldUnloaded);
+            GlobalEventDispatcher.GeneralSceneLoaded.AddListener(WorldLoaded);
+            GlobalEventDispatcher.GeneralSceneUnloaded.AddListener(WorldUnloaded);
         }
 
         private void WorldLoaded(GameObject playerGo)
@@ -73,7 +73,7 @@ namespace GUZ.Core.World
                 if (time > MAX_TIME)
                     time = MIN_TIME;
 
-                GUZEvents.GameTimeSecondChangeCallback.Invoke(time);
+                GlobalEventDispatcher.GameTimeSecondChangeCallback.Invoke(time);
                 RaiseMinuteAndHourEvent();
                 yield return new WaitForSeconds(ONE_INGAME_SECOND / _featureTimeMultiplier);
             }
@@ -84,7 +84,7 @@ namespace GUZ.Core.World
             if (secondsInMinute%60==0)
             {
                 secondsInMinute = 0;
-                GUZEvents.GameTimeMinuteChangeCallback.Invoke(time);
+                GlobalEventDispatcher.GameTimeMinuteChangeCallback.Invoke(time);
                 RaiseHourEvent();
             }
         }
@@ -94,7 +94,7 @@ namespace GUZ.Core.World
             if (minutesInHour % 60 == 0)
             {
                 minutesInHour = 0;
-                GUZEvents.GameTimeHourChangeCallback.Invoke(time);
+                GlobalEventDispatcher.GameTimeHourChangeCallback.Invoke(time);
             }
         }
 
