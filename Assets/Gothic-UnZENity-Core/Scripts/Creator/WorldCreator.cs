@@ -60,7 +60,6 @@ namespace GUZ.Core.Creator
                 await MeshFactory.CreateWorldTextureArray();
             }
 
-            SkyManager.I.InitSky();
             StationaryLight.InitStationaryLights();
 
             if (FeatureFlags.I.showBarrier)

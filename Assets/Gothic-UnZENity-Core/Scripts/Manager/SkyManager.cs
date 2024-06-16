@@ -5,28 +5,24 @@ using GUZ.Core.Caches;
 using GUZ.Core.Creator.Sounds;
 using GUZ.Core.Data;
 using GUZ.Core.Debugging;
+using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager.Settings;
-using GUZ.Core.Util;
 using GUZ.Core.World;
-using GUZ.Core.Extensions;
 using UnityEngine;
 using UnityEngine.Rendering;
+using Object = UnityEngine.Object;
 using Random = UnityEngine.Random;
 
 namespace GUZ.Core.Manager
 {
-    public class SkyManager : SingletonBehaviour<SkyManager>
+    public class SkyManager
     {
-        public Transform SunDirection;
-        [Tooltip("Changes will be reflected in Editor Runtime mode for testing purposes.")]
-        public Color SunColor;
-        [Tooltip("Changes will be reflected in Editor Runtime mode for testing purposes.")]
-        public Color AmbientColor;
-        [Tooltip("Changes will be reflected in Editor Runtime mode for testing purposes.")]
-        [Range(0, 1)]
-        public float PointLightIntensity = 1f;
-        public bool IsRaining;
+        private Quaternion SunDirection;
+        private readonly Color SunColor;
+        private readonly Color AmbientColor;
+        private readonly float PointLightIntensity = 1f;
+        private bool IsRaining;
 
         private float masterTime;
         private bool noSky = true;
@@ -62,20 +58,25 @@ namespace GUZ.Core.Manager
         private static readonly int DomeColor1ShaderId = Shader.PropertyToID("_DomeColor1");
         private static readonly int DomeColor2ShaderId = Shader.PropertyToID("_DomeColor2");
 
-        private void Start()
+        public SkyManager(GameConfiguration config)
         {
-            GUZEvents.GameTimeSecondChangeCallback.AddListener(Interpolate);
-            GUZEvents.GameTimeHourChangeCallback.AddListener(UpdateRainTime);
-            GUZEvents.GeneralSceneLoaded.AddListener(GeneralSceneLoaded);
+            SunDirection = config.sunLightDirection;
+            SunColor = config.sunLightColor;
+            AmbientColor = config.ambientLightColor;
+            PointLightIntensity = config.sunLightIntensity;
         }
 
-        private void OnValidate()
+        public void OnValidate()
         {
             SetShaderProperties();
         }
 
-        public void InitSky()
+        public void Init()
         {
+            GUZEvents.GameTimeSecondChangeCallback.AddListener(Interpolate);
+            GUZEvents.GameTimeHourChangeCallback.AddListener(UpdateRainTime);
+            GUZEvents.GeneralSceneLoaded.AddListener(GeneralSceneLoaded);
+
             stateList.AddRange(new[]
             {
                 CreatePresetState(new SkyState(), (state) => state.PresetDay1()),
@@ -248,10 +249,7 @@ namespace GUZ.Core.Manager
 
         private void SetShaderProperties()
         {
-            if (SunDirection)
-            {
-                Shader.SetGlobalVector(SunDirectionShaderId, SunDirection.forward);
-            }
+            Shader.SetGlobalVector(SunDirectionShaderId, SunDirection.eulerAngles);
             Shader.SetGlobalColor(SunColorShaderId, SunColor);
             Shader.SetGlobalColor(AmbientShaderId, AmbientColor);
             Shader.SetGlobalFloat(PointLightIntensityShaderId, PointLightIntensity);
@@ -259,7 +257,7 @@ namespace GUZ.Core.Manager
 
         private void GeneralSceneLoaded(GameObject playerGo)
         {
-            RenderSettings.skybox = Instantiate(TextureManager.I.skyMaterial);
+            RenderSettings.skybox = Object.Instantiate(TextureManager.I.skyMaterial);
 
             InitRainGO();
         }
