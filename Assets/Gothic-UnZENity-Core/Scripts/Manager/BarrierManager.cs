@@ -1,7 +1,4 @@
-using System;
-using GUZ.Core.Caches;
 using GUZ.Core.Creator.Meshes.V2;
-using GUZ.Core.Debugging;
 using GUZ.Core.Extensions;
 using GVR.Core;
 using UnityEngine;
@@ -11,9 +8,6 @@ namespace GUZ.Core.Manager
 {
     public class BarrierManager
     {
-        [Obsolete]
-        public static BarrierManager I;
-        
         private GameObject barrier;
 
         private Material material1;
@@ -46,9 +40,13 @@ namespace GUZ.Core.Manager
         private const float TimeToStayHidden = 1200;
         private const float TimeStepToUpdateFade = 0.001f;
 
-        public BarrierManager()
+        private readonly bool _featureEnableSounds;
+        private readonly bool _featureShowBarrierLogs;
+
+        public BarrierManager(GameConfiguration config)
         {
-            I = this;
+            _featureEnableSounds = config.enableGameSounds;
+            _featureShowBarrierLogs = config.enableBarrierLogs;
         }
 
         public void CreateBarrier()
@@ -57,8 +55,10 @@ namespace GUZ.Core.Manager
             barrier = MeshFactory.CreateBarrier("Barrier", barrierMesh)
                 .GetAllDirectChildren()[0];
 
-            if (!FeatureFlags.I.enableSounds)
+            if (!_featureEnableSounds)
+            {
                 return;
+            }
             
             for (var i = 0; i < thunderSoundSources.Length; i++)
             {
@@ -92,15 +92,17 @@ namespace GUZ.Core.Manager
 
             if (!barrierFadeIn)
             {
-                if (FeatureFlags.I.showBarrierLogs)
+                if (_featureShowBarrierLogs)
+                {
                     Debug.Log("Next Activation: " + nextActivation);
+                }
 
                 return;
             }
 
             UpdateFadeState();
 
-            if (showThunder && FeatureFlags.I.enableSounds)
+            if (showThunder && _featureEnableSounds)
             {
                 var sound = VobHelper.GetSoundClip("MFX_BARRIERE_AMBIENT");
                 

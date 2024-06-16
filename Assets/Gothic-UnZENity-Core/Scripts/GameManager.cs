@@ -106,7 +106,7 @@ namespace GUZ.Core
 			_gameSettingsManager = new SettingsManager();
 			_meshCullingManager = new VobMeshCullingManager(config, this);
 			_soundCullingManager = new VobSoundCullingManager(config);
-			_barrierManager = new BarrierManager();
+			_barrierManager = new BarrierManager(config);
 			_stationaryLightsManager = new StationaryLightsManager();
 			_xrSimulatorManager = new XRDeviceSimulatorManager(config);
 			_gameTimeManager = new GameTime(config, this);

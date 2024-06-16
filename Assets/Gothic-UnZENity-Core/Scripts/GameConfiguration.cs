@@ -80,5 +80,7 @@ namespace GUZ.Core
 
 		[SerializeField] [InspectorName("DirectMusic Log Level")]
 		public DirectMusic.LogLevel directMusicLogLevel = DirectMusic.LogLevel.Warning;
+
+		[SerializeField] public bool enableBarrierLogs = false;
 	}
 }
