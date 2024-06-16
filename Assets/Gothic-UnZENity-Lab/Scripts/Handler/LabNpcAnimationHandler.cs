@@ -10,7 +10,7 @@ using GUZ.Core.Npc.Actions.AnimationActions;
 using GUZ.Core.Properties;
 using GUZ.Core.Vm;
 using GUZ.Lab.AnimationActionMocks;
-using GVR.Core;
+using GUZ.Core;
 using TMPro;
 using UnityEngine;
 using ZenKit.Daedalus;

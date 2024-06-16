@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using GUZ.Core.Extensions;
-using GVR.Core;
 using UnityEngine;
 
 namespace GUZ.Core.Caches

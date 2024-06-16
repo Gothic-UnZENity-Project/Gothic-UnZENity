@@ -1,6 +1,6 @@
 using GUZ.Core.Context;
 using GUZ.Core.Creator.Meshes.V2;
-using GVR.Core;
+using GUZ.Core;
 using UnityEngine;
 
 namespace GUZ.Lab.Handler

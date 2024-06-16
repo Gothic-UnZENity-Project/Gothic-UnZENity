@@ -4,7 +4,7 @@ using JetBrains.Annotations;
 using UnityEngine;
 using ZenKit;
 
-namespace GVR.Core
+namespace GUZ.Core
 {
 	public class Resource<T>
 	{

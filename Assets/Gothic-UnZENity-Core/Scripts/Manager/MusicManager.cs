@@ -4,7 +4,7 @@ using System.Linq;
 using DirectMusic;
 using GUZ.Core.Globals;
 using GUZ.Core.Vob;
-using GVR.Core;
+using GUZ.Core;
 using UnityEngine;
 using ZenKit;
 using ZenKit.Daedalus;

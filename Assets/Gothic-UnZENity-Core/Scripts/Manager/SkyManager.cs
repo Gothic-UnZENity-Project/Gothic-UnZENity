@@ -9,7 +9,7 @@ using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager.Settings;
 using GUZ.Core.World;
-using GVR.Core;
+using GUZ.Core;
 using UnityEngine;
 using UnityEngine.Rendering;
 using Object = UnityEngine.Object;

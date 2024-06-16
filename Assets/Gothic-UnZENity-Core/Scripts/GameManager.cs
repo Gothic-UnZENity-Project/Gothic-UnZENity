@@ -4,7 +4,7 @@ using GUZ.Core.Manager;
 using GUZ.Core.Manager.Culling;
 using GUZ.Core.Manager.Settings;
 using GUZ.Core.World;
-using GVR.Core;
+using GUZ.Core;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 

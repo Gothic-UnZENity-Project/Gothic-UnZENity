@@ -7,7 +7,7 @@ using GUZ.Core.Globals;
 using GUZ.Core.Properties;
 using GUZ.Core.Extensions;
 using GUZ.Core.Vm;
-using GVR.Core;
+using GUZ.Core;
 using JetBrains.Annotations;
 using UnityEngine;
 

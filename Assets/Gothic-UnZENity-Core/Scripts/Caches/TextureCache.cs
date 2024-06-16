@@ -6,7 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using GUZ.Core.World;
 using GUZ.Core.Extensions;
-using GVR.Core;
+using GUZ.Core;
 using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.Rendering;

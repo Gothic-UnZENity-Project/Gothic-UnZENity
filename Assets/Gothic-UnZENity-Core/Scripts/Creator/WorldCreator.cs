@@ -9,7 +9,7 @@ using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
 using GUZ.Core.World;
-using GVR.Core;
+using GUZ.Core;
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
 using ZenKit;

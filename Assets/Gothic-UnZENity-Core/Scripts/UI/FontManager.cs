@@ -3,7 +3,7 @@ using System.Reflection;
 using GUZ.Core.Caches;
 using GUZ.Core.Globals;
 using GUZ.Core.Util;
-using GVR.Core;
+using GUZ.Core;
 using TMPro;
 using UnityEngine;
 using UnityEngine.TextCore;

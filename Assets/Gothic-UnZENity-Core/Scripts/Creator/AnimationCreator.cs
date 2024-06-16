@@ -8,7 +8,7 @@ using GUZ.Core.Npc;
 using GUZ.Core.Npc.Actions;
 using GUZ.Core.Properties;
 using GUZ.Core.Extensions;
-using GVR.Core;
+using GUZ.Core;
 using UnityEngine;
 using ZenKit;
 using Animation = UnityEngine.Animation;

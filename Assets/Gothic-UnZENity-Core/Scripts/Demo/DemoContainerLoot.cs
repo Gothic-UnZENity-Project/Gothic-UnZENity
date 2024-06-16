@@ -6,7 +6,7 @@ using GUZ.Core.Creator;
 using GUZ.Core.Creator.Meshes;
 using GUZ.Core.Extensions;
 using GUZ.Core.Vm;
-using GVR.Core;
+using GUZ.Core;
 using UnityEngine;
 
 namespace GUZ.Core.Demo

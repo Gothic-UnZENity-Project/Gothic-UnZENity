@@ -4,7 +4,6 @@ using System.Text.RegularExpressions;
 using GUZ.Core.Caches;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
-using GVR.Core;
 using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.Rendering;

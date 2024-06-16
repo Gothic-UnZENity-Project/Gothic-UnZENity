@@ -17,7 +17,7 @@ using GUZ.Core.Properties;
 using GUZ.Core.Vm;
 using GUZ.Core.Vob;
 using GUZ.Core.Vob.WayNet;
-using GVR.Core;
+using GUZ.Core;
 using JetBrains.Annotations;
 using Unity.XR.CoreUtils;
 using UnityEngine;

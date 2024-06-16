@@ -1,6 +1,6 @@
 using GUZ.Core.Creator.Meshes.V2;
 using GUZ.Core.Extensions;
-using GVR.Core;
+using GUZ.Core;
 using UnityEngine;
 using Random = UnityEngine.Random;
 

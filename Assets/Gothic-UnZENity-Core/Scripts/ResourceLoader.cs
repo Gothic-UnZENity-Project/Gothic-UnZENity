@@ -13,7 +13,7 @@ using Mesh = ZenKit.Mesh;
 using Object = UnityEngine.Object;
 using Texture = ZenKit.Texture;
 
-namespace GVR.Core
+namespace GUZ.Core
 {
 	public static class ResourceLoader
 	{
@@ -176,15 +176,15 @@ namespace GVR.Core
 		}
 
 		[CanBeNull]
-		public static World TryGetWorld([NotNull] string key)
+		public static ZenKit.World TryGetWorld([NotNull] string key)
 		{
-			return new World(Vfs, $"{GetPreparedKey(key)}.zen");
+			return new ZenKit.World(Vfs, $"{GetPreparedKey(key)}.zen");
 		}
 		
 		[CanBeNull]
-		public static World TryGetWorld([NotNull] string key, GameVersion version)
+		public static ZenKit.World TryGetWorld([NotNull] string key, GameVersion version)
 		{
-			return new World(Vfs, $"{GetPreparedKey(key)}.zen", version);
+			return new ZenKit.World(Vfs, $"{GetPreparedKey(key)}.zen", version);
 		}
 
 		[CanBeNull]

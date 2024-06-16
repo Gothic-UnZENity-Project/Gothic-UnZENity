@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using GUZ.Core.Caches;
 using GUZ.Core.Extensions;
-using GVR.Core;
+using GUZ.Core;
 using JetBrains.Annotations;
 using UnityEngine;
 using ZenKit;

@@ -4,7 +4,7 @@ using GUZ.Core.Caches;
 using GUZ.Core.Debugging;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
-using GVR.Core;
+using GUZ.Core;
 using TMPro;
 using UnityEngine;
 using ZenKit.Daedalus;

@@ -2,7 +2,7 @@ using System;
 using System.Linq;
 using GUZ.Core.Globals;
 using UnityEngine;
-using GVR.Core;
+using GUZ.Core;
 using UnityEngine.SceneManagement;
 
 namespace GUZ.Core.Manager

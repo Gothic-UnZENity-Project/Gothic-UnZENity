@@ -7,7 +7,7 @@ using GUZ.Core.Debugging;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager.Settings;
 using GUZ.Core.Vm;
-using GVR.Core;
+using GUZ.Core;
 using ZenKit;
 using ZenKit.Daedalus;
 using Debug = UnityEngine.Debug;

@@ -3,7 +3,7 @@ using System.Linq;
 using GUZ.Core.Globals;
 using GUZ.Core.World;
 using GUZ.Core.Extensions;
-using GVR.Core;
+using GUZ.Core;
 using UnityEngine;
 using ZenKit;
 using Material = UnityEngine.Material;

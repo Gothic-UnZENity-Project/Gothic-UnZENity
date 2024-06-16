@@ -1,6 +1,6 @@
 using System;
 
-namespace GVR.Core
+namespace GUZ.Core
 {
 	public enum PrefabType
 	{

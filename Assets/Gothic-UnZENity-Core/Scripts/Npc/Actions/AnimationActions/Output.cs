@@ -5,7 +5,7 @@ using GUZ.Core.Creator.Sounds;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
 using GUZ.Core.Extensions;
-using GVR.Core;
+using GUZ.Core;
 using UnityEngine;
 using Random = UnityEngine.Random;
 

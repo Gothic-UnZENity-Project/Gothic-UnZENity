@@ -12,7 +12,7 @@ using GUZ.Core.Vm;
 using GUZ.Core.Vob;
 using GUZ.Core.Creator;
 using GUZ.Core.Extensions;
-using GVR.Core;
+using GUZ.Core;
 using GUZ.XRIT.Components.Vobs;
 using TMPro;
 using UnityEngine;

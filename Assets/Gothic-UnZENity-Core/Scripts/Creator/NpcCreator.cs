@@ -9,7 +9,7 @@ using GUZ.Core.Properties;
 using GUZ.Core.Vm;
 using GUZ.Core.Vob.WayNet;
 using GUZ.Core.Extensions;
-using GVR.Core;
+using GUZ.Core;
 using UnityEngine;
 using ZenKit;
 using ZenKit.Daedalus;
