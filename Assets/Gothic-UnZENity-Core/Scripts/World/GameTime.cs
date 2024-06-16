@@ -1,16 +1,16 @@
 using System;
 using System.Collections;
-using GUZ.Core.Debugging;
 using GUZ.Core.Globals;
-using GUZ.Core.Util;
 using UnityEngine;
 
 namespace GUZ.Core.World
 {
-    public class GameTime : SingletonBehaviour<GameTime>
+    public class GameTime
     {
         public static readonly DateTime MIN_TIME = new(1, 1, 1, 0, 0, 0);
         public static readonly DateTime MAX_TIME = new(9999, 12, 31, 23, 59, 59);
+
+        [Obsolete] public static GameTime I;
 
         private int secondsInMinute = 0;
         private int minutesInHour = 0;
@@ -23,14 +23,26 @@ namespace GUZ.Core.World
         private static readonly float ONE_INGAME_SECOND = 0.06944f;
         private DateTime time = new(1, 1, 1, 15, 0, 0);
         private Coroutine timeTickCoroutineHandler;
-        
-        
-        private void Start()
+
+        private readonly CoroutineManager _coroutineManager;
+        private readonly int _featureStartHour;
+        private readonly int _featureStartMinute;
+        private readonly float _featureTimeMultiplier;
+
+        public GameTime(GameConfiguration config, CoroutineManager coroutineManager)
+        {
+            I = this;
+            _coroutineManager = coroutineManager;
+            _featureStartHour = config.startTimeHour;
+            _featureStartMinute = config.startTimeMinute;
+            _featureTimeMultiplier = config.timeSpeedMultiplier;
+        }
+
+        public void Init()
         {
             // Set debug value for current Time.
-            time = new DateTime(time.Year, time.Month, time.Day,
-                    FeatureFlags.I.startHour, FeatureFlags.I.startMinute, time.Second);
-            minutesInHour = FeatureFlags.I.startMinute;
+            time = new DateTime(time.Year, time.Month, time.Day, _featureStartHour, _featureStartMinute, time.Second);
+            minutesInHour = _featureStartMinute;
 
             GUZEvents.GeneralSceneLoaded.AddListener(WorldLoaded);
             GUZEvents.GeneralSceneUnloaded.AddListener(WorldUnloaded);
@@ -38,13 +50,13 @@ namespace GUZ.Core.World
 
         private void WorldLoaded(GameObject playerGo)
         {
-            timeTickCoroutineHandler = StartCoroutine(TimeTick());
+            timeTickCoroutineHandler = _coroutineManager.StartCoroutine(TimeTick());
         }
 
         private void WorldUnloaded()
         {
             // Pause Coroutine until next world is loaded.
-            StopCoroutine(timeTickCoroutineHandler);
+            _coroutineManager.StopCoroutine(timeTickCoroutineHandler);
         }
 
         public DateTime GetCurrentDateTime()
@@ -63,7 +75,7 @@ namespace GUZ.Core.World
 
                 GUZEvents.GameTimeSecondChangeCallback.Invoke(time);
                 RaiseMinuteAndHourEvent();
-                yield return new WaitForSeconds(ONE_INGAME_SECOND / FeatureFlags.I.TimeMultiplier);
+                yield return new WaitForSeconds(ONE_INGAME_SECOND / _featureTimeMultiplier);
             }
         }
         private void RaiseMinuteAndHourEvent()

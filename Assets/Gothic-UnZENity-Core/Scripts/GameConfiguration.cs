@@ -25,6 +25,13 @@ namespace GUZ.Core
 
 		[SerializeField] public Color ambientLightColor = new(r: 0.10196079f, g: 0.10196079f, b: 0.10196079f, a: 1);
 
+		[Header("### Time ###")] [SerializeField] [Range(0, 23)]
+		public int startTimeHour = 12;
+
+		[SerializeField] [Range(0, 59)] public int startTimeMinute;
+
+		[SerializeField] [Range(0.5f, 300f)] public float timeSpeedMultiplier = 1;
+
 		[Header("### Culling ###")] [SerializeField]
 		public bool enableSoundCulling = true;
 

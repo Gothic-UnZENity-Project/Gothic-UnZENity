@@ -1,8 +1,6 @@
-using System;
-using System.Collections.Generic;
 using GUZ.Core.Manager;
 using GUZ.Core.Manager.Culling;
-using Unity.Collections;
+using GUZ.Core.World;
 using UnityEngine;
 
 namespace GUZ.Core
@@ -17,6 +15,7 @@ namespace GUZ.Core
 		private SkyManager _skyVisualManager;
 		private StationaryLightsManager _stationaryLightsManager;
 		private XRDeviceSimulatorManager _xrSimulatorManager;
+		private GameTime _gameTimeManager;
 
 
 		private void Awake()
@@ -27,9 +26,11 @@ namespace GUZ.Core
 			_skyVisualManager = new SkyManager(config);
 			_stationaryLightsManager = new StationaryLightsManager();
 			_xrSimulatorManager = new XRDeviceSimulatorManager(config);
+			_gameTimeManager = new GameTime(config, this);
 
 			_meshCullingManager.Init();
 			_soundCullingManager.Init();
+			_gameTimeManager.Init();
 		}
 
 		private void Start()
