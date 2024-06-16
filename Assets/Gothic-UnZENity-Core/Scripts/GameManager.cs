@@ -71,6 +71,7 @@ namespace GUZ.Core
 		private MusicManager _gameMusicManager;
 		private GUZSceneManager _gameSceneManager;
 		private LoadingManager _gameLoadingManager;
+		private RoutineManager _npcRoutineManager;
 
 		private bool _isInitialised = false;
 
@@ -113,6 +114,7 @@ namespace GUZ.Core
 			_skyVisualManager = new SkyManager(config, _gameTimeManager);
 			_gameMusicManager = new MusicManager(config);
 			_gameSceneManager = new GUZSceneManager(config, _gameLoadingManager, xrInteractionManager);
+			_npcRoutineManager = new RoutineManager(config);
 		}
 
 		private void Start()
@@ -128,6 +130,7 @@ namespace GUZ.Core
 			_skyVisualManager.Init();
 			_xrSimulatorManager.Init();
 			_gameSceneManager.Init();
+			_npcRoutineManager.Init();
 
 			// Just in case we forgot to disable it in scene view. ;-)
 			invalidInstallationPathMessage.SetActive(false);

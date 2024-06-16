@@ -20,6 +20,7 @@ namespace GUZ.Core
 		public bool enableMainMenu = true;
 
 		[SerializeField] public bool spawnOldCampNpcs = false;
+		[SerializeField] public bool enableNpcRoutines = false;
 
 		[SerializeField] public string spawnAtWaypoint = string.Empty;
 

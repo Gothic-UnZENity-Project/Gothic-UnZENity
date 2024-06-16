@@ -1,9 +1,6 @@
 using System;
 using System.Collections.Generic;
-using GUZ.Core.Debugging;
-using GUZ.Core.Globals;
 using GUZ.Core.Npc.Routines;
-using GUZ.Core.Util;
 using UnityEngine;
 
 namespace GUZ.Core.Manager
@@ -11,41 +8,50 @@ namespace GUZ.Core.Manager
     /// <summary>
     /// Manages the Routines in a central spot. Routines Subscribe here. Calls the Routines when they are due.
     /// </summary>
-    public class RoutineManager : SingletonBehaviour<RoutineManager>
+    public class RoutineManager
     {
-        Dictionary<int, List<Routine>> npcStartTimeDict = new();
+        public static RoutineManager I;
+        
+        private Dictionary<int, List<Routine>> npcStartTimeDict = new();
 
-        private void OnEnable()
+        private readonly bool _featureEnable;
+        private readonly int _featureStartHour;
+        private readonly int _featureStartMinute;
+
+        public RoutineManager(GameConfiguration config)
         {
-            GlobalEventDispatcher.GameTimeMinuteChangeCallback.AddListener(Invoke);
+            I = this;
+            
+            _featureEnable = config.enableNpcRoutines;
+            _featureStartHour = config.startTimeHour;
+            _featureStartMinute = config.startTimeMinute;
         }
-
-        private void OnDisable()
-        {
-            GlobalEventDispatcher.GameTimeMinuteChangeCallback.RemoveListener(Invoke);
-        }
-
-        private void Start()
+        
+        public void Init()
         {
             //Init starting position
-            if (!FeatureFlags.I.enableNpcRoutines)
+            if (!_featureEnable)
+            {
                 return;
+            }
             
             GlobalEventDispatcher.GeneralSceneLoaded.AddListener(WorldLoadedEvent);
+            GlobalEventDispatcher.GameTimeMinuteChangeCallback.AddListener(Invoke);
         }
 
         private void WorldLoadedEvent(GameObject playerGo)
         {
-            var time = new DateTime(1, 1, 1,
-                FeatureFlags.I.startHour, FeatureFlags.I.startMinute, 0);
+            var time = new DateTime(1, 1, 1, _featureStartHour, _featureStartMinute, 0);
             
             Invoke(time);
         }
 
         public void Subscribe(Routine npcID, List<RoutineData> routines)
         {
-            if (!FeatureFlags.I.enableNpcRoutines)
+            if (!_featureEnable)
+            {
                 return;
+            }
 
             // We need to fill in routines backwards as e.g. Mud and Scorpio have duplicate routines. Last one needs to win.
             routines.Reverse();
