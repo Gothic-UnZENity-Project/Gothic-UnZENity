@@ -9,6 +9,7 @@ namespace GUZ.Core
 	{
 		public GameConfiguration config;
 
+		private SettingsManager _gameSettingsManager;
 		private VobMeshCullingManager _meshCullingManager;
 		private VobSoundCullingManager _soundCullingManager;
 		private BarrierManager _barrierManager;
@@ -20,6 +21,7 @@ namespace GUZ.Core
 
 		private void Awake()
 		{
+			_gameSettingsManager = new SettingsManager();
 			_meshCullingManager = new VobMeshCullingManager(config, this);
 			_soundCullingManager = new VobSoundCullingManager(config);
 			_barrierManager = new BarrierManager();
@@ -28,6 +30,7 @@ namespace GUZ.Core
 			_xrSimulatorManager = new XRDeviceSimulatorManager(config);
 			_gameTimeManager = new GameTime(config, this);
 
+			_gameSettingsManager.Init();
 			_meshCullingManager.Init();
 			_soundCullingManager.Init();
 			_gameTimeManager.Init();

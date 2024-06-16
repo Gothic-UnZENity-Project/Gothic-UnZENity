@@ -6,14 +6,14 @@ using UnityEngine.Networking;
 
 namespace GUZ.Core.Manager.Settings
 {
-    public class SettingsManager : MonoBehaviour
+    public class SettingsManager
     {
         public static GameSettings GameSettings { get; private set; }
 
         private const string SETTINGS_FILE_NAME = "GameSettings.json";
         private const string SETTINGS_FILE_NAME_DEV = "GameSettings.dev.json";
 
-        protected void Awake()
+        public void Init()
         {
             LoadGameSettings();
         }
