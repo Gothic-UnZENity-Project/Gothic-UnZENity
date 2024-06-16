@@ -9,7 +9,6 @@ using UnityEngine;
 using ZenKit;
 using ZenKit.Daedalus;
 using ZenKit.Vobs;
-using LogLevel = DirectMusic.LogLevel;
 using Object = UnityEngine.Object;
 
 namespace GUZ.Core.Manager
@@ -160,27 +159,6 @@ namespace GUZ.Core.Manager
             {
                 _themes[v.Name] = _vm.InitInstance<MusicThemeInstance>(v);
             });
-        }
-
-        private void LoggerCallback(LogLevel level, string message)
-        {
-            switch (level)
-            {
-                case LogLevel.Fatal:
-                case LogLevel.Error:
-                    Debug.LogError(message);
-                    break;
-                case LogLevel.Warning:
-                    Debug.LogWarning(message);
-                    break;
-                case LogLevel.Info:
-                case LogLevel.Debug:
-                case LogLevel.Trace:
-                    Debug.Log(message);
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(level), level, null);
-            }
         }
 
         private void PCMReaderCallback(float[] data)
