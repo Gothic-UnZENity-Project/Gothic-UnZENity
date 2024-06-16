@@ -1,3 +1,4 @@
+using GUZ.Core.Caches;
 using GUZ.Core.Manager;
 using GUZ.Core.Manager.Culling;
 using GUZ.Core.Manager.Settings;
@@ -90,6 +91,8 @@ namespace GUZ.Core
 
 		private void Awake()
 		{
+			LookupCache.Init();
+			
 			_gameSettingsManager = new SettingsManager();
 			_meshCullingManager = new VobMeshCullingManager(config, this);
 			_soundCullingManager = new VobSoundCullingManager(config);

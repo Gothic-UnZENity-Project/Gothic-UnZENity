@@ -32,7 +32,7 @@ namespace GUZ.Core.Caches
         /// </summary>
         public static List<GameObject> vobSoundsAndDayTime = new();
 
-        static LookupCache()
+        public static void Init()
         {
             GlobalEventDispatcher.GeneralSceneUnloaded.AddListener(delegate
             {
