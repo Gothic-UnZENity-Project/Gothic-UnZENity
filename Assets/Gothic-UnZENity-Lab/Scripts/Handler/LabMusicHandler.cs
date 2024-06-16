@@ -32,7 +32,7 @@ namespace GUZ.Lab.Handler
             if (!FeatureFlags.I.enableMusic)
                 Debug.LogError($"Music is deactivated inside ${nameof(FeatureFlags.enableMusic)}");
 
-            MusicManager.Play(fileSelector.options[fileSelector.value].text);
+            MusicManager.I.Play(fileSelector.options[fileSelector.value].text);
         }
     }
 }

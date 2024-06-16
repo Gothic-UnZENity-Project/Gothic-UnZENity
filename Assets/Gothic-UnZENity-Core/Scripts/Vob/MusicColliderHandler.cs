@@ -16,8 +16,8 @@ namespace GUZ.Core.Vob
                 return;
             
             // FIXME - We need to load the currently active music when spawned. Currently we need to walk 1cm to trigger collider.
-            MusicManager.AddMusicZone(gameObject);
-            MusicManager.Play(MusicManager.SegmentTags.Std);
+            MusicManager.I.AddMusicZone(gameObject);
+            MusicManager.I.Play(MusicManager.SegmentTags.Std);
         }
 
         private void OnTriggerExit(Collider other)
@@ -28,8 +28,8 @@ namespace GUZ.Core.Vob
             if (!other.CompareTag(Constants.PlayerTag))
                 return;
 
-            MusicManager.RemoveMusicZone(gameObject);
-            MusicManager.Play(MusicManager.SegmentTags.Std);
+            MusicManager.I.RemoveMusicZone(gameObject);
+            MusicManager.I.Play(MusicManager.SegmentTags.Std);
         }
     }
 }

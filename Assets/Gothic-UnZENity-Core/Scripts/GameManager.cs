@@ -2,6 +2,7 @@ using GUZ.Core.Manager;
 using GUZ.Core.Manager.Culling;
 using GUZ.Core.Manager.Settings;
 using GUZ.Core.World;
+using GVR.Core;
 using UnityEngine;
 
 namespace GUZ.Core
@@ -64,6 +65,7 @@ namespace GUZ.Core
 		private StationaryLightsManager _stationaryLightsManager;
 		private XRDeviceSimulatorManager _xrSimulatorManager;
 		private GameTime _gameTimeManager;
+		private MusicManager _gameMusicManager;
 
 		private bool _isInitialised = false;
 
@@ -78,6 +80,10 @@ namespace GUZ.Core
 			}
 
 			// Otherwise, continue loading Gothic.
+            ResourceLoader.Init(SettingsManager.GameSettings.GothicIPath);
+	
+            _gameMusicManager.Init();
+            
 			GUZBootstrapper.BootGothicUnZENity(SettingsManager.GameSettings.GothicIPath);
 			GUZSceneManager.I.LoadStartupScenes();
 		}
@@ -92,6 +98,7 @@ namespace GUZ.Core
 			_stationaryLightsManager = new StationaryLightsManager();
 			_xrSimulatorManager = new XRDeviceSimulatorManager(config);
 			_gameTimeManager = new GameTime(config, this);
+			_gameMusicManager = new MusicManager(config);
 		}
 
 		private void Start()
