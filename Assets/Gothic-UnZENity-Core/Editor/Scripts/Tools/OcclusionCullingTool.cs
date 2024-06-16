@@ -3,6 +3,7 @@ using GUZ.Core.Creator;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
 using GUZ.Core.Manager.Settings;
+using GVR.Core;
 using UnityEditor;
 using UnityEngine;
 
@@ -36,7 +37,7 @@ namespace GUZ.Core.Editor.Tools
                 SettingsManager.LoadGameSettings();
 
             GUZBootstrapper.SetLanguage();
-            GUZBootstrapper.MountVfs(SettingsManager.GameSettings.GothicIPath);
+            ResourceLoader.Init(SettingsManager.GameSettings.GothicIPath);
 
             WorldCreator.LoadEditorWorld();
         }

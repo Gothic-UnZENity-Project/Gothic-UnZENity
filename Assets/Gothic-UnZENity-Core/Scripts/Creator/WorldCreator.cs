@@ -11,6 +11,7 @@ using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
 using GUZ.Core.World;
+using GVR.Core;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.XR.Interaction.Toolkit;
@@ -75,7 +76,7 @@ namespace GUZ.Core.Creator
 
         private static void LoadWorld(string worldName)
         {
-            var zkWorld = new ZenKit.World(GameData.Vfs, worldName);
+            var zkWorld = ResourceLoader.TryGetWorld(worldName);
             var zkMesh = zkWorld.Mesh.Cache();
             var zkBspTree = zkWorld.BspTree.Cache();
             var zkWayNet = zkWorld.WayNet.Cache();

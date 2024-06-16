@@ -304,7 +304,7 @@ namespace GUZ.Core.Creator
 
             if (!vobTreeCache.TryGetValue(vob.VobTree.ToLower(), out IWorld vobTree))
             {
-                vobTree = new ZenKit.World(GameData.Vfs, vob.VobTree, GameVersion.Gothic1);
+                vobTree = ResourceLoader.TryGetWorld(vob.VobTree, GameVersion.Gothic1);
                 vobTreeCache.Add(vob.VobTree.ToLower(), vobTree);
             }
             

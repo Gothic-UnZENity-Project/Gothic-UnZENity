@@ -35,9 +35,7 @@ namespace GUZ.Core.Manager
             var watch = Stopwatch.StartNew();
 
             GUZContext.SetContext(FeatureFlags.I.gameControls);
-            ResourceLoader.Init(g1Dir);
             
-            MountVfs(g1Dir);
             SetLanguage();
             LoadGothicVm(g1Dir);
             LoadDialogs();
@@ -50,24 +48,6 @@ namespace GUZ.Core.Manager
             Debug.Log($"Time spent for Bootstrapping ZenKit: {watch.Elapsed}");
 
             GUZEvents.ZenKitBootstrapped.Invoke();
-        }
-
-        /// <summary>
-        /// Holy grail of everything! If this pointer is zero, we have nothing but a plain empty wormhole.
-        /// </summary>
-        public static void MountVfs(string g1Dir)
-        {
-            GameData.Vfs = new Vfs();
-
-            // FIXME - We currently don't load from within _WORK directory which is required for e.g. mods who use it.
-            var fullPath = Path.GetFullPath(Path.Join(g1Dir, "Data"));
-
-            var vfsPaths = Directory.GetFiles(fullPath, "*.VDF", SearchOption.AllDirectories);
-
-            foreach (var path in vfsPaths)
-            {
-                GameData.Vfs.MountDisk(path, VfsOverwriteBehavior.Older);
-            }
         }
 
         public static void SetLanguage()

@@ -176,6 +176,18 @@ namespace GVR.Core
 		}
 
 		[CanBeNull]
+		public static World TryGetWorld([NotNull] string key)
+		{
+			return new World(Vfs, $"{GetPreparedKey(key)}.zen");
+		}
+		
+		[CanBeNull]
+		public static World TryGetWorld([NotNull] string key, GameVersion version)
+		{
+			return new World(Vfs, $"{GetPreparedKey(key)}.zen", version);
+		}
+
+		[CanBeNull]
 		public static GameObject TryGetPrefab(PrefabType key)
 		{
 			return Prefab.TryLoad(key.Path(), out var item) ? item : null;
