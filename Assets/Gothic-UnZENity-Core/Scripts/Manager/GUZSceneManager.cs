@@ -26,23 +26,19 @@ namespace GUZ.Core.Manager
         private string startVobAfterLoading;
         private Scene generalScene;
         private bool generalSceneLoaded;
+        private Scene? currentScene;
 
         private GameObject startPoint;
 
         private bool debugFreshlyDoneLoading;
-        
-        private readonly bool _featureSkipMenu;
-        private readonly bool _featureSpawnNpcs;
-        private readonly string _featureSpawnWaypoint;
+
+        private GameConfiguration _config;
 
         public GUZSceneManager(GameConfiguration config, GameObject interactionManagerObject)
         {
             I = this;
             interactionManager = interactionManagerObject;
-
-            _featureSkipMenu = !config.enableMainMenu;
-            _featureSpawnWaypoint = config.spawnAtWaypoint;
-            _featureSpawnNpcs = config.spawnOldCampNpcs;
+            _config = config;
         }
         
         public void Init()
@@ -59,10 +55,14 @@ namespace GUZ.Core.Manager
         {
             try
             {
-                if (_featureSkipMenu)
+                if (!_config.enableMainMenu)
+                {
                     await LoadWorld(Constants.selectedWorld, Constants.selectedWaypoint, true);
+                }
                 else
+                {
                     await LoadMainMenu();
+                }
             }
             catch (Exception e)
             {
@@ -81,7 +81,7 @@ namespace GUZ.Core.Manager
 
             debugFreshlyDoneLoading = false;
 
-            if (_featureSpawnNpcs)
+            if (_config.spawnOldCampNpcs)
             {
                 GameData.GothicVm.Call("STARTUP_SUB_OLDCAMP");
             }
@@ -112,7 +112,7 @@ namespace GUZ.Core.Manager
             
             await ShowLoadingScene(worldName, newGame);
             var newWorldScene = await LoadNewWorldScene(newWorldName);
-            await WorldCreator.CreateAsync(newWorldName);
+            await WorldCreator.CreateAsync(newWorldName, _config);
             SetSpawnPoint(newWorldScene);
 
             HideLoadingScene();
@@ -131,10 +131,12 @@ namespace GUZ.Core.Manager
             await Task.Yield();
 
             // Remove previous scene if it exists
-            if (GameData.WorldScene.HasValue)
-                SceneManager.UnloadSceneAsync(GameData.WorldScene.Value);
+            if (currentScene.HasValue)
+            {
+                SceneManager.UnloadSceneAsync(currentScene.Value);
+            }
 
-            GameData.WorldScene = newWorldScene;
+            currentScene = newWorldScene;
             return newWorldScene;
         }
 
@@ -225,7 +227,7 @@ namespace GUZ.Core.Manager
 
         private void SetSpawnPoint(Scene worldScene)
         {
-            var debugSpawnPoint = _featureSpawnWaypoint;
+            var debugSpawnPoint = _config.spawnAtWaypoint;
             // DEBUG - Spawn at specifically named point.
             if (debugSpawnPoint.Any())
             {

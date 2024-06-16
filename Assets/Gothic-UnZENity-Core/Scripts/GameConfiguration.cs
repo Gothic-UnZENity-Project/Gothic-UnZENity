@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace GUZ.Core
@@ -13,20 +14,28 @@ namespace GUZ.Core
 	[CreateAssetMenu(fileName = "Data", menuName = "ScriptableObjects/GameConfiguration", order = 1)]
 	public class GameConfiguration : ScriptableObject
 	{
-		[Header("### Controls ###")]
-		public bool enableDeviceSimulator = false;
+		[Header("### Controls ###")] public bool enableDeviceSimulator = false;
 
-		[Header("### Developer ###")]
-		[SerializeField] public bool enableMainMenu = true;
-		
-		[SerializeField] 
-		public bool spawnOldCampNpcs = false;
+		[Header("### Developer ###")] [SerializeField]
+		public bool enableMainMenu = true;
+
+		[SerializeField] public bool spawnOldCampNpcs = false;
 
 		[SerializeField] public string spawnAtWaypoint = string.Empty;
- 
+
+		[SerializeField] public bool enableWorldObjects = true;
+		[SerializeField] public bool enableWorldMesh = true;
+		[SerializeField] public bool enableBarrierVisual = true;
+		[SerializeField] public bool enableSkyVisual = true;
+		[SerializeField] public bool enableDecalVisuals = true;
+		[SerializeField] public bool enableParticleEffects = false;
+		[SerializeField] public List<ZenKit.Vobs.VirtualObjectType> spawnWorldObjectTypes = new();
+
 		[Header("### Audio ###")] [SerializeField]
 		public bool enableGameMusic = true;
-		
+
+		[SerializeField] public bool enableGameSounds = true;
+
 		[Header("### Lighting ###")] [SerializeField]
 		public Quaternion sunLightDirection = new(x: 0.45451945f, y: 0.54167527f, z: -0.45451945f, w: 0.54167527f);
 
@@ -42,6 +51,13 @@ namespace GUZ.Core
 		[SerializeField] [Range(0, 59)] public int startTimeMinute;
 
 		[SerializeField] [Range(0.5f, 300f)] public float timeSpeedMultiplier = 1;
+
+		[Header("### WayNet ###")] [SerializeField]
+		public bool showFreePoints = false;
+
+		[SerializeField] public bool showWayPoints = false;
+
+		[SerializeField] public bool showWayEdges = false;
 
 		[Header("### Culling ###")] [SerializeField]
 		public bool enableSoundCulling = true;
@@ -61,7 +77,7 @@ namespace GUZ.Core
 
 		[Header("### Logging ###")] [SerializeField] [InspectorName("ZenKit Log Level")]
 		public ZenKit.LogLevel zenkitLogLevel = ZenKit.LogLevel.Warning;
-		
+
 		[SerializeField] [InspectorName("DirectMusic Log Level")]
 		public DirectMusic.LogLevel directMusicLogLevel = DirectMusic.LogLevel.Warning;
 	}

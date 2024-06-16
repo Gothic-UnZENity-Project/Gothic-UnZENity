@@ -90,6 +90,11 @@ namespace GUZ.Core
             
 			GUZBootstrapper.BootGothicUnZENity(SettingsManager.GameSettings.GothicIPath);
 			_gameSceneManager.LoadStartupScenes();
+
+			if (config.enableBarrierVisual)
+			{
+				_barrierManager.CreateBarrier();
+			}
 		}
 
 		private void Awake()
