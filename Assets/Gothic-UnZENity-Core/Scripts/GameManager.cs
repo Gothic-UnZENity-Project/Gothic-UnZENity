@@ -70,6 +70,7 @@ namespace GUZ.Core
 		private GameTime _gameTimeManager;
 		private MusicManager _gameMusicManager;
 		private GUZSceneManager _gameSceneManager;
+		private LoadingManager _gameLoadingManager;
 
 		private bool _isInitialised = false;
 
@@ -100,7 +101,8 @@ namespace GUZ.Core
 		private void Awake()
 		{
 			LookupCache.Init();
-			
+
+			_gameLoadingManager = new LoadingManager();
 			_gameSettingsManager = new SettingsManager();
 			_meshCullingManager = new VobMeshCullingManager(config, this);
 			_soundCullingManager = new VobSoundCullingManager(config);
@@ -110,7 +112,7 @@ namespace GUZ.Core
 			_gameTimeManager = new GameTime(config, this);
 			_skyVisualManager = new SkyManager(config, _gameTimeManager);
 			_gameMusicManager = new MusicManager(config);
-			_gameSceneManager = new GUZSceneManager(config, xrInteractionManager);
+			_gameSceneManager = new GUZSceneManager(config, _gameLoadingManager, xrInteractionManager);
 		}
 
 		private void Start()
@@ -118,6 +120,7 @@ namespace GUZ.Core
 			ZenKit.Logger.Set(config.zenkitLogLevel, Logging.OnZenKitLogMessage);
 			DirectMusic.Logger.Set(config.directMusicLogLevel, Logging.OnDirectMusicLogMessage);
 
+			_gameLoadingManager.Init();
 			_gameSettingsManager.Init();
 			_meshCullingManager.Init();
 			_soundCullingManager.Init();

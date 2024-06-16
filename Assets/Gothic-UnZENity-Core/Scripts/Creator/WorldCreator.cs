@@ -30,7 +30,7 @@ namespace GUZ.Core.Creator
             GlobalEventDispatcher.GeneralSceneLoaded.AddListener(WorldLoaded);
         }
 
-        public static async Task CreateAsync(string worldName, GameConfiguration config)
+        public static async Task CreateAsync(LoadingManager loading, string worldName, GameConfiguration config)
         {
             _worldGo = new GameObject("World");
 
@@ -47,7 +47,7 @@ namespace GUZ.Core.Creator
             // We need to start creating Vobs as we need to calculate world slicing based on amount of lights at a certain space afterwards.
             if (config.enableWorldObjects)
             {
-                await VobCreator.CreateAsync(config, _teleportGo, _nonTeleportGo, world.Vobs, Constants.VObPerFrame);
+                await VobCreator.CreateAsync(config, loading, _teleportGo, _nonTeleportGo, world.Vobs, Constants.VObPerFrame);
                 await MeshFactory.CreateVobTextureArray();
             }
 
@@ -59,7 +59,7 @@ namespace GUZ.Core.Creator
                 world.SubMeshes =
                     await BuildBspTree(world.World.Mesh.Cache(), world.World.BspTree.Cache(), lightingEnabled);
 
-                await MeshFactory.CreateWorld(world, _teleportGo, Constants.MeshPerFrame);
+                await MeshFactory.CreateWorld(world, loading, _teleportGo, Constants.MeshPerFrame);
                 await MeshFactory.CreateWorldTextureArray();
             }
 
@@ -68,7 +68,7 @@ namespace GUZ.Core.Creator
             WaynetCreator.Create(config, _worldGo, world);
 
             // Set the global variable to the result of the coroutine
-            LoadingManager.I.SetProgress(LoadingManager.LoadingProgressType.NPC, 1f);
+            loading.SetProgress(LoadingManager.LoadingProgressType.NPC, 1f);
         }
 
         private static WorldData LoadWorld(string worldName)

@@ -78,12 +78,12 @@ namespace GUZ.Core.Creator
             }
         }
 
-        public static async Task CreateAsync(GameConfiguration config, GameObject rootTeleport, GameObject rootNonTeleport, List<IVirtualObject> vobs, int vobsPerFrame)
+        public static async Task CreateAsync(GameConfiguration config, LoadingManager loading, GameObject rootTeleport, GameObject rootNonTeleport, List<IVirtualObject> vobs, int vobsPerFrame)
         {
             Stopwatch stopwatch = new();
             stopwatch.Start();
             PreCreateVobs(vobs, rootTeleport, rootNonTeleport, vobsPerFrame);
-            await CreateVobs(config, vobs);
+            await CreateVobs(config, loading, vobs);
             PostCreateVobs();
             stopwatch.Stop();
             Debug.Log($"Created vobs in {stopwatch.Elapsed.TotalSeconds} s");
@@ -114,7 +114,7 @@ namespace GUZ.Core.Creator
             return vobs.Count + vobs.Sum(vob => GetTotalVobCount(vob.Children));
         }
 
-        private static async Task CreateVobs(GameConfiguration config, List<IVirtualObject> vobs, GameObject parent = null, bool reparent = false)
+        private static async Task CreateVobs(GameConfiguration config, LoadingManager loading, List<IVirtualObject> vobs, GameObject parent = null, bool reparent = false)
         {
             foreach (var vob in vobs)
             {
@@ -131,9 +131,10 @@ namespace GUZ.Core.Creator
                 if (++_createdCount % _vobsPerFrame == 0)
                     await Task.Yield(); // Wait for the next frame
 
+                loading?.AddProgress(LoadingManager.LoadingProgressType.VOb, 1f / _totalVObs);
+
                 // Recursive creating sub-vobs
-                await CreateVobs(config, vob.Children, go, reparent);
-                LoadingManager.I.AddProgress(LoadingManager.LoadingProgressType.VOb, 1f / _totalVObs);
+                await CreateVobs(config, loading, vob.Children, go, reparent);
             }
         }
 
@@ -327,7 +328,7 @@ namespace GUZ.Core.Creator
                 vobRoot.Position = Vector3.Zero;
             }
 
-            CreateVobs(config, vobTree.RootObjects, go.FindChildRecursively(vob.Slot) ?? go, true);
+            CreateVobs(config, null, vobTree.RootObjects, go.FindChildRecursively(vob.Slot) ?? go, true);
 
             return go;
         }

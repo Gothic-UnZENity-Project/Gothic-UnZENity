@@ -33,12 +33,14 @@ namespace GUZ.Core.Manager
         private bool debugFreshlyDoneLoading;
 
         private GameConfiguration _config;
+        private LoadingManager _loading;
 
-        public GUZSceneManager(GameConfiguration config, GameObject interactionManagerObject)
+        public GUZSceneManager(GameConfiguration config, LoadingManager loading, GameObject interactionManagerObject)
         {
             I = this;
             interactionManager = interactionManagerObject;
             _config = config;
+            _loading = loading;
         }
         
         public void Init()
@@ -112,7 +114,7 @@ namespace GUZ.Core.Manager
             
             await ShowLoadingScene(worldName, newGame);
             var newWorldScene = await LoadNewWorldScene(newWorldName);
-            await WorldCreator.CreateAsync(newWorldName, _config);
+            await WorldCreator.CreateAsync(_loading, newWorldName, _config);
             SetSpawnPoint(newWorldScene);
 
             HideLoadingScene();
@@ -180,7 +182,7 @@ namespace GUZ.Core.Manager
         {
             SceneManager.UnloadSceneAsync(Constants.SceneLoading);
 
-            LoadingManager.I.ResetProgress();
+            _loading.ResetProgress();
         }
 
         private void OnSceneLoaded(Scene scene, LoadSceneMode mode)

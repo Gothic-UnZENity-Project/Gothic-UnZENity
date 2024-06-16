@@ -10,7 +10,7 @@ using UnityEngine.UI;
 
 namespace GUZ.Core.Manager
 {
-    public class LoadingManager : SingletonBehaviour<LoadingManager>
+    public class LoadingManager
     {
         public enum LoadingProgressType
         {
@@ -25,8 +25,8 @@ namespace GUZ.Core.Manager
         private const string loadingSceneName = "Loading";
 
         private Dictionary<LoadingProgressType, float> progressByType = new Dictionary<LoadingProgressType, float>();
-
-        private void Start()
+        
+        public void Init()
         {
             GlobalEventDispatcher.LoadingSceneLoaded.AddListener(OnLoadingSceneLoaded);
 
