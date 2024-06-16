@@ -73,6 +73,19 @@ namespace GUZ.Core.Manager
             GlobalEventDispatcher.MainMenuSceneLoaded.AddListener(OnMainMenuLoaded);
             GlobalEventDispatcher.LoadingSceneLoaded.AddListener(OnLoadingSceneLoaded);
             GlobalEventDispatcher.GeneralSceneLoaded.AddListener(OnWorldLoaded);
+            
+            GlobalEventDispatcher.MusicZoneEntered.AddListener(go =>
+            {
+                
+                AddMusicZone(go);
+                Play(SegmentTags.Std);
+            });
+            
+            GlobalEventDispatcher.MusicZoneExited.AddListener(go =>
+            {
+                RemoveMusicZone(go);
+                Play(SegmentTags.Std);
+            });
         }
 
         private void InitializeUnity()

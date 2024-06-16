@@ -653,6 +653,11 @@ namespace GUZ.Core.Creator
 
         private static GameObject CreateZoneMusic(ZoneMusic vob, GameObject parent = null)
         {
+            if (!FeatureFlags.I.enableMusic)
+            {
+                return null;
+            }
+
             var go = ResourceLoader.TryGetPrefabObject(PrefabType.VobMusic);
             go.SetParent(parent ?? parentGosNonTeleport[vob.Type], true, true);
             go.name = vob.Name;

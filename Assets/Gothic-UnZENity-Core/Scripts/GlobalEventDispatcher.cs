@@ -32,5 +32,8 @@ namespace GUZ.Core
         public static readonly UnityEvent<DateTime> GameTimeSecondChangeCallback = new();
         public static readonly UnityEvent<DateTime> GameTimeMinuteChangeCallback = new();
         public static readonly UnityEvent<DateTime> GameTimeHourChangeCallback = new();
+
+        public static readonly UnityEvent<GameObject> MusicZoneEntered = new();
+        public static readonly UnityEvent<GameObject> MusicZoneExited = new();
     }
 }
