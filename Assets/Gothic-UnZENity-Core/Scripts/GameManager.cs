@@ -1,4 +1,5 @@
 using GUZ.Core.Caches;
+using GUZ.Core.Context;
 using GUZ.Core.Manager;
 using GUZ.Core.Manager.Culling;
 using GUZ.Core.Manager.Settings;
@@ -134,6 +135,12 @@ namespace GUZ.Core
 
 			// Just in case we forgot to disable it in scene view. ;-)
 			invalidInstallationPathMessage.SetActive(false);
+			
+			// Load the player controller upon MainMenu loaded
+            GlobalEventDispatcher.MainMenuSceneLoaded.AddListener(delegate
+            {
+                GUZContext.InteractionAdapter.CreatePlayerController(SceneManager.GetActiveScene());
+            });
 		}
 
 		private void Update()
