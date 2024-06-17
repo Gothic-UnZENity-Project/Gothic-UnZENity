@@ -1,10 +1,24 @@
+# General
+
+Our Gothic-UnZENity style guide is taken from MS' official C# guide with a few additional changes where useful.
+You will find a full example of it below.
+
+We added a few settings into .editorconfig (e.g. underscore warning for private fields) which is automatically read by Rider and VS.
+It can be updated whenever necessary.
+
+# Auto-apply code formatting during save
+
+Both IDEs, Rider and Visual Studio, support auto formatting based on the settings we have set on .editorconfig.
+They can be applied like this:
+* [Rider](https://www.jetbrains.com/help/resharper/Enforcing_Code_Formatting_Rules.html#run-code-cleanup-automatically-on-save)
+* [VS22](https://devblogs.microsoft.com/visualstudio/bringing-code-cleanup-on-save-to-visual-studio-2022-17-1-preview-2/)
+
+# Specific example
+Taken and slightly altered from Thomas Krogh-Jacobsen (Team lead, Tech Content Marketing Management at Unity Technologies).  
+@see: https://github.com/thomasjacobsen-unity/Unity-Code-Style-Guide/blob/master/StyleExample.cs
+
+
 ```c#
-// STYLE SHEET EXAMPLE
-// Taken and slighly altered from Thomas Krogh-Jacobsen (Team lead, Tech Content Marketing Management at Unity Technologies)
-// @see: https://github.com/thomasjacobsen-unity/Unity-Code-Style-Guide/blob/master/StyleExample.cs
-
-//-------------------------
-
 // NAMING/CASING:
 // - Use Pascal case (e.g. ExamplePlayerController, MaxHealth, etc.) unless noted otherwise
 // - Use camel case (e.g. examplePlayerController, maxHealth, etc.) for local variables, parameters.
@@ -103,7 +117,9 @@ namespace StyleSheetExample
         // - Use meaningful names. Make names searchable and pronounceable. Don’t abbreviate (unless it’s math).
         // - Use Pascal case for public fields. Use camel case for private variables.
         // - Add an underscore (_) in front of private fields to differentiate from local variables
+        // - Constants are also just plain fields without special naming (underscore when private, camel case when public).
         private int _elapsedTimeInDays;
+        private const int _hoursPerDay = 24;
 
         // Use [SerializeField] attribute if you want to display a private field in Inspector.
         // Booleans ask a question that can be answered true or false.
