@@ -19,11 +19,12 @@ namespace GUZ.Core.Manager
 {
     public class SkyManager
     {
-        private Quaternion SunDirection;
+        private Vector3 SunDirection;
         private readonly Color SunColor;
         private readonly Color AmbientColor;
         private readonly float PointLightIntensity = 1f;
         private bool IsRaining;
+        private readonly GameTimeInterval _sunPerformanceSetting;
 
         private float masterTime;
         private bool noSky;
@@ -64,11 +65,11 @@ namespace GUZ.Core.Manager
         {
             gameTime = time;
 
-            SunDirection = config.sunLightDirection;
             SunColor = config.sunLightColor;
             AmbientColor = config.ambientLightColor;
             PointLightIntensity = config.sunLightIntensity;
             noSky = !config.enableSkyVisual;
+            _sunPerformanceSetting = config.sunUpdateInterval;
         }
 
         public void OnValidate()
@@ -81,6 +82,20 @@ namespace GUZ.Core.Manager
             GlobalEventDispatcher.GameTimeSecondChangeCallback.AddListener(Interpolate);
             GlobalEventDispatcher.GameTimeHourChangeCallback.AddListener(UpdateRainTime);
             GlobalEventDispatcher.GeneralSceneLoaded.AddListener(GeneralSceneLoaded);
+            
+            RotateSun(gameTime.GetCurrentDateTime());
+            switch (_sunPerformanceSetting)
+            {
+                case GameTimeInterval.EveryGameSecond:
+                    GlobalEventDispatcher.GameTimeSecondChangeCallback.AddListener(RotateSun);
+                    break;
+                case GameTimeInterval.EveryGameMinute:
+                    GlobalEventDispatcher.GameTimeMinuteChangeCallback.AddListener(RotateSun);
+                    break;
+                case GameTimeInterval.EveryGameHour:
+                    GlobalEventDispatcher.GameTimeHourChangeCallback.AddListener(RotateSun);
+                    break;
+            }
 
             stateList.AddRange(new[]
             {
@@ -253,7 +268,7 @@ namespace GUZ.Core.Manager
 
         private void SetShaderProperties()
         {
-            Shader.SetGlobalVector(SunDirectionShaderId, SunDirection.eulerAngles);
+            Shader.SetGlobalVector(SunDirectionShaderId, SunDirection);
             Shader.SetGlobalColor(SunColorShaderId, SunColor);
             Shader.SetGlobalColor(AmbientShaderId, AmbientColor);
             Shader.SetGlobalFloat(PointLightIntensityShaderId, PointLightIntensity);
@@ -367,6 +382,23 @@ namespace GUZ.Core.Manager
         {
             applyPreset(skyState);
             return skyState;
+        }
+        
+        /// <summary>
+        /// Based on performance settings, the sun direction is changed more or less frequent.
+        ///
+        /// Unity rotation settings:
+        /// 270° = midnight (no light)
+        /// 90° = noon (full light)
+        /// 
+        /// Calculation: 270f is the starting midnight value
+        /// Calculation: One full DateTime == 360°. --> e.g. 15° * 24h + 0min + 0sec == 360°
+        /// </summary>
+        private void RotateSun(DateTime time)
+        {
+            var xRotation = 270f + (15f * (time.Hour + (time.Minute / 60f) + (time.Second / 3600f)));
+            SunDirection = new(xRotation % 360, 0, 0);
+            Debug.Log($"Time Now: {time}, Sun Rotation: {SunDirection}");
         }
     }
 }

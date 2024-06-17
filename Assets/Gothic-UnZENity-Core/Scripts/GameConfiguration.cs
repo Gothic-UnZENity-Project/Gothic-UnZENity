@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using GUZ.Core.World;
 using UnityEngine;
 
 namespace GUZ.Core
@@ -37,12 +38,12 @@ namespace GUZ.Core
 
 		[SerializeField] public bool enableGameSounds = true;
 
-		[Header("### Lighting ###")] [SerializeField]
-		public Quaternion sunLightDirection = new(x: 0.45451945f, y: 0.54167527f, z: -0.45451945f, w: 0.54167527f);
-
+		[Header("### Lighting ###")] 
 		[SerializeField] public Color sunLightColor = new(r: 0.6901961f, g: 0.6901961f, b: 0.6901961f, a: 1);
 
 		[SerializeField] [Range(0, 1)] public float sunLightIntensity = 1;
+
+		[SerializeField] public GameTimeInterval sunUpdateInterval = GameTimeInterval.EveryGameHour;
 
 		[SerializeField] public Color ambientLightColor = new(r: 0.10196079f, g: 0.10196079f, b: 0.10196079f, a: 1);
 
@@ -51,7 +52,7 @@ namespace GUZ.Core
 
 		[SerializeField] [Range(0, 59)] public int startTimeMinute;
 
-		[SerializeField] [Range(0.5f, 300f)] public float timeSpeedMultiplier = 1;
+		[SerializeField] [Range(0.5f, 1000f)] public float timeSpeedMultiplier = 1;
 
 		[Header("### WayNet ###")] [SerializeField]
 		public bool showFreePoints = false;

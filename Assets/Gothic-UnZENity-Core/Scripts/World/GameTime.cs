@@ -5,6 +5,13 @@ using UnityEngine;
 
 namespace GUZ.Core.World
 {
+    public enum GameTimeInterval
+    {
+        EveryGameSecond,
+        EveryGameMinute,
+        EveryGameHour
+    }
+    
     public class GameTime
     {
         public static readonly DateTime MIN_TIME = new(1, 1, 1, 0, 0, 0);
