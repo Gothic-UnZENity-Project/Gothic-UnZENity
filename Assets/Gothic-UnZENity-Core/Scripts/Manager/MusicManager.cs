@@ -60,9 +60,9 @@ namespace GUZ.Core.Manager
             InitializeZenKit();
             InitializeDxMusic();
 
-            GvrEvents.MainMenuSceneLoaded.AddListener(OnMainMenuLoaded);
-            GvrEvents.LoadingSceneLoaded.AddListener(OnLoadingSceneLoaded);
-            GvrEvents.GeneralSceneLoaded.AddListener(OnWorldLoaded);
+            GUZEvents.MainMenuSceneLoaded.AddListener(OnMainMenuLoaded);
+            GUZEvents.LoadingSceneLoaded.AddListener(OnLoadingSceneLoaded);
+            GUZEvents.GeneralSceneLoaded.AddListener(OnWorldLoaded);
         }
 
         private static void InitializeUnity()
@@ -89,7 +89,7 @@ namespace GUZ.Core.Manager
             Play("SYS_LOADING");
         }
 
-        private static void OnWorldLoaded()
+        private static void OnWorldLoaded(GameObject playerGo)
         {
             _musicZones.Clear();
 

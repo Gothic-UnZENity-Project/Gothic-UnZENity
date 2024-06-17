@@ -3,6 +3,7 @@ using GUZ.Core.Caches;
 using GUZ.Core.Debugging;
 using GUZ.Core.Globals;
 using GUZ.Core.Util;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 
 namespace GUZ.Core.Manager
@@ -11,18 +12,21 @@ namespace GUZ.Core.Manager
     {
         private void Start()
         {
-            GvrEvents.GeneralSceneLoaded.AddListener(WorldLoaded);
-            GvrEvents.MainMenuSceneLoaded.AddListener(WorldLoaded);
+            GUZEvents.GeneralSceneLoaded.AddListener(delegate(GameObject playerGo)
+            {
+                AddXRDeviceSimulator();
+            });
+            GUZEvents.MainMenuSceneLoaded.AddListener(AddXRDeviceSimulator);
         }
 
-        private void WorldLoaded()
+        public void AddXRDeviceSimulator()
         {
             if (!FeatureFlags.I.useXRDeviceSimulator)
                 return;
 
             var simulator = PrefabCache.TryGetObject(PrefabCache.PrefabType.XRDeviceSimulator);
+            simulator.name = "XRDeviceSimulator - XRIT";
             SceneManager.GetActiveScene().GetRootGameObjects().Append(simulator);
         }
-        
     }
 }

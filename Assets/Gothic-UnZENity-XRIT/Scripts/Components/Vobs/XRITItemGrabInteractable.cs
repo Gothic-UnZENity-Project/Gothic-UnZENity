@@ -2,10 +2,10 @@ using GUZ.Core.Manager.Culling;
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
 
-namespace GUZ.Core.Vob
+namespace GUZ.XRIT.Components.Vobs
 {
     [RequireComponent(typeof(Rigidbody))]
-    public class ItemGrabInteractable : MonoBehaviour
+    public class XRITItemGrabInteractable : MonoBehaviour
     {
         public GameObject attachPoint1;
         public GameObject attachPoint2;

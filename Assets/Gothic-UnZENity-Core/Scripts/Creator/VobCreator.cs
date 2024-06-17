@@ -5,6 +5,7 @@ using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using GUZ.Core.Caches;
+using GUZ.Core.Context;
 using GUZ.Core.Creator.Meshes.V2;
 using GUZ.Core.Debugging;
 using GUZ.Core.Demo;
@@ -57,10 +58,10 @@ namespace GUZ.Core.Creator
 
         static VobCreator()
         {
-            GvrEvents.GeneralSceneLoaded.AddListener(PostWorldLoaded);
+            GUZEvents.GeneralSceneLoaded.AddListener(PostWorldLoaded);
         }
 
-        private static void PostWorldLoaded()
+        private static void PostWorldLoaded(GameObject playerGo)
         {
             // We need to check for all Sounds once, if they need to be activated as they're next to player.
             // As CullingGroup only triggers deactivation once player spawns, but not activation.
@@ -534,27 +535,7 @@ namespace GUZ.Core.Creator
                 return null;
             }
 
-            // It will set some default values for collider and grabbing now.
-            // Adding it now is easier than putting it on a prefab and updating it at runtime (as grabbing didn't work this way out-of-the-box).
-            var grabComp = vobObj.AddComponent<XRGrabInteractable>();
-
-            if (FeatureFlags.I.vobItemsDynamicAttach)
-            {
-                grabComp.useDynamicAttach = true;
-                grabComp.selectMode = InteractableSelectMode.Multiple;
-            }
-
-            var itemGrabComp = vobObj.GetComponent<ItemGrabInteractable>();
-            var colliderComp = vobObj.GetComponent<MeshCollider>();
-
-            grabComp.attachTransform = itemGrabComp.attachPoint1.transform;
-            grabComp.secondaryAttachTransform = itemGrabComp.attachPoint2.transform;
-
-            vobObj.layer = Constants.ItemLayer;
-
-            colliderComp.convex = true;
-            grabComp.selectEntered.AddListener(itemGrabComp.SelectEntered);
-            grabComp.selectExited.AddListener(itemGrabComp.SelectExited);
+            GUZContext.InteractionAdapter.AddItemComponent(vobObj);
 
             return vobObj;
         }

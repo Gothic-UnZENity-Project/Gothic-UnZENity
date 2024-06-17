@@ -2,6 +2,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using GUZ.Core.Caches;
+using GUZ.Core.Context;
 using GUZ.Core.Debugging;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager.Settings;
@@ -15,7 +16,7 @@ using Logger = ZenKit.Logger;
 
 namespace GUZ.Core.Manager
 {
-    public class GuzBootstrapper : SingletonBehaviour<GuzBootstrapper>
+    public class GUZBootstrapper : SingletonBehaviour<GUZBootstrapper>
     {
         private bool isBootstrapped;
         public GameObject invalidInstallationDirMessage;
@@ -52,7 +53,7 @@ namespace GUZ.Core.Manager
                 BootGothicUnZENity(g1Dir);
                 
 #pragma warning disable CS4014 // It's intended, that this async call is not awaited.
-                GvrSceneManager.I.LoadStartupScenes();
+                GUZSceneManager.I.LoadStartupScenes();
 #pragma warning restore CS4014
             }
             else
@@ -65,7 +66,9 @@ namespace GUZ.Core.Manager
         public static void BootGothicUnZENity(string g1Dir)
         {
             var watch = Stopwatch.StartNew();
-            
+
+            GUZContext.SetContext(FeatureFlags.I.gameControls);
+
             MountVfs(g1Dir);
             SetLanguage();
             LoadGothicVm(g1Dir);
@@ -79,7 +82,7 @@ namespace GUZ.Core.Manager
             watch.Stop();
             Debug.Log($"Time spent for Bootstrapping ZenKit: {watch.Elapsed}");
 
-            GvrEvents.ZenKitBootstrapped.Invoke();
+            GUZEvents.ZenKitBootstrapped.Invoke();
         }
 
         public static void ZenKitLoggerCallback(LogLevel level, string name, string message)

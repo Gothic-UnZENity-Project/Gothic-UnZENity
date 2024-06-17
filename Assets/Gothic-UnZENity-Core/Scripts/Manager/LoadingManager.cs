@@ -28,7 +28,7 @@ namespace GUZ.Core.Manager
 
         private void Start()
         {
-            GvrEvents.LoadingSceneLoaded.AddListener(OnLoadingSceneLoaded);
+            GUZEvents.LoadingSceneLoaded.AddListener(OnLoadingSceneLoaded);
 
             // Initializing the Dictionary with the default progress (which is 0) for each type
             foreach (LoadingProgressType progressType in Enum.GetValues(typeof(LoadingProgressType)))

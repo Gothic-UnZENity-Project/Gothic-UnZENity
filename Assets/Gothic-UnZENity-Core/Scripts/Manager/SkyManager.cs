@@ -64,9 +64,9 @@ namespace GUZ.Core.Manager
 
         private void Start()
         {
-            GvrEvents.GameTimeSecondChangeCallback.AddListener(Interpolate);
-            GvrEvents.GameTimeHourChangeCallback.AddListener(UpdateRainTime);
-            GvrEvents.GeneralSceneLoaded.AddListener(GeneralSceneLoaded);
+            GUZEvents.GameTimeSecondChangeCallback.AddListener(Interpolate);
+            GUZEvents.GameTimeHourChangeCallback.AddListener(UpdateRainTime);
+            GUZEvents.GeneralSceneLoaded.AddListener(GeneralSceneLoaded);
         }
 
         private void OnValidate()
@@ -257,7 +257,7 @@ namespace GUZ.Core.Manager
             Shader.SetGlobalFloat(PointLightIntensityShaderId, PointLightIntensity);
         }
 
-        private void GeneralSceneLoaded()
+        private void GeneralSceneLoaded(GameObject playerGo)
         {
             RenderSettings.skybox = Instantiate(TextureManager.I.skyMaterial);
 

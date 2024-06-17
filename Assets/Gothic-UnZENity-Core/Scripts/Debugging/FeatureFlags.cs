@@ -1,7 +1,8 @@
 using System;
 using System.Collections.Generic;
-using GUZ.Core.Util;
+using GUZ.Core.Context;
 using GUZ.Core.Extensions;
+using GUZ.Core.Util;
 using UnityEngine;
 using UnityEngine.Serialization;
 using ZenKit;
@@ -18,14 +19,16 @@ namespace GUZ.Core.Debugging
             EveryIngameHour
         };
 
+        [Header("__________Controls__________")]
+        public GUZContext.Controls gameControls;
+        public bool useXRDeviceSimulator;
+
         [Header("__________Developer__________")]
         public bool skipMainMenu;
-        public bool useXRDeviceSimulator;
 
         [Header("__________World__________")]
         public bool createWorldMesh;
         [Tooltip("True will render all pickables with dynamic attach points")]
-        public bool vobItemsDynamicAttach;
         public bool showBarrier;
 
         [Header("__________WayNet - Developer__________")]

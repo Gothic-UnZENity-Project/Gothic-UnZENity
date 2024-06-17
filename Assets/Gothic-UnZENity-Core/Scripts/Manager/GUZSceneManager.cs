@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using GUZ.Core.Context;
 using GUZ.Core.Creator;
 using GUZ.Core.Debugging;
 using GUZ.Core.Globals;
@@ -13,11 +14,11 @@ using Debug = UnityEngine.Debug;
 
 namespace GUZ.Core.Manager
 {
-    public class GvrSceneManager : SingletonBehaviour<GvrSceneManager>
+    public class GUZSceneManager : SingletonBehaviour<GUZSceneManager>
     {
         public GameObject interactionManager;
         
-        private const string generalSceneName = "General";
+        private static readonly string generalSceneName = Constants.SceneGeneral;
         private const int ensureLoadingBarDelayMilliseconds = 5;
 
         private string newWorldName;
@@ -83,7 +84,6 @@ namespace GUZ.Core.Manager
             if (worldName == newWorldName)
             {
                 SetSpawnPoint(SceneManager.GetSceneByName(newWorldName));
-                TeleportPlayerToSpot();
                 return;
             }
             
@@ -135,7 +135,7 @@ namespace GUZ.Core.Manager
                 SceneManager.MoveGameObjectToScene(interactionManager, SceneManager.GetSceneByName(Constants.SceneBootstrap));
                 SceneManager.UnloadSceneAsync(generalScene);
 
-                GvrEvents.GeneralSceneUnloaded.Invoke();
+                GUZEvents.GeneralSceneUnloaded.Invoke();
                 generalSceneLoaded = false;
             }
 
@@ -171,13 +171,15 @@ namespace GUZ.Core.Manager
                 case Constants.SceneBootstrap:
                     break;
                 case Constants.SceneLoading:
-                    GvrEvents.LoadingSceneLoaded.Invoke();
+                    GUZEvents.LoadingSceneLoaded.Invoke();
                     break;
                 case Constants.SceneGeneral:
                     SceneManager.MoveGameObjectToScene(interactionManager, generalScene);
 
-                    TeleportPlayerToSpot();
-                    GvrEvents.GeneralSceneLoaded.Invoke();
+                    var playerGo = GUZContext.InteractionAdapter.CreatePlayerController(scene);
+
+                    TeleportPlayerToSpot(playerGo);
+                    GUZEvents.GeneralSceneLoaded.Invoke(playerGo);
 
                     break;
                 case Constants.SceneMainMenu:
@@ -185,12 +187,12 @@ namespace GUZ.Core.Manager
                     sphere.GetComponent<MeshRenderer>().material = TextureManager.I.loadingSphereMaterial;
                     SceneManager.SetActiveScene(scene);
 
-                    GvrEvents.MainMenuSceneLoaded.Invoke();
+                    GUZEvents.MainMenuSceneLoaded.Invoke();
                     break;
                 // any World
                 default:
                     SceneManager.SetActiveScene(scene);
-                    GvrEvents.WorldSceneLoaded.Invoke();
+                    GUZEvents.WorldSceneLoaded.Invoke();
                     break;
             }
         }
@@ -236,13 +238,9 @@ namespace GUZ.Core.Manager
             startPoint = startPoint2;
         }
 
-        public void TeleportPlayerToSpot()
+        public void TeleportPlayerToSpot(GameObject playerGo)
         {
-            if (startPoint == null)
-                return;
-
-            var player = GameObject.FindWithTag(Constants.PlayerTag);
-            player.transform.SetPositionAndRotation(startPoint.transform.position, startPoint.transform.rotation);
+            playerGo.transform.SetPositionAndRotation(startPoint.transform.position, startPoint.transform.rotation);
         }
     }
 }

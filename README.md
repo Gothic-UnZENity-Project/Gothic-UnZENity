@@ -4,7 +4,7 @@
 ![Platforms](https://img.shields.io/static/v1?label=Platforms&message=PCVR%20|%20Quest2%20|%20Pico4&color=darkgreen)
 [![Release](https://img.shields.io/github/release-pre/GothicVRProject/GothicVR)](https://github.com/GothicVRProject/GothicVR/releases/latest)
 
-<img src="https://github.com/Gothic-UnZENity-Project/Gothic-UnZENity/assets/120568393/dbbcd129-562f-4590-abea-49c8d2e7ccc7" width="300" alt="Gothic-UnZENity logo" />
+<img src="./Docs/development/images/Gothic-UnZENity-logo.png" width="300" alt="Gothic-UnZENity logo" />
 
 Fan project recreating Piranha Bytes' evergreens Gothic I and Gothic II in Unity Engine. Currently focussing on VR.
 

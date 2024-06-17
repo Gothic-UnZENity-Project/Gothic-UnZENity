@@ -1,4 +1,5 @@
 ﻿using System;
+using UnityEngine;
 using UnityEngine.Events;
 
 namespace GUZ.Core.Globals
@@ -7,7 +8,7 @@ namespace GUZ.Core.Globals
     /// Loading/Unloading order of scenes:
     /// https://github.com/Gothic-UnZENity-Project/Gothic-UnZENity/blob/main/Docs/development/diagrams/SceneLoading.drawio.png
     /// </summary>
-    public static class GvrEvents
+    public static class GUZEvents
     {
         public static readonly UnityEvent ZenKitBootstrapped = new();
 
@@ -18,7 +19,11 @@ namespace GUZ.Core.Globals
         public static readonly UnityEvent LoadingSceneUnloaded = new();
 
         // Hint: Scene general is always loaded >after< world is fully filled with vobs etc.
-        public static readonly UnityEvent GeneralSceneLoaded = new();
+        /// <summary>
+        /// GameObject playerGo - as we spawn it the same frame, we call this event. But Unity can Find() it one frame later earliest.
+        /// We therefore provide it to the event.
+        /// </summary>
+        public static readonly UnityEvent<GameObject> GeneralSceneLoaded = new();
         public static readonly UnityEvent GeneralSceneUnloaded = new();
         
         public static readonly UnityEvent WorldSceneLoaded = new();

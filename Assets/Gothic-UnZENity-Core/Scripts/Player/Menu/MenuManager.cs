@@ -41,7 +41,7 @@ namespace GUZ.Core.Player.Menu
         public void PlayFunction()
         {
 #pragma warning disable CS4014 // It's intended, that this async call is not awaited.
-            GvrSceneManager.I.LoadWorld(Constants.selectedWorld, Constants.selectedWaypoint, true);
+            GUZSceneManager.I.LoadWorld(Constants.selectedWorld, Constants.selectedWaypoint, true);
 #pragma warning restore CS4014
         }
 
