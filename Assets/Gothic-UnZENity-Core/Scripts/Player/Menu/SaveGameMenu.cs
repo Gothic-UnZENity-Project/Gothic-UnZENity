@@ -43,14 +43,14 @@ namespace GUZ.Core.Player.Menu
                 }
 
                 // G1 save games start with ID 1
-                var saveId = int.Parse(saveGameFolderName.Remove(0, "savegame".Length)) - 1;
+                var folderSaveId = int.Parse(saveGameFolderName.Remove(0, "savegame".Length));
 
                 // Load metadata
-                var save = SaveGameManager.GetSaveGame(saveId);
-                _saves[saveId] = save;
+                var save = SaveGameManager.GetSaveGame(folderSaveId);
+                _saves[folderSaveId - 1] = save;
 
                 // Set metadata to slot
-                var saveSlotGo = SaveSlots[saveId];
+                var saveSlotGo = SaveSlots[folderSaveId - 1];
                 saveSlotGo.GetComponentInChildren<TMP_Text>().text = save.Metadata.Title;
             }
         }

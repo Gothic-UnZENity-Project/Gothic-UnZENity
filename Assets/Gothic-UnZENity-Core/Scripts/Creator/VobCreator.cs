@@ -262,6 +262,11 @@ namespace GUZ.Core.Creator
                     _cullingVobObjects.Add(go);
                     break;
                 }
+                case VirtualObjectType.oCNpc:
+                {
+                    // FIXME - We need to spawn NPCs from a save game. Somehow... :-D
+                    break;
+                }
                 case VirtualObjectType.zCVobScreenFX:
                 case VirtualObjectType.zCTriggerWorldStart:
                 case VirtualObjectType.zCTriggerList:

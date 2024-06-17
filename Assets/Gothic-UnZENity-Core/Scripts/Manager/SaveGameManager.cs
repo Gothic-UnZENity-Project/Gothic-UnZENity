@@ -25,6 +25,7 @@ namespace GUZ.Core.Manager
     {
         public static int SaveGameId;
         public static bool IsNewGame => SaveGameId <= 0;
+        public static bool IsLoadedGame => !IsNewGame;
         private static SaveGame _save;
 
         private static readonly Dictionary<string, (ZenKit.World zkWorld, WorldData uWorld)> _worlds = new();
@@ -63,41 +64,37 @@ namespace GUZ.Core.Manager
                 return;
             }
 
-            ZenKit.World loadedWorld = null;
+            ZenKit.World world = new ZenKit.World(GameData.Vfs, worldName);
+            ZenKit.World saveGameWorld = null;
 
             // We can't ask a SaveGame for a world if we didn't save it before. Bug?
-            if (!IsNewGame)
+            if (IsLoadedGame)
             {
                 // Try to load world from save game.
-                loadedWorld = _save.LoadWorld(worldName);
-            }
-
-            // If world is not inside save game, then load it now for the first time.
-            if (loadedWorld == null)
-            {
-                loadedWorld = new ZenKit.World(GameData.Vfs, worldName);
+                saveGameWorld = _save.LoadWorld(worldName);
             }
 
             // Store this world into runtime data as it's now loaded and cached during gameplay. (To save later when needed.)
             _worlds[worldName] = new()
             {
-                zkWorld = loadedWorld,
+                zkWorld = world,
                 uWorld = new WorldData()
                 {
-                    RawWorld = loadedWorld,
-                    Mesh = (CachedMesh)loadedWorld.Mesh.Cache(),
-                    Vobs = loadedWorld.RootObjects,
-                    BspTree = (CachedBspTree)loadedWorld.BspTree.Cache(),
-                    WayNet = (CachedWayNet)loadedWorld.WayNet.Cache()
+                    // Not contained inside saveGame
+                    Mesh = (CachedMesh)world.Mesh.Cache(),
+                    BspTree = (CachedBspTree)world.BspTree.Cache(),
+                    // Contained inside normal .zen file and also saveGame.
+                    Vobs = saveGameWorld == null ? world.RootObjects : saveGameWorld.RootObjects,
+                    WayNet = (CachedWayNet)(saveGameWorld == null ? world.WayNet.Cache() : saveGameWorld.WayNet.Cache())
                 }
             };
         }
 
-        public static SaveGame GetSaveGame(int saveGameId)
+        public static SaveGame GetSaveGame(int folderSaveId)
         {
             // Load metadata
             var save = new SaveGame(GameVersion.Gothic1);
-            save.Load(GetSaveGamePath(saveGameId));
+            save.Load(GetSaveGamePath(folderSaveId));
 
             return save;
         }
@@ -127,11 +124,10 @@ namespace GUZ.Core.Manager
             zkWorld.RootObjects = uWorld.Vobs;
         }
 
-        private static string GetSaveGamePath(int selectedSaveGameId)
+        private static string GetSaveGamePath(int folderSaveId)
         {
-            selectedSaveGameId = selectedSaveGameId == 0 ? SaveGameId : selectedSaveGameId;
             var g1Dir = SettingsManager.GameSettings.GothicIPath;
-            return Path.GetFullPath(Path.Join(g1Dir, $"Saves/savegame{selectedSaveGameId}"));
+            return Path.GetFullPath(Path.Join(g1Dir, $"Saves/savegame{folderSaveId}"));
         }
     }
 }
