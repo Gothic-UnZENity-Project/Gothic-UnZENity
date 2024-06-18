@@ -122,6 +122,7 @@ namespace StyleSheetExample
         private const int _hoursPerDay = 24;
 
         // Use [SerializeField] attribute if you want to display a private field in Inspector.
+        // Try to use private Fields for Components/MonoBehaviours, if you don't need them to be public.
         // Booleans ask a question that can be answered true or false.
         [SerializeField] private bool _isPlayerDead;
 
