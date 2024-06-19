@@ -5,6 +5,7 @@ using GUZ.Core.Manager.Culling;
 using GUZ.Core.Manager.Settings;
 using GUZ.Core.World;
 using GUZ.Core;
+using GUZ.Core.Debugging;
 using GUZ.Core.Util;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -13,11 +14,12 @@ namespace GUZ.Core
 {
 	public class GameManager : MonoBehaviour, CoroutineManager
 	{
+		public static GameManager Instance;
+		
 		public GameConfiguration config;
 		public GameObject xrInteractionManager;
 		public GameObject invalidInstallationPathMessage;
 
-		private SettingsManager _gameSettingsManager;
 		private VobMeshCullingManager _meshCullingManager;
 		private VobSoundCullingManager _soundCullingManager;
 		private BarrierManager _barrierManager;
@@ -29,25 +31,30 @@ namespace GUZ.Core
 		private GUZSceneManager _gameSceneManager;
 		private LoadingManager _gameLoadingManager;
 		private RoutineManager _npcRoutineManager;
+		private FileLoggingHandler _fileLoggingHandler;
 
+		private GameSettings _settings;
 		private bool _isInitialised = false;
+
+		/// <remarks><b>This property is available only AFTER the initial scene `Awake`!</b></remarks>
+		public static GameSettings Settings => Instance._settings;
 
 		// ReSharper disable Unity.PerformanceAnalysis
 		private void Load()
 		{
 			// If the Gothic installation directory is not set, show an error message and exit.
-			if (!_gameSettingsManager.CheckIfGothic1InstallationExists())
+			if (!_settings.CheckIfGothic1InstallationExists())
 			{
 				invalidInstallationPathMessage.SetActive(true);
 				return;
 			}
 
 			// Otherwise, continue loading Gothic.
-            ResourceLoader.Init(SettingsManager.GameSettings.GothicIPath);
+            ResourceLoader.Init(_settings.GothicIPath);
 	
             _gameMusicManager.Init();
             
-			GUZBootstrapper.BootGothicUnZENity(SettingsManager.GameSettings.GothicIPath);
+			GUZBootstrapper.BootGothicUnZENity(_settings.GothicIPath, _settings.GothicILanguage);
 			_gameSceneManager.LoadStartupScenes();
 
 			if (config.enableBarrierVisual)
@@ -58,17 +65,19 @@ namespace GUZ.Core
 
 		private void Awake()
 		{
+			Instance = this;
 			LookupCache.Init();
 
+			_settings = GameSettings.Load();
+			_fileLoggingHandler = new FileLoggingHandler(_settings);
 			_gameLoadingManager = new LoadingManager();
-			_gameSettingsManager = new SettingsManager();
 			_meshCullingManager = new VobMeshCullingManager(config, this);
 			_soundCullingManager = new VobSoundCullingManager(config);
 			_barrierManager = new BarrierManager(config);
 			_stationaryLightsManager = new StationaryLightsManager();
 			_xrSimulatorManager = new XRDeviceSimulatorManager(config);
 			_gameTimeManager = new GameTime(config, this);
-			_skyVisualManager = new SkyManager(config, _gameTimeManager);
+			_skyVisualManager = new SkyManager(config, _gameTimeManager, _settings);
 			_gameMusicManager = new MusicManager(config);
 			_gameSceneManager = new GUZSceneManager(config, _gameLoadingManager, xrInteractionManager);
 			_npcRoutineManager = new RoutineManager(config);
@@ -79,8 +88,8 @@ namespace GUZ.Core
 			ZenKit.Logger.Set(config.zenkitLogLevel, Logging.OnZenKitLogMessage);
 			DirectMusic.Logger.Set(config.directMusicLogLevel, Logging.OnDirectMusicLogMessage);
 
+			_fileLoggingHandler.Init();
 			_gameLoadingManager.Init();
-			_gameSettingsManager.Init();
 			_meshCullingManager.Init();
 			_soundCullingManager.Init();
 			_gameTimeManager.Init();
@@ -136,9 +145,10 @@ namespace GUZ.Core
 		{
 			_meshCullingManager.Destroy();
 			_soundCullingManager.Destroy();
+			_fileLoggingHandler.Destroy();
 
+			_settings = null;
 			_gameLoadingManager = null;
-			_gameSettingsManager = null;
 			_meshCullingManager = null;
 			_soundCullingManager = null;
 			_barrierManager = null;

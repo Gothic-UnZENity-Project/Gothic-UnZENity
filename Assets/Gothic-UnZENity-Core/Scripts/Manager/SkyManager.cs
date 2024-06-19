@@ -25,6 +25,7 @@ namespace GUZ.Core.Manager
         private readonly float PointLightIntensity = 1f;
         private bool IsRaining;
         private readonly GameTimeInterval _sunPerformanceSetting;
+        private readonly GameSettings _gameSettings;
 
         private float masterTime;
         private bool noSky;
@@ -61,7 +62,7 @@ namespace GUZ.Core.Manager
         private static readonly int DomeColor1ShaderId = Shader.PropertyToID("_DomeColor1");
         private static readonly int DomeColor2ShaderId = Shader.PropertyToID("_DomeColor2");
 
-        public SkyManager(GameConfiguration config, GameTime time)
+        public SkyManager(GameConfiguration config, GameTime time, GameSettings settings)
         {
             gameTime = time;
 
@@ -70,6 +71,7 @@ namespace GUZ.Core.Manager
             PointLightIntensity = config.sunLightIntensity;
             noSky = !config.enableSkyVisual;
             _sunPerformanceSetting = config.sunUpdateInterval;
+            _gameSettings = settings;
         }
 
         public void OnValidate()
@@ -120,7 +122,7 @@ namespace GUZ.Core.Manager
 
         private void UpdateStateTexAndFog()
         {
-            if (SettingsManager.GameSettings.GothicINISettings.ContainsKey("SKY_OUTDOOR"))
+            if (_gameSettings.GothicINISettings.ContainsKey("SKY_OUTDOOR"))
             {
                 var currentDay = gameTime.GetDay();
                 var day = (currentDay + 1);
@@ -131,7 +133,7 @@ namespace GUZ.Core.Manager
                 {
                     // hacky way to use the proper color for the current day until animTex is implemented
                     // % 2 is used as there are only 2 textures for the sky, consistent between G1 and G2 
-                    colorValues = SettingsManager.GameSettings.GothicINISettings["SKY_OUTDOOR"]["zDayColor" + day % 2]
+                    colorValues = _gameSettings.GothicINISettings["SKY_OUTDOOR"]["zDayColor" + day % 2]
                         .Split(' ').Select(float.Parse).ToArray();
                 }
                 catch (Exception e)

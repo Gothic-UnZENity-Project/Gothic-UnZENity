@@ -4,10 +4,11 @@ using UnityEngine;
 
 namespace GUZ.Core.Debugging
 {
-    public class FileLoggingHandler : MonoBehaviour
+    public class FileLoggingHandler
     {
         private StreamWriter fileWriter;
         private LogLevel logLevel;
+        private GameSettings _settings;
 
         // Levels are aligned with Unity's levels: UnityEngine.LogType
         private enum LogLevel
@@ -18,7 +19,12 @@ namespace GUZ.Core.Debugging
 	        Exception = 3
         }
 
-		private void Awake()
+        public FileLoggingHandler(GameSettings settings)
+        {
+	        _settings = settings;
+        }
+
+        public void Init()
         {
 			Application.logMessageReceived += HandleLog;
 
@@ -31,16 +37,10 @@ namespace GUZ.Core.Debugging
 			fileWriter.WriteLine("GUZ Version: " + Application.version);
             fileWriter.WriteLine();
             fileWriter.Flush();
-		}
-
-		/// <summary>
-		/// We need to set LogLevel at this stage to ensure we have SettingsManager initialized.
-		/// </summary>
-		private void Start()
-		{
-			if (LogLevel.TryParse(SettingsManager.GameSettings.LogLevel, true, out LogLevel value))
+            
+			if (LogLevel.TryParse(_settings.LogLevel, true, out LogLevel value))
 			{
-				fileWriter.WriteLine("LogLevel Setting found: " + SettingsManager.GameSettings.LogLevel);
+				fileWriter.WriteLine("LogLevel Setting found: " + _settings.LogLevel);
 				logLevel = value;
 			}
 			else
@@ -49,9 +49,9 @@ namespace GUZ.Core.Debugging
 				logLevel = LogLevel.Warning;
 			}
 			fileWriter.Flush();
-		}
+        }
 
-        private void OnDestroy()
+        public void Destroy()
         {
             Application.logMessageReceived -= HandleLog;
             fileWriter.Close();

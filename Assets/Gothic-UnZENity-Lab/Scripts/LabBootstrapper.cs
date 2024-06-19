@@ -1,3 +1,4 @@
+using GUZ.Core;
 using GUZ.Core.Caches;
 using GUZ.Core.Context;
 using GUZ.Core.Globals;
@@ -29,8 +30,9 @@ namespace GUZ.Lab
             if (_isBooted)
                 return;
             _isBooted = true;
-            
-            GUZBootstrapper.BootGothicUnZENity(SettingsManager.GameSettings.GothicIPath);
+
+            var settings = GameManager.Settings;
+            GUZBootstrapper.BootGothicUnZENity(settings.GothicIPath, settings.GothicILanguage);
 
             BootLab();
 

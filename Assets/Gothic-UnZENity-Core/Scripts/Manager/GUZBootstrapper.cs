@@ -25,13 +25,13 @@ namespace GUZ.Core.Manager
             MorphMeshCache.Dispose();
         }
         
-        public static void BootGothicUnZENity(string g1Dir)
+        public static void BootGothicUnZENity(string g1Dir, string language)
         {
             var watch = Stopwatch.StartNew();
 
             GUZContext.SetContext(FeatureFlags.I.gameControls);
             
-            SetLanguage();
+            SetLanguage(language);
             LoadGothicVm(g1Dir);
             LoadDialogs();
             LoadSfxVm(g1Dir);
@@ -44,11 +44,9 @@ namespace GUZ.Core.Manager
             GlobalEventDispatcher.ZenKitBootstrapped.Invoke();
         }
 
-        public static void SetLanguage()
+        public static void SetLanguage(string language)
         {
-            var g1Language = SettingsManager.GameSettings.GothicILanguage;
-
-            switch (g1Language?.Trim().ToLower())
+            switch (language)
             {
                 case "cs":
                 case "pl":

@@ -6,29 +6,38 @@ using UnityEngine.Networking;
 
 namespace GUZ.Core.Manager.Settings
 {
-    public class SettingsManager
+    [System.Serializable]
+    public class GameSettings
     {
-        public static GameSettings GameSettings { get; private set; }
-
         private const string SETTINGS_FILE_NAME = "GameSettings.json";
         private const string SETTINGS_FILE_NAME_DEV = "GameSettings.dev.json";
 
-        public void Init()
+        public string GothicIPath;
+        public string GothicILanguage;
+        public string LogLevel;
+
+        public string GothicMenuFontPath;
+        public string GothicSubtitleFontPath;
+
+        public Dictionary<string, Dictionary<string, string>> GothicINISettings = new();
+        
+        public bool CheckIfGothic1InstallationExists()
         {
-            LoadGameSettings();
+            var g1DataPath = Path.GetFullPath(Path.Join(GothicIPath, "Data"));
+			var g1WorkPath = Path.GetFullPath(Path.Join(GothicIPath, "_work"));
+
+            return Directory.Exists(g1WorkPath) && Directory.Exists(g1DataPath);
         }
         
         public static void SaveGameSettings(GameSettings gameSettings)
         {
-            if(Application.platform != RuntimePlatform.Android)
-            {
-                var settingsFilePath = $"{GetRootPath()}/{SETTINGS_FILE_NAME}";
-                var settingsJson = JsonUtility.ToJson(gameSettings, true);
-                File.WriteAllText(settingsFilePath,settingsJson);
-            }
+            if (Application.platform == RuntimePlatform.Android) return;
+            var settingsFilePath = $"{GetRootPath()}/{SETTINGS_FILE_NAME}";
+            var settingsJson = JsonUtility.ToJson(gameSettings, true);
+            File.WriteAllText(settingsFilePath,settingsJson);
         }
 
-        public static void LoadGameSettings()
+        public static GameSettings Load()
         {
             var rootPath = GetRootPath();
 
@@ -42,27 +51,30 @@ namespace GUZ.Core.Manager.Settings
             }
 
             var settingsJson = File.ReadAllText(settingsFilePath);
-            GameSettings = JsonUtility.FromJson<GameSettings>(settingsJson);
+            var obj = JsonUtility.FromJson<GameSettings>(settingsJson);
 
             // We ignore the "GothicIPath" field which is found in GameSettings for Android
             if (Application.platform == RuntimePlatform.Android)
-                GameSettings.GothicIPath = rootPath;
+            {
+                obj.GothicIPath = rootPath;
+            }
 
             var settingsDevFilePath = $"{rootPath}/{SETTINGS_FILE_NAME_DEV}";
             if (File.Exists(settingsDevFilePath))
             {
                 var devJson = File.ReadAllText(settingsDevFilePath);
-                JsonUtility.FromJsonOverwrite(devJson, GameSettings);
+                JsonUtility.FromJsonOverwrite(devJson, obj);
             }
 
-            var iniFilePath = Path.Combine(GameSettings.GothicIPath, "system", "gothic.ini");
+            var iniFilePath = Path.Combine(obj.GothicIPath, "system", "gothic.ini");
             if (!File.Exists(iniFilePath))
             {
                 Debug.Log("The gothic.ini file does not exist at the specified path :" + iniFilePath);
-                return;
+                return obj;
             }
 
-            GameSettings.GothicINISettings = ParseGothicINI(iniFilePath);
+            obj.GothicINISettings = ParseGothicINI(iniFilePath);
+            return obj;
         }
 
         /// <summary>
@@ -82,14 +94,6 @@ namespace GUZ.Core.Manager.Settings
                 // 1. Editor: Assets\StreamingAssets\
                 // 2. Standalone: Build\Gothic-UnZENity_Data\StreamingAssets\
                 return Application.streamingAssetsPath;
-        }
-
-        public bool CheckIfGothic1InstallationExists()
-        {
-            var g1DataPath = Path.GetFullPath(Path.Join(GameSettings.GothicIPath, "Data"));
-			var g1WorkPath = Path.GetFullPath(Path.Join(GameSettings.GothicIPath, "_work"));
-
-            return Directory.Exists(g1WorkPath) && Directory.Exists(g1DataPath);
         }
 
         /// <summary>
