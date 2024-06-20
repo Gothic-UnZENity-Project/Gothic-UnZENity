@@ -2,19 +2,18 @@ using System.Linq;
 using GUZ.Core.Caches;
 using GUZ.Core.Creator.Meshes.V2;
 using GUZ.Core.Debugging;
+using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
 using GUZ.Core.Npc.Routines;
 using GUZ.Core.Properties;
 using GUZ.Core.Vm;
 using GUZ.Core.Vob.WayNet;
-using GUZ.Core.Extensions;
 using UnityEngine;
 using ZenKit;
 using ZenKit.Daedalus;
 using Object = UnityEngine.Object;
 using WayNet_WayPoint = GUZ.Core.Vob.WayNet.WayPoint;
-using WayPoint = GUZ.Core.Vob.WayNet.WayPoint;
 
 namespace GUZ.Core.Creator
 {
@@ -88,8 +87,9 @@ namespace GUZ.Core.Creator
 
             if (FeatureFlags.I.npcToSpawn.Any() && !FeatureFlags.I.npcToSpawn.Contains(props.npcInstance.Id))
             {
-                Object.Destroy(newNpc);
                 LookupCache.NpcCache.Remove(props.npcInstance.Index);
+                props.IsDestroyed = true;
+                Object.Destroy(newNpc);
                 return;
             }
 
@@ -111,6 +111,7 @@ namespace GUZ.Core.Creator
         private static void SetSpawnPoint(GameObject npcGo, string spawnPoint)
         {
             WayNetPoint initialSpawnPoint;
+            // Find the right spawn point based on currently active routine.
             if (npcGo.GetComponent<Routine>().Routines.Any() && FeatureFlags.I.enableNpcRoutines)
             {
                 var routineSpawnPointName = npcGo.GetComponent<Routine>().CurrentRoutine.waypoint;
@@ -123,6 +124,7 @@ namespace GUZ.Core.Creator
                     initialSpawnPoint = WayNetHelper.GetWayNetPoint(routineSpawnPointName);
                 }
             }
+            // Fallback: If no routine exists, spawn at the spot which is named inside Wld_insertNpc()
             else
             {
                 initialSpawnPoint = WayNetHelper.GetWayNetPoint(spawnPoint);
@@ -134,8 +136,25 @@ namespace GUZ.Core.Creator
                 return;
             }
 
-            npcGo.transform.position = initialSpawnPoint.Position;
+            // Now let's circle around the spawn point if multiple NPCs spawn onto the same one.
+            float testRadius = 1f; // ~2x size of normal BBOX of NPC.
+            for (float angle = 0; angle < 360f; angle += 36f)
+            {
+                var angleInRadians = angle * Mathf.Deg2Rad;
+                var offsetPoint = new Vector3(Mathf.Cos(angleInRadians) * testRadius, 0, Mathf.Sin(angleInRadians) * testRadius);
+                var checkPoint = initialSpawnPoint.Position + offsetPoint;
 
+                // Check if the point is clear (no obstacles)
+                if (!Physics.CheckSphere(checkPoint, testRadius / 2))
+                {
+                    npcGo.transform.position = checkPoint;
+                    // There are three options to sync the Physics information for collision check. This is the most performant one as it only alters the single V3.
+                    npcGo.GetComponentInChildren<Rigidbody>().position = checkPoint;
+                    break;
+                }
+            }
+
+            // Some data to be used for later.
             if (initialSpawnPoint.IsFreePoint())
                 npcGo.GetComponent<NpcProperties>().CurrentFreePoint = (FreePoint)initialSpawnPoint;
             else
