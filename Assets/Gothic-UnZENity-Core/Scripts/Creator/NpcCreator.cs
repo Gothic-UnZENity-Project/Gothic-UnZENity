@@ -88,7 +88,6 @@ namespace GUZ.Core.Creator
             if (FeatureFlags.I.npcToSpawn.Any() && !FeatureFlags.I.npcToSpawn.Contains(props.npcInstance.Id))
             {
                 LookupCache.NpcCache.Remove(props.npcInstance.Index);
-                props.IsDestroyed = true;
                 Object.Destroy(newNpc);
                 return;
             }
