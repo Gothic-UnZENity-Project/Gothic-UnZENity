@@ -135,23 +135,35 @@ namespace GUZ.Core.Creator
                 return;
             }
 
-            // Now let's circle around the spawn point if multiple NPCs spawn onto the same one.
-            float testRadius = 1f; // ~2x size of normal BBOX of NPC.
-            for (float angle = 0; angle < 360f; angle += 36f)
-            {
-                var angleInRadians = angle * Mathf.Deg2Rad;
-                var offsetPoint = new Vector3(Mathf.Cos(angleInRadians) * testRadius, 0, Mathf.Sin(angleInRadians) * testRadius);
-                var checkPoint = initialSpawnPoint.Position + offsetPoint;
+            var testRadius = 1f; // ~2x size of normal bounding box of an NPC.
 
-                // Check if the point is clear (no obstacles)
-                if (!Physics.CheckSphere(checkPoint, testRadius / 2))
+            // Check if the spawn point is free.
+            if (!Physics.CheckSphere(initialSpawnPoint.Position, testRadius / 2))
+            {
+                npcGo.transform.position = initialSpawnPoint.Position;
+                // There are three options to sync the Physics information for collision check. This is the most performant one as it only alters the single V3.
+                npcGo.GetComponentInChildren<Rigidbody>().position = initialSpawnPoint.Position;
+            }
+            // Alternatively let's circle around the spawn point if multiple NPCs spawn onto the same one.
+            else
+            {
+                for (var angle = 0f; angle < 360f; angle += 36f)
                 {
-                    npcGo.transform.position = checkPoint;
-                    // There are three options to sync the Physics information for collision check. This is the most performant one as it only alters the single V3.
-                    npcGo.GetComponentInChildren<Rigidbody>().position = checkPoint;
-                    break;
+                    var angleInRadians = angle * Mathf.Deg2Rad;
+                    var offsetPoint = new Vector3(Mathf.Cos(angleInRadians) * testRadius, 0, Mathf.Sin(angleInRadians) * testRadius);
+                    var checkPoint = initialSpawnPoint.Position + offsetPoint;
+
+                    // Check if the point is clear (no obstacles)
+                    if (!Physics.CheckSphere(checkPoint, testRadius / 2))
+                    {
+                        npcGo.transform.position = checkPoint;
+                        // There are three options to sync the Physics information for collision check. This is the most performant one as it only alters the single V3.
+                        npcGo.GetComponentInChildren<Rigidbody>().position = checkPoint;
+                        break;
+                    }
                 }
             }
+
 
             // Some data to be used for later.
             if (initialSpawnPoint.IsFreePoint())
