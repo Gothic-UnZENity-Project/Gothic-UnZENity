@@ -136,13 +136,16 @@ namespace GUZ.Core.Creator
             }
 
             var testRadius = 1f; // ~2x size of normal bounding box of an NPC.
+            // Some FP/WP are on a hill. The spawn check will therefore lift the location for a little to not interfere with world mesh collision check.
+            var groundControlDifference = new Vector3(0, 0.5f, 0);
+            var initialSpawnPointGroundControl = initialSpawnPoint.Position + groundControlDifference;
 
             // Check if the spawn point is free.
-            if (!Physics.CheckSphere(initialSpawnPoint.Position, testRadius / 2))
+            if (!Physics.CheckSphere(initialSpawnPointGroundControl, testRadius / 2))
             {
-                npcGo.transform.position = initialSpawnPoint.Position;
+                npcGo.transform.position = initialSpawnPointGroundControl;
                 // There are three options to sync the Physics information for collision check. This is the most performant one as it only alters the single V3.
-                npcGo.GetComponentInChildren<Rigidbody>().position = initialSpawnPoint.Position;
+                npcGo.GetComponentInChildren<Rigidbody>().position = initialSpawnPointGroundControl;
             }
             // Alternatively let's circle around the spawn point if multiple NPCs spawn onto the same one.
             else
@@ -151,7 +154,7 @@ namespace GUZ.Core.Creator
                 {
                     var angleInRadians = angle * Mathf.Deg2Rad;
                     var offsetPoint = new Vector3(Mathf.Cos(angleInRadians) * testRadius, 0, Mathf.Sin(angleInRadians) * testRadius);
-                    var checkPoint = initialSpawnPoint.Position + offsetPoint;
+                    var checkPoint = initialSpawnPointGroundControl + offsetPoint;
 
                     // Check if the point is clear (no obstacles)
                     if (!Physics.CheckSphere(checkPoint, testRadius / 2))
