@@ -59,7 +59,10 @@ namespace GUZ.Core
 
 			if (config.enableBarrierVisual)
 			{
-				_barrierManager.CreateBarrier();
+				GlobalEventDispatcher.WorldSceneLoaded.AddListener(() =>
+				{
+					_barrierManager.CreateBarrier();
+				});
 			}
 		}
 
