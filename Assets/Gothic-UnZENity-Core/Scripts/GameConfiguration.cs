@@ -29,7 +29,11 @@ namespace GUZ.Core
 		[SerializeField] public bool enableWorldMesh = true;
 		[SerializeField] public bool enableBarrierVisual = true;
 		[SerializeField] public bool enableSkyVisual = true;
+		
+		[InspectorName("Experimental: Enable Decal Visuals")]
 		[SerializeField] public bool enableDecalVisuals = true;
+		
+		[InspectorName("Experimental: Enable Particle Effects")]
 		[SerializeField] public bool enableParticleEffects = false;
 		[SerializeField] public List<ZenKit.Vobs.VirtualObjectType> spawnWorldObjectTypes = new();
 
@@ -48,9 +52,9 @@ namespace GUZ.Core
 		[SerializeField] public Color ambientLightColor = new(r: 0.10196079f, g: 0.10196079f, b: 0.10196079f, a: 1);
 
 		[Header("### Time ###")] [SerializeField] [Range(0, 23)]
-		public int startTimeHour = 12;
+		public int startTimeHour = 8;
 
-		[SerializeField] [Range(0, 59)] public int startTimeMinute;
+		[SerializeField] [Range(0, 59)] public int startTimeMinute = 0;
 
 		[SerializeField] [Range(0.5f, 1000f)] public float timeSpeedMultiplier = 1;
 
