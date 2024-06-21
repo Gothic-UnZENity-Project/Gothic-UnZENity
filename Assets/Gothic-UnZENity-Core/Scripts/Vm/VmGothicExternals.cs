@@ -432,7 +432,7 @@ namespace GUZ.Core.Vm
         
         public static void PrintDebug(string message)
         {
-            if (!FeatureFlags.I.showZspyLogs)
+            if (!GameManager.Config.enableSpyLogs)
                 return;
 
             Debug.Log($"[zspy]: {message}");
@@ -441,7 +441,7 @@ namespace GUZ.Core.Vm
         
         public static void PrintDebugCh(int channel, string message)
         {
-            if (!FeatureFlags.I.showZspyLogs)
+            if (!GameManager.Config.enableSpyLogs)
                 return;
 
             Debug.Log($"[zspy,{channel}]: {message}");
@@ -450,7 +450,7 @@ namespace GUZ.Core.Vm
         
         public static void PrintDebugInst(string message)
         {
-            if (!FeatureFlags.I.showZspyLogs)
+            if (!GameManager.Config.enableSpyLogs)
                 return;
 
             Debug.Log($"[zspy]: {message}");
@@ -459,7 +459,7 @@ namespace GUZ.Core.Vm
         
         public static void PrintDebugInstCh(int channel, string message)
         {
-            if (!FeatureFlags.I.showZspyLogs)
+            if (!GameManager.Config.enableSpyLogs)
                 return;
 
             Debug.Log($"[zspy,{channel}]: {message}");

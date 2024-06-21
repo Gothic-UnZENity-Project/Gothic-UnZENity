@@ -14,6 +14,7 @@ namespace GUZ.Lab
 {
     public class LabBootstrapper : MonoBehaviour
     {
+        public GameConfiguration config;
         public LabMusicHandler labMusicHandler;
         public LabNpcDialogHandler npcDialogHandler;
         public LabLockableHandler lockableHandler;
@@ -32,7 +33,7 @@ namespace GUZ.Lab
             _isBooted = true;
 
             var settings = GameManager.Settings;
-            GUZBootstrapper.BootGothicUnZENity(settings.GothicIPath, settings.GothicILanguage);
+            GUZBootstrapper.BootGothicUnZENity(config, settings.GothicIPath, settings.GothicILanguage);
 
             BootLab();
 

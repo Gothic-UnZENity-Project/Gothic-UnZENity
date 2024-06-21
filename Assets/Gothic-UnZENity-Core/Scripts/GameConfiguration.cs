@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using GUZ.Core.Context;
 using GUZ.Core.World;
 using UnityEngine;
 
@@ -16,6 +17,7 @@ namespace GUZ.Core
 	public class GameConfiguration : ScriptableObject
 	{
 		[Header("### Controls ###")] public bool enableDeviceSimulator = false;
+        public GUZContext.Controls gameControls = GUZContext.Controls.VR_XRIT;
 
 		[Header("### Developer ###")] [SerializeField]
 		public bool enableMainMenu = true;
@@ -35,7 +37,12 @@ namespace GUZ.Core
 		
 		[InspectorName("Experimental: Enable Particle Effects")]
 		[SerializeField] public bool enableParticleEffects = false;
+
+		[InspectorName("Experimental: Enable NPC Eye Blinking")]
+		public bool enableNpcEyeBlinking = false;
+		
 		[SerializeField] public List<ZenKit.Vobs.VirtualObjectType> spawnWorldObjectTypes = new();
+		[SerializeField] public List<int> spawnNpcInstances = new();
 
 		[Header("### Audio ###")] [SerializeField]
 		public bool enableGameMusic = true;
@@ -88,5 +95,6 @@ namespace GUZ.Core
 		public DirectMusic.LogLevel directMusicLogLevel = DirectMusic.LogLevel.Warning;
 
 		[SerializeField] public bool enableBarrierLogs = false;
+		[SerializeField] public bool enableSpyLogs = false;
 	}
 }

@@ -29,9 +29,6 @@ namespace GUZ.Lab.Handler
 
         public void MusicPlayClick()
         {
-            if (!FeatureFlags.I.enableMusic)
-                Debug.LogError($"Music is deactivated inside ${nameof(FeatureFlags.enableMusic)}");
-
             MusicManager.I.Play(fileSelector.options[fileSelector.value].text);
         }
     }

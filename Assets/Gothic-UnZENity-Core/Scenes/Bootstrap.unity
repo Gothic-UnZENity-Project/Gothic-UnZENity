@@ -122,92 +122,6 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1 &235819213
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 235819214}
-  - component: {fileID: 235819215}
-  m_Layer: 0
-  m_Name: FeatureFlags
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &235819214
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 235819213}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 1139202468}
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &235819215
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 235819213}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 12af35efb7c45ea4fb4752d0328ebf2e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  controls: 0
-  skipMainMenu: 0
-  useXRDeviceSimulator: 0
-  createWorldMesh: 1
-  showBarrier: 1
-  drawWayPoints: 0
-  drawWaypointEdges: 0
-  drawFreePoints: 0
-  spawnAtSpecificWayNetPoint: 
-  TimeMultiplier: 1
-  sunMovementPerformanceValue: 1
-  startHour: 8
-  startMinute: 0
-  fireLightColor: {r: 1, g: 0.87, b: 0.44, a: 1}
-  fireLightRange: 10
-  createVobs: 1
-  enableDecals: 0
-  vobCulling: 1
-  vobCullingSmall:
-    maxObjectSize: 1.2
-    cullingDistance: 50
-  vobCullingMedium:
-    maxObjectSize: 5
-    cullingDistance: 100
-  vobCullingLarge:
-    maxObjectSize: 100
-    cullingDistance: 200
-  drawVobCullingGizmos: 0
-  vobTypeToSpawn: 
-  createOcNpcs: 0
-  enableNpcRoutines: 0
-  enableNpcEyeBlinking: 0
-  npcToSpawn: 
-  enableSounds: 1
-  enableMusic: 1
-  enableSoundCulling: 1
-  enableVobParticles: 0
-  zenKitLogLevel: 0
-  dxMusicLogLevel: 20
-  showZspyLogs: 0
-  showBarrierLogs: 0
 --- !u!1 &583338016
 GameObject:
   m_ObjectHideFlags: 0
@@ -218,6 +132,7 @@ GameObject:
   m_Component:
   - component: {fileID: 583338018}
   - component: {fileID: 583338017}
+  - component: {fileID: 583338019}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -255,6 +170,21 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &583338019
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 583338016}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4f23917a2fb44c7e94eee3fae8187f18, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  debugStart: 
+  debugEnd: 
+  pathDistanceCalculation: []
 --- !u!1 &734922770
 GameObject:
   m_ObjectHideFlags: 0
@@ -695,53 +625,6 @@ Transform:
   - {fileID: 1283201086}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1139202467
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1139202468}
-  - component: {fileID: 1139202469}
-  m_Layer: 0
-  m_Name: Debug
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1139202468
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1139202467}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 235819214}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1139202469
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1139202467}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4f23917a2fb44c7e94eee3fae8187f18, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  debugStart: 
-  debugEnd: 
-  pathDistanceCalculation: []
 --- !u!1 &1283201085
 GameObject:
   m_ObjectHideFlags: 0
@@ -1261,7 +1144,6 @@ SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 583338018}
-  - {fileID: 235819214}
   - {fileID: 1896514214}
   - {fileID: 1103036566}
   - {fileID: 1300502572}

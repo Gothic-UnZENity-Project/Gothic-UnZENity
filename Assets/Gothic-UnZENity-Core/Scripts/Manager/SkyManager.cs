@@ -12,6 +12,7 @@ using GUZ.Core.World;
 using GUZ.Core;
 using UnityEngine;
 using UnityEngine.Rendering;
+using ZenKit;
 using Object = UnityEngine.Object;
 using Random = UnityEngine.Random;
 
@@ -26,6 +27,7 @@ namespace GUZ.Core.Manager
         private bool IsRaining;
         private readonly GameTimeInterval _sunPerformanceSetting;
         private readonly GameSettings _gameSettings;
+        private readonly bool _gameSounds;
 
         private float masterTime;
         private bool noSky;
@@ -72,6 +74,7 @@ namespace GUZ.Core.Manager
             noSky = !config.enableSkyVisual;
             _sunPerformanceSetting = config.sunUpdateInterval;
             _gameSettings = settings;
+            _gameSounds = config.enableGameSounds;
         }
 
         public void OnValidate()
@@ -350,7 +353,7 @@ namespace GUZ.Core.Manager
             var module = rainParticleSystem.emission;
             module.rateOverTime = new ParticleSystem.MinMaxCurve(MAX_PARTICLE_COUNT * rainWeightAndVolume);
 
-            if (!rainParticleSound.isPlaying && FeatureFlags.I.enableSounds)
+            if (!rainParticleSound.isPlaying && _gameSounds)
             {
                 rainParticleSound.Play();
             }

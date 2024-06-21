@@ -19,7 +19,7 @@ namespace GUZ.Core.Editor.Tools
             var hvrFolder = Application.dataPath + "/HurricaneVR";
             var hvrExists = Directory.Exists(hvrFolder) && Directory.EnumerateFiles(hvrFolder).Count() != 0;
             var hvrCompilerSettingExists = PlayerSettings.GetScriptingDefineSymbols(NamedBuildTarget.Standalone).Contains(HVR_COMPILER_FLAG);
-            bool hvrSceneSetting = GameObject.FindObjectOfType<FeatureFlags>()?.gameControls == GUZContext.Controls.VR_HVR;
+            bool hvrSceneSetting = GameObject.FindObjectOfType<GameManager>()?.config.gameControls == GUZContext.Controls.VR_HVR;
 
             var message =
                 $"Plugin installed: {hvrExists}\n" +
@@ -35,12 +35,6 @@ namespace GUZ.Core.Editor.Tools
         [MenuItem("Gothic-UnZENity/Context/Activate HVR in Build", priority = 2)]
         private static void ActivatePlugin()
         {
-            // Change controls in FeatureFlags
-            var featureFlags = GameObject.FindObjectOfType<FeatureFlags>();
-
-            if (featureFlags != null)
-                featureFlags.gameControls = GUZContext.Controls.VR_HVR;
-
             // Change compile flag in PlayerSettings
             var settings = PlayerSettings.GetScriptingDefineSymbols(NamedBuildTarget.Standalone)
                 .Split(";")
@@ -59,12 +53,6 @@ namespace GUZ.Core.Editor.Tools
         [MenuItem("Gothic-UnZENity/Context/De-activate HVR", priority = 3)]
         private static void DeactivatePlugin()
         {
-            // Change controls in FeatureFlags
-            var featureFlags = GameObject.FindObjectOfType<FeatureFlags>();
-
-            if (featureFlags != null)
-                featureFlags.gameControls = GUZContext.Controls.VR_XRIT;
-
             // Change compile flag in PlayerSettings
             var settings = PlayerSettings.GetScriptingDefineSymbols(NamedBuildTarget.Standalone)
                 .Split(";")

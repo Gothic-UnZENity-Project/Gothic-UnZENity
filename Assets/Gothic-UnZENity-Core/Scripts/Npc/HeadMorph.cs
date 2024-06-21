@@ -30,7 +30,7 @@ namespace GUZ.Core.Npc
         {
             base.Start();
 
-            if (!FeatureFlags.I.enableNpcEyeBlinking)
+            if (!GameManager.Config.enableNpcEyeBlinking)
                 return;
 
             randomAnimations.Add(new()

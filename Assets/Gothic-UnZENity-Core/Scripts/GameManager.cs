@@ -1,3 +1,4 @@
+using System;
 using GUZ.Core.Caches;
 using GUZ.Core.Context;
 using GUZ.Core.Manager;
@@ -37,7 +38,13 @@ namespace GUZ.Core
 		private bool _isInitialised = false;
 
 		/// <remarks><b>This property is available only AFTER the initial scene `Awake`!</b></remarks>
+		[Obsolete("Don't use globals.")]
 		public static GameSettings Settings => Instance._settings;
+
+		/// <remarks><b>This property is available only AFTER the initial scene `Awake`!</b></remarks>
+		[Obsolete("Don't use globals.")]
+		public static GameConfiguration Config => Instance.config;
+		
 
 		// ReSharper disable Unity.PerformanceAnalysis
 		private void Load()
@@ -54,7 +61,7 @@ namespace GUZ.Core
 	
             _gameMusicManager.Init();
             
-			GUZBootstrapper.BootGothicUnZENity(_settings.GothicIPath, _settings.GothicILanguage);
+			GUZBootstrapper.BootGothicUnZENity(config, _settings.GothicIPath, _settings.GothicILanguage);
 			_gameSceneManager.LoadStartupScenes();
 
 			if (config.enableBarrierVisual)
