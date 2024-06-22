@@ -11,7 +11,7 @@ using Constants = GUZ.Core.Globals.Constants;
 
 namespace GUZ.Core.Manager
 {
-    public class FontManager : SingletonBehaviour<FontManager>
+    public class FontManager : MonoBehaviour
     {
         public TMP_FontAsset DefaultFont;
 

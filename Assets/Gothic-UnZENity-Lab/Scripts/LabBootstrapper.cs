@@ -7,13 +7,15 @@ using GUZ.Core.Manager.Settings;
 using GUZ.Core.Vm;
 using GUZ.Core.World;
 using GUZ.Core;
+using GUZ.Core.Manager.Culling;
 using GUZ.Lab.Handler;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 namespace GUZ.Lab
 {
-    public class LabBootstrapper : MonoBehaviour, GlobalDataProvider, CoroutineManager
+	[RequireComponent(typeof(TextureManager), typeof(FontManager))]
+    public class LabBootstrapper : MonoBehaviour, IGlobalDataProvider, CoroutineManager
     {
         public GameConfiguration config;
         public LabMusicHandler labMusicHandler;
@@ -28,18 +30,30 @@ namespace GUZ.Lab
         private RoutineManager _npcRoutineManager;
 		private GameSettings _settings;
         private GUZSceneManager _sceneManager;
+        private TextureManager _textureManager;
+        private FontManager _fontManager;
         private bool _isBooted;
 
         public GameConfiguration Config => config;
         public GameSettings Settings => _settings;
         public SkyManager Sky => null;
+		public GameTime Time => null;
+		public RoutineManager Routines => _npcRoutineManager;
+        public GUZSceneManager Scene => _sceneManager;
+		public TextureManager Textures => _textureManager;
+        public FontManager Font => _fontManager;
+        public StationaryLightsManager Lights => null;
+        public VobMeshCullingManager MeshCulling => null;
+        public VobSoundCullingManager SoundCulling => null;
 
 
         private void Awake()
         {
-            GlobalDataProvider.Instance = this;
+            GameGlobals.Instance = this;
             
             _settings = GameSettings.Load();
+            _textureManager = GetComponent<TextureManager>();
+            _fontManager = GetComponent<FontManager>();
             _sceneManager = new GUZSceneManager(config, null, null);
             _deviceSimulatorManager = new XRDeviceSimulatorManager(config);
             _npcRoutineManager = new RoutineManager(config);

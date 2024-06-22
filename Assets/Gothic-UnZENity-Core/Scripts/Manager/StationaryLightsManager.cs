@@ -7,17 +7,9 @@ namespace GUZ.Core.Manager
 {
     public class StationaryLightsManager
     {
-        [Obsolete]
-        public static StationaryLightsManager I;
-        
         private readonly HashSet<MeshRenderer> DirtiedMeshes = new();
         private readonly Dictionary<MeshRenderer, List<StationaryLight>> LightsPerRenderer = new();
         private readonly List<Material> NonAllocMaterials = new();
-
-        public StationaryLightsManager()
-        {
-            I = this;
-        }
 
         public void LateUpdate()
         {

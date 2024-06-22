@@ -63,7 +63,7 @@ namespace GUZ.Core.Creator
                 await MeshFactory.CreateWorldTextureArray();
             }
 
-            GlobalDataProvider.Instance.Sky.InitSky();
+            GameGlobals.Sky.InitSky();
             StationaryLight.InitStationaryLights();
 
             WaynetCreator.Create(config, _worldGo, world);
@@ -443,7 +443,7 @@ namespace GUZ.Core.Creator
         private static void WorldLoaded(GameObject playerGo)
         {
             // As we already added stored world mesh and waypoints in Unity GOs, we can safely remove them to free MBs.
-            var interactionManager = GUZSceneManager.I.interactionManager.GetComponent<XRInteractionManager>();
+            var interactionManager = GameGlobals.Scene.interactionManager.GetComponent<XRInteractionManager>();
 
             // If we load a new scene, just remove the existing one.
             if (_worldGo.TryGetComponent(out TeleportationArea teleportArea))

@@ -17,8 +17,6 @@ namespace GUZ.Core.World
         public static readonly DateTime MIN_TIME = new(1, 1, 1, 0, 0, 0);
         public static readonly DateTime MAX_TIME = new(9999, 12, 31, 23, 59, 59);
 
-        [Obsolete] public static GameTime I;
-
         private int secondsInMinute = 0;
         private int minutesInHour = 0;
         
@@ -38,7 +36,6 @@ namespace GUZ.Core.World
 
         public GameTime(GameConfiguration config, CoroutineManager coroutineManager)
         {
-            I = this;
             _coroutineManager = coroutineManager;
             _featureStartHour = config.startTimeHour;
             _featureStartMinute = config.startTimeMinute;

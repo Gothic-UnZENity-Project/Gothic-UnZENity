@@ -23,7 +23,7 @@ namespace GUZ.Core.Vob
         
         private void OnEnable()
         {
-            HourEventCallback(GameTime.I.GetCurrentDateTime());
+            HourEventCallback(GameGlobals.Time.GetCurrentDateTime());
 
             StartCoroutineInternal();
             GlobalEventDispatcher.GameTimeHourChangeCallback.AddListener(HourEventCallback);
@@ -56,7 +56,7 @@ namespace GUZ.Core.Vob
             audioSource2.Stop();
             
             // Set active sound initially
-            HourEventCallback(GameTime.I.GetCurrentDateTime());
+            HourEventCallback(GameGlobals.Time.GetCurrentDateTime());
             
             if (gameObject.activeSelf)
                 StartCoroutineInternal();

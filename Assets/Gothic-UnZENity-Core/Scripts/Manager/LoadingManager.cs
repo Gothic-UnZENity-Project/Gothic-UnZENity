@@ -64,10 +64,12 @@ namespace GUZ.Core.Manager
         {
             var scene = SceneManager.GetSceneByName(Constants.SceneLoading);
             var sphere = scene.GetRootGameObjects().FirstOrDefault(go => go.name == "LoadingSphere");
-            sphere.GetComponent<MeshRenderer>().material = TextureManager.I.loadingSphereMaterial;
-            sphere.FindChildRecursively("LoadingImage").GetComponent<Image>().material = TextureManager.I.gothicLoadingMenuMaterial;
-            sphere.FindChildRecursively("ProgressBackground").gameObject.GetComponent<Image>().material = TextureManager.I.loadingBarBackgroundMaterial;
-            sphere.FindChildRecursively("ProgressBar").gameObject.GetComponent<Image>().material = TextureManager.I.loadingBarMaterial;
+
+            var tm = GameGlobals.Textures;
+            sphere.GetComponent<MeshRenderer>().material = tm.loadingSphereMaterial;
+            sphere.FindChildRecursively("LoadingImage").GetComponent<Image>().material = tm.gothicLoadingMenuMaterial;
+            sphere.FindChildRecursively("ProgressBackground").gameObject.GetComponent<Image>().material = tm.loadingBarBackgroundMaterial;
+            sphere.FindChildRecursively("ProgressBar").gameObject.GetComponent<Image>().material = tm.loadingBarMaterial;
         }
 
         private float CalculateOverallProgress()

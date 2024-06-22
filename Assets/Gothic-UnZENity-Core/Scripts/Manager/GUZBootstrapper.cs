@@ -101,7 +101,7 @@ namespace GUZ.Core.Manager
 
         private static void LoadFonts()
         {
-            FontManager.I.Create();
+            GameGlobals.Font.Create();
         }
     }
 }

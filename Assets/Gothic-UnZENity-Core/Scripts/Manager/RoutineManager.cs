@@ -10,8 +10,6 @@ namespace GUZ.Core.Manager
     /// </summary>
     public class RoutineManager
     {
-        public static RoutineManager I;
-        
         private Dictionary<int, List<Routine>> npcStartTimeDict = new();
 
         private readonly bool _featureEnable;
@@ -20,8 +18,6 @@ namespace GUZ.Core.Manager
 
         public RoutineManager(GameConfiguration config)
         {
-            I = this;
-            
             _featureEnable = config.enableNpcRoutines;
             _featureStartHour = config.startTimeHour;
             _featureStartMinute = config.startTimeMinute;

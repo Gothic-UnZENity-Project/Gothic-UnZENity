@@ -146,7 +146,7 @@ namespace GUZ.Core.Player.Climb
 
             teleportIndicatorReticleImage.sprite = sprite;
             teleportIndicatorReticleImage.rectTransform.sizeDelta = new Vector2(1f, 1f);
-            teleportIndicatorReticleImage.material = TextureManager.I.arrowMaterial;
+            teleportIndicatorReticleImage.material = GameGlobals.Textures.arrowMaterial;
             teleportIndicatorReticleImage.type = Image.Type.Filled;
             teleportIndicatorReticleImage.fillMethod = Image.FillMethod.Vertical;
             Destroy(teleportIndicatorReticle.GetComponent<Collider>());

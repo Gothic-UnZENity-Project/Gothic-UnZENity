@@ -282,7 +282,7 @@ namespace GUZ.Core.Manager
 
         private void GeneralSceneLoaded(GameObject playerGo)
         {
-            RenderSettings.skybox = Object.Instantiate(TextureManager.I.skyMaterial);
+            RenderSettings.skybox = Object.Instantiate(GameGlobals.Textures.skyMaterial);
 
             InitRainGO();
         }

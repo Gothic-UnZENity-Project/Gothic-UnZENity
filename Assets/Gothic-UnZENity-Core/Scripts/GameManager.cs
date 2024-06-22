@@ -13,7 +13,8 @@ using UnityEngine.SceneManagement;
 
 namespace GUZ.Core
 {
-	public class GameManager : MonoBehaviour, CoroutineManager, GlobalDataProvider
+	[RequireComponent(typeof(TextureManager), typeof(FontManager))]
+	public class GameManager : MonoBehaviour, CoroutineManager, IGlobalDataProvider
 	{
 		public GameConfiguration config;
 		public GameObject xrInteractionManager;
@@ -31,6 +32,8 @@ namespace GUZ.Core
 		private LoadingManager _gameLoadingManager;
 		private RoutineManager _npcRoutineManager;
 		private FileLoggingHandler _fileLoggingHandler;
+		private TextureManager _textureManager;
+		private FontManager _fontManager;
 
 		private GameSettings _settings;
 		private bool _isInitialised = false;
@@ -38,6 +41,14 @@ namespace GUZ.Core
 		public GameSettings Settings => _settings;
 		public GameConfiguration Config => config;
 		public SkyManager Sky => _skyVisualManager;
+		public GameTime Time => _gameTimeManager;
+		public RoutineManager Routines => _npcRoutineManager;
+		public TextureManager Textures => _textureManager;
+		public GUZSceneManager Scene => _gameSceneManager;
+		public FontManager Font => _fontManager;
+        public StationaryLightsManager Lights => _stationaryLightsManager;
+        public VobMeshCullingManager MeshCulling => _meshCullingManager;
+        public VobSoundCullingManager SoundCulling => _soundCullingManager;
 
 		// ReSharper disable Unity.PerformanceAnalysis
 		private void Load()
@@ -68,9 +79,11 @@ namespace GUZ.Core
 
 		private void Awake()
 		{
-			GlobalDataProvider.Instance = this;
+			GameGlobals.Instance = this;
 			LookupCache.Init();
 
+			_textureManager = GetComponent<TextureManager>();
+			_fontManager = GetComponent<FontManager>();
 			_settings = GameSettings.Load();
 			_fileLoggingHandler = new FileLoggingHandler(_settings);
 			_gameLoadingManager = new LoadingManager();

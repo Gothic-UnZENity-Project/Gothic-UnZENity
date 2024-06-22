@@ -433,7 +433,7 @@ namespace GUZ.Core.Vm
         
         public static void PrintDebug(string message)
         {
-            if (!GlobalDataProvider.Instance.Config.enableSpyLogs)
+            if (!GameGlobals.Config.enableSpyLogs)
                 return;
 
             Debug.Log($"[zspy]: {message}");
@@ -442,7 +442,7 @@ namespace GUZ.Core.Vm
         
         public static void PrintDebugCh(int channel, string message)
         {
-            if (!GlobalDataProvider.Instance.Config.enableSpyLogs)
+            if (!GameGlobals.Config.enableSpyLogs)
                 return;
 
             Debug.Log($"[zspy,{channel}]: {message}");
@@ -451,7 +451,7 @@ namespace GUZ.Core.Vm
         
         public static void PrintDebugInst(string message)
         {
-            if (!GlobalDataProvider.Instance.Config.enableSpyLogs)
+            if (!GameGlobals.Config.enableSpyLogs)
                 return;
 
             Debug.Log($"[zspy]: {message}");
@@ -460,7 +460,7 @@ namespace GUZ.Core.Vm
         
         public static void PrintDebugInstCh(int channel, string message)
         {
-            if (!GlobalDataProvider.Instance.Config.enableSpyLogs)
+            if (!GameGlobals.Config.enableSpyLogs)
                 return;
 
             Debug.Log($"[zspy,{channel}]: {message}");
@@ -760,12 +760,12 @@ namespace GUZ.Core.Vm
 
         public static void Wld_SetTime(int hour, int minute)
         {
-            GameTime.I.SetTime(hour, minute);
+            GameGlobals.Time.SetTime(hour, minute);
         }
 
         public static int Wld_GetDay()
         {
-            return GameTime.I.GetDay();
+            return GameGlobals.Time.GetDay();
         }
 
         public static int Wld_IsTime(int beginHour, int beginMinute, int endHour, int endMinute)

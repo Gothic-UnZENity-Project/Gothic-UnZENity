@@ -14,9 +14,6 @@ namespace GUZ.Core.Manager
 {
     public class GUZSceneManager
     {
-        [Obsolete]
-        public static GUZSceneManager I;
-        
         public GameObject interactionManager;
         
         private static readonly string generalSceneName = Constants.SceneGeneral;
@@ -37,7 +34,6 @@ namespace GUZ.Core.Manager
 
         public GUZSceneManager(GameConfiguration config, LoadingManager loading, GameObject interactionManagerObject)
         {
-            I = this;
             interactionManager = interactionManagerObject;
             _config = config;
             _loading = loading;
@@ -93,7 +89,7 @@ namespace GUZ.Core.Manager
 
         private async Task LoadMainMenu()
         {
-            TextureManager.I.LoadLoadingDefaultTextures();
+            GameGlobals.Textures.LoadLoadingDefaultTextures();
             await LoadNewWorldScene(Constants.SceneMainMenu);
         }
 
@@ -150,7 +146,7 @@ namespace GUZ.Core.Manager
         /// </summary>
         private async Task ShowLoadingScene(string worldName = null, bool newGame = false)
         {
-            TextureManager.I.LoadLoadingDefaultTextures();
+            GameGlobals.Textures.LoadLoadingDefaultTextures();
 
             generalScene = SceneManager.GetSceneByName(generalSceneName);
             if (generalScene.isLoaded)
@@ -177,7 +173,7 @@ namespace GUZ.Core.Manager
                 return;
 
             string textureString = newGame ? "LOADING.TGA" : $"LOADING_{worldName.Split('.')[0].ToUpper()}.TGA";
-            TextureManager.I.SetTexture(textureString, TextureManager.I.gothicLoadingMenuMaterial);
+            GameGlobals.Textures.SetTexture(textureString, GameGlobals.Textures.gothicLoadingMenuMaterial);
         }
 
         private void HideLoadingScene()
@@ -207,7 +203,7 @@ namespace GUZ.Core.Manager
                     break;
                 case Constants.SceneMainMenu:
                     var sphere = scene.GetRootGameObjects().FirstOrDefault(go => go.name == "LoadingSphere");
-                    sphere.GetComponent<MeshRenderer>().material = TextureManager.I.loadingSphereMaterial;
+                    sphere.GetComponent<MeshRenderer>().material = GameGlobals.Textures.loadingSphereMaterial;
                     SceneManager.SetActiveScene(scene);
 
                     GlobalEventDispatcher.MainMenuSceneLoaded.Invoke();

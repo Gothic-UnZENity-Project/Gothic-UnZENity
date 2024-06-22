@@ -9,9 +9,6 @@ namespace GUZ.Core.Manager.Culling
 {
     public class VobSoundCullingManager
     {
-        [Obsolete]
-        public static VobSoundCullingManager I;
-        
         // Stored for resetting after world switch
         private CullingGroup soundCullingGroup;
 
@@ -22,8 +19,6 @@ namespace GUZ.Core.Manager.Culling
 
         public VobSoundCullingManager(GameConfiguration config)
         {
-            I = this;
-
             _featureEnable = config.enableSoundCulling;
         }
 

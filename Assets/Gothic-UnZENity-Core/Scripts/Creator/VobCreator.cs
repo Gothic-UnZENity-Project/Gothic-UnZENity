@@ -361,8 +361,8 @@ namespace GUZ.Core.Creator
 
         private static void PostCreateVobs()
         {
-            VobMeshCullingManager.I.PrepareVobCulling(_cullingVobObjects);
-            VobSoundCullingManager.I.PrepareSoundCulling(LookupCache.vobSoundsAndDayTime);
+            GameGlobals.MeshCulling.PrepareVobCulling(_cullingVobObjects);
+            GameGlobals.SoundCulling.PrepareSoundCulling(LookupCache.vobSoundsAndDayTime);
 
             vobTreeCache.ClearAndReleaseMemory();
             
@@ -918,7 +918,7 @@ namespace GUZ.Core.Creator
                 var standardShader = Constants.ShaderUnlitParticles;
                 var material = new Material(standardShader);
                 rendererModule.material = material;
-                TextureManager.I.SetTexture(pfx.VisNameS, rendererModule.material);
+                GameGlobals.Textures.SetTexture(pfx.VisNameS, rendererModule.material);
                 // renderer.material.renderQueue = (int)UnityEngine.Rendering.RenderQueue.AlphaTest; // First check with no change.
 
                 switch (pfx.VisAlphaFuncS.ToUpper())

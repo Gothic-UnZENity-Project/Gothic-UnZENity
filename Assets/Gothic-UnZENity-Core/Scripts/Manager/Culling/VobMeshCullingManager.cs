@@ -14,9 +14,6 @@ namespace GUZ.Core.Manager.Culling
     /// </summary>
     public class VobMeshCullingManager
     {
-        [Obsolete]
-        public static VobMeshCullingManager I;
-        
         // Stored for resetting after world switch
         private CullingGroup vobCullingGroupSmall;
         private CullingGroup vobCullingGroupMedium;
@@ -53,8 +50,6 @@ namespace GUZ.Core.Manager.Culling
 
         public VobMeshCullingManager(GameConfiguration config, CoroutineManager coroutineManager)
         {
-            I = this;
-            
             _coroutineManager = coroutineManager;
             _featureEnableCulling = config.enableMeshCulling;
             _featureDrawGizmos = config.showMeshCullingGizmos;
