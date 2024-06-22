@@ -65,6 +65,11 @@ namespace GUZ.Core.Manager.Culling
 
         public void Init()
         {
+            if (!_featureEnableCulling)
+            {
+                return;
+            }
+
             GlobalEventDispatcher.GeneralSceneUnloaded.AddListener(PreWorldCreate);
             GlobalEventDispatcher.GeneralSceneLoaded.AddListener(PostWorldCreate);
 
@@ -405,6 +410,10 @@ namespace GUZ.Core.Manager.Culling
 
         public void Destroy()
         {
+            if (!_featureEnableCulling)
+            {
+                return;
+            }
             vobCullingGroupSmall.Dispose();
             vobCullingGroupMedium.Dispose();
             vobCullingGroupLarge.Dispose();

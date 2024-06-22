@@ -361,7 +361,7 @@ namespace GUZ.Core.Creator
 
             // Workaround - if we have no lights spawned, then the merging algorithm has some issues.
             // But as this will only happen with Developer settings, we fix it here.
-            if (lightingEnabled)
+            if (!lightingEnabled)
             {
                 maxLightsPerChunk = 0;
             }

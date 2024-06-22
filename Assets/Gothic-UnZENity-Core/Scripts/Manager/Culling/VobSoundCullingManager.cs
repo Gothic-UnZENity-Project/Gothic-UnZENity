@@ -29,6 +29,10 @@ namespace GUZ.Core.Manager.Culling
 
         public void Init()
         {
+            if (!_featureEnable)
+            {
+                return;
+            }
             GlobalEventDispatcher.GeneralSceneUnloaded.AddListener(PreWorldCreate);
             GlobalEventDispatcher.GeneralSceneLoaded.AddListener(PostWorldCreate);
 
@@ -96,6 +100,10 @@ namespace GUZ.Core.Manager.Culling
         
         public void Destroy()
         {
+            if (!_featureEnable)
+            {
+                return;
+            }
             soundCullingGroup.Dispose();
         }
     }
