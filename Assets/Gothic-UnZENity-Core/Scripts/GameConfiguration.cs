@@ -30,7 +30,6 @@ namespace GUZ.Core
 		[SerializeField] public bool enableWorldObjects = true;
 		[SerializeField] public bool enableWorldMesh = true;
 		[SerializeField] public bool enableBarrierVisual = true;
-		[SerializeField] public bool enableSkyVisual = true;
 		
 		[InspectorName("Experimental: Enable Decal Visuals")]
 		[SerializeField] public bool enableDecalVisuals = true;

@@ -28,10 +28,9 @@ namespace GUZ.Core.Manager
         private readonly GameTimeInterval _sunPerformanceSetting;
         private readonly GameSettings _gameSettings;
         private readonly bool _gameSounds;
-        private readonly bool _featureEnable;
 
         private float masterTime;
-        private bool noSky;
+        private bool noSky = true;
         private List<SkyState> stateList = new();
         private GameTime gameTime;
 
@@ -72,11 +71,9 @@ namespace GUZ.Core.Manager
             SunColor = config.sunLightColor;
             AmbientColor = config.ambientLightColor;
             PointLightIntensity = config.sunLightIntensity;
-            noSky = !config.enableSkyVisual;
             _sunPerformanceSetting = config.sunUpdateInterval;
             _gameSettings = settings;
             _gameSounds = config.enableGameSounds;
-            _featureEnable = config.enableSkyVisual;
         }
 
         public void OnValidate()
@@ -86,15 +83,12 @@ namespace GUZ.Core.Manager
 
         public void Init()
         {
-            if (!_featureEnable)
-            {
-                return;
-            }
-
             GlobalEventDispatcher.GameTimeSecondChangeCallback.AddListener(Interpolate);
             GlobalEventDispatcher.GameTimeHourChangeCallback.AddListener(UpdateRainTime);
             GlobalEventDispatcher.GeneralSceneLoaded.AddListener(GeneralSceneLoaded);
-            
+        }
+
+        public void InitSky() {
             RotateSun(gameTime.GetCurrentDateTime());
             switch (_sunPerformanceSetting)
             {

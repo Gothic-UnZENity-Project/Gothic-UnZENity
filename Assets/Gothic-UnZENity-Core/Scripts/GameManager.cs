@@ -44,6 +44,10 @@ namespace GUZ.Core
 		/// <remarks><b>This property is available only AFTER the initial scene `Awake`!</b></remarks>
 		[Obsolete("Don't use globals.")]
 		public static GameConfiguration Config => Instance.config;
+
+		/// <remarks><b>This property is available only AFTER the initial scene `Awake`!</b></remarks>
+		[Obsolete("Don't use globals.")]
+		public static SkyManager Sky => Instance._skyVisualManager;
 		
 
 		// ReSharper disable Unity.PerformanceAnalysis
