@@ -1,10 +1,15 @@
 #if GUZ_HVR_INSTALLED
+using System.Linq;
 using GUZ.Core.Context;
+using GUZ.Core.Globals;
+using GVR;
 using HurricaneVR.Framework.Components;
 using HurricaneVR.Framework.Core;
 using HurricaneVR.Framework.Shared;
+using HurricaneVRExtensions.Simulator;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Object = UnityEngine.Object;
 
 namespace GUZ.HVR
 {
@@ -28,6 +33,20 @@ namespace GUZ.HVR
             SceneManager.MoveGameObjectToScene(go, scene);
 
             return go;
+        }
+
+        public void CreateXRDeviceSimulator()
+        {
+            var generalScene = SceneManager.GetSceneByName(Constants.SceneGeneral);
+            var simulatorGo = new GameObject("HVR-XRDeviceSimulator");
+            // We assume, that this Component is set inside the HVR root for a player rig.
+            var playerRig = generalScene.GetRootGameObjects().First(i => i.GetComponentInChildren<HVRPlayerManager>());
+
+            simulatorGo.AddComponent<HVRBodySimulator>().Rig = playerRig;
+            simulatorGo.AddComponent<HVRHandsSimulator>().Rig = playerRig;
+            simulatorGo.AddComponent<HVRSimulatorControlsGUI>();
+
+            SceneManager.MoveGameObjectToScene(simulatorGo, generalScene);
         }
 
         public void AddClimbingComponent(GameObject go)
