@@ -2110,13 +2110,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 464842610}
-  - component: {fileID: 464842609}
-  - component: {fileID: 464842612}
   - component: {fileID: 464842614}
   - component: {fileID: 464842616}
-  - component: {fileID: 464842617}
-  - component: {fileID: 464842618}
-  - component: {fileID: 464842619}
   m_Layer: 0
   m_Name: GVRSingletons
   m_TagString: Untagged
@@ -2124,18 +2119,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &464842609
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 464842608}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0a2378170bfeb9e47ba09b7534cf62e4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!4 &464842610
 Transform:
   m_ObjectHideFlags: 0
@@ -2149,23 +2132,9 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 1492632118}
   - {fileID: 393873742}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &464842612
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 464842608}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 943ded366cc83b447a209cb52b2d3209, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  interactionManager: {fileID: 0}
 --- !u!114 &464842614
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2206,47 +2175,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   DefaultFont: {fileID: 0}
---- !u!114 &464842617
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 464842608}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ff27067532e5fb14d8e963d887bb60cf, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &464842618
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 464842608}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 46e9095c72bc48bfb33591c93b3dc5f5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  SunDirection: {fileID: 1492632118}
-  SunColor: {r: 0.6901961, g: 0.6901961, b: 0.6901961, a: 1}
-  AmbientColor: {r: 0.10196079, g: 0.10196079, b: 0.10196079, a: 1}
-  PointLightIntensity: 1
-  IsRaining: 0
---- !u!114 &464842619
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 464842608}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9af6bda13a014da48ee7a934228cefe9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &493204840
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6649,37 +6577,6 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 8969571752666551114, guid: f4c83e540c0057948b19107b827dc236, type: 3}
   m_PrefabInstance: {fileID: 1482640495}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &1492632117
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1492632118}
-  m_Layer: 0
-  m_Name: Sun direction
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1492632118
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1492632117}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0.45451945, y: 0.54167527, z: -0.45451945, w: 0.54167527}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 464842610}
-  m_LocalEulerAnglesHint: {x: 80, y: 90, z: 0}
 --- !u!1 &1548736485
 GameObject:
   m_ObjectHideFlags: 0
@@ -9243,7 +9140,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2101890269}
-  - component: {fileID: 2101890271}
   - component: {fileID: 2101890270}
   m_Layer: 0
   m_Name: Bootstrap
@@ -9279,65 +9175,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3a5216bb91c14ec494f0c03b3f00ae47, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  config: {fileID: 11400000, guid: 6d8d06c956029b1158d990363b5992b5, type: 2}
   labMusicHandler: {fileID: 408181898}
   npcDialogHandler: {fileID: 1791413021}
   lockableHandler: {fileID: 1956714045}
   ladderLabHandler: {fileID: 747305793}
   vobHandAttachPointsLabHandler: {fileID: 330949651}
   labNpcAnimationHandler: {fileID: 501618520}
---- !u!114 &2101890271
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2101890268}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 12af35efb7c45ea4fb4752d0328ebf2e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  controls: 1
-  skipMainMenu: 0
-  useXRDeviceSimulator: 0
-  createWorldMesh: 0
-  showBarrier: 0
-  drawWayPoints: 0
-  drawWaypointEdges: 0
-  drawFreePoints: 0
-  spawnAtSpecificWayNetPoint: 
-  TimeMultiplier: 0.5
-  sunMovementPerformanceValue: 0
-  startHour: 0
-  startMinute: 0
-  fireLightColor: {r: 0, g: 0, b: 0, a: 0}
-  fireLightRange: 0
-  createVobs: 0
-  enableDecals: 0
-  vobCulling: 0
-  vobCullingSmall:
-    maxObjectSize: 1
-    cullingDistance: 1
-  vobCullingMedium:
-    maxObjectSize: 1
-    cullingDistance: 1
-  vobCullingLarge:
-    maxObjectSize: 1
-    cullingDistance: 1
-  drawVobCullingGizmos: 0
-  vobTypeToSpawn: 
-  createOcNpcs: 0
-  enableNpcRoutines: 0
-  enableNpcEyeBlinking: 1
-  npcToSpawn: 
-  enableSounds: 0
-  enableMusic: 1
-  enableSoundCulling: 0
-  enableVobParticles: 0
-  zenKitLogLevel: 1
-  dxMusicLogLevel: 30
-  showZspyLogs: 1
-  showBarrierLogs: 0
 --- !u!1 &2122853906
 GameObject:
   m_ObjectHideFlags: 0

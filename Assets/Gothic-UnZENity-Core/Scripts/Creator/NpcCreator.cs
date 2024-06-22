@@ -87,7 +87,7 @@ namespace GUZ.Core.Creator
                 props.Copy(origProps);
             }
 
-            if (GameManager.Config.spawnNpcInstances.Any() && !GameManager.Config.spawnNpcInstances.Contains(props.npcInstance.Id))
+            if (GlobalDataProvider.Instance.Config.spawnNpcInstances.Any() && !GlobalDataProvider.Instance.Config.spawnNpcInstances.Contains(props.npcInstance.Id))
             {
                 Object.Destroy(newNpc);
                 LookupCache.NpcCache.Remove(props.npcInstance.Index);
@@ -112,7 +112,7 @@ namespace GUZ.Core.Creator
         private static void SetSpawnPoint(GameObject npcGo, string spawnPoint)
         {
             WayNetPoint initialSpawnPoint;
-            if (npcGo.GetComponent<Routine>().Routines.Any() && GameManager.Config.enableNpcRoutines)
+            if (npcGo.GetComponent<Routine>().Routines.Any() && GlobalDataProvider.Instance.Config.enableNpcRoutines)
             {
                 var routineSpawnPointName = npcGo.GetComponent<Routine>().CurrentRoutine.waypoint;
                 initialSpawnPoint = WayNetHelper.GetWayNetPoint(routineSpawnPointName);

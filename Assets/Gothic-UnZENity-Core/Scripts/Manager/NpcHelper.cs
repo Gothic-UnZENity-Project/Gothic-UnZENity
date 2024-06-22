@@ -9,6 +9,7 @@ using GUZ.Core.Npc.Actions.AnimationActions;
 using GUZ.Core.Npc.Routines;
 using GUZ.Core.Properties;
 using GUZ.Core.Vm;
+using GUZ.Core;
 using JetBrains.Annotations;
 using UnityEngine;
 using ZenKit.Daedalus;
@@ -519,7 +520,7 @@ namespace GUZ.Core.Manager
             GameData.GothicVm.GlobalSelf = npcInstance;
             GameData.GothicVm.Call(routineIndex);
             
-            if (!GameManager.Config.enableNpcRoutines)
+            if (!GlobalDataProvider.Instance.Config.enableNpcRoutines)
                 return;
 
             routineComp.CalculateCurrentRoutine();

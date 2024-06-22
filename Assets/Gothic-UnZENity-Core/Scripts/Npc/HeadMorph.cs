@@ -2,6 +2,7 @@ using System;
 using GUZ.Core.Debugging;
 using GUZ.Core.Morph;
 using GUZ.Core.Extensions;
+using GUZ.Core;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -30,7 +31,7 @@ namespace GUZ.Core.Npc
         {
             base.Start();
 
-            if (!GameManager.Config.enableNpcEyeBlinking)
+            if (!GlobalDataProvider.Instance.Config.enableNpcEyeBlinking)
                 return;
 
             randomAnimations.Add(new()

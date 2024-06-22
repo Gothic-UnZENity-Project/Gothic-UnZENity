@@ -13,10 +13,8 @@ using UnityEngine.SceneManagement;
 
 namespace GUZ.Core
 {
-	public class GameManager : MonoBehaviour, CoroutineManager
+	public class GameManager : MonoBehaviour, CoroutineManager, GlobalDataProvider
 	{
-		public static GameManager Instance;
-		
 		public GameConfiguration config;
 		public GameObject xrInteractionManager;
 		public GameObject invalidInstallationPathMessage;
@@ -37,18 +35,9 @@ namespace GUZ.Core
 		private GameSettings _settings;
 		private bool _isInitialised = false;
 
-		/// <remarks><b>This property is available only AFTER the initial scene `Awake`!</b></remarks>
-		[Obsolete("Don't use globals.")]
-		public static GameSettings Settings => Instance._settings;
-
-		/// <remarks><b>This property is available only AFTER the initial scene `Awake`!</b></remarks>
-		[Obsolete("Don't use globals.")]
-		public static GameConfiguration Config => Instance.config;
-
-		/// <remarks><b>This property is available only AFTER the initial scene `Awake`!</b></remarks>
-		[Obsolete("Don't use globals.")]
-		public static SkyManager Sky => Instance._skyVisualManager;
-		
+		public GameSettings Settings => _settings;
+		public GameConfiguration Config => config;
+		public SkyManager Sky => _skyVisualManager;
 
 		// ReSharper disable Unity.PerformanceAnalysis
 		private void Load()
@@ -79,7 +68,7 @@ namespace GUZ.Core
 
 		private void Awake()
 		{
-			Instance = this;
+			GlobalDataProvider.Instance = this;
 			LookupCache.Init();
 
 			_settings = GameSettings.Load();

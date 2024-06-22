@@ -8,6 +8,7 @@ using GUZ.Core.Globals;
 using GUZ.Core.Manager;
 using GUZ.Core.Scripts.Manager;
 using GUZ.Core.World;
+using GUZ.Core;
 using UnityEngine;
 using ZenKit;
 using ZenKit.Daedalus;
@@ -432,7 +433,7 @@ namespace GUZ.Core.Vm
         
         public static void PrintDebug(string message)
         {
-            if (!GameManager.Config.enableSpyLogs)
+            if (!GlobalDataProvider.Instance.Config.enableSpyLogs)
                 return;
 
             Debug.Log($"[zspy]: {message}");
@@ -441,7 +442,7 @@ namespace GUZ.Core.Vm
         
         public static void PrintDebugCh(int channel, string message)
         {
-            if (!GameManager.Config.enableSpyLogs)
+            if (!GlobalDataProvider.Instance.Config.enableSpyLogs)
                 return;
 
             Debug.Log($"[zspy,{channel}]: {message}");
@@ -450,7 +451,7 @@ namespace GUZ.Core.Vm
         
         public static void PrintDebugInst(string message)
         {
-            if (!GameManager.Config.enableSpyLogs)
+            if (!GlobalDataProvider.Instance.Config.enableSpyLogs)
                 return;
 
             Debug.Log($"[zspy]: {message}");
@@ -459,7 +460,7 @@ namespace GUZ.Core.Vm
         
         public static void PrintDebugInstCh(int channel, string message)
         {
-            if (!GameManager.Config.enableSpyLogs)
+            if (!GlobalDataProvider.Instance.Config.enableSpyLogs)
                 return;
 
             Debug.Log($"[zspy,{channel}]: {message}");

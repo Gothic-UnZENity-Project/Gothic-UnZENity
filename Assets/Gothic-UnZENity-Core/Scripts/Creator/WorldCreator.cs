@@ -63,7 +63,7 @@ namespace GUZ.Core.Creator
                 await MeshFactory.CreateWorldTextureArray();
             }
 
-            GameManager.Sky.InitSky();
+            GlobalDataProvider.Instance.Sky.InitSky();
             StationaryLight.InitStationaryLights();
 
             WaynetCreator.Create(config, _worldGo, world);
