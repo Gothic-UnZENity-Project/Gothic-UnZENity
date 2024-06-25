@@ -29,12 +29,12 @@ namespace GUZ.Core.World
         private DateTime time = new(1, 1, 1, 15, 0, 0);
         private Coroutine timeTickCoroutineHandler;
 
-        private readonly CoroutineManager _coroutineManager;
+        private readonly ICoroutineManager _coroutineManager;
         private readonly int _featureStartHour;
         private readonly int _featureStartMinute;
         private readonly float _featureTimeMultiplier;
 
-        public GameTime(GameConfiguration config, CoroutineManager coroutineManager)
+        public GameTime(GameConfiguration config, ICoroutineManager coroutineManager)
         {
             _coroutineManager = coroutineManager;
             _featureStartHour = config.startTimeHour;

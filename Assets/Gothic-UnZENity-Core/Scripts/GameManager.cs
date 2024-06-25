@@ -14,7 +14,7 @@ using UnityEngine.SceneManagement;
 namespace GUZ.Core
 {
 	[RequireComponent(typeof(TextureManager), typeof(FontManager))]
-	public class GameManager : MonoBehaviour, CoroutineManager, IGlobalDataProvider
+	public class GameManager : MonoBehaviour, ICoroutineManager, IGlobalDataProvider
 	{
 		public GameConfiguration config;
 		public GameObject xrInteractionManager;

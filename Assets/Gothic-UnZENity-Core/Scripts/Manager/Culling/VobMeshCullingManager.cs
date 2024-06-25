@@ -41,14 +41,14 @@ namespace GUZ.Core.Manager.Culling
         private Dictionary<GameObject, Rigidbody> pausedVobsToReenable = new();
         private Dictionary<GameObject, Coroutine> pausedVobsToReenableCoroutine = new();
 
-        private readonly CoroutineManager _coroutineManager;
+        private readonly ICoroutineManager _coroutineManager;
         private readonly bool _featureEnableCulling;
         private readonly bool _featureDrawGizmos;
         private readonly MeshCullingGroup _featureSmallCullingGroup;
         private readonly MeshCullingGroup _featureMediumCullingGroup;
         private readonly MeshCullingGroup _featureLargeCullingGroup;
 
-        public VobMeshCullingManager(GameConfiguration config, CoroutineManager coroutineManager)
+        public VobMeshCullingManager(GameConfiguration config, ICoroutineManager coroutineManager)
         {
             _coroutineManager = coroutineManager;
             _featureEnableCulling = config.enableMeshCulling;

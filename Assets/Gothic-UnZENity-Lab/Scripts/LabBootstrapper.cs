@@ -15,7 +15,7 @@ using UnityEngine.SceneManagement;
 namespace GUZ.Lab
 {
 	[RequireComponent(typeof(TextureManager), typeof(FontManager))]
-    public class LabBootstrapper : MonoBehaviour, IGlobalDataProvider, CoroutineManager
+    public class LabBootstrapper : MonoBehaviour, IGlobalDataProvider, ICoroutineManager
     {
         public GameConfiguration config;
         public LabMusicHandler labMusicHandler;

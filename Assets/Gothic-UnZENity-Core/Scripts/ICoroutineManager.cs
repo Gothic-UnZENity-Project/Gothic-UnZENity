@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace GUZ.Core
 {
-	public interface CoroutineManager
+	public interface ICoroutineManager
 	{
 		public Coroutine StartCoroutine(IEnumerator routine);
 		public void StopCoroutine(Coroutine obj);
