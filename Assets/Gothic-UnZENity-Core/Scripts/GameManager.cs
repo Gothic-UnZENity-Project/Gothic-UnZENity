@@ -16,59 +16,58 @@ namespace GUZ.Core
 	[RequireComponent(typeof(TextureManager), typeof(FontManager))]
 	public class GameManager : MonoBehaviour, ICoroutineManager, IGlobalDataProvider
 	{
-		public GameConfiguration config;
+		[field: SerializeField]
+		public GameConfiguration Config { get; set; }
+		
 		public GameObject xrInteractionManager;
 		public GameObject invalidInstallationPathMessage;
 
-		private VobMeshCullingManager _meshCullingManager;
-		private VobSoundCullingManager _soundCullingManager;
 		private BarrierManager _barrierManager;
-		private SkyManager _skyVisualManager;
-		private StationaryLightsManager _stationaryLightsManager;
 		private XRDeviceSimulatorManager _xrSimulatorManager;
-		private GameTime _gameTimeManager;
 		private MusicManager _gameMusicManager;
-		private GUZSceneManager _gameSceneManager;
 		private LoadingManager _gameLoadingManager;
-		private RoutineManager _npcRoutineManager;
 		private FileLoggingHandler _fileLoggingHandler;
-		private TextureManager _textureManager;
-		private FontManager _fontManager;
 
-		private GameSettings _settings;
+		public GameSettings Settings { get; private set; }
 		private bool _isInitialised = false;
 
-		public GameSettings Settings => _settings;
-		public GameConfiguration Config => config;
-		public SkyManager Sky => _skyVisualManager;
-		public GameTime Time => _gameTimeManager;
-		public RoutineManager Routines => _npcRoutineManager;
-		public TextureManager Textures => _textureManager;
-		public GUZSceneManager Scene => _gameSceneManager;
-		public FontManager Font => _fontManager;
-        public StationaryLightsManager Lights => _stationaryLightsManager;
-        public VobMeshCullingManager MeshCulling => _meshCullingManager;
-        public VobSoundCullingManager SoundCulling => _soundCullingManager;
+		public SkyManager Sky { get; private set; }
+
+		public GameTime Time { get; private set; }
+
+		public RoutineManager Routines { get; private set; }
+
+		public TextureManager Textures { get; private set; }
+
+		public GUZSceneManager Scene { get; private set; }
+
+		public FontManager Font { get; private set; }
+
+		public StationaryLightsManager Lights { get; private set; }
+
+		public VobMeshCullingManager MeshCulling { get; private set; }
+
+		public VobSoundCullingManager SoundCulling { get; private set; }
 
 		// ReSharper disable Unity.PerformanceAnalysis
 		private void Load()
 		{
 			// If the Gothic installation directory is not set, show an error message and exit.
-			if (!_settings.CheckIfGothic1InstallationExists())
+			if (!Settings.CheckIfGothic1InstallationExists())
 			{
 				invalidInstallationPathMessage.SetActive(true);
 				return;
 			}
 
 			// Otherwise, continue loading Gothic.
-            ResourceLoader.Init(_settings.GothicIPath);
+            ResourceLoader.Init(Settings.GothicIPath);
 	
             _gameMusicManager.Init();
             
-			GUZBootstrapper.BootGothicUnZENity(config, _settings.GothicIPath, _settings.GothicILanguage);
-			_gameSceneManager.LoadStartupScenes();
+			GUZBootstrapper.BootGothicUnZENity(Config, Settings.GothicIPath, Settings.GothicILanguage);
+			Scene.LoadStartupScenes();
 
-			if (config.enableBarrierVisual)
+			if (Config.enableBarrierVisual)
 			{
 				GlobalEventDispatcher.WorldSceneLoaded.AddListener(() =>
 				{
@@ -82,37 +81,37 @@ namespace GUZ.Core
 			GameGlobals.Instance = this;
 			LookupCache.Init();
 
-			_textureManager = GetComponent<TextureManager>();
-			_fontManager = GetComponent<FontManager>();
-			_settings = GameSettings.Load();
-			_fileLoggingHandler = new FileLoggingHandler(_settings);
+			Textures = GetComponent<TextureManager>();
+			Font = GetComponent<FontManager>();
+			Settings = GameSettings.Load();
+			_fileLoggingHandler = new FileLoggingHandler(Settings);
 			_gameLoadingManager = new LoadingManager();
-			_meshCullingManager = new VobMeshCullingManager(config, this);
-			_soundCullingManager = new VobSoundCullingManager(config);
-			_barrierManager = new BarrierManager(config);
-			_stationaryLightsManager = new StationaryLightsManager();
-			_xrSimulatorManager = new XRDeviceSimulatorManager(config);
-			_gameTimeManager = new GameTime(config, this);
-			_skyVisualManager = new SkyManager(config, _gameTimeManager, _settings);
-			_gameMusicManager = new MusicManager(config);
-			_gameSceneManager = new GUZSceneManager(config, _gameLoadingManager, xrInteractionManager);
-			_npcRoutineManager = new RoutineManager(config);
+			MeshCulling = new VobMeshCullingManager(Config, this);
+			SoundCulling = new VobSoundCullingManager(Config);
+			_barrierManager = new BarrierManager(Config);
+			Lights = new StationaryLightsManager();
+			_xrSimulatorManager = new XRDeviceSimulatorManager(Config);
+			Time = new GameTime(Config, this);
+			Sky = new SkyManager(Config, Time, Settings);
+			_gameMusicManager = new MusicManager(Config);
+			Scene = new GUZSceneManager(Config, _gameLoadingManager, xrInteractionManager);
+			Routines = new RoutineManager(Config);
 		}
 
 		private void Start()
 		{
-			ZenKit.Logger.Set(config.zenkitLogLevel, Logging.OnZenKitLogMessage);
-			DirectMusic.Logger.Set(config.directMusicLogLevel, Logging.OnDirectMusicLogMessage);
+			ZenKit.Logger.Set(Config.zenkitLogLevel, Logging.OnZenKitLogMessage);
+			DirectMusic.Logger.Set(Config.directMusicLogLevel, Logging.OnDirectMusicLogMessage);
 
 			_fileLoggingHandler.Init();
 			_gameLoadingManager.Init();
-			_meshCullingManager.Init();
-			_soundCullingManager.Init();
-			_gameTimeManager.Init();
-			_skyVisualManager.Init();
+			MeshCulling.Init();
+			SoundCulling.Init();
+			Time.Init();
+			Sky.Init();
 			_xrSimulatorManager.Init();
-			_gameSceneManager.Init();
-			_npcRoutineManager.Init();
+			Scene.Init();
+			Routines.Init();
 
 			// Just in case we forgot to disable it in scene view. ;-)
 			invalidInstallationPathMessage.SetActive(false);
@@ -126,7 +125,7 @@ namespace GUZ.Core
 
 		private void Update()
 		{
-			_gameSceneManager.Update();
+			Scene.Update();
 
 			if (_isInitialised)
 			{
@@ -144,37 +143,37 @@ namespace GUZ.Core
 
 		private void LateUpdate()
 		{
-			_stationaryLightsManager.LateUpdate();
+			Lights.LateUpdate();
 		}
 
 		private void OnValidate()
 		{
-			_skyVisualManager?.OnValidate();
+			Sky?.OnValidate();
 		}
 
 		private void OnDrawGizmos()
 		{
-			_meshCullingManager?.OnDrawGizmos();
+			MeshCulling?.OnDrawGizmos();
 		}
 
 		public void OnDestroy()
 		{
-			_meshCullingManager.Destroy();
-			_soundCullingManager.Destroy();
+			MeshCulling.Destroy();
+			SoundCulling.Destroy();
 			_fileLoggingHandler.Destroy();
 
-			_settings = null;
+			Settings = null;
 			_gameLoadingManager = null;
-			_meshCullingManager = null;
-			_soundCullingManager = null;
+			MeshCulling = null;
+			SoundCulling = null;
 			_barrierManager = null;
-			_stationaryLightsManager = null;
+			Lights = null;
 			_xrSimulatorManager = null;
-			_gameTimeManager = null;
-			_skyVisualManager = null;
+			Time = null;
+			Sky = null;
 			_gameMusicManager = null;
-			_gameSceneManager = null;
-			_npcRoutineManager = null;
+			Scene = null;
+			Routines = null;
 		}
 
 		private void OnApplicationQuit()

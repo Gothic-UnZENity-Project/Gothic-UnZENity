@@ -19,7 +19,7 @@ namespace GUZ.Core.Editor.Tools
             var hvrFolder = Application.dataPath + "/HurricaneVR";
             var hvrExists = Directory.Exists(hvrFolder) && Directory.EnumerateFiles(hvrFolder).Count() != 0;
             var hvrCompilerSettingExists = PlayerSettings.GetScriptingDefineSymbols(NamedBuildTarget.Standalone).Contains(HVR_COMPILER_FLAG);
-            bool hvrSceneSetting = GameObject.FindObjectOfType<GameManager>()?.config.gameControls == GUZContext.Controls.VR_HVR;
+            bool hvrSceneSetting = GameObject.FindObjectOfType<GameManager>()?.Config.gameControls == GUZContext.Controls.VR_HVR;
 
             var message =
                 $"Plugin installed: {hvrExists}\n" +
