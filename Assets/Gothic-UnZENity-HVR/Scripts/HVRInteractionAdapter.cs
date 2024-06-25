@@ -1,8 +1,11 @@
 #if GUZ_HVR_INSTALLED
+using System.Collections;
 using GUZ.Core.Context;
 using HurricaneVR.Framework.Components;
 using HurricaneVR.Framework.Core;
+using HurricaneVR.Framework.Core.Player;
 using HurricaneVR.Framework.Shared;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -28,6 +31,22 @@ namespace GUZ.HVR
             SceneManager.MoveGameObjectToScene(go, scene);
 
             return go;
+        }
+
+        public void SpawnPlayerToSpot(GameObject playerGo, Vector3 position, Quaternion rotation)
+        {
+            // We highjack another Component to call StartCoroutine().
+            playerGo.GetComponentInChildren<HVRTeleporter>().StartCoroutine(Wait1FrameBeforeTeleport(playerGo, position, rotation));
+        }
+
+        /// <summary>
+        /// We need to wait 1 frame (after the Player Prefab is initialized) for HVR to recognize our position change.
+        /// </summary>
+        private IEnumerator Wait1FrameBeforeTeleport(GameObject playerGo, Vector3 position, Quaternion rotation)
+        {
+            yield return new WaitForNextFrameUnit();
+
+            playerGo.GetComponentInChildren<HVRTeleporter>().Teleport(position, rotation * Vector3.forward);
         }
 
         public void AddClimbingComponent(GameObject go)

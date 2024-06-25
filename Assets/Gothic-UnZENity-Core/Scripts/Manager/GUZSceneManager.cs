@@ -283,7 +283,7 @@ namespace GUZ.Core.Manager
 
         public void TeleportPlayerToSpot(GameObject playerGo)
         {
-            playerGo.transform.SetPositionAndRotation(heroStartPosition, heroStartRotation);
+            GUZContext.InteractionAdapter.SpawnPlayerToSpot(playerGo, heroStartPosition, heroStartRotation);
         }
     }
 }
