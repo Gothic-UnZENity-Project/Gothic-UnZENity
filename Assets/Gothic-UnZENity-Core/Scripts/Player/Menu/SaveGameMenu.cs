@@ -1,7 +1,6 @@
 using System.IO;
 using GUZ.Core.Caches;
 using GUZ.Core.Extensions;
-using GUZ.Core.Globals;
 using GUZ.Core.Manager;
 using GUZ.Core.Manager.Settings;
 using GUZ.Core.Util;
@@ -93,7 +92,7 @@ namespace GUZ.Core.Player.Menu
 
 #pragma warning disable CS4014 // It's intended, that this async call is not awaited.
             SaveGameManager.LoadSavedGame(id, save);
-            GUZSceneManager.I.LoadWorld(save.Metadata.World, Constants.selectedWaypoint);
+            GUZSceneManager.I.LoadWorld(save.Metadata.World);
 #pragma warning restore CS4014
         }
     }

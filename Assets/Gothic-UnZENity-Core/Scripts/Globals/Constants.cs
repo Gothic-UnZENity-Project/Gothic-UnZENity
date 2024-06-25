@@ -58,6 +58,7 @@ namespace GUZ.Core.Globals
         // e.g. for NPCs to check if they reached a FreePoint already. Value is based on best guess/testing.
         public const float CloseToThreshold = 0.6f;
 
+        public const string DaedalusHeroInstanceName = "PC_HERO"; // TODO - can be read from .ini file.
 
         static Constants()
         {

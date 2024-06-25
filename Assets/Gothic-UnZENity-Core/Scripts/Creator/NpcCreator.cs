@@ -2,19 +2,19 @@ using System.Linq;
 using GUZ.Core.Caches;
 using GUZ.Core.Creator.Meshes.V2;
 using GUZ.Core.Debugging;
+using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
 using GUZ.Core.Npc.Routines;
 using GUZ.Core.Properties;
 using GUZ.Core.Vm;
 using GUZ.Core.Vob.WayNet;
-using GUZ.Core.Extensions;
+using JetBrains.Annotations;
 using UnityEngine;
 using ZenKit;
 using ZenKit.Daedalus;
 using Object = UnityEngine.Object;
 using WayNet_WayPoint = GUZ.Core.Vob.WayNet.WayPoint;
-using WayPoint = GUZ.Core.Vob.WayNet.WayPoint;
 
 namespace GUZ.Core.Creator
 {
@@ -56,18 +56,31 @@ namespace GUZ.Core.Creator
         /// </summary>
         public static void ExtWldInsertNpc(int npcInstance, string spawnPoint)
         {
-            var newNpc = PrefabCache.TryGetObject(PrefabCache.PrefabType.Npc);
-            var props = newNpc.GetComponent<NpcProperties>();
-            var npcSymbol = vm.GetSymbolByIndex(npcInstance);
-            
-            if (npcSymbol == null)
+            var newNpc = InitializeNpc(npcInstance);
+
+            if (newNpc == null)
             {
-                Debug.LogError($"Npc with ID {npcInstance} not found.");
                 return;
             }
-            
+
+            SetSpawnPoint(newNpc, spawnPoint);
+        }
+
+        [CanBeNull]
+        public static GameObject InitializeNpc(int npcInstanceIndex)
+        {
+            var newNpc = PrefabCache.TryGetObject(PrefabCache.PrefabType.Npc);
+            var props = newNpc.GetComponent<NpcProperties>();
+            var npcSymbol = vm.GetSymbolByIndex(npcInstanceIndex);
+
+            if (npcSymbol == null)
+            {
+                Debug.LogError($"Npc with ID {npcInstanceIndex} not found.");
+                return null;
+            }
+
             // Humans are singletons.
-            if (LookupCache.NpcCache.TryAdd(npcInstance, newNpc.GetComponent<NpcProperties>()))
+            if (LookupCache.NpcCache.TryAdd(npcInstanceIndex, newNpc.GetComponent<NpcProperties>()))
             {
                 props.npcInstance = vm.AllocInstance<NpcInstance>(npcSymbol);
                 vm.InitInstance(props.npcInstance);
@@ -80,7 +93,7 @@ namespace GUZ.Core.Creator
             // Monsters are used multiple times.
             else
             {
-                var origNpc = LookupCache.NpcCache[npcInstance];
+                var origNpc = LookupCache.NpcCache[npcInstanceIndex];
                 var origProps = origNpc.GetComponent<NpcProperties>();
                 // Clone Properties as they're required from the first instance.
                 props.Copy(origProps);
@@ -90,22 +103,22 @@ namespace GUZ.Core.Creator
             {
                 Object.Destroy(newNpc);
                 LookupCache.NpcCache.Remove(props.npcInstance.Index);
-                return;
+                return null;
             }
 
             newNpc.name = $"{props.npcInstance.GetName(NpcNameSlot.Slot0)} ({props.npcInstance.Id})";
-            
+
             var mdhName = string.IsNullOrEmpty(props.overlayMdhName) ? props.baseMdhName : props.overlayMdhName;
             MeshFactory.CreateNpc(newNpc.name, props.mdmName, mdhName, props.BodyData, newNpc);
             newNpc.SetParent(GetRootGo());
 
             foreach (var equippedItem in props.EquippedItems)
                 MeshFactory.CreateNpcWeapon(newNpc, equippedItem, (VmGothicEnums.ItemFlags)equippedItem.MainFlag, (VmGothicEnums.ItemFlags)equippedItem.Flags);
-            
+
             var npcRoutine = props.npcInstance.DailyRoutine;
             NpcHelper.ExchangeRoutine(newNpc, props.npcInstance, npcRoutine);
 
-            SetSpawnPoint(newNpc, spawnPoint);
+            return newNpc;
         }
         
         private static void SetSpawnPoint(GameObject npcGo, string spawnPoint)

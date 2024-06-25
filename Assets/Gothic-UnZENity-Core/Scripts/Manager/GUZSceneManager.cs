@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 using GUZ.Core.Context;
 using GUZ.Core.Creator;
 using GUZ.Core.Debugging;
+using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Util;
-using GUZ.Core.Extensions;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Debug = UnityEngine.Debug;
@@ -17,7 +17,8 @@ namespace GUZ.Core.Manager
     public class GUZSceneManager : SingletonBehaviour<GUZSceneManager>
     {
         public GameObject interactionManager;
-        
+
+
         private static readonly string generalSceneName = Constants.SceneGeneral;
         private const int ensureLoadingBarDelayMilliseconds = 5;
 
@@ -26,7 +27,8 @@ namespace GUZ.Core.Manager
         private Scene generalScene;
         private bool generalSceneLoaded;
 
-        private GameObject startPoint;
+        private Vector3 heroStartPosition;
+        private Quaternion heroStartRotation;
 
         private bool debugFreshlyDoneLoading;
         
@@ -58,7 +60,6 @@ namespace GUZ.Core.Manager
                 else
                 {
                     SaveGameManager.LoadSavedGame(FeatureFlags.I.saveSlot);
-
                     await LoadWorld(Constants.selectedWorld, Constants.selectedWaypoint);
                 }
             }
@@ -76,7 +77,9 @@ namespace GUZ.Core.Manager
             else
                 debugFreshlyDoneLoading = false;
 
-            if (FeatureFlags.I.createOcNpcs)
+            // We load NPCs only! if we have a fresh game start.
+            // TODO - We need to properly update this logic to reflect world switches for the first time as well (even from save games).
+            if (FeatureFlags.I.createOcNpcs && !FeatureFlags.I.useSaveSlot)
                 GameData.GothicVm.Call("STARTUP_SUB_OLDCAMP");
         }
 
@@ -86,17 +89,20 @@ namespace GUZ.Core.Manager
             await LoadNewWorldScene(Constants.SceneMainMenu);
         }
 
-        public async Task LoadWorld(string worldName, string startVob)
+        public async Task LoadWorld(string worldName, string startVob = "")
         {
             // Our scenes are named *.zen - We therefore need to ensure the pattern of world name matches.
             worldName = worldName.ToLower();
             worldName += worldName.EndsWith(".zen") ? "" : ".zen";
 
+            // Reset position before world start to load (and hero position is potentially being loaded from vob.ocNPC.
+            heroStartPosition = Vector3.zero;
+            heroStartRotation = Quaternion.identity;
             startVobAfterLoading = startVob;
 
             if (worldName == newWorldName)
             {
-                SetSpawnPoint(SceneManager.GetSceneByName(newWorldName));
+                SetSpawnPoint();
                 return;
             }
             
@@ -111,7 +117,8 @@ namespace GUZ.Core.Manager
             await ShowLoadingScene(worldName);
             var newWorldScene = await LoadNewWorldScene(newWorldName);
             await WorldCreator.CreateAsync();
-            SetSpawnPoint(newWorldScene);
+
+            SetSpawnPoint();
 
             HideLoadingScene();
             watch.Stop();
@@ -221,8 +228,16 @@ namespace GUZ.Core.Manager
             }
         }
 
-        private void SetSpawnPoint(Scene worldScene)
+        private void SetSpawnPoint()
         {
+            // If we currently load world from a save game, we will use the stored hero position which was set during VOB loading.
+            if (heroStartPosition != Vector3.zero && SaveGameManager.IsFirstWorldLoadingFromSaveGame)
+            {
+                // We only use the Vob location once per save game loading.
+                SaveGameManager.IsFirstWorldLoadingFromSaveGame = false;
+                return;
+            }
+
             var debugSpawnPoint = FeatureFlags.I.spawnAtSpecificWayNetPoint;
             // DEBUG - Spawn at specifically named point.
             if (debugSpawnPoint.Any())
@@ -231,31 +246,44 @@ namespace GUZ.Core.Manager
                 
                 if (point != null)
                 {
-                    startPoint = GameObject.Find(debugSpawnPoint);
+                    SetStart(GameObject.Find(debugSpawnPoint).transform);
                     return;
                 }
             }
             
             var spots = GameObject.FindGameObjectsWithTag(Constants.SpotTag);
-            
+            Transform startTransform;
+
             // DEBUG - This _startVobAfterLoading_ is only used as debug method for the menu where we select the vob to spawn to.
             // DEBUG - Normally we would spawn at START(_GOTHIC2) or whatever the loaded save file tells us.
             var startPoint1 = spots.FirstOrDefault(go => go.name.EqualsIgnoreCase(startVobAfterLoading));
             if (startPoint1 != null)
             {
-                startPoint = startPoint1;
+                SetStart(startPoint1.transform);
                 return;
             }
 
             var startPoint2 = spots.FirstOrDefault(
                 go => go.name.EqualsIgnoreCase("START") || go.name.EqualsIgnoreCase("START_GOTHIC2")
             );
-            startPoint = startPoint2;
+
+            SetStart(startPoint2.transform);
+        }
+
+        public void SetStart(Transform start)
+        {
+            SetStart(start.position, start.rotation);
+        }
+
+        public void SetStart(Vector3 startPosition, Quaternion startRotation)
+        {
+            heroStartPosition = startPosition;
+            heroStartRotation = startRotation;
         }
 
         public void TeleportPlayerToSpot(GameObject playerGo)
         {
-            playerGo.transform.SetPositionAndRotation(startPoint.transform.position, startPoint.transform.rotation);
+            playerGo.transform.SetPositionAndRotation(heroStartPosition, heroStartRotation);
         }
     }
 }

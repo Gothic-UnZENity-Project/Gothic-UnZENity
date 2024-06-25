@@ -264,7 +264,21 @@ namespace GUZ.Core.Creator
                 }
                 case VirtualObjectType.oCNpc:
                 {
-                    // FIXME - We need to spawn NPCs from a save game. Somehow... :-D
+                    if (vob.Name.EqualsIgnoreCase(Constants.DaedalusHeroInstanceName))
+                    {
+                        GUZSceneManager.I.SetStart(vob.Position.ToUnityVector(), vob.Rotation.ToUnityQuaternion());
+
+                        break;
+                    }
+
+                    if (!FeatureFlags.I.createOcNpcs)
+                    {
+                        break;
+                    }
+
+                    var npcSymbol = GameData.GothicVm.GetSymbolByName(vob.Name);
+                    var newNpc = NpcCreator.InitializeNpc(npcSymbol.Index);
+
                     break;
                 }
                 case VirtualObjectType.zCVobScreenFX:

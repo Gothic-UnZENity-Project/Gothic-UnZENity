@@ -26,6 +26,8 @@ namespace GUZ.Core.Manager
         public static int SaveGameId;
         public static bool IsNewGame => SaveGameId <= 0;
         public static bool IsLoadedGame => !IsNewGame;
+        public static bool IsFirstWorldLoadingFromSaveGame; // Check if we load save game right now!
+
         private static SaveGame _save;
 
         private static readonly Dictionary<string, (ZenKit.World zkWorld, WorldData uWorld)> _worlds = new();
@@ -52,6 +54,7 @@ namespace GUZ.Core.Manager
         {
             SaveGameId = saveGameId;
             _save = save;
+            IsFirstWorldLoadingFromSaveGame = true;
         }
 
         public static void ChangeWorld(string worldName)
@@ -78,7 +81,7 @@ namespace GUZ.Core.Manager
             _worlds[worldName] = new()
             {
                 zkWorld = world,
-                uWorld = new WorldData()
+                uWorld = new WorldData
                 {
                     // Not contained inside saveGame
                     Mesh = (CachedMesh)world.Mesh.Cache(),
