@@ -32,7 +32,7 @@ namespace GUZ.Core
 		[SerializeField] public bool enableBarrierVisual = true;
 		
 		[InspectorName("Experimental: Enable Decal Visuals")]
-		[SerializeField] public bool enableDecalVisuals = true;
+		[SerializeField] public bool enableDecalVisuals = false;
 		
 		[InspectorName("Experimental: Enable Particle Effects")]
 		[SerializeField] public bool enableParticleEffects = false;
