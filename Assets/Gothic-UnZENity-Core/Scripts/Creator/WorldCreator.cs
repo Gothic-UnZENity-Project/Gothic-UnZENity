@@ -77,9 +77,15 @@ namespace GUZ.Core.Creator
             var zkWorld = ResourceLoader.TryGetWorld(worldName);
             var zkWayNet = zkWorld.WayNet.Cache();
 
-            if (zkWorld.RootObjectCount == 0) throw new ArgumentException($"World >{worldName}< couldn't be found.");
+            if (zkWorld.RootObjectCount == 0)
+            {
+                throw new ArgumentException($"World >{worldName}< couldn't be found.");
+            }
 
-            if (zkWorld.Mesh.PolygonCount == 0) throw new ArgumentException($"No mesh in world >{worldName}< found.");
+            if (zkWorld.Mesh.PolygonCount == 0)
+            {
+                throw new ArgumentException($"No mesh in world >{worldName}< found.");
+            }
 
             WorldData world = new()
             {
