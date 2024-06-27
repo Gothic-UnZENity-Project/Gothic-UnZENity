@@ -1,3 +1,5 @@
+using System.Linq;
+using GUZ.Core.Caches;
 using GUZ.Core.Context;
 using GUZ.Core.Globals;
 using GUZ.XRIT.Components.Vobs;
@@ -47,6 +49,13 @@ namespace GUZ.XRIT
         public void SpawnPlayerToSpot(GameObject playerGo, Vector3 position, Quaternion rotation)
         {
             playerGo.transform.SetPositionAndRotation(position, rotation);
+        }
+
+        public void CreateXRDeviceSimulator()
+        {
+            var simulator = PrefabCache.TryGetObject(PrefabCache.PrefabType.XRDeviceSimulator);
+            simulator.name = "XRDeviceSimulator - XRIT";
+            SceneManager.GetActiveScene().GetRootGameObjects().Append(simulator);
         }
 
         public void AddClimbingComponent(GameObject go)

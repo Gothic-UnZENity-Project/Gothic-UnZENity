@@ -1,5 +1,12 @@
 {
   "dependencies": {
+    "com.hurricanevrextensions.simulator": {
+      "version": "https://github.com/Gothic-UnZENity-Project/hvr-simulator.git",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "d9c94caeb702b7f3a61f7c81d1ee24ff315ed3cc"
+    },
     "com.unity.burst": {
       "version": "1.8.13",
       "depth": 1,

@@ -87,6 +87,7 @@ namespace GUZ.Core.Manager
         {
             TextureManager.I.LoadLoadingDefaultTextures();
             await LoadNewWorldScene(Constants.SceneMainMenu);
+            GameData.WorldScene = null;
         }
 
         public async Task LoadWorld(string worldName, string startVob = "")
@@ -159,6 +160,14 @@ namespace GUZ.Core.Manager
 
                 GUZEvents.GeneralSceneUnloaded.Invoke();
                 generalSceneLoaded = false;
+            }
+            
+            // Unload main menu scene if it exists
+            var mainScene = SceneManager.GetSceneByName(Constants.SceneMainMenu);
+            if (mainScene.isLoaded)
+            {
+                SceneManager.UnloadSceneAsync(mainScene);
+                GUZEvents.MainMenuSceneUnloaded.Invoke();
             }
 
             SetLoadingTextureForWorld(worldName);

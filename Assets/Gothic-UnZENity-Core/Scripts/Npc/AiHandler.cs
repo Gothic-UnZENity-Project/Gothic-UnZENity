@@ -56,18 +56,21 @@ namespace GUZ.Core.Npc
                         properties.currentLoopState = NpcProperties.LoopState.Loop;
                         break;
                     case NpcProperties.LoopState.Loop:
-                        // Check return type as not every loop returns int.
-                        if (vm.GetSymbolByIndex(properties.stateLoop)!.ReturnType == DaedalusDataType.Int)
-                        {
-                            var loopResponse = vm.Call<int>(properties.stateLoop);
-                            // Some ZS_*_Loop return !=0 when they want to quit.
-                            if (loopResponse != DaedalusLoopContinue)
-                                properties.currentLoopState = NpcProperties.LoopState.End;
-                        }
-                        else
-                        {
-                            vm.Call(properties.stateLoop);
-                        }
+                        var symbol = vm.GetSymbolByIndex(properties.stateLoop);
+                        if (symbol is { HasReturn: true })
+                            switch (symbol.ReturnType)
+                            {
+                                case DaedalusDataType.Int:
+                                    var loopResponse = vm.Call<int>(properties.stateLoop);
+                                    // Some ZS_*_Loop return !=0 when they want to quit.
+                                    if (loopResponse != DaedalusLoopContinue)
+                                        properties.currentLoopState = NpcProperties.LoopState.End;
+                                    break;
+                                default:
+                                    vm.Call(properties.stateLoop);
+                                    break;
+                            }
+
                         break;
                 }
             }
