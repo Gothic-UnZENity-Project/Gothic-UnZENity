@@ -1,22 +1,14 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using GUZ.Core.Caches;
 using GUZ.Core.Context;
 using GUZ.Core.Creator.Meshes.V2;
-using GUZ.Core.Data;
 using GUZ.Core.Globals;
 using GUZ.Core.Vm;
-using GUZ.Core.Vob;
-using GUZ.Core.Creator;
-using GUZ.Core.Extensions;
-using GUZ.XRIT.Components.Vobs;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
-using UnityEngine.XR.Interaction.Toolkit;
 using ZenKit.Daedalus;
 
 namespace GUZ.Lab.Handler
@@ -51,6 +43,8 @@ namespace GUZ.Lab.Handler
                 .ToList();
 
             CategoryDropdownValueChanged();
+
+            CreateItem("ItFo_Plants_mushroom_01");
         }
 
         public void CategoryDropdownValueChanged()
