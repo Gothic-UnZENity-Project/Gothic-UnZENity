@@ -32,9 +32,9 @@ namespace GUZ.Core.Caches
         /// </summary>
         public static List<GameObject> vobSoundsAndDayTime = new();
 
-        static LookupCache()
+        public static void Init()
         {
-            GUZEvents.GeneralSceneUnloaded.AddListener(delegate
+            GlobalEventDispatcher.GeneralSceneUnloaded.AddListener(delegate
             {
                 NpcCache.Clear();
                 vobSoundsAndDayTime.Clear();

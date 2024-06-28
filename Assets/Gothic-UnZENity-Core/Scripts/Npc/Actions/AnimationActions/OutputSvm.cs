@@ -1,6 +1,7 @@
 ﻿using GUZ.Core.Caches;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
+using GUZ.Core.Vm;
 using UnityEngine;
 using ZenKit.Daedalus;
 
@@ -19,7 +20,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
 
         public override void Start()
         {
-            var svm = AssetCache.TryGetSvmData(Props.npcInstance.Voice);
+            var svm = VmInstanceManager.TryGetSvmData(Props.npcInstance.Voice);
             preparedSvmFileName = svm.GetAudioName(Action.String0);
             
             base.Start();

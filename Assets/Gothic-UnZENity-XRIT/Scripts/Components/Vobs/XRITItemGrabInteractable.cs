@@ -1,3 +1,4 @@
+using GUZ.Core;
 using GUZ.Core.Manager.Culling;
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
@@ -19,7 +20,7 @@ namespace GUZ.XRIT.Components.Vobs
 
         public void SelectEntered(SelectEnterEventArgs args)
         {
-            VobMeshCullingManager.I.StartTrackVobPositionUpdates(gameObject);
+            GameGlobals.MeshCulling.StartTrackVobPositionUpdates(gameObject);
         }
 
         /// <summary>
@@ -29,7 +30,7 @@ namespace GUZ.XRIT.Components.Vobs
         {
             if (rb.isKinematic)
                 rb.isKinematic = false;
-            VobMeshCullingManager.I.StopTrackVobPositionUpdates(gameObject);
+            GameGlobals.MeshCulling.StopTrackVobPositionUpdates(gameObject);
         }
     }
 }

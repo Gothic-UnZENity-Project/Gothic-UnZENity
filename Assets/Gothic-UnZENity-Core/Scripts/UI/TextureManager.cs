@@ -4,7 +4,7 @@ using GUZ.Core.Globals;
 using GUZ.Core.Util;
 using UnityEngine;
 
-public class TextureManager : SingletonBehaviour<TextureManager>
+public class TextureManager : MonoBehaviour
 {
     public Material mainMenuImageBackgroundMaterial;
     public Material mainMenuBackgroundMaterial;
