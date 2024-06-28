@@ -43,7 +43,7 @@ namespace GUZ.Core
 				PrefabType.VobSound => "Prefabs/Vobs/zCVobSound",
 				PrefabType.VobSoundDaytime => "Prefabs/Vobs/zCVobSoundDaytime",
 				PrefabType.VobLadder => "Prefabs/Vobs/oCMobLadder",
-				PrefabType.XRDeviceSimulator => "Prefabs/XR Device Simulator",
+				PrefabType.XRDeviceSimulator => "Prefabs/VRPlayer/XR Device Simulator",
 				_ => throw new Exception($"Enum value {type} not yet defined.")
 			};
 		}

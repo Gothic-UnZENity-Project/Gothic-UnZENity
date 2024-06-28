@@ -20,10 +20,22 @@ This ensures (e.g.) velocity handling for Climbing ladders persists after update
 Update hints from Unity: [Starter Assets](https://docs.unity3d.com/Packages/com.unity.xr.interaction.toolkit@2.5/manual/samples-starter-assets.html)
 
 
-## XRDeviceSimulator
+## XR Device Simulators
+
+**HVR:**
+
+Hurricane VR has a community made plugin to explore the game via WASD (https://github.com/AdrielCodeops/HurricaneVR-Extensions).
+To activate it, you need to set _Game Controls_ to _HVR_ and _Use XR Device Simulator_ to _true_ inside feature flags.
+
+Please check this video to get more details about how it can be used:
+https://www.youtube.com/watch?v=-LRJt0cD4xk
+
+
+**XRIT:**
+
 You can play the game with [OpenXR's control simulator](https://docs.unity3d.com/Packages/com.unity.xr.interaction.toolkit@2.4/manual/xr-device-simulator-overview.html).
 This enables you to test without setting up your HMD.
-It needs to be activated via FeatureFlag _UseXRDeviceSimulator_ and is implemented to run in Editor mode only.
+It needs to be activated via FeatureFlag _Use XR Device Simulator_ and is implemented to run in Editor mode only.
 
 We're using the default controls which are:
 

@@ -1,9 +1,6 @@
 using System;
-using System.Linq;
-using GUZ.Core.Globals;
+using GUZ.Core.Context;
 using UnityEngine;
-using GUZ.Core;
-using UnityEngine.SceneManagement;
 
 namespace GUZ.Core.Manager
 {
@@ -30,11 +27,12 @@ namespace GUZ.Core.Manager
 
         public void AddXRDeviceSimulator()
         {
-            if (!_featureEnable) return;
+            if (!_featureEnable)
+            {
+                return;
+            }
 
-            var simulator = ResourceLoader.TryGetPrefabObject(PrefabType.XRDeviceSimulator);
-            simulator.name = "XRDeviceSimulator - XRIT";
-            SceneManager.GetActiveScene().GetRootGameObjects().Append(simulator);
+            GUZContext.InteractionAdapter.CreateXRDeviceSimulator();
         }
     }
 }

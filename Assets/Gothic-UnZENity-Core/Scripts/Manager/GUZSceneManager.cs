@@ -157,6 +157,14 @@ namespace GUZ.Core.Manager
                 GlobalEventDispatcher.GeneralSceneUnloaded.Invoke();
                 generalSceneLoaded = false;
             }
+            
+            // Unload main menu scene if it exists
+            var mainScene = SceneManager.GetSceneByName(Constants.SceneMainMenu);
+            if (mainScene.isLoaded)
+            {
+                SceneManager.UnloadSceneAsync(mainScene);
+                GlobalEventDispatcher.MainMenuSceneUnloaded.Invoke();
+            }
 
             SetLoadingTextureForWorld(worldName, newGame);
 
