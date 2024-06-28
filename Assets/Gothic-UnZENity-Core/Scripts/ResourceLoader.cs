@@ -5,6 +5,7 @@ using DirectMusic;
 using GUZ.Core.Context;
 using GUZ.Core.Creator.Sounds;
 using GUZ.Core.Data;
+using GUZ.Core.Globals;
 using JetBrains.Annotations;
 using UnityEngine;
 using ZenKit;
@@ -167,6 +168,11 @@ namespace GUZ.Core
 			return DmLoader.GetSegment(key);
 		}
 		
+		/// <summary>
+		/// Load a <b>new</b> <see cref="DaedalusVm"/> from the assets by name. VMs are not cached, thus this call will
+		/// <b>always create a new VM</b>. You most likely need to use the prepared VM instances in
+		/// <see cref="GameData"/> instead.
+		/// </summary>
 		[CanBeNull]
 		public static DaedalusVm TryGetDaedalusVm([NotNull] string key)
 		{
@@ -208,6 +214,12 @@ namespace GUZ.Core
 		}
 
 
+		/// <summary>
+		/// Determines the absolute path to a Gothic installation's <c>_work</c> directory given the installation's
+		/// root directory. It does the lookup case-insensitively.
+		/// </summary>
+		/// <param name="root">A path to a Gothic installation's root directory</param>
+		/// <returns>The absolute path to the <c>_work</c> folder of the Gothic installation</returns>
 		private static string FindWorkPath(string root)
 		{
 			var path = Directory.GetDirectories(root, "_work", new EnumerationOptions
@@ -219,6 +231,12 @@ namespace GUZ.Core
 			return Path.GetFullPath(path, root);
 		}
 
+		/// <summary>
+		/// Finds all <c>.vdf</c> files in a Gothic installation's <c>data</c> directory given the installation's
+		/// root directory. It does the lookup case-insensitively.
+		/// </summary>
+		/// <param name="root">A path to a Gothic installation's root directory</param>
+		/// <returns>A list of absolute paths to all <c>.vdf</c> files the <c>data</c> folder of the Gothic installation</returns>
 		private static List<string> FindDiskPaths(string root)
 		{
 			var path = Directory.GetDirectories(root, "data", new EnumerationOptions
