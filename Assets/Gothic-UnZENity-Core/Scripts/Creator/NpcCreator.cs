@@ -1,21 +1,18 @@
 using System.Linq;
 using GUZ.Core.Caches;
 using GUZ.Core.Creator.Meshes.V2;
-using GUZ.Core.Debugging;
+using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
 using GUZ.Core.Npc.Routines;
 using GUZ.Core.Properties;
 using GUZ.Core.Vm;
 using GUZ.Core.Vob.WayNet;
-using GUZ.Core.Extensions;
-using GUZ.Core;
 using UnityEngine;
 using ZenKit;
 using ZenKit.Daedalus;
 using Object = UnityEngine.Object;
 using WayNet_WayPoint = GUZ.Core.Vob.WayNet.WayPoint;
-using WayPoint = GUZ.Core.Vob.WayNet.WayPoint;
 
 namespace GUZ.Core.Creator
 {
@@ -89,8 +86,8 @@ namespace GUZ.Core.Creator
 
             if (GameGlobals.Config.spawnNpcInstances.Any() && !GameGlobals.Config.spawnNpcInstances.Contains(props.npcInstance.Id))
             {
-                Object.Destroy(newNpc);
                 LookupCache.NpcCache.Remove(props.npcInstance.Index);
+                Object.Destroy(newNpc);
                 return;
             }
 
@@ -112,6 +109,8 @@ namespace GUZ.Core.Creator
         private static void SetSpawnPoint(GameObject npcGo, string spawnPoint)
         {
             WayNetPoint initialSpawnPoint;
+
+            // Find the right spawn point based on currently active routine.
             if (npcGo.GetComponent<Routine>().Routines.Any() && GameGlobals.Config.enableNpcRoutines)
             {
                 var routineSpawnPointName = npcGo.GetComponent<Routine>().CurrentRoutine.waypoint;
@@ -124,6 +123,7 @@ namespace GUZ.Core.Creator
                     initialSpawnPoint = WayNetHelper.GetWayNetPoint(routineSpawnPointName);
                 }
             }
+            // Fallback: If no routine exists, spawn at the spot which is named inside Wld_insertNpc()
             else
             {
                 initialSpawnPoint = WayNetHelper.GetWayNetPoint(spawnPoint);
@@ -135,8 +135,48 @@ namespace GUZ.Core.Creator
                 return;
             }
 
-            npcGo.transform.position = initialSpawnPoint.Position;
+            var isPositionFound = false;
+            var testRadius = 1f; // ~2x size of normal bounding box of an NPC.
+            // Some FP/WP are on a hill. The spawn check will therefore lift the location for a little to not interfere with world mesh collision check.
+            var groundControlDifference = new Vector3(0, 0.5f, 0);
+            var initialSpawnPointGroundControl = initialSpawnPoint.Position + groundControlDifference;
 
+            // Check if the spawn point is free.
+            if (!Physics.CheckSphere(initialSpawnPointGroundControl, testRadius / 2))
+            {
+                npcGo.transform.position = initialSpawnPoint.Position;
+                // There are three options to sync the Physics information for collision check. This is the most performant one as it only alters the single V3.
+                npcGo.GetComponentInChildren<Rigidbody>().position = initialSpawnPoint.Position;
+                isPositionFound = true;
+            }
+            // Alternatively let's circle around the spawn point if multiple NPCs spawn onto the same one.
+            else
+            {
+                for (var angle = 0f; angle < 360f; angle += 36f)
+                {
+                    var angleInRadians = angle * Mathf.Deg2Rad;
+                    var offsetPoint = new Vector3(Mathf.Cos(angleInRadians) * testRadius, 0, Mathf.Sin(angleInRadians) * testRadius);
+                    var checkPointGroundControl = initialSpawnPointGroundControl + offsetPoint;
+
+                    // Check if the point is clear (no obstacles)
+                    if (!Physics.CheckSphere(checkPointGroundControl, testRadius / 2))
+                    {
+                        npcGo.transform.position = initialSpawnPoint.Position + offsetPoint;
+                        // There are three options to sync the Physics information for collision check. This is the most performant one as it only alters the single V3.
+                        npcGo.GetComponentInChildren<Rigidbody>().position = initialSpawnPoint.Position + offsetPoint;
+                        isPositionFound = true;
+                        break;
+                    }
+                }
+            }
+
+            if (!isPositionFound)
+            {
+                Debug.LogError($"No suitable spawn point found for NPC {npcGo.name}. Circle search didn't find anything!");
+                return;
+            }
+
+            // Some data to be used for later.
             if (initialSpawnPoint.IsFreePoint())
                 npcGo.GetComponent<NpcProperties>().CurrentFreePoint = (FreePoint)initialSpawnPoint;
             else
