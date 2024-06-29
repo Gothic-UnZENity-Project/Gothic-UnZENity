@@ -122,6 +122,7 @@ namespace GUZ.Core.Manager
             }
 
             newWorldName = worldName;
+            SaveGameManager.ChangeWorld(worldName);
 
             var watch = Stopwatch.StartNew();
 
