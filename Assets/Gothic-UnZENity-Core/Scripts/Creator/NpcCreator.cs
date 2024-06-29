@@ -135,6 +135,7 @@ namespace GUZ.Core.Creator
                 return;
             }
 
+            var isPositionFound = false;
             var testRadius = 1f; // ~2x size of normal bounding box of an NPC.
             // Some FP/WP are on a hill. The spawn check will therefore lift the location for a little to not interfere with world mesh collision check.
             var groundControlDifference = new Vector3(0, 0.5f, 0);
@@ -143,9 +144,10 @@ namespace GUZ.Core.Creator
             // Check if the spawn point is free.
             if (!Physics.CheckSphere(initialSpawnPointGroundControl, testRadius / 2))
             {
-                npcGo.transform.position = initialSpawnPointGroundControl;
+                npcGo.transform.position = initialSpawnPoint.Position;
                 // There are three options to sync the Physics information for collision check. This is the most performant one as it only alters the single V3.
-                npcGo.GetComponentInChildren<Rigidbody>().position = initialSpawnPointGroundControl;
+                npcGo.GetComponentInChildren<Rigidbody>().position = initialSpawnPoint.Position;
+                isPositionFound = true;
             }
             // Alternatively let's circle around the spawn point if multiple NPCs spawn onto the same one.
             else
@@ -154,19 +156,25 @@ namespace GUZ.Core.Creator
                 {
                     var angleInRadians = angle * Mathf.Deg2Rad;
                     var offsetPoint = new Vector3(Mathf.Cos(angleInRadians) * testRadius, 0, Mathf.Sin(angleInRadians) * testRadius);
-                    var checkPoint = initialSpawnPointGroundControl + offsetPoint;
+                    var checkPointGroundControl = initialSpawnPointGroundControl + offsetPoint;
 
                     // Check if the point is clear (no obstacles)
-                    if (!Physics.CheckSphere(checkPoint, testRadius / 2))
+                    if (!Physics.CheckSphere(checkPointGroundControl, testRadius / 2))
                     {
-                        npcGo.transform.position = checkPoint;
+                        npcGo.transform.position = initialSpawnPoint.Position + offsetPoint;
                         // There are three options to sync the Physics information for collision check. This is the most performant one as it only alters the single V3.
-                        npcGo.GetComponentInChildren<Rigidbody>().position = checkPoint;
+                        npcGo.GetComponentInChildren<Rigidbody>().position = initialSpawnPoint.Position + offsetPoint;
+                        isPositionFound = true;
                         break;
                     }
                 }
             }
 
+            if (!isPositionFound)
+            {
+                Debug.LogError($"No suitable spawn point found for NPC {npcGo.name}. Circle search didn't find anything!");
+                return;
+            }
 
             // Some data to be used for later.
             if (initialSpawnPoint.IsFreePoint())
