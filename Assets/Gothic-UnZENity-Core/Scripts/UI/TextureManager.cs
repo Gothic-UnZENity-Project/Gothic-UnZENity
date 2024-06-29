@@ -3,11 +3,13 @@ using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Util;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class TextureManager : MonoBehaviour
 {
     public Material mainMenuImageBackgroundMaterial;
     public Material mainMenuBackgroundMaterial;
+    public Material mainMenuSaveLoadBackgroundMaterial;
     public Material mainMenuTextImageMaterial;
 
     public Material backgroundMaterial;
@@ -28,6 +30,7 @@ public class TextureManager : MonoBehaviour
     {
         mainMenuImageBackgroundMaterial = GetEmptyMaterial(MaterialExtension.BlendMode.Opaque);
         mainMenuBackgroundMaterial = GetEmptyMaterial(MaterialExtension.BlendMode.Opaque);
+        mainMenuSaveLoadBackgroundMaterial = GetEmptyMaterial(MaterialExtension.BlendMode.Opaque);
         mainMenuTextImageMaterial = GetEmptyMaterial(MaterialExtension.BlendMode.Transparent);
 
         gothicLoadingMenuMaterial = GetEmptyMaterial(MaterialExtension.BlendMode.Opaque);
@@ -42,6 +45,7 @@ public class TextureManager : MonoBehaviour
     {
         mainMenuImageBackgroundMaterial.mainTexture = TextureCache.TryGetTexture("STARTSCREEN.TGA");
         mainMenuBackgroundMaterial.mainTexture = TextureCache.TryGetTexture("MENU_INGAME.TGA");
+        mainMenuSaveLoadBackgroundMaterial.mainTexture = TextureCache.TryGetTexture("MENU_SAVELOAD_BACK.TGA");
         mainMenuTextImageMaterial.mainTexture = TextureCache.TryGetTexture("MENU_GOTHIC.TGA");
         gothicLoadingMenuMaterial.mainTexture = TextureCache.TryGetTexture("LOADING.TGA");
         loadingBarBackgroundMaterial.mainTexture = TextureCache.TryGetTexture("PROGRESS.TGA");
@@ -60,7 +64,7 @@ public class TextureManager : MonoBehaviour
         material.mainTexture = TextureCache.TryGetTexture(texture);
     }
 
-    private Material GetEmptyMaterial(MaterialExtension.BlendMode blendMode)
+    public Material GetEmptyMaterial(MaterialExtension.BlendMode blendMode)
     {
         var standardShader = Constants.ShaderUnlit;
         var material = new Material(standardShader);

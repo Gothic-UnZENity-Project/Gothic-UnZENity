@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using GUZ.Core.Vm;
 using UnityEngine;
 using ZenKit;
 using ZenKit.Daedalus;
 using ZenKit.Util;
+using Texture = ZenKit.Texture;
 using TextureFormat = UnityEngine.TextureFormat;
 
 namespace GUZ.Core.Extensions
@@ -18,6 +18,7 @@ namespace GUZ.Core.Extensions
             {
                 ZenKit.TextureFormat.Dxt1 => TextureFormat.DXT1,
                 ZenKit.TextureFormat.Dxt5 => TextureFormat.DXT5,
+                ZenKit.TextureFormat.R5G6B5 => TextureFormat.RGB565,
                 _ => TextureFormat.RGBA32 // Everything else we need to use uncompressed for Unity (e.g. DXT3).
             };
         }
@@ -48,7 +49,7 @@ namespace GUZ.Core.Extensions
 
             return unityMatrix.rotation;
         }
-        
+
         public static Matrix4x4 ToUnityMatrix(this System.Numerics.Matrix4x4 matrix)
         {
             return new()

@@ -4,9 +4,8 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using GUZ.Core.World;
 using GUZ.Core.Extensions;
-using GUZ.Core;
+using GUZ.Core.World;
 using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -55,18 +54,24 @@ namespace GUZ.Core.Caches
         [CanBeNull]
         public static Texture2D TryGetTexture(string key)
         {
-            string preparedKey = GetPreparedKey(key);
+            var preparedKey = GetPreparedKey(key);
             if (Texture2DCache.TryGetValue(preparedKey, out var cachedTexture))
             {
                 return cachedTexture;
             }
 
-            ITexture zkTexture = ResourceLoader.TryGetTexture(key);
+            return TryGetTexture(ResourceLoader.TryGetTexture(key), preparedKey);
+        }
+
+        public static Texture2D TryGetTexture(ITexture zkTexture, string key)
+        {
             if (zkTexture == null)
             {
                 return null;
             }
             Texture2D texture;
+
+            var preparedKey = GetPreparedKey(key);
 
             // Workaround for Unity and DXT1 Mipmaps.
             if (zkTexture.Format == TextureFormat.Dxt1 && zkTexture.MipmapCount == 1)

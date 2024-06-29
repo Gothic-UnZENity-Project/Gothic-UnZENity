@@ -9,7 +9,6 @@ using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
 using GUZ.Core.World;
-using GUZ.Core;
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
 using ZenKit;
@@ -30,7 +29,7 @@ namespace GUZ.Core.Creator
             GlobalEventDispatcher.GeneralSceneLoaded.AddListener(WorldLoaded);
         }
 
-        public static async Task CreateAsync(LoadingManager loading, string worldName, GameConfiguration config)
+        public static async Task CreateAsync(LoadingManager loading, GameConfiguration config)
         {
             _worldGo = new GameObject("World");
 
@@ -41,13 +40,11 @@ namespace GUZ.Core.Creator
             _teleportGo.SetParent(_worldGo);
             _nonTeleportGo.SetParent(_worldGo);
 
-            var world = LoadWorld(worldName);
-
             // Build the world and vob meshes, populating the texture arrays.
             // We need to start creating Vobs as we need to calculate world slicing based on amount of lights at a certain space afterwards.
             if (config.enableWorldObjects)
             {
-                await VobCreator.CreateAsync(config, loading, _teleportGo, _nonTeleportGo, world.Vobs, Constants.VObPerFrame);
+                await VobCreator.CreateAsync(config, loading, _teleportGo, _nonTeleportGo, SaveGameManager.CurrentWorldData.Vobs, Constants.VObPerFrame);
                 await MeshFactory.CreateVobTextureArray();
             }
 
@@ -56,45 +53,22 @@ namespace GUZ.Core.Creator
                 var lightingEnabled = config.enableWorldObjects && (config.spawnWorldObjectTypes.IsEmpty() ||
                                                                     config.spawnWorldObjectTypes.Contains(
                                                                         VirtualObjectType.zCVobLight));
-                world.SubMeshes =
-                    await BuildBspTree(world.World.Mesh.Cache(), world.World.BspTree.Cache(), lightingEnabled);
+                SaveGameManager.CurrentWorldData.SubMeshes = await BuildBspTree(
+                    SaveGameManager.CurrentWorldData.Mesh.Cache(),
+                    SaveGameManager.CurrentWorldData.BspTree.Cache(),
+                    lightingEnabled);
 
-                await MeshFactory.CreateWorld(world, loading, _teleportGo, Constants.MeshPerFrame);
+                await MeshFactory.CreateWorld(SaveGameManager.CurrentWorldData, loading, _teleportGo, Constants.MeshPerFrame);
                 await MeshFactory.CreateWorldTextureArray();
             }
 
             GameGlobals.Sky.InitSky();
             StationaryLight.InitStationaryLights();
 
-            WaynetCreator.Create(config, _worldGo, world);
+            WaynetCreator.Create(config, _worldGo, SaveGameManager.CurrentWorldData);
 
             // Set the global variable to the result of the coroutine
             loading.SetProgress(LoadingManager.LoadingProgressType.NPC, 1f);
-        }
-
-        private static WorldData LoadWorld(string worldName)
-        {
-            var zkWorld = ResourceLoader.TryGetWorld(worldName);
-            var zkWayNet = zkWorld.WayNet.Cache();
-
-            if (zkWorld.RootObjectCount == 0)
-            {
-                throw new ArgumentException($"World >{worldName}< couldn't be found.");
-            }
-
-            if (zkWorld.Mesh.PolygonCount == 0)
-            {
-                throw new ArgumentException($"No mesh in world >{worldName}< found.");
-            }
-
-            WorldData world = new()
-            {
-                World = zkWorld,
-                Vobs = zkWorld.RootObjects,
-                WayNet = (CachedWayNet)zkWayNet
-            };
-
-            return world;
         }
 
         private static async Task<List<WorldData.SubMeshData>> BuildBspTree(IMesh zkMesh, IBspTree zkBspTree,
@@ -448,7 +422,6 @@ namespace GUZ.Core.Creator
 
         private static void WorldLoaded(GameObject playerGo)
         {
-            // As we already added stored world mesh and waypoints in Unity GOs, we can safely remove them to free MBs.
             var interactionManager = GameGlobals.Scene.interactionManager.GetComponent<XRInteractionManager>();
 
             // If we load a new scene, just remove the existing one.

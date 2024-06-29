@@ -9138,6 +9138,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mainMenuImageBackgroundMaterial: {fileID: 0}
   mainMenuBackgroundMaterial: {fileID: 0}
+  mainMenuSaveLoadBackgroundMaterial: {fileID: 0}
   mainMenuTextImageMaterial: {fileID: 0}
   backgroundMaterial: {fileID: 2100000, guid: 1e349bd46543d684da0fd00dfcc78b72, type: 2}
   buttonMaterial: {fileID: 2100000, guid: 731db01b086aeb94582b82a16a95775b, type: 2}

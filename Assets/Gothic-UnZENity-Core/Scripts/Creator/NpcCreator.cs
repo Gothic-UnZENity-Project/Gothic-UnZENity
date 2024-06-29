@@ -8,6 +8,7 @@ using GUZ.Core.Npc.Routines;
 using GUZ.Core.Properties;
 using GUZ.Core.Vm;
 using GUZ.Core.Vob.WayNet;
+using JetBrains.Annotations;
 using UnityEngine;
 using ZenKit;
 using ZenKit.Daedalus;
@@ -54,18 +55,31 @@ namespace GUZ.Core.Creator
         /// </summary>
         public static void ExtWldInsertNpc(int npcInstance, string spawnPoint)
         {
-            var newNpc = ResourceLoader.TryGetPrefabObject(PrefabType.Npc);
-            var props = newNpc.GetComponent<NpcProperties>();
-            var npcSymbol = vm.GetSymbolByIndex(npcInstance);
-            
-            if (npcSymbol == null)
+            var newNpc = InitializeNpc(npcInstance);
+
+            if (newNpc == null)
             {
-                Debug.LogError($"Npc with ID {npcInstance} not found.");
                 return;
             }
-            
+
+            SetSpawnPoint(newNpc, spawnPoint);
+        }
+
+        [CanBeNull]
+        public static GameObject InitializeNpc(int npcInstanceIndex)
+        {
+            var newNpc = ResourceLoader.TryGetPrefabObject(PrefabType.Npc);
+            var props = newNpc.GetComponent<NpcProperties>();
+            var npcSymbol = vm.GetSymbolByIndex(npcInstanceIndex);
+
+            if (npcSymbol == null)
+            {
+                Debug.LogError($"Npc with ID {npcInstanceIndex} not found.");
+                return null;
+            }
+
             // Humans are singletons.
-            if (LookupCache.NpcCache.TryAdd(npcInstance, newNpc.GetComponent<NpcProperties>()))
+            if (LookupCache.NpcCache.TryAdd(npcInstanceIndex, newNpc.GetComponent<NpcProperties>()))
             {
                 props.npcInstance = vm.AllocInstance<NpcInstance>(npcSymbol);
                 vm.InitInstance(props.npcInstance);
@@ -78,7 +92,7 @@ namespace GUZ.Core.Creator
             // Monsters are used multiple times.
             else
             {
-                var origNpc = LookupCache.NpcCache[npcInstance];
+                var origNpc = LookupCache.NpcCache[npcInstanceIndex];
                 var origProps = origNpc.GetComponent<NpcProperties>();
                 // Clone Properties as they're required from the first instance.
                 props.Copy(origProps);
@@ -88,22 +102,22 @@ namespace GUZ.Core.Creator
             {
                 LookupCache.NpcCache.Remove(props.npcInstance.Index);
                 Object.Destroy(newNpc);
-                return;
+                return null;
             }
 
             newNpc.name = $"{props.npcInstance.GetName(NpcNameSlot.Slot0)} ({props.npcInstance.Id})";
-            
+
             var mdhName = string.IsNullOrEmpty(props.overlayMdhName) ? props.baseMdhName : props.overlayMdhName;
             MeshFactory.CreateNpc(newNpc.name, props.mdmName, mdhName, props.BodyData, newNpc);
             newNpc.SetParent(GetRootGo());
 
             foreach (var equippedItem in props.EquippedItems)
                 MeshFactory.CreateNpcWeapon(newNpc, equippedItem, (VmGothicEnums.ItemFlags)equippedItem.MainFlag, (VmGothicEnums.ItemFlags)equippedItem.Flags);
-            
+
             var npcRoutine = props.npcInstance.DailyRoutine;
             NpcHelper.ExchangeRoutine(newNpc, props.npcInstance, npcRoutine);
 
-            SetSpawnPoint(newNpc, spawnPoint);
+            return newNpc;
         }
         
         private static void SetSpawnPoint(GameObject npcGo, string spawnPoint)

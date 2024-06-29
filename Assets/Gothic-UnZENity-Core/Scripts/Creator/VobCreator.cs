@@ -278,6 +278,25 @@ namespace GUZ.Core.Creator
                     _cullingVobObjects.Add(go);
                     break;
                 }
+                case VirtualObjectType.oCNpc:
+                {
+                    if (vob.Name.EqualsIgnoreCase(Constants.DaedalusHeroInstanceName))
+                    {
+                        GameGlobals.Scene.SetStart(vob.Position.ToUnityVector(), vob.Rotation.ToUnityQuaternion());
+
+                        break;
+                    }
+
+                    if (!config.spawnOldCampNpcs)
+                    {
+                        break;
+                    }
+
+                    var npcSymbol = GameData.GothicVm.GetSymbolByName(vob.Name);
+                    var newNpc = NpcCreator.InitializeNpc(npcSymbol.Index);
+
+                    break;
+                }
                 case VirtualObjectType.zCVobScreenFX:
                 case VirtualObjectType.zCTriggerWorldStart:
                 case VirtualObjectType.zCTriggerList:

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using GUZ.Core.Context;
 using GUZ.Core.World;
 using UnityEngine;
+using ZenKit;
+using ZenKit.Vobs;
 
 namespace GUZ.Core
 {
@@ -19,8 +21,11 @@ namespace GUZ.Core
 		[Header("### Controls ###")] public bool enableDeviceSimulator = false;
         public GUZContext.Controls gameControls = GUZContext.Controls.VR_XRIT;
 
-		[Header("### Developer ###")] [SerializeField]
-		public bool enableMainMenu = true;
+		[Header("### Developer ###")]
+        [SerializeField] public bool enableMainMenu = true;
+        [SerializeField] public bool loadFromSaveSlot = false;
+        [Range(1,15)]
+        [SerializeField] public int saveSlotToLoad = 0;
 
 		[SerializeField] public bool spawnOldCampNpcs = false;
 		[SerializeField] public bool enableNpcRoutines = false;
@@ -40,11 +45,11 @@ namespace GUZ.Core
 		[InspectorName("Experimental: Enable NPC Eye Blinking")]
 		public bool enableNpcEyeBlinking = false;
 		
-		[SerializeField] public List<ZenKit.Vobs.VirtualObjectType> spawnWorldObjectTypes = new();
+		[SerializeField] public List<VirtualObjectType> spawnWorldObjectTypes = new();
 		[SerializeField] public List<int> spawnNpcInstances = new();
 
-		[Header("### Audio ###")] [SerializeField]
-		public bool enableGameMusic = true;
+		[Header("### Audio ###")]
+        [SerializeField] public bool enableGameMusic = true;
 
 		[SerializeField] public bool enableGameSounds = true;
 
@@ -64,34 +69,32 @@ namespace GUZ.Core
 
 		[SerializeField] [Range(0.5f, 1000f)] public float timeSpeedMultiplier = 1;
 
-		[Header("### WayNet ###")] [SerializeField]
-		public bool showFreePoints = false;
+		[Header("### WayNet ###")]
+        [SerializeField] public bool showFreePoints = false;
 
 		[SerializeField] public bool showWayPoints = false;
 
 		[SerializeField] public bool showWayEdges = false;
 
-		[Header("### Culling ###")] [SerializeField]
-		public bool enableSoundCulling = true;
+		[Header("### Culling ###")]
+        [SerializeField] public bool enableSoundCulling = true;
 
 		[SerializeField] public bool enableMeshCulling = true;
 
 		[SerializeField] public bool showMeshCullingGizmos = true;
 
-		[SerializeField]
-		public MeshCullingGroup smallMeshCullingGroup = new() { maximumObjectSize = 0.2f, cullingDistance = 50 };
+		[SerializeField] public MeshCullingGroup smallMeshCullingGroup = new() { maximumObjectSize = 0.2f, cullingDistance = 50 };
 
-		[SerializeField]
-		public MeshCullingGroup mediumMeshCullingGroup = new() { maximumObjectSize = 5.0f, cullingDistance = 100 };
+		[SerializeField] public MeshCullingGroup mediumMeshCullingGroup = new() { maximumObjectSize = 5.0f, cullingDistance = 100 };
 
-		[SerializeField]
-		public MeshCullingGroup largeMeshCullingGroup = new() { maximumObjectSize = 100, cullingDistance = 200 };
+		[SerializeField] public MeshCullingGroup largeMeshCullingGroup = new() { maximumObjectSize = 100, cullingDistance = 200 };
 
-		[Header("### Logging ###")] [SerializeField] [InspectorName("ZenKit Log Level")]
-		public ZenKit.LogLevel zenkitLogLevel = ZenKit.LogLevel.Warning;
+		[Header("### Logging ###")]
+        [InspectorName("ZenKit Log Level")]
+        [SerializeField] public LogLevel zenkitLogLevel = LogLevel.Warning;
 
-		[SerializeField] [InspectorName("DirectMusic Log Level")]
-		public DirectMusic.LogLevel directMusicLogLevel = DirectMusic.LogLevel.Warning;
+        [InspectorName("DirectMusic Log Level")]
+		[SerializeField] public DirectMusic.LogLevel directMusicLogLevel = DirectMusic.LogLevel.Warning;
 
 		[SerializeField] public bool enableBarrierLogs = false;
 		[SerializeField] public bool enableSpyLogs = false;

@@ -7,6 +7,7 @@ using GUZ.XRIT.Components.Vobs;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.XR.Interaction.Toolkit;
+using Object = UnityEngine.Object;
 
 namespace GUZ.XRIT
 {
@@ -44,6 +45,11 @@ namespace GUZ.XRIT
             SceneManager.MoveGameObjectToScene(go, scene);
 
             return go;
+        }
+
+        public void SpawnPlayerToSpot(GameObject playerGo, Vector3 position, Quaternion rotation)
+        {
+            playerGo.transform.SetPositionAndRotation(position, rotation);
         }
 
         public void CreateXRDeviceSimulator()
