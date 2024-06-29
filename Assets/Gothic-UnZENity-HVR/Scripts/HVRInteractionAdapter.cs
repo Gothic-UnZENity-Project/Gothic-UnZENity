@@ -76,8 +76,24 @@ namespace GUZ.HVR
             // As we reference components from HVRPlayer inside HVRSimulator, we need to create the SimulatorGO on the same scene.
             var generalScene = SceneManager.GetSceneByName(Constants.SceneGeneral);
             var mainMenuScene = SceneManager.GetSceneByName(Constants.SceneMainMenu);
-            var currentScene = generalScene.IsValid() ? generalScene : mainMenuScene;
+            var labScene = SceneManager.GetSceneByName(Constants.SceneLab);
 
+            Scene currentScene = default;
+            foreach (var sceneToCheck in new []{ generalScene, mainMenuScene, labScene })
+            {
+                if (sceneToCheck.IsValid())
+                {
+                    currentScene = sceneToCheck;
+                    break;
+                }
+            }
+
+            if (!currentScene.IsValid())
+            {
+                Debug.LogError("No valid scene for XRDeviceSimulator found. Skipping setup.");
+                return;
+            }
+            
             var simulatorGo = new GameObject("HVR - XRDeviceSimulator");
             // We assume, that this Component (HVRPlayerManager) is set inside the HVR root for a player rig.
             var playerRig = currentScene.GetRootGameObjects().First(i => i.GetComponentInChildren<HVRPlayerManager>());

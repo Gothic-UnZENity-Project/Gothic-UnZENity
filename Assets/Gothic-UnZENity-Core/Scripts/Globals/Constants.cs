@@ -25,6 +25,7 @@ namespace GUZ.Core.Globals
         public const string SceneGeneral = "General";
         public const string SceneMainMenu = "MainMenu";
         public const string SceneLoading = "Loading";
+        public const string SceneLab = "Lab";
 
         //Layer for all Items, specifically to disable collision physics between player and items
         public static LayerMask PlayerLayer = LayerMask.NameToLayer("Player");
