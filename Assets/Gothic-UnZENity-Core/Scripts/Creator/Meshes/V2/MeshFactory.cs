@@ -5,6 +5,7 @@ using GUZ.Core.Creator.Meshes.V2.Builder.Textures;
 using GUZ.Core.Vm;
 using GUZ.Core.World;
 using GUZ.Core.Extensions;
+using GUZ.Core.Manager;
 using UnityEngine;
 using ZenKit;
 using ZenKit.Daedalus;
@@ -14,14 +15,14 @@ namespace GUZ.Core.Creator.Meshes.V2
 {
     public static class MeshFactory
     {
-        public static async Task CreateWorld(WorldData world, GameObject parent, int meshesPerFrame)
+        public static async Task CreateWorld(WorldData world, LoadingManager loading, GameObject parent, int meshesPerFrame)
         {
             var worldBuilder = new WorldMeshBuilder();
             worldBuilder.SetGameObject(null, "Mesh");
             worldBuilder.SetParent(parent);
             worldBuilder.SetWorldData(world, meshesPerFrame);
 
-            await worldBuilder.BuildAsync();
+            await worldBuilder.BuildAsync(loading);
         }
 
         public static GameObject CreateNpc(string npcName, string mdmName, string mdhName,

@@ -2,6 +2,7 @@ using GUZ.Core.Caches;
 using GUZ.Core.Creator;
 using GUZ.Core.Data.ZkEvents;
 using GUZ.Core.Manager;
+using GUZ.Core.Vm;
 using UnityEngine;
 using ZenKit.Daedalus;
 
@@ -44,7 +45,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
                 newItemAnimationState = --Props.itemAnimationState;
             }
 
-            ItemInstance item = AssetCache.TryGetItemData(itemToUse);
+            ItemInstance item = VmInstanceManager.TryGetItemData(itemToUse);
             string oldState = oldItemAnimationState == -1 ? "STAND" : $"S{oldItemAnimationState}";
             string newState = newItemAnimationState == -1 ? "STAND" : $"S{newItemAnimationState}";
 

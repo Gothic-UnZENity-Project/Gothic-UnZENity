@@ -1,25 +1,33 @@
+using System;
 using GUZ.Core.Context;
-using GUZ.Core.Debugging;
-using GUZ.Core.Globals;
-using GUZ.Core.Util;
 using UnityEngine;
 
 namespace GUZ.Core.Manager
 {
-    public class XRDeviceSimulatorManager: SingletonBehaviour<XRDeviceSimulatorManager>
+    public class XRDeviceSimulatorManager
     {
-        private void Start()
+        [Obsolete] public static XRDeviceSimulatorManager I;
+
+        private readonly bool _featureEnable;
+
+        public XRDeviceSimulatorManager(GameConfiguration config)
         {
-            GUZEvents.GeneralSceneLoaded.AddListener(delegate(GameObject playerGo)
+            I = this;
+            _featureEnable = config.enableDeviceSimulator;
+        }
+
+        public void Init()
+        {
+            GlobalEventDispatcher.GeneralSceneLoaded.AddListener(delegate(GameObject playerGo)
             {
                 AddXRDeviceSimulator();
             });
-            GUZEvents.MainMenuSceneLoaded.AddListener(AddXRDeviceSimulator);
+            GlobalEventDispatcher.MainMenuSceneLoaded.AddListener(AddXRDeviceSimulator);
         }
 
         public void AddXRDeviceSimulator()
         {
-            if (!FeatureFlags.I.useXRDeviceSimulator)
+            if (!_featureEnable)
             {
                 return;
             }

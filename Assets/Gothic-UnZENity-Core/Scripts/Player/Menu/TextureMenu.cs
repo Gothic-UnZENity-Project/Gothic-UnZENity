@@ -19,9 +19,10 @@ namespace GUZ.Core.Player.Menu
             var mmb = MainMenuBackground.GetComponent<MeshRenderer>();
             var mmt = MainMenuText.GetComponent<MeshRenderer>();
 
-            mmib.material = TextureManager.I.mainMenuImageBackgroundMaterial;
-            mmb.material = TextureManager.I.mainMenuBackgroundMaterial;
-            mmt.material = TextureManager.I.mainMenuTextImageMaterial;
+            var tm = GameGlobals.Textures;
+            mmib.material = tm.mainMenuImageBackgroundMaterial;
+            mmb.material = tm.mainMenuBackgroundMaterial;
+            mmt.material = tm.mainMenuTextImageMaterial;
         }
     }
 

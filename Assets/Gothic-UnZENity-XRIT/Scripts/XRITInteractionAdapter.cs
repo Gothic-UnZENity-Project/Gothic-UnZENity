@@ -1,4 +1,5 @@
 using System.Linq;
+using GUZ.Core;
 using GUZ.Core.Caches;
 using GUZ.Core.Context;
 using GUZ.Core.Globals;
@@ -47,7 +48,7 @@ namespace GUZ.XRIT
 
         public void CreateXRDeviceSimulator()
         {
-            var simulator = PrefabCache.TryGetObject(PrefabCache.PrefabType.XRDeviceSimulator);
+            var simulator = ResourceLoader.TryGetPrefabObject(PrefabType.XRDeviceSimulator);
             simulator.name = "XRDeviceSimulator - XRIT";
             SceneManager.GetActiveScene().GetRootGameObjects().Append(simulator);
         }

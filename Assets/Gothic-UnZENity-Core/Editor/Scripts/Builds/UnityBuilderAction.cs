@@ -37,7 +37,6 @@ namespace GUZ.Core.Editor.Builds.UnityBuildTools
 		{
 			string target_path = TARGET_DIR + "/Quest/" + APP_NAME + ".apk";
 			SetQuestSettings();
-				FeatureFlagTool.SetFeatureFlags();
 				EditorSceneManager.SaveScene(SceneManager.GetSceneByName("Bootstrap"));
 			GenericBuild(SCENES, target_path, BuildTargetGroup.Android, BuildTarget.Android, BuildOptions.None);
 		}
@@ -48,7 +47,6 @@ namespace GUZ.Core.Editor.Builds.UnityBuildTools
             SetQuestSettings();
             if (resetFeatureFlags)
             {
-                FeatureFlagTool.SetFeatureFlags();
 				EditorSceneManager.SaveScene(SceneManager.GetSceneByName("Bootstrap"));
 			}
 			GenericBuild(SCENES, target_path, BuildTargetGroup.Android, BuildTarget.Android, BuildOptions.None);
@@ -69,7 +67,6 @@ namespace GUZ.Core.Editor.Builds.UnityBuildTools
 		{
 			string target_path = TARGET_DIR + "/Pico/" + APP_NAME + ".apk";
 			SetPicoSettings();
-				FeatureFlagTool.SetFeatureFlags();
 				EditorSceneManager.SaveScene(SceneManager.GetSceneByName("Bootstrap"));
 			GenericBuild(SCENES, target_path, BuildTargetGroup.Android, BuildTarget.Android, BuildOptions.None);
 		}
@@ -79,7 +76,6 @@ namespace GUZ.Core.Editor.Builds.UnityBuildTools
             SetPicoSettings();
 			if (resetFeatureFlags)
 			{
-				FeatureFlagTool.SetFeatureFlags();
 				EditorSceneManager.SaveScene(SceneManager.GetSceneByName("Bootstrap"));
 			}
 			GenericBuild(SCENES, target_path, BuildTargetGroup.Android, BuildTarget.Android, BuildOptions.None);
@@ -99,7 +95,6 @@ namespace GUZ.Core.Editor.Builds.UnityBuildTools
 		static void PerformWindows64Build()
 		{
 			string target_path = TARGET_DIR + "/Windows64/" + APP_NAME + ".exe";
-				FeatureFlagTool.SetFeatureFlags();
 				EditorSceneManager.SaveScene(SceneManager.GetSceneByName("Bootstrap"));	
 			GenericBuild(SCENES, target_path, BuildTargetGroup.Standalone, BuildTarget.StandaloneWindows64, BuildOptions.None);
 		}
@@ -108,7 +103,6 @@ namespace GUZ.Core.Editor.Builds.UnityBuildTools
 			string target_path = TARGET_DIR + "/Windows64/" + APP_NAME + ".exe";
 			if (resetFeatureFlags)
 			{
-				FeatureFlagTool.SetFeatureFlags();
 				EditorSceneManager.SaveScene(SceneManager.GetSceneByName("Bootstrap"));
 			}
 			GenericBuild(SCENES, target_path, BuildTargetGroup.Standalone, BuildTarget.StandaloneWindows64, BuildOptions.None);

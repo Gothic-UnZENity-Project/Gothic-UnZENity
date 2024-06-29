@@ -4,8 +4,10 @@ using GUZ.Core.Caches;
 using GUZ.Core.Debugging;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
+using GUZ.Core;
 using TMPro;
 using UnityEngine;
+using ZenKit.Daedalus;
 
 namespace GUZ.Lab.Handler
 {
@@ -16,25 +18,18 @@ namespace GUZ.Lab.Handler
 
         public void Bootstrap()
         {
-            var prototype = GameData.MusicVm.GetSymbolByName("C_MUSICTHEME_DEF");
+            var vm = ResourceLoader.TryGetDaedalusVm("MUSIC");
 
-            var musicInstances = GameData.MusicVm.Symbols
-                .Where(s => s.Parent == prototype.Index)
-                .Select(s => AssetCache.TryGetMusic(s.Name))
-                .GroupBy(instance => instance.File, StringComparer.InvariantCultureIgnoreCase)
-                .Select(group => group.First())
-                .OrderBy(instance => instance.File)
+            var musicInstances = vm.GetInstanceSymbols("C_MUSICTHEME")
+                .Select(s => s.Name)
                 .ToList();
 
-            fileSelector.options = musicInstances.Select(i => new TMP_Dropdown.OptionData(i.File)).ToList();
+            fileSelector.options = musicInstances.Select(i => new TMP_Dropdown.OptionData(i)).ToList();
         }
 
         public void MusicPlayClick()
         {
-            if (!FeatureFlags.I.enableMusic)
-                Debug.LogError($"Music is deactivated inside ${nameof(FeatureFlags.enableMusic)}");
-
-            MusicManager.Play(fileSelector.options[fileSelector.value].text);
+            MusicManager.I.Play(fileSelector.options[fileSelector.value].text);
         }
     }
 }

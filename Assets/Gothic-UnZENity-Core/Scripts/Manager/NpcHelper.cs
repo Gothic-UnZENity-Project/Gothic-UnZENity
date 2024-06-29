@@ -9,6 +9,7 @@ using GUZ.Core.Npc.Actions.AnimationActions;
 using GUZ.Core.Npc.Routines;
 using GUZ.Core.Properties;
 using GUZ.Core.Vm;
+using GUZ.Core;
 using JetBrains.Annotations;
 using UnityEngine;
 using ZenKit.Daedalus;
@@ -21,7 +22,7 @@ namespace GUZ.Core.Manager
 
         static NpcHelper()
         {
-            GUZEvents.GeneralSceneLoaded.AddListener((GameObject playerGo) =>
+            GlobalEventDispatcher.GeneralSceneLoaded.AddListener((GameObject playerGo) =>
             {
                 CacheHero(playerGo);
             });
@@ -519,7 +520,7 @@ namespace GUZ.Core.Manager
             GameData.GothicVm.GlobalSelf = npcInstance;
             GameData.GothicVm.Call(routineIndex);
             
-            if (!FeatureFlags.I.enableNpcRoutines)
+            if (!GameGlobals.Config.enableNpcRoutines)
                 return;
 
             routineComp.CalculateCurrentRoutine();

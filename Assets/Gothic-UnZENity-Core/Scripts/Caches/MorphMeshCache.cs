@@ -99,7 +99,7 @@ namespace GUZ.Core.Caches
                 return data;
 
             // Create logic
-            var mmb = AssetCache.TryGetMmb(mmbName);
+            var mmb = ResourceLoader.TryGetMorphMesh(mmbName);
             var anim = mmb.Animations.First(anim => anim.Name.EqualsIgnoreCase(animationName));
 
             var originalVertexMapping = VertexMapping[preparedMmbKey];
