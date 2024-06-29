@@ -1,15 +1,12 @@
-using System;
 using GUZ.Core.Caches;
-using GUZ.Core.Context;
+using GUZ.Core.Debugging;
 using GUZ.Core.Manager;
 using GUZ.Core.Manager.Culling;
 using GUZ.Core.Manager.Settings;
-using GUZ.Core.World;
-using GUZ.Core;
-using GUZ.Core.Debugging;
 using GUZ.Core.Util;
+using GUZ.Core.World;
 using UnityEngine;
-using UnityEngine.SceneManagement;
+using Logger = ZenKit.Logger;
 
 namespace GUZ.Core
 {
@@ -22,6 +19,7 @@ namespace GUZ.Core
         public GameObject invalidInstallationPathMessage;
 
         private BarrierManager _barrierManager;
+        private XRPlayerManager _xrPlayerManager;
         private XRDeviceSimulatorManager _xrSimulatorManager;
         private MusicManager _gameMusicManager;
         private LoadingManager _gameLoadingManager;
@@ -86,6 +84,7 @@ namespace GUZ.Core
             SoundCulling = new VobSoundCullingManager(Config);
             _barrierManager = new BarrierManager(Config);
             Lights = new StationaryLightsManager();
+            _xrPlayerManager = new XRPlayerManager(Config);
             _xrSimulatorManager = new XRDeviceSimulatorManager(Config);
             Time = new GameTime(Config, this);
             Sky = new SkyManager(Config, Time, Settings);
@@ -96,7 +95,7 @@ namespace GUZ.Core
 
         private void Start()
         {
-            ZenKit.Logger.Set(Config.zenkitLogLevel, Logging.OnZenKitLogMessage);
+            Logger.Set(Config.zenkitLogLevel, Logging.OnZenKitLogMessage);
             DirectMusic.Logger.Set(Config.directMusicLogLevel, Logging.OnDirectMusicLogMessage);
 
             _fileLoggingHandler.Init();
@@ -105,18 +104,13 @@ namespace GUZ.Core
             SoundCulling.Init();
             Time.Init();
             Sky.Init();
+            _xrPlayerManager.Init();
             _xrSimulatorManager.Init();
             Scene.Init();
             Routines.Init();
 
             // Just in case we forgot to disable it in scene view. ;-)
             invalidInstallationPathMessage.SetActive(false);
-
-            // Load the player controller upon MainMenu loaded
-            GlobalEventDispatcher.MainMenuSceneLoaded.AddListener(delegate
-            {
-                GUZContext.InteractionAdapter.CreatePlayerController(SceneManager.GetActiveScene());
-            });
         }
 
         private void Update()
