@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using GUZ.Core.Caches;
 using GUZ.Core.Extensions;
+using GUZ.Core;
 using JetBrains.Annotations;
 using UnityEngine;
 using ZenKit;
@@ -41,7 +42,7 @@ namespace GUZ.Core.Morph
         {
             var newMorph = new MorphAnimationData();
 
-            newMorph.MeshMetadata = AssetCache.TryGetMmb(morphMeshName);
+            newMorph.MeshMetadata = ResourceLoader.TryGetMorphMesh(morphMeshName);
             newMorph.AnimationMetadata = animationName == null
                 ? newMorph.MeshMetadata.Animations.First()
                 : newMorph.MeshMetadata.Animations.First(anim => anim.Name.EqualsIgnoreCase(animationName));

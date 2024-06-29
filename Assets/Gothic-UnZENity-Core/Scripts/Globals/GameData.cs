@@ -16,13 +16,9 @@ namespace GUZ.Core.Globals
 {
     public static class GameData
     {
-        public static Vfs Vfs;
         public static DaedalusVm GothicVm;
         public static DaedalusVm SfxVm; // Sound FX
         public static DaedalusVm PfxVm; // Particle FX
-        public static DaedalusVm MusicVm;
-
-        public static WorldData World;
 
         // Lookup optimized WayNet data
         public static readonly Dictionary<string, WayNet_WayPoint> WayPoints = new();
@@ -56,11 +52,8 @@ namespace GUZ.Core.Globals
         // FIXME Find a better place for the NPC routines. E.g. on the NPCs itself? But we e.g. need to have a static NPCObject List to do so.
         public static Dictionary<int, List<RoutineData>> npcRoutines = new();
 
-        public static Scene? WorldScene;
-
         public static void Reset()
         {
-            World = null;
             WayPoints.Clear();
             FreePoints.Clear();
             VobsInteractable.Clear();
@@ -69,11 +62,8 @@ namespace GUZ.Core.Globals
         public static void Dispose()
         {
             // Needs to be reset as Unity won't clear static variables when closing game in EditorMode.
-            Vfs = null;
-            World = null;
             GothicVm = null;
             SfxVm = null;
-            MusicVm = null;
             WayPoints.Clear();
             FreePoints.Clear();
             VobsInteractable.Clear();

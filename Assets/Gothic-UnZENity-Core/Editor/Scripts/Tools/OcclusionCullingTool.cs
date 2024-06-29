@@ -32,11 +32,9 @@ namespace GUZ.Core.Editor.Tools
             if (Application.isPlaying)
                 return;
 
-            if (SettingsManager.GameSettings == null)
-                SettingsManager.LoadGameSettings();
-
-            GUZBootstrapper.SetLanguage();
-            GUZBootstrapper.MountVfs(SettingsManager.GameSettings.GothicIPath);
+            var settings = GameSettings.Load();
+            GUZBootstrapper.SetLanguage(settings.GothicILanguage);
+            ResourceLoader.Init(settings.GothicIPath);
 
             WorldCreator.LoadEditorWorld();
         }

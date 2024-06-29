@@ -10,7 +10,7 @@ using UnityEngine.UI;
 
 namespace GUZ.Core.Manager
 {
-    public class LoadingManager : SingletonBehaviour<LoadingManager>
+    public class LoadingManager
     {
         public enum LoadingProgressType
         {
@@ -25,10 +25,10 @@ namespace GUZ.Core.Manager
         private const string loadingSceneName = "Loading";
 
         private Dictionary<LoadingProgressType, float> progressByType = new Dictionary<LoadingProgressType, float>();
-
-        private void Start()
+        
+        public void Init()
         {
-            GUZEvents.LoadingSceneLoaded.AddListener(OnLoadingSceneLoaded);
+            GlobalEventDispatcher.LoadingSceneLoaded.AddListener(OnLoadingSceneLoaded);
 
             // Initializing the Dictionary with the default progress (which is 0) for each type
             foreach (LoadingProgressType progressType in Enum.GetValues(typeof(LoadingProgressType)))
@@ -64,10 +64,12 @@ namespace GUZ.Core.Manager
         {
             var scene = SceneManager.GetSceneByName(Constants.SceneLoading);
             var sphere = scene.GetRootGameObjects().FirstOrDefault(go => go.name == "LoadingSphere");
-            sphere.GetComponent<MeshRenderer>().material = TextureManager.I.loadingSphereMaterial;
-            sphere.FindChildRecursively("LoadingImage").GetComponent<Image>().material = TextureManager.I.gothicLoadingMenuMaterial;
-            sphere.FindChildRecursively("ProgressBackground").gameObject.GetComponent<Image>().material = TextureManager.I.loadingBarBackgroundMaterial;
-            sphere.FindChildRecursively("ProgressBar").gameObject.GetComponent<Image>().material = TextureManager.I.loadingBarMaterial;
+
+            var tm = GameGlobals.Textures;
+            sphere.GetComponent<MeshRenderer>().material = tm.loadingSphereMaterial;
+            sphere.FindChildRecursively("LoadingImage").GetComponent<Image>().material = tm.gothicLoadingMenuMaterial;
+            sphere.FindChildRecursively("ProgressBackground").gameObject.GetComponent<Image>().material = tm.loadingBarBackgroundMaterial;
+            sphere.FindChildRecursively("ProgressBar").gameObject.GetComponent<Image>().material = tm.loadingBarMaterial;
         }
 
         private float CalculateOverallProgress()

@@ -7,6 +7,7 @@ namespace GUZ.Core.Context
     {
         string GetContextName();
         GameObject CreatePlayerController(Scene scene);
+        void CreateXRDeviceSimulator();
         void AddClimbingComponent(GameObject go);
         void AddItemComponent(GameObject go, bool isLab = false);
     }

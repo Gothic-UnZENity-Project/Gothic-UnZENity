@@ -3,6 +3,7 @@ using System.Reflection;
 using GUZ.Core.Caches;
 using GUZ.Core.Globals;
 using GUZ.Core.Util;
+using GUZ.Core;
 using TMPro;
 using UnityEngine;
 using UnityEngine.TextCore;
@@ -10,7 +11,7 @@ using Constants = GUZ.Core.Globals.Constants;
 
 namespace GUZ.Core.Manager
 {
-    public class FontManager : SingletonBehaviour<FontManager>
+    public class FontManager : MonoBehaviour
     {
         public TMP_FontAsset DefaultFont;
 
@@ -24,7 +25,7 @@ namespace GUZ.Core.Manager
         {
             if (LookupCache.fontCache.TryGetValue(fontName.ToUpper(), out TMP_SpriteAsset data))
                 return data;
-            var font = AssetCache.TryGetFont(fontName.ToUpper());
+            var font = ResourceLoader.TryGetFont(fontName.ToUpper());
             var fontTexture = TextureCache.TryGetTexture(fontName);
 
             TMP_SpriteAsset spriteAsset = ScriptableObject.CreateInstance<TMP_SpriteAsset>();

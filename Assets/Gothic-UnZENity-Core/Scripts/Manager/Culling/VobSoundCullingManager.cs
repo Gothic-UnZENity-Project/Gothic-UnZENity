@@ -1,25 +1,35 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using GUZ.Core.Debugging;
 using GUZ.Core.Globals;
-using GUZ.Core.Util;
 using JetBrains.Annotations;
 using UnityEngine;
 
 namespace GUZ.Core.Manager.Culling
 {
-    public class VobSoundCullingManager : SingletonBehaviour<VobSoundCullingManager>
+    public class VobSoundCullingManager
     {
         // Stored for resetting after world switch
         private CullingGroup soundCullingGroup;
 
         // Stored for later index mapping SphereIndex => GOIndex
         private readonly List<GameObject> objects = new();
-        
-        private void Start()
+
+        private readonly bool _featureEnable;
+
+        public VobSoundCullingManager(GameConfiguration config)
         {
-            GUZEvents.GeneralSceneUnloaded.AddListener(PreWorldCreate);
-            GUZEvents.GeneralSceneLoaded.AddListener(PostWorldCreate);
+            _featureEnable = config.enableSoundCulling;
+        }
+
+        public void Init()
+        {
+            if (!_featureEnable)
+            {
+                return;
+            }
+            GlobalEventDispatcher.GeneralSceneUnloaded.AddListener(PreWorldCreate);
+            GlobalEventDispatcher.GeneralSceneLoaded.AddListener(PostWorldCreate);
 
             // Unity demands CullingGroups to be created in Awake() or Start() earliest.
             soundCullingGroup = new();
@@ -49,7 +59,7 @@ namespace GUZ.Core.Manager.Culling
         /// </summary>
         public void PrepareSoundCulling([ItemCanBeNull] List<GameObject> gameObjects)
         {
-            if (!FeatureFlags.I.enableSoundCulling)
+            if (!_featureEnable)
                 return;
             
             var spheres = new List<BoundingSphere>();
@@ -83,8 +93,12 @@ namespace GUZ.Core.Manager.Culling
             soundCullingGroup.SetDistanceReferencePoint(mainCamera.transform);
         }
         
-        private void OnDestroy()
+        public void Destroy()
         {
+            if (!_featureEnable)
+            {
+                return;
+            }
             soundCullingGroup.Dispose();
         }
     }
