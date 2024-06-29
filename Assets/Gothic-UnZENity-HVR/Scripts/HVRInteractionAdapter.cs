@@ -35,6 +35,23 @@ namespace GUZ.HVR
             // world scene and removed whenever we change the world.
             SceneManager.MoveGameObjectToScene(go, scene);
 
+            if (Constants.SceneMainMenu == scene.name)
+            {
+                var controllerComp = go.GetComponentInChildren<HVRPlayerController>();
+
+                // Disable physics
+                controllerComp.Gravity = 0f;
+                controllerComp.MaxFallSpeed = 0f;
+
+                // Disable movement
+                controllerComp.MoveSpeed = 0f;
+                controllerComp.RunSpeed = 0f;
+
+                // Disable rotation
+                controllerComp.SmoothTurnSpeed = 0f;
+                controllerComp.SnapAmount = 0f;
+            }
+
             return go;
         }
 
@@ -56,16 +73,20 @@ namespace GUZ.HVR
 
         public void CreateXRDeviceSimulator()
         {
+            // As we reference components from HVRPlayer inside HVRSimulator, we need to create the SimulatorGO on the same scene.
             var generalScene = SceneManager.GetSceneByName(Constants.SceneGeneral);
-            var simulatorGo = new GameObject("HVR-XRDeviceSimulator");
-            // We assume, that this Component is set inside the HVR root for a player rig.
-            var playerRig = generalScene.GetRootGameObjects().First(i => i.GetComponentInChildren<HVRPlayerManager>());
+            var mainMenuScene = SceneManager.GetSceneByName(Constants.SceneMainMenu);
+            var currentScene = generalScene.IsValid() ? generalScene : mainMenuScene;
+
+            var simulatorGo = new GameObject("HVR - XRDeviceSimulator");
+            // We assume, that this Component (HVRPlayerManager) is set inside the HVR root for a player rig.
+            var playerRig = currentScene.GetRootGameObjects().First(i => i.GetComponentInChildren<HVRPlayerManager>());
 
             simulatorGo.AddComponent<HVRBodySimulator>().Rig = playerRig;
             simulatorGo.AddComponent<HVRHandsSimulator>().Rig = playerRig;
             simulatorGo.AddComponent<HVRSimulatorControlsGUI>();
 
-            SceneManager.MoveGameObjectToScene(simulatorGo, generalScene);
+            SceneManager.MoveGameObjectToScene(simulatorGo, currentScene);
         }
 
         public void AddClimbingComponent(GameObject go)
