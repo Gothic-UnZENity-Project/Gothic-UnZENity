@@ -39,14 +39,16 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
         public virtual void AnimationSfxEventCallback(SerializableEventSoundEffect sfxData)
         {
             var clip = VobHelper.GetSoundClip(sfxData.Name);
-            Props.npcSound.clip = clip;
-            Props.npcSound.maxDistance = sfxData.Range.ToMeter();
-            Props.npcSound.Play();
+            Props.NpcSound.clip = clip;
+            Props.NpcSound.maxDistance = sfxData.Range.ToMeter();
+            Props.NpcSound.Play();
 
             if (sfxData.EmptySlot)
+            {
                 Debug.LogWarning($"PxEventSfxData.emptySlot not yet implemented: {sfxData.Name}");
+            }
         }
-        
+
         public virtual void AnimationEventCallback(SerializableEventTag data)
         {
             switch (data.Type)
@@ -59,7 +61,8 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
                     RemoveItem();
                     break;
                 case EventType.TorchInventory:
-                    Debug.Log("EventType.inventory_torch: I assume this means: if torch is in inventory, then put it out. But not really sure. Need a NPC with real usage of it to predict right.");
+                    Debug.Log(
+                        "EventType.inventory_torch: I assume this means: if torch is in inventory, then put it out. But not really sure. Need a NPC with real usage of it to predict right.");
                     break;
                 default:
                     Debug.LogWarning($"EventType.type {data.Type} not yet supported.");
@@ -69,35 +72,39 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
 
         public virtual void AnimationMorphEventCallback(SerializableEventMorphAnimation data)
         {
-            var type = Props.headMorph.GetAnimationTypeByName(data.Animation);
+            var type = Props.HeadMorph.GetAnimationTypeByName(data.Animation);
 
-            Props.headMorph.StartAnimation(Props.BodyData.Head, type);
+            Props.HeadMorph.StartAnimation(Props.BodyData.Head, type);
         }
-        
+
         protected virtual void InsertItem(string slot1, string slot2)
         {
             if (slot2.Any())
+            {
                 throw new Exception("Slot 2 is set but not yet handled by InsertItem as AnimationEvent.");
+            }
 
             var slotGo = NpcGo.FindChildRecursively(slot1);
-            
-            VobCreator.CreateItem(Props.currentItem, slotGo);
 
-            Props.usedItemSlot = slot1;
+            VobCreator.CreateItem(Props.CurrentItem, slotGo);
+
+            Props.UsedItemSlot = slot1;
         }
 
         private void RemoveItem()
         {
             // Some animations need to force remove items, some not.
-            if (Props.usedItemSlot == "")
+            if (Props.UsedItemSlot == "")
+            {
                 return;
+            }
 
-            var slotGo = NpcGo.FindChildRecursively(Props.usedItemSlot);
+            var slotGo = NpcGo.FindChildRecursively(Props.UsedItemSlot);
             var item = slotGo!.transform.GetChild(0);
 
             Object.Destroy(item.gameObject);
         }
-        
+
         /// <summary>
         /// Most of our animations are fine if we just set this flag and return it via IsFinished()
         /// If an animation has also a next animation set, we will call it automatically.
@@ -110,13 +117,13 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             if (eventData.NextAnimation.Any())
             {
                 PhysicsHelper.DisablePhysicsForNpc(Props);
-                AnimationCreator.PlayAnimation(Props.mdsNames, eventData.NextAnimation, Props.go);
+                AnimationCreator.PlayAnimation(Props.MdsNames, eventData.NextAnimation, Props.Go);
             }
             // Play Idle animation
             // But only if NPC isn't using an item right now. Otherwise breathing will spawn hand to hips which looks wrong when (e.g.) drinking beer.
-            else if (Props.currentItem < 0)
+            else if (Props.CurrentItem < 0)
             {
-                var animName = Props.walkMode switch
+                var animName = Props.WalkMode switch
                 {
                     VmGothicEnums.WalkMode.Walk => "S_WALK",
                     VmGothicEnums.WalkMode.Sneak => "S_SNEAK",
@@ -124,9 +131,11 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
                     VmGothicEnums.WalkMode.Dive => "S_DIVE",
                     _ => "S_RUN"
                 };
-                var idleAnimPlaying = AnimationCreator.PlayAnimation(Props.mdsNames, animName, Props.go, true);
+                var idleAnimPlaying = AnimationCreator.PlayAnimation(Props.MdsNames, animName, Props.Go, true);
                 if (!idleAnimPlaying)
+                {
                     Debug.LogError($"Animation {animName} not found for {NpcGo.name} on {this}.");
+                }
             }
 
             IsFinishedFlag = true;
@@ -137,7 +146,8 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
         /// Can be used to handle frequent things internally.
         /// </summary>
         public virtual void Tick()
-        { }
+        {
+        }
 
         /// <summary>
         /// Most of our animations are fine if we just set this flag and return it via IsFinished()

@@ -6,9 +6,9 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
 {
     public class GoToNpc : AbstractWalkAnimationAction
     {
-        private Transform destinationTransform;
-        private int otherId => Action.Int0;
-        private int otherIndex => Action.Int1;
+        private Transform _destinationTransform;
+        private int OtherId => Action.Int0;
+        private int OtherIndex => Action.Int1;
 
         public GoToNpc(AnimationAction action, GameObject npcGo) : base(action, npcGo)
         {
@@ -18,12 +18,12 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
         {
             base.Start();
 
-            destinationTransform = LookupCache.NpcCache[otherIndex].transform;
+            _destinationTransform = LookupCache.NpcCache[OtherIndex].transform;
         }
 
         protected override Vector3 GetWalkDestination()
         {
-            return destinationTransform.position;
+            return _destinationTransform.position;
         }
 
 
@@ -36,9 +36,9 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
 
         protected override void OnDestinationReached()
         {
-            AnimationEndEventCallback(new SerializableEventEndSignal(nextAnimation: ""));
+            AnimationEndEventCallback(new SerializableEventEndSignal(""));
 
-            walkState = WalkState.Done;
+            State = WalkState.Done;
             IsFinishedFlag = true;
         }
     }

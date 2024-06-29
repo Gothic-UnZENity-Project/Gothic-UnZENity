@@ -4,6 +4,6 @@ namespace GUZ.Core.Properties
 {
     public abstract class AbstractProperties : MonoBehaviour
     {
-        public GameObject go => gameObject;
+        public GameObject Go => gameObject;
     }
 }

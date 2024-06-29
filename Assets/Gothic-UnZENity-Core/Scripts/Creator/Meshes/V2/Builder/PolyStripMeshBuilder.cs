@@ -1,22 +1,21 @@
-
 using GUZ.Core.Caches;
-using GUZ.Core.Globals;
 using GUZ.Core.Extensions;
+using GUZ.Core.Globals;
 using UnityEngine;
 
 namespace GUZ.Core.Creator.Meshes.V2.Builder
 {
     public class PolyStripMeshBuilder : AbstractMeshBuilder
     {
-        private int numberOfSegments;
-        private Vector3 startPoint;
-        private Vector3 endPoint;
+        private int _numberOfSegments;
+        private Vector3 _startPoint;
+        private Vector3 _endPoint;
 
         public void SetPolyStripData(int numberSegments, Vector3 start, Vector3 end)
         {
-            numberOfSegments = numberSegments;
-            startPoint = start;
-            endPoint = end;
+            _numberOfSegments = numberSegments;
+            _startPoint = start;
+            _endPoint = end;
         }
 
         public override GameObject Build()
@@ -32,34 +31,34 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
                 material.mainTexture = texture;
             }
 
-            var direction = (endPoint - startPoint);
-            var segmentLength = direction.magnitude / numberOfSegments;
+            var direction = _endPoint - _startPoint;
+            var segmentLength = direction.magnitude / _numberOfSegments;
             direction.Normalize();
 
             var mesh = new Mesh();
             RootGo.GetComponent<MeshFilter>().mesh = mesh;
             RootGo.GetComponent<MeshRenderer>().material = material; // Set the material
 
-            var vertices = new Vector3[(numberOfSegments + 1) * 2];
-            var triangles = new int[numberOfSegments * 6];
-            var uv = new Vector2[(numberOfSegments + 1) * 2];
+            var vertices = new Vector3[(_numberOfSegments + 1) * 2];
+            var triangles = new int[_numberOfSegments * 6];
+            var uv = new Vector2[(_numberOfSegments + 1) * 2];
 
 
-            for (var i = 0; i <= numberOfSegments; i++)
+            for (var i = 0; i <= _numberOfSegments; i++)
             {
-                var segmentStart = startPoint + direction * (segmentLength * i);
+                var segmentStart = _startPoint + direction * (segmentLength * i);
 
                 vertices[i * 2] = segmentStart;
-                vertices[i * 2 + 1] = (segmentStart + new Vector3(0, 30, 0));
+                vertices[i * 2 + 1] = segmentStart + new Vector3(0, 30, 0);
 
 
-                uv[i * 2] = new Vector2(0, (float)i / numberOfSegments);
-                uv[i * 2 + 1] = new Vector2(1, (float)i / numberOfSegments);
+                uv[i * 2] = new Vector2(0, (float)i / _numberOfSegments);
+                uv[i * 2 + 1] = new Vector2(1, (float)i / _numberOfSegments);
 
                 uv[i * 2].y = 1 - uv[i * 2].y;
                 uv[i * 2 + 1].y = 1 - uv[i * 2 + 1].y;
 
-                if (i < numberOfSegments)
+                if (i < _numberOfSegments)
                 {
                     var baseIndex = i * 6;
                     triangles[baseIndex] = i * 2;

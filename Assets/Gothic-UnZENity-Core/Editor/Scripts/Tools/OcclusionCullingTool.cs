@@ -30,10 +30,12 @@ namespace GUZ.Core.Editor.Tools
         {
             // Do not show Window when game is started.
             if (Application.isPlaying)
+            {
                 return;
+            }
 
             var settings = GameSettings.Load();
-            GUZBootstrapper.SetLanguage(settings.GothicILanguage);
+            GuzBootstrapper.SetLanguage(settings.GothicILanguage);
             ResourceLoader.Init(settings.GothicIPath);
 
             WorldCreator.LoadEditorWorld();
@@ -43,7 +45,9 @@ namespace GUZ.Core.Editor.Tools
         {
             // Do not show Window when game is started.
             if (Application.isPlaying)
+            {
                 Close();
+            }
         }
 
         private void OnDestroy()

@@ -15,7 +15,7 @@ namespace GUZ.Core.Manager
             // Load the player controller upon MainMenu loaded
             GlobalEventDispatcher.MainMenuSceneLoaded.AddListener(delegate
             {
-                GUZContext.InteractionAdapter.CreatePlayerController(SceneManager.GetActiveScene());
+                GuzContext.InteractionAdapter.CreatePlayerController(SceneManager.GetActiveScene());
             });
         }
     }

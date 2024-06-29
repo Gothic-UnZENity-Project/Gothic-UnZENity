@@ -1,20 +1,16 @@
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using GUZ.Core.Caches;
 using GUZ.Core.Context;
-using GUZ.Core.Debugging;
 using GUZ.Core.Globals;
-using GUZ.Core.Manager.Settings;
 using GUZ.Core.Vm;
-using GUZ.Core;
 using ZenKit;
 using ZenKit.Daedalus;
 using Debug = UnityEngine.Debug;
 
 namespace GUZ.Core.Manager
 {
-    public class GUZBootstrapper
+    public class GuzBootstrapper
     {
         public static void OnApplicationQuit()
         {
@@ -24,20 +20,20 @@ namespace GUZ.Core.Manager
             LookupCache.Dispose();
             MorphMeshCache.Dispose();
         }
-        
-        public static void BootGothicUnZENity(GameConfiguration config, string g1Dir, string language)
+
+        public static void BootGothicUnZeNity(GameConfiguration config, string g1Dir, string language)
         {
             var watch = Stopwatch.StartNew();
 
-            GUZContext.SetContext(config.gameControls);
-            
+            GuzContext.SetContext(config.GameControls);
+
             SetLanguage(language);
             LoadGothicVm(g1Dir);
             LoadDialogs();
             LoadSfxVm(g1Dir);
             LoadPfxVm(g1Dir);
             LoadFonts();
-            
+
             watch.Stop();
             Debug.Log($"Time spent for Bootstrapping ZenKit: {watch.Elapsed}");
 
@@ -66,11 +62,11 @@ namespace GUZ.Core.Manager
             }
         }
 
-        
+
         private static void LoadGothicVm(string g1Dir)
         {
             GameData.GothicVm = ResourceLoader.TryGetDaedalusVm("GOTHIC");
-            
+
             NpcHelper.LoadHero();
 
             VmGothicExternals.RegisterExternals();
@@ -95,7 +91,6 @@ namespace GUZ.Core.Manager
 
         private static void LoadPfxVm(string g1Dir)
         {
-            
             GameData.PfxVm = ResourceLoader.TryGetDaedalusVm("PARTICLEFX");
         }
 

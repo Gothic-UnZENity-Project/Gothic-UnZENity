@@ -14,10 +14,10 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             var ai = Props.GetComponent<AiHandler>();
 
             ai.ClearState(false);
-            
+
             var routine = Props.GetComponent<Routine>().CurrentRoutine;
-            
-            ai.StartRoutine(routine.action, routine.waypoint);
+
+            ai.StartRoutine(routine.Action, routine.Waypoint);
 
             IsFinishedFlag = true;
         }

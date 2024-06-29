@@ -15,7 +15,7 @@ namespace GUZ.Lab.AnimationActionMocks
         {
             var itemSymbol = GameData.GothicVm.GetSymbolByName(Action.String0);
 
-            VmGothicExternals.CreateInvItem(Props.npcInstance, itemSymbol!.Index);
+            VmGothicExternals.CreateInvItem(Props.NpcInstance, itemSymbol!.Index);
 
             base.Start();
         }

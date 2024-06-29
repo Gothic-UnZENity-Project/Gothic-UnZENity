@@ -14,7 +14,7 @@ namespace GUZ.Core
 
         public static readonly UnityEvent MainMenuSceneLoaded = new();
         public static readonly UnityEvent MainMenuSceneUnloaded = new();
-        
+
         public static readonly UnityEvent LoadingSceneLoaded = new();
         public static readonly UnityEvent LoadingSceneUnloaded = new();
 
@@ -24,11 +24,12 @@ namespace GUZ.Core
         /// We therefore provide it to the event.
         /// </summary>
         public static readonly UnityEvent<GameObject> GeneralSceneLoaded = new();
+
         public static readonly UnityEvent GeneralSceneUnloaded = new();
-        
+
         public static readonly UnityEvent WorldSceneLoaded = new();
         public static readonly UnityEvent WorldSceneUnloaded = new();
-        
+
         public static readonly UnityEvent<DateTime> GameTimeSecondChangeCallback = new();
         public static readonly UnityEvent<DateTime> GameTimeMinuteChangeCallback = new();
         public static readonly UnityEvent<DateTime> GameTimeHourChangeCallback = new();

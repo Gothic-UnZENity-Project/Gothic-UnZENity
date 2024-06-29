@@ -5,19 +5,20 @@ using GUZ.Core.Manager;
 using GUZ.Core.Util;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Serialization;
 using ZenKit;
 
 namespace GUZ.Core.Player.Menu
 {
-    public class SaveGameMenu: SingletonBehaviour<SaveGameMenu>
+    public class SaveGameMenu : SingletonBehaviour<SaveGameMenu>
     {
         public GameObject[] SaveSlots;
 
-        public GameObject thumbnail;
-        public TMP_Text world;
-        public TMP_Text savedAt;
-        public TMP_Text gameTime;
-        public TMP_Text version;
+        [FormerlySerializedAs("thumbnail")] public GameObject Thumbnail;
+        [FormerlySerializedAs("world")] public TMP_Text World;
+        [FormerlySerializedAs("savedAt")] public TMP_Text SavedAt;
+        [FormerlySerializedAs("gameTime")] public TMP_Text GameTime;
+        [FormerlySerializedAs("version")] public TMP_Text Version;
 
         private readonly SaveGame[] _saves = new SaveGame[15];
 
@@ -26,14 +27,15 @@ namespace GUZ.Core.Player.Menu
         /// </summary>
         private void Start()
         {
-            thumbnail.GetComponent<MeshRenderer>().material = GameGlobals.Textures.GetEmptyMaterial(MaterialExtension.BlendMode.Opaque);
+            Thumbnail.GetComponent<MeshRenderer>().material =
+                GameGlobals.Textures.GetEmptyMaterial(MaterialExtension.BlendMode.Opaque);
 
             var g1Dir = GameGlobals.Settings.GothicIPath;
             var saveGameListPath = Path.GetFullPath(Path.Join(g1Dir, "Saves"));
 
             foreach (var fullPath in Directory.EnumerateDirectories(saveGameListPath))
             {
-                var saveGameFolderName = Path.GetFullPath(fullPath).Remove(0, saveGameListPath.Length+1);
+                var saveGameFolderName = Path.GetFullPath(fullPath).Remove(0, saveGameListPath.Length + 1);
 
                 if (!saveGameFolderName.StartsWith("savegame"))
                 {
@@ -62,22 +64,22 @@ namespace GUZ.Core.Player.Menu
                 return;
             }
 
-            thumbnail.GetComponent<MeshRenderer>().material.mainTexture
-                = TextureCache.TryGetTexture(save.Thumbnail, "savegame_"+save.Metadata.Title);
-            thumbnail.SetActive(true);
-            world.text = save.Metadata.World;
-            savedAt.text = save.Metadata.SaveDate;
-            gameTime.text = $"{save.Metadata.TimeDay} - {save.Metadata.TimeHour}:{save.Metadata.TimeMinute}";
-            version.text = save.Metadata.VersionAppName;
+            Thumbnail.GetComponent<MeshRenderer>().material.mainTexture
+                = TextureCache.TryGetTexture(save.Thumbnail, "savegame_" + save.Metadata.Title);
+            Thumbnail.SetActive(true);
+            World.text = save.Metadata.World;
+            SavedAt.text = save.Metadata.SaveDate;
+            GameTime.text = $"{save.Metadata.TimeDay} - {save.Metadata.TimeHour}:{save.Metadata.TimeMinute}";
+            Version.text = save.Metadata.VersionAppName;
         }
 
         public void OnLoadGameSlotPointerExit()
         {
-            thumbnail.SetActive(false);
-            world.text = "";
-            savedAt.text = "";
-            gameTime.text = "";
-            version.text = "";
+            Thumbnail.SetActive(false);
+            World.text = "";
+            SavedAt.text = "";
+            GameTime.text = "";
+            Version.text = "";
         }
 
         public void OnLoadGameSlotClick(int id)

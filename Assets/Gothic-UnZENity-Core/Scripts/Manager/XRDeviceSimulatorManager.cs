@@ -1,6 +1,5 @@
 using System;
 using GUZ.Core.Context;
-using UnityEngine;
 
 namespace GUZ.Core.Manager
 {
@@ -13,15 +12,12 @@ namespace GUZ.Core.Manager
         public XRDeviceSimulatorManager(GameConfiguration config)
         {
             I = this;
-            _featureEnable = config.enableDeviceSimulator;
+            _featureEnable = config.EnableDeviceSimulator;
         }
 
         public void Init()
         {
-            GlobalEventDispatcher.GeneralSceneLoaded.AddListener(delegate(GameObject playerGo)
-            {
-                AddXRDeviceSimulator();
-            });
+            GlobalEventDispatcher.GeneralSceneLoaded.AddListener(delegate { AddXRDeviceSimulator(); });
             GlobalEventDispatcher.MainMenuSceneLoaded.AddListener(AddXRDeviceSimulator);
         }
 
@@ -32,7 +28,7 @@ namespace GUZ.Core.Manager
                 return;
             }
 
-            GUZContext.InteractionAdapter.CreateXRDeviceSimulator();
+            GuzContext.InteractionAdapter.CreateXRDeviceSimulator();
         }
     }
 }

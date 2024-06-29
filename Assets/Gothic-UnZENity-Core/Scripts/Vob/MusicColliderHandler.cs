@@ -11,7 +11,7 @@ namespace GUZ.Core.Vob
             {
                 return;
             }
-            
+
             // FIXME - We need to load the currently active music when spawned. Currently we need to walk 1cm to trigger collider.
             GlobalEventDispatcher.MusicZoneEntered.Invoke(gameObject);
         }

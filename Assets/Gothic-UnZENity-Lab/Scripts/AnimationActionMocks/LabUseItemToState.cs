@@ -7,7 +7,7 @@ namespace GUZ.Lab.AnimationActionMocks
 {
     public class LabUseItemToState : UseItemToState
     {
-        public LabUseItemToState(AnimationAction action, GameObject npcGo): base(CalculateItemIndex(action), npcGo)
+        public LabUseItemToState(AnimationAction action, GameObject npcGo) : base(CalculateItemIndex(action), npcGo)
         {
         }
 
@@ -15,11 +15,10 @@ namespace GUZ.Lab.AnimationActionMocks
         {
             var item = GameData.GothicVm.GetSymbolByName(action.String0);
 
-            return new(
+            return new AnimationAction(
                 int0: item!.Index,
                 int1: action.Int1
             );
-
         }
     }
 }

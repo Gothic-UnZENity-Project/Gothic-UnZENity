@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using GUZ.Core.Caches;
 using GUZ.Core.Creator.Meshes.V2;
@@ -19,21 +20,23 @@ namespace GUZ.Core.Creator
 {
     public static class NpcCreator
     {
-        private static GameObject npcRootGo;
-        private static DaedalusVm vm => GameData.GothicVm;
+        private static GameObject _npcRootGo;
+        private static DaedalusVm Vm => GameData.GothicVm;
 
         // Hint - If this scale ratio isn't looking well, feel free to change it.
-        private const float fatnessScale = 0.1f;
+        private const float _fatnessScale = 0.1f;
 
         private static GameObject GetRootGo()
         {
             // GO need to be created after world is loaded. Otherwise we will spawn NPCs inside Bootstrap.unity
-            if (npcRootGo != null)
-                return npcRootGo;
-            
-            npcRootGo = new GameObject("NPCs");
-            
-            return npcRootGo;
+            if (_npcRootGo != null)
+            {
+                return _npcRootGo;
+            }
+
+            _npcRootGo = new GameObject("NPCs");
+
+            return _npcRootGo;
         }
 
         private static NpcProperties GetProperties(NpcInstance npc)
@@ -43,7 +46,7 @@ namespace GUZ.Core.Creator
 
         private static GameObject GetNpcGo(NpcInstance npcInstance)
         {
-            return GetProperties(npcInstance).go;
+            return GetProperties(npcInstance).Go;
         }
 
         /// <summary>
@@ -70,7 +73,7 @@ namespace GUZ.Core.Creator
         {
             var newNpc = ResourceLoader.TryGetPrefabObject(PrefabType.Npc);
             var props = newNpc.GetComponent<NpcProperties>();
-            var npcSymbol = vm.GetSymbolByIndex(npcInstanceIndex);
+            var npcSymbol = Vm.GetSymbolByIndex(npcInstanceIndex);
 
             if (npcSymbol == null)
             {
@@ -81,11 +84,11 @@ namespace GUZ.Core.Creator
             // Humans are singletons.
             if (LookupCache.NpcCache.TryAdd(npcInstanceIndex, newNpc.GetComponent<NpcProperties>()))
             {
-                props.npcInstance = vm.AllocInstance<NpcInstance>(npcSymbol);
-                vm.InitInstance(props.npcInstance);
+                props.NpcInstance = Vm.AllocInstance<NpcInstance>(npcSymbol);
+                Vm.InitInstance(props.NpcInstance);
 
                 props.Dialogs = GameData.Dialogs.Instances
-                    .Where(dialog => dialog.Npc == props.npcInstance.Index)
+                    .Where(dialog => dialog.Npc == props.NpcInstance.Index)
                     .OrderByDescending(dialog => dialog.Important)
                     .ToList();
             }
@@ -98,42 +101,46 @@ namespace GUZ.Core.Creator
                 props.Copy(origProps);
             }
 
-            if (GameGlobals.Config.spawnNpcInstances.Any() && !GameGlobals.Config.spawnNpcInstances.Contains(props.npcInstance.Id))
+            if (GameGlobals.Config.SpawnNpcInstances.Any() &&
+                !GameGlobals.Config.SpawnNpcInstances.Contains(props.NpcInstance.Id))
             {
-                LookupCache.NpcCache.Remove(props.npcInstance.Index);
+                LookupCache.NpcCache.Remove(props.NpcInstance.Index);
                 Object.Destroy(newNpc);
                 return null;
             }
 
-            newNpc.name = $"{props.npcInstance.GetName(NpcNameSlot.Slot0)} ({props.npcInstance.Id})";
+            newNpc.name = $"{props.NpcInstance.GetName(NpcNameSlot.Slot0)} ({props.NpcInstance.Id})";
 
-            var mdhName = string.IsNullOrEmpty(props.overlayMdhName) ? props.baseMdhName : props.overlayMdhName;
-            MeshFactory.CreateNpc(newNpc.name, props.mdmName, mdhName, props.BodyData, newNpc);
+            var mdhName = string.IsNullOrEmpty(props.OverlayMdhName) ? props.BaseMdhName : props.OverlayMdhName;
+            MeshFactory.CreateNpc(newNpc.name, props.MdmName, mdhName, props.BodyData, newNpc);
             newNpc.SetParent(GetRootGo());
 
             foreach (var equippedItem in props.EquippedItems)
-                MeshFactory.CreateNpcWeapon(newNpc, equippedItem, (VmGothicEnums.ItemFlags)equippedItem.MainFlag, (VmGothicEnums.ItemFlags)equippedItem.Flags);
+            {
+                MeshFactory.CreateNpcWeapon(newNpc, equippedItem, (VmGothicEnums.ItemFlags)equippedItem.MainFlag,
+                    (VmGothicEnums.ItemFlags)equippedItem.Flags);
+            }
 
-            var npcRoutine = props.npcInstance.DailyRoutine;
-            NpcHelper.ExchangeRoutine(newNpc, props.npcInstance, npcRoutine);
+            var npcRoutine = props.NpcInstance.DailyRoutine;
+            NpcHelper.ExchangeRoutine(newNpc, props.NpcInstance, npcRoutine);
 
             return newNpc;
         }
-        
+
         private static void SetSpawnPoint(GameObject npcGo, string spawnPoint)
         {
             WayNetPoint initialSpawnPoint;
 
             // Find the right spawn point based on currently active routine.
-            if (npcGo.GetComponent<Routine>().Routines.Any() && GameGlobals.Config.enableNpcRoutines)
+            if (npcGo.GetComponent<Routine>().Routines.Any() && GameGlobals.Config.EnableNpcRoutines)
             {
-                var routineSpawnPointName = npcGo.GetComponent<Routine>().CurrentRoutine.waypoint;
+                var routineSpawnPointName = npcGo.GetComponent<Routine>().CurrentRoutine.Waypoint;
                 initialSpawnPoint = WayNetHelper.GetWayNetPoint(routineSpawnPointName);
 
                 // Fallback: No WP found? Try one more time with the previous (most likely "earlier") routine waypoint.
                 if (initialSpawnPoint == null)
                 {
-                    routineSpawnPointName = npcGo.GetComponent<Routine>().GetPreviousRoutine().waypoint;
+                    routineSpawnPointName = npcGo.GetComponent<Routine>().GetPreviousRoutine().Waypoint;
                     initialSpawnPoint = WayNetHelper.GetWayNetPoint(routineSpawnPointName);
                 }
             }
@@ -169,7 +176,8 @@ namespace GUZ.Core.Creator
                 for (var angle = 0f; angle < 360f; angle += 36f)
                 {
                     var angleInRadians = angle * Mathf.Deg2Rad;
-                    var offsetPoint = new Vector3(Mathf.Cos(angleInRadians) * testRadius, 0, Mathf.Sin(angleInRadians) * testRadius);
+                    var offsetPoint = new Vector3(Mathf.Cos(angleInRadians) * testRadius, 0,
+                        Mathf.Sin(angleInRadians) * testRadius);
                     var checkPointGroundControl = initialSpawnPointGroundControl + offsetPoint;
 
                     // Check if the point is clear (no obstacles)
@@ -186,50 +194,56 @@ namespace GUZ.Core.Creator
 
             if (!isPositionFound)
             {
-                Debug.LogError($"No suitable spawn point found for NPC {npcGo.name}. Circle search didn't find anything!");
+                Debug.LogError(
+                    $"No suitable spawn point found for NPC {npcGo.name}. Circle search didn't find anything!");
                 return;
             }
 
             // Some data to be used for later.
             if (initialSpawnPoint.IsFreePoint())
+            {
                 npcGo.GetComponent<NpcProperties>().CurrentFreePoint = (FreePoint)initialSpawnPoint;
+            }
             else
+            {
                 npcGo.GetComponent<NpcProperties>().CurrentWayPoint = (WayNet_WayPoint)initialSpawnPoint;
+            }
         }
 
-        public static void ExtTaMin(NpcInstance npcInstance, int startH, int startM, int stopH, int stopM, int action, string waypoint)
+        public static void ExtTaMin(NpcInstance npcInstance, int startH, int startM, int stopH, int stopM, int action,
+            string waypoint)
         {
             var npc = GetNpcGo(npcInstance);
 
             RoutineData routine = new()
             {
-                startH = startH,
-                startM = startM,
-                normalizedStart = (startH % 24) * 60 + startM,
-                stopH = stopH,
-                stopM = stopM,
-                normalizedEnd = (stopH % 24) * 60 + stopM,
-                action = action,
-                waypoint = waypoint
+                StartH = startH,
+                StartM = startM,
+                NormalizedStart = startH % 24 * 60 + startM,
+                StopH = stopH,
+                StopM = stopM,
+                NormalizedEnd = stopH % 24 * 60 + stopM,
+                Action = action,
+                Waypoint = waypoint
             };
 
             npc.GetComponent<Routine>().Routines.Add(routine);
 
             // Add element if key not yet exists.
-            GameData.npcRoutines.TryAdd(npcInstance.Index, new());
-            GameData.npcRoutines[npcInstance.Index].Add(routine);
+            GameData.NpcRoutines.TryAdd(npcInstance.Index, new List<RoutineData>());
+            GameData.NpcRoutines[npcInstance.Index].Add(routine);
         }
 
         public static void ExtMdlSetVisual(NpcInstance npc, string visual)
         {
             var props = GetProperties(npc);
-            props.baseMdsName = visual;
+            props.BaseMdsName = visual;
         }
 
         public static void ExtApplyOverlayMds(NpcInstance npc, string overlayName)
         {
             var props = GetProperties(npc);
-            props.overlayMdsName = overlayName;
+            props.OverlayMdsName = overlayName;
         }
 
         public static void ExtNpcSetTalentSkill(NpcInstance npc, VmGothicEnums.Talent talent, int level)
@@ -248,11 +262,11 @@ namespace GUZ.Core.Creator
             {
                 var armorData = VmInstanceManager.TryGetItemData(data.Armor);
                 props.EquippedItems.Add(VmInstanceManager.TryGetItemData(data.Armor));
-                props.mdmName = armorData.VisualChange;
+                props.MdmName = armorData.VisualChange;
             }
             else
             {
-                props.mdmName = data.Body;
+                props.MdmName = data.Body;
             }
         }
 
@@ -268,9 +282,9 @@ namespace GUZ.Core.Creator
         {
             var npcGo = GetNpcGo(npc);
             var oldScale = npcGo.transform.localScale;
-            var bonusFat = fatness * fatnessScale;
+            var bonusFat = fatness * _fatnessScale;
 
-            npcGo.transform.localScale = new(oldScale.x + bonusFat, oldScale.y, oldScale.z + bonusFat);
+            npcGo.transform.localScale = new Vector3(oldScale.x + bonusFat, oldScale.y, oldScale.z + bonusFat);
         }
 
         public static NpcInstance ExtHlpGetNpc(int instanceId)
@@ -282,22 +296,26 @@ namespace GUZ.Core.Creator
             }
 
 
-            return properties.npcInstance;
+            return properties.NpcInstance;
         }
 
         public static int ExtHlpGetInstanceId(DaedalusInstance instance)
         {
             if (instance == null)
+            {
                 return -1;
+            }
+
             return instance.Index;
         }
 
-        public static void ExtNpcPerceptionEnable(NpcInstance npc, VmGothicEnums.PerceptionType perception, int function)
+        public static void ExtNpcPerceptionEnable(NpcInstance npc, VmGothicEnums.PerceptionType perception,
+            int function)
         {
             var props = GetProperties(npc);
             props.Perceptions[perception] = function;
         }
-        
+
         public static void ExtNpcPerceptionDisable(NpcInstance npc, VmGothicEnums.PerceptionType perception)
         {
             var props = GetProperties(npc);
@@ -307,7 +325,7 @@ namespace GUZ.Core.Creator
         public static void ExtNpcSetPerceptionTime(NpcInstance npc, float time)
         {
             var props = GetProperties(npc);
-            props.perceptionTime = time;
+            props.PerceptionTime = time;
         }
 
         public static void ExtNpcSetTalentValue(NpcInstance npc, VmGothicEnums.Talent talent, int level)

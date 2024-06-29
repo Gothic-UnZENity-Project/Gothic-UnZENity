@@ -5,7 +5,8 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
     public class StartState : AbstractAnimationAction
     {
         public StartState(AnimationAction action, GameObject npcGo) : base(action, npcGo)
-        { }
+        {
+        }
 
         public override void Start()
         {
@@ -13,8 +14,8 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
 
             ai.ClearState(Action.Bool0);
 
-            Props.isStateTimeActive = true;
-            Props.stateTime = 0;
+            Props.IsStateTimeActive = true;
+            Props.StateTime = 0;
 
             ai.StartRoutine(Action.Int0, Action.String0);
         }

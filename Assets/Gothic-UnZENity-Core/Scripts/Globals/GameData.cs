@@ -29,7 +29,8 @@ namespace GUZ.Core.Globals
             public static List<InfoInstance> Instances = new();
             public static bool IsInDialog;
 
-            public static int GestureCount = 0;
+            public static int GestureCount;
+
             public static class CurrentDialog
             {
                 public static InfoInstance Instance;
@@ -46,7 +47,7 @@ namespace GUZ.Core.Globals
         }
 
         // FIXME Find a better place for the NPC routines. E.g. on the NPCs itself? But we e.g. need to have a static NPCObject List to do so.
-        public static Dictionary<int, List<RoutineData>> npcRoutines = new();
+        public static Dictionary<int, List<RoutineData>> NpcRoutines = new();
 
         public static void Reset()
         {

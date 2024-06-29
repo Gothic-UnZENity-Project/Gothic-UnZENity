@@ -14,7 +14,9 @@ namespace GUZ.Core.Globals
         public static readonly Shader ShaderStandard = Shader.Find("Standard");
 
         // Custom GUZ shaders
-        public static readonly Shader ShaderSingleMeshLit = Shader.Find("Lit/SingleMesh"); // For textures like NPCs, _not_ the grouped texture array.
+        // For textures like NPCs, _not_ the grouped texture array.
+        public static readonly Shader ShaderSingleMeshLit = Shader.Find("Lit/SingleMesh");
+
         public static readonly Shader ShaderWorldLit = Shader.Find("Lit/World");
         public static readonly Shader ShaderLitAlphaToCoverage = Shader.Find("Lit/AlphaToCoverage");
         public static readonly Shader ShaderWater = Shader.Find("Lit/Water");
@@ -30,7 +32,9 @@ namespace GUZ.Core.Globals
         //Layer for all Items, specifically to disable collision physics between player and items
         public static LayerMask PlayerLayer = LayerMask.NameToLayer("Player");
         public static LayerMask ItemLayer = LayerMask.NameToLayer("Item");
-        public static LayerMask InteractiveLayer = LayerMask.NameToLayer("Interactive"); //set layer to interactive so we can interact using XR Ray interactor
+
+        // set layer to interactive so we can interact using XR Ray interactor
+        public static LayerMask InteractiveLayer = LayerMask.NameToLayer("Interactive");
 
         // solves some weird interactions between the teleport raycast and collider (musicZone/worldTriggerChange)
         public static LayerMask IgnoreRaycastLayer = LayerMask.NameToLayer("Ignore Raycast");
@@ -44,17 +48,17 @@ namespace GUZ.Core.Globals
         public static int VObPerFrame { get; } = 75;
 
         //Collection of PlayerPref entries for settings
-        public const string moveSpeedPlayerPref = "MoveSpeed";
-        public const string turnSettingPlayerPref = "TurnSetting";
-        public const string musicVolumePlayerPref = "BackgroundMusicVolume";
-        public const string soundEffectsVolumePlayerPref = "SoundEffectsVolume";
-        public static float moveSpeed { get; set; } = 8f;
+        public const string MoveSpeedPlayerPref = "MoveSpeed";
+        public const string TurnSettingPlayerPref = "TurnSetting";
+        public const string MusicVolumePlayerPref = "BackgroundMusicVolume";
+        public const string SoundEffectsVolumePlayerPref = "SoundEffectsVolume";
+        public static float MoveSpeed { get; set; } = 8f;
 
-        public static string selectedWorld { get; set; } = "world.zen";
-        public static string selectedWaypoint { get; set; } = "START";
+        public static string SelectedWorld { get; set; } = "world.zen";
+        public static string SelectedWaypoint { get; set; } = "START";
 
         // We need to set the scale so that collision and NPC animation is starting at the right spot.
-        public static Vector3 VobZSScale = new(0.1f, 0.1f, 0.1f);
+        public static Vector3 VobZsScale = new(0.1f, 0.1f, 0.1f);
 
         // e.g. for NPCs to check if they reached a FreePoint already. Value is based on best guess/testing.
         public const float CloseToThreshold = 0.6f;

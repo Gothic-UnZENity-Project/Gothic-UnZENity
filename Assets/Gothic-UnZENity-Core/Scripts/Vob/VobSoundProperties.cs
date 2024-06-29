@@ -5,7 +5,6 @@ namespace GUZ.Core.Vob
 {
     public class VobSoundProperties : VobProperties
     {
-        public Sound soundData;
-
+        public Sound SoundData;
     }
 }

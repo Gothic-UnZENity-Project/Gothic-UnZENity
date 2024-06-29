@@ -1,194 +1,195 @@
 using System;
 using System.Collections.Generic;
-using GUZ.Core.Editor.Tools;
+using Unity.XR.OpenXR.Features.PICOSupport;
 using UnityEditor;
-using UnityEditor.Build.Reporting;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.XR.OpenXR;
 using UnityEngine.XR.OpenXR.Features.Interactions;
 using UnityEngine.XR.OpenXR.Features.MetaQuestSupport;
-using Pico;
-using Unity.XR.OpenXR.Features.PICOSupport;
 
 namespace GUZ.Core.Editor.Builds.UnityBuildTools
 {
-	public class UnityBuilderAction
+    public class UnityBuilderAction
     {
-        static string[] SCENES = FindEnabledEditorScenes();
-    
-        static readonly string APP_NAME = "Gothic-UnZENity";
-        static readonly string TARGET_DIR = "build";
+        private static string[] SCENES = FindEnabledEditorScenes();
+
+        private static readonly string APP_NAME = "Gothic-UnZENity";
+        private static readonly string TARGET_DIR = "build";
 
 
-		/// <summary>
-		/// Perform Quest Build
-		/// </summary>
-
-		[MenuItem("Gothic-UnZENity/Build/Build Quest")]
-		static void PerformLocalQuestBuild()
-		{
-			bool buildProductionReady = ShowConfirmationPopup("Should the feature flags be set to Production Ready?");
-			PerformQuestBuild(buildProductionReady);
-		}
-
-		static void PerformQuestBuild()
-		{
-			string target_path = TARGET_DIR + "/Quest/" + APP_NAME + ".apk";
-			SetQuestSettings();
-				EditorSceneManager.SaveScene(SceneManager.GetSceneByName("Bootstrap"));
-			GenericBuild(SCENES, target_path, BuildTargetGroup.Android, BuildTarget.Android, BuildOptions.None);
-		}
-
-		static void PerformQuestBuild(bool resetFeatureFlags = true)
+        /// <summary>
+        /// Perform Quest Build
+        /// </summary>
+        [MenuItem("Gothic-UnZENity/Build/Build Quest")]
+        private static void PerformLocalQuestBuild()
         {
-            string target_path = TARGET_DIR + "/Quest/" + APP_NAME + ".apk";
+            var buildProductionReady = ShowConfirmationPopup("Should the feature flags be set to Production Ready?");
+            PerformQuestBuild(buildProductionReady);
+        }
+
+        private static void PerformQuestBuild()
+        {
+            var target_path = TARGET_DIR + "/Quest/" + APP_NAME + ".apk";
+            SetQuestSettings();
+            EditorSceneManager.SaveScene(SceneManager.GetSceneByName("Bootstrap"));
+            GenericBuild(SCENES, target_path, BuildTargetGroup.Android, BuildTarget.Android, BuildOptions.None);
+        }
+
+        private static void PerformQuestBuild(bool resetFeatureFlags = true)
+        {
+            var target_path = TARGET_DIR + "/Quest/" + APP_NAME + ".apk";
             SetQuestSettings();
             if (resetFeatureFlags)
             {
-				EditorSceneManager.SaveScene(SceneManager.GetSceneByName("Bootstrap"));
-			}
-			GenericBuild(SCENES, target_path, BuildTargetGroup.Android, BuildTarget.Android, BuildOptions.None);
+                EditorSceneManager.SaveScene(SceneManager.GetSceneByName("Bootstrap"));
+            }
+
+            GenericBuild(SCENES, target_path, BuildTargetGroup.Android, BuildTarget.Android, BuildOptions.None);
         }
 
-		/// <summary>
-		/// Perform Quest Build
-		/// </summary>
-
-		[MenuItem("Gothic-UnZENity/Build/Build Pico4")]
-		static void PerformLocalPicoBuild()
-		{
-			bool buildProductionReady = ShowConfirmationPopup("Should the feature flags be set to Production Ready?");
-			PerformPicoBuild(buildProductionReady);
-		}
-
-		static void PerformPicoBuild()
-		{
-			string target_path = TARGET_DIR + "/Pico/" + APP_NAME + ".apk";
-			SetPicoSettings();
-				EditorSceneManager.SaveScene(SceneManager.GetSceneByName("Bootstrap"));
-			GenericBuild(SCENES, target_path, BuildTargetGroup.Android, BuildTarget.Android, BuildOptions.None);
-		}
-		static void PerformPicoBuild(bool resetFeatureFlags = true)
-		{
-			string target_path = TARGET_DIR + "/Pico/" + APP_NAME + ".apk";
-            SetPicoSettings();
-			if (resetFeatureFlags)
-			{
-				EditorSceneManager.SaveScene(SceneManager.GetSceneByName("Bootstrap"));
-			}
-			GenericBuild(SCENES, target_path, BuildTargetGroup.Android, BuildTarget.Android, BuildOptions.None);
-		}
-
-		/// <summary>
-		/// Perform Quest Build
-		/// </summary>
-
-		[MenuItem("Gothic-UnZENity/Build/Build PCVR")]
-		static void PerformLocalWindows64Build()
-		{
-			bool buildProductionReady = ShowConfirmationPopup("Should the feature flags be set to Production Ready?");
-			PerformWindows64Build(buildProductionReady);
-		}
-
-		static void PerformWindows64Build()
-		{
-			string target_path = TARGET_DIR + "/Windows64/" + APP_NAME + ".exe";
-				EditorSceneManager.SaveScene(SceneManager.GetSceneByName("Bootstrap"));	
-			GenericBuild(SCENES, target_path, BuildTargetGroup.Standalone, BuildTarget.StandaloneWindows64, BuildOptions.None);
-		}
-		static void PerformWindows64Build(bool resetFeatureFlags = true)
-		{
-			string target_path = TARGET_DIR + "/Windows64/" + APP_NAME + ".exe";
-			if (resetFeatureFlags)
-			{
-				EditorSceneManager.SaveScene(SceneManager.GetSceneByName("Bootstrap"));
-			}
-			GenericBuild(SCENES, target_path, BuildTargetGroup.Standalone, BuildTarget.StandaloneWindows64, BuildOptions.None);
-		}
-
-		static bool ShowConfirmationPopup(string message)
-		{
-			return EditorUtility.DisplayDialog("Confirmation", message, "Yes", "No");
-		}
-
-		private static void GenericBuild(string[] scenes, string target_path, BuildTargetGroup build_target_group, BuildTarget build_target, BuildOptions build_options)
+        /// <summary>
+        /// Perform Quest Build
+        /// </summary>
+        [MenuItem("Gothic-UnZENity/Build/Build Pico4")]
+        private static void PerformLocalPicoBuild()
         {
+            var buildProductionReady = ShowConfirmationPopup("Should the feature flags be set to Production Ready?");
+            PerformPicoBuild(buildProductionReady);
+        }
 
+        private static void PerformPicoBuild()
+        {
+            var target_path = TARGET_DIR + "/Pico/" + APP_NAME + ".apk";
+            SetPicoSettings();
+            EditorSceneManager.SaveScene(SceneManager.GetSceneByName("Bootstrap"));
+            GenericBuild(SCENES, target_path, BuildTargetGroup.Android, BuildTarget.Android, BuildOptions.None);
+        }
+
+        private static void PerformPicoBuild(bool resetFeatureFlags = true)
+        {
+            var target_path = TARGET_DIR + "/Pico/" + APP_NAME + ".apk";
+            SetPicoSettings();
+            if (resetFeatureFlags)
+            {
+                EditorSceneManager.SaveScene(SceneManager.GetSceneByName("Bootstrap"));
+            }
+
+            GenericBuild(SCENES, target_path, BuildTargetGroup.Android, BuildTarget.Android, BuildOptions.None);
+        }
+
+        /// <summary>
+        /// Perform Quest Build
+        /// </summary>
+        [MenuItem("Gothic-UnZENity/Build/Build PCVR")]
+        private static void PerformLocalWindows64Build()
+        {
+            var buildProductionReady = ShowConfirmationPopup("Should the feature flags be set to Production Ready?");
+            PerformWindows64Build(buildProductionReady);
+        }
+
+        private static void PerformWindows64Build()
+        {
+            var target_path = TARGET_DIR + "/Windows64/" + APP_NAME + ".exe";
+            EditorSceneManager.SaveScene(SceneManager.GetSceneByName("Bootstrap"));
+            GenericBuild(SCENES, target_path, BuildTargetGroup.Standalone, BuildTarget.StandaloneWindows64,
+                BuildOptions.None);
+        }
+
+        private static void PerformWindows64Build(bool resetFeatureFlags = true)
+        {
+            var target_path = TARGET_DIR + "/Windows64/" + APP_NAME + ".exe";
+            if (resetFeatureFlags)
+            {
+                EditorSceneManager.SaveScene(SceneManager.GetSceneByName("Bootstrap"));
+            }
+
+            GenericBuild(SCENES, target_path, BuildTargetGroup.Standalone, BuildTarget.StandaloneWindows64,
+                BuildOptions.None);
+        }
+
+        private static bool ShowConfirmationPopup(string message)
+        {
+            return EditorUtility.DisplayDialog("Confirmation", message, "Yes", "No");
+        }
+
+        private static void GenericBuild(string[] scenes, string target_path, BuildTargetGroup build_target_group,
+            BuildTarget build_target, BuildOptions build_options)
+        {
             // Set the target platform for the build
             EditorUserBuildSettings.SwitchActiveBuildTarget(build_target_group, build_target);
-    
+
             // Set BuildPlayerOptions
-            BuildPlayerOptions options = new BuildPlayerOptions();
+            var options = new BuildPlayerOptions();
             options.scenes = scenes;
             options.locationPathName = target_path;
             options.target = build_target;
             options.targetGroup = build_target_group;
             options.options = build_options;
-    
+
             // Build the project
-            BuildReport report = BuildPipeline.BuildPlayer(options);
+            var report = BuildPipeline.BuildPlayer(options);
 
             // TODO: Check GitHub Issue: https://github.com/game-ci/unity-builder/issues/563
             Debug.Log("Logging fake Build results so that the build via game-ci/unity-builder does not fail...");
-            Debug.Log($"###########################{Environment.NewLine}#      Build results      #{Environment.NewLine}###########################{Environment.NewLine}" +
-            $"{Environment.NewLine}Duration: 00:00:00.0000000{Environment.NewLine}Warnings: 0{Environment.NewLine}Errors: 0{Environment.NewLine}Size: 0 bytes{Environment.NewLine}{Environment.NewLine}{Environment.NewLine}Build succeeded!");
+            Debug.Log(
+                $"###########################{Environment.NewLine}#      Build results      #{Environment.NewLine}###########################{Environment.NewLine}" +
+                $"{Environment.NewLine}Duration: 00:00:00.0000000{Environment.NewLine}Warnings: 0{Environment.NewLine}Errors: 0{Environment.NewLine}Size: 0 bytes{Environment.NewLine}{Environment.NewLine}{Environment.NewLine}Build succeeded!");
         }
-    
+
         private static string[] FindEnabledEditorScenes()
         {
-            List<string> EditorScenes = new List<string>();
-            foreach (EditorBuildSettingsScene scene in EditorBuildSettings.scenes)
+            var EditorScenes = new List<string>();
+            foreach (var scene in EditorBuildSettings.scenes)
             {
-                if (!scene.enabled) continue;
+                if (!scene.enabled)
+                {
+                    continue;
+                }
+
                 EditorScenes.Add(scene.path);
             }
-            
-	    return EditorScenes.ToArray();
+
+            return EditorScenes.ToArray();
         }
 
-        private static void SetPicoSettings(){
-
-			PlayerSettings.Android.targetArchitectures = AndroidArchitecture.ARM64;
+        private static void SetPicoSettings()
+        {
+            PlayerSettings.Android.targetArchitectures = AndroidArchitecture.ARM64;
 
             //Enable Pico
-			OpenXRSettings.ActiveBuildTargetInstance.GetFeature<PICO4ControllerProfile>().enabled = true;
+            OpenXRSettings.ActiveBuildTargetInstance.GetFeature<PICO4ControllerProfile>().enabled = true;
             OpenXRSettings.ActiveBuildTargetInstance.GetFeature<PICOFeature>().enabled = true;
 
             //Disable Meta
-			OpenXRSettings.ActiveBuildTargetInstance.GetFeature<MetaQuestFeature>().enabled = false;
-			// OpenXRSettings.ActiveBuildTargetInstance.GetFeature<MetaQuestTouchProControllerProfile>().enabled = false;
-			OpenXRSettings.ActiveBuildTargetInstance.GetFeature<OculusTouchControllerProfile>().enabled = false;
+            OpenXRSettings.ActiveBuildTargetInstance.GetFeature<MetaQuestFeature>().enabled = false;
+            // OpenXRSettings.ActiveBuildTargetInstance.GetFeature<MetaQuestTouchProControllerProfile>().enabled = false;
+            OpenXRSettings.ActiveBuildTargetInstance.GetFeature<OculusTouchControllerProfile>().enabled = false;
 
-			foreach (var item in OpenXRSettings.ActiveBuildTargetInstance.GetFeatures()) 
+            foreach (var item in OpenXRSettings.ActiveBuildTargetInstance.GetFeatures())
             {
-				Debug.Log(item.name);
-			}
-            Debug.Log("OpenXR settings set for: Pico");  
-            
+                Debug.Log(item.name);
+            }
+
+            Debug.Log("OpenXR settings set for: Pico");
         }
 
 
-        private static void SetQuestSettings(){
+        private static void SetQuestSettings()
+        {
+            PlayerSettings.Android.targetArchitectures = AndroidArchitecture.ARM64;
 
-			PlayerSettings.Android.targetArchitectures = AndroidArchitecture.ARM64;
+            //Enable Meta
+            // OpenXRSettings.ActiveBuildTargetInstance.GetFeature<MetaQuestTouchProControllerProfile>().enabled = true;
+            OpenXRSettings.ActiveBuildTargetInstance.GetFeature<OculusTouchControllerProfile>().enabled = true;
+            OpenXRSettings.ActiveBuildTargetInstance.GetFeature<MetaQuestFeature>().enabled = true;
 
-			//Enable Meta
-			// OpenXRSettings.ActiveBuildTargetInstance.GetFeature<MetaQuestTouchProControllerProfile>().enabled = true;
-			OpenXRSettings.ActiveBuildTargetInstance.GetFeature<OculusTouchControllerProfile>().enabled = true;
-			OpenXRSettings.ActiveBuildTargetInstance.GetFeature<MetaQuestFeature>().enabled = true;
+            //Disable Pico
+            OpenXRSettings.ActiveBuildTargetInstance.GetFeature<PICOFeature>().enabled = false;
+            OpenXRSettings.ActiveBuildTargetInstance.GetFeature<PICO4ControllerProfile>().enabled = false;
 
-			//Disable Pico
-			OpenXRSettings.ActiveBuildTargetInstance.GetFeature<PICOFeature>().enabled = false;
-			OpenXRSettings.ActiveBuildTargetInstance.GetFeature<PICO4ControllerProfile>().enabled = false;
-
-			Debug.Log("OpenXR settings set for: Quest");
-        
+            Debug.Log("OpenXR settings set for: Quest");
         }
-
-        
     }
 }
-
-

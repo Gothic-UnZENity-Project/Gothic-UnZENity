@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using GUZ.Core.Globals;
 using GUZ.Core.Properties;
 using TMPro;
 using UnityEngine;
@@ -21,23 +20,23 @@ namespace GUZ.Core.Caches
         /// Already created AnimationData (Clips + RootMotions) can be reused.
         /// </summary>
         public static readonly Dictionary<string, AnimationClip> AnimationClipCache = new();
-        
+
         /// <summary>
         /// This dictionary caches the sprite assets for fonts.
         /// </summary>
-        public static Dictionary<string, TMP_SpriteAsset> fontCache = new();
-        
+        public static Dictionary<string, TMP_SpriteAsset> FontCache = new();
+
         /// <summary>
         /// VobSounds and VobSoundsDayTime GOs.
         /// </summary>
-        public static List<GameObject> vobSoundsAndDayTime = new();
+        public static List<GameObject> VobSoundsAndDayTime = new();
 
         public static void Init()
         {
             GlobalEventDispatcher.GeneralSceneUnloaded.AddListener(delegate
             {
                 NpcCache.Clear();
-                vobSoundsAndDayTime.Clear();
+                VobSoundsAndDayTime.Clear();
             });
         }
 
@@ -45,8 +44,8 @@ namespace GUZ.Core.Caches
         {
             NpcCache.Clear();
             AnimationClipCache.Clear();
-            fontCache.Clear();
-            vobSoundsAndDayTime.Clear();
+            FontCache.Clear();
+            VobSoundsAndDayTime.Clear();
         }
     }
 }

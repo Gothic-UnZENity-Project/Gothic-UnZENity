@@ -38,7 +38,7 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder.Textures
 
         private void PrepareMeshRenderer(Renderer rend, WorldData.SubMeshData subMesh)
         {
-            UnityEngine.Texture texture = TextureCache.TextureArrays[TextureCache.TextureTypes.World][subMesh.TextureArrayType];
+            var texture = TextureCache.TextureArrays[TextureCache.TextureTypes.World][subMesh.TextureArrayType];
             Material material;
             if (subMesh.Material.Group == MaterialGroup.Water)
             {
@@ -48,6 +48,7 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder.Textures
             {
                 material = GetDefaultMaterial(subMesh.TextureArrayType == TextureCache.TextureArrayTypes.Transparent);
             }
+
             material.mainTexture = texture;
             rend.material = material;
         }

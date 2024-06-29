@@ -8,10 +8,10 @@ namespace GUZ.Core.Properties
 
         public override void SetData(IVirtualObject data)
         {
-            if (data is InteractiveObject InteractiveData)
+            if (data is InteractiveObject interactiveData)
             {
-                Properties = InteractiveData;
-                base.Properties = InteractiveData;
+                Properties = interactiveData;
+                base.Properties = interactiveData;
             }
 
             base.SetData(data);

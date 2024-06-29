@@ -7,7 +7,6 @@ using UnityEngine;
 using UnityEngine.Rendering;
 using ZenKit;
 using Material = UnityEngine.Material;
-using Texture = UnityEngine.Texture;
 using TextureFormat = UnityEngine.TextureFormat;
 
 namespace GUZ.Core.Creator.Meshes.V2.Builder.Textures
@@ -38,7 +37,8 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder.Textures
             }
         }
 
-        private void PrepareMeshRenderer(Renderer rend, IMultiResolutionMesh mrmData, List<TextureCache.TextureArrayTypes> textureArrayTypes)
+        private void PrepareMeshRenderer(Renderer rend, IMultiResolutionMesh mrmData,
+            List<TextureCache.TextureArrayTypes> textureArrayTypes)
         {
             if (null == mrmData)
             {
@@ -52,13 +52,15 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder.Textures
                 return;
             }
 
-            List<Material> finalMaterials = new List<Material>(mrmData.SubMeshes.Count);
-            int submeshCount = rend is MeshRenderer ? rend.GetComponent<MeshFilter>().sharedMesh.subMeshCount : mrmData.SubMeshCount;
+            var finalMaterials = new List<Material>(mrmData.SubMeshes.Count);
+            var submeshCount = rend is MeshRenderer
+                ? rend.GetComponent<MeshFilter>().sharedMesh.subMeshCount
+                : mrmData.SubMeshCount;
 
-            for (int i = 0; i < submeshCount; i++)
+            for (var i = 0; i < submeshCount; i++)
             {
-                Texture texture = TextureCache.TextureArrays[TextureCache.TextureTypes.Vob][textureArrayTypes[i]];
-                Material material = GetDefaultMaterial(texture && ((Texture2DArray)texture).format == TextureFormat.RGBA32);
+                var texture = TextureCache.TextureArrays[TextureCache.TextureTypes.Vob][textureArrayTypes[i]];
+                var material = GetDefaultMaterial(texture && ((Texture2DArray)texture).format == TextureFormat.RGBA32);
 
                 material.mainTexture = texture;
                 rend.material = material;

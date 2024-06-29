@@ -6,6 +6,7 @@ using GUZ.Core.Manager.Settings;
 using GUZ.Core.Util;
 using GUZ.Core.World;
 using UnityEngine;
+using UnityEngine.Serialization;
 using Logger = ZenKit.Logger;
 
 namespace GUZ.Core
@@ -15,8 +16,11 @@ namespace GUZ.Core
     {
         [field: SerializeField] public GameConfiguration Config { get; set; }
 
-        public GameObject xrInteractionManager;
-        public GameObject invalidInstallationPathMessage;
+        [FormerlySerializedAs("xrInteractionManager")]
+        public GameObject XRInteractionManager;
+
+        [FormerlySerializedAs("invalidInstallationPathMessage")]
+        public GameObject InvalidInstallationPathMessage;
 
         private BarrierManager _barrierManager;
         private XRPlayerManager _xrPlayerManager;
@@ -26,7 +30,7 @@ namespace GUZ.Core
         private FileLoggingHandler _fileLoggingHandler;
 
         public GameSettings Settings { get; private set; }
-        private bool _isInitialised = false;
+        private bool _isInitialised;
 
         public SkyManager Sky { get; private set; }
 
@@ -36,7 +40,7 @@ namespace GUZ.Core
 
         public TextureManager Textures { get; private set; }
 
-        public GUZSceneManager Scene { get; private set; }
+        public GuzSceneManager Scene { get; private set; }
 
         public FontManager Font { get; private set; }
 
@@ -52,7 +56,7 @@ namespace GUZ.Core
             // If the Gothic installation directory is not set, show an error message and exit.
             if (!Settings.CheckIfGothic1InstallationExists())
             {
-                invalidInstallationPathMessage.SetActive(true);
+                InvalidInstallationPathMessage.SetActive(true);
                 return;
             }
 
@@ -61,10 +65,10 @@ namespace GUZ.Core
 
             _gameMusicManager.Init();
 
-            GUZBootstrapper.BootGothicUnZENity(Config, Settings.GothicIPath, Settings.GothicILanguage);
+            GuzBootstrapper.BootGothicUnZeNity(Config, Settings.GothicIPath, Settings.GothicILanguage);
             Scene.LoadStartupScenes();
 
-            if (Config.enableBarrierVisual)
+            if (Config.EnableBarrierVisual)
             {
                 GlobalEventDispatcher.WorldSceneLoaded.AddListener(() => { _barrierManager.CreateBarrier(); });
             }
@@ -89,14 +93,14 @@ namespace GUZ.Core
             Time = new GameTime(Config, this);
             Sky = new SkyManager(Config, Time, Settings);
             _gameMusicManager = new MusicManager(Config);
-            Scene = new GUZSceneManager(Config, _gameLoadingManager, xrInteractionManager);
+            Scene = new GuzSceneManager(Config, _gameLoadingManager, XRInteractionManager);
             Routines = new RoutineManager(Config);
         }
 
         private void Start()
         {
-            Logger.Set(Config.zenkitLogLevel, Logging.OnZenKitLogMessage);
-            DirectMusic.Logger.Set(Config.directMusicLogLevel, Logging.OnDirectMusicLogMessage);
+            Logger.Set(Config.ZenkitLogLevel, Logging.OnZenKitLogMessage);
+            DirectMusic.Logger.Set(Config.DirectMusicLogLevel, Logging.OnDirectMusicLogMessage);
 
             _fileLoggingHandler.Init();
             _gameLoadingManager.Init();
@@ -110,7 +114,7 @@ namespace GUZ.Core
             Routines.Init();
 
             // Just in case we forgot to disable it in scene view. ;-)
-            invalidInstallationPathMessage.SetActive(false);
+            InvalidInstallationPathMessage.SetActive(false);
         }
 
         private void Update()
@@ -168,7 +172,7 @@ namespace GUZ.Core
 
         private void OnApplicationQuit()
         {
-            GUZBootstrapper.OnApplicationQuit();
+            GuzBootstrapper.OnApplicationQuit();
         }
     }
 }

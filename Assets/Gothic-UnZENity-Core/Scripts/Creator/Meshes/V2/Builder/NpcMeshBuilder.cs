@@ -4,16 +4,17 @@ using GUZ.Core.Caches;
 using GUZ.Core.Vm;
 using UnityEngine;
 using ZenKit;
+using Vector3 = System.Numerics.Vector3;
 
 namespace GUZ.Core.Creator.Meshes.V2.Builder
 {
     public class NpcMeshBuilder : AbstractMeshBuilder
     {
-        protected VmGothicExternals.ExtSetVisualBodyData bodyData;
+        protected VmGothicExternals.ExtSetVisualBodyData BodyData;
 
         public virtual void SetBodyData(VmGothicExternals.ExtSetVisualBodyData body)
         {
-            bodyData = body;
+            BodyData = body;
         }
 
         public override GameObject Build()
@@ -32,12 +33,13 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
                 // This regex replaces the suffix of V0_C0 with values of corresponding data.
                 // e.g. Some_Texture_V0_C0.TGA --> Some_Texture_V1_C2.TGA
                 Regex.Replace(name, "(?<=.*?)V0_C0",
-                    $"V{bodyData.BodyTexNr}_C{bodyData.BodyTexColor}");
+                    $"V{BodyData.BodyTexNr}_C{BodyData.BodyTexColor}");
 
             return base.GetTexture(finalTextureName);
         }
 
-        protected override Dictionary<string, IMultiResolutionMesh> GetFilteredAttachments(Dictionary<string, IMultiResolutionMesh> attachments)
+        protected override Dictionary<string, IMultiResolutionMesh> GetFilteredAttachments(
+            Dictionary<string, IMultiResolutionMesh> attachments)
         {
             Dictionary<string, IMultiResolutionMesh> newAttachments = new(attachments);
 
@@ -54,7 +56,7 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
         /// Positions in mdm files for NPC armor isn't what it seems to be. We need to calculate the real data from weights.
         /// Please check the Cache class for more details.
         /// </summary>
-        protected override List<System.Numerics.Vector3> GetSoftSkinMeshPositions(ISoftSkinMesh softSkinMesh)
+        protected override List<Vector3> GetSoftSkinMeshPositions(ISoftSkinMesh softSkinMesh)
         {
             return NpcArmorPositionCache.TryGetPositions(softSkinMesh, Mdh);
         }

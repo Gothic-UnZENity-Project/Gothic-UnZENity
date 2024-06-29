@@ -1,16 +1,17 @@
 ﻿using System;
-using System.Numerics;
+using UnityEngine;
+using ZenKit;
 
 namespace GUZ.Core.Extensions
 {
     public static class NumericsExtension
     {
-        public static UnityEngine.Vector2 ToUnityVector(this Vector2 vector2)
+        public static Vector2 ToUnityVector(this System.Numerics.Vector2 vector2)
         {
-            return new()
+            return new Vector2
             {
                 x = vector2.X,
-                y = vector2.Y,
+                y = vector2.Y
             };
         }
 
@@ -18,9 +19,9 @@ namespace GUZ.Core.Extensions
         /// Transform Vector3 to Unity Vector3.
         /// cmScale - Gothic positions are in cm, but Unity in m. (factor 100). Most of the time we just transform it directly.
         /// </summary>
-        public static UnityEngine.Vector3 ToUnityVector(this Vector3 vector3, bool cmScale = true)
+        public static Vector3 ToUnityVector(this System.Numerics.Vector3 vector3, bool cmScale = true)
         {
-            var vector = new UnityEngine.Vector3
+            var vector = new Vector3
             {
                 x = vector3.X,
                 y = vector3.Y,
@@ -31,29 +32,27 @@ namespace GUZ.Core.Extensions
             {
                 return vector / 100;
             }
-            else
-            {
-                return vector;
-            }
+
+            return vector;
         }
 
-        public static UnityEngine.Bounds ToUnityBounds(this ZenKit.AxisAlignedBoundingBox bounds)
+        public static Bounds ToUnityBounds(this AxisAlignedBoundingBox bounds)
         {
-            UnityEngine.Vector3 max = bounds.Max.ToUnityVector();
-            UnityEngine.Vector3 min = bounds.Min.ToUnityVector();
+            var max = bounds.Max.ToUnityVector();
+            var min = bounds.Min.ToUnityVector();
 
-            UnityEngine.Vector3 boundsChord = max  - min;
-            UnityEngine.Bounds unityBounds = new UnityEngine.Bounds(min + boundsChord.normalized * boundsChord.magnitude * .5f, 
-                new UnityEngine.Vector3(UnityEngine.Mathf.Abs(max.x - min.x),
-                                        UnityEngine.Mathf.Abs(max.y - min.y),
-                                        UnityEngine.Mathf.Abs(max.z - min.z)));
+            var boundsChord = max - min;
+            var unityBounds = new Bounds(min + boundsChord.normalized * boundsChord.magnitude * .5f,
+                new Vector3(Mathf.Abs(max.x - min.x),
+                    Mathf.Abs(max.y - min.y),
+                    Mathf.Abs(max.z - min.z)));
 
             return unityBounds;
         }
 
-        public static UnityEngine.Color ToUnityColor(this Vector3 vector3, float alpha = 1)
+        public static Color ToUnityColor(this System.Numerics.Vector3 vector3, float alpha = 1)
         {
-            return new UnityEngine.Color()
+            return new Color
             {
                 r = vector3.X,
                 g = vector3.Y,
@@ -62,9 +61,9 @@ namespace GUZ.Core.Extensions
             };
         }
 
-        public static UnityEngine.Color ToUnityColor(this UnityEngine.Vector3 vector3, float alpha = 1)
+        public static Color ToUnityColor(this Vector3 vector3, float alpha = 1)
         {
-            return new UnityEngine.Color()
+            return new Color
             {
                 r = vector3.x,
                 g = vector3.y,
@@ -73,9 +72,9 @@ namespace GUZ.Core.Extensions
             };
         }
 
-        public static UnityEngine.Vector3[] ToUnityArray(this Vector3[] array)
+        public static Vector3[] ToUnityArray(this System.Numerics.Vector3[] array)
         {
-            return Array.ConvertAll(array, item => new UnityEngine.Vector3()
+            return Array.ConvertAll(array, item => new Vector3
             {
                 x = item.X,
                 y = item.Y,
@@ -83,9 +82,9 @@ namespace GUZ.Core.Extensions
             });
         }
 
-        public static UnityEngine.Vector2[] ToUnityArray(this Vector2[] array)
+        public static Vector2[] ToUnityArray(this System.Numerics.Vector2[] array)
         {
-            return Array.ConvertAll(array, item => new UnityEngine.Vector2()
+            return Array.ConvertAll(array, item => new Vector2
             {
                 x = item.X,
                 y = item.Y

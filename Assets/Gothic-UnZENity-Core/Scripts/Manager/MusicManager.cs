@@ -4,7 +4,6 @@ using System.Linq;
 using DirectMusic;
 using GUZ.Core.Globals;
 using GUZ.Core.Vob;
-using GUZ.Core;
 using UnityEngine;
 using ZenKit;
 using ZenKit.Daedalus;
@@ -26,8 +25,7 @@ namespace GUZ.Core.Manager
             Thr = 1 << 2
         }
 
-        [Obsolete]
-        public static MusicManager I;
+        [Obsolete] public static MusicManager I;
 
         private Performance _dxPerformance;
         private AudioSource _audioSourceComp;
@@ -35,8 +33,9 @@ namespace GUZ.Core.Manager
 
         private Dictionary<string, MusicThemeInstance> _themes = new();
         private DaedalusVm _vm;
-        
+
         private MusicThemeInstance _currentTheme;
+
         /// <summary>
         /// Whenever we collide with a musicZoneVobGO, it's entry will be added to the list and the most important theme will be played.
         /// </summary>
@@ -46,15 +45,15 @@ namespace GUZ.Core.Manager
         // If we cache each call to dxMusic synthesizer, we would skip a lot of transition options as the synthesizer assumes we're already ahead.
         // This is due to the fact, that whenever we ask for data from dxMusic, the handler "moves" forward as it assumes we play to the end until asking for more data.
         // But if we ask for numerous seconds and therefore "cache" music way too long, the transition will take place very late which can be heard by gamers.
-        private const int BUFFER_SIZE = 2048;
-        private const int FREQUENCY_RATE = 44100;
+        private const int _bufferSize = 2048;
+        private const int _frequencyRate = 44100;
 
         private readonly bool _featureEnabled;
 
         public MusicManager(GameConfiguration config)
         {
             I = this;
-            _featureEnabled = config.enableGameMusic;
+            _featureEnabled = config.EnableGameMusic;
         }
 
         public void Init()
@@ -64,7 +63,7 @@ namespace GUZ.Core.Manager
                 return;
             }
 
-            _dxPerformance = Performance.Create(FREQUENCY_RATE);
+            _dxPerformance = Performance.Create(_frequencyRate);
 
             InitializeUnity();
             InitializeDxMusic();
@@ -72,14 +71,13 @@ namespace GUZ.Core.Manager
             GlobalEventDispatcher.MainMenuSceneLoaded.AddListener(OnMainMenuLoaded);
             GlobalEventDispatcher.LoadingSceneLoaded.AddListener(OnLoadingSceneLoaded);
             GlobalEventDispatcher.GeneralSceneLoaded.AddListener(OnWorldLoaded);
-            
+
             GlobalEventDispatcher.MusicZoneEntered.AddListener(go =>
             {
-                
                 AddMusicZone(go);
                 Play(SegmentTags.Std);
             });
-            
+
             GlobalEventDispatcher.MusicZoneExited.AddListener(go =>
             {
                 RemoveMusicZone(go);
@@ -93,7 +91,7 @@ namespace GUZ.Core.Manager
             _audioSourceComp = backgroundMusic.GetComponent<AudioSource>();
             _reverbFilterComp = backgroundMusic.GetComponent<AudioReverbFilter>();
 
-            var audioClip = AudioClip.Create("Music", BUFFER_SIZE * 2, 2, FREQUENCY_RATE, true, PCMReaderCallback);
+            var audioClip = AudioClip.Create("Music", _bufferSize * 2, 2, _frequencyRate, true, PCMReaderCallback);
 
             _audioSourceComp.priority = 0;
             _audioSourceComp.clip = audioClip;
@@ -121,7 +119,7 @@ namespace GUZ.Core.Manager
             foreach (var zone in zones)
             {
                 // We always set default music as fallback.
-                if (zone.musicData.GetType() == typeof(ZoneMusicDefault))
+                if (zone.MusicData.GetType() == typeof(ZoneMusicDefault))
                 {
                     AddMusicZone(zone.gameObject);
                     continue;
@@ -141,7 +139,9 @@ namespace GUZ.Core.Manager
         {
             // If a collider triggers multiple times or we added the zone manually: Skip as duplicate
             if (_musicZones.Contains(newMusicZoneGo))
+            {
                 return;
+            }
 
             _musicZones.Add(newMusicZoneGo);
         }
@@ -169,19 +169,23 @@ namespace GUZ.Core.Manager
         public void Play(SegmentTags tags)
         {
             var zoneName = _musicZones
-                .OrderBy(i => i.GetComponent<VobMusicProperties>().musicData.Priority)
+                .OrderBy(i => i.GetComponent<VobMusicProperties>().MusicData.Priority)
                 .Last()
-                .GetComponent<VobMusicProperties>().musicData.Name;
+                .GetComponent<VobMusicProperties>().MusicData.Name;
 
-            bool isDay = (tags & SegmentTags.Ngt) == 0;
-            string result = zoneName.Substring(zoneName.IndexOf("_") + 1);
+            var isDay = (tags & SegmentTags.Ngt) == 0;
+            var result = zoneName.Substring(zoneName.IndexOf("_") + 1);
             var musicTag = "STD";
 
             if ((tags & SegmentTags.Fgt) != 0)
+            {
                 musicTag = "FGT";
+            }
 
             if ((tags & SegmentTags.Thr) != 0)
+            {
                 musicTag = "THR";
+            }
 
             var musicThemeInstanceName = $"{result}_{(isDay ? "DAY" : "NGT")}_{musicTag}";
 
@@ -204,7 +208,9 @@ namespace GUZ.Core.Manager
             // Do not restart the current theme if already playing.
             // Multiple MusicThemeInstances can reference the same audio. Therefore checking actual files only.
             if (_currentTheme != null && theme.File == _currentTheme.File)
+            {
                 return;
+            }
 
             var segment = ResourceLoader.TryGetSegment(theme.File);
 

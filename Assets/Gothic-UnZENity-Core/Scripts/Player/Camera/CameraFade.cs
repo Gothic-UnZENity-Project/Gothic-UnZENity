@@ -1,19 +1,21 @@
 using System.Collections;
-using System.Collections.Generic;
 using GUZ.Core.Util;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 namespace GUZ.Core.Player.Camera
 {
     public class CameraFade : SingletonBehaviour<CameraFade>
     {
-        public Image cameraFadeImage;
-        public const float defaultCameraFadeDuration = 0.15f;
+        [FormerlySerializedAs("cameraFadeImage")]
+        public Image CameraFadeImage;
+
+        public const float DefaultCameraFadeDuration = 0.15f;
 
         private void Start()
         {
-            Fade(defaultCameraFadeDuration, 0);
+            Fade(DefaultCameraFadeDuration, 0);
         }
 
         public void Fade(float duration, float targetAlpha)
@@ -28,10 +30,11 @@ namespace GUZ.Core.Player.Camera
             while (currentTime < duration)
             {
                 currentTime += Time.deltaTime;
-                cameraFadeImage.color = Color.Lerp(cameraFadeImage.color, new Color(cameraFadeImage.color.r, cameraFadeImage.color.g, cameraFadeImage.color.b, targetAlpha), currentTime / duration);
+                CameraFadeImage.color = Color.Lerp(CameraFadeImage.color,
+                    new Color(CameraFadeImage.color.r, CameraFadeImage.color.g, CameraFadeImage.color.b, targetAlpha),
+                    currentTime / duration);
                 yield return null;
             }
-            yield break;
         }
     }
 }

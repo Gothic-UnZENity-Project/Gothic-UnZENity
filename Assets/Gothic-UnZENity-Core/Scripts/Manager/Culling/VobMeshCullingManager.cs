@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using GUZ.Core.Globals;
 using UnityEngine;
 
 namespace GUZ.Core.Manager.Culling
@@ -15,19 +14,19 @@ namespace GUZ.Core.Manager.Culling
     public class VobMeshCullingManager
     {
         // Stored for resetting after world switch
-        private CullingGroup vobCullingGroupSmall;
-        private CullingGroup vobCullingGroupMedium;
-        private CullingGroup vobCullingGroupLarge;
+        private CullingGroup _vobCullingGroupSmall;
+        private CullingGroup _vobCullingGroupMedium;
+        private CullingGroup _vobCullingGroupLarge;
 
         // Stored for later index mapping SphereIndex => GOIndex
-        private readonly List<GameObject> vobObjectsSmall = new();
-        private readonly List<GameObject> vobObjectsMedium = new();
-        private readonly List<GameObject> vobObjectsLarge = new();
+        private readonly List<GameObject> _vobObjectsSmall = new();
+        private readonly List<GameObject> _vobObjectsMedium = new();
+        private readonly List<GameObject> _vobObjectsLarge = new();
 
         // Stored for later position updates for moved Vobs
-        private BoundingSphere[] vobSpheresSmall;
-        private BoundingSphere[] vobSpheresMedium;
-        private BoundingSphere[] vobSpheresLarge;
+        private BoundingSphere[] _vobSpheresSmall;
+        private BoundingSphere[] _vobSpheresMedium;
+        private BoundingSphere[] _vobSpheresLarge;
 
         private enum VobList
         {
@@ -37,9 +36,9 @@ namespace GUZ.Core.Manager.Culling
         }
 
         // Grabbed Vobs will be ignored from Culling until Grabbing stopped and velocity = 0
-        private Dictionary<GameObject, Tuple<VobList, int>> pausedVobs = new();
-        private Dictionary<GameObject, Rigidbody> pausedVobsToReenable = new();
-        private Dictionary<GameObject, Coroutine> pausedVobsToReenableCoroutine = new();
+        private Dictionary<GameObject, Tuple<VobList, int>> _pausedVobs = new();
+        private Dictionary<GameObject, Rigidbody> _pausedVobsToReenable = new();
+        private Dictionary<GameObject, Coroutine> _pausedVobsToReenableCoroutine = new();
 
         private readonly ICoroutineManager _coroutineManager;
         private readonly bool _featureEnableCulling;
@@ -51,11 +50,11 @@ namespace GUZ.Core.Manager.Culling
         public VobMeshCullingManager(GameConfiguration config, ICoroutineManager coroutineManager)
         {
             _coroutineManager = coroutineManager;
-            _featureEnableCulling = config.enableMeshCulling;
-            _featureDrawGizmos = config.showMeshCullingGizmos;
-            _featureSmallCullingGroup = config.smallMeshCullingGroup;
-            _featureMediumCullingGroup = config.mediumMeshCullingGroup;
-            _featureLargeCullingGroup = config.largeMeshCullingGroup;
+            _featureEnableCulling = config.EnableMeshCulling;
+            _featureDrawGizmos = config.ShowMeshCullingGizmos;
+            _featureSmallCullingGroup = config.SmallMeshCullingGroup;
+            _featureMediumCullingGroup = config.MediumMeshCullingGroup;
+            _featureLargeCullingGroup = config.LargeMeshCullingGroup;
         }
 
         public void Init()
@@ -69,9 +68,9 @@ namespace GUZ.Core.Manager.Culling
             GlobalEventDispatcher.GeneralSceneLoaded.AddListener(PostWorldCreate);
 
             // Unity demands CullingGroups to be created in Awake() or Start() earliest.
-            vobCullingGroupSmall = new();
-            vobCullingGroupMedium = new();
-            vobCullingGroupLarge = new();
+            _vobCullingGroupSmall = new CullingGroup();
+            _vobCullingGroupMedium = new CullingGroup();
+            _vobCullingGroupLarge = new CullingGroup();
 
             _coroutineManager.StartCoroutine(StopVobTrackingBasedOnVelocity());
         }
@@ -87,25 +86,27 @@ namespace GUZ.Core.Manager.Culling
             }
 
             Gizmos.color = new Color(.5f, 0, 0);
-            if (vobSpheresSmall != null)
+            if (_vobSpheresSmall != null)
             {
-                foreach (BoundingSphere sphere in vobSpheresSmall)
+                foreach (var sphere in _vobSpheresSmall)
                 {
                     Gizmos.DrawWireSphere(sphere.position, sphere.radius);
                 }
             }
+
             Gizmos.color = new Color(.4f, 0, 0);
-            if (vobSpheresMedium != null)
+            if (_vobSpheresMedium != null)
             {
-                foreach (BoundingSphere sphere in vobSpheresMedium)
+                foreach (var sphere in _vobSpheresMedium)
                 {
                     Gizmos.DrawWireSphere(sphere.position, sphere.radius);
                 }
             }
+
             Gizmos.color = new Color(.3f, 0, 0);
-            if (vobSpheresLarge != null)
+            if (_vobSpheresLarge != null)
             {
-                foreach (BoundingSphere sphere in vobSpheresLarge)
+                foreach (var sphere in _vobSpheresLarge)
                 {
                     Gizmos.DrawWireSphere(sphere.position, sphere.radius);
                 }
@@ -114,61 +115,67 @@ namespace GUZ.Core.Manager.Culling
 
         private void PreWorldCreate()
         {
-            vobCullingGroupSmall.Dispose();
-            vobCullingGroupMedium.Dispose();
-            vobCullingGroupLarge.Dispose();
+            _vobCullingGroupSmall.Dispose();
+            _vobCullingGroupMedium.Dispose();
+            _vobCullingGroupLarge.Dispose();
 
-            vobCullingGroupSmall = new();
-            vobCullingGroupMedium = new();
-            vobCullingGroupLarge = new();
+            _vobCullingGroupSmall = new CullingGroup();
+            _vobCullingGroupMedium = new CullingGroup();
+            _vobCullingGroupLarge = new CullingGroup();
 
-            vobObjectsSmall.Clear();
-            vobObjectsMedium.Clear();
-            vobObjectsLarge.Clear();
+            _vobObjectsSmall.Clear();
+            _vobObjectsMedium.Clear();
+            _vobObjectsLarge.Clear();
 
-            vobSpheresSmall = null;
-            vobSpheresMedium = null;
-            vobSpheresLarge = null;
+            _vobSpheresSmall = null;
+            _vobSpheresMedium = null;
+            _vobSpheresLarge = null;
 
-            pausedVobs.Clear();
-            pausedVobsToReenable.Clear();
-            pausedVobsToReenableCoroutine.Clear();
+            _pausedVobs.Clear();
+            _pausedVobsToReenable.Clear();
+            _pausedVobsToReenableCoroutine.Clear();
         }
 
         private void VobSmallChanged(CullingGroupEvent evt)
         {
-            var smallPaused = pausedVobs
+            var smallPaused = _pausedVobs
                 .Where(i => i.Value.Item1 == VobList.Small)
                 .Select(i => i.Value.Item2);
 
             if (smallPaused.Contains(evt.index))
+            {
                 return;
+            }
 
-            vobObjectsSmall[evt.index].SetActive(evt.hasBecomeVisible);
+            _vobObjectsSmall[evt.index].SetActive(evt.hasBecomeVisible);
         }
 
         private void VobMediumChanged(CullingGroupEvent evt)
         {
-            var mediumPaused = pausedVobs
+            var mediumPaused = _pausedVobs
                 .Where(i => i.Value.Item1 == VobList.Medium)
                 .Select(i => i.Value.Item2);
 
             if (mediumPaused.Contains(evt.index))
+            {
                 return;
+            }
 
-            vobObjectsMedium[evt.index].SetActive(evt.hasBecomeVisible);
+            _vobObjectsMedium[evt.index].SetActive(evt.hasBecomeVisible);
         }
 
         private void VobLargeChanged(CullingGroupEvent evt)
         {
-            var largePaused = pausedVobs
+            var largePaused = _pausedVobs
                 .Where(i => i.Value.Item1 == VobList.Large)
                 .Select(i => i.Value.Item2);
 
             if (largePaused.Contains(evt.index))
+            {
                 return;
+            }
 
-            vobObjectsLarge[evt.index].SetActive(evt.hasBecomeVisible);
+            _vobObjectsLarge[evt.index].SetActive(evt.hasBecomeVisible);
         }
 
         /// <summary>
@@ -181,8 +188,8 @@ namespace GUZ.Core.Manager.Culling
                 return;
             }
 
-            var smallDim = _featureSmallCullingGroup.maximumObjectSize;
-            var mediumDim = _featureMediumCullingGroup.maximumObjectSize;
+            var smallDim = _featureSmallCullingGroup.MaximumObjectSize;
+            var mediumDim = _featureMediumCullingGroup.MaximumObjectSize;
             var spheresSmall = new List<BoundingSphere>();
             var spheresMedium = new List<BoundingSphere>();
             var spheresLarge = new List<BoundingSphere>();
@@ -209,44 +216,45 @@ namespace GUZ.Core.Manager.Culling
 
                 if (size <= smallDim)
                 {
-                    vobObjectsSmall.Add(obj);
+                    _vobObjectsSmall.Add(obj);
                     spheresSmall.Add(sphere);
                 }
                 else if (size <= mediumDim)
                 {
-                    vobObjectsMedium.Add(obj);
+                    _vobObjectsMedium.Add(obj);
                     spheresMedium.Add(sphere);
                 }
                 else
                 {
-                    vobObjectsLarge.Add(obj);
+                    _vobObjectsLarge.Add(obj);
                     spheresLarge.Add(sphere);
                 }
             }
 
-            vobCullingGroupSmall.onStateChanged = VobSmallChanged;
-            vobCullingGroupMedium.onStateChanged = VobMediumChanged;
-            vobCullingGroupLarge.onStateChanged = VobLargeChanged;
+            _vobCullingGroupSmall.onStateChanged = VobSmallChanged;
+            _vobCullingGroupMedium.onStateChanged = VobMediumChanged;
+            _vobCullingGroupLarge.onStateChanged = VobLargeChanged;
 
-            vobCullingGroupSmall.SetBoundingDistances(new[] { _featureSmallCullingGroup.cullingDistance });
-            vobCullingGroupMedium.SetBoundingDistances(new[] { _featureMediumCullingGroup.cullingDistance });
-            vobCullingGroupLarge.SetBoundingDistances(new[] { _featureLargeCullingGroup.cullingDistance });
+            _vobCullingGroupSmall.SetBoundingDistances(new[] { _featureSmallCullingGroup.CullingDistance });
+            _vobCullingGroupMedium.SetBoundingDistances(new[] { _featureMediumCullingGroup.CullingDistance });
+            _vobCullingGroupLarge.SetBoundingDistances(new[] { _featureLargeCullingGroup.CullingDistance });
 
-            vobSpheresSmall = spheresSmall.ToArray();
-            vobSpheresMedium = spheresMedium.ToArray();
-            vobSpheresLarge = spheresLarge.ToArray();
+            _vobSpheresSmall = spheresSmall.ToArray();
+            _vobSpheresMedium = spheresMedium.ToArray();
+            _vobSpheresLarge = spheresLarge.ToArray();
 
-            vobCullingGroupSmall.SetBoundingSpheres(vobSpheresSmall);
-            vobCullingGroupMedium.SetBoundingSpheres(vobSpheresMedium);
-            vobCullingGroupLarge.SetBoundingSpheres(vobSpheresLarge);
+            _vobCullingGroupSmall.SetBoundingSpheres(_vobSpheresSmall);
+            _vobCullingGroupMedium.SetBoundingSpheres(_vobSpheresMedium);
+            _vobCullingGroupLarge.SetBoundingSpheres(_vobSpheresLarge);
         }
 
         private BoundingSphere GetSphere(GameObject go, Bounds bounds)
         {
             var bboxSize = bounds.size;
-            Vector3 worldCenter = go.transform.TransformPoint(bounds.center);
+            var worldCenter = go.transform.TransformPoint(bounds.center);
 
-            var maxDimension = Mathf.Max(bboxSize.x, bboxSize.y, bboxSize.z); // Get biggest dim for calculation of object size group.
+            // Get biggest dim for calculation of object size group.
+            var maxDimension = Mathf.Max(bboxSize.x, bboxSize.y, bboxSize.z);
             var sphere = new BoundingSphere(worldCenter, maxDimension / 2); // Radius is half the size.
 
             return sphere;
@@ -264,18 +272,18 @@ namespace GUZ.Core.Manager.Culling
                 {
                     return particleRenderer.bounds;
                 }
-                else if (go.TryGetComponent(out Light light))
+
+                if (go.TryGetComponent(out Light light))
                 {
                     return new Bounds(Vector3.zero, Vector3.one * light.range * 2);
                 }
-                else if (go.TryGetComponent(out StationaryLight stationaryLight))
+
+                if (go.TryGetComponent(out StationaryLight stationaryLight))
                 {
                     return new Bounds(Vector3.zero, Vector3.one * stationaryLight.Range * 2);
                 }
-                else
-                {
-                    return go.GetComponentInChildren<MeshFilter>().mesh.bounds;
-                }
+
+                return go.GetComponentInChildren<MeshFilter>().mesh.bounds;
             }
             catch (Exception e)
             {
@@ -290,7 +298,7 @@ namespace GUZ.Core.Manager.Culling
         /// </summary>
         private void PostWorldCreate(GameObject playerGo)
         {
-            foreach (var group in new[] { vobCullingGroupSmall, vobCullingGroupMedium, vobCullingGroupLarge })
+            foreach (var group in new[] { _vobCullingGroupSmall, _vobCullingGroupMedium, _vobCullingGroupLarge })
             {
                 var mainCamera = Camera.main!;
                 group.targetCamera = mainCamera; // Needed for FrustumCulling and OcclusionCulling to work.
@@ -303,34 +311,40 @@ namespace GUZ.Core.Manager.Culling
             CancelStopTrackVobPositionUpdates(go);
 
             // Entry is already in list
-            if (pausedVobs.ContainsKey(go))
+            if (_pausedVobs.ContainsKey(go))
+            {
                 return;
+            }
 
             // Check Small list
-            int index = vobObjectsSmall.IndexOf(go);
+            var index = _vobObjectsSmall.IndexOf(go);
             var vobType = VobList.Small;
             // Check Medium list
             if (index == -1)
             {
-                index = vobObjectsMedium.IndexOf(go);
+                index = _vobObjectsMedium.IndexOf(go);
                 vobType = VobList.Medium;
             }
+
             // Check Large list
             if (index == -1)
             {
-                index = vobObjectsLarge.IndexOf(go);
+                index = _vobObjectsLarge.IndexOf(go);
                 vobType = VobList.Large;
             }
 
-            pausedVobs.Add(go, new(vobType, index));
+            _pausedVobs.Add(go, new Tuple<VobList, int>(vobType, index));
         }
 
         public void StopTrackVobPositionUpdates(GameObject go)
         {
-            if (pausedVobsToReenableCoroutine.ContainsKey(go))
+            if (_pausedVobsToReenableCoroutine.ContainsKey(go))
+            {
                 return;
+            }
 
-            pausedVobsToReenableCoroutine.Add(go, _coroutineManager.StartCoroutine(StopTrackVobPositionUpdatesDelayed(go)));
+            _pausedVobsToReenableCoroutine.Add(go,
+                _coroutineManager.StartCoroutine(StopTrackVobPositionUpdatesDelayed(go)));
         }
 
         /// <summary>
@@ -339,17 +353,16 @@ namespace GUZ.Core.Manager.Culling
         /// </summary>
         private void CancelStopTrackVobPositionUpdates(GameObject go)
         {
-            if (pausedVobsToReenableCoroutine.ContainsKey(go))
+            if (_pausedVobsToReenableCoroutine.ContainsKey(go))
             {
-                _coroutineManager.StopCoroutine(pausedVobsToReenableCoroutine[go]);
-                pausedVobsToReenableCoroutine.Remove(go);
+                _coroutineManager.StopCoroutine(_pausedVobsToReenableCoroutine[go]);
+                _pausedVobsToReenableCoroutine.Remove(go);
             }
 
-            if (pausedVobsToReenable.ContainsKey(go))
+            if (_pausedVobsToReenable.ContainsKey(go))
             {
-                pausedVobsToReenable.Remove(go);
+                _pausedVobsToReenable.Remove(go);
             }
-
         }
 
         /// <summary>
@@ -359,26 +372,30 @@ namespace GUZ.Core.Manager.Culling
         private IEnumerator StopTrackVobPositionUpdatesDelayed(GameObject go)
         {
             yield return new WaitForSeconds(1f);
-            pausedVobsToReenableCoroutine.Remove(go);
-            if(!pausedVobsToReenable.ContainsKey(go))
-                pausedVobsToReenable.Add(go, go.GetComponent<Rigidbody>());
+            _pausedVobsToReenableCoroutine.Remove(go);
+            if (!_pausedVobsToReenable.ContainsKey(go))
+            {
+                _pausedVobsToReenable.Add(go, go.GetComponent<Rigidbody>());
+            }
         }
 
         private IEnumerator StopVobTrackingBasedOnVelocity()
         {
             while (true)
             {
-                for (int i = pausedVobsToReenable.Keys.Count - 1; i >= 0; i--)
+                for (var i = _pausedVobsToReenable.Keys.Count - 1; i >= 0; i--)
                 {
-                    GameObject key = pausedVobsToReenable.Keys.ElementAt(i);
-                    Rigidbody rigidBody = pausedVobsToReenable[key];
+                    var key = _pausedVobsToReenable.Keys.ElementAt(i);
+                    var rigidBody = _pausedVobsToReenable[key];
                     if (rigidBody.velocity != Vector3.zero)
+                    {
                         continue;
+                    }
 
                     UpdateSpherePosition(key);
 
-                    pausedVobs.Remove(key);
-                    pausedVobsToReenable.Remove(key);
+                    _pausedVobs.Remove(key);
+                    _pausedVobsToReenable.Remove(key);
                 }
 
                 yield return null;
@@ -387,16 +404,16 @@ namespace GUZ.Core.Manager.Culling
 
         private void UpdateSpherePosition(GameObject go)
         {
-            var grabbed = pausedVobs[go];
+            var grabbed = _pausedVobs[go];
             var vobType = grabbed.Item1;
             var index = grabbed.Item2;
 
             // We need to find the GO's correlated Sphere in the right VobArray.
-            BoundingSphere[] sphereList = vobType switch
+            var sphereList = vobType switch
             {
-                VobList.Small => vobSpheresSmall,
-                VobList.Medium => vobSpheresMedium,
-                VobList.Large => vobSpheresLarge,
+                VobList.Small => _vobSpheresSmall,
+                VobList.Medium => _vobSpheresMedium,
+                VobList.Large => _vobSpheresLarge,
                 _ => throw new ArgumentOutOfRangeException()
             };
 
@@ -409,9 +426,10 @@ namespace GUZ.Core.Manager.Culling
             {
                 return;
             }
-            vobCullingGroupSmall.Dispose();
-            vobCullingGroupMedium.Dispose();
-            vobCullingGroupLarge.Dispose();
+
+            _vobCullingGroupSmall.Dispose();
+            _vobCullingGroupMedium.Dispose();
+            _vobCullingGroupLarge.Dispose();
         }
     }
 }

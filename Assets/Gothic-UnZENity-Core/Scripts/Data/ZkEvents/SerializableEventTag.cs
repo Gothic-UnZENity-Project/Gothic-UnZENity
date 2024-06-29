@@ -18,13 +18,16 @@ namespace GUZ.Core.Data.ZkEvents
         public bool Attached;
 
         public SerializableEventTag()
-        { }
-        
+        {
+        }
+
         public SerializableEventTag(IEventTag zkEventTag)
         {
             Frame = zkEventTag.Frame;
             Type = zkEventTag.Type;
-            Slot1 = zkEventTag.Slots.Item1; // Tuples aren't serialized by JsonUtility. Therefore separating its data now.
+            
+             // Tuples aren't serialized by JsonUtility. Therefore separating its data now.
+            Slot1 = zkEventTag.Slots .Item1;
             Slot2 = zkEventTag.Slots.Item2;
             Item = zkEventTag.Item;
             Frames = zkEventTag.Frames;

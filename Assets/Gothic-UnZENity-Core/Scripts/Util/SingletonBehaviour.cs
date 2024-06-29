@@ -1,34 +1,29 @@
 ﻿using UnityEngine;
 
 namespace GUZ.Core.Util
-{ 
+{
     public class SingletonBehaviour<T> : MonoBehaviour where T : SingletonBehaviour<T>
     {
-        protected static T _instance;
+        protected static T Instance;
 
-        public static bool Created { get { return _instance != null; } }
+        public static bool Created => Instance != null;
 
         /// <summary>
         /// Always returns the first created instance.
         /// </summary>
-        public static T I
-        {
-            get
-            {
-                return _instance;
-            }
-        }
+        public static T I => Instance;
 
         protected virtual void Awake()
         {
-            if (Created && _instance != this)
+            if (Created && Instance != this)
             {
-                Debug.LogWarning("An instance of this singleton (" + _instance.name + ") already exists. Destroying " + this.gameObject);
-                Destroy(this.gameObject);
+                Debug.LogWarning("An instance of this singleton (" + Instance.name + ") already exists. Destroying " +
+                                 gameObject);
+                Destroy(gameObject);
             }
             else
             {
-                _instance = (T)this;
+                Instance = (T)this;
             }
         }
     }

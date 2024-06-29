@@ -1,16 +1,14 @@
-﻿using System;
-
-namespace GUZ.Core.Npc.Routines
+﻿namespace GUZ.Core.Npc.Routines
 {
     public class RoutineData
     {
-        public int startH;
-        public int startM;
-        public int normalizedStart;
-        public int stopH;
-        public int stopM;
-        public int normalizedEnd;
-        public int action;
-        public string waypoint;
+        public int StartH;
+        public int StartM;
+        public int NormalizedStart;
+        public int StopH;
+        public int StopM;
+        public int NormalizedEnd;
+        public int Action;
+        public string Waypoint;
     }
 }

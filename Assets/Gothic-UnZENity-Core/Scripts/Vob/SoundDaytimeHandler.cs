@@ -1,8 +1,8 @@
 using System;
 using System.Collections;
-using GUZ.Core.Globals;
 using GUZ.Core.World;
 using UnityEngine;
+using UnityEngine.Serialization;
 using ZenKit.Vobs;
 using Random = UnityEngine.Random;
 
@@ -10,17 +10,17 @@ namespace GUZ.Core.Vob
 {
     public class SoundDaytimeHandler : MonoBehaviour
     {
-        public AudioSource audioSource1;
-        public AudioSource audioSource2;
-        public VobSoundDaytimeProperties properties;
-        
-        private DateTime startSound1 = GameTime.MIN_TIME;
-        private DateTime endSound1 = GameTime.MAX_TIME;
+        [FormerlySerializedAs("audioSource1")] public AudioSource AudioSource1;
+        [FormerlySerializedAs("audioSource2")] public AudioSource AudioSource2;
+        [FormerlySerializedAs("properties")] public VobSoundDaytimeProperties Properties;
+
+        private DateTime _startSound1 = GameTime.MinTime;
+        private DateTime _endSound1 = GameTime.MaxTime;
 
         // We need to avoid to start the Coroutine twice.
-        private bool isCoroutineRunning;
-        private AudioSource activeAudio;
-        
+        private bool _isCoroutineRunning;
+        private AudioSource _activeAudio;
+
         private void OnEnable()
         {
             HourEventCallback(GameGlobals.Time.GetCurrentDateTime());
@@ -32,97 +32,112 @@ namespace GUZ.Core.Vob
         private void OnDisable()
         {
             // Coroutines are stopped when GameObject gets disabled. But we need to restart during OnEnable() manually.
-            isCoroutineRunning = false;
+            _isCoroutineRunning = false;
             GlobalEventDispatcher.GameTimeHourChangeCallback.RemoveListener(HourEventCallback);
         }
 
         public void PrepareSoundHandling()
         {
-            var startTime = properties.soundDaytimeData.StartTime;
-            var endTime = properties.soundDaytimeData.EndTime;
+            var startTime = Properties.SoundDaytimeData.StartTime;
+            var endTime = Properties.SoundDaytimeData.EndTime;
             if (startTime != (int)startTime || endTime != (int)endTime)
             {
-                Debug.LogError($"Currently fractional times for DayTimeAudio aren't supported. Only full hours are handled. start={startSound1} end={endSound1}");
+                Debug.LogError(
+                    $"Currently fractional times for DayTimeAudio aren't supported. Only full hours are handled. start={_startSound1} end={_endSound1}");
                 return;
             }
-            
-            startSound1 = new(1, 1, 1, (int)startTime, 0, 0);
-            endSound1 = new(1, 1, 1, (int)endTime, 0, 0);
-            
+
+            _startSound1 = new DateTime(1, 1, 1, (int)startTime, 0, 0);
+            _endSound1 = new DateTime(1, 1, 1, (int)endTime, 0, 0);
+
             // Reset sounds
-            audioSource1.enabled = false;
-            audioSource2.enabled = false;
-            audioSource1.Stop();
-            audioSource2.Stop();
-            
+            AudioSource1.enabled = false;
+            AudioSource2.enabled = false;
+            AudioSource1.Stop();
+            AudioSource2.Stop();
+
             // Set active sound initially
             HourEventCallback(GameGlobals.Time.GetCurrentDateTime());
-            
+
             if (gameObject.activeSelf)
+            {
                 StartCoroutineInternal();
+            }
         }
-        
+
         private void StartCoroutineInternal()
         {
             // Either it's not yet initialized (no clip) or it's no random loop
-            if (audioSource1.clip == null || properties.soundDaytimeData.Mode != SoundMode.Random)
+            if (AudioSource1.clip == null || Properties.SoundDaytimeData.Mode != SoundMode.Random)
+            {
                 return;
-            
-            if (isCoroutineRunning)
+            }
+
+            if (_isCoroutineRunning)
+            {
                 return;
+            }
 
             StartCoroutine(ReplayRandomSound());
-            isCoroutineRunning = true;
+            _isCoroutineRunning = true;
         }
 
         private void HourEventCallback(DateTime currentTime)
         {
-            if (currentTime >= startSound1 && currentTime < endSound1)
+            if (currentTime >= _startSound1 && currentTime < _endSound1)
+            {
                 SwitchToSound1();
+            }
             else
+            {
                 SwitchToSound2();
+            }
         }
 
         private void SwitchToSound1()
         {
             // No need to change anything.
-            if (audioSource1.isActiveAndEnabled)
+            if (AudioSource1.isActiveAndEnabled)
+            {
                 return;
+            }
 
             // disable
-            audioSource2.enabled = false;
-            audioSource2.Stop();
+            AudioSource2.enabled = false;
+            AudioSource2.Stop();
 
             // enable
-            audioSource1.enabled = true;
-            activeAudio = audioSource1;
+            AudioSource1.enabled = true;
+            _activeAudio = AudioSource1;
         }
 
         private void SwitchToSound2()
         {
             // No need to change anything.
-            if (audioSource2.isActiveAndEnabled)
+            if (AudioSource2.isActiveAndEnabled)
+            {
                 return;
+            }
 
             // disable
-            audioSource1.enabled = false;
-            audioSource1.Stop();
+            AudioSource1.enabled = false;
+            AudioSource1.Stop();
 
             // enable
-            audioSource2.enabled = true;
-            activeAudio = audioSource2;
+            AudioSource2.enabled = true;
+            _activeAudio = AudioSource2;
         }
 
         private IEnumerator ReplayRandomSound()
         {
             while (true)
             {
-                var nextRandomPlayTime = properties.soundDaytimeData.RandomDelay
-                                         + Random.Range(0.0f, properties.soundDaytimeData.RandomDelayVar);
+                var nextRandomPlayTime = Properties.SoundDaytimeData.RandomDelay
+                                         + Random.Range(0.0f, Properties.SoundDaytimeData.RandomDelayVar);
                 yield return new WaitForSeconds(nextRandomPlayTime);
 
-                activeAudio.Play();
-                yield return new WaitForSeconds(activeAudio.clip.length);
+                _activeAudio.Play();
+                yield return new WaitForSeconds(_activeAudio.clip.length);
             }
         }
     }

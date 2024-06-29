@@ -5,6 +5,6 @@ namespace GUZ.Core.Vob
 {
     public class VobSoundDaytimeProperties : VobProperties
     {
-        public SoundDaytime soundDaytimeData;
+        public SoundDaytime SoundDaytimeData;
     }
 }
