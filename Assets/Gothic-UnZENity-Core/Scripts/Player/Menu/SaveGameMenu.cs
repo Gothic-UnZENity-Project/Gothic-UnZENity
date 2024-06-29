@@ -2,7 +2,6 @@ using System.IO;
 using GUZ.Core.Caches;
 using GUZ.Core.Extensions;
 using GUZ.Core.Manager;
-using GUZ.Core.Manager.Settings;
 using GUZ.Core.Util;
 using TMPro;
 using UnityEngine;
@@ -27,9 +26,9 @@ namespace GUZ.Core.Player.Menu
         /// </summary>
         private void Start()
         {
-            thumbnail.GetComponent<MeshRenderer>().material = TextureManager.I.GetEmptyMaterial(MaterialExtension.BlendMode.Opaque);
+            thumbnail.GetComponent<MeshRenderer>().material = GameGlobals.Textures.GetEmptyMaterial(MaterialExtension.BlendMode.Opaque);
 
-            var g1Dir = SettingsManager.GameSettings.GothicIPath;
+            var g1Dir = GameGlobals.Settings.GothicIPath;
             var saveGameListPath = Path.GetFullPath(Path.Join(g1Dir, "Saves"));
 
             foreach (var fullPath in Directory.EnumerateDirectories(saveGameListPath))
@@ -92,7 +91,7 @@ namespace GUZ.Core.Player.Menu
 
 #pragma warning disable CS4014 // It's intended, that this async call is not awaited.
             SaveGameManager.LoadSavedGame(id, save);
-            GUZSceneManager.I.LoadWorld(save.Metadata.World);
+            GameGlobals.Scene.LoadWorld(save.Metadata.World);
 #pragma warning restore CS4014
         }
     }

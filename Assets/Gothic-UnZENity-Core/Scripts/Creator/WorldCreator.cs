@@ -1,18 +1,15 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using GUZ.Core.Caches;
 using GUZ.Core.Creator.Meshes.V2;
-using GUZ.Core.Debugging;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
 using GUZ.Core.World;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.XR.Interaction.Toolkit;
 using ZenKit;
 using ZenKit.Vobs;
@@ -29,10 +26,10 @@ namespace GUZ.Core.Creator
 
         static WorldCreator()
         {
-            GUZEvents.GeneralSceneLoaded.AddListener(WorldLoaded);
+            GlobalEventDispatcher.GeneralSceneLoaded.AddListener(WorldLoaded);
         }
 
-        public static async Task CreateAsync()
+        public static async Task CreateAsync(LoadingManager loading, GameConfiguration config)
         {
             _worldGo = new GameObject("World");
 
@@ -45,36 +42,37 @@ namespace GUZ.Core.Creator
 
             // Build the world and vob meshes, populating the texture arrays.
             // We need to start creating Vobs as we need to calculate world slicing based on amount of lights at a certain space afterwards.
-            if (FeatureFlags.I.createVobs)
+            if (config.enableWorldObjects)
             {
-                await VobCreator.CreateAsync(_teleportGo, _nonTeleportGo, SaveGameManager.CurrentWorldData, Constants.VObPerFrame);
+                await VobCreator.CreateAsync(config, loading, _teleportGo, _nonTeleportGo, SaveGameManager.CurrentWorldData.Vobs, Constants.VObPerFrame);
                 await MeshFactory.CreateVobTextureArray();
             }
 
-            if (FeatureFlags.I.createWorldMesh)
+            if (config.enableWorldMesh)
             {
-                SaveGameManager.CurrentWorldData.SubMeshes =
-                    await BuildBspTree(SaveGameManager.CurrentWorldData.Mesh.Cache(), SaveGameManager.CurrentWorldData.BspTree);
+                var lightingEnabled = config.enableWorldObjects && (config.spawnWorldObjectTypes.IsEmpty() ||
+                                                                    config.spawnWorldObjectTypes.Contains(
+                                                                        VirtualObjectType.zCVobLight));
+                SaveGameManager.CurrentWorldData.SubMeshes = await BuildBspTree(
+                    SaveGameManager.CurrentWorldData.Mesh.Cache(),
+                    SaveGameManager.CurrentWorldData.BspTree.Cache(),
+                    lightingEnabled);
 
-                await MeshFactory.CreateWorld(SaveGameManager.CurrentWorldData, _teleportGo, Constants.MeshPerFrame);
+                await MeshFactory.CreateWorld(SaveGameManager.CurrentWorldData, loading, _teleportGo, Constants.MeshPerFrame);
                 await MeshFactory.CreateWorldTextureArray();
             }
 
-            SkyManager.I.InitSky();
+            GameGlobals.Sky.InitSky();
             StationaryLight.InitStationaryLights();
 
-            if (FeatureFlags.I.showBarrier)
-            {
-                BarrierManager.I.CreateBarrier();
-            }
-
-            WaynetCreator.Create(_worldGo, SaveGameManager.CurrentWorldData);
+            WaynetCreator.Create(config, _worldGo, SaveGameManager.CurrentWorldData);
 
             // Set the global variable to the result of the coroutine
-            LoadingManager.I.SetProgress(LoadingManager.LoadingProgressType.NPC, 1f);
+            loading.SetProgress(LoadingManager.LoadingProgressType.NPC, 1f);
         }
 
-        private static async Task<List<WorldData.SubMeshData>> BuildBspTree(IMesh zkMesh, IBspTree zkBspTree)
+        private static async Task<List<WorldData.SubMeshData>> BuildBspTree(IMesh zkMesh, IBspTree zkBspTree,
+            bool lightingEnabled)
         {
             ClaimedPolygons = new();
             Dictionary<int, List<WorldData.SubMeshData>> subMeshesPerParentNode = new();
@@ -93,7 +91,8 @@ namespace GUZ.Core.Creator
             Dictionary<int, List<WorldData.SubMeshData>> mergedSubMeshesPerParentNode = subMeshesPerParentNode;
             while (true)
             {
-                mergedSubMeshesPerParentNode = MergeWorldChunksByLightCount(zkBspTree, subMeshesPerParentNode);
+                mergedSubMeshesPerParentNode =
+                    MergeWorldChunksByLightCount(zkBspTree, subMeshesPerParentNode, lightingEnabled);
                 if (mergedSubMeshesPerParentNode.Count == subMeshesPerParentNode.Count)
                 {
                     break;
@@ -336,13 +335,14 @@ namespace GUZ.Core.Creator
             return mergedMeshes;
         }
 
-        private static Dictionary<int, List<WorldData.SubMeshData>> MergeWorldChunksByLightCount(IBspTree bspTree, Dictionary<int, List<WorldData.SubMeshData>> submeshesPerParentNode)
+        private static Dictionary<int, List<WorldData.SubMeshData>> MergeWorldChunksByLightCount(IBspTree bspTree,
+            Dictionary<int, List<WorldData.SubMeshData>> submeshesPerParentNode, bool lightingEnabled)
         {
             int maxLightsPerChunk = 16;
 
             // Workaround - if we have no lights spawned, then the merging algorithm has some issues.
             // But as this will only happen with Developer settings, we fix it here.
-            if (!FeatureFlags.I.IsVobTypeSpawned(VirtualObjectType.zCVobLight))
+            if (!lightingEnabled)
             {
                 maxLightsPerChunk = 0;
             }
@@ -422,10 +422,7 @@ namespace GUZ.Core.Creator
 
         private static void WorldLoaded(GameObject playerGo)
         {
-            // As we already added stored world mesh and waypoints in Unity GOs, we can safely remove them to free MBs.
-            SaveGameManager.CurrentWorldData.SubMeshes = null;
-
-            var interactionManager = GUZSceneManager.I.interactionManager.GetComponent<XRInteractionManager>();
+            var interactionManager = GameGlobals.Scene.interactionManager.GetComponent<XRInteractionManager>();
 
             // If we load a new scene, just remove the existing one.
             if (_worldGo.TryGetComponent(out TeleportationArea teleportArea))

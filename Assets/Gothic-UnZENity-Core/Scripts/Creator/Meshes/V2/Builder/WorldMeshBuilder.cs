@@ -28,7 +28,7 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
             throw new NotImplementedException("Use BuildAsync instead.");
         }
 
-        public async Task BuildAsync()
+        public async Task BuildAsync(LoadingManager loading)
         {
             RootGo.isStatic = true;
 
@@ -70,10 +70,7 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
                 }
 #endif
 
-                if (LoadingManager.I)
-                {
-                    LoadingManager.I.AddProgress(LoadingManager.LoadingProgressType.WorldMesh, 1f / numSubMeshes);
-                }
+                loading?.AddProgress(LoadingManager.LoadingProgressType.WorldMesh, 1f / numSubMeshes);
 
                 if (++meshesCreated % meshesPerFrame == 0)
                 {

@@ -4,17 +4,15 @@ using System.Linq;
 using System.Threading.Tasks;
 using GUZ.Core.Context;
 using GUZ.Core.Creator;
-using GUZ.Core.Debugging;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
-using GUZ.Core.Util;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Debug = UnityEngine.Debug;
 
 namespace GUZ.Core.Manager
 {
-    public class GUZSceneManager : SingletonBehaviour<GUZSceneManager>
+    public class GUZSceneManager
     {
         public GameObject interactionManager;
 
@@ -26,18 +24,29 @@ namespace GUZ.Core.Manager
         private string startVobAfterLoading;
         private Scene generalScene;
         private bool generalSceneLoaded;
+        private Scene? currentScene;
 
         private Vector3 heroStartPosition;
         private Quaternion heroStartRotation;
 
         private bool debugFreshlyDoneLoading;
-        
-        protected override void Awake()
-        {
-            base.Awake();
 
+        private GameConfiguration _config;
+        private LoadingManager _loading;
+
+        public GUZSceneManager(GameConfiguration config, LoadingManager loading, GameObject interactionManagerObject)
+        {
+            interactionManager = interactionManagerObject;
+            _config = config;
+            _loading = loading;
+        }
+        
+        public void Init()
+        {
             SceneManager.sceneLoaded += OnSceneLoaded;
             SceneManager.sceneUnloaded += OnSceneUnloaded;
+            
+            GlobalEventDispatcher.LevelChangeTriggered.AddListener((world, spawn) => _ = LoadWorld(world, spawn));
         }
 
         /// <summary>
@@ -48,18 +57,19 @@ namespace GUZ.Core.Manager
         {
             try
             {
-                if (!FeatureFlags.I.skipMainMenu)
+                if (_config.enableMainMenu)
                 {
                     await LoadMainMenu();
                 }
-                else if (!FeatureFlags.I.useSaveSlot)
+                else if (_config.loadFromSaveSlot)
                 {
-                    SaveGameManager.LoadNewGame();
-                    await LoadWorld(Constants.selectedWorld, Constants.selectedWaypoint);
+                    SaveGameManager.LoadSavedGame(_config.saveSlotToLoad);
+
+                    await LoadWorld(SaveGameManager.Save.Metadata.World);
                 }
                 else
                 {
-                    SaveGameManager.LoadSavedGame(FeatureFlags.I.saveSlot);
+                    SaveGameManager.LoadNewGame();
                     await LoadWorld(Constants.selectedWorld, Constants.selectedWaypoint);
                 }
             }
@@ -70,24 +80,28 @@ namespace GUZ.Core.Manager
         }
 
         // Outsourced after async Task LoadStartupScenes() as async makes Debugging way harder
-        private void Update()
+        // (Breakpoints won't be caught during exceptions)
+        public void Update()
         {
             if (!debugFreshlyDoneLoading)
+            {
                 return;
-            else
-                debugFreshlyDoneLoading = false;
+            }
+
+            debugFreshlyDoneLoading = false;
 
             // We load NPCs only! if we have a fresh game start.
             // TODO - We need to properly update this logic to reflect world switches for the first time as well (even from save games).
-            if (FeatureFlags.I.createOcNpcs && !FeatureFlags.I.useSaveSlot)
+            if (_config.spawnOldCampNpcs && !_config.loadFromSaveSlot)
+            {
                 GameData.GothicVm.Call("STARTUP_SUB_OLDCAMP");
+            }
         }
 
         private async Task LoadMainMenu()
         {
-            TextureManager.I.LoadLoadingDefaultTextures();
+            GameGlobals.Textures.LoadLoadingDefaultTextures();
             await LoadNewWorldScene(Constants.SceneMainMenu);
-            GameData.WorldScene = null;
         }
 
         public async Task LoadWorld(string worldName, string startVob = "")
@@ -106,28 +120,24 @@ namespace GUZ.Core.Manager
                 SetSpawnPoint();
                 return;
             }
-            
-            newWorldName = worldName;
 
-            SaveGameManager.ChangeWorld(worldName);
+            newWorldName = worldName;
 
             var watch = Stopwatch.StartNew();
 
             GameData.Reset();
-            
-            await ShowLoadingScene(worldName);
-            var newWorldScene = await LoadNewWorldScene(newWorldName);
-            await WorldCreator.CreateAsync();
 
+            await ShowLoadingScene(worldName);
+            await LoadNewWorldScene(newWorldName);
+            await WorldCreator.CreateAsync(_loading, _config);
             SetSpawnPoint();
 
             HideLoadingScene();
             watch.Stop();
             Debug.Log($"Time spent for loading {worldName}: {watch.Elapsed}");
-            
+
             debugFreshlyDoneLoading = true;
         }
-
         private async Task<Scene> LoadNewWorldScene(string worldName)
         {
             var newWorldScene = SceneManager.LoadScene(worldName, new LoadSceneParameters(LoadSceneMode.Additive));
@@ -137,10 +147,12 @@ namespace GUZ.Core.Manager
             await Task.Yield();
 
             // Remove previous scene if it exists
-            if (GameData.WorldScene.HasValue)
-                SceneManager.UnloadSceneAsync(GameData.WorldScene.Value);
+            if (currentScene.HasValue)
+            {
+                SceneManager.UnloadSceneAsync(currentScene.Value);
+            }
 
-            GameData.WorldScene = newWorldScene;
+            currentScene = newWorldScene;
             return newWorldScene;
         }
 
@@ -150,7 +162,7 @@ namespace GUZ.Core.Manager
         /// </summary>
         private async Task ShowLoadingScene(string worldName = null)
         {
-            TextureManager.I.LoadLoadingDefaultTextures();
+            GameGlobals.Textures.LoadLoadingDefaultTextures();
 
             generalScene = SceneManager.GetSceneByName(generalSceneName);
             if (generalScene.isLoaded)
@@ -158,7 +170,7 @@ namespace GUZ.Core.Manager
                 SceneManager.MoveGameObjectToScene(interactionManager, SceneManager.GetSceneByName(Constants.SceneBootstrap));
                 SceneManager.UnloadSceneAsync(generalScene);
 
-                GUZEvents.GeneralSceneUnloaded.Invoke();
+                GlobalEventDispatcher.GeneralSceneUnloaded.Invoke();
                 generalSceneLoaded = false;
             }
             
@@ -167,7 +179,7 @@ namespace GUZ.Core.Manager
             if (mainScene.isLoaded)
             {
                 SceneManager.UnloadSceneAsync(mainScene);
-                GUZEvents.MainMenuSceneUnloaded.Invoke();
+                GlobalEventDispatcher.MainMenuSceneUnloaded.Invoke();
             }
 
             SetLoadingTextureForWorld(worldName);
@@ -182,17 +194,19 @@ namespace GUZ.Core.Manager
         private void SetLoadingTextureForWorld(string worldName)
         {
             if (worldName == null)
+            {
                 return;
+            }
 
             string textureString = SaveGameManager.IsNewGame ? "LOADING.TGA" : $"LOADING_{worldName.Split('.')[0].ToUpper()}.TGA";
-            TextureManager.I.SetTexture(textureString, TextureManager.I.gothicLoadingMenuMaterial);
+            GameGlobals.Textures.SetTexture(textureString, GameGlobals.Textures.gothicLoadingMenuMaterial);
         }
 
         private void HideLoadingScene()
         {
             SceneManager.UnloadSceneAsync(Constants.SceneLoading);
 
-            LoadingManager.I.ResetProgress();
+            _loading.ResetProgress();
         }
 
         private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
@@ -202,7 +216,7 @@ namespace GUZ.Core.Manager
                 case Constants.SceneBootstrap:
                     break;
                 case Constants.SceneLoading:
-                    GUZEvents.LoadingSceneLoaded.Invoke();
+                    GlobalEventDispatcher.LoadingSceneLoaded.Invoke();
                     break;
                 case Constants.SceneGeneral:
                     SceneManager.MoveGameObjectToScene(interactionManager, generalScene);
@@ -210,20 +224,20 @@ namespace GUZ.Core.Manager
                     var playerGo = GUZContext.InteractionAdapter.CreatePlayerController(scene);
 
                     TeleportPlayerToSpot(playerGo);
-                    GUZEvents.GeneralSceneLoaded.Invoke(playerGo);
+                    GlobalEventDispatcher.GeneralSceneLoaded.Invoke(playerGo);
 
                     break;
                 case Constants.SceneMainMenu:
                     var sphere = scene.GetRootGameObjects().FirstOrDefault(go => go.name == "LoadingSphere");
-                    sphere.GetComponent<MeshRenderer>().material = TextureManager.I.loadingSphereMaterial;
+                    sphere.GetComponent<MeshRenderer>().material = GameGlobals.Textures.loadingSphereMaterial;
                     SceneManager.SetActiveScene(scene);
 
-                    GUZEvents.MainMenuSceneLoaded.Invoke();
+                    GlobalEventDispatcher.MainMenuSceneLoaded.Invoke();
                     break;
                 // any World
                 default:
                     SceneManager.SetActiveScene(scene);
-                    GUZEvents.WorldSceneLoaded.Invoke();
+                    GlobalEventDispatcher.WorldSceneLoaded.Invoke();
                     break;
             }
         }
@@ -247,21 +261,20 @@ namespace GUZ.Core.Manager
                 return;
             }
 
-            var debugSpawnPoint = FeatureFlags.I.spawnAtSpecificWayNetPoint;
+            var debugSpawnPoint = _config.spawnAtWaypoint;
             // DEBUG - Spawn at specifically named point.
             if (debugSpawnPoint.Any())
             {
                 var point = WayNetHelper.GetWayNetPoint(debugSpawnPoint);
-                
+
                 if (point != null)
                 {
                     SetStart(GameObject.Find(debugSpawnPoint).transform);
                     return;
                 }
             }
-            
+
             var spots = GameObject.FindGameObjectsWithTag(Constants.SpotTag);
-            Transform startTransform;
 
             // DEBUG - This _startVobAfterLoading_ is only used as debug method for the menu where we select the vob to spawn to.
             // DEBUG - Normally we would spawn at START(_GOTHIC2) or whatever the loaded save file tells us.
@@ -275,7 +288,6 @@ namespace GUZ.Core.Manager
             var startPoint2 = spots.FirstOrDefault(
                 go => go.name.EqualsIgnoreCase("START") || go.name.EqualsIgnoreCase("START_GOTHIC2")
             );
-
             SetStart(startPoint2.transform);
         }
 

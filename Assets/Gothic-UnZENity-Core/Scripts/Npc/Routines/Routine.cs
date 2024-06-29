@@ -15,12 +15,12 @@ namespace GUZ.Core.Npc.Routines
 
         private void Start()
         {
-            RoutineManager.I.Subscribe(this, Routines);
+            GameGlobals.Routines.Subscribe(this, Routines);
         }
         
         private void OnDisable()
         {
-            RoutineManager.I.Unsubscribe(this, Routines);
+            GameGlobals.Routines.Unsubscribe(this, Routines);
         }
 
         public void ChangeRoutine(DateTime now)
@@ -46,7 +46,7 @@ namespace GUZ.Core.Npc.Routines
         /// <returns>Whether the routine changed or not.</returns>
         public bool CalculateCurrentRoutine()
         {
-            var currentTime = GameTime.I.GetCurrentDateTime();
+            var currentTime = GameGlobals.Time.GetCurrentDateTime();
             
             var normalizedNow = currentTime.Hour % 24 * 60 + currentTime.Minute;
 

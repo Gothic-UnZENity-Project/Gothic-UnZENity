@@ -1,7 +1,5 @@
 using System.Collections.Generic;
 using System.IO;
-using GUZ.Core.Globals;
-using GUZ.Core.Manager.Settings;
 using GUZ.Core.World;
 using ZenKit;
 
@@ -28,7 +26,7 @@ namespace GUZ.Core.Manager
         public static bool IsLoadedGame => !IsNewGame;
         public static bool IsFirstWorldLoadingFromSaveGame; // Check if we load save game right now!
 
-        private static SaveGame _save;
+        public static SaveGame Save;
 
         private static readonly Dictionary<string, (ZenKit.World zkWorld, WorldData uWorld)> _worlds = new();
         public static string CurrentWorldName;
@@ -39,7 +37,7 @@ namespace GUZ.Core.Manager
         public static void LoadNewGame()
         {
             SaveGameId = 0;
-            _save = new SaveGame(GameVersion.Gothic1);
+            Save = new SaveGame(GameVersion.Gothic1);
         }
 
         /// <summary>
@@ -53,7 +51,7 @@ namespace GUZ.Core.Manager
         public static void LoadSavedGame(int saveGameId, SaveGame save)
         {
             SaveGameId = saveGameId;
-            _save = save;
+            Save = save;
             IsFirstWorldLoadingFromSaveGame = true;
         }
 
@@ -67,14 +65,14 @@ namespace GUZ.Core.Manager
                 return;
             }
 
-            ZenKit.World world = new ZenKit.World(GameData.Vfs, worldName);
+            ZenKit.World world = ResourceLoader.TryGetWorld(worldName);
             ZenKit.World saveGameWorld = null;
 
             // We can't ask a SaveGame for a world if we didn't save it before. Bug?
             if (IsLoadedGame)
             {
                 // Try to load world from save game.
-                saveGameWorld = _save.LoadWorld(worldName);
+                saveGameWorld = Save.LoadWorld(worldName);
             }
 
             // Store this world into runtime data as it's now loaded and cached during gameplay. (To save later when needed.)
@@ -113,7 +111,7 @@ namespace GUZ.Core.Manager
             foreach (var world in _worlds)
             {
                 PrepareWorldDataForSaving(world.Value.zkWorld, world.Value.uWorld);
-                _save.Save(GetSaveGamePath(saveGameId), world.Value.zkWorld, world.Key);
+                Save.Save(GetSaveGamePath(saveGameId), world.Value.zkWorld, world.Key);
             }
         }
 
@@ -129,7 +127,7 @@ namespace GUZ.Core.Manager
 
         private static string GetSaveGamePath(int folderSaveId)
         {
-            var g1Dir = SettingsManager.GameSettings.GothicIPath;
+            var g1Dir = GameGlobals.Settings.GothicIPath;
             return Path.GetFullPath(Path.Join(g1Dir, $"Saves/savegame{folderSaveId}"));
         }
     }

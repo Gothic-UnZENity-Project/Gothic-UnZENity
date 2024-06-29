@@ -1,13 +1,18 @@
 using System;
 using System.Collections;
-using GUZ.Core.Debugging;
 using GUZ.Core.Globals;
-using GUZ.Core.Util;
 using UnityEngine;
 
 namespace GUZ.Core.World
 {
-    public class GameTime : SingletonBehaviour<GameTime>
+    public enum GameTimeInterval
+    {
+        EveryGameSecond,
+        EveryGameMinute,
+        EveryGameHour
+    }
+    
+    public class GameTime
     {
         public static readonly DateTime MIN_TIME = new(1, 1, 1, 0, 0, 0);
         public static readonly DateTime MAX_TIME = new(9999, 12, 31, 23, 59, 59);
@@ -23,28 +28,39 @@ namespace GUZ.Core.World
         private static readonly float ONE_INGAME_SECOND = 0.06944f;
         private DateTime time = new(1, 1, 1, 15, 0, 0);
         private Coroutine timeTickCoroutineHandler;
-        
-        
-        private void Start()
+
+        private readonly ICoroutineManager _coroutineManager;
+        private readonly int _featureStartHour;
+        private readonly int _featureStartMinute;
+        private readonly float _featureTimeMultiplier;
+
+        public GameTime(GameConfiguration config, ICoroutineManager coroutineManager)
+        {
+            _coroutineManager = coroutineManager;
+            _featureStartHour = config.startTimeHour;
+            _featureStartMinute = config.startTimeMinute;
+            _featureTimeMultiplier = config.timeSpeedMultiplier;
+        }
+
+        public void Init()
         {
             // Set debug value for current Time.
-            time = new DateTime(time.Year, time.Month, time.Day,
-                    FeatureFlags.I.startHour, FeatureFlags.I.startMinute, time.Second);
-            minutesInHour = FeatureFlags.I.startMinute;
+            time = new DateTime(time.Year, time.Month, time.Day, _featureStartHour, _featureStartMinute, time.Second);
+            minutesInHour = _featureStartMinute;
 
-            GUZEvents.GeneralSceneLoaded.AddListener(WorldLoaded);
-            GUZEvents.GeneralSceneUnloaded.AddListener(WorldUnloaded);
+            GlobalEventDispatcher.GeneralSceneLoaded.AddListener(WorldLoaded);
+            GlobalEventDispatcher.GeneralSceneUnloaded.AddListener(WorldUnloaded);
         }
 
         private void WorldLoaded(GameObject playerGo)
         {
-            timeTickCoroutineHandler = StartCoroutine(TimeTick());
+            timeTickCoroutineHandler = _coroutineManager.StartCoroutine(TimeTick());
         }
 
         private void WorldUnloaded()
         {
             // Pause Coroutine until next world is loaded.
-            StopCoroutine(timeTickCoroutineHandler);
+            _coroutineManager.StopCoroutine(timeTickCoroutineHandler);
         }
 
         public DateTime GetCurrentDateTime()
@@ -61,9 +77,9 @@ namespace GUZ.Core.World
                 if (time > MAX_TIME)
                     time = MIN_TIME;
 
-                GUZEvents.GameTimeSecondChangeCallback.Invoke(time);
+                GlobalEventDispatcher.GameTimeSecondChangeCallback.Invoke(time);
                 RaiseMinuteAndHourEvent();
-                yield return new WaitForSeconds(ONE_INGAME_SECOND / FeatureFlags.I.TimeMultiplier);
+                yield return new WaitForSeconds(ONE_INGAME_SECOND / _featureTimeMultiplier);
             }
         }
         private void RaiseMinuteAndHourEvent()
@@ -72,7 +88,7 @@ namespace GUZ.Core.World
             if (secondsInMinute%60==0)
             {
                 secondsInMinute = 0;
-                GUZEvents.GameTimeMinuteChangeCallback.Invoke(time);
+                GlobalEventDispatcher.GameTimeMinuteChangeCallback.Invoke(time);
                 RaiseHourEvent();
             }
         }
@@ -82,7 +98,7 @@ namespace GUZ.Core.World
             if (minutesInHour % 60 == 0)
             {
                 minutesInHour = 0;
-                GUZEvents.GameTimeHourChangeCallback.Invoke(time);
+                GlobalEventDispatcher.GameTimeHourChangeCallback.Invoke(time);
             }
         }
 

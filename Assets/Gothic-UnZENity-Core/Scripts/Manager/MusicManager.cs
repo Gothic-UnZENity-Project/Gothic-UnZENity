@@ -1,24 +1,19 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using DirectMusic;
-using GUZ.Core.Caches;
-using GUZ.Core.Debugging;
 using GUZ.Core.Globals;
-using GUZ.Core.Manager.Settings;
 using GUZ.Core.Vob;
+using GUZ.Core;
 using UnityEngine;
 using ZenKit;
 using ZenKit.Daedalus;
 using ZenKit.Vobs;
-using Logger = DirectMusic.Logger;
-using LogLevel = DirectMusic.LogLevel;
 using Object = UnityEngine.Object;
 
 namespace GUZ.Core.Manager
 {
-    public static class MusicManager
+    public class MusicManager
     {
         [Flags]
         public enum SegmentTags : byte
@@ -31,16 +26,21 @@ namespace GUZ.Core.Manager
             Thr = 1 << 2
         }
 
-        private static Performance _dxPerformance;
-        private static Loader _dxLoader;
-        private static AudioSource _audioSourceComp;
-        private static AudioReverbFilter _reverbFilterComp;
+        [Obsolete]
+        public static MusicManager I;
 
-        private static MusicThemeInstance _currentTheme;
+        private Performance _dxPerformance;
+        private AudioSource _audioSourceComp;
+        private AudioReverbFilter _reverbFilterComp;
+
+        private Dictionary<string, MusicThemeInstance> _themes = new();
+        private DaedalusVm _vm;
+        
+        private MusicThemeInstance _currentTheme;
         /// <summary>
         /// Whenever we collide with a musicZoneVobGO, it's entry will be added to the list and the most important theme will be played.
         /// </summary>
-        private static readonly List<GameObject> _musicZones = new();
+        private readonly List<GameObject> _musicZones = new();
 
         // Depending on speed of track, 2048 == around less than a second
         // If we cache each call to dxMusic synthesizer, we would skip a lot of transition options as the synthesizer assumes we're already ahead.
@@ -49,23 +49,45 @@ namespace GUZ.Core.Manager
         private const int BUFFER_SIZE = 2048;
         private const int FREQUENCY_RATE = 44100;
 
-        public static void Initialize()
+        private readonly bool _featureEnabled;
+
+        public MusicManager(GameConfiguration config)
         {
-            if (!FeatureFlags.I.enableMusic)
+            I = this;
+            _featureEnabled = config.enableGameMusic;
+        }
+
+        public void Init()
+        {
+            if (!_featureEnabled)
+            {
                 return;
+            }
 
             _dxPerformance = Performance.Create(FREQUENCY_RATE);
 
             InitializeUnity();
-            InitializeZenKit();
             InitializeDxMusic();
 
-            GUZEvents.MainMenuSceneLoaded.AddListener(OnMainMenuLoaded);
-            GUZEvents.LoadingSceneLoaded.AddListener(OnLoadingSceneLoaded);
-            GUZEvents.GeneralSceneLoaded.AddListener(OnWorldLoaded);
+            GlobalEventDispatcher.MainMenuSceneLoaded.AddListener(OnMainMenuLoaded);
+            GlobalEventDispatcher.LoadingSceneLoaded.AddListener(OnLoadingSceneLoaded);
+            GlobalEventDispatcher.GeneralSceneLoaded.AddListener(OnWorldLoaded);
+            
+            GlobalEventDispatcher.MusicZoneEntered.AddListener(go =>
+            {
+                
+                AddMusicZone(go);
+                Play(SegmentTags.Std);
+            });
+            
+            GlobalEventDispatcher.MusicZoneExited.AddListener(go =>
+            {
+                RemoveMusicZone(go);
+                Play(SegmentTags.Std);
+            });
         }
 
-        private static void InitializeUnity()
+        private void InitializeUnity()
         {
             var backgroundMusic = GameObject.Find("BackgroundMusic");
             _audioSourceComp = backgroundMusic.GetComponent<AudioSource>();
@@ -79,17 +101,17 @@ namespace GUZ.Core.Manager
             _audioSourceComp.Play();
         }
 
-        private static void OnMainMenuLoaded()
+        private void OnMainMenuLoaded()
         {
             Play("SYS_MENU");
         }
 
-        private static void OnLoadingSceneLoaded()
+        private void OnLoadingSceneLoaded()
         {
             Play("SYS_LOADING");
         }
 
-        private static void OnWorldLoaded(GameObject playerGo)
+        private void OnWorldLoaded(GameObject playerGo)
         {
             _musicZones.Clear();
 
@@ -115,7 +137,7 @@ namespace GUZ.Core.Manager
             Play(SegmentTags.Std);
         }
 
-        public static void AddMusicZone(GameObject newMusicZoneGo)
+        public void AddMusicZone(GameObject newMusicZoneGo)
         {
             // If a collider triggers multiple times or we added the zone manually: Skip as duplicate
             if (_musicZones.Contains(newMusicZoneGo))
@@ -124,63 +146,27 @@ namespace GUZ.Core.Manager
             _musicZones.Add(newMusicZoneGo);
         }
 
-        public static void RemoveMusicZone(GameObject newMusicZoneGo)
+        public void RemoveMusicZone(GameObject newMusicZoneGo)
         {
             _musicZones.Remove(newMusicZoneGo);
         }
 
-        private static void InitializeZenKit()
+        private void InitializeDxMusic()
         {
-            // Load all music files into vfs.
-            GameData.Vfs.Mount(Path.Combine(SettingsManager.GameSettings.GothicIPath, "_work"), "/", VfsOverwriteBehavior.All);
-        }
-
-        private static void InitializeDxMusic()
-        {
-            Logger.Set(FeatureFlags.I.dxMusicLogLevel, LoggerCallback);
-
-            _dxLoader = Loader.Create(LoaderOptions.Download);
-            _dxLoader.AddResolver(name =>
+            // Load the VM and initialize all music theme instances
+            _vm = ResourceLoader.TryGetDaedalusVm("MUSIC");
+            _vm.GetInstanceSymbols("C_MUSICTHEME").ForEach(v =>
             {
-                try
-                {
-                    return GameData.Vfs.Find(name).Buffer.Bytes;
-                }
-                catch (Exception)
-                {
-                    // No audio file found. Return null for now as it seems sufficient.
-                    return null;
-                }
+                _themes[v.Name] = _vm.InitInstance<MusicThemeInstance>(v);
             });
         }
 
-        private static void LoggerCallback(LogLevel level, string message)
-        {
-            switch (level)
-            {
-                case LogLevel.Fatal:
-                case LogLevel.Error:
-                    Debug.LogError(message);
-                    break;
-                case LogLevel.Warning:
-                    Debug.LogWarning(message);
-                    break;
-                case LogLevel.Info:
-                case LogLevel.Debug:
-                case LogLevel.Trace:
-                    Debug.Log(message);
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(level), level, null);
-            }
-        }
-
-        private static void PCMReaderCallback(float[] data)
+        private void PCMReaderCallback(float[] data)
         {
             _dxPerformance.RenderPcm(data, true);
         }
 
-        public static void Play(SegmentTags tags)
+        public void Play(SegmentTags tags)
         {
             var zoneName = _musicZones
                 .OrderBy(i => i.GetComponent<VobMusicProperties>().musicData.Priority)
@@ -202,29 +188,30 @@ namespace GUZ.Core.Manager
             Play(musicThemeInstanceName);
         }
 
-        public static void Play(string musicInstanceName)
+        public void Play(string musicInstanceName)
         {
-            var music = AssetCache.TryGetMusic(musicInstanceName);
+            var music = _themes[musicInstanceName];
             Play(music);
         }
 
-        public static void Play(MusicThemeInstance theme)
+        public void Play(MusicThemeInstance theme)
         {
-            if (!FeatureFlags.I.enableMusic)
+            if (!_featureEnabled)
+            {
                 return;
+            }
 
             // Do not restart the current theme if already playing.
             // Multiple MusicThemeInstances can reference the same audio. Therefore checking actual files only.
             if (_currentTheme != null && theme.File == _currentTheme.File)
                 return;
 
-            var segment = _dxLoader.GetSegment(theme.File);
+            var segment = ResourceLoader.TryGetSegment(theme.File);
 
             var timing = ToTiming(theme.TransSubType);
             var embellishment = ToEmbellishment(theme.TransType);
 
-            if (FeatureFlags.I.dxMusicLogLevel >= LogLevel.Info)
-                Debug.Log($"Changing music theme to: {theme.File}");
+            Debug.Log($"Changing music theme to: {theme.File}");
 
             _dxPerformance.PlayTransition(segment, embellishment, timing);
 

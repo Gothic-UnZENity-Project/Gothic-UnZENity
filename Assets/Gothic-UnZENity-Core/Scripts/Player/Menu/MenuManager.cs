@@ -34,11 +34,11 @@ namespace GUZ.Core.Player.Menu
 
         public void SetMaterials()
         {
-            MainMenuImageBackground.GetComponent<MeshRenderer>().material = TextureManager.I.mainMenuImageBackgroundMaterial;
+            MainMenuImageBackground.GetComponent<MeshRenderer>().material = GameGlobals.Textures.mainMenuImageBackgroundMaterial;
             MainMenuSaveLoadBackground.GetComponent<MeshRenderer>().material =
-                TextureManager.I.mainMenuSaveLoadBackgroundMaterial;
-            MainMenuBackground.GetComponent<MeshRenderer>().material = TextureManager.I.mainMenuBackgroundMaterial;
-            MainMenuText.GetComponent<MeshRenderer>().material = TextureManager.I.mainMenuTextImageMaterial;
+                GameGlobals.Textures.mainMenuSaveLoadBackgroundMaterial;
+            MainMenuBackground.GetComponent<MeshRenderer>().material = GameGlobals.Textures.mainMenuBackgroundMaterial;
+            MainMenuText.GetComponent<MeshRenderer>().material = GameGlobals.Textures.mainMenuTextImageMaterial;
         }
 
         public void SetSettingsValues()
@@ -56,7 +56,7 @@ namespace GUZ.Core.Player.Menu
         {
 #pragma warning disable CS4014 // It's intended, that this async call is not awaited.
             SaveGameManager.LoadNewGame();
-            GUZSceneManager.I.LoadWorld(Constants.selectedWorld, Constants.selectedWaypoint);
+            GameGlobals.Scene.LoadWorld(Constants.selectedWorld, Constants.selectedWaypoint);
 #pragma warning restore CS4014
         }
 

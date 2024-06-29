@@ -4,8 +4,8 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using GUZ.Core.World;
 using GUZ.Core.Extensions;
+using GUZ.Core.World;
 using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -60,7 +60,7 @@ namespace GUZ.Core.Caches
                 return cachedTexture;
             }
 
-            return TryGetTexture(AssetCache.TryGetTexture(preparedKey), preparedKey);
+            return TryGetTexture(ResourceLoader.TryGetTexture(key), preparedKey);
         }
 
         public static Texture2D TryGetTexture(ITexture zkTexture, string key)
@@ -115,7 +115,7 @@ namespace GUZ.Core.Caches
             Dictionary<TextureArrayTypes, List<(string PreparedKey, ITexture Texture)>> textureDict = _arrayTexturesList[type];
 
             string key = materialData.Texture;
-            ITexture zenTextureData = AssetCache.TryGetTexture(key);
+            ITexture zenTextureData = ResourceLoader.TryGetTexture(key);
 
             if (zenTextureData == null)
             {

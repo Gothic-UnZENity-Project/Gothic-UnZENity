@@ -6,6 +6,8 @@ using GUZ.Core.Data;
 using GUZ.Core.Globals;
 using GUZ.Core.Properties;
 using GUZ.Core.Extensions;
+using GUZ.Core.Vm;
+using GUZ.Core;
 using JetBrains.Annotations;
 using UnityEngine;
 
@@ -63,16 +65,16 @@ namespace GUZ.Core.Manager
             // FIXME - Move to EndsWithIgnoreCase()
             if (soundName.ToLower().EndsWith(".wav"))
             {
-                soundData = AssetCache.TryGetSound(soundName);
+                soundData = ResourceLoader.TryGetSound(soundName);
             }
             else
             {
-                var sfxData = AssetCache.TryGetSfxData(soundName);
+                var sfxData = VmInstanceManager.TryGetSfxData(soundName);
 
                 if (sfxData == null)
                     return null;
 
-                soundData = AssetCache.TryGetSound(sfxData.File);
+                soundData = ResourceLoader.TryGetSound(sfxData.File);
             }
 
             if (soundData == null)
