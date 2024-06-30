@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using GUZ.Core.World;
+using JetBrains.Annotations;
+using UnityEngine;
 using ZenKit;
 
 namespace GUZ.Core.Manager
@@ -51,6 +53,12 @@ namespace GUZ.Core.Manager
 
         public static void LoadSavedGame(int saveGameId, SaveGame save)
         {
+            if (save == null)
+            {
+                Debug.LogError($"SaveGame with id {saveGameId} doesn't exist.");
+                return;
+            }
+
             SaveGameId = saveGameId;
             Save = save;
             IsFirstWorldLoadingFromSaveGame = true;
@@ -92,10 +100,19 @@ namespace GUZ.Core.Manager
             };
         }
 
+        [CanBeNull]
         public static SaveGame GetSaveGame(int folderSaveId)
         {
             // Load metadata
             var save = new SaveGame(GameVersion.Gothic1);
+            var saveGamePath = GetSaveGamePath(folderSaveId);
+
+            if (!Directory.Exists(saveGamePath))
+            {
+                Debug.LogError($"SaveGame inside folder >{saveGamePath}< doesn't exist.");
+                return null;
+            }
+
             save.Load(GetSaveGamePath(folderSaveId));
 
             return save;
@@ -107,6 +124,7 @@ namespace GUZ.Core.Manager
         /// 2. Alter its values inside the ZenKit data
         /// 3. Save world-by-world into the save game itself
         /// </summary>
+        //FIXME - untested!
         public static void SaveGame(int saveGameId)
         {
             foreach (var world in _worlds)
@@ -121,6 +139,7 @@ namespace GUZ.Core.Manager
         /// Hint: Not all elements need to be replaced and therefore have no setter (e.g. .Mesh, .WayNet).
         /// We therefore only set what's needed.
         /// </summary>
+        //FIXME - untested!
         private static void PrepareWorldDataForSaving(ZenKit.World zkWorld, WorldData uWorld)
         {
             zkWorld.RootObjects = uWorld.Vobs;

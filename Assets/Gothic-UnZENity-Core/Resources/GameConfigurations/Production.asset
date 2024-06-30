@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 355b4ad0092f448a80ea647207f12648, type: 3}
   m_Name: Production
   m_EditorClassIdentifier: 
-  EnableDeviceSimulator: 1
+  EnableDeviceSimulator: 0
   GameControls: 0
-  EnableMainMenu: 0
+  EnableMainMenu: 1
   LoadFromSaveSlot: 0
   SaveSlotToLoad: 1
   SpawnOldCampNpcs: 0
@@ -23,7 +23,7 @@ MonoBehaviour:
   EnableWorldObjects: 1
   EnableWorldMesh: 1
   EnableBarrierVisual: 1
-  EnableDecalVisuals: 1
+  EnableDecalVisuals: 0
   EnableParticleEffects: 0
   EnableNpcEyeBlinking: 0
   SpawnWorldObjectTypes: 
@@ -42,7 +42,7 @@ MonoBehaviour:
   ShowWayEdges: 0
   EnableSoundCulling: 1
   EnableMeshCulling: 1
-  ShowMeshCullingGizmos: 1
+  ShowMeshCullingGizmos: 0
   SmallMeshCullingGroup:
     MaximumObjectSize: 1
     CullingDistance: 50
