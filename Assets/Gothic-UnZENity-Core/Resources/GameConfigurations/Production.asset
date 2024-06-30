@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Production
   m_EditorClassIdentifier: 
   enableDeviceSimulator: 0
+  gameControls: 0
   enableMainMenu: 1
   loadFromSaveSlot: 0
   saveSlotToLoad: 0
@@ -22,10 +23,11 @@ MonoBehaviour:
   enableWorldObjects: 1
   enableWorldMesh: 1
   enableBarrierVisual: 1
-  enableSkyVisual: 1
-  enableDecalVisuals: 1
+  enableDecalVisuals: 0
   enableParticleEffects: 0
+  enableNpcEyeBlinking: 0
   spawnWorldObjectTypes: 
+  spawnNpcInstances: 
   enableGameMusic: 1
   enableGameSounds: 1
   sunLightColor: {r: 0.6901961, g: 0.6901961, b: 0.6901961, a: 1}
@@ -40,7 +42,7 @@ MonoBehaviour:
   showWayEdges: 0
   enableSoundCulling: 1
   enableMeshCulling: 1
-  showMeshCullingGizmos: 1
+  showMeshCullingGizmos: 0
   smallMeshCullingGroup:
     maximumObjectSize: 1
     cullingDistance: 50
@@ -53,3 +55,4 @@ MonoBehaviour:
   zenkitLogLevel: 1
   directMusicLogLevel: 30
   enableBarrierLogs: 0
+  enableSpyLogs: 0

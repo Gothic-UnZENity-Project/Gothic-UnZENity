@@ -24,7 +24,7 @@ namespace GUZ.Core.Manager
         private string startVobAfterLoading;
         private Scene generalScene;
         private bool generalSceneLoaded;
-        private Scene? currentScene;
+        private Scene currentScene;
 
         private Vector3 heroStartPosition;
         private Quaternion heroStartRotation;
@@ -122,6 +122,7 @@ namespace GUZ.Core.Manager
             }
 
             newWorldName = worldName;
+            SaveGameManager.ChangeWorld(worldName);
 
             var watch = Stopwatch.StartNew();
 
@@ -147,9 +148,9 @@ namespace GUZ.Core.Manager
             await Task.Yield();
 
             // Remove previous scene if it exists
-            if (currentScene.HasValue)
+            if (currentScene.IsValid())
             {
-                SceneManager.UnloadSceneAsync(currentScene.Value);
+                SceneManager.UnloadSceneAsync(currentScene);
             }
 
             currentScene = newWorldScene;
