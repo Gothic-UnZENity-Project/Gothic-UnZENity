@@ -8,7 +8,8 @@ namespace GUZ.Core.Data.ZkEvents
     public class SerializableEventSoundEffect
     {
         public SerializableEventSoundEffect()
-        { }
+        {
+        }
 
         public SerializableEventSoundEffect(IEventSoundEffect zkEventSoundEffect)
         {

@@ -2,8 +2,8 @@
 {
     public class SoundData
     {
-        public float[] sound;
-        public ushort channels;
-        public int sampleRate;
+        public float[] Sound;
+        public ushort Channels;
+        public int SampleRate;
     }
 }

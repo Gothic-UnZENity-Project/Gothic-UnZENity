@@ -1,8 +1,12 @@
+using GUZ.Core;
 using GUZ.Core.Caches;
 using GUZ.Core.Context;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
+using GUZ.Core.Manager.Culling;
 using GUZ.Core.Manager.Settings;
+using GUZ.Core.Vm;
+using GUZ.Core.World;
 using GUZ.Lab.Handler;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -10,51 +14,108 @@ using UnityEngine.Serialization;
 
 namespace GUZ.Lab
 {
-    public class LabBootstrapper : MonoBehaviour
+    [RequireComponent(typeof(TextureManager), typeof(FontManager))]
+    public class LabBootstrapper : MonoBehaviour, IGlobalDataProvider, ICoroutineManager
     {
-        public LabMusicHandler labMusicHandler;
-        public LabNpcDialogHandler npcDialogHandler;
-        public LabLockableHandler lockableHandler;
-        public LabLadderLabHandler ladderLabHandler;
-        public LabVobHandAttachPointsLabHandler vobHandAttachPointsLabHandler;
-        public LabNpcAnimationHandler labNpcAnimationHandler;
+        [field: FormerlySerializedAs("config")]
+        [field: SerializeField]
+        public GameConfiguration Config { get; private set; }
 
+        [FormerlySerializedAs("labMusicHandler")]
+        public LabMusicHandler LabMusicHandler;
+
+        [FormerlySerializedAs("npcDialogHandler")]
+        public LabNpcDialogHandler NpcDialogHandler;
+
+        [FormerlySerializedAs("lockableHandler")]
+        public LabLockableHandler LockableHandler;
+
+        [FormerlySerializedAs("ladderLabHandler")]
+        public LabLadderLabHandler LadderLabHandler;
+
+        [FormerlySerializedAs("vobHandAttachPointsLabHandler")]
+        public LabVobHandAttachPointsLabHandler VobHandAttachPointsLabHandler;
+
+        [FormerlySerializedAs("labNpcAnimationHandler")]
+        public LabNpcAnimationHandler LabNpcAnimationHandler;
+
+        private XRDeviceSimulatorManager _deviceSimulatorManager;
+        private MusicManager _gameMusicManager;
+        private RoutineManager _npcRoutineManager;
+        private GameSettings _settings;
+        private GuzSceneManager _sceneManager;
+        private TextureManager _textureManager;
+        private FontManager _fontManager;
         private bool _isBooted;
+
+        public GameSettings Settings => _settings;
+        public SkyManager Sky => null;
+        public GameTime Time => null;
+        public RoutineManager Routines => _npcRoutineManager;
+        public GuzSceneManager Scene => _sceneManager;
+        public TextureManager Textures => _textureManager;
+        public FontManager Font => _fontManager;
+        public StationaryLightsManager Lights => null;
+        public VobMeshCullingManager MeshCulling => null;
+        public VobSoundCullingManager SoundCulling => null;
+
+
+        private void Awake()
+        {
+            GameGlobals.Instance = this;
+
+            _settings = GameSettings.Load();
+            _textureManager = GetComponent<TextureManager>();
+            _fontManager = GetComponent<FontManager>();
+            _sceneManager = new GuzSceneManager(Config, null, null);
+            _deviceSimulatorManager = new XRDeviceSimulatorManager(Config);
+            _npcRoutineManager = new RoutineManager(Config);
+            _gameMusicManager = new MusicManager(Config);
+
+            ResourceLoader.Init(_settings.GothicIPath);
+            _sceneManager.Init();
+            _gameMusicManager.Init();
+            _npcRoutineManager.Init();
+        }
+
         /// <summary>
         /// It's easiest to wait for Start() to initialize all the MonoBehaviours first.
         /// </summary>
         private void Update()
         {
             if (_isBooted)
+            {
                 return;
+            }
+
             _isBooted = true;
-            
-            GUZBootstrapper.BootGothicUnZENity(SettingsManager.GameSettings.GothicIPath);
+
+            var settings = _settings;
+            GuzBootstrapper.BootGothicUnZeNity(Config, settings.GothicIPath, settings.GothicILanguage);
 
             BootLab();
 
-            labNpcAnimationHandler.Bootstrap();
-            labMusicHandler.Bootstrap();
-            npcDialogHandler.Bootstrap();
-            lockableHandler.Bootstrap();
-            ladderLabHandler.Bootstrap();
-            vobHandAttachPointsLabHandler.Bootstrap();
+            LabNpcAnimationHandler.Bootstrap();
+            LabMusicHandler.Bootstrap();
+            NpcDialogHandler.Bootstrap();
+            LockableHandler.Bootstrap();
+            LadderLabHandler.Bootstrap();
+            VobHandAttachPointsLabHandler.Bootstrap();
         }
 
         private void BootLab()
         {
-            var playerGo = GUZContext.InteractionAdapter.CreatePlayerController(SceneManager.GetActiveScene());
-            XRDeviceSimulatorManager.I.AddXRDeviceSimulator();
+            var playerGo = GuzContext.InteractionAdapter.CreatePlayerController(SceneManager.GetActiveScene());
+            _deviceSimulatorManager.AddXRDeviceSimulator();
             NpcHelper.CacheHero(playerGo);
         }
 
         private void OnDestroy()
         {
             GameData.Dispose();
-            AssetCache.Dispose();
+            VmInstanceManager.Dispose();
             TextureCache.Dispose();
             LookupCache.Dispose();
-            PrefabCache.Dispose();
             MorphMeshCache.Dispose();
         }
     }

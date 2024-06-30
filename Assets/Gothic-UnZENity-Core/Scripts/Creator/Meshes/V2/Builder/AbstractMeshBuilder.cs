@@ -9,8 +9,10 @@ using UnityEngine;
 using UnityEngine.Rendering;
 using ZenKit;
 using Material = UnityEngine.Material;
+using Matrix4x4 = System.Numerics.Matrix4x4;
 using TextureFormat = UnityEngine.TextureFormat;
 using Mesh = UnityEngine.Mesh;
+using Texture = UnityEngine.Texture;
 
 namespace GUZ.Core.Creator.Meshes.V2.Builder
 {
@@ -28,14 +30,15 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
 
         protected Vector3 RootPosition;
         protected Quaternion RootRotation;
-        
-        protected bool isMorphMeshMappingAlreadyCached;
+
+        protected bool IsMorphMeshMappingAlreadyCached;
 
 
         public abstract GameObject Build();
 
 
-#region Setter
+        #region Setter
+
         public void SetGameObject([CanBeNull] GameObject rootGo, string name = null)
         {
             RootGo = rootGo == null ? new GameObject() : rootGo;
@@ -71,7 +74,7 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
 
         public void SetMdh(string mdhName)
         {
-            Mdh = AssetCache.TryGetMdh(mdhName);
+            Mdh = ResourceLoader.TryGetModelHierarchy(mdhName);
 
             if (Mdh == null)
             {
@@ -81,12 +84,12 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
 
         public void SetMdh(IModelHierarchy mdh)
         {
-            this.Mdh = mdh;
+            Mdh = mdh;
         }
 
         public void SetMdm(string mdmName)
         {
-            Mdm = AssetCache.TryGetMdm(mdmName);
+            Mdm = ResourceLoader.TryGetModelMesh(mdmName);
 
             if (Mdm == null)
             {
@@ -96,22 +99,22 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
 
         public void SetMdm(IModelMesh mdm)
         {
-            this.Mdm = mdm;
+            Mdm = mdm;
         }
 
         public void SetMrm(IMultiResolutionMesh mrm)
         {
-            this.Mrm = mrm;
+            Mrm = mrm;
         }
 
         public void SetMmb(IMorphMesh mmb)
         {
-            this.Mmb = mmb;
+            Mmb = mmb;
         }
 
         public void SetMrm(string mrmName)
         {
-            Mrm = AssetCache.TryGetMrm(mrmName);
+            Mrm = ResourceLoader.TryGetMultiResolutionMesh(mrmName);
 
             if (Mrm == null)
             {
@@ -124,7 +127,7 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
         /// </summary>
         public void SetMmb(string mmbName)
         {
-            Mmb = AssetCache.TryGetMmb(mmbName);
+            Mmb = ResourceLoader.TryGetMorphMesh(mmbName);
 
             if (Mmb == null)
             {
@@ -147,13 +150,14 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
         {
             UseTextureArray = use;
         }
-#endregion
+
+        #endregion
 
 
         protected void BuildViaMrm()
         {
-            MeshFilter meshFilter = RootGo.TryAddComponent<MeshFilter>();
-            MeshRenderer meshRenderer = RootGo.TryAddComponent<MeshRenderer>();
+            var meshFilter = RootGo.TryAddComponent<MeshFilter>();
+            var meshRenderer = RootGo.TryAddComponent<MeshRenderer>();
             meshRenderer.material = Constants.LoadingMaterial;
             PrepareMeshFilter(meshFilter, Mrm, meshRenderer);
 
@@ -206,17 +210,25 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
                     SetPosAndRot(nodeObj, node.Transform);
 
                     if (node.ParentIndex == -1)
+                    {
                         nodeObj.SetParent(RootGo);
+                    }
                     else
+                    {
                         nodeObj.SetParent(nodeObjects[node.ParentIndex]);
+                    }
                 }
 
                 for (var i = 0; i < nodeObjects.Length; i++)
                 {
                     if (Mdh.Nodes[i].ParentIndex == -1)
+                    {
                         nodeObjects[i].transform.localPosition = Mdh.RootTranslation.ToUnityVector();
+                    }
                     else
+                    {
                         SetPosAndRot(nodeObjects[i], Mdh.Nodes[i].Transform);
+                    }
                 }
             }
 
@@ -243,14 +255,14 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
                 CreateBonesData(RootGo, nodeObjects, meshRenderer, softSkinMesh);
             }
 
-            Dictionary<string, IMultiResolutionMesh> attachments = GetFilteredAttachments(Mdm.Attachments);
+            var attachments = GetFilteredAttachments(Mdm.Attachments);
 
             // Fill GameObjects with Meshes from attachments
-            foreach (KeyValuePair<string, IMultiResolutionMesh> subMesh in attachments)
+            foreach (var subMesh in attachments)
             {
-                GameObject meshObj = nodeObjects.First(bone => bone.name == subMesh.Key);
-                MeshFilter meshFilter = meshObj.TryAddComponent<MeshFilter>();
-                MeshRenderer meshRenderer = meshObj.TryAddComponent<MeshRenderer>();
+                var meshObj = nodeObjects.First(bone => bone.name == subMesh.Key);
+                var meshFilter = meshObj.TryAddComponent<MeshFilter>();
+                var meshRenderer = meshObj.TryAddComponent<MeshRenderer>();
                 meshRenderer.material = Constants.LoadingMaterial;
 
                 PrepareMeshFilter(meshFilter, subMesh.Value, meshRenderer);
@@ -259,7 +271,7 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
                 {
                     PrepareMeshRenderer(meshRenderer, subMesh.Value);
                 }
-                
+
                 PrepareMeshCollider(meshObj, meshFilter.sharedMesh, subMesh.Value.Materials);
             }
 
@@ -275,12 +287,12 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
         {
             var meshFilter = RootGo.TryAddComponent<MeshFilter>();
             var meshRenderer = RootGo.TryAddComponent<MeshRenderer>();
-            
+
             PrepareMeshFilter(meshFilter, Mmb.Mesh, meshRenderer);
             PrepareMeshRenderer(meshRenderer, Mmb.Mesh);
-            
+
             SetPosAndRot(RootGo, RootPosition, RootRotation);
-            
+
             return RootGo;
         }
 
@@ -298,19 +310,21 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
                 return;
             }
 
-            List<Material> finalMaterials = new List<Material>(mrmData.SubMeshes.Count);
-            int submeshCount = rend is MeshRenderer ? rend.GetComponent<MeshFilter>().sharedMesh.subMeshCount : mrmData.SubMeshCount;
+            var finalMaterials = new List<Material>(mrmData.SubMeshes.Count);
+            var submeshCount = rend is MeshRenderer
+                ? rend.GetComponent<MeshFilter>().sharedMesh.subMeshCount
+                : mrmData.SubMeshCount;
 
-            for (int i = 0; i < submeshCount; i++)
+            for (var i = 0; i < submeshCount; i++)
             {
-                IMaterial materialData = mrmData.SubMeshes[i].Material;
+                var materialData = mrmData.SubMeshes[i].Material;
                 if (materialData.Texture.IsEmpty()) // No texture to add.
                 {
                     Debug.LogWarning("No texture was set for: " + materialData.Name);
                     return;
                 }
 
-                UnityEngine.Texture texture = GetTexture(materialData.Texture);
+                Texture texture = GetTexture(materialData.Texture);
                 if (!texture)
                 {
                     if (materialData.Texture.EndsWithIgnoreCase(".TGA"))
@@ -323,7 +337,7 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
                     }
                 }
 
-                Material material = GetDefaultMaterial(texture && ((Texture2D)texture).format == TextureFormat.RGBA32);
+                var material = GetDefaultMaterial(texture && ((Texture2D)texture).format == TextureFormat.RGBA32);
 
                 material.mainTexture = texture;
                 rend.material = material;
@@ -335,7 +349,7 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
 
         protected void PrepareMeshFilter(MeshFilter meshFilter, IMultiResolutionMesh mrmData, MeshRenderer meshRenderer)
         {
-            Mesh mesh = new Mesh();
+            var mesh = new Mesh();
             meshFilter.mesh = mesh;
 
             if (null == mrmData)
@@ -346,24 +360,25 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
 
             CreateMorphMeshBegin(mrmData, mesh);
 
-            int triangleCount = mrmData.SubMeshes.Sum(i => i.Triangles.Count);
-            int vertexCount = triangleCount * 3;
-            List<Vector3> preparedVertices = new List<Vector3>(vertexCount);
-            List<Vector4> preparedUVs = new List<Vector4>(vertexCount);
-            List<Vector3> normals = new List<Vector3>(vertexCount);
-            List<List<int>> preparedTriangles = new List<List<int>>();
-            int index = 0;
-            Dictionary<TextureCache.TextureArrayTypes, int> submeshPerTextureFormat = new Dictionary<TextureCache.TextureArrayTypes, int>();
+            var triangleCount = mrmData.SubMeshes.Sum(i => i.Triangles.Count);
+            var vertexCount = triangleCount * 3;
+            var preparedVertices = new List<Vector3>(vertexCount);
+            var preparedUVs = new List<Vector4>(vertexCount);
+            var normals = new List<Vector3>(vertexCount);
+            var preparedTriangles = new List<List<int>>();
+            var index = 0;
+            var submeshPerTextureFormat = new Dictionary<TextureCache.TextureArrayTypes, int>();
 
             foreach (var subMesh in mrmData.SubMeshes)
             {
                 // When using the texture array, get the index of the array of the matching texture format. Build submeshes for each texture format, i.e. separating opaque and alpha cutout textures.
                 int textureArrayIndex = 0, maxMipLevel = 0;
-                Vector2 textureScale = Vector2.one;
-                TextureCache.TextureArrayTypes textureArrayType = TextureCache.TextureArrayTypes.Opaque;
+                var textureScale = Vector2.one;
+                var textureArrayType = TextureCache.TextureArrayTypes.Opaque;
                 if (UseTextureArray)
                 {
-                    TextureCache.GetTextureArrayIndex(TextureCache.TextureTypes.Vob, subMesh.Material, out textureArrayType, out textureArrayIndex, out textureScale, out maxMipLevel);
+                    TextureCache.GetTextureArrayIndex(TextureCache.TextureTypes.Vob, subMesh.Material,
+                        out textureArrayType, out textureArrayIndex, out textureScale, out maxMipLevel);
                     if (!submeshPerTextureFormat.ContainsKey(textureArrayType))
                     {
                         submeshPerTextureFormat.Add(textureArrayType, preparedTriangles.Count);
@@ -375,12 +390,16 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
                     preparedTriangles.Add(new List<int>());
                 }
 
-                for (int i = 0; i < subMesh.Triangles.Count; i++)
+                for (var i = 0; i < subMesh.Triangles.Count; i++)
                 {
                     // One triangle is made of 3 elements for Unity. We therefore need to prepare 3 elements within one loop.
-                    MeshWedge[] wedges = { subMesh.Wedges[subMesh.Triangles[i].Wedge2], subMesh.Wedges[subMesh.Triangles[i].Wedge1], subMesh.Wedges[subMesh.Triangles[i].Wedge0] };
+                    MeshWedge[] wedges =
+                    {
+                        subMesh.Wedges[subMesh.Triangles[i].Wedge2], subMesh.Wedges[subMesh.Triangles[i].Wedge1],
+                        subMesh.Wedges[subMesh.Triangles[i].Wedge0]
+                    };
 
-                    for (int w = 0; w < wedges.Length; w++)
+                    for (var w = 0; w < wedges.Length; w++)
                     {
                         preparedVertices.Add(mrmData.Positions[wedges[w].Index].ToUnityVector());
                         if (UseTextureArray)
@@ -391,8 +410,9 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
                         {
                             preparedTriangles[preparedTriangles.Count - 1].Add(index++);
                         }
+
                         normals.Add(wedges[w].Normal.ToUnityVector());
-                        Vector2 uv = Vector2.Scale(textureScale, wedges[w].Texture.ToUnityVector());
+                        var uv = Vector2.Scale(textureScale, wedges[w].Texture.ToUnityVector());
                         preparedUVs.Add(new Vector4(uv.x, uv.y, textureArrayIndex, maxMipLevel));
 
                         CreateMorphMeshEntry(wedges[w].Index, preparedVertices.Count);
@@ -408,7 +428,7 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
             mesh.SetVertices(preparedVertices);
             mesh.SetUVs(0, preparedUVs);
             mesh.SetNormals(normals);
-            for (int i = 0; i < preparedTriangles.Count; i++)
+            for (var i = 0; i < preparedTriangles.Count; i++)
             {
                 mesh.SetTriangles(preparedTriangles[i], i);
             }
@@ -417,7 +437,8 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
 
             if (UseTextureArray)
             {
-                TextureCache.VobMeshRenderersForTextureArray.Add((meshRenderer, (mrmData, submeshPerTextureFormat.Keys.ToList())));
+                TextureCache.VobMeshRenderersForTextureArray.Add((meshRenderer,
+                    (mrmData, submeshPerTextureFormat.Keys.ToList())));
             }
         }
 
@@ -492,6 +513,7 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
                     preparedBoneWeights.Add(weights[index2.Index].ToBoneWeight(soft.Nodes));
                     preparedBoneWeights.Add(weights[index3.Index].ToBoneWeight(soft.Nodes));
                 }
+
                 preparedTriangles.Add(subMeshTriangles);
             }
 
@@ -519,7 +541,8 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
         /// @see https://docs.unity3d.com/ScriptReference/Mesh-bindposes.html
         /// @see https://forum.unity.com/threads/some-explanations-on-bindposes.86185/
         /// </summary>
-        private void CreateBonesData(GameObject rootObj, GameObject[] nodeObjects, SkinnedMeshRenderer renderer, ISoftSkinMesh mesh)
+        private void CreateBonesData(GameObject rootObj, GameObject[] nodeObjects, SkinnedMeshRenderer renderer,
+            ISoftSkinMesh mesh)
         {
             var meshBones = new Transform[mesh.Nodes.Count];
             var bindPoses = new UnityEngine.Matrix4x4[mesh.Nodes.Count];
@@ -554,10 +577,8 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
                 // Do not add colliders
                 return null;
             }
-            else
-            {
-                return PrepareMeshCollider(obj, mesh);
-            }
+
+            return PrepareMeshCollider(obj, mesh);
         }
 
         /// <summary>
@@ -565,8 +586,8 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
         /// </summary>
         protected void PrepareMeshCollider(GameObject obj, Mesh mesh, List<IMaterial> materialDatas)
         {
-            bool anythingDisableCollission = materialDatas.Any(i => i.DisableCollision);
-            bool anythingWater = materialDatas.Any(i => i.Group == MaterialGroup.Water);
+            var anythingDisableCollission = materialDatas.Any(i => i.DisableCollision);
+            var anythingWater = materialDatas.Any(i => i.Group == MaterialGroup.Water);
 
             if (!anythingDisableCollission && !anythingWater)
             {
@@ -580,12 +601,12 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
             {
                 return;
             }
-            
+
             // MorphMeshes will change the vertices. This call optimizes performance.
             mesh.MarkDynamic();
 
-            isMorphMeshMappingAlreadyCached = MorphMeshCache.IsMappingAlreadyCached(Mmb.Name);
-            if (isMorphMeshMappingAlreadyCached)
+            IsMorphMeshMappingAlreadyCached = MorphMeshCache.IsMappingAlreadyCached(Mmb.Name);
+            if (IsMorphMeshMappingAlreadyCached)
             {
                 return;
             }
@@ -596,7 +617,7 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
         private void CreateMorphMeshEntry(int index1, int preparedVerticesCount)
         {
             // We add mapping data to later reuse for IMorphAnimation samples
-            if (Mmb == null || isMorphMeshMappingAlreadyCached)
+            if (Mmb == null || IsMorphMeshMappingAlreadyCached)
             {
                 return;
             }
@@ -606,7 +627,7 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
 
         private void CreateMorphMeshEnd(List<Vector3> preparedVertices)
         {
-            if (Mmb == null || isMorphMeshMappingAlreadyCached)
+            if (Mmb == null || IsMorphMeshMappingAlreadyCached)
             {
                 return;
             }
@@ -617,7 +638,8 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
         /// <summary>
         /// There are some objects (e.g. NPCs) where we want to skip specific attachments. This method can be overridden for this feature.
         /// </summary>
-        protected virtual Dictionary<string, IMultiResolutionMesh> GetFilteredAttachments(Dictionary<string, IMultiResolutionMesh> attachments)
+        protected virtual Dictionary<string, IMultiResolutionMesh> GetFilteredAttachments(
+            Dictionary<string, IMultiResolutionMesh> attachments)
         {
             return attachments;
         }
@@ -634,18 +656,18 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
 
         protected Material GetWaterMaterial()
         {
-            Material material = new Material(Constants.ShaderWater);
+            var material = new Material(Constants.ShaderWater);
             // Manually correct the render queue for alpha test, as Unity doesn't want to do it from the shader's render queue tag.
             material.renderQueue = (int)RenderQueue.Transparent;
             return material;
         }
 
-        protected void SetPosAndRot(GameObject obj, System.Numerics.Matrix4x4 matrix)
+        protected void SetPosAndRot(GameObject obj, Matrix4x4 matrix)
         {
             SetPosAndRot(obj, matrix.ToUnityMatrix());
         }
 
-        protected void SetPosAndRot(GameObject obj, Matrix4x4 matrix)
+        protected void SetPosAndRot(GameObject obj, UnityEngine.Matrix4x4 matrix)
         {
             SetPosAndRot(obj, matrix.GetPosition() / 100, matrix.rotation);
         }
@@ -676,7 +698,8 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
         ///   |- BIP01 CHEST_SMALL_1 - from prefab; but the order changed later, when glued together with new GOs. No issue on that so far.
         ///   |- BIP01 CHESTLOCK     - from nodes; new
         /// </summary>
-        private bool TryGetExistingGoInsideNodeHierarchy(List<IModelHierarchyNode> nodes, IModelHierarchyNode currentNode, [CanBeNull] out GameObject foundGo)
+        private bool TryGetExistingGoInsideNodeHierarchy(List<IModelHierarchyNode> nodes,
+            IModelHierarchyNode currentNode, [CanBeNull] out GameObject foundGo)
         {
             // We use a stack to have LI-FO approach. When we loop, we need to start from root (last entry), not bottom (first entry).
             var loopHierarchy = new Stack<IModelHierarchyNode>();
@@ -711,7 +734,7 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
                     // Second comparison - We need to check if the name of this GO is matching a regex pattern for NodeName
                     // e.g. BIP01 CHEST_.*_1 --> matches --> BIP01 CHEST_SMALL_1
                     var regex = new Regex(childGo.name, RegexOptions.IgnoreCase);
-                    if(regex.IsMatch(loopHierarchy.Peek().Name))
+                    if (regex.IsMatch(loopHierarchy.Peek().Name))
                     {
                         currentGo = childGo;
                         childFound = true;

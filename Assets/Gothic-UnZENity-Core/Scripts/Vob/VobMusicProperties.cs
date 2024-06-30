@@ -5,6 +5,6 @@ namespace GUZ.Core.Vob
 {
     public class VobMusicProperties : VobProperties
     {
-        public ZoneMusic musicData;
+        public ZoneMusic MusicData;
     }
 }

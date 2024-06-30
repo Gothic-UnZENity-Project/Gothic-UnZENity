@@ -11,16 +11,18 @@ namespace GUZ.Core.Properties
         /// Because within Daedalus there are functions requesting it. e.g. Wld_IsMobAvailable (self,"BED")
         /// </summary>
         [field: SerializeField]
-        public string visualScheme { get; private set; }
+        public string VisualScheme { get; private set; }
 
         public IVirtualObject Properties;
 
         public virtual void SetData(IVirtualObject data)
         {
             Properties = data;
-            
+
             if (data.Visual != null)
-                visualScheme = data.Visual.Name.Split('_').First(); // e.g. BED_1_OC.ASC => BED
+            {
+                VisualScheme = data.Visual.Name.Split('_').First(); // e.g. BED_1_OC.ASC => BED
+            }
         }
     }
 }

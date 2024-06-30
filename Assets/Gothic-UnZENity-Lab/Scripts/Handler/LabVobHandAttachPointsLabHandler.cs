@@ -2,26 +2,32 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using GUZ.Core.Caches;
+using GUZ.Core;
 using GUZ.Core.Context;
 using GUZ.Core.Creator.Meshes.V2;
 using GUZ.Core.Globals;
 using GUZ.Core.Vm;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Serialization;
 using ZenKit.Daedalus;
 
 namespace GUZ.Lab.Handler
 {
-    public class LabVobHandAttachPointsLabHandler: MonoBehaviour, ILabHandler
+    public class LabVobHandAttachPointsLabHandler : MonoBehaviour, ILabHandler
     {
-        public TMP_Dropdown vobCategoryDropdown;
-        public TMP_Dropdown vobItemDropdown;
-        public GameObject itemSpawnSlot;
+        [FormerlySerializedAs("vobCategoryDropdown")]
+        public TMP_Dropdown VobCategoryDropdown;
 
-        private string currentItemName;
+        [FormerlySerializedAs("vobItemDropdown")]
+        public TMP_Dropdown VobItemDropdown;
 
-        private Dictionary<string, ItemInstance> items = new();
+        [FormerlySerializedAs("itemSpawnSlot")]
+        public GameObject ItemSpawnSlot;
+
+        private string _currentItemName;
+
+        private Dictionary<string, ItemInstance> _items = new();
 
         public void Bootstrap()
         {
@@ -33,10 +39,10 @@ namespace GUZ.Lab.Handler
              */
             var itemNames = GameData.GothicVm.GetInstanceSymbols("C_Item").Select(i => i.Name).ToList();
 
-            items = itemNames
-                .ToDictionary(itemName => itemName, AssetCache.TryGetItemData);
+            _items = itemNames
+                .ToDictionary(itemName => itemName, VmInstanceManager.TryGetItemData);
 
-            vobCategoryDropdown.options = items
+            VobCategoryDropdown.options = _items
                 .Select(item => ((VmGothicEnums.ItemFlags)item.Value.MainFlag).ToString())
                 .Distinct()
                 .Select(flag => new TMP_Dropdown.OptionData(flag))
@@ -49,16 +55,19 @@ namespace GUZ.Lab.Handler
 
         public void CategoryDropdownValueChanged()
         {
-            Enum.TryParse<VmGothicEnums.ItemFlags>(vobCategoryDropdown.options[vobCategoryDropdown.value].text, out var category);
-            var items = this.items.Where(item => item.Value.MainFlag == (int)category).ToList();
-            vobItemDropdown.options = items.Select(item => new TMP_Dropdown.OptionData(item.Key)).ToList();
+            Enum.TryParse<VmGothicEnums.ItemFlags>(VobCategoryDropdown.options[VobCategoryDropdown.value].text,
+                out var category);
+            var items = _items.Where(item => item.Value.MainFlag == (int)category).ToList();
+            VobItemDropdown.options = items.Select(item => new TMP_Dropdown.OptionData(item.Key)).ToList();
         }
 
         public void LoadVobOnClick()
         {
             // We want to have one element only.
-            if (itemSpawnSlot.transform.childCount != 0)
-                Destroy(itemSpawnSlot.transform.GetChild(0).gameObject);
+            if (ItemSpawnSlot.transform.childCount != 0)
+            {
+                Destroy(ItemSpawnSlot.transform.GetChild(0).gameObject);
+            }
 
             StartCoroutine(LoadVobOnClickDelayed());
         }
@@ -68,19 +77,19 @@ namespace GUZ.Lab.Handler
             // Wait 1 frame for GOs to be destroyed.
             yield return null;
 
-            currentItemName = vobItemDropdown.options[vobItemDropdown.value].text;
-            var item = CreateItem(currentItemName);
+            _currentItemName = VobItemDropdown.options[VobItemDropdown.value].text;
+            var item = CreateItem(_currentItemName);
         }
 
         private GameObject CreateItem(string itemName)
         {
-            var itemPrefab = PrefabCache.TryGetObject(PrefabCache.PrefabType.VobItem);
-            var item = AssetCache.TryGetItemData(itemName);
-            var mrm = AssetCache.TryGetMrm(item.Visual);
+            var itemPrefab = ResourceLoader.TryGetPrefabObject(PrefabType.VobItem);
+            var item = VmInstanceManager.TryGetItemData(itemName);
+            var mrm = ResourceLoader.TryGetMultiResolutionMesh(item.Visual);
             var itemGo = MeshFactory.CreateVob(item.Visual, mrm, default, default, true,
-                rootGo: itemPrefab, parent: itemSpawnSlot, useTextureArray: false);
+                rootGo: itemPrefab, parent: ItemSpawnSlot, useTextureArray: false);
 
-            GUZContext.InteractionAdapter.AddItemComponent(itemGo, true);
+            GuzContext.InteractionAdapter.AddItemComponent(itemGo, true);
 
             return gameObject;
         }

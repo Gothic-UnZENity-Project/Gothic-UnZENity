@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Rendering;
 
 namespace GUZ.Core.Extensions
 {
@@ -8,7 +9,7 @@ namespace GUZ.Core.Extensions
         {
             Opaque,
             Cutout,
-            Fade,   // Old school alpha-blending mode, fresnel does not affect amount of transparency
+            Fade, // Old school alpha-blending mode, fresnel does not affect amount of transparency
             Transparent // Physically plausible transparency mode, implemented as alpha pre-multiply
         }
 
@@ -21,7 +22,7 @@ namespace GUZ.Core.Extensions
             material.DisableKeyword("_ALPHATEST_ON");
             material.DisableKeyword("_ALPHABLEND_ON");
             material.DisableKeyword("_ALPHAPREMULTIPLY_ON");
-            material.SetInt("_Cull", (int)UnityEngine.Rendering.CullMode.Off);
+            material.SetInt("_Cull", (int)CullMode.Off);
             material.renderQueue = -1;
         }
 
@@ -45,7 +46,7 @@ namespace GUZ.Core.Extensions
             material.DisableKeyword("_ALPHATEST_ON");
             material.EnableKeyword("_ALPHABLEND_ON");
             material.DisableKeyword("_ALPHAPREMULTIPLY_ON");
-            material.renderQueue = (int)UnityEngine.Rendering.RenderQueue.Transparent;
+            material.renderQueue = (int)RenderQueue.Transparent;
         }
 
         public static void ToTransparentMode(this Material material)
@@ -58,7 +59,7 @@ namespace GUZ.Core.Extensions
             material.EnableKeyword("_ALPHATEST_ON");
             material.EnableKeyword("_ALPHABLEND_ON");
             material.EnableKeyword("_ALPHAPREMULTIPLY_ON");
-            material.renderQueue = (int)UnityEngine.Rendering.RenderQueue.Transparent;
+            material.renderQueue = (int)RenderQueue.Transparent;
         }
 
         public static void ToAdditiveMode(this Material material)
@@ -71,7 +72,7 @@ namespace GUZ.Core.Extensions
             material.EnableKeyword("_ALPHATEST_ON");
             material.EnableKeyword("_ALPHABLEND_ON");
             material.EnableKeyword("_ALPHAPREMULTIPLY_ON");
-            material.renderQueue = (int)UnityEngine.Rendering.RenderQueue.Transparent;
+            material.renderQueue = (int)RenderQueue.Transparent;
         }
     }
 }

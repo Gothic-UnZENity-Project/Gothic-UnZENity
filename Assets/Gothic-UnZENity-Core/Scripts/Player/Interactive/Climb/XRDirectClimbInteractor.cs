@@ -14,12 +14,12 @@ namespace GUZ.Core.Player.Climb
         public static UnityEvent<string, GameObject> ClimbHandActivated = new();
         public static UnityEvent<string> ClimbHandDeactivated = new();
 
-        private string controllerName;
+        private string _controllerName;
 
         protected override void Start()
         {
             base.Start();
-            controllerName = gameObject.name;
+            _controllerName = gameObject.name;
         }
 
         protected override void OnSelectEntered(SelectEnterEventArgs args)
@@ -29,7 +29,9 @@ namespace GUZ.Core.Player.Climb
             var objTransform = args.interactableObject.transform;
 
             if (objTransform.transform.CompareTag(Constants.ClimbableTag))
-                ClimbHandActivated.Invoke(controllerName, objTransform.gameObject);
+            {
+                ClimbHandActivated.Invoke(_controllerName, objTransform.gameObject);
+            }
         }
 
         protected override void OnSelectExited(SelectExitEventArgs args)
@@ -37,7 +39,9 @@ namespace GUZ.Core.Player.Climb
             base.OnSelectExited(args);
 
             if (args.interactableObject.transform.CompareTag(Constants.ClimbableTag))
-                ClimbHandDeactivated.Invoke(controllerName);
+            {
+                ClimbHandDeactivated.Invoke(_controllerName);
+            }
         }
     }
 }

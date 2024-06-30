@@ -6,38 +6,38 @@ namespace GUZ.Core.Vm
     {
         public enum PerceptionType
         {
-            ASSESSPLAYER = 1,
-            ASSESSENEMY = 2,
-            ASSESSFIGHTER = 3,
-            ASSESSBODY = 4,
-            ASSESSITEM = 5,
-            ASSESSMURDER = 6,
-            ASSESSDEFEAT = 7,
-            ASSESSDAMAGE = 8,
-            ASSESSOTHERSDAMAGE = 9,
-            ASSESSTHREAT = 10,
-            ASSESSREMOVEWEAPON = 11,
-            OBSERVEINTRUDER = 12,
-            ASSESSFIGHTSOUND = 13,
-            ASSESSQUIETSOUND = 14,
-            ASSESSWARN = 15,
-            CATCHTHIEF = 16,
-            ASSESSTHEFT = 17,
-            ASSESSCALL = 18,
-            ASSESSTALK = 19,
-            ASSESSGIVENITEM = 20,
-            ASSESSFAKEGUILD = 21,
-            MOVEMOB = 22,
-            MOVENPC = 23,
-            DRAWWEAPON = 24,
-            OBSERVESUSPECT = 25,
-            NPCCOMMAND = 26,
-            ASSESSMAGIC = 27,
-            ASSESSSTOPMAGIC = 28,
-            ASSESSCASTER = 29,
-            ASSESSSURPRISE = 30,
-            ASSESSENTERROOM = 31,
-            ASSESSUSEMOB = 32,
+            Assessplayer = 1,
+            Assessenemy = 2,
+            Assessfighter = 3,
+            Assessbody = 4,
+            Assessitem = 5,
+            Assessmurder = 6,
+            Assessdefeat = 7,
+            Assessdamage = 8,
+            Assessothersdamage = 9,
+            Assessthreat = 10,
+            Assessremoveweapon = 11,
+            Observeintruder = 12,
+            Assessfightsound = 13,
+            Assessquietsound = 14,
+            Assesswarn = 15,
+            Catchthief = 16,
+            Assesstheft = 17,
+            Assesscall = 18,
+            Assesstalk = 19,
+            Assessgivenitem = 20,
+            Assessfakeguild = 21,
+            Movemob = 22,
+            Movenpc = 23,
+            Drawweapon = 24,
+            Observesuspect = 25,
+            Npccommand = 26,
+            Assessmagic = 27,
+            Assessstopmagic = 28,
+            Assesscaster = 29,
+            Assesssurprise = 30,
+            Assessenterroom = 31,
+            Assessusemob = 32,
             Count
         }
 
@@ -53,123 +53,123 @@ namespace GUZ.Core.Vm
 
         public enum Talent
         {
-            UNKNOWN = 0,
+            Unknown = 0,
             _1H = 1,
             _2H = 2,
-            BOW = 3,
-            CROSSBOW = 4,
-            PICKLOCK = 5,
-            MAGE = 7,
-            SNEAK = 8,
-            REGENERATE = 9,
-            FIREMASTER = 10,
-            ACROBAT = 11,
-            PICKPOCKET = 12,
-            SMITH = 13,
-            RUNES = 14,
-            ALCHEMY = 15,
-            TAKEANIMALTROPHY = 16,
-            FOREIGNLANGUAGE = 17,
-            WISPDETECTOR = 18,
+            Bow = 3,
+            Crossbow = 4,
+            Picklock = 5,
+            Mage = 7,
+            Sneak = 8,
+            Regenerate = 9,
+            Firemaster = 10,
+            Acrobat = 11,
+            Pickpocket = 12,
+            Smith = 13,
+            Runes = 14,
+            Alchemy = 15,
+            Takeanimaltrophy = 16,
+            Foreignlanguage = 17,
+            Wispdetector = 18,
             C = 19,
             D = 20,
             E = 21,
 
-            MAX_G1 = 12,
-            MAX_G2 = 22
+            MaxG1 = 12,
+            MaxG2 = 22
         }
 
         [Flags]
         public enum BodyState
         {
             // Interruptable Flags
-            BS_FLAG_INTERRUPTABLE = 32768,
-            BS_FLAG_FREEHANDS = 65536,
+            BsFlagInterruptable = 32768,
+            BsFlagFreehands = 65536,
 
             // ******************************************
             // BodyStates / Overlays and Flags
             // ******************************************
-            BS_STAND = 0 | BS_FLAG_INTERRUPTABLE | BS_FLAG_FREEHANDS,
-            BS_WALK = 1 | BS_FLAG_INTERRUPTABLE, // PointAt not possible
-            BS_SNEAK = 2 | BS_FLAG_INTERRUPTABLE,
-            BS_RUN = 3, // PointAt not possible
-            BS_SPRINT = 4, // PointAt not possible
-            BS_SWIM = 5,
-            BS_CRAWL = 6,
-            BS_DIVE = 7,
-            BS_JUMP = 8,
-            BS_CLIMB = 9 | BS_FLAG_INTERRUPTABLE, // GE�NDERT!
-            BS_FALL = 10,
-            BS_SIT = 11 | BS_FLAG_FREEHANDS,
-            BS_LIE = 12,
-            BS_INVENTORY = 13,
-            BS_ITEMINTERACT = 14 | BS_FLAG_INTERRUPTABLE,
-            BS_MOBINTERACT = 15,
-            BS_MOBINTERACT_INTERRUPT = 16 | BS_FLAG_INTERRUPTABLE,
+            BsStand = 0 | BsFlagInterruptable | BsFlagFreehands,
+            BsWalk = 1 | BsFlagInterruptable, // PointAt not possible
+            BsSneak = 2 | BsFlagInterruptable,
+            BsRun = 3, // PointAt not possible
+            BsSprint = 4, // PointAt not possible
+            BsSwim = 5,
+            BsCrawl = 6,
+            BsDive = 7,
+            BsJump = 8,
+            BsClimb = 9 | BsFlagInterruptable, // GE�NDERT!
+            BsFall = 10,
+            BsSit = 11 | BsFlagFreehands,
+            BsLie = 12,
+            BsInventory = 13,
+            BsIteminteract = 14 | BsFlagInterruptable,
+            BsMobinteract = 15,
+            BsMobinteractInterrupt = 16 | BsFlagInterruptable,
 
-            BS_TAKEITEM = 17,
-            BS_DROPITEM = 18,
-            BS_THROWITEM = 19,
-            BS_PICKPOCKET = 20 | BS_FLAG_INTERRUPTABLE,
+            BsTakeitem = 17,
+            BsDropitem = 18,
+            BsThrowitem = 19,
+            BsPickpocket = 20 | BsFlagInterruptable,
 
-            BS_STUMBLE = 21,
-            BS_UNCONSCIOUS = 22,
-            BS_DEAD = 23,
+            BsStumble = 21,
+            BsUnconscious = 22,
+            BsDead = 23,
 
-            BS_AIMNEAR = 24, // wird z.Zt nicht benutzt
-            BS_AIMFAR = 25, // d.h. Bogenschütze kann weiterschießen, auch wenn er geschlagen wird
-            BS_HIT = 26 | BS_FLAG_INTERRUPTABLE,
-            BS_PARADE = 27,
+            BsAimnear = 24, // wird z.Zt nicht benutzt
+            BsAimfar = 25, // d.h. Bogenschütze kann weiterschießen, auch wenn er geschlagen wird
+            BsHit = 26 | BsFlagInterruptable,
+            BsParade = 27,
 
             // Magic
-            BS_CASTING = 28 | BS_FLAG_INTERRUPTABLE,
-            BS_PETRIFIED = 29,
-            BS_CONTROLLING = 30 | BS_FLAG_INTERRUPTABLE,
+            BsCasting = 28 | BsFlagInterruptable,
+            BsPetrified = 29,
+            BsControlling = 30 | BsFlagInterruptable,
 
-            BS_MAX = 31,
+            BsMax = 31,
 
             // Modifier / Overlays
-            BS_MOD_HIDDEN = 128,
-            BS_MOD_DRUNK = 256,
-            BS_MOD_NUTS = 512,
-            BS_MOD_BURNING = 1024,
-            BS_MOD_CONTROLLED = 2048,
-            BS_MOD_TRANSFORMED = 4096
+            BsModHidden = 128,
+            BsModDrunk = 256,
+            BsModNuts = 512,
+            BsModBurning = 1024,
+            BsModControlled = 2048,
+            BsModTransformed = 4096
         }
 
         [Flags]
         public enum ItemFlags
         {
             // Item categories
-            ITEM_KAT_NONE    = 1 <<  0, // misc
-            ITEM_KAT_NF      = 1 <<  1, // melee weapons
-            ITEM_KAT_FF      = 1 <<  2, // distant-combat weapons
-            ITEM_KAT_MUN     = 1 <<  3, // munition (->MultiSlot)
-            ITEM_KAT_ARMOR   = 1 <<  4, // armor and helmets
-            ITEM_KAT_FOOD    = 1 <<  5, // food (->MultiSlot)
-            ITEM_KAT_DOCS    = 1 <<  6, // documents
-            ITEM_KAT_POTIONS = 1 <<  7, // potions
-            ITEM_KAT_LIGHT   = 1 <<  8, // light sources
-            ITEM_KAT_RUNE    = 1 <<  9, // runes and scrolls
-            ITEM_KAT_MAGIC   = 1 << 31, // rings and amulets
-            ITEM_KAT_KEYS    = ITEM_KAT_NONE,
+            ItemKatNone = 1 << 0, // misc
+            ItemKatNf = 1 << 1, // melee weapons
+            ItemKatFf = 1 << 2, // distant-combat weapons
+            ItemKatMun = 1 << 3, // munition (->MultiSlot)
+            ItemKatArmor = 1 << 4, // armor and helmets
+            ItemKatFood = 1 << 5, // food (->MultiSlot)
+            ItemKatDocs = 1 << 6, // documents
+            ItemKatPotions = 1 << 7, // potions
+            ItemKatLight = 1 << 8, // light sources
+            ItemKatRune = 1 << 9, // runes and scrolls
+            ItemKatMagic = 1 << 31, // rings and amulets
+            ItemKatKeys = ItemKatNone,
 
             // Item flags
-            ITEM_BURN    = 1 << 10, // can be burnt (i.e. torch)
-            ITEM_MISSION = 1 << 12, // mission item
-            ITEM_MULTI   = 1 << 21, // is multi
-            ITEM_TORCH   = 1 << 28, // use like a torch
-            ITEM_THROW   = 1 << 29, // item can be thrown
+            ItemBurn = 1 << 10, // can be burnt (i.e. torch)
+            ItemMission = 1 << 12, // mission item
+            ItemMulti = 1 << 21, // is multi
+            ItemTorch = 1 << 28, // use like a torch
+            ItemThrow = 1 << 29, // item can be thrown
 
             // Item weapon flags
-            ITEM_SWD      = 1 << 14, // use like sword
-            ITEM_AXE      = 1 << 15, // use like axe
-            ITEM_2HD_SWD  = 1 << 16, // use like two handed weapon
-            ITEM_2HD_AXE  = 1 << 17, // use like two handed axe
-            ITEM_BOW      = 1 << 19, // use like bow
-            ITEM_CROSSBOW = 1 << 20, // use like crossbow
-            ITEM_AMULET   = 1 << 22, // use like amulet
-            ITEM_RING     = 1 << 11  // use like ring
-        };
+            ItemSwd = 1 << 14, // use like sword
+            ItemAxe = 1 << 15, // use like axe
+            Item2HdSwd = 1 << 16, // use like two handed weapon
+            Item2HdAxe = 1 << 17, // use like two handed axe
+            ItemBow = 1 << 19, // use like bow
+            ItemCrossbow = 1 << 20, // use like crossbow
+            ItemAmulet = 1 << 22, // use like amulet
+            ItemRing = 1 << 11 // use like ring
+        }
     }
 }

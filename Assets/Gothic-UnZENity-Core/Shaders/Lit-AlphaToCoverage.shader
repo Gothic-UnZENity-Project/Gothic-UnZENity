@@ -10,8 +10,11 @@ Shader "Lit/AlphaToCoverage"
     }
     SubShader
     {
-        Tags {  "RenderType" = "TransparentCutout" "RenderPipeline" = "UniversalPipeline" "RenderQueue" = "AlphaTest" }
-         AlphaToMask On
+        Tags
+        {
+            "RenderType" = "TransparentCutout" "RenderPipeline" = "UniversalPipeline" "RenderQueue" = "AlphaTest"
+        }
+        AlphaToMask On
 
         Pass
         {
@@ -28,7 +31,7 @@ Shader "Lit/AlphaToCoverage"
                 float3 normal : NORMAL;
                 float4 uv : TEXCOORD0;
                 half3 color : COLOR;
-                
+
                 UNITY_VERTEX_INPUT_INSTANCE_ID
             };
 
@@ -78,7 +81,7 @@ Shader "Lit/AlphaToCoverage"
                 return diffuse;
             }
 
-            v2f vert (appdata v)
+            v2f vert(appdata v)
             {
                 v2f o;
 
@@ -95,14 +98,16 @@ Shader "Lit/AlphaToCoverage"
                 return o;
             }
 
-            half4 frag (v2f i) : SV_Target
+            half4 frag(v2f i) : SV_Target
             {
                 float mipLevel = CalcMipLevel(i.uv.xy * _MainTex_TexelSize.zw);
-                half4 albedo = SAMPLE_TEXTURE2D_ARRAY_LOD(_MainTex, sampler_MainTex, i.uv.xy, i.uv.z, clamp(mipLevel, 0, i.uv.w));
+                half4 albedo = SAMPLE_TEXTURE2D_ARRAY_LOD(_MainTex, sampler_MainTex, i.uv.xy, i.uv.z,
+                                        clamp(mipLevel, 0, i.uv.w));
                 // Rescale alpha by mip level since preserved coverage mip maps can't be generated at runtime.
                 albedo.a *= 1 + max(0, CalcMipLevel(i.uv * _MainTex_TexelSize.zw)) * _MipScale;
                 // Rescale alpha by partial derivative, faded by distance. This way, at a distance, the wide coverage is kept to reduce aliasing further.
-                albedo.a = lerp((albedo.a - _Cutoff) / max(fwidth(albedo.a), 0.0001) + 0.5, albedo.a, saturate(max(i.distance, 0.0001) / _DistanceFade));
+                albedo.a = lerp((albedo.a - _Cutoff) / max(fwidth(albedo.a), 0.0001) + 0.5, albedo.a,
+                                                      saturate(max(i.distance, 0.0001) / _DistanceFade));
 
                 half3 diffuse = albedo.rgb * i.diffuse;
                 diffuse = ApplyFog(diffuse, i.worldPos);

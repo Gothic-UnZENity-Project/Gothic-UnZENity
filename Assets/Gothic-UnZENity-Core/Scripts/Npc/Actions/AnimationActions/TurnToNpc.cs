@@ -6,8 +6,8 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
 {
     public class TurnToNpc : AbstractRotateAnimationAction
     {
-        private int otherId => Action.Int0;
-        private int otherIndex => Action.Int1;
+        private int OtherId => Action.Int0;
+        private int OtherIndex => Action.Int1;
 
         public TurnToNpc(AnimationAction action, GameObject npcGo) : base(action, npcGo)
         {
@@ -15,7 +15,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
 
         protected override Quaternion GetRotationDirection()
         {
-            var destinationTransform = LookupCache.NpcCache[otherIndex].transform;
+            var destinationTransform = LookupCache.NpcCache[OtherIndex].transform;
             var temp = destinationTransform.position - NpcGo.transform.position;
             return Quaternion.LookRotation(temp, Vector3.up);
         }

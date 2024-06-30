@@ -1,11 +1,12 @@
 ﻿using GUZ.Core.Properties;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace GUZ.Core.Npc
 {
-    public abstract class BasePlayerBehaviour: MonoBehaviour
+    public abstract class BasePlayerBehaviour : MonoBehaviour
     {
-        public GameObject npcRoot;
-        public NpcProperties properties;
+        [FormerlySerializedAs("npcRoot")] public GameObject NpcRoot;
+        [FormerlySerializedAs("properties")] public NpcProperties Properties;
     }
 }

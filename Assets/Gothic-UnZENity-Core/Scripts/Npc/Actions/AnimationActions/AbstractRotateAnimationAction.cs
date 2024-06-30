@@ -8,13 +8,14 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
 {
     public abstract class AbstractRotateAnimationAction : AbstractAnimationAction
     {
-        private const float RotationSpeed = 5f;
+        private const float _rotationSpeed = 5f;
 
-        private Quaternion finalDirection;
-        private bool isRotateLeft;
+        private Quaternion _finalDirection;
+        private bool _isRotateLeft;
 
         protected AbstractRotateAnimationAction(AnimationAction action, GameObject npcGo) : base(action, npcGo)
-        { }
+        {
+        }
 
         /// <summary>
         /// We need to define the final direction within overriding class.
@@ -23,30 +24,30 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
 
         public override void Start()
         {
-            finalDirection = GetRotationDirection();
+            _finalDirection = GetRotationDirection();
 
             // Already aligned.
-            if (Math.Abs(NpcGo.transform.eulerAngles.y - finalDirection.y) < 1f)
+            if (Math.Abs(NpcGo.transform.eulerAngles.y - _finalDirection.y) < 1f)
             {
                 IsFinishedFlag = true;
                 return;
             }
 
             // https://discussions.unity.com/t/determining-whether-to-rotate-left-or-right/44021
-            var cross = Vector3.Cross(NpcGo.transform.forward, finalDirection.eulerAngles);
-            isRotateLeft = (cross.y >= 0);
+            var cross = Vector3.Cross(NpcGo.transform.forward, _finalDirection.eulerAngles);
+            _isRotateLeft = cross.y >= 0;
 
-            AnimationCreator.PlayAnimation(Props.mdsNames, GetRotateModeAnimationString(), NpcGo, true);
+            AnimationCreator.PlayAnimation(Props.MdsNames, GetRotateModeAnimationString(), NpcGo, true);
         }
 
         private string GetRotateModeAnimationString()
         {
-            switch (Props.walkMode)
+            switch (Props.WalkMode)
             {
                 case VmGothicEnums.WalkMode.Walk:
-                    return (isRotateLeft ? "T_WALKWTURNL" : "T_WALKWTURNR");
+                    return _isRotateLeft ? "T_WALKWTURNL" : "T_WALKWTURNR";
                 default:
-                    Debug.LogWarning($"Animation of type {Props.walkMode} not yet implemented.");
+                    Debug.LogWarning($"Animation of type {Props.WalkMode} not yet implemented.");
                     return "";
             }
         }
@@ -64,8 +65,9 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
         /// </summary>
         private void HandleRotation(Transform npcTransform)
         {
-            var currentRotation = Quaternion.Slerp(npcTransform.rotation, finalDirection, Time.deltaTime * RotationSpeed);
-            
+            var currentRotation =
+                Quaternion.Slerp(npcTransform.rotation, _finalDirection, Time.deltaTime * _rotationSpeed);
+
             // Check if rotation is done.
             if (Quaternion.Angle(npcTransform.rotation, currentRotation) < 1f)
             {

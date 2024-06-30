@@ -1,5 +1,3 @@
-using System;
-using GUZ.Core.Data.ZkEvents;
 using UnityEngine;
 
 namespace GUZ.Core.Npc.Actions.AnimationActions
@@ -7,7 +5,8 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
     public class None : AbstractAnimationAction
     {
         public None(AnimationAction action, GameObject npcGo) : base(action, npcGo)
-        { }
+        {
+        }
 
         public override void Start()
         {

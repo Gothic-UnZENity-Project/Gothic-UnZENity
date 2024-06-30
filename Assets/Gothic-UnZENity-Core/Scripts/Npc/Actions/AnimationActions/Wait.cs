@@ -4,21 +4,22 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
 {
     public class Wait : AbstractAnimationAction
     {
-        private float waitSeconds;
+        private float _waitSeconds;
 
         public Wait(AnimationAction action, GameObject npcGo) : base(action, npcGo)
-        { }
+        {
+        }
 
         public override void Start()
         {
-            waitSeconds = Action.Float0;
+            _waitSeconds = Action.Float0;
         }
 
         public override bool IsFinished()
         {
-            waitSeconds -= Time.deltaTime;
+            _waitSeconds -= Time.deltaTime;
 
-            return waitSeconds <= 0f;
+            return _waitSeconds <= 0f;
         }
     }
 }

@@ -1,9 +1,7 @@
 using System;
-using GUZ.Core.Debugging;
-using GUZ.Core.Morph;
 using GUZ.Core.Extensions;
+using GUZ.Core.Morph;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace GUZ.Core.Npc
 {
@@ -30,10 +28,12 @@ namespace GUZ.Core.Npc
         {
             base.Start();
 
-            if (!FeatureFlags.I.enableNpcEyeBlinking)
+            if (!GameGlobals.Config.EnableNpcEyeBlinking)
+            {
                 return;
+            }
 
-            randomAnimations.Add(new()
+            RandomAnimations.Add(new()
             {
                 morphMeshName = HeadName,
                 animationName = GetAnimationNameByType(HeadMorphType.Eyesblink),
@@ -43,7 +43,7 @@ namespace GUZ.Core.Npc
                 secondTimeVariable = 1.0f,
                 probabilityOfFirst = 0.2f
             });
-            randomAnimationTimers.Add(3.8f * 2); // secondTimeAverage * 2 seconds);
+            RandomAnimationTimers.Add(3.8f * 2); // secondTimeAverage * 2 seconds);
         }
 
         public void StartAnimation(string headName, HeadMorphType type)
@@ -74,9 +74,11 @@ namespace GUZ.Core.Npc
         public HeadMorphType GetAnimationTypeByName(string name)
         {
             if (name.ContainsIgnoreCase("EAT"))
+            {
                 return HeadMorphType.Eat;
-            else
-                Debug.LogError($"{name} as morphMeshType not yet mapped.");
+            }
+
+            Debug.LogError($"{name} as morphMeshType not yet mapped.");
 
             // If nothing found, we return the hurt face. Meme potential? ;-)
             return HeadMorphType.Hurt;

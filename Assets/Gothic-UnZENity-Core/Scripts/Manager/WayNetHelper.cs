@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Vob.WayNet;
 using GUZ.Core.World;
-using GUZ.Core.Extensions;
 using JetBrains.Annotations;
 using UnityEngine;
 using Debug = UnityEngine.Debug;
@@ -25,14 +25,16 @@ namespace GUZ.Core.Manager
                 .FirstOrDefault(item => item.Key.Equals(pointName, StringComparison.OrdinalIgnoreCase))
                 .Value;
             if (wayPoint != null)
+            {
                 return wayPoint;
-            
+            }
+
             var freePoint = GameData.FreePoints
                 .FirstOrDefault(pair => pair.Key.Equals(pointName, StringComparison.OrdinalIgnoreCase))
                 .Value;
             return freePoint;
         }
-        
+
         public static List<FreePoint> FindFreePointsWithName(Vector3 lookupPosition, string namePart, float maxDistance)
         {
             var matchingFreePoints = GameData.FreePoints
@@ -40,7 +42,7 @@ namespace GUZ.Core.Manager
                 .Where(pair => Vector3.Distance(lookupPosition, pair.Value.Position) <= maxDistance) // PF is in range
                 .OrderBy(pair => Vector3.Distance(lookupPosition, pair.Value.Position)) // order from nearest to farthest
                 .Select(pair => pair.Value);
-            
+
             return matchingFreePoints.ToList();
         }
 
@@ -96,7 +98,7 @@ namespace GUZ.Core.Manager
                 previousNodes[waypointX.Name] = null;
             }
 
-            while (unvisited.count > 0)
+            while (unvisited.Count > 0)
             {
                 var currentWaypoint = unvisited.Dequeue();
 
@@ -130,6 +132,7 @@ namespace GUZ.Core.Manager
                 {
                     lastChecked = previousNodes[lastChecked].Name;
                 }
+
                 if (lastChecked == startWaypoint)
                 {
                     break;
@@ -150,21 +153,20 @@ namespace GUZ.Core.Manager
         }
 
 
-
         private class PriorityQueue
         {
-            private List<KeyValuePair<DijkstraWaypoint, double>> data = new();
+            private List<KeyValuePair<DijkstraWaypoint, double>> _data = new();
 
             public bool Contains(DijkstraWaypoint item)
             {
                 // Check if the queue contains the item by comparing the names of the waypoints
-                return data.Select(x => x.Key.Name == item.Name).Count() > 0;
+                return _data.Select(x => x.Key.Name == item.Name).Count() > 0;
             }
 
             public void UpdatePriority(DijkstraWaypoint item, double priority)
             {
                 // Find the index of the item
-                var index = data.FindIndex(pair => pair.Key.Name == item.Name);
+                var index = _data.FindIndex(pair => pair.Key.Name == item.Name);
                 if (index == -1)
                 {
                     // If the item is not in the queue, throw an exception (it should never do that so this is a good way to catch bugs)
@@ -172,9 +174,9 @@ namespace GUZ.Core.Manager
                 }
 
                 // Get the old priority of the item
-                double oldPriority = data[index].Value;
+                var oldPriority = _data[index].Value;
                 // Update the priority of the item in the queue
-                data[index] = new KeyValuePair<DijkstraWaypoint, double>(item, priority);
+                _data[index] = new KeyValuePair<DijkstraWaypoint, double>(item, priority);
 
                 // If the new priority is less than the old priority, sift up
                 if (priority < oldPriority)
@@ -196,7 +198,7 @@ namespace GUZ.Core.Manager
             private void SiftUp(int index)
             {
                 var parentIndex = (index - 1) / 2;
-                while (index > 0 && data[index].Value < data[parentIndex].Value)
+                while (index > 0 && _data[index].Value < _data[parentIndex].Value)
                 {
                     Swap(index, parentIndex);
                     index = parentIndex;
@@ -210,12 +212,12 @@ namespace GUZ.Core.Manager
                 var rightChildIndex = index * 2 + 2;
                 var smallestChildIndex = leftChildIndex;
 
-                if (rightChildIndex < data.Count && data[rightChildIndex].Value < data[leftChildIndex].Value)
+                if (rightChildIndex < _data.Count && _data[rightChildIndex].Value < _data[leftChildIndex].Value)
                 {
                     smallestChildIndex = rightChildIndex;
                 }
 
-                while (smallestChildIndex < data.Count && data[smallestChildIndex].Value < data[index].Value)
+                while (smallestChildIndex < _data.Count && _data[smallestChildIndex].Value < _data[index].Value)
                 {
                     Swap(index, smallestChildIndex);
                     index = smallestChildIndex;
@@ -223,7 +225,7 @@ namespace GUZ.Core.Manager
                     rightChildIndex = index * 2 + 2;
                     smallestChildIndex = leftChildIndex;
 
-                    if (rightChildIndex < data.Count && data[rightChildIndex].Value < data[leftChildIndex].Value)
+                    if (rightChildIndex < _data.Count && _data[rightChildIndex].Value < _data[leftChildIndex].Value)
                     {
                         smallestChildIndex = rightChildIndex;
                     }
@@ -232,24 +234,24 @@ namespace GUZ.Core.Manager
 
             private void Swap(int index1, int index2)
             {
-                (data[index1], data[index2]) = (data[index2], data[index1]);
+                (_data[index1], _data[index2]) = (_data[index2], _data[index1]);
             }
 
             public void Enqueue(DijkstraWaypoint waypoint, double priority)
             {
-                data.Add(new KeyValuePair<DijkstraWaypoint, double>(waypoint, priority));
-                var currentIndex = data.Count - 1;
+                _data.Add(new KeyValuePair<DijkstraWaypoint, double>(waypoint, priority));
+                var currentIndex = _data.Count - 1;
 
                 while (currentIndex > 0)
                 {
                     var parentIndex = (currentIndex - 1) / 2;
 
-                    if (data[currentIndex].Value >= data[parentIndex].Value)
+                    if (_data[currentIndex].Value >= _data[parentIndex].Value)
                     {
                         break;
                     }
 
-                    (data[currentIndex], data[parentIndex]) = (data[parentIndex], data[currentIndex]);
+                    (_data[currentIndex], _data[parentIndex]) = (_data[parentIndex], _data[currentIndex]);
 
                     currentIndex = parentIndex;
                 }
@@ -257,28 +259,34 @@ namespace GUZ.Core.Manager
 
             public DijkstraWaypoint Dequeue()
             {
-                var lastIndex = data.Count - 1;
-                var frontItem = data[0].Key;
-                data[0] = data[lastIndex];
-                data.RemoveAt(lastIndex);
+                var lastIndex = _data.Count - 1;
+                var frontItem = _data[0].Key;
+                _data[0] = _data[lastIndex];
+                _data.RemoveAt(lastIndex);
 
                 --lastIndex;
-                int parentIndex = 0;
+                var parentIndex = 0;
 
                 while (true)
                 {
-                    int leftChildIndex = parentIndex * 2 + 1;
-                    if (leftChildIndex > lastIndex) break;
+                    var leftChildIndex = parentIndex * 2 + 1;
+                    if (leftChildIndex > lastIndex)
+                    {
+                        break;
+                    }
 
-                    int rightChildIndex = leftChildIndex + 1;
-                    if (rightChildIndex <= lastIndex && data[rightChildIndex].Value < data[leftChildIndex].Value)
+                    var rightChildIndex = leftChildIndex + 1;
+                    if (rightChildIndex <= lastIndex && _data[rightChildIndex].Value < _data[leftChildIndex].Value)
                     {
                         leftChildIndex = rightChildIndex;
                     }
 
-                    if (data[parentIndex].Value <= data[leftChildIndex].Value) break;
+                    if (_data[parentIndex].Value <= _data[leftChildIndex].Value)
+                    {
+                        break;
+                    }
 
-                    (data[parentIndex], data[leftChildIndex]) = (data[leftChildIndex], data[parentIndex]);
+                    (_data[parentIndex], _data[leftChildIndex]) = (_data[leftChildIndex], _data[parentIndex]);
 
                     parentIndex = leftChildIndex;
                 }
@@ -286,18 +294,19 @@ namespace GUZ.Core.Manager
                 return frontItem;
             }
 
-            public int count => data.Count;
+            public int Count => _data.Count;
 
             public void Remove(DijkstraWaypoint waypoint)
             {
-                var index = data.FindIndex(pair => pair.Key.Name == waypoint.Name);
+                var index = _data.FindIndex(pair => pair.Key.Name == waypoint.Name);
                 if (index == -1)
                 {
                     //throw new ArgumentException("The specified waypoint is not in the queue.");
                     Debug.Log("The specified waypoint " + waypoint.Name + " is not in the queue.");
                     return;
                 }
-                data.RemoveAt(index);
+
+                _data.RemoveAt(index);
             }
         }
     }

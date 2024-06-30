@@ -7,7 +7,10 @@ Shader "Lit/SingleMesh"
     }
     SubShader
     {
-        Tags {  "RenderType" = "Opaque" "RenderPipeline" = "UniversalPipeline" "RenderQueue" = "Geometry" }
+        Tags
+        {
+            "RenderType" = "Opaque" "RenderPipeline" = "UniversalPipeline" "RenderQueue" = "Geometry"
+        }
 
         Pass
         {
@@ -26,7 +29,7 @@ Shader "Lit/SingleMesh"
                 half3 color : COLOR;
                 half3 normal : NORMAL;
                 half2 uv : TEXCOORD0;
-                
+
                 UNITY_VERTEX_INPUT_INSTANCE_ID
             };
 
@@ -60,7 +63,7 @@ Shader "Lit/SingleMesh"
                 return diffuse;
             }
 
-            v2f vert (appdata v)
+            v2f vert(appdata v)
             {
                 v2f o;
 

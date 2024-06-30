@@ -9,30 +9,37 @@ using GUZ.Core.Util;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 using ZenKit.Daedalus;
 
 public class ControllerManager : SingletonBehaviour<ControllerManager>
 {
-    public GameObject raycastLeft;
-    public GameObject raycastRight;
-    public GameObject directLeft;
-    public GameObject directRight;
+    [FormerlySerializedAs("raycastLeft")] public GameObject RaycastLeft;
+    [FormerlySerializedAs("raycastRight")] public GameObject RaycastRight;
+    [FormerlySerializedAs("directLeft")] public GameObject DirectLeft;
+    [FormerlySerializedAs("directRight")] public GameObject DirectRight;
     public GameObject MenuGameObject;
-    public GameObject dialogGameObject;
-    public List<GameObject> dialogItems;
-    private InputAction leftPrimaryButtonAction;
-    private InputAction leftSecondaryButtonAction;
 
-    private InputAction rightPrimaryButtonAction;
-    private InputAction rightSecondaryButtonAction;
+    [FormerlySerializedAs("dialogGameObject")]
+    public GameObject DialogGameObject;
+
+    [FormerlySerializedAs("dialogItems")] public List<GameObject> DialogItems;
+    private InputAction _leftPrimaryButtonAction;
+    private InputAction _leftSecondaryButtonAction;
+
+    private InputAction _rightPrimaryButtonAction;
+    private InputAction _rightSecondaryButtonAction;
 
     public GameObject MapObject;
-    public float maprollspeed;
-    public float maprolloffset;
-    private Animator maproll;
-    AudioSource mapaudio;
-    AudioClip scrollsound;
+    [FormerlySerializedAs("maprollspeed")] public float Maprollspeed;
+
+    [FormerlySerializedAs("maprolloffset")]
+    public float Maprolloffset;
+
+    private Animator _maproll;
+    private AudioSource _mapaudio;
+    private AudioClip _scrollsound;
 
     protected override void Awake()
     {
@@ -42,100 +49,118 @@ public class ControllerManager : SingletonBehaviour<ControllerManager>
 
     private void Initialize()
     {
-        maproll = MapObject.gameObject.GetComponent<Animator>();
-        mapaudio = MapObject.gameObject.GetComponent<AudioSource>();
-        scrollsound = VobHelper.GetSoundClip("SCROLLROLL.WAV");
+        _maproll = MapObject.gameObject.GetComponent<Animator>();
+        _mapaudio = MapObject.gameObject.GetComponent<AudioSource>();
+        _scrollsound = VobHelper.GetSoundClip("SCROLLROLL.WAV");
         MapObject.SetActive(false);
-        maproll.enabled = false;
+        _maproll.enabled = false;
 
-        leftPrimaryButtonAction = new InputAction("primaryButton", binding: "<XRController>{LeftHand}/primaryButton");
-        leftSecondaryButtonAction = new InputAction("secondaryButton", binding: "<XRController>{LeftHand}/secondaryButton");
+        _leftPrimaryButtonAction = new InputAction("primaryButton", binding: "<XRController>{LeftHand}/primaryButton");
+        _leftSecondaryButtonAction =
+            new InputAction("secondaryButton", binding: "<XRController>{LeftHand}/secondaryButton");
 
-        leftPrimaryButtonAction.started += ctx => ShowRayCasts();
-        leftPrimaryButtonAction.canceled += ctx => HideRayCasts();
+        _leftPrimaryButtonAction.started += ctx => ShowRayCasts();
+        _leftPrimaryButtonAction.canceled += ctx => HideRayCasts();
 
-        leftPrimaryButtonAction.Enable();
-        leftSecondaryButtonAction.Enable();
+        _leftPrimaryButtonAction.Enable();
+        _leftSecondaryButtonAction.Enable();
 
-        rightPrimaryButtonAction = new InputAction("primaryButton", binding: "<XRController>{RightHand}/primaryButton");
-        rightSecondaryButtonAction = new InputAction("secondaryButton", binding: "<XRController>{RightHand}/secondaryButton");
+        _rightPrimaryButtonAction =
+            new InputAction("primaryButton", binding: "<XRController>{RightHand}/primaryButton");
+        _rightSecondaryButtonAction =
+            new InputAction("secondaryButton", binding: "<XRController>{RightHand}/secondaryButton");
 
-        rightPrimaryButtonAction.started += ctx => ShowMap();
-        rightSecondaryButtonAction.started += ctx => ShowMainMenu();
+        _rightPrimaryButtonAction.started += ctx => ShowMap();
+        _rightSecondaryButtonAction.started += ctx => ShowMainMenu();
 
-        rightPrimaryButtonAction.Enable();
-        rightSecondaryButtonAction.Enable();
+        _rightPrimaryButtonAction.Enable();
+        _rightSecondaryButtonAction.Enable();
     }
 
     private void OnDestroy()
     {
-        leftPrimaryButtonAction?.Disable();
-        leftSecondaryButtonAction?.Disable();
+        _leftPrimaryButtonAction?.Disable();
+        _leftSecondaryButtonAction?.Disable();
 
-        rightPrimaryButtonAction?.Disable();
-        rightSecondaryButtonAction?.Disable();
+        _rightPrimaryButtonAction?.Disable();
+        _rightSecondaryButtonAction?.Disable();
     }
 
     public void ShowRayCasts()
     {
-        raycastLeft.SetActive(true);
-        raycastRight.SetActive(true);
-        directLeft.SetActive(false);
-        directRight.SetActive(false);
+        RaycastLeft.SetActive(true);
+        RaycastRight.SetActive(true);
+        DirectLeft.SetActive(false);
+        DirectRight.SetActive(false);
     }
 
     public void HideRayCasts()
     {
-        raycastLeft.SetActive(false);
-        raycastRight.SetActive(false);
-        directLeft.SetActive(true);
-        directRight.SetActive(true);
+        RaycastLeft.SetActive(false);
+        RaycastRight.SetActive(false);
+        DirectLeft.SetActive(true);
+        DirectRight.SetActive(true);
     }
 
     public void ShowMainMenu()
     {
         if (!MenuGameObject.activeSelf)
+        {
             MenuGameObject.SetActive(true);
+        }
         else
+        {
             MenuGameObject.SetActive(false);
+        }
     }
 
     public void ShowMap()
     {
         if (!MapObject.activeSelf)
+        {
             StartCoroutine(UnrollMap());
+        }
         else
+        {
             StartCoroutine(RollupMap());
+        }
     }
 
     public IEnumerator UnrollMap()
     {
         MapObject.SetActive(true);
-        maproll.enabled = true;
-        maproll.speed = maprollspeed;
-        maproll.Play("Unroll", -1, 0.0f);
-        mapaudio.PlayOneShot(scrollsound);
-        yield return new WaitForSeconds((maproll.GetCurrentAnimatorClipInfo(0)[0].clip.length / maprollspeed) * (maproll.GetCurrentAnimatorClipInfo(0)[0].clip.length - maprolloffset) / maproll.GetCurrentAnimatorClipInfo(0)[0].clip.length);
-        maproll.speed = 0f;
+        _maproll.enabled = true;
+        _maproll.speed = Maprollspeed;
+        _maproll.Play("Unroll", -1, 0.0f);
+        _mapaudio.PlayOneShot(_scrollsound);
+        yield return new WaitForSeconds(_maproll.GetCurrentAnimatorClipInfo(0)[0].clip.length / Maprollspeed *
+                                        (_maproll.GetCurrentAnimatorClipInfo(0)[0].clip.length - Maprolloffset) /
+                                        _maproll.GetCurrentAnimatorClipInfo(0)[0].clip.length);
+        _maproll.speed = 0f;
     }
+
     public IEnumerator RollupMap()
     {
-        maproll.speed = maprollspeed;
-        maproll.Play("Roll", -1, (1 - (maproll.GetCurrentAnimatorClipInfo(0)[0].clip.length - maprolloffset) / maproll.GetCurrentAnimatorClipInfo(0)[0].clip.length));
-        mapaudio.PlayOneShot(scrollsound);
-        yield return new WaitForSeconds((maproll.GetCurrentAnimatorClipInfo(0)[0].clip.length / maprollspeed) * (maproll.GetCurrentAnimatorClipInfo(0)[0].clip.length - maprolloffset) / maproll.GetCurrentAnimatorClipInfo(0)[0].clip.length);
-        maproll.speed = 0f;
+        _maproll.speed = Maprollspeed;
+        _maproll.Play("Roll", -1,
+            1 - (_maproll.GetCurrentAnimatorClipInfo(0)[0].clip.length - Maprolloffset) /
+            _maproll.GetCurrentAnimatorClipInfo(0)[0].clip.length);
+        _mapaudio.PlayOneShot(_scrollsound);
+        yield return new WaitForSeconds(_maproll.GetCurrentAnimatorClipInfo(0)[0].clip.length / Maprollspeed *
+                                        (_maproll.GetCurrentAnimatorClipInfo(0)[0].clip.length - Maprolloffset) /
+                                        _maproll.GetCurrentAnimatorClipInfo(0)[0].clip.length);
+        _maproll.speed = 0f;
         MapObject.SetActive(false);
     }
 
     public void ShowDialog()
     {
-        dialogGameObject.SetActive(true);
+        DialogGameObject.SetActive(true);
     }
 
     public void HideDialog()
     {
-        dialogGameObject.SetActive(false);
+        DialogGameObject.SetActive(false);
     }
 
     public void FillDialog(int npcInstanceIndex, List<DialogOption> dialogOptions)
@@ -147,7 +172,7 @@ public class ControllerManager : SingletonBehaviour<ControllerManager>
         dialogOptions.Reverse();
         for (var i = 0; i < dialogOptions.Count; i++)
         {
-            var dialogItem = dialogItems[i];
+            var dialogItem = DialogItems[i];
             var dialogOption = dialogOptions[i];
 
             dialogItem.GetComponent<Button>().onClick.AddListener(
@@ -163,7 +188,7 @@ public class ControllerManager : SingletonBehaviour<ControllerManager>
 
         for (var i = 0; i < dialogOptions.Count; i++)
         {
-            var dialogItem = dialogItems[i];
+            var dialogItem = DialogItems[i];
             var dialogOption = dialogOptions[i];
 
             dialogItem.GetComponent<Button>().onClick.AddListener(
@@ -178,26 +203,28 @@ public class ControllerManager : SingletonBehaviour<ControllerManager>
     /// </summary>
     private void CreateAdditionalDialogOptions(int currentItemsNeeded)
     {
-        var newItemsToCreate = currentItemsNeeded - dialogItems.Count;
+        var newItemsToCreate = currentItemsNeeded - DialogItems.Count;
 
         if (newItemsToCreate <= 0)
+        {
             return;
+        }
 
-        var lastItem = dialogItems.Last();
+        var lastItem = DialogItems.Last();
         for (var i = 0; i < newItemsToCreate; i++)
         {
             var newItem = Instantiate(lastItem, lastItem.transform.parent, false);
-            dialogItems.Add(newItem);
+            DialogItems.Add(newItem);
 
-            newItem.name = $"Item{dialogItems.Count-1:00}";
+            newItem.name = $"Item{DialogItems.Count - 1:00}";
             // FIXME - We need to handle this kind of UI magic more transparent somewhere else...
-            newItem.transform.localPosition += new Vector3(0, -50 * (dialogItems.Count - 1), 0);
+            newItem.transform.localPosition += new Vector3(0, -50 * (DialogItems.Count - 1), 0);
         }
     }
 
     private void ClearDialogOptions()
     {
-        foreach (var item in dialogItems)
+        foreach (var item in DialogItems)
         {
             item.GetComponent<Button>().onClick.RemoveAllListeners();
             item.FindChildRecursively("Label").GetComponent<TMP_Text>().text = "";

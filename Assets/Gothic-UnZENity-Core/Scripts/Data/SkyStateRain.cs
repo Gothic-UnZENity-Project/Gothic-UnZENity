@@ -1,7 +1,7 @@
 namespace GUZ.Core.Data
 {
-    public class SkyStateRain :SkyState
+    public class SkyStateRain : SkyState
     {
-        public float endTime;
+        public float EndTime;
     }
 }

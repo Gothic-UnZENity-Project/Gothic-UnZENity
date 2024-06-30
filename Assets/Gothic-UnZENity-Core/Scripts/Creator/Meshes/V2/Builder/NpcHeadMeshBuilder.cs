@@ -1,7 +1,7 @@
 using System.Text.RegularExpressions;
+using GUZ.Core.Extensions;
 using GUZ.Core.Npc;
 using GUZ.Core.Properties;
-using GUZ.Core.Extensions;
 using UnityEngine;
 
 namespace GUZ.Core.Creator.Meshes.V2.Builder
@@ -21,9 +21,9 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
             var props = RootGo.GetComponent<NpcProperties>();
 
             // Cache it for faster use during runtime
-            props.head = headGo.transform;
-            props.headMorph = headGo.AddComponent<HeadMorph>();
-            props.headMorph.HeadName = props.BodyData.Head;
+            props.Head = headGo.transform;
+            props.HeadMorph = headGo.AddComponent<HeadMorph>();
+            props.HeadMorph.HeadName = props.BodyData.Head;
 
             var headMeshFilter = headGo.AddComponent<MeshFilter>();
             var headMeshRenderer = headGo.AddComponent<MeshRenderer>();
@@ -38,7 +38,7 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
         /// </summary>
         protected override Texture2D GetTexture(string name)
         {
-            string finalTextureName = name;
+            var finalTextureName = name;
 
             // FIXME - We don't have different mouths in Gothic1. Need to recheck it in Gothic2.
             if (name.ToUpper().EndsWith("MOUTH_V0.TGA"))
@@ -48,12 +48,12 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
             else if (name.ToUpper().EndsWith("TEETH_V0.TGA"))
             {
                 // e.g. Some_Texture_V0.TGA --> Some_Texture_V1.TGA
-                finalTextureName = Regex.Replace(name, "(?<=.*?)V0", $"V{bodyData.TeethTexNr}");
+                finalTextureName = Regex.Replace(name, "(?<=.*?)V0", $"V{BodyData.TeethTexNr}");
             }
             else if (name.ToUpper().EndsWith("V0_C0.TGA"))
             {
                 finalTextureName = Regex.Replace(name, "(?<=.*?)V0_C0",
-                    $"V{bodyData.HeadTexNr}_C{bodyData.BodyTexColor}");
+                    $"V{BodyData.HeadTexNr}_C{BodyData.BodyTexColor}");
             }
 
             return base.GetTexture(finalTextureName);

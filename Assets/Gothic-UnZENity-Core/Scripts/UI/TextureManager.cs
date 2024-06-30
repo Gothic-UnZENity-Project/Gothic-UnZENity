@@ -1,58 +1,87 @@
 using GUZ.Core.Caches;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
-using GUZ.Core.Util;
 using UnityEngine;
+using UnityEngine.Serialization;
 
-public class TextureManager : SingletonBehaviour<TextureManager>
+public class TextureManager : MonoBehaviour
 {
-    public Material mainMenuImageBackgroundMaterial;
-    public Material mainMenuBackgroundMaterial;
-    public Material mainMenuTextImageMaterial;
+    [FormerlySerializedAs("mainMenuImageBackgroundMaterial")]
+    public Material MainMenuImageBackgroundMaterial;
 
-    public Material backgroundMaterial;
-    public Material buttonMaterial;
-    public Material sliderMaterial;
-    public Material sliderPositionMaterial;
-    public Material arrowMaterial;
-    public Material fillerMaterial;
-    public Material skyMaterial;
-    public Material mapMaterial;
+    [FormerlySerializedAs("mainMenuBackgroundMaterial")]
+    public Material MainMenuBackgroundMaterial;
 
-    public Material gothicLoadingMenuMaterial;
-    public Material loadingBarBackgroundMaterial;
-    public Material loadingBarMaterial;
-    public Material loadingSphereMaterial;
+    [FormerlySerializedAs("mainMenuSaveLoadBackgroundMaterial")]
+    public Material MainMenuSaveLoadBackgroundMaterial;
+
+    [FormerlySerializedAs("mainMenuTextImageMaterial")]
+    public Material MainMenuTextImageMaterial;
+
+    [FormerlySerializedAs("backgroundMaterial")]
+    public Material BackgroundMaterial;
+
+    [FormerlySerializedAs("buttonMaterial")]
+    public Material ButtonMaterial;
+
+    [FormerlySerializedAs("sliderMaterial")]
+    public Material SliderMaterial;
+
+    [FormerlySerializedAs("sliderPositionMaterial")]
+    public Material SliderPositionMaterial;
+
+    [FormerlySerializedAs("arrowMaterial")]
+    public Material ArrowMaterial;
+
+    [FormerlySerializedAs("fillerMaterial")]
+    public Material FillerMaterial;
+
+    [FormerlySerializedAs("skyMaterial")] public Material SkyMaterial;
+    [FormerlySerializedAs("mapMaterial")] public Material MapMaterial;
+
+    [FormerlySerializedAs("gothicLoadingMenuMaterial")]
+    public Material GothicLoadingMenuMaterial;
+
+    [FormerlySerializedAs("loadingBarBackgroundMaterial")]
+    public Material LoadingBarBackgroundMaterial;
+
+    [FormerlySerializedAs("loadingBarMaterial")]
+    public Material LoadingBarMaterial;
+
+    [FormerlySerializedAs("loadingSphereMaterial")]
+    public Material LoadingSphereMaterial;
 
     private void Start()
     {
-        mainMenuImageBackgroundMaterial = GetEmptyMaterial(MaterialExtension.BlendMode.Opaque);
-        mainMenuBackgroundMaterial = GetEmptyMaterial(MaterialExtension.BlendMode.Opaque);
-        mainMenuTextImageMaterial = GetEmptyMaterial(MaterialExtension.BlendMode.Transparent);
+        MainMenuImageBackgroundMaterial = GetEmptyMaterial(MaterialExtension.BlendMode.Opaque);
+        MainMenuBackgroundMaterial = GetEmptyMaterial(MaterialExtension.BlendMode.Opaque);
+        MainMenuSaveLoadBackgroundMaterial = GetEmptyMaterial(MaterialExtension.BlendMode.Opaque);
+        MainMenuTextImageMaterial = GetEmptyMaterial(MaterialExtension.BlendMode.Transparent);
 
-        gothicLoadingMenuMaterial = GetEmptyMaterial(MaterialExtension.BlendMode.Opaque);
-        loadingBarBackgroundMaterial = GetEmptyMaterial(MaterialExtension.BlendMode.Opaque);
-        loadingBarMaterial = GetEmptyMaterial(MaterialExtension.BlendMode.Opaque);
+        GothicLoadingMenuMaterial = GetEmptyMaterial(MaterialExtension.BlendMode.Opaque);
+        LoadingBarBackgroundMaterial = GetEmptyMaterial(MaterialExtension.BlendMode.Opaque);
+        LoadingBarMaterial = GetEmptyMaterial(MaterialExtension.BlendMode.Opaque);
 
-        loadingSphereMaterial = GetEmptyMaterial(MaterialExtension.BlendMode.Opaque);
-        loadingSphereMaterial.color = new Color(.25f, .25f, .25f, 1f); // dark gray
+        LoadingSphereMaterial = GetEmptyMaterial(MaterialExtension.BlendMode.Opaque);
+        LoadingSphereMaterial.color = new Color(.25f, .25f, .25f, 1f); // dark gray
     }
 
     public void LoadLoadingDefaultTextures()
     {
-        mainMenuImageBackgroundMaterial.mainTexture = TextureCache.TryGetTexture("STARTSCREEN.TGA");
-        mainMenuBackgroundMaterial.mainTexture = TextureCache.TryGetTexture("MENU_INGAME.TGA");
-        mainMenuTextImageMaterial.mainTexture = TextureCache.TryGetTexture("MENU_GOTHIC.TGA");
-        gothicLoadingMenuMaterial.mainTexture = TextureCache.TryGetTexture("LOADING.TGA");
-        loadingBarBackgroundMaterial.mainTexture = TextureCache.TryGetTexture("PROGRESS.TGA");
-        loadingBarMaterial.mainTexture = TextureCache.TryGetTexture("PROGRESS_BAR.TGA");
-        backgroundMaterial.mainTexture = TextureCache.TryGetTexture("LOG_PAPER.TGA");
-        buttonMaterial.mainTexture = TextureCache.TryGetTexture("INV_SLOT.TGA");
-        sliderMaterial.mainTexture = TextureCache.TryGetTexture("MENU_SLIDER_BACK.TGA");
-        sliderPositionMaterial.mainTexture = TextureCache.TryGetTexture("MENU_SLIDER_POS.TGA");
-        fillerMaterial.mainTexture = TextureCache.TryGetTexture("MENU_BUTTONBACK.TGA");
-        arrowMaterial.mainTexture = TextureCache.TryGetTexture("U.TGA");
-        mapMaterial.mainTexture = TextureCache.TryGetTexture("MAP_WORLD_ORC.TGA");
+        MainMenuImageBackgroundMaterial.mainTexture = TextureCache.TryGetTexture("STARTSCREEN.TGA");
+        MainMenuBackgroundMaterial.mainTexture = TextureCache.TryGetTexture("MENU_INGAME.TGA");
+        MainMenuSaveLoadBackgroundMaterial.mainTexture = TextureCache.TryGetTexture("MENU_SAVELOAD_BACK.TGA");
+        MainMenuTextImageMaterial.mainTexture = TextureCache.TryGetTexture("MENU_GOTHIC.TGA");
+        GothicLoadingMenuMaterial.mainTexture = TextureCache.TryGetTexture("LOADING.TGA");
+        LoadingBarBackgroundMaterial.mainTexture = TextureCache.TryGetTexture("PROGRESS.TGA");
+        LoadingBarMaterial.mainTexture = TextureCache.TryGetTexture("PROGRESS_BAR.TGA");
+        BackgroundMaterial.mainTexture = TextureCache.TryGetTexture("LOG_PAPER.TGA");
+        ButtonMaterial.mainTexture = TextureCache.TryGetTexture("INV_SLOT.TGA");
+        SliderMaterial.mainTexture = TextureCache.TryGetTexture("MENU_SLIDER_BACK.TGA");
+        SliderPositionMaterial.mainTexture = TextureCache.TryGetTexture("MENU_SLIDER_POS.TGA");
+        FillerMaterial.mainTexture = TextureCache.TryGetTexture("MENU_BUTTONBACK.TGA");
+        ArrowMaterial.mainTexture = TextureCache.TryGetTexture("U.TGA");
+        MapMaterial.mainTexture = TextureCache.TryGetTexture("MAP_WORLD_ORC.TGA");
     }
 
     public void SetTexture(string texture, Material material)
@@ -60,7 +89,7 @@ public class TextureManager : SingletonBehaviour<TextureManager>
         material.mainTexture = TextureCache.TryGetTexture(texture);
     }
 
-    private Material GetEmptyMaterial(MaterialExtension.BlendMode blendMode)
+    public Material GetEmptyMaterial(MaterialExtension.BlendMode blendMode)
     {
         var standardShader = Constants.ShaderUnlit;
         var material = new Material(standardShader);
@@ -74,6 +103,7 @@ public class TextureManager : SingletonBehaviour<TextureManager>
                 material.ToTransparentMode();
                 break;
         }
+
         // Enable clipping of alpha values.
         material.EnableKeyword("_ALPHATEST_ON");
 

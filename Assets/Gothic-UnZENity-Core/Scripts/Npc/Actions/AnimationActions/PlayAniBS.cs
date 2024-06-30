@@ -4,16 +4,16 @@ using UnityEngine;
 
 namespace GUZ.Core.Npc.Actions.AnimationActions
 {
-    public class PlayAniBS : AbstractAnimationAction
+    public class PlayAniBs : AbstractAnimationAction
     {
-        public PlayAniBS(AnimationAction action, GameObject npcGo) : base(action, npcGo)
+        public PlayAniBs(AnimationAction action, GameObject npcGo) : base(action, npcGo)
         {
         }
 
         public override void Start()
         {
-            Props.bodyState = (VmGothicEnums.BodyState)Action.Int0;
-            AnimationCreator.PlayAnimation(Props.mdsNames, Action.String0, NpcGo);
+            Props.BodyState = (VmGothicEnums.BodyState)Action.Int0;
+            AnimationCreator.PlayAnimation(Props.MdsNames, Action.String0, NpcGo);
         }
     }
 }

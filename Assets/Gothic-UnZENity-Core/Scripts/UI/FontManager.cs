@@ -1,8 +1,5 @@
-using System;
 using System.Reflection;
 using GUZ.Core.Caches;
-using GUZ.Core.Globals;
-using GUZ.Core.Util;
 using TMPro;
 using UnityEngine;
 using UnityEngine.TextCore;
@@ -10,7 +7,7 @@ using Constants = GUZ.Core.Globals.Constants;
 
 namespace GUZ.Core.Manager
 {
-    public class FontManager : SingletonBehaviour<FontManager>
+    public class FontManager : MonoBehaviour
     {
         public TMP_FontAsset DefaultFont;
 
@@ -22,28 +19,32 @@ namespace GUZ.Core.Manager
 
         public TMP_SpriteAsset LoadFont(string fontName)
         {
-            if (LookupCache.fontCache.TryGetValue(fontName.ToUpper(), out TMP_SpriteAsset data))
+            if (LookupCache.FontCache.TryGetValue(fontName.ToUpper(), out var data))
+            {
                 return data;
-            var font = AssetCache.TryGetFont(fontName.ToUpper());
+            }
+
+            var font = ResourceLoader.TryGetFont(fontName.ToUpper());
             var fontTexture = TextureCache.TryGetTexture(fontName);
 
-            TMP_SpriteAsset spriteAsset = ScriptableObject.CreateInstance<TMP_SpriteAsset>();
+            var spriteAsset = ScriptableObject.CreateInstance<TMP_SpriteAsset>();
 
-            for (int i = 0; i < font.Glyphs.Count; i++)
+            for (var i = 0; i < font.Glyphs.Count; i++)
             {
                 var x = font.Glyphs[i].topLeft.X * fontTexture.width;
                 x = x < 0 ? 0 : x;
                 var y = font.Glyphs[i].topLeft.Y * fontTexture.height;
                 var w = font.Glyphs[i].width;
                 var h = font.Height;
-                Sprite newSprite = Sprite.Create(fontTexture, new Rect(x, y, w, h), new Vector2(font.Glyphs[i].topLeft.X, font.Glyphs[i].bottomRight.Y));
+                var newSprite = Sprite.Create(fontTexture, new Rect(x, y, w, h),
+                    new Vector2(font.Glyphs[i].topLeft.X, font.Glyphs[i].bottomRight.Y));
 
                 var spriteGlyph = new TMP_SpriteGlyph
                 {
                     glyphRect = new GlyphRect
                     {
-                        width = (int)w,
-                        height = (int)h,
+                        width = w,
+                        height = h,
                         x = (int)x,
                         y = (int)y
                     },
@@ -63,26 +64,27 @@ namespace GUZ.Core.Manager
                 var spriteCharacter = new TMP_SpriteCharacter((uint)i, spriteGlyph);
                 spriteAsset.spriteCharacterTable.Add(spriteCharacter);
             }
+
             spriteAsset.name = name;
             spriteAsset.material = GetDefaultSpriteMaterial(fontTexture);
             spriteAsset.spriteSheet = fontTexture;
 
             // Get the Type of the TMP_SpriteAsset
-            Type spriteAssetType = spriteAsset.GetType();
+            var spriteAssetType = spriteAsset.GetType();
 
             // Get the FieldInfo of the 'm_Version' field
-            FieldInfo versionField = spriteAssetType.GetField("m_Version", BindingFlags.NonPublic | BindingFlags.Instance);
+            var versionField = spriteAssetType.GetField("m_Version", BindingFlags.NonPublic | BindingFlags.Instance);
 
             versionField.SetValue(spriteAsset, "1.0.0"); // setting this as to skip "UpgradeSpriteAsset"
 
             spriteAsset.UpdateLookupTables();
 
-            LookupCache.fontCache[fontName.ToUpper()] = spriteAsset;
+            LookupCache.FontCache[fontName.ToUpper()] = spriteAsset;
 
             return spriteAsset;
         }
 
-        static Material GetDefaultSpriteMaterial(Texture2D spriteSheet = null)
+        private static Material GetDefaultSpriteMaterial(Texture2D spriteSheet = null)
         {
             ShaderUtilities.GetShaderPropertyIDs();
 

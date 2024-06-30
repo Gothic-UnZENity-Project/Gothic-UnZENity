@@ -91,9 +91,9 @@ Shader "Unlit/SkyboxWithHorizonFog"
                 float4 sky4 = tex2D(_Sky4, skyUV4);
 
                 float3 blendedSkies1 = lerp(lerp(_DomeColor1.rgb, sky1.rgb, _Sky1Opacity * sky1.a), sky2.rgb,
-                                        _Sky2Opacity * sky2.a);
+                                            _Sky2Opacity * sky2.a);
                 float3 blendedSkies2 = lerp(lerp(_DomeColor2.rgb, sky3.rgb, _Sky3Opacity * sky3.a), sky4.rgb,
-                                                                _Sky4Opacity * sky4.a);
+                                                _Sky4Opacity * sky4.a);
                 float3 blendedSkies = lerp(blendedSkies1, blendedSkies2, _LayerBlend);
 
                 // Calculate the fog color based on the horizon factor

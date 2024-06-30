@@ -1,27 +1,33 @@
 using UnityEngine;
 using UnityEngine.Audio;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 namespace GUZ.Core.UI
 {
     public class AudioMixerHandler : MonoBehaviour
     {
-        [SerializeField] private AudioMixerGroup audioMixer;
-        [SerializeField] private Slider audioVolumeSlider;
-        [SerializeField] private string volumePlayerPrefName;
+        [FormerlySerializedAs("audioMixer")] [SerializeField]
+        private AudioMixerGroup _audioMixer;
 
-        void Awake()
+        [FormerlySerializedAs("audioVolumeSlider")] [SerializeField]
+        private Slider _audioVolumeSlider;
+
+        [FormerlySerializedAs("volumePlayerPrefName")] [SerializeField]
+        private string _volumePlayerPrefName;
+
+        private void Awake()
         {
-            float oldVolume = PlayerPrefs.GetFloat(volumePlayerPrefName, 1f);
-            audioVolumeSlider.value = oldVolume;
+            var oldVolume = PlayerPrefs.GetFloat(_volumePlayerPrefName, 1f);
+            _audioVolumeSlider.value = oldVolume;
         }
 
         public void SliderUpdate(float value)
         {
-            PlayerPrefs.SetFloat(volumePlayerPrefName, value);
+            PlayerPrefs.SetFloat(_volumePlayerPrefName, value);
             // Volume and loudness are not the same, volume can be linear but loudness is logarithmic
             // https://www.msdmanuals.com/home/multimedia/table/measurement-of-loudness
-            audioMixer.audioMixer.SetFloat(volumePlayerPrefName, Mathf.Log10(value) * 20);
+            _audioMixer.audioMixer.SetFloat(_volumePlayerPrefName, Mathf.Log10(value) * 20);
         }
     }
 }

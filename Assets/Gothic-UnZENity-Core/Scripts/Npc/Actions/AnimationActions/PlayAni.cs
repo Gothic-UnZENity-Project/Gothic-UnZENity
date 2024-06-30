@@ -11,7 +11,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
 
         public override void Start()
         {
-            AnimationCreator.PlayAnimation(Props.mdsNames, Action.String0, NpcGo);
+            AnimationCreator.PlayAnimation(Props.MdsNames, Action.String0, NpcGo);
         }
     }
 }

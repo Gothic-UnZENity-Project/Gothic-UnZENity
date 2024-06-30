@@ -1,6 +1,7 @@
-using GUZ.Core.Globals;
 using GUZ.Core.Extensions;
+using GUZ.Core.Globals;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 using UnityEngine.XR.Interaction.Toolkit;
 
@@ -8,29 +9,35 @@ namespace GUZ.Core.Player.Climb
 {
     public class RayTeleportClimb : MonoBehaviour
     {
-        [SerializeField] private XRInteractorLineVisual lineVisual;
-        [SerializeField] private XRBaseInteractor interactor;
-        [SerializeField] private GameObject player;
+        [FormerlySerializedAs("lineVisual")] [SerializeField]
+        private XRInteractorLineVisual _lineVisual;
 
-        [SerializeField] private Sprite sprite;
+        [FormerlySerializedAs("interactor")] [SerializeField]
+        private XRBaseInteractor _interactor;
 
-        private GameObject teleportIndicatorReticle;
-        private Image teleportIndicatorReticleImage;
+        [FormerlySerializedAs("player")] [SerializeField]
+        private GameObject _player;
 
-        private bool isHittingObject = false;
-        private GameObject zsPos0GO;
-        private GameObject zsPos1GO;
-        private float hitTime;
-        private float teleportDelay = 1f; // Adjust the delay duration as needed
+        [FormerlySerializedAs("sprite")] [SerializeField]
+        private Sprite _sprite;
 
-        private string zsPos0 = "ZS_POS0";
-        private string zsPos1 = "ZS_POS1";
+        private GameObject _teleportIndicatorReticle;
+        private Image _teleportIndicatorReticleImage;
+
+        private bool _isHittingObject;
+        private GameObject _zsPos0Go;
+        private GameObject _zsPos1Go;
+        private float _hitTime;
+        private float _teleportDelay = 1f; // Adjust the delay duration as needed
+
+        private string _zsPos0 = "ZS_POS0";
+        private string _zsPos1 = "ZS_POS1";
 
         private void Start()
         {
             CreateReticle();
-            interactor.selectEntered.AddListener(OnRaycastHit);
-            interactor.selectExited.AddListener(OnRaycastExit);
+            _interactor.selectEntered.AddListener(OnRaycastHit);
+            _interactor.selectExited.AddListener(OnRaycastExit);
         }
 
         private void OnRaycastHit(SelectEnterEventArgs args)
@@ -42,54 +49,56 @@ namespace GUZ.Core.Player.Climb
                 // Show a message in the logs
                 var hitObject = args.interactableObject.transform.gameObject;
 
-                zsPos0GO = hitObject.FindChildRecursively(zsPos0);
-                zsPos1GO = hitObject.FindChildRecursively(zsPos1);
+                _zsPos0Go = hitObject.FindChildRecursively(_zsPos0);
+                _zsPos1Go = hitObject.FindChildRecursively(_zsPos1);
 
                 // Get the zs_pos0 and zs_pos1 positions
-                var zsPos0Position = zsPos0GO.transform.position;
-                var zsPos1Position = zsPos1GO.transform.position;
+                var zsPos0Position = _zsPos0Go.transform.position;
+                var zsPos1Position = _zsPos1Go.transform.position;
 
-                Vector3 playerPosition = player.transform.position;
+                var playerPosition = _player.transform.position;
 
-                float yDifferenceToZsPos0 = Mathf.Abs(playerPosition.y - zsPos0Position.y);
-                float yDifferenceToZsPos1 = Mathf.Abs(playerPosition.y - zsPos1Position.y);
+                var yDifferenceToZsPos0 = Mathf.Abs(playerPosition.y - zsPos0Position.y);
+                var yDifferenceToZsPos1 = Mathf.Abs(playerPosition.y - zsPos1Position.y);
 
-                teleportIndicatorReticle.SetActive(true);
+                _teleportIndicatorReticle.SetActive(true);
 
                 // Teleport the player to the closer zs_pos position based on y-level
                 if (yDifferenceToZsPos0 < yDifferenceToZsPos1)
                 {
-                    teleportIndicatorReticle.SetParent(zsPos0GO, true, true);
-                    teleportIndicatorReticleImage.rectTransform.localRotation = Quaternion.AngleAxis(0, Vector3.forward);
+                    _teleportIndicatorReticle.SetParent(_zsPos0Go, true, true);
+                    _teleportIndicatorReticleImage.rectTransform.localRotation =
+                        Quaternion.AngleAxis(0, Vector3.forward);
                 }
                 else
                 {
-                    teleportIndicatorReticle.SetParent(zsPos1GO, true, true);
-                    teleportIndicatorReticleImage.rectTransform.localRotation = Quaternion.AngleAxis(180, Vector3.forward);
+                    _teleportIndicatorReticle.SetParent(_zsPos1Go, true, true);
+                    _teleportIndicatorReticleImage.rectTransform.localRotation =
+                        Quaternion.AngleAxis(180, Vector3.forward);
                 }
 
-                isHittingObject = true;
+                _isHittingObject = true;
 
                 // Record the hit time
-                hitTime = Time.time;
+                _hitTime = Time.time;
             }
         }
 
         private void OnRaycastExit(SelectExitEventArgs args)
         {
-            isHittingObject = false;
-            teleportIndicatorReticle.transform.parent = null;
-            teleportIndicatorReticleImage.fillAmount = 0;
-            teleportIndicatorReticle.SetActive(false);
+            _isHittingObject = false;
+            _teleportIndicatorReticle.transform.parent = null;
+            _teleportIndicatorReticleImage.fillAmount = 0;
+            _teleportIndicatorReticle.SetActive(false);
         }
 
         private void Update()
         {
-            if (isHittingObject)
+            if (_isHittingObject)
             {
-                teleportIndicatorReticleImage.fillAmount = (Time.time - hitTime) / teleportDelay;
+                _teleportIndicatorReticleImage.fillAmount = (Time.time - _hitTime) / _teleportDelay;
                 // Check if the delay duration has passed since the hit
-                if (Time.time - hitTime >= teleportDelay)
+                if (Time.time - _hitTime >= _teleportDelay)
                 {
                     PerformTeleport();
                 }
@@ -99,13 +108,13 @@ namespace GUZ.Core.Player.Climb
         private void PerformTeleport()
         {
             // Get the player's position
-            Vector3 playerPosition = player.transform.position;
+            var playerPosition = _player.transform.position;
 
-            var zsPos0Position = zsPos0GO.transform.position;
-            var zsPos1Position = zsPos1GO.transform.position;
+            var zsPos0Position = _zsPos0Go.transform.position;
+            var zsPos1Position = _zsPos1Go.transform.position;
 
-            float yDifferenceToZsPos0 = Mathf.Abs(playerPosition.y - zsPos0Position.y);
-            float yDifferenceToZsPos1 = Mathf.Abs(playerPosition.y - zsPos1Position.y);
+            var yDifferenceToZsPos0 = Mathf.Abs(playerPosition.y - zsPos0Position.y);
+            var yDifferenceToZsPos1 = Mathf.Abs(playerPosition.y - zsPos1Position.y);
 
             // Teleport the player to the closer zs_pos position based on y-level
             if (yDifferenceToZsPos0 < yDifferenceToZsPos1)
@@ -118,40 +127,42 @@ namespace GUZ.Core.Player.Climb
             }
 
             // Reset the state
-            isHittingObject = false;
+            _isHittingObject = false;
 
             // Deactivate the teleport ray
-            if (interactor.gameObject.name.Contains("Teleport"))
-                interactor.enabled = false;
+            if (_interactor.gameObject.name.Contains("Teleport"))
+            {
+                _interactor.enabled = false;
+            }
         }
 
         private void TeleportPlayer(Vector3 targetPosition)
         {
             // Teleport the player to the target position
-            player.transform.position = targetPosition;
+            _player.transform.position = targetPosition;
         }
 
         private void CreateReticle()
         {
-            teleportIndicatorReticle = new GameObject("Reticle");
+            _teleportIndicatorReticle = new GameObject("Reticle");
 
             var canvas = new GameObject("Canvas");
-            canvas.SetParent(teleportIndicatorReticle);
+            canvas.SetParent(_teleportIndicatorReticle);
             canvas.AddComponent<Canvas>();
             var image = new GameObject("Image");
             image.SetParent(canvas);
 
 
-            teleportIndicatorReticleImage = image.AddComponent<Image>();
+            _teleportIndicatorReticleImage = image.AddComponent<Image>();
 
-            teleportIndicatorReticleImage.sprite = sprite;
-            teleportIndicatorReticleImage.rectTransform.sizeDelta = new Vector2(1f, 1f);
-            teleportIndicatorReticleImage.material = TextureManager.I.arrowMaterial;
-            teleportIndicatorReticleImage.type = Image.Type.Filled;
-            teleportIndicatorReticleImage.fillMethod = Image.FillMethod.Vertical;
-            Destroy(teleportIndicatorReticle.GetComponent<Collider>());
+            _teleportIndicatorReticleImage.sprite = _sprite;
+            _teleportIndicatorReticleImage.rectTransform.sizeDelta = new Vector2(1f, 1f);
+            _teleportIndicatorReticleImage.material = GameGlobals.Textures.ArrowMaterial;
+            _teleportIndicatorReticleImage.type = Image.Type.Filled;
+            _teleportIndicatorReticleImage.fillMethod = Image.FillMethod.Vertical;
+            Destroy(_teleportIndicatorReticle.GetComponent<Collider>());
 
-            teleportIndicatorReticle.SetActive(false);
+            _teleportIndicatorReticle.SetActive(false);
         }
     }
 }

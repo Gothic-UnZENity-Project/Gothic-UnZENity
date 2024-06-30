@@ -21,35 +21,46 @@ namespace GUZ.Core.Morph
         /// We therefore add animations to a list to calculate their positions together.
         /// </summary>
         private readonly List<MorphAnimationData> _runningMorphs = new();
+
         private Mesh _mesh;
 
         /// <summary>
         /// RandomMorphs are blinking eyes in G1.
         /// The settings for it contains two options of blinking firstTime and secondTime.
         /// </summary>
-        protected List<(string morphMeshName, string animationName, float firstTimeAverage, float firstTimeVariable, float secondTimeAverage, float secondTimeVariable, float probabilityOfFirst, float timer)> randomAnimations = new ();
-        protected List<float> randomAnimationTimers = new(); // It's faster to alter a list entry than rewriting the whole Tuple struct above.
+        protected List<(string morphMeshName, string animationName, float firstTimeAverage, float firstTimeVariable,
+                float secondTimeAverage, float secondTimeVariable, float probabilityOfFirst, float timer)>
+            RandomAnimations = new();
+
+        protected List<float>
+            RandomAnimationTimers =
+                new(); // It's faster to alter a list entry than rewriting the whole Tuple struct above.
 
         protected virtual void Start()
         {
             // As we don't set component inside Prefab, we need to assign mesh later at runtime.
             if (_mesh == null)
+            {
                 _mesh = GetComponent<MeshFilter>().mesh;
+            }
         }
 
         protected void StartAnimation(string morphMeshName, [CanBeNull] string animationName)
         {
             var newMorph = new MorphAnimationData();
 
-            newMorph.MeshMetadata = AssetCache.TryGetMmb(morphMeshName);
+            newMorph.MeshMetadata = ResourceLoader.TryGetMorphMesh(morphMeshName);
             newMorph.AnimationMetadata = animationName == null
                 ? newMorph.MeshMetadata.Animations.First()
                 : newMorph.MeshMetadata.Animations.First(anim => anim.Name.EqualsIgnoreCase(animationName));
-            newMorph.AnimationFrameData = MorphMeshCache.TryGetMorphData(morphMeshName, newMorph.AnimationMetadata.Name);
+            newMorph.AnimationFrameData =
+                MorphMeshCache.TryGetMorphData(morphMeshName, newMorph.AnimationMetadata.Name);
 
             // Reset if already added and playing
             if (_runningMorphs.Any(i => i.MeshName == newMorph.MeshName))
+            {
                 StopAnimation(newMorph.AnimationMetadata.Name);
+            }
 
             var animationFlags = newMorph.AnimationMetadata.Flags;
 
@@ -64,7 +75,9 @@ namespace GUZ.Core.Morph
 
             // TODO/HINT - Is also handled via -1 second duration value of morphAnimation.Duration
             if (animationFlags.HasFlag(MorphAnimationFlags.Loop))
+            {
                 newMorph.IsLooping = true;
+            }
 
             _runningMorphs.Add(newMorph);
         }
@@ -103,7 +116,7 @@ namespace GUZ.Core.Morph
                 CalculateMorphWeights();
 
                 // IMorphAnimation.Speed is in milliseconds. We therefore multiply current time by 1000.
-                var newFrameFloat = (morph.Time * 1000 * morph.AnimationMetadata.Speed);
+                var newFrameFloat = morph.Time * 1000 * morph.AnimationMetadata.Speed;
                 var newFrameInt = (int)newFrameFloat;
 
                 // We can't use animationtime as (e.g.) for R_EYESBLINK we have only one frame which is a time of 0.0f,
@@ -135,12 +148,14 @@ namespace GUZ.Core.Morph
                     {
                         calculatedMorph[i] = currentMorph[i];
                     }
+
                     _mesh.vertices = calculatedMorph;
                 }
                 else
                 {
                     var nextMorph =
-                        morph.AnimationFrameData[newFrameInt == morph.AnimationMetadata.FrameCount - 1 ? 0 : newFrameInt + 1];
+                        morph.AnimationFrameData[
+                            newFrameInt == morph.AnimationMetadata.FrameCount - 1 ? 0 : newFrameInt + 1];
 
                     var interpolatedMorph = new Vector3[currentMorph.Length];
                     for (var i = 0; i < currentMorph.Length; i++)
@@ -148,6 +163,7 @@ namespace GUZ.Core.Morph
                         interpolatedMorph[i] =
                             Vector3.Lerp(currentMorph[i], nextMorph[i], newFrameFloat - MathF.Truncate(newFrameFloat));
                     }
+
                     _mesh.vertices = interpolatedMorph;
                 }
             }
@@ -160,23 +176,30 @@ namespace GUZ.Core.Morph
 
         private void CheckIfRandomAnimationShouldBePlayed()
         {
-            for (var i = 0; i < randomAnimations.Count; i++)
+            for (var i = 0; i < RandomAnimations.Count; i++)
             {
-                randomAnimationTimers[i] -= Time.deltaTime;
+                RandomAnimationTimers[i] -= Time.deltaTime;
 
-                if (randomAnimationTimers[i] > 0)
+                if (RandomAnimationTimers[i] > 0)
+                {
                     continue;
+                }
 
-                var anim = randomAnimations[i];
+                var anim = RandomAnimations[i];
 
                 // FIXME - Set maxWeight for animation based on random value.
                 // FIXME - var weight = Random.value * 0.4f + 0.6f
                 StartAnimation(anim.morphMeshName, anim.animationName);
 
                 if (Random.value < anim.probabilityOfFirst)
-                    randomAnimationTimers[i] = (Random.value * 2 - 1) * anim.firstTimeVariable + anim.firstTimeAverage;
+                {
+                    RandomAnimationTimers[i] = (Random.value * 2 - 1) * anim.firstTimeVariable + anim.firstTimeAverage;
+                }
                 else
-                    randomAnimationTimers[i] = (Random.value * 2 - 1) * anim.secondTimeVariable + anim.secondTimeAverage;
+                {
+                    RandomAnimationTimers[i] =
+                        (Random.value * 2 - 1) * anim.secondTimeVariable + anim.secondTimeAverage;
+                }
             }
         }
     }

@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Text;
 using GUZ.Core.Data;
-using GUZ.Core.Globals;
-using JetBrains.Annotations;
 using UnityEngine;
 
 namespace GUZ.Core.Creator.Sounds
@@ -15,30 +13,6 @@ namespace GUZ.Core.Creator.Sounds
             BIT16 = 16
         }
 
-        [CanBeNull]
-        public static SoundData GetSoundArrayFromVfs(string name)
-        {
-            if (GameData.Vfs == null)
-                return null;
-
-            var node = GameData.Vfs.Find(name);
-            if (node == null)
-                return null;
-
-            try
-            {
-                var wavFile = node.Buffer.Bytes;
-
-                var soundData = ConvertWavByteArrayToFloatArray(wavFile);
-                return soundData;
-            }
-            catch (Exception e)
-            {
-                Debug.LogError(e);
-                return null;
-            }
-        }
-
         public static AudioClip ToAudioClip(SoundData wavFile)
         {
             AudioClip audioClip;
@@ -46,9 +20,9 @@ namespace GUZ.Core.Creator.Sounds
             try
             {
                 audioClip =
-                    AudioClip.Create("Sound", wavFile.sound.Length / wavFile.channels, wavFile.channels,
-                        wavFile.sampleRate, false);
-                audioClip.SetData(wavFile.sound, 0);
+                    AudioClip.Create("Sound", wavFile.Sound.Length / wavFile.Channels, wavFile.Channels,
+                        wavFile.SampleRate, false);
+                audioClip.SetData(wavFile.Sound, 0);
             }
             catch (Exception e)
             {
@@ -60,7 +34,7 @@ namespace GUZ.Core.Creator.Sounds
             return audioClip;
         }
 
-        private static SoundData ConvertWavByteArrayToFloatArray(byte[] fileBytes)
+        public static SoundData ConvertWavByteArrayToFloatArray(byte[] fileBytes)
         {
             var riff = Encoding.ASCII.GetString(fileBytes, 0, 4);
             var wave = Encoding.ASCII.GetString(fileBytes, 8, 4);
@@ -78,21 +52,23 @@ namespace GUZ.Core.Creator.Sounds
             // Calculate header offset and data size
             var headerOffset = 20 + subchunk1;
             var dataSizeOffset = headerOffset + 4;
-            if(dataSizeOffset + 4 > fileBytes.Length)
+            if (dataSizeOffset + 4 > fileBytes.Length)
+            {
                 throw new ArgumentException("Invalid WAV file structure.");
+            }
 
             var subchunk2 = BitConverter.ToInt32(fileBytes, dataSizeOffset);
 
             // Ensure that subchunk2 does not exceed fileBytes length
             var dataAvailable = fileBytes.Length - (dataSizeOffset + 4);
-            if(subchunk2 > dataAvailable)
+            if (subchunk2 > dataAvailable)
             {
                 subchunk2 = dataAvailable;
             }
-            
+
             if (formatCode == "IMA ADPCM")
             {
-                return ConvertWavByteArrayToFloatArray(IMAADPCMDecoder.Decode(fileBytes));
+                return ConvertWavByteArrayToFloatArray(ImaadpcmDecoder.Decode(fileBytes));
             }
 
             // Copy WAV data section into a new array
@@ -101,9 +77,9 @@ namespace GUZ.Core.Creator.Sounds
 
             return new SoundData
             {
-                sound = ConvertByteArrayToFloatArray(data, 0, (BitDepth)bitDepth),
-                channels = channels,
-                sampleRate = sampleRate
+                Sound = ConvertByteArrayToFloatArray(data, 0, (BitDepth)bitDepth),
+                Channels = channels,
+                SampleRate = sampleRate
             };
         }
 
@@ -121,20 +97,22 @@ namespace GUZ.Core.Creator.Sounds
                     var maxValue = sbyte.MaxValue;
 
                     for (var i = 0; i < wavSize; i++)
+                    {
                         data[i] = (float)source[i] / maxValue;
+                    }
 
                     return data;
                 }
                 case BitDepth.BIT16:
                 {
-                    var bytesPerSample = sizeof(Int16); // block size = 2
+                    var bytesPerSample = sizeof(short); // block size = 2
                     var sampleCount = source.Length / bytesPerSample;
 
                     var data = new float[sampleCount];
 
-                    var maxValue = Int16.MaxValue;
+                    var maxValue = short.MaxValue;
 
-                    for (int i = 0; i < sampleCount; i++)
+                    for (var i = 0; i < sampleCount; i++)
                     {
                         var offset = i * bytesPerSample;
                         var sample = BitConverter.ToInt16(source, offset);
@@ -149,7 +127,7 @@ namespace GUZ.Core.Creator.Sounds
             }
         }
 
-        private static string FormatCode(UInt16 code)
+        private static string FormatCode(ushort code)
         {
             switch (code)
             {

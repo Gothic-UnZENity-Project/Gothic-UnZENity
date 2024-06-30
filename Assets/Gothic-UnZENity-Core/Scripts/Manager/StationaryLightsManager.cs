@@ -1,52 +1,53 @@
 using System.Collections.Generic;
-using GUZ.Core.Util;
 using UnityEngine;
 using UnityEngine.Profiling;
 
 namespace GUZ.Core.Manager
 {
-    public class StationaryLightsManager : SingletonBehaviour<StationaryLightsManager>
+    public class StationaryLightsManager
     {
-        private static readonly HashSet<MeshRenderer> DirtiedMeshes = new();
-        private static readonly Dictionary<MeshRenderer, List<StationaryLight>> LightsPerRenderer = new();
-        private static readonly List<Material> NonAllocMaterials = new();
+        private readonly HashSet<MeshRenderer> _dirtiedMeshes = new();
+        private readonly Dictionary<MeshRenderer, List<StationaryLight>> _lightsPerRenderer = new();
+        private readonly List<Material> _nonAllocMaterials = new();
 
-        private void LateUpdate()
+        public void LateUpdate()
         {
             // Update the renderer once for all updated lights.
-            if (DirtiedMeshes.Count > 0)
+            if (_dirtiedMeshes.Count > 0)
             {
                 Profiler.BeginSample("Update stationary light renderers");
-                foreach (MeshRenderer renderer in DirtiedMeshes)
+                foreach (var renderer in _dirtiedMeshes)
                 {
                     UpdateRenderer(renderer);
                 }
-                DirtiedMeshes.Clear();
+
+                _dirtiedMeshes.Clear();
                 Profiler.EndSample();
             }
         }
-        public static void AddLightOnRenderer(StationaryLight light, MeshRenderer renderer)
+
+        public void AddLightOnRenderer(StationaryLight light, MeshRenderer renderer)
         {
-            if (!LightsPerRenderer.ContainsKey(renderer))
+            if (!_lightsPerRenderer.ContainsKey(renderer))
             {
-                LightsPerRenderer.Add(renderer, new List<StationaryLight>());
+                _lightsPerRenderer.Add(renderer, new List<StationaryLight>());
             }
 
-            LightsPerRenderer[renderer].Add(light);
-            DirtiedMeshes.Add(renderer);
+            _lightsPerRenderer[renderer].Add(light);
+            _dirtiedMeshes.Add(renderer);
         }
 
-        public static void RemoveLightOnRenderer(StationaryLight light, MeshRenderer renderer)
+        public void RemoveLightOnRenderer(StationaryLight light, MeshRenderer renderer)
         {
-            if (!LightsPerRenderer.ContainsKey(renderer))
+            if (!_lightsPerRenderer.ContainsKey(renderer))
             {
                 return;
             }
 
             try
             {
-                LightsPerRenderer[renderer].Remove(light);
-                DirtiedMeshes.Add(renderer);
+                _lightsPerRenderer[renderer].Remove(light);
+                _dirtiedMeshes.Add(renderer);
             }
             catch
             {
@@ -61,32 +62,35 @@ namespace GUZ.Core.Manager
                 return;
             }
 
-            Matrix4x4 indicesMatrix = Matrix4x4.identity;
-            renderer.GetSharedMaterials(NonAllocMaterials);
-            for (int i = 0; i < Mathf.Min(16, LightsPerRenderer[renderer].Count); i++)
+            var indicesMatrix = Matrix4x4.identity;
+            renderer.GetSharedMaterials(_nonAllocMaterials);
+            for (var i = 0; i < Mathf.Min(16, _lightsPerRenderer[renderer].Count); i++)
             {
-                indicesMatrix[i / 4, i % 4] = LightsPerRenderer[renderer][i].Index;
+                indicesMatrix[i / 4, i % 4] = _lightsPerRenderer[renderer][i].Index;
             }
-            for (int i = 0; i < NonAllocMaterials.Count; i++)
+
+            for (var i = 0; i < _nonAllocMaterials.Count; i++)
             {
-                if (NonAllocMaterials[i])
+                if (_nonAllocMaterials[i])
                 {
-                    NonAllocMaterials[i].SetMatrix(StationaryLight.StationaryLightIndicesShaderId, indicesMatrix);
-                    NonAllocMaterials[i].SetInt(StationaryLight.StationaryLightCountShaderId, LightsPerRenderer[renderer].Count);
+                    _nonAllocMaterials[i].SetMatrix(StationaryLight.StationaryLightIndicesShaderId, indicesMatrix);
+                    _nonAllocMaterials[i].SetInt(StationaryLight.StationaryLightCountShaderId,
+                        _lightsPerRenderer[renderer].Count);
                 }
             }
 
-            if (LightsPerRenderer[renderer].Count >= 16)
+            if (_lightsPerRenderer[renderer].Count >= 16)
             {
-                for (int i = 0; i < Mathf.Min(16, LightsPerRenderer[renderer].Count - 16); i++)
+                for (var i = 0; i < Mathf.Min(16, _lightsPerRenderer[renderer].Count - 16); i++)
                 {
-                    indicesMatrix[i / 4, i % 4] = LightsPerRenderer[renderer][i + 16].Index;
+                    indicesMatrix[i / 4, i % 4] = _lightsPerRenderer[renderer][i + 16].Index;
                 }
-                for (int i = 0; i < NonAllocMaterials.Count; i++)
+
+                for (var i = 0; i < _nonAllocMaterials.Count; i++)
                 {
-                    if (NonAllocMaterials[i])
+                    if (_nonAllocMaterials[i])
                     {
-                        NonAllocMaterials[i].SetMatrix(StationaryLight.StationaryLightIndices2ShaderId, indicesMatrix);
+                        _nonAllocMaterials[i].SetMatrix(StationaryLight.StationaryLightIndices2ShaderId, indicesMatrix);
                     }
                 }
             }

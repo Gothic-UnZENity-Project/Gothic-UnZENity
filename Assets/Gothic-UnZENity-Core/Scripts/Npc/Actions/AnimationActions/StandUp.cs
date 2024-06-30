@@ -6,7 +6,8 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
     public class StandUp : AbstractAnimationAction
     {
         public StandUp(AnimationAction action, GameObject npcGo) : base(action, npcGo)
-        { }
+        {
+        }
 
         public override void Start()
         {
@@ -17,7 +18,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
         {
             // FIXME - TODO
         }
-        
+
         public override bool IsFinished()
         {
             // FIXME - DEBUG

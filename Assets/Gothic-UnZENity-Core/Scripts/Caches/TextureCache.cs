@@ -4,8 +4,8 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using GUZ.Core.World;
 using GUZ.Core.Extensions;
+using GUZ.Core.World;
 using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -23,19 +23,29 @@ namespace GUZ.Core.Caches
 
         public static Dictionary<TextureTypes, Dictionary<TextureArrayTypes, Texture>> TextureArrays { get; } = new()
         {
-            { TextureTypes.World, new() },
-            { TextureTypes.Vob, new() }
+            { TextureTypes.World, new Dictionary<TextureArrayTypes, Texture>() },
+            { TextureTypes.Vob, new Dictionary<TextureArrayTypes, Texture>() }
         };
 
-        public static List<(MeshRenderer Renderer, WorldData.SubMeshData SubmeshData)> WorldMeshRenderersForTextureArray = new();
-        public static List<(MeshRenderer Renderer, (IMultiResolutionMesh Mrm, List<TextureArrayTypes> TextureArrayTypes) Data)> VobMeshRenderersForTextureArray = new();
+        public static List<(MeshRenderer Renderer, WorldData.SubMeshData SubmeshData)>
+            WorldMeshRenderersForTextureArray = new();
 
-        private static readonly Dictionary<string, Texture2D> Texture2DCache = new();
-        private static readonly Dictionary<TextureTypes, Dictionary<TextureArrayTypes, List<(string PreparedKey, ITexture Texture)>>> _arrayTexturesList = new()
-        {
-            { TextureTypes.World, new() },
-            { TextureTypes.Vob, new() }
-        };
+        public static
+            List<(MeshRenderer Renderer, (IMultiResolutionMesh Mrm, List<TextureArrayTypes> TextureArrayTypes) Data)>
+            VobMeshRenderersForTextureArray = new();
+
+        private static readonly Dictionary<string, Texture2D> _texture2DCache = new();
+
+        private static readonly
+            Dictionary<TextureTypes, Dictionary<TextureArrayTypes, List<(string PreparedKey, ITexture Texture)>>>
+            _arrayTexturesList = new()
+            {
+                {
+                    TextureTypes.World,
+                    new Dictionary<TextureArrayTypes, List<(string PreparedKey, ITexture Texture)>>()
+                },
+                { TextureTypes.Vob, new Dictionary<TextureArrayTypes, List<(string PreparedKey, ITexture Texture)>>() }
+            };
 
 
         public enum TextureTypes
@@ -54,18 +64,25 @@ namespace GUZ.Core.Caches
         [CanBeNull]
         public static Texture2D TryGetTexture(string key)
         {
-            string preparedKey = GetPreparedKey(key);
-            if (Texture2DCache.TryGetValue(preparedKey, out var cachedTexture))
+            var preparedKey = GetPreparedKey(key);
+            if (_texture2DCache.TryGetValue(preparedKey, out var cachedTexture))
             {
                 return cachedTexture;
             }
 
-            ITexture zkTexture = AssetCache.TryGetTexture(key);
+            return TryGetTexture(ResourceLoader.TryGetTexture(key), preparedKey);
+        }
+
+        public static Texture2D TryGetTexture(ITexture zkTexture, string key)
+        {
             if (zkTexture == null)
             {
                 return null;
             }
+
             Texture2D texture;
+
+            var preparedKey = GetPreparedKey(key);
 
             // Workaround for Unity and DXT1 Mipmaps.
             if (zkTexture.Format == TextureFormat.Dxt1 && zkTexture.MipmapCount == 1)
@@ -75,7 +92,9 @@ namespace GUZ.Core.Caches
             else
             {
                 var format = zkTexture.Format.AsUnityTextureFormat();
-                var updateMipmaps = zkTexture.MipmapCount == 1; // Let Unity generate Mipmaps if they aren't provided by Gothic texture itself.
+
+                // Let Unity generate Mipmaps if they aren't provided by Gothic texture itself.
+                var updateMipmaps = zkTexture.MipmapCount == 1;
 
                 // Use Gothic's mips if provided.
                 texture = new Texture2D(zkTexture.Width, zkTexture.Height, format, zkTexture.MipmapCount, false);
@@ -99,17 +118,18 @@ namespace GUZ.Core.Caches
             texture.filterMode = FilterMode.Trilinear;
             texture.name = key;
 
-            Texture2DCache[preparedKey] = texture;
+            _texture2DCache[preparedKey] = texture;
 
             return texture;
         }
 
-        public static void GetTextureArrayIndex(TextureTypes type, IMaterial materialData, out TextureArrayTypes textureArrayType, out int arrayIndex, out Vector2 textureScale, out int maxMipLevel)
+        public static void GetTextureArrayIndex(TextureTypes type, IMaterial materialData,
+            out TextureArrayTypes textureArrayType, out int arrayIndex, out Vector2 textureScale, out int maxMipLevel)
         {
-            Dictionary<TextureArrayTypes, List<(string PreparedKey, ITexture Texture)>> textureDict = _arrayTexturesList[type];
+            var textureDict = _arrayTexturesList[type];
 
-            string key = materialData.Texture;
-            ITexture zenTextureData = AssetCache.TryGetTexture(key);
+            var key = materialData.Texture;
+            var zenTextureData = ResourceLoader.TryGetTexture(key);
 
             if (zenTextureData == null)
             {
@@ -121,7 +141,7 @@ namespace GUZ.Core.Caches
             }
 
             maxMipLevel = zenTextureData.MipmapCount - 1;
-            UnityEngine.TextureFormat textureFormat = zenTextureData.Format.AsUnityTextureFormat();
+            var textureFormat = zenTextureData.Format.AsUnityTextureFormat();
 
             if (materialData.Group == MaterialGroup.Water)
             {
@@ -129,16 +149,20 @@ namespace GUZ.Core.Caches
             }
             else
             {
-                textureArrayType = textureFormat == UnityEngine.TextureFormat.DXT1 ? TextureArrayTypes.Opaque : TextureArrayTypes.Transparent;
+                textureArrayType = textureFormat == UnityEngine.TextureFormat.DXT1
+                    ? TextureArrayTypes.Opaque
+                    : TextureArrayTypes.Transparent;
             }
 
-            textureScale = new Vector2((float)zenTextureData.Width / ReferenceTextureSize, (float)zenTextureData.Height / ReferenceTextureSize);
+            textureScale = new Vector2((float)zenTextureData.Width / ReferenceTextureSize,
+                (float)zenTextureData.Height / ReferenceTextureSize);
             if (!textureDict.ContainsKey(textureArrayType))
             {
                 textureDict.Add(textureArrayType, new List<(string PreparedKey, ITexture Texture)>());
             }
 
-            (string, ITexture) cachedTextureData = textureDict[textureArrayType].FirstOrDefault(k => k.PreparedKey == key);
+            (string, ITexture) cachedTextureData =
+                textureDict[textureArrayType].FirstOrDefault(k => k.PreparedKey == key);
             if (cachedTextureData != default)
             {
                 arrayIndex = textureDict[textureArrayType].IndexOf(cachedTextureData);
@@ -152,16 +176,16 @@ namespace GUZ.Core.Caches
 
         public static async Task BuildTextureArrays(TextureTypes type)
         {
-            Dictionary<TextureArrayTypes, List<(string PreparedKey, ITexture Texture)>> textureDict = _arrayTexturesList[type];
+            var textureDict = _arrayTexturesList[type];
 
             Stopwatch stopwatch = new();
             stopwatch.Start();
-            foreach (TextureArrayTypes textureArrayType in textureDict.Keys)
+            foreach (var textureArrayType in textureDict.Keys)
             {
                 // Create the texture array with the max size of the contained textures.
-                int maxSize = textureDict[textureArrayType].Max(p => p.Texture.Width);
+                var maxSize = textureDict[textureArrayType].Max(p => p.Texture.Width);
 
-                UnityEngine.TextureFormat textureFormat = UnityEngine.TextureFormat.RGBA32;
+                var textureFormat = UnityEngine.TextureFormat.RGBA32;
                 if (textureArrayType == TextureArrayTypes.Opaque)
                 {
                     textureFormat = UnityEngine.TextureFormat.DXT1;
@@ -170,15 +194,17 @@ namespace GUZ.Core.Caches
                 Texture texArray;
                 if (textureArrayType != TextureArrayTypes.Water)
                 {
-                    texArray = new Texture2DArray(maxSize, maxSize, textureDict[textureArrayType].Count, textureFormat, true, false, true)
+                    texArray = new Texture2DArray(maxSize, maxSize, textureDict[textureArrayType].Count, textureFormat,
+                        true, false, true)
                     {
                         filterMode = FilterMode.Trilinear,
-                        wrapMode = TextureWrapMode.Repeat,
+                        wrapMode = TextureWrapMode.Repeat
                     };
                 }
                 else
                 {
-                    texArray = new RenderTexture(maxSize, maxSize, 0, RenderTextureFormat.ARGB32, textureDict[textureArrayType].Max(p => p.Texture.MipmapCount))
+                    texArray = new RenderTexture(maxSize, maxSize, 0, RenderTextureFormat.ARGB32,
+                        textureDict[textureArrayType].Max(p => p.Texture.MipmapCount))
                     {
                         dimension = TextureDimension.Tex2DArray,
                         autoGenerateMips = false,
@@ -190,26 +216,31 @@ namespace GUZ.Core.Caches
                 }
 
                 // Copy all the textures and their mips into the array. Textures which are smaller are tiled so bilinear sampling isn't broken - this is why it's not possible to pack different textures together in the same slice.
-                for (int i = 0; i < textureDict[textureArrayType].Count; i++)
+                for (var i = 0; i < textureDict[textureArrayType].Count; i++)
                 {
-                    Texture2D sourceTex = TryGetTexture(textureDict[textureArrayType][i].PreparedKey);
-                    for (int mip = 0; mip < sourceTex.mipmapCount; mip++)
+                    var sourceTex = TryGetTexture(textureDict[textureArrayType][i].PreparedKey);
+                    for (var mip = 0; mip < sourceTex.mipmapCount; mip++)
                     {
-                        for (int x = 0; x < texArray.width / sourceTex.width; x++)
+                        for (var x = 0; x < texArray.width / sourceTex.width; x++)
                         {
-                            for (int y = 0; y < texArray.height / sourceTex.height; y++)
+                            for (var y = 0; y < texArray.height / sourceTex.height; y++)
                             {
                                 if (texArray is Texture2DArray)
                                 {
-                                    Graphics.CopyTexture(sourceTex, 0, mip, 0, 0, sourceTex.width >> mip, sourceTex.height >> mip, texArray, i, mip, (sourceTex.width >> mip) * x, (sourceTex.height >> mip) * y);
+                                    Graphics.CopyTexture(sourceTex, 0, mip, 0, 0, sourceTex.width >> mip,
+                                        sourceTex.height >> mip, texArray, i, mip, (sourceTex.width >> mip) * x,
+                                        (sourceTex.height >> mip) * y);
                                 }
                                 else
                                 {
-                                    CommandBuffer cmd = CommandBufferPool.Get();
-                                    RenderTexture rt = (RenderTexture)texArray;
-                                    cmd.SetRenderTarget(new RenderTargetBinding(new RenderTargetSetup(rt.colorBuffer, rt.depthBuffer, mip, CubemapFace.Unknown, i)));
-                                    Vector2 scale = new Vector2((float)sourceTex.width / texArray.width, (float)sourceTex.height / texArray.height);
-                                    Blitter.BlitQuad(cmd, sourceTex, new Vector4(1, 1, 0, 0), new Vector4(scale.x, scale.y, scale.x * x, scale.y * y), mip, false);
+                                    var cmd = CommandBufferPool.Get();
+                                    var rt = (RenderTexture)texArray;
+                                    cmd.SetRenderTarget(new RenderTargetBinding(new RenderTargetSetup(rt.colorBuffer,
+                                        rt.depthBuffer, mip, CubemapFace.Unknown, i)));
+                                    var scale = new Vector2((float)sourceTex.width / texArray.width,
+                                        (float)sourceTex.height / texArray.height);
+                                    Blitter.BlitQuad(cmd, sourceTex, new Vector4(1, 1, 0, 0),
+                                        new Vector4(scale.x, scale.y, scale.x * x, scale.y * y), mip, false);
                                     Graphics.ExecuteCommandBuffer(cmd);
                                     cmd.Clear();
                                     CommandBufferPool.Release(cmd);
@@ -294,14 +325,16 @@ namespace GUZ.Core.Caches
             var extension = Path.GetExtension(lowerKey);
 
             if (extension == string.Empty)
+            {
                 return lowerKey;
-            else
-                return lowerKey.Replace(extension, "");
+            }
+
+            return lowerKey.Replace(extension, "");
         }
 
         public static void Dispose()
         {
-            Texture2DCache.Clear();
+            _texture2DCache.Clear();
 
             foreach (var textureArray in TextureArrays.Values)
             {

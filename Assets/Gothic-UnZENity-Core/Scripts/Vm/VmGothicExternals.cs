@@ -3,11 +3,9 @@ using System.Globalization;
 using AOT;
 using GUZ.Core.Caches;
 using GUZ.Core.Creator;
-using GUZ.Core.Debugging;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
 using GUZ.Core.Scripts.Manager;
-using GUZ.Core.World;
 using UnityEngine;
 using ZenKit;
 using ZenKit.Daedalus;
@@ -70,7 +68,8 @@ namespace GUZ.Core.Vm
             // Model
             vm.RegisterExternal<NpcInstance, string>("Mdl_SetVisual", Mdl_SetVisual);
             vm.RegisterExternal<NpcInstance, string>("Mdl_ApplyOverlayMds", Mdl_ApplyOverlayMds);
-            vm.RegisterExternal<NpcInstance, string, int, int , string, int, int ,int>("Mdl_SetVisualBody", Mdl_SetVisualBody);
+            vm.RegisterExternal<NpcInstance, string, int, int, string, int, int, int>("Mdl_SetVisualBody",
+                Mdl_SetVisualBody);
             vm.RegisterExternal<NpcInstance, float, float, float>("Mdl_SetModelScale", Mdl_SetModelScale);
             vm.RegisterExternal<NpcInstance, float>("Mdl_SetModelFatness", Mdl_SetModelFatness);
 
@@ -125,7 +124,7 @@ namespace GUZ.Core.Vm
 
             // Day Routine
             vm.RegisterExternal<NpcInstance, int, int, int, int, int, string>("TA_MIN", TA_MIN);
-            vm.RegisterExternal<NpcInstance, int, int, int, string>("TA", TA);
+            vm.RegisterExternal<NpcInstance, int, int, int, string>("TA", Ta);
             vm.RegisterExternal<NpcInstance, string>("Npc_ExchangeRoutine", Npc_ExchangeRoutine);
 
             // World
@@ -149,7 +148,7 @@ namespace GUZ.Core.Vm
             vm.RegisterExternal<float, int>("IntToFloat", IntToFloat);
         }
 
-        
+
         public static void DefaultExternal(DaedalusVm vm, DaedalusSymbol sym)
         {
             // FIXME: Once GUZ is fully released, we can safely throw an exception as it tells us: The game will not work until you implement this missing function.
@@ -162,7 +161,7 @@ namespace GUZ.Core.Vm
                 }
                 else
                 {
-                    var npcName = LookupCache.NpcCache[GameData.GothicVm.GlobalSelf.Index].go.name;
+                    var npcName = LookupCache.NpcCache[GameData.GothicVm.GlobalSelf.Index].Go.name;
                     Debug.LogWarning($"Method >{sym.Name}< not yet implemented in DaedalusVM (called on >{npcName}<).");
                 }
             }
@@ -189,7 +188,7 @@ namespace GUZ.Core.Vm
         {
             NpcHelper.ExtAiAlignToFp(npc);
         }
-        
+
         public static void AI_AlignToWP(NpcInstance npc)
         {
             NpcHelper.ExtAiAlignToWp(npc);
@@ -199,7 +198,7 @@ namespace GUZ.Core.Vm
         {
             NpcHelper.ExtAiGoToFp(npc, freePointName);
         }
-        
+
         public static void AI_GotoWP(NpcInstance npc, string wayPointName)
         {
             NpcHelper.ExtAiGoToWp(npc, wayPointName);
@@ -281,7 +280,7 @@ namespace GUZ.Core.Vm
 
         public static void AI_PlayAniBS(NpcInstance npc, string name, int bodyState)
         {
-            NpcHelper.ExtAiPlayAniBS(npc, name, bodyState);
+            NpcHelper.ExtAiPlayAniBs(npc, name, bodyState);
         }
 
         public static void AI_UnequipArmor(NpcInstance npc)
@@ -310,16 +309,15 @@ namespace GUZ.Core.Vm
 
         #region Helper
 
-        
         public static int Hlp_Random(int n0)
         {
             return Random.Range(0, n0 - 1);
         }
 
-        
+
         public static int Hlp_StrCmp(string s1, string s2)
         {
-            return (s1 == s2) ? 1 : 0;
+            return s1 == s2 ? 1 : 0;
         }
 
         public static int Hlp_IsItem(ItemInstance item, int itemIndexToCheck)
@@ -373,13 +371,12 @@ namespace GUZ.Core.Vm
 
         #region Model
 
-        
         public static void Mdl_SetVisual(NpcInstance npc, string visual)
         {
             NpcCreator.ExtMdlSetVisual(npc, visual);
         }
 
-        
+
         public static void Mdl_ApplyOverlayMds(NpcInstance npc, string overlayName)
         {
             NpcCreator.ExtApplyOverlayMds(npc, overlayName);
@@ -396,10 +393,11 @@ namespace GUZ.Core.Vm
             public int TeethTexNr;
             public int Armor;
         }
-        
-        public static void Mdl_SetVisualBody(NpcInstance npc, string body, int bodyTexNr, int bodyTexColor, string head, int headTexNr, int teethTexNr, int armor)
+
+        public static void Mdl_SetVisualBody(NpcInstance npc, string body, int bodyTexNr, int bodyTexColor, string head,
+            int headTexNr, int teethTexNr, int armor)
         {
-            NpcCreator.ExtSetVisualBody(new ()
+            NpcCreator.ExtSetVisualBody(new ExtSetVisualBodyData
                 {
                     Npc = npc,
                     Body = body,
@@ -413,13 +411,13 @@ namespace GUZ.Core.Vm
             );
         }
 
-        
+
         public static void Mdl_SetModelScale(NpcInstance npc, float x, float y, float z)
         {
-            NpcCreator.ExtMdlSetModelScale(npc, new(x, y, z));
+            NpcCreator.ExtMdlSetModelScale(npc, new Vector3(x, y, z));
         }
 
-        
+
         public static void Mdl_SetModelFatness(NpcInstance npc, float fatness)
         {
             NpcCreator.ExtSetModelFatness(npc, fatness);
@@ -429,38 +427,45 @@ namespace GUZ.Core.Vm
 
         #region Print
 
-        
         public static void PrintDebug(string message)
         {
-            if (!FeatureFlags.I.showZspyLogs)
+            if (!GameGlobals.Config.EnableSpyLogs)
+            {
                 return;
+            }
 
             Debug.Log($"[zspy]: {message}");
         }
 
-        
+
         public static void PrintDebugCh(int channel, string message)
         {
-            if (!FeatureFlags.I.showZspyLogs)
+            if (!GameGlobals.Config.EnableSpyLogs)
+            {
                 return;
+            }
 
             Debug.Log($"[zspy,{channel}]: {message}");
         }
 
-        
+
         public static void PrintDebugInst(string message)
         {
-            if (!FeatureFlags.I.showZspyLogs)
+            if (!GameGlobals.Config.EnableSpyLogs)
+            {
                 return;
+            }
 
             Debug.Log($"[zspy]: {message}");
         }
 
-        
+
         public static void PrintDebugInstCh(int channel, string message)
         {
-            if (!FeatureFlags.I.showZspyLogs)
+            if (!GameGlobals.Config.EnableSpyLogs)
+            {
                 return;
+            }
 
             Debug.Log($"[zspy,{channel}]: {message}");
         }
@@ -493,43 +498,42 @@ namespace GUZ.Core.Vm
 
         #region NPC
 
-        
         public static void Npc_SetTalentValue(NpcInstance npc, int talent, int level)
         {
             NpcCreator.ExtNpcSetTalentValue(npc, (VmGothicEnums.Talent)talent, level);
         }
 
-        
+
         public static void CreateInvItem(NpcInstance npc, int itemId)
         {
             NpcCreator.ExtCreateInvItems(npc, (uint)itemId, 1);
         }
 
-        
+
         public static void CreateInvItems(NpcInstance npc, int itemId, int amount)
         {
             NpcCreator.ExtCreateInvItems(npc, (uint)itemId, amount);
         }
 
-        
+
         public static void Npc_PercEnable(NpcInstance npc, int perception, int function)
         {
             NpcCreator.ExtNpcPerceptionEnable(npc, (VmGothicEnums.PerceptionType)perception, function);
         }
 
-        
+
         public static void Npc_SetPercTime(NpcInstance npc, float time)
         {
             NpcCreator.ExtNpcSetPerceptionTime(npc, time);
         }
 
-        
+
         public static int Npc_GetBodyState(NpcInstance npc)
         {
             return (int)NpcHelper.ExtGetBodyState(npc);
         }
 
-        
+
         public static void Npc_PerceiveAll(NpcInstance npc)
         {
             // NOP
@@ -538,33 +542,33 @@ namespace GUZ.Core.Vm
             // But we don't need to pre-load them and can just load the necessary elements when really needed.
         }
 
-        
+
         public static int Npc_HasItems(NpcInstance npc, int itemId)
         {
             var count = NpcHelper.ExtNpcHasItems(npc, (uint)itemId);
             return count;
         }
 
-        
+
         public static int Npc_GetStateTime(NpcInstance npc)
         {
             var stateTime = NpcHelper.ExtNpcGetStateTime(npc);
             return stateTime;
         }
 
-        
+
         public static void Npc_SetStateTime(NpcInstance npc, int seconds)
         {
             NpcHelper.ExtNpcSetStateTime(npc, seconds);
         }
 
-        
+
         public static ItemInstance Npc_GetEquippedArmor(NpcInstance npc)
         {
             return NpcHelper.ExtGetEquippedArmor(npc);
         }
 
-        
+
         public static void Npc_SetTalentSkill(NpcInstance npc, int talent, int level)
         {
             NpcCreator.ExtNpcSetTalentSkill(npc, (VmGothicEnums.Talent)talent, level);
@@ -575,56 +579,56 @@ namespace GUZ.Core.Vm
             return NpcHelper.ExtGetNearestWayPoint(npc);
         }
 
-        
+
         public static int Npc_IsOnFP(NpcInstance npc, string vobNamePart)
         {
             var res = NpcHelper.ExtIsNpcOnFp(npc, vobNamePart);
             return Convert.ToInt32(res);
         }
 
-        
+
         public static int Npc_WasInState(NpcInstance npc, int action)
         {
             var result = NpcHelper.ExtNpcWasInState(npc, (uint)action);
             return Convert.ToInt32(result);
         }
 
-        
+
         public static void Npc_GetInvItem(IntPtr vmPtr)
         {
             // NpcCreator.ExtGetInvItem();
         }
 
-        
+
         public static void Npc_GetInvItemBySlot(IntPtr vmPtr)
         {
             // NpcCreator.ExtGetInvItemBySlot();
         }
 
-        
+
         public static void Npc_RemoveInvItem(IntPtr vmPtr)
         {
             // NpcCreator.ExtRemoveInvItem();
         }
 
-        
+
         public static void Npc_RemoveInvItems(IntPtr vmPtr)
         {
             // NpcCreator.ExtRemoveInvItems();
         }
 
-        
+
         public static void EquipItem(NpcInstance npc, int itemId)
         {
             NpcCreator.ExtEquipItem(npc, itemId);
         }
 
-        
+
         public static int Npc_GetDistToNpc(NpcInstance npc1, NpcInstance npc2)
         {
             return NpcHelper.ExtNpcGetDistToNpc(npc1, npc2);
         }
-        
+
         public static int Npc_HasEquippedArmor(NpcInstance npc)
         {
             return NpcHelper.ExtNpcHasEquippedArmor(npc) ? 1 : 0;
@@ -689,21 +693,18 @@ namespace GUZ.Core.Vm
         {
             return NpcHelper.ExtNpcGetTalentValue(npc, skillId);
         }
-        
-        
 
         #endregion
-        
+
         #region Day Routine
 
-        
         public static void TA_MIN(NpcInstance npc, int startH, int startM, int stopH, int stopM, int action,
             string waypoint)
         {
             NpcCreator.ExtTaMin(npc, startH, startM, stopH, stopM, action, waypoint);
         }
-        
-        public static void TA(NpcInstance npc, int startH, int stopH, int action,
+
+        public static void Ta(NpcInstance npc, int startH, int stopH, int action,
             string waypoint)
         {
             NpcCreator.ExtTaMin(npc, startH, 0, stopH, 0, action, waypoint);
@@ -718,21 +719,19 @@ namespace GUZ.Core.Vm
 
         #region World
 
-        
         public static void Wld_InsertNpc(int npcInstance, string spawnPoint)
         {
             NpcCreator.ExtWldInsertNpc(npcInstance, spawnPoint);
         }
 
-        
+
         public static int Wld_IsFPAvailable(NpcInstance npc, string fpName)
         {
-
-            var response = NpcHelper.ExtWldIsFPAvailable(npc, fpName);
+            var response = NpcHelper.ExtWldIsFpAvailable(npc, fpName);
             return Convert.ToInt32(response);
         }
 
-        
+
         public static int Wld_IsMobAvailable(NpcInstance npc, string vobName)
         {
             var res = NpcHelper.ExtIsMobAvailable(npc, vobName);
@@ -750,7 +749,7 @@ namespace GUZ.Core.Vm
 
             return Convert.ToInt32(res);
         }
-        
+
         public static int Wld_IsNextFPAvailable(NpcInstance npc, string fpNamePart)
         {
             var result = NpcHelper.ExtIsNextFpAvailable(npc, fpNamePart);
@@ -759,12 +758,12 @@ namespace GUZ.Core.Vm
 
         public static void Wld_SetTime(int hour, int minute)
         {
-            GameTime.I.SetTime(hour, minute);
+            GameGlobals.Time.SetTime(hour, minute);
         }
 
         public static int Wld_GetDay()
         {
-            return GameTime.I.GetDay();
+            return GameGlobals.Time.GetDay();
         }
 
         public static int Wld_IsTime(int beginHour, int beginMinute, int endHour, int endMinute)
@@ -801,31 +800,30 @@ namespace GUZ.Core.Vm
 
         #region Misc
 
-        
         public static string ConcatStrings(string str1, string str2)
         {
             return str1 + str2;
         }
 
-        
+
         public static string IntToString(int x)
         {
             return x.ToString();
         }
 
-        
+
         public static string FloatToString(float x)
         {
             return x.ToString(CultureInfo.InvariantCulture);
         }
 
-        
+
         public static int FloatToInt(float x)
         {
             return (int)x;
         }
 
-        
+
         public static float IntToFloat(int x)
         {
             return x;

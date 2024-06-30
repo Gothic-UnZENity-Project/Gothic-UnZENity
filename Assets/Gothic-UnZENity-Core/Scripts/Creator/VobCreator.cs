@@ -7,17 +7,15 @@ using System.Threading.Tasks;
 using GUZ.Core.Caches;
 using GUZ.Core.Context;
 using GUZ.Core.Creator.Meshes.V2;
-using GUZ.Core.Debugging;
 using GUZ.Core.Demo;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
-using GUZ.Core.Manager.Culling;
 using GUZ.Core.Player.Interactive;
 using GUZ.Core.Properties;
+using GUZ.Core.Vm;
 using GUZ.Core.Vob;
 using GUZ.Core.Vob.WayNet;
-using GUZ.Core.World;
 using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -30,16 +28,17 @@ using Debug = UnityEngine.Debug;
 using Light = ZenKit.Vobs.Light;
 using LightType = ZenKit.Vobs.LightType;
 using Material = UnityEngine.Material;
+using Object = UnityEngine.Object;
 using Vector3 = System.Numerics.Vector3;
 
 namespace GUZ.Core.Creator
 {
     public static class VobCreator
     {
-        private static Dictionary<VirtualObjectType, GameObject> parentGosTeleport = new();
-        private static Dictionary<VirtualObjectType, GameObject> parentGosNonTeleport = new();
+        private static Dictionary<VirtualObjectType, GameObject> _parentGosTeleport = new();
+        private static Dictionary<VirtualObjectType, GameObject> _parentGosNonTeleport = new();
 
-        private static VirtualObjectType[] nonTeleportTypes =
+        private static VirtualObjectType[] _nonTeleportTypes =
         {
             VirtualObjectType.oCItem,
             VirtualObjectType.oCMobLadder,
@@ -54,46 +53,47 @@ namespace GUZ.Core.Creator
         private static int _vobsPerFrame;
         private static int _createdCount;
         private static List<GameObject> _cullingVobObjects = new();
-        private static Dictionary<string, IWorld> vobTreeCache = new();
+        private static Dictionary<string, IWorld> _vobTreeCache = new();
 
         static VobCreator()
         {
-            GUZEvents.GeneralSceneLoaded.AddListener(PostWorldLoaded);
+            GlobalEventDispatcher.GeneralSceneLoaded.AddListener(PostWorldLoaded);
         }
 
         private static void PostWorldLoaded(GameObject playerGo)
         {
             // We need to check for all Sounds once, if they need to be activated as they're next to player.
             // As CullingGroup only triggers deactivation once player spawns, but not activation.
-            if (!FeatureFlags.I.enableSounds)
-                return;
-
             var loc = Camera.main!.transform.position;
-            foreach (var sound in LookupCache.vobSoundsAndDayTime.Where(i => i != null))
+            foreach (var sound in LookupCache.VobSoundsAndDayTime.Where(i => i != null))
             {
                 var soundLoc = sound.transform.position;
                 var soundDist = sound.GetComponent<AudioSource>().maxDistance;
                 var dist = UnityEngine.Vector3.Distance(loc, soundLoc);
 
                 if (dist < soundDist)
+                {
                     sound.SetActive(true);
+                }
             }
         }
 
-        public static async Task CreateAsync(GameObject rootTeleport, GameObject rootNonTeleport, WorldData world, int vobsPerFrame)
+        public static async Task CreateAsync(GameConfiguration config, LoadingManager loading, GameObject rootTeleport,
+            GameObject rootNonTeleport, List<IVirtualObject> vobs, int vobsPerFrame)
         {
             Stopwatch stopwatch = new();
             stopwatch.Start();
-            PreCreateVobs(world, rootTeleport, rootNonTeleport, vobsPerFrame);
-            await CreateVobs(world.Vobs);
+            PreCreateVobs(vobs, rootTeleport, rootNonTeleport, vobsPerFrame);
+            await CreateVobs(config, loading, vobs);
             PostCreateVobs();
             stopwatch.Stop();
             Debug.Log($"Created vobs in {stopwatch.Elapsed.TotalSeconds} s");
         }
 
-        private static void PreCreateVobs(WorldData world, GameObject rootTeleport, GameObject rootNonTeleport, int vobsPerFrame)
+        private static void PreCreateVobs(List<IVirtualObject> vobs, GameObject rootTeleport,
+            GameObject rootNonTeleport, int vobsPerFrame)
         {
-            _totalVObs = GetTotalVobCount(world.Vobs);
+            _totalVObs = GetTotalVobCount(vobs);
 
             _createdCount = 0;
             _cullingVobObjects.Clear();
@@ -104,8 +104,8 @@ namespace GUZ.Core.Creator
             vobRootTeleport.SetParent(rootTeleport);
             vobRootNonTeleport.SetParent(rootNonTeleport);
 
-            parentGosTeleport = new();
-            parentGosNonTeleport = new();
+            _parentGosTeleport = new Dictionary<VirtualObjectType, GameObject>();
+            _parentGosNonTeleport = new Dictionary<VirtualObjectType, GameObject>();
 
             CreateParentVobObjectTeleport(vobRootTeleport);
             CreateParentVobObjectNonTeleport(vobRootNonTeleport);
@@ -116,31 +116,35 @@ namespace GUZ.Core.Creator
             return vobs.Count + vobs.Sum(vob => GetTotalVobCount(vob.Children));
         }
 
-        private static async Task CreateVobs(List<IVirtualObject> vobs, GameObject parent = null, bool reparent = false)
+        private static async Task CreateVobs(GameConfiguration config, LoadingManager loading,
+            List<IVirtualObject> vobs, GameObject parent = null, bool reparent = false)
         {
             foreach (var vob in vobs)
             {
                 GameObject go = null;
 
                 // Debug - Skip loading if not wanted.
-                if (FeatureFlags.I.vobTypeToSpawn.IsEmpty() || FeatureFlags.I.vobTypeToSpawn.Contains(vob.Type))
+                if (config.SpawnWorldObjectTypes.IsEmpty() || config.SpawnWorldObjectTypes.Contains(vob.Type))
                 {
-                    go = reparent ? LoadVob(vob, parent) : LoadVob(vob);
+                    go = reparent ? LoadVob(config, vob, parent) : LoadVob(config, vob);
                 }
 
                 AddToMobInteractableList(vob, go);
 
                 if (++_createdCount % _vobsPerFrame == 0)
+                {
                     await Task.Yield(); // Wait for the next frame
+                }
+
+                loading?.AddProgress(LoadingManager.LoadingProgressType.VOb, 1f / _totalVObs);
 
                 // Recursive creating sub-vobs
-                await CreateVobs(vob.Children, go, reparent);
-                LoadingManager.I.AddProgress(LoadingManager.LoadingProgressType.VOb, 1f / _totalVObs);
+                await CreateVobs(config, loading, vob.Children, go, reparent);
             }
         }
 
         [CanBeNull]
-        private static GameObject LoadVob(IVirtualObject vob, GameObject parent = null)
+        private static GameObject LoadVob(GameConfiguration config, IVirtualObject vob, GameObject parent = null)
         {
             GameObject go = null;
             switch (vob.Type)
@@ -164,26 +168,38 @@ namespace GUZ.Core.Creator
                 }
                 case VirtualObjectType.zCVobSound:
                 {
-                    go = CreateSound((Sound)vob, parent);
-                    LookupCache.vobSoundsAndDayTime.Add(go);
+                    if (config.EnableGameSounds)
+                    {
+                        go = CreateSound((Sound)vob, parent);
+                        LookupCache.VobSoundsAndDayTime.Add(go);
+                    }
+
                     break;
                 }
                 case VirtualObjectType.zCVobSoundDaytime:
                 {
-                    go = CreateSoundDaytime((SoundDaytime)vob, parent);
-                    LookupCache.vobSoundsAndDayTime.Add(go);
+                    if (config.EnableGameSounds)
+                    {
+                        go = CreateSoundDaytime((SoundDaytime)vob, parent);
+                        LookupCache.VobSoundsAndDayTime.Add(go);
+                    }
+
                     break;
                 }
                 case VirtualObjectType.oCZoneMusic:
                 case VirtualObjectType.oCZoneMusicDefault:
                 {
-                    go = CreateZoneMusic((ZoneMusic)vob, parent);
+                    if (config.EnableGameMusic)
+                    {
+                        go = CreateZoneMusic((ZoneMusic)vob, parent);
+                    }
+
                     break;
                 }
                 case VirtualObjectType.zCVobSpot:
                 case VirtualObjectType.zCVobStartpoint:
                 {
-                    go = CreateSpot(vob, parent);
+                    go = CreateSpot(vob, parent, config.ShowFreePoints);
                     break;
                 }
                 case VirtualObjectType.oCMobLadder:
@@ -208,10 +224,18 @@ namespace GUZ.Core.Creator
                     switch (vob.Visual!.Type)
                     {
                         case VisualType.Decal:
-                            go = CreateDecal(vob, parent);
+                            if (config.EnableDecalVisuals)
+                            {
+                                go = CreateDecal(vob, parent);
+                            }
+
                             break;
                         case VisualType.ParticleEffect:
-                            go = CreatePfx(vob, parent);
+                            if (config.EnableParticleEffects)
+                            {
+                                go = CreatePfx(vob, parent);
+                            }
+
                             break;
                         default:
                             go = CreateDefaultMesh(vob, parent);
@@ -223,28 +247,26 @@ namespace GUZ.Core.Creator
                 }
                 case VirtualObjectType.oCMobFire:
                 {
-                    go = CreateFire((Fire)vob, parent);
+                    go = CreateFire(config, (Fire)vob, parent);
                     _cullingVobObjects.Add(go);
                     break;
                 }
                 case VirtualObjectType.oCMobInter:
+                {
+                    if (vob.Name.ContainsIgnoreCase("bench") ||
+                        vob.Name.ContainsIgnoreCase("chair") ||
+                        vob.Name.ContainsIgnoreCase("throne") ||
+                        vob.Name.ContainsIgnoreCase("barrelo"))
                     {
-                        if (vob.Name.ContainsIgnoreCase("bench") ||
-                            vob.Name.ContainsIgnoreCase("chair") ||
-                            vob.Name.ContainsIgnoreCase("throne") ||
-                            vob.Name.ContainsIgnoreCase("barrelo"))
-                        {
-                            go = CreateSeat(vob, parent);
-                            _cullingVobObjects.Add(go);
-                            break;
-                        }
-                        else
-                        {
-                            go = CreateDefaultMesh(vob);
-                            _cullingVobObjects.Add(go);
-                            break;
-                        }
+                        go = CreateSeat(vob, parent);
+                        _cullingVobObjects.Add(go);
+                        break;
                     }
+
+                    go = CreateDefaultMesh(vob);
+                    _cullingVobObjects.Add(go);
+                    break;
+                }
                 case VirtualObjectType.oCMobDoor:
                 case VirtualObjectType.oCMobSwitch:
                 case VirtualObjectType.oCMOB:
@@ -260,6 +282,25 @@ namespace GUZ.Core.Creator
                 {
                     go = CreateAnimatedVob((Animate)vob, parent);
                     _cullingVobObjects.Add(go);
+                    break;
+                }
+                case VirtualObjectType.oCNpc:
+                {
+                    if (vob.Name.EqualsIgnoreCase(Constants.DaedalusHeroInstanceName))
+                    {
+                        GameGlobals.Scene.SetStart(vob.Position.ToUnityVector(), vob.Rotation.ToUnityQuaternion());
+
+                        break;
+                    }
+
+                    if (!config.SpawnOldCampNpcs)
+                    {
+                        break;
+                    }
+
+                    var npcSymbol = GameData.GothicVm.GetSymbolByName(vob.Name);
+                    var newNpc = NpcCreator.InitializeNpc(npcSymbol.Index);
+
                     break;
                 }
                 case VirtualObjectType.zCVobScreenFX:
@@ -293,26 +334,28 @@ namespace GUZ.Core.Creator
         /// <summary>
         /// Some fire slots have the light too low to cast light onto the mesh and the surroundings.
         /// </summary>
-        private static GameObject CreateFire(Fire vob, GameObject parent = null)
+        private static GameObject CreateFire(GameConfiguration config, Fire vob, GameObject parent = null)
         {
             var go = CreateDefaultMesh(vob, parent);
 
             if (vob.VobTree == "")
-                return go;
-
-            if (!vobTreeCache.TryGetValue(vob.VobTree.ToLower(), out IWorld vobTree))
             {
-                vobTree = new ZenKit.World(GameData.Vfs, vob.VobTree, GameVersion.Gothic1);
-                vobTreeCache.Add(vob.VobTree.ToLower(), vobTree);
+                return go;
             }
-            
+
+            if (!_vobTreeCache.TryGetValue(vob.VobTree.ToLower(), out var vobTree))
+            {
+                vobTree = ResourceLoader.TryGetWorld(vob.VobTree, GameVersion.Gothic1);
+                _vobTreeCache.Add(vob.VobTree.ToLower(), vobTree);
+            }
+
             foreach (var vobRoot in vobTree.RootObjects)
             {
                 ResetVobTreePositions(vobRoot.Children, vobRoot.Position, vobRoot.Rotation);
                 vobRoot.Position = Vector3.Zero;
             }
 
-            CreateVobs(vobTree.RootObjects, go.FindChildRecursively(vob.Slot) ?? go, true);
+            CreateVobs(config, null, vobTree.RootObjects, go.FindChildRecursively(vob.Slot) ?? go, true);
 
             return go;
         }
@@ -324,10 +367,13 @@ namespace GUZ.Core.Creator
         /// </summary>
         /// <param name="vobList"></param>
         /// <param name="position"></param>
-        private static void ResetVobTreePositions(List<IVirtualObject> vobList, Vector3 position = default, Matrix3x3 rotation = default)
+        private static void ResetVobTreePositions(List<IVirtualObject> vobList, Vector3 position = default,
+            Matrix3x3 rotation = default)
         {
             if (vobList == null)
+            {
                 return;
+            }
 
             foreach (var vob in vobList)
             {
@@ -345,11 +391,11 @@ namespace GUZ.Core.Creator
 
         private static void PostCreateVobs()
         {
-            VobMeshCullingManager.I.PrepareVobCulling(_cullingVobObjects);
-            VobSoundCullingManager.I.PrepareSoundCulling(LookupCache.vobSoundsAndDayTime);
+            GameGlobals.MeshCulling.PrepareVobCulling(_cullingVobObjects);
+            GameGlobals.SoundCulling.PrepareSoundCulling(LookupCache.VobSoundsAndDayTime);
 
-            vobTreeCache.ClearAndReleaseMemory();
-            
+            _vobTreeCache.ClearAndReleaseMemory();
+
             // TODO - warnings about "not implemented" - print them once only.
             foreach (var var in new[]
                      {
@@ -371,47 +417,47 @@ namespace GUZ.Core.Creator
         private static GameObject GetPrefab(IVirtualObject vob)
         {
             GameObject go;
-            string name = vob.Name;
+            var name = vob.Name;
 
             switch (vob.Type)
             {
                 case VirtualObjectType.oCItem:
-                    go = PrefabCache.TryGetObject(PrefabCache.PrefabType.VobItem);
+                    go = ResourceLoader.TryGetPrefabObject(PrefabType.VobItem);
                     break;
                 case VirtualObjectType.zCVobSpot:
                 case VirtualObjectType.zCVobStartpoint:
-                    go = PrefabCache.TryGetObject(PrefabCache.PrefabType.VobSpot);
+                    go = ResourceLoader.TryGetPrefabObject(PrefabType.VobSpot);
                     break;
                 case VirtualObjectType.zCVobSound:
-                    go = PrefabCache.TryGetObject(PrefabCache.PrefabType.VobSound);
+                    go = ResourceLoader.TryGetPrefabObject(PrefabType.VobSound);
                     break;
                 case VirtualObjectType.zCVobSoundDaytime:
-                    go = PrefabCache.TryGetObject(PrefabCache.PrefabType.VobSoundDaytime);
+                    go = ResourceLoader.TryGetPrefabObject(PrefabType.VobSoundDaytime);
                     break;
                 case VirtualObjectType.oCZoneMusic:
-                    go = PrefabCache.TryGetObject(PrefabCache.PrefabType.VobMusic);
+                    go = ResourceLoader.TryGetPrefabObject(PrefabType.VobMusic);
                     break;
                 case VirtualObjectType.oCMOB:
-                    go = PrefabCache.TryGetObject(PrefabCache.PrefabType.Vob);
+                    go = ResourceLoader.TryGetPrefabObject(PrefabType.Vob);
                     break;
                 case VirtualObjectType.oCMobFire:
                 case VirtualObjectType.oCMobInter:
                 case VirtualObjectType.oCMobBed:
                 case VirtualObjectType.oCMobWheel:
                 case VirtualObjectType.oCMobSwitch:
-                    go = PrefabCache.TryGetObject(PrefabCache.PrefabType.VobInteractable);
+                    go = ResourceLoader.TryGetPrefabObject(PrefabType.VobInteractable);
                     break;
                 case VirtualObjectType.oCMobDoor:
-                    go = PrefabCache.TryGetObject(PrefabCache.PrefabType.VobDoor);
+                    go = ResourceLoader.TryGetPrefabObject(PrefabType.VobDoor);
                     break;
                 case VirtualObjectType.oCMobContainer:
-                    go = PrefabCache.TryGetObject(PrefabCache.PrefabType.VobContainer);
+                    go = ResourceLoader.TryGetPrefabObject(PrefabType.VobContainer);
                     break;
                 case VirtualObjectType.oCMobLadder:
-                    go = PrefabCache.TryGetObject(PrefabCache.PrefabType.VobLadder);
+                    go = ResourceLoader.TryGetPrefabObject(PrefabType.VobLadder);
                     break;
                 case VirtualObjectType.zCVobAnimate:
-                    go = PrefabCache.TryGetObject(PrefabCache.PrefabType.VobAnimate);
+                    go = ResourceLoader.TryGetPrefabObject(PrefabType.VobAnimate);
                     break;
                 default:
                     return new GameObject(name);
@@ -429,7 +475,9 @@ namespace GUZ.Core.Creator
         private static void AddToMobInteractableList(IVirtualObject vob, GameObject go)
         {
             if (go == null)
+            {
                 return;
+            }
 
             switch (vob.Type)
             {
@@ -444,7 +492,9 @@ namespace GUZ.Core.Creator
                     var propertiesComponent = go.GetComponent<VobProperties>();
 
                     if (propertiesComponent == null)
+                    {
                         Debug.LogError($"VobProperties component missing on {go.name} ({vob.Type})");
+                    }
 
                     GameData.VobsInteractable.Add(go.GetComponent<VobProperties>());
                     break;
@@ -454,12 +504,12 @@ namespace GUZ.Core.Creator
         private static void CreateParentVobObjectTeleport(GameObject root)
         {
             var allTypes = (VirtualObjectType[])Enum.GetValues(typeof(VirtualObjectType));
-            foreach (var type in allTypes.Except(nonTeleportTypes))
+            foreach (var type in allTypes.Except(_nonTeleportTypes))
             {
                 var newGo = new GameObject(type.ToString());
                 newGo.SetParent(root);
 
-                parentGosTeleport.Add(type, newGo);
+                _parentGosTeleport.Add(type, newGo);
             }
         }
 
@@ -470,12 +520,12 @@ namespace GUZ.Core.Creator
         private static void CreateParentVobObjectNonTeleport(GameObject root)
         {
             var allTypes = (VirtualObjectType[])Enum.GetValues(typeof(VirtualObjectType));
-            foreach (var type in allTypes.Intersect(nonTeleportTypes))
+            foreach (var type in allTypes.Intersect(_nonTeleportTypes))
             {
                 var newGo = new GameObject(type.ToString());
                 newGo.SetParent(root);
 
-                parentGosNonTeleport.Add(type, newGo);
+                _parentGosNonTeleport.Add(type, newGo);
             }
         }
 
@@ -484,14 +534,14 @@ namespace GUZ.Core.Creator
         /// </summary>
         public static void CreateItem(int itemId, GameObject go)
         {
-            var item = AssetCache.TryGetItemData(itemId);
+            var item = VmInstanceManager.TryGetItemData(itemId);
 
             CreateItemMesh(item, go);
         }
 
         public static void CreateItem(int itemId, string spawnpoint, GameObject go)
         {
-            var item = AssetCache.TryGetItemData(itemId);
+            var item = VmInstanceManager.TryGetItemData(itemId);
 
             var position = WayNetHelper.GetWayNetPoint(spawnpoint).Position;
 
@@ -501,9 +551,11 @@ namespace GUZ.Core.Creator
         public static void CreateItem(string itemName, GameObject go)
         {
             if (itemName == "")
+            {
                 return;
+            }
 
-            var item = AssetCache.TryGetItemData(itemName);
+            var item = VmInstanceManager.TryGetItemData(itemName);
 
             CreateItemMesh(item, go);
         }
@@ -514,28 +566,37 @@ namespace GUZ.Core.Creator
             string itemName;
 
             if (!string.IsNullOrEmpty(vob.Instance))
+            {
                 itemName = vob.Instance;
+            }
             else if (!string.IsNullOrEmpty(vob.Name))
+            {
                 itemName = vob.Name;
+            }
             else
+            {
                 throw new Exception("Vob Item -> no usable name found.");
+            }
 
-            var item = AssetCache.TryGetItemData(itemName);
+            var item = VmInstanceManager.TryGetItemData(itemName);
 
             if (item == null)
+            {
                 return null;
+            }
 
             var prefabInstance = GetPrefab(vob);
             var vobObj = CreateItemMesh(vob, item, prefabInstance, parent);
 
             if (vobObj == null)
             {
-                GameObject.Destroy(prefabInstance); // No mesh created. Delete the prefab instance again.
-                Debug.LogError($"There should be no! object which can't be found n:{vob.Name} i:{vob.Instance}. We need to use >PxVobItem.instance< to do it right!");
+                Object.Destroy(prefabInstance); // No mesh created. Delete the prefab instance again.
+                Debug.LogError(
+                    $"There should be no! object which can't be found n:{vob.Name} i:{vob.Instance}. We need to use >PxVobItem.instance< to do it right!");
                 return null;
             }
 
-            GUZContext.InteractionAdapter.AddItemComponent(vobObj);
+            GuzContext.InteractionAdapter.AddItemComponent(vobObj);
 
             return vobObj;
         }
@@ -548,11 +609,11 @@ namespace GUZ.Core.Creator
                 return null;
             }
 
-            GameObject vobObj = new GameObject($"{vob.LightType} Light {vob.Name}");
-            vobObj.SetParent(parent ?? parentGosTeleport[vob.Type], true, true);
+            var vobObj = new GameObject($"{vob.LightType} Light {vob.Name}");
+            vobObj.SetParent(parent ?? _parentGosTeleport[vob.Type], true, true);
             SetPosAndRot(vobObj, vob.Position, vob.Rotation);
 
-            StationaryLight lightComp = vobObj.AddComponent<StationaryLight>();
+            var lightComp = vobObj.AddComponent<StationaryLight>();
             lightComp.Color = new Color(vob.Color.R / 255f, vob.Color.G / 255f, vob.Color.B / 255f, vob.Color.A / 255f);
             lightComp.Type = vob.LightType == LightType.Point
                 ? UnityEngine.LightType.Point
@@ -585,13 +646,12 @@ namespace GUZ.Core.Creator
         [CanBeNull]
         private static GameObject CreateSound(Sound vob, GameObject parent = null)
         {
-            if (!FeatureFlags.I.enableSounds)
-                return null;
-
             var go = GetPrefab(vob);
             go.name = $"{vob.SoundName}";
-            go.SetActive(false); // We don't want to have sound when we boot the game async for 30 seconds in non-spatial blend mode.
-            go.SetParent(parent ?? parentGosNonTeleport[vob.Type], true, true);
+            
+            // We don't want to have sound when we boot the game async for 30 seconds in non-spatial blend mode.
+            go.SetActive(false);
+            go.SetParent(parent ?? _parentGosNonTeleport[vob.Type], true, true);
             SetPosAndRot(go, vob.Position, vob.Rotation);
 
             var source = go.GetComponent<AudioSource>();
@@ -599,7 +659,7 @@ namespace GUZ.Core.Creator
             PrepareAudioSource(source, vob);
             source.clip = VobHelper.GetSoundClip(vob.SoundName);
 
-            go.GetComponent<VobSoundProperties>().soundData = vob;
+            go.GetComponent<VobSoundProperties>().SoundData = vob;
             go.GetComponent<SoundHandler>().PrepareSoundHandling();
 
             return go;
@@ -615,13 +675,12 @@ namespace GUZ.Core.Creator
         [CanBeNull]
         private static GameObject CreateSoundDaytime(SoundDaytime vob, GameObject parent = null)
         {
-            if (!FeatureFlags.I.enableSounds)
-                return null;
-
-            var go = PrefabCache.TryGetObject(PrefabCache.PrefabType.VobSoundDaytime);
+            var go = ResourceLoader.TryGetPrefabObject(PrefabType.VobSoundDaytime);
             go.name = $"{vob.SoundName}-{vob.SoundNameDaytime}";
-            go.SetActive(false); // We don't want to have sound when we boot the game async for 30 seconds in non-spatial blend mode.
-            go.SetParent(parent ?? parentGosNonTeleport[vob.Type], true, true);
+            
+            // We don't want to have sound when we boot the game async for 30 seconds in non-spatial blend mode.
+            go.SetActive(false);
+            go.SetParent(parent ?? _parentGosNonTeleport[vob.Type], true, true);
             SetPosAndRot(go, vob.Position, vob.Rotation);
 
             var sources = go.GetComponents<AudioSource>();
@@ -632,7 +691,7 @@ namespace GUZ.Core.Creator
             PrepareAudioSource(sources[1], vob);
             sources[1].clip = VobHelper.GetSoundClip(vob.SoundNameDaytime);
 
-            go.GetComponent<VobSoundDaytimeProperties>().soundDaytimeData = vob;
+            go.GetComponent<VobSoundDaytimeProperties>().SoundDaytimeData = vob;
             go.GetComponent<SoundDaytimeHandler>().PrepareSoundHandling();
 
             return go;
@@ -644,15 +703,15 @@ namespace GUZ.Core.Creator
             source.volume = soundData.Volume / 100f; // Gothic's volume is 0...100, Unity's is 0...1.
 
             // Random sounds shouldn't play initially, but after certain time.
-            source.playOnAwake = (soundData.InitiallyPlaying && soundData.Mode != SoundMode.Random);
-            source.loop = (soundData.Mode == SoundMode.Loop);
+            source.playOnAwake = soundData.InitiallyPlaying && soundData.Mode != SoundMode.Random;
+            source.loop = soundData.Mode == SoundMode.Loop;
             source.spatialBlend = soundData.Ambient3d ? 1f : 0f;
         }
 
         private static GameObject CreateZoneMusic(ZoneMusic vob, GameObject parent = null)
         {
-            var go = PrefabCache.TryGetObject(PrefabCache.PrefabType.VobMusic);
-            go.SetParent(parent ?? parentGosNonTeleport[vob.Type], true, true);
+            var go = ResourceLoader.TryGetPrefabObject(PrefabType.VobMusic);
+            go.SetParent(parent ?? _parentGosNonTeleport[vob.Type], true, true);
             go.name = vob.Name;
 
             go.layer = Constants.IgnoreRaycastLayer;
@@ -661,9 +720,9 @@ namespace GUZ.Core.Creator
             var max = vob.BoundingBox.Max.ToUnityVector();
 
             go.transform.position = (min + max) / 2f;
-            go.transform.localScale = (max - min);
+            go.transform.localScale = max - min;
 
-            go.GetComponent<VobMusicProperties>().musicData = vob;
+            go.GetComponent<VobMusicProperties>().MusicData = vob;
 
             return go;
         }
@@ -671,7 +730,7 @@ namespace GUZ.Core.Creator
         private static GameObject CreateTriggerChangeLevel(TriggerChangeLevel vob, GameObject parent = null)
         {
             var vobObj = new GameObject(vob.Name);
-            vobObj.SetParent(parent ?? parentGosTeleport[vob.Type], true, true);
+            vobObj.SetParent(parent ?? _parentGosTeleport[vob.Type], true, true);
 
             vobObj.layer = Constants.IgnoreRaycastLayer;
 
@@ -682,15 +741,11 @@ namespace GUZ.Core.Creator
             var max = vob.BoundingBox.Max.ToUnityVector();
             vobObj.transform.position = (min + max) / 2f;
 
-            vobObj.transform.localScale = (max - min);
+            vobObj.transform.localScale = max - min;
 
-            if (FeatureFlags.I.createVobs)
-            {
-                var triggerHandler = vobObj.AddComponent<ChangeLevelTriggerHandler>();
-                triggerHandler.levelName = vob.LevelName;
-                triggerHandler.startVob = vob.StartVob;
-            }
-
+            var triggerHandler = vobObj.AddComponent<ChangeLevelTriggerHandler>();
+            triggerHandler.LevelName = vob.LevelName;
+            triggerHandler.StartVob = vob.StartVob;
             return vobObj;
         }
 
@@ -698,20 +753,20 @@ namespace GUZ.Core.Creator
         /// Basically a free point where NPCs can do something like sitting on a bench etc.
         /// @see for more information: https://ataulien.github.io/Inside-Gothic/objects/spot/
         /// </summary>
-        private static GameObject CreateSpot(IVirtualObject vob, GameObject parent = null)
+        private static GameObject CreateSpot(IVirtualObject vob, GameObject parent = null, bool debugDraw = false)
         {
             // FIXME - change to a Prefab in the future.
             var vobObj = GetPrefab(vob);
 
-            if (!FeatureFlags.I.drawFreePoints)
+            if (!debugDraw)
             {
                 // Quick win: If we don't want to render the spots, we just remove the Renderer.
-                GameObject.Destroy(vobObj.GetComponent<MeshRenderer>());
+                Object.Destroy(vobObj.GetComponent<MeshRenderer>());
             }
 
             var fpName = vob.Name.IsEmpty() ? "START" : vob.Name;
             vobObj.name = fpName;
-            vobObj.SetParent(parent ?? parentGosTeleport[vob.Type], true, true);
+            vobObj.SetParent(parent ?? _parentGosTeleport[vob.Type], true, true);
 
             var freePointData = new FreePoint
             {
@@ -719,7 +774,7 @@ namespace GUZ.Core.Creator
                 Position = vob.Position.ToUnityVector(),
                 Direction = vob.Rotation.ToUnityQuaternion().eulerAngles
             };
-            vobObj.GetComponent<VobSpotProperties>().fp = freePointData;
+            vobObj.GetComponent<VobSpotProperties>().Fp = freePointData;
             GameData.FreePoints.Add(fpName, freePointData);
 
             SetPosAndRot(vobObj, vob.Position, vob.Rotation);
@@ -740,7 +795,8 @@ namespace GUZ.Core.Creator
             meshColliderComp.convex = true; // We need to set it to overcome Physics.ClosestPoint warnings.
             vobObj.tag = Constants.ClimbableTag;
             rigidbodyComp.isKinematic = true;
-            grabComp.throwOnDetach = false; // Throws errors and isn't needed as we don't want to move the kinematic ladder when released.
+            // Throws errors and isn't needed as we don't want to move the kinematic ladder when released.
+            grabComp.throwOnDetach = false;
             grabComp.trackPosition = false;
             grabComp.trackRotation = false;
             grabComp.selectMode = InteractableSelectMode.Multiple; // With this, we can grab with both hands!
@@ -757,13 +813,13 @@ namespace GUZ.Core.Creator
 
             var grabComp = meshColliderComp.gameObject.AddComponent<XRGrabInteractable>();
             var rigidbodyComp = meshColliderComp.gameObject.GetComponent<Rigidbody>();
-            
-            Seat seat = meshColliderComp.gameObject.AddComponent<Seat>();
 
-            meshColliderComp.convex = true; 
+            var seat = meshColliderComp.gameObject.AddComponent<Seat>();
+
+            meshColliderComp.convex = true;
 
             rigidbodyComp.isKinematic = true;
-            grabComp.throwOnDetach = false; 
+            grabComp.throwOnDetach = false;
             grabComp.trackPosition = false;
             grabComp.trackRotation = false;
 
@@ -772,23 +828,22 @@ namespace GUZ.Core.Creator
 
         private static GameObject CreateItemMesh(Item vob, ItemInstance item, GameObject go, GameObject parent = null)
         {
-            var mrm = AssetCache.TryGetMrm(item.Visual);
-            return MeshFactory.CreateVob(item.Visual, mrm, vob.Position.ToUnityVector(), vob.Rotation.ToUnityQuaternion(),
-                true, parent ?? parentGosNonTeleport[vob.Type], go, useTextureArray: false);
+            var mrm = ResourceLoader.TryGetMultiResolutionMesh(item.Visual);
+            return MeshFactory.CreateVob(item.Visual, mrm, vob.Position.ToUnityVector(),
+                vob.Rotation.ToUnityQuaternion(),
+                true, parent ?? _parentGosNonTeleport[vob.Type], go, false);
         }
 
-        private static GameObject CreateItemMesh(ItemInstance item, GameObject parentGo, UnityEngine.Vector3 position = default)
+        private static GameObject CreateItemMesh(ItemInstance item, GameObject parentGo,
+            UnityEngine.Vector3 position = default)
         {
-            var mrm = AssetCache.TryGetMrm(item.Visual);
-            return MeshFactory.CreateVob(item.Visual, mrm, position, default, false, parent: parentGo, useTextureArray: false);
+            var mrm = ResourceLoader.TryGetMultiResolutionMesh(item.Visual);
+            return MeshFactory.CreateVob(item.Visual, mrm, position, default, false, parentGo, useTextureArray: false);
         }
 
         private static GameObject CreateDecal(IVirtualObject vob, GameObject parent = null)
         {
-            if (!FeatureFlags.I.enableDecals)
-                return null;
-
-            return MeshFactory.CreateVobDecal(vob, (VisualDecal)vob.Visual, parent ?? parentGosTeleport[vob.Type]);
+            return MeshFactory.CreateVobDecal(vob, (VisualDecal)vob.Visual, parent ?? _parentGosTeleport[vob.Type]);
         }
 
         /// <summary>
@@ -797,10 +852,7 @@ namespace GUZ.Core.Creator
         /// </summary>
         private static GameObject CreatePfx(IVirtualObject vob, GameObject parent = null)
         {
-            if (!FeatureFlags.I.enableVobParticles)
-                return null;
-
-            var pfxGo = PrefabCache.TryGetObject(PrefabCache.PrefabType.VobPfx);
+            var pfxGo = ResourceLoader.TryGetPrefabObject(PrefabType.VobPfx);
             pfxGo.name = vob.Visual!.Name;
 
             // if parent exists then set rotation before parent (for correct rotation vob trees)
@@ -811,14 +863,14 @@ namespace GUZ.Core.Creator
             }
             else
             {
-                pfxGo.SetParent(parent??parentGosTeleport[vob.Type], true, true);
+                pfxGo.SetParent(parent ?? _parentGosTeleport[vob.Type], true, true);
                 SetPosAndRot(pfxGo, vob.Position, vob.Rotation);
             }
 
-            var pfx = AssetCache.TryGetPfxData(vob.Visual.Name);
+            var pfx = VmInstanceManager.TryGetPfxData(vob.Visual.Name);
             var particleSystem = pfxGo.GetComponent<ParticleSystem>();
 
-            pfxGo.GetComponent<VobPfxProperties>().pfxData = pfx;
+            pfxGo.GetComponent<VobPfxProperties>().PfxData = pfx;
 
             particleSystem.Stop();
 
@@ -835,15 +887,16 @@ namespace GUZ.Core.Creator
             // Main module
             {
                 var mainModule = particleSystem.main;
-                var minLifeTime = (pfx.LspPartAvg - pfx.LspPartVar) / 1000; // I assume we need to change milliseconds to seconds.
+                // I assume we need to change milliseconds to seconds.
+                var minLifeTime = (pfx.LspPartAvg - pfx.LspPartVar) / 1000;
                 var maxLifeTime = (pfx.LspPartAvg + pfx.LspPartVar) / 1000;
                 mainModule.duration = 1f; // I assume pfx data wants a cycle being 1 second long.
-                mainModule.startLifetime = new(minLifeTime, maxLifeTime);
+                mainModule.startLifetime = new ParticleSystem.MinMaxCurve(minLifeTime, maxLifeTime);
                 mainModule.loop = Convert.ToBoolean(pfx.PpsIsLooping);
 
                 var minSpeed = (pfx.VelAvg - pfx.VelVar) / 1000;
                 var maxSpeed = (pfx.VelAvg + pfx.VelVar) / 1000;
-                mainModule.startSpeed = new(minSpeed, maxSpeed);
+                mainModule.startSpeed = new ParticleSystem.MinMaxCurve(minSpeed, maxSpeed);
             }
 
             // Emission module
@@ -874,18 +927,18 @@ namespace GUZ.Core.Creator
                 gradient.SetKeys(
                     new GradientColorKey[]
                     {
-                        new GradientColorKey(
+                        new(
                             new Color(float.Parse(colorStart[0]) / 255, float.Parse(colorStart[1]) / 255,
                                 float.Parse(colorStart[2]) / 255),
                             0f),
-                        new GradientColorKey(
+                        new(
                             new Color(float.Parse(colorEnd[0]) / 255, float.Parse(colorEnd[1]) / 255,
                                 float.Parse(colorEnd[2]) / 255), 1f)
                     },
                     new GradientAlphaKey[]
                     {
-                        new GradientAlphaKey(pfx.VisAlphaStart / 255, 0),
-                        new GradientAlphaKey(pfx.VisAlphaEnd / 255, 1),
+                        new(pfx.VisAlphaStart / 255, 0),
+                        new(pfx.VisAlphaEnd / 255, 1)
                     });
                 colorOverTime.color = gradient;
             }
@@ -895,7 +948,7 @@ namespace GUZ.Core.Creator
                 var sizeOverTime = particleSystem.sizeOverLifetime;
                 sizeOverTime.enabled = true;
 
-                AnimationCurve curve = new AnimationCurve();
+                var curve = new AnimationCurve();
                 var shapeScaleKeys = pfx.ShpScaleKeysS.Split();
                 if (shapeScaleKeys.Length > 1 && !pfx.ShpScaleKeysS.IsEmpty())
                 {
@@ -918,7 +971,7 @@ namespace GUZ.Core.Creator
                 var standardShader = Constants.ShaderUnlitParticles;
                 var material = new Material(standardShader);
                 rendererModule.material = material;
-                TextureManager.I.SetTexture(pfx.VisNameS, rendererModule.material);
+                GameGlobals.Textures.SetTexture(pfx.VisNameS, rendererModule.material);
                 // renderer.material.renderQueue = (int)UnityEngine.Rendering.RenderQueue.AlphaTest; // First check with no change.
 
                 switch (pfx.VisAlphaFuncS.ToUpper())
@@ -933,6 +986,7 @@ namespace GUZ.Core.Creator
                         Debug.LogWarning($"Particle AlphaFunc {pfx.VisAlphaFuncS} not yet handled.");
                         break;
                 }
+
                 // makes the material render both faces
                 rendererModule.material.SetInt("_Cull", (int)CullMode.Off);
 
@@ -976,19 +1030,22 @@ namespace GUZ.Core.Creator
                 switch (shapeDimensions.Length)
                 {
                     case 1:
-                        shapeModule.radius = float.Parse(shapeDimensions[0], CultureInfo.InvariantCulture) / 100; // cm in m
+                        // cm in m
+                        shapeModule.radius = float.Parse(shapeDimensions[0], CultureInfo.InvariantCulture) / 100;
                         break;
                     default:
                         Debug.LogWarning($"shpDim >{pfx.ShpDimS}< not yet handled");
                         break;
                 }
 
-                shapeModule.rotation = new(pfx.DirAngleElev, 0, 0);
+                shapeModule.rotation = new UnityEngine.Vector3(pfx.DirAngleElev, 0, 0);
 
                 var shapeOffsetVec = pfx.ShpOffsetVecS.Split();
                 if (float.TryParse(shapeOffsetVec[0], out var x) && float.TryParse(shapeOffsetVec[1], out var y) &&
                     float.TryParse(shapeOffsetVec[2], out var z))
+                {
                     shapeModule.position = new UnityEngine.Vector3(x / 100, y / 100, z / 100);
+                }
 
                 shapeModule.alignToDirection = true;
 
@@ -999,7 +1056,7 @@ namespace GUZ.Core.Creator
 
             return pfxGo;
         }
-        
+
         private static GameObject CreateAnimatedVob(Animate vob, GameObject parent = null)
         {
             var go = CreateDefaultMesh(vob, parent, true);
@@ -1008,32 +1065,38 @@ namespace GUZ.Core.Creator
             return go;
         }
 
-        private static GameObject CreateDefaultMesh(IVirtualObject vob, GameObject parent = null, bool nonTeleport = false)
+        private static GameObject CreateDefaultMesh(IVirtualObject vob, GameObject parent = null,
+            bool nonTeleport = false)
         {
-            var parentGo = nonTeleport ? parentGosNonTeleport[vob.Type] : parentGosTeleport[vob.Type];
+            var parentGo = nonTeleport ? _parentGosNonTeleport[vob.Type] : _parentGosTeleport[vob.Type];
             var meshName = vob.ShowVisual ? vob.Visual!.Name : vob.Name;
 
             if (meshName.IsEmpty())
+            {
                 return null;
+            }
 
             var go = GetPrefab(vob);
 
             // MDL
-            var mdl = AssetCache.TryGetMdl(meshName);
+            var mdl = ResourceLoader.TryGetModel(meshName);
             if (mdl != null)
             {
-                var ret = MeshFactory.CreateVob(meshName, mdl, vob.Position.ToUnityVector(), vob.Rotation.ToUnityQuaternion(), parent ?? parentGo, go);
+                var ret = MeshFactory.CreateVob(meshName, mdl, vob.Position.ToUnityVector(),
+                    vob.Rotation.ToUnityQuaternion(), parent ?? parentGo, go);
 
                 // A few objects are broken and have no meshes. We need to destroy them immediately again.
                 if (ret == null)
-                    GameObject.Destroy(go);
+                {
+                    Object.Destroy(go);
+                }
 
                 return ret;
             }
 
             // MDH+MDM (without MDL as wrapper)
-            var mdh = AssetCache.TryGetMdh(meshName);
-            var mdm = AssetCache.TryGetMdm(meshName);
+            var mdh = ResourceLoader.TryGetModelHierarchy(meshName);
+            var mdm = ResourceLoader.TryGetModelMesh(meshName);
             if (mdh != null && mdm != null)
             {
                 var ret = MeshFactory.CreateVob(meshName, mdm, mdh, vob.Position.ToUnityVector(),
@@ -1041,39 +1104,46 @@ namespace GUZ.Core.Creator
 
                 // A few objects are broken and have no meshes. We need to destroy them immediately again.
                 if (ret == null)
-                    GameObject.Destroy(go);
+                {
+                    Object.Destroy(go);
+                }
 
                 return ret;
             }
-            
+
             // MMB
-            var mmb = AssetCache.TryGetMmb(meshName);
+            var mmb = ResourceLoader.TryGetMorphMesh(meshName);
             if (mmb != null)
             {
                 var ret = MeshFactory.CreateVob(meshName, mmb, vob.Position.ToUnityVector(),
                     vob.Rotation.ToUnityQuaternion(), parent ?? parentGo, go);
-                
+
                 // this is a dynamic object 
 
                 // A few objects are broken and have no meshes. We need to destroy them immediately again.
                 if (ret == null)
-                    GameObject.Destroy(go);
-                
+                {
+                    Object.Destroy(go);
+                }
+
                 return ret;
             }
 
             // MRM
-            var mrm = AssetCache.TryGetMrm(meshName);
+            var mrm = ResourceLoader.TryGetMultiResolutionMesh(meshName);
             if (mrm != null)
             {
                 // If the object is a dynamic one, it will collide.
                 var withCollider = vob.CdDynamic;
 
-                var ret = MeshFactory.CreateVob(meshName, mrm, vob.Position.ToUnityVector(), vob.Rotation.ToUnityQuaternion(), withCollider, parent ?? parentGo, go);
+                var ret = MeshFactory.CreateVob(meshName, mrm, vob.Position.ToUnityVector(),
+                    vob.Rotation.ToUnityQuaternion(), withCollider, parent ?? parentGo, go);
 
                 // A few objects are broken and have no meshes. We need to destroy them immediately again.
                 if (ret == null)
-                    GameObject.Destroy(go);
+                {
+                    Object.Destroy(go);
+                }
 
                 return ret;
             }

@@ -22,6 +22,5 @@ namespace GUZ.Lab.AnimationActionMocks
         {
             IsFinishedFlag = true;
         }
-
     }
 }

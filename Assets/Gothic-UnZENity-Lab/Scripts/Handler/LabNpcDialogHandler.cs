@@ -1,56 +1,64 @@
 using System.Linq;
+using GUZ.Core;
 using GUZ.Core.Caches;
 using GUZ.Core.Creator.Meshes.V2;
+using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Properties;
 using GUZ.Core.Vm;
-using GUZ.Core.Extensions;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Serialization;
 using ZenKit.Daedalus;
 
 namespace GUZ.Lab.Handler
 {
     public class LabNpcDialogHandler : MonoBehaviour, ILabHandler
     {
-        public TMP_Dropdown animationsDropdown;
-        public GameObject bloodwynSlotGo;
-        private string bloodwynInstanceId = "GRD_233_Bloodwyn";
-        
+        [FormerlySerializedAs("animationsDropdown")]
+        public TMP_Dropdown AnimationsDropdown;
 
-        private NpcInstance bloodwynInstance;
-        private string[] animations = {
+        [FormerlySerializedAs("bloodwynSlotGo")]
+        public GameObject BloodwynSlotGo;
+
+        private string _bloodwynInstanceId = "GRD_233_Bloodwyn";
+
+
+        private NpcInstance _bloodwynInstance;
+
+        private string[] _animations =
+        {
             "T_LGUARD_2_STAND", "T_STAND_2_LGUARD", "T_LGUARD_SCRATCH", "T_LGUARD_STRETCH", "T_LGUARD_CHANGELEG",
             "T_HGUARD_2_STAND", "T_STAND_2_HGUARD", "T_HGUARD_LOOKAROUND"
         };
 
         public void Bootstrap()
         {
-            animationsDropdown.options = animations.Select(item => new TMP_Dropdown.OptionData(item)).ToList();
+            AnimationsDropdown.options = _animations.Select(item => new TMP_Dropdown.OptionData(item)).ToList();
 
             BootstrapBloodwyn();
         }
-        
+
 
         private void BootstrapBloodwyn()
         {
-            var newNpc = PrefabCache.TryGetObject(PrefabCache.PrefabType.Npc);
-            newNpc.SetParent(bloodwynSlotGo);
+            var newNpc = ResourceLoader.TryGetPrefabObject(PrefabType.Npc);
+            newNpc.SetParent(BloodwynSlotGo);
 
-            var npcSymbol = GameData.GothicVm.GetSymbolByName(bloodwynInstanceId);
-            bloodwynInstance = GameData.GothicVm.AllocInstance<NpcInstance>(npcSymbol!);
+            var npcSymbol = GameData.GothicVm.GetSymbolByName(_bloodwynInstanceId);
+            _bloodwynInstance = GameData.GothicVm.AllocInstance<NpcInstance>(npcSymbol!);
             var properties = newNpc.GetComponent<NpcProperties>();
-            LookupCache.NpcCache[bloodwynInstance.Index] = properties;
-            properties.npcInstance = bloodwynInstance;
+            LookupCache.NpcCache[_bloodwynInstance.Index] = properties;
+            properties.NpcInstance = _bloodwynInstance;
 
-           GameData.GothicVm.InitInstance(bloodwynInstance);
-            
+            GameData.GothicVm.InitInstance(_bloodwynInstance);
+
             properties.Dialogs = GameData.Dialogs.Instances
-                .Where(dialog => dialog.Npc == bloodwynInstance.Index)
+                .Where(dialog => dialog.Npc == _bloodwynInstance.Index)
                 .OrderByDescending(dialog => dialog.Important)
                 .ToList();
-            newNpc.name = bloodwynInstance.GetName(NpcNameSlot.Slot0);
-            GameData.GothicVm.GlobalSelf = bloodwynInstance;
+            newNpc.name = _bloodwynInstance.GetName(NpcNameSlot.Slot0);
+            GameData.GothicVm.GlobalSelf = _bloodwynInstance;
 
             // Hero
             {
@@ -61,7 +69,7 @@ namespace GUZ.Lab.Handler
 
             var mdmName = "Hum_GRDM_ARMOR.asc";
             var mdhName = "Humans_Militia.mds";
-            var body = new VmGothicExternals.ExtSetVisualBodyData()
+            var body = new VmGothicExternals.ExtSetVisualBodyData
             {
                 Armor = -1,
                 Body = "hum_body_Naked0",
@@ -77,7 +85,7 @@ namespace GUZ.Lab.Handler
 
         public void AnimationStartClick()
         {
-            VmGothicExternals.AI_PlayAni(bloodwynInstance, animationsDropdown.options[animationsDropdown.value].text);
+            VmGothicExternals.AI_PlayAni(_bloodwynInstance, AnimationsDropdown.options[AnimationsDropdown.value].text);
         }
     }
 }
