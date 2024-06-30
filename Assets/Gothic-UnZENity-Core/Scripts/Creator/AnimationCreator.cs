@@ -4,11 +4,10 @@ using System.IO;
 using System.Linq;
 using GUZ.Core.Caches;
 using GUZ.Core.Data.ZkEvents;
+using GUZ.Core.Extensions;
 using GUZ.Core.Npc;
 using GUZ.Core.Npc.Actions;
 using GUZ.Core.Properties;
-using GUZ.Core.Extensions;
-using GUZ.Core;
 using UnityEngine;
 using ZenKit;
 using Animation = UnityEngine.Animation;
@@ -26,7 +25,9 @@ namespace GUZ.Core.Creator
             foreach (var mdsName in mdsNames.Reverse())
             {
                 if (TryPlayAnimation(mdsName, animationName, go, repeat))
+                {
                     return true;
+                }
             }
 
             // No suitable animation found.
@@ -40,7 +41,9 @@ namespace GUZ.Core.Creator
 
             var modelAnimation = ResourceLoader.TryGetModelAnimation(mdsName, animationName);
             if (modelAnimation == null)
+            {
                 return false;
+            }
 
             var mdsAnimationKeyName = GetCombinedAnimationKey(mdsName, animationName);
             var animationComp = go.GetComponent<Animation>();
@@ -51,10 +54,15 @@ namespace GUZ.Core.Creator
 
             // If we create empty animations with only one frame, Unity will complain. We therefore skip it for now.
             if (anim.FirstFrame == anim.LastFrame)
+            {
                 return false;
+            }
 
             if (anim.Direction == AnimationDirection.Backward)
-                Debug.LogWarning($"Backwards animations not yet handled. Called for >{animationName}< from >{mdsName}<. Currently playing Forward.");
+            {
+                Debug.LogWarning(
+                    $"Backwards animations not yet handled. Called for >{animationName}< from >{mdsName}<. Currently playing Forward.");
+            }
 
             // Try to load from cache
             if (!LookupCache.AnimationClipCache.TryGetValue(mdsAnimationKeyName, out var clip))
@@ -85,7 +93,9 @@ namespace GUZ.Core.Creator
             // Rewind workaround to actually set NPC to first frame of the animation.
             // @see: https://forum.unity.com/threads/animation-rewind-not-working.4756/
             if (!animationComp.isPlaying)
+            {
                 return;
+            }
 
             animationComp.Rewind();
             animationComp.Play();
@@ -95,15 +105,16 @@ namespace GUZ.Core.Creator
 
         public static void PlayHeadMorphAnimation(NpcProperties props, HeadMorph.HeadMorphType type)
         {
-            props.headMorph.StartAnimation(props.BodyData.Head, type);
+            props.HeadMorph.StartAnimation(props.BodyData.Head, type);
         }
 
         public static void StopHeadMorphAnimation(NpcProperties props, HeadMorph.HeadMorphType type)
         {
-            props.headMorph.StopAnimation(type);
+            props.HeadMorph.StopAnimation(type);
         }
 
-        private static AnimationClip LoadAnimationClip(IModelAnimation pxAnimation, IModelHierarchy mdh, GameObject rootBone, bool repeat, string clipName)
+        private static AnimationClip LoadAnimationClip(IModelAnimation pxAnimation, IModelHierarchy mdh,
+            GameObject rootBone, bool repeat, string clipName)
         {
             var clip = new AnimationClip
             {
@@ -125,7 +136,7 @@ namespace GUZ.Core.Creator
                 curves[boneName].AddRange(Enumerable.Range(0, 7).Select(i => new AnimationCurve()).ToArray());
             }
 
-            Vector3 rootBoneStartCorrection = Vector3.zero;
+            var rootBoneStartCorrection = Vector3.zero;
 
             // Add KeyFrames from PxSamples
             for (var i = 0; i < pxAnimation.Samples.Count; i++)
@@ -133,7 +144,7 @@ namespace GUZ.Core.Creator
                 // We want to know what time it is for the animation.
                 // Therefore we need to know fps multiplied with current sample. As there are nodeCount samples before a new time starts,
                 // we need to add this to the calculation.
-                var time = (1 / pxAnimation.Fps) * (int)(i / pxAnimation.NodeCount);
+                var time = 1 / pxAnimation.Fps * (i / pxAnimation.NodeCount);
                 var sample = pxAnimation.Samples[i];
                 var boneId = i % pxAnimation.NodeCount;
                 var boneName = boneNames[boneId];
@@ -144,19 +155,27 @@ namespace GUZ.Core.Creator
                 // Therefore we need to calculate the offset.
                 // Otherwise e.g. walking will hick up as NPC will _spawn_ slightly in front of last animation loop.
                 if (time == 0.0f && isRootBone)
+                {
                     rootBoneStartCorrection = sample.Position.ToUnityVector();
+                }
 
                 Vector3 uPosition;
                 if (isRootBone)
+                {
                     uPosition = sample.Position.ToUnityVector() - rootBoneStartCorrection;
+                }
                 else
+                {
                     uPosition = sample.Position.ToUnityVector();
+                }
 
                 // We add 7 properties for location and rotation.
                 boneList[0].AddKey(time, uPosition.x);
                 boneList[1].AddKey(time, uPosition.y);
                 boneList[2].AddKey(time, uPosition.z);
-                boneList[3].AddKey(time, -sample.Rotation.W); // It's important to have this value with a -1. Otherwise animation is inversed.
+                
+                // It's important to have this value with a -1. Otherwise animation is inversed.
+                boneList[3].AddKey(time, -sample.Rotation.W);
                 boneList[4].AddKey(time, sample.Rotation.X);
                 boneList[5].AddKey(time, sample.Rotation.Y);
                 boneList[6].AddKey(time, sample.Rotation.Z);
@@ -165,7 +184,7 @@ namespace GUZ.Core.Creator
             foreach (var entry in curves)
             {
                 var path = GetChildPathRecursively(rootBone.transform, entry.Key, "");
-                
+
                 clip.SetCurve(path, typeof(Transform), "m_LocalPosition.x", entry.Value[0]);
                 clip.SetCurve(path, typeof(Transform), "m_LocalPosition.y", entry.Value[1]);
                 clip.SetCurve(path, typeof(Transform), "m_LocalPosition.z", entry.Value[2]);
@@ -181,7 +200,7 @@ namespace GUZ.Core.Creator
 
             return clip;
         }
-        
+
         // TODO - If we have a performance bottleneck while loading animations, then we could cache these results.
         private static string GetChildPathRecursively(Transform parent, string curName, string currentPath)
         {
@@ -191,26 +210,28 @@ namespace GUZ.Core.Creator
             {
                 // The child object was found, return the current path
                 if (currentPath != "")
-                    return currentPath + "/" + curName;
-                else
-                    return curName;
-            }
-            else
-            {
-                // Search recursively in the children of the current object
-                foreach (Transform child in parent)
                 {
-                    var childPath = currentPath + "/" + child.name;
-                    var resultPath = GetChildPathRecursively(child, curName, childPath);
-
-                    if (resultPath != null)
-                        // The child object was found in a recursive call, return the result path
-                        return resultPath.TrimStart('/');
+                    return currentPath + "/" + curName;
                 }
 
-                // The child object was not found
-                return null;
+                return curName;
             }
+
+            // Search recursively in the children of the current object
+            foreach (Transform child in parent)
+            {
+                var childPath = currentPath + "/" + child.name;
+                var resultPath = GetChildPathRecursively(child, curName, childPath);
+
+                // The child object was found in a recursive call, return the result path
+                if (resultPath != null)
+                {
+                    return resultPath.TrimStart('/');
+                }
+            }
+
+            // The child object was not found
+            return null;
         }
 
         private static void AddClipEvents(AnimationClip clip, IModelAnimation modelAnimation, IAnimation anim)
@@ -223,8 +244,10 @@ namespace GUZ.Core.Creator
                 {
                     time = clampedFrame / clip.frameRate,
                     functionName = nameof(IAnimationCallbacks.AnimationCallback),
-                    stringParameter = JsonUtility.ToJson(new SerializableEventTag(zkEvent)) // As we can't add a custom object, we serialize the data object.
-                 };
+
+                     // As we can't add a custom object, we serialize the data object.
+                    stringParameter = JsonUtility.ToJson(new SerializableEventTag(zkEvent))
+                };
 
                 clip.AddEvent(animEvent);
             }
@@ -236,9 +259,11 @@ namespace GUZ.Core.Creator
                 {
                     time = clampedFrame / clip.frameRate,
                     functionName = nameof(IAnimationCallbacks.AnimationSfxCallback),
-                    stringParameter = JsonUtility.ToJson(new SerializableEventSoundEffect(sfxEvent)) // As we can't add a custom object, we serialize the data object.
+
+                     // As we can't add a custom object, we serialize the data object.
+                    stringParameter = JsonUtility.ToJson(new SerializableEventSoundEffect(sfxEvent))
                 };
-                
+
                 clip.AddEvent(animEvent);
             }
 
@@ -249,14 +274,18 @@ namespace GUZ.Core.Creator
                 {
                     time = clampedFrame / clip.frameRate,
                     functionName = nameof(IAnimationCallbacks.AnimationMorphCallback),
-                    stringParameter = JsonUtility.ToJson(new SerializableEventMorphAnimation(morphEvent)) // As we can't add a custom object, we serialize the data object.
+                    
+                     // As we can't add a custom object, we serialize the data object.
+                    stringParameter = JsonUtility.ToJson(new SerializableEventMorphAnimation(morphEvent))
                 };
 
                 clip.AddEvent(animEvent);
             }
 
             if (anim.ParticleEffects.Any())
+            {
                 Debug.LogWarning($"SFX events not yet implemented. Tried to use for {anim.Name}");
+            }
         }
 
         /// <summary>
@@ -282,11 +311,16 @@ namespace GUZ.Core.Creator
 
             // (3). check for misaligned animation frame boundaries (if any).
             if (expectedFrame < 0)
+            {
                 return 0;
-            else if (expectedFrame >= modelAnimation.FrameCount)
+            }
+
+            if (expectedFrame >= modelAnimation.FrameCount)
+            {
                 return modelAnimation.FrameCount - 1;
-            else
-                return expectedFrame;
+            }
+
+            return expectedFrame;
         }
 
         /// <summary>
@@ -303,10 +337,10 @@ namespace GUZ.Core.Creator
                 functionName = nameof(IAnimationCallbacks.AnimationEndCallback),
                 stringParameter = JsonUtility.ToJson(new SerializableEventEndSignal(anim.Next))
             };
-            
+
             clip.AddEvent(finalEvent);
         }
-        
+
         /// <summary>
         /// .man files are combined of MDSNAME-ANIMATIONNAME.man
         /// </summary>
@@ -314,10 +348,10 @@ namespace GUZ.Core.Creator
         {
             var preparedMdsKey = GetPreparedKey(mdsKey);
             var preparedAnimKey = GetPreparedKey(animKey);
-            
+
             return preparedMdsKey + "-" + preparedAnimKey;
         }
-        
+
         /// <summary>
         /// Basically extract file ending and lower names.
         /// </summary>
@@ -327,9 +361,11 @@ namespace GUZ.Core.Creator
             var extension = Path.GetExtension(lowerKey);
 
             if (extension == string.Empty)
+            {
                 return lowerKey;
-            else
-                return lowerKey.Replace(extension, "");
+            }
+
+            return lowerKey.Replace(extension, "");
         }
     }
 }

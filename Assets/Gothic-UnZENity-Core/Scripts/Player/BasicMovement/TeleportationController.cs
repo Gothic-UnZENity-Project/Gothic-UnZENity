@@ -1,41 +1,51 @@
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
+using UnityEngine.Serialization;
 
 public class TeleportationController : MonoBehaviour
 {
-    public GameObject baseControllerGameObject;
-    public GameObject teleportationGameObject;
-    public GameObject player;
-    public InputActionReference teleportActivationReference;
-    [Space]
-    public UnityEvent onTeleportActivate;
-    public UnityEvent onTeleportCanceled;
+    [FormerlySerializedAs("baseControllerGameObject")]
+    public GameObject BaseControllerGameObject;
+
+    [FormerlySerializedAs("teleportationGameObject")]
+    public GameObject TeleportationGameObject;
+
+    [FormerlySerializedAs("player")] public GameObject Player;
+
+    [FormerlySerializedAs("teleportActivationReference")]
+    public InputActionReference TeleportActivationReference;
+
+    [FormerlySerializedAs("onTeleportActivate")] [Space]
+    public UnityEvent OnTeleportActivate;
+
+    [FormerlySerializedAs("onTeleportCanceled")]
+    public UnityEvent OnTeleportCanceled;
 
     private void Start()
     {
-        teleportActivationReference.action.performed += TeleportModeActivate;
-        teleportActivationReference.action.canceled += TeleportModeCancel;
+        TeleportActivationReference.action.performed += TeleportModeActivate;
+        TeleportActivationReference.action.canceled += TeleportModeCancel;
     }
-    
+
     private void TeleportModeActivate(InputAction.CallbackContext obj)
     {
-        onTeleportActivate.Invoke();
+        OnTeleportActivate.Invoke();
     }
-    
-    void DeactivateTeleporter()
+
+    private void DeactivateTeleporter()
     {
-        onTeleportCanceled.Invoke();
+        OnTeleportCanceled.Invoke();
     }
-    
+
     private void TeleportModeCancel(InputAction.CallbackContext obj)
     {
-        Invoke(nameof(DeactivateTeleporter),.1f);
+        Invoke(nameof(DeactivateTeleporter), .1f);
     }
 
     private void OnDestroy()
     {
-        teleportActivationReference.action.performed -= TeleportModeActivate;
-        teleportActivationReference.action.canceled -= TeleportModeCancel;
+        TeleportActivationReference.action.performed -= TeleportModeActivate;
+        TeleportActivationReference.action.canceled -= TeleportModeCancel;
     }
 }

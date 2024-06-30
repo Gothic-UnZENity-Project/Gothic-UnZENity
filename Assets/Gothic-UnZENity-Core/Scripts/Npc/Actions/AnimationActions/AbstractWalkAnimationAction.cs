@@ -19,13 +19,14 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             Done
         }
 
-        protected WalkState walkState = WalkState.Initial;
+        protected WalkState State = WalkState.Initial;
 
         protected AbstractWalkAnimationAction(AnimationAction action, GameObject npcGo) : base(action, npcGo)
-        { }
+        {
+        }
 
         protected abstract void OnDestinationReached();
-        
+
         /// <summary>
         /// We need to define the final destination spot within overriding class.
         /// </summary>
@@ -43,19 +44,21 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             base.Tick();
 
             if (IsFinishedFlag)
+            {
                 return;
+            }
 
-            switch (walkState)
+            switch (State)
             {
                 case WalkState.Initial:
-                    walkState = WalkState.Rotate;
+                    State = WalkState.Rotate;
                     HandleRotation(NpcGo.transform, GetWalkDestination(), false);
                     return;
                 case WalkState.Rotate:
                     HandleRotation(NpcGo.transform, GetWalkDestination(), false);
                     return;
                 case WalkState.Walk:
-                    HandleWalk(Props.colliderRootMotion.transform);
+                    HandleWalk(Props.ColliderRootMotion.transform);
                     return;
                 case WalkState.WalkAndRotate:
                     HandleRotation(NpcGo.transform, GetWalkDestination(), true);
@@ -63,21 +66,21 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
                 case WalkState.Done:
                     return; // NOP
                 default:
-                    Debug.Log($"MovementState {walkState} not yet implemented.");
+                    Debug.Log($"MovementState {State} not yet implemented.");
                     return;
             }
         }
 
         private string GetWalkModeAnimationString()
         {
-            switch (Props.walkMode)
+            switch (Props.WalkMode)
             {
                 case VmGothicEnums.WalkMode.Walk:
                     return "S_WALKL";
                 case VmGothicEnums.WalkMode.Run:
                     return "S_RUNL";
                 default:
-                    Debug.LogWarning($"Animation of type {Props.walkMode} not yet implemented.");
+                    Debug.LogWarning($"Animation of type {Props.WalkMode} not yet implemented.");
                     return "";
             }
         }
@@ -85,9 +88,9 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
         private void StartWalk()
         {
             var animName = GetWalkModeAnimationString();
-            AnimationCreator.PlayAnimation(Props.mdsNames, animName, NpcGo, true);
+            AnimationCreator.PlayAnimation(Props.MdsNames, animName, NpcGo, true);
 
-            walkState = WalkState.Walk;
+            State = WalkState.Walk;
         }
 
         private void HandleWalk(Transform transform)
@@ -100,7 +103,9 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
 
             // FIXME - Scorpio is above FP, but values don't represent it.
             if (distance < Constants.CloseToThreshold)
+            {
                 OnDestinationReached();
+            }
         }
 
         private void HandleRotation(Transform transform, Vector3 destination, bool includesWalking)
@@ -115,11 +120,13 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             // Stop the rotation and start walking.
             if (Math.Abs(dot - 1f) < 0.0001f)
             {
-                walkState = WalkState.Walk;
+                State = WalkState.Walk;
 
                 // If we didn't walk so far, we do it now.
                 if (!includesWalking)
+                {
                     StartWalk();
+                }
             }
         }
 
@@ -131,12 +138,14 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             base.AnimationEndEventCallback(eventData);
 
             // We need to ensure, that physics still apply when an animation is looped.
-            if (walkState != WalkState.Done)
+            if (State != WalkState.Done)
+            {
                 PhysicsHelper.EnablePhysicsForNpc(Props);
+            }
 
-            NpcGo.transform.localPosition = Props.bip01.position;
-            Props.bip01.localPosition = Vector3.zero;
-            Props.colliderRootMotion.localPosition = Vector3.zero;
+            NpcGo.transform.localPosition = Props.Bip01.position;
+            Props.Bip01.localPosition = Vector3.zero;
+            Props.ColliderRootMotion.localPosition = Vector3.zero;
 
             // TODO - Needed?
             // root.SetLocalPositionAndRotation(

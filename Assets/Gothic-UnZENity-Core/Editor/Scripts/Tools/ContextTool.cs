@@ -1,11 +1,9 @@
 using System.IO;
 using System.Linq;
 using GUZ.Core.Context;
-using GUZ.Core.Debugging;
 using UnityEditor;
 using UnityEditor.Build;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 namespace GUZ.Core.Editor.Tools
 {
@@ -18,8 +16,10 @@ namespace GUZ.Core.Editor.Tools
         {
             var hvrFolder = Application.dataPath + "/HurricaneVR";
             var hvrExists = Directory.Exists(hvrFolder) && Directory.EnumerateFiles(hvrFolder).Count() != 0;
-            var hvrCompilerSettingExists = PlayerSettings.GetScriptingDefineSymbols(NamedBuildTarget.Standalone).Contains(HVR_COMPILER_FLAG);
-            bool hvrSceneSetting = GameObject.FindObjectOfType<GameManager>()?.Config.gameControls == GUZContext.Controls.VR_HVR;
+            var hvrCompilerSettingExists = PlayerSettings.GetScriptingDefineSymbols(NamedBuildTarget.Standalone)
+                .Contains(HVR_COMPILER_FLAG);
+            var hvrSceneSetting = Object.FindObjectOfType<GameManager>()?.Config.GameControls ==
+                                  GuzContext.Controls.VRHvr;
 
             var message =
                 $"Plugin installed: {hvrExists}\n" +
@@ -41,7 +41,9 @@ namespace GUZ.Core.Editor.Tools
                 .ToList();
 
             if (settings.Any(i => i.Equals(HVR_COMPILER_FLAG)))
+            {
                 return;
+            }
 
             settings.Add(HVR_COMPILER_FLAG);
             PlayerSettings.SetScriptingDefineSymbols(NamedBuildTarget.Standalone, string.Join(";", settings));
@@ -59,7 +61,9 @@ namespace GUZ.Core.Editor.Tools
                 .ToList();
 
             if (!settings.Any(i => i.Equals(HVR_COMPILER_FLAG)))
+            {
                 return;
+            }
 
             settings.Remove(HVR_COMPILER_FLAG);
             PlayerSettings.SetScriptingDefineSymbols(NamedBuildTarget.Standalone, string.Join(";", settings));

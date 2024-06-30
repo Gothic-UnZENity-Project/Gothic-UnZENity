@@ -4,11 +4,11 @@ namespace GUZ.Core.Data
 {
     public class SkyLayerData
     {
-        public Texture2D[] texBox;
-        public Texture2D tex;
-        public string texName = "";
-        public float texAlpha;
-        public float texScale = 1;
-        public Vector2 texSpeed = new(0.9f, 1.1f);
+        public Texture2D[] TEXBox;
+        public Texture2D TEX;
+        public string TEXName = "";
+        public float TEXAlpha;
+        public float TEXScale = 1;
+        public Vector2 TEXSpeed = new(0.9f, 1.1f);
     }
 }

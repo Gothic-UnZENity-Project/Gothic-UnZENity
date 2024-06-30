@@ -1,13 +1,12 @@
 using GUZ.Core.Data.ZkEvents;
-using GUZ.Core.Caches;
 using UnityEngine;
 
 namespace GUZ.Core.Npc.Actions.AnimationActions
 {
     public class LookAtNpc : AbstractRotateAnimationAction
     {
-        private int otherId => Action.Int0;
-        private int otherIndex => Action.Int1;
+        private int OtherId => Action.Int0;
+        private int OtherIndex => Action.Int1;
 
         public LookAtNpc(AnimationAction action, GameObject npcGo) : base(action, npcGo)
         {

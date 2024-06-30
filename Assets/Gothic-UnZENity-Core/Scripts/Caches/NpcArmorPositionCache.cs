@@ -2,13 +2,14 @@ using System.Collections.Generic;
 using GUZ.Core.Extensions;
 using UnityEngine;
 using ZenKit;
+using Vector3 = System.Numerics.Vector3;
 
 namespace GUZ.Core.Caches
 {
     public static class NpcArmorPositionCache
     {
         private static Dictionary<IModelHierarchy, List<Matrix4x4>> _bonesInWorldSpace = new();
-        private static Dictionary<ISoftSkinMesh, List<System.Numerics.Vector3>> _correctedVertexPositions = new();
+        private static Dictionary<ISoftSkinMesh, List<Vector3>> _correctedVertexPositions = new();
 
         /// <summary>
         /// Return calculated positions for NPC armor vertices.
@@ -33,14 +34,14 @@ namespace GUZ.Core.Caches
         /// the cached objects or otherwise you will suffer performance death. ;-)
         /// </summary>
         /// <returns></returns>
-        public static List<System.Numerics.Vector3> TryGetPositions(ISoftSkinMesh softSkinMesh, IModelHierarchy mdh)
+        public static List<Vector3> TryGetPositions(ISoftSkinMesh softSkinMesh, IModelHierarchy mdh)
         {
             if (!_bonesInWorldSpace.ContainsKey(mdh))
             {
                 CalculateBonesInWorldSpace(mdh);
             }
 
-            if (!_correctedVertexPositions.TryGetValue(softSkinMesh, out List<System.Numerics.Vector3> currentCorrectedVertexPositions))
+            if (!_correctedVertexPositions.TryGetValue(softSkinMesh, out var currentCorrectedVertexPositions))
             {
                 currentCorrectedVertexPositions = CalculateCorrectedVertexPositions(softSkinMesh, mdh);
             }
@@ -52,7 +53,7 @@ namespace GUZ.Core.Caches
         {
             List<Matrix4x4> retValue = new();
 
-            foreach (IModelHierarchyNode node in mdh.Nodes)
+            foreach (var node in mdh.Nodes)
             {
                 Matrix4x4 newTransform;
 
@@ -76,23 +77,23 @@ namespace GUZ.Core.Caches
         /// <summary>
         /// We transform to UnityVector in between as calculation was easier (or at least we found a method which works)
         /// </summary>
-        private static List<System.Numerics.Vector3> CalculateCorrectedVertexPositions(ISoftSkinMesh softSkinMesh, IModelHierarchy mdh)
+        private static List<Vector3> CalculateCorrectedVertexPositions(ISoftSkinMesh softSkinMesh, IModelHierarchy mdh)
         {
-            List<System.Numerics.Vector3> retValue = new();
+            List<Vector3> retValue = new();
 
-            for (int vertexId = 0; vertexId < softSkinMesh.Weights.Count; vertexId++)
+            for (var vertexId = 0; vertexId < softSkinMesh.Weights.Count; vertexId++)
             {
-                Vector3 vertexPosition = new Vector3(0, 0, 0);
+                var vertexPosition = new UnityEngine.Vector3(0, 0, 0);
 
-                foreach (SoftSkinWeightEntry weight in softSkinMesh.Weights[vertexId])
+                foreach (var weight in softSkinMesh.Weights[vertexId])
                 {
-                    Matrix4x4 mdhBoneMatrix = _bonesInWorldSpace[mdh][weight.NodeIndex];
+                    var mdhBoneMatrix = _bonesInWorldSpace[mdh][weight.NodeIndex];
 
-                    Vector3 newPos = mdhBoneMatrix.MultiplyPoint(weight.Position.ToUnityVector(false));
+                    var newPos = mdhBoneMatrix.MultiplyPoint(weight.Position.ToUnityVector(false));
                     vertexPosition += newPos * weight.Weight;
                 }
 
-                retValue.Add(new System.Numerics.Vector3(vertexPosition.x, vertexPosition.y, vertexPosition.z));
+                retValue.Add(new Vector3(vertexPosition.x, vertexPosition.y, vertexPosition.z));
             }
 
             _correctedVertexPositions[softSkinMesh] = retValue;

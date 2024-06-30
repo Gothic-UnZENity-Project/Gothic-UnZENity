@@ -34,29 +34,32 @@ namespace GUZ.Core.Player.Menu
 
         public void SetMaterials()
         {
-            MainMenuImageBackground.GetComponent<MeshRenderer>().material = GameGlobals.Textures.mainMenuImageBackgroundMaterial;
+            MainMenuImageBackground.GetComponent<MeshRenderer>().material =
+                GameGlobals.Textures.MainMenuImageBackgroundMaterial;
             MainMenuSaveLoadBackground.GetComponent<MeshRenderer>().material =
-                GameGlobals.Textures.mainMenuSaveLoadBackgroundMaterial;
-            MainMenuBackground.GetComponent<MeshRenderer>().material = GameGlobals.Textures.mainMenuBackgroundMaterial;
-            MainMenuText.GetComponent<MeshRenderer>().material = GameGlobals.Textures.mainMenuTextImageMaterial;
+                GameGlobals.Textures.MainMenuSaveLoadBackgroundMaterial;
+            MainMenuBackground.GetComponent<MeshRenderer>().material = GameGlobals.Textures.MainMenuBackgroundMaterial;
+            MainMenuText.GetComponent<MeshRenderer>().material = GameGlobals.Textures.MainMenuTextImageMaterial;
         }
 
         public void SetSettingsValues()
         {
             if (MoveSpeedController == null || TurnSettingDropdownController == null)
+            {
                 return;
+            }
 
-            MoveSpeedController.ChangeMoveSpeed(PlayerPrefs.GetFloat(Constants.moveSpeedPlayerPref));
-            TurnSettingDropdownController.DropdownItemSelected(PlayerPrefs.GetInt(Constants.turnSettingPlayerPref));
-            MusicVolumeHandler.SliderUpdate(PlayerPrefs.GetFloat(Constants.musicVolumePlayerPref, 1f));
-            SoundEffectsVolumeHandler.SliderUpdate(PlayerPrefs.GetFloat(Constants.soundEffectsVolumePlayerPref, 1f));
+            MoveSpeedController.ChangeMoveSpeed(PlayerPrefs.GetFloat(Constants.MoveSpeedPlayerPref));
+            TurnSettingDropdownController.DropdownItemSelected(PlayerPrefs.GetInt(Constants.TurnSettingPlayerPref));
+            MusicVolumeHandler.SliderUpdate(PlayerPrefs.GetFloat(Constants.MusicVolumePlayerPref, 1f));
+            SoundEffectsVolumeHandler.SliderUpdate(PlayerPrefs.GetFloat(Constants.SoundEffectsVolumePlayerPref, 1f));
         }
 
         public void PlayFunction()
         {
 #pragma warning disable CS4014 // It's intended, that this async call is not awaited.
             SaveGameManager.LoadNewGame();
-            GameGlobals.Scene.LoadWorld(Constants.selectedWorld, Constants.selectedWaypoint);
+            GameGlobals.Scene.LoadWorld(Constants.SelectedWorld, Constants.SelectedWaypoint);
 #pragma warning restore CS4014
         }
 

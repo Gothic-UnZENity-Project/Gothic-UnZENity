@@ -1,6 +1,5 @@
-using System.Linq;
-using GUZ.Core.Globals;
 using GUZ.Core.Extensions;
+using GUZ.Core.Globals;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -48,11 +47,13 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
             {
                 var child = zm.GetChild(i);
                 if (!child.name.StartsWithIgnoreCase("ZS_"))
+                {
                     continue;
+                }
 
                 // ZS need to be "invisible" for the Raycast teleporter.
                 child.gameObject.layer = Constants.IgnoreRaycastLayer;
-                child.localScale = Constants.VobZSScale;
+                child.localScale = Constants.VobZsScale;
                 // Used for event triggers with NPCs.
                 var coll = child.AddComponent<SphereCollider>();
                 coll.isTrigger = true;

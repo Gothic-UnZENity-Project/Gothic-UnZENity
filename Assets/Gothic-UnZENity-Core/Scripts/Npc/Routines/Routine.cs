@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using GUZ.Core.Manager;
-using GUZ.Core.World;
 using UnityEngine;
 
 namespace GUZ.Core.Npc.Routines
@@ -17,7 +15,7 @@ namespace GUZ.Core.Npc.Routines
         {
             GameGlobals.Routines.Subscribe(this, Routines);
         }
-        
+
         private void OnDisable()
         {
             GameGlobals.Routines.Unsubscribe(this, Routines);
@@ -28,11 +26,11 @@ namespace GUZ.Core.Npc.Routines
             if (!CalculateCurrentRoutine())
             {
                 Debug.LogWarning("ChangeRoutine got called but the resulting routine was the same: " +
-                                 $"NPC: >{gameObject.name}< WP: >{CurrentRoutine.waypoint}<");
+                                 $"NPC: >{gameObject.name}< WP: >{CurrentRoutine.Waypoint}<");
                 return;
             }
 
-            GetComponent<AiHandler>().StartRoutine(CurrentRoutine.action, CurrentRoutine.waypoint);
+            GetComponent<AiHandler>().StartRoutine(CurrentRoutine.Action, CurrentRoutine.Waypoint);
         }
 
         /// <summary>
@@ -47,23 +45,24 @@ namespace GUZ.Core.Npc.Routines
         public bool CalculateCurrentRoutine()
         {
             var currentTime = GameGlobals.Time.GetCurrentDateTime();
-            
+
             var normalizedNow = currentTime.Hour % 24 * 60 + currentTime.Minute;
 
             RoutineData newRoutine = null;
-            
+
             // There are routines where stop is lower than start. (e.g. now:8:00, routine:22:00-9:00), therefore the second check.
             foreach (var routine in Routines)
             {
-                if (routine.normalizedStart <= normalizedNow && normalizedNow < routine.normalizedEnd)
+                if (routine.NormalizedStart <= normalizedNow && normalizedNow < routine.NormalizedEnd)
                 {
                     newRoutine = routine;
                     break;
                 }
                 // Handling the case where the time range spans across midnight
-                else if (routine.normalizedStart > routine.normalizedEnd)
+
+                if (routine.NormalizedStart > routine.NormalizedEnd)
                 {
-                    if (routine.normalizedStart <= normalizedNow || normalizedNow < routine.normalizedEnd)
+                    if (routine.NormalizedStart <= normalizedNow || normalizedNow < routine.NormalizedEnd)
                     {
                         newRoutine = routine;
                         break;
@@ -73,7 +72,9 @@ namespace GUZ.Core.Npc.Routines
 
             // e.g. Mud has a bug as there is no routine covering 8am. We therefore pick the last one as seen in original G1. (sit)
             if (newRoutine == null)
+            {
                 newRoutine = Routines.Last();
+            }
 
             var changed = CurrentRoutine != newRoutine;
             CurrentRoutine = newRoutine;

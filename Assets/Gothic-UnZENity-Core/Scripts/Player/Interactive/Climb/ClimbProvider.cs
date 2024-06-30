@@ -1,48 +1,58 @@
-using System;
 using GUZ.Core.Extensions;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Serialization;
 using UnityEngine.XR.Interaction.Toolkit;
 
 namespace GUZ.Core.Player.Climb
 {
     public class ClimbProvider : MonoBehaviour
     {
-        public CharacterController characterController;
-        public InputActionProperty velocityRight;
-        public InputActionProperty velocityLeft;
+        [FormerlySerializedAs("characterController")]
+        public CharacterController CharacterController;
 
-        private bool rightActive;
-        private bool leftActive;
+        [FormerlySerializedAs("velocityRight")]
+        public InputActionProperty VelocityRight;
 
-        private float originalMovementSpeed;
-        private float originalTurnSpeed;
+        [FormerlySerializedAs("velocityLeft")] public InputActionProperty VelocityLeft;
 
-        private Vector3 grabbedLadderZsTopPosition;
+        private bool _rightActive;
+        private bool _leftActive;
+
+        private float _originalMovementSpeed;
+        private float _originalTurnSpeed;
+
+        private Vector3 _grabbedLadderZsTopPosition;
 
         private void Start()
         {
             XRDirectClimbInteractor.ClimbHandActivated.AddListener(HandActivated);
             XRDirectClimbInteractor.ClimbHandDeactivated.AddListener(HandDeactivated);
 
-            originalMovementSpeed = transform.GetComponent<ActionBasedContinuousMoveProvider>().moveSpeed;
-            originalTurnSpeed = transform.GetComponent<ContinuousTurnProviderBase>().turnSpeed;
+            _originalMovementSpeed = transform.GetComponent<ActionBasedContinuousMoveProvider>().moveSpeed;
+            _originalTurnSpeed = transform.GetComponent<ContinuousTurnProviderBase>().turnSpeed;
         }
-        
+
         /// <summary>
         /// As this is called every 0.02 seconds - fixed. This offers a smoother movement than with variable fps.
         /// </summary>
         private void FixedUpdate()
         {
-            if (!rightActive && !leftActive)
+            if (!_rightActive && !_leftActive)
+            {
                 return;
+            }
 
             if (IsOnTop())
+            {
                 SpawnToTop();
+            }
             else
+            {
                 Climb();
+            }
         }
-        
+
         private void OnDestroy()
         {
             XRDirectClimbInteractor.ClimbHandActivated.RemoveListener(HandActivated);
@@ -56,7 +66,7 @@ namespace GUZ.Core.Player.Climb
             var mainCamera = UnityEngine.Camera.main!;
             var mainCameraHeight = mainCamera.transform.position.y;
 
-            return mainCameraHeight >= grabbedLadderZsTopPosition.y;
+            return mainCameraHeight >= _grabbedLadderZsTopPosition.y;
         }
 
         private void SpawnToTop()
@@ -64,18 +74,18 @@ namespace GUZ.Core.Player.Climb
             XRDirectClimbInteractor.ClimbHandDeactivated.Invoke("RightHandBaseController");
             XRDirectClimbInteractor.ClimbHandDeactivated.Invoke("LeftHandBaseController");
 
-            characterController.transform.position = grabbedLadderZsTopPosition;
+            CharacterController.transform.position = _grabbedLadderZsTopPosition;
         }
 
         private void Climb()
         {
             var velocity = Vector3.zero;
-            velocity += leftActive ? velocityLeft.action.ReadValue<Vector3>() : Vector3.zero;
-            velocity += rightActive ? velocityRight.action.ReadValue<Vector3>() : Vector3.zero;
+            velocity += _leftActive ? VelocityLeft.action.ReadValue<Vector3>() : Vector3.zero;
+            velocity += _rightActive ? VelocityRight.action.ReadValue<Vector3>() : Vector3.zero;
 
-            characterController.Move(characterController.transform.rotation * -velocity * Time.fixedDeltaTime);
+            CharacterController.Move(CharacterController.transform.rotation * -velocity * Time.fixedDeltaTime);
         }
-        
+
         /// <summary>
         /// If a hand starts grabbing a Ladder.
         /// </summary>
@@ -84,17 +94,18 @@ namespace GUZ.Core.Player.Climb
             switch (controllerName)
             {
                 case "LeftHandBaseController":
-                    leftActive = true;
+                    _leftActive = true;
                     break;
                 case "RightHandBaseController":
-                    rightActive = true;
+                    _rightActive = true;
                     break;
                 default:
                     Debug.LogWarning($"Unknown hand controller used for climbing: >{controllerName}<");
                     return; // Do nothing.
             }
-            grabbedLadderZsTopPosition = ladder.FindChildRecursively("ZS_POS1").transform.position;
-            
+
+            _grabbedLadderZsTopPosition = ladder.FindChildRecursively("ZS_POS1").transform.position;
+
             DeactivateMovement();
         }
 
@@ -106,22 +117,24 @@ namespace GUZ.Core.Player.Climb
             switch (controllerName)
             {
                 case "LeftHandBaseController":
-                    leftActive = false;
+                    _leftActive = false;
                     break;
                 case "RightHandBaseController":
-                    rightActive = false;
+                    _rightActive = false;
                     break;
                 default:
                     Debug.LogWarning($"Unknown hand controller used for climbing: >{controllerName}<");
                     return; // Do nothing.
             }
 
-            if (leftActive || rightActive)
+            if (_leftActive || _rightActive)
+            {
                 return;
-            
+            }
+
             ActivateMovement();
         }
-        
+
         /// <summary>
         /// Activates Gravity, movement and turn options
         /// </summary>
@@ -129,10 +142,10 @@ namespace GUZ.Core.Player.Climb
         {
             // Reactivate gravity and speed to original speed
             transform.GetComponent<ActionBasedContinuousMoveProvider>().useGravity = true;
-            transform.GetComponent<ActionBasedContinuousMoveProvider>().moveSpeed = originalMovementSpeed;
+            transform.GetComponent<ActionBasedContinuousMoveProvider>().moveSpeed = _originalMovementSpeed;
 
             // In case of using Continuous turn, reactivate turn speed
-            transform.GetComponent<ContinuousTurnProviderBase>().turnSpeed = originalTurnSpeed;
+            transform.GetComponent<ContinuousTurnProviderBase>().turnSpeed = _originalTurnSpeed;
 
             // In case of using Snap Turn, reenable turn
             transform.GetComponent<SnapTurnProviderBase>().enableTurnLeftRight = true;

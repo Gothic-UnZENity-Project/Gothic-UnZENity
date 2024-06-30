@@ -1,6 +1,5 @@
 using System.Linq;
 using GUZ.Core;
-using GUZ.Core.Caches;
 using GUZ.Core.Context;
 using GUZ.Core.Globals;
 using GUZ.XRIT.Components.Vobs;
@@ -11,13 +10,13 @@ using Object = UnityEngine.Object;
 
 namespace GUZ.XRIT
 {
-    public class XRITInteractionAdapter : IInteractionAdapter
+    public class XritInteractionAdapter : IInteractionAdapter
     {
-        private const string CONTEXT_NAME = "XRIT"; // XR Interaction Toolkit
+        private const string _contextName = "XRIT"; // XR Interaction Toolkit
 
         public string GetContextName()
         {
-            return CONTEXT_NAME;
+            return _contextName;
         }
 
         public GameObject CreatePlayerController(Scene scene)
@@ -27,12 +26,12 @@ namespace GUZ.XRIT
 
             if (Constants.SceneMainMenu == scene.name)
             {
-                prefabName = $"{CONTEXT_NAME}/Prefabs/VRPlayer/VRPlayer-MainMenu";
+                prefabName = $"{_contextName}/Prefabs/VRPlayer/VRPlayer-MainMenu";
                 goName = "VRPlayer - XRIT - MainMenu";
             }
             else
             {
-                prefabName = $"{CONTEXT_NAME}/Prefabs/VRPlayer/VRPlayer";
+                prefabName = $"{_contextName}/Prefabs/VRPlayer/VRPlayer";
                 goName = "VRPlayer - XRIT";
             }
 
@@ -71,7 +70,9 @@ namespace GUZ.XRIT
             meshColliderComp.convex = true; // We need to set it to overcome Physics.ClosestPoint warnings.
             go.tag = Constants.ClimbableTag;
             rigidbodyComp.isKinematic = true;
-            grabComp.throwOnDetach = false; // Throws errors and isn't needed as we don't want to move the kinematic ladder when released.
+            
+            // Throws errors and isn't needed as we don't want to move the kinematic ladder when released.
+            grabComp.throwOnDetach = false;
             grabComp.trackPosition = false;
             grabComp.trackRotation = false;
             grabComp.selectMode = InteractableSelectMode.Multiple; // With this, we can grab with both hands!
@@ -86,8 +87,8 @@ namespace GUZ.XRIT
             var colliderComp = go.GetComponent<MeshCollider>();
             colliderComp.convex = true;
 
-            var itemGrabComp = go.AddComponent<XRITItemGrabInteractable>();
-            itemGrabComp.rb = go.GetComponent<Rigidbody>();
+            var itemGrabComp = go.AddComponent<XritItemGrabInteractable>();
+            itemGrabComp.Rb = go.GetComponent<Rigidbody>();
 
             // There is no culling in Lab
             if (!isLab)

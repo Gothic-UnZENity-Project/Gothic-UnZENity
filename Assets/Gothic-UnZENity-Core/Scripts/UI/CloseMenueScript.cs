@@ -2,22 +2,23 @@ using UnityEngine;
 
 public class CloseMenueScript : MonoBehaviour
 {
-    private Vector3 menuePosition;
-    private Quaternion menueRotation;
-    private GameObject menueParent;
+    private Vector3 _menuePosition;
+    private Quaternion _menueRotation;
+    private GameObject _menueParent;
+
     private void Start()
     {
-        menuePosition = transform.localPosition;
-        menueRotation = transform.localRotation;
-        menueParent = transform.parent.gameObject;
+        _menuePosition = transform.localPosition;
+        _menueRotation = transform.localRotation;
+        _menueParent = transform.parent.gameObject;
         gameObject.SetActive(false);
     }
 
     public void CloseFunction()
     {
-        transform.parent = menueParent.transform;
-        transform.localRotation = menueRotation;
-        transform.localPosition = menuePosition;
+        transform.parent = _menueParent.transform;
+        transform.localRotation = _menueRotation;
+        transform.localPosition = _menuePosition;
         gameObject.SetActive(false);
     }
 }

@@ -1,21 +1,21 @@
 using GUZ.Core;
-using GUZ.Core.Manager.Culling;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.XR.Interaction.Toolkit;
 
 namespace GUZ.XRIT.Components.Vobs
 {
     [RequireComponent(typeof(Rigidbody))]
-    public class XRITItemGrabInteractable : MonoBehaviour
+    public class XritItemGrabInteractable : MonoBehaviour
     {
-        public GameObject attachPoint1;
-        public GameObject attachPoint2;
+        [FormerlySerializedAs("attachPoint1")] public GameObject AttachPoint1;
+        [FormerlySerializedAs("attachPoint2")] public GameObject AttachPoint2;
 
-        public Rigidbody rb;
+        [FormerlySerializedAs("rb")] public Rigidbody Rb;
 
         private void Start()
         {
-            rb = GetComponent<Rigidbody>();
+            Rb = GetComponent<Rigidbody>();
         }
 
         public void SelectEntered(SelectEnterEventArgs args)
@@ -28,8 +28,11 @@ namespace GUZ.XRIT.Components.Vobs
         /// </summary>
         public void SelectExited(SelectExitEventArgs args)
         {
-            if (rb.isKinematic)
-                rb.isKinematic = false;
+            if (Rb.isKinematic)
+            {
+                Rb.isKinematic = false;
+            }
+
             GameGlobals.MeshCulling.StopTrackVobPositionUpdates(gameObject);
         }
     }

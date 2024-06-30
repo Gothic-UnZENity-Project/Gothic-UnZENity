@@ -6,10 +6,11 @@ using UnityEngine;
 
 namespace GUZ.Core.Npc.Actions.AnimationActions
 {
-    public class StartProcessInfos: AbstractAnimationAction
+    public class StartProcessInfos : AbstractAnimationAction
     {
         public StartProcessInfos(AnimationAction action, GameObject npcGo) : base(action, npcGo)
-        { }
+        {
+        }
 
         public override void Start()
         {
@@ -17,7 +18,9 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
 
             // AI_STopProcessInfos was called before this Action
             if (!GameData.Dialogs.IsInDialog)
+            {
                 return;
+            }
 
             var dialogId = Action.Int0;
 
@@ -25,11 +28,14 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
 
             if (isInSubDialog)
             {
-                var foundItem = GameData.Dialogs.CurrentDialog.Options.FirstOrDefault(option => option.Function == dialogId);
+                var foundItem =
+                    GameData.Dialogs.CurrentDialog.Options.FirstOrDefault(option => option.Function == dialogId);
 
                 // If a dialog calls Info_ClearChoices(), then the current sub dialog is already gone.
                 if (foundItem != null)
+                {
                     GameData.Dialogs.CurrentDialog.Options.Remove(foundItem);
+                }
             }
             else
             {
@@ -42,7 +48,6 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             }
 
             DialogHelper.StartDialog(Props);
-
         }
     }
 }

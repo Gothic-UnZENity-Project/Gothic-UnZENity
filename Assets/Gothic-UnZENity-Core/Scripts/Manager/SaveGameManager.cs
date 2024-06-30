@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using GUZ.Core.World;
@@ -73,7 +74,7 @@ namespace GUZ.Core.Manager
                 return;
             }
 
-            ZenKit.World world = ResourceLoader.TryGetWorld(worldName);
+            var world = ResourceLoader.TryGetWorld(worldName);
             ZenKit.World saveGameWorld = null;
 
             // We can't ask a SaveGame for a world if we didn't save it before. Bug?

@@ -7,12 +7,12 @@ namespace GUZ.Core.Manager
     {
         public static void DisablePhysicsForNpc(NpcProperties props)
         {
-            props.colliderRootMotion.GetComponent<Rigidbody>().isKinematic = true;
+            props.ColliderRootMotion.GetComponent<Rigidbody>().isKinematic = true;
         }
 
         public static void EnablePhysicsForNpc(NpcProperties props)
         {
-            props.colliderRootMotion.GetComponent<Rigidbody>().isKinematic = false;
+            props.ColliderRootMotion.GetComponent<Rigidbody>().isKinematic = false;
         }
     }
 }

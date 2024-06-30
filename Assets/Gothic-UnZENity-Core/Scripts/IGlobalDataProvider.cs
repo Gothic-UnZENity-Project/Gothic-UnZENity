@@ -5,18 +5,18 @@ using GUZ.Core.World;
 
 namespace GUZ.Core
 {
-	public interface IGlobalDataProvider
-	{
-		public GameConfiguration Config { get; }
-		public GameSettings Settings { get; }
-		public SkyManager Sky { get; }
-		public GameTime Time { get; }
-		public RoutineManager Routines { get; }
-		public TextureManager Textures { get; }
-		public GUZSceneManager Scene { get; }
-		public FontManager Font { get; }
-		public StationaryLightsManager Lights { get; }
-		public VobMeshCullingManager MeshCulling { get; }
-		public VobSoundCullingManager SoundCulling { get; }
-	}
+    public interface IGlobalDataProvider
+    {
+        public GameConfiguration Config { get; }
+        public GameSettings Settings { get; }
+        public SkyManager Sky { get; }
+        public GameTime Time { get; }
+        public RoutineManager Routines { get; }
+        public TextureManager Textures { get; }
+        public GuzSceneManager Scene { get; }
+        public FontManager Font { get; }
+        public StationaryLightsManager Lights { get; }
+        public VobMeshCullingManager MeshCulling { get; }
+        public VobSoundCullingManager SoundCulling { get; }
+    }
 }

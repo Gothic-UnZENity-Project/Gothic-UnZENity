@@ -5,6 +5,6 @@ namespace GUZ.Core.Vob
 {
     public class VobPfxProperties : VobProperties
     {
-        public ParticleEffectInstance pfxData;
+        public ParticleEffectInstance PfxData;
     }
 }

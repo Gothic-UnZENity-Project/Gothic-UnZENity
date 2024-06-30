@@ -56,8 +56,7 @@ Shader "Unlit/ThunderShader"
 
             fixed4 frag(v2f i) : SV_Target
             {
-
-                if (i.uv.y < 1-_ShowThreshold)
+                if (i.uv.y < 1 - _ShowThreshold)
                 {
                     discard; // Discard the fragment if it is beyond the threshold.
                 }

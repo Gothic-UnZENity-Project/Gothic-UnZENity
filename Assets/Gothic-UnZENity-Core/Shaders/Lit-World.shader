@@ -7,7 +7,10 @@ Shader "Lit/World"
     }
     SubShader
     {
-        Tags {  "RenderType" = "Opaque" "RenderPipeline" = "UniversalPipeline" "RenderQueue" = "Geometry" }
+        Tags
+        {
+            "RenderType" = "Opaque" "RenderPipeline" = "UniversalPipeline" "RenderQueue" = "Geometry"
+        }
 
         Pass
         {
@@ -24,7 +27,7 @@ Shader "Lit/World"
                 half3 color : COLOR;
                 half3 normal : NORMAL;
                 float4 uv : TEXCOORD0; // uv, array slice, max mip level
-                
+
                 UNITY_VERTEX_INPUT_INSTANCE_ID
             };
 
@@ -68,16 +71,18 @@ Shader "Lit/World"
                 }
                 if (_StationaryLightCount >= MAX_AFFECTING_STATIONARY_LIGHTS)
                 {
-                    for (int l = 0; l < min(_StationaryLightCount - MAX_AFFECTING_STATIONARY_LIGHTS, MAX_AFFECTING_STATIONARY_LIGHTS); l++)
+                    for (int l = 0; l < min(_StationaryLightCount - MAX_AFFECTING_STATIONARY_LIGHTS,
+                            MAX_AFFECTING_STATIONARY_LIGHTS); l++)
                     {
-                        diffuse += AdditionalStationaryDiffuse(_StationaryLightIndices2[l / 4][l % 4], worldPos, normal);
+                        diffuse += AdditionalStationaryDiffuse(_StationaryLightIndices2[l / 4][l % 4], worldPos,
+                                                                           normal);
                     }
                 }
 
                 return diffuse;
             }
 
-            v2f vert (appdata v)
+            v2f vert(appdata v)
             {
                 v2f o;
 
@@ -94,9 +99,10 @@ Shader "Lit/World"
             half4 frag(v2f i) : SV_Target
             {
                 float mipLevel = CalcMipLevel(i.uv.xy * _MainTex_TexelSize.zw);
-                half4 albedo = SAMPLE_TEXTURE2D_ARRAY_LOD(_MainTex, sampler_MainTex, i.uv.xy, i.uv.z, clamp(mipLevel, 0, i.uv.w));
+                half4 albedo = SAMPLE_TEXTURE2D_ARRAY_LOD(_MainTex, sampler_MainTex, i.uv.xy, i.uv.z,
+             clamp(mipLevel, 0, i.uv.w));
                 half3 diffuse = albedo * i.diffuse;
-                
+
                 diffuse = ApplyFog(diffuse, i.worldPos);
                 return half4(diffuse, 1);
             }

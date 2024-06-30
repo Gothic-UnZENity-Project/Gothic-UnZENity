@@ -1,5 +1,3 @@
-using GUZ.Core.Extensions;
-using GUZ.Core.Properties;
 using UnityEngine;
 
 namespace GUZ.Core.Npc
@@ -22,7 +20,7 @@ namespace GUZ.Core.Npc
             var collisionTransform = transform;
 
             // Apply physics based position change to root.
-            npcRoot.transform.localPosition += collisionTransform.localPosition;
+            NpcRoot.transform.localPosition += collisionTransform.localPosition;
 
             // Empty physics based diff. Next frame physics will be recalculated.
             collisionTransform.localPosition = Vector3.zero;

@@ -3,100 +3,143 @@ using System.Collections.Generic;
 using GUZ.Core.Context;
 using GUZ.Core.World;
 using UnityEngine;
+using UnityEngine.Serialization;
 using ZenKit;
 using ZenKit.Vobs;
 
 namespace GUZ.Core
 {
-	[Serializable]
-	public class MeshCullingGroup
-	{
-		[Range(1f, 100f)] public float maximumObjectSize;
-		[Range(1f, 1000f)] public float cullingDistance;
-	}
+    [Serializable]
+    public class MeshCullingGroup
+    {
+        [FormerlySerializedAs("maximumObjectSize")] [Range(1f, 100f)]
+        public float MaximumObjectSize;
 
-	[CreateAssetMenu(fileName = "Data", menuName = "ScriptableObjects/GameConfiguration", order = 1)]
-	public class GameConfiguration : ScriptableObject
-	{
-		[Header("### Controls ###")] public bool enableDeviceSimulator = false;
-        public GUZContext.Controls gameControls = GUZContext.Controls.VR_XRIT;
+        [FormerlySerializedAs("cullingDistance")] [Range(1f, 1000f)]
+        public float CullingDistance;
+    }
 
-		[Header("### Developer ###")]
-        [SerializeField] public bool enableMainMenu = true;
-        [SerializeField] public bool loadFromSaveSlot = false;
-        [Range(1,15)]
-        [SerializeField] public int saveSlotToLoad = 0;
+    [CreateAssetMenu(fileName = "Data", menuName = "ScriptableObjects/GameConfiguration", order = 1)]
+    public class GameConfiguration : ScriptableObject
+    {
+        [FormerlySerializedAs("enableDeviceSimulator")] [Header("### Controls ###")]
+        public bool EnableDeviceSimulator;
 
-		[SerializeField] public bool spawnOldCampNpcs = false;
-		[SerializeField] public bool enableNpcRoutines = false;
+        [FormerlySerializedAs("gameControls")] public GuzContext.Controls GameControls = GuzContext.Controls.VRXrit;
 
-		[SerializeField] public string spawnAtWaypoint = string.Empty;
+        [FormerlySerializedAs("enableMainMenu")] [Header("### Developer ###")] [SerializeField]
+        public bool EnableMainMenu = true;
 
-		[SerializeField] public bool enableWorldObjects = true;
-		[SerializeField] public bool enableWorldMesh = true;
-		[SerializeField] public bool enableBarrierVisual = true;
-		
-		[InspectorName("Experimental: Enable Decal Visuals")]
-		[SerializeField] public bool enableDecalVisuals = false;
-		
-		[InspectorName("Experimental: Enable Particle Effects")]
-		[SerializeField] public bool enableParticleEffects = false;
+        [FormerlySerializedAs("loadFromSaveSlot")] [SerializeField]
+        public bool LoadFromSaveSlot;
 
-		[InspectorName("Experimental: Enable NPC Eye Blinking")]
-		public bool enableNpcEyeBlinking = false;
-		
-		[SerializeField] public List<VirtualObjectType> spawnWorldObjectTypes = new();
-		[SerializeField] public List<int> spawnNpcInstances = new();
+        [FormerlySerializedAs("saveSlotToLoad")] [Range(1, 15)] [SerializeField]
+        public int SaveSlotToLoad;
 
-		[Header("### Audio ###")]
-        [SerializeField] public bool enableGameMusic = true;
+        [FormerlySerializedAs("spawnOldCampNpcs")] [SerializeField]
+        public bool SpawnOldCampNpcs;
 
-		[SerializeField] public bool enableGameSounds = true;
+        [FormerlySerializedAs("enableNpcRoutines")] [SerializeField]
+        public bool EnableNpcRoutines;
 
-		[Header("### Lighting ###")] 
-		[SerializeField] public Color sunLightColor = new(r: 0.6901961f, g: 0.6901961f, b: 0.6901961f, a: 1);
+        [FormerlySerializedAs("spawnAtWaypoint")] [SerializeField]
+        public string SpawnAtWaypoint = string.Empty;
 
-		[SerializeField] [Range(0, 1)] public float sunLightIntensity = 1;
+        [FormerlySerializedAs("enableWorldObjects")] [SerializeField]
+        public bool EnableWorldObjects = true;
 
-		[SerializeField] public GameTimeInterval sunUpdateInterval = GameTimeInterval.EveryGameHour;
+        [FormerlySerializedAs("enableWorldMesh")] [SerializeField]
+        public bool EnableWorldMesh = true;
 
-		[SerializeField] public Color ambientLightColor = new(r: 0.10196079f, g: 0.10196079f, b: 0.10196079f, a: 1);
+        [FormerlySerializedAs("enableBarrierVisual")] [SerializeField]
+        public bool EnableBarrierVisual = true;
 
-		[Header("### Time ###")] [SerializeField] [Range(0, 23)]
-		public int startTimeHour = 8;
+        [FormerlySerializedAs("enableDecalVisuals")]
+        [InspectorName("Experimental: Enable Decal Visuals")]
+        [SerializeField]
+        public bool EnableDecalVisuals;
 
-		[SerializeField] [Range(0, 59)] public int startTimeMinute = 0;
+        [FormerlySerializedAs("enableParticleEffects")]
+        [InspectorName("Experimental: Enable Particle Effects")]
+        [SerializeField]
+        public bool EnableParticleEffects;
 
-		[SerializeField] [Range(0.5f, 1000f)] public float timeSpeedMultiplier = 1;
+        [FormerlySerializedAs("enableNpcEyeBlinking")] [InspectorName("Experimental: Enable NPC Eye Blinking")]
+        public bool EnableNpcEyeBlinking;
 
-		[Header("### WayNet ###")]
-        [SerializeField] public bool showFreePoints = false;
+        [FormerlySerializedAs("spawnWorldObjectTypes")] [SerializeField]
+        public List<VirtualObjectType> SpawnWorldObjectTypes = new();
 
-		[SerializeField] public bool showWayPoints = false;
+        [FormerlySerializedAs("spawnNpcInstances")] [SerializeField]
+        public List<int> SpawnNpcInstances = new();
 
-		[SerializeField] public bool showWayEdges = false;
+        [FormerlySerializedAs("enableGameMusic")] [Header("### Audio ###")] [SerializeField]
+        public bool EnableGameMusic = true;
 
-		[Header("### Culling ###")]
-        [SerializeField] public bool enableSoundCulling = true;
+        [FormerlySerializedAs("enableGameSounds")] [SerializeField]
+        public bool EnableGameSounds = true;
 
-		[SerializeField] public bool enableMeshCulling = true;
+        [FormerlySerializedAs("sunLightColor")] [Header("### Lighting ###")] [SerializeField]
+        public Color SunLightColor = new(0.6901961f, 0.6901961f, 0.6901961f, 1);
 
-		[SerializeField] public bool showMeshCullingGizmos = true;
+        [FormerlySerializedAs("sunLightIntensity")] [SerializeField] [Range(0, 1)]
+        public float SunLightIntensity = 1;
 
-		[SerializeField] public MeshCullingGroup smallMeshCullingGroup = new() { maximumObjectSize = 0.2f, cullingDistance = 50 };
+        [FormerlySerializedAs("sunUpdateInterval")] [SerializeField]
+        public GameTimeInterval SunUpdateInterval = GameTimeInterval.EveryGameHour;
 
-		[SerializeField] public MeshCullingGroup mediumMeshCullingGroup = new() { maximumObjectSize = 5.0f, cullingDistance = 100 };
+        [FormerlySerializedAs("ambientLightColor")] [SerializeField]
+        public Color AmbientLightColor = new(0.10196079f, 0.10196079f, 0.10196079f, 1);
 
-		[SerializeField] public MeshCullingGroup largeMeshCullingGroup = new() { maximumObjectSize = 100, cullingDistance = 200 };
+        [FormerlySerializedAs("startTimeHour")] [Header("### Time ###")] [SerializeField] [Range(0, 23)]
+        public int StartTimeHour = 8;
 
-		[Header("### Logging ###")]
+        [FormerlySerializedAs("startTimeMinute")] [SerializeField] [Range(0, 59)]
+        public int StartTimeMinute;
+
+        [FormerlySerializedAs("timeSpeedMultiplier")] [SerializeField] [Range(0.5f, 1000f)]
+        public float TimeSpeedMultiplier = 1;
+
+        [FormerlySerializedAs("showFreePoints")] [Header("### WayNet ###")] [SerializeField]
+        public bool ShowFreePoints;
+
+        [FormerlySerializedAs("showWayPoints")] [SerializeField]
+        public bool ShowWayPoints;
+
+        [FormerlySerializedAs("showWayEdges")] [SerializeField]
+        public bool ShowWayEdges;
+
+        [FormerlySerializedAs("enableSoundCulling")] [Header("### Culling ###")] [SerializeField]
+        public bool EnableSoundCulling = true;
+
+        [FormerlySerializedAs("enableMeshCulling")] [SerializeField]
+        public bool EnableMeshCulling = true;
+
+        [FormerlySerializedAs("showMeshCullingGizmos")] [SerializeField]
+        public bool ShowMeshCullingGizmos = true;
+
+        [FormerlySerializedAs("smallMeshCullingGroup")] [SerializeField]
+        public MeshCullingGroup SmallMeshCullingGroup = new() { MaximumObjectSize = 0.2f, CullingDistance = 50 };
+
+        [FormerlySerializedAs("mediumMeshCullingGroup")] [SerializeField]
+        public MeshCullingGroup MediumMeshCullingGroup = new() { MaximumObjectSize = 5.0f, CullingDistance = 100 };
+
+        [FormerlySerializedAs("largeMeshCullingGroup")] [SerializeField]
+        public MeshCullingGroup LargeMeshCullingGroup = new() { MaximumObjectSize = 100, CullingDistance = 200 };
+
+        [FormerlySerializedAs("zenkitLogLevel")]
+        [Header("### Logging ###")]
         [InspectorName("ZenKit Log Level")]
-        [SerializeField] public LogLevel zenkitLogLevel = LogLevel.Warning;
+        [SerializeField]
+        public LogLevel ZenkitLogLevel = LogLevel.Warning;
 
-        [InspectorName("DirectMusic Log Level")]
-		[SerializeField] public DirectMusic.LogLevel directMusicLogLevel = DirectMusic.LogLevel.Warning;
+        [FormerlySerializedAs("directMusicLogLevel")] [InspectorName("DirectMusic Log Level")] [SerializeField]
+        public DirectMusic.LogLevel DirectMusicLogLevel = DirectMusic.LogLevel.Warning;
 
-		[SerializeField] public bool enableBarrierLogs = false;
-		[SerializeField] public bool enableSpyLogs = false;
-	}
+        [FormerlySerializedAs("enableBarrierLogs")] [SerializeField]
+        public bool EnableBarrierLogs;
+
+        [FormerlySerializedAs("enableSpyLogs")] [SerializeField]
+        public bool EnableSpyLogs;
+    }
 }

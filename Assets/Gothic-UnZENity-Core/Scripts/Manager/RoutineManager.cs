@@ -10,7 +10,7 @@ namespace GUZ.Core.Manager
     /// </summary>
     public class RoutineManager
     {
-        private Dictionary<int, List<Routine>> npcStartTimeDict = new();
+        private Dictionary<int, List<Routine>> _npcStartTimeDict = new();
 
         private readonly bool _featureEnable;
         private readonly int _featureStartHour;
@@ -18,11 +18,11 @@ namespace GUZ.Core.Manager
 
         public RoutineManager(GameConfiguration config)
         {
-            _featureEnable = config.enableNpcRoutines;
-            _featureStartHour = config.startTimeHour;
-            _featureStartMinute = config.startTimeMinute;
+            _featureEnable = config.EnableNpcRoutines;
+            _featureStartHour = config.StartTimeHour;
+            _featureStartMinute = config.StartTimeMinute;
         }
-        
+
         public void Init()
         {
             //Init starting position
@@ -30,7 +30,7 @@ namespace GUZ.Core.Manager
             {
                 return;
             }
-            
+
             GlobalEventDispatcher.GeneralSceneLoaded.AddListener(WorldLoadedEvent);
             GlobalEventDispatcher.GameTimeMinuteChangeCallback.AddListener(Invoke);
         }
@@ -38,7 +38,7 @@ namespace GUZ.Core.Manager
         private void WorldLoadedEvent(GameObject playerGo)
         {
             var time = new DateTime(1, 1, 1, _featureStartHour, _featureStartMinute, 0);
-            
+
             Invoke(time);
         }
 
@@ -53,23 +53,27 @@ namespace GUZ.Core.Manager
             routines.Reverse();
             foreach (var routine in routines)
             {
-                npcStartTimeDict.TryAdd(routine.normalizedStart, new());
-                npcStartTimeDict[routine.normalizedStart].Add(npcID);
+                _npcStartTimeDict.TryAdd(routine.NormalizedStart, new List<Routine>());
+                _npcStartTimeDict[routine.NormalizedStart].Add(npcID);
             }
         }
 
         public void Unsubscribe(Routine routineInstance, List<RoutineData> routines)
         {
-            foreach (RoutineData routine in routines)
+            foreach (var routine in routines)
             {
-                if (!npcStartTimeDict.TryGetValue(routine.normalizedStart, out List<Routine> routinesForStartPoint))
+                if (!_npcStartTimeDict.TryGetValue(routine.NormalizedStart, out var routinesForStartPoint))
+                {
                     return;
+                }
 
                 routinesForStartPoint.Remove(routineInstance);
 
                 // Remove element if empty
-                if (npcStartTimeDict[routine.normalizedStart].Count == 0)
-                    npcStartTimeDict.Remove(routine.normalizedStart);
+                if (_npcStartTimeDict[routine.NormalizedStart].Count == 0)
+                {
+                    _npcStartTimeDict.Remove(routine.NormalizedStart);
+                }
             }
         }
 
@@ -80,11 +84,13 @@ namespace GUZ.Core.Manager
         private void Invoke(DateTime now)
         {
             var normalizedNow = now.Hour % 24 * 60 + now.Minute;
-            
+
             Debug.Log($"RoutineManager.timeChanged={now}");
-            if (!npcStartTimeDict.TryGetValue(normalizedNow, out var routineItems))
+            if (!_npcStartTimeDict.TryGetValue(normalizedNow, out var routineItems))
+            {
                 return;
-            
+            }
+
             foreach (var routineItem in routineItems)
             {
                 routineItem.ChangeRoutine(now);

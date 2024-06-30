@@ -6,7 +6,8 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
     public class AlignToWp : AbstractRotateAnimationAction
     {
         public AlignToWp(AnimationAction action, GameObject npcGo) : base(action, npcGo)
-        { }
+        {
+        }
 
         protected override Quaternion GetRotationDirection()
         {
@@ -18,7 +19,8 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             catch (Exception e)
             {
                 Debug.LogError(e);
-                return Quaternion.identity;;
+                return Quaternion.identity;
+                ;
             }
         }
     }

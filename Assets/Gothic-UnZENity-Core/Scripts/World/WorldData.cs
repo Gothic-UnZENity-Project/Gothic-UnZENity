@@ -30,11 +30,10 @@ namespace GUZ.Core.World
 
             public readonly List<Vector3> Vertices = new();
             public readonly List<int> Triangles = new();
-            public readonly List<Vector4> Uvs = new() ;
+            public readonly List<Vector4> Uvs = new();
             public readonly List<Vector3> Normals = new();
             public readonly List<Color32> BakedLightColors = new();
             public readonly List<Vector2> TextureAnimations = new();
         }
-
     }
 }

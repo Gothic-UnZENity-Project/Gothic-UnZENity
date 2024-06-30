@@ -1,13 +1,14 @@
+using GUZ.Core;
 using GUZ.Core.Context;
 using GUZ.Core.Creator.Meshes.V2;
-using GUZ.Core;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace GUZ.Lab.Handler
 {
     public class LabLadderLabHandler : MonoBehaviour, ILabHandler
     {
-        public GameObject ladderSlot;
+        [FormerlySerializedAs("ladderSlot")] public GameObject LadderSlot;
 
         public void Bootstrap()
         {
@@ -16,10 +17,10 @@ namespace GUZ.Lab.Handler
             var mdl = ResourceLoader.TryGetModel(ladderName);
 
             var vobObj = MeshFactory.CreateVob(ladderName, mdl, Vector3.zero, Quaternion.Euler(0, 270, 0),
-                ladderSlot, rootGo: itemPrefab, useTextureArray: false);
+                LadderSlot, itemPrefab, false);
 
-            GameObject climbableObj = vobObj.GetComponentInChildren<MeshCollider>().gameObject;
-            GUZContext.InteractionAdapter.AddClimbingComponent(climbableObj);
+            var climbableObj = vobObj.GetComponentInChildren<MeshCollider>().gameObject;
+            GuzContext.InteractionAdapter.AddClimbingComponent(climbableObj);
         }
     }
 }

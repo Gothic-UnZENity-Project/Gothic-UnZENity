@@ -1,25 +1,22 @@
-using GUZ.Core.Caches;
 using GUZ.Core.Creator;
 using GUZ.Core.Data.ZkEvents;
-using GUZ.Core.Manager;
 using GUZ.Core.Vm;
 using UnityEngine;
-using ZenKit.Daedalus;
 
 namespace GUZ.Core.Npc.Actions.AnimationActions
 {
     public class UseItemToState : AbstractAnimationAction
     {
-        
-        private const string animationScheme = "T_{0}_{1}_2_{2}";
-        private const string LoopAnimationScheme = "S_{0}_S{1}";
+        private const string _animationScheme = "T_{0}_{1}_2_{2}";
+        private const string _loopAnimationScheme = "S_{0}_S{1}";
 
-        private int itemToUse => Action.Int0;
-        private int desiredState => Action.Int1;
+        private int ItemToUse => Action.Int0;
+        private int DesiredState => Action.Int1;
 
 
         public UseItemToState(AnimationAction action, GameObject npcGo) : base(action, npcGo)
-        { }
+        {
+        }
 
         public override void Start()
         {
@@ -28,31 +25,31 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
 
         private void PlayTransitionAnimation()
         {
-            int oldItemAnimationState = Props.itemAnimationState;
+            var oldItemAnimationState = Props.ItemAnimationState;
             int newItemAnimationState;
-            if (desiredState > Props.itemAnimationState)
+            if (DesiredState > Props.ItemAnimationState)
             {
-                Props.hasItemEquipped = true;
-                Props.currentItem = itemToUse;
-                newItemAnimationState = ++Props.itemAnimationState;
+                Props.HasItemEquipped = true;
+                Props.CurrentItem = ItemToUse;
+                newItemAnimationState = ++Props.ItemAnimationState;
             }
             else
             {
-                Props.hasItemEquipped = false;
-                Props.currentItem = -1;
+                Props.HasItemEquipped = false;
+                Props.CurrentItem = -1;
                 // e.g. Babe brush doesn't call it automatically. We therefore need to force remove the brush item from hand.
                 // AnimationEventCallback(new() { Type = ZenKit.EventType.ItemDestroy });
-                newItemAnimationState = --Props.itemAnimationState;
+                newItemAnimationState = --Props.ItemAnimationState;
             }
 
-            ItemInstance item = VmInstanceManager.TryGetItemData(itemToUse);
-            string oldState = oldItemAnimationState == -1 ? "STAND" : $"S{oldItemAnimationState}";
-            string newState = newItemAnimationState == -1 ? "STAND" : $"S{newItemAnimationState}";
+            var item = VmInstanceManager.TryGetItemData(ItemToUse);
+            var oldState = oldItemAnimationState == -1 ? "STAND" : $"S{oldItemAnimationState}";
+            var newState = newItemAnimationState == -1 ? "STAND" : $"S{newItemAnimationState}";
 
             // e.g. T_POTION_STAND_2_S0
-            var animationName = string.Format(animationScheme, item.SchemeName, oldState, newState);
+            var animationName = string.Format(_animationScheme, item.SchemeName, oldState, newState);
 
-            bool animationFound = AnimationCreator.PlayAnimation(Props.mdsNames, animationName, NpcGo);
+            var animationFound = AnimationCreator.PlayAnimation(Props.MdsNames, animationName, NpcGo);
 
             // e.g. BABE-T_BRUSH_S1_2_S0.man doesn't exist, but we can skip and use next one (S0_2_Stand)
             if (!animationFound)
@@ -66,7 +63,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
         {
             base.AnimationEndEventCallback(eventData);
 
-            if (Props.itemAnimationState == desiredState)
+            if (Props.ItemAnimationState == DesiredState)
             {
                 return;
             }

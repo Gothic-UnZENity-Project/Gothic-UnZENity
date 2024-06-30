@@ -6,7 +6,10 @@ Shader "Lit/Water"
     }
     SubShader
     {
-        Tags {  "RenderType" = "Transparent" "RenderPipeline" = "UniversalPipeline" "RenderQueue" = "Transparent" }
+        Tags
+        {
+            "RenderType" = "Transparent" "RenderPipeline" = "UniversalPipeline" "RenderQueue" = "Transparent"
+        }
 
         Pass
         {
@@ -28,7 +31,7 @@ Shader "Lit/Water"
                 half3 normal : NORMAL;
                 float4 uv : TEXCOORD0; // uv, array slice, max mip level
                 float2 textureAnimation : TEXCOORD1;
-                
+
                 UNITY_VERTEX_INPUT_INSTANCE_ID
             };
 
@@ -66,7 +69,7 @@ Shader "Lit/Water"
                 return diffuse;
             }
 
-            v2f vert (appdata v)
+            v2f vert(appdata v)
             {
                 v2f o;
 
@@ -75,7 +78,8 @@ Shader "Lit/Water"
 
                 o.worldPos = TransformObjectToWorld(v.vertex);
                 o.vertex = TransformObjectToHClip(v.vertex);
-                float2 movingUv = v.uv.xy * REFERENCE_TEX_ARRAY_SIZE * _MainTex_TexelSize.xy + v.textureAnimation * _Time.y * 1000;
+                float2 movingUv = v.uv.xy * REFERENCE_TEX_ARRAY_SIZE * _MainTex_TexelSize.xy + v.textureAnimation *
+                    _Time.y * 1000;
                 o.uv = float4(movingUv, v.uv.zw);
                 o.normal = TransformObjectToWorldNormal(v.normal);
                 o.diffuse = DiffuseLighting(o, v);
@@ -85,9 +89,10 @@ Shader "Lit/Water"
             half4 frag(v2f i) : SV_Target
             {
                 float mipLevel = CalcMipLevel(i.uv.xy * _MainTex_TexelSize.zw);
-                half4 albedo = SAMPLE_TEXTURE2D_ARRAY_LOD(_MainTex, sampler_MainTex, i.uv.xy, i.uv.z, clamp(mipLevel, 0, i.uv.w));
+                half4 albedo = SAMPLE_TEXTURE2D_ARRAY_LOD(_MainTex, sampler_MainTex, i.uv.xy, i.uv.z,
+                                                             clamp(mipLevel, 0, i.uv.w));
                 half3 diffuse = albedo * i.diffuse;
-                
+
                 diffuse = ApplyFog(diffuse, i.worldPos);
                 return half4(diffuse, 0.5 * albedo.a);
             }

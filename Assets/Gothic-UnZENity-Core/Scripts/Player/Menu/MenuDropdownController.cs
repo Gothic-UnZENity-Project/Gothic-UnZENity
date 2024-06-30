@@ -4,22 +4,25 @@ using GUZ.Core.Globals;
 using GUZ.Core.Util;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace GUZ.Core.Player.Menu
 {
     public class WorldSelectorDropdownController : SingletonBehaviour<WorldSelectorDropdownController>
     {
-        private Dictionary<string, string> waypoints = new Dictionary<string, string>();
-        [SerializeField] private TMP_Dropdown waypointDropdown;
+        private Dictionary<string, string> _waypoints = new();
+
+        [FormerlySerializedAs("waypointDropdown")] [SerializeField]
+        private TMP_Dropdown _waypointDropdown;
 
         private void Start()
         {
             SetWaypointDropdown();
         }
 
-        void SetWaypointDropdown()
+        private void SetWaypointDropdown()
         {
-            waypoints = new Dictionary<string, string>()
+            _waypoints = new Dictionary<string, string>
             {
                 { "START", "Start" },
                 { "ENTRANCE_SURFACE_OLDMINE", "Entrance Old Mine" },
@@ -33,23 +36,23 @@ namespace GUZ.Core.Player.Menu
             };
 
             WaypointSetDropdownValues();
-            waypointDropdown.onValueChanged.AddListener(WaypointDropdownItemSelected);
-            waypointDropdown.value = waypoints.Keys.ToList().IndexOf(Constants.selectedWaypoint);
+            _waypointDropdown.onValueChanged.AddListener(WaypointDropdownItemSelected);
+            _waypointDropdown.value = _waypoints.Keys.ToList().IndexOf(Constants.SelectedWaypoint);
         }
 
         public void WaypointSetDropdownValues()
         {
-            waypointDropdown.options.Clear();
+            _waypointDropdown.options.Clear();
 
-            foreach (var item in waypoints)
+            foreach (var item in _waypoints)
             {
-                waypointDropdown.options.Add(new TMP_Dropdown.OptionData() { text = item.Value });
+                _waypointDropdown.options.Add(new TMP_Dropdown.OptionData { text = item.Value });
             }
         }
 
-        void WaypointDropdownItemSelected(int value)
+        private void WaypointDropdownItemSelected(int value)
         {
-            Constants.selectedWaypoint = waypoints.Keys.ElementAt(value);
+            Constants.SelectedWaypoint = _waypoints.Keys.ElementAt(value);
         }
     }
 }

@@ -12,47 +12,47 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 355b4ad0092f448a80ea647207f12648, type: 3}
   m_Name: Production
   m_EditorClassIdentifier: 
-  enableDeviceSimulator: 0
-  gameControls: 0
-  enableMainMenu: 1
-  loadFromSaveSlot: 0
-  saveSlotToLoad: 0
-  spawnOldCampNpcs: 0
-  enableNpcRoutines: 0
-  spawnAtWaypoint: 
-  enableWorldObjects: 1
-  enableWorldMesh: 1
-  enableBarrierVisual: 1
-  enableDecalVisuals: 0
-  enableParticleEffects: 0
-  enableNpcEyeBlinking: 0
-  spawnWorldObjectTypes: 
-  spawnNpcInstances: 
-  enableGameMusic: 1
-  enableGameSounds: 1
-  sunLightColor: {r: 0.6901961, g: 0.6901961, b: 0.6901961, a: 1}
-  sunLightIntensity: 1
-  sunUpdateInterval: 2
-  ambientLightColor: {r: 0.10196079, g: 0.10196079, b: 0.10196079, a: 1}
-  startTimeHour: 8
-  startTimeMinute: 0
-  timeSpeedMultiplier: 1
-  showFreePoints: 0
-  showWayPoints: 0
-  showWayEdges: 0
-  enableSoundCulling: 1
-  enableMeshCulling: 1
-  showMeshCullingGizmos: 0
-  smallMeshCullingGroup:
-    maximumObjectSize: 1
-    cullingDistance: 50
-  mediumMeshCullingGroup:
-    maximumObjectSize: 5
-    cullingDistance: 100
-  largeMeshCullingGroup:
-    maximumObjectSize: 100
-    cullingDistance: 200
-  zenkitLogLevel: 1
-  directMusicLogLevel: 30
-  enableBarrierLogs: 0
-  enableSpyLogs: 0
+  EnableDeviceSimulator: 0
+  GameControls: 0
+  EnableMainMenu: 1
+  LoadFromSaveSlot: 0
+  SaveSlotToLoad: 1
+  SpawnOldCampNpcs: 0
+  EnableNpcRoutines: 0
+  SpawnAtWaypoint: 
+  EnableWorldObjects: 1
+  EnableWorldMesh: 1
+  EnableBarrierVisual: 1
+  EnableDecalVisuals: 0
+  EnableParticleEffects: 0
+  EnableNpcEyeBlinking: 0
+  SpawnWorldObjectTypes: 
+  SpawnNpcInstances: 
+  EnableGameMusic: 1
+  EnableGameSounds: 1
+  SunLightColor: {r: 0.6901961, g: 0.6901961, b: 0.6901961, a: 1}
+  SunLightIntensity: 1
+  SunUpdateInterval: 2
+  AmbientLightColor: {r: 0.10196079, g: 0.10196079, b: 0.10196079, a: 1}
+  StartTimeHour: 8
+  StartTimeMinute: 0
+  TimeSpeedMultiplier: 1
+  ShowFreePoints: 0
+  ShowWayPoints: 0
+  ShowWayEdges: 0
+  EnableSoundCulling: 1
+  EnableMeshCulling: 1
+  ShowMeshCullingGizmos: 0
+  SmallMeshCullingGroup:
+    MaximumObjectSize: 1
+    CullingDistance: 50
+  MediumMeshCullingGroup:
+    MaximumObjectSize: 5
+    CullingDistance: 100
+  LargeMeshCullingGroup:
+    MaximumObjectSize: 100
+    CullingDistance: 200
+  ZenkitLogLevel: 1
+  DirectMusicLogLevel: 30
+  EnableBarrierLogs: 0
+  EnableSpyLogs: 0

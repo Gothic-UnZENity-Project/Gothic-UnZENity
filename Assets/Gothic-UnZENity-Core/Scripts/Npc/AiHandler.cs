@@ -4,8 +4,6 @@ using GUZ.Core.Globals;
 using GUZ.Core.Npc.Actions;
 using GUZ.Core.Npc.Actions.AnimationActions;
 using GUZ.Core.Properties;
-using GUZ.Core.Extensions;
-using GUZ.Core.Manager;
 using UnityEngine;
 using ZenKit;
 
@@ -13,12 +11,12 @@ namespace GUZ.Core.Npc
 {
     public class AiHandler : BasePlayerBehaviour, IAnimationCallbacks
     {
-        private static DaedalusVm vm => GameData.GothicVm;
-        private const int DaedalusLoopContinue = 0; // Id taken from a Daedalus constant.
+        private static DaedalusVm Vm => GameData.GothicVm;
+        private const int _daedalusLoopContinue = 0; // Id taken from a Daedalus constant.
 
         private void Start()
         {
-            properties.currentAction = new None(new(), gameObject);
+            Properties.CurrentAction = new None(new AnimationAction(), gameObject);
         }
 
         /// <summary>
@@ -30,46 +28,58 @@ namespace GUZ.Core.Npc
         /// </summary>
         private void Update()
         {
-            properties.currentAction.Tick();
-          
+            Properties.CurrentAction.Tick();
+
             // Add new milliseconds when stateTime shall be measured.
-            if (properties.isStateTimeActive)
-                properties.stateTime += Time.deltaTime;
+            if (Properties.IsStateTimeActive)
+            {
+                Properties.StateTime += Time.deltaTime;
+            }
 
             // If we're not yet done, we won't handle further tasks (like dequeuing another Action)
-            if (!properties.currentAction.IsFinished())
+            if (!Properties.CurrentAction.IsFinished())
+            {
                 return;
-            
+            }
+
             // Queue is empty. Check if we want to start Looping
-            if (properties.AnimationQueue.Count == 0)
+            if (Properties.AnimationQueue.Count == 0)
             {
                 // We always need to set "self" before executing any Daedalus function.
-                vm.GlobalSelf = properties.npcInstance;
+                Vm.GlobalSelf = Properties.NpcInstance;
 
-                switch (properties.currentLoopState)
+                switch (Properties.CurrentLoopState)
                 {
                     case NpcProperties.LoopState.Start:
-                        if (properties.stateLoop == 0)
+                        if (Properties.StateLoop == 0)
+                        {
                             return;
-                        vm.Call(properties.stateStart);
+                        }
 
-                        properties.currentLoopState = NpcProperties.LoopState.Loop;
+                        Vm.Call(Properties.StateStart);
+
+                        Properties.CurrentLoopState = NpcProperties.LoopState.Loop;
                         break;
                     case NpcProperties.LoopState.Loop:
-                        var symbol = vm.GetSymbolByIndex(properties.stateLoop);
+                        var symbol = Vm.GetSymbolByIndex(Properties.StateLoop);
                         if (symbol is { HasReturn: true })
+                        {
                             switch (symbol.ReturnType)
                             {
                                 case DaedalusDataType.Int:
-                                    var loopResponse = vm.Call<int>(properties.stateLoop);
+                                    var loopResponse = Vm.Call<int>(Properties.StateLoop);
                                     // Some ZS_*_Loop return !=0 when they want to quit.
-                                    if (loopResponse != DaedalusLoopContinue)
-                                        properties.currentLoopState = NpcProperties.LoopState.End;
+                                    if (loopResponse != _daedalusLoopContinue)
+                                    {
+                                        Properties.CurrentLoopState = NpcProperties.LoopState.End;
+                                    }
+
                                     break;
                                 default:
-                                    vm.Call(properties.stateLoop);
+                                    Vm.Call(Properties.StateLoop);
                                     break;
                             }
+                        }
 
                         break;
                 }
@@ -77,40 +87,44 @@ namespace GUZ.Core.Npc
             // Go on
             else
             {
-                Debug.Log($"Start playing >{properties.AnimationQueue.Peek().GetType()}< on >{properties.go.name}<");
-                PlayNextAnimation(properties.AnimationQueue.Dequeue());
+                Debug.Log($"Start playing >{Properties.AnimationQueue.Peek().GetType()}< on >{Properties.Go.name}<");
+                PlayNextAnimation(Properties.AnimationQueue.Dequeue());
             }
         }
 
         public void StartRoutine(int action, string wayPointName)
         {
             // End original loop first
-            if (properties.currentLoopState == NpcProperties.LoopState.Loop)
+            if (Properties.CurrentLoopState == NpcProperties.LoopState.Loop)
             {
                 // We reuse this function as it is doing what we need.
                 ClearState(false);
             }
 
             // We need to set WayPoint within Daedalus instance as it calls _self.wp_ during routine loops.
-            properties.npcInstance.Wp = wayPointName;
-            properties.stateStart = action;
+            Properties.NpcInstance.Wp = wayPointName;
+            Properties.StateStart = action;
 
-            var routineSymbol = vm.GetSymbolByIndex(action);
-            
-            var symbolLoop = vm.GetSymbolByName($"{routineSymbol.Name}_Loop");
+            var routineSymbol = Vm.GetSymbolByIndex(action);
+
+            var symbolLoop = Vm.GetSymbolByName($"{routineSymbol.Name}_Loop");
             if (symbolLoop != null)
-                properties.stateLoop = symbolLoop.Index;
-            
-            var symbolEnd = vm.GetSymbolByName($"{routineSymbol.Name}_End");
+            {
+                Properties.StateLoop = symbolLoop.Index;
+            }
+
+            var symbolEnd = Vm.GetSymbolByName($"{routineSymbol.Name}_End");
             if (symbolEnd != null)
-                properties.stateEnd = symbolEnd.Index;
-            
-            properties.currentLoopState = NpcProperties.LoopState.Start;
+            {
+                Properties.StateEnd = symbolEnd.Index;
+            }
+
+            Properties.CurrentLoopState = NpcProperties.LoopState.Start;
 
             // We need to properly start state time as e.g. ZS_Cook won't call AI_StartState() or Npc_SetStateTime()
             // But it's required as it checks immediately how long the Cauldron is already been whirled.
-            properties.isStateTimeActive = true;
-            properties.stateTime = 0;
+            Properties.IsStateTimeActive = true;
+            Properties.StateTime = 0;
         }
 
         /// <summary>
@@ -119,52 +133,52 @@ namespace GUZ.Core.Npc
         public void ClearState(bool stopCurrentStateImmediately)
         {
             // Whenever we change routine, we reset some data to "start" from scratch as if the NPC got spawned.
-            properties.AnimationQueue.Clear();
-            properties.currentAction = new None(new(), gameObject);
-            properties.stateTime = 0.0f;
+            Properties.AnimationQueue.Clear();
+            Properties.CurrentAction = new None(new AnimationAction(), gameObject);
+            Properties.StateTime = 0.0f;
 
             if (stopCurrentStateImmediately)
             {
-                properties.currentLoopState = NpcProperties.LoopState.None;
-                AnimationCreator.StopAnimation(properties.go);
+                Properties.CurrentLoopState = NpcProperties.LoopState.None;
+                AnimationCreator.StopAnimation(Properties.Go);
             }
             else
             {
-                properties.currentLoopState = NpcProperties.LoopState.End;
+                Properties.CurrentLoopState = NpcProperties.LoopState.End;
 
-                if (properties.stateEnd != 0)
+                if (Properties.StateEnd != 0)
                 {
                     // We always need to set "self" before executing any Daedalus function.
-                    vm.GlobalSelf = properties.npcInstance;
-                    vm.Call(properties.stateEnd);
+                    Vm.GlobalSelf = Properties.NpcInstance;
+                    Vm.Call(Properties.StateEnd);
                 }
             }
         }
 
         private void PlayNextAnimation(AbstractAnimationAction action)
         {
-            properties.currentAction = action;
+            Properties.CurrentAction = action;
             action.Start();
         }
 
         public void AnimationCallback(string eventTagDataParam)
         {
             var eventData = JsonUtility.FromJson<SerializableEventTag>(eventTagDataParam);
-            properties.currentAction.AnimationEventCallback(eventData);
+            Properties.CurrentAction.AnimationEventCallback(eventData);
         }
 
         public void AnimationSfxCallback(string eventSfxDataParam)
         {
             var eventData = JsonUtility.FromJson<SerializableEventSoundEffect>(eventSfxDataParam);
-            properties.currentAction.AnimationSfxEventCallback(eventData);
+            Properties.CurrentAction.AnimationSfxEventCallback(eventData);
         }
 
         public void AnimationMorphCallback(string eventMorphDataParam)
         {
             var eventData = JsonUtility.FromJson<SerializableEventMorphAnimation>(eventMorphDataParam);
-            properties.currentAction.AnimationMorphEventCallback(eventData);
+            Properties.CurrentAction.AnimationMorphEventCallback(eventData);
         }
-        
+
         /// <summary>
         /// As all Components on a GameObject get called, we need to feed this information into current AnimationAction instance.
         /// </summary>
@@ -173,7 +187,7 @@ namespace GUZ.Core.Npc
             var eventData = JsonUtility.FromJson<SerializableEventEndSignal>(eventEndSignalParam);
 
             // FIXME ! We need to re-add physics when e.g. looping walk animation!
-            properties.currentAction.AnimationEndEventCallback(eventData);
+            Properties.CurrentAction.AnimationEndEventCallback(eventData);
         }
     }
 }

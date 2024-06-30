@@ -1,21 +1,21 @@
-using GUZ.Core.Manager;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace GUZ.Core.Vob
 {
     public class ChangeLevelTriggerHandler : MonoBehaviour
     {
-        public string levelName;
-        public string startVob;
-        
-        void OnTriggerEnter(Collider other)
+        [FormerlySerializedAs("levelName")] public string LevelName;
+        [FormerlySerializedAs("startVob")] public string StartVob;
+
+        private void OnTriggerEnter(Collider other)
         {
             if (!other.CompareTag("Player"))
             {
                 return;
             }
 
-            GlobalEventDispatcher.LevelChangeTriggered.Invoke(levelName, startVob.Trim());
+            GlobalEventDispatcher.LevelChangeTriggered.Invoke(LevelName, StartVob.Trim());
         }
     }
 }

@@ -9,7 +9,8 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
     public class StopProcessInfos : AbstractAnimationAction
     {
         public StopProcessInfos(AnimationAction action, GameObject npcGo) : base(action, npcGo)
-        { }
+        {
+        }
 
         public override void Start()
         {

@@ -5,7 +5,6 @@ using UnityEngine;
 using ZenKit;
 using ZenKit.Daedalus;
 using ZenKit.Util;
-using Texture = ZenKit.Texture;
 using TextureFormat = UnityEngine.TextureFormat;
 
 namespace GUZ.Core.Extensions
@@ -52,7 +51,7 @@ namespace GUZ.Core.Extensions
 
         public static Matrix4x4 ToUnityMatrix(this System.Numerics.Matrix4x4 matrix)
         {
-            return new()
+            return new Matrix4x4
             {
                 m00 = matrix.M11,
                 m01 = matrix.M12,
@@ -79,9 +78,15 @@ namespace GUZ.Core.Extensions
         public static BoneWeight ToBoneWeight(this List<SoftSkinWeightEntry> weights, List<int> nodeMapping)
         {
             if (weights == null)
+            {
                 throw new ArgumentNullException("Weights are null.");
+            }
+
             if (weights.Count == 0 || weights.Count > 4)
-                throw new ArgumentOutOfRangeException($"Only 1...4 weights are currently supported but >{weights.Count}< provided.");
+            {
+                throw new ArgumentOutOfRangeException(
+                    $"Only 1...4 weights are currently supported but >{weights.Count}< provided.");
+            }
 
             var data = new BoneWeight();
 
@@ -89,7 +94,10 @@ namespace GUZ.Core.Extensions
             {
                 var index = Array.IndexOf(nodeMapping.ToArray(), weights[i].NodeIndex);
                 if (index == -1)
-                    throw new ArgumentException($"No matching node index found in nodeMapping for weights[{i}].nodeIndex.");
+                {
+                    throw new ArgumentException(
+                        $"No matching node index found in nodeMapping for weights[{i}].nodeIndex.");
+                }
 
                 switch (i)
                 {
@@ -255,10 +263,12 @@ namespace GUZ.Core.Extensions
                 "$om" => svm.Om,
                 _ => null
             };
-            
+
             if (fileName == null)
+            {
                 Debug.LogError($"key {svmEntry} not (yet) implemented.");
-            
+            }
+
             return fileName;
         }
     }

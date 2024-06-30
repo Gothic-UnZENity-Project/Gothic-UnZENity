@@ -1,12 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.World;
-using GUZ.Core.Extensions;
-using GUZ.Core;
 using UnityEngine;
 using ZenKit;
 using Material = UnityEngine.Material;
+using WayPoint = GUZ.Core.Vob.WayNet.WayPoint;
 
 namespace GUZ.Core.Creator
 {
@@ -14,15 +14,15 @@ namespace GUZ.Core.Creator
     {
         public static void Create(GameConfiguration config, GameObject root, WorldData world)
         {
-            var waynetObj = new GameObject(string.Format("Waynet"));
+            var waynetObj = new GameObject("Waynet");
             waynetObj.SetParent(root);
 
 
             SetWayPointCache(world.WayNet);
-            CreateWaypoints(waynetObj, world, config.showWayPoints);
+            CreateWaypoints(waynetObj, world, config.ShowWayPoints);
             CreateDijkstraWaypoints(world.WayNet);
 
-            if (config.showWayEdges)
+            if (config.ShowWayEdges)
             {
                 CreateWaypointEdges(waynetObj, world);
             }
@@ -34,7 +34,7 @@ namespace GUZ.Core.Creator
 
             foreach (var wp in wayNet.Points)
             {
-                GameData.WayPoints.Add(wp.Name, new Vob.WayNet.WayPoint
+                GameData.WayPoints.Add(wp.Name, new WayPoint
                 {
                     Name = wp.Name,
                     Position = wp.Position.ToUnityVector(),
@@ -65,11 +65,12 @@ namespace GUZ.Core.Creator
                     new { a = wayPoints[edge.B], b = wayPoints[edge.A] }
                 })
                 .GroupBy(x => x.a.Name) // Group the entries by the name of the source waypoint.
-                .ToDictionary(g => g.Key, g => new DijkstraWaypoint(g.Key) // Transform each group into a DijkstraWaypoint.
-                {
-                    // The neighbors of the DijkstraWaypoint are the names of the destination waypoints in the group.
-                    Neighbors = g.Select(x => x.b.Name).ToList()
-                });
+                .ToDictionary(g => g.Key, g =>
+                    new DijkstraWaypoint(g.Key) // Transform each group into a DijkstraWaypoint.
+                    {
+                        // The neighbors of the DijkstraWaypoint are the names of the destination waypoints in the group.
+                        Neighbors = g.Select(x => x.b.Name).ToList()
+                    });
 
             GameData.DijkstraWaypoints = dijkstraWaypoints;
         }
@@ -82,6 +83,7 @@ namespace GUZ.Core.Creator
                 waypoint.Value.Position = result;
             }
         }
+
         /// <summary>
         /// Needed for future calculations.
         /// </summary>
@@ -92,15 +94,19 @@ namespace GUZ.Core.Creator
                 foreach (var neighbour in waypoint.Neighbors)
                 {
                     if (waypoint.DistanceToNeighbors.ContainsKey(neighbour))
+                    {
                         continue;
-                    waypoint.DistanceToNeighbors.Add(neighbour, Vector3.Distance(waypoint.Position, GameData.DijkstraWaypoints[neighbour].Position));
+                    }
+
+                    waypoint.DistanceToNeighbors.Add(neighbour,
+                        Vector3.Distance(waypoint.Position, GameData.DijkstraWaypoints[neighbour].Position));
                 }
             }
         }
 
         private static void CreateWaypoints(GameObject parent, WorldData world, bool debugDraw)
         {
-            var waypointsObj = new GameObject(string.Format("Waypoints"));
+            var waypointsObj = new GameObject("Waypoints");
             waypointsObj.SetParent(parent);
 
             foreach (var waypoint in world.WayNet.Points)
@@ -110,7 +116,9 @@ namespace GUZ.Core.Creator
                 // We remove the Renderer only if not wanted.
                 // TODO - Can be outsourced to a different Prefab-variant without Renderer for a fractal of additional performance. ;-)
                 if (!debugDraw)
+                {
                     Object.Destroy(wpObject.GetComponent<MeshRenderer>());
+                }
 
                 wpObject.name = waypoint.Name;
                 wpObject.transform.position = waypoint.Position.ToUnityVector();
@@ -121,14 +129,14 @@ namespace GUZ.Core.Creator
 
         private static void CreateWaypointEdges(GameObject parent, WorldData world)
         {
-            var waypointEdgesObj = new GameObject(string.Format("Edges"));
+            var waypointEdgesObj = new GameObject("Edges");
             waypointEdgesObj.SetParent(parent);
 
             for (var i = 0; i < world.WayNet.Edges.Count; i++)
             {
                 var edge = world.WayNet.Edges[i];
-                var startPos = world.WayNet.Points[(int)edge.A].Position.ToUnityVector();
-                var endPos = world.WayNet.Points[(int)edge.B].Position.ToUnityVector();
+                var startPos = world.WayNet.Points[edge.A].Position.ToUnityVector();
+                var endPos = world.WayNet.Points[edge.B].Position.ToUnityVector();
                 var lineObj = new GameObject();
 
                 lineObj.AddComponent<LineRenderer>();
@@ -143,7 +151,6 @@ namespace GUZ.Core.Creator
                 lineObj.transform.position = startPos;
                 lineObj.transform.parent = waypointEdgesObj.transform;
             }
-
         }
     }
 }

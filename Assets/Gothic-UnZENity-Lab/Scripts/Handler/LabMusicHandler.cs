@@ -1,19 +1,15 @@
-using System;
 using System.Linq;
-using GUZ.Core.Caches;
-using GUZ.Core.Debugging;
-using GUZ.Core.Globals;
-using GUZ.Core.Manager;
 using GUZ.Core;
+using GUZ.Core.Manager;
 using TMPro;
 using UnityEngine;
-using ZenKit.Daedalus;
+using UnityEngine.Serialization;
 
 namespace GUZ.Lab.Handler
 {
     public class LabMusicHandler : MonoBehaviour, ILabHandler
     {
-        public TMP_Dropdown fileSelector;
+        [FormerlySerializedAs("fileSelector")] public TMP_Dropdown FileSelector;
 
 
         public void Bootstrap()
@@ -24,12 +20,12 @@ namespace GUZ.Lab.Handler
                 .Select(s => s.Name)
                 .ToList();
 
-            fileSelector.options = musicInstances.Select(i => new TMP_Dropdown.OptionData(i)).ToList();
+            FileSelector.options = musicInstances.Select(i => new TMP_Dropdown.OptionData(i)).ToList();
         }
 
         public void MusicPlayClick()
         {
-            MusicManager.I.Play(fileSelector.options[fileSelector.value].text);
+            MusicManager.I.Play(FileSelector.options[FileSelector.value].text);
         }
     }
 }

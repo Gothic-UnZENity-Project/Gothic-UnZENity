@@ -1,9 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using GUZ.Core.Globals;
-using GUZ.Core.Util;
 using GUZ.Core.Extensions;
+using GUZ.Core.Globals;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -16,16 +15,17 @@ namespace GUZ.Core.Manager
         {
             WorldMesh,
             VOb,
-            NPC
+            Npc
         }
-        private GameObject bar;
 
-        private Scene loadingScene;
+        private GameObject _bar;
 
-        private const string loadingSceneName = "Loading";
+        private Scene _loadingScene;
 
-        private Dictionary<LoadingProgressType, float> progressByType = new Dictionary<LoadingProgressType, float>();
-        
+        private const string _loadingSceneName = "Loading";
+
+        private Dictionary<LoadingProgressType, float> _progressByType = new();
+
         public void Init()
         {
             GlobalEventDispatcher.LoadingSceneLoaded.AddListener(OnLoadingSceneLoaded);
@@ -33,18 +33,18 @@ namespace GUZ.Core.Manager
             // Initializing the Dictionary with the default progress (which is 0) for each type
             foreach (LoadingProgressType progressType in Enum.GetValues(typeof(LoadingProgressType)))
             {
-                if (!progressByType.ContainsKey(progressType))
+                if (!_progressByType.ContainsKey(progressType))
                 {
-                    progressByType.Add(progressType, 0f);
+                    _progressByType.Add(progressType, 0f);
                 }
             }
         }
 
         public void ResetProgress()
         {
-            foreach (LoadingProgressType progressType in progressByType.Keys.ToList())
+            foreach (var progressType in _progressByType.Keys.ToList())
             {
-                progressByType[progressType] = 0f;
+                _progressByType[progressType] = 0f;
             }
         }
 
@@ -57,7 +57,7 @@ namespace GUZ.Core.Manager
         private void SetBarFromScene()
         {
             var sphere = GameObject.Find("LoadingSphere");
-            bar = sphere.FindChildRecursively("ProgressBar");
+            _bar = sphere.FindChildRecursively("ProgressBar");
         }
 
         private void SetMaterialForLoading()
@@ -66,18 +66,20 @@ namespace GUZ.Core.Manager
             var sphere = scene.GetRootGameObjects().FirstOrDefault(go => go.name == "LoadingSphere");
 
             var tm = GameGlobals.Textures;
-            sphere.GetComponent<MeshRenderer>().material = tm.loadingSphereMaterial;
-            sphere.FindChildRecursively("LoadingImage").GetComponent<Image>().material = tm.gothicLoadingMenuMaterial;
-            sphere.FindChildRecursively("ProgressBackground").gameObject.GetComponent<Image>().material = tm.loadingBarBackgroundMaterial;
-            sphere.FindChildRecursively("ProgressBar").gameObject.GetComponent<Image>().material = tm.loadingBarMaterial;
+            sphere.GetComponent<MeshRenderer>().material = tm.LoadingSphereMaterial;
+            sphere.FindChildRecursively("LoadingImage").GetComponent<Image>().material = tm.GothicLoadingMenuMaterial;
+            sphere.FindChildRecursively("ProgressBackground").gameObject.GetComponent<Image>().material =
+                tm.LoadingBarBackgroundMaterial;
+            sphere.FindChildRecursively("ProgressBar").gameObject.GetComponent<Image>().material =
+                tm.LoadingBarMaterial;
         }
 
         private float CalculateOverallProgress()
         {
-            float totalProgress = 0f;
-            int numTypes = progressByType.Count;
+            var totalProgress = 0f;
+            var numTypes = _progressByType.Count;
 
-            foreach (var progressPair in progressByType)
+            foreach (var progressPair in _progressByType)
             {
                 totalProgress += progressPair.Value / numTypes;
             }
@@ -88,25 +90,29 @@ namespace GUZ.Core.Manager
         private void UpdateLoadingBar()
         {
             // Calculate the overall progress based on individual progress values
-            float overallProgress = CalculateOverallProgress();
+            var overallProgress = CalculateOverallProgress();
 
             // Update the loading bar with the overall progress
-            bar.GetComponent<Image>().fillAmount = overallProgress;
+            _bar.GetComponent<Image>().fillAmount = overallProgress;
         }
 
         public void SetProgress(LoadingProgressType progressType, float progress)
         {
-            progressByType[progressType] = progress;
-            if (bar != null)
+            _progressByType[progressType] = progress;
+            if (_bar != null)
+            {
                 UpdateLoadingBar();
+            }
         }
 
         public void AddProgress(LoadingProgressType progressType, float progress)
         {
-            float newProgress = progressByType[progressType] + progress;
-            progressByType[progressType] = newProgress;
-            if (bar != null)
+            var newProgress = _progressByType[progressType] + progress;
+            _progressByType[progressType] = newProgress;
+            if (_bar != null)
+            {
                 UpdateLoadingBar();
+            }
         }
     }
 }

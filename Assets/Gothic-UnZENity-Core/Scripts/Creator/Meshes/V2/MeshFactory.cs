@@ -2,10 +2,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using GUZ.Core.Creator.Meshes.V2.Builder;
 using GUZ.Core.Creator.Meshes.V2.Builder.Textures;
-using GUZ.Core.Vm;
-using GUZ.Core.World;
 using GUZ.Core.Extensions;
 using GUZ.Core.Manager;
+using GUZ.Core.Vm;
+using GUZ.Core.World;
 using UnityEngine;
 using ZenKit;
 using ZenKit.Daedalus;
@@ -15,7 +15,8 @@ namespace GUZ.Core.Creator.Meshes.V2
 {
     public static class MeshFactory
     {
-        public static async Task CreateWorld(WorldData world, LoadingManager loading, GameObject parent, int meshesPerFrame)
+        public static async Task CreateWorld(WorldData world, LoadingManager loading, GameObject parent,
+            int meshesPerFrame)
         {
             var worldBuilder = new WorldMeshBuilder();
             worldBuilder.SetGameObject(null, "Mesh");
@@ -45,17 +46,18 @@ namespace GUZ.Core.Creator.Meshes.V2
             return npcHeadBuilder.Build();
         }
 
-        public static GameObject CreateNpcWeapon(GameObject npcGo, ItemInstance itemData, VmGothicEnums.ItemFlags mainFlag, VmGothicEnums.ItemFlags flags)
+        public static GameObject CreateNpcWeapon(GameObject npcGo, ItemInstance itemData,
+            VmGothicEnums.ItemFlags mainFlag, VmGothicEnums.ItemFlags flags)
         {
             var npcWeaponBuilder = new NpcWeaponMeshBuilder();
             npcWeaponBuilder.SetWeaponData(npcGo, itemData, mainFlag, flags);
 
             switch (mainFlag)
             {
-                case VmGothicEnums.ItemFlags.ITEM_KAT_NF:
+                case VmGothicEnums.ItemFlags.ItemKatNf:
                     npcWeaponBuilder.SetMrm(itemData.Visual);
                     break;
-                case VmGothicEnums.ItemFlags.ITEM_KAT_FF:
+                case VmGothicEnums.ItemFlags.ItemKatFf:
                     npcWeaponBuilder.SetMmb(itemData.Visual);
                     break;
                 default:
@@ -74,7 +76,7 @@ namespace GUZ.Core.Creator.Meshes.V2
             {
                 return null;
             }
-            
+
             var vobBuilder = new VobMeshBuilder();
             vobBuilder.SetRootPosAndRot(position, rotation);
             vobBuilder.SetGameObject(rootGo, objectName);
@@ -97,17 +99,18 @@ namespace GUZ.Core.Creator.Meshes.V2
             {
                 return null;
             }
-            
+
             var vobBuilder = new VobMeshBuilder();
             vobBuilder.SetRootPosAndRot(position, rotation);
             vobBuilder.SetGameObject(rootGo, objectName);
-            vobBuilder.SetParent(parent, resetRotation: true); // If we don't reset these, all objects will be rotated wrong!
+            vobBuilder.SetParent(parent,
+                resetRotation: true); // If we don't reset these, all objects will be rotated wrong!
             vobBuilder.SetMdl(mdl);
             vobBuilder.SetUseTextureArray(useTextureArray);
 
             return vobBuilder.Build();
         }
-        
+
         public static GameObject CreateVob(string objectName, IMorphMesh mmb, Vector3 position, Quaternion rotation,
             GameObject parent = null, GameObject rootGo = null)
         {
@@ -122,7 +125,8 @@ namespace GUZ.Core.Creator.Meshes.V2
         }
 
         public static GameObject CreateVob(string objectName, IModelMesh mdm, IModelHierarchy mdh,
-            Vector3 position, Quaternion rotation, GameObject parent = null, GameObject rootGo = null, bool useTextureArray = true)
+            Vector3 position, Quaternion rotation, GameObject parent = null, GameObject rootGo = null,
+            bool useTextureArray = true)
         {
             if (!HasMeshes(mdm))
             {
@@ -146,13 +150,15 @@ namespace GUZ.Core.Creator.Meshes.V2
             // G1: Some skull decorations (OC_DECORATE_V4.3DS) are without texture.
             return !mrm.Materials.All(m => m.Texture.IsEmpty());
         }
-        
+
         private static bool HasMeshes(IModelMesh mdm)
         {
             // Check if there are completely empty elements without any texture.
             // G1: e.g. Harp, Flute, and WASH_SLOT (usage moved to a FreePoint within daedalus functions)
-            var noMeshTextures = mdm.Meshes.All(mesh => mesh.Mesh.SubMeshes.All(subMesh => subMesh.Material.Texture.IsEmpty()));
-            var noAttachmentTextures = mdm.Attachments.All(att => att.Value.Materials.All(mat => mat.Texture.IsEmpty()));
+            var noMeshTextures =
+                mdm.Meshes.All(mesh => mesh.Mesh.SubMeshes.All(subMesh => subMesh.Material.Texture.IsEmpty()));
+            var noAttachmentTextures =
+                mdm.Attachments.All(att => att.Value.Materials.All(mat => mat.Texture.IsEmpty()));
 
             return !(noMeshTextures && noAttachmentTextures);
         }
@@ -187,7 +193,8 @@ namespace GUZ.Core.Creator.Meshes.V2
             return barrierBuilder.Build();
         }
 
-        public static GameObject CreatePolyStrip(GameObject go, int numberOfSegments, Vector3 startPoint, Vector3 endPoint)
+        public static GameObject CreatePolyStrip(GameObject go, int numberOfSegments, Vector3 startPoint,
+            Vector3 endPoint)
         {
             var polyStripBuilder = new PolyStripMeshBuilder();
             polyStripBuilder.SetGameObject(go);

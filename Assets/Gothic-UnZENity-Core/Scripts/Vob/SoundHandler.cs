@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.Serialization;
 using ZenKit.Vobs;
 using Random = UnityEngine.Random;
 
@@ -7,13 +8,13 @@ namespace GUZ.Core.Vob
 {
     public class SoundHandler : MonoBehaviour
     {
-        public AudioSource audioSource;
-        public VobSoundProperties properties;
-        
+        [FormerlySerializedAs("audioSource")] public AudioSource AudioSource;
+        [FormerlySerializedAs("properties")] public VobSoundProperties Properties;
+
         // We need to avoid to start the Coroutine twice.
-        private bool isCoroutineRunning;
-        
-        
+        private bool _isCoroutineRunning;
+
+
         private void OnEnable()
         {
             StartCoroutine();
@@ -22,7 +23,7 @@ namespace GUZ.Core.Vob
         private void OnDisable()
         {
             // Coroutines are stopped when GameObject gets disabled. But we need to restart during OnEnable() manually.
-            isCoroutineRunning = false;
+            _isCoroutineRunning = false;
         }
 
         /// <summary>
@@ -32,39 +33,45 @@ namespace GUZ.Core.Vob
         /// </summary>
         public void PrepareSoundHandling()
         {
-            if (properties.soundData == null)
+            if (Properties.SoundData == null)
             {
                 Debug.LogError("VobSoundProperties.soundData not set. Can't register random sound play!");
                 return;
             }
 
             if (gameObject.activeSelf)
+            {
                 StartCoroutine();
+            }
         }
 
         private void StartCoroutine()
         {
             // Either it's not yet initialized (no clip) or it's no random loop
-            if (audioSource.clip == null || properties.soundData.Mode != SoundMode.Random)
+            if (AudioSource.clip == null || Properties.SoundData.Mode != SoundMode.Random)
+            {
                 return;
-            
-            if (isCoroutineRunning)
+            }
+
+            if (_isCoroutineRunning)
+            {
                 return;
+            }
 
             StartCoroutine(ReplayRandomSound());
-            isCoroutineRunning = true;
+            _isCoroutineRunning = true;
         }
 
         private IEnumerator ReplayRandomSound()
         {
             while (true)
             {
-                var nextRandomPlayTime = properties.soundData.RandomDelay
-                                         + Random.Range(0.0f, properties.soundData.RandomDelayVar);
+                var nextRandomPlayTime = Properties.SoundData.RandomDelay
+                                         + Random.Range(0.0f, Properties.SoundData.RandomDelayVar);
                 yield return new WaitForSeconds(nextRandomPlayTime);
 
-                audioSource.Play();
-                yield return new WaitForSeconds(audioSource.clip.length);
+                AudioSource.Play();
+                yield return new WaitForSeconds(AudioSource.clip.length);
             }
         }
     }
