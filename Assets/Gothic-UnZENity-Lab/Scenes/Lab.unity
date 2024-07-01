@@ -1001,7 +1001,7 @@ GameObject:
   - component: {fileID: 330949650}
   - component: {fileID: 330949651}
   m_Layer: 0
-  m_Name: VobHandAttachPointsTool
+  m_Name: ItemTool
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1021,6 +1021,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1548736486}
+  - {fileID: 788441771}
   - {fileID: 1325188954}
   m_Father: {fileID: 648481967}
   m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
@@ -1036,9 +1037,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c222e5408fe648339da6359928e67e41, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  vobCategoryDropdown: {fileID: 1257716466}
-  vobItemDropdown: {fileID: 1059581844}
-  itemSpawnSlot: {fileID: 1325188953}
+  VobCategoryDropdown: {fileID: 1257716466}
+  VobItemDropdown: {fileID: 1059581844}
+  ItemSpawnSlot: {fileID: 1325188953}
 --- !u!1001 &365204272
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1492,7 +1493,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c92583f35a1a4e2b9a3be94bc523424c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fileSelector: {fileID: 91929454}
+  FileSelector: {fileID: 91929454}
 --- !u!1 &410087039
 GameObject:
   m_ObjectHideFlags: 0
@@ -2261,9 +2262,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fae8547078154388b3218ac719e184a5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  npcDropdown: {fileID: 2000851651}
-  animationDropdown: {fileID: 1139058678}
-  npcSlotGo: {fileID: 572605886}
+  NpcDropdown: {fileID: 2000851651}
+  AnimationDropdown: {fileID: 1139058678}
+  NpcSlotGo: {fileID: 572605886}
 --- !u!1 &525536754
 GameObject:
   m_ObjectHideFlags: 0
@@ -3232,7 +3233,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7551e97cc8e94a20a57fbeecdfb4892e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ladderSlot: {fileID: 1831873010}
+  LadderSlot: {fileID: 1831873010}
 --- !u!1 &770233790
 GameObject:
   m_ObjectHideFlags: 0
@@ -3339,6 +3340,113 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1620998804}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &788441770
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 788441771}
+  - component: {fileID: 788441774}
+  - component: {fileID: 788441773}
+  - component: {fileID: 788441772}
+  m_Layer: 0
+  m_Name: Podest
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &788441771
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 788441770}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -1, y: -0.6, z: 0}
+  m_LocalScale: {x: 0.5, y: 0.4, z: 0.5}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 330949650}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!136 &788441772
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 788441770}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.5000001
+  m_Height: 2
+  m_Direction: 1
+  m_Center: {x: 0.000000059604645, y: 0, z: -0.00000008940697}
+--- !u!23 &788441773
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 788441770}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!33 &788441774
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 788441770}
+  m_Mesh: {fileID: 10206, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!1 &807579451
 GameObject:
   m_ObjectHideFlags: 0
@@ -8062,8 +8170,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1b036fba11ef4587835f0ac146edede2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  animationsDropdown: {fileID: 999036247}
-  bloodwynSlotGo: {fileID: 576832278}
+  AnimationsDropdown: {fileID: 999036247}
+  BloodwynSlotGo: {fileID: 576832278}
 --- !u!1 &1820935222
 GameObject:
   m_ObjectHideFlags: 0
@@ -8837,8 +8945,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f050d09eef924423ad3ce4734f50f452, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  chestsGo: {fileID: 668302235}
-  doorsGo: {fileID: 525536754}
+  ChestsGo: {fileID: 668302235}
+  DoorsGo: {fileID: 525536754}
 --- !u!4 &1956714046
 Transform:
   m_ObjectHideFlags: 0
@@ -9104,13 +9212,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3a5216bb91c14ec494f0c03b3f00ae47, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  config: {fileID: 11400000, guid: 6d8d06c956029b1158d990363b5992b5, type: 2}
-  labMusicHandler: {fileID: 408181898}
-  npcDialogHandler: {fileID: 1791413021}
-  lockableHandler: {fileID: 1956714045}
-  ladderLabHandler: {fileID: 747305793}
-  vobHandAttachPointsLabHandler: {fileID: 330949651}
-  labNpcAnimationHandler: {fileID: 501618520}
+  <Config>k__BackingField: {fileID: 11400000, guid: d1ee11f3526d3a847a5aaeefc5da6ab2, type: 2}
+  LabMusicHandler: {fileID: 408181898}
+  NpcDialogHandler: {fileID: 1791413021}
+  LockableHandler: {fileID: 1956714045}
+  LadderLabHandler: {fileID: 747305793}
+  VobItemHandler: {fileID: 330949651}
+  LabNpcAnimationHandler: {fileID: 501618520}
 --- !u!114 &2101890271
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9136,22 +9244,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d06cd27c7d627aa499a0430dd39b8238, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mainMenuImageBackgroundMaterial: {fileID: 0}
-  mainMenuBackgroundMaterial: {fileID: 0}
-  mainMenuSaveLoadBackgroundMaterial: {fileID: 0}
-  mainMenuTextImageMaterial: {fileID: 0}
-  backgroundMaterial: {fileID: 2100000, guid: 1e349bd46543d684da0fd00dfcc78b72, type: 2}
-  buttonMaterial: {fileID: 2100000, guid: 731db01b086aeb94582b82a16a95775b, type: 2}
-  sliderMaterial: {fileID: 2100000, guid: 9edb2534304dae240937e63c8a079e58, type: 2}
-  sliderPositionMaterial: {fileID: 2100000, guid: ef75494119d9122438ca7408644d2e66, type: 2}
-  arrowMaterial: {fileID: 2100000, guid: dc6ce4e18c065d34f9037b5b60259872, type: 2}
-  fillerMaterial: {fileID: 2100000, guid: 7f15366450c487344a1e66a13b22a847, type: 2}
-  skyMaterial: {fileID: 2100000, guid: 39ac659c922b5b1489714aacd9b952e9, type: 2}
-  mapMaterial: {fileID: 0}
-  gothicLoadingMenuMaterial: {fileID: 0}
-  loadingBarBackgroundMaterial: {fileID: 0}
-  loadingBarMaterial: {fileID: 0}
-  loadingSphereMaterial: {fileID: 0}
+  MainMenuImageBackgroundMaterial: {fileID: 0}
+  MainMenuBackgroundMaterial: {fileID: 0}
+  MainMenuSaveLoadBackgroundMaterial: {fileID: 0}
+  MainMenuTextImageMaterial: {fileID: 0}
+  BackgroundMaterial: {fileID: 2100000, guid: 1e349bd46543d684da0fd00dfcc78b72, type: 2}
+  ButtonMaterial: {fileID: 2100000, guid: 731db01b086aeb94582b82a16a95775b, type: 2}
+  SliderMaterial: {fileID: 2100000, guid: 9edb2534304dae240937e63c8a079e58, type: 2}
+  SliderPositionMaterial: {fileID: 2100000, guid: ef75494119d9122438ca7408644d2e66, type: 2}
+  ArrowMaterial: {fileID: 2100000, guid: dc6ce4e18c065d34f9037b5b60259872, type: 2}
+  FillerMaterial: {fileID: 2100000, guid: 7f15366450c487344a1e66a13b22a847, type: 2}
+  SkyMaterial: {fileID: 2100000, guid: 39ac659c922b5b1489714aacd9b952e9, type: 2}
+  MapMaterial: {fileID: 0}
+  GothicLoadingMenuMaterial: {fileID: 0}
+  LoadingBarBackgroundMaterial: {fileID: 0}
+  LoadingBarMaterial: {fileID: 0}
+  LoadingSphereMaterial: {fileID: 0}
 --- !u!1 &2122853906
 GameObject:
   m_ObjectHideFlags: 0

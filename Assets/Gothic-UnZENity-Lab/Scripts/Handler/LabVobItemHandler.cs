@@ -9,20 +9,16 @@ using GUZ.Core.Globals;
 using GUZ.Core.Vm;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Serialization;
 using ZenKit.Daedalus;
 
 namespace GUZ.Lab.Handler
 {
-    public class LabVobHandAttachPointsLabHandler : MonoBehaviour, ILabHandler
+    public class LabVobItemHandler : MonoBehaviour, ILabHandler
     {
-        [FormerlySerializedAs("vobCategoryDropdown")]
         public TMP_Dropdown VobCategoryDropdown;
 
-        [FormerlySerializedAs("vobItemDropdown")]
         public TMP_Dropdown VobItemDropdown;
 
-        [FormerlySerializedAs("itemSpawnSlot")]
         public GameObject ItemSpawnSlot;
 
         private string _currentItemName;
@@ -49,6 +45,8 @@ namespace GUZ.Lab.Handler
                 .ToList();
 
             CategoryDropdownValueChanged();
+
+            CreateItem("ItFo_Plants_mushroom_01");
         }
 
         public void CategoryDropdownValueChanged()
