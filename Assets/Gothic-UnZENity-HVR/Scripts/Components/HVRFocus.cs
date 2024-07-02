@@ -28,6 +28,12 @@ namespace GVR.HVR.Components
             _nameCanvas.SetActive(false);
         }
 
+        public void OnGrabbed(HVRGrabberBase grabber, HVRGrabbable grabbable)
+        {
+            // In Gothic, Items have no physics when lying around. We need to activate physics for HVR to properly move items in(to) our hands.
+            transform.GetComponent<Rigidbody>().isKinematic = false;
+        }
+
         public void OnHoverEnter(HVRGrabberBase grabber, HVRGrabbable grabbable)
         {
             if (_defaultMaterial == null)

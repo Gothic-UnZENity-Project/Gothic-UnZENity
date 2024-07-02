@@ -112,13 +112,9 @@ namespace GUZ.HVR
             grabbable.PoseType = PoseType.PhysicPoser;
         }
 
-        public void AddItemComponent(GameObject go, bool isLab = false)
+        public void AddItemComponent(GameObject go, bool isLab)
         {
-            // TODO - Hack for Lab.scene - Better way to get something thrown. Needs to be removed soon.
-            Rigidbody rb = go.GetComponent<Rigidbody>();
-            rb.isKinematic = false;
-
-            // FIXME - activate/deactivate culling when dragged around
+            // Currently nothing to do. Everything's set up inside Prefab already.
         }
     }
 }
