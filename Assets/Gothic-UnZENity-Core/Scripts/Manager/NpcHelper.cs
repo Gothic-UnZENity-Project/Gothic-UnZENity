@@ -563,7 +563,7 @@ namespace GUZ.Core.Manager
             GameData.GothicVm.GlobalSelf = npcInstance;
             GameData.GothicVm.Call(routineIndex);
 
-            if (!GameGlobals.Config.EnableNpcRoutines)
+            if (!GameGlobals.Config.EnableNPCRoutines)
             {
                 return;
             }

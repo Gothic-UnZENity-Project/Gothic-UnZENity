@@ -50,11 +50,11 @@ namespace GUZ.Core.Manager.Culling
         public VobMeshCullingManager(GameConfiguration config, ICoroutineManager coroutineManager)
         {
             _coroutineManager = coroutineManager;
-            _featureEnableCulling = config.EnableMeshCulling;
-            _featureDrawGizmos = config.ShowMeshCullingGizmos;
-            _featureSmallCullingGroup = config.SmallMeshCullingGroup;
-            _featureMediumCullingGroup = config.MediumMeshCullingGroup;
-            _featureLargeCullingGroup = config.LargeMeshCullingGroup;
+            _featureEnableCulling = config.EnableVOBMeshCulling;
+            _featureDrawGizmos = config.ShowVOBMeshCullingGizmos;
+            _featureSmallCullingGroup = config.SmallVOBMeshCullingGroup;
+            _featureMediumCullingGroup = config.MediumVOBMeshCullingGroup;
+            _featureLargeCullingGroup = config.LargeVOBMeshCullingGroup;
         }
 
         public void Init()

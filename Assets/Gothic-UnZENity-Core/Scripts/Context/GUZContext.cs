@@ -13,32 +13,32 @@ namespace GUZ.Core.Context
 
         public enum Controls
         {
-            VRXrit, // XR Interaction Toolkit
-            VRHvr // Hurricane VR
+            HVR, // Hurricane VR
+            XRIT // XR Interaction Toolkit
         }
 
         public static void SetContext(Controls controls)
         {
             switch (controls)
             {
-                case Controls.VRXrit:
-                    SetXritContext();
+                case Controls.XRIT:
+                    SetXRITContext();
                     break;
-                case Controls.VRHvr:
-                    SetHvrContext();
+                case Controls.HVR:
+                    SetHVRContext();
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(controls), controls, null);
             }
         }
 
-        private static void SetXritContext()
+        private static void SetXRITContext()
         {
             Debug.Log("Selecting Context: VR - XR Interaction Toolkit (XRIT)");
             InteractionAdapter = new XritInteractionAdapter();
         }
 
-        private static void SetHvrContext()
+        private static void SetHVRContext()
         {
 #if GUZ_HVR_INSTALLED
             Debug.Log("Selecting Context: VR - HurricaneVR");

@@ -19,7 +19,7 @@ namespace GUZ.Core.Editor.Tools
             var hvrCompilerSettingExists = PlayerSettings.GetScriptingDefineSymbols(NamedBuildTarget.Standalone)
                 .Contains(HVR_COMPILER_FLAG);
             var hvrSceneSetting = Object.FindObjectOfType<GameManager>()?.Config.GameControls ==
-                                  GuzContext.Controls.VRHvr;
+                                  GuzContext.Controls.HVR;
 
             var message =
                 $"Plugin installed: {hvrExists}\n" +
