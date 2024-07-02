@@ -53,6 +53,6 @@ MonoBehaviour:
     MaximumObjectSize: 100
     CullingDistance: 200
   ZenkitLogLevel: 1
+  EnableSpyLogs: 0
   DirectMusicLogLevel: 30
   EnableBarrierLogs: 0
-  EnableSpyLogs: 0

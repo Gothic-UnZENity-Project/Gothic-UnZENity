@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using GUZ.Core.Context;
 using GUZ.Core.World;
+using MyBox;
 using UnityEngine;
 using ZenKit;
 using ZenKit.Vobs;
@@ -21,18 +22,23 @@ namespace GUZ.Core
     [CreateAssetMenu(fileName = "Data", menuName = "ScriptableObjects/GameConfiguration", order = 1)]
     public class GameConfiguration : ScriptableObject
     {
-        [Header("### Controls ###")]
+#region Controls
+        [Foldout("Controls", true)]
         public GuzContext.Controls GameControls = GuzContext.Controls.VRXrit;
 
         public bool EnableDeviceSimulator;
+#endregion
 
-        [Header("### Developer ###")]
+
+#region Developer
+        [Foldout("Developer", true)]
         public bool EnableMainMenu = true;
 
         public bool LoadFromSaveSlot;
 
         [Range(1, 15)]
         public int SaveSlotToLoad;
+        private bool SaveSlotPredicate() => !EnableMainMenu && LoadFromSaveSlot;
 
         public bool SpawnOldCampNpcs;
 
@@ -58,13 +64,19 @@ namespace GUZ.Core
         public List<VirtualObjectType> SpawnWorldObjectTypes = new();
 
         public List<int> SpawnNpcInstances = new();
+#endregion
 
-        [Header("### Audio ###")]
+
+#region Audio
+        [Foldout("Audio", true)]
         public bool EnableGameMusic = true;
 
         public bool EnableGameSounds = true;
+#endregion
 
-        [Header("### Lighting ###")]
+
+#region Lighting
+        [Foldout("Lighting", true)]
         public Color SunLightColor = new(0.6901961f, 0.6901961f, 0.6901961f, 1);
 
         [Range(0, 1)]
@@ -73,8 +85,11 @@ namespace GUZ.Core
         public GameTimeInterval SunUpdateInterval = GameTimeInterval.EveryGameHour;
 
         public Color AmbientLightColor = new(0.10196079f, 0.10196079f, 0.10196079f, 1);
+#endregion
 
-        [Header("### Time ###")]
+
+#region Time
+        [Foldout("Time", true)]
         [Range(0, 23)]
         public int StartTimeHour = 8;
 
@@ -83,36 +98,49 @@ namespace GUZ.Core
 
         [Range(0.5f, 1000f)]
         public float TimeSpeedMultiplier = 1;
+#endregion
 
-        [Header("### WayNet ###")]
+
+#region WayNet
+        [Foldout("WayNet", true)]
         public bool ShowFreePoints;
 
         public bool ShowWayPoints;
 
         public bool ShowWayEdges;
+#endregion
 
-        [Header("### Culling ###")]
+
+#region Culling
+        [Foldout("Culling", true)]
+        [Separator("Misc")]
         public bool EnableSoundCulling = true;
 
         public bool EnableMeshCulling = true;
 
         public bool ShowMeshCullingGizmos = true;
 
+        [Separator("VOB Culling")]
         public MeshCullingGroup SmallMeshCullingGroup = new() { MaximumObjectSize = 0.2f, CullingDistance = 50 };
 
         public MeshCullingGroup MediumMeshCullingGroup = new() { MaximumObjectSize = 5.0f, CullingDistance = 100 };
 
         public MeshCullingGroup LargeMeshCullingGroup = new() { MaximumObjectSize = 100, CullingDistance = 200 };
+#endregion
 
-        [Header("### Logging ###")]
+
+#region Logging
+        [Foldout("Logging", true)]
         [InspectorName("ZenKit Log Level")]
         public LogLevel ZenkitLogLevel = LogLevel.Warning;
+
+        [Tooltip("Enable Daedalus logs which are called ZSpyLogs inside .d scripts.")]
+        public bool EnableSpyLogs;
 
         [InspectorName("DirectMusic Log Level")]
         public DirectMusic.LogLevel DirectMusicLogLevel = DirectMusic.LogLevel.Warning;
 
         public bool EnableBarrierLogs;
-
-        public bool EnableSpyLogs;
+#endregion
     }
 }
