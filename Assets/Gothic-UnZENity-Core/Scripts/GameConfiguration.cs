@@ -23,8 +23,11 @@ namespace GUZ.Core
     public class GameConfiguration : ScriptableObject
     {
 
-#region ConditionalFieldArrayFilter
         /**
+         * ##########
+         * ConditionalFieldArrayFilter
+         * ##########
+         *
          * Unity doesn't support custom drawer on Arrays. MyBox came up with a solution by wrapping a list into a wrapper class.
          * @see: https://github.com/Deadcows/MyBox/wiki/Attributes#conditionalfield-with-arrays
          */
@@ -34,17 +37,25 @@ namespace GUZ.Core
 
         [Serializable]
         public class VOBTypesCollection : CollectionWrapper<VirtualObjectType> { }
-#endregion
 
 
-#region Controls
+        /**
+         * ##########
+         * Controls
+         * ##########
+         */
+
         [Foldout("Controls", true)]
         public GuzContext.Controls GameControls = GuzContext.Controls.HVR;
         public bool EnableDeviceSimulator;
-#endregion
 
 
-#region Logging
+        /**
+         * ##########
+         * Logging
+         * ##########
+         */
+
         [Foldout("Logging", true)]
         [OverrideLabel("ZenKit Log Level")]
         public LogLevel ZenKitLogLevel = LogLevel.Warning;
@@ -56,10 +67,14 @@ namespace GUZ.Core
         [OverrideLabel("DirectMusic Log Level")]
         public DirectMusic.LogLevel DirectMusicLogLevel = DirectMusic.LogLevel.Warning;
         public bool EnableBarrierLogs;
-#endregion
 
 
-#region Menu and Loading
+        /**
+         * ##########
+         * Menu and Loading
+         * ##########
+         */
+
         [Foldout("Menu and Loading", true)]
         public bool EnableMainMenu = true;
 
@@ -70,10 +85,14 @@ namespace GUZ.Core
         [Range(1, 15)]
         public int SaveSlotToLoad;
         private bool SaveSlotFieldCondition() => !EnableMainMenu && LoadFromSaveSlot;
-#endregion
 
 
-#region VOBs
+        /**
+         * ##########
+         * VOBs
+         * ##########
+         */
+
         [Foldout("VOBs", true)]
         [Separator("General")]
         [Tooltip("Enable World objects.")]
@@ -99,10 +118,14 @@ namespace GUZ.Core
         [ConditionalField(fieldToCheck: nameof(EnableVOBMeshCulling), compareValues: true)]
         [Tooltip("For debugging purposes only.")]
         public bool ShowVOBMeshCullingGizmos;
-#endregion
 
 
-#region NPCs
+        /**
+         * ##########
+         * NPCs
+         * ##########
+         */
+
         [Foldout("NPCs", true)]
         [Tooltip("Currently focusing on Old Camp NPCs.")]
         [OverrideLabel("Spawn NPCs")]
@@ -118,10 +141,14 @@ namespace GUZ.Core
         [Tooltip("WIP - Not production ready.")]
         [ConditionalField(fieldToCheck: nameof(SpawnNPCs), compareValues: true)]
         public bool EnableNPCEyeBlinking;
-#endregion
 
 
-#region WayNet
+        /**
+         * ##########
+         * WayNet
+         * ##########
+         */
+
         [Foldout("WayNet", true)]
         [OverrideLabel("Show Free Point Meshes")]
         public bool ShowFreePoints;
@@ -134,18 +161,26 @@ namespace GUZ.Core
 
         [Tooltip("Covers Free Points and Way Points.")]
         public string SpawnAtWaypoint = string.Empty;
-#endregion
 
 
-#region Audio
+        /**
+         * ##########
+         * Audio
+         * ##########
+         */
+
         [Foldout("Audio", true)]
         public bool EnableGameMusic = true;
         public bool EnableGameSounds = true;
         public bool EnableSoundCulling = true;
-#endregion
 
 
-#region Lighting
+        /**
+         * ##########
+         * Lighting
+         * ##########
+         */
+
         [Foldout("Lighting", true)]
         public Color SunLightColor = new(0.69f, 0.69f, 0.69f, 1);
 
@@ -153,10 +188,14 @@ namespace GUZ.Core
         public float SunLightIntensity = 1;
         public GameTimeInterval SunUpdateInterval = GameTimeInterval.EveryGameMinute;
         public Color AmbientLightColor = new(0.1f, 0.1f, 0.1f, 1);
-#endregion
 
 
-#region Time
+        /**
+         * ##########
+         * Time
+         * ##########
+         */
+
         [Foldout("Time", true)]
         [Range(0, 23)]
         public int StartTimeHour = 8;
@@ -167,10 +206,14 @@ namespace GUZ.Core
         [Range(0.5f, 1000f)]
         [Tooltip("Speeds up the in game time.")]
         public float TimeSpeedMultiplier = 1;
-#endregion
 
 
-#region Misc
+        /**
+         * ##########
+         * Misc
+         * ##########
+         */
+
         [Foldout("Misc", true)]
         [Separator("Meshes/Visuals")]
         public bool EnableWorldMesh = true;
@@ -179,7 +222,6 @@ namespace GUZ.Core
         [Separator("WIP - Not production ready", true)]
         public bool EnableDecalVisuals;
         public bool EnableParticleEffects;
-#endregion
 
     }
 }
