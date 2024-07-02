@@ -18,7 +18,7 @@ namespace GUZ.Core.Manager
 
         public RoutineManager(GameConfiguration config)
         {
-            _featureEnable = config.EnableNpcRoutines;
+            _featureEnable = config.EnableNPCRoutines;
             _featureStartHour = config.StartTimeHour;
             _featureStartMinute = config.StartTimeMinute;
         }

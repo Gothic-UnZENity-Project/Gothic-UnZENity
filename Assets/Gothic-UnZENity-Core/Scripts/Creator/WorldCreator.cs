@@ -52,8 +52,8 @@ namespace GUZ.Core.Creator
 
             if (config.EnableWorldMesh)
             {
-                var lightingEnabled = config.EnableVOBs && (config.SpawnVOBTypes.IsEmpty() ||
-                                                                    config.SpawnVOBTypes.Contains(
+                var lightingEnabled = config.EnableVOBs && (config.SpawnVOBTypes.Value.IsEmpty() ||
+                                                                    config.SpawnVOBTypes.Value.Contains(
                                                                         VirtualObjectType.zCVobLight));
                 SaveGameManager.CurrentWorldData.SubMeshes = await BuildBspTree(
                     SaveGameManager.CurrentWorldData.Mesh.Cache(),

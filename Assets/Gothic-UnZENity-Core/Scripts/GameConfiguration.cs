@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using GUZ.Core.Context;
 using GUZ.Core.World;
 using MyBox;
@@ -19,9 +18,24 @@ namespace GUZ.Core
         public float CullingDistance;
     }
 
+
     [CreateAssetMenu(fileName = "NewGameConfiguration", menuName = "UnZENity/ScriptableObjects/GameConfiguration", order = 1)]
     public class GameConfiguration : ScriptableObject
     {
+
+#region ConditionalFieldArrayFilter
+        /**
+         * Unity doesn't support custom drawer on Arrays. MyBox came up with a solution by wrapping a list into a wrapper class.
+         * @see: https://github.com/Deadcows/MyBox/wiki/Attributes#conditionalfield-with-arrays
+         */
+
+        [Serializable]
+        public class IntCollection : CollectionWrapper<int> {}
+
+        [Serializable]
+        public class VOBTypesCollection : CollectionWrapper<VirtualObjectType> { }
+#endregion
+
 
 #region Controls
         [Foldout("Controls", true)]
@@ -36,6 +50,7 @@ namespace GUZ.Core
         public LogLevel ZenKitLogLevel = LogLevel.Warning;
 
         [Tooltip("Enable Daedalus logs inside .d scripts.")]
+        [OverrideLabel("Enable ZSpy Logs")]
         public bool EnableZSpyLogs;
 
         [OverrideLabel("DirectMusic Log Level")]
@@ -47,31 +62,62 @@ namespace GUZ.Core
 #region Menu and Loading
         [Foldout("Menu and Loading", true)]
         public bool EnableMainMenu = true;
+
+        [ConditionalField(fieldToCheck: nameof(EnableMainMenu), compareValues: false)]
         public bool LoadFromSaveSlot;
 
+        [ConditionalField(useMethod: true, method: nameof(SaveSlotFieldCondition))]
         [Range(1, 15)]
         public int SaveSlotToLoad;
-        private bool SaveSlotPredicate() => !EnableMainMenu && LoadFromSaveSlot;
+        private bool SaveSlotFieldCondition() => !EnableMainMenu && LoadFromSaveSlot;
 #endregion
 
 
 #region VOBs
         [Foldout("VOBs", true)]
+        [Separator("General")]
         [Tooltip("Enable World objects.")]
+        [OverrideLabel("Enable VOBs")]
         public bool EnableVOBs = true;
 
+        [ConditionalField(fieldToCheck: nameof(EnableVOBs), compareValues: true)]
         [Tooltip("Spawn only specific VOBs by naming their types in here.")]
-        public List<VirtualObjectType> SpawnVOBTypes = new();
+        public VOBTypesCollection SpawnVOBTypes = new();
+
+        [Separator("Culling")]
+        public bool EnableVOBMeshCulling = true;
+
+        [ConditionalField(fieldToCheck: nameof(EnableVOBMeshCulling), compareValues: true)]
+        public MeshCullingGroup SmallVOBMeshCullingGroup = new() { MaximumObjectSize = 0.2f, CullingDistance = 50 };
+
+        [ConditionalField(fieldToCheck: nameof(EnableVOBMeshCulling), compareValues: true)]
+        public MeshCullingGroup MediumVOBMeshCullingGroup = new() { MaximumObjectSize = 5.0f, CullingDistance = 100 };
+
+        [ConditionalField(fieldToCheck: nameof(EnableVOBMeshCulling), compareValues: true)]
+        public MeshCullingGroup LargeVOBMeshCullingGroup = new() { MaximumObjectSize = 100, CullingDistance = 200 };
+
+        [ConditionalField(fieldToCheck: nameof(EnableVOBMeshCulling), compareValues: true)]
+        [Tooltip("For debugging purposes only.")]
+        public bool ShowVOBMeshCullingGizmos;
 #endregion
 
 
 #region NPCs
         [Foldout("NPCs", true)]
-        public bool SpawnOldCampNpcs;
-        public bool EnableNpcRoutines;
+        [Tooltip("Currently focusing on Old Camp NPCs.")]
+        [OverrideLabel("Spawn NPCs")]
+        public bool SpawnNPCs;
+
+        [ConditionalField(fieldToCheck: nameof(SpawnNPCs), compareValues: true)]
+        public bool EnableNPCRoutines;
 
         [Tooltip("Spawn only specific NPCs by naming their IDs in here.")]
-        public List<int> SpawnNpcInstances = new();
+        [ConditionalField(fieldToCheck: nameof(SpawnNPCs), compareValues: true)]
+        public IntCollection SpawnNPCInstances = new();
+
+        [Tooltip("WIP - Not production ready.")]
+        [ConditionalField(fieldToCheck: nameof(SpawnNPCs), compareValues: true)]
+        public bool EnableNPCEyeBlinking;
 #endregion
 
 
@@ -95,6 +141,7 @@ namespace GUZ.Core
         [Foldout("Audio", true)]
         public bool EnableGameMusic = true;
         public bool EnableGameSounds = true;
+        public bool EnableSoundCulling = true;
 #endregion
 
 
@@ -123,33 +170,15 @@ namespace GUZ.Core
 #endregion
 
 
-#region Culling
-        [Foldout("Culling", true)]
-        [Separator("VOBs")]
-        public MeshCullingGroup SmallMeshCullingGroup = new() { MaximumObjectSize = 0.2f, CullingDistance = 50 };
-        public MeshCullingGroup MediumMeshCullingGroup = new() { MaximumObjectSize = 5.0f, CullingDistance = 100 };
-        public MeshCullingGroup LargeMeshCullingGroup = new() { MaximumObjectSize = 100, CullingDistance = 200 };
-
-        [Separator("Misc")]
-        public bool EnableSoundCulling = true;
-        public bool EnableMeshCulling = true;
-        public bool ShowMeshCullingGizmos;
-#endregion
-
-
 #region Misc
         [Foldout("Misc", true)]
         [Separator("Meshes/Visuals")]
         public bool EnableWorldMesh = true;
         public bool EnableBarrierVisual = true;
-#endregion
 
-
-#region Experimental - Not production ready
-        [Foldout("Experimental - Not production ready", true)]
+        [Separator("WIP - Not production ready", true)]
         public bool EnableDecalVisuals;
         public bool EnableParticleEffects;
-        public bool EnableNpcEyeBlinking;
 #endregion
 
     }

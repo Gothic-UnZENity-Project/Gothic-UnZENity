@@ -22,16 +22,31 @@ MonoBehaviour:
   LoadFromSaveSlot: 0
   SaveSlotToLoad: 0
   EnableVOBs: 1
-  SpawnVOBTypes: 
-  SpawnOldCampNpcs: 0
-  EnableNpcRoutines: 0
-  SpawnNpcInstances: 
+  SpawnVOBTypes:
+    Value: 
+  EnableVOBMeshCulling: 1
+  SmallVOBMeshCullingGroup:
+    MaximumObjectSize: 0.2
+    CullingDistance: 50
+  MediumVOBMeshCullingGroup:
+    MaximumObjectSize: 5
+    CullingDistance: 100
+  LargeVOBMeshCullingGroup:
+    MaximumObjectSize: 100
+    CullingDistance: 200
+  ShowVOBMeshCullingGizmos: 0
+  SpawnNPCs: 0
+  EnableNPCRoutines: 0
+  SpawnNPCInstances:
+    Value: 
+  EnableNPCEyeBlinking: 0
   ShowFreePoints: 0
   ShowWayPoints: 0
   ShowWayEdges: 0
   SpawnAtWaypoint: 
   EnableGameMusic: 1
   EnableGameSounds: 1
+  EnableSoundCulling: 1
   SunLightColor: {r: 0.69, g: 0.69, b: 0.69, a: 1}
   SunLightIntensity: 1
   SunUpdateInterval: 1
@@ -39,20 +54,7 @@ MonoBehaviour:
   StartTimeHour: 8
   StartTimeMinute: 0
   TimeSpeedMultiplier: 1
-  SmallMeshCullingGroup:
-    MaximumObjectSize: 0.2
-    CullingDistance: 50
-  MediumMeshCullingGroup:
-    MaximumObjectSize: 5
-    CullingDistance: 100
-  LargeMeshCullingGroup:
-    MaximumObjectSize: 100
-    CullingDistance: 200
-  EnableSoundCulling: 1
-  EnableMeshCulling: 1
-  ShowMeshCullingGizmos: 0
   EnableWorldMesh: 1
   EnableBarrierVisual: 1
   EnableDecalVisuals: 0
   EnableParticleEffects: 0
-  EnableNpcEyeBlinking: 0

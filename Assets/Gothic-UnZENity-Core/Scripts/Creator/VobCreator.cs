@@ -124,7 +124,7 @@ namespace GUZ.Core.Creator
                 GameObject go = null;
 
                 // Debug - Skip loading if not wanted.
-                if (config.SpawnVOBTypes.IsEmpty() || config.SpawnVOBTypes.Contains(vob.Type))
+                if (config.SpawnVOBTypes.Value.IsEmpty() || config.SpawnVOBTypes.Value.Contains(vob.Type))
                 {
                     go = reparent ? LoadVob(config, vob, parent) : LoadVob(config, vob);
                 }
@@ -293,7 +293,7 @@ namespace GUZ.Core.Creator
                         break;
                     }
 
-                    if (!config.SpawnOldCampNpcs)
+                    if (!config.SpawnNPCs)
                     {
                         break;
                     }
