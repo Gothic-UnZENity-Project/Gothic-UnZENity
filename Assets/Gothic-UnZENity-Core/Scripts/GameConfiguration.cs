@@ -1,9 +1,8 @@
 using System;
-using System.Collections.Generic;
 using GUZ.Core.Context;
 using GUZ.Core.World;
+using MyBox;
 using UnityEngine;
-using UnityEngine.Serialization;
 using ZenKit;
 using ZenKit.Vobs;
 
@@ -12,134 +11,217 @@ namespace GUZ.Core
     [Serializable]
     public class MeshCullingGroup
     {
-        [FormerlySerializedAs("maximumObjectSize")] [Range(1f, 100f)]
+        [Range(1f, 100f)]
         public float MaximumObjectSize;
 
-        [FormerlySerializedAs("cullingDistance")] [Range(1f, 1000f)]
+        [Range(1f, 1000f)]
         public float CullingDistance;
     }
 
-    [CreateAssetMenu(fileName = "Data", menuName = "ScriptableObjects/GameConfiguration", order = 1)]
+
+    [CreateAssetMenu(fileName = "NewGameConfiguration", menuName = "UnZENity/ScriptableObjects/GameConfiguration", order = 1)]
     public class GameConfiguration : ScriptableObject
     {
-        [FormerlySerializedAs("enableDeviceSimulator")] [Header("### Controls ###")]
+
+        /**
+         * ##########
+         * ConditionalFieldArrayFilter
+         * ##########
+         *
+         * Unity doesn't support custom drawer on Arrays. MyBox came up with a solution by wrapping a list into a wrapper class.
+         * @see: https://github.com/Deadcows/MyBox/wiki/Attributes#conditionalfield-with-arrays
+         */
+
+        [Serializable]
+        public class IntCollection : CollectionWrapper<int> {}
+
+        [Serializable]
+        public class VOBTypesCollection : CollectionWrapper<VirtualObjectType> { }
+
+
+        /**
+         * ##########
+         * Controls
+         * ##########
+         */
+
+        [Foldout("Controls", true)]
+        public GuzContext.Controls GameControls = GuzContext.Controls.HVR;
         public bool EnableDeviceSimulator;
 
-        [FormerlySerializedAs("gameControls")] public GuzContext.Controls GameControls = GuzContext.Controls.VRXrit;
 
-        [FormerlySerializedAs("enableMainMenu")] [Header("### Developer ###")] [SerializeField]
-        public bool EnableMainMenu = true;
+        /**
+         * ##########
+         * Logging
+         * ##########
+         */
 
-        [FormerlySerializedAs("loadFromSaveSlot")] [SerializeField]
-        public bool LoadFromSaveSlot;
+        [Foldout("Logging", true)]
+        [OverrideLabel("ZenKit Log Level")]
+        public LogLevel ZenKitLogLevel = LogLevel.Warning;
 
-        [FormerlySerializedAs("saveSlotToLoad")] [Range(1, 15)] [SerializeField]
-        public int SaveSlotToLoad;
+        [Tooltip("Enable Daedalus logs inside .d scripts.")]
+        [OverrideLabel("Enable ZSpy Logs")]
+        public bool EnableZSpyLogs;
 
-        [FormerlySerializedAs("spawnOldCampNpcs")] [SerializeField]
-        public bool SpawnOldCampNpcs;
-
-        [FormerlySerializedAs("enableNpcRoutines")] [SerializeField]
-        public bool EnableNpcRoutines;
-
-        [FormerlySerializedAs("spawnAtWaypoint")] [SerializeField]
-        public string SpawnAtWaypoint = string.Empty;
-
-        [FormerlySerializedAs("enableWorldObjects")] [SerializeField]
-        public bool EnableWorldObjects = true;
-
-        [FormerlySerializedAs("enableWorldMesh")] [SerializeField]
-        public bool EnableWorldMesh = true;
-
-        [FormerlySerializedAs("enableBarrierVisual")] [SerializeField]
-        public bool EnableBarrierVisual = true;
-
-        [FormerlySerializedAs("enableDecalVisuals")]
-        [InspectorName("Experimental: Enable Decal Visuals")]
-        [SerializeField]
-        public bool EnableDecalVisuals;
-
-        [FormerlySerializedAs("enableParticleEffects")]
-        [InspectorName("Experimental: Enable Particle Effects")]
-        [SerializeField]
-        public bool EnableParticleEffects;
-
-        [FormerlySerializedAs("enableNpcEyeBlinking")] [InspectorName("Experimental: Enable NPC Eye Blinking")]
-        public bool EnableNpcEyeBlinking;
-
-        [FormerlySerializedAs("spawnWorldObjectTypes")] [SerializeField]
-        public List<VirtualObjectType> SpawnWorldObjectTypes = new();
-
-        [FormerlySerializedAs("spawnNpcInstances")] [SerializeField]
-        public List<int> SpawnNpcInstances = new();
-
-        [FormerlySerializedAs("enableGameMusic")] [Header("### Audio ###")] [SerializeField]
-        public bool EnableGameMusic = true;
-
-        [FormerlySerializedAs("enableGameSounds")] [SerializeField]
-        public bool EnableGameSounds = true;
-
-        [FormerlySerializedAs("sunLightColor")] [Header("### Lighting ###")] [SerializeField]
-        public Color SunLightColor = new(0.6901961f, 0.6901961f, 0.6901961f, 1);
-
-        [FormerlySerializedAs("sunLightIntensity")] [SerializeField] [Range(0, 1)]
-        public float SunLightIntensity = 1;
-
-        [FormerlySerializedAs("sunUpdateInterval")] [SerializeField]
-        public GameTimeInterval SunUpdateInterval = GameTimeInterval.EveryGameHour;
-
-        [FormerlySerializedAs("ambientLightColor")] [SerializeField]
-        public Color AmbientLightColor = new(0.10196079f, 0.10196079f, 0.10196079f, 1);
-
-        [FormerlySerializedAs("startTimeHour")] [Header("### Time ###")] [SerializeField] [Range(0, 23)]
-        public int StartTimeHour = 8;
-
-        [FormerlySerializedAs("startTimeMinute")] [SerializeField] [Range(0, 59)]
-        public int StartTimeMinute;
-
-        [FormerlySerializedAs("timeSpeedMultiplier")] [SerializeField] [Range(0.5f, 1000f)]
-        public float TimeSpeedMultiplier = 1;
-
-        [FormerlySerializedAs("showFreePoints")] [Header("### WayNet ###")] [SerializeField]
-        public bool ShowFreePoints;
-
-        [FormerlySerializedAs("showWayPoints")] [SerializeField]
-        public bool ShowWayPoints;
-
-        [FormerlySerializedAs("showWayEdges")] [SerializeField]
-        public bool ShowWayEdges;
-
-        [FormerlySerializedAs("enableSoundCulling")] [Header("### Culling ###")] [SerializeField]
-        public bool EnableSoundCulling = true;
-
-        [FormerlySerializedAs("enableMeshCulling")] [SerializeField]
-        public bool EnableMeshCulling = true;
-
-        [FormerlySerializedAs("showMeshCullingGizmos")] [SerializeField]
-        public bool ShowMeshCullingGizmos = true;
-
-        [FormerlySerializedAs("smallMeshCullingGroup")] [SerializeField]
-        public MeshCullingGroup SmallMeshCullingGroup = new() { MaximumObjectSize = 0.2f, CullingDistance = 50 };
-
-        [FormerlySerializedAs("mediumMeshCullingGroup")] [SerializeField]
-        public MeshCullingGroup MediumMeshCullingGroup = new() { MaximumObjectSize = 5.0f, CullingDistance = 100 };
-
-        [FormerlySerializedAs("largeMeshCullingGroup")] [SerializeField]
-        public MeshCullingGroup LargeMeshCullingGroup = new() { MaximumObjectSize = 100, CullingDistance = 200 };
-
-        [FormerlySerializedAs("zenkitLogLevel")]
-        [Header("### Logging ###")]
-        [InspectorName("ZenKit Log Level")]
-        [SerializeField]
-        public LogLevel ZenkitLogLevel = LogLevel.Warning;
-
-        [FormerlySerializedAs("directMusicLogLevel")] [InspectorName("DirectMusic Log Level")] [SerializeField]
+        [OverrideLabel("DirectMusic Log Level")]
         public DirectMusic.LogLevel DirectMusicLogLevel = DirectMusic.LogLevel.Warning;
-
-        [FormerlySerializedAs("enableBarrierLogs")] [SerializeField]
         public bool EnableBarrierLogs;
 
-        [FormerlySerializedAs("enableSpyLogs")] [SerializeField]
-        public bool EnableSpyLogs;
+
+        /**
+         * ##########
+         * Menu and Loading
+         * ##########
+         */
+
+        [Foldout("Menu and Loading", true)]
+        public bool EnableMainMenu = true;
+
+        [ConditionalField(fieldToCheck: nameof(EnableMainMenu), compareValues: false)]
+        public bool LoadFromSaveSlot;
+
+        [ConditionalField(useMethod: true, method: nameof(SaveSlotFieldCondition))]
+        [Range(1, 15)]
+        public int SaveSlotToLoad;
+        private bool SaveSlotFieldCondition() => !EnableMainMenu && LoadFromSaveSlot;
+
+
+        /**
+         * ##########
+         * VOBs
+         * ##########
+         */
+
+        [Foldout("VOBs", true)]
+        [Separator("General")]
+        [Tooltip("Enable World objects.")]
+        [OverrideLabel("Enable VOBs")]
+        public bool EnableVOBs = true;
+
+        [ConditionalField(fieldToCheck: nameof(EnableVOBs), compareValues: true)]
+        [Tooltip("Spawn only specific VOBs by naming their types in here.")]
+        public VOBTypesCollection SpawnVOBTypes = new();
+
+        [Separator("Culling")]
+        public bool EnableVOBMeshCulling = true;
+
+        [ConditionalField(fieldToCheck: nameof(EnableVOBMeshCulling), compareValues: true)]
+        public MeshCullingGroup SmallVOBMeshCullingGroup = new() { MaximumObjectSize = 0.2f, CullingDistance = 50 };
+
+        [ConditionalField(fieldToCheck: nameof(EnableVOBMeshCulling), compareValues: true)]
+        public MeshCullingGroup MediumVOBMeshCullingGroup = new() { MaximumObjectSize = 5.0f, CullingDistance = 100 };
+
+        [ConditionalField(fieldToCheck: nameof(EnableVOBMeshCulling), compareValues: true)]
+        public MeshCullingGroup LargeVOBMeshCullingGroup = new() { MaximumObjectSize = 100, CullingDistance = 200 };
+
+        [ConditionalField(fieldToCheck: nameof(EnableVOBMeshCulling), compareValues: true)]
+        [Tooltip("For debugging purposes only.")]
+        public bool ShowVOBMeshCullingGizmos;
+
+
+        /**
+         * ##########
+         * NPCs
+         * ##########
+         */
+
+        [Foldout("NPCs", true)]
+        [Tooltip("Currently focusing on Old Camp NPCs.")]
+        [OverrideLabel("Spawn NPCs")]
+        public bool SpawnNPCs;
+
+        [ConditionalField(fieldToCheck: nameof(SpawnNPCs), compareValues: true)]
+        public bool EnableNPCRoutines;
+
+        [Tooltip("Spawn only specific NPCs by naming their IDs in here.")]
+        [ConditionalField(fieldToCheck: nameof(SpawnNPCs), compareValues: true)]
+        public IntCollection SpawnNPCInstances = new();
+
+        [Tooltip("WIP - Not production ready.")]
+        [ConditionalField(fieldToCheck: nameof(SpawnNPCs), compareValues: true)]
+        public bool EnableNPCEyeBlinking;
+
+
+        /**
+         * ##########
+         * WayNet
+         * ##########
+         */
+
+        [Foldout("WayNet", true)]
+        [OverrideLabel("Show Free Point Meshes")]
+        public bool ShowFreePoints;
+
+        [OverrideLabel("Show Way Point Meshes")]
+        public bool ShowWayPoints;
+
+        [OverrideLabel("Show Way Point Edge Meshes")]
+        public bool ShowWayEdges;
+
+        [Tooltip("Covers Free Points and Way Points.")]
+        public string SpawnAtWaypoint = string.Empty;
+
+
+        /**
+         * ##########
+         * Audio
+         * ##########
+         */
+
+        [Foldout("Audio", true)]
+        public bool EnableGameMusic = true;
+        public bool EnableGameSounds = true;
+        public bool EnableSoundCulling = true;
+
+
+        /**
+         * ##########
+         * Lighting
+         * ##########
+         */
+
+        [Foldout("Lighting", true)]
+        public Color SunLightColor = new(0.69f, 0.69f, 0.69f, 1);
+
+        [Range(0, 1)]
+        public float SunLightIntensity = 1;
+        public GameTimeInterval SunUpdateInterval = GameTimeInterval.EveryGameMinute;
+        public Color AmbientLightColor = new(0.1f, 0.1f, 0.1f, 1);
+
+
+        /**
+         * ##########
+         * Time
+         * ##########
+         */
+
+        [Foldout("Time", true)]
+        [Range(0, 23)]
+        public int StartTimeHour = 8;
+
+        [Range(0, 59)]
+        public int StartTimeMinute;
+
+        [Range(0.5f, 1000f)]
+        [Tooltip("Speeds up the in game time.")]
+        public float TimeSpeedMultiplier = 1;
+
+
+        /**
+         * ##########
+         * Misc
+         * ##########
+         */
+
+        [Foldout("Misc", true)]
+        [Separator("Meshes/Visuals")]
+        public bool EnableWorldMesh = true;
+        public bool EnableBarrierVisual = true;
+
+        [Separator("WIP - Not production ready", true)]
+        public bool EnableDecalVisuals;
+        public bool EnableParticleEffects;
+
     }
 }
