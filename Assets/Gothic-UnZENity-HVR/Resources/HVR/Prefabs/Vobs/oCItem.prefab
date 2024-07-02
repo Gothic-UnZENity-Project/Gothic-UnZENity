@@ -113,7 +113,7 @@ GameObject:
   - component: {fileID: 2022050282646122291}
   - component: {fileID: 1778516865459391894}
   - component: {fileID: 3848800049239021948}
-  - component: {fileID: 4740512252186575585}
+  - component: {fileID: 6095836136900462541}
   - component: {fileID: 6759220176799969513}
   - component: {fileID: -6808202407213995710}
   m_Layer: 0
@@ -188,7 +188,7 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 0}
---- !u!114 &4740512252186575585
+--- !u!114 &6095836136900462541
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -197,7 +197,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 6503575194566409312}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 024fa582612e45c0afcf4ba9d756341e, type: 3}
+  m_Script: {fileID: 11500000, guid: a5b5018cb218469dacae60454551ca9c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   <VisualScheme>k__BackingField: 
@@ -213,7 +213,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b3d4d12525e40a7ac803add610db925, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _properties: {fileID: 4740512252186575585}
+  _properties: {fileID: 6095836136900462541}
   _nameCanvas: {fileID: 3261430823668897889}
 --- !u!114 &-6808202407213995710
 MonoBehaviour:
@@ -442,14 +442,14 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 36
-  m_fontSizeBase: 36
+  m_fontSize: 12
+  m_fontSizeBase: 12
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 0
-  m_HorizontalAlignment: 1
+  m_HorizontalAlignment: 2
   m_VerticalAlignment: 256
   m_textAlignment: 65535
   m_characterSpacing: 0

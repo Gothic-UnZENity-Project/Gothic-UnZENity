@@ -7,6 +7,7 @@ using GUZ.Core.Context;
 using GUZ.Core.Creator.Meshes.V2;
 using GUZ.Core.Globals;
 using GUZ.Core.Vm;
+using GUZ.Core.Vob;
 using TMPro;
 using UnityEngine;
 using ZenKit.Daedalus;
@@ -85,6 +86,7 @@ namespace GUZ.Lab.Handler
             var itemGo = MeshFactory.CreateVob(item.Visual, mrm, default, default, true,
                 rootGo: itemPrefab, parent: ItemSpawnSlot, useTextureArray: false);
 
+            itemGo.GetComponent<VobItemProperties>().ItemData = item;
             GuzContext.InteractionAdapter.AddItemComponent(itemGo, true);
 
             return gameObject;

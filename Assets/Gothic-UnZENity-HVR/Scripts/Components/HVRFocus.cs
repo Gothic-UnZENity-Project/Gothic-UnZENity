@@ -1,5 +1,5 @@
 using GUZ.Core.Globals;
-using GUZ.Core.Properties;
+using GUZ.Core.Vob;
 using HurricaneVR.Framework.Core;
 using HurricaneVR.Framework.Core.Grabbers;
 using TMPro;
@@ -15,7 +15,7 @@ namespace GVR.HVR.Components
         private static readonly int _focusBrightness = Shader.PropertyToID("_FocusBrightness");
         private static Camera _mainCamera;
 
-        [SerializeField] private VobProperties _properties;
+        [SerializeField] private VobItemProperties _properties;
         [SerializeField] private GameObject _nameCanvas;
 
         private Material _defaultMaterial;
@@ -25,7 +25,6 @@ namespace GVR.HVR.Components
 
         private void Start()
         {
-            _mainCamera = Camera.main;
             _nameCanvas.SetActive(false);
         }
 
@@ -33,6 +32,9 @@ namespace GVR.HVR.Components
         {
             if (_defaultMaterial == null)
             {
+                // Items are loaded while Loading.scene is active (different Camera), but not the General.scene. We therefore need to set the camera at this point.
+                _mainCamera = Camera.main;
+
                 _defaultMaterial = transform.GetComponentInChildren<Renderer>().sharedMaterial;
                 _focusedMaterial = new Material(_defaultMaterial);
                 _focusedMaterial.SetFloat(_focusBrightness, Constants.ShaderPropertyFocusBrightness);
@@ -40,7 +42,7 @@ namespace GVR.HVR.Components
             transform.GetComponentInChildren<Renderer>().sharedMaterial = _focusedMaterial;
 
             _nameCanvas.SetActive(true);
-            _nameCanvas.GetComponentInChildren<TMP_Text>().text = _properties.name; // FIXME - Needs to be altered to the language agnostic name.
+            _nameCanvas.GetComponentInChildren<TMP_Text>().text = _properties.ItemData.Name;
             _isHovered = true;
         }
 

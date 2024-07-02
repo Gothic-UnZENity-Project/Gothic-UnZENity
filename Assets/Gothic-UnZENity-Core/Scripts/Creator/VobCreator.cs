@@ -596,6 +596,8 @@ namespace GUZ.Core.Creator
                 return null;
             }
 
+            vobObj.GetComponent<VobItemProperties>().ItemData = item;
+
             GuzContext.InteractionAdapter.AddItemComponent(vobObj);
 
             return vobObj;
