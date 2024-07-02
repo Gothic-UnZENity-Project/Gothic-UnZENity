@@ -429,7 +429,7 @@ namespace GUZ.Core.Vm
 
         public static void PrintDebug(string message)
         {
-            if (!GameGlobals.Config.EnableSpyLogs)
+            if (!GameGlobals.Config.EnableZSpyLogs)
             {
                 return;
             }
@@ -440,7 +440,7 @@ namespace GUZ.Core.Vm
 
         public static void PrintDebugCh(int channel, string message)
         {
-            if (!GameGlobals.Config.EnableSpyLogs)
+            if (!GameGlobals.Config.EnableZSpyLogs)
             {
                 return;
             }
@@ -451,7 +451,7 @@ namespace GUZ.Core.Vm
 
         public static void PrintDebugInst(string message)
         {
-            if (!GameGlobals.Config.EnableSpyLogs)
+            if (!GameGlobals.Config.EnableZSpyLogs)
             {
                 return;
             }
@@ -462,7 +462,7 @@ namespace GUZ.Core.Vm
 
         public static void PrintDebugInstCh(int channel, string message)
         {
-            if (!GameGlobals.Config.EnableSpyLogs)
+            if (!GameGlobals.Config.EnableZSpyLogs)
             {
                 return;
             }

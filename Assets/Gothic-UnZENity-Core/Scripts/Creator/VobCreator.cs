@@ -124,7 +124,7 @@ namespace GUZ.Core.Creator
                 GameObject go = null;
 
                 // Debug - Skip loading if not wanted.
-                if (config.SpawnWorldObjectTypes.IsEmpty() || config.SpawnWorldObjectTypes.Contains(vob.Type))
+                if (config.SpawnVOBTypes.IsEmpty() || config.SpawnVOBTypes.Contains(vob.Type))
                 {
                     go = reparent ? LoadVob(config, vob, parent) : LoadVob(config, vob);
                 }

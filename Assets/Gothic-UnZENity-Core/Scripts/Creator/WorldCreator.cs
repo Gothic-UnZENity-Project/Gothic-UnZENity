@@ -43,7 +43,7 @@ namespace GUZ.Core.Creator
 
             // Build the world and vob meshes, populating the texture arrays.
             // We need to start creating Vobs as we need to calculate world slicing based on amount of lights at a certain space afterwards.
-            if (config.EnableWorldObjects)
+            if (config.EnableVOBs)
             {
                 await VobCreator.CreateAsync(config, loading, _teleportGo, _nonTeleportGo,
                     SaveGameManager.CurrentWorldData.Vobs, Constants.VObPerFrame);
@@ -52,8 +52,8 @@ namespace GUZ.Core.Creator
 
             if (config.EnableWorldMesh)
             {
-                var lightingEnabled = config.EnableWorldObjects && (config.SpawnWorldObjectTypes.IsEmpty() ||
-                                                                    config.SpawnWorldObjectTypes.Contains(
+                var lightingEnabled = config.EnableVOBs && (config.SpawnVOBTypes.IsEmpty() ||
+                                                                    config.SpawnVOBTypes.Contains(
                                                                         VirtualObjectType.zCVobLight));
                 SaveGameManager.CurrentWorldData.SubMeshes = await BuildBspTree(
                     SaveGameManager.CurrentWorldData.Mesh.Cache(),

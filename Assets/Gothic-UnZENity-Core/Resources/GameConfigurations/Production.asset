@@ -14,37 +14,33 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   GameControls: 0
   EnableDeviceSimulator: 0
+  ZenKitLogLevel: 1
+  EnableZSpyLogs: 0
+  DirectMusicLogLevel: 30
+  EnableBarrierLogs: 0
   EnableMainMenu: 1
   LoadFromSaveSlot: 0
-  SaveSlotToLoad: 1
+  SaveSlotToLoad: 0
+  EnableVOBs: 1
+  SpawnVOBTypes: 
   SpawnOldCampNpcs: 0
   EnableNpcRoutines: 0
-  SpawnAtWaypoint: 
-  EnableWorldObjects: 1
-  EnableWorldMesh: 1
-  EnableBarrierVisual: 1
-  EnableDecalVisuals: 0
-  EnableParticleEffects: 0
-  EnableNpcEyeBlinking: 0
-  SpawnWorldObjectTypes: 
   SpawnNpcInstances: 
-  EnableGameMusic: 1
-  EnableGameSounds: 1
-  SunLightColor: {r: 0.6901961, g: 0.6901961, b: 0.6901961, a: 1}
-  SunLightIntensity: 1
-  SunUpdateInterval: 2
-  AmbientLightColor: {r: 0.10196079, g: 0.10196079, b: 0.10196079, a: 1}
-  StartTimeHour: 8
-  StartTimeMinute: 0
-  TimeSpeedMultiplier: 1
   ShowFreePoints: 0
   ShowWayPoints: 0
   ShowWayEdges: 0
-  EnableSoundCulling: 1
-  EnableMeshCulling: 1
-  ShowMeshCullingGizmos: 0
+  SpawnAtWaypoint: 
+  EnableGameMusic: 1
+  EnableGameSounds: 1
+  SunLightColor: {r: 0.69, g: 0.69, b: 0.69, a: 1}
+  SunLightIntensity: 1
+  SunUpdateInterval: 1
+  AmbientLightColor: {r: 0.1, g: 0.1, b: 0.1, a: 1}
+  StartTimeHour: 8
+  StartTimeMinute: 0
+  TimeSpeedMultiplier: 1
   SmallMeshCullingGroup:
-    MaximumObjectSize: 1
+    MaximumObjectSize: 0.2
     CullingDistance: 50
   MediumMeshCullingGroup:
     MaximumObjectSize: 5
@@ -52,7 +48,11 @@ MonoBehaviour:
   LargeMeshCullingGroup:
     MaximumObjectSize: 100
     CullingDistance: 200
-  ZenkitLogLevel: 1
-  EnableSpyLogs: 0
-  DirectMusicLogLevel: 30
-  EnableBarrierLogs: 0
+  EnableSoundCulling: 1
+  EnableMeshCulling: 1
+  ShowMeshCullingGizmos: 0
+  EnableWorldMesh: 1
+  EnableBarrierVisual: 1
+  EnableDecalVisuals: 0
+  EnableParticleEffects: 0
+  EnableNpcEyeBlinking: 0

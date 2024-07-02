@@ -99,7 +99,7 @@ namespace GUZ.Core
 
         private void Start()
         {
-            Logger.Set(Config.ZenkitLogLevel, Logging.OnZenKitLogMessage);
+            Logger.Set(Config.ZenKitLogLevel, Logging.OnZenKitLogMessage);
             DirectMusic.Logger.Set(Config.DirectMusicLogLevel, Logging.OnDirectMusicLogMessage);
 
             _fileLoggingHandler.Init();
