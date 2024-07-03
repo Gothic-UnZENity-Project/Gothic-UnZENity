@@ -6,6 +6,7 @@ using GUZ.Core;
 using GUZ.Core.Context;
 using GUZ.Core.Creator.Meshes.V2;
 using GUZ.Core.Globals;
+using GUZ.Core.Properties;
 using GUZ.Core.Vm;
 using GUZ.Core.Vob;
 using TMPro;
