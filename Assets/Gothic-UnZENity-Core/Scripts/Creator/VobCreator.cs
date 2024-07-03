@@ -596,7 +596,7 @@ namespace GUZ.Core.Creator
                 return null;
             }
 
-            vobObj.GetComponent<VobItemProperties>().ItemData = item;
+            vobObj.GetComponent<VobItemProperties>().SetData(vob, item);
 
             GuzContext.InteractionAdapter.AddItemComponent(vobObj);
 
@@ -786,22 +786,6 @@ namespace GUZ.Core.Creator
         private static GameObject CreateLadder(IVirtualObject vob, GameObject parent = null)
         {
             var vobObj = CreateDefaultMesh(vob, parent, true);
-
-            // We will set some default values for collider and grabbing now.
-            // Adding it now is easier than putting it on a prefab and updating it at runtime (as grabbing didn't work this way out-of-the-box).
-            // e.g. grabComp's colliders aren't recalculated if we have the XRGrabInteractable set in Prefab.
-            var grabComp = vobObj.AddComponent<XRGrabInteractable>();
-            var rigidbodyComp = vobObj.GetComponent<Rigidbody>();
-            var meshColliderComp = vobObj.GetComponentInChildren<MeshCollider>();
-
-            meshColliderComp.convex = true; // We need to set it to overcome Physics.ClosestPoint warnings.
-            vobObj.tag = Constants.ClimbableTag;
-            rigidbodyComp.isKinematic = true;
-            // Throws errors and isn't needed as we don't want to move the kinematic ladder when released.
-            grabComp.throwOnDetach = false;
-            grabComp.trackPosition = false;
-            grabComp.trackRotation = false;
-            grabComp.selectMode = InteractableSelectMode.Multiple; // With this, we can grab with both hands!
 
             return vobObj;
         }

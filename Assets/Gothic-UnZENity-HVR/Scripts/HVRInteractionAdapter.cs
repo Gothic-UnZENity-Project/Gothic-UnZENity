@@ -4,10 +4,7 @@ using System.Linq;
 using GUZ.Core.Context;
 using GUZ.Core.Globals;
 using GVR;
-using HurricaneVR.Framework.Components;
-using HurricaneVR.Framework.Core;
 using HurricaneVR.Framework.Core.Player;
-using HurricaneVR.Framework.Shared;
 using HurricaneVRExtensions.Simulator;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -107,14 +104,12 @@ namespace GUZ.HVR
 
         public void AddClimbingComponent(GameObject go)
         {
-            go.AddComponent<HVRClimbable>();
-            HVRGrabbable grabbable = go.AddComponent<HVRGrabbable>();
-            grabbable.PoseType = PoseType.PhysicPoser;
+            // Currently nothing to do. Everything's set up inside oCMobLadder.prefab already.
         }
 
         public void AddItemComponent(GameObject go, bool isLab)
         {
-            // Currently nothing to do. Everything's set up inside Prefab already.
+            // Currently nothing to do. Everything's set up inside oCItem.prefab already.
         }
     }
 }

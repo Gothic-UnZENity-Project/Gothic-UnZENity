@@ -12,14 +12,16 @@ namespace GUZ.Core.Properties
         /// </summary>
         [field: SerializeField]
         public string VisualScheme { get; private set; }
+        public virtual string FocusName => Properties.Name;
 
         public IVirtualObject Properties;
+
 
         public virtual void SetData(IVirtualObject data)
         {
             Properties = data;
 
-            if (data.Visual != null)
+            if (data?.Visual != null)
             {
                 VisualScheme = data.Visual.Name.Split('_').First(); // e.g. BED_1_OC.ASC => BED
             }

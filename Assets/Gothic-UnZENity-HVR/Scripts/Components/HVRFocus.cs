@@ -1,5 +1,5 @@
 using GUZ.Core.Globals;
-using GUZ.Core.Vob;
+using GUZ.Core.Properties;
 using HurricaneVR.Framework.Core;
 using HurricaneVR.Framework.Core.Grabbers;
 using TMPro;
@@ -15,7 +15,8 @@ namespace GVR.HVR.Components
         private static readonly int _focusBrightness = Shader.PropertyToID("_FocusBrightness");
         private static Camera _mainCamera;
 
-        [SerializeField] private VobItemProperties _properties;
+        public bool ChangeKinematicOnGrab;
+        [SerializeField] private VobProperties _properties;
         [SerializeField] private GameObject _nameCanvas;
 
         private Material _defaultMaterial;
@@ -30,8 +31,11 @@ namespace GVR.HVR.Components
 
         public void OnGrabbed(HVRGrabberBase grabber, HVRGrabbable grabbable)
         {
-            // In Gothic, Items have no physics when lying around. We need to activate physics for HVR to properly move items in(to) our hands.
-            transform.GetComponent<Rigidbody>().isKinematic = false;
+            if (ChangeKinematicOnGrab)
+            {
+                // In Gothic, Items have no physics when lying around. We need to activate physics for HVR to properly move items in(to) our hands.
+                transform.GetComponent<Rigidbody>().isKinematic = false;
+            }
         }
 
         public void OnHoverEnter(HVRGrabberBase grabber, HVRGrabbable grabbable)
@@ -48,7 +52,7 @@ namespace GVR.HVR.Components
             transform.GetComponentInChildren<Renderer>().sharedMaterial = _focusedMaterial;
 
             _nameCanvas.SetActive(true);
-            _nameCanvas.GetComponentInChildren<TMP_Text>().text = _properties.ItemData.Name;
+            _nameCanvas.GetComponentInChildren<TMP_Text>().text = _properties.FocusName;
             _isHovered = true;
         }
 

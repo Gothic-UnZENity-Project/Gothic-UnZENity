@@ -19,7 +19,6 @@ namespace GUZ.Lab.Handler
             MeshFactory.CreateVob(chestName, mdm, mdh, Vector3.zero, Quaternion.identity, ChestsGo,
                 useTextureArray: false);
 
-
             var doorName = "DOOR_WOODEN";
             var mdlDoor = ResourceLoader.TryGetModel(doorName);
 
