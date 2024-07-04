@@ -195,7 +195,7 @@ namespace GUZ.Core
         }
 
         [CanBeNull]
-        public static GameObject TryGetPrefab(PrefabType key)
+        private static GameObject TryGetPrefab(PrefabType key)
         {
             return _prefab.TryLoad(key.Path(), out var item) ? item : null;
         }

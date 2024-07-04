@@ -12,7 +12,7 @@ namespace GUZ.Core.Properties
         /// </summary>
         [field: SerializeField]
         public string VisualScheme { get; private set; }
-        public virtual string FocusName => Properties.Name;
+        public virtual string FocusName => Properties?.Name;
 
         public IVirtualObject Properties;
 
