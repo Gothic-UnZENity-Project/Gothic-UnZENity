@@ -23,7 +23,7 @@ namespace GUZ.Lab
 
         public LabNpcDialogHandler NpcDialogHandler;
 
-        public LabLockableHandler LockableHandler;
+        public LabInteractableHandler InteractableHandler;
 
         public LabLadderLabHandler LadderLabHandler;
 
@@ -90,7 +90,7 @@ namespace GUZ.Lab
             LabNpcAnimationHandler.Bootstrap();
             LabMusicHandler.Bootstrap();
             NpcDialogHandler.Bootstrap();
-            LockableHandler.Bootstrap();
+            InteractableHandler.Bootstrap();
             LadderLabHandler.Bootstrap();
             VobItemHandler.Bootstrap();
         }
