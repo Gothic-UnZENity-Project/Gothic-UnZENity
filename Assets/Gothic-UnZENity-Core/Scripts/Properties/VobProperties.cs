@@ -12,7 +12,6 @@ namespace GUZ.Core.Properties
         /// </summary>
         [field: SerializeField]
         public string VisualScheme { get; private set; }
-        public virtual string FocusName => Properties?.Name;
 
         public IVirtualObject Properties;
 
@@ -26,5 +25,11 @@ namespace GUZ.Core.Properties
                 VisualScheme = data.Visual.Name.Split('_').First(); // e.g. BED_1_OC.ASC => BED
             }
         }
+
+        public virtual string GetFocusName()
+        {
+            return Properties?.Name;
+        }
+
     }
 }

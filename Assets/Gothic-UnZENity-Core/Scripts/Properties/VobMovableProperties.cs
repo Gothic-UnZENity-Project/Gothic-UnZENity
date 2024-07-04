@@ -1,3 +1,4 @@
+using GUZ.Core.Globals;
 using ZenKit.Vobs;
 
 namespace GUZ.Core.Properties
@@ -6,7 +7,10 @@ namespace GUZ.Core.Properties
     {
         public MovableObject MovableProperties => (MovableObject)Properties;
 
-        // FIXME - We need to load the proper string value from Daedalus -> $"MOBNAME_{FocusName}"
-        public override string FocusName => MovableProperties.FocusName;
+        public override string GetFocusName()
+        {
+            var nameSymbol = GameData.GothicVm.GetSymbolByName($"MOBNAME_{MovableProperties.FocusName}");
+            return nameSymbol?.GetString(0);
+        }
     }
 }

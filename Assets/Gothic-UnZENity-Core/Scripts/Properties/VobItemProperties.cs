@@ -8,13 +8,25 @@ namespace GUZ.Core.Properties
         public ItemInstance Item;
         public Item ItemProperties => (Item)Properties;
 
-        public override string FocusName => Item.Name + "(" + ItemProperties.Amount + ")";
 
         public void SetData(Item data, ItemInstance item)
         {
             base.SetData(data);
 
             Item = item;
+        }
+
+        public override string GetFocusName()
+        {
+            if (ItemProperties.Amount > 1)
+            {
+                return $"{Item.Name} ({ItemProperties.Amount})";
+            }
+            else
+            {
+                return Item.Name;
+            }
+
         }
     }
 }

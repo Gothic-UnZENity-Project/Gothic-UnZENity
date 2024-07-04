@@ -9,6 +9,11 @@ namespace GVR.HVR.Components
 {
     /// <summary>
     /// Handles focus brightness and name visibility for VOBs and NPCs.
+    ///
+    /// Order of use is always:
+    /// 1. HoverEnver -> We hover from far or near (e.g. grab distance without pulling towards us)
+    /// 2. Grabbed -> Object is being Grabbed for movement/rotation
+    /// 3. HoverExit -> We might still grab the object, but the Hover from our hand stops
     /// </summary>
     public class HVRFocus : MonoBehaviour
     {
@@ -29,15 +34,6 @@ namespace GVR.HVR.Components
             _nameCanvas.SetActive(false);
         }
 
-        public void OnGrabbed(HVRGrabberBase grabber, HVRGrabbable grabbable)
-        {
-            if (ChangeKinematicOnGrab)
-            {
-                // In Gothic, Items have no physics when lying around. We need to activate physics for HVR to properly move items in(to) our hands.
-                transform.GetComponent<Rigidbody>().isKinematic = false;
-            }
-        }
-
         public void OnHoverEnter(HVRGrabberBase grabber, HVRGrabbable grabbable)
         {
             if (_defaultMaterial == null)
@@ -52,8 +48,17 @@ namespace GVR.HVR.Components
             transform.GetComponentInChildren<Renderer>().sharedMaterial = _focusedMaterial;
 
             _nameCanvas.SetActive(true);
-            _nameCanvas.GetComponentInChildren<TMP_Text>().text = _properties.FocusName;
+            _nameCanvas.GetComponentInChildren<TMP_Text>().text = _properties.GetFocusName();
             _isHovered = true;
+        }
+
+        public void OnGrabbed(HVRGrabberBase grabber, HVRGrabbable grabbable)
+        {
+            if (ChangeKinematicOnGrab)
+            {
+                // In Gothic, Items have no physics when lying around. We need to activate physics for HVR to properly move items in(to) our hands.
+                transform.GetComponent<Rigidbody>().isKinematic = false;
+            }
         }
 
         public void OnHoverExit(HVRGrabberBase grabber, HVRGrabbable grabbable)
@@ -80,7 +85,18 @@ namespace GVR.HVR.Components
         /// </summary>
         private void OnDisable()
         {
-            transform.GetComponentInChildren<Renderer>().sharedMaterial = _defaultMaterial;
+            // In this case, the object got destroyed instead of Disabled and we don't need to revert data.
+            if (transform == null)
+            {
+                return;
+            }
+
+            // If we get no renderer, then the GO got destroyed.
+            var rend = transform.GetComponentInChildren<Renderer>();
+            if (rend != null)
+            {
+                transform.GetComponentInChildren<Renderer>().sharedMaterial = _defaultMaterial;
+            }
 
             // We need to destroy our Material manually otherwise it won't be GC'ed by Unity (as stated in the docs).
             Destroy(_focusedMaterial);
