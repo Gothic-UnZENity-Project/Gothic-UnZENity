@@ -23,7 +23,7 @@ namespace GUZ.Lab.Handler
             var doorName = "DOOR_WOODEN";
             var mdlDoor = ResourceLoader.TryGetModel(doorName);
 
-            MeshFactory.CreateVob(doorName, mdlDoor, Vector3.zero, Quaternion.identity, DoorsGo,
+            MeshFactory.CreateVob(doorName, mdlDoor, Vector3.zero, Quaternion.Euler(0, 270, 0), DoorsGo,
                 useTextureArray: false);
         }
     }
