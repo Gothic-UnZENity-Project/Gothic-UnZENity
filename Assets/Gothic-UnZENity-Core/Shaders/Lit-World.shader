@@ -4,12 +4,15 @@ Shader "Lit/World"
     {
         _MainTex("Texture", 2DArray) = "" {}
         [HideInInspector]_StationaryLightCount("Stationary light count", Int) = 0
+        _FocusBrightness("FocusBrightness", float) = 1
     }
     SubShader
     {
         Tags
         {
-            "RenderType" = "Opaque" "RenderPipeline" = "UniversalPipeline" "RenderQueue" = "Geometry"
+            "RenderType" = "Opaque"
+            "RenderPipeline" = "UniversalPipeline"
+            "RenderQueue" = "Geometry"
         }
 
         Pass
@@ -20,6 +23,8 @@ Shader "Lit/World"
 
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
+
+            float _FocusBrightness;
 
             struct appdata
             {
@@ -101,7 +106,7 @@ Shader "Lit/World"
                 float mipLevel = CalcMipLevel(i.uv.xy * _MainTex_TexelSize.zw);
                 half4 albedo = SAMPLE_TEXTURE2D_ARRAY_LOD(_MainTex, sampler_MainTex, i.uv.xy, i.uv.z,
              clamp(mipLevel, 0, i.uv.w));
-                half3 diffuse = albedo * i.diffuse;
+                half3 diffuse = albedo * i.diffuse * _FocusBrightness;
 
                 diffuse = ApplyFog(diffuse, i.worldPos);
                 return half4(diffuse, 1);
