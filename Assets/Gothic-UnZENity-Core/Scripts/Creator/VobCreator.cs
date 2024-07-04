@@ -444,10 +444,16 @@ namespace GUZ.Core.Creator
                     go = ResourceLoader.TryGetPrefabObject(PrefabType.VobFire);
                     break;
                 case VirtualObjectType.oCMobInter:
-                case VirtualObjectType.oCMobBed:
-                case VirtualObjectType.oCMobWheel:
-                case VirtualObjectType.oCMobSwitch:
                     go = ResourceLoader.TryGetPrefabObject(PrefabType.VobInteractable);
+                    break;
+                case VirtualObjectType.oCMobBed:
+                    go = ResourceLoader.TryGetPrefabObject(PrefabType.VobBed);
+                    break;
+                case VirtualObjectType.oCMobWheel:
+                    go = ResourceLoader.TryGetPrefabObject(PrefabType.VobWheel);
+                    break;
+                case VirtualObjectType.oCMobSwitch:
+                    go = ResourceLoader.TryGetPrefabObject(PrefabType.VobSwitch);
                     break;
                 case VirtualObjectType.oCMobDoor:
                     go = ResourceLoader.TryGetPrefabObject(PrefabType.VobDoor);
