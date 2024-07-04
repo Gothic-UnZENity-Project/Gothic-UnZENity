@@ -12,12 +12,13 @@ namespace GUZ.Lab.Handler
 
         public void Bootstrap()
         {
+            var chestPrefab = ResourceLoader.TryGetPrefabObject(PrefabType.VobContainer);
             var chestName = "CHESTBIG_OCCHESTLARGELOCKED.MDS";
             var mdh = ResourceLoader.TryGetModelHierarchy(chestName);
             var mdm = ResourceLoader.TryGetModelMesh(chestName);
 
             MeshFactory.CreateVob(chestName, mdm, mdh, Vector3.zero, Quaternion.identity, ChestsGo,
-                useTextureArray: false);
+                rootGo: chestPrefab, useTextureArray: false);
 
             var doorName = "DOOR_WOODEN";
             var mdlDoor = ResourceLoader.TryGetModel(doorName);
