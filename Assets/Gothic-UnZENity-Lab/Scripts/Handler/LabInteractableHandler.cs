@@ -11,8 +11,8 @@ namespace GUZ.Lab.Handler
         public GameObject FiresGO;
         public GameObject BedsGO;
         public GameObject SwitchesGO;
-        public GameObject WheelsGO;
         public GameObject InteractablesGO;
+        public GameObject WheelsGO;
 
         public void Bootstrap()
         {
@@ -21,69 +21,65 @@ namespace GUZ.Lab.Handler
             InitOCMobFire();
             InitOCMobBed();
             InitOCMobSwitch();
-            InitOCMobWheel();
             InitOCMobInter();
+            InitOCMobWheel();
         }
 
         private void InitOCMobContainer()
         {
-            var chestPrefab = ResourceLoader.TryGetPrefabObject(PrefabType.VobContainer);
-            var chestName = "CHESTBIG_OCCHESTLARGELOCKED.MDS";
-            var mdh = ResourceLoader.TryGetModelHierarchy(chestName);
-            var mdm = ResourceLoader.TryGetModelMesh(chestName);
-
-            MeshFactory.CreateVob(chestName, mdm, mdh, Vector3.zero, Quaternion.identity,
-                rootGo: chestPrefab, parent: ContainersGO, useTextureArray: false);
+            SpawnInteractable("CHESTSMALL_OCCHESTSMALLLOCKED", PrefabType.VobContainer, ContainersGO, rotation: Quaternion.Euler(0, 90, 0));
         }
 
         private void InitOCMobDoor()
         {
-            var doorPrefab = ResourceLoader.TryGetPrefabObject(PrefabType.VobDoor);
-            var doorName = "DOOR_WOODEN";
-            var mdlDoor = ResourceLoader.TryGetModel(doorName);
-
-            MeshFactory.CreateVob(doorName, mdlDoor, new Vector3(0, 0.2f, 0), Quaternion.identity,
-                rootGo: doorPrefab, parent: DoorsGO, useTextureArray: false);
-
+            SpawnInteractable("DOOR_WOODEN", PrefabType.VobDoor, DoorsGO, new Vector3(0, 0.2f, 0));
 
             // Yes, that's correct. Beds are mostly of type oCMobDoor inside G1. ;-)
-            // TODO BED_1_OC.ASC
-            var doorPrefab2 = ResourceLoader.TryGetPrefabObject(PrefabType.VobDoor);
-            var door2Name = "BED_1_OC";
-            var mdlDoor2 = ResourceLoader.TryGetModel(door2Name);
-
-            MeshFactory.CreateVob(door2Name, mdlDoor2, new Vector3(0, 0, -3), Quaternion.identity,
-                rootGo: doorPrefab2, parent: DoorsGO, useTextureArray: false);
+            SpawnInteractable("BED_1_OC", PrefabType.VobDoor, DoorsGO, new Vector3(0, 0, -3));
         }
 
         private void InitOCMobFire()
         {
-            // TODO FIREPLACE_HIGH.ASC
+            SpawnInteractable("FIREPLACE_HIGH", PrefabType.VobFire, FiresGO);
         }
 
         private void InitOCMobBed()
         {
-            // TODO BEDLOW_PSI.ASC
+            SpawnInteractable("BEDLOW_PSI", PrefabType.VobBed, BedsGO, new Vector3(0, 0.1f, -1), Quaternion.Euler(0, 90, 0));
         }
 
         private void InitOCMobSwitch()
         {
-            // TODO LEVER_1_OC.MDS
-            // TODO TOUCHPLATE_STONE.MDS
-            // TODO VWHEEL_1_OC.MDS
-        }
-
-        private void InitOCMobWheel()
-        {
-            // TODO THRONE_BIG.ASC
-            // TODO BABEBED_1.ASC
+            SpawnInteractable("LEVER_1_OC", PrefabType.VobSwitch, SwitchesGO, new Vector3(0, 1, 0), Quaternion.Euler(0, 180, 0));
+            SpawnInteractable("TOUCHPLATE_STONE", PrefabType.VobSwitch, SwitchesGO, new Vector3(0,0, -3), Quaternion.Euler(0, 180, 0));
+            SpawnInteractable("VWHEEL_1_OC", PrefabType.VobSwitch, SwitchesGO, new Vector3(0,0, -6), Quaternion.Euler(0, 90, 0));
         }
 
         private void InitOCMobInter()
         {
-            // TODO WHEEL_1_OC.mds
-            // TODO SMOKE_WATERPIPE.mds
-            // TODO CHAIR_1_OC.ASC
+            SpawnInteractable("SMOKE_WATERPIPE", PrefabType.VobInteractable, InteractablesGO);
+            SpawnInteractable("CHAIR_1_OC", PrefabType.VobInteractable, InteractablesGO, new Vector3(0,0, -3));
+        }
+
+        private void InitOCMobWheel()
+        {
+            SpawnInteractable("THRONE_BIG", PrefabType.VobWheel, WheelsGO, rotation: Quaternion.Euler(0, 180, 0));
+            SpawnInteractable("BABEBED_1", PrefabType.VobWheel, WheelsGO, new Vector3(0, 0, -4));
+        }
+
+        private void SpawnInteractable(string mdlName, PrefabType type, GameObject parentGo, Vector3 position = default, Quaternion rotation = default)
+        {
+            var prefab = ResourceLoader.TryGetPrefabObject(type);
+            var mdl = ResourceLoader.TryGetModel(mdlName);
+
+            if (mdl == null)
+            {
+                Debug.LogError("LabInteractableHandler: Element has no .mdl file: " + mdlName);
+                return;
+            }
+
+            MeshFactory.CreateVob(mdlName, mdl, position, rotation,
+                rootGo: prefab, parent: parentGo, useTextureArray: false);
         }
     }
 }
