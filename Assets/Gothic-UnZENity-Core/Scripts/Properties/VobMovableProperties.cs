@@ -9,7 +9,7 @@ namespace GUZ.Core.Properties
 
         public override string GetFocusName()
         {
-            var nameSymbol = GameData.GothicVm.GetSymbolByName($"MOBNAME_{MovableProperties.FocusName}");
+            var nameSymbol = GameData.GothicVm.GetSymbolByName($"MOBNAME_{MovableProperties?.FocusName}");
             return nameSymbol?.GetString(0);
         }
     }
