@@ -17,14 +17,15 @@ namespace GUZ.Lab.Handler
             var mdh = ResourceLoader.TryGetModelHierarchy(chestName);
             var mdm = ResourceLoader.TryGetModelMesh(chestName);
 
-            MeshFactory.CreateVob(chestName, mdm, mdh, Vector3.zero, Quaternion.identity, ChestsGo,
-                rootGo: chestPrefab, useTextureArray: false);
+            MeshFactory.CreateVob(chestName, mdm, mdh, Vector3.zero, Quaternion.identity,
+                rootGo: chestPrefab, parent: ChestsGo, useTextureArray: false);
 
+            var doorPrefab = ResourceLoader.TryGetPrefabObject(PrefabType.VobDoor);
             var doorName = "DOOR_WOODEN";
             var mdlDoor = ResourceLoader.TryGetModel(doorName);
 
-            MeshFactory.CreateVob(doorName, mdlDoor, Vector3.zero, Quaternion.Euler(0, 270, 0), DoorsGo,
-                useTextureArray: false);
+            MeshFactory.CreateVob(doorName, mdlDoor, Vector3.zero, Quaternion.identity,
+                rootGo: doorPrefab, parent: DoorsGo, useTextureArray: false);
         }
     }
 }
