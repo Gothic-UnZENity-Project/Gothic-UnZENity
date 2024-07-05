@@ -16,8 +16,8 @@ namespace GUZ.Lab.Handler
 
         public void Bootstrap()
         {
-            InitOCMobContainer();
             InitOCMobDoor();
+            InitOCMobContainer();
             InitOCMobFire();
             InitOCMobBed();
             InitOCMobSwitch();
@@ -25,17 +25,18 @@ namespace GUZ.Lab.Handler
             InitOCMobWheel();
         }
 
-        private void InitOCMobContainer()
-        {
-            SpawnInteractable("CHESTSMALL_OCCHESTSMALLLOCKED", PrefabType.VobContainer, ContainersGO, rotation: Quaternion.Euler(0, 90, 0));
-        }
 
         private void InitOCMobDoor()
         {
             SpawnInteractable("DOOR_WOODEN", PrefabType.VobDoor, DoorsGO, new Vector3(0, 0.2f, 0));
 
             // Yes, that's correct. Beds are mostly of type oCMobDoor inside G1. ;-)
-            SpawnInteractable("BED_1_OC", PrefabType.VobDoor, DoorsGO, new Vector3(0, 0, -3));
+            SpawnInteractable("BED_1_OC", PrefabType.VobDoor, DoorsGO, new Vector3(0, 0, -4));
+        }
+
+        private void InitOCMobContainer()
+        {
+            SpawnInteractable("CHESTSMALL_OCCHESTSMALLLOCKED", PrefabType.VobContainer, ContainersGO, rotation: Quaternion.Euler(0, 0, 0));
         }
 
         private void InitOCMobFire()

@@ -146,7 +146,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4265338153244332921}
   m_Layer: 0
-  m_Name: BIP01 CHEST_BIG_0
+  m_Name: BIP01 CHEST_.*_0
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -286,7 +286,7 @@ GameObject:
   - component: {fileID: 6573836035492029965}
   - component: {fileID: 6797639264981372780}
   m_Layer: 0
-  m_Name: BIP01 CHEST_BIG_1
+  m_Name: BIP01 CHEST_.*_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
