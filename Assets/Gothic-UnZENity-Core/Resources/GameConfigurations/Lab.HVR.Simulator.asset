@@ -12,24 +12,43 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 355b4ad0092f448a80ea647207f12648, type: 3}
   m_Name: Lab.HVR.Simulator
   m_EditorClassIdentifier: 
+  GameControls: 0
   EnableDeviceSimulator: 1
-  GameControls: 1
-  EnableMainMenu: 1
+  ZenKitLogLevel: 1
+  EnableZSpyLogs: 0
+  DirectMusicLogLevel: 30
+  EnableBarrierLogs: 0
+  EnableMainMenu: 0
   LoadFromSaveSlot: 0
   SaveSlotToLoad: 1
-  SpawnOldCampNpcs: 0
-  EnableNpcRoutines: 0
+  EnableVOBs: 0
+  SpawnVOBTypes:
+    Value: 
+  EnableVOBMeshCulling: 0
+  SmallVOBMeshCullingGroup:
+    MaximumObjectSize: 0.2
+    CullingDistance: 50
+  MediumVOBMeshCullingGroup:
+    MaximumObjectSize: 5
+    CullingDistance: 100
+  LargeVOBMeshCullingGroup:
+    MaximumObjectSize: 100
+    CullingDistance: 200
+  ShowVOBMeshCullingGizmos: 0
+  BrightenUpHoveredVOBs: 1
+  ShowNamesOnHoveredVOBs: 1
+  SpawnNPCs: 0
+  EnableNPCRoutines: 0
+  SpawnNPCInstances:
+    Value: 
+  EnableNPCEyeBlinking: 0
+  ShowFreePoints: 0
+  ShowWayPoints: 0
+  ShowWayEdges: 0
   SpawnAtWaypoint: 
-  EnableWorldObjects: 1
-  EnableWorldMesh: 1
-  EnableBarrierVisual: 1
-  EnableDecalVisuals: 0
-  EnableParticleEffects: 0
-  EnableNpcEyeBlinking: 0
-  SpawnWorldObjectTypes: 
-  SpawnNpcInstances: 
   EnableGameMusic: 1
   EnableGameSounds: 1
+  EnableSoundCulling: 0
   SunLightColor: {r: 0.6901961, g: 0.6901961, b: 0.6901961, a: 1}
   SunLightIntensity: 1
   SunUpdateInterval: 2
@@ -37,22 +56,7 @@ MonoBehaviour:
   StartTimeHour: 8
   StartTimeMinute: 0
   TimeSpeedMultiplier: 1
-  ShowFreePoints: 0
-  ShowWayPoints: 0
-  ShowWayEdges: 0
-  EnableSoundCulling: 1
-  EnableMeshCulling: 1
-  ShowMeshCullingGizmos: 0
-  SmallMeshCullingGroup:
-    MaximumObjectSize: 1
-    CullingDistance: 50
-  MediumMeshCullingGroup:
-    MaximumObjectSize: 5
-    CullingDistance: 100
-  LargeMeshCullingGroup:
-    MaximumObjectSize: 100
-    CullingDistance: 200
-  ZenkitLogLevel: 1
-  DirectMusicLogLevel: 30
-  EnableBarrierLogs: 0
-  EnableSpyLogs: 0
+  EnableWorldMesh: 0
+  EnableBarrierVisual: 0
+  EnableDecalVisuals: 0
+  EnableParticleEffects: 0
