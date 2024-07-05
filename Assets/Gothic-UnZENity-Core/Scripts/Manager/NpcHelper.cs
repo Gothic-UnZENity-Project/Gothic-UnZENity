@@ -123,9 +123,9 @@ namespace GUZ.Core.Manager
                 return -1;
             }
 
-            if (vob is InteractiveProperties interactiveVob)
+            if (vob is VobInteractiveProperties interactiveVob)
             {
-                return Math.Max(0, interactiveVob.Properties.State);
+                return Math.Max(0, interactiveVob.InteractiveProperties.State);
             }
 
             return -1;

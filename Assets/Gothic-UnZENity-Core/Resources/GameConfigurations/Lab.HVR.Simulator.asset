@@ -10,21 +10,21 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 355b4ad0092f448a80ea647207f12648, type: 3}
-  m_Name: Production
+  m_Name: Lab.HVR.Simulator
   m_EditorClassIdentifier: 
   GameControls: 0
-  EnableDeviceSimulator: 0
+  EnableDeviceSimulator: 1
   ZenKitLogLevel: 1
   EnableZSpyLogs: 0
   DirectMusicLogLevel: 30
   EnableBarrierLogs: 0
-  EnableMainMenu: 1
+  EnableMainMenu: 0
   LoadFromSaveSlot: 0
-  SaveSlotToLoad: 0
-  EnableVOBs: 1
+  SaveSlotToLoad: 1
+  EnableVOBs: 0
   SpawnVOBTypes:
     Value: 
-  EnableVOBMeshCulling: 1
+  EnableVOBMeshCulling: 0
   SmallVOBMeshCullingGroup:
     MaximumObjectSize: 0.2
     CullingDistance: 50
@@ -48,15 +48,15 @@ MonoBehaviour:
   SpawnAtWaypoint: 
   EnableGameMusic: 1
   EnableGameSounds: 1
-  EnableSoundCulling: 1
-  SunLightColor: {r: 0.69, g: 0.69, b: 0.69, a: 1}
+  EnableSoundCulling: 0
+  SunLightColor: {r: 0.6901961, g: 0.6901961, b: 0.6901961, a: 1}
   SunLightIntensity: 1
-  SunUpdateInterval: 1
-  AmbientLightColor: {r: 0.1, g: 0.1, b: 0.1, a: 1}
+  SunUpdateInterval: 2
+  AmbientLightColor: {r: 0.10196079, g: 0.10196079, b: 0.10196079, a: 1}
   StartTimeHour: 8
   StartTimeMinute: 0
   TimeSpeedMultiplier: 1
-  EnableWorldMesh: 1
-  EnableBarrierVisual: 1
+  EnableWorldMesh: 0
+  EnableBarrierVisual: 0
   EnableDecalVisuals: 0
   EnableParticleEffects: 0

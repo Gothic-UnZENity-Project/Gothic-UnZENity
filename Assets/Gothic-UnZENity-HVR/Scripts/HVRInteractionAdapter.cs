@@ -4,12 +4,9 @@ using System.Linq;
 using GUZ.Core.Context;
 using GUZ.Core.Globals;
 using GVR;
-using HurricaneVR.Framework.Components;
-using HurricaneVR.Framework.Core;
 using HurricaneVR.Framework.Core.Player;
-using HurricaneVR.Framework.Shared;
-using Unity.VisualScripting;
 using HurricaneVRExtensions.Simulator;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Object = UnityEngine.Object;
@@ -107,18 +104,12 @@ namespace GUZ.HVR
 
         public void AddClimbingComponent(GameObject go)
         {
-            go.AddComponent<HVRClimbable>();
-            HVRGrabbable grabbable = go.AddComponent<HVRGrabbable>();
-            grabbable.PoseType = PoseType.PhysicPoser;
+            // Currently nothing to do. Everything's set up inside oCMobLadder.prefab already.
         }
 
-        public void AddItemComponent(GameObject go, bool isLab = false)
+        public void AddItemComponent(GameObject go, bool isLab)
         {
-            // TODO - Hack for Lab.scene - Better way to get something thrown. Needs to be removed soon.
-            Rigidbody rb = go.GetComponent<Rigidbody>();
-            rb.isKinematic = false;
-
-            // FIXME - activate/deactivate culling when dragged around
+            // Currently nothing to do. Everything's set up inside oCItem.prefab already.
         }
     }
 }

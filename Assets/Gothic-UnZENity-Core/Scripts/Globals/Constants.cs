@@ -23,6 +23,9 @@ namespace GUZ.Core.Globals
         public static readonly Shader ShaderBarrier = Shader.Find("Unlit/Barrier");
         public static readonly Shader ShaderThunder = Shader.Find("Unlit/ThunderShader");
 
+        // Shader properties
+        public static readonly float ShaderPropertyFocusBrightness = 10f; // Object is in focus of player. Brighten up the color by this value.
+
         public const string SceneBootstrap = "Bootstrap";
         public const string SceneGeneral = "General";
         public const string SceneMainMenu = "MainMenu";

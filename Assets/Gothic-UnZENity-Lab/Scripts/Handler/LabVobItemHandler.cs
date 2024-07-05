@@ -6,23 +6,21 @@ using GUZ.Core;
 using GUZ.Core.Context;
 using GUZ.Core.Creator.Meshes.V2;
 using GUZ.Core.Globals;
+using GUZ.Core.Properties;
 using GUZ.Core.Vm;
+using GUZ.Core.Vob;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Serialization;
 using ZenKit.Daedalus;
 
 namespace GUZ.Lab.Handler
 {
-    public class LabVobHandAttachPointsLabHandler : MonoBehaviour, ILabHandler
+    public class LabVobItemHandler : MonoBehaviour, ILabHandler
     {
-        [FormerlySerializedAs("vobCategoryDropdown")]
         public TMP_Dropdown VobCategoryDropdown;
 
-        [FormerlySerializedAs("vobItemDropdown")]
         public TMP_Dropdown VobItemDropdown;
 
-        [FormerlySerializedAs("itemSpawnSlot")]
         public GameObject ItemSpawnSlot;
 
         private string _currentItemName;
@@ -49,6 +47,8 @@ namespace GUZ.Lab.Handler
                 .ToList();
 
             CategoryDropdownValueChanged();
+
+            CreateItem("ItFo_Plants_mushroom_01");
         }
 
         public void CategoryDropdownValueChanged()
@@ -87,6 +87,7 @@ namespace GUZ.Lab.Handler
             var itemGo = MeshFactory.CreateVob(item.Visual, mrm, default, default, true,
                 rootGo: itemPrefab, parent: ItemSpawnSlot, useTextureArray: false);
 
+            itemGo.GetComponent<VobItemProperties>().SetData(null, item);
             GuzContext.InteractionAdapter.AddItemComponent(itemGo, true);
 
             return gameObject;

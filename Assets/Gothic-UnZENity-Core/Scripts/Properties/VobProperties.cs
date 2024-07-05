@@ -15,14 +15,21 @@ namespace GUZ.Core.Properties
 
         public IVirtualObject Properties;
 
+
         public virtual void SetData(IVirtualObject data)
         {
             Properties = data;
 
-            if (data.Visual != null)
+            if (data?.Visual != null)
             {
                 VisualScheme = data.Visual.Name.Split('_').First(); // e.g. BED_1_OC.ASC => BED
             }
         }
+
+        public virtual string GetFocusName()
+        {
+            return Properties?.Name;
+        }
+
     }
 }

@@ -119,6 +119,12 @@ namespace GUZ.Core
         [Tooltip("For debugging purposes only.")]
         public bool ShowVOBMeshCullingGizmos;
 
+        [Separator("Immersion")]
+        [OverrideLabel("Brighten Up Hovered VOBs")]
+        public bool BrightenUpHoveredVOBs = true;
+        [OverrideLabel("Show Names On Hovered VOBs")]
+        public bool ShowNamesOnHoveredVOBs = true;
+
 
         /**
          * ##########

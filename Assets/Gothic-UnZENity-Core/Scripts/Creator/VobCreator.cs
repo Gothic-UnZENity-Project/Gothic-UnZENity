@@ -441,11 +441,19 @@ namespace GUZ.Core.Creator
                     go = ResourceLoader.TryGetPrefabObject(PrefabType.Vob);
                     break;
                 case VirtualObjectType.oCMobFire:
+                    go = ResourceLoader.TryGetPrefabObject(PrefabType.VobFire);
+                    break;
                 case VirtualObjectType.oCMobInter:
-                case VirtualObjectType.oCMobBed:
-                case VirtualObjectType.oCMobWheel:
-                case VirtualObjectType.oCMobSwitch:
                     go = ResourceLoader.TryGetPrefabObject(PrefabType.VobInteractable);
+                    break;
+                case VirtualObjectType.oCMobBed:
+                    go = ResourceLoader.TryGetPrefabObject(PrefabType.VobBed);
+                    break;
+                case VirtualObjectType.oCMobWheel:
+                    go = ResourceLoader.TryGetPrefabObject(PrefabType.VobWheel);
+                    break;
+                case VirtualObjectType.oCMobSwitch:
+                    go = ResourceLoader.TryGetPrefabObject(PrefabType.VobSwitch);
                     break;
                 case VirtualObjectType.oCMobDoor:
                     go = ResourceLoader.TryGetPrefabObject(PrefabType.VobDoor);
@@ -595,6 +603,8 @@ namespace GUZ.Core.Creator
                     $"There should be no! object which can't be found n:{vob.Name} i:{vob.Instance}. We need to use >PxVobItem.instance< to do it right!");
                 return null;
             }
+
+            vobObj.GetComponent<VobItemProperties>().SetData(vob, item);
 
             GuzContext.InteractionAdapter.AddItemComponent(vobObj);
 
@@ -784,22 +794,6 @@ namespace GUZ.Core.Creator
         private static GameObject CreateLadder(IVirtualObject vob, GameObject parent = null)
         {
             var vobObj = CreateDefaultMesh(vob, parent, true);
-
-            // We will set some default values for collider and grabbing now.
-            // Adding it now is easier than putting it on a prefab and updating it at runtime (as grabbing didn't work this way out-of-the-box).
-            // e.g. grabComp's colliders aren't recalculated if we have the XRGrabInteractable set in Prefab.
-            var grabComp = vobObj.AddComponent<XRGrabInteractable>();
-            var rigidbodyComp = vobObj.GetComponent<Rigidbody>();
-            var meshColliderComp = vobObj.GetComponentInChildren<MeshCollider>();
-
-            meshColliderComp.convex = true; // We need to set it to overcome Physics.ClosestPoint warnings.
-            vobObj.tag = Constants.ClimbableTag;
-            rigidbodyComp.isKinematic = true;
-            // Throws errors and isn't needed as we don't want to move the kinematic ladder when released.
-            grabComp.throwOnDetach = false;
-            grabComp.trackPosition = false;
-            grabComp.trackRotation = false;
-            grabComp.selectMode = InteractableSelectMode.Multiple; // With this, we can grab with both hands!
 
             return vobObj;
         }
