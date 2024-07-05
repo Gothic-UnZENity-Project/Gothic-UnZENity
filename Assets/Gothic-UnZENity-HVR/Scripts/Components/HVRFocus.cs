@@ -1,3 +1,4 @@
+using GUZ.Core;
 using GUZ.Core.Globals;
 using GUZ.Core.Properties;
 using HurricaneVR.Framework.Core;
@@ -45,13 +46,21 @@ namespace GVR.HVR.Components
                 _focusedMaterial = new Material(_defaultMaterial);
                 _focusedMaterial.SetFloat(_focusBrightness, Constants.ShaderPropertyFocusBrightness);
             }
-            transform.GetComponentInChildren<Renderer>().sharedMaterial = _focusedMaterial;
 
-            _nameCanvas.SetActive(true);
-            _nameCanvas.GetComponentInChildren<TMP_Text>().text = _properties.GetFocusName();
+            if (GameGlobals.Config.BrightenUpHoveredVOBs)
+            {
+                transform.GetComponentInChildren<Renderer>().sharedMaterial = _focusedMaterial;
+            }
+
+            if (GameGlobals.Config.ShowNamesOnHoveredVOBs)
+            {
+                _nameCanvas.SetActive(true);
+                _nameCanvas.GetComponentInChildren<TMP_Text>().text = _properties.GetFocusName();
+            }
             _isHovered = true;
         }
 
+        // FIXME - Should later reside in another Component for Items only as the physical change is only for oCItems.
         public void OnGrabbed(HVRGrabberBase grabber, HVRGrabbable grabbable)
         {
             if (ChangeKinematicOnGrab)
@@ -63,7 +72,10 @@ namespace GVR.HVR.Components
 
         public void OnHoverExit(HVRGrabberBase grabber, HVRGrabbable grabbable)
         {
-            transform.GetComponentInChildren<Renderer>().sharedMaterial = _defaultMaterial;
+            if (GameGlobals.Config.BrightenUpHoveredVOBs)
+            {
+                transform.GetComponentInChildren<Renderer>().sharedMaterial = _defaultMaterial;
+            }
 
             _nameCanvas.SetActive(false);
             _isHovered = false;
@@ -76,8 +88,11 @@ namespace GVR.HVR.Components
                 return;
             }
 
-            _nameCanvas.transform.LookAt(_mainCamera.transform);
-            _nameCanvas.transform.Rotate(0, 180, 0);
+            if (GameGlobals.Config.ShowNamesOnHoveredVOBs)
+            {
+                _nameCanvas.transform.LookAt(_mainCamera.transform);
+                _nameCanvas.transform.Rotate(0, 180, 0);
+            }
         }
 
         /// <summary>
