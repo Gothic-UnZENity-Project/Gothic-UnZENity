@@ -159,7 +159,7 @@ namespace GUZ.Core.Creator
             var isPositionFound = false;
             var testRadius = 1f; // ~2x size of normal bounding box of an NPC.
             // Some FP/WP are on a hill. The spawn check will therefore lift the location for a little to not interfere with world mesh collision check.
-            var groundControlDifference = new Vector3(0, 0.5f, 0);
+            var groundControlDifference = new Vector3(0, 1f, 0);
             var initialSpawnPointGroundControl = initialSpawnPoint.Position + groundControlDifference;
 
             // Check if the spawn point is free.
