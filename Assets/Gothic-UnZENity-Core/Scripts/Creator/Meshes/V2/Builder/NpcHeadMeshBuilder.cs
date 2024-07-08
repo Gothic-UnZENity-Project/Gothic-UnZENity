@@ -54,6 +54,19 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
             {
                 finalTextureName = Regex.Replace(name, "(?<=.*?)V0_C0",
                     $"V{BodyData.HeadTexNr}_C{BodyData.BodyTexColor}");
+
+                var texture = base.GetTexture(finalTextureName);
+
+                if (texture != null)
+                {
+                    return texture;
+                }
+                // Peasant/Bauer (922) has no V52_C2, we therefore try it with Cx-1 on more time.
+                else
+                {
+                    finalTextureName = Regex.Replace(name, "(?<=.*?)V0_C0",
+                        $"V{BodyData.HeadTexNr}_C{BodyData.BodyTexColor - 1}");
+                }
             }
 
             return base.GetTexture(finalTextureName);
