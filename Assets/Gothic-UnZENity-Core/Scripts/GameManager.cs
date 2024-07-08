@@ -46,7 +46,9 @@ namespace GUZ.Core
 
         public StationaryLightsManager Lights { get; private set; }
 
-        public VobMeshCullingManager MeshCulling { get; private set; }
+        public VobMeshCullingManager VOBMeshCulling { get; private set; }
+
+        public NPCMeshCullingManager NPCMeshCulling { get; private set; }
 
         public VobSoundCullingManager SoundCulling { get; private set; }
 
@@ -84,7 +86,8 @@ namespace GUZ.Core
             Settings = GameSettings.Load();
             _fileLoggingHandler = new FileLoggingHandler(Settings);
             _gameLoadingManager = new LoadingManager();
-            MeshCulling = new VobMeshCullingManager(Config, this);
+            VOBMeshCulling = new VobMeshCullingManager(Config, this);
+            NPCMeshCulling = new NPCMeshCullingManager(Config, this);
             SoundCulling = new VobSoundCullingManager(Config);
             _barrierManager = new BarrierManager(Config);
             Lights = new StationaryLightsManager();
@@ -104,7 +107,8 @@ namespace GUZ.Core
 
             _fileLoggingHandler.Init();
             _gameLoadingManager.Init();
-            MeshCulling.Init();
+            VOBMeshCulling.Init();
+            NPCMeshCulling.Init();
             SoundCulling.Init();
             Time.Init();
             Sky.Init();
@@ -147,18 +151,20 @@ namespace GUZ.Core
 
         private void OnDrawGizmos()
         {
-            MeshCulling?.OnDrawGizmos();
+            VOBMeshCulling?.OnDrawGizmos();
         }
 
         public void OnDestroy()
         {
-            MeshCulling.Destroy();
+            VOBMeshCulling.Destroy();
+            NPCMeshCulling.Destroy();
             SoundCulling.Destroy();
             _fileLoggingHandler.Destroy();
 
             Settings = null;
             _gameLoadingManager = null;
-            MeshCulling = null;
+            VOBMeshCulling = null;
+            NPCMeshCulling = null;
             SoundCulling = null;
             _barrierManager = null;
             Lights = null;

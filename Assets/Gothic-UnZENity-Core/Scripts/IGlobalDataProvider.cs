@@ -16,7 +16,7 @@ namespace GUZ.Core
         public GuzSceneManager Scene { get; }
         public FontManager Font { get; }
         public StationaryLightsManager Lights { get; }
-        public VobMeshCullingManager MeshCulling { get; }
+        public VobMeshCullingManager VOBMeshCulling { get; }
         public VobSoundCullingManager SoundCulling { get; }
     }
 }

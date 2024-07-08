@@ -48,7 +48,7 @@ namespace GUZ.Lab
         public TextureManager Textures => _textureManager;
         public FontManager Font => _fontManager;
         public StationaryLightsManager Lights => null;
-        public VobMeshCullingManager MeshCulling => null;
+        public VobMeshCullingManager VOBMeshCulling => null;
         public VobSoundCullingManager SoundCulling => null;
 
 

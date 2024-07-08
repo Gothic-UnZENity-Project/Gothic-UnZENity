@@ -19,7 +19,7 @@ namespace GUZ.Core
         [Obsolete("Don't use globals.")] public static GuzSceneManager Scene => Instance.Scene;
         [Obsolete("Don't use globals.")] public static FontManager Font => Instance.Font;
         [Obsolete("Don't use globals.")] public static StationaryLightsManager Lights => Instance.Lights;
-        [Obsolete("Don't use globals.")] public static VobMeshCullingManager MeshCulling => Instance.MeshCulling;
+        [Obsolete("Don't use globals.")] public static VobMeshCullingManager MeshCulling => Instance.VOBMeshCulling;
         [Obsolete("Don't use globals.")] public static VobSoundCullingManager SoundCulling => Instance.SoundCulling;
     }
 }
