@@ -173,21 +173,25 @@ namespace GUZ.Core.Creator
             // Alternatively let's circle around the spawn point if multiple NPCs spawn onto the same one.
             else
             {
-                for (var angle = 0f; angle < 360f; angle += 36f)
+                // G1: Orc-dogs are in a big crowd. We therefore need to draw a location circle multiple times to spawn them all.
+                for (var currentRadius = testRadius; currentRadius <= testRadius * 2; currentRadius += testRadius)
                 {
-                    var angleInRadians = angle * Mathf.Deg2Rad;
-                    var offsetPoint = new Vector3(Mathf.Cos(angleInRadians) * testRadius, 0,
-                        Mathf.Sin(angleInRadians) * testRadius);
-                    var checkPointGroundControl = initialSpawnPointGroundControl + offsetPoint;
-
-                    // Check if the point is clear (no obstacles)
-                    if (!Physics.CheckSphere(checkPointGroundControl, testRadius / 2))
+                    for (var angle = 0f; angle < 360f; angle += 36f)
                     {
-                        npcGo.transform.position = initialSpawnPoint.Position + offsetPoint;
-                        // There are three options to sync the Physics information for collision check. This is the most performant one as it only alters the single V3.
-                        npcGo.GetComponentInChildren<Rigidbody>().position = initialSpawnPoint.Position + offsetPoint;
-                        isPositionFound = true;
-                        break;
+                        var angleInRadians = angle * Mathf.Deg2Rad;
+                        var offsetPoint = new Vector3(Mathf.Cos(angleInRadians) * currentRadius, 0,
+                            Mathf.Sin(angleInRadians) * currentRadius);
+                        var checkPointGroundControl = initialSpawnPointGroundControl + offsetPoint;
+
+                        // Check if the point is clear (no obstacles)
+                        if (!Physics.CheckSphere(checkPointGroundControl, testRadius / 2))
+                        {
+                            npcGo.transform.position = initialSpawnPoint.Position + offsetPoint;
+                            // There are three options to sync the Physics information for collision check. This is the most performant one as it only alters the single V3.
+                            npcGo.GetComponentInChildren<Rigidbody>().position = initialSpawnPoint.Position + offsetPoint;
+                            isPositionFound = true;
+                            break;
+                        }
                     }
                 }
             }
