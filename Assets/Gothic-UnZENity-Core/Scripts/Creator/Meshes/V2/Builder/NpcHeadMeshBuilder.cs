@@ -18,6 +18,12 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
                 return RootGo;
             }
 
+            // Fix for G1: Damlurker
+            if (Mmb == null)
+            {
+                return null;
+            }
+
             var props = RootGo.GetComponent<NpcProperties>();
 
             // Cache it for faster use during runtime

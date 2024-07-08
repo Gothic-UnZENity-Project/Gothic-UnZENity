@@ -127,11 +127,17 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
         /// </summary>
         public void SetMmb(string mmbName)
         {
+            // Fix for G1: Damlurker
+            if (mmbName == string.Empty)
+            {
+                return;
+            }
+
             Mmb = ResourceLoader.TryGetMorphMesh(mmbName);
 
             if (Mmb == null)
             {
-                Debug.LogError($"MDH from name >{mmbName}< for object >{RootGo.name}< not found.");
+                Debug.LogError($"MMB from name >{mmbName}< for object >{RootGo.name}< not found.");
             }
         }
 

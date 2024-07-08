@@ -195,7 +195,7 @@ namespace GUZ.Core.Creator
             if (!isPositionFound)
             {
                 Debug.LogError(
-                    $"No suitable spawn point found for NPC {npcGo.name}. Circle search didn't find anything!");
+                    $"No suitable spawn point found for NPC >{npcGo.name}<. Circle search didn't find anything!");
                 return;
             }
 
