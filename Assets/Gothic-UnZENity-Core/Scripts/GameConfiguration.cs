@@ -132,14 +132,18 @@ namespace GUZ.Core
          * ##########
          */
 
-        [Foldout("NPCs", true)]
-        [Tooltip("Currently focusing on Old Camp NPCs.")]
+        [Foldout("NPCs (NPCs+Monsters)", true)]
+        [Separator("General")]
         [OverrideLabel("Spawn NPCs")]
         public bool SpawnNPCs;
 
         [ConditionalField(fieldToCheck: nameof(SpawnNPCs), compareValues: true)]
         public bool EnableNPCRoutines;
 
+        [ConditionalField(fieldToCheck: nameof(SpawnNPCs), compareValues: true)]
+        public bool EnableNPCMeshCulling = true;
+
+        [Separator("NPCs only")]
         [Tooltip("Spawn only specific NPCs by naming their IDs in here.")]
         [ConditionalField(fieldToCheck: nameof(SpawnNPCs), compareValues: true)]
         public IntCollection SpawnNPCInstances = new();
