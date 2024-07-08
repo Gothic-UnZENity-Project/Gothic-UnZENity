@@ -100,21 +100,18 @@ namespace GVR.HVR.Components
         /// </summary>
         private void OnDisable()
         {
-            // In this case, the object got destroyed instead of Disabled and we don't need to revert data.
-            if (transform == null)
-            {
-                return;
-            }
-
-            // If we get no renderer, then the GO got destroyed.
+            // Reset material.
             var rend = transform.GetComponentInChildren<Renderer>();
-            if (rend != null)
+            if (rend != null && _defaultMaterial != null)
             {
                 transform.GetComponentInChildren<Renderer>().sharedMaterial = _defaultMaterial;
             }
 
             // We need to destroy our Material manually otherwise it won't be GC'ed by Unity (as stated in the docs).
-            Destroy(_focusedMaterial);
+            if (_focusedMaterial != null)
+            {
+                Destroy(_focusedMaterial);
+            }
 
             _defaultMaterial = null;
             _focusedMaterial = null;
