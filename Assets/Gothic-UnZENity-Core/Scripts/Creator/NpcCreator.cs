@@ -173,6 +173,7 @@ namespace GUZ.Core.Creator
             // Alternatively let's circle around the spawn point if multiple NPCs spawn onto the same one.
             else
             {
+                // Circle around at least x-times.
                 // G1: Orc-dogs are in a big crowd. We therefore need to draw a location circle multiple times to spawn them all.
                 for (var currentRadius = testRadius; currentRadius <= testRadius * 2; currentRadius += testRadius)
                 {
