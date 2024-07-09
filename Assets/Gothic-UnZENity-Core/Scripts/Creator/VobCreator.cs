@@ -293,7 +293,7 @@ namespace GUZ.Core.Creator
                         break;
                     }
 
-                    if (!config.EnableNPCs)
+                    if (!config.EnableNpcs)
                     {
                         break;
                     }

@@ -1,6 +1,5 @@
 using System.Collections.Generic;
-using System.Linq;
-using JetBrains.Annotations;
+using GUZ.Core.Extensions;
 using UnityEngine;
 
 namespace GUZ.Core.Manager.Culling
@@ -14,14 +13,17 @@ namespace GUZ.Core.Manager.Culling
         // Stored for resetting after world switch
         private CullingGroup _npcCullingGroup;
 
+        // Temporary spheres during execution of Wld_InsertNpc() calls.
+        private List<BoundingSphere> _tempSpheres = new();
+
         // Stored for later index mapping SphereIndex => GOIndex
         private readonly List<GameObject> _objects = new();
 
 
         public NpcMeshCullingManager(GameConfiguration config, ICoroutineManager coroutineManager)
         {
-            _featureEnableCulling = config.EnableNPCMeshCulling;
-            _featureCullingDistance = config.NPCCullingDistance;
+            _featureEnableCulling = config.EnableNpcMeshCulling;
+            _featureCullingDistance = config.NpcCullingDistance;
             _coroutineManager = coroutineManager;
         }
 
@@ -39,46 +41,46 @@ namespace GUZ.Core.Manager.Culling
             _npcCullingGroup = new CullingGroup();
         }
 
-        public void PreWorldCreate()
+        private void PreWorldCreate()
         {
             _npcCullingGroup.Dispose();
             _npcCullingGroup = new CullingGroup();
             _objects.Clear();
         }
 
-        /// <summary>
-        /// Fill CullingGroups with GOs based on size (radius) and position
-        /// </summary>
-        public void PrepareSoundCulling([ItemCanBeNull] List<GameObject> gameObjects)
+        public void AddCullingEntry(GameObject go)
         {
             if (!_featureEnableCulling)
             {
                 return;
             }
 
-            var spheres = new List<BoundingSphere>();
-
-            foreach (var go in gameObjects.Where(i => i != null))
-            {
-                if (go == null)
-                {
-                    continue;
-                }
-
-                _objects.Add(go);
-                var sphere = new BoundingSphere(go.transform.position, go.GetComponent<AudioSource>().maxDistance);
-                spheres.Add(sphere);
-            }
-
-            // Disable sounds if we're leaving the area and therefore last audible location.
-            // Hint: As there are non spatial sounds (always same volume wherever we are),
-            // we need to disable the sounds at exactly the spot we are.
-            _npcCullingGroup.SetBoundingDistances(new[] { _featureCullingDistance });
-            _npcCullingGroup.onStateChanged = NPCVisibilityChanged;
-            _npcCullingGroup.SetBoundingSpheres(spheres.ToArray());
+            _objects.Add(go);
+            var sphere = new BoundingSphere(go.transform.position, 1f);
+            _tempSpheres.Add(sphere);
         }
 
-        private void NPCVisibilityChanged(CullingGroupEvent evt)
+        /// <summary>
+        /// Set main camera once world is loaded fully.
+        /// Doesn't work at loading time as we change scenes etc.
+        /// </summary>
+        private void PostWorldCreate(GameObject playerGo)
+        {
+            // Set main camera as reference point
+            var mainCamera = Camera.main!;
+            _npcCullingGroup.targetCamera = mainCamera;
+            _npcCullingGroup.SetDistanceReferencePoint(mainCamera.transform);
+
+            // Fill culling information into spawned GOs
+            _npcCullingGroup.SetBoundingDistances(new[] { _featureCullingDistance });
+            _npcCullingGroup.SetBoundingSpheres(_tempSpheres.ToArray());
+            _npcCullingGroup.onStateChanged = NpcVisibilityChanged;
+
+            // Cleanup
+            _tempSpheres.ClearAndReleaseMemory();
+        }
+
+        private void NpcVisibilityChanged(CullingGroupEvent evt)
         {
             // Ignore Frustum and Occlusion culling.
             if (evt.previousDistance == evt.currentDistance)
@@ -89,17 +91,6 @@ namespace GUZ.Core.Manager.Culling
             var inVisibleRange = evt.previousDistance > evt.currentDistance;
 
             _objects[evt.index].SetActive(inVisibleRange);
-        }
-
-        /// <summary>
-        /// Set main camera once world is loaded fully.
-        /// Doesn't work at loading time as we change scenes etc.
-        /// </summary>
-        public void PostWorldCreate(GameObject playerGo)
-        {
-            var mainCamera = Camera.main!;
-            _npcCullingGroup.targetCamera = mainCamera;
-            _npcCullingGroup.SetDistanceReferencePoint(mainCamera.transform);
         }
 
         public void Destroy()

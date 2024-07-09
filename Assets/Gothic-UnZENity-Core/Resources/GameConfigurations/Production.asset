@@ -37,13 +37,13 @@ MonoBehaviour:
   ShowVOBMeshCullingGizmos: 0
   BrightenUpHoveredVOBs: 1
   ShowNamesOnHoveredVOBs: 1
-  EnableNPCs: 0
+  EnableNpcs: 0
   EnableNPCRoutines: 0
-  EnableNPCMeshCulling: 1
-  NPCCullingDistance: 0
-  SpawnNPCInstances:
+  EnableNpcMeshCulling: 1
+  NpcCullingDistance: 10
+  SpawnNpcInstances:
     Value: 
-  EnableNPCEyeBlinking: 0
+  EnableNpcEyeBlinking: 0
   ShowFreePoints: 0
   ShowWayPoints: 0
   ShowWayEdges: 0

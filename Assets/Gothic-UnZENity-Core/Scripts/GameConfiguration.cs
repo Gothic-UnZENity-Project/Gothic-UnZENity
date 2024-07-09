@@ -135,27 +135,27 @@ namespace GUZ.Core
         [Foldout("NPCs (+ Monsters)", true)]
         [Separator("General")]
         [OverrideLabel("Enable NPCs")]
-        public bool EnableNPCs;
+        public bool EnableNpcs;
 
-        [ConditionalField(fieldToCheck: nameof(EnableNPCs), compareValues: true)]
+        [ConditionalField(fieldToCheck: nameof(EnableNpcs), compareValues: true)]
         public bool EnableNPCRoutines;
 
-        [ConditionalField(fieldToCheck: nameof(EnableNPCs), compareValues: true)]
-        public bool EnableNPCMeshCulling = true;
+        [ConditionalField(fieldToCheck: nameof(EnableNpcs), compareValues: true)]
+        public bool EnableNpcMeshCulling = true;
 
-        [ConditionalField(useMethod: true, method: nameof(NPCCullingDistanceFieldCondition))]
+        [ConditionalField(useMethod: true, method: nameof(NpcCullingDistanceFieldCondition))]
         [Range(1f, 100f)]
-        public float NPCCullingDistance = 10f;
-        private bool NPCCullingDistanceFieldCondition() => !EnableNPCs && EnableNPCMeshCulling;
+        public float NpcCullingDistance = 10f;
+        private bool NpcCullingDistanceFieldCondition() => EnableNpcs && EnableNpcMeshCulling;
 
         [Separator("NPCs only")]
         [Tooltip("Spawn only specific NPCs by naming their IDs in here.")]
-        [ConditionalField(fieldToCheck: nameof(EnableNPCs), compareValues: true)]
-        public IntCollection SpawnNPCInstances = new();
+        [ConditionalField(fieldToCheck: nameof(EnableNpcs), compareValues: true)]
+        public IntCollection SpawnNpcInstances = new();
 
         [Tooltip("WIP - Not production ready.")]
-        [ConditionalField(fieldToCheck: nameof(EnableNPCs), compareValues: true)]
-        public bool EnableNPCEyeBlinking;
+        [ConditionalField(fieldToCheck: nameof(EnableNpcs), compareValues: true)]
+        public bool EnableNpcEyeBlinking;
 
 
         /**

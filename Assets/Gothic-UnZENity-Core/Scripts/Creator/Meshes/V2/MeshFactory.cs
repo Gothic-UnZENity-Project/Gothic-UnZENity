@@ -27,10 +27,11 @@ namespace GUZ.Core.Creator.Meshes.V2
         }
 
         public static GameObject CreateNpc(string npcName, string mdmName, string mdhName,
-            VmGothicExternals.ExtSetVisualBodyData bodyData, GameObject root)
+            VmGothicExternals.ExtSetVisualBodyData bodyData, GameObject root, GameObject parent = null)
         {
             var npcBuilder = new NpcMeshBuilder();
             npcBuilder.SetGameObject(root, npcName);
+            npcBuilder.SetParent(parent);
             npcBuilder.SetMdh(mdhName);
             npcBuilder.SetMdm(mdmName);
             npcBuilder.SetBodyData(bodyData);

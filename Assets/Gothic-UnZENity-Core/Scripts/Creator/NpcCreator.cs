@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.Linq;
 using GUZ.Core.Caches;
 using GUZ.Core.Creator.Meshes.V2;
-using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
 using GUZ.Core.Npc.Routines;
@@ -66,6 +65,8 @@ namespace GUZ.Core.Creator
             }
 
             SetSpawnPoint(newNpc, spawnPoint);
+
+            GameGlobals.NpcMeshCulling.AddCullingEntry(newNpc);
         }
 
         [CanBeNull]
@@ -101,8 +102,8 @@ namespace GUZ.Core.Creator
                 props.Copy(origProps);
             }
 
-            if (GameGlobals.Config.SpawnNPCInstances.Value.Any() &&
-                !GameGlobals.Config.SpawnNPCInstances.Value.Contains(props.NpcInstance.Id))
+            if (GameGlobals.Config.SpawnNpcInstances.Value.Any() &&
+                !GameGlobals.Config.SpawnNpcInstances.Value.Contains(props.NpcInstance.Id))
             {
                 LookupCache.NpcCache.Remove(props.NpcInstance.Index);
                 Object.Destroy(newNpc);
@@ -112,8 +113,7 @@ namespace GUZ.Core.Creator
             newNpc.name = $"{props.NpcInstance.GetName(NpcNameSlot.Slot0)} ({props.NpcInstance.Id})";
 
             var mdhName = string.IsNullOrEmpty(props.OverlayMdhName) ? props.BaseMdhName : props.OverlayMdhName;
-            MeshFactory.CreateNpc(newNpc.name, props.MdmName, mdhName, props.BodyData, newNpc);
-            newNpc.SetParent(GetRootGo());
+            MeshFactory.CreateNpc(newNpc.name, props.MdmName, mdhName, props.BodyData, newNpc, GetRootGo());
 
             foreach (var equippedItem in props.EquippedItems)
             {
