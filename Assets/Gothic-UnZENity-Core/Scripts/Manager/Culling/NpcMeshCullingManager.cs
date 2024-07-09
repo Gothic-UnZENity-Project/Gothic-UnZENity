@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace GUZ.Core.Manager.Culling
 {
-    public class NPCMeshCullingManager
+    public class NpcMeshCullingManager
     {
         private readonly bool _featureEnableCulling;
         private readonly float _featureCullingDistance;
@@ -18,7 +18,7 @@ namespace GUZ.Core.Manager.Culling
         private readonly List<GameObject> _objects = new();
 
 
-        public NPCMeshCullingManager(GameConfiguration config, ICoroutineManager coroutineManager)
+        public NpcMeshCullingManager(GameConfiguration config, ICoroutineManager coroutineManager)
         {
             _featureEnableCulling = config.EnableNPCMeshCulling;
             _featureCullingDistance = config.NPCCullingDistance;

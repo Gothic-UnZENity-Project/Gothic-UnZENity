@@ -92,7 +92,7 @@ namespace GUZ.Core.Manager
 
             // We load NPCs only! if we have a fresh game start.
             // TODO - We need to properly update this logic to reflect world switches for the first time as well (even from save games).
-            if (_config.SpawnNPCs && !_config.LoadFromSaveSlot)
+            if (_config.EnableNPCs && !_config.LoadFromSaveSlot)
             {
                 GameData.GothicVm.Call("STARTUP_SUB_OLDCAMP");
             }

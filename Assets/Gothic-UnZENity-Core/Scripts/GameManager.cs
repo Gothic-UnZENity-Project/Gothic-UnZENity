@@ -46,9 +46,9 @@ namespace GUZ.Core
 
         public StationaryLightsManager Lights { get; private set; }
 
-        public VobMeshCullingManager VOBMeshCulling { get; private set; }
+        public VobMeshCullingManager VobMeshCulling { get; private set; }
 
-        public NPCMeshCullingManager NPCMeshCulling { get; private set; }
+        public NpcMeshCullingManager NpcMeshCulling { get; private set; }
 
         public VobSoundCullingManager SoundCulling { get; private set; }
 
@@ -86,8 +86,8 @@ namespace GUZ.Core
             Settings = GameSettings.Load();
             _fileLoggingHandler = new FileLoggingHandler(Settings);
             _gameLoadingManager = new LoadingManager();
-            VOBMeshCulling = new VobMeshCullingManager(Config, this);
-            NPCMeshCulling = new NPCMeshCullingManager(Config, this);
+            VobMeshCulling = new VobMeshCullingManager(Config, this);
+            NpcMeshCulling = new NpcMeshCullingManager(Config, this);
             SoundCulling = new VobSoundCullingManager(Config);
             _barrierManager = new BarrierManager(Config);
             Lights = new StationaryLightsManager();
@@ -107,8 +107,8 @@ namespace GUZ.Core
 
             _fileLoggingHandler.Init();
             _gameLoadingManager.Init();
-            VOBMeshCulling.Init();
-            NPCMeshCulling.Init();
+            VobMeshCulling.Init();
+            NpcMeshCulling.Init();
             SoundCulling.Init();
             Time.Init();
             Sky.Init();
@@ -151,20 +151,20 @@ namespace GUZ.Core
 
         private void OnDrawGizmos()
         {
-            VOBMeshCulling?.OnDrawGizmos();
+            VobMeshCulling?.OnDrawGizmos();
         }
 
         public void OnDestroy()
         {
-            VOBMeshCulling.Destroy();
-            NPCMeshCulling.Destroy();
+            VobMeshCulling.Destroy();
+            NpcMeshCulling.Destroy();
             SoundCulling.Destroy();
             _fileLoggingHandler.Destroy();
 
             Settings = null;
             _gameLoadingManager = null;
-            VOBMeshCulling = null;
-            NPCMeshCulling = null;
+            VobMeshCulling = null;
+            NpcMeshCulling = null;
             SoundCulling = null;
             _barrierManager = null;
             Lights = null;

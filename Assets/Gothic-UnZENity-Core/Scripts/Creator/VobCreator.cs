@@ -391,7 +391,7 @@ namespace GUZ.Core.Creator
 
         private static void PostCreateVobs()
         {
-            GameGlobals.MeshCulling.PrepareVobCulling(_cullingVobObjects);
+            GameGlobals.VobMeshCulling.PrepareVobCulling(_cullingVobObjects);
             GameGlobals.SoundCulling.PrepareSoundCulling(LookupCache.VobSoundsAndDayTime);
 
             _vobTreeCache.ClearAndReleaseMemory();
