@@ -83,7 +83,7 @@ namespace GUZ.Core.Properties
 
         public bool HasItemEquipped;
 
-        public int CurrentItem;
+        public int CurrentItem = -1;
         public string UsedItemSlot;
 
         // We need to start with an "invalid" value as >0< is an allowed state value like in >t_Potion_Stand_2_S0<

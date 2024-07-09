@@ -67,7 +67,7 @@ namespace GUZ.Core
 
             _gameMusicManager.Init();
 
-            GuzBootstrapper.BootGothicUnZeNity(Config, Settings.GothicIPath, Settings.GothicILanguage);
+            GuzBootstrapper.BootGothicUnZENity(Config, Settings.GothicIPath, Settings.GothicILanguage);
             Scene.LoadStartupScenes();
 
             if (Config.EnableBarrierVisual)

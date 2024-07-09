@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using GUZ.Core.Extensions;
+using GUZ.Core.Npc;
 using UnityEngine;
 
 namespace GUZ.Core.Manager.Culling
@@ -91,6 +92,11 @@ namespace GUZ.Core.Manager.Culling
             var inVisibleRange = evt.previousDistance > evt.currentDistance;
 
             _objects[evt.index].SetActive(inVisibleRange);
+
+            if (inVisibleRange)
+            {
+                _objects[evt.index].GetComponent<AiHandler>().ReEnableNpc();
+            }
         }
 
         public void Destroy()

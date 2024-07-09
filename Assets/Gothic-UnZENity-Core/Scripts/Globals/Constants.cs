@@ -68,9 +68,23 @@ namespace GUZ.Core.Globals
 
         public const string DaedalusHeroInstanceName = "PC_HERO"; // TODO - can be read from .ini file.
 
+
+        public static int DaedalusAIVItemStatusKey;
+        public static int DaedalusAIVItemFreqKey;
+
+        public static int DaedalusTAITNone;
+
         static Constants()
         {
             LoadingMaterial = new Material(ShaderWorldLit);
+            GlobalEventDispatcher.ZenKitBootstrapped.AddListener(Init);
+        }
+
+        private static void Init()
+        {
+            DaedalusAIVItemStatusKey = GameData.GothicVm.GetSymbolByName("AIV_ITEMSTATUS").GetInt(0);
+            DaedalusAIVItemFreqKey = GameData.GothicVm.GetSymbolByName("AIV_ITEMFREQ").GetInt(0);
+            DaedalusTAITNone = GameData.GothicVm.GetSymbolByName("TA_IT_NONE").GetInt(0);
         }
     }
 }

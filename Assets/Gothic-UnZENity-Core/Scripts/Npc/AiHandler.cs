@@ -1,8 +1,11 @@
 ﻿using GUZ.Core.Creator;
 using GUZ.Core.Data.ZkEvents;
+using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
+using GUZ.Core.Manager;
 using GUZ.Core.Npc.Actions;
 using GUZ.Core.Npc.Actions.AnimationActions;
+using GUZ.Core.Npc.Routines;
 using GUZ.Core.Properties;
 using UnityEngine;
 using ZenKit;
@@ -136,6 +139,7 @@ namespace GUZ.Core.Npc
             Properties.AnimationQueue.Clear();
             Properties.CurrentAction = new None(new AnimationAction(), gameObject);
             Properties.StateTime = 0.0f;
+            Properties.ItemAnimationState = -1;
 
             if (stopCurrentStateImmediately)
             {
@@ -188,6 +192,63 @@ namespace GUZ.Core.Npc
 
             // FIXME ! We need to re-add physics when e.g. looping walk animation!
             Properties.CurrentAction.AnimationEndEventCallback(eventData);
+        }
+
+        /// <summary>
+        /// Fully reset NPC state.
+        /// Called after an NPC is re-enabled in the scene.
+        /// </summary>
+        public void ReEnableNpc()
+        {
+            // Spawn to initial spawn location
+            var currentRoutine = gameObject.GetComponent<Routine>().CurrentRoutine;
+            gameObject.transform.position = WayNetHelper.GetWayNetPoint(currentRoutine.Waypoint).Position;
+
+            // Animation state handling
+            Properties.AnimationQueue.Clear();
+            Properties.CurrentAction = new None(new AnimationAction(), gameObject);
+            Properties.StateTime = 0.0f;
+
+            // WayNet handling
+            if (Properties.CurrentFreePoint != null)
+            {
+                // If we despawn an NPC, the FP needs to be cleared as well.
+                Properties.CurrentFreePoint.IsLocked = false;
+            }
+            Properties.CurrentFreePoint = null;
+            Properties.CurrentWayPoint = null;
+
+            // CurrentItem handling
+            Properties.ItemAnimationState = -1;
+            if (Properties.CurrentItem != -1)
+            {
+                // If NPC had an item in its hands, we need to remove the mesh.
+                var leftHand = gameObject.FindChildRecursively("ZS_LEFTHAND");
+                var rightHand = gameObject.FindChildRecursively("ZS_RIGHTHAND");
+
+                if (leftHand != null)
+                {
+                    for (var i = 0; i < leftHand.transform.childCount; i++)
+                    {
+                        Destroy(leftHand.transform.GetChild(i).gameObject);
+                    }
+                }
+
+                if (rightHand != null)
+                {
+                    for (var i = 0; i < rightHand.transform.childCount; i++)
+                    {
+                        Destroy(rightHand.transform.GetChild(i).gameObject);
+                    }
+                }
+            }
+            Properties.CurrentItem = -1;
+
+            // Reset "currently" used item
+            Properties.NpcInstance.SetAiVar(Constants.DaedalusAIVItemStatusKey, Constants.DaedalusTAITNone);
+
+            // Start over
+            StartRoutine(currentRoutine.Action, currentRoutine.Waypoint);
         }
     }
 }

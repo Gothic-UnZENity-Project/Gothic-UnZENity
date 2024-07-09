@@ -21,7 +21,7 @@ namespace GUZ.Core.Manager
             MorphMeshCache.Dispose();
         }
 
-        public static void BootGothicUnZeNity(GameConfiguration config, string g1Dir, string language)
+        public static void BootGothicUnZENity(GameConfiguration config, string g1Dir, string language)
         {
             var watch = Stopwatch.StartNew();
 

@@ -84,7 +84,7 @@ namespace GUZ.Lab
             _isBooted = true;
 
             var settings = _settings;
-            GuzBootstrapper.BootGothicUnZeNity(Config, settings.GothicIPath, settings.GothicILanguage);
+            GuzBootstrapper.BootGothicUnZENity(Config, settings.GothicIPath, settings.GothicILanguage);
 
             BootLab();
 
