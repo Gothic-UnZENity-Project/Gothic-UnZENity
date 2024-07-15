@@ -215,6 +215,11 @@ namespace GUZ.Core.Creator
             }
         }
 
+        public static void SetSpawnPoint(GameObject npcGo, Vector3 position, Quaternion rotation)
+        {
+            npcGo.transform.SetPositionAndRotation(position, rotation);
+        }
+
         public static void ExtTaMin(NpcInstance npcInstance, int startH, int startM, int stopH, int stopM, int action,
             string waypoint)
         {

@@ -289,7 +289,6 @@ namespace GUZ.Core.Creator
                     if (vob.Name.EqualsIgnoreCase(Constants.DaedalusHeroInstanceName))
                     {
                         GameGlobals.Scene.SetStart(vob.Position.ToUnityVector(), vob.Rotation.ToUnityQuaternion());
-
                         break;
                     }
 
@@ -298,9 +297,9 @@ namespace GUZ.Core.Creator
                         break;
                     }
 
-                    var npcSymbol = GameData.GothicVm.GetSymbolByName(vob.Name);
-                    var newNpc = NpcCreator.InitializeNpc(npcSymbol.Index);
-
+                    var npcVob = (VirtualObject)vob;
+                    var aiHuman = (AiHuman)npcVob.Ai!;
+                    go = CreateNpc(aiHuman.Npc);
                     break;
                 }
                 case VirtualObjectType.zCVobScreenFX:
@@ -798,6 +797,7 @@ namespace GUZ.Core.Creator
             return vobObj;
         }
 
+        // FIXME - Needs to be outsourced to Context.InteractionAdapter as we have different handling for XRIT and HVR.
         private static GameObject CreateSeat(IVirtualObject vob, GameObject parent = null)
         {
             //to be used for creating chairs, benches etc
@@ -1057,6 +1057,26 @@ namespace GUZ.Core.Creator
             var morph = go.AddComponent<VobAnimateMorph>();
             morph.StartAnimation(vob.Visual!.Name);
             return go;
+        }
+
+        private static GameObject CreateNpc(ZenKit.Vobs.Npc vob)
+        {
+            var npcSymbol = GameData.GothicVm.GetSymbolByName(vob.Name);
+            var newNpc = NpcCreator.InitializeNpc(npcSymbol.Index);
+
+            if (newNpc == null)
+            {
+                return null;
+            }
+
+            NpcCreator.SetSpawnPoint(newNpc, vob.Position.ToUnityVector(), vob.Rotation.ToUnityQuaternion());
+            //
+            //
+            //
+            //
+            // npc.CurrentRoutine;
+            // npc.CurrentStateName;
+            return newNpc;
         }
 
         private static GameObject CreateDefaultMesh(IVirtualObject vob, GameObject parent = null,
