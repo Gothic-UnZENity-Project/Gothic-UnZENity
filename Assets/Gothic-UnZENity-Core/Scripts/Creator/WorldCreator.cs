@@ -30,6 +30,13 @@ namespace GUZ.Core.Creator
             GlobalEventDispatcher.GeneralSceneLoaded.AddListener(WorldLoaded);
         }
 
+        /// <summary>
+        /// Order of loading:
+        /// 1. VOBs - First entry, as we slice world chunks based on light VOBs
+        /// 2. WayPoints - Needed for spawning NPCs when world is loaded the first time
+        /// 3. NPCs - If we load the world for the first time, we leverage their current routine's values
+        /// 4. World - Mesh of the world
+        /// </summary>
         public static async Task CreateAsync(LoadingManager loading, GameConfiguration config)
         {
             _worldGo = new GameObject("World");
@@ -41,6 +48,7 @@ namespace GUZ.Core.Creator
             _teleportGo.SetParent(_worldGo);
             _nonTeleportGo.SetParent(_worldGo);
 
+            // 1.
             // Build the world and vob meshes, populating the texture arrays.
             // We need to start creating Vobs as we need to calculate world slicing based on amount of lights at a certain space afterwards.
             if (config.EnableVOBs)
@@ -50,12 +58,17 @@ namespace GUZ.Core.Creator
                 await MeshFactory.CreateVobTextureArray();
             }
 
+            // 2.
+            WaynetCreator.Create(config, _worldGo, SaveGameManager.CurrentWorldData);
+
+            // 3.
             // If the world is visited for the first time, then we need to load Npcs via Wld_InsertNpc()
             if (config.EnableNpcs)
             {
                 await NpcCreator.CreateAsync(config, loading, Constants.VObPerFrame);
             }
 
+            // 4.
             if (config.EnableWorldMesh)
             {
                 var lightingEnabled = config.EnableVOBs && (config.SpawnVOBTypes.Value.IsEmpty() ||
@@ -74,7 +87,6 @@ namespace GUZ.Core.Creator
             GameGlobals.Sky.InitSky();
             StationaryLight.InitStationaryLights();
 
-            WaynetCreator.Create(config, _worldGo, SaveGameManager.CurrentWorldData);
 
             // Set the global variable to the result of the coroutine
             loading.SetProgress(LoadingManager.LoadingProgressType.Npc, 1f);

@@ -55,11 +55,6 @@ namespace GUZ.Core.Creator
             GameData.GothicVm.Call($"STARTUP_{SaveGameManager.CurrentWorldName}");
         }
 
-        public static void CreateSync()
-        {
-
-        }
-
         private static void PostWorldLoaded(GameObject playerGo)
         {
             // FIXME - We need to activate physics (kinetic=false) and routines now. (After world mesh is loaded and player sees game for the first frame)
@@ -109,6 +104,8 @@ namespace GUZ.Core.Creator
             GameGlobals.NpcMeshCulling.AddCullingEntry(newNpc);
         }
 
+        // FIXME - We need to extract mesh creation as it would create all! of the ~1k NPCs/Monsters in one Daedaluscall synchronously.
+        // FIXME - So let's load the meshes whenever we make them visible for the first time (culling).
         [CanBeNull]
         public static GameObject InitializeNpc(int npcInstanceIndex)
         {
