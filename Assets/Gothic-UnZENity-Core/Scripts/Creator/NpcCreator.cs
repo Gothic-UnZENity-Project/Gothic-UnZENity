@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using GUZ.Core.Caches;
 using GUZ.Core.Creator.Meshes.V2;
 using GUZ.Core.Globals;
@@ -24,6 +25,45 @@ namespace GUZ.Core.Creator
 
         // Hint - If this scale ratio isn't looking well, feel free to change it.
         private const float _fatnessScale = 0.1f;
+
+
+        static NpcCreator()
+        {
+            GlobalEventDispatcher.GeneralSceneLoaded.AddListener(PostWorldLoaded);
+        }
+
+        /// <summary>
+        /// If the current world is visited for the first time, we call Wld_InsertNpc() to "spawn" them for the first time.
+        /// </summary>
+        public static async Task CreateAsync(GameConfiguration config, LoadingManager loading, int vobsPerFrame)
+        {
+            // We load NPCs only! if we enter the world for the first time (e.g. when having a fresh game start).
+            // If we loaded the data from a save game or previous visit in this game session, we have our NPCs already loaded via Vobs + SaveGame state.
+            if (!SaveGameManager.IsWorldLoadedForTheFirstTime)
+            {
+                return;
+            }
+
+            // Final debug check if we really want to load NPCs.
+            if (!config.EnableNpcs)
+            {
+                return;
+            }
+
+            // Inside Startup.d, it's always STARTUP_{MAPNAME} and INIT_{MAPNAME}
+            // FIXME - Inside Startup.d some Startup_*() functions also call Init_*() some not. How to handle properly? (Force calling it here? Even if done twice?)
+            GameData.GothicVm.Call($"STARTUP_{SaveGameManager.CurrentWorldName}");
+        }
+
+        public static void CreateSync()
+        {
+
+        }
+
+        private static void PostWorldLoaded(GameObject playerGo)
+        {
+            // FIXME - We need to activate physics (kinetic=false) and routines now. (After world mesh is loaded and player sees game for the first frame)
+        }
 
         private static GameObject GetRootGo()
         {

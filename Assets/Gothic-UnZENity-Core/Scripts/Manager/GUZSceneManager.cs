@@ -6,6 +6,7 @@ using GUZ.Core.Context;
 using GUZ.Core.Creator;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
+using MyBox;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Debug = UnityEngine.Debug;
@@ -28,8 +29,6 @@ namespace GUZ.Core.Manager
 
         private Vector3 _heroStartPosition;
         private Quaternion _heroStartRotation;
-
-        private bool _debugFreshlyDoneLoading;
 
         private GameConfiguration _config;
         private LoadingManager _loading;
@@ -79,26 +78,6 @@ namespace GUZ.Core.Manager
             }
         }
 
-        // Outsourced after async Task LoadStartupScenes() as async makes Debugging way harder
-        // (Breakpoints won't be caught during exceptions)
-        public void Update()
-        {
-            if (!_debugFreshlyDoneLoading)
-            {
-                return;
-            }
-
-            _debugFreshlyDoneLoading = false;
-
-            // We load NPCs only! if we enter the world for the first time (e.g. when having a fresh game start).
-            // TODO - We need to properly update this logic to reflect world switches for the first time as well (even from save games).
-            if (_config.EnableNpcs && !_config.LoadFromSaveSlot)
-            {
-                // TODO - It's always STARTUP_{MAPNAME} and INIT_{MAPNAME}
-                GameData.GothicVm.Call("STARTUP_WORLD");
-            }
-        }
-
         private async Task LoadMainMenu()
         {
             GameGlobals.Textures.LoadLoadingDefaultTextures();
@@ -107,9 +86,7 @@ namespace GUZ.Core.Manager
 
         public async Task LoadWorld(string worldName, string startVob = "")
         {
-            // Our scenes are named *.zen - We therefore need to ensure the pattern of world name matches.
-            worldName = worldName.ToLower();
-            worldName += worldName.EndsWith(".zen") ? "" : ".zen";
+            worldName = worldName.ToLower().RemoveEnd(".zen");
 
             // Reset position before world start to load (and hero position is potentially being loaded from vob.ocNPC.
             _heroStartPosition = Vector3.zero;
@@ -136,13 +113,16 @@ namespace GUZ.Core.Manager
 
             HideLoadingScene();
             watch.Stop();
-            Debug.Log($"Time spent for loading {worldName}: {watch.Elapsed}");
-
-            _debugFreshlyDoneLoading = true;
+            Debug.Log($"Time spent for loading >{worldName}<: {watch.Elapsed}");
         }
 
-        private async Task<Scene> LoadNewWorldScene(string worldName)
+        private async Task LoadNewWorldScene(string worldName)
         {
+            if (!worldName.EndsWithIgnoreCase(".zen"))
+            {
+                worldName += ".zen";
+            }
+
             var newWorldScene = SceneManager.LoadScene(worldName, new LoadSceneParameters(LoadSceneMode.Additive));
 
             // Delay for at least one frame to allow the scene to be set active successfully
@@ -156,14 +136,13 @@ namespace GUZ.Core.Manager
             }
 
             _currentScene = newWorldScene;
-            return newWorldScene;
         }
 
         /// <summary>
         /// Create loading scene and wait for a few milliseconds to go on, ensuring loading bar is selectable.
         /// Async: execute in sync, but whole process can be paused for x amount of frames.
         /// </summary>
-        private async Task ShowLoadingScene(string worldName = null)
+        private async Task ShowLoadingScene(string worldName)
         {
             GameGlobals.Textures.LoadLoadingDefaultTextures();
 
@@ -197,14 +176,9 @@ namespace GUZ.Core.Manager
 
         private void SetLoadingTextureForWorld(string worldName)
         {
-            if (worldName == null)
-            {
-                return;
-            }
-
             var textureString = SaveGameManager.IsNewGame
                 ? "LOADING.TGA"
-                : $"LOADING_{worldName.Split('.')[0].ToUpper()}.TGA";
+                : $"LOADING_{worldName.ToUpper()}.TGA";
             GameGlobals.Textures.SetTexture(textureString, GameGlobals.Textures.GothicLoadingMenuMaterial);
         }
 

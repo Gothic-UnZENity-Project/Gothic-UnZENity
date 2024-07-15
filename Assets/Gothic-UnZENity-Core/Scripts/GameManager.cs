@@ -123,8 +123,6 @@ namespace GUZ.Core
 
         private void Update()
         {
-            Scene.Update();
-
             if (_isInitialised)
             {
                 return;

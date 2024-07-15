@@ -50,6 +50,12 @@ namespace GUZ.Core.Creator
                 await MeshFactory.CreateVobTextureArray();
             }
 
+            // If the world is visited for the first time, then we need to load Npcs via Wld_InsertNpc()
+            if (config.EnableNpcs)
+            {
+                await NpcCreator.CreateAsync(config, loading, Constants.VObPerFrame);
+            }
+
             if (config.EnableWorldMesh)
             {
                 var lightingEnabled = config.EnableVOBs && (config.SpawnVOBTypes.Value.IsEmpty() ||
