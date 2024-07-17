@@ -138,9 +138,6 @@ namespace GUZ.Core
         public bool EnableNpcs;
 
         [ConditionalField(fieldToCheck: nameof(EnableNpcs), compareValues: true)]
-        public bool EnableNPCRoutines;
-
-        [ConditionalField(fieldToCheck: nameof(EnableNpcs), compareValues: true)]
         public bool EnableNpcMeshCulling = true;
 
         [ConditionalField(useMethod: true, method: nameof(NpcCullingDistanceFieldCondition))]

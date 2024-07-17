@@ -169,7 +169,7 @@ namespace GUZ.Core.Creator
             WayNetPoint initialSpawnPoint;
 
             // Find the right spawn point based on currently active routine.
-            if (npcGo.GetComponent<Routine>().Routines.Any() && GameGlobals.Config.EnableNPCRoutines)
+            if (npcGo.GetComponent<Routine>().Routines.Any())
             {
                 var routineSpawnPointName = npcGo.GetComponent<Routine>().CurrentRoutine.Waypoint;
                 initialSpawnPoint = WayNetHelper.GetWayNetPoint(routineSpawnPointName);

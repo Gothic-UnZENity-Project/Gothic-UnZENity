@@ -12,13 +12,11 @@ namespace GUZ.Core.Manager
     {
         private Dictionary<int, List<Routine>> _npcStartTimeDict = new();
 
-        private readonly bool _featureEnable;
         private readonly int _featureStartHour;
         private readonly int _featureStartMinute;
 
         public RoutineManager(GameConfiguration config)
         {
-            _featureEnable = config.EnableNPCRoutines;
             _featureStartHour = config.StartTimeHour;
             _featureStartMinute = config.StartTimeMinute;
         }
@@ -26,11 +24,6 @@ namespace GUZ.Core.Manager
         public void Init()
         {
             //Init starting position
-            if (!_featureEnable)
-            {
-                return;
-            }
-
             GlobalEventDispatcher.GeneralSceneLoaded.AddListener(WorldLoadedEvent);
             GlobalEventDispatcher.GameTimeMinuteChangeCallback.AddListener(Invoke);
         }
@@ -44,11 +37,6 @@ namespace GUZ.Core.Manager
 
         public void Subscribe(Routine npcID, List<RoutineData> routines)
         {
-            if (!_featureEnable)
-            {
-                return;
-            }
-
             // We need to fill in routines backwards as e.g. Mud and Scorpio have duplicate routines. Last one needs to win.
             routines.Reverse();
             foreach (var routine in routines)
