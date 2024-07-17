@@ -81,14 +81,16 @@ namespace GUZ.Core.Manager
         private async Task LoadMainMenu()
         {
             GameGlobals.Textures.LoadLoadingDefaultTextures();
-            await LoadNewWorldScene(Constants.SceneMainMenu);
+            await LoadScene(Constants.SceneMainMenu);
         }
 
         public async Task LoadWorld(string worldName, string startVob = "")
         {
-            worldName = worldName.ToLower().RemoveEnd(".zen");
+            // Our scenes are named *.zen - We therefore need to ensure the pattern of world name matches.
+            worldName = worldName.ToLower();
+            worldName += worldName.EndsWith(".zen") ? "" : ".zen";
 
-            // Reset position before world start to load (and hero position is potentially being loaded from vob.ocNPC.
+            // Reset position before world start to load (and hero position is potentially being loaded from vob.ocNPC).
             _heroStartPosition = Vector3.zero;
             _heroStartRotation = Quaternion.identity;
             _startVobAfterLoading = startVob;
@@ -107,7 +109,7 @@ namespace GUZ.Core.Manager
             GameData.Reset();
 
             await ShowLoadingScene(worldName);
-            await LoadNewWorldScene(_newWorldName);
+            await LoadScene(_newWorldName);
             await WorldCreator.CreateAsync(_loading, _config);
             SetSpawnPoint();
 
@@ -116,17 +118,12 @@ namespace GUZ.Core.Manager
             Debug.Log($"Time spent for loading >{worldName}<: {watch.Elapsed}");
         }
 
-        private async Task LoadNewWorldScene(string worldName)
+        private async Task LoadScene(string worldName)
         {
-            if (!worldName.EndsWithIgnoreCase(".zen"))
-            {
-                worldName += ".zen";
-            }
-
-            var newWorldScene = SceneManager.LoadScene(worldName, new LoadSceneParameters(LoadSceneMode.Additive));
+            var newScene = SceneManager.LoadScene(worldName, new LoadSceneParameters(LoadSceneMode.Additive));
 
             // Delay for at least one frame to allow the scene to be set active successfully
-            // i.e. created GOs will be automatically put to right scene afterwards.
+            // i.e. created GOs will be automatically put to right scene afterward.
             await Task.Yield();
 
             // Remove previous scene if it exists
@@ -135,7 +132,7 @@ namespace GUZ.Core.Manager
                 SceneManager.UnloadSceneAsync(_currentScene);
             }
 
-            _currentScene = newWorldScene;
+            _currentScene = newScene;
         }
 
         /// <summary>
@@ -178,7 +175,7 @@ namespace GUZ.Core.Manager
         {
             var textureString = SaveGameManager.IsNewGame
                 ? "LOADING.TGA"
-                : $"LOADING_{worldName.ToUpper()}.TGA";
+                : $"LOADING_{worldName.ToUpper().RemoveEnd(".ZEN")}.TGA";
             GameGlobals.Textures.SetTexture(textureString, GameGlobals.Textures.GothicLoadingMenuMaterial);
         }
 
