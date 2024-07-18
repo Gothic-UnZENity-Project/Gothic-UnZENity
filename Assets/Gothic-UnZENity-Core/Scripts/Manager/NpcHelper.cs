@@ -30,10 +30,11 @@ namespace GUZ.Core.Manager
             var playerProperties = playerGo.GetComponent<NpcProperties>();
 
             // Set data for NPC.
-            playerProperties.NpcInstance = (NpcInstance)GameData.GothicVm.GlobalHero;
+            var npcInstance = (NpcInstance)GameData.GothicVm.GlobalHero;
+            playerProperties.NpcInstance = npcInstance;
 
             // Cache hero for future lookups.
-            LookupCache.NpcCache[heroIndex] = playerProperties;
+            LookupCache.NpcCache[heroIndex] = (instance: npcInstance, properties: playerProperties);
         }
 
         public static bool ExtIsMobAvailable(NpcInstance npcInstance, string vobName)
@@ -195,25 +196,25 @@ namespace GUZ.Core.Manager
             // FIXME - Add Guild check
             // FIXME - add range check based on perceiveAll's range (npc.sense_range)
             var foundNpc = LookupCache.NpcCache.Values
-                .Where(i => i.Go != null) // ignore empty (safe check)
-                .Where(i => i.NpcInstance.Index != npcInstance.Index) // ignore self
+                .Where(i => i.properties.Go != null) // ignore empty (safe check)
+                .Where(i => i.instance.Index != npcInstance.Index) // ignore self
                 .Where(i => detectPlayer ||
-                            i.NpcInstance.Index !=
+                            i.instance.Index !=
                             GameData.GothicVm.GlobalHero!.Index) // if we don't detect player, then skip it
                 .Where(i => specificNpcIndex < 0 ||
-                            specificNpcIndex == i.NpcInstance.Index) // Specific NPC is found right now?
-                .Where(i => aiState < 0 || npc.State == i.State)
-                .OrderBy(i => Vector3.Distance(i.transform.position, npcPos)) // get nearest
+                            specificNpcIndex == i.instance.Index) // Specific NPC is found right now?
+                .Where(i => aiState < 0 || npc.State == i.properties.State)
+                .OrderBy(i => Vector3.Distance(i.properties.transform.position, npcPos)) // get nearest
                 .FirstOrDefault();
 
             // We need to set it, as there are calls where we immediately need _other_. e.g.:
             // if (Wld_DetectNpc(self, ...) && (Npc_GetDistToNpc(self, other)<HAI_DIST_SMALLTALK)
-            if (foundNpc != null)
+            if (foundNpc.instance != null)
             {
-                GameData.GothicVm.GlobalOther = foundNpc.NpcInstance;
+                GameData.GothicVm.GlobalOther = foundNpc.instance;
             }
 
-            return foundNpc != null;
+            return foundNpc.instance != null;
         }
 
         public static int ExtNpcHasItems(NpcInstance npc, uint itemId)
@@ -306,7 +307,7 @@ namespace GUZ.Core.Manager
 
         private static NpcProperties GetProperties([CanBeNull] NpcInstance npc)
         {
-            return npc == null ? null : LookupCache.NpcCache[npc.Index];
+            return npc == null ? null : LookupCache.NpcCache[npc.Index].properties;
         }
 
         public static void ExtAiWait(NpcInstance npc, float seconds)
@@ -510,7 +511,7 @@ namespace GUZ.Core.Manager
                 return int.MaxValue;
             }
 
-            var npc1Pos = LookupCache.NpcCache[npc1.Index].Go.transform.position;
+            var npc1Pos = LookupCache.NpcCache[npc1.Index].properties.Go.transform.position;
 
             Vector3 npc2Pos;
             // If hero
@@ -520,7 +521,7 @@ namespace GUZ.Core.Manager
             }
             else
             {
-                npc2Pos = LookupCache.NpcCache[npc2.Index].Go.transform.position;
+                npc2Pos = LookupCache.NpcCache[npc2.Index].properties.Go.transform.position;
             }
 
             return (int)(Vector3.Distance(npc1Pos, npc2Pos) * 100);
@@ -545,7 +546,7 @@ namespace GUZ.Core.Manager
             }
 
             var npcGo = LookupCache.NpcCache[npcInstance.Index];
-            ExchangeRoutine(npcGo.Go, npcInstance, newRoutine.Index);
+            ExchangeRoutine(npcGo.properties.Go, npcInstance, newRoutine.Index);
         }
 
         public static void ExchangeRoutine(GameObject go, NpcInstance npcInstance, int routineIndex)
@@ -579,7 +580,7 @@ namespace GUZ.Core.Manager
         {
             var heroIndex = GameData.GothicVm.GlobalHero!.Index;
 
-            return LookupCache.NpcCache[heroIndex].Go;
+            return LookupCache.NpcCache[heroIndex].properties.Go;
         }
     }
 }

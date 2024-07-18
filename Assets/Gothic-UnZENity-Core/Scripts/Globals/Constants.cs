@@ -48,7 +48,8 @@ namespace GUZ.Core.Globals
         public const string PlayerTag = "Player";
 
         public static int MeshPerFrame { get; } = 10;
-        public static int VObPerFrame { get; } = 75;
+        public static int VobsPerFrame { get; } = 75;
+        public static int NpcsPerFrame { get; } = 75;
 
         //Collection of PlayerPref entries for settings
         public const string MoveSpeedPlayerPref = "MoveSpeed";

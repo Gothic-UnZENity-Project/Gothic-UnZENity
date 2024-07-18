@@ -8,6 +8,10 @@ using ZenKit.Daedalus;
 
 namespace GUZ.Core.Properties
 {
+    /// <summary>
+    /// This component is attached to the root of NPC/Monster prefab.
+    /// It's data is filled, whenever we call GothicVM.InitNpc(). This call triggers DaedalusVM to execute INSTANCE logic and we will fetch it with this object.
+    /// </summary>
     public class NpcProperties : AbstractProperties
     {
         public NpcInstance NpcInstance;

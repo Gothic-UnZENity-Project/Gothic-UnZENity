@@ -48,7 +48,7 @@ namespace GUZ.Lab.Handler
             var npcSymbol = GameData.GothicVm.GetSymbolByName(_bloodwynInstanceId);
             _bloodwynInstance = GameData.GothicVm.AllocInstance<NpcInstance>(npcSymbol!);
             var properties = newNpc.GetComponent<NpcProperties>();
-            LookupCache.NpcCache[_bloodwynInstance.Index] = properties;
+            LookupCache.NpcCache[_bloodwynInstance.Index] = (instance: _bloodwynInstance, properties: properties);
             properties.NpcInstance = _bloodwynInstance;
 
             GameData.GothicVm.InitInstance(_bloodwynInstance);

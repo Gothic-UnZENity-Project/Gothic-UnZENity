@@ -128,7 +128,7 @@ namespace GUZ.Lab.Handler
             var npcProps = newNpc.GetComponent<NpcProperties>();
 
             npcProps.NpcInstance = npcInstance;
-            LookupCache.NpcCache[npcInstance.Index] = npcProps;
+            LookupCache.NpcCache[npcInstance.Index] = (instance: npcInstance, properties: npcProps);
 
             GameData.GothicVm.InitInstance(npcInstance);
 

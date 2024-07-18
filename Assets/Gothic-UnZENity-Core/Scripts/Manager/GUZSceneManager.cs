@@ -134,7 +134,7 @@ namespace GUZ.Core.Manager
             if (config.EnableVOBs)
             {
                 await VobCreator.CreateAsync(config, loading,
-                    SaveGameManager.CurrentWorldData.Vobs, Constants.VObPerFrame);
+                    SaveGameManager.CurrentWorldData.Vobs, Constants.VobsPerFrame);
                 await MeshFactory.CreateVobTextureArray();
             }
 
@@ -145,7 +145,7 @@ namespace GUZ.Core.Manager
             // If the world is visited for the first time, then we need to load Npcs via Wld_InsertNpc()
             if (config.EnableNpcs)
             {
-                await NpcCreator.CreateAsync(config, loading, Constants.VObPerFrame);
+                await NpcCreator.CreateAsync(config, loading, Constants.NpcsPerFrame);
             }
 
             // 4.
