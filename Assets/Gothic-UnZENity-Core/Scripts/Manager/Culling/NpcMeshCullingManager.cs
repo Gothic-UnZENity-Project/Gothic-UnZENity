@@ -30,11 +30,6 @@ namespace GUZ.Core.Manager.Culling
 
         public void Init()
         {
-            if (!_featureEnableCulling)
-            {
-                return;
-            }
-
             GlobalEventDispatcher.GeneralSceneUnloaded.AddListener(PreWorldCreate);
             GlobalEventDispatcher.GeneralSceneLoaded.AddListener(PostWorldCreate);
 
@@ -51,11 +46,6 @@ namespace GUZ.Core.Manager.Culling
 
         public void AddCullingEntry(GameObject go)
         {
-            if (!_featureEnableCulling)
-            {
-                return;
-            }
-
             _objects.Add(go);
             var sphere = new BoundingSphere(go.transform.position, 1f);
             _tempSpheres.Add(sphere);
@@ -67,15 +57,23 @@ namespace GUZ.Core.Manager.Culling
         /// </summary>
         private void PostWorldCreate(GameObject playerGo)
         {
-            // Set main camera as reference point
-            var mainCamera = Camera.main!;
-            _npcCullingGroup.targetCamera = mainCamera;
-            _npcCullingGroup.SetDistanceReferencePoint(mainCamera.transform);
+            if (_featureEnableCulling)
+            {
+                // Set main camera as reference point
+                var mainCamera = Camera.main!;
+                _npcCullingGroup.targetCamera = mainCamera;
+                _npcCullingGroup.SetDistanceReferencePoint(mainCamera.transform);
 
-            // Fill culling information into spawned GOs
-            _npcCullingGroup.SetBoundingDistances(new[] { _featureCullingDistance });
-            _npcCullingGroup.SetBoundingSpheres(_tempSpheres.ToArray());
-            _npcCullingGroup.onStateChanged = NpcVisibilityChanged;
+                // Fill culling information into spawned GOs
+                _npcCullingGroup.SetBoundingDistances(new[] { _featureCullingDistance });
+                _npcCullingGroup.SetBoundingSpheres(_tempSpheres.ToArray());
+                _npcCullingGroup.onStateChanged = NpcVisibilityChanged;
+            }
+            // If we disabled NPC culling, then we need to render them all now!
+            else
+            {
+                _objects.ForEach(obj => obj.SetActive(true));
+            }
 
             // Cleanup
             _tempSpheres.ClearAndReleaseMemory();
@@ -91,6 +89,8 @@ namespace GUZ.Core.Manager.Culling
 
             var inVisibleRange = evt.previousDistance > evt.currentDistance;
 
+            Debug.Log($"Culling: {inVisibleRange} - {_objects[evt.index].name}", _objects[evt.index]);
+
             _objects[evt.index].SetActive(inVisibleRange);
 
             if (inVisibleRange)
@@ -101,11 +101,6 @@ namespace GUZ.Core.Manager.Culling
 
         public void Destroy()
         {
-            if (!_featureEnableCulling)
-            {
-                return;
-            }
-
             _npcCullingGroup.Dispose();
         }
     }
