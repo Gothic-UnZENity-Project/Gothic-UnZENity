@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using GUZ.Core.Caches;
 using JetBrains.Annotations;
 using UnityEngine;
 
@@ -13,20 +14,14 @@ namespace GUZ.Core.Manager.Culling
         // Stored for later index mapping SphereIndex => GOIndex
         private readonly List<GameObject> _objects = new();
 
-        private readonly bool _featureEnable;
 
         public VobSoundCullingManager(GameConfiguration config)
         {
-            _featureEnable = config.EnableSoundCulling;
+            // NOP
         }
 
         public void Init()
         {
-            if (!_featureEnable)
-            {
-                return;
-            }
-
             GlobalEventDispatcher.GeneralSceneUnloaded.AddListener(PreWorldCreate);
             GlobalEventDispatcher.GeneralSceneLoaded.AddListener(PostWorldCreate);
 
@@ -60,11 +55,6 @@ namespace GUZ.Core.Manager.Culling
         /// </summary>
         public void PrepareSoundCulling([ItemCanBeNull] List<GameObject> gameObjects)
         {
-            if (!_featureEnable)
-            {
-                return;
-            }
-
             var spheres = new List<BoundingSphere>();
 
             foreach (var go in gameObjects.Where(i => i != null))
@@ -80,7 +70,7 @@ namespace GUZ.Core.Manager.Culling
             }
 
             // Disable sounds if we're leaving the area and therefore last audible location.
-            // Hint: As there are non spatial sounds (always same volume wherever we are),
+            // Hint: As there are non-spatial sounds (always same volume wherever we are),
             // we need to disable the sounds at exactly the spot we are.
             _soundCullingGroup.SetBoundingDistances(new[] { 0f });
             _soundCullingGroup.onStateChanged = SoundChanged;
@@ -93,6 +83,23 @@ namespace GUZ.Core.Manager.Culling
         /// </summary>
         public void PostWorldCreate(GameObject playerGo)
         {
+            /*
+             * We need to check for all Sounds once, if they need to be activated as they're next to player.
+             * As CullingGroup only triggers deactivation once player spawns, but no activation.
+             */
+            var loc = Camera.main!.transform.position;
+            foreach (var sound in LookupCache.VobSoundsAndDayTime.Where(i => i != null))
+            {
+                var soundLoc = sound.transform.position;
+                var soundDist = sound.GetComponent<AudioSource>().maxDistance;
+                var dist = Vector3.Distance(loc, soundLoc);
+
+                if (dist < soundDist)
+                {
+                    sound.SetActive(true);
+                }
+            }
+
             var mainCamera = Camera.main!;
             _soundCullingGroup.targetCamera = mainCamera;
             _soundCullingGroup.SetDistanceReferencePoint(mainCamera.transform);
@@ -100,11 +107,6 @@ namespace GUZ.Core.Manager.Culling
 
         public void Destroy()
         {
-            if (!_featureEnable)
-            {
-                return;
-            }
-
             _soundCullingGroup.Dispose();
         }
     }

@@ -75,23 +75,6 @@ namespace GUZ.Core.Creator
             {
                 teleportationArea.interactionManager = interactionManager;
             }
-
-            /*
-             * We need to check for all Sounds once, if they need to be activated as they're next to player.
-             * As CullingGroup only triggers deactivation once player spawns, but not activation.
-             */
-            var loc = Camera.main!.transform.position;
-            foreach (var sound in LookupCache.VobSoundsAndDayTime.Where(i => i != null))
-            {
-                var soundLoc = sound.transform.position;
-                var soundDist = sound.GetComponent<AudioSource>().maxDistance;
-                var dist = UnityEngine.Vector3.Distance(loc, soundLoc);
-
-                if (dist < soundDist)
-                {
-                    sound.SetActive(true);
-                }
-            }
         }
 
         public static async Task CreateAsync(GameConfiguration config, LoadingManager loading, List<IVirtualObject> vobs, int vobsPerFrame)

@@ -49,7 +49,6 @@ MonoBehaviour:
   SpawnAtWaypoint: 
   EnableGameMusic: 1
   EnableGameSounds: 1
-  EnableSoundCulling: 1
   SunLightColor: {r: 0.69, g: 0.69, b: 0.69, a: 1}
   SunLightIntensity: 1
   SunUpdateInterval: 1
