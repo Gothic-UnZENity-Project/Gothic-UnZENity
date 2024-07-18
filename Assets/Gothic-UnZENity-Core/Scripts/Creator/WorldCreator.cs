@@ -14,15 +14,12 @@ using UnityEngine.XR.Interaction.Toolkit;
 using ZenKit;
 using ZenKit.Vobs;
 using Debug = UnityEngine.Debug;
-using Object = UnityEngine.Object;
 
 namespace GUZ.Core.Creator
 {
     public static class WorldCreator
     {
         private static GameObject _worldGo;
-        private static GameObject _teleportGo;
-        private static GameObject _nonTeleportGo;
         private static HashSet<IPolygon> _claimedPolygons;
 
         static WorldCreator()
@@ -30,69 +27,26 @@ namespace GUZ.Core.Creator
             GlobalEventDispatcher.GeneralSceneLoaded.AddListener(WorldLoaded);
         }
 
-        /// <summary>
-        /// Order of loading:
-        /// 1. VOBs - First entry, as we slice world chunks based on light VOBs
-        /// 2. WayPoints - Needed for spawning NPCs when world is loaded the first time
-        /// 3. NPCs - If we load the world for the first time, we leverage their current routine's values
-        /// 4. World - Mesh of the world
-        /// </summary>
-        public static async Task CreateAsync(LoadingManager loading, GameConfiguration config)
+        public static async Task CreateAsync(GameConfiguration config, LoadingManager loading)
         {
             _worldGo = new GameObject("World");
 
-            // Interactable Vobs (item, ladder, ...) have their own collider Components
-            // AND we don't want to teleport on top of them. We therefore exclude them from being added to teleport.
-            _teleportGo = new GameObject("Teleport");
-            _nonTeleportGo = new GameObject("NonTeleport");
-            _teleportGo.SetParent(_worldGo);
-            _nonTeleportGo.SetParent(_worldGo);
+            var lightingEnabled = config.EnableVOBs &&
+                                  (
+                                      config.SpawnVOBTypes.Value.IsEmpty() ||
+                                      config.SpawnVOBTypes.Value.Contains(VirtualObjectType.zCVobLight)
+                                  );
 
-            // 1.
-            // Build the world and vob meshes, populating the texture arrays.
-            // We need to start creating Vobs as we need to calculate world slicing based on amount of lights at a certain space afterwards.
-            if (config.EnableVOBs)
-            {
-                await VobCreator.CreateAsync(config, loading, _teleportGo, _nonTeleportGo,
-                    SaveGameManager.CurrentWorldData.Vobs, Constants.VObPerFrame);
-                await MeshFactory.CreateVobTextureArray();
-            }
+            SaveGameManager.CurrentWorldData.SubMeshes = await BuildBspTree(
+                SaveGameManager.CurrentWorldData.Mesh.Cache(),
+                SaveGameManager.CurrentWorldData.BspTree.Cache(),
+                lightingEnabled);
 
-            // 2.
-            WaynetCreator.Create(config, _worldGo, SaveGameManager.CurrentWorldData);
-
-            // 3.
-            // If the world is visited for the first time, then we need to load Npcs via Wld_InsertNpc()
-            if (config.EnableNpcs)
-            {
-                await NpcCreator.CreateAsync(config, loading, Constants.VObPerFrame);
-            }
-
-            // 4.
-            if (config.EnableWorldMesh)
-            {
-                var lightingEnabled = config.EnableVOBs && (config.SpawnVOBTypes.Value.IsEmpty() ||
-                                                                    config.SpawnVOBTypes.Value.Contains(
-                                                                        VirtualObjectType.zCVobLight));
-                SaveGameManager.CurrentWorldData.SubMeshes = await BuildBspTree(
-                    SaveGameManager.CurrentWorldData.Mesh.Cache(),
-                    SaveGameManager.CurrentWorldData.BspTree.Cache(),
-                    lightingEnabled);
-
-                await MeshFactory.CreateWorld(SaveGameManager.CurrentWorldData, loading, _teleportGo,
-                    Constants.MeshPerFrame);
-                await MeshFactory.CreateWorldTextureArray();
-            }
-
-            GameGlobals.Sky.InitSky();
-            StationaryLight.InitStationaryLights();
-
-
-            // Set the global variable to the result of the coroutine
-            loading.SetProgress(LoadingManager.LoadingProgressType.Npc, 1f);
+            await MeshFactory.CreateWorld(SaveGameManager.CurrentWorldData, loading, _worldGo, Constants.MeshPerFrame);
+            await MeshFactory.CreateWorldTextureArray();
         }
 
-        private static async Task<List<WorldData.SubMeshData>> BuildBspTree(IMesh zkMesh, IBspTree zkBspTree,
+        public static async Task<List<WorldData.SubMeshData>> BuildBspTree(IMesh zkMesh, IBspTree zkBspTree,
             bool lightingEnabled)
         {
             _claimedPolygons = new HashSet<IPolygon>();
@@ -477,14 +431,8 @@ namespace GUZ.Core.Creator
         {
             var interactionManager = GameGlobals.Scene.InteractionManager.GetComponent<XRInteractionManager>();
 
-            // If we load a new scene, just remove the existing one.
-            if (_worldGo.TryGetComponent(out TeleportationArea teleportArea))
-            {
-                Object.Destroy(teleportArea);
-            }
-
             // We need to set the Teleportation area after adding mesh to world. Otherwise Awake() method is called too early.
-            var teleportationArea = _teleportGo.AddComponent<TeleportationArea>();
+            var teleportationArea = _worldGo.AddComponent<TeleportationArea>();
             if (interactionManager != null)
             {
                 teleportationArea.interactionManager = interactionManager;

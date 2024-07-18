@@ -49,6 +49,10 @@ namespace GUZ.Core.Creator
             VirtualObjectType.zCVobAnimate
         };
 
+        private static GameObject _vobsGo;
+        private static GameObject _teleportGo;
+        private static GameObject _nonTeleportGo;
+
         private static int _totalVObs;
         private static int _vobsPerFrame;
         private static int _createdCount;
@@ -62,8 +66,20 @@ namespace GUZ.Core.Creator
 
         private static void PostWorldLoaded(GameObject playerGo)
         {
-            // We need to check for all Sounds once, if they need to be activated as they're next to player.
-            // As CullingGroup only triggers deactivation once player spawns, but not activation.
+            /*
+             * We need to set the Teleportation area after adding mesh to VOBs.
+             */
+            var interactionManager = GameGlobals.Scene.InteractionManager.GetComponent<XRInteractionManager>();
+            var teleportationArea = _teleportGo.AddComponent<TeleportationArea>();
+            if (interactionManager != null)
+            {
+                teleportationArea.interactionManager = interactionManager;
+            }
+
+            /*
+             * We need to check for all Sounds once, if they need to be activated as they're next to player.
+             * As CullingGroup only triggers deactivation once player spawns, but not activation.
+             */
             var loc = Camera.main!.transform.position;
             foreach (var sound in LookupCache.VobSoundsAndDayTime.Where(i => i != null))
             {
@@ -78,20 +94,18 @@ namespace GUZ.Core.Creator
             }
         }
 
-        public static async Task CreateAsync(GameConfiguration config, LoadingManager loading, GameObject rootTeleport,
-            GameObject rootNonTeleport, List<IVirtualObject> vobs, int vobsPerFrame)
+        public static async Task CreateAsync(GameConfiguration config, LoadingManager loading, List<IVirtualObject> vobs, int vobsPerFrame)
         {
             Stopwatch stopwatch = new();
             stopwatch.Start();
-            PreCreateVobs(vobs, rootTeleport, rootNonTeleport, vobsPerFrame);
+            PreCreateVobs(vobs, vobsPerFrame);
             await CreateVobs(config, loading, vobs);
             PostCreateVobs();
             stopwatch.Stop();
             Debug.Log($"Created vobs in {stopwatch.Elapsed.TotalSeconds} s");
         }
 
-        private static void PreCreateVobs(List<IVirtualObject> vobs, GameObject rootTeleport,
-            GameObject rootNonTeleport, int vobsPerFrame)
+        private static void PreCreateVobs(List<IVirtualObject> vobs, int vobsPerFrame)
         {
             _totalVObs = GetTotalVobCount(vobs);
 
@@ -99,16 +113,17 @@ namespace GUZ.Core.Creator
             _cullingVobObjects.Clear();
             _vobsPerFrame = vobsPerFrame;
 
-            var vobRootTeleport = new GameObject("Vobs");
-            var vobRootNonTeleport = new GameObject("Vobs");
-            vobRootTeleport.SetParent(rootTeleport);
-            vobRootNonTeleport.SetParent(rootNonTeleport);
+            _vobsGo = new GameObject("VOBs");
+            _teleportGo = new GameObject("Teleport");
+            _nonTeleportGo = new GameObject("NonTeleport");
+            _teleportGo.SetParent(_vobsGo);
+            _nonTeleportGo.SetParent(_vobsGo);
 
             _parentGosTeleport = new Dictionary<VirtualObjectType, GameObject>();
             _parentGosNonTeleport = new Dictionary<VirtualObjectType, GameObject>();
 
-            CreateParentVobObjectTeleport(vobRootTeleport);
-            CreateParentVobObjectNonTeleport(vobRootNonTeleport);
+            CreateParentVobObjectTeleport(_teleportGo);
+            CreateParentVobObjectNonTeleport(_nonTeleportGo);
         }
 
         private static int GetTotalVobCount(List<IVirtualObject> vobs)
