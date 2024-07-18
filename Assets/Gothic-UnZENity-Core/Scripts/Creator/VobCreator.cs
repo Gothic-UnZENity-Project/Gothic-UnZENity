@@ -1068,6 +1068,8 @@ namespace GUZ.Core.Creator
             }
 
             NpcCreator.SetSpawnPoint(newNpc, vob.Position.ToUnityVector(), vob.Rotation.ToUnityQuaternion());
+            GameGlobals.NpcMeshCulling.AddCullingEntry(newNpc);
+
             //
             //
             //

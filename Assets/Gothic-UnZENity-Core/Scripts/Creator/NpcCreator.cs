@@ -225,6 +225,11 @@ namespace GUZ.Core.Creator
             var npcRoutine = cachedValue.instance.DailyRoutine;
             NpcHelper.ExchangeRoutine(newNpc, cachedValue.instance, npcRoutine);
 
+            // As they're loaded asynchronously, we need to disable every NPC/Monster during loading.
+            // We will enable them via Culling once everything is loaded.
+            // Otherwise, they'll fall through the world as the world mesh is loaded last. ;-)
+            newNpc.SetActive(false);
+
             return newNpc;
         }
 
