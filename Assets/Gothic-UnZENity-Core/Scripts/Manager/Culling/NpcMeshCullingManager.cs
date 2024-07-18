@@ -81,19 +81,16 @@ namespace GUZ.Core.Manager.Culling
 
         private void NpcVisibilityChanged(CullingGroupEvent evt)
         {
-            // Ignore Frustum and Occlusion culling.
-            if (evt.previousDistance == evt.currentDistance)
-            {
-                return;
-            }
+            Debug.Log($"Culling: {evt.hasBecomeVisible} - {_objects[evt.index].name}", _objects[evt.index]);
 
-            var inVisibleRange = evt.previousDistance > evt.currentDistance;
+            // A higher distance level means "invisible" as we only leverage: 0 -> in-range; 1 -> out-of-range.
+            var isInVisibleRange = evt.currentDistance == 0;
+            var wasOutOfDistance = evt.previousDistance > 0;
 
-            Debug.Log($"Culling: {inVisibleRange} - {_objects[evt.index].name}", _objects[evt.index]);
+            _objects[evt.index].SetActive(isInVisibleRange);
 
-            _objects[evt.index].SetActive(inVisibleRange);
-
-            if (inVisibleRange)
+            // If we walked to an NPC in our game, the NPC will be re-enabled and Routines get reset.
+            if (isInVisibleRange && wasOutOfDistance)
             {
                 _objects[evt.index].GetComponent<AiHandler>().ReEnableNpc();
             }
