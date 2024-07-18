@@ -39,7 +39,7 @@ MonoBehaviour:
   ShowNamesOnHoveredVOBs: 1
   EnableNpcs: 0
   EnableNpcMeshCulling: 1
-  NpcCullingDistance: 10
+  NpcCullingDistance: 40
   SpawnNpcInstances:
     Value: 
   EnableNpcEyeBlinking: 0

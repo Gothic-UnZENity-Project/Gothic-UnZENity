@@ -140,9 +140,10 @@ namespace GUZ.Core
         [ConditionalField(fieldToCheck: nameof(EnableNpcs), compareValues: true)]
         public bool EnableNpcMeshCulling = true;
 
+        [Tooltip("Based on original G1 saves, the distance for NPCs to occur inside VobTree (oCNPC) is about 40m. Please alter at your own risk.")]
         [ConditionalField(useMethod: true, method: nameof(NpcCullingDistanceFieldCondition))]
         [Range(1f, 100f)]
-        public float NpcCullingDistance = 10f;
+        public float NpcCullingDistance = 40f;
         private bool NpcCullingDistanceFieldCondition() => EnableNpcs && EnableNpcMeshCulling;
 
         [Separator("NPCs only")]
