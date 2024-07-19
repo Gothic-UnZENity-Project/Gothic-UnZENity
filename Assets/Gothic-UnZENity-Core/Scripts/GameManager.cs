@@ -30,7 +30,6 @@ namespace GUZ.Core
         private FileLoggingHandler _fileLoggingHandler;
 
         public GameSettings Settings { get; private set; }
-        private bool _isInitialised;
 
         public SkyManager Sky { get; private set; }
 
@@ -52,7 +51,6 @@ namespace GUZ.Core
 
         public VobSoundCullingManager SoundCulling { get; private set; }
 
-        // ReSharper disable Unity.PerformanceAnalysis
         private void Load()
         {
             // If the Gothic installation directory is not set, show an error message and exit.
@@ -119,17 +117,13 @@ namespace GUZ.Core
 
             // Just in case we forgot to disable it in scene view. ;-)
             InvalidInstallationPathMessage.SetActive(false);
+
+            Load();
         }
 
         private void Update()
         {
-            if (_isInitialised)
-            {
-                return;
-            }
-
-            _isInitialised = true;
-            Load();
+            NpcMeshCulling.Update();
         }
 
         private void FixedUpdate()
