@@ -294,6 +294,7 @@ namespace GUZ.Core.Creator
                         break;
                     }
 
+                    // TODO - ZenKit is working on a fix to use it directly via (Npc)vob; --> Please check later.
                     var npcVob = (VirtualObject)vob;
                     var aiHuman = (AiHuman)npcVob.Ai!;
                     go = CreateNpc(aiHuman.Npc);
@@ -1068,12 +1069,13 @@ namespace GUZ.Core.Creator
             NpcCreator.SetSpawnPoint(newNpc, vob.Position.ToUnityVector(), vob.Rotation.ToUnityQuaternion());
             GameGlobals.NpcMeshCulling.AddCullingEntry(newNpc);
 
-            //
-            //
-            //
-            //
-            // npc.CurrentRoutine;
-            // npc.CurrentStateName;
+            var loadedRoutineSymbol = GameData.GothicVm.GetSymbolByName(vob.CurrentRoutine);
+            var properties = newNpc.GetComponent<NpcProperties>();
+
+            // If we get an NPC from VOBTree, it means the NPC was very close/visible when saving the game.
+            // Inside Vob, we have the information of the last executed routine. Let's exchange it instead having the initial one.
+            NpcHelper.ExchangeRoutine(newNpc, properties.NpcInstance, loadedRoutineSymbol.Index);
+
             return newNpc;
         }
 
