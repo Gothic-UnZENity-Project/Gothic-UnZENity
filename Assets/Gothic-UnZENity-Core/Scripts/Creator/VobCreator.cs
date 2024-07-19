@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
-using GUZ.Core.Caches;
 using GUZ.Core.Context;
 using GUZ.Core.Creator.Meshes.V2;
 using GUZ.Core.Demo;
@@ -169,7 +168,7 @@ namespace GUZ.Core.Creator
                     if (config.EnableGameSounds)
                     {
                         go = CreateSound((Sound)vob, parent);
-                        LookupCache.VobSoundsAndDayTime.Add(go);
+                        GameGlobals.SoundCulling.AddCullingEntry(go);
                     }
 
                     break;
@@ -179,7 +178,7 @@ namespace GUZ.Core.Creator
                     if (config.EnableGameSounds)
                     {
                         go = CreateSoundDaytime((SoundDaytime)vob, parent);
-                        LookupCache.VobSoundsAndDayTime.Add(go);
+                        GameGlobals.SoundCulling.AddCullingEntry(go);
                     }
 
                     break;
@@ -389,7 +388,6 @@ namespace GUZ.Core.Creator
         private static void PostCreateVobs()
         {
             GameGlobals.VobMeshCulling.PrepareVobCulling(_cullingVobObjects);
-            GameGlobals.SoundCulling.PrepareSoundCulling(LookupCache.VobSoundsAndDayTime);
 
             _vobTreeCache.ClearAndReleaseMemory();
 

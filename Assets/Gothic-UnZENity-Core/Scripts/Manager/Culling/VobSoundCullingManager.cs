@@ -1,6 +1,5 @@
 using System.Collections.Generic;
-using System.Linq;
-using JetBrains.Annotations;
+using GUZ.Core.Extensions;
 using UnityEngine;
 
 namespace GUZ.Core.Manager.Culling
@@ -13,6 +12,8 @@ namespace GUZ.Core.Manager.Culling
         // Stored for later index mapping SphereIndex => GOIndex
         private readonly List<GameObject> _objects = new();
 
+        // Temporary spheres during execution of Wld_InsertNpc() calls.
+        private List<BoundingSphere> _tempSpheres = new();
 
         public VobSoundCullingManager(GameConfiguration config)
         {
@@ -41,34 +42,23 @@ namespace GUZ.Core.Manager.Culling
             var inAudibleRange = evt.currentDistance == 0;
 
             _objects[evt.index].SetActive(inAudibleRange);
+
+            if (inAudibleRange)
+            {
+                Debug.Log("Enable culling: " + _objects[evt.index], _objects[evt.index]);
+            }
+            else
+            {
+                Debug.Log("Disable culling: " + _objects[evt.index], _objects[evt.index]);
+            }
         }
 
 
-        /// <summary>
-        /// Fill CullingGroups with GOs based on size (radius) and position
-        /// </summary>
-        public void PrepareSoundCulling([ItemCanBeNull] List<GameObject> gameObjects)
+        public void AddCullingEntry(GameObject go)
         {
-            var spheres = new List<BoundingSphere>();
-
-            foreach (var go in gameObjects.Where(i => i != null))
-            {
-                if (go == null)
-                {
-                    continue;
-                }
-
-                _objects.Add(go);
-                var sphere = new BoundingSphere(go.transform.position, go.GetComponent<AudioSource>().maxDistance);
-                spheres.Add(sphere);
-            }
-
-            // Disable sounds if we're leaving the area and therefore last audible location.
-            // Hint: As there are non-spatial sounds (always same volume wherever we are),
-            // we need to disable the sounds at exactly the spot we are.
-            _soundCullingGroup.SetBoundingDistances(new[] { 0f });
-            _soundCullingGroup.onStateChanged = SoundChanged;
-            _soundCullingGroup.SetBoundingSpheres(spheres.ToArray());
+            _objects.Add(go);
+            var sphere = new BoundingSphere(go.transform.position, go.GetComponent<AudioSource>().maxDistance);
+            _tempSpheres.Add(sphere);
         }
 
         /// <summary>
@@ -77,9 +67,20 @@ namespace GUZ.Core.Manager.Culling
         /// </summary>
         public void PostWorldCreate(GameObject playerGo)
         {
+            // Set main camera as reference point
             var mainCamera = Camera.main!;
             _soundCullingGroup.targetCamera = mainCamera;
             _soundCullingGroup.SetDistanceReferencePoint(mainCamera.transform);
+
+            // Disable sounds if we're leaving the area and therefore last audible location.
+            // Hint: As there are non-spatial sounds (always same volume wherever we are),
+            // we need to disable the sounds at exactly the spot we are.
+            _soundCullingGroup.SetBoundingDistances(new[] { 0f });
+            _soundCullingGroup.SetBoundingSpheres(_tempSpheres.ToArray());
+            _soundCullingGroup.onStateChanged = SoundChanged;
+
+            // Cleanup
+            _tempSpheres.ClearAndReleaseMemory();
         }
 
         public void Destroy()

@@ -30,17 +30,11 @@ namespace GUZ.Core.Caches
         /// </summary>
         public static Dictionary<string, TMP_SpriteAsset> FontCache = new();
 
-        /// <summary>
-        /// VobSounds and VobSoundsDayTime GOs.
-        /// </summary>
-        public static List<GameObject> VobSoundsAndDayTime = new();
-
         public static void Init()
         {
             GlobalEventDispatcher.GeneralSceneUnloaded.AddListener(delegate
             {
                 NpcCache.Clear();
-                VobSoundsAndDayTime.Clear();
             });
         }
 
@@ -49,7 +43,6 @@ namespace GUZ.Core.Caches
             NpcCache.Clear();
             AnimationClipCache.Clear();
             FontCache.Clear();
-            VobSoundsAndDayTime.Clear();
         }
     }
 }
