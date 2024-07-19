@@ -238,9 +238,8 @@ namespace GUZ.Core.Manager
                 case Constants.SceneGeneral:
                     SceneManager.MoveGameObjectToScene(InteractionManager, _generalScene);
 
-                    var playerGo = GuzContext.InteractionAdapter.CreatePlayerController(scene);
+                    var playerGo = GuzContext.InteractionAdapter.CreatePlayerController(scene, _heroStartPosition, _heroStartRotation);
 
-                    TeleportPlayerToSpot(playerGo);
                     GlobalEventDispatcher.GeneralSceneLoaded.Invoke(playerGo);
 
                     break;
@@ -318,11 +317,6 @@ namespace GUZ.Core.Manager
         {
             _heroStartPosition = startPosition;
             _heroStartRotation = startRotation;
-        }
-
-        public void TeleportPlayerToSpot(GameObject playerGo)
-        {
-            GuzContext.InteractionAdapter.SpawnPlayerToSpot(playerGo, _heroStartPosition, _heroStartRotation);
         }
     }
 }

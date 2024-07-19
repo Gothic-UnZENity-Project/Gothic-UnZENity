@@ -42,15 +42,6 @@ namespace GUZ.Core.Manager.Culling
             var inAudibleRange = evt.currentDistance == 0;
 
             _objects[evt.index].SetActive(inAudibleRange);
-
-            if (inAudibleRange)
-            {
-                Debug.Log("Enable culling: " + _objects[evt.index], _objects[evt.index]);
-            }
-            else
-            {
-                Debug.Log("Disable culling: " + _objects[evt.index], _objects[evt.index]);
-            }
         }
 
 

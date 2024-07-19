@@ -19,7 +19,7 @@ namespace GUZ.XRIT
             return _contextName;
         }
 
-        public GameObject CreatePlayerController(Scene scene)
+        public GameObject CreatePlayerController(Scene scene, Vector3 position = default, Quaternion rotation = default)
         {
             string prefabName;
             string goName;
@@ -36,7 +36,7 @@ namespace GUZ.XRIT
             }
 
             var newPrefab = Resources.Load<GameObject>(prefabName);
-            var go = Object.Instantiate(newPrefab);
+            var go = Object.Instantiate(newPrefab, position, rotation);
             go.name = goName;
 
             // During normal gameplay, we need to move the VRPlayer to General scene. Otherwise, it will be created inside
@@ -44,11 +44,6 @@ namespace GUZ.XRIT
             SceneManager.MoveGameObjectToScene(go, scene);
 
             return go;
-        }
-
-        public void SpawnPlayerToSpot(GameObject playerGo, Vector3 position, Quaternion rotation)
-        {
-            playerGo.transform.SetPositionAndRotation(position, rotation);
         }
 
         public void CreateXRDeviceSimulator()
