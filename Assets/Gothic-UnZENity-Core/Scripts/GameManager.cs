@@ -87,7 +87,7 @@ namespace GUZ.Core
             _fileLoggingHandler = new FileLoggingHandler(Settings);
             _gameLoadingManager = new LoadingManager();
             VobMeshCulling = new VobMeshCullingManager(Config, this);
-            NpcMeshCulling = new NpcMeshCullingManager(Config, this);
+            NpcMeshCulling = new NpcMeshCullingManager(Config);
             SoundCulling = new VobSoundCullingManager(Config);
             _barrierManager = new BarrierManager(Config);
             Lights = new StationaryLightsManager();
