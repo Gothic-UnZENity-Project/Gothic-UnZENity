@@ -35,7 +35,6 @@ namespace GUZ.Core.Editor.Tools
             }
 
             var settings = GameSettings.Load();
-            GuzBootstrapper.SetLanguage(settings.GothicILanguage);
             ResourceLoader.Init(settings.GothicIPath);
 
             WorldCreator.LoadEditorWorld();
