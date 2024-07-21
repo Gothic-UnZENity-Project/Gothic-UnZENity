@@ -124,7 +124,6 @@ namespace GUZ.Core.Creator
                 loading.AddProgress(LoadingManager.LoadingProgressType.VOb, 1f / totalNpcs);
                 if (++createdCount % npcsPerFrame == 0)
                 {
-                    Debug.Log("NPC: Wait 1 frame.");
                     await Task.Yield(); // Wait for the next frame
                 }
 
