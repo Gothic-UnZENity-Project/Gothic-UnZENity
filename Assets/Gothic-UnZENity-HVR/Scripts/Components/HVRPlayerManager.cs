@@ -1,9 +1,6 @@
 #if GUZ_HVR_INSTALLED
-using System.Collections;
 using System.Linq;
-using GUZ.Core.Manager;
 using GUZ.Core.Util;
-using HurricaneVR.Framework.Core.Player;
 using HurricaneVR.Framework.Core.UI;
 using UnityEngine;
 
