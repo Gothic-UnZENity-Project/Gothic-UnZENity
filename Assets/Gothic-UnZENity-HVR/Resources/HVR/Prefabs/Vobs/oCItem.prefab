@@ -116,6 +116,7 @@ GameObject:
   - component: {fileID: 6095836136900462541}
   - component: {fileID: 6759220176799969513}
   - component: {fileID: -6808202407213995710}
+  - component: {fileID: 8543334853728962911}
   m_Layer: 0
   m_Name: oCItem
   m_TagString: Untagged
@@ -292,8 +293,8 @@ MonoBehaviour:
   Grabbed:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 6759220176799969513}
-        m_TargetAssemblyTypeName: GVR.HVR.Components.HVRFocus, Assembly-CSharp
+      - m_Target: {fileID: 8543334853728962911}
+        m_TargetAssemblyTypeName: GUZ.HVR.Components.HVROCItem, Assembly-CSharp
         m_MethodName: OnGrabbed
         m_Mode: 0
         m_Arguments:
@@ -363,6 +364,18 @@ MonoBehaviour:
   HandGrabbers: []
   Stabbers: []
   Stabbable: {fileID: 0}
+--- !u!114 &8543334853728962911
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6503575194566409312}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0333c47fdf6b4631be18b7d69729f0c4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &8287200665113283090
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using GUZ.Core.Npc;
 using GUZ.Core.Npc.Actions.AnimationActions;
@@ -115,6 +116,11 @@ namespace GUZ.Core.Properties
             BodyData = other.BodyData;
             Perceptions = other.Perceptions;
             PerceptionTime = other.PerceptionTime;
+        }
+
+        public override string GetFocusName()
+        {
+            return NpcInstance.GetName(0);
         }
     }
 }
