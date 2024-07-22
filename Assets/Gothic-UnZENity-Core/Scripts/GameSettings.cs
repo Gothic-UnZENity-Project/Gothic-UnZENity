@@ -13,11 +13,7 @@ namespace GUZ.Core.Manager.Settings
         private const string _settingsFileNameDev = "GameSettings.dev.json";
 
         public string GothicIPath;
-        public string GothicILanguage;
         public string LogLevel;
-
-        public string GothicMenuFontPath;
-        public string GothicSubtitleFontPath;
 
         public Dictionary<string, Dictionary<string, string>> GothicIniSettings = new();
 
