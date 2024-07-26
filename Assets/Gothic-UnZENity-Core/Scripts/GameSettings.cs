@@ -11,7 +11,6 @@ namespace GUZ.Core.Manager.Settings
     {
         private const string _settingsFileName = "GameSettings.json";
         private const string _settingsFileNameDev = "GameSettings.dev.json";
-        private const string _androidProjectFolder = "/sdcard/Documents/Gothic-UnZENity-Data/";
         private const string _defaultSteamGothicFolder = @"C:\Program Files (x86)\Steam\steamapps\common\Gothic\";
 
 
@@ -46,15 +45,9 @@ namespace GUZ.Core.Manager.Settings
 
             // We need to do a final check for Gothic installation path and which one to ultimately use.
             loadedSettings.GothicIPath = AlterGothicInstallationPath(loadedSettings.GothicIPath);
-            
-            var iniFilePath = Path.Combine(loadedSettings.GothicIPath, "system", "gothic.ini");
-            if (!File.Exists(iniFilePath))
-            {
-                Debug.LogError("The gothic.ini file does not exist at the specified path :" + iniFilePath);
-                return loadedSettings;
-            }
 
-            loadedSettings.GothicIniSettings = ParseGothicIni(iniFilePath);
+            LoadIniFile(loadedSettings);
+            
             return loadedSettings;
         }
 
@@ -70,14 +63,13 @@ namespace GUZ.Core.Manager.Settings
             }
             
             // If directory exists and GameSettings.json is placed, we assume everything is created already.
-            if (Directory.Exists(_androidProjectFolder) && File.Exists($"{_androidProjectFolder}/{_settingsFileName}"))
+            if (File.Exists($"{Application.persistentDataPath}/{_settingsFileName}"))
             {
                 return;
             }
             
-            // Create folder
-            Directory.CreateDirectory(_androidProjectFolder);
-            Directory.CreateDirectory($"{_androidProjectFolder}/Gothic1");
+            // Create folder(s)
+            Directory.CreateDirectory($"{Application.persistentDataPath}/Gothic1");
             
             // Copy GameSettings.json into writable Documents folder
             var gameSettingsPath = Path.Combine($"{Application.streamingAssetsPath}/{_settingsFileName}");
@@ -90,14 +82,14 @@ namespace GUZ.Core.Manager.Settings
             { }
             
             var result = www.downloadHandler.text;
-            File.WriteAllText($"{_androidProjectFolder}/{_settingsFileName}", result);
+            File.WriteAllText($"{Application.persistentDataPath}/{_settingsFileName}", result);
 
             // If existing, copy GameSettings.dev.json into writable Documents folder
             var gameSettingsDevPath = Path.Combine($"{Application.streamingAssetsPath}/{_settingsFileNameDev}");
             if (File.Exists(gameSettingsDevPath))
             {
                 var devresult = File.ReadAllText(gameSettingsPath);
-                File.WriteAllText($"{_androidProjectFolder}/{_settingsFileNameDev}", devresult);
+                File.WriteAllText($"{Application.persistentDataPath}/{_settingsFileNameDev}", devresult);
             }
         }
 
@@ -106,19 +98,18 @@ namespace GUZ.Core.Manager.Settings
         /// </summary>
         private static string GetGameSettingsRootPath()
         {
+            // https://docs.unity3d.com/ScriptReference/Application-persistentDataPath.html
+            // Will be: /storage/emulated/<userid>/Android/data/<packagename>/files
             if (Application.platform == RuntimePlatform.Android)
             {
-                // We already extracted the necessary data into this folder before.
-                return _androidProjectFolder;
+                return Application.persistentDataPath;
             }
-            else // Standalone
-            {
-                // https://docs.unity3d.com/ScriptReference/Application-streamingAssetsPath.html
-                // This will be:
-                //   1. Editor: Assets\StreamingAssets\
-                //   2. Standalone: Build\Gothic-UnZENity_Data\StreamingAssets\
-                return Application.streamingAssetsPath;
-            }
+
+            // https://docs.unity3d.com/ScriptReference/Application-streamingAssetsPath.html
+            // Will be:
+            // 1. Editor: Assets\StreamingAssets\
+            // 2. Standalone: Build\Gothic-UnZENity_Data\StreamingAssets\
+            return Application.streamingAssetsPath;
         }
 
         /// <summary>
@@ -136,7 +127,7 @@ namespace GUZ.Core.Manager.Settings
             // Try platform specific fallbacks.
             if (Application.platform == RuntimePlatform.Android)
             {
-                return $"{_androidProjectFolder}/Gothic1";
+                return $"{Application.persistentDataPath}/Gothic1";
             }
             // Standalone
             else
@@ -144,7 +135,7 @@ namespace GUZ.Core.Manager.Settings
                 return _defaultSteamGothicFolder;
             }
         }
-        
+
         public bool CheckIfGothic1InstallationExists()
         {
             var g1DataPath = Path.GetFullPath(Path.Join(GothicIPath, "Data"));
@@ -153,12 +144,24 @@ namespace GUZ.Core.Manager.Settings
             return Directory.Exists(g1WorkPath) && Directory.Exists(g1DataPath);
         }
 
-        private static Dictionary<string, Dictionary<string, string>> ParseGothicIni(string filePath)
+        private static void LoadIniFile(GameSettings loadedSettings)
         {
+            // We load Ini file only, if we already stored Gothic installation data.
+            if (!loadedSettings.CheckIfGothic1InstallationExists())
+            {
+                return;
+            }
+
+            var iniFilePath = Path.Combine(loadedSettings.GothicIPath, "system", "gothic.ini");
+            if (!File.Exists(iniFilePath))
+            {
+                Debug.LogError("The gothic.ini file does not exist at the specified path :" + iniFilePath);
+            }
+
             var data = new Dictionary<string, Dictionary<string, string>>();
             string currentSection = null;
 
-            foreach (var line in File.ReadLines(filePath))
+            foreach (var line in File.ReadLines(iniFilePath))
             {
                 var trimmedLine = line.Trim();
                 if (string.IsNullOrWhiteSpace(trimmedLine) || trimmedLine.StartsWith(";"))
@@ -181,7 +184,7 @@ namespace GUZ.Core.Manager.Settings
                 }
             }
 
-            return data;
+            loadedSettings.GothicIniSettings = data;
         }
     }
 }

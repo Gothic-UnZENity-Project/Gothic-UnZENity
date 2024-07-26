@@ -10,7 +10,6 @@ namespace GUZ.Core.Debugging
         private StreamWriter _fileWriter;
         private LogLevel _logLevel;
 
-        private const string _androidProjectFolder = "/sdcard/Documents/Gothic-UnZENity-Data/";
         private const string _logFileName = "Gothic-UnZENity.log.txt";
         
         // Levels are aligned with Unity's levels: UnityEngine.LogType
@@ -35,14 +34,7 @@ namespace GUZ.Core.Debugging
             string rootFolder;
             if (Application.platform == RuntimePlatform.Android)
             {
-                rootFolder = _androidProjectFolder;
-                
-                // We create this directory via GameSettings, but it's too late as we want to start logging earlier.
-                // We therefore create the initial directory already.
-                if (!Directory.Exists(rootFolder))
-                {
-                    Directory.CreateDirectory(rootFolder);
-                }
+                rootFolder = Application.persistentDataPath;
             }
             else
             {
@@ -74,12 +66,6 @@ namespace GUZ.Core.Debugging
             }
             
             _fileWriter.Flush();
-        }
-
-        public void Destroy()
-        {
-            Application.logMessageReceived -= HandleLog;
-            _fileWriter.Close();
         }
 
         private void HandleLog(string logString, string stackTrace, LogType type)
@@ -114,6 +100,12 @@ namespace GUZ.Core.Debugging
                 default:
                     return true; // never reached, but compiler demands it.
             }
+        }
+        
+        public void Destroy()
+        {
+            Application.logMessageReceived -= HandleLog;
+            _fileWriter.Close();
         }
     }
 }
