@@ -52,8 +52,13 @@ namespace GUZ.Core.Manager.Settings
         }
 
         /// <summary>
-        /// We create some ready-to use folder inside /sdcard/Documents/Gothic-UnZENity/ to provide folders
-        /// where gamers will place their game data into.
+        /// We prepare use of app by copying GameSettings.json and empty Gothic installation directories where gamers
+        /// will place their game data into.
+        ///
+        /// HINT: With Android 10+, there is no easy way to use data from a different folder. i.e. we can create files and folders wherever we want,
+        /// but if we upload or alter them from another app (like SideQuest), we loose access (Androids new Scoped Storage/Shared Storage feature).
+        /// Therefore, let's stick with the installation folder as it's the official place where other apps (SideQuest etc.) can update/upload our files
+        /// and Gothic-UnZENity can still read the data later on.
         /// </summary>
         private static void PrepareAndroidFolders()
         {
@@ -71,7 +76,7 @@ namespace GUZ.Core.Manager.Settings
             // Create folder(s)
             Directory.CreateDirectory($"{Application.persistentDataPath}/Gothic1");
             
-            // Copy GameSettings.json into writable Documents folder
+            // Copy GameSettings.json into app's shared folder
             var gameSettingsPath = Path.Combine($"{Application.streamingAssetsPath}/{_settingsFileName}");
             
             var www = UnityWebRequest.Get(gameSettingsPath);
@@ -84,7 +89,7 @@ namespace GUZ.Core.Manager.Settings
             var result = www.downloadHandler.text;
             File.WriteAllText($"{Application.persistentDataPath}/{_settingsFileName}", result);
 
-            // If existing, copy GameSettings.dev.json into writable Documents folder
+            // If existing, copy GameSettings.dev.json into writable shared storage folder of our app.
             var gameSettingsDevPath = Path.Combine($"{Application.streamingAssetsPath}/{_settingsFileNameDev}");
             if (File.Exists(gameSettingsDevPath))
             {
@@ -115,10 +120,11 @@ namespace GUZ.Core.Manager.Settings
         /// <summary>
         /// Check if the specified path inside GameSettings is a valid Gothic installation. If not, use a platform specific fallback:
         /// Standalone: C:\Program Files (x86)\Steam\steamapps\common\Gothic\
-        /// Android: /sdcard/Documents/Gothic-UnZENity/Gothic1/
+        /// Android: /storage/emulated/0/Android/data/com.GothicUnZENity/files/Gothic1/
         /// </summary>
         private static string AlterGothicInstallationPath(string gothicInstallationPath)
         {
+            // GameSettings (or its dev) entry already provides a valid installation directory.
             if (Directory.Exists(gothicInstallationPath))
             {
                 return gothicInstallationPath;
