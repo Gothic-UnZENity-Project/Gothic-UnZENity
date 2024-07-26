@@ -9,8 +9,10 @@ namespace GUZ.Core.Debugging
     {
         private StreamWriter _fileWriter;
         private LogLevel _logLevel;
-        private GameSettings _settings;
 
+        private const string _androidProjectFolder = "/sdcard/Documents/Gothic-UnZENity-Data/";
+        private const string _logFileName = "Gothic-UnZENity.log.txt";
+        
         // Levels are aligned with Unity's levels: UnityEngine.LogType
         private enum LogLevel
         {
@@ -20,16 +22,34 @@ namespace GUZ.Core.Debugging
             Exception = 3
         }
 
-        public FileLoggingHandler(GameSettings settings)
+        public FileLoggingHandler()
         {
-            _settings = settings;
+            // As we need to get logs as early as possible, we will pre-initialize it immediately.
+            PreInit();
         }
 
-        public void Init()
+        private void PreInit()
         {
             Application.logMessageReceived += HandleLog;
 
-            _fileWriter = new StreamWriter(Application.persistentDataPath + "/gothic-unzenity_log.txt", false);
+            string rootFolder;
+            if (Application.platform == RuntimePlatform.Android)
+            {
+                rootFolder = _androidProjectFolder;
+                
+                // We create this directory via GameSettings, but it's too late as we want to start logging earlier.
+                // We therefore create the initial directory already.
+                if (!Directory.Exists(rootFolder))
+                {
+                    Directory.CreateDirectory(rootFolder);
+                }
+            }
+            else
+            {
+                rootFolder = Application.persistentDataPath;
+            }
+            
+            _fileWriter = new StreamWriter($"{rootFolder}/{_logFileName}", false);
             _fileWriter.WriteLine("DeviceModel: " + SystemInfo.deviceModel);
             _fileWriter.WriteLine("DeviceType: " + SystemInfo.deviceType);
             _fileWriter.WriteLine("OperatingSystem: " + SystemInfo.operatingSystem);
@@ -38,10 +58,13 @@ namespace GUZ.Core.Debugging
             _fileWriter.WriteLine("GUZ Version: " + Application.version);
             _fileWriter.WriteLine();
             _fileWriter.Flush();
+        }
 
-            if (Enum.TryParse(_settings.LogLevel, true, out LogLevel value))
+        public void Init(GameSettings settings)
+        {
+            if (Enum.TryParse(settings.LogLevel, true, out LogLevel value))
             {
-                _fileWriter.WriteLine("LogLevel Setting found: " + _settings.LogLevel);
+                _fileWriter.WriteLine("LogLevel Setting found: " + settings.LogLevel);
                 _logLevel = value;
             }
             else
@@ -49,7 +72,7 @@ namespace GUZ.Core.Debugging
                 _fileWriter.WriteLine("LogLevel Setting not found. Setting Default to >Warning<.");
                 _logLevel = LogLevel.Warning;
             }
-
+            
             _fileWriter.Flush();
         }
 
@@ -67,6 +90,12 @@ namespace GUZ.Core.Debugging
             }
 
             _fileWriter.WriteLine(type + ": " + logString);
+            
+            if (type == LogType.Exception)
+            {
+                _fileWriter.WriteLine(stackTrace);
+            }
+            
             _fileWriter.Flush();
         }
 

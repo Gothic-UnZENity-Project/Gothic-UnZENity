@@ -6,7 +6,6 @@ using GUZ.Core.Manager.Settings;
 using GUZ.Core.Util;
 using GUZ.Core.World;
 using UnityEngine;
-using UnityEngine.Serialization;
 using Logger = ZenKit.Logger;
 
 namespace GUZ.Core
@@ -16,18 +15,16 @@ namespace GUZ.Core
     {
         [field: SerializeField] public GameConfiguration Config { get; set; }
 
-        [FormerlySerializedAs("xrInteractionManager")]
         public GameObject XRInteractionManager;
 
-        [FormerlySerializedAs("invalidInstallationPathMessage")]
         public GameObject InvalidInstallationPathMessage;
 
+        private FileLoggingHandler _fileLoggingHandler;
         private BarrierManager _barrierManager;
         private XRPlayerManager _xrPlayerManager;
         private XRDeviceSimulatorManager _xrSimulatorManager;
         private MusicManager _gameMusicManager;
         private LoadingManager _gameLoadingManager;
-        private FileLoggingHandler _fileLoggingHandler;
 
         public GameSettings Settings { get; private set; }
         private bool _isInitialised;
@@ -50,7 +47,6 @@ namespace GUZ.Core
 
         public VobSoundCullingManager SoundCulling { get; private set; }
 
-        // ReSharper disable Unity.PerformanceAnalysis
         private void Load()
         {
             // If the Gothic installation directory is not set, show an error message and exit.
@@ -76,13 +72,14 @@ namespace GUZ.Core
 
         private void Awake()
         {
+            _fileLoggingHandler = new FileLoggingHandler();
+
             GameGlobals.Instance = this;
             LookupCache.Init();
 
             Textures = GetComponent<TextureManager>();
             Font = GetComponent<FontManager>();
             Settings = GameSettings.Load();
-            _fileLoggingHandler = new FileLoggingHandler(Settings);
             _gameLoadingManager = new LoadingManager();
             MeshCulling = new VobMeshCullingManager(Config, this);
             SoundCulling = new VobSoundCullingManager(Config);
@@ -102,7 +99,7 @@ namespace GUZ.Core
             Logger.Set(Config.ZenKitLogLevel, Logging.OnZenKitLogMessage);
             DirectMusic.Logger.Set(Config.DirectMusicLogLevel, Logging.OnDirectMusicLogMessage);
 
-            _fileLoggingHandler.Init();
+            _fileLoggingHandler.Init(Settings);
             _gameLoadingManager.Init();
             MeshCulling.Init();
             SoundCulling.Init();
