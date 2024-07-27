@@ -4,7 +4,6 @@ using System.Linq;
 using GUZ.Core.Data;
 using GUZ.Core.Extensions;
 using GUZ.Core.Manager;
-using GUZ.Core.Scripts.Manager;
 using GUZ.Core.Util;
 using TMPro;
 using UnityEngine;
@@ -233,6 +232,6 @@ public class ControllerManager : SingletonBehaviour<ControllerManager>
 
     private void OnDialogClick(int npcInstanceIndex, int dialogId, bool isMainDialog)
     {
-        DialogHelper.SelectionClicked(npcInstanceIndex, dialogId, isMainDialog);
+        DialogManager.SelectionClicked(npcInstanceIndex, dialogId, isMainDialog);
     }
 }

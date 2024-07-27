@@ -5,7 +5,6 @@ using GUZ.Core.Caches;
 using GUZ.Core.Creator;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
-using GUZ.Core.Scripts.Manager;
 using UnityEngine;
 using ZenKit;
 using ZenKit.Daedalus;
@@ -250,12 +249,12 @@ namespace GUZ.Core.Vm
 
         public static void AI_Output(NpcInstance self, NpcInstance target, string outputName)
         {
-            DialogHelper.ExtAiOutput(self, target, outputName);
+            DialogManager.ExtAiOutput(self, target, outputName);
         }
 
         public static void AI_StopProcessInfos(NpcInstance npc)
         {
-            DialogHelper.ExtAiStopProcessInfos(npc);
+            DialogManager.ExtAiStopProcessInfos(npc);
         }
 
         public static void AI_LookAt(NpcInstance npc, string waypoint)
@@ -290,7 +289,7 @@ namespace GUZ.Core.Vm
 
         public static void AI_OutputSVM(NpcInstance npc, NpcInstance target, string svmname)
         {
-            DialogHelper.ExtAiOutputSvm(npc, target, svmname);
+            DialogManager.ExtAiOutputSvm(npc, target, svmname);
         }
 
         #endregion
@@ -352,13 +351,13 @@ namespace GUZ.Core.Vm
         [MonoPInvokeCallback(typeof(DaedalusVm.ExternalFuncV))]
         public static void Info_ClearChoices(int info)
         {
-            DialogHelper.ExtInfoClearChoices(info);
+            DialogManager.ExtInfoClearChoices(info);
         }
 
         [MonoPInvokeCallback(typeof(DaedalusVm.ExternalFuncV))]
         public static void Info_AddChoice(int info, string text, int function)
         {
-            DialogHelper.ExtInfoAddChoice(info, text, function);
+            DialogManager.ExtInfoAddChoice(info, text, function);
         }
 
         #endregion

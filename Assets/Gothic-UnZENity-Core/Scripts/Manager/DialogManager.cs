@@ -11,9 +11,9 @@ using GUZ.Core.Properties;
 using UnityEngine;
 using ZenKit.Daedalus;
 
-namespace GUZ.Core.Scripts.Manager
+namespace GUZ.Core.Manager
 {
-    public static class DialogHelper
+    public static class DialogManager
     {
         public static void StartDialog(NpcProperties properties)
         {

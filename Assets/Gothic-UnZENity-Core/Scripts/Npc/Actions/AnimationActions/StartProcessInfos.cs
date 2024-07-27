@@ -1,7 +1,7 @@
 using System.Linq;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
-using GUZ.Core.Scripts.Manager;
+using GUZ.Core.Manager;
 using UnityEngine;
 
 namespace GUZ.Core.Npc.Actions.AnimationActions
@@ -47,7 +47,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
                 }
             }
 
-            DialogHelper.StartDialog(Props);
+            DialogManager.StartDialog(Props);
         }
     }
 }

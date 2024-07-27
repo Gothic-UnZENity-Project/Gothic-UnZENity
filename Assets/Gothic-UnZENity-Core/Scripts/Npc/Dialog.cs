@@ -1,4 +1,4 @@
-﻿using GUZ.Core.Scripts.Manager;
+﻿using GUZ.Core.Manager;
 using UnityEngine;
 
 namespace GUZ.Core.Npc
@@ -12,7 +12,7 @@ namespace GUZ.Core.Npc
                 return;
             }
 
-            DialogHelper.StartDialog(Properties);
+            DialogManager.StartDialog(Properties);
         }
     }
 }
