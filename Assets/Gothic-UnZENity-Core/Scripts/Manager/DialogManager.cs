@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using GUZ.Core.Caches;
+using GUZ.Core.Context;
 using GUZ.Core.Data;
 using GUZ.Core.Globals;
 using GUZ.Core.Npc;
@@ -22,8 +23,8 @@ namespace GUZ.Core.Manager
             // We are already inside a sub-dialog
             if (GameData.Dialogs.CurrentDialog.Options.Any())
             {
-                ControllerManager.I.FillDialog(properties.NpcInstance.Index, GameData.Dialogs.CurrentDialog.Options);
-                ControllerManager.I.ShowDialog();
+                GuzContext.DialogAdapter.FillDialog(properties.NpcInstance.Index, GameData.Dialogs.CurrentDialog.Options);
+                GuzContext.DialogAdapter.ShowDialog();
             }
             // There is at least one important entry, the NPC wants to talk to the hero about.
             else if (TryGetImportant(properties.Dialogs, out var infoInstance))
@@ -53,8 +54,8 @@ namespace GUZ.Core.Manager
                 }
 
                 selectableDialogs = selectableDialogs.OrderBy(d => d.Nr).ToList();
-                ControllerManager.I.FillDialog(properties.NpcInstance.Index, selectableDialogs);
-                ControllerManager.I.ShowDialog();
+                GuzContext.DialogAdapter.FillDialog(properties.NpcInstance.Index, selectableDialogs);
+                GuzContext.DialogAdapter.ShowDialog();
             }
         }
 
@@ -151,7 +152,7 @@ namespace GUZ.Core.Manager
             GameData.Dialogs.CurrentDialog.Options.Clear();
             GameData.Dialogs.IsInDialog = false;
 
-            ControllerManager.I.HideDialog();
+            GuzContext.DialogAdapter.HideDialog();
         }
 
         private static void CallInformation(int npcInstanceIndex, int information, bool isMainDialog)
@@ -165,7 +166,7 @@ namespace GUZ.Core.Manager
                     .First(d => d.Information == information);
             }
 
-            ControllerManager.I.HideDialog();
+            GuzContext.DialogAdapter.HideDialog();
 
             // We always need to set "self" before executing any Daedalus function.
             GameData.GothicVm.GlobalSelf = npcData.instance;
