@@ -14,8 +14,9 @@ GameObject:
   - component: {fileID: 418615690}
   - component: {fileID: 9042877295681826828}
   - component: {fileID: 383060561904739675}
+  - component: {fileID: 4148423720954529152}
   m_Layer: 0
-  m_Name: NPC
+  m_Name: oCNpc
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -130,6 +131,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _properties: {fileID: 4778879049934742964}
   _nameCanvas: {fileID: 6587480391989834217}
+--- !u!114 &4148423720954529152
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2202926895728732233}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9df2797e60b740a184fb2cfd36d0a490, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2815092147823170342
 GameObject:
   m_ObjectHideFlags: 0
@@ -272,7 +285,6 @@ GameObject:
   - component: {fileID: 3620496381512049433}
   - component: {fileID: 8720130747125307888}
   - component: {fileID: 957202922675155714}
-  - component: {fileID: 712981900298770246}
   - component: {fileID: 8095166574519349901}
   m_Layer: 0
   m_Name: RootMotionCollider
@@ -360,20 +372,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   NpcRoot: {fileID: 2202926895728732233}
   Properties: {fileID: 4778879049934742964}
---- !u!114 &712981900298770246
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3647559741746323219}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6b485183a82257e47a2eea67e7716ef2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  NpcRoot: {fileID: 2202926895728732233}
-  Properties: {fileID: 4778879049934742964}
 --- !u!114 &8095166574519349901
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -449,7 +447,19 @@ MonoBehaviour:
       m_Calls: []
   Grabbed:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 4148423720954529152}
+        m_TargetAssemblyTypeName: GUZ.HVR.Components.HVRoCNpc, Assembly-CSharp
+        m_MethodName: OnGrabbed
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   Released:
     m_PersistentCalls:
       m_Calls: []

@@ -2,7 +2,7 @@
 using System.Linq;
 using GUZ.Core.Context;
 using GUZ.Core.Globals;
-using GVR;
+using GUZ.HVR.Components;
 using HurricaneVR.Framework.Core.Player;
 using HurricaneVRExtensions.Simulator;
 using UnityEngine;
