@@ -9,7 +9,7 @@ using UnityEngine.Serialization;
 namespace GUZ.XRIT.Manager
 {
     [Obsolete("Not yet migrated to new HVR/XRIT logic. Can be removed once the menus are migrated to HVR.")]
-    public class ControllerManager : SingletonBehaviour<ControllerManager>
+    public class XRITControllerManager : SingletonBehaviour<XRITControllerManager>
     {
         [FormerlySerializedAs("raycastLeft")] public GameObject RaycastLeft;
         [FormerlySerializedAs("raycastRight")] public GameObject RaycastRight;

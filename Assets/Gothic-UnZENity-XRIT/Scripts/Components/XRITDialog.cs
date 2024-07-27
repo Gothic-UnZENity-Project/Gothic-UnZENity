@@ -1,9 +1,12 @@
-﻿using GUZ.Core.Manager;
+﻿using System;
+using GUZ.Core.Manager;
+using GUZ.Core.Npc;
 using UnityEngine;
 
-namespace GUZ.Core.Npc
+namespace GUZ.XRIT.Components
 {
-    public class Dialog : BasePlayerBehaviour
+    [Obsolete("Not yet migrated to new HVR/XRIT logic. Can be removed once the menus are migrated to HVR.")]
+    public class XRITDialog : BasePlayerBehaviour
     {
         private void OnTriggerEnter(Collider other)
         {
