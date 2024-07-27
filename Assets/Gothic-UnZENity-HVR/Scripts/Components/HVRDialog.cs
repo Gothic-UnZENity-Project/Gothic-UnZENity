@@ -13,8 +13,7 @@ namespace GUZ.HVR.Components
     public class HVRDialog : MonoBehaviour
     {
         [SerializeField] private GameObject _dialogGameObject;
-        
-        private List<GameObject> _dialogItems;
+        [SerializeField] private List<GameObject> _dialogItems;
         
         public void ShowDialog()
         {
@@ -62,7 +61,7 @@ namespace GUZ.HVR.Components
         
         /// <summary>
         /// We won't know the maximum amount of element from the start of the game.
-        /// Therefore we start with one entry only and create more if needed now.
+        /// Therefore, we start with one entry as template and create more if needed now.
         /// </summary>
         private void CreateAdditionalDialogOptions(int currentItemsNeeded)
         {

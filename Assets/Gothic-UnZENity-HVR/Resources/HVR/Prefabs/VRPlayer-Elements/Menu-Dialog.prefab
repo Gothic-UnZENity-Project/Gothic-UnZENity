@@ -477,3 +477,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _dialogGameObject: {fileID: 2782839599571649433}
+  _dialogItems:
+  - {fileID: 4125357950801094888}
