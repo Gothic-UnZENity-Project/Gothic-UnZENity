@@ -37,18 +37,18 @@ MonoBehaviour:
   ShowVOBMeshCullingGizmos: 0
   BrightenUpHoveredVOBs: 1
   ShowNamesOnHoveredVOBs: 1
-  SpawnNPCs: 0
-  EnableNPCRoutines: 0
-  SpawnNPCInstances:
+  EnableNpcs: 0
+  EnableNpcMeshCulling: 1
+  NpcCullingDistance: 50
+  SpawnNpcInstances:
     Value: 
-  EnableNPCEyeBlinking: 0
+  EnableNpcEyeBlinking: 0
   ShowFreePoints: 0
   ShowWayPoints: 0
   ShowWayEdges: 0
   SpawnAtWaypoint: 
   EnableGameMusic: 1
   EnableGameSounds: 1
-  EnableSoundCulling: 0
   SunLightColor: {r: 0.6901961, g: 0.6901961, b: 0.6901961, a: 1}
   SunLightIntensity: 1
   SunUpdateInterval: 2

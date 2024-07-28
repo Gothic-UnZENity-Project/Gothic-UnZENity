@@ -156,26 +156,26 @@ namespace GUZ.Core.Scripts.Manager
 
         private static void CallInformation(int npcInstanceIndex, int information, bool isMainDialog)
         {
-            var npcProperties = LookupCache.NpcCache[npcInstanceIndex];
+            var npcData = LookupCache.NpcCache[npcInstanceIndex];
 
             // If a C_Info is clicked, then set a new CurrentInstance.
             if (isMainDialog)
             {
-                GameData.Dialogs.CurrentDialog.Instance = npcProperties.Dialogs
+                GameData.Dialogs.CurrentDialog.Instance = npcData.properties.Dialogs
                     .First(d => d.Information == information);
             }
 
             ControllerManager.I.HideDialog();
 
             // We always need to set "self" before executing any Daedalus function.
-            GameData.GothicVm.GlobalSelf = npcProperties.NpcInstance;
+            GameData.GothicVm.GlobalSelf = npcData.instance;
             GameData.GothicVm.GlobalOther = GameData.GothicVm.GlobalHero;
             GameData.GothicVm.Call(information);
 
             // We always want to have a method to get the dialog menu back once all dialog lines are talked.
-            npcProperties.AnimationQueue.Enqueue(new StartProcessInfos(
+            npcData.properties.AnimationQueue.Enqueue(new StartProcessInfos(
                 new AnimationAction(int0: information),
-                npcProperties.Go));
+                npcData.properties.Go));
         }
 
         private static GameObject GetNpc(NpcInstance npc)
@@ -185,7 +185,7 @@ namespace GUZ.Core.Scripts.Manager
 
         private static NpcProperties GetProperties(NpcInstance npc)
         {
-            return LookupCache.NpcCache[npc.Index];
+            return LookupCache.NpcCache[npc.Index].properties;
         }
     }
 }

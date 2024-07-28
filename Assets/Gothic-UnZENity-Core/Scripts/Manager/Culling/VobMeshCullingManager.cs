@@ -367,7 +367,7 @@ namespace GUZ.Core.Manager.Culling
 
         /// <summary>
         /// We need to wait a few frames before the velocity of object is != 0.
-        /// Therefore we put the object into the list delayed.
+        /// Therefore, we put the object into the list delayed.
         /// </summary>
         private IEnumerator StopTrackVobPositionUpdatesDelayed(GameObject go)
         {

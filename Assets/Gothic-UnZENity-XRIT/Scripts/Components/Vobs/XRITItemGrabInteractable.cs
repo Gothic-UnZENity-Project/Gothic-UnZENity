@@ -20,7 +20,7 @@ namespace GUZ.XRIT.Components.Vobs
 
         public void SelectEntered(SelectEnterEventArgs args)
         {
-            GameGlobals.MeshCulling.StartTrackVobPositionUpdates(gameObject);
+            GameGlobals.VobMeshCulling.StartTrackVobPositionUpdates(gameObject);
         }
 
         /// <summary>
@@ -33,7 +33,7 @@ namespace GUZ.XRIT.Components.Vobs
                 Rb.isKinematic = false;
             }
 
-            GameGlobals.MeshCulling.StopTrackVobPositionUpdates(gameObject);
+            GameGlobals.VobMeshCulling.StopTrackVobPositionUpdates(gameObject);
         }
     }
 }

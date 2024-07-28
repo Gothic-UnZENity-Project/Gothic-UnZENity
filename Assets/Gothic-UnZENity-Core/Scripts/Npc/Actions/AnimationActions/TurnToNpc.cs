@@ -15,7 +15,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
 
         protected override Quaternion GetRotationDirection()
         {
-            var destinationTransform = LookupCache.NpcCache[OtherIndex].transform;
+            var destinationTransform = LookupCache.NpcCache[OtherIndex].properties.transform;
             var temp = destinationTransform.position - NpcGo.transform.position;
             return Quaternion.LookRotation(temp, Vector3.up);
         }

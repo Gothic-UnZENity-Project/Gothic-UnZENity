@@ -4,8 +4,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using GUZ.Core.Context;
 using GUZ.Core.Creator;
+using GUZ.Core.Creator.Meshes.V2;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
+using MyBox;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Debug = UnityEngine.Debug;
@@ -28,8 +30,6 @@ namespace GUZ.Core.Manager
 
         private Vector3 _heroStartPosition;
         private Quaternion _heroStartRotation;
-
-        private bool _debugFreshlyDoneLoading;
 
         private GameConfiguration _config;
         private LoadingManager _loading;
@@ -79,29 +79,10 @@ namespace GUZ.Core.Manager
             }
         }
 
-        // Outsourced after async Task LoadStartupScenes() as async makes Debugging way harder
-        // (Breakpoints won't be caught during exceptions)
-        public void Update()
-        {
-            if (!_debugFreshlyDoneLoading)
-            {
-                return;
-            }
-
-            _debugFreshlyDoneLoading = false;
-
-            // We load NPCs only! if we have a fresh game start.
-            // TODO - We need to properly update this logic to reflect world switches for the first time as well (even from save games).
-            if (_config.SpawnNPCs && !_config.LoadFromSaveSlot)
-            {
-                GameData.GothicVm.Call("STARTUP_SUB_OLDCAMP");
-            }
-        }
-
         private async Task LoadMainMenu()
         {
             GameGlobals.Textures.LoadLoadingDefaultTextures();
-            await LoadNewWorldScene(Constants.SceneMainMenu);
+            await LoadScene(Constants.SceneMainMenu);
         }
 
         public async Task LoadWorld(string worldName, string startVob = "")
@@ -110,7 +91,7 @@ namespace GUZ.Core.Manager
             worldName = worldName.ToLower();
             worldName += worldName.EndsWith(".zen") ? "" : ".zen";
 
-            // Reset position before world start to load (and hero position is potentially being loaded from vob.ocNPC.
+            // Reset position before world start to load (and hero position is potentially being loaded from vob.ocNPC).
             _heroStartPosition = Vector3.zero;
             _heroStartRotation = Quaternion.identity;
             _startVobAfterLoading = startVob;
@@ -129,23 +110,60 @@ namespace GUZ.Core.Manager
             GameData.Reset();
 
             await ShowLoadingScene(worldName);
-            await LoadNewWorldScene(_newWorldName);
-            await WorldCreator.CreateAsync(_loading, _config);
+            await LoadScene(_newWorldName);
+            await LoadWorldContentAsync(_loading, _config);
             SetSpawnPoint();
 
             HideLoadingScene();
             watch.Stop();
-            Debug.Log($"Time spent for loading {worldName}: {watch.Elapsed}");
-
-            _debugFreshlyDoneLoading = true;
+            Debug.Log($"Time spent for loading >{worldName}<: {watch.Elapsed}");
         }
 
-        private async Task<Scene> LoadNewWorldScene(string worldName)
+        /// <summary>
+        /// Order of loading:
+        /// 1. VOBs - First entry, as we slice world chunks based on light VOBs
+        /// 2. WayPoints - Needed for spawning NPCs when world is loaded the first time
+        /// 3. NPCs - If we load the world for the first time, we leverage their current routine's values
+        /// 4. World - Mesh of the world
+        /// </summary>
+        private async Task LoadWorldContentAsync(LoadingManager loading, GameConfiguration config)
         {
-            var newWorldScene = SceneManager.LoadScene(worldName, new LoadSceneParameters(LoadSceneMode.Additive));
+            // 1.
+            // Build the world and vob meshes, populating the texture arrays.
+            // We need to start creating Vobs as we need to calculate world slicing based on amount of lights at a certain space afterwards.
+            if (config.EnableVOBs)
+            {
+                await VobCreator.CreateAsync(config, loading,
+                    SaveGameManager.CurrentWorldData.Vobs, Constants.VobsPerFrame);
+                await MeshFactory.CreateVobTextureArray();
+            }
+
+            // 2.
+            WayNetCreator.Create(config, SaveGameManager.CurrentWorldData);
+
+            // 3.
+            // If the world is visited for the first time, then we need to load Npcs via Wld_InsertNpc()
+            if (config.EnableNpcs)
+            {
+                await NpcCreator.CreateAsync(config, loading, Constants.NpcsPerFrame);
+            }
+
+            // 4.
+            if (config.EnableWorldMesh)
+            {
+                await WorldCreator.CreateAsync(config, loading);
+            }
+
+            GameGlobals.Sky.InitSky();
+            StationaryLight.InitStationaryLights();
+        }
+
+        private async Task LoadScene(string worldName)
+        {
+            var newScene = SceneManager.LoadScene(worldName, new LoadSceneParameters(LoadSceneMode.Additive));
 
             // Delay for at least one frame to allow the scene to be set active successfully
-            // i.e. created GOs will be automatically put to right scene afterwards.
+            // i.e. created GOs will be automatically put to right scene afterward.
             await Task.Yield();
 
             // Remove previous scene if it exists
@@ -154,15 +172,14 @@ namespace GUZ.Core.Manager
                 SceneManager.UnloadSceneAsync(_currentScene);
             }
 
-            _currentScene = newWorldScene;
-            return newWorldScene;
+            _currentScene = newScene;
         }
 
         /// <summary>
         /// Create loading scene and wait for a few milliseconds to go on, ensuring loading bar is selectable.
         /// Async: execute in sync, but whole process can be paused for x amount of frames.
         /// </summary>
-        private async Task ShowLoadingScene(string worldName = null)
+        private async Task ShowLoadingScene(string worldName)
         {
             GameGlobals.Textures.LoadLoadingDefaultTextures();
 
@@ -196,14 +213,9 @@ namespace GUZ.Core.Manager
 
         private void SetLoadingTextureForWorld(string worldName)
         {
-            if (worldName == null)
-            {
-                return;
-            }
-
             var textureString = SaveGameManager.IsNewGame
                 ? "LOADING.TGA"
-                : $"LOADING_{worldName.Split('.')[0].ToUpper()}.TGA";
+                : $"LOADING_{worldName.ToUpper().RemoveEnd(".ZEN")}.TGA";
             GameGlobals.Textures.SetTexture(textureString, GameGlobals.Textures.GothicLoadingMenuMaterial);
         }
 
@@ -226,9 +238,8 @@ namespace GUZ.Core.Manager
                 case Constants.SceneGeneral:
                     SceneManager.MoveGameObjectToScene(InteractionManager, _generalScene);
 
-                    var playerGo = GuzContext.InteractionAdapter.CreatePlayerController(scene);
+                    var playerGo = GuzContext.InteractionAdapter.CreatePlayerController(scene, _heroStartPosition, _heroStartRotation);
 
-                    TeleportPlayerToSpot(playerGo);
                     GlobalEventDispatcher.GeneralSceneLoaded.Invoke(playerGo);
 
                     break;
@@ -306,11 +317,6 @@ namespace GUZ.Core.Manager
         {
             _heroStartPosition = startPosition;
             _heroStartRotation = startRotation;
-        }
-
-        public void TeleportPlayerToSpot(GameObject playerGo)
-        {
-            GuzContext.InteractionAdapter.SpawnPlayerToSpot(playerGo, _heroStartPosition, _heroStartRotation);
         }
     }
 }

@@ -1,111 +1,50 @@
-using System.Collections.Generic;
-using System.Linq;
-using JetBrains.Annotations;
+using GUZ.Core.Extensions;
 using UnityEngine;
 
 namespace GUZ.Core.Manager.Culling
 {
-    public class VobSoundCullingManager
+    public class VobSoundCullingManager : AbstractCullingManager
     {
-        // Stored for resetting after world switch
-        private CullingGroup _soundCullingGroup;
-
-        // Stored for later index mapping SphereIndex => GOIndex
-        private readonly List<GameObject> _objects = new();
-
-        private readonly bool _featureEnable;
-
         public VobSoundCullingManager(GameConfiguration config)
         {
-            _featureEnable = config.EnableSoundCulling;
+            // NOP
         }
 
-        public void Init()
+        public override void AddCullingEntry(GameObject go)
         {
-            if (!_featureEnable)
-            {
-                return;
-            }
-
-            GlobalEventDispatcher.GeneralSceneUnloaded.AddListener(PreWorldCreate);
-            GlobalEventDispatcher.GeneralSceneLoaded.AddListener(PostWorldCreate);
-
-            // Unity demands CullingGroups to be created in Awake() or Start() earliest.
-            _soundCullingGroup = new CullingGroup();
+            Objects.Add(go);
+            var sphere = new BoundingSphere(go.transform.position, go.GetComponent<AudioSource>().maxDistance);
+            TempSpheres.Add(sphere);
         }
-
-        public void PreWorldCreate()
-        {
-            _soundCullingGroup.Dispose();
-            _soundCullingGroup = new CullingGroup();
-            _objects.Clear();
-        }
-
-        private void SoundChanged(CullingGroupEvent evt)
-        {
-            // Ignore Frustum and Occlusion culling.
-            if (evt.previousDistance == evt.currentDistance)
-            {
-                return;
-            }
-
-            var inAudibleRange = evt.previousDistance > evt.currentDistance;
-
-            _objects[evt.index].SetActive(inAudibleRange);
-        }
-
 
         /// <summary>
-        /// Fill CullingGroups with GOs based on size (radius) and position
+        /// We only check for distance band 0 - visible, and 0 - invisible (or to be more precise here: audible/inaudible)
         /// </summary>
-        public void PrepareSoundCulling([ItemCanBeNull] List<GameObject> gameObjects)
+        protected override void VisibilityChanged(CullingGroupEvent evt)
         {
-            if (!_featureEnable)
-            {
-                return;
-            }
+            // A higher distance level means "inaudible" as we only leverage: 0 -> in-range; 1 -> out-of-range.
+            var inAudibleRange = evt.currentDistance == 0;
 
-            var spheres = new List<BoundingSphere>();
-
-            foreach (var go in gameObjects.Where(i => i != null))
-            {
-                if (go == null)
-                {
-                    continue;
-                }
-
-                _objects.Add(go);
-                var sphere = new BoundingSphere(go.transform.position, go.GetComponent<AudioSource>().maxDistance);
-                spheres.Add(sphere);
-            }
-
-            // Disable sounds if we're leaving the area and therefore last audible location.
-            // Hint: As there are non spatial sounds (always same volume wherever we are),
-            // we need to disable the sounds at exactly the spot we are.
-            _soundCullingGroup.SetBoundingDistances(new[] { 0f });
-            _soundCullingGroup.onStateChanged = SoundChanged;
-            _soundCullingGroup.SetBoundingSpheres(spheres.ToArray());
+            Objects[evt.index].SetActive(inAudibleRange);
         }
 
         /// <summary>
         /// Set main camera once world is loaded fully.
         /// Doesn't work at loading time as we change scenes etc.
         /// </summary>
-        public void PostWorldCreate(GameObject playerGo)
+        protected override void PostWorldCreate(GameObject playerGo)
         {
-            var mainCamera = Camera.main!;
-            _soundCullingGroup.targetCamera = mainCamera;
-            _soundCullingGroup.SetDistanceReferencePoint(mainCamera.transform);
-        }
+            base.PostWorldCreate(playerGo);
 
-        public void Destroy()
-        {
-            if (!_featureEnable)
-            {
-                return;
-            }
+            // Disable sounds if we're leaving the area and therefore last audible location.
+            // Hint: As there are non-spatial sounds (always same volume wherever we are),
+            // we need to disable the sounds at exactly the spot we are.
+            CullingGroup.SetBoundingDistances(new[] { 0f });
+            CullingGroup.SetBoundingSpheres(TempSpheres.ToArray());
+            CullingGroup.onStateChanged = VisibilityChanged;
 
-            _soundCullingGroup.Dispose();
+            // Cleanup
+            TempSpheres.ClearAndReleaseMemory();
         }
     }
 }

@@ -8,6 +8,7 @@ using GUZ.Core.Properties;
 using GUZ.Core.Vm;
 using JetBrains.Annotations;
 using UnityEngine;
+using ZenKit.Vobs;
 
 namespace GUZ.Core.Manager
 {
@@ -32,7 +33,12 @@ namespace GUZ.Core.Manager
                 return;
             }
 
-            VobCreator.CreateItem(itemInstance, spawnpoint, null);
+            var config = GameGlobals.Config;
+            var activeTypes = config.SpawnVOBTypes.Value;
+            if (config.EnableVOBs && (activeTypes.IsEmpty() || activeTypes.Contains(VirtualObjectType.oCItem)))
+            {
+                VobCreator.CreateItem(itemInstance, spawnpoint, null);
+            }
         }
 
         [CanBeNull]

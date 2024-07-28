@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.IO;
 using GUZ.Core.World;
@@ -28,6 +27,16 @@ namespace GUZ.Core.Manager
         public static bool IsNewGame => SaveGameId <= 0;
         public static bool IsLoadedGame => !IsNewGame;
         public static bool IsFirstWorldLoadingFromSaveGame; // Check if we load save game right now!
+
+        /// <summary>
+        /// Values can be:
+        /// - true - When we start a new game and load first world | when we visit another world for the first time
+        /// - false - We load a save game and spawn where we left off last time | when we visit another world for a n-th time
+        ///
+        /// Visiting a world for the first time can be triggered with or without leveraging a save game.
+        /// It only matters if it's the first time! (Save games only include world saves if we visited it before.)
+        /// </summary>
+        public static bool IsWorldLoadedForTheFirstTime;
 
         public static SaveGame Save;
 
@@ -64,27 +73,36 @@ namespace GUZ.Core.Manager
             IsFirstWorldLoadingFromSaveGame = true;
         }
 
+        /// <summary>
+        /// Loading logic order:
+        /// 1. Check if the world is already loaded (cached) for this game session (i.e. we visited it already in this session)
+        /// 2. Try to load the world state from the save game
+        /// 3. Either use this saved world data or load it from normal .zen file
+        /// </summary>
         public static void ChangeWorld(string worldName)
         {
             CurrentWorldName = worldName;
 
-            // World was already loaded.
-            if (_worlds.TryGetValue(worldName, out var w))
+            // 1. World was already loaded.
+            if (_worlds.ContainsKey(worldName))
             {
+                IsWorldLoadedForTheFirstTime = true;
                 return;
             }
 
             var world = ResourceLoader.TryGetWorld(worldName);
             ZenKit.World saveGameWorld = null;
 
-            // We can't ask a SaveGame for a world if we didn't save it before. Bug?
+            // 2. Try to load world from save game.
             if (IsLoadedGame)
             {
-                // Try to load world from save game.
                 saveGameWorld = Save.LoadWorld(worldName);
             }
 
-            // Store this world into runtime data as it's now loaded and cached during gameplay. (To save later when needed.)
+            // If there is no world saved, we visit it for the first time.
+            IsWorldLoadedForTheFirstTime = saveGameWorld == null;
+
+            // 3. Store this world into runtime data as it's now loaded and cached during gameplay. (To save later when needed.)
             _worlds[worldName] = new()
             {
                 zkWorld = world,

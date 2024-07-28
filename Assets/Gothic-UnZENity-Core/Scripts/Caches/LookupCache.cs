@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using GUZ.Core.Properties;
 using TMPro;
 using UnityEngine;
+using ZenKit.Daedalus;
 
 namespace GUZ.Core.Caches
 {
@@ -11,10 +12,13 @@ namespace GUZ.Core.Caches
     public static class LookupCache
     {
         /// <summary>
-        /// [symbolIndex] = Properties-Component
-        /// Hint: Includes NPCs and Hero (Easier for lookups like "what is nearest enemy in range".)
+        /// [symbolIndex] = {zkInstance => NpcInstance from ZenKit, properties => Properties component (MonoBehaviour)}
+        /// Hints:
+        ///     * Includes NPCs and Hero (Easier for lookups like "what is the nearest enemy in range".)
+        ///     * Doesn't include all the Monsters Properties as they have same symbolIndex for multiple GOs. But it's not needed to look them up.
+        ///     * During loading time, we have no option to understand what is an NPC and what a Monster. We therefore have the first entry of each monster Id in here.
         /// </summary>
-        public static readonly Dictionary<int, NpcProperties> NpcCache = new();
+        public static readonly Dictionary<int, (NpcInstance instance, NpcProperties properties)> NpcCache = new();
 
         /// <summary>
         /// Already created AnimationData (Clips + RootMotions) can be reused.
@@ -26,17 +30,11 @@ namespace GUZ.Core.Caches
         /// </summary>
         public static Dictionary<string, TMP_SpriteAsset> FontCache = new();
 
-        /// <summary>
-        /// VobSounds and VobSoundsDayTime GOs.
-        /// </summary>
-        public static List<GameObject> VobSoundsAndDayTime = new();
-
         public static void Init()
         {
             GlobalEventDispatcher.GeneralSceneUnloaded.AddListener(delegate
             {
                 NpcCache.Clear();
-                VobSoundsAndDayTime.Clear();
             });
         }
 
@@ -45,7 +43,6 @@ namespace GUZ.Core.Caches
             NpcCache.Clear();
             AnimationClipCache.Clear();
             FontCache.Clear();
-            VobSoundsAndDayTime.Clear();
         }
     }
 }

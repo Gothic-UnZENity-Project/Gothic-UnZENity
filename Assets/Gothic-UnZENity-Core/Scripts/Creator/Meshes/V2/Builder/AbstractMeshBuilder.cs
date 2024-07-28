@@ -127,11 +127,17 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
         /// </summary>
         public void SetMmb(string mmbName)
         {
+            // Fix for G1: Damlurker
+            if (mmbName == string.Empty)
+            {
+                return;
+            }
+
             Mmb = ResourceLoader.TryGetMorphMesh(mmbName);
 
             if (Mmb == null)
             {
-                Debug.LogError($"MDH from name >{mmbName}< for object >{RootGo.name}< not found.");
+                Debug.LogError($"MMB from name >{mmbName}< for object >{RootGo.name}< not found.");
             }
         }
 
@@ -325,16 +331,13 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
                 }
 
                 Texture texture = GetTexture(materialData.Texture);
+
+                // TODO - G1: Skeleton warrior's second texture doesn't exist. No alternatives needed/given.
+                // TODO - Therefore consider removing this warning in the future.
                 if (!texture)
                 {
-                    if (materialData.Texture.EndsWithIgnoreCase(".TGA"))
-                    {
-                        Debug.LogError("This is supposed to be a decal: " + materialData.Texture);
-                    }
-                    else
-                    {
-                        Debug.LogError("Couldn't get texture from name: " + materialData.Texture);
-                    }
+                    Debug.LogWarning("Couldn't get texture from name: " + materialData.Texture);
+                    continue;
                 }
 
                 var material = GetDefaultMaterial(texture && ((Texture2D)texture).format == TextureFormat.RGBA32);

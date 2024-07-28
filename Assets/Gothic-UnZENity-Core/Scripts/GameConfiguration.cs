@@ -128,25 +128,32 @@ namespace GUZ.Core
 
         /**
          * ##########
-         * NPCs
+         * NPCs (+ Monsters)
          * ##########
          */
 
-        [Foldout("NPCs", true)]
-        [Tooltip("Currently focusing on Old Camp NPCs.")]
-        [OverrideLabel("Spawn NPCs")]
-        public bool SpawnNPCs;
+        [Foldout("NPCs (+ Monsters)", true)]
+        [Separator("General")]
+        [OverrideLabel("Enable NPCs")]
+        public bool EnableNpcs;
 
-        [ConditionalField(fieldToCheck: nameof(SpawnNPCs), compareValues: true)]
-        public bool EnableNPCRoutines;
+        [ConditionalField(fieldToCheck: nameof(EnableNpcs), compareValues: true)]
+        public bool EnableNpcMeshCulling = true;
 
+        [Tooltip("Based on original G1 saves, the distance for NPCs to occur inside VobTree (oCNPC) is about 50m. Please alter at your own risk.")]
+        [ConditionalField(useMethod: true, method: nameof(NpcCullingDistanceFieldCondition))]
+        [Range(1f, 100f)]
+        public float NpcCullingDistance = 50f;
+        private bool NpcCullingDistanceFieldCondition() => EnableNpcs && EnableNpcMeshCulling;
+
+        [Separator("NPCs only")]
         [Tooltip("Spawn only specific NPCs by naming their IDs in here.")]
-        [ConditionalField(fieldToCheck: nameof(SpawnNPCs), compareValues: true)]
-        public IntCollection SpawnNPCInstances = new();
+        [ConditionalField(fieldToCheck: nameof(EnableNpcs), compareValues: true)]
+        public IntCollection SpawnNpcInstances = new();
 
         [Tooltip("WIP - Not production ready.")]
-        [ConditionalField(fieldToCheck: nameof(SpawnNPCs), compareValues: true)]
-        public bool EnableNPCEyeBlinking;
+        [ConditionalField(fieldToCheck: nameof(EnableNpcs), compareValues: true)]
+        public bool EnableNpcEyeBlinking;
 
 
         /**
@@ -178,7 +185,6 @@ namespace GUZ.Core
         [Foldout("Audio", true)]
         public bool EnableGameMusic = true;
         public bool EnableGameSounds = true;
-        public bool EnableSoundCulling = true;
 
 
         /**

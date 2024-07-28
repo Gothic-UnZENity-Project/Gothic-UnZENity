@@ -1,3 +1,4 @@
+#if GUZ_HVR_INSTALLED
 using GUZ.Core;
 using GUZ.Core.Globals;
 using GUZ.Core.Properties;
@@ -119,3 +120,4 @@ namespace GVR.HVR.Components
         }
     }
 }
+#endif
