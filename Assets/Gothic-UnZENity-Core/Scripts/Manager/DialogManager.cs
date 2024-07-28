@@ -16,7 +16,7 @@ namespace GUZ.Core.Manager
 {
     public static class DialogManager
     {
-        public static void StartDialog(NpcProperties properties)
+        public static void StartDialog(GameObject npcGo, NpcProperties properties)
         {
             GameData.Dialogs.IsInDialog = true;
 
@@ -24,7 +24,7 @@ namespace GUZ.Core.Manager
             if (GameData.Dialogs.CurrentDialog.Options.Any())
             {
                 GuzContext.DialogAdapter.FillDialog(properties.NpcInstance.Index, GameData.Dialogs.CurrentDialog.Options);
-                GuzContext.DialogAdapter.ShowDialog();
+                GuzContext.DialogAdapter.ShowDialog(npcGo);
             }
             // There is at least one important entry, the NPC wants to talk to the hero about.
             else if (TryGetImportant(properties.Dialogs, out var infoInstance))
@@ -55,7 +55,7 @@ namespace GUZ.Core.Manager
 
                 selectableDialogs = selectableDialogs.OrderBy(d => d.Nr).ToList();
                 GuzContext.DialogAdapter.FillDialog(properties.NpcInstance.Index, selectableDialogs);
-                GuzContext.DialogAdapter.ShowDialog();
+                GuzContext.DialogAdapter.ShowDialog(npcGo);
             }
         }
 

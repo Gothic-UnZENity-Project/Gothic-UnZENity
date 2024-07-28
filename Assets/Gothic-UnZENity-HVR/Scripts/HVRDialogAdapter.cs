@@ -5,6 +5,7 @@ using GUZ.Core.Context;
 using GUZ.Core.Data;
 using GUZ.Core.Globals;
 using GUZ.HVR.Components;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 using ZenKit.Daedalus;
 
@@ -37,9 +38,10 @@ namespace GUZ.HVR
         }
         
 
-        public void ShowDialog()
+        public void ShowDialog(GameObject npcGo)
         {
-            GetDialog().ShowDialog();
+            var dialog = GetDialog();
+            dialog.ShowDialog(npcGo);
         }
 
         public void HideDialog()

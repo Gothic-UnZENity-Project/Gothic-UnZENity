@@ -10,7 +10,7 @@ namespace GUZ.HVR.Components
     {
         public void OnGrabbed(HVRGrabberBase grabber, HVRGrabbable grabbable)
         {
-            DialogManager.StartDialog(GetComponent<NpcProperties>());
+            DialogManager.StartDialog(gameObject, GetComponent<NpcProperties>());
         }
     }
 }

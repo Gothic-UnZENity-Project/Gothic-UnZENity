@@ -47,7 +47,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
                 }
             }
 
-            DialogManager.StartDialog(Props);
+            DialogManager.StartDialog(NpcGo, Props);
         }
     }
 }

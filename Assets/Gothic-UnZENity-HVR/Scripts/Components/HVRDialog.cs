@@ -15,8 +15,12 @@ namespace GUZ.HVR.Components
         [SerializeField] private GameObject _dialogGameObject;
         [SerializeField] private List<GameObject> _dialogItems;
         
-        public void ShowDialog()
+        public void ShowDialog(GameObject npcGo)
         {
+            var dialogTransform = _dialogGameObject.transform;
+            dialogTransform.position = npcGo.transform.position;
+            dialogTransform.LookAt(Camera.main!.transform, Vector3.up);
+            
             _dialogGameObject.SetActive(true);
         }
 
