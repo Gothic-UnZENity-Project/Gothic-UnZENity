@@ -1,4 +1,4 @@
 ﻿{
-    "GothicIPath": "---Please set it to the path where your game is installed---",
+    "GothicIPath": "---(PCVR only) Please set it to the path where your game is installed---",
     "LogLevel": "---Set log level to one of these values: Debug/Warning/Error/Exception---"
 }

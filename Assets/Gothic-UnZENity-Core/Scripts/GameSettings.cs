@@ -11,83 +11,97 @@ namespace GUZ.Core.Manager.Settings
     {
         private const string _settingsFileName = "GameSettings.json";
         private const string _settingsFileNameDev = "GameSettings.dev.json";
+        private const string _defaultSteamGothicFolder = @"C:\Program Files (x86)\Steam\steamapps\common\Gothic\";
+
 
         public string GothicIPath;
         public string LogLevel;
 
         public Dictionary<string, Dictionary<string, string>> GothicIniSettings = new();
 
-        public bool CheckIfGothic1InstallationExists()
-        {
-            var g1DataPath = Path.GetFullPath(Path.Join(GothicIPath, "Data"));
-            var g1WorkPath = Path.GetFullPath(Path.Join(GothicIPath, "_work"));
-
-            return Directory.Exists(g1WorkPath) && Directory.Exists(g1DataPath);
-        }
-
-        public static void SaveGameSettings(GameSettings gameSettings)
-        {
-            if (Application.platform == RuntimePlatform.Android)
-            {
-                return;
-            }
-
-            var settingsFilePath = $"{GetRootPath()}/{_settingsFileName}";
-            var settingsJson = JsonUtility.ToJson(gameSettings, true);
-            File.WriteAllText(settingsFilePath, settingsJson);
-        }
 
         public static GameSettings Load()
         {
-            var rootPath = GetRootPath();
-
+            PrepareAndroidFolders();
+            
+            var rootPath = GetGameSettingsRootPath();
             var settingsFilePath = $"{rootPath}/{_settingsFileName}";
+            
             if (!File.Exists(settingsFilePath))
             {
-                if (Application.platform == RuntimePlatform.Android)
-                {
-                    CopyGameSettingsForAndroidBuild();
-                }
-                else
-                {
-                    throw new ArgumentException(
-                        $"No >GameSettings.json< file exists at >{settingsFilePath}<. Can't load Gothic1.");
-                }
+                throw new ArgumentException($"No >GameSettings.json< file exists at >{settingsFilePath}<.");
             }
 
             var settingsJson = File.ReadAllText(settingsFilePath);
-            var obj = JsonUtility.FromJson<GameSettings>(settingsJson);
+            var loadedSettings = JsonUtility.FromJson<GameSettings>(settingsJson);
 
-            // We ignore the "GothicIPath" field which is found in GameSettings for Android
-            if (Application.platform == RuntimePlatform.Android)
-            {
-                obj.GothicIPath = rootPath;
-            }
-
+            // Overwrite data with GameSettings.dev.json if it exists.
             var settingsDevFilePath = $"{rootPath}/{_settingsFileNameDev}";
             if (File.Exists(settingsDevFilePath))
             {
                 var devJson = File.ReadAllText(settingsDevFilePath);
-                JsonUtility.FromJsonOverwrite(devJson, obj);
+                JsonUtility.FromJsonOverwrite(devJson, loadedSettings);
             }
 
-            var iniFilePath = Path.Combine(obj.GothicIPath, "system", "gothic.ini");
-            if (!File.Exists(iniFilePath))
+            // We need to do a final check for Gothic installation path and which one to ultimately use.
+            loadedSettings.GothicIPath = AlterGothicInstallationPath(loadedSettings.GothicIPath);
+
+            LoadIniFile(loadedSettings);
+            
+            return loadedSettings;
+        }
+
+        /// <summary>
+        /// We prepare use of app by copying GameSettings.json and empty Gothic installation directories where gamers
+        /// will place their game data into.
+        ///
+        /// HINT: With Android 10+, there is no easy way to use data from a different folder. i.e. we can create files and folders wherever we want,
+        /// but if we upload or alter them from another app (like SideQuest), we loose access (Androids new Scoped Storage/Shared Storage feature).
+        /// Therefore, let's stick with the installation folder as it's the official place where other apps (SideQuest etc.) can update/upload our files
+        /// and Gothic-UnZENity can still read the data later on.
+        /// </summary>
+        private static void PrepareAndroidFolders()
+        {
+            if (Application.platform != RuntimePlatform.Android)
             {
-                Debug.Log("The gothic.ini file does not exist at the specified path :" + iniFilePath);
-                return obj;
+                return;
             }
+            
+            // If directory exists and GameSettings.json is placed, we assume everything is created already.
+            if (File.Exists($"{Application.persistentDataPath}/{_settingsFileName}"))
+            {
+                return;
+            }
+            
+            // Create folder(s)
+            Directory.CreateDirectory($"{Application.persistentDataPath}/Gothic1");
+            
+            // Copy GameSettings.json into app's shared folder
+            var gameSettingsPath = Path.Combine($"{Application.streamingAssetsPath}/{_settingsFileName}");
+            
+            var www = UnityWebRequest.Get(gameSettingsPath);
+            www.SendWebRequest();
+            
+            // Wait until async download is done
+            while (!www.isDone)
+            { }
+            
+            var result = www.downloadHandler.text;
+            File.WriteAllText($"{Application.persistentDataPath}/{_settingsFileName}", result);
 
-            obj.GothicIniSettings = ParseGothicIni(iniFilePath);
-            return obj;
+            // If existing, copy GameSettings.dev.json into writable shared storage folder of our app.
+            var gameSettingsDevPath = Path.Combine($"{Application.streamingAssetsPath}/{_settingsFileNameDev}");
+            if (File.Exists(gameSettingsDevPath))
+            {
+                var devresult = File.ReadAllText(gameSettingsPath);
+                File.WriteAllText($"{Application.persistentDataPath}/{_settingsFileNameDev}", devresult);
+            }
         }
 
         /// <summary>
         /// Return path of settings file based on target architecture.
-        /// As there is no "folder" for an Android build (as it's a packaged .apk file), we need to check within user directory.
         /// </summary>
-        /// <returns></returns>
-        private static string GetRootPath()
+        private static string GetGameSettingsRootPath()
         {
             // https://docs.unity3d.com/ScriptReference/Application-persistentDataPath.html
             // Will be: /storage/emulated/<userid>/Android/data/<packagename>/files
@@ -104,40 +118,56 @@ namespace GUZ.Core.Manager.Settings
         }
 
         /// <summary>
-        /// Import the settings file from streamingAssetPath to persistentDataPath.
-        /// Since the settings file is in streamingAssetPath, we need to use UnityWebRequest to move it so we can have access to it
-        /// as detailed here https://docs.unity3d.com/ScriptReference/Application-streamingAssetsPath.html
+        /// Check if the specified path inside GameSettings is a valid Gothic installation. If not, use a platform specific fallback:
+        /// Standalone: C:\Program Files (x86)\Steam\steamapps\common\Gothic\
+        /// Android: /storage/emulated/0/Android/data/com.GothicUnZENity/files/Gothic1/
         /// </summary>
-        private static void CopyGameSettingsForAndroidBuild()
+        private static string AlterGothicInstallationPath(string gothicInstallationPath)
         {
-            var gameSettingsPath = Path.Combine(Application.streamingAssetsPath, $"{_settingsFileName}");
-            var result = "";
-            if (gameSettingsPath.Contains("://") || gameSettingsPath.Contains(":///"))
+            // GameSettings (or its dev) entry already provides a valid installation directory.
+            if (Directory.Exists(gothicInstallationPath))
             {
-                var www = UnityWebRequest.Get(gameSettingsPath);
-                www.SendWebRequest();
-                // Wait until async download is done
-                while (!www.isDone)
-                {
-                }
-
-                result = www.downloadHandler.text;
+                return gothicInstallationPath;
             }
+            
+            // Try platform specific fallbacks.
+            if (Application.platform == RuntimePlatform.Android)
+            {
+                return $"{Application.persistentDataPath}/Gothic1";
+            }
+            // Standalone
             else
             {
-                result = File.ReadAllText(gameSettingsPath);
+                return _defaultSteamGothicFolder;
             }
-
-            var finalPath = Path.Combine(Application.persistentDataPath, $"{_settingsFileName}");
-            File.WriteAllText(finalPath, result);
         }
 
-        private static Dictionary<string, Dictionary<string, string>> ParseGothicIni(string filePath)
+        public bool CheckIfGothic1InstallationExists()
         {
+            var g1DataPath = Path.GetFullPath(Path.Join(GothicIPath, "Data"));
+            var g1WorkPath = Path.GetFullPath(Path.Join(GothicIPath, "_work"));
+
+            return Directory.Exists(g1WorkPath) && Directory.Exists(g1DataPath);
+        }
+
+        private static void LoadIniFile(GameSettings loadedSettings)
+        {
+            // We load Ini file only, if we already stored Gothic installation data.
+            if (!loadedSettings.CheckIfGothic1InstallationExists())
+            {
+                return;
+            }
+
+            var iniFilePath = Path.Combine(loadedSettings.GothicIPath, "system", "gothic.ini");
+            if (!File.Exists(iniFilePath))
+            {
+                Debug.LogError("The gothic.ini file does not exist at the specified path :" + iniFilePath);
+            }
+
             var data = new Dictionary<string, Dictionary<string, string>>();
             string currentSection = null;
 
-            foreach (var line in File.ReadLines(filePath))
+            foreach (var line in File.ReadLines(iniFilePath))
             {
                 var trimmedLine = line.Trim();
                 if (string.IsNullOrWhiteSpace(trimmedLine) || trimmedLine.StartsWith(";"))
@@ -160,7 +190,7 @@ namespace GUZ.Core.Manager.Settings
                 }
             }
 
-            return data;
+            loadedSettings.GothicIniSettings = data;
         }
     }
 }
