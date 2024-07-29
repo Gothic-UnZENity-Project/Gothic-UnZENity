@@ -16,15 +16,17 @@ namespace GUZ.Core.Editor.Tools
         {
             var hvrFolder = Application.dataPath + "/HurricaneVR";
             var hvrExists = Directory.Exists(hvrFolder) && Directory.EnumerateFiles(hvrFolder).Count() != 0;
-            var hvrCompilerSettingExists = PlayerSettings.GetScriptingDefineSymbols(NamedBuildTarget.Standalone)
+            var hvrCompilerSettingStandaloneExists = PlayerSettings.GetScriptingDefineSymbols(NamedBuildTarget.Standalone)
+                .Contains(HVR_COMPILER_FLAG);
+            var hvrCompilerSettingAndroidExists = PlayerSettings.GetScriptingDefineSymbols(NamedBuildTarget.Android)
                 .Contains(HVR_COMPILER_FLAG);
             var hvrSceneSetting = Object.FindObjectOfType<GameManager>()?.Config.GameControls ==
                                   GuzContext.Controls.HVR;
 
             var message =
-                $"Plugin installed: {hvrExists}\n" +
-                $"Include in Build: {hvrCompilerSettingExists}\n" +
-                $"Include in Scene: {hvrSceneSetting}";
+                $"{hvrExists} - Plugin installed\n" +
+                $"{hvrCompilerSettingStandaloneExists}/{hvrCompilerSettingAndroidExists} - Included in Build Standalone/Android\n" +
+                $"{hvrSceneSetting} - Included in Scene";
 
             EditorUtility.DisplayDialog("Hurricane VR - Status", message, "Close");
         }
@@ -35,8 +37,14 @@ namespace GUZ.Core.Editor.Tools
         [MenuItem("Gothic-UnZENity/Context/Activate HVR in Build", priority = 2)]
         private static void ActivatePlugin()
         {
+            ActivatePlugin(NamedBuildTarget.Standalone);
+            ActivatePlugin(NamedBuildTarget.Android);
+        }
+
+        public static void ActivatePlugin(NamedBuildTarget target)
+        {
             // Change compile flag in PlayerSettings
-            var settings = PlayerSettings.GetScriptingDefineSymbols(NamedBuildTarget.Standalone)
+            var settings = PlayerSettings.GetScriptingDefineSymbols(target)
                 .Split(";")
                 .ToList();
 
@@ -46,7 +54,7 @@ namespace GUZ.Core.Editor.Tools
             }
 
             settings.Add(HVR_COMPILER_FLAG);
-            PlayerSettings.SetScriptingDefineSymbols(NamedBuildTarget.Standalone, string.Join(";", settings));
+            PlayerSettings.SetScriptingDefineSymbols(target, string.Join(";", settings));
         }
 
         /// <summary>
@@ -55,8 +63,13 @@ namespace GUZ.Core.Editor.Tools
         [MenuItem("Gothic-UnZENity/Context/De-activate HVR", priority = 3)]
         private static void DeactivatePlugin()
         {
-            // Change compile flag in PlayerSettings
-            var settings = PlayerSettings.GetScriptingDefineSymbols(NamedBuildTarget.Standalone)
+            DeactivatePlugin(NamedBuildTarget.Standalone);
+            DeactivatePlugin(NamedBuildTarget.Android);
+        }
+
+        public static void DeactivatePlugin(NamedBuildTarget target)
+        {
+            var settings = PlayerSettings.GetScriptingDefineSymbols(target)
                 .Split(";")
                 .ToList();
 
@@ -66,7 +79,7 @@ namespace GUZ.Core.Editor.Tools
             }
 
             settings.Remove(HVR_COMPILER_FLAG);
-            PlayerSettings.SetScriptingDefineSymbols(NamedBuildTarget.Standalone, string.Join(";", settings));
+            PlayerSettings.SetScriptingDefineSymbols(target, string.Join(";", settings));
         }
     }
 }
