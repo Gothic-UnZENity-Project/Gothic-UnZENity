@@ -14,13 +14,29 @@ namespace GUZ.HVR.Components
     {
         [SerializeField] private GameObject _dialogGameObject;
         [SerializeField] private List<GameObject> _dialogItems;
+
+        private float _dialogItemHeight;
+        private float _lowestDialogItemYPos;
+        
+        
+        private void Awake()
+        {
+            // When prefab is loaded for the first time, we store the size of a dialog item.
+            // It's needed to add more elements on top in the right position.
+            if (_dialogItemHeight == 0f)
+            {
+                var rectTransform = _dialogItems.First().GetComponent<RectTransform>();
+                _dialogItemHeight = rectTransform.rect.height;
+                _lowestDialogItemYPos = rectTransform.localPosition.y;
+            }
+        }
         
         public void ShowDialog(GameObject npcGo)
         {
-            var dialogTransform = _dialogGameObject.transform;
-            dialogTransform.position = npcGo.transform.position;
-            dialogTransform.LookAt(Camera.main!.transform, Vector3.up);
-            
+            // We don't move the UI to the NPC, but copy the location values only.
+            // It's intended, so that we don't loose the UI if an NPC gets destroyed or so...
+            var npcDialogTransform = npcGo.FindChildRecursively("DialogMenuRootPos").transform;
+            _dialogGameObject.transform.position = npcDialogTransform.position;
             _dialogGameObject.SetActive(true);
         }
 
@@ -51,7 +67,8 @@ namespace GUZ.HVR.Components
         {
             CreateAdditionalDialogOptions(dialogOptions.Count);
             ClearDialogOptions();
-
+            
+            dialogOptions.Reverse();
             for (var i = 0; i < dialogOptions.Count; i++)
             {
                 var dialogItem = _dialogItems[i];
@@ -65,6 +82,7 @@ namespace GUZ.HVR.Components
         
         /// <summary>
         /// We won't know the maximum amount of element from the start of the game.
+        /// But we don't want to show pagination or so but instead want to show them all in one spot.
         /// Therefore, we start with one entry as template and create more if needed now.
         /// </summary>
         private void CreateAdditionalDialogOptions(int currentItemsNeeded)
@@ -83,8 +101,8 @@ namespace GUZ.HVR.Components
                 _dialogItems.Add(newItem);
 
                 newItem.name = $"Item{_dialogItems.Count - 1:00}";
-                // FIXME - We need to handle this kind of UI magic more transparent somewhere else...
-                newItem.transform.localPosition += new Vector3(0, -50 * (_dialogItems.Count - 1), 0);
+                var newYPos = _lowestDialogItemYPos + _dialogItemHeight * (_dialogItems.Count - 1);
+                newItem.transform.localPosition = new Vector3(0, newYPos, 0);
             }
         }
 
