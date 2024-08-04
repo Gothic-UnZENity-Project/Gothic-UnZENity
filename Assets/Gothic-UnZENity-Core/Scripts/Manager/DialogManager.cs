@@ -46,8 +46,13 @@ namespace GUZ.Core.Manager
                     {
                         continue;
                     }
+                    
+                    var conditionResult = GameData.GothicVm.Call<bool>(dialog.Condition);
+                    
+                    // var conditionName = GameData.GothicVm.GetSymbolByIndex(dialog.Condition).Name;
+                    // Debug.Log($"Condition: {conditionName} = {conditionResult}");
 
-                    if (GameData.GothicVm.Call<int>(dialog.Condition) == 1)
+                    if (conditionResult)
                     {
                         selectableDialogs.Add(dialog);
                     }
@@ -157,6 +162,9 @@ namespace GUZ.Core.Manager
 
         private static void CallInformation(int npcInstanceIndex, int information, bool isMainDialog)
         {
+            // Add entry to list of "told" information.
+            AddNpcInfoTold(information);
+            
             var npcData = LookupCache.NpcCache[npcInstanceIndex];
 
             // If a C_Info is clicked, then set a new CurrentInstance.
@@ -177,6 +185,16 @@ namespace GUZ.Core.Manager
             npcData.properties.AnimationQueue.Enqueue(new StartProcessInfos(
                 new AnimationAction(int0: information),
                 npcData.properties.Go));
+        }
+        
+        public static bool ExtNpcKnowsInfo(NpcInstance npc, int infoInstance)
+        {
+            return GameData.KnownDialogInfos.Contains(infoInstance);
+        }
+
+        public static void AddNpcInfoTold(int infoInstance)
+        {
+            GameData.KnownDialogInfos.Add(infoInstance);
         }
 
         private static GameObject GetNpc(NpcInstance npc)

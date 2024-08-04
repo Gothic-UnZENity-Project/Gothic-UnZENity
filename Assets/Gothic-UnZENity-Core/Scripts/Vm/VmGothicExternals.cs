@@ -111,7 +111,7 @@ namespace GUZ.Core.Vm
             vm.RegisterExternal<string, NpcInstance>("Npc_GetNextWp", Npc_GetNextWp);
             // vm.RegisterExternal<int, NpcInstance, int>("Npc_GetTalentSkill", Npc_GetTalentSkill);
             vm.RegisterExternal<int, NpcInstance, int>("Npc_GetTalentValue", Npc_GetTalentValue);
-
+            vm.RegisterExternal<int, NpcInstance, int>("Npc_KnowsInfo", Npc_KnowsInfo);
 
             // Print
             vm.RegisterExternal<string>("PrintDebug", PrintDebug);
@@ -691,6 +691,15 @@ namespace GUZ.Core.Vm
         public static int Npc_GetTalentValue(NpcInstance npc, int skillId)
         {
             return NpcHelper.ExtNpcGetTalentValue(npc, skillId);
+        }
+
+        public static int Npc_KnowsInfo(NpcInstance npc, int infoInstance)
+        {
+            var res = DialogManager.ExtNpcKnowsInfo(npc, infoInstance);
+
+            // Debug.Log($"KnowsInfo: {res} - {GameData.GothicVm.GetSymbolByIndex(infoInstance).Name}");
+            
+            return res ? 1 : 0;
         }
 
         #endregion

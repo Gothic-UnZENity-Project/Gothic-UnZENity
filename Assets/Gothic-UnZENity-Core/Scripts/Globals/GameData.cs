@@ -24,6 +24,11 @@ namespace GUZ.Core.Globals
         public static Dictionary<string, DijkstraWaypoint> DijkstraWaypoints = new();
         public static readonly List<VobProperties> VobsInteractable = new();
 
+        /// <summary>
+        /// Store and update global NPC information about dialog options already listened to.
+        /// </summary>
+        public static HashSet<int> KnownDialogInfos = new();
+        
         public static class Dialogs
         {
             public static List<InfoInstance> Instances = new();
