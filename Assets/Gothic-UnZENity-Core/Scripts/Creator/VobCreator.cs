@@ -294,10 +294,7 @@ namespace GUZ.Core.Creator
                         break;
                     }
 
-                    // TODO - ZenKit is working on a fix to use it directly via (Npc)vob; --> Please check later.
-                    var npcVob = (VirtualObject)vob;
-                    var aiHuman = (AiHuman)npcVob.Ai!;
-                    go = CreateNpc(aiHuman.Npc);
+                    go = CreateNpc((ZenKit.Vobs.Npc)vob);
                     break;
                 }
                 case VirtualObjectType.zCVobScreenFX:
