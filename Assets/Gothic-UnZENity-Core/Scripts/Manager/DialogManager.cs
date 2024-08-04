@@ -47,12 +47,12 @@ namespace GUZ.Core.Manager
                         continue;
                     }
                     
-                    var conditionResult = GameData.GothicVm.Call<bool>(dialog.Condition);
+                    var conditionResult = GameData.GothicVm.Call<int>(dialog.Condition);
                     
                     // var conditionName = GameData.GothicVm.GetSymbolByIndex(dialog.Condition).Name;
                     // Debug.Log($"Condition: {conditionName} = {conditionResult}");
 
-                    if (conditionResult)
+                    if (conditionResult > 0)
                     {
                         selectableDialogs.Add(dialog);
                     }
