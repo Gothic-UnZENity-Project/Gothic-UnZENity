@@ -99,7 +99,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b3d4d12525e40a7ac803add610db925, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ChangeKinematicOnGrab: 0
   _properties: {fileID: 2607151182155886275}
   _nameCanvas: {fileID: 8911497835147767188}
 --- !u!114 &258546060515477993
