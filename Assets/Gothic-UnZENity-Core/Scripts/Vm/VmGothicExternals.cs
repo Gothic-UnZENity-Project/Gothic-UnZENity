@@ -145,6 +145,7 @@ namespace GUZ.Core.Vm
             vm.RegisterExternal<string, float>("FloatToString", FloatToString);
             vm.RegisterExternal<int, float>("FloatToInt", FloatToInt);
             vm.RegisterExternal<float, int>("IntToFloat", IntToFloat);
+            vm.RegisterExternal<string, string, string, string, int>("IntroduceChapter", IntroduceChapter);
         }
 
 
@@ -835,6 +836,11 @@ namespace GUZ.Core.Vm
         public static float IntToFloat(int x)
         {
             return x;
+        }
+
+        public static void IntroduceChapter(string chapter, string text, string texture, string wav, int time)
+        {
+            Debug.Log("IntroduceChapter called!");
         }
 
         #endregion

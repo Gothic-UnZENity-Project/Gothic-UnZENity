@@ -418,7 +418,8 @@ namespace GUZ.Core.Creator
         {
             if (!LookupCache.NpcCache.TryGetValue(instanceId, out var npcData))
             {
-                Debug.LogError($"Couldn't find NPC {instanceId} inside cache.");
+                var instanceName = GameData.GothicVm.GetSymbolByIndex(instanceId).Name;
+                Debug.LogError($"Couldn't find NPC {instanceId} inside cache. Please ensure {instanceName}'s NPC.id is added inside GameConfiguration.");
                 return null;
             }
 
