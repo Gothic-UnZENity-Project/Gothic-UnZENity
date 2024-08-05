@@ -13,7 +13,7 @@ namespace GUZ.Lab.Handler
 {
     public class LabNpcDialogHandler : MonoBehaviour, ILabHandler
     {
-        public GameObject BloodwynSlotGo;
+        public GameObject NpcSlotGo;
 
         private string _bloodwynInstanceId = "GRD_233_Bloodwyn";
         private NpcInstance _bloodwynInstance;
@@ -27,7 +27,7 @@ namespace GUZ.Lab.Handler
         private void BootstrapBloodwyn()
         {
             var newNpc = ResourceLoader.TryGetPrefabObject(PrefabType.Npc);
-            newNpc.SetParent(BloodwynSlotGo);
+            newNpc.SetParent(NpcSlotGo);
 
             var npcSymbol = GameData.GothicVm.GetSymbolByName(_bloodwynInstanceId);
             _bloodwynInstance = GameData.GothicVm.AllocInstance<NpcInstance>(npcSymbol!);
