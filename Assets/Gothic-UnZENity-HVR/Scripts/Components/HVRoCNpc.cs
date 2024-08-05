@@ -1,4 +1,5 @@
-﻿using GUZ.Core.Manager;
+﻿#if GUZ_HVR_INSTALLED
+using GUZ.Core.Manager;
 using GUZ.Core.Properties;
 using HurricaneVR.Framework.Core;
 using HurricaneVR.Framework.Core.Grabbers;
@@ -14,3 +15,4 @@ namespace GUZ.HVR.Components
         }
     }
 }
+#endif
