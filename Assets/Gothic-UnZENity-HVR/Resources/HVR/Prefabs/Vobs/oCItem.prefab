@@ -214,7 +214,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b3d4d12525e40a7ac803add610db925, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ChangeKinematicOnGrab: 1
   _properties: {fileID: 6095836136900462541}
   _nameCanvas: {fileID: 3261430823668897889}
 --- !u!114 &-6808202407213995710
@@ -307,7 +306,19 @@ MonoBehaviour:
         m_CallState: 2
   Released:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 8543334853728962911}
+        m_TargetAssemblyTypeName: GUZ.HVR.Components.HVRoCItem, Assembly-CSharp
+        m_MethodName: OnReleased
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   HoverEnter:
     m_PersistentCalls:
       m_Calls:

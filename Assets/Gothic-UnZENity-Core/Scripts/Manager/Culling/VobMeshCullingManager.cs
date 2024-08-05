@@ -336,17 +336,6 @@ namespace GUZ.Core.Manager.Culling
             _pausedVobs.Add(go, new Tuple<VobList, int>(vobType, index));
         }
 
-        public void StopTrackVobPositionUpdates(GameObject go)
-        {
-            if (_pausedVobsToReenableCoroutine.ContainsKey(go))
-            {
-                return;
-            }
-
-            _pausedVobsToReenableCoroutine.Add(go,
-                _coroutineManager.StartCoroutine(StopTrackVobPositionUpdatesDelayed(go)));
-        }
-
         /// <summary>
         /// If we execute Start() and Stop() during a short time frame, we need to cancel all the "stop" features.
         /// e.g. If we start grabbing it while it's still in release-stop mode, we cancel delay Coroutine and loop itself.
@@ -364,9 +353,24 @@ namespace GUZ.Core.Manager.Culling
                 _pausedVobsToReenable.Remove(go);
             }
         }
+        
+        /// <summary>
+        /// When we release an item from our hands, we need to wait a few frames before the velocity of the object is != 0.
+        /// Therefore, we put the object into the list delayed.
+        /// </summary>
+        public void StopTrackVobPositionUpdates(GameObject go)
+        {
+            if (_pausedVobsToReenableCoroutine.ContainsKey(go))
+            {
+                return;
+            }
+
+            _pausedVobsToReenableCoroutine.Add(go,
+                _coroutineManager.StartCoroutine(StopTrackVobPositionUpdatesDelayed(go)));
+        }
 
         /// <summary>
-        /// We need to wait a few frames before the velocity of object is != 0.
+        /// When we release an item from our hands, we need to wait a few frames before the velocity of the object is != 0.
         /// Therefore, we put the object into the list delayed.
         /// </summary>
         private IEnumerator StopTrackVobPositionUpdatesDelayed(GameObject go)
@@ -379,6 +383,12 @@ namespace GUZ.Core.Manager.Culling
             }
         }
 
+        /// <summary>
+        /// Iterate over all currently non-kinematic (physical) items (e.g. after grab stopped).
+        /// We then look if their velocity is zero to:
+        /// 1. update culling position once
+        /// 2. stop physics again
+        /// </summary>
         private IEnumerator StopVobTrackingBasedOnVelocity()
         {
             while (true)
@@ -393,6 +403,7 @@ namespace GUZ.Core.Manager.Culling
                     }
 
                     UpdateSpherePosition(key);
+                    rigidBody.isKinematic = true;
 
                     _pausedVobs.Remove(key);
                     _pausedVobsToReenable.Remove(key);
