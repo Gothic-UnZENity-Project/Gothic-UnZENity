@@ -2,10 +2,12 @@
 using System.Linq;
 using GUZ.Core;
 using GUZ.Core.Extensions;
+using GUZ.Core.Globals;
 using GUZ.Core.Manager;
 using GUZ.Core.Properties;
 using HurricaneVR.Framework.Components;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace GUZ.HVR.Components
 {
@@ -19,6 +21,16 @@ namespace GUZ.HVR.Components
         private void Start()
         {
             var props = GetComponent<VobContainerProperties>().ContainerProperties;
+
+            if (props == null)
+            {
+                if (SceneManager.GetActiveScene().name != Constants.SceneLab)
+                {
+                    Debug.LogError("oCMobContainer properties not set for GameObject.");
+                }
+                return;
+            }
+            
             var mdsName = props.Visual.Name;
 
             // If the sound isn't already loaded and cached: Do it now.
