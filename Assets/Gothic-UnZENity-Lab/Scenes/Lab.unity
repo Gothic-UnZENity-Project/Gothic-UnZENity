@@ -10201,7 +10201,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1b036fba11ef4587835f0ac146edede2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  BloodwynSlotGo: {fileID: 576832278}
+  NpcSlotGo: {fileID: 576832278}
 --- !u!1 &1820935222
 GameObject:
   m_ObjectHideFlags: 0
