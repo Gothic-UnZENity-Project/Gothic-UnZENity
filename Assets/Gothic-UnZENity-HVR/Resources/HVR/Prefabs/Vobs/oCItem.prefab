@@ -113,10 +113,11 @@ GameObject:
   - component: {fileID: 2022050282646122291}
   - component: {fileID: 1778516865459391894}
   - component: {fileID: 3848800049239021948}
-  - component: {fileID: 6095836136900462541}
+  - component: {fileID: 6221555039147954839}
   - component: {fileID: 6759220176799969513}
   - component: {fileID: -6808202407213995710}
   - component: {fileID: 8543334853728962911}
+  - component: {fileID: 8461469363836242350}
   m_Layer: 0
   m_Name: oCItem
   m_TagString: Untagged
@@ -189,7 +190,7 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 0}
---- !u!114 &6095836136900462541
+--- !u!114 &6221555039147954839
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -198,10 +199,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 6503575194566409312}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a5b5018cb218469dacae60454551ca9c, type: 3}
+  m_Script: {fileID: 11500000, guid: 3892cc187c4d45ebb4a8c59e3c4af78b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   <VisualScheme>k__BackingField: 
+  IsSocketed: 0
 --- !u!114 &6759220176799969513
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -214,7 +216,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b3d4d12525e40a7ac803add610db925, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _properties: {fileID: 6095836136900462541}
+  _properties: {fileID: 6221555039147954839}
   _nameCanvas: {fileID: 3261430823668897889}
 --- !u!114 &-6808202407213995710
 MonoBehaviour:
@@ -387,6 +389,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0333c47fdf6b4631be18b7d69729f0c4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _properties: {fileID: 6221555039147954839}
+--- !u!114 &8461469363836242350
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6503575194566409312}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 10345b4efa150014fb756a02715a4231, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Poses: []
+  CounterScale: {x: 1, y: 1, z: 1}
+  UseRendererBounds: 1
+  ScaleSize: 0
+  SocketScale: 1
+  ScaleOverride: {fileID: 0}
+  SocketedClip: {fileID: 0}
+  UnsocketedClip: {fileID: 0}
+  LinkedGrabbables: []
+  SocketOrientation: {fileID: 0}
+  Tags:
+    Tags: {fileID: 11400000, guid: 836908d62a0d2e8489d7e21e7f774964, type: 2}
+    _data: 1
 --- !u!1 &8287200665113283090
 GameObject:
   m_ObjectHideFlags: 0
