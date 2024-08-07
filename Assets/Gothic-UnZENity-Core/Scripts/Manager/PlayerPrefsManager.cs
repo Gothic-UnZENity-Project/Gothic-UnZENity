@@ -21,7 +21,7 @@ namespace GUZ.Core.Manager
         public static int MovementType
         {
             get => PlayerPrefs.GetInt(Constants.PlayerPrefMovementDirection, _movementDirectionCamera);
-            set => PlayerPrefs.GetInt(Constants.PlayerPrefMovementDirection, value);
+            set => PlayerPrefs.SetInt(Constants.PlayerPrefMovementDirection, value);
         }    
         
         public static bool MovementDirectionCamera
@@ -50,7 +50,7 @@ namespace GUZ.Core.Manager
         public static int TurnType
         {
             get => PlayerPrefs.GetInt(Constants.PlayerPrefTurnType, _turnTypeSnap);
-            set => PlayerPrefs.GetInt(Constants.PlayerPrefTurnType, value);
+            set => PlayerPrefs.SetInt(Constants.PlayerPrefTurnType, value);
         }
         
         public static bool SnapTurn
@@ -71,7 +71,7 @@ namespace GUZ.Core.Manager
             set => PlayerPrefs.SetInt(Constants.PlayerPrefSnapTurnAngle, value);
         }
 
-        public static int ContinuousTurnSpeed
+        public static int SmoothTurnSpeed
         {
             get => PlayerPrefs.GetInt(Constants.PlayerPrefSmoothTurnSpeed, _defaultSmoothTurnSpeed);
             set => PlayerPrefs.SetInt(Constants.PlayerPrefSmoothTurnSpeed, value);
