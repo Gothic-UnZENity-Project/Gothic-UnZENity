@@ -9,10 +9,10 @@ namespace GUZ.Core.Manager
         private const int _directionModeLeftController = 1;
         private const int _directionModeRightController = 2;
         
-        private const int _rotationTypeSnap = 0;
-        private const int _turnTypeSmooth = 1;
-        private const int _defaultSnapRotationAmount = 10;
+        private const int _rotationTypeSmooth = 0;
+        private const int _rotationTypeSnap = 1;
         private const int _defaultSmoothRotationSpeed = 2;
+        private const int _defaultSnapRotationAmount = 10;
 
         /**
          * Movement settings
@@ -53,28 +53,29 @@ namespace GUZ.Core.Manager
             set => PlayerPrefs.SetInt(Constants.PlayerPrefRotationType, value);
         }
         
-        public static bool SnapRotation
-        {
-            get => PlayerPrefs.GetInt(Constants.PlayerPrefRotationType, _rotationTypeSnap) == 0;
-            set => PlayerPrefs.SetInt(Constants.PlayerPrefRotationType, value ? _rotationTypeSnap : _turnTypeSmooth);
-        }
         
         public static bool SmoothRotation
         {
-            get => PlayerPrefs.GetInt(Constants.PlayerPrefRotationType, _rotationTypeSnap) == 1;
-            set => PlayerPrefs.SetInt(Constants.PlayerPrefRotationType, value ? _turnTypeSmooth : _rotationTypeSnap);
+            get => PlayerPrefs.GetInt(Constants.PlayerPrefRotationType, _rotationTypeSnap) == _rotationTypeSmooth;
+            set => PlayerPrefs.SetInt(Constants.PlayerPrefRotationType, value ? _rotationTypeSmooth : _rotationTypeSnap);
+        }
+        
+        public static bool SnapRotation
+        {
+            get => PlayerPrefs.GetInt(Constants.PlayerPrefRotationType, _rotationTypeSnap) == _rotationTypeSnap;
+            set => PlayerPrefs.SetInt(Constants.PlayerPrefRotationType, value ? _rotationTypeSnap : _rotationTypeSmooth);
+        }
+        
+        public static int SmoothRotationSpeed
+        {
+            get => PlayerPrefs.GetInt(Constants.PlayerPrefSmoothRotationSpeed, _defaultSmoothRotationSpeed);
+            set => PlayerPrefs.SetInt(Constants.PlayerPrefSmoothRotationSpeed, value);
         }
 
         public static int SnapRotationAmount
         {
             get => PlayerPrefs.GetInt(Constants.PlayerPrefSnapRotationAmount, _defaultSnapRotationAmount);
             set => PlayerPrefs.SetInt(Constants.PlayerPrefSnapRotationAmount, value);
-        }
-
-        public static int SmoothRotationSpeed
-        {
-            get => PlayerPrefs.GetInt(Constants.PlayerPrefSmoothRotationSpeed, _defaultSmoothRotationSpeed);
-            set => PlayerPrefs.SetInt(Constants.PlayerPrefSmoothRotationSpeed, value);
         }
     }
 }
