@@ -211,7 +211,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
 
             var slotGo = NpcGo.FindChildRecursively(slot1);
             var item = ((InteractiveObject)_mobGo.GetComponent<VobProperties>().Properties).Item;
-            VobCreator.CreateItem(item, slotGo);
+            VobCreator.CreateItemMesh(item, slotGo);
 
             Props.UsedItemSlot = slot1;
         }

@@ -531,25 +531,21 @@ namespace GUZ.Core.Creator
         }
 
         /// <summary>
-        /// Render item inside GameObject
+        /// Create item with mesh only. No special handling like grabbing etc.
+        /// e.g. used for NPCs drinking beer mesh in their hand.
         /// </summary>
-        public static void CreateItem(int itemId, GameObject go)
+        public static void CreateItemMesh(int itemId, GameObject go)
         {
             var item = VmInstanceManager.TryGetItemData(itemId);
 
             CreateItemMesh(item, go);
         }
-
-        public static void CreateItem(int itemId, string spawnpoint, GameObject go)
-        {
-            var item = VmInstanceManager.TryGetItemData(itemId);
-
-            var position = WayNetHelper.GetWayNetPoint(spawnpoint).Position;
-
-            CreateItemMesh(item, go, position);
-        }
-
-        public static void CreateItem(string itemName, GameObject go)
+        
+        /// <summary>
+        /// Create item with mesh only. No special handling like grabbing etc.
+        /// e.g. used for NPCs drinking beer mesh in their hand.
+        /// </summary>
+        public static void CreateItemMesh(string itemName, GameObject go)
         {
             if (itemName == "")
             {
@@ -561,8 +557,17 @@ namespace GUZ.Core.Creator
             CreateItemMesh(item, go);
         }
 
+        public static void CreateItemMesh(int itemId, string spawnPoint, GameObject go)
+        {
+            var item = VmInstanceManager.TryGetItemData(itemId);
+
+            var position = WayNetHelper.GetWayNetPoint(spawnPoint).Position;
+
+            CreateItemMesh(item, go, position);
+        }
+
         [CanBeNull]
-        private static GameObject CreateItem(Item vob, GameObject parent = null)
+        public static GameObject CreateItem(Item vob, GameObject parent = null)
         {
             string itemName;
 
