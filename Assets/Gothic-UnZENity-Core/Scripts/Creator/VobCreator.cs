@@ -644,9 +644,6 @@ namespace GUZ.Core.Creator
                 return null;
             }
 
-            var lootComp = vobObj.AddComponent<DemoContainerLoot>();
-            lootComp.SetContent(vob.Contents);
-
             return vobObj;
         }
 
