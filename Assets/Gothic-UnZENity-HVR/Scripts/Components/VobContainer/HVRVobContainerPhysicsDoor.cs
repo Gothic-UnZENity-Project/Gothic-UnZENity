@@ -86,9 +86,9 @@ namespace GUZ.HVR.Components.VobContainer
 
         private void InitializeContent()
         {
-            var contents = _containerProperties.ContainerProperties.Contents;
+            var contents = _containerProperties.ContainerProperties?.Contents;
 
-            if (contents == string.Empty)
+            if (string.IsNullOrEmpty(contents))
             {
                 return;
             }

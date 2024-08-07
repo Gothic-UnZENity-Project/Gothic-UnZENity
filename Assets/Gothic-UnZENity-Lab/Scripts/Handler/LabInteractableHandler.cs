@@ -40,7 +40,7 @@ namespace GUZ.Lab.Handler
         private void InitOCMobContainer()
         {
             SpawnInteractable("CHESTSMALL_OCCHESTSMALLLOCKED", PrefabType.VobContainer, ContainersGO, rotation: Quaternion.Euler(0, 0, 0));
-            SpawnItem("ItFo_Plants_mushroom_01", ContainersGO, new Vector3(1, 0.25f, 0));
+            SpawnItem("ItMwPickaxe", ContainersGO, new Vector3(1.25f, 0.25f, 0));
         }
 
         private void InitOCMobFire()
