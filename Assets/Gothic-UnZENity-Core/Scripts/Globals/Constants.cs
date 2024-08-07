@@ -51,11 +51,13 @@ namespace GUZ.Core.Globals
         public static int VobsPerFrame { get; } = 75;
         public static int NpcsPerFrame { get; } = 75;
 
-        //Collection of PlayerPref entries for settings
-        public const string MoveSpeedPlayerPref = "MoveSpeed";
-        public const string TurnSettingPlayerPref = "TurnSetting";
-        public const string MusicVolumePlayerPref = "BackgroundMusicVolume";
-        public const string SoundEffectsVolumePlayerPref = "SoundEffectsVolume";
+        //Collection of PlayerPref entries for VR settings
+        public const string PlayerPrefMovementDirection = "MovementDirection";
+        public const string PlayerPrefTurnType = "TurnType";
+        public const string PlayerPrefSnapTurnAngle = "SnapTurnAngle";
+        public const string PlayerPrefSmoothTurnSpeed = "SmoothTurnSpeed";
+        public const string PlayerPrefMusicVolume = "BackgroundMusicVolume";
+        public const string PlayerPrefSoundEffectsVolume = "SoundEffectsVolume";
         public static float MoveSpeed { get; set; } = 8f;
 
         public static string SelectedWorld { get; set; } = "world.zen";

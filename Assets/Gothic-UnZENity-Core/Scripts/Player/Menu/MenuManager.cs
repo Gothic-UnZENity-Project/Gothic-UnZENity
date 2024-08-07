@@ -1,6 +1,7 @@
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
 using GUZ.Core.UI;
+using GUZ.Core.UI.MainMenu;
 using GUZ.Core.Util;
 using UnityEngine;
 
@@ -15,8 +16,7 @@ namespace GUZ.Core.Player.Menu
         public GameObject MovementMenu;
         public GameObject SoundMenu;
 
-        public MoveSpeedController MoveSpeedController;
-        public TurnSettingDropdownController TurnSettingDropdownController;
+        public MovementMenuHandler MovementMenuHandler;
         public AudioMixerHandler MusicVolumeHandler;
         public AudioMixerHandler SoundEffectsVolumeHandler;
 
@@ -44,15 +44,8 @@ namespace GUZ.Core.Player.Menu
 
         public void SetSettingsValues()
         {
-            if (MoveSpeedController == null || TurnSettingDropdownController == null)
-            {
-                return;
-            }
-
-            MoveSpeedController.ChangeMoveSpeed(PlayerPrefs.GetFloat(Constants.MoveSpeedPlayerPref));
-            TurnSettingDropdownController.DropdownItemSelected(PlayerPrefs.GetInt(Constants.TurnSettingPlayerPref));
-            MusicVolumeHandler.SliderUpdate(PlayerPrefs.GetFloat(Constants.MusicVolumePlayerPref, 1f));
-            SoundEffectsVolumeHandler.SliderUpdate(PlayerPrefs.GetFloat(Constants.SoundEffectsVolumePlayerPref, 1f));
+            MusicVolumeHandler.SliderUpdate(PlayerPrefs.GetFloat(Constants.PlayerPrefMusicVolume, 1f));
+            SoundEffectsVolumeHandler.SliderUpdate(PlayerPrefs.GetFloat(Constants.PlayerPrefSoundEffectsVolume, 1f));
         }
 
         public void PlayFunction()
