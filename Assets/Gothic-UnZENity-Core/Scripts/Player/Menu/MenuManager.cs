@@ -3,6 +3,8 @@ using GUZ.Core.Manager;
 using GUZ.Core.UI;
 using GUZ.Core.UI.MainMenu;
 using GUZ.Core.Util;
+using MyBox;
+using TMPro;
 using UnityEngine;
 
 namespace GUZ.Core.Player.Menu
@@ -58,6 +60,10 @@ namespace GUZ.Core.Player.Menu
 
         public void SwitchMenu(GameObject menu)
         {
+            // Reset fonts of all newly-visible menu items. Otherwise the previously hovered elements will be visible again when going "Back".
+            menu.GetComponentsInChildren<TMP_Text>()
+                .ForEach(i => i.spriteAsset = GameGlobals.Font.DefaultSpriteAsset);
+            
             MainMenu.SetActive(menu == MainMenu);
             LoadMenu.SetActive(menu == LoadMenu);
             SettingsMenu.SetActive(menu == SettingsMenu);

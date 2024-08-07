@@ -4,6 +4,9 @@ using UnityEngine.EventSystems;
 
 namespace GUZ.Core.UI
 {
+    /// <summary>
+    /// Alter font of Text based on G1 default/highlight fonts.
+    /// </summary>
     public class HoverEvent : MonoBehaviour
     {
         public void OnPointerEnter(BaseEventData evt)
