@@ -5461,7 +5461,7 @@ GameObject:
   - component: {fileID: 1485463712071812010}
   - component: {fileID: 5139670529807056872}
   m_Layer: 5
-  m_Name: TurnTypeDropdown
+  m_Name: RotationTypeDropdown
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -11932,7 +11932,7 @@ GameObject:
   - component: {fileID: 3070669511769414668}
   - component: {fileID: 470726328640698092}
   m_Layer: 5
-  m_Name: SmoothTurnSpeedSlider
+  m_Name: SmoothRotationSpeedSlider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -14823,7 +14823,7 @@ GameObject:
   - component: {fileID: 921289719632186573}
   - component: {fileID: 1367819898680681640}
   m_Layer: 5
-  m_Name: SnapTurnAngleSlider
+  m_Name: SnapRotationAmountSlider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -16600,7 +16600,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2906071133598535223}
   m_Layer: 5
-  m_Name: MovementType
+  m_Name: DirectionMode
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -16636,7 +16636,7 @@ GameObject:
   - component: {fileID: 5931559144069629922}
   - component: {fileID: 6089638776630794167}
   m_Layer: 5
-  m_Name: MovementTypeDropdown
+  m_Name: DirectionModeDropdown
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -17555,6 +17555,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 2906071133598535223}
     m_Modifications:
     - target: {fileID: 6401121504383089494, guid: 4293d805a850fb84885c55f47b7299bd, type: 3}
+      propertyPath: m_text
+      value: Direction Mode
+      objectReference: {fileID: 0}
+    - target: {fileID: 6401121504383089494, guid: 4293d805a850fb84885c55f47b7299bd, type: 3}
       propertyPath: m_fontSize
       value: 45
       objectReference: {fileID: 0}
@@ -17588,7 +17592,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6670382117503956553, guid: 4293d805a850fb84885c55f47b7299bd, type: 3}
       propertyPath: m_Name
-      value: MovementTypeLabel
+      value: DirectionModeLabel
       objectReference: {fileID: 0}
     - target: {fileID: 6670382117503956553, guid: 4293d805a850fb84885c55f47b7299bd, type: 3}
       propertyPath: m_TagString
@@ -17710,7 +17714,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 6401121504383089494, guid: 4293d805a850fb84885c55f47b7299bd, type: 3}
       propertyPath: m_text
-      value: Turn Type
+      value: Rotation Type
       objectReference: {fileID: 0}
     - target: {fileID: 6401121504383089494, guid: 4293d805a850fb84885c55f47b7299bd, type: 3}
       propertyPath: m_fontSize
@@ -17746,7 +17750,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6670382117503956553, guid: 4293d805a850fb84885c55f47b7299bd, type: 3}
       propertyPath: m_Name
-      value: TurnTypeLabel
+      value: RotationTypeLabel
       objectReference: {fileID: 0}
     - target: {fileID: 6670382117503956553, guid: 4293d805a850fb84885c55f47b7299bd, type: 3}
       propertyPath: m_TagString
@@ -18034,7 +18038,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 6401121504383089494, guid: 4293d805a850fb84885c55f47b7299bd, type: 3}
       propertyPath: m_text
-      value: Snap Turn Angle
+      value: Snap Rotation Amount
       objectReference: {fileID: 0}
     - target: {fileID: 6401121504383089494, guid: 4293d805a850fb84885c55f47b7299bd, type: 3}
       propertyPath: m_fontSize
@@ -18074,7 +18078,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6670382117503956553, guid: 4293d805a850fb84885c55f47b7299bd, type: 3}
       propertyPath: m_Name
-      value: SnapTurnAngleLabel
+      value: SnapRotationAmountLabel
       objectReference: {fileID: 0}
     - target: {fileID: 6670382117503956553, guid: 4293d805a850fb84885c55f47b7299bd, type: 3}
       propertyPath: m_TagString
@@ -18196,7 +18200,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 6401121504383089494, guid: 4293d805a850fb84885c55f47b7299bd, type: 3}
       propertyPath: m_text
-      value: Smooth Turn Speed
+      value: Smooth Rotation Speed
       objectReference: {fileID: 0}
     - target: {fileID: 6401121504383089494, guid: 4293d805a850fb84885c55f47b7299bd, type: 3}
       propertyPath: m_fontSize
@@ -18236,7 +18240,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6670382117503956553, guid: 4293d805a850fb84885c55f47b7299bd, type: 3}
       propertyPath: m_Name
-      value: SmoothTurnSpeedLabel
+      value: SmoothRotationSpeedLabel
       objectReference: {fileID: 0}
     - target: {fileID: 6670382117503956553, guid: 4293d805a850fb84885c55f47b7299bd, type: 3}
       propertyPath: m_TagString

@@ -5,41 +5,41 @@ namespace GUZ.Core.Manager
 {
     public class PlayerPrefsManager
     {
-        private const int _movementDirectionCamera = 0;
-        private const int _movementDirectionLeftController = 1;
-        private const int _movementDirectionRightController = 2;
+        private const int _directionModeCamera = 0;
+        private const int _directionModeLeftController = 1;
+        private const int _directionModeRightController = 2;
         
-        private const int _turnTypeSnap = 0;
+        private const int _rotationTypeSnap = 0;
         private const int _turnTypeSmooth = 1;
-        private const int _defaultSnapTurnAngle = 10;
-        private const int _defaultSmoothTurnSpeed = 2;
+        private const int _defaultSnapRotationAmount = 10;
+        private const int _defaultSmoothRotationSpeed = 2;
 
         /**
          * Movement settings
          */
 
-        public static int MovementType
+        public static int DirectionMode
         {
-            get => PlayerPrefs.GetInt(Constants.PlayerPrefMovementDirection, _movementDirectionCamera);
-            set => PlayerPrefs.SetInt(Constants.PlayerPrefMovementDirection, value);
+            get => PlayerPrefs.GetInt(Constants.PlayerPrefDirectionMode, _directionModeCamera);
+            set => PlayerPrefs.SetInt(Constants.PlayerPrefDirectionMode, value);
         }    
         
         public static bool MovementDirectionCamera
         {
-            get => PlayerPrefs.GetInt(Constants.PlayerPrefMovementDirection, _movementDirectionCamera) == _movementDirectionCamera;
-            set => PlayerPrefs.SetInt(Constants.PlayerPrefMovementDirection, value ? _movementDirectionCamera : -1);
+            get => PlayerPrefs.GetInt(Constants.PlayerPrefDirectionMode, _directionModeCamera) == _directionModeCamera;
+            set => PlayerPrefs.SetInt(Constants.PlayerPrefDirectionMode, value ? _directionModeCamera : -1);
         }
 
         public static bool MovementDirectionLeftController
         {
-            get => PlayerPrefs.GetInt(Constants.PlayerPrefMovementDirection, _movementDirectionCamera) == _movementDirectionLeftController;
-            set => PlayerPrefs.SetInt(Constants.PlayerPrefMovementDirection, value ? _movementDirectionLeftController : -1);
+            get => PlayerPrefs.GetInt(Constants.PlayerPrefDirectionMode, _directionModeCamera) == _directionModeLeftController;
+            set => PlayerPrefs.SetInt(Constants.PlayerPrefDirectionMode, value ? _directionModeLeftController : -1);
         }
         
         public static bool MovementDirectionRightController
         {
-            get => PlayerPrefs.GetInt(Constants.PlayerPrefMovementDirection, _movementDirectionCamera) == _movementDirectionRightController;
-            set => PlayerPrefs.SetInt(Constants.PlayerPrefMovementDirection, value ? _movementDirectionRightController : -1);
+            get => PlayerPrefs.GetInt(Constants.PlayerPrefDirectionMode, _directionModeCamera) == _directionModeRightController;
+            set => PlayerPrefs.SetInt(Constants.PlayerPrefDirectionMode, value ? _directionModeRightController : -1);
         }
         
         
@@ -47,34 +47,34 @@ namespace GUZ.Core.Manager
          * Turn settings
          */
         
-        public static int TurnType
+        public static int RotationType
         {
-            get => PlayerPrefs.GetInt(Constants.PlayerPrefTurnType, _turnTypeSnap);
-            set => PlayerPrefs.SetInt(Constants.PlayerPrefTurnType, value);
+            get => PlayerPrefs.GetInt(Constants.PlayerPrefRotationType, _rotationTypeSnap);
+            set => PlayerPrefs.SetInt(Constants.PlayerPrefRotationType, value);
         }
         
-        public static bool SnapTurn
+        public static bool SnapRotation
         {
-            get => PlayerPrefs.GetInt(Constants.PlayerPrefTurnType, _turnTypeSnap) == 0;
-            set => PlayerPrefs.SetInt(Constants.PlayerPrefTurnType, value ? _turnTypeSnap : _turnTypeSmooth);
+            get => PlayerPrefs.GetInt(Constants.PlayerPrefRotationType, _rotationTypeSnap) == 0;
+            set => PlayerPrefs.SetInt(Constants.PlayerPrefRotationType, value ? _rotationTypeSnap : _turnTypeSmooth);
         }
         
-        public static bool SmoothTurn
+        public static bool SmoothRotation
         {
-            get => PlayerPrefs.GetInt(Constants.PlayerPrefTurnType, _turnTypeSnap) == 1;
-            set => PlayerPrefs.SetInt(Constants.PlayerPrefTurnType, value ? _turnTypeSmooth : _turnTypeSnap);
+            get => PlayerPrefs.GetInt(Constants.PlayerPrefRotationType, _rotationTypeSnap) == 1;
+            set => PlayerPrefs.SetInt(Constants.PlayerPrefRotationType, value ? _turnTypeSmooth : _rotationTypeSnap);
         }
 
-        public static int SnapTurnAngle
+        public static int SnapRotationAmount
         {
-            get => PlayerPrefs.GetInt(Constants.PlayerPrefSnapTurnAngle, _defaultSnapTurnAngle);
-            set => PlayerPrefs.SetInt(Constants.PlayerPrefSnapTurnAngle, value);
+            get => PlayerPrefs.GetInt(Constants.PlayerPrefSnapRotationAmount, _defaultSnapRotationAmount);
+            set => PlayerPrefs.SetInt(Constants.PlayerPrefSnapRotationAmount, value);
         }
 
-        public static int SmoothTurnSpeed
+        public static int SmoothRotationSpeed
         {
-            get => PlayerPrefs.GetInt(Constants.PlayerPrefSmoothTurnSpeed, _defaultSmoothTurnSpeed);
-            set => PlayerPrefs.SetInt(Constants.PlayerPrefSmoothTurnSpeed, value);
+            get => PlayerPrefs.GetInt(Constants.PlayerPrefSmoothRotationSpeed, _defaultSmoothRotationSpeed);
+            set => PlayerPrefs.SetInt(Constants.PlayerPrefSmoothRotationSpeed, value);
         }
     }
 }

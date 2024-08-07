@@ -16,30 +16,30 @@ namespace GUZ.Core.UI.MainMenu
         private void Start()
         {
             // Init field values.
-            _movementTypeDropdown.value = PlayerPrefsManager.MovementType;
-            _turnTypeDropdown.value = PlayerPrefsManager.TurnType;
-            _snapTurnAngleSlider.value = PlayerPrefsManager.SnapTurnAngle;
-            _smoothTurnSpeedSlider.value = PlayerPrefsManager.SmoothTurnSpeed;
+            _movementTypeDropdown.value = PlayerPrefsManager.DirectionMode;
+            _turnTypeDropdown.value = PlayerPrefsManager.RotationType;
+            _snapTurnAngleSlider.value = PlayerPrefsManager.SnapRotationAmount;
+            _smoothTurnSpeedSlider.value = PlayerPrefsManager.SmoothRotationSpeed;
         }
 
         public void OnMovementTypeChanged(int value)
         {
-            PlayerPrefsManager.MovementType = value;
+            PlayerPrefsManager.DirectionMode = value;
         }
 
         public void OnTurnTypeChanged(int value)
         {
-            PlayerPrefsManager.TurnType = value;
+            PlayerPrefsManager.RotationType = value;
         }
         
         public void OnSnapTurnAngleChanged(float value)
         {
-            PlayerPrefsManager.SnapTurnAngle = (int)value;
+            PlayerPrefsManager.SnapRotationAmount = (int)value;
         }
         
         public void OnSmoothTurnSpeedChanged(float value)
         {
-            PlayerPrefsManager.SmoothTurnSpeed = (int)value;
+            PlayerPrefsManager.SmoothRotationSpeed = (int)value;
         }
     }
 }
