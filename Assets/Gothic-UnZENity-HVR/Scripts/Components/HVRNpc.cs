@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace GUZ.HVR.Components
 {
-    public class HVRoCNpc : MonoBehaviour
+    public class HVRNpc : MonoBehaviour
     {
         public void OnGrabbed(HVRGrabberBase grabber, HVRGrabbable grabbable)
         {

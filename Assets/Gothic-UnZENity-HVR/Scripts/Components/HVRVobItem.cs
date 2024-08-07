@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace GUZ.HVR.Components
 {
-    public class HVRoCItem : MonoBehaviour
+    public class HVRVobItem : MonoBehaviour
     {
         [SerializeField] private HVRVobItemProperties _properties;
         

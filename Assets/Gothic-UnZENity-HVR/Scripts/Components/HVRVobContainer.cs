@@ -13,7 +13,7 @@ using UnityEngine.SceneManagement;
 namespace GUZ.HVR.Components
 {
     [RequireComponent(typeof(VobContainerProperties))]
-    public class HVRoCMobContainer : MonoBehaviour
+    public class HVRVobContainer : MonoBehaviour
     {
         private static Dictionary<string, AudioClip> _containerOpenedClips = new();
         private static Dictionary<string, AudioClip> _containerClosedClips= new();
