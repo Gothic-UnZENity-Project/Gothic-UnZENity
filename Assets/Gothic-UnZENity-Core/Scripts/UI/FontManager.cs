@@ -1,5 +1,6 @@
 using System.Reflection;
 using GUZ.Core.Caches;
+using GUZ.Core.Util;
 using TMPro;
 using UnityEngine;
 using UnityEngine.TextCore;
@@ -7,17 +8,24 @@ using Constants = GUZ.Core.Globals.Constants;
 
 namespace GUZ.Core.Manager
 {
-    public class FontManager : MonoBehaviour
+    public class FontManager : SingletonBehaviour<FontManager>
     {
         public TMP_FontAsset DefaultFont;
 
+        public TMP_SpriteAsset DefaultSpriteAsset;
+        public TMP_SpriteAsset HighlightSpriteAsset;
+
+        
         public void Create()
         {
-            TMP_Settings.defaultSpriteAsset = LoadFont("font_old_20_white.FNT");
+            DefaultSpriteAsset = LoadFont("font_old_20_white.FNT");
+            HighlightSpriteAsset = LoadFont("font_old_20_white_hi.FNT");
+
+            TMP_Settings.defaultSpriteAsset = DefaultSpriteAsset;
             TMP_Settings.defaultFontAsset = DefaultFont;
         }
 
-        public TMP_SpriteAsset LoadFont(string fontName)
+        private TMP_SpriteAsset LoadFont(string fontName)
         {
             if (LookupCache.FontCache.TryGetValue(fontName.ToUpper(), out var data))
             {
