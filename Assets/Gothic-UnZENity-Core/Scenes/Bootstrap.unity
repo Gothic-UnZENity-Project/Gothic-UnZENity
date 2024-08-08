@@ -200,6 +200,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   DefaultFont: {fileID: 0}
+  DefaultSpriteAsset: {fileID: 0}
+  HighlightSpriteAsset: {fileID: 0}
 --- !u!114 &583338021
 MonoBehaviour:
   m_ObjectHideFlags: 0
