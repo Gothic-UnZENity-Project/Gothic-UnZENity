@@ -18,7 +18,7 @@ namespace GUZ.Core.Properties
 
         public override string GetFocusName()
         {
-            if (ItemProperties.Amount > 1)
+            if (ItemProperties?.Amount > 1)
             {
                 return $"{Item.Name} ({ItemProperties.Amount})";
             }

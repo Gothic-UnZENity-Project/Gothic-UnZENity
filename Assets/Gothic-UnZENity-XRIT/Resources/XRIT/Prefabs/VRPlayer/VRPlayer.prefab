@@ -6041,10 +6041,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2c625e0e97af8b547b71c1ff774aab52, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lineVisual: {fileID: 3286136461704158095}
-  interactor: {fileID: 3286136461704158093}
-  player: {fileID: 3286136461781483594}
-  sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
+  _lineVisual: {fileID: 3286136461704158095}
+  _interactor: {fileID: 3286136461704158093}
+  _player: {fileID: 3286136461781483594}
+  _sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
 --- !u!1 &3286136461781483594
 GameObject:
   m_ObjectHideFlags: 0
@@ -6291,32 +6291,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: da21e4a06ee346319b0a6dc74e0dcc61, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  npcSound: {fileID: 0}
-  bip01: {fileID: 0}
-  colliderRootMotion: {fileID: 0}
-  head: {fileID: 0}
-  headMorph: {fileID: 0}
-  mdmName: 
-  baseMdsName: 
-  overlayMdsName: 
-  perceptionTime: 0
-  walkMode: 0
-  bodyState: 0
-  currentInteractable: {fileID: 0}
-  currentInteractableSlot: {fileID: 0}
-  currentInteractableStateId: -1
-  prevStateStart: 0
-  stateStart: 0
-  stateLoop: 0
-  stateEnd: 0
-  isStateTimeActive: 0
-  stateTime: 0
-  currentLoopState: 0
-  hasItemEquipped: 0
-  currentItem: 0
-  usedItemSlot: 
-  itemAnimationState: -1
-  isClonedFromAnother: 0
+  NpcSound: {fileID: 0}
+  Bip01: {fileID: 0}
+  ColliderRootMotion: {fileID: 0}
+  Head: {fileID: 0}
+  HeadMorph: {fileID: 0}
+  MdmName: 
+  BaseMdsName: 
+  OverlayMdsName: 
+  PerceptionTime: 0
+  WalkMode: 0
+  BodyState: 0
+  CurrentInteractable: {fileID: 0}
+  CurrentInteractableSlot: {fileID: 0}
+  CurrentInteractableStateId: -1
+  PrevStateStart: 0
+  StateStart: 0
+  StateLoop: 0
+  StateEnd: 0
+  IsStateTimeActive: 0
+  StateTime: 0
+  CurrentLoopState: 0
+  HasItemEquipped: 0
+  CurrentItem: -1
+  UsedItemSlot: 
+  ItemAnimationState: -1
+  IsClonedFromAnother: 0
 --- !u!1 &3286136462172449750
 GameObject:
   m_ObjectHideFlags: 0
@@ -6430,11 +6430,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2509daa8e66a28f45ad0a4251fb532e5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  baseControllerGameObject: {fileID: 3286136463242076545}
-  teleportationGameObject: {fileID: 3286136462967229782}
-  player: {fileID: 3286136461781483594}
-  teleportActivationReference: {fileID: -8061240218431744966, guid: 9a7437f3e3bee0145bc5a2d4f573e331, type: 3}
-  onTeleportActivate:
+  BaseControllerGameObject: {fileID: 3286136463242076545}
+  TeleportationGameObject: {fileID: 3286136462967229782}
+  Player: {fileID: 3286136461781483594}
+  TeleportActivationReference: {fileID: -8061240218431744966, guid: 9a7437f3e3bee0145bc5a2d4f573e331, type: 3}
+  OnTeleportActivate:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 3286136463242076557}
@@ -6487,7 +6487,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 1
         m_CallState: 2
-  onTeleportCanceled:
+  OnTeleportCanceled:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 3286136463242076557}
@@ -6740,8 +6740,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dfc8d6f571474f58965b8bfe77fcc4b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  characterController: {fileID: 3286136461781483592}
-  velocityRight:
+  CharacterController: {fileID: 3286136461781483592}
+  VelocityRight:
     m_UseReference: 1
     m_Action:
       m_Name: Velocity Right
@@ -6753,7 +6753,7 @@ MonoBehaviour:
       m_SingletonActionBindings: []
       m_Flags: 0
     m_Reference: {fileID: -8265130257064739641, guid: 9a7437f3e3bee0145bc5a2d4f573e331, type: 3}
-  velocityLeft:
+  VelocityLeft:
     m_UseReference: 1
     m_Action:
       m_Name: Velocity Left
@@ -7430,10 +7430,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2c625e0e97af8b547b71c1ff774aab52, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lineVisual: {fileID: 3286136462967229780}
-  interactor: {fileID: 3286136462967229778}
-  player: {fileID: 3286136461781483594}
-  sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
+  _lineVisual: {fileID: 3286136462967229780}
+  _interactor: {fileID: 3286136462967229778}
+  _player: {fileID: 3286136461781483594}
+  _sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
 --- !u!1 &3286136463048429795
 GameObject:
   m_ObjectHideFlags: 0
@@ -8359,12 +8359,12 @@ MonoBehaviour:
   m_RequiresColorTexture: 0
   m_Version: 2
   m_TaaSettings:
-    quality: 3
-    frameInfluence: 0.1
-    jitterScale: 1
-    mipBias: 0
-    varianceClampScale: 0.9
-    contrastAdaptiveSharpening: 0
+    m_Quality: 3
+    m_FrameInfluence: 0.1
+    m_JitterScale: 1
+    m_MipBias: 0
+    m_VarianceClampScale: 0.9
+    m_ContrastAdaptiveSharpening: 0
 --- !u!81 &9105039786394560442
 AudioListener:
   m_ObjectHideFlags: 0
@@ -8385,7 +8385,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 615aaeb7a44164c4e9d1f53146a6127a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cameraFadeImage: {fileID: 1341512149633278554}
+  CameraFadeImage: {fileID: 1341512149633278554}
 --- !u!1 &3286136463242076545
 GameObject:
   m_ObjectHideFlags: 0
@@ -8801,17 +8801,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2bffdd595b98b434cad5e6bbbb2a0bed, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  raycastLeft: {fileID: 3286136463048429795}
-  raycastRight: {fileID: 3286136461704158082}
-  directLeft: {fileID: 3286136461689514591}
-  directRight: {fileID: 3286136463242076545}
+  RaycastLeft: {fileID: 3286136463048429795}
+  RaycastRight: {fileID: 3286136461704158082}
+  DirectLeft: {fileID: 3286136461689514591}
+  DirectRight: {fileID: 3286136463242076545}
   MenuGameObject: {fileID: 1762865631986952849}
-  dialogGameObject: {fileID: 7762858363386810679}
-  dialogItems:
-  - {fileID: 8387286217587800646}
   MapObject: {fileID: 6988130571231615501}
-  maprollspeed: 3.6
-  maprolloffset: 0.15
+  Maprollspeed: 3.6
+  Maprolloffset: 0.15
 --- !u!1 &5086955422694840730
 GameObject:
   m_ObjectHideFlags: 0
@@ -9107,6 +9104,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 3286136463054414635}
     - target: {fileID: 5718367256005164722, guid: b2f7ec490b212544e97a98adc4cb9d50, type: 3}
+      propertyPath: Movecontroller
+      value: 
+      objectReference: {fileID: 3286136462831979464}
+    - target: {fileID: 5718367256005164722, guid: b2f7ec490b212544e97a98adc4cb9d50, type: 3}
       propertyPath: movecontroller
       value: 
       objectReference: {fileID: 3286136462831979464}
@@ -9119,13 +9120,25 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6969592086016783357, guid: b2f7ec490b212544e97a98adc4cb9d50, type: 3}
+      propertyPath: SnapTurn
+      value: 
+      objectReference: {fileID: 3286136462831979467}
+    - target: {fileID: 6969592086016783357, guid: b2f7ec490b212544e97a98adc4cb9d50, type: 3}
       propertyPath: snapTurn
       value: 
       objectReference: {fileID: 3286136462831979467}
     - target: {fileID: 6969592086016783357, guid: b2f7ec490b212544e97a98adc4cb9d50, type: 3}
+      propertyPath: ContinuousTurn
+      value: 
+      objectReference: {fileID: 3286136462831979465}
+    - target: {fileID: 6969592086016783357, guid: b2f7ec490b212544e97a98adc4cb9d50, type: 3}
       propertyPath: continuousTurn
       value: 
       objectReference: {fileID: 3286136462831979465}
+    - target: {fileID: 6969592086016783357, guid: b2f7ec490b212544e97a98adc4cb9d50, type: 3}
+      propertyPath: Locomotionsystem
+      value: 
+      objectReference: {fileID: 3286136462831979470}
     - target: {fileID: 6969592086016783357, guid: b2f7ec490b212544e97a98adc4cb9d50, type: 3}
       propertyPath: locomotionsystem
       value: 
@@ -9359,15 +9372,5 @@ Transform:
 --- !u!1 &6988130571231615501 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3305436417525696675, guid: 783884182cf2f8a46a2b872b08eb2aad, type: 3}
-  m_PrefabInstance: {fileID: 5559015695381729966}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &7762858363386810679 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 2782839599571649433, guid: 783884182cf2f8a46a2b872b08eb2aad, type: 3}
-  m_PrefabInstance: {fileID: 5559015695381729966}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &8387286217587800646 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 4125357950801094888, guid: 783884182cf2f8a46a2b872b08eb2aad, type: 3}
   m_PrefabInstance: {fileID: 5559015695381729966}
   m_PrefabAsset: {fileID: 0}

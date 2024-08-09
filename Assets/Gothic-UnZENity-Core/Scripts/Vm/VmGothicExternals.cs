@@ -5,7 +5,6 @@ using GUZ.Core.Caches;
 using GUZ.Core.Creator;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
-using GUZ.Core.Scripts.Manager;
 using UnityEngine;
 using ZenKit;
 using ZenKit.Daedalus;
@@ -112,7 +111,7 @@ namespace GUZ.Core.Vm
             vm.RegisterExternal<string, NpcInstance>("Npc_GetNextWp", Npc_GetNextWp);
             // vm.RegisterExternal<int, NpcInstance, int>("Npc_GetTalentSkill", Npc_GetTalentSkill);
             vm.RegisterExternal<int, NpcInstance, int>("Npc_GetTalentValue", Npc_GetTalentValue);
-
+            vm.RegisterExternal<int, NpcInstance, int>("Npc_KnowsInfo", Npc_KnowsInfo);
 
             // Print
             vm.RegisterExternal<string>("PrintDebug", PrintDebug);
@@ -146,6 +145,7 @@ namespace GUZ.Core.Vm
             vm.RegisterExternal<string, float>("FloatToString", FloatToString);
             vm.RegisterExternal<int, float>("FloatToInt", FloatToInt);
             vm.RegisterExternal<float, int>("IntToFloat", IntToFloat);
+            vm.RegisterExternal<string, string, string, string, int>("IntroduceChapter", IntroduceChapter);
         }
 
 
@@ -250,12 +250,12 @@ namespace GUZ.Core.Vm
 
         public static void AI_Output(NpcInstance self, NpcInstance target, string outputName)
         {
-            DialogHelper.ExtAiOutput(self, target, outputName);
+            DialogManager.ExtAiOutput(self, target, outputName);
         }
 
         public static void AI_StopProcessInfos(NpcInstance npc)
         {
-            DialogHelper.ExtAiStopProcessInfos(npc);
+            DialogManager.ExtAiStopProcessInfos(npc);
         }
 
         public static void AI_LookAt(NpcInstance npc, string waypoint)
@@ -290,7 +290,7 @@ namespace GUZ.Core.Vm
 
         public static void AI_OutputSVM(NpcInstance npc, NpcInstance target, string svmname)
         {
-            DialogHelper.ExtAiOutputSvm(npc, target, svmname);
+            DialogManager.ExtAiOutputSvm(npc, target, svmname);
         }
 
         #endregion
@@ -352,13 +352,13 @@ namespace GUZ.Core.Vm
         [MonoPInvokeCallback(typeof(DaedalusVm.ExternalFuncV))]
         public static void Info_ClearChoices(int info)
         {
-            DialogHelper.ExtInfoClearChoices(info);
+            DialogManager.ExtInfoClearChoices(info);
         }
 
         [MonoPInvokeCallback(typeof(DaedalusVm.ExternalFuncV))]
         public static void Info_AddChoice(int info, string text, int function)
         {
-            DialogHelper.ExtInfoAddChoice(info, text, function);
+            DialogManager.ExtInfoAddChoice(info, text, function);
         }
 
         #endregion
@@ -694,6 +694,15 @@ namespace GUZ.Core.Vm
             return NpcHelper.ExtNpcGetTalentValue(npc, skillId);
         }
 
+        public static int Npc_KnowsInfo(NpcInstance npc, int infoInstance)
+        {
+            var res = DialogManager.ExtNpcKnowsInfo(npc, infoInstance);
+
+            // Debug.Log($"KnowsInfo: {res} - {GameData.GothicVm.GetSymbolByIndex(infoInstance).Name}");
+            
+            return res ? 1 : 0;
+        }
+
         #endregion
 
         #region Day Routine
@@ -827,6 +836,11 @@ namespace GUZ.Core.Vm
         public static float IntToFloat(int x)
         {
             return x;
+        }
+
+        public static void IntroduceChapter(string chapter, string text, string texture, string wav, int time)
+        {
+            Debug.Log("IntroduceChapter called!");
         }
 
         #endregion

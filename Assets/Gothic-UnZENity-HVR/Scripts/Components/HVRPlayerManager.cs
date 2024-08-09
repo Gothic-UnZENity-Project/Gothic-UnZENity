@@ -4,7 +4,7 @@ using GUZ.Core.Util;
 using HurricaneVR.Framework.Core.UI;
 using UnityEngine;
 
-namespace GVR
+namespace GUZ.HVR.Components
 {
     public class HVRPlayerManager : SingletonBehaviour<HVRPlayerManager>
     {

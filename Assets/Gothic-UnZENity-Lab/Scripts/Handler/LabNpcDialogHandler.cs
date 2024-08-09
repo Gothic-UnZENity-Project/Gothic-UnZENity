@@ -6,44 +6,28 @@ using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Properties;
 using GUZ.Core.Vm;
-using TMPro;
 using UnityEngine;
-using UnityEngine.Serialization;
 using ZenKit.Daedalus;
 
 namespace GUZ.Lab.Handler
 {
     public class LabNpcDialogHandler : MonoBehaviour, ILabHandler
     {
-        [FormerlySerializedAs("animationsDropdown")]
-        public TMP_Dropdown AnimationsDropdown;
-
-        [FormerlySerializedAs("bloodwynSlotGo")]
-        public GameObject BloodwynSlotGo;
+        public GameObject NpcSlotGo;
 
         private string _bloodwynInstanceId = "GRD_233_Bloodwyn";
-
-
         private NpcInstance _bloodwynInstance;
 
-        private string[] _animations =
-        {
-            "T_LGUARD_2_STAND", "T_STAND_2_LGUARD", "T_LGUARD_SCRATCH", "T_LGUARD_STRETCH", "T_LGUARD_CHANGELEG",
-            "T_HGUARD_2_STAND", "T_STAND_2_HGUARD", "T_HGUARD_LOOKAROUND"
-        };
 
         public void Bootstrap()
         {
-            AnimationsDropdown.options = _animations.Select(item => new TMP_Dropdown.OptionData(item)).ToList();
-
             BootstrapBloodwyn();
         }
-
 
         private void BootstrapBloodwyn()
         {
             var newNpc = ResourceLoader.TryGetPrefabObject(PrefabType.Npc);
-            newNpc.SetParent(BloodwynSlotGo);
+            newNpc.SetParent(NpcSlotGo);
 
             var npcSymbol = GameData.GothicVm.GetSymbolByName(_bloodwynInstanceId);
             _bloodwynInstance = GameData.GothicVm.AllocInstance<NpcInstance>(npcSymbol!);
@@ -81,11 +65,6 @@ namespace GUZ.Lab.Handler
             };
 
             MeshFactory.CreateNpc(newNpc.name, mdmName, mdhName, body, newNpc);
-        }
-
-        public void AnimationStartClick()
-        {
-            VmGothicExternals.AI_PlayAni(_bloodwynInstance, AnimationsDropdown.options[AnimationsDropdown.value].text);
         }
     }
 }

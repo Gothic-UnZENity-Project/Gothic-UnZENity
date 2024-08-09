@@ -14,18 +14,10 @@ namespace GUZ.Core.Editor.Builds.UnityBuildTools
         private static string[] SCENES = FindEnabledEditorScenes();
 
         private static readonly string APP_NAME = "Gothic-UnZENity";
-        private static readonly string TARGET_DIR = "build";
+        private static readonly string TARGET_DIR = "Builds";
+        
 
-
-        [MenuItem("Gothic-UnZENity/Build/Build Quest")]
-        private static void PerformQuestBuild()
-        {
-            var target_path = TARGET_DIR + "/Quest/" + APP_NAME + ".apk";
-            SetQuestSettings();
-            GenericBuild(SCENES, target_path, BuildTargetGroup.Android, BuildTarget.Android, BuildOptions.None);
-        }
-
-        [MenuItem("Gothic-UnZENity/Build/Build Pico4")]
+        [MenuItem("Gothic-UnZENity/Build/Pico")]
         private static void PerformPicoBuild()
         {
             var target_path = TARGET_DIR + "/Pico/" + APP_NAME + ".apk";
@@ -33,7 +25,7 @@ namespace GUZ.Core.Editor.Builds.UnityBuildTools
             GenericBuild(SCENES, target_path, BuildTargetGroup.Android, BuildTarget.Android, BuildOptions.None);
         }
 
-        [MenuItem("Gothic-UnZENity/Build/Build PCVR")]
+        [MenuItem("Gothic-UnZENity/Build/PCVR")]
         private static void PerformWindows64Build()
         {
             var target_path = TARGET_DIR + "/Windows64/" + APP_NAME + ".exe";
@@ -42,6 +34,14 @@ namespace GUZ.Core.Editor.Builds.UnityBuildTools
             
             GenericBuild(SCENES, target_path, BuildTargetGroup.Standalone, BuildTarget.StandaloneWindows64,
                 BuildOptions.None);
+        }
+        
+        [MenuItem("Gothic-UnZENity/Build/Quest")]
+        private static void PerformQuestBuild()
+        {
+            var target_path = TARGET_DIR + "/Quest/" + APP_NAME + ".apk";
+            SetQuestSettings();
+            GenericBuild(SCENES, target_path, BuildTargetGroup.Android, BuildTarget.Android, BuildOptions.None);
         }
 
         private static void GenericBuild(string[] scenes, string target_path, BuildTargetGroup build_target_group,
@@ -111,7 +111,6 @@ namespace GUZ.Core.Editor.Builds.UnityBuildTools
 
             Debug.Log("OpenXR settings set for: Pico");
         }
-
 
         private static void SetQuestSettings()
         {

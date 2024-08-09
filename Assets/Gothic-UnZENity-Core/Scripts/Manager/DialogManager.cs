@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using GUZ.Core.Caches;
+using GUZ.Core.Context;
 using GUZ.Core.Data;
 using GUZ.Core.Globals;
 using GUZ.Core.Npc;
@@ -11,19 +12,19 @@ using GUZ.Core.Properties;
 using UnityEngine;
 using ZenKit.Daedalus;
 
-namespace GUZ.Core.Scripts.Manager
+namespace GUZ.Core.Manager
 {
-    public static class DialogHelper
+    public static class DialogManager
     {
-        public static void StartDialog(NpcProperties properties)
+        public static void StartDialog(GameObject npcGo, NpcProperties properties)
         {
             GameData.Dialogs.IsInDialog = true;
 
             // We are already inside a sub-dialog
             if (GameData.Dialogs.CurrentDialog.Options.Any())
             {
-                ControllerManager.I.FillDialog(properties.NpcInstance.Index, GameData.Dialogs.CurrentDialog.Options);
-                ControllerManager.I.ShowDialog();
+                GuzContext.DialogAdapter.FillDialog(properties.NpcInstance.Index, GameData.Dialogs.CurrentDialog.Options);
+                GuzContext.DialogAdapter.ShowDialog(npcGo);
             }
             // There is at least one important entry, the NPC wants to talk to the hero about.
             else if (TryGetImportant(properties.Dialogs, out var infoInstance))
@@ -45,16 +46,21 @@ namespace GUZ.Core.Scripts.Manager
                     {
                         continue;
                     }
+                    
+                    var conditionResult = GameData.GothicVm.Call<int>(dialog.Condition);
+                    
+                    // var conditionName = GameData.GothicVm.GetSymbolByIndex(dialog.Condition).Name;
+                    // Debug.Log($"Condition: {conditionName} = {conditionResult}");
 
-                    if (GameData.GothicVm.Call<int>(dialog.Condition) == 1)
+                    if (conditionResult > 0)
                     {
                         selectableDialogs.Add(dialog);
                     }
                 }
 
                 selectableDialogs = selectableDialogs.OrderBy(d => d.Nr).ToList();
-                ControllerManager.I.FillDialog(properties.NpcInstance.Index, selectableDialogs);
-                ControllerManager.I.ShowDialog();
+                GuzContext.DialogAdapter.FillDialog(properties.NpcInstance.Index, selectableDialogs);
+                GuzContext.DialogAdapter.ShowDialog(npcGo);
             }
         }
 
@@ -151,11 +157,14 @@ namespace GUZ.Core.Scripts.Manager
             GameData.Dialogs.CurrentDialog.Options.Clear();
             GameData.Dialogs.IsInDialog = false;
 
-            ControllerManager.I.HideDialog();
+            GuzContext.DialogAdapter.HideDialog();
         }
 
         private static void CallInformation(int npcInstanceIndex, int information, bool isMainDialog)
         {
+            // Add entry to list of "told" information.
+            AddNpcInfoTold(information);
+            
             var npcData = LookupCache.NpcCache[npcInstanceIndex];
 
             // If a C_Info is clicked, then set a new CurrentInstance.
@@ -165,7 +174,7 @@ namespace GUZ.Core.Scripts.Manager
                     .First(d => d.Information == information);
             }
 
-            ControllerManager.I.HideDialog();
+            GuzContext.DialogAdapter.HideDialog();
 
             // We always need to set "self" before executing any Daedalus function.
             GameData.GothicVm.GlobalSelf = npcData.instance;
@@ -176,6 +185,16 @@ namespace GUZ.Core.Scripts.Manager
             npcData.properties.AnimationQueue.Enqueue(new StartProcessInfos(
                 new AnimationAction(int0: information),
                 npcData.properties.Go));
+        }
+        
+        public static bool ExtNpcKnowsInfo(NpcInstance npc, int infoInstance)
+        {
+            return GameData.KnownDialogInfos.Contains(infoInstance);
+        }
+
+        public static void AddNpcInfoTold(int infoInstance)
+        {
+            GameData.KnownDialogInfos.Add(infoInstance);
         }
 
         private static GameObject GetNpc(NpcInstance npc)
