@@ -59,7 +59,7 @@ namespace GUZ.HVR.Components
                 var dialogOption = dialogOptions[i];
 
                 dialogItem.GetComponent<Button>().onClick.AddListener(
-                    () => OnDialogClick(npcInstanceIndex, dialogOption.Function, false));
+                    () => OnDialogClicked(npcInstanceIndex, dialogOption.Function));
                 dialogItem.FindChildRecursively("Label").GetComponent<TMP_Text>().text = dialogOption.Text;
             }
         }
@@ -76,7 +76,7 @@ namespace GUZ.HVR.Components
                 var dialogOption = dialogOptions[i];
 
                 dialogItem.GetComponent<Button>().onClick.AddListener(
-                    () => OnDialogClick(npcInstanceIndex, dialogOption.Information, true));
+                    () => OnDialogClicked(npcInstanceIndex, dialogOption));
                 dialogItem.FindChildRecursively("Label").GetComponent<TMP_Text>().text = dialogOption.Description;
             }
         }
@@ -116,9 +116,15 @@ namespace GUZ.HVR.Components
             }
         }
 
-        private void OnDialogClick(int npcInstanceIndex, int dialogId, bool isMainDialog)
+        private void OnDialogClicked(int npcInstanceIndex, InfoInstance infoInstance)
         {
-            DialogManager.SelectionClicked(npcInstanceIndex, dialogId, isMainDialog);
+            DialogManager.SelectionClicked(npcInstanceIndex, infoInstance);
+        }
+
+        private void OnDialogClicked(int npcInstanceIndex, int informationId)
+        {
+            DialogManager.SelectionClicked(npcInstanceIndex, informationId);
+
         }
     }
 }

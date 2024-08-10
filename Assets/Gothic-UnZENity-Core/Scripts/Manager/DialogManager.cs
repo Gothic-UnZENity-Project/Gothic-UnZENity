@@ -48,10 +48,7 @@ namespace GUZ.Core.Manager
                     }
                     
                     var conditionResult = GameData.GothicVm.Call<int>(dialog.Condition);
-                    
-                    // var conditionName = GameData.GothicVm.GetSymbolByIndex(dialog.Condition).Name;
-                    // Debug.Log($"Condition: {conditionName} = {conditionResult}");
-
+                    var debugInfoFunction = GameData.GothicVm.GetSymbolByIndex(dialog.Condition).Name;
                     if (conditionResult > 0)
                     {
                         selectableDialogs.Add(dialog);
@@ -146,9 +143,17 @@ namespace GUZ.Core.Manager
             props.AnimationQueue.Enqueue(new StopProcessInfos(new AnimationAction(), props.Go));
         }
 
-        public static void SelectionClicked(int npcInstanceIndex, int dialogId, bool isMainDialog)
+        public static void SelectionClicked(int npcInstanceIndex, int dialogId)
         {
-            CallInformation(npcInstanceIndex, dialogId, isMainDialog);
+            CallInformation(npcInstanceIndex, dialogId, false);
+        }
+
+        public static void SelectionClicked(int npcInstanceIndex, InfoInstance infoInstance)
+        {
+            // Add entry to list of "told" information.
+            AddNpcInfoTold(infoInstance);
+
+            CallInformation(npcInstanceIndex, infoInstance.Information, true);
         }
 
         public static void StopDialog()
@@ -162,9 +167,6 @@ namespace GUZ.Core.Manager
 
         private static void CallInformation(int npcInstanceIndex, int information, bool isMainDialog)
         {
-            // Add entry to list of "told" information.
-            AddNpcInfoTold(information);
-            
             var npcData = LookupCache.NpcCache[npcInstanceIndex];
 
             // If a C_Info is clicked, then set a new CurrentInstance.
@@ -192,9 +194,9 @@ namespace GUZ.Core.Manager
             return GameData.KnownDialogInfos.Contains(infoInstance);
         }
 
-        public static void AddNpcInfoTold(int infoInstance)
+        public static void AddNpcInfoTold(InfoInstance infoInstance)
         {
-            GameData.KnownDialogInfos.Add(infoInstance);
+            GameData.KnownDialogInfos.Add(infoInstance.Index);
         }
 
         private static GameObject GetNpc(NpcInstance npc)
