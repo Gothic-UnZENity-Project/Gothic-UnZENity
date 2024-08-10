@@ -66,10 +66,8 @@ namespace GUZ.Core.Manager
         /// </summary>
         private static bool TryGetImportant(List<InfoInstance> dialogs, out InfoInstance item)
         {
-            item = dialogs.FirstOrDefault(
-                dialog =>
-                    dialog.Important == 1
-                    && (dialog.Condition == 0 || GameData.GothicVm.Call<int>(dialog.Condition) == 1));
+            item = dialogs.FirstOrDefault(dialog =>
+                dialog.Important == 1 && (dialog.Condition == 0 || GameData.GothicVm.Call<int>(dialog.Condition) == 1));
 
             return item != null;
         }

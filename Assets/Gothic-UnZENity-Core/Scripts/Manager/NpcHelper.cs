@@ -549,6 +549,20 @@ namespace GUZ.Core.Manager
             ExchangeRoutine(npcGo.properties.Go, npcInstance, newRoutine.Index);
         }
 
+        public static bool ExtNpcIsDead(NpcInstance npcInstance)
+        {
+            // FIXME - We need to implement it properly. Just fixing NPEs for now!
+            // FIXME - e.g. used for PC_Thief_AFTERTROLL_Condition() from Daedalus.
+            return false;
+        }
+        
+        public static bool ExtNpcIsInState(NpcInstance npc, int state)
+        {
+            // FIXME - We need to implement it properly. Just fixing NPEs for now!
+            // FIXME - e.g. used for PC_Thief_AFTERTROLL_Condition() from Daedalus.
+            return false;
+        }
+
         public static void ExchangeRoutine(GameObject go, NpcInstance npcInstance, int routineIndex)
         {
             // e.g. Monsters have no routine and therefore no further routine handling needed.

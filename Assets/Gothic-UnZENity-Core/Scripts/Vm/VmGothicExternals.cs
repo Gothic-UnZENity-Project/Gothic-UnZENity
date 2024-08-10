@@ -112,6 +112,8 @@ namespace GUZ.Core.Vm
             // vm.RegisterExternal<int, NpcInstance, int>("Npc_GetTalentSkill", Npc_GetTalentSkill);
             vm.RegisterExternal<int, NpcInstance, int>("Npc_GetTalentValue", Npc_GetTalentValue);
             vm.RegisterExternal<int, NpcInstance, int>("Npc_KnowsInfo", Npc_KnowsInfo);
+            vm.RegisterExternal<int, NpcInstance>("Npc_IsDead", Npc_IsDead);
+            vm.RegisterExternal<int, NpcInstance, int>("Npc_IsInState", Npc_IsInState);
 
             // Print
             vm.RegisterExternal<string>("PrintDebug", PrintDebug);
@@ -697,10 +699,17 @@ namespace GUZ.Core.Vm
         public static int Npc_KnowsInfo(NpcInstance npc, int infoInstance)
         {
             var res = DialogManager.ExtNpcKnowsInfo(npc, infoInstance);
-
-            // Debug.Log($"KnowsInfo: {res} - {GameData.GothicVm.GetSymbolByIndex(infoInstance).Name}");
-            
-            return res ? 1 : 0;
+            return Convert.ToInt32(res);
+        }
+        
+        public static int Npc_IsDead(NpcInstance npc)
+        {
+            return Convert.ToInt32(NpcHelper.ExtNpcIsDead(npc));
+        }
+        
+        public static int Npc_IsInState(NpcInstance npc, int state)
+        {
+            return Convert.ToInt32(NpcHelper.ExtNpcIsInState(npc, state));
         }
 
         #endregion
