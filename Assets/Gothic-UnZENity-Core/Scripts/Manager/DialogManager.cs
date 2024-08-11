@@ -48,7 +48,6 @@ namespace GUZ.Core.Manager
                     }
                     
                     var conditionResult = GameData.GothicVm.Call<int>(dialog.Condition);
-                    var debugInfoFunction = GameData.GothicVm.GetSymbolByIndex(dialog.Condition).Name;
                     if (conditionResult > 0)
                     {
                         selectableDialogs.Add(dialog);

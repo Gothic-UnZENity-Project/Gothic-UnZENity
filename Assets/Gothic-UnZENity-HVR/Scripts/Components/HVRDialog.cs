@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using GUZ.Core.Data;
 using GUZ.Core.Extensions;
+using GUZ.Core.Globals;
 using GUZ.Core.Manager;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using ZenKit.Daedalus;
 
@@ -34,16 +36,23 @@ namespace GUZ.HVR.Components
         
         public void ShowDialog(GameObject npcGo)
         {
-            // We don't move the UI to the NPC, but copy the location values only.
-            // It's intended, so that we don't loose the UI if an NPC gets destroyed or so...
-            var npcDialogTransform = npcGo.FindChildRecursively("DialogMenuRootPos").transform;
-            _dialogGameObject.transform.position = npcDialogTransform.position;
+            var npcDialog = npcGo.FindChildRecursively("DialogMenuRootPos");
+            _dialogGameObject.SetParent(npcDialog, true, true);
+
+            // We need to rotate the y-axis to be aligned with NPC rotation.
+            _dialogGameObject.transform.localRotation = Quaternion.Euler(0, npcDialog.transform.rotation.eulerAngles.y, 0);
+            
             _dialogGameObject.SetActive(true);
         }
 
+        /// <summary>
+        /// Once we close the dialog, we need to move the dialog box back to the General scene
+        /// (or something without any object which might be destroyed (like an NPC after dying)).
+        /// </summary>
         public void HideDialog()
         {
             _dialogGameObject.SetActive(false);
+            _dialogGameObject.SetParent(SceneManager.GetSceneByName(Constants.SceneGeneral).GetRootGameObjects()[0]);
         }
         
         public void FillDialog(int npcInstanceIndex, List<DialogOption> dialogOptions)
