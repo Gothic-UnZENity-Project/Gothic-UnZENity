@@ -5,6 +5,7 @@ using GUZ.Core.Data;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
+using GUZ.Core.UI;
 using MyBox;
 using TMPro;
 using UnityEngine;
@@ -18,6 +19,7 @@ namespace GUZ.HVR.Components
     {
         [SerializeField] private GameObject _dialogRoot;
         [SerializeField] private List<GameObject> _dialogItems;
+        [SerializeField] private HoverEvent _hoverEventHandler;
 
         private float _dialogItemHeight;
         private int _dialogItemsInUse;
@@ -43,6 +45,12 @@ namespace GUZ.HVR.Components
 
             var rootRectHeight = _dialogItemHeight * _dialogItemsInUse;
             _dialogRoot.GetComponent<RectTransform>().SetHeight(rootRectHeight);
+
+            // Some HoverEnter events recognize the DialogItems itself, some recognize the Labels directly. We therefore need to add both to be checked.
+            var hoverElements = new List<GameObject>();
+            hoverElements.AddRange(_dialogItems);
+            hoverElements.AddRange(_dialogItems.Select(i => i.GetComponentInChildren<TMP_Text>().gameObject).ToList());
+            _hoverEventHandler.SetElementsToHover(hoverElements, true);
             
             _dialogRoot.SetActive(true);
         }

@@ -415,7 +415,6 @@ namespace GUZ.Core.Manager
         {
             var xRotation = 270f + 15f * (time.Hour + time.Minute / 60f + time.Second / 3600f);
             _sunDirection = new Vector3(xRotation % 360, 0, 0);
-            Debug.Log($"Time Now: {time}, Sun Rotation: {_sunDirection}");
         }
     }
 }
