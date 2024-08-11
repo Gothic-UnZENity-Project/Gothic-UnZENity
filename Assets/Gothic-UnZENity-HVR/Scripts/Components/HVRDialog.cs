@@ -5,6 +5,7 @@ using GUZ.Core.Data;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
+using MyBox;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -15,12 +16,11 @@ namespace GUZ.HVR.Components
 {
     public class HVRDialog : MonoBehaviour
     {
-        [SerializeField] private GameObject _dialogGameObject;
+        [SerializeField] private GameObject _dialogRoot;
         [SerializeField] private List<GameObject> _dialogItems;
 
         private float _dialogItemHeight;
-        private float _lowestDialogItemYPos;
-        
+        private int _dialogItemsInUse;
         
         private void Awake()
         {
@@ -30,19 +30,21 @@ namespace GUZ.HVR.Components
             {
                 var rectTransform = _dialogItems.First().GetComponent<RectTransform>();
                 _dialogItemHeight = rectTransform.rect.height;
-                _lowestDialogItemYPos = rectTransform.localPosition.y;
             }
         }
         
         public void ShowDialog(GameObject npcGo)
         {
             var npcDialog = npcGo.FindChildRecursively("DialogMenuRootPos");
-            _dialogGameObject.SetParent(npcDialog, true, true);
+            _dialogRoot.SetParent(npcDialog, true, true);
 
             // We need to rotate the y-axis to be aligned with NPC rotation.
-            _dialogGameObject.transform.localRotation = Quaternion.Euler(0, npcDialog.transform.rotation.eulerAngles.y, 0);
+            _dialogRoot.transform.localRotation = Quaternion.Euler(0, npcDialog.transform.rotation.eulerAngles.y, 0);
+
+            var rootRectHeight = _dialogItemHeight * _dialogItemsInUse;
+            _dialogRoot.GetComponent<RectTransform>().SetHeight(rootRectHeight);
             
-            _dialogGameObject.SetActive(true);
+            _dialogRoot.SetActive(true);
         }
 
         /// <summary>
@@ -51,8 +53,8 @@ namespace GUZ.HVR.Components
         /// </summary>
         public void HideDialog()
         {
-            _dialogGameObject.SetActive(false);
-            _dialogGameObject.SetParent(SceneManager.GetSceneByName(Constants.SceneGeneral).GetRootGameObjects()[0]);
+            _dialogRoot.SetActive(false);
+            _dialogRoot.SetParent(SceneManager.GetSceneByName(Constants.SceneGeneral).GetRootGameObjects()[0]);
         }
         
         public void FillDialog(int npcInstanceIndex, List<DialogOption> dialogOptions)
@@ -71,6 +73,8 @@ namespace GUZ.HVR.Components
                     () => OnDialogClicked(npcInstanceIndex, dialogOption.Function));
                 dialogItem.FindChildRecursively("Label").GetComponent<TMP_Text>().text = dialogOption.Text;
             }
+
+            _dialogItemsInUse = dialogOptions.Count;
         }
 
         public void FillDialog(int npcInstanceIndex, List<InfoInstance> dialogOptions)
@@ -78,7 +82,6 @@ namespace GUZ.HVR.Components
             CreateAdditionalDialogOptions(dialogOptions.Count);
             ClearDialogOptions();
             
-            dialogOptions.Reverse();
             for (var i = 0; i < dialogOptions.Count; i++)
             {
                 var dialogItem = _dialogItems[i];
@@ -88,6 +91,8 @@ namespace GUZ.HVR.Components
                     () => OnDialogClicked(npcInstanceIndex, dialogOption));
                 dialogItem.FindChildRecursively("Label").GetComponent<TMP_Text>().text = dialogOption.Description;
             }
+            
+            _dialogItemsInUse = dialogOptions.Count;
         }
         
         /// <summary>
@@ -104,15 +109,16 @@ namespace GUZ.HVR.Components
                 return;
             }
 
-            var lastItem = _dialogItems.Last();
+            var firstItem = _dialogItems.First();
             for (var i = 0; i < newItemsToCreate; i++)
             {
-                var newItem = Instantiate(lastItem, lastItem.transform.parent, false);
+                var newItem = Instantiate(firstItem, firstItem.transform.parent, false);
                 _dialogItems.Add(newItem);
 
                 newItem.name = $"Item{_dialogItems.Count - 1:00}";
-                var newYPos = _lowestDialogItemYPos + _dialogItemHeight * (_dialogItems.Count - 1);
-                newItem.transform.localPosition = new Vector3(0, newYPos, 0);
+                
+                var newYPos = -_dialogItemHeight/2 + -_dialogItemHeight * (_dialogItems.Count - 1);
+                newItem.GetComponent<RectTransform>().SetPositionY(newYPos);
             }
         }
 
