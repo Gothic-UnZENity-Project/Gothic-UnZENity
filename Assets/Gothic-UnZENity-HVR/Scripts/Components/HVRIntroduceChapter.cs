@@ -1,4 +1,5 @@
-﻿using GUZ.Core;
+﻿using System.Collections;
+using GUZ.Core;
 using GUZ.Core.Creator.Sounds;
 using GUZ.Core.Extensions;
 using TMPro;
@@ -21,8 +22,12 @@ namespace GUZ.HVR.Components
 
         public void DisplayIntroduction(string chapter, string text, string texture, string wav, int time)
         {
+            gameObject.SetActive(true);
+            
             PlayAudio(wav);
             ShowCover(chapter, text, texture, time);
+            
+            StartCoroutine(DisableDelayed(time));
         }
 
         private void PlayAudio(string wav)
@@ -44,6 +49,12 @@ namespace GUZ.HVR.Components
 
             _chapterTitle.text = chapter;
             _chapterSubtitle.text = text;
+        }
+
+        private IEnumerator DisableDelayed(int milliseconds)
+        {
+            yield return new WaitForSeconds(milliseconds / 1000f);
+            gameObject.SetActive(false);
         }
     }
 }
