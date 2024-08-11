@@ -38,7 +38,7 @@ namespace GUZ.HVR.Components
         public void ShowDialog(GameObject npcGo)
         {
             var npcDialog = npcGo.FindChildRecursively("DialogMenuRootPos");
-            _dialogRoot.SetParent(npcDialog, true, true);
+            _dialogRoot.SetParent(npcDialog, true, true, true);
 
             // We need to rotate the y-axis to be aligned with NPC rotation.
             _dialogRoot.transform.localRotation = Quaternion.Euler(0, npcDialog.transform.rotation.eulerAngles.y, 0);
@@ -62,7 +62,7 @@ namespace GUZ.HVR.Components
         public void HideDialog()
         {
             _dialogRoot.SetActive(false);
-            _dialogRoot.SetParent(SceneManager.GetSceneByName(Constants.SceneGeneral).GetRootGameObjects()[0]);
+            _dialogRoot.SetParent(SceneManager.GetSceneByName(Constants.SceneGeneral).GetRootGameObjects()[0], worldPositionStays: true);
         }
         
         public void FillDialog(int npcInstanceIndex, List<DialogOption> dialogOptions)

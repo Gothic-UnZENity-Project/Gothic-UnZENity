@@ -61,8 +61,6 @@ namespace GUZ.Core.UI
                 return;
             }
 
-            Debug.Log("HoverExit!");
-            
             foreach (var hoveredObj in pointerEventData.hovered)
             {
                 if (!_elementsToFilter.IsEmpty() && !_elementsToFilter.Contains(hoveredObj))
