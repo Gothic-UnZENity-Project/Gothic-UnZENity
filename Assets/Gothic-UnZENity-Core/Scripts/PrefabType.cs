@@ -23,7 +23,8 @@ namespace GUZ.Core
         VobSound,
         VobSoundDaytime,
         VobLadder,
-        XRDeviceSimulator
+        XRDeviceSimulator,
+        StoryIntroduceChapter
     }
 
     public static class PrefabTypeExtension
@@ -52,6 +53,7 @@ namespace GUZ.Core
                 PrefabType.VobSoundDaytime => "Prefabs/Vobs/zCVobSoundDaytime",
                 PrefabType.VobLadder => "Prefabs/Vobs/oCMobLadder",
                 PrefabType.XRDeviceSimulator => "Prefabs/VRPlayer/XR Device Simulator",
+                PrefabType.StoryIntroduceChapter => "Prefabs/Story/IntroduceChapter",
                 _ => throw new Exception($"Enum value {type} not yet defined.")
             };
         }

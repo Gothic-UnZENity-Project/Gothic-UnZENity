@@ -10,5 +10,6 @@ namespace GUZ.Core.Context
         void CreateXRDeviceSimulator();
         void AddClimbingComponent(GameObject go);
         void AddItemComponent(GameObject go, bool isLab = false);
+        void IntroduceChapter(string chapter, string text, string texture, string wav, int time);
     }
 }

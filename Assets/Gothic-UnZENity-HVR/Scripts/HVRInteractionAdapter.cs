@@ -1,5 +1,6 @@
 #if GUZ_HVR_INSTALLED
 using System.Linq;
+using GUZ.Core;
 using GUZ.Core.Context;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
@@ -103,6 +104,23 @@ namespace GUZ.HVR
         public void AddItemComponent(GameObject go, bool isLab)
         {
             // Currently nothing to do. Everything's set up inside oCItem.prefab already.
+        }
+
+        public void IntroduceChapter(string chapter, string text, string texture, string wav, int time)
+        {
+            var generalScene = SceneManager.GetSceneByName(Constants.SceneGeneral);
+            
+            // Check if we already loaded the Chapter change prefab
+            GameObject chapterPrefab = generalScene.GetRootGameObjects()
+                .FirstOrDefault(i => i.GetComponentInChildren<HVRIntroduceChapter>());
+            
+            if (chapterPrefab == null)
+            {
+                chapterPrefab = ResourceLoader.TryGetPrefabObject(PrefabType.StoryIntroduceChapter);
+                SceneManager.MoveGameObjectToScene(chapterPrefab, generalScene);
+            }
+            
+            chapterPrefab.GetComponent<HVRIntroduceChapter>().DisplayIntroduction(chapter, text, texture, wav, time);
         }
     }
 }

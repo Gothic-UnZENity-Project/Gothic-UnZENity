@@ -849,7 +849,7 @@ namespace GUZ.Core.Vm
 
         public static void IntroduceChapter(string chapter, string text, string texture, string wav, int time)
         {
-            Debug.Log("IntroduceChapter called!");
+            GameGlobals.Story.ExtIntroduceChapter(chapter, text, texture, wav, time);
         }
 
         #endregion
