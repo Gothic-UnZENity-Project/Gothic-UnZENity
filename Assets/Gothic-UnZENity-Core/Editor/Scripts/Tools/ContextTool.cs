@@ -41,7 +41,7 @@ namespace GUZ.Core.Editor.Tools
             ActivatePlugin(NamedBuildTarget.Android);
         }
 
-        public static void ActivatePlugin(NamedBuildTarget target)
+        private static void ActivatePlugin(NamedBuildTarget target)
         {
             // Change compile flag in PlayerSettings
             var settings = PlayerSettings.GetScriptingDefineSymbols(target)
@@ -67,7 +67,7 @@ namespace GUZ.Core.Editor.Tools
             DeactivatePlugin(NamedBuildTarget.Android);
         }
 
-        public static void DeactivatePlugin(NamedBuildTarget target)
+        private static void DeactivatePlugin(NamedBuildTarget target)
         {
             var settings = PlayerSettings.GetScriptingDefineSymbols(target)
                 .Split(";")
