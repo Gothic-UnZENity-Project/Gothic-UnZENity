@@ -68,7 +68,7 @@ namespace GUZ.Core.Globals
 
         // e.g. for NPCs to check if they reached a FreePoint already. Value is based on best guess/testing.
         public const float CloseToThreshold = 0.6f;
-        public const float NpcRotationSpeed = 500f;
+        public const float NpcRotationSpeed = 150f; // FIXME - Still too high. Diego will over-rotate in between START and OC. But if we lower it, it looks wrong.
 
         public const string DaedalusHeroInstanceName = "PC_HERO"; // TODO - can be read from .ini file.
 
