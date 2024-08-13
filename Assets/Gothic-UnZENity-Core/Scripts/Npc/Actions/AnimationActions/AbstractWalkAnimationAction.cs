@@ -8,6 +8,7 @@ using UnityEngine;
 
 namespace GUZ.Core.Npc.Actions.AnimationActions
 {
+    [Obsolete("Successor is AbstractWalkAnimationAction2, but it needs to be tested with (1)GoToFp, (2)GoToNpc, (3)UseMob, (4)GoToNextFp first.")]
     public abstract class AbstractWalkAnimationAction : AbstractAnimationAction
     {
         protected enum WalkState
