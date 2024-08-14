@@ -21,9 +21,12 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
         {
             var currentWaypoint = Props.CurrentWayPoint ?? WayNetHelper.FindNearestWayPoint(Props.transform.position);
             var destinationWaypoint = (WayPoint)WayNetHelper.GetWayNetPoint(Destination);
+
+            
             /*
-             * 1. AI_StartState() can get called multiple times until it won't share the WP. (e.g. ZS_SLEEP -> ZS_StandAround())
-             * 2. Happens (e.g.) during spawning. As we spawn NPCs onto their current WayPoints, they don't need to walk there from entrance of OC.
+             * Two situations, when this action can be skipped:
+             * 1. Ai_GoToWp() can get called multiple times until it will loose the WP in between the Ai_StartState() calls. (e.g. ZS_Sleep() -> ZS_StandAround())
+             * 2. During spawning (e.g.). As we spawn NPCs onto their current WayPoints, they don't need to walk there from entrance of OC.
              */
             if (destinationWaypoint == null || destinationWaypoint.Name == "" || currentWaypoint.Name == Destination)
             {
@@ -47,7 +50,6 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             {
                 base.StartWalk();
             }
-
         }
 
         protected override Vector3 GetWalkDestination()

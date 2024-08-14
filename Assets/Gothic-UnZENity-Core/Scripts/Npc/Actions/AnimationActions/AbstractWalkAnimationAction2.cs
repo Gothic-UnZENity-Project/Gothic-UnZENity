@@ -84,19 +84,17 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             var distance = Vector3.Distance(npcDistPos, walkPos);
 
             // FIXME - Scorpio is above FP, but values don't represent it.
-            return distance < Constants.CloseToThreshold;
+            return distance < Constants.NpcDestinationReachedThreshold;
         }
 
         private void HandleRotation()
         {
             var destination = GetWalkDestination();
-            var pos = NpcTransform.position;
-            var sameHeightDirection = new Vector3(destination.x, pos.y, destination.z);
-            var direction = (sameHeightDirection - pos).normalized;
-            var dot = Vector3.Dot(direction, NpcTransform.forward);
-
-            var lookRotation = Quaternion.LookRotation(direction);
-            NpcTransform.rotation = Quaternion.RotateTowards(NpcTransform.rotation, lookRotation, Time.deltaTime * Constants.NpcRotationSpeed);
+            var npcPos = NpcTransform.position;
+            var sameHeightDirection = new Vector3(destination.x, npcPos.y, destination.z);
+            var direction = (sameHeightDirection - npcPos);
+            var destinationRotation = Quaternion.LookRotation(direction);
+            NpcTransform.rotation = Quaternion.RotateTowards(NpcTransform.rotation, destinationRotation, Time.deltaTime * Constants.NpcRotationSpeed); 
         }
 
         /// <summary>

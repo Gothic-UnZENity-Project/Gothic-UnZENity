@@ -103,7 +103,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             var distance = Vector3.Distance(npcDistPos, walkPos);
 
             // FIXME - Scorpio is above FP, but values don't represent it.
-            if (distance < Constants.CloseToThreshold)
+            if (distance < Constants.NpcDestinationReachedThreshold)
             {
                 OnDestinationReached();
             }

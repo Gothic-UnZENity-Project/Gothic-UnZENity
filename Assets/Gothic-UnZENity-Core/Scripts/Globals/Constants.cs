@@ -67,8 +67,8 @@ namespace GUZ.Core.Globals
         public static Vector3 VobZsScale = new(0.1f, 0.1f, 0.1f);
 
         // e.g. for NPCs to check if they reached a FreePoint already. Value is based on best guess/testing.
-        public const float CloseToThreshold = 0.6f;
-        public const float NpcRotationSpeed = 150f; // FIXME - Still too high. Diego will over-rotate in between START and OC. But if we lower it, it looks wrong.
+        public const float NpcDestinationReachedThreshold = 0.6f;
+        public const float NpcRotationSpeed = 500f;
 
         public const string DaedalusHeroInstanceName = "PC_HERO"; // TODO - can be read from .ini file.
 
