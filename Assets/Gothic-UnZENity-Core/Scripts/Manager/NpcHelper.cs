@@ -242,27 +242,26 @@ namespace GUZ.Core.Manager
             return (int)Vector3.Distance(npcPos, waypoint.Position);
         }
 
-        public static bool ExtNpcCanSeeNpc(NpcInstance npc, NpcInstance other)
+        public static bool ExtNpcCanSeeNpc(NpcInstance self, NpcInstance other)
         {
-            var npcGo = GetNpc(npc);
-            var otherGo = GetNpc(other);
+            var selfProps = GetProperties(self);
+            var selfHeadBone = selfProps.Head;
+            var otherProps = GetProperties(other);
 
-            if (npcGo == null || otherGo == null)
+            if (selfProps == null || otherProps == null)
             {
                 return false;
             }
 
-            var headBone = npcGo.FindChildRecursively("BIP01 HEAD").transform;
 
-            var inSightRange = Vector3.Distance(npcGo.transform.position, otherGo.transform.position) <=
-                               npc.SensesRange;
+            var distanceToNpc = Vector3.Distance(selfProps.transform.position, otherProps.transform.position);
+            var inSightRange =  distanceToNpc <= self.SensesRange;
 
-            var directionToTarget = (otherGo.transform.position - headBone.position).normalized;
-            var angleToTarget = Vector3.Angle(headBone.forward, directionToTarget);
-
+            var directionToTarget = (otherProps.transform.position - selfHeadBone.position).normalized;
+            var angleToTarget = Vector3.Angle(selfHeadBone.forward, directionToTarget);
             var inFov = angleToTarget <= 50.0f; // OpenGothic assumes 100 fov for NPCs
 
-            var inLineOfSight = Physics.Linecast(headBone.position, directionToTarget);
+            var inLineOfSight = Physics.Linecast(selfHeadBone.position, otherProps.transform.position);
 
             return inSightRange && inFov && inLineOfSight;
         }
