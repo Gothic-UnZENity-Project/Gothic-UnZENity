@@ -668,7 +668,7 @@ namespace GUZ.Core.Vm
 
         public static int Npc_CanSeeNpc(NpcInstance npc, NpcInstance target)
         {
-            return NpcHelper.ExtNpcCanSeeNpc(npc, target) ? 1 : 0;
+            return Convert.ToInt32(NpcHelper.ExtNpcCanSeeNpc(npc, target));
         }
 
         public static void Npc_ClearAiQueue(NpcInstance npc)
