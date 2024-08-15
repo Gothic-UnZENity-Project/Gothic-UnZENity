@@ -6,7 +6,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using GUZ.Core.Context;
 using GUZ.Core.Creator.Meshes.V2;
-using GUZ.Core.Demo;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
@@ -85,6 +84,25 @@ namespace GUZ.Core.Creator
             PostCreateVobs();
             stopwatch.Stop();
             Debug.Log($"Created vobs in {stopwatch.Elapsed.TotalSeconds} s");
+        }
+
+        public static GameObject GetRootGameObjectOfType(VirtualObjectType type)
+        {
+            GameObject retVal;
+
+            if (_parentGosTeleport.TryGetValue(type, out retVal))
+            {
+                return retVal;
+            }
+            else if (_parentGosNonTeleport.TryGetValue(type, out retVal))
+            {
+                return _parentGosNonTeleport[type];
+            }
+            else
+            {
+                Debug.LogError($"No suitable root GO found for type >{type}<");
+                return null;
+            }
         }
 
         private static void PreCreateVobs(List<IVirtualObject> vobs, int vobsPerFrame)
