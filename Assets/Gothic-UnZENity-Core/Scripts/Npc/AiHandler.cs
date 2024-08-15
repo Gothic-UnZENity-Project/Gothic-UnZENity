@@ -49,7 +49,10 @@ namespace GUZ.Core.Npc
             if (Properties.AnimationQueue.Count == 0)
             {
                 // We always need to set "self" before executing any Daedalus function.
-                Vm.GlobalSelf = Properties.NpcInstance;
+                if(Properties.NpcInstance is not null)
+                {
+                    Vm.GlobalSelf = Properties.NpcInstance;
+                }
 
                 switch (Properties.CurrentLoopState)
                 {
