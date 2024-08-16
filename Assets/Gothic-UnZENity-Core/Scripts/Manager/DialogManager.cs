@@ -153,6 +153,15 @@ namespace GUZ.Core.Manager
             CallInformation(npcInstanceIndex, infoInstance.Information, true);
         }
 
+        /// <summary>
+        /// Skip/Stop current Dialog .wav entry now.
+        /// </summary>
+        /// <param name="props"></param>
+        public static void SkipCurrentDialogLine(NpcProperties props)
+        {
+            props.CurrentAction.StopImmediately();
+        }
+
         public static void StopDialog()
         {
             GameData.Dialogs.CurrentDialog.Instance = null;

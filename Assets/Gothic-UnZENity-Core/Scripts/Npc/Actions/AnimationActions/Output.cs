@@ -1,4 +1,5 @@
 using System.Linq;
+using GUZ.Core.Caches;
 using GUZ.Core.Creator;
 using GUZ.Core.Creator.Sounds;
 using GUZ.Core.Extensions;
@@ -11,23 +12,25 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
 {
     public class Output : AbstractAnimationAction
     {
-        private float _audioPlaySeconds;
-
-        private int SpeakerId => Action.Int0;
         protected virtual string OutputName => Action.String0;
 
+        private bool _isHeroSpeaking => Action.Int0 == 0;
+        private float _audioPlaySeconds;
+
+
         public Output(AnimationAction action, GameObject npcGo) : base(action, npcGo)
-        {
-        }
+        { }
 
         public override void Start()
         {
+            var x = LookupCache.NpcCache;
+
             var soundData = ResourceLoader.TryGetSound(OutputName);
             var audioClip = SoundCreator.ToAudioClip(soundData);
             _audioPlaySeconds = audioClip.length;
 
             // Hero
-            if (SpeakerId == 0)
+            if (_isHeroSpeaking)
             {
                 // If NPC talked before, we stop it immediately (As some audio samples are shorter than the actual animation)
                 AnimationCreator.StopAnimation(NpcGo);
@@ -68,6 +71,21 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             return GameData.Dialogs.GestureCount;
         }
 
+        public override void StopImmediately()
+        {
+            _audioPlaySeconds = 0f;
+
+            if (_isHeroSpeaking)
+            {
+                NpcHelper.GetHeroGameObject().GetComponent<AudioSource>().Stop();
+            }
+            // NPC
+            else
+            {
+                Props.NpcSound.Stop();
+            }
+        }
+
         public override bool IsFinished()
         {
             _audioPlaySeconds -= Time.deltaTime;
@@ -75,7 +93,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             if (_audioPlaySeconds <= 0f)
             {
                 // NPC
-                if (SpeakerId != 0)
+                if (!_isHeroSpeaking)
                 {
                     AnimationCreator.StopHeadMorphAnimation(Props, HeadMorph.HeadMorphType.Viseme);
                 }

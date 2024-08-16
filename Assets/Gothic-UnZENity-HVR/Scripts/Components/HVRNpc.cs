@@ -12,8 +12,14 @@ namespace GUZ.HVR.Components
     {
         public void OnGrabbed(HVRGrabberBase grabber, HVRGrabbable grabbable)
         {
-            if (!GameData.Dialogs.IsInDialog)
+            if (GameData.Dialogs.IsInDialog)
+            {
+                DialogManager.SkipCurrentDialogLine(GetComponent<NpcProperties>());
+            }
+            else
+            {
                 DialogManager.StartDialog(gameObject, GetComponent<NpcProperties>());
+            }
         }
     }
 }
