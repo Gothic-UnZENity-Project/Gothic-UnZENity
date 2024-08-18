@@ -142,6 +142,9 @@ namespace GUZ.Core.Vm
             vm.RegisterExternal<int, int, int, int, int>("Wld_IsTime", Wld_IsTime);
             vm.RegisterExternal<int, NpcInstance, string>("Wld_GetMobState", Wld_GetMobState);
             vm.RegisterExternal<int, string>("Wld_InsertItem", Wld_InsertItem);
+            vm.RegisterExternal<string>("Wld_ExchangeGuildAttitudes", Wld_ExchangeGuildAttitudes);
+            vm.RegisterExternal<int, int, int>("Wld_SetGuildAttitude", Wld_SetGuildAttitude);
+            vm.RegisterExternal<int, int, int>("Wld_GetGuildAttitude", Wld_GetGuildAttitude);
 
             // Misc
             vm.RegisterExternal<string, string, string>("ConcatStrings", ConcatStrings);
@@ -829,6 +832,36 @@ namespace GUZ.Core.Vm
         public static void Wld_InsertItem(int itemInstance, string spawnpoint)
         {
             VobHelper.ExtWldInsertItem(itemInstance, spawnpoint);
+        }
+
+        public static void Wld_ExchangeGuildAttitudes(string name)
+        {
+            var guilds = GameData.GothicVm.GetSymbolByName(name);
+
+            if (guilds == null)
+                return;
+
+            for (double i = 0, count = GameData.GuildTableSize; i < count; ++i)
+            {
+                for (var j = 0; j < count; ++j)
+                    GameData.GuildAttitudes[(int)(i * count + j)] = guilds.GetInt((ushort)(i * count + j));
+            }
+        }
+
+        public static void Wld_SetGuildAttitude(int guild1, int attitude, int guild2)
+        {
+            if (guild1 < 0 || guild2 < 0 || guild1 >= GameData.GuildCount || guild2 >= GameData.GuildCount)
+                return;
+
+            GameData.GuildAttitudes[guild1 * GameData.GuildCount + guild2] = attitude;
+        }
+
+        public static int Wld_GetGuildAttitude(int guild1, int guild2)
+        {
+            if (guild1 < 0 || guild2 < 0 || guild1 >= GameData.GuildCount || guild2 >= GameData.GuildCount)
+                return 0;
+
+            return GameData.GuildAttitudes[guild1 * GameData.GuildCount + guild2];
         }
 
         #endregion
