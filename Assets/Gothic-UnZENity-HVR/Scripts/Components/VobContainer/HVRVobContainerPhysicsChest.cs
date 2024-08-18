@@ -24,10 +24,15 @@ namespace GUZ.HVR.Components.VobContainer
         private readonly char[] _itemNameSeparators = { ';', ',' };
         private readonly char[] _itemCountSeparators = { ':', '.' };
 
+        // Need to be updated if ocMobContainer.prefab is changed.
+        private const int _socketRows = 3;
+        private const int _socketsPerRow = 5;
+
         [Separator("GUZ - Settings")]
         [SerializeField] private GameObject _rootGo;
         [SerializeField] private VobContainerProperties _containerProperties;
         [SerializeField] private HVRSocketContainer _socketContainer;
+        [SerializeField] private BoxCollider _collectorCollider;
 
         // Flags to ensure we always call On*() once, everytime open/close status changes.
         private bool _openingForTheFirstTime = true;
@@ -114,10 +119,12 @@ namespace GUZ.HVR.Components.VobContainer
             {
                 Debug.LogError($"More than one feasible MeshFilter for HVR Socket size calculation found in {_rootGo.name}. Leveraging first one.");
             }
-            
-            
-            
+
             var containerBounds = meshFilters.First().sharedMesh.bounds;
+            
+            // Set collectorCollider's size to perfectly align with container.
+            _collectorCollider.size = new Vector3(containerBounds.size.x, _collectorCollider.size.y, containerBounds.size.z);
+            
             Debug.Log($"{gameObject.name}: {containerBounds}", gameObject);
 
             var centerY = containerBounds.center.y;
