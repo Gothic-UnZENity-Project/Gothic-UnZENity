@@ -27,6 +27,8 @@ namespace GUZ.HVR.Components.VobContainer
         // Need to be updated if ocMobContainer.prefab is changed.
         private const int _socketRows = 3;
         private const int _socketsPerRow = 5;
+        private const float _socketRadius = 0.1f;
+        private const float _socketCollectionMargin = _socketRadius / 2;
 
         [Separator("GUZ - Settings")]
         [SerializeField] private GameObject _rootGo;
@@ -96,14 +98,12 @@ namespace GUZ.HVR.Components.VobContainer
 
         /// <summary>
         /// Containers have different sizes. Re-align the prefab's HVR sockets to match their actual sizes.
-        /// We need to dynamically fetch the bounding box of main mesh as some chests have the correct one inside BIP01 "CHEST_*_0" and others inside "ZM_CHEST*"
         /// </summary>
         private void AlignSockets()
         {
             var sockets = _socketContainer.Sockets;
-            var firstSocket = sockets.First();
-            var lastSocket = sockets.Last();
 
+            // We need to dynamically fetch the bounding box of main mesh as some chests have the correct one inside BIP01 "CHEST_*_0" and others inside "ZM_CHEST*"
             var meshFilters = _rootGo
                 .GetComponentsInChildren<MeshFilter>() // Find all meshes
                 .Where(i => !i.TryGetComponent(typeof(HVRGrabbable), out _)) // Filter out meshe, which is the lid
@@ -120,21 +120,48 @@ namespace GUZ.HVR.Components.VobContainer
                 Debug.LogError($"More than one feasible MeshFilter for HVR Socket size calculation found in {_rootGo.name}. Leveraging first one.");
             }
 
-            var containerBounds = meshFilters.First().sharedMesh.bounds;
+            var mainMeshBounds = meshFilters.First().sharedMesh.bounds;
             
             // Set collectorCollider's size to perfectly align with container.
-            _collectorCollider.size = new Vector3(containerBounds.size.x, _collectorCollider.size.y, containerBounds.size.z);
+            _collectorCollider.size = new Vector3(mainMeshBounds.size.x, _collectorCollider.size.y, mainMeshBounds.size.z);
             
-            Debug.Log($"{gameObject.name}: {containerBounds}", gameObject);
+            // Move all Slots nearly towards height of container (*1,5 == 75% close to top).
+            _socketContainer.transform.localPosition = new (0, mainMeshBounds.center.y * 1.5f, 0);
 
-            var centerY = containerBounds.center.y;
-
-            _socketContainer.transform.localPosition = new (0, centerY * 1.5f, 0); // Move all Slots nearly towards height of container.
+            var centeredMainBound = new Bounds(Vector3.zero, mainMeshBounds.size);
             
-            // firstSocket.transform.localPosition = containerBounds.min;
-            // lastSocket.transform.localPosition = containerBounds.max;
+            // Align all sockets in row+column based on actual sizes.
+            var rowWidth = (centeredMainBound.size.x - 2*_socketCollectionMargin) / _socketsPerRow;
+            var rowDepth = (centeredMainBound.size.z - 2*_socketCollectionMargin) / _socketRows;
+            
+            // Calculate center of a grid-element for a socket ring entry.
+            var middleAlignmentX = (rowWidth - _socketRadius * 2) / 2;
+            var middleAlignmentZ = (rowDepth - _socketRadius * 2) / 2;
+            
+            // Loop variables
+            var currentRow = 0;
+            var currentColumn = 0;
+            
+            foreach (var socket in sockets)
+            {
+                // Calculation
+                // _socketCollectionMargin - Left aligned margin for the whole collection
+                // _socketRadius - Location is based on a 50% shift into the desired area as the drawing of a circle starts centered
+                // middleAlignment* - Centered location within a grid for an element
+                // min.x - Start point to calculate from left top
+                socket.transform.localPosition = new (
+                    _socketCollectionMargin + _socketRadius + middleAlignmentX + centeredMainBound.min.x + rowWidth * currentColumn,
+                    0,
+                    _socketCollectionMargin + _socketRadius + middleAlignmentZ + centeredMainBound.min.z + rowDepth * currentRow
+                );
 
-            // Fetch size between lower- and upper socket
+                currentColumn++;
+                if (currentColumn >= _socketsPerRow)
+                {
+                    currentColumn = 0;
+                    currentRow++;
+                }
+            }
         }
         
         private void InitializeContent()

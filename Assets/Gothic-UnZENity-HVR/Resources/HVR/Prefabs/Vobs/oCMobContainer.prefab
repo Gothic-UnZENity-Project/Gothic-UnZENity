@@ -313,8 +313,8 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 0.11938889
-  m_Center: {x: -0.0014079142, y: 0, z: -4.3868842e-17}
+  m_Radius: 0.1
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &7785860572896069705
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -591,8 +591,8 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 0.11938889
-  m_Center: {x: -0.0014079142, y: 0, z: -4.3868842e-17}
+  m_Radius: 0.1
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &7916747858208428323
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -786,8 +786,8 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 0.11938889
-  m_Center: {x: -0.0014079142, y: 0, z: -4.3868842e-17}
+  m_Radius: 0.1
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &5755579173600781048
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1064,8 +1064,8 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 0.11938889
-  m_Center: {x: -0.0014079142, y: 0, z: -4.3868842e-17}
+  m_Radius: 0.1
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &2204362521791305196
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1259,8 +1259,8 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 0.11938889
-  m_Center: {x: -0.0014079142, y: 0, z: -4.3868842e-17}
+  m_Radius: 0.1
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &3541697341500023025
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1466,6 +1466,11 @@ MonoBehaviour:
   - {fileID: 3344203670231043850}
   - {fileID: 1718324186881852430}
   - {fileID: 8479260276281829361}
+  - {fileID: 5451276034633494523}
+  - {fileID: 2830219026482579767}
+  - {fileID: 6878944202598868553}
+  - {fileID: 4779824246905148160}
+  - {fileID: 1374613663307227583}
 --- !u!114 &2596048974797699402
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1738,8 +1743,8 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 0.11938889
-  m_Center: {x: -0.0014079142, y: 0, z: -4.3868842e-17}
+  m_Radius: 0.1
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &1904934727426696998
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1933,8 +1938,8 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 0.11938889
-  m_Center: {x: -0.0014079142, y: 0, z: -4.3868842e-17}
+  m_Radius: 0.1
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &5825525148917267618
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2460,8 +2465,8 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 0.11938889
-  m_Center: {x: -0.0014079142, y: 0, z: -4.3868842e-17}
+  m_Radius: 0.1
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &2783188317653191907
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3243,8 +3248,8 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 0.11938889
-  m_Center: {x: -0.0014079142, y: 0, z: -4.3868842e-17}
+  m_Radius: 0.1
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &4095462061646403189
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3663,8 +3668,8 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 0.11938889
-  m_Center: {x: -0.0014079142, y: 0, z: -4.3868842e-17}
+  m_Radius: 0.1
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &5298672618290999715
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3858,8 +3863,8 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 0.11938889
-  m_Center: {x: -0.0014079142, y: 0, z: -4.3868842e-17}
+  m_Radius: 0.1
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &2564368200858102714
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4136,8 +4141,8 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 0.11938889
-  m_Center: {x: -0.0014079142, y: 0, z: -4.3868842e-17}
+  m_Radius: 0.1
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &2037134406786832725
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4414,8 +4419,8 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 0.11938889
-  m_Center: {x: -0.0014079142, y: 0, z: -4.3868842e-17}
+  m_Radius: 0.1
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &1543325685525774575
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4609,8 +4614,8 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 0.11938889
-  m_Center: {x: -0.0014079142, y: 0, z: -4.3868842e-17}
+  m_Radius: 0.1
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &8938383412123691392
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4918,8 +4923,8 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 0.11938889
-  m_Center: {x: -0.0014079142, y: 0, z: -4.3868842e-17}
+  m_Radius: 0.1
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &9057796826089372788
 MonoBehaviour:
   m_ObjectHideFlags: 0
