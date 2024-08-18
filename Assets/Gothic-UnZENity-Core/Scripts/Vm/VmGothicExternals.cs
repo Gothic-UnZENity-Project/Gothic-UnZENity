@@ -34,6 +34,7 @@ namespace GUZ.Core.Vm
             vm.RegisterExternal<NpcInstance, int, int, string>("AI_StartState", AI_StartState);
             vm.RegisterExternal<NpcInstance, int, int>("AI_UseItemToState", AI_UseItemToState);
             vm.RegisterExternal<NpcInstance, float>("AI_Wait", AI_Wait);
+            vm.RegisterExternal<NpcInstance, int>("AI_WaitMs", AI_WaitMs);
             vm.RegisterExternal<int, NpcInstance, string, int>("AI_UseMob", AI_UseMob);
             vm.RegisterExternal<NpcInstance, string>("AI_GoToNextFP", AI_GoToNextFP);
             vm.RegisterExternal<NpcInstance>("AI_DrawWeapon", AI_DrawWeapon);
@@ -229,6 +230,11 @@ namespace GUZ.Core.Vm
         public static void AI_Wait(NpcInstance npc, float seconds)
         {
             NpcHelper.ExtAiWait(npc, seconds);
+        }
+
+        public static void AI_WaitMs(NpcInstance npc, int miliseconds)
+        {
+            NpcHelper.ExtAiWait(npc, miliseconds / 1000);
         }
 
         public static int AI_UseMob(NpcInstance npc, string target, int state)
