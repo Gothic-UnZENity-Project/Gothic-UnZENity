@@ -196,6 +196,7 @@ namespace GUZ.Core.Manager
             // FIXME - Add Guild check
             // FIXME - add range check based on perceiveAll's range (npc.sense_range)
             var foundNpc = LookupCache.NpcCache.Values
+                .Where(i => i.properties != null) // ignore empty (safe check)
                 .Where(i => i.properties.Go != null) // ignore empty (safe check)
                 .Where(i => i.instance.Index != npcInstance.Index) // ignore self
                 .Where(i => detectPlayer ||

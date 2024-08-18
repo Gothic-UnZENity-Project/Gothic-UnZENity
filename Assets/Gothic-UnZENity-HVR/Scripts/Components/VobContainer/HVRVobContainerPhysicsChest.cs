@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using GUZ.Core;
+using GUZ.Core.Creator;
 using GUZ.Core.Creator.Meshes.V2;
 using GUZ.Core.Extensions;
 using GUZ.Core.Properties;
@@ -14,10 +15,11 @@ using HurricaneVR.Framework.Core.Sockets;
 using MyBox;
 using UnityEngine;
 using ZenKit.Daedalus;
+using ZenKit.Vobs;
 
 namespace GUZ.HVR.Components.VobContainer
 {
-    public class HVRVobContainerPhysicsDoor : HVRPhysicsDoor
+    public class HVRVobContainerPhysicsChest : HVRPhysicsDoor
     {
         private readonly char[] _itemNameSeparators = { ';', ',' };
         private readonly char[] _itemCountSeparators = { ':', '.' };
@@ -207,11 +209,17 @@ namespace GUZ.HVR.Components.VobContainer
                 
                 var go = TempCreateItem(itemInstance);
 
+                // We need to parent our item to the normal Vob tree. Because putting it into a slot changes the parent to the slot-GO.
+                // And when grabbed out of the chest, HVR will re-parent the object to it's original parent.
+                // If the chest or sth. else ist the parent, a culling of the chest will hide the item (e.g. in our hand).
+                var parentGo = VobCreator.GetRootGameObjectOfType(VirtualObjectType.oCItem);
+                go.SetParent(parentGo);
+
                 // With this, we move the object into the chest and the "auto-collector" will trigger and move the object to the first free Socket.
-                // TODO - The order of items might be wrong if e.g. a sword with order 0 is colliding with the chest and therefore
-                // TODO - moving sliding down too late and will therefore have another slot-ID used
-                // TODO - (physic based "collider-collecting" is triggered after other objects.)
-                go.SetParent(currentSocket.gameObject, true, true);
+                // TODO - The order of items might be wrong if e.g. a huge sword with order-ID 0 is colliding with the chest and therefore
+                //        sliding down too slow (due to collisions inside the chest) it might get another slot-ID.
+                //        It's up to us if this is an issue or even worth a word.
+                go.transform.position = currentSocket.transform.position;
             }
         }
         

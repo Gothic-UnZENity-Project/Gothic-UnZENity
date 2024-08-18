@@ -156,5 +156,10 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
         {
             return IsFinishedFlag;
         }
+
+        public virtual void StopImmediately()
+        {
+            IsFinishedFlag = true;
+        }
     }
 }
