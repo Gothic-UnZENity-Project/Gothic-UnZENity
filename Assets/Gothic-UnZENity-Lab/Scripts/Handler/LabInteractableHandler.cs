@@ -39,7 +39,15 @@ namespace GUZ.Lab.Handler
 
         private void InitOCMobContainer()
         {
-            SpawnInteractable("CHESTSMALL_OCCHESTSMALLLOCKED", PrefabType.VobContainer, ContainersGO, rotation: Quaternion.Euler(0, 0, 0));
+            SpawnInteractable("CHESTBIG_OCCHESTLARGE", PrefabType.VobContainer, ContainersGO, position: new(0,0,0));
+            SpawnInteractable("CHESTBIG_OCCHESTMEDIUM", PrefabType.VobContainer, ContainersGO, position: new(0,0,-2));
+            SpawnInteractable("CHESTBIG_OCCRATELARGE", PrefabType.VobContainer, ContainersGO, position: new(0,0,-4));
+            SpawnInteractable("CHESTBIG_ORCMUMMY", PrefabType.VobContainer, ContainersGO, position: new(0,0,-6));
+            SpawnInteractable("CHESTSMALL_OCCHESTSMALL", PrefabType.VobContainer, ContainersGO, position: new(0,0,-8));
+            SpawnInteractable("CHESTSMALL_OCCHESTSMALLLOCKED", PrefabType.VobContainer, ContainersGO, position: new(0,0,-10));
+            SpawnInteractable("CHESTSMALL_OCCRATESMALL", PrefabType.VobContainer, ContainersGO, position: new(0,0,0-12));
+            SpawnInteractable("CHESTSMALL_OCCRATESMALLLOCKED", PrefabType.VobContainer, ContainersGO, position: new(0,0,-14));
+            
             SpawnItem("ItMwPickaxe", ContainersGO, new Vector3(1.25f, 0.25f, 0));
         }
 

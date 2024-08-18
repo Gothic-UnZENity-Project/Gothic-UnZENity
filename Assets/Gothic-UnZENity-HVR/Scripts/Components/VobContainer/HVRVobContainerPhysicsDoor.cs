@@ -9,6 +9,7 @@ using GUZ.Core.Extensions;
 using GUZ.Core.Properties;
 using GUZ.Core.Vm;
 using HurricaneVR.Framework.Components;
+using HurricaneVR.Framework.Core;
 using HurricaneVR.Framework.Core.Sockets;
 using MyBox;
 using UnityEngine;
@@ -20,11 +21,12 @@ namespace GUZ.HVR.Components.VobContainer
     {
         private readonly char[] _itemNameSeparators = { ';', ',' };
         private readonly char[] _itemCountSeparators = { ':', '.' };
-        
+
         [Separator("GUZ - Settings")]
+        [SerializeField] private GameObject _rootGo;
         [SerializeField] private VobContainerProperties _containerProperties;
         [SerializeField] private HVRSocketContainer _socketContainer;
-        
+
         // Flags to ensure we always call On*() once, everytime open/close status changes.
         private bool _openingForTheFirstTime = true;
         private bool _onOpenedHandled;
@@ -65,6 +67,7 @@ namespace GUZ.HVR.Components.VobContainer
         {
             if (_openingForTheFirstTime)
             {
+                AlignSockets();
                 InitializeContent();
                 _openingForTheFirstTime = false;
             }
@@ -84,6 +87,47 @@ namespace GUZ.HVR.Components.VobContainer
             _onClosedHandled = true;
         }
 
+        /// <summary>
+        /// Containers have different sizes. Re-align the prefab's HVR sockets to match their actual sizes.
+        /// We need to dynamically fetch the bounding box of main mesh as some chests have the correct one inside BIP01 "CHEST_*_0" and others inside "ZM_CHEST*"
+        /// </summary>
+        private void AlignSockets()
+        {
+            var sockets = _socketContainer.Sockets;
+            var firstSocket = sockets.First();
+            var lastSocket = sockets.Last();
+
+            var meshFilters = _rootGo
+                .GetComponentsInChildren<MeshFilter>() // Find all meshes
+                .Where(i => !i.TryGetComponent(typeof(HVRGrabbable), out _)) // Filter out meshe, which is the lid
+                .Where(i => i.gameObject.name.StartsWithIgnoreCase("ZM_") || i.gameObject.name.StartsWithIgnoreCase("BIP01")) // Use Gothic elements only. Ignore elements like HVR sockets.
+                .ToArray();
+
+            if (meshFilters.IsEmpty())
+            {
+                Debug.LogError($"No suitable mesh found for HVR Socket size calculation in {_rootGo.name}. Skipping...");
+                return;
+            }
+            else if (meshFilters.Length >= 2)
+            {
+                Debug.LogError($"More than one feasible MeshFilter for HVR Socket size calculation found in {_rootGo.name}. Leveraging first one.");
+            }
+            
+            
+            
+            var containerBounds = meshFilters.First().sharedMesh.bounds;
+            Debug.Log($"{gameObject.name}: {containerBounds}", gameObject);
+
+            var centerY = containerBounds.center.y;
+
+            _socketContainer.transform.localPosition = new (0, centerY * 1.5f, 0); // Move all Slots nearly towards height of container.
+            
+            // firstSocket.transform.localPosition = containerBounds.min;
+            // lastSocket.transform.localPosition = containerBounds.max;
+
+            // Fetch size between lower- and upper socket
+        }
+        
         private void InitializeContent()
         {
             var contents = _containerProperties.ContainerProperties?.Contents;

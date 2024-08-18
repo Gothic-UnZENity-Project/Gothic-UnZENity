@@ -9,6 +9,7 @@ using GUZ.Core.Properties;
 using HurricaneVR.Framework.Components;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using ZenKit.Vobs;
 
 namespace GUZ.HVR.Components
 {
@@ -28,17 +29,31 @@ namespace GUZ.HVR.Components
                 if (SceneManager.GetActiveScene().name != Constants.SceneLab)
                 {
                     Debug.LogError("oCMobContainer properties not set for GameObject.");
+                    return;
                 }
+            }
+
+            PrepareSounds(props);
+        }
+
+        /// <summary>
+        /// Add opening and closing sound to the containers HVR settings.
+        /// The logic about when to play them is provided by HVR itself.
+        /// </summary>
+        private void PrepareSounds(Container props)
+        {
+            if (props == null)
+            {
                 return;
             }
-            
-            var mdsName = props.Visual.Name;
+
+            var mdsName = props.Visual!.Name;
 
             // If the sound isn't already loaded and cached: Do it now.
             if (!_containerClosedClips.ContainsKey(mdsName.ToLower()))
             {
                 var mds = ResourceLoader.TryGetModelScript(mdsName);
-                
+
                 if (mds == null)
                 {
                     Debug.LogError($"ModelScript >{mdsName}< for oCMobContainer not found.");
