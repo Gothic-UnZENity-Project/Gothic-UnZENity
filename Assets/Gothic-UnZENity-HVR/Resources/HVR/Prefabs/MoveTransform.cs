@@ -14,7 +14,7 @@ namespace GUZ
         // Start is called before the first frame update
         void Start()
         {
-        
+
         }
 
         void Update()
@@ -43,8 +43,11 @@ namespace GUZ
                     child.SetParent(rootObject);
                 }
             }
-            rootObject = this.transform;
-            cameraTransform = rootObject.FindChildRecursive("Camera");
+            else
+            {
+                rootObject = this.transform;
+                cameraTransform = rootObject.FindChildRecursive("Camera");
+            }
         }
     }
 }
