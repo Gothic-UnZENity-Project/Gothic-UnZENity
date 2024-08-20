@@ -26,7 +26,7 @@ namespace GUZ.HVR.Components.VobContainer
 
         // Need to be updated if ocMobContainer.prefab is changed.
         private const int _socketRows = 3;
-        private const int _socketsPerRow = 5;
+        private const int _socketsPerRow = 4;
         private const float _socketRadius = 0.1f;
         private const float _socketCollectionMargin = _socketRadius / 2;
 
@@ -108,19 +108,29 @@ namespace GUZ.HVR.Components.VobContainer
                 .GetComponentsInChildren<MeshFilter>() // Find all meshes
                 .Where(i => !i.TryGetComponent(typeof(HVRGrabbable), out _)) // Filter out meshe, which is the lid
                 .Where(i => i.gameObject.name.StartsWithIgnoreCase("ZM_") || i.gameObject.name.StartsWithIgnoreCase("BIP01")) // Use Gothic elements only. Ignore elements like HVR sockets.
+                .Where(i => !i.gameObject.name.ContainsIgnoreCase("LOCK")) // Ignore lock element
                 .ToArray();
 
+            MeshFilter usedMesh;
             if (meshFilters.IsEmpty())
             {
-                Debug.LogError($"No suitable mesh found for HVR Socket size calculation in {_rootGo.name}. Skipping...");
+                Debug.LogError($"No suitable mesh found for HVR Socket size calculation in {_rootGo.name}. Skipping...", _rootGo);
                 return;
             }
             else if (meshFilters.Length >= 2)
             {
-                Debug.LogError($"More than one feasible MeshFilter for HVR Socket size calculation found in {_rootGo.name}. Leveraging first one.");
-            }
+                Debug.LogWarning($"More than one feasible MeshFilter for HVR Socket size calculation found in {_rootGo.name}. Leveraging first (1)ZM_* or (2)BIP01 one.", _rootGo);
 
-            var mainMeshBounds = meshFilters.First().sharedMesh.bounds;
+                // Based on mesh check of all containers in G1, the highest priority for the right mesh is a ZM_* GO if existing.
+                var zmMesh = meshFilters.FirstOrDefault(i => i.gameObject.name.StartsWithIgnoreCase("ZM_"));
+                usedMesh = zmMesh ?? meshFilters.First();
+            }
+            else
+            {
+                usedMesh = meshFilters.First();
+            }
+            
+            var mainMeshBounds = usedMesh!.sharedMesh.bounds;
             
             // Set collectorCollider's size to perfectly align with container.
             _collectorCollider.size = new Vector3(mainMeshBounds.size.x, _collectorCollider.size.y, mainMeshBounds.size.z);
