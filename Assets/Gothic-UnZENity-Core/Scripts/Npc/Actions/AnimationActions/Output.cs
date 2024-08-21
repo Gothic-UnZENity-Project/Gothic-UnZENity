@@ -83,6 +83,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             else
             {
                 Props.NpcSound.Stop();
+                AnimationCreator.StopAnimation(NpcGo);
             }
         }
 
