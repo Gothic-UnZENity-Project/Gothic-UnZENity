@@ -42,6 +42,10 @@ namespace GUZ.Core.Globals
         // solves some weird interactions between the teleport raycast and collider (musicZone/worldTriggerChange)
         public static LayerMask IgnoreRaycastLayer = LayerMask.NameToLayer("Ignore Raycast");
 
+        // HVR Layers (could also be reused for XRIT if needed)
+        public static LayerMask HandLayer = LayerMask.NameToLayer("Hand");
+        public static LayerMask GrabbableLayer = LayerMask.NameToLayer("Grabbable");
+
         // Tags
         public const string ClimbableTag = "Climbable";
         public const string SpotTag = "PxVob_zCVobSpot";

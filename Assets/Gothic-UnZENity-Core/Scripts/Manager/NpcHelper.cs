@@ -264,9 +264,10 @@ namespace GUZ.Core.Manager
             var angleToTarget = Vector3.Angle(selfHeadBone.forward, directionToTarget);
             var inFov = angleToTarget <= 50.0f; // OpenGothic assumes 100 fov for NPCs
 
-            var inLineOfSight = Physics.Linecast(selfHeadBone.position, otherHeadBone.position);
+            var layersToIgnore = Constants.HandLayer | Constants.GrabbableLayer;
+            var hasLineOfSightCollisions = Physics.Linecast(selfHeadBone.position, otherHeadBone.position, layersToIgnore);
 
-            return inSightRange && inFov && inLineOfSight;
+            return inSightRange && inFov && !hasLineOfSightCollisions;
         }
 
         public static void ExtNpcClearAiQueue(NpcInstance npc)
