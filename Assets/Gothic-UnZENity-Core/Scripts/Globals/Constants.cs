@@ -53,6 +53,7 @@ namespace GUZ.Core.Globals
 
         // Custom layers
         public static LayerMask VobRotatableLayer = LayerMask.NameToLayer("VobRotatable"); // No collision with world (e.g. for chest lid and door)
+        public static LayerMask VobItemNoCollision = LayerMask.NameToLayer("VobItemNoCollision"); // No collision with world (e.g. while item is in our hands)
 
         // Tags
         public const string ClimbableTag = "Climbable";

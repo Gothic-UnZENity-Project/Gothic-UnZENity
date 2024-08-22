@@ -35,6 +35,7 @@ MonoBehaviour:
     MaximumObjectSize: 100
     CullingDistance: 200
   ShowVOBMeshCullingGizmos: 0
+  ItemsInHandHaveCollision: 1
   BrightenUpHoveredVOBs: 1
   ShowNamesOnHoveredVOBs: 1
   EnableNpcs: 0
