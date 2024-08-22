@@ -2204,7 +2204,7 @@ GameObject:
   - component: {fileID: 7136319683539270999}
   - component: {fileID: 6573836035492029965}
   - component: {fileID: 6797639264981372780}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: BIP01 CHEST_.*_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2332,7 +2332,7 @@ MonoBehaviour:
   HandGrabbedClip: {fileID: 0}
   SocketGrabPoints: []
   Rigidbody: {fileID: 0}
-  AutoApplyLayer: 1
+  AutoApplyLayer: 0
   RequireOverlapClearance: 0
   OverlapTimeout: 0.1
   FinalJointMaxAngle: 15
@@ -2418,12 +2418,6 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   UnSocketed:
-    m_PersistentCalls:
-      m_Calls: []
-  DistanceGrabbed:
-    m_PersistentCalls:
-      m_Calls: []
-  DistanceReleased:
     m_PersistentCalls:
       m_Calls: []
   GrabPointsMeta: []

@@ -17,11 +17,11 @@ TagManager:
   - 
   - Water
   - UI
-  - Item
+  - VobRotatable
+  - 
   - Player
-  - Hands
-  - Interactive
   - DynamicPose
+  - 
   - 
   - 
   - 

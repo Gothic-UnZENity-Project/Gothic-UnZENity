@@ -32,15 +32,27 @@ namespace GUZ.Core.Globals
         public const string SceneLoading = "Loading";
         public const string SceneLab = "Lab";
 
-        //Layer for all Items, specifically to disable collision physics between player and items
-        public static LayerMask PlayerLayer = LayerMask.NameToLayer("Player");
-        public static LayerMask ItemLayer = LayerMask.NameToLayer("Item");
 
-        // set layer to interactive so we can interact using XR Ray interactor
-        public static LayerMask InteractiveLayer = LayerMask.NameToLayer("Interactive");
+        /*
+         * ### Layers
+         */
 
+        // Unity's built-in layers
+        public static LayerMask DefaultLayer = LayerMask.NameToLayer("Default");
+        public static LayerMask TransparentFXLayer = LayerMask.NameToLayer("TransparentFX");
         // solves some weird interactions between the teleport raycast and collider (musicZone/worldTriggerChange)
         public static LayerMask IgnoreRaycastLayer = LayerMask.NameToLayer("Ignore Raycast");
+        public static LayerMask WaterLayer = LayerMask.NameToLayer("Water");
+        public static LayerMask UILayer = LayerMask.NameToLayer("UI");
+
+        // HVR Layers (could also be reused and implemented for XRIT if needed)
+        public static LayerMask PlayerLayer = LayerMask.NameToLayer("Player"); // Layer 8 (suggested by HVR)
+        public static LayerMask DynamicPoseLayer = LayerMask.NameToLayer("DynamicPose"); // Layer 9 (suggested by HVR)
+        public static LayerMask GrabbableLayer = LayerMask.NameToLayer("Grabbable"); // Layer 20 (suggested by HVR)
+        public static LayerMask HandLayer = LayerMask.NameToLayer("Hand"); // Layer 21 (suggested by HVR)
+
+        // Custom layers
+        public static LayerMask VobRotatableLayer = LayerMask.NameToLayer("VobRotatable"); // No collision with world (e.g. for chest lid and door)
 
         // Tags
         public const string ClimbableTag = "Climbable";

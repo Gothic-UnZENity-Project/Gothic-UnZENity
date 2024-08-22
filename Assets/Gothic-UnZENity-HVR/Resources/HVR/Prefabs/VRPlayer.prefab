@@ -5436,7 +5436,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3210201902041804740, guid: a0de35f4e16efb54ba0281586c17416f, type: 3}
       propertyPath: RaycastLayermask.m_Bits
-      value: 1048577
+      value: 1048641
       objectReference: {fileID: 0}
     - target: {fileID: 3242523465998059869, guid: a0de35f4e16efb54ba0281586c17416f, type: 3}
       propertyPath: Tags.Tags
@@ -5757,6 +5757,10 @@ PrefabInstance:
     - target: {fileID: 5988708336704610116, guid: a0de35f4e16efb54ba0281586c17416f, type: 3}
       propertyPath: BeforeGrabbed.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 6346987878268507658, guid: a0de35f4e16efb54ba0281586c17416f, type: 3}
+      propertyPath: RaycastLayermask.m_Bits
+      value: 1048641
       objectReference: {fileID: 0}
     - target: {fileID: 6444349944712932463, guid: a0de35f4e16efb54ba0281586c17416f, type: 3}
       propertyPath: Released.m_PersistentCalls.m_Calls.Array.size
