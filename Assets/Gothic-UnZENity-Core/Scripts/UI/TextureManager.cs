@@ -2,55 +2,34 @@ using GUZ.Core.Caches;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 public class TextureManager : MonoBehaviour
 {
-    [FormerlySerializedAs("mainMenuImageBackgroundMaterial")]
+    // MainMenu
     public Material MainMenuImageBackgroundMaterial;
-
-    [FormerlySerializedAs("mainMenuBackgroundMaterial")]
     public Material MainMenuBackgroundMaterial;
-
-    [FormerlySerializedAs("mainMenuSaveLoadBackgroundMaterial")]
     public Material MainMenuSaveLoadBackgroundMaterial;
-
-    [FormerlySerializedAs("mainMenuTextImageMaterial")]
     public Material MainMenuTextImageMaterial;
-
-    [FormerlySerializedAs("backgroundMaterial")]
-    public Material BackgroundMaterial;
-
-    [FormerlySerializedAs("buttonMaterial")]
-    public Material ButtonMaterial;
-
-    [FormerlySerializedAs("sliderMaterial")]
-    public Material SliderMaterial;
-
-    [FormerlySerializedAs("sliderPositionMaterial")]
-    public Material SliderPositionMaterial;
-
-    [FormerlySerializedAs("arrowMaterial")]
-    public Material ArrowMaterial;
-
-    [FormerlySerializedAs("fillerMaterial")]
-    public Material FillerMaterial;
-
-    [FormerlySerializedAs("skyMaterial")] public Material SkyMaterial;
-    [FormerlySerializedAs("mapMaterial")] public Material MapMaterial;
-
-    [FormerlySerializedAs("gothicLoadingMenuMaterial")]
+    
+    // Menu
     public Material GothicLoadingMenuMaterial;
-
-    [FormerlySerializedAs("loadingBarBackgroundMaterial")]
+    public Material ButtonMaterial;
+    public Material SliderMaterial;
+    public Material SliderPositionMaterial;
+    public Material ArrowMaterial;
+    public Material FillerMaterial;
+    
+    // Loading
     public Material LoadingBarBackgroundMaterial;
-
-    [FormerlySerializedAs("loadingBarMaterial")]
     public Material LoadingBarMaterial;
-
-    [FormerlySerializedAs("loadingSphereMaterial")]
     public Material LoadingSphereMaterial;
 
+    // Misc
+    public Material SkyMaterial;
+    public Material MapMaterial;
+    public Material BackgroundMaterial;
+
+    
     private void Start()
     {
         MainMenuImageBackgroundMaterial = GetEmptyMaterial(MaterialExtension.BlendMode.Opaque);
