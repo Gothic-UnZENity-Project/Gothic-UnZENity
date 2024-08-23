@@ -2,6 +2,7 @@
 using System.Collections;
 using GUZ.Core;
 using GUZ.Core.Globals;
+using GUZ.Core.Manager;
 using GUZ.HVR.Properties;
 using HurricaneVR.Framework.Core;
 using HurricaneVR.Framework.Core.Grabbers;
@@ -53,7 +54,8 @@ namespace GUZ.HVR.Components
             // Stop collisions while being dragged around (at least shortly; otherwise e.g. items might stick inside chests when pulled out).
             gameObject.layer = Constants.VobItemNoCollision;
 
-            if (GameGlobals.Config.ItemsInHandHaveCollision)
+            // If we want Item collisions, we just temporarily deactivate them until the item is free of collisions.
+            if (PlayerPrefsManager.ItemCollisionWhileDragged)
             {
                 StartCoroutine(ReEnableCollisionRoutine());
             }

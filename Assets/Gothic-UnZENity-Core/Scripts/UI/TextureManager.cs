@@ -5,12 +5,13 @@ using UnityEngine;
 
 public class TextureManager : MonoBehaviour
 {
-    // MainMenu
+    // (Main) Menu
     public Material MainMenuImageBackgroundMaterial;
     public Material MainMenuBackgroundMaterial;
     public Material MainMenuSaveLoadBackgroundMaterial;
     public Material MainMenuTextImageMaterial;
-    
+    public Material MenuChoiceBackMaterial;
+        
     // Menu
     public Material GothicLoadingMenuMaterial;
     public Material ButtonMaterial;
@@ -51,6 +52,8 @@ public class TextureManager : MonoBehaviour
         MainMenuBackgroundMaterial.mainTexture = TextureCache.TryGetTexture("MENU_INGAME.TGA");
         MainMenuSaveLoadBackgroundMaterial.mainTexture = TextureCache.TryGetTexture("MENU_SAVELOAD_BACK.TGA");
         MainMenuTextImageMaterial.mainTexture = TextureCache.TryGetTexture("MENU_GOTHIC.TGA");
+        MenuChoiceBackMaterial.mainTexture = TextureCache.TryGetTexture("MENU_CHOICE_BACK.TGA");
+
         GothicLoadingMenuMaterial.mainTexture = TextureCache.TryGetTexture("LOADING.TGA");
         LoadingBarBackgroundMaterial.mainTexture = TextureCache.TryGetTexture("PROGRESS.TGA");
         LoadingBarMaterial.mainTexture = TextureCache.TryGetTexture("PROGRESS_BAR.TGA");

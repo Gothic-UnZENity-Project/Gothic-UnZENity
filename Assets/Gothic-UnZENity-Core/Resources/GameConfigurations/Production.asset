@@ -34,7 +34,6 @@ MonoBehaviour:
   LargeVOBMeshCullingGroup:
     MaximumObjectSize: 100
     CullingDistance: 200
-  ItemsInHandHaveCollision: 1
   BrightenUpHoveredVOBs: 1
   ShowNamesOnHoveredVOBs: 1
   ShowVOBMeshCullingGizmos: 0

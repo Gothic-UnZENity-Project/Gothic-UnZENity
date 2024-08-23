@@ -117,7 +117,6 @@ namespace GUZ.Core
 
 
         [Separator("Immersion")]
-        public bool ItemsInHandHaveCollision = true;
         [OverrideLabel("Brighten Up Hovered VOBs")]
         public bool BrightenUpHoveredVOBs = true;
         [OverrideLabel("Show Names On Hovered VOBs")]

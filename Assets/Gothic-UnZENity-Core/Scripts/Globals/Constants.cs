@@ -71,8 +71,8 @@ namespace GUZ.Core.Globals
         public const string PlayerPrefSmoothRotationSpeed = "SmoothRotationSpeed";
         public const string PlayerPrefMusicVolume = "BackgroundMusicVolume";
         public const string PlayerPrefSoundEffectsVolume = "SoundEffectsVolume";
-        public static float MoveSpeed { get; set; } = 8f;
-
+        public const string PlayerPrefItemCollisionWhileDragged = "ItemCollisionWhileDragged";
+        
         public static string SelectedWorld { get; set; } = "world.zen";
         public static string SelectedWaypoint { get; set; } = "START";
 
@@ -91,6 +91,10 @@ namespace GUZ.Core.Globals
 
         public static int DaedalusTAITNone;
 
+        
+        public static string YesLabel = "Yes";
+        public static string NoLabel = "No";
+        
         static Constants()
         {
             LoadingMaterial = new Material(ShaderWorldLit);
