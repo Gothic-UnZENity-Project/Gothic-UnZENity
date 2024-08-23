@@ -34,10 +34,11 @@ MonoBehaviour:
   LargeVOBMeshCullingGroup:
     MaximumObjectSize: 100
     CullingDistance: 200
-  ShowVOBMeshCullingGizmos: 0
   ItemsInHandHaveCollision: 1
   BrightenUpHoveredVOBs: 1
   ShowNamesOnHoveredVOBs: 1
+  ShowVOBMeshCullingGizmos: 0
+  ShowCapsuleOverlapGizmos: 0
   EnableNpcs: 0
   EnableNpcMeshCulling: 1
   NpcCullingDistance: 50
