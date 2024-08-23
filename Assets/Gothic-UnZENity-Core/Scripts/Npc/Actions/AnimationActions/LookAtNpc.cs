@@ -35,6 +35,17 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             AnimationCreator.PlayAnimation(Props.MdsNames, _animationName, NpcGo, true);
         }
 
+        // private Quaternion GetDesiredHeadRotation() old
+        // {
+        //     var destination = LookupCache.NpcCache[OtherIndex].properties.transform.position;
+        //     var lookRotationVector = destination - NpcHeadTransform.position;
+        //     var lookRotation = Quaternion.LookRotation(lookRotationVector);
+
+        //     var currentNpcRotationEuler = NpcHeadTransform.rotation.eulerAngles;
+
+        //     return Quaternion.Euler(currentNpcRotationEuler.x, lookRotation.eulerAngles.y, currentNpcRotationEuler.z);
+        // }
+
         private Quaternion GetDesiredHeadRotation()
         {
             var destination = LookupCache.NpcCache[OtherIndex].properties.transform.position;
@@ -42,8 +53,16 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             var lookRotation = Quaternion.LookRotation(lookRotationVector);
 
             var currentNpcRotationEuler = NpcHeadTransform.rotation.eulerAngles;
+            var desiredYRotation = lookRotation.eulerAngles.y;
 
-            return Quaternion.Euler(currentNpcRotationEuler.x, lookRotation.eulerAngles.y, currentNpcRotationEuler.z);
+            // Constrain the Y rotation within a reasonable range (e.g., -90 to 90 degrees relative to the body)
+            var bodyYRotation = NpcGo.transform.rotation.eulerAngles.y;
+            var relativeYRotation = Mathf.DeltaAngle(bodyYRotation, desiredYRotation);
+
+            relativeYRotation = Mathf.Clamp(relativeYRotation, -50f, 50f);
+
+            // Apply the constrained Y rotation back to the head
+            return Quaternion.Euler(currentNpcRotationEuler.x, bodyYRotation + relativeYRotation, currentNpcRotationEuler.z);
         }
 
         public override void Tick()
@@ -59,18 +78,35 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
         /// </summary>
         private void HandleRotation()
         {
-            var currentRotation =
-                Quaternion.RotateTowards(NpcHeadTransform.rotation, _finalRotation, Time.deltaTime * 100);
+            // var currentRotation =
+            //     Quaternion.RotateTowards(NpcHeadTransform.rotation, _finalRotation, Time.deltaTime * 100);
 
-            // Check if rotation is done.
-            if (Quaternion.Angle(NpcHeadTransform.rotation, _finalRotation) < 1f)
+            // // Check if rotation is done.
+            // if (Quaternion.Angle(NpcHeadTransform.rotation, _finalRotation) < 1f)
+            // {
+            //     AnimationCreator.StopAnimation(NpcGo);
+            //     IsFinishedFlag = true;
+            // }
+            // else
+            // {
+            //     NpcHeadTransform.rotation = currentRotation;
+            // }
+
+            // Gradually rotate the head towards the target rotation
+            var currentRotation = Quaternion.RotateTowards(NpcHeadTransform.rotation, _finalRotation, Time.deltaTime * 100);
+            NpcHeadTransform.rotation = currentRotation;
+
+            // Calculate the angle to the target rotation
+            var angleToTarget = Quaternion.Angle(NpcHeadTransform.rotation, _finalRotation);
+
+            // Stop the animation and finalize if the rotation is close enough to the target
+            if (angleToTarget < 1f)
             {
-                AnimationCreator.StopAnimation(NpcGo);
+                // Ensure that animation continues blending smoothly
+                Debug.Log("BoroLog: NPC stopped looking");
+                AnimationCreator.StopAnimation(NpcGo); // Ensure animation is stopped correctly
+
                 IsFinishedFlag = true;
-            }
-            else
-            {
-                NpcHeadTransform.rotation = currentRotation;
             }
         }
 
