@@ -8,7 +8,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
 {
     public class LookAtNpc : AbstractAnimationAction
     {
-        private const string _animationName = "S_TLOOK";
+        private const string _animationName = "T_LOOK";
 
         private int OtherId => Action.Int0;
         private int OtherIndex => Action.Int1;
@@ -32,7 +32,10 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             }
 
             // Look animation. Will be used to transition from (e.g.) folded hands towards this animation later.
-            AnimationCreator.PlayAnimation(Props.MdsNames, _animationName, NpcGo, true);
+            // var animationPlayed = AnimationCreator.BlendAnimation(Props.MdsNames, _animationName, NpcGo, false);
+            // if (animationPlayed){
+            //     Debug.Log("BoroLog: NPC Started playing S_TLOOK animation");
+            // } 
         }
 
         // private Quaternion GetDesiredHeadRotation() old
@@ -104,7 +107,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             {
                 // Ensure that animation continues blending smoothly
                 Debug.Log("BoroLog: NPC stopped looking");
-                AnimationCreator.StopAnimation(NpcGo); // Ensure animation is stopped correctly
+                // AnimationCreator.StopAnimation(NpcGo); // Ensure animation is stopped correctly
 
                 IsFinishedFlag = true;
             }
