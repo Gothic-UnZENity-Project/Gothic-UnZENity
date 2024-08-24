@@ -94,9 +94,9 @@ namespace GUZ.Core.Manager.Culling
                     if (wayNetPoint is not null)
                     {
                         UpdatePosition(evt.index, wayNetPoint.Position);
-                        _visibleNpcs.Remove(evt.index);
                     }
                 }
+                _visibleNpcs.Remove(evt.index);
             }
 
             // If the NPC !wasOutOfDistance (==wasInDistanceAlready), then we spawned our VRPlayer next to the NPC
