@@ -218,18 +218,19 @@ MonoBehaviour:
   MainMenuBackgroundMaterial: {fileID: 0}
   MainMenuSaveLoadBackgroundMaterial: {fileID: 0}
   MainMenuTextImageMaterial: {fileID: 0}
-  BackgroundMaterial: {fileID: 2100000, guid: 1e349bd46543d684da0fd00dfcc78b72, type: 2}
+  MenuChoiceBackMaterial: {fileID: 2100000, guid: abf584ad0ef807746abef146336eebe6, type: 2}
+  GothicLoadingMenuMaterial: {fileID: 0}
   ButtonMaterial: {fileID: 2100000, guid: 731db01b086aeb94582b82a16a95775b, type: 2}
   SliderMaterial: {fileID: 2100000, guid: 9edb2534304dae240937e63c8a079e58, type: 2}
   SliderPositionMaterial: {fileID: 2100000, guid: ef75494119d9122438ca7408644d2e66, type: 2}
   ArrowMaterial: {fileID: 2100000, guid: dc6ce4e18c065d34f9037b5b60259872, type: 2}
   FillerMaterial: {fileID: 2100000, guid: 7f15366450c487344a1e66a13b22a847, type: 2}
-  SkyMaterial: {fileID: 2100000, guid: 39ac659c922b5b1489714aacd9b952e9, type: 2}
-  MapMaterial: {fileID: 2100000, guid: 6edba26a8e8b5c3488fd2eb615350942, type: 2}
-  GothicLoadingMenuMaterial: {fileID: 0}
   LoadingBarBackgroundMaterial: {fileID: 0}
   LoadingBarMaterial: {fileID: 0}
   LoadingSphereMaterial: {fileID: 0}
+  SkyMaterial: {fileID: 2100000, guid: 39ac659c922b5b1489714aacd9b952e9, type: 2}
+  MapMaterial: {fileID: 2100000, guid: 6edba26a8e8b5c3488fd2eb615350942, type: 2}
+  BackgroundMaterial: {fileID: 2100000, guid: 1e349bd46543d684da0fd00dfcc78b72, type: 2}
 --- !u!1 &734922770
 GameObject:
   m_ObjectHideFlags: 0
