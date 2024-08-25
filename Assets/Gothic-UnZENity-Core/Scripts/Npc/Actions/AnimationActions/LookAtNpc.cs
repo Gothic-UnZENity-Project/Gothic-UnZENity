@@ -1,6 +1,5 @@
 using System;
 using GUZ.Core.Caches;
-using GUZ.Core.Creator;
 using GUZ.Core.Data.ZkEvents;
 using UnityEngine;
 
@@ -28,26 +27,8 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             if (Math.Abs(NpcHeadTransform.transform.eulerAngles.y - _finalRotation.y) < 1f)
             {
                 IsFinishedFlag = true;
-                return;
             }
-
-            // Look animation. Will be used to transition from (e.g.) folded hands towards this animation later.
-            // var animationPlayed = AnimationCreator.BlendAnimation(Props.MdsNames, _animationName, NpcGo, false);
-            // if (animationPlayed){
-            //     Debug.Log("BoroLog: NPC Started playing S_TLOOK animation");
-            // } 
         }
-
-        // private Quaternion GetDesiredHeadRotation() old
-        // {
-        //     var destination = LookupCache.NpcCache[OtherIndex].properties.transform.position;
-        //     var lookRotationVector = destination - NpcHeadTransform.position;
-        //     var lookRotation = Quaternion.LookRotation(lookRotationVector);
-
-        //     var currentNpcRotationEuler = NpcHeadTransform.rotation.eulerAngles;
-
-        //     return Quaternion.Euler(currentNpcRotationEuler.x, lookRotation.eulerAngles.y, currentNpcRotationEuler.z);
-        // }
 
         private Quaternion GetDesiredHeadRotation()
         {
@@ -81,20 +62,6 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
         /// </summary>
         private void HandleRotation()
         {
-            // var currentRotation =
-            //     Quaternion.RotateTowards(NpcHeadTransform.rotation, _finalRotation, Time.deltaTime * 100);
-
-            // // Check if rotation is done.
-            // if (Quaternion.Angle(NpcHeadTransform.rotation, _finalRotation) < 1f)
-            // {
-            //     AnimationCreator.StopAnimation(NpcGo);
-            //     IsFinishedFlag = true;
-            // }
-            // else
-            // {
-            //     NpcHeadTransform.rotation = currentRotation;
-            // }
-
             // Gradually rotate the head towards the target rotation
             var currentRotation = Quaternion.RotateTowards(NpcHeadTransform.rotation, _finalRotation, Time.deltaTime * 100);
             NpcHeadTransform.rotation = currentRotation;
@@ -106,9 +73,6 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             if (angleToTarget < 1f)
             {
                 // Ensure that animation continues blending smoothly
-                Debug.Log("BoroLog: NPC stopped looking");
-                // AnimationCreator.StopAnimation(NpcGo); // Ensure animation is stopped correctly
-
                 IsFinishedFlag = true;
             }
         }

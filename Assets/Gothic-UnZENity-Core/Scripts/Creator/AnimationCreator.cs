@@ -105,19 +105,10 @@ namespace GUZ.Core.Creator
 
         public static bool BlendAnimation(string[] mdsNames, string animationName, GameObject go, bool repeat = false)
         {
-            // We assume, that we get mdsNames in this order: base, overlay. But we should always check for overlay first.
-            // foreach (var mdsName in mdsNames.Reverse())
-            // {
-            //     if (TryBlendAnimation(mdsName, animationName, go, repeat))
-            //     {
-            //         return true;
-            //     }
-            // }
-
             if (TryBlendAnimation(mdsNames[0], animationName, go, repeat))
-                {
-                    return true;
-                }
+            {
+                return true;
+            }
 
             // No suitable animation found.
             return false;
@@ -172,7 +163,6 @@ namespace GUZ.Core.Creator
                 animationComp[mdsAnimationKeyName]!.layer = modelAnimation.Layer;
             }
 
-            // animationComp.Stop();
             animationComp.Blend(mdsAnimationKeyName);
 
             return true;
