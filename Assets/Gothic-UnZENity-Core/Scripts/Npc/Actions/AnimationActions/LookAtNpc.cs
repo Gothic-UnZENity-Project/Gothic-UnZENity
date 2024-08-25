@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using GUZ.Core.Caches;
 using GUZ.Core.Creator;
 using GUZ.Core.Data.ZkEvents;
@@ -30,6 +31,10 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
                 IsFinishedFlag = true;
                 NpcHeadTransform.rotation = _finalRotation;
             }
+            // if(!IsFinishedFlag){
+            //     AnimationCreator.StopAnimation(NpcGo);
+            // }
+            AnimationCreator.BlendAnimation(Props.MdsNames, GetWalkModeAnimationString(), NpcGo, true, new List<string> { "BIP01 HEAD" });
         }
 
         private Quaternion GetDesiredHeadRotation()
@@ -54,7 +59,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
         public override void Tick()
         {
             base.Tick();
-
+            
             HandleRotation();
         }
 
@@ -75,6 +80,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             if (angleToTarget < 1f)
             {
                 // Ensure that animation continues blending smoothly
+                // AnimationCreator.StopAnimation(NpcGo);
                 IsFinishedFlag = true;
             }
         }

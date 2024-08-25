@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using GUZ.Core.Creator;
 using GUZ.Core.Data.ZkEvents;
 using GUZ.Core.Vm;
@@ -93,7 +94,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             if (Quaternion.Angle(npcTransform.rotation, _finalRotation) < 1f && IsFinishedFlag != true)
             {
                 AnimationCreator.StopAnimation(NpcGo);
-                AnimationCreator.BlendAnimation(Props.MdsNames, GetWalkModeAnimationString(), NpcGo, false);
+                AnimationCreator.BlendAnimation(Props.MdsNames, GetWalkModeAnimationString(), NpcGo, true, new List<string> { "BIP01 HEAD" });
                 IsFinishedFlag = true;
             }
             else
