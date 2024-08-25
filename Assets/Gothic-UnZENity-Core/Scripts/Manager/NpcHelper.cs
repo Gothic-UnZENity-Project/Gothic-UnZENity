@@ -563,6 +563,25 @@ namespace GUZ.Core.Manager
             return false;
         }
 
+        public static void ExtNpcSetToFistMode(NpcInstance npcInstance)
+        {
+            var npcProperties = GetProperties(npcInstance);
+
+            npcProperties.WeaponState = VmGothicEnums.WeaponState.Fist;
+            // npc.properties.
+            // if npc has item in hand remove it and set weapon to fist 
+            // Some animations need to force remove items, some not.
+            if (npcProperties.UsedItemSlot == "")
+            {
+                return;
+            }
+
+            var slotGo = npcProperties.Go.FindChildRecursively(npcProperties.UsedItemSlot);
+            var item = slotGo!.transform.GetChild(0);
+
+            UnityEngine.Object.Destroy(item.gameObject);
+        }
+
         public static void ExchangeRoutine(GameObject go, NpcInstance npcInstance, int routineIndex)
         {
             // e.g. Monsters have no routine and therefore no further routine handling needed.

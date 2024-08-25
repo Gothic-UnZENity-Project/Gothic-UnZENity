@@ -115,6 +115,7 @@ namespace GUZ.Core.Vm
             vm.RegisterExternal<int, NpcInstance, int>("Npc_KnowsInfo", Npc_KnowsInfo);
             vm.RegisterExternal<int, NpcInstance>("Npc_IsDead", Npc_IsDead);
             vm.RegisterExternal<int, NpcInstance, int>("Npc_IsInState", Npc_IsInState);
+            vm.RegisterExternal<NpcInstance>("Npc_SetToFistMode", Npc_SetToFistMode);
 
             // Print
             vm.RegisterExternal<string>("PrintDebug", PrintDebug);
@@ -730,6 +731,11 @@ namespace GUZ.Core.Vm
         public static int Npc_IsInState(NpcInstance npc, int state)
         {
             return Convert.ToInt32(NpcHelper.ExtNpcIsInState(npc, state));
+        }
+
+        public static void Npc_SetToFistMode(NpcInstance npc)
+        {
+            NpcHelper.ExtNpcSetToFistMode(npc);
         }
 
         #endregion
