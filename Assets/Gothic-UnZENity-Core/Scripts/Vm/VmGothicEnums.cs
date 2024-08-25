@@ -171,5 +171,16 @@ namespace GUZ.Core.Vm
             ItemAmulet = 1 << 22, // use like amulet
             ItemRing = 1 << 11 // use like ring
         }
+
+        public enum WeaponState
+        {
+            NoWeapon,
+            Fist,
+            W1H,
+            W2H,
+            Bow,
+            CBow,
+            Mage
+        }
     }
 }
