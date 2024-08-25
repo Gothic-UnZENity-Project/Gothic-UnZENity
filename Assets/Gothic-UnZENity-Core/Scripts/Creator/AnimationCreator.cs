@@ -103,6 +103,81 @@ namespace GUZ.Core.Creator
             animationComp.Stop();
         }
 
+        public static bool BlendAnimation(string[] mdsNames, string animationName, GameObject go, bool repeat = false)
+        {
+            // We assume, that we get mdsNames in this order: base, overlay. But we should always check for overlay first.
+            // foreach (var mdsName in mdsNames.Reverse())
+            // {
+            //     if (TryBlendAnimation(mdsName, animationName, go, repeat))
+            //     {
+            //         return true;
+            //     }
+            // }
+
+            if (TryBlendAnimation(mdsNames[0], animationName, go, repeat))
+                {
+                    return true;
+                }
+
+            // No suitable animation found.
+            return false;
+        }
+
+        public static bool TryBlendAnimation(string mdsName, string animationName, GameObject go, bool repeat)
+        {
+            // For animations: mdhName == mdsName (with different file ending of course ;-))
+            var mdhName = mdsName;
+
+            var modelAnimation = ResourceLoader.TryGetModelAnimation(mdsName, animationName);
+            var mds = ResourceLoader.TryGetModelScript(mdsName);
+            if (modelAnimation == null)
+            {
+                Debug.Log("BoroLog: ERROR Couldn't find "+animationName+" animation");
+                var lol = LookupCache.AnimationClipCache;
+                // return false;
+            }
+
+            var mdsAnimationKeyName = GetCombinedAnimationKey(mdsName, animationName);
+            var animationComp = go.GetComponent<Animation>();
+
+            var mdh = ResourceLoader.TryGetModelHierarchy(mdhName);
+            var anim = mds.Animations.First(i => i.Name.EqualsIgnoreCase(animationName));
+
+            // If we create empty animations with only one frame, Unity will complain. We therefore skip it for now.
+            if (anim.FirstFrame == anim.LastFrame)
+            {
+                Debug.Log("BoroLog: ERROR first frame == last frame");
+                return false;
+            }
+
+            if (anim.Direction == AnimationDirection.Backward)
+            {
+                Debug.LogWarning(
+                    $"Backwards animations not yet handled. Called for >{animationName}< from >{mdsName}<. Currently playing Forward.");
+            }
+
+            // Try to load from cache
+            if (!LookupCache.AnimationClipCache.TryGetValue(mdsAnimationKeyName, out var clip))
+            {
+                clip = LoadAnimationClip(modelAnimation, mdh, go, repeat, mdsAnimationKeyName);
+                LookupCache.AnimationClipCache[mdsAnimationKeyName] = clip;
+
+                AddClipEvents(clip, modelAnimation, anim);
+                AddClipEndEvent(anim, clip);
+            }
+
+            if (animationComp[mdsAnimationKeyName] == null)
+            {
+                animationComp.AddClip(clip, mdsAnimationKeyName);
+                animationComp[mdsAnimationKeyName]!.layer = modelAnimation.Layer;
+            }
+
+            // animationComp.Stop();
+            animationComp.Blend(mdsAnimationKeyName);
+
+            return true;
+        }
+
         public static void PlayHeadMorphAnimation(NpcProperties props, HeadMorph.HeadMorphType type)
         {
             props.HeadMorph.StartAnimation(props.BodyData.Head, type);
@@ -173,7 +248,7 @@ namespace GUZ.Core.Creator
                 boneList[0].AddKey(time, uPosition.x);
                 boneList[1].AddKey(time, uPosition.y);
                 boneList[2].AddKey(time, uPosition.z);
-                
+
                 // It's important to have this value with a -1. Otherwise animation is inversed.
                 boneList[3].AddKey(time, -sample.Rotation.W);
                 boneList[4].AddKey(time, sample.Rotation.X);
@@ -245,7 +320,7 @@ namespace GUZ.Core.Creator
                     time = clampedFrame / clip.frameRate,
                     functionName = nameof(IAnimationCallbacks.AnimationCallback),
 
-                     // As we can't add a custom object, we serialize the data object.
+                    // As we can't add a custom object, we serialize the data object.
                     stringParameter = JsonUtility.ToJson(new SerializableEventTag(zkEvent))
                 };
 
@@ -260,7 +335,7 @@ namespace GUZ.Core.Creator
                     time = clampedFrame / clip.frameRate,
                     functionName = nameof(IAnimationCallbacks.AnimationSfxCallback),
 
-                     // As we can't add a custom object, we serialize the data object.
+                    // As we can't add a custom object, we serialize the data object.
                     stringParameter = JsonUtility.ToJson(new SerializableEventSoundEffect(sfxEvent))
                 };
 
@@ -274,8 +349,8 @@ namespace GUZ.Core.Creator
                 {
                     time = clampedFrame / clip.frameRate,
                     functionName = nameof(IAnimationCallbacks.AnimationMorphCallback),
-                    
-                     // As we can't add a custom object, we serialize the data object.
+
+                    // As we can't add a custom object, we serialize the data object.
                     stringParameter = JsonUtility.ToJson(new SerializableEventMorphAnimation(morphEvent))
                 };
 

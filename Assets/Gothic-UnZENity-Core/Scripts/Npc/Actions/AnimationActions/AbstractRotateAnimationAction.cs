@@ -25,7 +25,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             _finalRotation = GetRotationDirection();
 
             // Already aligned.
-            if (Math.Abs(NpcGo.transform.eulerAngles.y - _finalRotation.y) < 1f)
+            if (Quaternion.Angle(NpcGo.transform.rotation, _finalRotation) < 1f)
             {
                 IsFinishedFlag = true;
                 return;
@@ -35,7 +35,10 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             var cross = Vector3.Cross(NpcGo.transform.forward, _finalRotation.eulerAngles);
             _isRotateLeft = cross.y >= 0;
 
-            AnimationCreator.PlayAnimation(Props.MdsNames, GetRotateModeAnimationString(), NpcGo, true);
+            if (Quaternion.Angle(NpcGo.transform.rotation, _finalRotation) > 1f)
+            {
+                AnimationCreator.BlendAnimation(Props.MdsNames, GetRotateModeAnimationString(), NpcGo, true);
+            }
         }
 
         private string GetRotateModeAnimationString()
@@ -43,7 +46,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             switch (Props.WalkMode)
             {
                 case VmGothicEnums.WalkMode.Walk:
-                    return _isRotateLeft ? "T_WALKTURNL" : "T_WALKTURNR";
+                    return _isRotateLeft ? "T_RUNTURNL" : "T_RUNTURNR";
                 default:
                     Debug.LogWarning($"Animation of type {Props.WalkMode} not yet implemented.");
                     return "";
@@ -67,7 +70,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
                 Quaternion.RotateTowards(npcTransform.rotation, _finalRotation, Time.deltaTime * 100);
 
             // Check if rotation is done.
-            if (Quaternion.Angle(npcTransform.rotation, _finalRotation) < 1f)
+            if (Quaternion.Angle(npcTransform.rotation, _finalRotation) < 1f && IsFinishedFlag != true)
             {
                 AnimationCreator.StopAnimation(NpcGo);
                 IsFinishedFlag = true;
