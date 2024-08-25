@@ -24,11 +24,11 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
         public override void Start()
         {
             _finalRotation = GetDesiredHeadRotation();
-
             // Already aligned.
-            if (Math.Abs(NpcHeadTransform.transform.eulerAngles.y - _finalRotation.y) < 1f)
+            if (Quaternion.Angle(NpcHeadTransform.rotation, _finalRotation) < 1f)
             {
                 IsFinishedFlag = true;
+                NpcHeadTransform.rotation = _finalRotation;
             }
         }
 
