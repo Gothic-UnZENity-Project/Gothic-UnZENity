@@ -55,6 +55,8 @@ namespace GUZ.Core.Properties
 
 
         public readonly Queue<AbstractAnimationAction> AnimationQueue = new();
+        public int AnimationQueueLength;
+
         public VmGothicEnums.WalkMode WalkMode;
         public VmGothicEnums.WeaponState WeaponState;
 

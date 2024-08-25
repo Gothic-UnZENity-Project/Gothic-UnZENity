@@ -25,6 +25,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             Action = action;
             NpcGo = npcGo;
             Props = npcGo.GetComponent<NpcProperties>();
+            Props.AnimationQueueLength = Props.AnimationQueue.Count;
         }
 
         public virtual void Start()
@@ -155,6 +156,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
         /// </summary>
         public virtual bool IsFinished()
         {
+            Props.AnimationQueueLength = Props.AnimationQueue.Count;
             return IsFinishedFlag;
         }
 
