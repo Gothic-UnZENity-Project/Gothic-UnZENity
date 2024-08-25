@@ -104,6 +104,17 @@ namespace GUZ.Core.Creator
             animationComp.Stop();
         }
 
+        /// <summary>
+        /// Blends the specified animation on the given GameObject.
+        /// <br/>
+        /// Note on excludeBones: <b>Currently this is only used to detach Head so it's not affected by animation while rotating (LookAt method)</b>
+        /// </summary>
+        /// <param name="mdsNames">An array of MDS file names to search for the animation.</param>
+        /// <param name="animationName">The name of the animation to blend.</param>
+        /// <param name="go">The GameObject to blend the animation on.</param>
+        /// <param name="repeat">Whether the animation should repeat or not.</param>
+        /// <param name="excludeBones">A list of bone names to exclude from the loaded animation. <b>Currently this is only used to detach Head so it's not affected by animation while rotating (LookAt)</b></param>
+        /// <returns>True if the animation was successfully blended, false otherwise.</returns>
         public static bool BlendAnimation(string[] mdsNames, string animationName, GameObject go, bool repeat = false, List<string> excludeBones = null)
         {
             foreach (var mdsName in mdsNames.Reverse())
