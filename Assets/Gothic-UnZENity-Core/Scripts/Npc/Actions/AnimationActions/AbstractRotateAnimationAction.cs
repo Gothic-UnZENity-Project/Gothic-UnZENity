@@ -37,6 +37,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
 
             if (Quaternion.Angle(NpcGo.transform.rotation, _finalRotation) > 1f)
             {
+                AnimationCreator.StopAnimation(NpcGo);
                 AnimationCreator.BlendAnimation(Props.MdsNames, GetRotateModeAnimationString(), NpcGo, true);
             }
         }
@@ -92,6 +93,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             if (Quaternion.Angle(npcTransform.rotation, _finalRotation) < 1f && IsFinishedFlag != true)
             {
                 AnimationCreator.StopAnimation(NpcGo);
+                AnimationCreator.BlendAnimation(Props.MdsNames, GetWalkModeAnimationString(), NpcGo, false);
                 IsFinishedFlag = true;
             }
             else

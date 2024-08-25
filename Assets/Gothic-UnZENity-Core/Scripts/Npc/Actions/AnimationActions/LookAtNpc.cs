@@ -1,6 +1,8 @@
 using System;
 using GUZ.Core.Caches;
+using GUZ.Core.Creator;
 using GUZ.Core.Data.ZkEvents;
+using GUZ.Core.Vm;
 using UnityEngine;
 
 namespace GUZ.Core.Npc.Actions.AnimationActions
@@ -43,7 +45,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             var bodyYRotation = NpcGo.transform.rotation.eulerAngles.y;
             var relativeYRotation = Mathf.DeltaAngle(bodyYRotation, desiredYRotation);
 
-            relativeYRotation = Mathf.Clamp(relativeYRotation, -50f, 50f);
+            relativeYRotation = Mathf.Clamp(relativeYRotation, -70f, 70f);
 
             // Apply the constrained Y rotation back to the head
             return Quaternion.Euler(currentNpcRotationEuler.x, bodyYRotation + relativeYRotation, currentNpcRotationEuler.z);
@@ -63,7 +65,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
         private void HandleRotation()
         {
             // Gradually rotate the head towards the target rotation
-            var currentRotation = Quaternion.RotateTowards(NpcHeadTransform.rotation, _finalRotation, Time.deltaTime * 100);
+            var currentRotation = Quaternion.RotateTowards(NpcHeadTransform.rotation, _finalRotation, Time.deltaTime * 150);
             NpcHeadTransform.rotation = currentRotation;
 
             // Calculate the angle to the target rotation
