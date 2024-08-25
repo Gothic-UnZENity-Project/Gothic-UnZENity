@@ -795,7 +795,7 @@ namespace GUZ.Core.Vm
             var begin = new TimeSpan(beginHour, beginMinute, 0);
             var end = new TimeSpan(endHour, endMinute, 0);
 
-            var now = DateTime.Now.TimeOfDay;
+            var now = GameGlobals.Time.GetCurrentTime();
 
             if (begin <= end && begin <= now && now < end)
             {
