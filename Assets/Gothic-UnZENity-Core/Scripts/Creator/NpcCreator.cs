@@ -77,7 +77,24 @@ namespace GUZ.Core.Creator
 
         private static NpcProperties GetProperties(NpcInstance npc)
         {
-            return LookupCache.NpcCache[npc.Index].properties;
+            if (npc == null)
+                return null;
+
+            int counter = 0;
+
+            foreach (var monsterGo in LookupCache.MonsterCache)
+            {
+                if (monsterGo.instance.Handle == npc.Handle)
+                    // return monsterGo.properties;
+                    counter++;
+            }
+            
+            LookupCache.NpcCache.TryGetValue(npc.Index, out var cachedNpc);
+
+            if (cachedNpc.instance != null)
+                return cachedNpc.properties;
+
+            return null;
         }
 
         private static GameObject GetNpcGo(NpcInstance npcInstance)
@@ -203,9 +220,22 @@ namespace GUZ.Core.Creator
             {
                 var origNpc = LookupCache.NpcCache[npcInstanceIndex];
                 var origProps = origNpc.properties.GetComponent<NpcProperties>();
-                // Clone Properties as they're required from the first instance and fetched via e.g. Mdl_SetVisualBody().
-                // As we won't call it multiple times, we will only copy the data but not reinvoke it on ZenKit.
-                cachedValue.properties.Copy(origProps);
+                newNpc.GetComponent<NpcProperties>().Copy(origProps);
+
+                var npcSymbol = Vm.GetSymbolByIndex(npcInstanceIndex);
+                var npcInstance = Vm.AllocInstance<NpcInstance>(npcSymbol);
+                
+                
+                cachedValue.properties = newNpc.GetComponent<NpcProperties>();
+                cachedValue.properties.NpcInstance = npcInstance;
+                cachedValue.instance = npcInstance;
+
+                Vm.InitInstance(npcInstance);
+
+                LookupCache.MonsterCache.Add(cachedValue);
+
+                // // Clone Properties as they're required from the first instance and fetched via e.g. Mdl_SetVisualBody().
+                // // As we won't call it multiple times, we will only copy the data but not reinvoke it on ZenKit.
             }
 
             // Hint: If we filter out NPCs to spawn, we will never get any Monster as they have no Ids set. Except default: 0.
@@ -438,6 +468,7 @@ namespace GUZ.Core.Creator
 
             npcGo.transform.localScale = new Vector3(oldScale.x + bonusFat, oldScale.y, oldScale.z + bonusFat);
         }
+
 
         public static NpcInstance ExtHlpGetNpc(int instanceId)
         {

@@ -19,6 +19,8 @@ namespace GUZ.Core.Caches
         ///     * During loading time, we have no option to understand what is an NPC and what a Monster. We therefore have the first entry of each monster Id in here.
         /// </summary>
         public static readonly Dictionary<int, (NpcInstance instance, NpcProperties properties)> NpcCache = new();
+        
+        public static readonly List<(NpcInstance instance, NpcProperties properties)> MonsterCache = new();
 
         /// <summary>
         /// Already created AnimationData (Clips + RootMotions) can be reused.

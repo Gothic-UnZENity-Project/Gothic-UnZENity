@@ -307,7 +307,21 @@ namespace GUZ.Core.Manager
 
         private static NpcProperties GetProperties([CanBeNull] NpcInstance npc)
         {
-            return npc == null ? null : LookupCache.NpcCache[npc.Index].properties;
+            if (npc == null)
+                return null;
+
+            foreach (var monsterGo in LookupCache.MonsterCache)
+            {
+                if (monsterGo.instance.Handle == npc.Handle)
+                    return monsterGo.properties;
+            }
+
+            LookupCache.NpcCache.TryGetValue(npc.Index, out var cachedNpc);
+
+            if (cachedNpc.instance != null)
+                return cachedNpc.properties;
+
+            return null;
         }
 
         public static void ExtAiWait(NpcInstance npc, float seconds)
