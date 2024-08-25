@@ -74,12 +74,15 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
 
         private string GetWalkModeAnimationString()
         {
+            var weaponState = Props.WeaponState == VmGothicEnums.WeaponState.NoWeapon
+                ? ""
+                : Props.WeaponState.ToString();
             switch (Props.WalkMode)
             {
                 case VmGothicEnums.WalkMode.Walk:
-                    return "S_WALKL";
+                    return $"S_{weaponState}WALKL";
                 case VmGothicEnums.WalkMode.Run:
-                    return "S_RUNL";
+                    return $"S_{weaponState}RUNL";
                 default:
                     Debug.LogWarning($"Animation of type {Props.WalkMode} not yet implemented.");
                     return "";

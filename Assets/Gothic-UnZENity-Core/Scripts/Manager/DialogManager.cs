@@ -154,12 +154,15 @@ namespace GUZ.Core.Manager
         }
 
         /// <summary>
-        /// Skip/Stop current Dialog .wav entry now.
+        /// Skip/Stop current Dialog's .wav entry now.
         /// </summary>
-        /// <param name="props"></param>
         public static void SkipCurrentDialogLine(NpcProperties props)
         {
-            props.CurrentAction.StopImmediately();
+
+            if (props.CurrentAction.GetType() == typeof(Output))
+            {
+                props.CurrentAction.StopImmediately();
+            }
         }
 
         public static void StopDialog()

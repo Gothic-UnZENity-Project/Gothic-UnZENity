@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 258546060515477993}
   - component: {fileID: 6106660089090848833}
   - component: {fileID: 2964456439257095392}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: BIP01 DOORANGLE
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -143,7 +143,7 @@ MonoBehaviour:
   HandGrabbedClip: {fileID: 0}
   SocketGrabPoints: []
   Rigidbody: {fileID: 0}
-  AutoApplyLayer: 1
+  AutoApplyLayer: 0
   RequireOverlapClearance: 0
   OverlapTimeout: 0.1
   FinalJointMaxAngle: 15

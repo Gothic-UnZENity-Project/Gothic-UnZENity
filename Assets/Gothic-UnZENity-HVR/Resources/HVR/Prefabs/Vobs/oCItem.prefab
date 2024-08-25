@@ -390,6 +390,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _properties: {fileID: 6221555039147954839}
+  _meshCollider: {fileID: 3848800049239021948}
 --- !u!114 &8461469363836242350
 MonoBehaviour:
   m_ObjectHideFlags: 0

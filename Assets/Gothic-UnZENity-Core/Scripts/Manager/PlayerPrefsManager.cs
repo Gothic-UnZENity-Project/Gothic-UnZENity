@@ -1,19 +1,26 @@
-﻿using GUZ.Core.Globals;
+﻿using System;
+using GUZ.Core.Globals;
 using UnityEngine;
 
 namespace GUZ.Core.Manager
 {
     public class PlayerPrefsManager
     {
+        // Movement - Direction
         private const int _directionModeCamera = 0;
         private const int _directionModeLeftController = 1;
         private const int _directionModeRightController = 2;
         
+        // Movement - Rotation
         private const int _rotationTypeSmooth = 0;
         private const int _rotationTypeSnap = 1;
         private const int _defaultSmoothRotationSpeed = 2;
         private const int _defaultSnapRotationAmount = 10;
-
+        
+        // Gameplay
+        private const bool _defaultItemCollisionWhileDragged = true;
+        
+        
         /**
          * Movement settings
          */
@@ -76,6 +83,12 @@ namespace GUZ.Core.Manager
         {
             get => PlayerPrefs.GetInt(Constants.PlayerPrefSnapRotationAmount, _defaultSnapRotationAmount);
             set => PlayerPrefs.SetInt(Constants.PlayerPrefSnapRotationAmount, value);
+        }
+        
+        public static bool ItemCollisionWhileDragged
+        {
+            get => Convert.ToBoolean(PlayerPrefs.GetInt(Constants.PlayerPrefItemCollisionWhileDragged, Convert.ToInt32(_defaultItemCollisionWhileDragged)));
+            set => PlayerPrefs.SetInt(Constants.PlayerPrefItemCollisionWhileDragged, Convert.ToInt32(value));
         }
     }
 }

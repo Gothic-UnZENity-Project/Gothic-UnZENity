@@ -14,8 +14,9 @@ namespace GUZ.Core.Player.Menu
         public GameObject MainMenu;
         public GameObject LoadMenu;
         public GameObject SettingsMenu;
-        public GameObject TeleportMenu;
         public GameObject MovementMenu;
+        public GameObject ImmersionMenu;
+        public GameObject TeleportMenu;
         public GameObject SoundMenu;
 
         public MovementMenuHandler MovementMenuHandler;
@@ -67,8 +68,9 @@ namespace GUZ.Core.Player.Menu
             MainMenu.SetActive(menu == MainMenu);
             LoadMenu.SetActive(menu == LoadMenu);
             SettingsMenu.SetActive(menu == SettingsMenu);
-            TeleportMenu.SetActive(menu == TeleportMenu);
             MovementMenu.SetActive(menu == MovementMenu);
+            ImmersionMenu.SetActive(menu == ImmersionMenu);
+            TeleportMenu.SetActive(menu == TeleportMenu);
             SoundMenu.SetActive(menu == SoundMenu);
 
             MainMenuBackground.SetActive(menu != LoadMenu);

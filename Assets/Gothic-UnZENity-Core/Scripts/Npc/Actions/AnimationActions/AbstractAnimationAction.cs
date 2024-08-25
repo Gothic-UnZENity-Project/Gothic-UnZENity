@@ -123,13 +123,14 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             // But only if NPC isn't using an item right now. Otherwise breathing will spawn hand to hips which looks wrong when (e.g.) drinking beer.
             else if (Props.CurrentItem < 0)
             {
+                var weaponState = Props.WeaponState == VmGothicEnums.WeaponState.NoWeapon ? "" : Props.WeaponState.ToString();
                 var animName = Props.WalkMode switch
                 {
-                    VmGothicEnums.WalkMode.Walk => "S_WALK",
-                    VmGothicEnums.WalkMode.Sneak => "S_SNEAK",
-                    VmGothicEnums.WalkMode.Swim => "S_SWIM",
-                    VmGothicEnums.WalkMode.Dive => "S_DIVE",
-                    _ => "S_RUN"
+                    VmGothicEnums.WalkMode.Walk => $"S_{weaponState}WALKL",
+                    VmGothicEnums.WalkMode.Sneak => $"S_{weaponState}SNEAK",
+                    VmGothicEnums.WalkMode.Swim => $"S_{weaponState}SWIM",
+                    VmGothicEnums.WalkMode.Dive => $"S_{weaponState}DIVE",
+                    _ => $"S_{weaponState}RUN"
                 };
                 var idleAnimPlaying = AnimationCreator.PlayAnimation(Props.MdsNames, animName, Props.Go, true);
                 if (!idleAnimPlaying)

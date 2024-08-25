@@ -19,7 +19,7 @@ namespace GUZ.HVR.Components
     {
         [SerializeField] private GameObject _dialogRoot;
         [SerializeField] private List<GameObject> _dialogItems;
-        [SerializeField] private HoverEvent _hoverEventHandler;
+        [SerializeField] private UIEvents _uiEventsHandler;
 
         private float _dialogItemHeight;
         private int _dialogItemsInUse;
@@ -50,7 +50,7 @@ namespace GUZ.HVR.Components
             var hoverElements = new List<GameObject>();
             hoverElements.AddRange(_dialogItems);
             hoverElements.AddRange(_dialogItems.Select(i => i.GetComponentInChildren<TMP_Text>().gameObject).ToList());
-            _hoverEventHandler.SetElementsToHover(hoverElements, true);
+            _uiEventsHandler.SetElementsToHover(hoverElements, true);
             
             _dialogRoot.SetActive(true);
         }

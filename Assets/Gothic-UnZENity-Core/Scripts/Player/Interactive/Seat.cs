@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using GUZ.Core.Globals;
 using GUZ.Core.Player.Camera;
 using Unity.XR.CoreUtils;
 using UnityEngine;
@@ -33,7 +32,9 @@ namespace GUZ.Core.Player.Interactive
 
         private void Start()
         {
-            gameObject.layer = Constants.InteractiveLayer;
+            // FIXME - Previously used another layer. Still needed?
+            // gameObject.layer = _Constants.InteractiveLayer;
+
             //get snap points
             GetSnapPoints();
             //get interactable

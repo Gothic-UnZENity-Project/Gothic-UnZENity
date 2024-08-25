@@ -5299,8 +5299,12 @@ PrefabInstance:
       value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     - target: {fileID: 3210201902041804740, guid: a0de35f4e16efb54ba0281586c17416f, type: 3}
+      propertyPath: Inputs
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 3210201902041804740, guid: a0de35f4e16efb54ba0281586c17416f, type: 3}
       propertyPath: RaycastLayermask.m_Bits
-      value: 1048577
+      value: 1048769
       objectReference: {fileID: 0}
     - target: {fileID: 3242523465998059869, guid: a0de35f4e16efb54ba0281586c17416f, type: 3}
       propertyPath: Tags.Tags
@@ -5621,6 +5625,14 @@ PrefabInstance:
     - target: {fileID: 5988708336704610116, guid: a0de35f4e16efb54ba0281586c17416f, type: 3}
       propertyPath: BeforeGrabbed.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 6346987878268507658, guid: a0de35f4e16efb54ba0281586c17416f, type: 3}
+      propertyPath: Inputs
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 6346987878268507658, guid: a0de35f4e16efb54ba0281586c17416f, type: 3}
+      propertyPath: RaycastLayermask.m_Bits
+      value: 1048769
       objectReference: {fileID: 0}
     - target: {fileID: 6444349944712932463, guid: a0de35f4e16efb54ba0281586c17416f, type: 3}
       propertyPath: Released.m_PersistentCalls.m_Calls.Array.size
@@ -6030,16 +6042,20 @@ PrefabInstance:
       propertyPath: BeforeGrabbed.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 5939876337207847242, guid: a0de35f4e16efb54ba0281586c17416f, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 7486009837194656689, guid: a0de35f4e16efb54ba0281586c17416f, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1684319560234749483}
+      insertIndex: 5
+      addedObject: {fileID: 6717938044841316945}
     - targetCorrespondingSourceObject: {fileID: 7486009837194656689, guid: a0de35f4e16efb54ba0281586c17416f, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 9160517253604081034}
+      addedObject: {fileID: 7174930359443231006}
+    - targetCorrespondingSourceObject: {fileID: 7486009837194656689, guid: a0de35f4e16efb54ba0281586c17416f, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2100257876914915749}
     - targetCorrespondingSourceObject: {fileID: 5020206764174325560, guid: a0de35f4e16efb54ba0281586c17416f, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1991208515551361440}
@@ -6066,7 +6082,74 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 7486009837194656689, guid: a0de35f4e16efb54ba0281586c17416f, type: 3}
   m_PrefabInstance: {fileID: 1411404257910760324}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1684319560234749483
+--- !u!114 &6717938044841316945
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8391885030387849269}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a1a344c5edbb4923be7733206feb6ace, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CanDistanceGrab: 1
+  CanTriggerGrab: 0
+  ForceGrabActivation: 0
+  TriggerGrabThreshold: 0.7
+  MovementAxis: {x: 0, y: 0}
+  TurnAxis: {x: 0, y: 0}
+  IsTeleportActivated: 0
+  IsTeleportDeactivated: 0
+  IsSprintingActivated: 0
+  SprintRequiresDoubleClick: 0
+  IsCrouchActivated: 0
+  IsStandActivated: 0
+  JumpState:
+    Active: 0
+    JustActivated: 0
+    JustDeactivated: 0
+    Value: 0
+  CrouchState:
+    Active: 0
+    JustActivated: 0
+    JustDeactivated: 0
+    Value: 0
+  StandState:
+    Active: 0
+    JustActivated: 0
+    JustDeactivated: 0
+    Value: 0
+  LeftTriggerGrabState:
+    Active: 0
+    JustActivated: 0
+    JustDeactivated: 0
+    Value: 0
+  RightTriggerGrabState:
+    Active: 0
+    JustActivated: 0
+    JustDeactivated: 0
+    Value: 0
+  IsLeftGrabActivated: 0
+  IsLeftHoldActive: 0
+  IsLeftGripHoldActive: 0
+  IsLeftTriggerHoldActive: 0
+  IsRightGrabActivated: 0
+  IsRightHoldActive: 0
+  IsRightGripHoldActive: 0
+  IsRightTriggerHoldActive: 0
+  IsLeftForceGrabActive: 0
+  IsRightForceGrabActive: 0
+  IsLeftForceGrabActivated: 0
+  IsRightForceGrabActivated: 0
+  IsJumpActivated: 0
+  TeleportHandSide: 1
+  SwapMovementAxis: 0
+  UseWASD: 0
+  IsMouseDown: 0
+  MouseAxis: {x: 0, y: 0}
+--- !u!114 &7174930359443231006
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -6078,7 +6161,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: da21e4a06ee346319b0a6dc74e0dcc61, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  NpcSound: {fileID: 9160517253604081034}
+  NpcSound: {fileID: 2100257876914915749}
   Bip01: {fileID: 0}
   ColliderRootMotion: {fileID: 0}
   Head: {fileID: 0}
@@ -6088,6 +6171,7 @@ MonoBehaviour:
   OverlayMdsName: 
   PerceptionTime: 0
   WalkMode: 0
+  WeaponState: 0
   BodyState: 0
   CurrentInteractable: {fileID: 0}
   CurrentInteractableSlot: {fileID: 0}
@@ -6104,7 +6188,7 @@ MonoBehaviour:
   UsedItemSlot: 
   ItemAnimationState: -1
   IsClonedFromAnother: 0
---- !u!82 &9160517253604081034
+--- !u!82 &2100257876914915749
 AudioSource:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
