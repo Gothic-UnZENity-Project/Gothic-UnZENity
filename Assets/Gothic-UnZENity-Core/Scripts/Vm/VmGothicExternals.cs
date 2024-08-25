@@ -121,6 +121,7 @@ namespace GUZ.Core.Vm
             vm.RegisterExternal<int, string>("PrintDebugCh", PrintDebugCh);
             vm.RegisterExternal<string>("PrintDebugInst", PrintDebugInst);
             vm.RegisterExternal<int, string>("PrintDebugInstCh", PrintDebugInstCh);
+            vm.RegisterExternal<int, string>("PrintDebugNpc", PrintDebugNpc);
 
             // Sound
 
@@ -469,6 +470,16 @@ namespace GUZ.Core.Vm
 
 
         public static void PrintDebugInstCh(int channel, string message)
+        {
+            if (!GameGlobals.Config.EnableZSpyLogs)
+            {
+                return;
+            }
+
+            Debug.Log($"[zspy,{channel}]: {message}");
+        }
+
+        public static void PrintDebugNpc(int channel, string message)
         {
             if (!GameGlobals.Config.EnableZSpyLogs)
             {
