@@ -21,7 +21,7 @@ namespace GUZ.Core.Manager
 
         static NpcHelper()
         {
-            GlobalEventDispatcher.GeneralSceneLoaded.AddListener(playerGo => { CacheHero(playerGo); });
+            GlobalEventDispatcher.GeneralSceneLoaded.AddListener(CacheHero);
         }
 
         public static void CacheHero(GameObject playerGo)
@@ -32,6 +32,7 @@ namespace GUZ.Core.Manager
             // Set data for NPC.
             var npcInstance = (NpcInstance)GameData.GothicVm.GlobalHero;
             playerProperties.NpcInstance = npcInstance;
+            playerProperties.Head = Camera.main.transform;
 
             // Cache hero for future lookups.
             LookupCache.NpcCache[heroIndex] = (instance: npcInstance, properties: playerProperties);
@@ -246,7 +247,6 @@ namespace GUZ.Core.Manager
         public static bool ExtNpcCanSeeNpc(NpcInstance self, NpcInstance other)
         {
             var selfProps = GetProperties(self);
-            var selfHeadBone = selfProps.Head;
             var otherProps = GetProperties(other);
 
             if (selfProps == null || otherProps == null)
@@ -254,17 +254,20 @@ namespace GUZ.Core.Manager
                 return false;
             }
 
+            var selfHeadBone = selfProps.Head;
+            var otherHeadBone = otherProps.Head;
 
-            var distanceToNpc = Vector3.Distance(selfProps.transform.position, otherProps.transform.position);
+            var distanceToNpc = Vector3.Distance(selfProps.transform.position, otherHeadBone.position);
             var inSightRange =  distanceToNpc <= self.SensesRange;
 
-            var directionToTarget = (otherProps.transform.position - selfHeadBone.position).normalized;
+            var directionToTarget = (otherHeadBone.position - selfHeadBone.position).normalized;
             var angleToTarget = Vector3.Angle(selfHeadBone.forward, directionToTarget);
             var inFov = angleToTarget <= 50.0f; // OpenGothic assumes 100 fov for NPCs
 
-            var inLineOfSight = Physics.Linecast(selfHeadBone.position, otherProps.transform.position);
+            var layersToIgnore = Constants.HandLayer | Constants.GrabbableLayer;
+            var hasLineOfSightCollisions = Physics.Linecast(selfHeadBone.position, otherHeadBone.position, layersToIgnore);
 
-            return inSightRange && inFov && inLineOfSight;
+            return inSightRange && inFov && !hasLineOfSightCollisions;
         }
 
         public static void ExtNpcClearAiQueue(NpcInstance npc)

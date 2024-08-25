@@ -55,11 +55,14 @@ namespace GUZ.Core.Globals
         public static LayerMask VobRotatableLayer = LayerMask.NameToLayer("VobRotatable"); // No collision with world (e.g. for chest lid and door)
         public static LayerMask VobItemNoCollision = LayerMask.NameToLayer("VobItemNoCollision"); // No collision with world (e.g. while item is in our hands)
 
-        // Tags
+        /*
+         * ### Tags
+         */
         public const string ClimbableTag = "Climbable";
         public const string SpotTag = "PxVob_zCVobSpot";
         public const string PlayerTag = "Player";
 
+        
         public static int MeshPerFrame { get; } = 10;
         public static int VobsPerFrame { get; } = 75;
         public static int NpcsPerFrame { get; } = 75;
