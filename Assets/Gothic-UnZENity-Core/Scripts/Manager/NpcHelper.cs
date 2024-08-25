@@ -584,9 +584,12 @@ namespace GUZ.Core.Manager
 
         public static void ExchangeRoutine(GameObject go, NpcInstance npcInstance, int routineIndex)
         {
-            // e.g. Monsters have no routine and therefore no further routine handling needed.
+            // e.g. Monsters have no routine and we just need to send ai
             if (routineIndex == 0)
             {
+                // We always need to set "self" before executing any Daedalus function.
+                GameData.GothicVm.GlobalSelf = npcInstance;
+                go.GetComponent<AiHandler>().StartRoutine(npcInstance.StartAiState);
                 return;
             }
 
