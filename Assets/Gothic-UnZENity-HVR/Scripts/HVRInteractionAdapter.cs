@@ -59,7 +59,7 @@ namespace GUZ.HVR
                 controllerComp.SmoothTurnSpeed = PlayerPrefsManager.SmoothRotationSpeed;
             }
 
-            return go;
+            return go.GetComponentInChildren<HVRPlayerController>().gameObject;
         }
 
         public void CreateXRDeviceSimulator()

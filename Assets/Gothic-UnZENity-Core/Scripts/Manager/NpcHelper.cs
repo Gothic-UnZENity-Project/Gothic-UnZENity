@@ -21,7 +21,7 @@ namespace GUZ.Core.Manager
 
         static NpcHelper()
         {
-            GlobalEventDispatcher.GeneralSceneLoaded.AddListener(playerGo => { CacheHero(playerGo); });
+            GlobalEventDispatcher.GeneralSceneLoaded.AddListener(CacheHero);
         }
 
         public static void CacheHero(GameObject playerGo)
@@ -255,7 +255,7 @@ namespace GUZ.Core.Manager
             }
 
             var selfHeadBone = selfProps.Head;
-            var otherHeadBone = otherProps.Head; // Camera position
+            var otherHeadBone = otherProps.Head;
 
             var distanceToNpc = Vector3.Distance(selfProps.transform.position, otherHeadBone.position);
             var inSightRange =  distanceToNpc <= self.SensesRange;
