@@ -12,6 +12,8 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
         private Quaternion _finalRotation;
         private bool _isRotateLeft;
 
+        private Transform NpcHeadTransform => Props.Head;
+
         protected AbstractRotateAnimationAction(AnimationAction action, GameObject npcGo) : base(action, npcGo)
         {
         }
@@ -20,6 +22,21 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
         /// We need to define the final direction within overriding class.
         /// </summary>
         protected abstract Quaternion GetRotationDirection();
+
+        private Quaternion GetDesiredHeadRotation()
+        {
+            // Get the current forward direction of the NPC's body
+            var currentBodyForwardDirection = NpcGo.transform.TransformDirection(Vector3.forward);
+
+            // Calculate the desired rotation for the head to look in the current body's forward direction
+            var desiredHeadRotation = Quaternion.LookRotation(currentBodyForwardDirection);
+
+            // Adjust the desired head rotation to prevent the head from resting on the shoulder
+            desiredHeadRotation *= Quaternion.Euler(0f, -30f, 90f); // Reset pitch and roll
+
+            return desiredHeadRotation;
+        }
+
 
         public override void Start()
         {
@@ -39,7 +56,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             if (Quaternion.Angle(NpcGo.transform.rotation, _finalRotation) > 1f)
             {
                 AnimationCreator.StopAnimation(NpcGo);
-                AnimationCreator.BlendAnimation(Props.MdsNames, GetRotateModeAnimationString(), NpcGo, true);
+                AnimationCreator.BlendAnimation(Props.MdsNames, GetRotateModeAnimationString(), NpcGo, true, new List<string> { "BIP01 HEAD" });
             }
         }
 
@@ -71,7 +88,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
                     return "";
             }
 
-            return $"T_{walkmode}TURN{(_isRotateLeft ? 'L': 'R')}";
+            return $"T_{walkmode}TURN{(_isRotateLeft ? 'L' : 'R')}";
         }
 
         public override void Tick()
@@ -100,6 +117,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             else
             {
                 npcTransform.rotation = currentRotation;
+                NpcHeadTransform.rotation = GetDesiredHeadRotation();
             }
         }
 
