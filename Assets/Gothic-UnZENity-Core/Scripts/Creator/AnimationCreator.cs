@@ -8,6 +8,7 @@ using GUZ.Core.Extensions;
 using GUZ.Core.Npc;
 using GUZ.Core.Npc.Actions;
 using GUZ.Core.Properties;
+using MyBox;
 using UnityEngine;
 using ZenKit;
 using Animation = UnityEngine.Animation;
@@ -103,18 +104,32 @@ namespace GUZ.Core.Creator
             animationComp.Stop();
         }
 
-        public static bool BlendAnimation(string[] mdsNames, string animationName, GameObject go, bool repeat = false)
+        /// <summary>
+        /// Blends the specified animation on the given GameObject.
+        /// <br/>
+        /// Note on excludeBones: <b>Currently this is only used to detach Head so it's not affected by animation while rotating (LookAt method)</b>
+        /// </summary>
+        /// <param name="mdsNames">An array of MDS file names to search for the animation.</param>
+        /// <param name="animationName">The name of the animation to blend.</param>
+        /// <param name="go">The GameObject to blend the animation on.</param>
+        /// <param name="repeat">Whether the animation should repeat or not.</param>
+        /// <param name="excludeBones">A list of bone names to exclude from the loaded animation. <b>Currently this is only used to detach Head so it's not affected by animation while rotating (LookAt)</b></param>
+        /// <returns>True if the animation was successfully blended, false otherwise.</returns>
+        public static bool BlendAnimation(string[] mdsNames, string animationName, GameObject go, bool repeat = false, List<string> excludeBones = null)
         {
-            if (TryBlendAnimation(mdsNames[0], animationName, go, repeat))
+            foreach (var mdsName in mdsNames.Reverse())
             {
-                return true;
+                if (TryBlendAnimation(mdsName, animationName, go, repeat, excludeBones))
+                {
+                    return true;
+                }
             }
 
             // No suitable animation found.
             return false;
         }
 
-        public static bool TryBlendAnimation(string mdsName, string animationName, GameObject go, bool repeat)
+        public static bool TryBlendAnimation(string mdsName, string animationName, GameObject go, bool repeat, List<string> excludeBones = null)
         {
             // For animations: mdhName == mdsName (with different file ending of course ;-))
             var mdhName = mdsName;
@@ -123,9 +138,8 @@ namespace GUZ.Core.Creator
             var mds = ResourceLoader.TryGetModelScript(mdsName);
             if (modelAnimation == null)
             {
-                Debug.Log("BoroLog: ERROR Couldn't find "+animationName+" animation");
-                var lol = LookupCache.AnimationClipCache;
-                // return false;
+                Debug.Log("BoroLog: ERROR Couldn't find " + animationName + " animation");
+                return false;
             }
 
             var mdsAnimationKeyName = GetCombinedAnimationKey(mdsName, animationName);
@@ -148,9 +162,9 @@ namespace GUZ.Core.Creator
             }
 
             // Try to load from cache
-            if (!LookupCache.AnimationClipCache.TryGetValue(mdsAnimationKeyName, out var clip))
+            if (!LookupCache.AnimationClipCache.TryGetValue(mdsAnimationKeyName, out var clip) || !excludeBones.IsNullOrEmpty())
             {
-                clip = LoadAnimationClip(modelAnimation, mdh, go, repeat, mdsAnimationKeyName);
+                clip = LoadAnimationClip(modelAnimation, mdh, go, repeat, mdsAnimationKeyName, excludeBones);
                 LookupCache.AnimationClipCache[mdsAnimationKeyName] = clip;
 
                 AddClipEvents(clip, modelAnimation, anim);
@@ -179,7 +193,7 @@ namespace GUZ.Core.Creator
         }
 
         private static AnimationClip LoadAnimationClip(IModelAnimation pxAnimation, IModelHierarchy mdh,
-            GameObject rootBone, bool repeat, string clipName)
+            GameObject rootBone, bool repeat, string clipName, List<string> excludeBones = null)
         {
             var clip = new AnimationClip
             {
@@ -195,6 +209,13 @@ namespace GUZ.Core.Creator
             for (var boneId = 0; boneId < boneNames.Length; boneId++)
             {
                 var boneName = boneNames[boneId];
+
+                // Skip adding curves for excluded bones
+                if (excludeBones != null && excludeBones.Contains(boneName))
+                {
+                    continue;
+                }
+
                 curves.Add(boneName, new List<AnimationCurve>(7));
 
                 // Initialize 7 dimensions. (3x position, 4x rotation)
@@ -213,6 +234,12 @@ namespace GUZ.Core.Creator
                 var sample = pxAnimation.Samples[i];
                 var boneId = i % pxAnimation.NodeCount;
                 var boneName = boneNames[boneId];
+
+                if (excludeBones != null && excludeBones.Contains(boneName))
+                {
+                    continue;
+                }
+
                 var boneList = curves[boneName];
                 var isRootBone = boneName.EqualsIgnoreCase("BIP01");
 

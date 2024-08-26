@@ -33,6 +33,37 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             PhysicsHelper.DisablePhysicsForNpc(Props);
         }
 
+        public string GetWalkModeAnimationString()
+        {
+            string walkmode;
+            switch (Props.WalkMode)
+            {
+                case VmGothicEnums.WalkMode.Walk:
+                    walkmode = "WALK";
+                    break;
+                case VmGothicEnums.WalkMode.Run:
+                    walkmode = "RUN";
+                    break;
+                case VmGothicEnums.WalkMode.Sneak:
+                    walkmode = "SNEAK";
+                    break;
+                case VmGothicEnums.WalkMode.Water:
+                    walkmode = "WATER";
+                    break;
+                case VmGothicEnums.WalkMode.Swim:
+                    walkmode = "SWIM";
+                    break;
+                case VmGothicEnums.WalkMode.Dive:
+                    walkmode = "DIVE";
+                    break;
+                default:
+                    Debug.LogWarning($"Animation of type {Props.WalkMode} not yet implemented.");
+                    return "";
+            }
+
+            return $"S_{walkmode}";
+        }
+
         /// <summary>
         /// We just set the audio by default.
         /// </summary>

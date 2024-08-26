@@ -15,7 +15,7 @@ namespace GUZ.XRIT.Components
                 return;
             }
 
-            DialogManager.StartDialog(gameObject, Properties);
+            DialogManager.StartDialog(gameObject, Properties, true);
         }
     }
 }
