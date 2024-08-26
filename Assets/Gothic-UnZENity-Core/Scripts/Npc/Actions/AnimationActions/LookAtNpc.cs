@@ -10,12 +10,10 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
 {
     public class LookAtNpc : AbstractAnimationAction
     {
-        private const string _animationName = "T_LOOK";
+        private int _otherId => Action.Int0;
+        private int _otherIndex => Action.Int1;
 
-        private int OtherId => Action.Int0;
-        private int OtherIndex => Action.Int1;
-
-        private Transform NpcHeadTransform => Props.Head;
+        private Transform _npcHeadTransform => Props.Head;
         private Quaternion _finalRotation;
 
 
@@ -25,25 +23,24 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
         public override void Start()
         {
             _finalRotation = GetDesiredHeadRotation();
+
             // Already aligned.
-            if (Quaternion.Angle(NpcHeadTransform.rotation, _finalRotation) < 1f)
+            if (Quaternion.Angle(_npcHeadTransform.rotation, _finalRotation) < 1f)
             {
                 IsFinishedFlag = true;
-                NpcHeadTransform.rotation = _finalRotation;
+                _npcHeadTransform.rotation = _finalRotation;
             }
-            // if(!IsFinishedFlag){
-            //     AnimationCreator.StopAnimation(NpcGo);
-            // }
+
             AnimationCreator.BlendAnimation(Props.MdsNames, GetWalkModeAnimationString(), NpcGo, true, new List<string> { "BIP01 HEAD" });
         }
 
         private Quaternion GetDesiredHeadRotation()
         {
-            var destination = LookupCache.NpcCache[OtherIndex].properties.transform.position;
-            var lookRotationVector = destination - NpcHeadTransform.position;
+            var destination = LookupCache.NpcCache[_otherIndex].properties.transform.position;
+            var lookRotationVector = destination - _npcHeadTransform.position;
             var lookRotation = Quaternion.LookRotation(lookRotationVector);
 
-            var currentNpcRotationEuler = NpcHeadTransform.rotation.eulerAngles;
+            var currentNpcRotationEuler = _npcHeadTransform.rotation.eulerAngles;
             var desiredYRotation = lookRotation.eulerAngles.y;
 
             // Constrain the Y rotation within a reasonable range (e.g., -90 to 90 degrees relative to the body)
@@ -70,17 +67,15 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
         private void HandleRotation()
         {
             // Gradually rotate the head towards the target rotation
-            var currentRotation = Quaternion.RotateTowards(NpcHeadTransform.rotation, _finalRotation, Time.deltaTime * 150);
-            NpcHeadTransform.rotation = currentRotation;
+            var currentRotation = Quaternion.RotateTowards(_npcHeadTransform.rotation, _finalRotation, Time.deltaTime * 150);
+            _npcHeadTransform.rotation = currentRotation;
 
             // Calculate the angle to the target rotation
-            var angleToTarget = Quaternion.Angle(NpcHeadTransform.rotation, _finalRotation);
+            var angleToTarget = Quaternion.Angle(_npcHeadTransform.rotation, _finalRotation);
 
             // Stop the animation and finalize if the rotation is close enough to the target
             if (angleToTarget < 1f)
             {
-                // Ensure that animation continues blending smoothly
-                // AnimationCreator.StopAnimation(NpcGo);
                 IsFinishedFlag = true;
             }
         }
