@@ -18,7 +18,7 @@ namespace GUZ.HVR.Components
             }
             else
             {
-                DialogManager.StartDialog(gameObject, GetComponent<NpcProperties>());
+                DialogManager.StartDialog(gameObject, GetComponent<NpcProperties>(), true);
             }
         }
     }

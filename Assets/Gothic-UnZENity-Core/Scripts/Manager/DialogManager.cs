@@ -16,7 +16,11 @@ namespace GUZ.Core.Manager
 {
     public static class DialogManager
     {
-        public static void StartDialog(GameObject npcGo, NpcProperties properties)
+        /// <summary>
+        /// initialDialogStarting - We only stop current AI routine if this is the first time the dialog box opens/NPC
+        ///     talks important things. Otherwise the ZS_*_End will get called every time we re-open a dialog in between.
+        /// </summary>
+        public static void StartDialog(GameObject npcGo, NpcProperties properties, bool initialDialogStarting)
         {
             GameData.Dialogs.IsInDialog = true;
 
@@ -29,7 +33,10 @@ namespace GUZ.Core.Manager
             // There is at least one important entry, the NPC wants to talk to the hero about.
             else if (TryGetImportant(properties.Dialogs, out var infoInstance))
             {
-                properties.Go.GetComponent<AiHandler>().ClearState(true);
+                if (initialDialogStarting)
+                {
+                    properties.Go.GetComponent<AiHandler>().ClearState(true);
+                }
 
                 GameData.Dialogs.CurrentDialog.Instance = infoInstance;
 
@@ -37,7 +44,10 @@ namespace GUZ.Core.Manager
             }
             else
             {
-                properties.Go.GetComponent<AiHandler>().ClearState(false);
+                if (initialDialogStarting)
+                {
+                    properties.Go.GetComponent<AiHandler>().ClearState(false);
+                }
                 var selectableDialogs = new List<InfoInstance>();
 
                 foreach (var dialog in properties.Dialogs)
