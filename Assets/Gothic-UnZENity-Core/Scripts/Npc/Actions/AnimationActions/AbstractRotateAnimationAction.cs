@@ -2,8 +2,10 @@ using System;
 using System.Collections.Generic;
 using GUZ.Core.Creator;
 using GUZ.Core.Data.ZkEvents;
+using GUZ.Core.Globals;
 using GUZ.Core.Vm;
 using UnityEngine;
+using static GUZ.Core.Globals.Constants;
 
 namespace GUZ.Core.Npc.Actions.AnimationActions
 {
@@ -104,8 +106,9 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
         /// </summary>
         private void HandleRotation(Transform npcTransform)
         {
+            var turnSpeed = GameData.cGuildValue.GetTurnSpeed((int)Guild.GIL_HUMAN);
             var currentRotation =
-                Quaternion.RotateTowards(npcTransform.rotation, _finalRotation, Time.deltaTime * 100);
+                Quaternion.RotateTowards(npcTransform.rotation, _finalRotation, Time.deltaTime * turnSpeed);
 
             // Check if rotation is done.
             if (Quaternion.Angle(npcTransform.rotation, _finalRotation) < 1f && IsFinishedFlag != true)
