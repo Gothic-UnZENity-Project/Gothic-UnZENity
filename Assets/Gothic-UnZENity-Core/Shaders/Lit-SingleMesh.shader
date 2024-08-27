@@ -3,7 +3,6 @@ Shader "Lit/SingleMesh"
     Properties
     {
         _MainTex("Texture", 2D) = "white" {}
-        _FocusBrightness("FocusBrightness", float) = 1
     }
     SubShader
     {
@@ -45,7 +44,6 @@ Shader "Lit/SingleMesh"
 
             CBUFFER_START(UnityPerMaterial)
                 sampler2D _MainTex;
-                float _FocusBrightness;
             CBUFFER_END
 
             #include "GothicIncludes.hlsl"
@@ -81,7 +79,7 @@ Shader "Lit/SingleMesh"
             half4 frag(v2f i) : SV_Target
             {
                 half4 albedo = tex2D(_MainTex, i.uv);
-                half3 diffuse = albedo * i.diffuse * _FocusBrightness;
+                half3 diffuse = albedo * i.diffuse;
 
                 diffuse = ApplyFog(diffuse, i.worldPos);
                 return half4(diffuse, 1);

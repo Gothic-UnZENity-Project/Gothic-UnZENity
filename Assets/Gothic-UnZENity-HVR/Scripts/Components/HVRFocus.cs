@@ -4,6 +4,7 @@ using System.Linq;
 using GUZ.Core;
 using GUZ.Core.Globals;
 using GUZ.Core.Properties;
+using GUZ.HVR.Components;
 using HurricaneVR.Framework.Core;
 using HurricaneVR.Framework.Core.Grabbers;
 using TMPro;
@@ -22,7 +23,6 @@ namespace GVR.HVR.Components
     /// </summary>
     public class HVRFocus : MonoBehaviour
     {
-        private static readonly int _focusBrightness = Shader.PropertyToID("_FocusBrightness");
         private static Camera _mainCamera;
 
         private static bool _featureBrightenUp;
@@ -65,9 +65,30 @@ namespace GVR.HVR.Components
                 _defaultMaterials = transform.GetComponentsInChildren<Renderer>()
                     .Select(i => i.sharedMaterial)
                     .ToList();
-                _focusedMaterials = _defaultMaterials.Select(i => new Material(i)).ToList();
 
-                _focusedMaterials.ForEach(i => i.SetFloat(_focusBrightness, Constants.ShaderPropertyFocusBrightness));
+                _focusedMaterials = new();
+                foreach (var mat in _defaultMaterials)
+                {
+                    var newFocusMaterial = new Material(Constants.ShaderSingleMeshLitDynamic)
+                    {
+                        mainTexture = mat.mainTexture,
+                        renderQueue = Constants.ShaderTypeTransparent
+                    };
+
+                    newFocusMaterial.SetFloat(
+                        Constants.ShaderPropertyFocusBrightness,
+                        Constants.ShaderPropertyFocusBrightnessValue);
+
+                    _focusedMaterials.Add(newFocusMaterial);
+                }
+            }
+
+            // If the item is currently being grabbed, just stop execution of the shader.
+            // This is a convenience feature as the dynamic shader can handle both: Alpha+FocusBrightness.
+            // But it's easier for now to have only one component handling the shader value changes.
+            if (grabbable.TryGetComponent(out HVRVobItem itemComp) && itemComp.GrabCount > 0)
+            {
+                return;
             }
 
             if (_featureBrightenUp)
@@ -80,8 +101,8 @@ namespace GVR.HVR.Components
 
             if (_featureShowName)
             {
-                _nameCanvas.SetActive(true);
                 _nameCanvas.GetComponentInChildren<TMP_Text>().text = _properties.GetFocusName();
+                _nameCanvas.SetActive(true);
             }
 
             _isHovered = true;

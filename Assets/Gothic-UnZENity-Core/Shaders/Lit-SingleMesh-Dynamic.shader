@@ -1,9 +1,9 @@
-Shader "Lit/SingleMesh-Transparent"
+Shader "Lit/SingleMesh-Dynamic"
 {
     Properties
     {
         _MainTex("Texture", 2D) = "white" {}
-        _FocusBrightness("FocusBrightness", float) = 1
+        _FocusBrightness("FocusBrightness", Range(1, 100)) = 1
         _Alpha("Alpha", Range(0,1)) = 1
     }
     SubShader

@@ -8,11 +8,14 @@ using HurricaneVR.Framework.Core;
 using HurricaneVR.Framework.Core.Grabbers;
 using UnityEngine;
 using UnityEngine.Animations;
+using UnityEngine.Serialization;
 
 namespace GUZ.HVR.Components
 {
     public class HVRVobItem : MonoBehaviour
     {
+        [FormerlySerializedAs("GrabbedCount")] public int GrabCount;
+
         [SerializeField] private HVRVobItemProperties _properties;
         [SerializeField] private MeshCollider _meshCollider;
 
@@ -61,6 +64,8 @@ namespace GUZ.HVR.Components
             }
 
             GameGlobals.VobMeshCulling?.StartTrackVobPositionUpdates(gameObject);
+
+            GrabCount++;
         }
 
         public void OnReleased(HVRGrabberBase grabber, HVRGrabbable grabbable)
@@ -68,6 +73,8 @@ namespace GUZ.HVR.Components
             gameObject.layer = Constants.GrabbableLayer; // Back to HVR default
 
             GameGlobals.VobMeshCulling?.StopTrackVobPositionUpdates(gameObject);
+
+            GrabCount--;
         }
 
         /// <summary>
