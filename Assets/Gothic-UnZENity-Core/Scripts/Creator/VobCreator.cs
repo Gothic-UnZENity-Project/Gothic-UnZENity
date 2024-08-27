@@ -329,6 +329,16 @@ namespace GUZ.Core.Creator
                 case VirtualObjectType.zCZoneZFogDefault:
                 case VirtualObjectType.zCZoneVobFarPlane:
                 case VirtualObjectType.zCZoneVobFarPlaneDefault:
+                case VirtualObjectType.zCMessageFilter:
+                case VirtualObjectType.zCCodeMaster:
+                case VirtualObjectType.zCCSCamera:
+                case VirtualObjectType.zCCamTrj_KeyFrame:
+                case VirtualObjectType.oCTouchDamage:
+                case VirtualObjectType.zCTriggerUntouch:
+                case VirtualObjectType.zCEarthquake:
+                case VirtualObjectType.zCTrigger:
+                case VirtualObjectType.Ignored:
+                case VirtualObjectType.Unknown:
                 {
                     // FIXME - not yet implemented.
                     break;
@@ -357,7 +367,7 @@ namespace GUZ.Core.Creator
 
             if (!_vobTreeCache.TryGetValue(vob.VobTree.ToLower(), out var vobTree))
             {
-                vobTree = ResourceLoader.TryGetWorld(vob.VobTree, GameVersion.Gothic1);
+                vobTree = ResourceLoader.TryGetWorld(vob.VobTree, GameVersion.Gothic2);
                 _vobTreeCache.Add(vob.VobTree.ToLower(), vobTree);
             }
 
