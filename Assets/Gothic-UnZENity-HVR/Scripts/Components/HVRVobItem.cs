@@ -12,7 +12,7 @@ using UnityEngine.Serialization;
 
 namespace GUZ.HVR.Components
 {
-    public class HVRVobItem : MonoBehaviour
+    public class HVRVobItem : AbstractDynamicMaterials
     {
         [FormerlySerializedAs("GrabbedCount")] public int GrabCount;
 
@@ -45,6 +45,8 @@ namespace GUZ.HVR.Components
 
         public void OnGrabbed(HVRGrabberBase grabber, HVRGrabbable grabbable)
         {
+            InitiallyPrepareMaterials();
+
             // OnGrabbed is normally called multiple times. Even after an object is already socketed. If so, then let's stop Grab behaviour.
             if (_properties.IsSocketed)
             {
@@ -62,6 +64,8 @@ namespace GUZ.HVR.Components
             {
                 StartCoroutine(ReEnableCollisionRoutine());
             }
+            // At least for 1 frame the object will be a ghost (i.e. no collision + transparency activated)
+            ActivateDynamicMaterial();
 
             GameGlobals.VobMeshCulling?.StartTrackVobPositionUpdates(gameObject);
 
@@ -73,6 +77,9 @@ namespace GUZ.HVR.Components
             gameObject.layer = Constants.GrabbableLayer; // Back to HVR default
 
             GameGlobals.VobMeshCulling?.StopTrackVobPositionUpdates(gameObject);
+
+            // Disable "ghostification" of object.
+            DeactivateDynamicMaterial();
 
             GrabCount--;
         }
@@ -142,6 +149,14 @@ namespace GUZ.HVR.Components
 
             // Re-enable collisions
             gameObject.layer = Constants.GrabbableLayer;
+
+            // Disable "ghostification" of object.
+            DeactivateDynamicMaterial();
+        }
+
+        protected override void PrepareDynamicMaterial(Material mat)
+        {
+            mat.SetFloat(Constants.ShaderPropertyTransparency, Constants.ShaderPropertyTransparencyValue);
         }
 
         /// <summary>

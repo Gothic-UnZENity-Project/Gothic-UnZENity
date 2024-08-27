@@ -1,6 +1,4 @@
 #if GUZ_HVR_INSTALLED
-using System.Collections.Generic;
-using System.Linq;
 using GUZ.Core;
 using GUZ.Core.Globals;
 using GUZ.Core.Properties;
@@ -21,7 +19,7 @@ namespace GVR.HVR.Components
     /// 2. Grabbed -> Object is being Grabbed for movement/rotation
     /// 3. HoverExit -> We might still grab the object, but the Hover from our hand stops
     /// </summary>
-    public class HVRFocus : MonoBehaviour
+    public class HVRFocus : AbstractDynamicMaterials
     {
         private static Camera _mainCamera;
 
@@ -30,12 +28,6 @@ namespace GVR.HVR.Components
 
         [SerializeField] private AbstractProperties _properties;
         [SerializeField] private GameObject _nameCanvas;
-
-        // Some objects (like NPCs) have multiple meshes. We therefore assume HVRFocus is added at level of first renderer.
-        // Then we do a lookup into its children to show focus effect on all meshes.
-        private List<Renderer> _renderers;
-        private List<Material> _defaultMaterials;
-        private List<Material> _focusedMaterials;
 
         private bool _isHovered;
 
@@ -47,6 +39,8 @@ namespace GVR.HVR.Components
 
         public void OnHoverEnter(HVRGrabberBase grabber, HVRGrabbable grabbable)
         {
+            InitiallyPrepareMaterials();
+
             // GameObjects are loaded while Loading.scene is active (different Camera), but not the General.scene.
             // We therefore need to set the camera at this time earliest.
             if (_mainCamera == null)
@@ -56,31 +50,6 @@ namespace GVR.HVR.Components
                 // Features also need to be fetched once only.
                 _featureBrightenUp = GameGlobals.Config.BrightenUpHoveredVOBs;
                 _featureShowName = GameGlobals.Config.ShowNamesOnHoveredVOBs;
-            }
-
-            // If we hover this object for the first time, set its values.
-            if (_renderers == null)
-            {
-                _renderers = transform.GetComponentsInChildren<Renderer>().ToList();
-                _defaultMaterials = transform.GetComponentsInChildren<Renderer>()
-                    .Select(i => i.sharedMaterial)
-                    .ToList();
-
-                _focusedMaterials = new();
-                foreach (var mat in _defaultMaterials)
-                {
-                    var newFocusMaterial = new Material(Constants.ShaderSingleMeshLitDynamic)
-                    {
-                        mainTexture = mat.mainTexture,
-                        renderQueue = Constants.ShaderTypeTransparent
-                    };
-
-                    newFocusMaterial.SetFloat(
-                        Constants.ShaderPropertyFocusBrightness,
-                        Constants.ShaderPropertyFocusBrightnessValue);
-
-                    _focusedMaterials.Add(newFocusMaterial);
-                }
             }
 
             // If the item is currently being grabbed, just stop execution of the shader.
@@ -93,10 +62,7 @@ namespace GVR.HVR.Components
 
             if (_featureBrightenUp)
             {
-                for (var i = 0; i < _renderers.Count; i++)
-                {
-                    _renderers[i].sharedMaterial = _focusedMaterials[i];
-                }
+                ActivateDynamicMaterial();
             }
 
             if (_featureShowName)
@@ -112,10 +78,7 @@ namespace GVR.HVR.Components
         {
             if (_featureBrightenUp)
             {
-                for (var i = 0; i < _renderers.Count; i++)
-                {
-                    _renderers[i].sharedMaterial = _defaultMaterials[i];
-                }
+                DeactivateDynamicMaterial();
             }
 
             _nameCanvas.SetActive(false);
@@ -136,29 +99,20 @@ namespace GVR.HVR.Components
             }
         }
 
+        protected override void PrepareDynamicMaterial(Material mat)
+        {
+            mat.SetFloat(
+                Constants.ShaderPropertyFocusBrightness,
+                Constants.ShaderPropertyFocusBrightnessValue);
+        }
+
         /// <summary>
         /// Reset everything (e.g. when GO is culled out.)
         /// </summary>
-        private void OnDisable()
+        protected override void OnDisable()
         {
-            // Reset material.
-            if (_renderers != null)
-            {
-                for (var i = 0; i < _renderers.Count; i++)
-                {
-                    _renderers[i].sharedMaterial = _defaultMaterials[i];
-                }
-            }
+            base.OnDisable();
 
-            // We need to destroy our Material manually otherwise it won't be GC'ed by Unity (as stated in the docs).
-            if (_focusedMaterials != null)
-            {
-                _focusedMaterials.ForEach(Destroy);
-            }
-
-            _renderers = null;
-            _defaultMaterials = null;
-            _focusedMaterials = null;
             _isHovered = false;
         }
     }
