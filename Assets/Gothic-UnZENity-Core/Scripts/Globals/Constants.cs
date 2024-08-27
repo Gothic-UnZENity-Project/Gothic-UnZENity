@@ -76,7 +76,7 @@ namespace GUZ.Core.Globals
         public const string PlayerPrefSoundEffectsVolume = "SoundEffectsVolume";
         public const string PlayerPrefItemCollisionWhileDragged = "ItemCollisionWhileDragged";
         
-        public static string SelectedWorld { get; set; } = "world.zen";
+        public static string SelectedWorld { get; set; } = "newworld.zen";
         public static string SelectedWaypoint { get; set; } = "START";
 
         // We need to set the scale so that collision and NPC animation is starting at the right spot.
