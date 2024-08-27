@@ -491,7 +491,11 @@ namespace GUZ.Core.Creator
         public static void ExtCreateInvItems(NpcInstance npc, uint itemId, int amount)
         {
             var props = GetProperties(npc);
-
+            if (props == null)
+            {
+                Debug.LogError($"NPC not found with index {npc.Index}");
+                return;
+            }
             props.Items.TryAdd(itemId, amount);
             props.Items[itemId] += amount;
         }
