@@ -122,6 +122,11 @@ namespace GUZ.Core.World
             return _time.Day;
         }
 
+        public TimeSpan GetCurrentTime()
+        {
+            return _time.TimeOfDay;
+        }
+
         public void SetTime(int hour, int minute)
         {
             _time = new DateTime(_time.Year, _time.Month, _time.Day, hour, minute, 0);

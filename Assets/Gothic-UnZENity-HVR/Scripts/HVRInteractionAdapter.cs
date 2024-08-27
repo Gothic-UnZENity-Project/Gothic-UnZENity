@@ -1,8 +1,10 @@
 #if GUZ_HVR_INSTALLED
 using System.Linq;
+using GUZ.Core;
 using GUZ.Core.Context;
 using GUZ.Core.Globals;
-using GVR;
+using GUZ.Core.Manager;
+using GUZ.HVR.Components;
 using HurricaneVR.Framework.Core.Player;
 using HurricaneVRExtensions.Simulator;
 using UnityEngine;
@@ -24,6 +26,8 @@ namespace GUZ.HVR
         {
             var newPrefab = Resources.Load<GameObject>("HVR/Prefabs/VRPlayer");
             var go = Object.Instantiate(newPrefab, position, rotation);
+            var controllerComp = go.GetComponentInChildren<HVRPlayerController>();
+            
             go.name = "VRPlayer - HVR";
 
             // During normal gameplay, we need to move the VRPlayer to General scene. Otherwise, it will be created inside
@@ -32,22 +36,30 @@ namespace GUZ.HVR
 
             if (Constants.SceneMainMenu == scene.name)
             {
-                var controllerComp = go.GetComponentInChildren<HVRPlayerController>();
-
                 // Disable physics
                 controllerComp.Gravity = 0f;
                 controllerComp.MaxFallSpeed = 0f;
 
                 // Disable movement
+                controllerComp.MovementEnabled = false;
                 controllerComp.MoveSpeed = 0f;
                 controllerComp.RunSpeed = 0f;
 
                 // Disable rotation
+                controllerComp.RotationEnabled = false;
                 controllerComp.SmoothTurnSpeed = 0f;
                 controllerComp.SnapAmount = 0f;
             }
+            // Normal game
+            else
+            {
+                controllerComp.DirectionStyle = (PlayerDirectionMode)PlayerPrefsManager.DirectionMode;
+                controllerComp.RotationType = (RotationType)PlayerPrefsManager.RotationType;
+                controllerComp.SnapAmount = PlayerPrefsManager.SnapRotationAmount;
+                controllerComp.SmoothTurnSpeed = PlayerPrefsManager.SmoothRotationSpeed;
+            }
 
-            return go;
+            return go.GetComponentInChildren<HVRPlayerController>().gameObject;
         }
 
         public void CreateXRDeviceSimulator()
@@ -92,6 +104,23 @@ namespace GUZ.HVR
         public void AddItemComponent(GameObject go, bool isLab)
         {
             // Currently nothing to do. Everything's set up inside oCItem.prefab already.
+        }
+
+        public void IntroduceChapter(string chapter, string text, string texture, string wav, int time)
+        {
+            var generalScene = SceneManager.GetSceneByName(Constants.SceneGeneral);
+            
+            // Check if we already loaded the Chapter change prefab
+            GameObject chapterPrefab = generalScene.GetRootGameObjects()
+                .FirstOrDefault(i => i.GetComponentInChildren<HVRIntroduceChapter>());
+            
+            if (chapterPrefab == null)
+            {
+                chapterPrefab = ResourceLoader.TryGetPrefabObject(PrefabType.StoryIntroduceChapter);
+                SceneManager.MoveGameObjectToScene(chapterPrefab, generalScene);
+            }
+            
+            chapterPrefab.GetComponent<HVRIntroduceChapter>().DisplayIntroduction(chapter, text, texture, wav, time);
         }
     }
 }

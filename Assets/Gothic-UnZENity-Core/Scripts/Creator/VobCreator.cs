@@ -6,7 +6,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using GUZ.Core.Context;
 using GUZ.Core.Creator.Meshes.V2;
-using GUZ.Core.Demo;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
@@ -85,6 +84,25 @@ namespace GUZ.Core.Creator
             PostCreateVobs();
             stopwatch.Stop();
             Debug.Log($"Created vobs in {stopwatch.Elapsed.TotalSeconds} s");
+        }
+
+        public static GameObject GetRootGameObjectOfType(VirtualObjectType type)
+        {
+            GameObject retVal;
+
+            if (_parentGosTeleport.TryGetValue(type, out retVal))
+            {
+                return retVal;
+            }
+            else if (_parentGosNonTeleport.TryGetValue(type, out retVal))
+            {
+                return _parentGosNonTeleport[type];
+            }
+            else
+            {
+                Debug.LogError($"No suitable root GO found for type >{type}<");
+                return null;
+            }
         }
 
         private static void PreCreateVobs(List<IVirtualObject> vobs, int vobsPerFrame)
@@ -531,25 +549,21 @@ namespace GUZ.Core.Creator
         }
 
         /// <summary>
-        /// Render item inside GameObject
+        /// Create item with mesh only. No special handling like grabbing etc.
+        /// e.g. used for NPCs drinking beer mesh in their hand.
         /// </summary>
-        public static void CreateItem(int itemId, GameObject go)
+        public static void CreateItemMesh(int itemId, GameObject go)
         {
             var item = VmInstanceManager.TryGetItemData(itemId);
 
             CreateItemMesh(item, go);
         }
-
-        public static void CreateItem(int itemId, string spawnpoint, GameObject go)
-        {
-            var item = VmInstanceManager.TryGetItemData(itemId);
-
-            var position = WayNetHelper.GetWayNetPoint(spawnpoint).Position;
-
-            CreateItemMesh(item, go, position);
-        }
-
-        public static void CreateItem(string itemName, GameObject go)
+        
+        /// <summary>
+        /// Create item with mesh only. No special handling like grabbing etc.
+        /// e.g. used for NPCs drinking beer mesh in their hand.
+        /// </summary>
+        public static void CreateItemMesh(string itemName, GameObject go)
         {
             if (itemName == "")
             {
@@ -561,8 +575,17 @@ namespace GUZ.Core.Creator
             CreateItemMesh(item, go);
         }
 
+        public static void CreateItemMesh(int itemId, string spawnPoint, GameObject go)
+        {
+            var item = VmInstanceManager.TryGetItemData(itemId);
+
+            var position = WayNetHelper.GetWayNetPoint(spawnPoint).Position;
+
+            CreateItemMesh(item, go, position);
+        }
+
         [CanBeNull]
-        private static GameObject CreateItem(Item vob, GameObject parent = null)
+        public static GameObject CreateItem(Item vob, GameObject parent = null)
         {
             string itemName;
 
@@ -638,9 +661,6 @@ namespace GUZ.Core.Creator
                 Debug.LogWarning($"{vob.Name} - mesh for MobContainer not found.");
                 return null;
             }
-
-            var lootComp = vobObj.AddComponent<DemoContainerLoot>();
-            lootComp.SetContent(vob.Contents);
 
             return vobObj;
         }

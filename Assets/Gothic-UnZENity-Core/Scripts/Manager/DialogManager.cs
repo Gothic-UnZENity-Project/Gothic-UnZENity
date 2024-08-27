@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using GUZ.Core.Caches;
+using GUZ.Core.Context;
 using GUZ.Core.Data;
 using GUZ.Core.Globals;
 using GUZ.Core.Npc;
@@ -11,24 +12,31 @@ using GUZ.Core.Properties;
 using UnityEngine;
 using ZenKit.Daedalus;
 
-namespace GUZ.Core.Scripts.Manager
+namespace GUZ.Core.Manager
 {
-    public static class DialogHelper
+    public static class DialogManager
     {
-        public static void StartDialog(NpcProperties properties)
+        /// <summary>
+        /// initialDialogStarting - We only stop current AI routine if this is the first time the dialog box opens/NPC
+        ///     talks important things. Otherwise the ZS_*_End will get called every time we re-open a dialog in between.
+        /// </summary>
+        public static void StartDialog(GameObject npcGo, NpcProperties properties, bool initialDialogStarting)
         {
             GameData.Dialogs.IsInDialog = true;
 
             // We are already inside a sub-dialog
             if (GameData.Dialogs.CurrentDialog.Options.Any())
             {
-                ControllerManager.I.FillDialog(properties.NpcInstance.Index, GameData.Dialogs.CurrentDialog.Options);
-                ControllerManager.I.ShowDialog();
+                GuzContext.DialogAdapter.FillDialog(properties.NpcInstance.Index, GameData.Dialogs.CurrentDialog.Options);
+                GuzContext.DialogAdapter.ShowDialog(npcGo);
             }
             // There is at least one important entry, the NPC wants to talk to the hero about.
             else if (TryGetImportant(properties.Dialogs, out var infoInstance))
             {
-                properties.Go.GetComponent<AiHandler>().ClearState(true);
+                if (initialDialogStarting)
+                {
+                    properties.Go.GetComponent<AiHandler>().ClearState(true);
+                }
 
                 GameData.Dialogs.CurrentDialog.Instance = infoInstance;
 
@@ -36,7 +44,10 @@ namespace GUZ.Core.Scripts.Manager
             }
             else
             {
-                properties.Go.GetComponent<AiHandler>().ClearState(false);
+                if (initialDialogStarting)
+                {
+                    properties.Go.GetComponent<AiHandler>().ClearState(false);
+                }
                 var selectableDialogs = new List<InfoInstance>();
 
                 foreach (var dialog in properties.Dialogs)
@@ -45,16 +56,17 @@ namespace GUZ.Core.Scripts.Manager
                     {
                         continue;
                     }
-
-                    if (GameData.GothicVm.Call<int>(dialog.Condition) == 1)
+                    
+                    var conditionResult = GameData.GothicVm.Call<int>(dialog.Condition);
+                    if (conditionResult > 0)
                     {
                         selectableDialogs.Add(dialog);
                     }
                 }
 
                 selectableDialogs = selectableDialogs.OrderBy(d => d.Nr).ToList();
-                ControllerManager.I.FillDialog(properties.NpcInstance.Index, selectableDialogs);
-                ControllerManager.I.ShowDialog();
+                GuzContext.DialogAdapter.FillDialog(properties.NpcInstance.Index, selectableDialogs);
+                GuzContext.DialogAdapter.ShowDialog(npcGo);
             }
         }
 
@@ -63,10 +75,8 @@ namespace GUZ.Core.Scripts.Manager
         /// </summary>
         private static bool TryGetImportant(List<InfoInstance> dialogs, out InfoInstance item)
         {
-            item = dialogs.FirstOrDefault(
-                dialog =>
-                    dialog.Important == 1
-                    && (dialog.Condition == 0 || GameData.GothicVm.Call<int>(dialog.Condition) == 1));
+            item = dialogs.FirstOrDefault(dialog =>
+                dialog.Important == 1 && (dialog.Condition == 0 || GameData.GothicVm.Call<int>(dialog.Condition) == 1));
 
             return item != null;
         }
@@ -140,9 +150,29 @@ namespace GUZ.Core.Scripts.Manager
             props.AnimationQueue.Enqueue(new StopProcessInfos(new AnimationAction(), props.Go));
         }
 
-        public static void SelectionClicked(int npcInstanceIndex, int dialogId, bool isMainDialog)
+        public static void SelectionClicked(int npcInstanceIndex, int dialogId)
         {
-            CallInformation(npcInstanceIndex, dialogId, isMainDialog);
+            CallInformation(npcInstanceIndex, dialogId, false);
+        }
+
+        public static void SelectionClicked(int npcInstanceIndex, InfoInstance infoInstance)
+        {
+            // Add entry to list of "told" information.
+            AddNpcInfoTold(infoInstance);
+
+            CallInformation(npcInstanceIndex, infoInstance.Information, true);
+        }
+
+        /// <summary>
+        /// Skip/Stop current Dialog's .wav entry now.
+        /// </summary>
+        public static void SkipCurrentDialogLine(NpcProperties props)
+        {
+
+            if (props.CurrentAction.GetType() == typeof(Output))
+            {
+                props.CurrentAction.StopImmediately();
+            }
         }
 
         public static void StopDialog()
@@ -151,7 +181,7 @@ namespace GUZ.Core.Scripts.Manager
             GameData.Dialogs.CurrentDialog.Options.Clear();
             GameData.Dialogs.IsInDialog = false;
 
-            ControllerManager.I.HideDialog();
+            GuzContext.DialogAdapter.HideDialog();
         }
 
         private static void CallInformation(int npcInstanceIndex, int information, bool isMainDialog)
@@ -165,7 +195,7 @@ namespace GUZ.Core.Scripts.Manager
                     .First(d => d.Information == information);
             }
 
-            ControllerManager.I.HideDialog();
+            GuzContext.DialogAdapter.HideDialog();
 
             // We always need to set "self" before executing any Daedalus function.
             GameData.GothicVm.GlobalSelf = npcData.instance;
@@ -176,6 +206,16 @@ namespace GUZ.Core.Scripts.Manager
             npcData.properties.AnimationQueue.Enqueue(new StartProcessInfos(
                 new AnimationAction(int0: information),
                 npcData.properties.Go));
+        }
+        
+        public static bool ExtNpcKnowsInfo(NpcInstance npc, int infoInstance)
+        {
+            return GameData.KnownDialogInfos.Contains(infoInstance);
+        }
+
+        public static void AddNpcInfoTold(InfoInstance infoInstance)
+        {
+            GameData.KnownDialogInfos.Add(infoInstance.Index);
         }
 
         private static GameObject GetNpc(NpcInstance npc)

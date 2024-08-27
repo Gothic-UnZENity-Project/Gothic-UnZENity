@@ -1,13 +1,15 @@
 using System.Linq;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
-using GUZ.Core.Scripts.Manager;
+using GUZ.Core.Manager;
 using UnityEngine;
 
 namespace GUZ.Core.Npc.Actions.AnimationActions
 {
     public class StartProcessInfos : AbstractAnimationAction
     {
+        private int _dialogId => Action.Int0;
+
         public StartProcessInfos(AnimationAction action, GameObject npcGo) : base(action, npcGo)
         {
         }
@@ -22,14 +24,12 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
                 return;
             }
 
-            var dialogId = Action.Int0;
-
             var isInSubDialog = GameData.Dialogs.CurrentDialog.Options.Any();
 
             if (isInSubDialog)
             {
-                var foundItem =
-                    GameData.Dialogs.CurrentDialog.Options.FirstOrDefault(option => option.Function == dialogId);
+                var foundItem = GameData.Dialogs.CurrentDialog.Options
+                        .FirstOrDefault(option => option.Function == _dialogId);
 
                 // If a dialog calls Info_ClearChoices(), then the current sub dialog is already gone.
                 if (foundItem != null)
@@ -47,7 +47,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
                 }
             }
 
-            DialogHelper.StartDialog(Props);
+            DialogManager.StartDialog(NpcGo, Props, false);
         }
     }
 }

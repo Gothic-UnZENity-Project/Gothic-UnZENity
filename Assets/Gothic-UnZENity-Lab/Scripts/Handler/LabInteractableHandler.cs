@@ -1,5 +1,8 @@
 using GUZ.Core;
+using GUZ.Core.Context;
 using GUZ.Core.Creator.Meshes.V2;
+using GUZ.Core.Properties;
+using GUZ.Core.Vm;
 using UnityEngine;
 
 namespace GUZ.Lab.Handler
@@ -36,7 +39,16 @@ namespace GUZ.Lab.Handler
 
         private void InitOCMobContainer()
         {
-            SpawnInteractable("CHESTSMALL_OCCHESTSMALLLOCKED", PrefabType.VobContainer, ContainersGO, rotation: Quaternion.Euler(0, 0, 0));
+            SpawnInteractable("CHESTBIG_OCCHESTLARGE", PrefabType.VobContainer, ContainersGO, position: new(0,0,0));
+            SpawnInteractable("CHESTBIG_OCCHESTMEDIUM", PrefabType.VobContainer, ContainersGO, position: new(0,0,-2));
+            SpawnInteractable("CHESTBIG_OCCRATELARGE", PrefabType.VobContainer, ContainersGO, position: new(0,0,-4));
+            SpawnInteractable("CHESTBIG_ORCMUMMY", PrefabType.VobContainer, ContainersGO, position: new(0,0,-6));
+            SpawnInteractable("CHESTSMALL_OCCHESTSMALL", PrefabType.VobContainer, ContainersGO, position: new(0,0,-8));
+            SpawnInteractable("CHESTSMALL_OCCHESTSMALLLOCKED", PrefabType.VobContainer, ContainersGO, position: new(0,0,-10));
+            SpawnInteractable("CHESTSMALL_OCCRATESMALL", PrefabType.VobContainer, ContainersGO, position: new(0,0,0-12));
+            SpawnInteractable("CHESTSMALL_OCCRATESMALLLOCKED", PrefabType.VobContainer, ContainersGO, position: new(0,0,-14));
+            
+            SpawnItem("ItMwPickaxe", ContainersGO, new Vector3(1.25f, 0.25f, 0));
         }
 
         private void InitOCMobFire()
@@ -81,6 +93,20 @@ namespace GUZ.Lab.Handler
 
             MeshFactory.CreateVob(mdlName, mdl, position, rotation,
                 rootGo: prefab, parent: parentGo, useTextureArray: false);
+        }
+        
+        private GameObject SpawnItem(string itemName, GameObject parentGo, Vector3 position = default)
+        {
+            var itemPrefab = ResourceLoader.TryGetPrefabObject(PrefabType.VobItem);
+            var item = VmInstanceManager.TryGetItemData(itemName);
+            var mrm = ResourceLoader.TryGetMultiResolutionMesh(item.Visual);
+            var itemGo = MeshFactory.CreateVob(item.Visual, mrm, position, default, true,
+                rootGo: itemPrefab, parent: parentGo, useTextureArray: false);
+
+            itemGo.GetComponent<VobItemProperties>().SetData(null, item);
+            GuzContext.InteractionAdapter.AddItemComponent(itemGo, true);
+
+            return gameObject;
         }
     }
 }

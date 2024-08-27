@@ -1,7 +1,10 @@
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
 using GUZ.Core.UI;
+using GUZ.Core.UI.MainMenu;
 using GUZ.Core.Util;
+using MyBox;
+using TMPro;
 using UnityEngine;
 
 namespace GUZ.Core.Player.Menu
@@ -11,12 +14,12 @@ namespace GUZ.Core.Player.Menu
         public GameObject MainMenu;
         public GameObject LoadMenu;
         public GameObject SettingsMenu;
-        public GameObject TeleportMenu;
         public GameObject MovementMenu;
+        public GameObject ImmersionMenu;
+        public GameObject TeleportMenu;
         public GameObject SoundMenu;
 
-        public MoveSpeedController MoveSpeedController;
-        public TurnSettingDropdownController TurnSettingDropdownController;
+        public MovementMenuHandler MovementMenuHandler;
         public AudioMixerHandler MusicVolumeHandler;
         public AudioMixerHandler SoundEffectsVolumeHandler;
 
@@ -44,15 +47,8 @@ namespace GUZ.Core.Player.Menu
 
         public void SetSettingsValues()
         {
-            if (MoveSpeedController == null || TurnSettingDropdownController == null)
-            {
-                return;
-            }
-
-            MoveSpeedController.ChangeMoveSpeed(PlayerPrefs.GetFloat(Constants.MoveSpeedPlayerPref));
-            TurnSettingDropdownController.DropdownItemSelected(PlayerPrefs.GetInt(Constants.TurnSettingPlayerPref));
-            MusicVolumeHandler.SliderUpdate(PlayerPrefs.GetFloat(Constants.MusicVolumePlayerPref, 1f));
-            SoundEffectsVolumeHandler.SliderUpdate(PlayerPrefs.GetFloat(Constants.SoundEffectsVolumePlayerPref, 1f));
+            MusicVolumeHandler.SliderUpdate(PlayerPrefs.GetFloat(Constants.PlayerPrefMusicVolume, 1f));
+            SoundEffectsVolumeHandler.SliderUpdate(PlayerPrefs.GetFloat(Constants.PlayerPrefSoundEffectsVolume, 1f));
         }
 
         public void PlayFunction()
@@ -65,11 +61,16 @@ namespace GUZ.Core.Player.Menu
 
         public void SwitchMenu(GameObject menu)
         {
+            // Reset fonts of all newly-visible menu items. Otherwise the previously hovered elements will be visible again when going "Back".
+            menu.GetComponentsInChildren<TMP_Text>()
+                .ForEach(i => i.spriteAsset = GameGlobals.Font.DefaultSpriteAsset);
+            
             MainMenu.SetActive(menu == MainMenu);
             LoadMenu.SetActive(menu == LoadMenu);
             SettingsMenu.SetActive(menu == SettingsMenu);
-            TeleportMenu.SetActive(menu == TeleportMenu);
             MovementMenu.SetActive(menu == MovementMenu);
+            ImmersionMenu.SetActive(menu == ImmersionMenu);
+            TeleportMenu.SetActive(menu == TeleportMenu);
             SoundMenu.SetActive(menu == SoundMenu);
 
             MainMenuBackground.SetActive(menu != LoadMenu);

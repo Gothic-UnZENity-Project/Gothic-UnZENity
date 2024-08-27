@@ -24,6 +24,11 @@ namespace GUZ.Core.Globals
         public static Dictionary<string, DijkstraWaypoint> DijkstraWaypoints = new();
         public static readonly List<VobProperties> VobsInteractable = new();
 
+        /// <summary>
+        /// Store and update global NPC information about dialog options already listened to.
+        /// </summary>
+        public static HashSet<int> KnownDialogInfos = new();
+        
         public static class Dialogs
         {
             public static List<InfoInstance> Instances = new();
@@ -45,6 +50,12 @@ namespace GUZ.Core.Globals
                 GestureCount = 0;
             }
         }
+
+        public static int GuildTableSize;
+        public static int GuildCount;
+        public static int[] GuildAttitudes;
+
+        public static GuildValuesInstance cGuildValue;
 
         // FIXME Find a better place for the NPC routines. E.g. on the NPCs itself? But we e.g. need to have a static NPCObject List to do so.
         public static Dictionary<int, List<RoutineData>> NpcRoutines = new();

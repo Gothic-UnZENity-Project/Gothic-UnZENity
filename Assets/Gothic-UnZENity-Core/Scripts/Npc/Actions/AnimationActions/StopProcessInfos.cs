@@ -1,4 +1,4 @@
-using GUZ.Core.Scripts.Manager;
+using GUZ.Core.Manager;
 using UnityEngine;
 
 namespace GUZ.Core.Npc.Actions.AnimationActions
@@ -14,8 +14,10 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
 
         public override void Start()
         {
-            DialogHelper.StopDialog();
             IsFinishedFlag = true;
+            
+            DialogManager.StopDialog();
+            GameGlobals.Story.SwitchChapterIfPending();
         }
     }
 }

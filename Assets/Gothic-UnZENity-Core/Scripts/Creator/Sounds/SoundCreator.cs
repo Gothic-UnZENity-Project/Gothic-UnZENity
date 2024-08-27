@@ -13,6 +13,16 @@ namespace GUZ.Core.Creator.Sounds
             BIT16 = 16
         }
 
+        /// <summary>
+        /// Create AudioClip from a file inside .vdf containers.
+        /// Usage: ToAudioClip("fileName"):
+        /// </summary>
+        public static AudioClip ToAudioClip(string fileName)
+        {
+            var soundData = ResourceLoader.TryGetSound(fileName);
+            return ToAudioClip(soundData);
+        }
+        
         public static AudioClip ToAudioClip(SoundData wavFile)
         {
             AudioClip audioClip;

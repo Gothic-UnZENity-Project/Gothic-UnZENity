@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using GUZ.Core.Npc;
 using GUZ.Core.Npc.Actions.AnimationActions;
@@ -55,6 +56,7 @@ namespace GUZ.Core.Properties
 
         public readonly Queue<AbstractAnimationAction> AnimationQueue = new();
         public VmGothicEnums.WalkMode WalkMode;
+        public VmGothicEnums.WeaponState WeaponState;
 
         // HINT: These information aren't set within Daedalus. We need to define them manually.
         // HINT: i.e. every animation might have a BS. E.g. when AI_TakeItem() is called, we set BS.BS_TAKEITEM
@@ -107,7 +109,6 @@ namespace GUZ.Core.Properties
         public void Copy(NpcProperties other)
         {
             IsClonedFromAnother = true;
-            NpcInstance = other.NpcInstance;
 
             MdmName = other.MdmName;
             BaseMdsName = other.BaseMdsName;
@@ -115,6 +116,11 @@ namespace GUZ.Core.Properties
             BodyData = other.BodyData;
             Perceptions = other.Perceptions;
             PerceptionTime = other.PerceptionTime;
+        }
+
+        public override string GetFocusName()
+        {
+            return NpcInstance.GetName(0);
         }
     }
 }

@@ -49,41 +49,72 @@ namespace GUZ.Core.Npc
             if (Properties.AnimationQueue.Count == 0)
             {
                 // We always need to set "self" before executing any Daedalus function.
-                Vm.GlobalSelf = Properties.NpcInstance;
+                if (Properties.NpcInstance != null)
+                {
+                    Vm.GlobalSelf = Properties.NpcInstance;
+                }
 
+                DaedalusSymbol symbol;
                 switch (Properties.CurrentLoopState)
                 {
                     case NpcProperties.LoopState.Start:
-                        if (Properties.StateLoop == 0)
+                        if (Properties.StateStart == 0)
                         {
                             return;
                         }
 
-                        Vm.Call(Properties.StateStart);
+                        symbol = Vm.GetSymbolByIndex(Properties.StateStart);
+                        switch (symbol.ReturnType)
+                        {
+                            case DaedalusDataType.Int:
+                                Vm.Call<int>(Properties.StateStart);
+                                break;
+                            default:
+                                Vm.Call(Properties.StateStart);
+                                break;
+                        }
+
 
                         Properties.CurrentLoopState = NpcProperties.LoopState.Loop;
                         break;
                     case NpcProperties.LoopState.Loop:
-                        var symbol = Vm.GetSymbolByIndex(Properties.StateLoop);
-                        if (symbol is { HasReturn: true })
+                        if (Properties.StateLoop == 0 && Properties.StateStart != 0)
                         {
-                            switch (symbol.ReturnType)
-                            {
-                                case DaedalusDataType.Int:
-                                    var loopResponse = Vm.Call<int>(Properties.StateLoop);
-                                    // Some ZS_*_Loop return !=0 when they want to quit.
-                                    if (loopResponse != _daedalusLoopContinue)
-                                    {
-                                        Properties.CurrentLoopState = NpcProperties.LoopState.End;
-                                    }
-
-                                    break;
-                                default:
-                                    Vm.Call(Properties.StateLoop);
-                                    break;
-                            }
+                            Properties.CurrentLoopState = NpcProperties.LoopState.Start;
+                            return;
+                        }
+                        
+                        symbol = Vm.GetSymbolByIndex(Properties.StateLoop);
+                        switch (symbol.ReturnType)
+                        {
+                            case DaedalusDataType.Int:
+                                var loopResponse = Vm.Call<int>(Properties.StateLoop);
+                                // Some ZS_*_Loop return !=0 when they want to quit.
+                                if (loopResponse != _daedalusLoopContinue)
+                                {
+                                    Properties.CurrentLoopState = NpcProperties.LoopState.End;
+                                }
+                                break;
+                            default:
+                                Vm.Call(Properties.StateLoop);
+                                break;
                         }
 
+                        break;
+                    
+                    case NpcProperties.LoopState.End:
+                        symbol = Vm.GetSymbolByIndex(Properties.StateEnd);
+                        switch (symbol.ReturnType)
+                        {
+                            case DaedalusDataType.Int:
+                                var loopResponse = Vm.Call<int>(Properties.StateEnd);
+                                break;
+                            default:
+                                Vm.Call(Properties.StateEnd);
+                                break;
+                        }
+                        
+                        Properties.CurrentLoopState = NpcProperties.LoopState.Start;
                         break;
                 }
             }
@@ -97,6 +128,13 @@ namespace GUZ.Core.Npc
 
         public void StartRoutine(int action, string wayPointName)
         {
+            // We need to set WayPoint within Daedalus instance as it calls _self.wp_ during routine loops.
+            Properties.NpcInstance.Wp = wayPointName;
+            StartRoutine(action);
+        }
+
+        public void StartRoutine(int action)
+        {
             // End original loop first
             if (Properties.CurrentLoopState == NpcProperties.LoopState.Loop)
             {
@@ -104,8 +142,6 @@ namespace GUZ.Core.Npc
                 ClearState(false);
             }
 
-            // We need to set WayPoint within Daedalus instance as it calls _self.wp_ during routine loops.
-            Properties.NpcInstance.Wp = wayPointName;
             Properties.StateStart = action;
 
             var routineSymbol = Vm.GetSymbolByIndex(action);
@@ -202,7 +238,8 @@ namespace GUZ.Core.Npc
         {
             // Spawn to initial spawn location
             var currentRoutine = gameObject.GetComponent<Routine>().CurrentRoutine;
-            gameObject.transform.position = WayNetHelper.GetWayNetPoint(currentRoutine.Waypoint).Position;
+            if (currentRoutine != null)
+                gameObject.transform.position = WayNetHelper.GetWayNetPoint(currentRoutine.Waypoint).Position;
 
             // Animation state handling
             Properties.AnimationQueue.Clear();
@@ -248,7 +285,13 @@ namespace GUZ.Core.Npc
             Properties.NpcInstance.SetAiVar(Constants.DaedalusAIVItemStatusKey, Constants.DaedalusTAITNone);
 
             // Start over
-            StartRoutine(currentRoutine.Action, currentRoutine.Waypoint);
+            if (currentRoutine != null)
+                StartRoutine(currentRoutine.Action, currentRoutine.Waypoint);
+            else
+            {
+                //if we don't have a routine means it's about a monster
+                StartRoutine(Properties.StateStart);
+            }
         }
     }
 }

@@ -8,6 +8,7 @@ using UnityEngine;
 
 namespace GUZ.Core.Npc.Actions.AnimationActions
 {
+    [Obsolete("Successor is AbstractWalkAnimationAction2, but it needs to be tested with (1)GoToFp, (2)GoToNpc, (3)UseMob, (4)GoToNextFp first.")]
     public abstract class AbstractWalkAnimationAction : AbstractAnimationAction
     {
         protected enum WalkState
@@ -73,12 +74,15 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
 
         private string GetWalkModeAnimationString()
         {
+            var weaponState = Props.WeaponState == VmGothicEnums.WeaponState.NoWeapon
+                ? ""
+                : Props.WeaponState.ToString();
             switch (Props.WalkMode)
             {
                 case VmGothicEnums.WalkMode.Walk:
-                    return "S_WALKL";
+                    return $"S_{weaponState}WALKL";
                 case VmGothicEnums.WalkMode.Run:
-                    return "S_RUNL";
+                    return $"S_{weaponState}RUNL";
                 default:
                     Debug.LogWarning($"Animation of type {Props.WalkMode} not yet implemented.");
                     return "";
@@ -102,7 +106,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             var distance = Vector3.Distance(npcDistPos, walkPos);
 
             // FIXME - Scorpio is above FP, but values don't represent it.
-            if (distance < Constants.CloseToThreshold)
+            if (distance < Constants.NpcDestinationReachedThreshold)
             {
                 OnDestinationReached();
             }
