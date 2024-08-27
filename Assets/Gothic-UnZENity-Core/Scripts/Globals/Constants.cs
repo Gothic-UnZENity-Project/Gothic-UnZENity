@@ -33,11 +33,13 @@ namespace GUZ.Core.Globals
 
         // Interactable VOB is in focus of player. Brighten up the color by this value.
         public static readonly int ShaderPropertyFocusBrightness = Shader.PropertyToID("_FocusBrightness");
+        public static readonly float ShaderPropertyFocusBrightnessDefault = 1f;
         public static readonly float ShaderPropertyFocusBrightnessValue = 10f;
 
         // Item is a "ghost" in hand. i.e. no collision.
         public static readonly int ShaderPropertyTransparency = Shader.PropertyToID("_Alpha");
-        public static readonly float ShaderPropertyTransparencyValue = 0.25f;
+        public static readonly float ShaderPropertyTransparencyDefault = 1f;
+        public static readonly float ShaderPropertyTransparencyValue = 0.75f;
 
         public const string SceneBootstrap = "Bootstrap";
         public const string SceneGeneral = "General";

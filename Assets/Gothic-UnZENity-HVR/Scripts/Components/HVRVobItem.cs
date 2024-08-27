@@ -8,20 +8,18 @@ using HurricaneVR.Framework.Core;
 using HurricaneVR.Framework.Core.Grabbers;
 using UnityEngine;
 using UnityEngine.Animations;
-using UnityEngine.Serialization;
 
 namespace GUZ.HVR.Components
 {
-    public class HVRVobItem : AbstractDynamicMaterials
+    public class HVRVobItem : MonoBehaviour
     {
-        [FormerlySerializedAs("GrabbedCount")] public int GrabCount;
-
         [SerializeField] private HVRVobItemProperties _properties;
         [SerializeField] private MeshCollider _meshCollider;
 
         // We pre-allocate enough entries to fetch at least one entry which is not ourselves.
         private readonly Collider[] _overlapColliders = new Collider[1];
         private static int _ignoreLayerCollisionCheck;
+
 
         private struct OverlapCheckData
         {
@@ -45,8 +43,6 @@ namespace GUZ.HVR.Components
 
         public void OnGrabbed(HVRGrabberBase grabber, HVRGrabbable grabbable)
         {
-            InitiallyPrepareMaterials();
-
             // OnGrabbed is normally called multiple times. Even after an object is already socketed. If so, then let's stop Grab behaviour.
             if (_properties.IsSocketed)
             {
@@ -59,17 +55,16 @@ namespace GUZ.HVR.Components
             // Stop collisions while being dragged around (at least shortly; otherwise e.g. items might stick inside chests when pulled out).
             gameObject.layer = Constants.VobItemNoCollision;
 
+            // At least until object isn't colliding with anything any longer, the object will be a ghost (i.e. no collision + transparency activated)
+            DynamicMaterialManager.SetDynamicValue(gameObject, Constants.ShaderPropertyTransparency, Constants.ShaderPropertyTransparencyValue);
+
             // If we want Item collisions, we just temporarily deactivate them until the item is free of collisions.
             if (PlayerPrefsManager.ItemCollisionWhileDragged)
             {
                 StartCoroutine(ReEnableCollisionRoutine());
             }
-            // At least for 1 frame the object will be a ghost (i.e. no collision + transparency activated)
-            ActivateDynamicMaterial();
 
             GameGlobals.VobMeshCulling?.StartTrackVobPositionUpdates(gameObject);
-
-            GrabCount++;
         }
 
         public void OnReleased(HVRGrabberBase grabber, HVRGrabbable grabbable)
@@ -79,9 +74,7 @@ namespace GUZ.HVR.Components
             GameGlobals.VobMeshCulling?.StopTrackVobPositionUpdates(gameObject);
 
             // Disable "ghostification" of object.
-            DeactivateDynamicMaterial();
-
-            GrabCount--;
+            DynamicMaterialManager.ResetDynamicValue(gameObject, Constants.ShaderPropertyTransparency, Constants.ShaderPropertyTransparencyDefault);
         }
 
         /// <summary>
@@ -151,12 +144,7 @@ namespace GUZ.HVR.Components
             gameObject.layer = Constants.GrabbableLayer;
 
             // Disable "ghostification" of object.
-            DeactivateDynamicMaterial();
-        }
-
-        protected override void PrepareDynamicMaterial(Material mat)
-        {
-            mat.SetFloat(Constants.ShaderPropertyTransparency, Constants.ShaderPropertyTransparencyValue);
+            DynamicMaterialManager.ResetDynamicValue(gameObject, Constants.ShaderPropertyTransparency, Constants.ShaderPropertyTransparencyDefault);
         }
 
         /// <summary>
@@ -250,6 +238,14 @@ namespace GUZ.HVR.Components
             }
 
             return result;
+        }
+
+        /// <summary>
+        /// Reset everything (e.g. when GO is culled out.)
+        /// </summary>
+        private void OnDisable()
+        {
+            DynamicMaterialManager.ResetAllDynamicValues(gameObject);
         }
     }
 }

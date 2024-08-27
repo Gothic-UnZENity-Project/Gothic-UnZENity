@@ -1,8 +1,8 @@
 #if GUZ_HVR_INSTALLED
 using GUZ.Core;
 using GUZ.Core.Globals;
+using GUZ.Core.Manager;
 using GUZ.Core.Properties;
-using GUZ.HVR.Components;
 using HurricaneVR.Framework.Core;
 using HurricaneVR.Framework.Core.Grabbers;
 using TMPro;
@@ -19,7 +19,7 @@ namespace GVR.HVR.Components
     /// 2. Grabbed -> Object is being Grabbed for movement/rotation
     /// 3. HoverExit -> We might still grab the object, but the Hover from our hand stops
     /// </summary>
-    public class HVRFocus : AbstractDynamicMaterials
+    public class HVRFocus : MonoBehaviour
     {
         private static Camera _mainCamera;
 
@@ -39,8 +39,6 @@ namespace GVR.HVR.Components
 
         public void OnHoverEnter(HVRGrabberBase grabber, HVRGrabbable grabbable)
         {
-            InitiallyPrepareMaterials();
-
             // GameObjects are loaded while Loading.scene is active (different Camera), but not the General.scene.
             // We therefore need to set the camera at this time earliest.
             if (_mainCamera == null)
@@ -52,17 +50,9 @@ namespace GVR.HVR.Components
                 _featureShowName = GameGlobals.Config.ShowNamesOnHoveredVOBs;
             }
 
-            // If the item is currently being grabbed, just stop execution of the shader.
-            // This is a convenience feature as the dynamic shader can handle both: Alpha+FocusBrightness.
-            // But it's easier for now to have only one component handling the shader value changes.
-            if (grabbable.TryGetComponent(out HVRVobItem itemComp) && itemComp.GrabCount > 0)
-            {
-                return;
-            }
-
             if (_featureBrightenUp)
             {
-                ActivateDynamicMaterial();
+                DynamicMaterialManager.SetDynamicValue(gameObject, Constants.ShaderPropertyFocusBrightness, Constants.ShaderPropertyFocusBrightnessValue);
             }
 
             if (_featureShowName)
@@ -78,7 +68,7 @@ namespace GVR.HVR.Components
         {
             if (_featureBrightenUp)
             {
-                DeactivateDynamicMaterial();
+                DynamicMaterialManager.ResetDynamicValue(gameObject, Constants.ShaderPropertyFocusBrightness, Constants.ShaderPropertyFocusBrightnessDefault);
             }
 
             _nameCanvas.SetActive(false);
@@ -99,19 +89,12 @@ namespace GVR.HVR.Components
             }
         }
 
-        protected override void PrepareDynamicMaterial(Material mat)
-        {
-            mat.SetFloat(
-                Constants.ShaderPropertyFocusBrightness,
-                Constants.ShaderPropertyFocusBrightnessValue);
-        }
-
         /// <summary>
         /// Reset everything (e.g. when GO is culled out.)
         /// </summary>
-        protected override void OnDisable()
+        private void OnDisable()
         {
-            base.OnDisable();
+            DynamicMaterialManager.ResetAllDynamicValues(gameObject);
 
             _isHovered = false;
         }
