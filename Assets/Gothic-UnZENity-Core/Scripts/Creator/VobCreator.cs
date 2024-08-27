@@ -837,9 +837,19 @@ namespace GUZ.Core.Creator
         private static GameObject CreateItemMesh(Item vob, ItemInstance item, GameObject go, GameObject parent = null)
         {
             var mrm = ResourceLoader.TryGetMultiResolutionMesh(item.Visual);
-            return MeshFactory.CreateVob(item.Visual, mrm, vob.Position.ToUnityVector(),
-                vob.Rotation.ToUnityQuaternion(),
-                true, parent ?? _parentGosNonTeleport[vob.Type], go, false);
+
+            if (mrm != null)
+            {
+                return MeshFactory.CreateVob(item.Visual, mrm, vob.Position.ToUnityVector(),
+                    vob.Rotation.ToUnityQuaternion(),
+                    true, parent ?? _parentGosNonTeleport[vob.Type], go, false);
+            }
+
+            // shortbow (itrw_bow_l_01) has no mrm, but has mmb
+            var mmb = ResourceLoader.TryGetMorphMesh(item.Visual);
+
+            return MeshFactory.CreateVob(item.Visual, mmb, vob.Position.ToUnityVector(),
+                vob.Rotation.ToUnityQuaternion(), parent ?? _parentGosNonTeleport[vob.Type], go);
         }
 
         private static GameObject CreateItemMesh(ItemInstance item, GameObject parentGo,
