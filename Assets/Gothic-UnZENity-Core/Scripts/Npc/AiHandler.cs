@@ -282,7 +282,7 @@ namespace GUZ.Core.Npc
             Properties.CurrentItem = -1;
 
             // Reset "currently" used item
-            Properties.NpcInstance.SetAiVar(Constants.DaedalusAIVItemStatusKey, Constants.DaedalusTAITNone);
+            // Properties.NpcInstance.SetAiVar(Constants.DaedalusAIVItemStatusKey, Constants.DaedalusTAITNone);
 
             // Start over
             if (currentRoutine != null)

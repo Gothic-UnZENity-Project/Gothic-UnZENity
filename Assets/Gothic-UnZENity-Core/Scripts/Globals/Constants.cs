@@ -183,9 +183,9 @@ namespace GUZ.Core.Globals
 
         private static void Init()
         {
-            DaedalusAIVItemStatusKey = GameData.GothicVm.GetSymbolByName("AIV_ITEMSTATUS").GetInt(0);
-            DaedalusAIVItemFreqKey = GameData.GothicVm.GetSymbolByName("AIV_ITEMFREQ").GetInt(0);
-            DaedalusTAITNone = GameData.GothicVm.GetSymbolByName("TA_IT_NONE").GetInt(0);
+            // DaedalusAIVItemStatusKey = GameData.GothicVm.GetSymbolByName("AIV_ITEMSTATUS").GetInt(0);
+            // DaedalusAIVItemFreqKey = GameData.GothicVm.GetSymbolByName("AIV_ITEMFREQ").GetInt(0);
+            // DaedalusTAITNone = GameData.GothicVm.GetSymbolByName("TA_IT_NONE").GetInt(0);
         }
     }
 }
