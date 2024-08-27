@@ -72,9 +72,10 @@ namespace GUZ.Core.Manager
             // Nothing found
             // TODO - Potentially re-enable error label on screen to say: We couldn't identify your language.
             // TODO - It also might make sense to manually overwrite/define language/Encoding via GameConfiguration.json - but only if needed in the future.
+            // TODO - Add values for Gothic 2
             else
             {
-                throw new CultureNotFoundException("Language couldn't be identified based on current Gothic installation.");
+                // throw new CultureNotFoundException("Language couldn't be identified based on current Gothic installation.");
             }
         }
 
