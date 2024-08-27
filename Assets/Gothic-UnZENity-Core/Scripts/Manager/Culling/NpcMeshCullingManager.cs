@@ -84,10 +84,18 @@ namespace GUZ.Core.Manager.Culling
             // When an NPC gets invisible, we need to check for their next respawn from their initially spawned position.
             else
             {
-                var spawnedWayPointName = Objects[evt.index].GetComponentInChildren<Routine>().CurrentRoutine.Waypoint;
-                var wayNetPoint = WayNetHelper.GetWayNetPoint(spawnedWayPointName);
+                Objects[evt.index].TryGetComponent<Routine>(out var routine);
 
-                UpdatePosition(evt.index, wayNetPoint.Position);
+                if (routine.CurrentRoutine != null)
+                {
+                    var spawnedWayPointName = routine.CurrentRoutine.Waypoint;
+                    var wayNetPoint = WayNetHelper.GetWayNetPoint(spawnedWayPointName);
+
+                    if (wayNetPoint is not null)
+                    {
+                        UpdatePosition(evt.index, wayNetPoint.Position);
+                    }
+                }
                 _visibleNpcs.Remove(evt.index);
             }
 

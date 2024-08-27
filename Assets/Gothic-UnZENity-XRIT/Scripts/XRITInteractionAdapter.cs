@@ -92,5 +92,10 @@ namespace GUZ.XRIT
                 grabComp.selectExited.AddListener(itemGrabComp.SelectExited);
             }
         }
+        
+        public void IntroduceChapter(string chapter, string text, string texture, string wav, int time)
+        {
+            Debug.LogWarning("IntroduceChapter is not implemented for XRIT");
+        }
     }
 }

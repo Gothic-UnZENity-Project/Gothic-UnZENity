@@ -5,7 +5,6 @@ using GUZ.Core.Caches;
 using GUZ.Core.Creator;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
-using GUZ.Core.Scripts.Manager;
 using UnityEngine;
 using ZenKit;
 using ZenKit.Daedalus;
@@ -35,6 +34,7 @@ namespace GUZ.Core.Vm
             vm.RegisterExternal<NpcInstance, int, int, string>("AI_StartState", AI_StartState);
             vm.RegisterExternal<NpcInstance, int, int>("AI_UseItemToState", AI_UseItemToState);
             vm.RegisterExternal<NpcInstance, float>("AI_Wait", AI_Wait);
+            vm.RegisterExternal<NpcInstance, int>("AI_WaitMs", AI_WaitMs);
             vm.RegisterExternal<int, NpcInstance, string, int>("AI_UseMob", AI_UseMob);
             vm.RegisterExternal<NpcInstance, string>("AI_GoToNextFP", AI_GoToNextFP);
             vm.RegisterExternal<NpcInstance>("AI_DrawWeapon", AI_DrawWeapon);
@@ -112,13 +112,17 @@ namespace GUZ.Core.Vm
             vm.RegisterExternal<string, NpcInstance>("Npc_GetNextWp", Npc_GetNextWp);
             // vm.RegisterExternal<int, NpcInstance, int>("Npc_GetTalentSkill", Npc_GetTalentSkill);
             vm.RegisterExternal<int, NpcInstance, int>("Npc_GetTalentValue", Npc_GetTalentValue);
-
+            vm.RegisterExternal<int, NpcInstance, int>("Npc_KnowsInfo", Npc_KnowsInfo);
+            vm.RegisterExternal<int, NpcInstance>("Npc_IsDead", Npc_IsDead);
+            vm.RegisterExternal<int, NpcInstance, int>("Npc_IsInState", Npc_IsInState);
+            vm.RegisterExternal<NpcInstance>("Npc_SetToFistMode", Npc_SetToFistMode);
 
             // Print
             vm.RegisterExternal<string>("PrintDebug", PrintDebug);
             vm.RegisterExternal<int, string>("PrintDebugCh", PrintDebugCh);
             vm.RegisterExternal<string>("PrintDebugInst", PrintDebugInst);
             vm.RegisterExternal<int, string>("PrintDebugInstCh", PrintDebugInstCh);
+            vm.RegisterExternal<int, string>("PrintDebugNpc", PrintDebugNpc);
 
             // Sound
 
@@ -139,6 +143,9 @@ namespace GUZ.Core.Vm
             vm.RegisterExternal<int, int, int, int, int>("Wld_IsTime", Wld_IsTime);
             vm.RegisterExternal<int, NpcInstance, string>("Wld_GetMobState", Wld_GetMobState);
             vm.RegisterExternal<int, string>("Wld_InsertItem", Wld_InsertItem);
+            vm.RegisterExternal<string>("Wld_ExchangeGuildAttitudes", Wld_ExchangeGuildAttitudes);
+            vm.RegisterExternal<int, int, int>("Wld_SetGuildAttitude", Wld_SetGuildAttitude);
+            vm.RegisterExternal<int, int, int>("Wld_GetGuildAttitude", Wld_GetGuildAttitude);
 
             // Misc
             vm.RegisterExternal<string, string, string>("ConcatStrings", ConcatStrings);
@@ -146,6 +153,7 @@ namespace GUZ.Core.Vm
             vm.RegisterExternal<string, float>("FloatToString", FloatToString);
             vm.RegisterExternal<int, float>("FloatToInt", FloatToInt);
             vm.RegisterExternal<float, int>("IntToFloat", IntToFloat);
+            vm.RegisterExternal<string, string, string, string, int>("IntroduceChapter", IntroduceChapter);
         }
 
 
@@ -229,6 +237,11 @@ namespace GUZ.Core.Vm
             NpcHelper.ExtAiWait(npc, seconds);
         }
 
+        public static void AI_WaitMs(NpcInstance npc, int miliseconds)
+        {
+            NpcHelper.ExtAiWait(npc, miliseconds / 1000);
+        }
+
         public static int AI_UseMob(NpcInstance npc, string target, int state)
         {
             NpcHelper.ExtAiUseMob(npc, target, state);
@@ -250,12 +263,12 @@ namespace GUZ.Core.Vm
 
         public static void AI_Output(NpcInstance self, NpcInstance target, string outputName)
         {
-            DialogHelper.ExtAiOutput(self, target, outputName);
+            DialogManager.ExtAiOutput(self, target, outputName);
         }
 
         public static void AI_StopProcessInfos(NpcInstance npc)
         {
-            DialogHelper.ExtAiStopProcessInfos(npc);
+            DialogManager.ExtAiStopProcessInfos(npc);
         }
 
         public static void AI_LookAt(NpcInstance npc, string waypoint)
@@ -290,7 +303,7 @@ namespace GUZ.Core.Vm
 
         public static void AI_OutputSVM(NpcInstance npc, NpcInstance target, string svmname)
         {
-            DialogHelper.ExtAiOutputSvm(npc, target, svmname);
+            DialogManager.ExtAiOutputSvm(npc, target, svmname);
         }
 
         #endregion
@@ -352,13 +365,13 @@ namespace GUZ.Core.Vm
         [MonoPInvokeCallback(typeof(DaedalusVm.ExternalFuncV))]
         public static void Info_ClearChoices(int info)
         {
-            DialogHelper.ExtInfoClearChoices(info);
+            DialogManager.ExtInfoClearChoices(info);
         }
 
         [MonoPInvokeCallback(typeof(DaedalusVm.ExternalFuncV))]
         public static void Info_AddChoice(int info, string text, int function)
         {
-            DialogHelper.ExtInfoAddChoice(info, text, function);
+            DialogManager.ExtInfoAddChoice(info, text, function);
         }
 
         #endregion
@@ -461,6 +474,16 @@ namespace GUZ.Core.Vm
 
 
         public static void PrintDebugInstCh(int channel, string message)
+        {
+            if (!GameGlobals.Config.EnableZSpyLogs)
+            {
+                return;
+            }
+
+            Debug.Log($"[zspy,{channel}]: {message}");
+        }
+
+        public static void PrintDebugNpc(int channel, string message)
         {
             if (!GameGlobals.Config.EnableZSpyLogs)
             {
@@ -666,7 +689,7 @@ namespace GUZ.Core.Vm
 
         public static int Npc_CanSeeNpc(NpcInstance npc, NpcInstance target)
         {
-            return NpcHelper.ExtNpcCanSeeNpc(npc, target) ? 1 : 0;
+            return Convert.ToInt32(NpcHelper.ExtNpcCanSeeNpc(npc, target));
         }
 
         public static void Npc_ClearAiQueue(NpcInstance npc)
@@ -692,6 +715,27 @@ namespace GUZ.Core.Vm
         public static int Npc_GetTalentValue(NpcInstance npc, int skillId)
         {
             return NpcHelper.ExtNpcGetTalentValue(npc, skillId);
+        }
+
+        public static int Npc_KnowsInfo(NpcInstance npc, int infoInstance)
+        {
+            var res = DialogManager.ExtNpcKnowsInfo(npc, infoInstance);
+            return Convert.ToInt32(res);
+        }
+        
+        public static int Npc_IsDead(NpcInstance npc)
+        {
+            return Convert.ToInt32(NpcHelper.ExtNpcIsDead(npc));
+        }
+        
+        public static int Npc_IsInState(NpcInstance npc, int state)
+        {
+            return Convert.ToInt32(NpcHelper.ExtNpcIsInState(npc, state));
+        }
+
+        public static void Npc_SetToFistMode(NpcInstance npc)
+        {
+            NpcHelper.ExtNpcSetToFistMode(npc);
         }
 
         #endregion
@@ -771,7 +815,7 @@ namespace GUZ.Core.Vm
             var begin = new TimeSpan(beginHour, beginMinute, 0);
             var end = new TimeSpan(endHour, endMinute, 0);
 
-            var now = DateTime.Now.TimeOfDay;
+            var now = GameGlobals.Time.GetCurrentTime();
 
             if (begin <= end && begin <= now && now < end)
             {
@@ -794,6 +838,36 @@ namespace GUZ.Core.Vm
         public static void Wld_InsertItem(int itemInstance, string spawnpoint)
         {
             VobHelper.ExtWldInsertItem(itemInstance, spawnpoint);
+        }
+
+        public static void Wld_ExchangeGuildAttitudes(string name)
+        {
+            var guilds = GameData.GothicVm.GetSymbolByName(name);
+
+            if (guilds == null)
+                return;
+
+            for (double i = 0, count = GameData.GuildTableSize; i < count; ++i)
+            {
+                for (var j = 0; j < count; ++j)
+                    GameData.GuildAttitudes[(int)(i * count + j)] = guilds.GetInt((ushort)(i * count + j));
+            }
+        }
+
+        public static void Wld_SetGuildAttitude(int guild1, int attitude, int guild2)
+        {
+            if (guild1 < 0 || guild2 < 0 || guild1 >= GameData.GuildCount || guild2 >= GameData.GuildCount)
+                return;
+
+            GameData.GuildAttitudes[guild1 * GameData.GuildCount + guild2] = attitude;
+        }
+
+        public static int Wld_GetGuildAttitude(int guild1, int guild2)
+        {
+            if (guild1 < 0 || guild2 < 0 || guild1 >= GameData.GuildCount || guild2 >= GameData.GuildCount)
+                return 0;
+
+            return GameData.GuildAttitudes[guild1 * GameData.GuildCount + guild2];
         }
 
         #endregion
@@ -827,6 +901,11 @@ namespace GUZ.Core.Vm
         public static float IntToFloat(int x)
         {
             return x;
+        }
+
+        public static void IntroduceChapter(string chapter, string text, string texture, string wav, int time)
+        {
+            GameGlobals.Story.ExtIntroduceChapter(chapter, text, texture, wav, time);
         }
 
         #endregion

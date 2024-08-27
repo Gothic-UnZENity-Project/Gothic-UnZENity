@@ -4,9 +4,9 @@ namespace GUZ.Core
 {
     public enum PrefabType
     {
-        Npc,
         WayPoint,
         Vob,
+        Npc,
         VobAnimate,
         VobItem,
         VobContainer,
@@ -23,7 +23,8 @@ namespace GUZ.Core
         VobSound,
         VobSoundDaytime,
         VobLadder,
-        XRDeviceSimulator
+        XRDeviceSimulator,
+        StoryIntroduceChapter
     }
 
     public static class PrefabTypeExtension
@@ -32,9 +33,9 @@ namespace GUZ.Core
         {
             return type switch
             {
-                PrefabType.Npc => "Prefabs/Npc",
                 PrefabType.WayPoint => "Prefabs/WayPoint",
                 PrefabType.Vob => "Prefabs/Vobs/Vob",
+                PrefabType.Npc => "Prefabs/Vobs/oCNpc",
                 PrefabType.VobAnimate => "Prefabs/Vobs/zCVobAnimate",
                 PrefabType.VobItem => "Prefabs/Vobs/oCItem",
                 PrefabType.VobContainer => "Prefabs/Vobs/oCMobContainer",
@@ -52,6 +53,7 @@ namespace GUZ.Core
                 PrefabType.VobSoundDaytime => "Prefabs/Vobs/zCVobSoundDaytime",
                 PrefabType.VobLadder => "Prefabs/Vobs/oCMobLadder",
                 PrefabType.XRDeviceSimulator => "Prefabs/VRPlayer/XR Device Simulator",
+                PrefabType.StoryIntroduceChapter => "Prefabs/Story/IntroduceChapter",
                 _ => throw new Exception($"Enum value {type} not yet defined.")
             };
         }

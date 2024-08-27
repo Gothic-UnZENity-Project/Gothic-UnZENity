@@ -17,11 +17,11 @@ csharp_style_var_when_type_is_apparent = true:suggestion
 
 # Define private members/static variables to be underscored: e.g. private bool _isEnabled;
 # Hint: Constants are also handled by it.
-dotnet_naming_rule.private_members_with_underscore.symbols  = private_fields
+dotnet_naming_rule.private_members_with_underscore.symbols  = private_fields_and_properties
 dotnet_naming_rule.private_members_with_underscore.style    = prefix_underscore
 dotnet_naming_rule.private_members_with_underscore.severity = warning
-dotnet_naming_symbols.private_fields.applicable_kinds           = field
-dotnet_naming_symbols.private_fields.applicable_accessibilities = private
+dotnet_naming_symbols.private_fields_and_properties.applicable_kinds           = field, property
+dotnet_naming_symbols.private_fields_and_properties.applicable_accessibilities = private
 dotnet_naming_style.prefix_underscore.capitalization  = camel_case
 dotnet_naming_style.prefix_underscore.required_prefix = _
 

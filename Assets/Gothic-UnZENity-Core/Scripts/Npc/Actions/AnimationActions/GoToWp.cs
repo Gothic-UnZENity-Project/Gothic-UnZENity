@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace GUZ.Core.Npc.Actions.AnimationActions
 {
-    public class GoToWp : AbstractWalkAnimationAction
+    public class GoToWp : AbstractWalkAnimationAction2
     {
         private string Destination => Action.String0;
 
@@ -19,14 +19,14 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
 
         public override void Start()
         {
-            base.Start();
-
             var currentWaypoint = Props.CurrentWayPoint ?? WayNetHelper.FindNearestWayPoint(Props.transform.position);
             var destinationWaypoint = (WayPoint)WayNetHelper.GetWayNetPoint(Destination);
 
+            
             /*
-             * 1. AI_StartState() can get called multiple times until it won't share the WP. (e.g. ZS_SLEEP -> ZS_StandAround())
-             * 2. Happens (e.g.) during spawning. As we spawn NPCs onto their current WayPoints, they don't need to walk there from entrance of OC.
+             * Two situations, when this action can be skipped:
+             * 1. Ai_GoToWp() can get called multiple times until it will loose the WP in between the Ai_StartState() calls. (e.g. ZS_Sleep() -> ZS_StandAround())
+             * 2. During spawning (e.g.). As we spawn NPCs onto their current WayPoints, they don't need to walk there from entrance of OC.
              */
             if (destinationWaypoint == null || destinationWaypoint.Name == "" || currentWaypoint.Name == Destination)
             {
@@ -34,8 +34,22 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
                 return;
             }
 
+            // We need to set the route now to ensure base.Start() can check if NPC is already _on_ the final destination.
             _route = new Stack<DijkstraWaypoint>(WayNetHelper.FindFastestPath(currentWaypoint.Name,
                 destinationWaypoint.Name));
+
+            base.Start();
+        }
+
+        /// <summary>
+        /// Skip animation setting if we're on the final destination right from the start.
+        /// </summary>
+        protected override void StartWalk()
+        {
+            if (!IsFinishedFlag)
+            {
+                base.StartWalk();
+            }
         }
 
         protected override Vector3 GetWalkDestination()
@@ -54,18 +68,14 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
         {
             _route.Pop();
 
-            if (_route.Count == 0)
+            if (_route.Count != 0)
             {
-                AnimationEndEventCallback(new SerializableEventEndSignal(""));
+                return;
+            }
 
-                State = WalkState.Done;
-                IsFinishedFlag = true;
-            }
-            else
-            {
-                // A new waypoint is destination, we therefore rotate NPC again.
-                State = WalkState.WalkAndRotate;
-            }
+            AnimationEndEventCallback(new SerializableEventEndSignal(""));
+
+            IsFinishedFlag = true;
         }
     }
 }

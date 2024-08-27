@@ -38,6 +38,8 @@ namespace GUZ.Core
 
         public GuzSceneManager Scene { get; private set; }
 
+        public StoryManager Story { get; private set; }
+
         public FontManager Font { get; private set; }
 
         public StationaryLightsManager Lights { get; private set; }
@@ -93,6 +95,7 @@ namespace GUZ.Core
             Sky = new SkyManager(Config, Time, Settings);
             _gameMusicManager = new MusicManager(Config);
             Scene = new GuzSceneManager(Config, _gameLoadingManager, XRInteractionManager);
+            Story = new StoryManager(Config);
             Routines = new RoutineManager(Config);
         }
 

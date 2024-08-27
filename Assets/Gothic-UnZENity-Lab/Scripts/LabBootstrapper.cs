@@ -51,6 +51,7 @@ namespace GUZ.Lab
         public VobMeshCullingManager VobMeshCulling => null;
         public NpcMeshCullingManager NpcMeshCulling => null;
         public VobSoundCullingManager SoundCulling => null;
+        public StoryManager Story => null;
 
 
         private void Awake()

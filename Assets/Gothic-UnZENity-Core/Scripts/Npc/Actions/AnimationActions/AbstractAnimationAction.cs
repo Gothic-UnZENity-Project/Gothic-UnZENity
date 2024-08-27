@@ -33,6 +33,37 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             PhysicsHelper.DisablePhysicsForNpc(Props);
         }
 
+        public string GetWalkModeAnimationString()
+        {
+            string walkmode;
+            switch (Props.WalkMode)
+            {
+                case VmGothicEnums.WalkMode.Walk:
+                    walkmode = "WALK";
+                    break;
+                case VmGothicEnums.WalkMode.Run:
+                    walkmode = "RUN";
+                    break;
+                case VmGothicEnums.WalkMode.Sneak:
+                    walkmode = "SNEAK";
+                    break;
+                case VmGothicEnums.WalkMode.Water:
+                    walkmode = "WATER";
+                    break;
+                case VmGothicEnums.WalkMode.Swim:
+                    walkmode = "SWIM";
+                    break;
+                case VmGothicEnums.WalkMode.Dive:
+                    walkmode = "DIVE";
+                    break;
+                default:
+                    Debug.LogWarning($"Animation of type {Props.WalkMode} not yet implemented.");
+                    return "";
+            }
+
+            return $"S_{walkmode}";
+        }
+
         /// <summary>
         /// We just set the audio by default.
         /// </summary>
@@ -86,7 +117,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
 
             var slotGo = NpcGo.FindChildRecursively(slot1);
 
-            VobCreator.CreateItem(Props.CurrentItem, slotGo);
+            VobCreator.CreateItemMesh(Props.CurrentItem, slotGo);
 
             Props.UsedItemSlot = slot1;
         }
@@ -123,13 +154,14 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             // But only if NPC isn't using an item right now. Otherwise breathing will spawn hand to hips which looks wrong when (e.g.) drinking beer.
             else if (Props.CurrentItem < 0)
             {
+                var weaponState = Props.WeaponState == VmGothicEnums.WeaponState.NoWeapon ? "" : Props.WeaponState.ToString();
                 var animName = Props.WalkMode switch
                 {
-                    VmGothicEnums.WalkMode.Walk => "S_WALK",
-                    VmGothicEnums.WalkMode.Sneak => "S_SNEAK",
-                    VmGothicEnums.WalkMode.Swim => "S_SWIM",
-                    VmGothicEnums.WalkMode.Dive => "S_DIVE",
-                    _ => "S_RUN"
+                    VmGothicEnums.WalkMode.Walk => $"S_{weaponState}WALKL",
+                    VmGothicEnums.WalkMode.Sneak => $"S_{weaponState}SNEAK",
+                    VmGothicEnums.WalkMode.Swim => $"S_{weaponState}SWIM",
+                    VmGothicEnums.WalkMode.Dive => $"S_{weaponState}DIVE",
+                    _ => $"S_{weaponState}RUN"
                 };
                 var idleAnimPlaying = AnimationCreator.PlayAnimation(Props.MdsNames, animName, Props.Go, true);
                 if (!idleAnimPlaying)
@@ -155,6 +187,11 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
         public virtual bool IsFinished()
         {
             return IsFinishedFlag;
+        }
+
+        public virtual void StopImmediately()
+        {
+            IsFinishedFlag = true;
         }
     }
 }

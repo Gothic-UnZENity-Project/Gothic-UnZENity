@@ -21,7 +21,7 @@ namespace GUZ.Core.Manager
 
         static NpcHelper()
         {
-            GlobalEventDispatcher.GeneralSceneLoaded.AddListener(playerGo => { CacheHero(playerGo); });
+            GlobalEventDispatcher.GeneralSceneLoaded.AddListener(CacheHero);
         }
 
         public static void CacheHero(GameObject playerGo)
@@ -32,6 +32,7 @@ namespace GUZ.Core.Manager
             // Set data for NPC.
             var npcInstance = (NpcInstance)GameData.GothicVm.GlobalHero;
             playerProperties.NpcInstance = npcInstance;
+            playerProperties.Head = Camera.main.transform;
 
             // Cache hero for future lookups.
             LookupCache.NpcCache[heroIndex] = (instance: npcInstance, properties: playerProperties);
@@ -196,6 +197,7 @@ namespace GUZ.Core.Manager
             // FIXME - Add Guild check
             // FIXME - add range check based on perceiveAll's range (npc.sense_range)
             var foundNpc = LookupCache.NpcCache.Values
+                .Where(i => i.properties != null) // ignore empty (safe check)
                 .Where(i => i.properties.Go != null) // ignore empty (safe check)
                 .Where(i => i.instance.Index != npcInstance.Index) // ignore self
                 .Where(i => detectPlayer ||
@@ -242,29 +244,30 @@ namespace GUZ.Core.Manager
             return (int)Vector3.Distance(npcPos, waypoint.Position);
         }
 
-        public static bool ExtNpcCanSeeNpc(NpcInstance npc, NpcInstance other)
+        public static bool ExtNpcCanSeeNpc(NpcInstance self, NpcInstance other)
         {
-            var npcGo = GetNpc(npc);
-            var otherGo = GetNpc(other);
+            var selfProps = GetProperties(self);
+            var otherProps = GetProperties(other);
 
-            if (npcGo == null || otherGo == null)
+            if (selfProps == null || otherProps == null)
             {
                 return false;
             }
 
-            var headBone = npcGo.FindChildRecursively("BIP01 HEAD").transform;
+            var selfHeadBone = selfProps.Head;
+            var otherHeadBone = otherProps.Head;
 
-            var inSightRange = Vector3.Distance(npcGo.transform.position, otherGo.transform.position) <=
-                               npc.SensesRange;
+            var distanceToNpc = Vector3.Distance(selfProps.transform.position, otherHeadBone.position);
+            var inSightRange =  distanceToNpc <= self.SensesRange;
 
-            var directionToTarget = (otherGo.transform.position - headBone.position).normalized;
-            var angleToTarget = Vector3.Angle(headBone.forward, directionToTarget);
-
+            var directionToTarget = (otherHeadBone.position - selfHeadBone.position).normalized;
+            var angleToTarget = Vector3.Angle(selfHeadBone.forward, directionToTarget);
             var inFov = angleToTarget <= 50.0f; // OpenGothic assumes 100 fov for NPCs
 
-            var inLineOfSight = Physics.Linecast(headBone.position, directionToTarget);
+            var layersToIgnore = Constants.HandLayer | Constants.GrabbableLayer;
+            var hasLineOfSightCollisions = Physics.Linecast(selfHeadBone.position, otherHeadBone.position, layersToIgnore);
 
-            return inSightRange && inFov && inLineOfSight;
+            return inSightRange && inFov && !hasLineOfSightCollisions;
         }
 
         public static void ExtNpcClearAiQueue(NpcInstance npc)
@@ -549,11 +552,47 @@ namespace GUZ.Core.Manager
             ExchangeRoutine(npcGo.properties.Go, npcInstance, newRoutine.Index);
         }
 
+        public static bool ExtNpcIsDead(NpcInstance npcInstance)
+        {
+            // FIXME - We need to implement it properly. Just fixing NPEs for now!
+            // FIXME - e.g. used for PC_Thief_AFTERTROLL_Condition() from Daedalus.
+            return false;
+        }
+        
+        public static bool ExtNpcIsInState(NpcInstance npc, int state)
+        {
+            // FIXME - We need to implement it properly. Just fixing NPEs for now!
+            // FIXME - e.g. used for PC_Thief_AFTERTROLL_Condition() from Daedalus.
+            return false;
+        }
+
+        public static void ExtNpcSetToFistMode(NpcInstance npcInstance)
+        {
+            var npcProperties = GetProperties(npcInstance);
+
+            npcProperties.WeaponState = VmGothicEnums.WeaponState.Fist;
+            // npc.properties.
+            // if npc has item in hand remove it and set weapon to fist 
+            // Some animations need to force remove items, some not.
+            if (npcProperties.UsedItemSlot == "")
+            {
+                return;
+            }
+
+            var slotGo = npcProperties.Go.FindChildRecursively(npcProperties.UsedItemSlot);
+            var item = slotGo!.transform.GetChild(0);
+
+            UnityEngine.Object.Destroy(item.gameObject);
+        }
+
         public static void ExchangeRoutine(GameObject go, NpcInstance npcInstance, int routineIndex)
         {
-            // e.g. Monsters have no routine and therefore no further routine handling needed.
+            // e.g. Monsters have no routine and we just need to send ai
             if (routineIndex == 0)
             {
+                // We always need to set "self" before executing any Daedalus function.
+                GameData.GothicVm.GlobalSelf = npcInstance;
+                go.GetComponent<AiHandler>().StartRoutine(npcInstance.StartAiState);
                 return;
             }
 

@@ -127,6 +127,12 @@ namespace GUZ.Core.Creator
                     await Task.Yield(); // Wait for the next frame
                 }
 
+                if (WayNetHelper.GetWayNetPoint(npcData.spawnPoint) is null)
+                {
+                    Debug.LogWarning($"Cannot spawn NPC as waypoint ${npcData.spawnPoint} does not exist.");
+                    continue;
+                }
+
                 var newNpc = InitializeNpc(npcData.npcInstance);
                 if (newNpc == null)
                 {
@@ -183,7 +189,8 @@ namespace GUZ.Core.Creator
                 // At that point we need to have our properties component set inside our lookup to fill the data properly.
                 cachedValue.properties = newNpc.GetComponent<NpcProperties>();
                 cachedValue.properties.NpcInstance = cachedValue.instance;
-                LookupCache.NpcCache[npcInstanceIndex] = cachedValue; // Tuples are structs. We therefore need to update the whole struct instead of a single property only.
+                LookupCache.NpcCache[npcInstanceIndex] =
+                    cachedValue; // Tuples are structs. We therefore need to update the whole struct instead of a single property only.
                 Vm.InitInstance(cachedValue.instance);
 
                 cachedValue.properties.Dialogs = GameData.Dialogs.Instances
@@ -212,8 +219,11 @@ namespace GUZ.Core.Creator
 
             newNpc.name = $"{cachedValue.instance.GetName(NpcNameSlot.Slot0)} ({cachedValue.instance.Id})";
 
-            var mdhName = string.IsNullOrEmpty(cachedValue.properties.OverlayMdhName) ? cachedValue.properties.BaseMdhName : cachedValue.properties.OverlayMdhName;
-            MeshFactory.CreateNpc(newNpc.name, cachedValue.properties.MdmName, mdhName, cachedValue.properties.BodyData, newNpc, GetRootGo());
+            var mdhName = string.IsNullOrEmpty(cachedValue.properties.OverlayMdhName)
+                ? cachedValue.properties.BaseMdhName
+                : cachedValue.properties.OverlayMdhName;
+            MeshFactory.CreateNpc(newNpc.name, cachedValue.properties.MdmName, mdhName, cachedValue.properties.BodyData,
+                newNpc, GetRootGo());
 
             foreach (var equippedItem in cachedValue.properties.EquippedItems)
             {
@@ -223,6 +233,20 @@ namespace GUZ.Core.Creator
 
             var npcRoutine = cachedValue.instance.DailyRoutine;
             NpcHelper.ExchangeRoutine(newNpc, cachedValue.instance, npcRoutine);
+
+
+            newNpc.TryGetComponent<Routine>(out var routine);
+
+            if (routine.CurrentRoutine != null)
+
+                // As per the original game we don't spawn the NPC if the WayNet point doesn't exist.
+                if (WayNetHelper.GetWayNetPoint(routine.CurrentRoutine.Waypoint) == null)
+                {
+                    LookupCache.NpcCache.Remove(cachedValue.instance.Index);
+                    Object.Destroy(newNpc);
+                    return null;
+                }
+
 
             // As they're loaded asynchronously, we need to disable every NPC/Monster during loading.
             // We will enable them via Culling once everything is loaded.
@@ -299,7 +323,8 @@ namespace GUZ.Core.Creator
                         {
                             npcGo.transform.position = initialSpawnPoint.Position + offsetPoint;
                             // There are three options to sync the Physics information for collision check. This is the most performant one as it only alters the single V3.
-                            npcGo.GetComponentInChildren<Rigidbody>().position = initialSpawnPoint.Position + offsetPoint;
+                            npcGo.GetComponentInChildren<Rigidbody>().position =
+                                initialSpawnPoint.Position + offsetPoint;
                             isPositionFound = true;
                             break;
                         }
@@ -418,7 +443,9 @@ namespace GUZ.Core.Creator
         {
             if (!LookupCache.NpcCache.TryGetValue(instanceId, out var npcData))
             {
-                Debug.LogError($"Couldn't find NPC {instanceId} inside cache.");
+                var instanceName = GameData.GothicVm.GetSymbolByIndex(instanceId).Name;
+                Debug.LogError(
+                    $"Couldn't find NPC {instanceId} inside cache. Please ensure {instanceName}'s NPC.id is added inside GameConfiguration.");
                 return null;
             }
 

@@ -7,11 +7,11 @@ namespace GUZ.Core.Extensions
     public static class GameObjectExtension
     {
         public static void SetParent(this GameObject obj, GameObject parent, bool resetLocation = false,
-            bool resetRotation = false)
+            bool resetRotation = false, bool worldPositionStays = false)
         {
             if (parent != null)
             {
-                obj.transform.parent = parent.transform;
+                obj.transform.SetParent(parent.transform, worldPositionStays);
             }
 
             // FIXME - I don't know why, but Unity adds location, rotation, and scale to newly attached sub elements.

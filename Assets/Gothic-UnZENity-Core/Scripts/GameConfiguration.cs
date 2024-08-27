@@ -115,15 +115,17 @@ namespace GUZ.Core
         [ConditionalField(fieldToCheck: nameof(EnableVOBMeshCulling), compareValues: true)]
         public MeshCullingGroup LargeVOBMeshCullingGroup = new() { MaximumObjectSize = 100, CullingDistance = 200 };
 
-        [ConditionalField(fieldToCheck: nameof(EnableVOBMeshCulling), compareValues: true)]
-        [Tooltip("For debugging purposes only.")]
-        public bool ShowVOBMeshCullingGizmos;
 
         [Separator("Immersion")]
         [OverrideLabel("Brighten Up Hovered VOBs")]
         public bool BrightenUpHoveredVOBs = true;
         [OverrideLabel("Show Names On Hovered VOBs")]
         public bool ShowNamesOnHoveredVOBs = true;
+
+        [Separator("Debug")]
+        [Tooltip("For debugging purposes only.")]
+        public bool ShowVOBMeshCullingGizmos;
+        public bool ShowCapsuleOverlapGizmos;
 
 
         /**

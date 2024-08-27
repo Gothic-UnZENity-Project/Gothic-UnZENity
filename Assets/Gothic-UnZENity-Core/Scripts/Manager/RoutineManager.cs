@@ -73,7 +73,6 @@ namespace GUZ.Core.Manager
         {
             var normalizedNow = now.Hour % 24 * 60 + now.Minute;
 
-            Debug.Log($"RoutineManager.timeChanged={now}");
             if (!_npcStartTimeDict.TryGetValue(normalizedNow, out var routineItems))
             {
                 return;

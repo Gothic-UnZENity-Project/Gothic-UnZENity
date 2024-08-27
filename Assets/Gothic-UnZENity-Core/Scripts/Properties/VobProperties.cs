@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using UnityEngine;
 using ZenKit.Vobs;
@@ -26,10 +27,9 @@ namespace GUZ.Core.Properties
             }
         }
 
-        public virtual string GetFocusName()
+        public override string GetFocusName()
         {
             return Properties?.Name;
         }
-
     }
 }
