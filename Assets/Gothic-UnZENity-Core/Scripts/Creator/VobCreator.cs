@@ -798,7 +798,7 @@ namespace GUZ.Core.Creator
                 Direction = vob.Rotation.ToUnityQuaternion().eulerAngles
             };
             vobObj.GetComponent<VobSpotProperties>().Fp = freePointData;
-            GameData.FreePoints.Add(fpName, freePointData);
+            GameData.FreePoints.TryAdd(fpName, freePointData);
 
             SetPosAndRot(vobObj, vob.Position, vob.Rotation);
             return vobObj;
