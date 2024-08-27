@@ -12,10 +12,8 @@ namespace GUZ.HVR.Components
             {
                 return Keyboard.current[Key.Space].wasPressedThisFrame;
             }
-            else
-            {
-                return base.GetIsJumpActivated();
-            }
+
+            return RightController.PrimaryButtonState.JustActivated;
         }
 
         protected override bool GetCrouch()
