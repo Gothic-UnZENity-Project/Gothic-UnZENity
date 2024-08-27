@@ -15,10 +15,12 @@ namespace GUZ.Core.Globals
 
         // Custom shaders
         // For textures like NPCs, _not_ the grouped texture array.
-        public static readonly Shader ShaderSingleMeshLit = Shader.Find("Lit/SingleMesh");
+        public static readonly string ShaderSingleMeshLitName = "Lit/SingleMesh";
+        public static readonly Shader ShaderSingleMeshLit = Shader.Find(ShaderSingleMeshLitName);
         public static readonly Shader ShaderSingleMeshLitDynamic = Shader.Find("Lit/SingleMesh-Dynamic");
 
-        public static readonly Shader ShaderWorldLit = Shader.Find("Lit/World");
+        public static readonly string ShaderWorldLitName = "Lit/World";
+        public static readonly Shader ShaderWorldLit = Shader.Find(ShaderWorldLitName);
         public static readonly Shader ShaderLitAlphaToCoverage = Shader.Find("Lit/AlphaToCoverage");
         public static readonly Shader ShaderWater = Shader.Find("Lit/Water");
         public static readonly Shader ShaderBarrier = Shader.Find("Unlit/Barrier");
@@ -29,6 +31,7 @@ namespace GUZ.Core.Globals
          * Shader properties
          */
 
+        public static readonly int ShaderTypeDefault = 0;
         public static readonly int ShaderTypeTransparent = 3000;
 
         // Interactable VOB is in focus of player. Brighten up the color by this value.

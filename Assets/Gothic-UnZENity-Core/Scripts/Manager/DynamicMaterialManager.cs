@@ -24,7 +24,13 @@ namespace GUZ.Core.Manager
             public List<Material> DynamicMaterials;
         }
 
-        private static Shader _dynamicShader => Constants.ShaderSingleMeshLitDynamic;
+
+        private static Dictionary<string, (Shader dynamicShader, int shaderType)> _dynamicShaderMap = new ()
+        {
+            { Constants.ShaderSingleMeshLitName, new (Constants.ShaderSingleMeshLitDynamic, Constants.ShaderTypeTransparent) },
+            // Basically: Leave the default shader (no special logic inside code needed with this handling.
+            { Constants.ShaderWorldLitName, new (Constants.ShaderWorldLit, Constants.ShaderTypeDefault) }
+        };
 
         // Some objects (like NPCs) have multiple meshes. We therefore add all self+children renderers/materials.
         private static Dictionary<GameObject, CacheEntry> _cache = new();
@@ -89,10 +95,10 @@ namespace GUZ.Core.Manager
             var dynamicMaterials = new List<Material>();
             foreach (var mat in defaultMaterials)
             {
-                var newMaterial = new Material(_dynamicShader)
+                var newMaterial = new Material(_dynamicShaderMap[mat.shader.name].dynamicShader)
                 {
                     mainTexture = mat.mainTexture,
-                    renderQueue = Constants.ShaderTypeTransparent
+                    renderQueue = _dynamicShaderMap[mat.shader.name].shaderType
                 };
 
                 dynamicMaterials.Add(newMaterial);
