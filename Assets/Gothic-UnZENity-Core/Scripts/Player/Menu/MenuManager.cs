@@ -23,7 +23,6 @@ namespace GUZ.Core.Player.Menu
         public AudioMixerHandler MusicVolumeHandler;
         public AudioMixerHandler SoundEffectsVolumeHandler;
 
-        public GameObject MainMenuImageBackground;
         public GameObject MainMenuBackground;
         public GameObject MainMenuSaveLoadBackground;
         public GameObject MainMenuText;
@@ -37,8 +36,6 @@ namespace GUZ.Core.Player.Menu
 
         public void SetMaterials()
         {
-            MainMenuImageBackground.GetComponent<MeshRenderer>().material =
-                GameGlobals.Textures.MainMenuImageBackgroundMaterial;
             MainMenuSaveLoadBackground.GetComponent<MeshRenderer>().material =
                 GameGlobals.Textures.MainMenuSaveLoadBackgroundMaterial;
             MainMenuBackground.GetComponent<MeshRenderer>().material = GameGlobals.Textures.MainMenuBackgroundMaterial;

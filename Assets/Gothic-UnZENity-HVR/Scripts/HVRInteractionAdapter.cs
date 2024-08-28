@@ -2,14 +2,14 @@
 using System.Linq;
 using GUZ.Core;
 using GUZ.Core.Context;
+using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
-using GUZ.Core.Manager;
 using GUZ.HVR.Components;
-using HurricaneVR.Framework.Core.Player;
 using HurricaneVRExtensions.Simulator;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Object = UnityEngine.Object;
+using PrefabType = GUZ.Core.PrefabType;
 
 namespace GUZ.HVR
 {
@@ -26,8 +26,8 @@ namespace GUZ.HVR
         {
             var newPrefab = Resources.Load<GameObject>("HVR/Prefabs/VRPlayer");
             var go = Object.Instantiate(newPrefab, position, rotation);
-            var controllerComp = go.GetComponentInChildren<HVRPlayerController>();
-            
+            var playerController = go.GetComponentInChildren<GUZHVRPlayerController>();
+
             go.name = "VRPlayer - HVR";
 
             // During normal gameplay, we need to move the VRPlayer to General scene. Otherwise, it will be created inside
@@ -36,30 +36,24 @@ namespace GUZ.HVR
 
             if (Constants.SceneMainMenu == scene.name)
             {
-                // Disable physics
-                controllerComp.Gravity = 0f;
-                controllerComp.MaxFallSpeed = 0f;
-
-                // Disable movement
-                controllerComp.MovementEnabled = false;
-                controllerComp.MoveSpeed = 0f;
-                controllerComp.RunSpeed = 0f;
-
-                // Disable rotation
-                controllerComp.RotationEnabled = false;
-                controllerComp.SmoothTurnSpeed = 0f;
-                controllerComp.SnapAmount = 0f;
+                playerController.SetMainMenuControls();
             }
             // Normal game
             else
             {
-                controllerComp.DirectionStyle = (PlayerDirectionMode)PlayerPrefsManager.DirectionMode;
-                controllerComp.RotationType = (RotationType)PlayerPrefsManager.RotationType;
-                controllerComp.SnapAmount = PlayerPrefsManager.SnapRotationAmount;
-                controllerComp.SmoothTurnSpeed = PlayerPrefsManager.SmoothRotationSpeed;
+                playerController.SetNormalControls();
+
+                // Add MainMenu entry to the game
+                var mainMenuPrefab = ResourceLoader.TryGetPrefabObject(PrefabType.MainMenu);
+                playerController.MainMenu = mainMenuPrefab;
+
+                mainMenuPrefab.SetParent(playerController.gameObject, true, true);
+                mainMenuPrefab.SetActive(false);
+                // TODO: Same as on MainMenu.unity scene. Will be replaced by a proper FollowPlayer component later.
+                mainMenuPrefab.transform.localPosition = new(0, 1.5f, 4);
             }
 
-            return go.GetComponentInChildren<HVRPlayerController>().gameObject;
+            return playerController.gameObject;
         }
 
         public void CreateXRDeviceSimulator()
