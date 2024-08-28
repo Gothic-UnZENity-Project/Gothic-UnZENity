@@ -1,3 +1,4 @@
+using GUZ.Core;
 using GUZ.Core.Manager;
 using HurricaneVR.Framework.Core.Player;
 using MyBox;
@@ -17,7 +18,7 @@ namespace GUZ.HVR.Components
 
         private void Start()
         {
-            PlayerPrefsManager.PlayerPrefsUpdated.AddListener(OnPlayerPrefsUpdated);
+            GlobalEventDispatcher.PlayerPrefUpdated.AddListener(OnPlayerPrefsUpdated);
         }
 
         protected override void Update()
@@ -33,7 +34,7 @@ namespace GUZ.HVR.Components
 
         private void OnDestroy()
         {
-            PlayerPrefsManager.PlayerPrefsUpdated.RemoveListener(OnPlayerPrefsUpdated);
+            GlobalEventDispatcher.PlayerPrefUpdated.RemoveListener(OnPlayerPrefsUpdated);
         }
 
         /// <summary>

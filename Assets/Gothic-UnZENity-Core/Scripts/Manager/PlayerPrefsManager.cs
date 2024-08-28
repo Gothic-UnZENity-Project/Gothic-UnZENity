@@ -1,14 +1,11 @@
 ﻿using System;
 using GUZ.Core.Globals;
 using UnityEngine;
-using UnityEngine.Events;
 
 namespace GUZ.Core.Manager
 {
     public class PlayerPrefsManager
     {
-        public static UnityEvent<string, object> PlayerPrefsUpdated = new();
-
         // Movement - Direction
         private const int _directionModeCamera = 0;
         private const int _directionModeLeftController = 1;
@@ -34,7 +31,7 @@ namespace GUZ.Core.Manager
             set
             {
                 PlayerPrefs.SetInt(Constants.PlayerPrefDirectionMode, value);
-                PlayerPrefsUpdated.Invoke(Constants.PlayerPrefDirectionMode, DirectionMode);
+                GlobalEventDispatcher.PlayerPrefUpdated.Invoke(Constants.PlayerPrefDirectionMode, DirectionMode);
             }
         }
 
@@ -44,7 +41,7 @@ namespace GUZ.Core.Manager
             set
             {
                 PlayerPrefs.SetInt(Constants.PlayerPrefDirectionMode, value ? _directionModeCamera : -1);
-                PlayerPrefsUpdated.Invoke(Constants.PlayerPrefDirectionMode, MovementDirectionCamera);
+                GlobalEventDispatcher.PlayerPrefUpdated.Invoke(Constants.PlayerPrefDirectionMode, MovementDirectionCamera);
             }
         }
 
@@ -54,7 +51,7 @@ namespace GUZ.Core.Manager
             set
             {
                 PlayerPrefs.SetInt(Constants.PlayerPrefDirectionMode, value ? _directionModeLeftController : -1);
-                PlayerPrefsUpdated.Invoke(Constants.PlayerPrefDirectionMode, MovementDirectionLeftController);
+                GlobalEventDispatcher.PlayerPrefUpdated.Invoke(Constants.PlayerPrefDirectionMode, MovementDirectionLeftController);
             }
         }
 
@@ -64,7 +61,7 @@ namespace GUZ.Core.Manager
             set
             {
                 PlayerPrefs.SetInt(Constants.PlayerPrefDirectionMode, value ? _directionModeRightController : -1);
-                PlayerPrefsUpdated.Invoke(Constants.PlayerPrefDirectionMode, MovementDirectionRightController);
+                GlobalEventDispatcher.PlayerPrefUpdated.Invoke(Constants.PlayerPrefDirectionMode, MovementDirectionRightController);
             }
         }
 
@@ -79,7 +76,7 @@ namespace GUZ.Core.Manager
             set
             {
                 PlayerPrefs.SetInt(Constants.PlayerPrefRotationType, value);
-                PlayerPrefsUpdated.Invoke(Constants.PlayerPrefRotationType, RotationType);
+                GlobalEventDispatcher.PlayerPrefUpdated.Invoke(Constants.PlayerPrefRotationType, RotationType);
             }
         }
 
@@ -89,7 +86,7 @@ namespace GUZ.Core.Manager
             set
             {
                 PlayerPrefs.SetInt(Constants.PlayerPrefRotationType, value ? _rotationTypeSmooth : _rotationTypeSnap);
-                PlayerPrefsUpdated.Invoke(Constants.PlayerPrefRotationType, SmoothRotation);
+                GlobalEventDispatcher.PlayerPrefUpdated.Invoke(Constants.PlayerPrefRotationType, SmoothRotation);
             }
         }
 
@@ -99,7 +96,7 @@ namespace GUZ.Core.Manager
             set
             {
                 PlayerPrefs.SetInt(Constants.PlayerPrefRotationType, value ? _rotationTypeSnap : _rotationTypeSmooth);
-                PlayerPrefsUpdated.Invoke(Constants.PlayerPrefRotationType, SnapRotation);
+                GlobalEventDispatcher.PlayerPrefUpdated.Invoke(Constants.PlayerPrefRotationType, SnapRotation);
             }
         }
 
@@ -109,7 +106,7 @@ namespace GUZ.Core.Manager
             set
             {
                 PlayerPrefs.SetInt(Constants.PlayerPrefSmoothRotationSpeed, value);
-                PlayerPrefsUpdated.Invoke(Constants.PlayerPrefSmoothRotationSpeed, SmoothRotationSpeed);
+                GlobalEventDispatcher.PlayerPrefUpdated.Invoke(Constants.PlayerPrefSmoothRotationSpeed, SmoothRotationSpeed);
             }
         }
 
@@ -119,7 +116,7 @@ namespace GUZ.Core.Manager
             set
             {
                 PlayerPrefs.SetInt(Constants.PlayerPrefSnapRotationAmount, value);
-                PlayerPrefsUpdated.Invoke(Constants.PlayerPrefSnapRotationAmount, SnapRotationAmount);
+                GlobalEventDispatcher.PlayerPrefUpdated.Invoke(Constants.PlayerPrefSnapRotationAmount, SnapRotationAmount);
             }
         }
 
@@ -129,7 +126,7 @@ namespace GUZ.Core.Manager
             set
             {
                 PlayerPrefs.SetInt(Constants.PlayerPrefItemCollisionWhileDragged, Convert.ToInt32(value));
-                PlayerPrefsUpdated.Invoke(Constants.PlayerPrefItemCollisionWhileDragged, ItemCollisionWhileDragged);
+                GlobalEventDispatcher.PlayerPrefUpdated.Invoke(Constants.PlayerPrefItemCollisionWhileDragged, ItemCollisionWhileDragged);
             }
         }
     }
