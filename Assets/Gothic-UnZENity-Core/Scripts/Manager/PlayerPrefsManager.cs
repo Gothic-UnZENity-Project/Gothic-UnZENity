@@ -20,6 +20,9 @@ namespace GUZ.Core.Manager
         // Gameplay
         private const bool _defaultItemCollisionWhileDragged = true;
         
+        // Audio
+        private const float _defaultMusicVolume = 0.2f;
+        
         
         /**
          * Movement settings
@@ -127,6 +130,21 @@ namespace GUZ.Core.Manager
             {
                 PlayerPrefs.SetInt(Constants.PlayerPrefItemCollisionWhileDragged, Convert.ToInt32(value));
                 GlobalEventDispatcher.PlayerPrefUpdated.Invoke(Constants.PlayerPrefItemCollisionWhileDragged, ItemCollisionWhileDragged);
+            }
+        }
+        
+        
+        /**
+         * Audio settings
+         */
+         
+        public static float MusicVolume
+        {
+            get => PlayerPrefs.GetFloat(Constants.PlayerPrefMusicVolume, _defaultMusicVolume);
+            set
+            {
+                PlayerPrefs.SetFloat(Constants.PlayerPrefMusicVolume, value);
+                GlobalEventDispatcher.PlayerPrefUpdated.Invoke(Constants.PlayerPrefMusicVolume, MusicVolume);
             }
         }
     }

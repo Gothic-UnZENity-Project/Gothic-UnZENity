@@ -1,7 +1,6 @@
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
 using GUZ.Core.UI;
-using GUZ.Core.UI.MainMenu;
 using GUZ.Core.Util;
 using MyBox;
 using TMPro;
@@ -19,14 +18,11 @@ namespace GUZ.Core.Player.Menu
         public GameObject TeleportMenu;
         public GameObject SoundMenu;
 
-        public MovementMenuHandler MovementMenuHandler;
-        public AudioMixerHandler MusicVolumeHandler;
         public AudioMixerHandler SoundEffectsVolumeHandler;
 
         public GameObject MainMenuBackground;
         public GameObject MainMenuSaveLoadBackground;
         public GameObject MainMenuText;
-
 
         private void Start()
         {
@@ -44,7 +40,6 @@ namespace GUZ.Core.Player.Menu
 
         public void SetSettingsValues()
         {
-            MusicVolumeHandler.SliderUpdate(PlayerPrefs.GetFloat(Constants.PlayerPrefMusicVolume, 1f));
             SoundEffectsVolumeHandler.SliderUpdate(PlayerPrefs.GetFloat(Constants.PlayerPrefSoundEffectsVolume, 1f));
         }
 

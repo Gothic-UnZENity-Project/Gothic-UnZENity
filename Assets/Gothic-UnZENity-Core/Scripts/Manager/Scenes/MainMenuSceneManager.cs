@@ -1,11 +1,11 @@
 using UnityEngine;
 
-namespace GUZ.Core.UI.MainMenu
+namespace GUZ.Core.Manager.Scenes
 {
     /// <summary>
     /// Specific manager for MainMenu.unity scene tasks only.
     /// </summary>
-    public class MainMenuSceneHandler : MonoBehaviour
+    public class MainMenuSceneManager : MonoBehaviour
     {
         [SerializeField]
         private GameObject _mainMenuImageBackground;

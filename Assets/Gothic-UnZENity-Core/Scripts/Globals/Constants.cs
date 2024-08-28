@@ -72,7 +72,7 @@ namespace GUZ.Core.Globals
         public const string PlayerPrefRotationType = "RotationType";
         public const string PlayerPrefSnapRotationAmount = "SnapRotationAmount";
         public const string PlayerPrefSmoothRotationSpeed = "SmoothRotationSpeed";
-        public const string PlayerPrefMusicVolume = "BackgroundMusicVolume";
+        public const string PlayerPrefMusicVolume = "MusicVolume";
         public const string PlayerPrefSoundEffectsVolume = "SoundEffectsVolume";
         public const string PlayerPrefItemCollisionWhileDragged = "ItemCollisionWhileDragged";
         
