@@ -6190,7 +6190,7 @@ MonoBehaviour:
   InitialHMDAdjustment: 1
   GroundedLayerMask:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 1
   GroundedDistance: 0.02
   GroundedRadiusFactor: 0.5
   MinHeight: 0.3
@@ -6235,7 +6235,7 @@ MonoBehaviour:
   MouseSensitivityX: 1
   IsGrounded: 0
   _actualVelocity: 0
-  _mainMenu: {fileID: 0}
+  MainMenu: {fileID: 0}
 --- !u!114 &6717938044841316945
 MonoBehaviour:
   m_ObjectHideFlags: 0
