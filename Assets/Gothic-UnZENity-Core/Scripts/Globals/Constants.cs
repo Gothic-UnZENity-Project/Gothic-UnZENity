@@ -13,18 +13,36 @@ namespace GUZ.Core.Globals
         public static readonly Shader ShaderDecal = Shader.Find("Shader Graphs/Decal");
         public static readonly Shader ShaderStandard = Shader.Find("Standard");
 
-        // Custom GUZ shaders
+        // Custom shaders
         // For textures like NPCs, _not_ the grouped texture array.
-        public static readonly Shader ShaderSingleMeshLit = Shader.Find("Lit/SingleMesh");
+        public static readonly string ShaderSingleMeshLitName = "Lit/SingleMesh";
+        public static readonly Shader ShaderSingleMeshLit = Shader.Find(ShaderSingleMeshLitName);
+        public static readonly Shader ShaderSingleMeshLitDynamic = Shader.Find("Lit/SingleMesh-Dynamic");
 
-        public static readonly Shader ShaderWorldLit = Shader.Find("Lit/World");
+        public static readonly string ShaderWorldLitName = "Lit/World";
+        public static readonly Shader ShaderWorldLit = Shader.Find(ShaderWorldLitName);
         public static readonly Shader ShaderLitAlphaToCoverage = Shader.Find("Lit/AlphaToCoverage");
         public static readonly Shader ShaderWater = Shader.Find("Lit/Water");
         public static readonly Shader ShaderBarrier = Shader.Find("Unlit/Barrier");
         public static readonly Shader ShaderThunder = Shader.Find("Unlit/ThunderShader");
 
-        // Shader properties
-        public static readonly float ShaderPropertyFocusBrightness = 10f; // Object is in focus of player. Brighten up the color by this value.
+
+        /*
+         * Shader properties
+         */
+
+        public static readonly int ShaderTypeDefault = 0;
+        public static readonly int ShaderTypeTransparent = 3000;
+
+        // Interactable VOB is in focus of player. Brighten up the color by this value.
+        public static readonly int ShaderPropertyFocusBrightness = Shader.PropertyToID("_FocusBrightness");
+        public static readonly float ShaderPropertyFocusBrightnessDefault = 1f;
+        public static readonly float ShaderPropertyFocusBrightnessValue = 10f;
+
+        // Item is a "ghost" in hand. i.e. no collision.
+        public static readonly int ShaderPropertyTransparency = Shader.PropertyToID("_Alpha");
+        public static readonly float ShaderPropertyTransparencyDefault = 1f;
+        public static readonly float ShaderPropertyTransparencyValue = 0.75f;
 
         public const string SceneBootstrap = "Bootstrap";
         public const string SceneGeneral = "General";

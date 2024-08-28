@@ -1,8 +1,7 @@
 #if GUZ_HVR_INSTALLED
-using System.Collections.Generic;
-using System.Linq;
 using GUZ.Core;
 using GUZ.Core.Globals;
+using GUZ.Core.Manager;
 using GUZ.Core.Properties;
 using HurricaneVR.Framework.Core;
 using HurricaneVR.Framework.Core.Grabbers;
@@ -22,7 +21,6 @@ namespace GVR.HVR.Components
     /// </summary>
     public class HVRFocus : MonoBehaviour
     {
-        private static readonly int _focusBrightness = Shader.PropertyToID("_FocusBrightness");
         private static Camera _mainCamera;
 
         private static bool _featureBrightenUp;
@@ -30,12 +28,6 @@ namespace GVR.HVR.Components
 
         [SerializeField] private AbstractProperties _properties;
         [SerializeField] private GameObject _nameCanvas;
-
-        // Some objects (like NPCs) have multiple meshes. We therefore assume HVRFocus is added at level of first renderer.
-        // Then we do a lookup into its children to show focus effect on all meshes.
-        private List<Renderer> _renderers;
-        private List<Material> _defaultMaterials;
-        private List<Material> _focusedMaterials;
 
         private bool _isHovered;
 
@@ -58,30 +50,15 @@ namespace GVR.HVR.Components
                 _featureShowName = GameGlobals.Config.ShowNamesOnHoveredVOBs;
             }
 
-            // If we hover this object for the first time, set its values.
-            if (_renderers == null)
-            {
-                _renderers = transform.GetComponentsInChildren<Renderer>().ToList();
-                _defaultMaterials = transform.GetComponentsInChildren<Renderer>()
-                    .Select(i => i.sharedMaterial)
-                    .ToList();
-                _focusedMaterials = _defaultMaterials.Select(i => new Material(i)).ToList();
-
-                _focusedMaterials.ForEach(i => i.SetFloat(_focusBrightness, Constants.ShaderPropertyFocusBrightness));
-            }
-
             if (_featureBrightenUp)
             {
-                for (var i = 0; i < _renderers.Count; i++)
-                {
-                    _renderers[i].sharedMaterial = _focusedMaterials[i];
-                }
+                DynamicMaterialManager.SetDynamicValue(gameObject, Constants.ShaderPropertyFocusBrightness, Constants.ShaderPropertyFocusBrightnessValue);
             }
 
             if (_featureShowName)
             {
-                _nameCanvas.SetActive(true);
                 _nameCanvas.GetComponentInChildren<TMP_Text>().text = _properties.GetFocusName();
+                _nameCanvas.SetActive(true);
             }
 
             _isHovered = true;
@@ -91,10 +68,7 @@ namespace GVR.HVR.Components
         {
             if (_featureBrightenUp)
             {
-                for (var i = 0; i < _renderers.Count; i++)
-                {
-                    _renderers[i].sharedMaterial = _defaultMaterials[i];
-                }
+                DynamicMaterialManager.ResetDynamicValue(gameObject, Constants.ShaderPropertyFocusBrightness, Constants.ShaderPropertyFocusBrightnessDefault);
             }
 
             _nameCanvas.SetActive(false);
@@ -120,24 +94,8 @@ namespace GVR.HVR.Components
         /// </summary>
         private void OnDisable()
         {
-            // Reset material.
-            if (_renderers != null)
-            {
-                for (var i = 0; i < _renderers.Count; i++)
-                {
-                    _renderers[i].sharedMaterial = _defaultMaterials[i];
-                }
-            }
+            DynamicMaterialManager.ResetAllDynamicValues(gameObject);
 
-            // We need to destroy our Material manually otherwise it won't be GC'ed by Unity (as stated in the docs).
-            if (_focusedMaterials != null)
-            {
-                _focusedMaterials.ForEach(Destroy);
-            }
-
-            _renderers = null;
-            _defaultMaterials = null;
-            _focusedMaterials = null;
             _isHovered = false;
         }
     }

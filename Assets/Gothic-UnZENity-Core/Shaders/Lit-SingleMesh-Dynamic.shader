@@ -1,20 +1,24 @@
-Shader "Lit/SingleMesh"
+Shader "Lit/SingleMesh-Dynamic"
 {
     Properties
     {
         _MainTex("Texture", 2D) = "white" {}
+        _FocusBrightness("FocusBrightness", Range(1, 100)) = 1
+        _Alpha("Alpha", Range(0,1)) = 1
     }
     SubShader
     {
         Tags
         {
-            "RenderType" = "Opaque"
+            "RenderType" = "Transparent"
             "RenderPipeline" = "UniversalPipeline"
-            "RenderQueue" = "Geometry"
+            "RenderQueue" = "Transparent"
         }
 
         Pass
         {
+            Blend SrcAlpha OneMinusSrcAlpha
+
             HLSLPROGRAM
             #pragma vertex vert
             #pragma fragment frag
@@ -44,6 +48,8 @@ Shader "Lit/SingleMesh"
 
             CBUFFER_START(UnityPerMaterial)
                 sampler2D _MainTex;
+                float _FocusBrightness;
+                float _Alpha;
             CBUFFER_END
 
             #include "GothicIncludes.hlsl"
@@ -79,10 +85,10 @@ Shader "Lit/SingleMesh"
             half4 frag(v2f i) : SV_Target
             {
                 half4 albedo = tex2D(_MainTex, i.uv);
-                half3 diffuse = albedo * i.diffuse;
+                half3 diffuse = albedo * i.diffuse * _FocusBrightness;
 
                 diffuse = ApplyFog(diffuse, i.worldPos);
-                return half4(diffuse, 1);
+                return half4(diffuse, _Alpha);
             }
             ENDHLSL
         }

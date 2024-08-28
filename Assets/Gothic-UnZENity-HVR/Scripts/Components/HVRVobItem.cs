@@ -20,6 +20,7 @@ namespace GUZ.HVR.Components
         private readonly Collider[] _overlapColliders = new Collider[1];
         private static int _ignoreLayerCollisionCheck;
 
+
         private struct OverlapCheckData
         {
             public Axis MaxAxis; // Used for P0 and P1 calculation
@@ -54,6 +55,9 @@ namespace GUZ.HVR.Components
             // Stop collisions while being dragged around (at least shortly; otherwise e.g. items might stick inside chests when pulled out).
             gameObject.layer = Constants.VobItemNoCollision;
 
+            // At least until object isn't colliding with anything any longer, the object will be a ghost (i.e. no collision + transparency activated)
+            DynamicMaterialManager.SetDynamicValue(gameObject, Constants.ShaderPropertyTransparency, Constants.ShaderPropertyTransparencyValue);
+
             // If we want Item collisions, we just temporarily deactivate them until the item is free of collisions.
             if (PlayerPrefsManager.ItemCollisionWhileDragged)
             {
@@ -68,6 +72,9 @@ namespace GUZ.HVR.Components
             gameObject.layer = Constants.GrabbableLayer; // Back to HVR default
 
             GameGlobals.VobMeshCulling?.StopTrackVobPositionUpdates(gameObject);
+
+            // Disable "ghostification" of object.
+            DynamicMaterialManager.ResetDynamicValue(gameObject, Constants.ShaderPropertyTransparency, Constants.ShaderPropertyTransparencyDefault);
         }
 
         /// <summary>
@@ -135,6 +142,9 @@ namespace GUZ.HVR.Components
 
             // Re-enable collisions
             gameObject.layer = Constants.GrabbableLayer;
+
+            // Disable "ghostification" of object.
+            DynamicMaterialManager.ResetDynamicValue(gameObject, Constants.ShaderPropertyTransparency, Constants.ShaderPropertyTransparencyDefault);
         }
 
         /// <summary>
@@ -228,6 +238,14 @@ namespace GUZ.HVR.Components
             }
 
             return result;
+        }
+
+        /// <summary>
+        /// Reset everything (e.g. when GO is culled out.)
+        /// </summary>
+        private void OnDisable()
+        {
+            DynamicMaterialManager.ResetAllDynamicValues(gameObject);
         }
     }
 }
