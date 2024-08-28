@@ -14,16 +14,17 @@ namespace GUZ.HVR.Components
 
         protected override void UpdateInput()
         {
+            base.UpdateInput();
+
             if (!UpdateInputs)
             {
                 return;
             }
 
             IsMenuActivated = GetMenuActivated();
+
+            ResetState(ref MenuState);
             SetState(ref MenuState, IsMenuActivated);
-
-            base.UpdateInput();
-
         }
 
         private bool GetMenuActivated()

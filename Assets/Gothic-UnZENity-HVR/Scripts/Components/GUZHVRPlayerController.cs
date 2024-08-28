@@ -22,6 +22,8 @@ namespace GUZ.HVR.Components
 
         protected override void Update()
         {
+            base.Update();
+
             if (_guzInputs.IsMenuActivated && IsGameScene())
             {
                 // Toggle visibility
