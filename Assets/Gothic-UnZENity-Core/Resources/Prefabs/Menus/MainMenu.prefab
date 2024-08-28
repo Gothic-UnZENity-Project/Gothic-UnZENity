@@ -14402,10 +14402,10 @@ MonoBehaviour:
   m_FillRect: {fileID: 4724508948064285557}
   m_HandleRect: {fileID: 5119081957892920177}
   m_Direction: 0
-  m_MinValue: 5
-  m_MaxValue: 45
+  m_MinValue: 15
+  m_MaxValue: 250
   m_WholeNumbers: 1
-  m_Value: 25
+  m_Value: 90
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
@@ -17431,10 +17431,10 @@ MonoBehaviour:
   m_FillRect: {fileID: 6265463884079170440}
   m_HandleRect: {fileID: 6331654548372080465}
   m_Direction: 0
-  m_MinValue: 5
-  m_MaxValue: 45
+  m_MinValue: 15
+  m_MaxValue: 90
   m_WholeNumbers: 1
-  m_Value: 15
+  m_Value: 45
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:

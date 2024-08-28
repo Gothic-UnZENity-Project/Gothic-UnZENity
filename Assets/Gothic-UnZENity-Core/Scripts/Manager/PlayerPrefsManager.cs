@@ -14,8 +14,8 @@ namespace GUZ.Core.Manager
         // Movement - Rotation
         private const int _rotationTypeSmooth = 0;
         private const int _rotationTypeSnap = 1;
-        private const int _defaultSmoothRotationSpeed = 2;
-        private const int _defaultSnapRotationAmount = 10;
+        private const int _defaultSmoothRotationSpeed = 90; // Default taken from HVRPlayerController.SmoothTurnSpeed
+        private const int _defaultSnapRotationAmount = 45; // Default taken from HVRPlayerController.SnapAmount
         
         // Gameplay
         private const bool _defaultItemCollisionWhileDragged = true;
