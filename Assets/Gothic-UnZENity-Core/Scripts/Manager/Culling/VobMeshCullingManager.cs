@@ -28,6 +28,9 @@ namespace GUZ.Core.Manager.Culling
         private BoundingSphere[] _vobSpheresMedium;
         private BoundingSphere[] _vobSpheresLarge;
 
+        // Do not trigger FC or OC while in that range of an object.
+        private const float _gracePeriodCullingDistance = 5f;
+
         private enum VobList
         {
             Small,
@@ -138,44 +141,45 @@ namespace GUZ.Core.Manager.Culling
 
         private void VobSmallChanged(CullingGroupEvent evt)
         {
-            var smallPaused = _pausedVobs
-                .Where(i => i.Value.Item1 == VobList.Small)
-                .Select(i => i.Value.Item2);
-
-            if (smallPaused.Contains(evt.index))
-            {
-                return;
-            }
-
-            _vobObjectsSmall[evt.index].SetActive(evt.hasBecomeVisible);
+            VobChanged(evt, _vobObjectsSmall, VobList.Small);
         }
 
         private void VobMediumChanged(CullingGroupEvent evt)
         {
-            var mediumPaused = _pausedVobs
-                .Where(i => i.Value.Item1 == VobList.Medium)
-                .Select(i => i.Value.Item2);
-
-            if (mediumPaused.Contains(evt.index))
-            {
-                return;
-            }
-
-            _vobObjectsMedium[evt.index].SetActive(evt.hasBecomeVisible);
+            VobChanged(evt, _vobObjectsMedium, VobList.Medium);
         }
 
         private void VobLargeChanged(CullingGroupEvent evt)
         {
-            var largePaused = _pausedVobs
-                .Where(i => i.Value.Item1 == VobList.Large)
+            VobChanged(evt, _vobObjectsLarge, VobList.Large);
+        }
+
+        /// <summary>
+        /// Band explanation:
+        /// Band 0 - (0m...~5m)   - Grace period where a VOB won't get culled (no FC, no OC) - e.g. to ensure a ladder is still in our hands or a light behind us still shines.
+        /// Band 1 - (5m...~100m) - Frustum Culling (FC) and Occlusion Culling (OC) will happen - ensure proper performance for culled out, unseen objects.
+        /// Band 2 - [~100m-∞)    - Items inside last band will always be culled out.
+        /// </summary>
+        private void VobChanged(CullingGroupEvent evt, List<GameObject> vobObjects, VobList vobListType)
+        {
+            var pausedVobs = _pausedVobs
+                .Where(i => i.Value.Item1 == vobListType)
                 .Select(i => i.Value.Item2);
 
-            if (largePaused.Contains(evt.index))
+            if (pausedVobs.Contains(evt.index))
             {
                 return;
             }
 
-            _vobObjectsLarge[evt.index].SetActive(evt.hasBecomeVisible);
+            switch (evt.currentDistance)
+            {
+                case 0: // grace period band - ignore FC and OC, plainly enable the vob!
+                    vobObjects[evt.index].SetActive(true);
+                    break;
+                default:
+                    vobObjects[evt.index].SetActive(evt.hasBecomeVisible || (evt.isVisible && !evt.hasBecomeInvisible));
+                    break;
+            }
         }
 
         /// <summary>
@@ -235,9 +239,9 @@ namespace GUZ.Core.Manager.Culling
             _vobCullingGroupMedium.onStateChanged = VobMediumChanged;
             _vobCullingGroupLarge.onStateChanged = VobLargeChanged;
 
-            _vobCullingGroupSmall.SetBoundingDistances(new[] { _featureSmallCullingGroup.CullingDistance });
-            _vobCullingGroupMedium.SetBoundingDistances(new[] { _featureMediumCullingGroup.CullingDistance });
-            _vobCullingGroupLarge.SetBoundingDistances(new[] { _featureLargeCullingGroup.CullingDistance });
+            _vobCullingGroupSmall.SetBoundingDistances(new[] { _gracePeriodCullingDistance, _featureSmallCullingGroup.CullingDistance });
+            _vobCullingGroupMedium.SetBoundingDistances(new[] { _gracePeriodCullingDistance, _featureMediumCullingGroup.CullingDistance });
+            _vobCullingGroupLarge.SetBoundingDistances(new[] { _gracePeriodCullingDistance, _featureLargeCullingGroup.CullingDistance });
 
             _vobSpheresSmall = spheresSmall.ToArray();
             _vobSpheresMedium = spheresMedium.ToArray();
