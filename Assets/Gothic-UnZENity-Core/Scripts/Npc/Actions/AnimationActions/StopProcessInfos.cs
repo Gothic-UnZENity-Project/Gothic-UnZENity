@@ -1,10 +1,12 @@
 using GUZ.Core.Manager;
+using GUZ.Core.Properties;
 using UnityEngine;
 
 namespace GUZ.Core.Npc.Actions.AnimationActions
 {
     /// <summary>
-    /// Close dialog menu immediately.
+    /// Dialog is done. (e.g. END clicked)
+    /// Therefore close dialog menu immediately.
     /// </summary>
     public class StopProcessInfos : AbstractAnimationAction
     {
@@ -18,6 +20,9 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             
             DialogManager.StopDialog();
             GameGlobals.Story.SwitchChapterIfPending();
+
+            // Restart NPC routine
+            Props.CurrentLoopState = NpcProperties.LoopState.Start;
         }
     }
 }
