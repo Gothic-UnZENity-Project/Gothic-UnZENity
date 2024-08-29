@@ -4,7 +4,7 @@ using System.Linq;
 using GUZ.Core.Context;
 using GUZ.Core.Data;
 using GUZ.Core.Globals;
-using GUZ.HVR.Components;
+using GUZ.HVR.Components.UI;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using ZenKit.Daedalus;
