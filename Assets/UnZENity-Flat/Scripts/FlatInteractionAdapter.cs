@@ -17,7 +17,7 @@ namespace GUZ.HVR
 
         public GameObject CreatePlayerController(Scene scene, Vector3 position = default, Quaternion rotation = default)
         {
-            var go = ResourceLoader.TryGetPrefabObject(PrefabType.Player);
+            var go = ResourceLoader.TryGetPrefabObject(PrefabType.Player, position, rotation);
 
             go.name = "Player - Flat";
 
@@ -25,7 +25,7 @@ namespace GUZ.HVR
             // world scene and removed whenever we change the world.
             SceneManager.MoveGameObjectToScene(go, scene);
 
-            return go;
+            return go.GetComponentInChildren<CharacterController>().gameObject;
         }
 
         public void CreateVRDeviceSimulator()

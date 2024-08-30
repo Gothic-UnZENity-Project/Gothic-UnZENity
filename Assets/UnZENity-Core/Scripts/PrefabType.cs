@@ -56,7 +56,7 @@ namespace GUZ.Core
                 PrefabType.VobSoundDaytime => "Prefabs/Vobs/zCVobSoundDaytime",
                 PrefabType.VobLadder => "Prefabs/Vobs/oCMobLadder",
 
-                PrefabType.Player => "HVR/Prefabs/Player",
+                PrefabType.Player => "Prefabs/Player",
                 PrefabType.MainMenu => "Prefabs/Menus/MainMenu",
                 PrefabType.XRDeviceSimulator => "Prefabs/VRPlayer/XR Device Simulator",
                 PrefabType.StoryIntroduceChapter => "Prefabs/Story/IntroduceChapter",

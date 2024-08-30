@@ -29,6 +29,12 @@ namespace GUZ.Core.Extensions
 
         public static GameObject FindChildRecursively(this GameObject go, string name)
         {
+            if (go == null)
+            {
+                Debug.LogError("Empty GameObject provided.");
+                return null;
+            }
+            
             Transform result;
             try
             {
