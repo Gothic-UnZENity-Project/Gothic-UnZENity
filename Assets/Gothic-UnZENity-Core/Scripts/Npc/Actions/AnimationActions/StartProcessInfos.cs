@@ -1,11 +1,14 @@
 using System.Linq;
-using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
 using UnityEngine;
 
 namespace GUZ.Core.Npc.Actions.AnimationActions
 {
+    /// <summary>
+    /// Hint: This is no Daedalus external. We execute this element whenever the Dialog UI needs to be opened.
+    ///       It's simply an AnimationAction for convenience reasons and to align with AnimationQueue.
+    /// </summary>
     public class StartProcessInfos : AbstractAnimationAction
     {
         private int _dialogId => Action.Int0;
@@ -18,12 +21,6 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
         {
             IsFinishedFlag = true;
 
-            // AI_STopProcessInfos was called before this Action
-            if (!GameData.Dialogs.IsInDialog)
-            {
-                return;
-            }
-
             var isInSubDialog = GameData.Dialogs.CurrentDialog.Options.Any();
 
             if (isInSubDialog)
@@ -35,15 +32,6 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
                 if (foundItem != null)
                 {
                     GameData.Dialogs.CurrentDialog.Options.Remove(foundItem);
-                }
-            }
-            else
-            {
-                // The dialog wasn't important and has no sub-options. i.e. the dialog is fully told.
-                if (GameData.Dialogs.CurrentDialog.Instance.Permanent == 0 &&
-                    GameData.Dialogs.CurrentDialog.Options.IsEmpty())
-                {
-                    Props.Dialogs.Remove(GameData.Dialogs.CurrentDialog.Instance);
                 }
             }
 

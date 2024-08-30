@@ -31,14 +31,10 @@ namespace GUZ.Core.Manager
                 GuzContext.DialogAdapter.ShowDialog(npcGo);
             }
             // There is at least one important entry, the NPC wants to talk to the hero about.
-            else if (TryGetImportant(properties.Dialogs, out var infoInstance))
+            else if (initialDialogStarting && TryGetImportant(properties.Dialogs, out var infoInstance))
             {
-                if (initialDialogStarting)
-                {
-                    properties.Go.GetComponent<AiHandler>().ClearState(true);
-                }
-
                 GameData.Dialogs.CurrentDialog.Instance = infoInstance;
+                properties.Go.GetComponent<AiHandler>().ClearState(true);
 
                 CallInformation(properties.NpcInstance.Index, infoInstance.Information, true);
             }
@@ -52,16 +48,20 @@ namespace GUZ.Core.Manager
 
                 foreach (var dialog in properties.Dialogs)
                 {
-                    if (dialog.Condition == 0)
+                    // Dialog is non-permanent and already been told
+                    if (dialog.Permanent == 0 && GameData.KnownDialogInfos.Contains(dialog.Index))
                     {
                         continue;
                     }
-                    
-                    var conditionResult = GameData.GothicVm.Call<int>(dialog.Condition);
-                    if (conditionResult > 0)
+
+                    // Dialog condition is false
+                    if (dialog.Condition == 0 || GameData.GothicVm.Call<int>(dialog.Condition) <= 0)
                     {
-                        selectableDialogs.Add(dialog);
+                        continue;
                     }
+
+                    // We can now add the dialog
+                    selectableDialogs.Add(dialog);
                 }
 
                 selectableDialogs = selectableDialogs.OrderBy(d => d.Nr).ToList();
@@ -75,10 +75,33 @@ namespace GUZ.Core.Manager
         /// </summary>
         private static bool TryGetImportant(List<InfoInstance> dialogs, out InfoInstance item)
         {
-            item = dialogs.FirstOrDefault(dialog =>
-                dialog.Important == 1 && (dialog.Condition == 0 || GameData.GothicVm.Call<int>(dialog.Condition) == 1));
+            foreach (var dialog in dialogs)
+            {
+                // Dialog is not important.
+                if (dialog.Important != 1)
+                {
+                    continue;
+                }
 
-            return item != null;
+                // Important dialog has already been told.
+                if (dialog.Permanent != 1 && GameData.KnownDialogInfos.Contains(dialog.Index))
+                {
+                    continue;
+                }
+
+                // No dialog condition exists or dialog condition() is false.
+                if (dialog.Condition == 0 || GameData.GothicVm.Call<int>(dialog.Condition) == 0)
+                {
+                    continue;
+                }
+
+                // Dialog is usable.
+                item = dialog;
+                return true;
+            }
+
+            item = null;
+            return false;
         }
 
         public static void ExtAiOutput(NpcInstance self, NpcInstance target, string outputName)
@@ -202,10 +225,21 @@ namespace GUZ.Core.Manager
             GameData.GothicVm.GlobalOther = GameData.GothicVm.GlobalHero;
             GameData.GothicVm.Call(information);
 
-            // We always want to have a method to get the dialog menu back once all dialog lines are talked.
-            npcData.properties.AnimationQueue.Enqueue(new StartProcessInfos(
-                new AnimationAction(int0: information),
-                npcData.properties.Go));
+
+            var animationQueue = npcData.properties.AnimationQueue;
+
+            // If Daedalus tells us, that the dialog is stopped after this chat (AI_StopProcessInfos), then we're done.
+            if (animationQueue.Any(i => i.GetType() == typeof(StopProcessInfos)))
+            {
+                return;
+            }
+            // Else we want to have a the dialog menu back once all dialog lines are talked.
+            else
+            {
+                animationQueue.Enqueue(new StartProcessInfos(
+                    new AnimationAction(int0: information),
+                    npcData.properties.Go));
+            }
         }
         
         public static bool ExtNpcKnowsInfo(NpcInstance npc, int infoInstance)

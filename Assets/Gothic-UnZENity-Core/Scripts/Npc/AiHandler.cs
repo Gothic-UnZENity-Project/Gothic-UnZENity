@@ -103,18 +103,22 @@ namespace GUZ.Core.Npc
                         break;
                     
                     case NpcProperties.LoopState.End:
-                        symbol = Vm.GetSymbolByIndex(Properties.StateEnd);
-                        switch (symbol.ReturnType)
+                        if (Properties.StateEnd != 0)
                         {
-                            case DaedalusDataType.Int:
-                                var loopResponse = Vm.Call<int>(Properties.StateEnd);
-                                break;
-                            default:
-                                Vm.Call(Properties.StateEnd);
-                                break;
+                            symbol = Vm.GetSymbolByIndex(Properties.StateEnd);
+                            switch (symbol.ReturnType)
+                            {
+                                case DaedalusDataType.Int:
+                                    var loopResponse = Vm.Call<int>(Properties.StateEnd);
+                                    break;
+                                default:
+                                    Vm.Call(Properties.StateEnd);
+                                    break;
+                            }
                         }
-                        
-                        Properties.CurrentLoopState = NpcProperties.LoopState.Start;
+
+                        // We filled the AnimationQueue with the ZS_*_End() animations. Do not fill it again until a new behaviour is triggered.
+                        Properties.CurrentLoopState = NpcProperties.LoopState.None;
                         break;
                 }
             }
@@ -184,14 +188,7 @@ namespace GUZ.Core.Npc
             }
             else
             {
-                Properties.CurrentLoopState = NpcProperties.LoopState.End;
-
-                if (Properties.StateEnd != 0)
-                {
-                    // We always need to set "self" before executing any Daedalus function.
-                    Vm.GlobalSelf = Properties.NpcInstance;
-                    Vm.Call(Properties.StateEnd);
-                }
+                Properties.CurrentLoopState = NpcProperties.LoopState.End; // Next frame, the End logic will be executed.
             }
         }
 
