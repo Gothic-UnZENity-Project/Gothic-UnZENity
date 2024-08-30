@@ -201,9 +201,9 @@ namespace GUZ.Core
         }
 
         [CanBeNull]
-        public static GameObject TryGetPrefabObject(PrefabType key)
+        public static GameObject TryGetPrefabObject(PrefabType key, Vector3 position = default, Quaternion rotation = default)
         {
-            return Object.Instantiate(TryGetPrefab(key));
+            return Object.Instantiate(TryGetPrefab(key), position, rotation);
         }
 
         [NotNull]

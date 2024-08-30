@@ -8,7 +8,6 @@ using GUZ.HVR.Components;
 using HurricaneVRExtensions.Simulator;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using Object = UnityEngine.Object;
 using PrefabType = GUZ.Core.PrefabType;
 
 namespace GUZ.HVR
@@ -24,9 +23,7 @@ namespace GUZ.HVR
 
         public GameObject CreatePlayerController(Scene scene, Vector3 position = default, Quaternion rotation = default)
         {
-            // We need to instantiate the Prefab in here as we need to set the default position+rotation. Otherwise HVR will always spawn at 0,0,0.
-            var newPrefab = Resources.Load<GameObject>("HVR/Prefabs/Player");
-            var go = Object.Instantiate(newPrefab, position, rotation);
+            var go = ResourceLoader.TryGetPrefabObject(PrefabType.Player, position, rotation);
             var playerController = go.GetComponentInChildren<GUZHVRPlayerController>();
 
             go.name = "Player - VR";
