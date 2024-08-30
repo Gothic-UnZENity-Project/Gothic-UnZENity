@@ -4,9 +4,9 @@ using UnityEngine.SceneManagement;
 
 namespace GUZ.Core.Manager
 {
-    public class VRPlayerManager
+    public class PlayerManager
     {
-        public VRPlayerManager(GameConfiguration config)
+        public PlayerManager(GameConfiguration config)
         {
             // Nothing to do for now. Might be needed later.
         }

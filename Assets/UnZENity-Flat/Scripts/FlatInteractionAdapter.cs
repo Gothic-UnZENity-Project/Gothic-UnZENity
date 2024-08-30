@@ -1,5 +1,5 @@
-#if GUZ_HVR_INSTALLED
 using System;
+using GUZ.Core;
 using GUZ.Core.Context;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -17,7 +17,15 @@ namespace GUZ.HVR
 
         public GameObject CreatePlayerController(Scene scene, Vector3 position = default, Quaternion rotation = default)
         {
-            throw new NotImplementedException();
+            var go = ResourceLoader.TryGetPrefabObject(PrefabType.Player);
+
+            go.name = "Player - Flat";
+
+            // During normal gameplay, we need to move the VRPlayer to General scene. Otherwise, it will be created inside
+            // world scene and removed whenever we change the world.
+            SceneManager.MoveGameObjectToScene(go, scene);
+
+            return go;
         }
 
         public void CreateVRDeviceSimulator()
@@ -41,4 +49,3 @@ namespace GUZ.HVR
         }
     }
 }
-#endif

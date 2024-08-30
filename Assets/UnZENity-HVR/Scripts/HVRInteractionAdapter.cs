@@ -24,11 +24,12 @@ namespace GUZ.HVR
 
         public GameObject CreatePlayerController(Scene scene, Vector3 position = default, Quaternion rotation = default)
         {
-            var newPrefab = Resources.Load<GameObject>("HVR/Prefabs/VRPlayer");
+            // We need to instantiate the Prefab in here as we need to set the default position+rotation. Otherwise HVR will always spawn at 0,0,0.
+            var newPrefab = Resources.Load<GameObject>("HVR/Prefabs/Player");
             var go = Object.Instantiate(newPrefab, position, rotation);
             var playerController = go.GetComponentInChildren<GUZHVRPlayerController>();
 
-            go.name = "VRPlayer - HVR";
+            go.name = "Player - VR";
 
             // During normal gameplay, we need to move the VRPlayer to General scene. Otherwise, it will be created inside
             // world scene and removed whenever we change the world.
