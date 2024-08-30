@@ -104,5 +104,4 @@ Assets/HurricaneVR/
 # Do not commit local development settings
 Assets/StreamingAssets/GameSettings.dev.json
 Assets/StreamingAssets/GameSettings.dev.json.meta
-Assets/Gothic-UnZENity-Core/Resources/GameConfigurations/*.dev.asset
-Assets/Gothic-UnZENity-Core/Resources/GameConfigurations/*.dev.asset.meta
+Assets/UnZENity-Core/Resources/GameConfigurations/*.dev.asset*
