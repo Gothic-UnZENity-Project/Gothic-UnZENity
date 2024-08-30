@@ -13,7 +13,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using ZenKit.Daedalus;
 
-namespace GUZ.HVR.Components
+namespace GUZ.HVR.Components.UI
 {
     public class HVRDialog : MonoBehaviour
     {
@@ -33,15 +33,14 @@ namespace GUZ.HVR.Components
                 var rectTransform = _dialogItems.First().GetComponent<RectTransform>();
                 _dialogItemHeight = rectTransform.rect.height;
             }
+
+            GetComponentInChildren<Billboard>().FacedObject = Camera.main!.transform;
         }
         
         public void ShowDialog(GameObject npcGo)
         {
             var npcDialog = npcGo.FindChildRecursively("DialogMenuRootPos");
             _dialogRoot.SetParent(npcDialog, true, true, true);
-
-            // We need to rotate the y-axis to be aligned with NPC rotation.
-            _dialogRoot.transform.localRotation = Quaternion.Euler(0, npcDialog.transform.rotation.eulerAngles.y, 0);
 
             var rootRectHeight = _dialogItemHeight * _dialogItemsInUse;
             _dialogRoot.GetComponent<RectTransform>().SetHeight(rootRectHeight);
