@@ -31,7 +31,7 @@ namespace GUZ.Lab
 
         public LabNpcAnimationHandler LabNpcAnimationHandler;
 
-        private XRDeviceSimulatorManager _deviceSimulatorManager;
+        private VRDeviceSimulatorManager _deviceSimulatorManager;
         private MusicManager _gameMusicManager;
         private RoutineManager _npcRoutineManager;
         private GameSettings _settings;
@@ -62,7 +62,7 @@ namespace GUZ.Lab
             _textureManager = GetComponent<TextureManager>();
             _fontManager = GetComponent<FontManager>();
             _sceneManager = new GuzSceneManager(Config, null, null);
-            _deviceSimulatorManager = new XRDeviceSimulatorManager(Config);
+            _deviceSimulatorManager = new VRDeviceSimulatorManager(Config);
             _npcRoutineManager = new RoutineManager(Config);
             _gameMusicManager = new MusicManager(Config);
 
@@ -100,7 +100,7 @@ namespace GUZ.Lab
         private void BootLab()
         {
             var playerGo = GuzContext.InteractionAdapter.CreatePlayerController(SceneManager.GetActiveScene());
-            _deviceSimulatorManager.AddXRDeviceSimulator();
+            _deviceSimulatorManager.AddVRDeviceSimulator();
             NpcHelper.CacheHero(playerGo);
         }
 

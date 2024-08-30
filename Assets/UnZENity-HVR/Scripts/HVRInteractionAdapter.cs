@@ -34,9 +34,9 @@ namespace GUZ.HVR
             // world scene and removed whenever we change the world.
             SceneManager.MoveGameObjectToScene(go, scene);
 
-            if (Constants.SceneMainMenu == scene.name)
+            if (scene.name is Constants.SceneMainMenu or Constants.SceneLoading)
             {
-                playerController.SetMainMenuControls();
+                playerController.SetLockedControls();
             }
             // Normal game
             else
@@ -56,7 +56,7 @@ namespace GUZ.HVR
             return playerController.gameObject;
         }
 
-        public void CreateXRDeviceSimulator()
+        public void CreateVRDeviceSimulator()
         {
             // As we reference components from HVRPlayer inside HVRSimulator, we need to create the SimulatorGO on the same scene.
             var generalScene = SceneManager.GetSceneByName(Constants.SceneGeneral);

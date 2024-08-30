@@ -259,11 +259,11 @@ Transform:
   m_GameObject: {fileID: 1308095009}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 1.5, z: 4}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 7604298098518958911}
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
 --- !u!114 &1308095011
 MonoBehaviour:
@@ -597,9 +597,6 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects:
-    - targetCorrespondingSourceObject: {fileID: 7559068981978770, guid: b2f7ec490b212544e97a98adc4cb9d50, type: 3}
-      insertIndex: 0
-      addedObject: {fileID: 1308095010}
     - targetCorrespondingSourceObject: {fileID: 6399765361351343797, guid: b2f7ec490b212544e97a98adc4cb9d50, type: 3}
       insertIndex: 0
       addedObject: {fileID: 2031667427}
@@ -626,15 +623,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _mainMenuImageBackground: {fileID: 2031667426}
---- !u!4 &7604298098518958911 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 7559068981978770, guid: b2f7ec490b212544e97a98adc4cb9d50, type: 3}
-  m_PrefabInstance: {fileID: 7604298098518958908}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 1478698497}
   - {fileID: 7604298098518958908}
+  - {fileID: 1308095010}
   - {fileID: 791865610}

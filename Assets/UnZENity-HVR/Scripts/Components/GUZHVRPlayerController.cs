@@ -51,7 +51,7 @@ namespace GUZ.HVR.Components
         /// <summary>
         /// Disable certain actions to keep player stuck in current position.
         /// </summary>
-        public void SetMainMenuControls()
+        public void SetLockedControls()
         {
             // Disable physics
             Gravity = 0f;

@@ -20,7 +20,7 @@ namespace GUZ.HVR
             throw new NotImplementedException();
         }
 
-        public void CreateXRDeviceSimulator()
+        public void CreateVRDeviceSimulator()
         {
             throw new NotImplementedException("This method should never been called on Flat adapter.");
         }

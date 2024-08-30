@@ -233,6 +233,7 @@ namespace GUZ.Core.Manager
                 case Constants.SceneBootstrap:
                     break;
                 case Constants.SceneLoading:
+                    SceneManager.SetActiveScene(scene);
                     GlobalEventDispatcher.LoadingSceneLoaded.Invoke();
                     break;
                 case Constants.SceneGeneral:
@@ -244,9 +245,10 @@ namespace GUZ.Core.Manager
 
                     break;
                 case Constants.SceneMainMenu:
+                    SceneManager.SetActiveScene(scene);
+                    
                     var sphere = scene.GetRootGameObjects().FirstOrDefault(go => go.name == "LoadingSphere");
                     sphere.GetComponent<MeshRenderer>().material = GameGlobals.Textures.LoadingSphereMaterial;
-                    SceneManager.SetActiveScene(scene);
 
                     GlobalEventDispatcher.MainMenuSceneLoaded.Invoke();
                     break;

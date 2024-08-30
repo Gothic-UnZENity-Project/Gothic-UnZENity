@@ -21,8 +21,8 @@ namespace GUZ.Core
 
         private FileLoggingHandler _fileLoggingHandler;
         private BarrierManager _barrierManager;
-        private XRPlayerManager _xrPlayerManager;
-        private XRDeviceSimulatorManager _xrSimulatorManager;
+        private VRPlayerManager _vrPlayerManager;
+        private VRDeviceSimulatorManager _vrSimulatorManager;
         private MusicManager _gameMusicManager;
         private LoadingManager _gameLoadingManager;
 
@@ -89,8 +89,8 @@ namespace GUZ.Core
             SoundCulling = new VobSoundCullingManager(Config);
             _barrierManager = new BarrierManager(Config);
             Lights = new StationaryLightsManager();
-            _xrPlayerManager = new XRPlayerManager(Config);
-            _xrSimulatorManager = new XRDeviceSimulatorManager(Config);
+            _vrPlayerManager = new VRPlayerManager(Config);
+            _vrSimulatorManager = new VRDeviceSimulatorManager(Config);
             Time = new GameTime(Config, this);
             Sky = new SkyManager(Config, Time, Settings);
             _gameMusicManager = new MusicManager(Config);
@@ -111,8 +111,8 @@ namespace GUZ.Core
             SoundCulling.Init();
             Time.Init();
             Sky.Init();
-            _xrPlayerManager.Init();
-            _xrSimulatorManager.Init();
+            _vrPlayerManager.Init();
+            _vrSimulatorManager.Init();
             Scene.Init();
             Routines.Init();
 
@@ -161,7 +161,7 @@ namespace GUZ.Core
             SoundCulling = null;
             _barrierManager = null;
             Lights = null;
-            _xrSimulatorManager = null;
+            _vrSimulatorManager = null;
             Time = null;
             Sky = null;
             _gameMusicManager = null;
