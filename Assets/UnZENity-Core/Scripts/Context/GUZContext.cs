@@ -1,5 +1,4 @@
 using System;
-using GUZ.XRIT;
 using UnityEngine;
 #if GUZ_HVR_INSTALLED
 using GUZ.HVR;
@@ -14,39 +13,39 @@ namespace GUZ.Core.Context
 
         public enum Controls
         {
-            HVR, // Hurricane VR
-            XRIT // XR Interaction Toolkit
+            VR,
+            Flat
         }
 
         public static void SetContext(Controls controls)
         {
             switch (controls)
             {
-                case Controls.XRIT:
-                    SetXRITContext();
+                case Controls.VR:
+                    SetVRContext();
                     break;
-                case Controls.HVR:
-                    SetHVRContext();
+                case Controls.Flat:
+                    SetFlatContext();
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(controls), controls, null);
             }
         }
 
-        private static void SetXRITContext()
+        private static void SetFlatContext()
         {
-            Debug.Log("Selecting Context: VR - XR Interaction Toolkit (XRIT)");
-            InteractionAdapter = new XritInteractionAdapter();
+            Debug.Log("Selecting Context: Flat");
+            InteractionAdapter = new FlatInteractionAdapter();
         }
 
-        private static void SetHVRContext()
+        private static void SetVRContext()
         {
 #if GUZ_HVR_INSTALLED
-            Debug.Log("Selecting Context: VR - HurricaneVR");
+            Debug.Log("Selecting Context: VR");
             InteractionAdapter = new HVRInteractionAdapter();
             DialogAdapter = new HVRDialogAdapter();
 #else
-            Debug.LogError("HVR isn't activated inside Player Settings. Please do before you use it.");
+            throw new Exception("Hurricane VR isn't activated inside Player Settings. Please do before you use it.");
 #endif
         }
     }

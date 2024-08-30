@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Production
   m_EditorClassIdentifier: 
   GameControls: 0
-  EnableDeviceSimulator: 0
+  EnableVRDeviceSimulator: 0
   ZenKitLogLevel: 1
   EnableZSpyLogs: 0
   DirectMusicLogLevel: 30

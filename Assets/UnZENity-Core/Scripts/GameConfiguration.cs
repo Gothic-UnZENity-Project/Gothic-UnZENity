@@ -3,6 +3,7 @@ using GUZ.Core.Context;
 using GUZ.Core.World;
 using MyBox;
 using UnityEngine;
+using UnityEngine.Serialization;
 using ZenKit;
 using ZenKit.Vobs;
 
@@ -46,8 +47,10 @@ namespace GUZ.Core
          */
 
         [Foldout("Controls", true)]
-        public GuzContext.Controls GameControls = GuzContext.Controls.HVR;
-        public bool EnableDeviceSimulator;
+        public GuzContext.Controls GameControls = GuzContext.Controls.VR;
+        
+        [ConditionalField(fieldToCheck: nameof(GameControls), compareValues: GuzContext.Controls.VR)]
+        public bool EnableVRDeviceSimulator;
 
 
         /**

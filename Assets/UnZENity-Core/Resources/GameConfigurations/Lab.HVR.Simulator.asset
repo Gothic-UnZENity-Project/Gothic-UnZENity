@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Lab.HVR.Simulator
   m_EditorClassIdentifier: 
   GameControls: 0
-  EnableDeviceSimulator: 1
+  EnableVRDeviceSimulator: 1
   ZenKitLogLevel: 1
   EnableZSpyLogs: 0
   DirectMusicLogLevel: 30

@@ -33,8 +33,6 @@ namespace GUZ.HVR.Components.UI
                 var rectTransform = _dialogItems.First().GetComponent<RectTransform>();
                 _dialogItemHeight = rectTransform.rect.height;
             }
-
-            GetComponentInChildren<Billboard>().FacedObject = Camera.main!.transform;
         }
         
         public void ShowDialog(GameObject npcGo)

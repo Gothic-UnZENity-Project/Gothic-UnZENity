@@ -5,14 +5,11 @@ namespace GUZ.Core.Manager
 {
     public class XRDeviceSimulatorManager
     {
-        [Obsolete] public static XRDeviceSimulatorManager I;
-
         private readonly bool _featureEnable;
 
         public XRDeviceSimulatorManager(GameConfiguration config)
         {
-            I = this;
-            _featureEnable = config.EnableDeviceSimulator;
+            _featureEnable = config.GameControls == GuzContext.Controls.VR && config.EnableVRDeviceSimulator;
         }
 
         public void Init()
