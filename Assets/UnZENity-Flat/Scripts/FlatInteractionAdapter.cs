@@ -4,7 +4,7 @@ using GUZ.Core.Context;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace GUZ.HVR
+namespace GUZ.Flat
 {
     public class FlatInteractionAdapter : IInteractionAdapter
     {

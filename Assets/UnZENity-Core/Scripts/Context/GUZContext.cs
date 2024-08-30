@@ -1,4 +1,5 @@
 using System;
+using GUZ.Flat;
 using UnityEngine;
 #if GUZ_HVR_INSTALLED
 using GUZ.HVR;
