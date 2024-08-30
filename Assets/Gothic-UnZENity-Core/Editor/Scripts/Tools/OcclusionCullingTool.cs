@@ -18,14 +18,14 @@ namespace GUZ.Core.Editor.Tools
     {
         private static IntPtr _vfsPtr = IntPtr.Zero;
 
-        [MenuItem("Gothic-UnZENity/Tools/Load world meshes in editor", true)]
+        [MenuItem("UnZENity/Tools/Load world meshes in editor", true)]
         private static bool ValidateMyMenuItem()
         {
             // If game is in playmode, disable button.
             return !EditorApplication.isPlaying;
         }
 
-        [MenuItem("Gothic-UnZENity/Tools/Load world meshes in editor")]
+        [MenuItem("UnZENity/Tools/Load world meshes in editor")]
         public static void ShowWindow()
         {
             // Do not show Window when game is started.
