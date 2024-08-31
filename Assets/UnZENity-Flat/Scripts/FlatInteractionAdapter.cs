@@ -25,7 +25,7 @@ namespace GUZ.Flat
             // world scene and removed whenever we change the world.
             SceneManager.MoveGameObjectToScene(go, scene);
 
-            return go.GetComponentInChildren<CharacterController>().gameObject;
+            return go.GetComponentInChildren<Rigidbody>().gameObject;
         }
 
         public void CreateVRDeviceSimulator()

@@ -5,50 +5,50 @@ namespace GUZ.Flat.Components
 {
     public class FlatPlayerMovement : MonoBehaviour
     {
-        [SerializeField] private CharacterController _characterController;
+        [SerializeField] private Rigidbody _rigidbody;
         
-        private Vector3 _playerVelocity;
-        private bool _groundedPlayer;
-        private float _playerSpeed = 2.0f;
-        private float _jumpHeight = 1.0f;
-        private float _gravityValue = -9.81f;
+        private const float _moveSpeed = 5f;
+        private const float _turnSpeed = 2.5f;
+        private const float _jumpHeight = 5f;
+
+        private const float _maxGroundedVelocity = 0.001f;
         
-        private Vector3 _mouseDelta => Mouse.current.delta.ReadValue();
-        
+        private float playerSpeed = 2.0f;
+        private float jumpHeight = 1.0f;
+        private float gravityValue = -10f;
+
         
         void Update()
         {
-            _groundedPlayer = _characterController.isGrounded;
-            if (_groundedPlayer && _playerVelocity.y < 0)
-            {
-                _playerVelocity.y = 0f;
-            }
-            
-            var rot = transform.TransformDirection(Vector3.left);
-            
-            // var move = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
-            // _characterController.Move(rot * Time.deltaTime * _playerSpeed);
-
-            if (IsPressed(Key.W))
-            {
-                gameObject.transform.forward = default;
-            }
-
-            if (IsPressed(Key.A))
-            {
-                gameObject.transform.forward = default; // aka -1 forward
-            }
-
-            // Changes the height position of the player..
-            if (Keyboard.current[Key.Space].isPressed && _groundedPlayer)
-            {
-                _playerVelocity.y += Mathf.Sqrt(_jumpHeight * -3.0f * _gravityValue);
-            }
-
-            _playerVelocity.y += _gravityValue * Time.deltaTime;
-            _characterController.Move(_playerVelocity * Time.deltaTime);
+            ExecuteWalk();
+            ExecuteRotation();
+            ExecuteJump();
         }
 
+        private void ExecuteWalk()
+        {
+            if (IsPressed(Key.W) || IsPressed(Key.UpArrow))
+                transform.Translate(Vector3.forward * Time.deltaTime * _moveSpeed);
+            if (IsPressed(Key.S) || IsPressed(Key.DownArrow))
+                transform.Translate(-1 * Vector3.forward * Time.deltaTime * _moveSpeed);
+        }
+
+        private void ExecuteRotation()
+        {
+            if (IsPressed(Key.A) || IsPressed(Key.LeftArrow))
+                transform.Rotate(0, -_turnSpeed, 0);
+            if (IsPressed(Key.D) || IsPressed(Key.RightArrow))
+                transform.Rotate(0, _turnSpeed, 0);
+        }
+        
+        private void ExecuteJump()
+        {
+            if (IsPressed(Key.Space) && Mathf.Abs(_rigidbody.velocity.y) < _maxGroundedVelocity)
+            {
+                _rigidbody.velocity += Vector3.up * _jumpHeight;
+            }
+        }
+        
         private bool IsPressed(Key key)
         {
             return Keyboard.current[key].isPressed;
