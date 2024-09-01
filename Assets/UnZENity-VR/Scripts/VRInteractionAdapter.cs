@@ -4,16 +4,16 @@ using GUZ.Core;
 using GUZ.Core.Context;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
-using GUZ.HVR.Components;
+using GUZ.VR.Components;
 using HurricaneVRExtensions.Simulator;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.XR.Interaction.Toolkit;
 using PrefabType = GUZ.Core.PrefabType;
 
-namespace GUZ.HVR
+namespace GUZ.VR
 {
-    public class HVRInteractionAdapter : IInteractionAdapter
+    public class VRInteractionAdapter : IInteractionAdapter
     {
         private const string CONTEXT_NAME = "HVR";
 
@@ -25,7 +25,7 @@ namespace GUZ.HVR
         public GameObject CreatePlayerController(Scene scene, Vector3 position = default, Quaternion rotation = default)
         {
             var go = ResourceLoader.TryGetPrefabObject(PrefabType.Player, position, rotation);
-            var playerController = go.GetComponentInChildren<GUZHVRPlayerController>();
+            var playerController = go.GetComponentInChildren<VRPlayerController>();
 
             go.name = "Player - VR";
 
@@ -80,7 +80,7 @@ namespace GUZ.HVR
 
             var simulatorGo = new GameObject("HVR - XRDeviceSimulator");
             // We assume, that this Component (HVRPlayerManager) is set inside the HVR root for a player rig.
-            var playerRig = currentScene.GetRootGameObjects().First(i => i.GetComponentInChildren<HVRPlayerManager>());
+            var playerRig = currentScene.GetRootGameObjects().First(i => i.GetComponentInChildren<VRPlayerManager>());
 
             simulatorGo.AddComponent<HVRBodySimulator>().Rig = playerRig;
             simulatorGo.AddComponent<HVRHandsSimulator>().Rig = playerRig;
@@ -108,7 +108,7 @@ namespace GUZ.HVR
             
             // Check if we already loaded the Chapter change prefab
             GameObject chapterPrefab = generalScene.GetRootGameObjects()
-                .FirstOrDefault(i => i.GetComponentInChildren<HVRIntroduceChapter>());
+                .FirstOrDefault(i => i.GetComponentInChildren<VRIntroduceChapter>());
             
             if (chapterPrefab == null)
             {
@@ -116,7 +116,7 @@ namespace GUZ.HVR
                 SceneManager.MoveGameObjectToScene(chapterPrefab, generalScene);
             }
             
-            chapterPrefab.GetComponent<HVRIntroduceChapter>().DisplayIntroduction(chapter, text, texture, wav, time);
+            chapterPrefab.GetComponent<VRIntroduceChapter>().DisplayIntroduction(chapter, text, texture, wav, time);
         }
     }
 }

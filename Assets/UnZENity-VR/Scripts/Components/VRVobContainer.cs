@@ -11,10 +11,10 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using ZenKit.Vobs;
 
-namespace GUZ.HVR.Components
+namespace GUZ.VR.Components
 {
     [RequireComponent(typeof(VobContainerProperties))]
-    public class HVRVobContainer : MonoBehaviour
+    public class VRVobContainer : MonoBehaviour
     {
         private static Dictionary<string, AudioClip> _containerOpenedClips = new();
         private static Dictionary<string, AudioClip> _containerClosedClips= new();

@@ -1,8 +1,8 @@
 using UnityEngine;
 
-namespace GUZ.HVR.Components.UI
+namespace GUZ.VR.Components.UI
 {
-    public class HVRBillboard : MonoBehaviour
+    public class VRBillboard : MonoBehaviour
     {
         private Transform _cameraTransform;
 

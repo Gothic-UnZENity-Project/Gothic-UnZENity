@@ -3,15 +3,15 @@ using System.Collections;
 using GUZ.Core;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
-using GUZ.HVR.Properties;
+using GUZ.VR.Properties;
 using HurricaneVR.Framework.Core;
 using HurricaneVR.Framework.Core.Grabbers;
 using UnityEngine;
 using UnityEngine.Animations;
 
-namespace GUZ.HVR.Components
+namespace GUZ.VR.Components
 {
-    public class HVRVobItem : MonoBehaviour
+    public class VRVobItem : MonoBehaviour
     {
         [SerializeField] private HVRVobItemProperties _properties;
         [SerializeField] private MeshCollider _meshCollider;

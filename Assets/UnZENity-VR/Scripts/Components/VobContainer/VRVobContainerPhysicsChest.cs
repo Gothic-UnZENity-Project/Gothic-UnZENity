@@ -17,9 +17,9 @@ using UnityEngine;
 using ZenKit.Daedalus;
 using ZenKit.Vobs;
 
-namespace GUZ.HVR.Components.VobContainer
+namespace GUZ.VR.Components.VobContainer
 {
-    public class HVRVobContainerPhysicsChest : HVRPhysicsDoor
+    public class VRVobContainerPhysicsChest : HVRPhysicsDoor
     {
         private readonly char[] _itemNameSeparators = { ';', ',' };
         private readonly char[] _itemCountSeparators = { ':', '.' };

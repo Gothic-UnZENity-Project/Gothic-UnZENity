@@ -6,12 +6,12 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace GUZ.HVR.Components
+namespace GUZ.VR.Components
 {
     /// <summary>
     /// UI logic handler for Daedalus call of IntroduceChapter()
     /// </summary>
-    public class HVRIntroduceChapter : MonoBehaviour
+    public class VRIntroduceChapter : MonoBehaviour
     {
         [SerializeField] private AudioSource _audioSource;
         [SerializeField] private Canvas _chapterCanvas;

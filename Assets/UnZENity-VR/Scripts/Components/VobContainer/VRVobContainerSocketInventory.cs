@@ -1,15 +1,15 @@
 ﻿#if GUZ_HVR_INSTALLED
-using GUZ.HVR.Properties;
+using GUZ.VR.Properties;
 using HurricaneVR.Framework.Core;
 using HurricaneVR.Framework.Core.Grabbers;
 using UnityEngine;
 
-namespace GUZ.HVR.Components.VobContainer
+namespace GUZ.VR.Components.VobContainer
 {
     /// <summary>
     /// Handle Socket-events for a whole Container (e.g. chest) and its corresponding sockets (rings where we put items into).
     /// </summary>
-    public class HVRVobContainerSocketInventory : MonoBehaviour
+    public class VRVobContainerSocketInventory : MonoBehaviour
     {
 
         public void OnBeforeGrabbed(HVRGrabberBase grabber, HVRGrabbable grabbable)

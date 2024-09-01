@@ -4,18 +4,18 @@ using System.Linq;
 using GUZ.Core.Context;
 using GUZ.Core.Data;
 using GUZ.Core.Globals;
-using GUZ.HVR.Components.UI;
+using GUZ.VR.Components.UI;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using ZenKit.Daedalus;
 
-namespace GUZ.HVR
+namespace GUZ.VR
 {
-    public class HVRDialogAdapter : IDialogAdapter
+    public class VRDialogAdapter : IDialogAdapter
     {
-        private HVRDialog _dialogComponent;
+        private VRDialog _dialogComponent;
 
-        private HVRDialog GetDialog()
+        private VRDialog GetDialog()
         {
             // The component is stored in General scene. We therefore load it when accessing for the first time.
             if (_dialogComponent == null)
@@ -30,7 +30,7 @@ namespace GUZ.HVR
                 
                 // We need to look through all RootGOs and fetch the first matching HVRDialog Component.
                 _dialogComponent = scene.GetRootGameObjects()
-                    .Select(i => i.GetComponentInChildren<HVRDialog>())
+                    .Select(i => i.GetComponentInChildren<VRDialog>())
                     .First(i => i != null);
             }
 

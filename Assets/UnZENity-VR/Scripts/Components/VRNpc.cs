@@ -6,9 +6,9 @@ using HurricaneVR.Framework.Core;
 using HurricaneVR.Framework.Core.Grabbers;
 using UnityEngine;
 
-namespace GUZ.HVR.Components
+namespace GUZ.VR.Components
 {
-    public class HVRNpc : MonoBehaviour
+    public class VRNpc : MonoBehaviour
     {
         public void OnGrabbed(HVRGrabberBase grabber, HVRGrabbable grabbable)
         {

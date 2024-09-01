@@ -13,9 +13,9 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using ZenKit.Daedalus;
 
-namespace GUZ.HVR.Components.UI
+namespace GUZ.VR.Components.UI
 {
-    public class HVRDialog : MonoBehaviour
+    public class VRDialog : MonoBehaviour
     {
         [SerializeField] private GameObject _dialogRoot;
         [SerializeField] private List<GameObject> _dialogItems;

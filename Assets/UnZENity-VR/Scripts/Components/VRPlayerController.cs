@@ -7,11 +7,11 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using Constants = GUZ.Core.Globals.Constants;
 
-namespace GUZ.HVR.Components
+namespace GUZ.VR.Components
 {
-    public class GUZHVRPlayerController : HVRPlayerController
+    public class VRPlayerController : HVRPlayerController
     {
-        private GUZHVRPlayerInputs _guzInputs => (GUZHVRPlayerInputs)Inputs;
+        private VRPlayerInputs _guzInputs => (VRPlayerInputs)Inputs;
 
         [Separator("GUZ - Settings")]
         [SerializeField]

@@ -4,9 +4,9 @@ using HurricaneVR.Framework.Shared;
 using MyBox;
 using UnityEngine.InputSystem;
 
-namespace GUZ.HVR.Components
+namespace GUZ.VR.Components
 {
-    public class GUZHVRPlayerInputs : HVRPlayerInputs
+    public class VRPlayerInputs : HVRPlayerInputs
     {
         [Separator("GUZ - Settings")]
         public bool IsMenuActivated;

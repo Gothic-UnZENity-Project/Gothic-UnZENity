@@ -8,7 +8,7 @@ using HurricaneVR.Framework.Core.Grabbers;
 using TMPro;
 using UnityEngine;
 
-namespace GVR.HVR.Components
+namespace GUZ.VR.Components
 {
     /// <summary>
     /// Handles focus brightness and name visibility for VOBs and NPCs.
@@ -19,7 +19,7 @@ namespace GVR.HVR.Components
     /// 2. Grabbed -> Object is being Grabbed for movement/rotation
     /// 3. HoverExit -> We might still grab the object, but the Hover from our hand stops
     /// </summary>
-    public class HVRFocus : MonoBehaviour
+    public class VRFocus : MonoBehaviour
     {
         private static Camera _mainCamera;
 
