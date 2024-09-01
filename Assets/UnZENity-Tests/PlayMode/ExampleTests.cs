@@ -1,4 +1,5 @@
 using System.Collections;
+using GUZ.Core.Globals;
 using NUnit.Framework;
 using UnityEditor;
 using UnityEngine.SceneManagement;
@@ -11,7 +12,7 @@ namespace GUZ.Tests.PlayMode
         [OneTimeSetUp]
         protected void LoadScene()
         {
-            SceneManager.LoadScene("Assets/UnZENity-Core/Scenes/Bootstrap.unity");
+            SceneManager.LoadScene($"Assets/UnZENity-Core/Scenes/{Constants.SceneBootstrap}.unity");
         }
         
         [UnityTest]

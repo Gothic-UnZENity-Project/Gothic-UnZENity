@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace GUZ.HVR.Editor
 {
-    public class VRContextTool
+    public class VRContextToolActions
     {
         private const string HVR_COMPILER_FLAG = "GUZ_HVR_INSTALLED";
 

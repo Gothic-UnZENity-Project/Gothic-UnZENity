@@ -1,9 +1,10 @@
 {
-    "name": "Tests",
+    "name": "UnZENity.Tests.PlayMode",
     "rootNamespace": "GUZ.Tests.PlayMode",
     "references": [
         "UnityEngine.TestRunner",
-        "UnityEditor.TestRunner"
+        "UnityEditor.TestRunner",
+        "UnZENity.Core"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
@@ -13,9 +14,7 @@
         "nunit.framework.dll"
     ],
     "autoReferenced": true,
-    "defineConstraints": [
-        "UNITY_INCLUDE_TESTS"
-    ],
+    "defineConstraints": [],
     "versionDefines": [],
     "noEngineReferences": false
 }
