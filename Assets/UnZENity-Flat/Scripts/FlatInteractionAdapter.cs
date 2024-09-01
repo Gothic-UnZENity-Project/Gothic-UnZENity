@@ -33,16 +33,6 @@ namespace GUZ.Flat
             throw new NotImplementedException("This method should never been called on Flat adapter.");
         }
 
-        public void AddClimbingComponent(GameObject go)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void AddItemComponent(GameObject go, bool isLab)
-        {
-            throw new NotImplementedException();
-        }
-
         public void IntroduceChapter(string chapter, string text, string texture, string wav, int time)
         {
             throw new NotImplementedException();

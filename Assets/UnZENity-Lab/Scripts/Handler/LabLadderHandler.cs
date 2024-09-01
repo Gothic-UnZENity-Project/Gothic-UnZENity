@@ -19,7 +19,6 @@ namespace GUZ.Lab.Handler
                 LadderSlot, itemPrefab, false);
 
             var climbableObj = vobObj.GetComponentInChildren<MeshCollider>().gameObject;
-            GuzContext.InteractionAdapter.AddClimbingComponent(climbableObj);
         }
     }
 }

@@ -87,7 +87,6 @@ namespace GUZ.Lab.Handler
                 rootGo: itemPrefab, parent: ItemSpawnSlot, useTextureArray: false);
 
             itemGo.GetComponent<VobItemProperties>().SetData(null, item);
-            GuzContext.InteractionAdapter.AddItemComponent(itemGo, true);
 
             return gameObject;
         }

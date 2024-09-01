@@ -4,8 +4,9 @@
 ![Platforms](https://img.shields.io/static/v1?label=Platforms&message=PCVR%20|%20Quest2%20|%20Pico4&color=darkgreen)
 [![Release](https://img.shields.io/github/release-pre/GothicVRProject/GothicVR)](https://github.com/GothicVRProject/GothicVR/releases/latest)
 
-<img src="./Docs/development/images/Gothic-UnZENity-logo.png" width="300" alt="Gothic-UnZENity logo" />
-
+<p align="center">
+  <img src="./Docs/development/images/Gothic-UnZENity-logo.png" width="300" alt="Gothic-UnZENity logo" />
+</p>
 Fan project recreating Piranha Bytes' evergreens Gothic I and Gothic II in Unity Engine. Currently focussing on VR.
 
 ## Usage
@@ -40,15 +41,13 @@ If you're interested in Core Unity development, C# coding, or you're seasoned wi
 
 ## Dependencies
 Gothic-UnZENity is using the following projects:
-* [ZenKit](https://github.com/GothicKit/ZenKit) (Gothic asset parser)
-* [ZenKitCAPI](https://github.com/GothicKit/ZenKitCAPI) (C++ -> C interface)
-* [ZenKitCS](https://github.com/GothicKit/ZenKitCS) (C# endpoint for C interface)
-
+* [GothicKit/ZenKit](https://github.com/GothicKit/ZenKit) - Gothic asset parser
+* [GothicKit/dmusic](https://github.com/GothicKit/dmusic) - Open Source reimplementation of DirectMusic.
 
 ## Credits
 Big shoutout towards
 * [ZenKit](https://github.com/GothicKit/ZenKit) - Our single source of truth for parsing Gothic assets at runtime.
-* [OpenGothic](https://github.com/Try/OpenGothic) - Our reliable inspiration and code support on how to remake the classic Gothic games.
+* [OpenGothic](https://github.com/Try/OpenGothic) - Our reliable inspiration and code support on how to rebuild the classic Gothic games.
 
 
 ## FAQ

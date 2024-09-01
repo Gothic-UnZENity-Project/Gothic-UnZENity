@@ -88,16 +88,6 @@ namespace GUZ.HVR
             SceneManager.MoveGameObjectToScene(simulatorGo, currentScene);
         }
 
-        public void AddClimbingComponent(GameObject go)
-        {
-            // Currently nothing to do. Everything's set up inside oCMobLadder.prefab already.
-        }
-
-        public void AddItemComponent(GameObject go, bool isLab)
-        {
-            // Currently nothing to do. Everything's set up inside oCItem.prefab already.
-        }
-
         public void IntroduceChapter(string chapter, string text, string texture, string wav, int time)
         {
             var generalScene = SceneManager.GetSceneByName(Constants.SceneGeneral);
