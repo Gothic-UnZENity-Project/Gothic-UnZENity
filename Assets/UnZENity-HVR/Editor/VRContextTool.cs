@@ -1,13 +1,14 @@
 using System.IO;
 using System.Linq;
+using GUZ.Core;
 using GUZ.Core.Context;
 using UnityEditor;
 using UnityEditor.Build;
 using UnityEngine;
 
-namespace GUZ.Core.Editor.Tools
+namespace GUZ.HVR.Editor
 {
-    public class ContextTool
+    public class VRContextTool
     {
         private const string HVR_COMPILER_FLAG = "GUZ_HVR_INSTALLED";
 
