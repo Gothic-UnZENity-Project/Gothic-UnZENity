@@ -8,6 +8,7 @@ using GUZ.HVR.Components;
 using HurricaneVRExtensions.Simulator;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.XR.Interaction.Toolkit;
 using PrefabType = GUZ.Core.PrefabType;
 
 namespace GUZ.HVR
@@ -86,6 +87,19 @@ namespace GUZ.HVR
             simulatorGo.AddComponent<HVRSimulatorControlsGUI>();
 
             SceneManager.MoveGameObjectToScene(simulatorGo, currentScene);
+        }
+
+        public void SetTeleportationArea(GameObject teleportationGo)
+        {
+            /*
+             * We need to set the Teleportation area after adding mesh to VOBs. Therefore we call it via event after world was loaded.
+             */
+            var interactionManager = GameGlobals.Scene.InteractionManager.GetComponent<XRInteractionManager>();
+            var teleportationArea = teleportationGo.AddComponent<TeleportationArea>();
+            if (interactionManager != null)
+            {
+                teleportationArea.interactionManager = interactionManager;
+            }
         }
 
         public void IntroduceChapter(string chapter, string text, string texture, string wav, int time)

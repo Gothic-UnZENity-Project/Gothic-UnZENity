@@ -7,7 +7,7 @@ namespace GUZ.Flat
     /// </summary>
     public class FlatContextBootstrap : AbstractContextBootstrap
     {
-        protected override void Register(GuzContext.Controls controls)
+        protected override void RegisterModule(GuzContext.Controls controls)
         {
             if (controls != GuzContext.Controls.Flat)
             {

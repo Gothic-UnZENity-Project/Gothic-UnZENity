@@ -8,11 +8,11 @@ namespace GUZ.Core.Context
     /// </summary>
     public abstract class AbstractContextBootstrap : MonoBehaviour
     {
-        protected abstract void Register(GuzContext.Controls controls);
-
+        protected abstract void RegisterModule(GuzContext.Controls controls);
+        
         private void Awake()
         {
-            GuzContext.RegisterAdapters.AddListener(Register);
+            GuzContext.RegisterAdapters.AddListener(RegisterModule);
         }
     }
 }

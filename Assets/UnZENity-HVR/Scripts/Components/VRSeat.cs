@@ -1,14 +1,14 @@
+#if GUZ_HVR_INSTALLED
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using GUZ.Core.Player.Camera;
-using Unity.XR.CoreUtils;
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
 
-namespace GUZ.Core.Player.Interactive
+namespace GUZ.VR.Components
 {
-    public class Seat : MonoBehaviour
+    public class VRSeat : MonoBehaviour
     {
         //this will enable player to sit on benches/chairs etc
         private Vector3 _posOffset = new(0, -0.75f, 0.9f);
@@ -66,7 +66,11 @@ namespace GUZ.Core.Player.Interactive
 
             //get player object
             _canPlayerSit = false; //disable this function to cooldown
-            var player = args.interactorObject.transform.GetComponentInParent<XROrigin>().gameObject;
+            
+            // FIXME - With HVR, we load the player differently.
+            // var player = args.interactorObject.transform.GetComponentInParent<XROrigin>().gameObject;
+            GameObject player = null;
+
             //handle sitting/standing
             _isPlayerSeated = !_isPlayerSeated;
             if (_isPlayerSeated)
@@ -140,3 +144,4 @@ namespace GUZ.Core.Player.Interactive
         }
     }
 }
+#endif

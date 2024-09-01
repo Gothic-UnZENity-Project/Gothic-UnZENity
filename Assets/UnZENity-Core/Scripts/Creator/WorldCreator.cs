@@ -4,13 +4,13 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using GUZ.Core.Caches;
+using GUZ.Core.Context;
 using GUZ.Core.Creator.Meshes.V2;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
 using GUZ.Core.World;
 using UnityEngine;
-using UnityEngine.XR.Interaction.Toolkit;
 using ZenKit;
 using ZenKit.Vobs;
 using Debug = UnityEngine.Debug;
@@ -429,16 +429,10 @@ namespace GUZ.Core.Creator
 
         private static void WorldLoaded(GameObject playerGo)
         {
-            var interactionManager = GameGlobals.Scene.InteractionManager.GetComponent<XRInteractionManager>();
-
-            // We need to set the Teleportation area after adding mesh to world. Otherwise Awake() method is called too early.
-            var teleportationArea = _worldGo.AddComponent<TeleportationArea>();
-            if (interactionManager != null)
-            {
-                teleportationArea.interactionManager = interactionManager;
-            }
+            GuzContext.InteractionAdapter.SetTeleportationArea(_worldGo);
         }
 
+        
 #if UNITY_EDITOR
         /// <summary>
         /// Loads the world for occlusion culling.

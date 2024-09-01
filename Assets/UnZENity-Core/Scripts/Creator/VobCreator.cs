@@ -4,11 +4,11 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
+using GUZ.Core.Context;
 using GUZ.Core.Creator.Meshes.V2;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
-using GUZ.Core.Player.Interactive;
 using GUZ.Core.Properties;
 using GUZ.Core.Vm;
 using GUZ.Core.Vob;
@@ -16,7 +16,6 @@ using GUZ.Core.Vob.WayNet;
 using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.Rendering;
-using UnityEngine.XR.Interaction.Toolkit;
 using ZenKit;
 using ZenKit.Daedalus;
 using ZenKit.Util;
@@ -63,15 +62,7 @@ namespace GUZ.Core.Creator
 
         private static void PostWorldLoaded(GameObject playerGo)
         {
-            /*
-             * We need to set the Teleportation area after adding mesh to VOBs.
-             */
-            var interactionManager = GameGlobals.Scene.InteractionManager.GetComponent<XRInteractionManager>();
-            var teleportationArea = _teleportGo.AddComponent<TeleportationArea>();
-            if (interactionManager != null)
-            {
-                teleportationArea.interactionManager = interactionManager;
-            }
+            GuzContext.InteractionAdapter.SetTeleportationArea(_teleportGo);
         }
 
         public static async Task CreateAsync(GameConfiguration config, LoadingManager loading, List<IVirtualObject> vobs, int vobsPerFrame)
@@ -808,25 +799,10 @@ namespace GUZ.Core.Creator
             return vobObj;
         }
 
-        // FIXME - Needs to be outsourced to Context.InteractionAdapter as we have different handling for XRIT and HVR.
+        // FIXME - We need to load a different prefab!
         private static GameObject CreateSeat(IVirtualObject vob, GameObject parent = null)
         {
-            //to be used for creating chairs, benches etc
-            //based on Creating Ladder
             var vobObj = CreateDefaultMesh(vob);
-            var meshColliderComp = vobObj.GetComponentInChildren<MeshCollider>();
-
-            var grabComp = meshColliderComp.gameObject.AddComponent<XRGrabInteractable>();
-            var rigidbodyComp = meshColliderComp.gameObject.GetComponent<Rigidbody>();
-
-            var seat = meshColliderComp.gameObject.AddComponent<Seat>();
-
-            meshColliderComp.convex = true;
-
-            rigidbodyComp.isKinematic = true;
-            grabComp.throwOnDetach = false;
-            grabComp.trackPosition = false;
-            grabComp.trackRotation = false;
 
             return vobObj;
         }

@@ -1,5 +1,4 @@
-﻿using System;
-using GUZ.Core.Context;
+﻿using GUZ.Core.Context;
 
 namespace GUZ.HVR
 {
@@ -8,7 +7,7 @@ namespace GUZ.HVR
     /// </summary>
     public class VRContextBootstrap : AbstractContextBootstrap
     {
-        protected override void Register(GuzContext.Controls controls)
+        protected override void RegisterModule(GuzContext.Controls controls)
         {
             if (controls != GuzContext.Controls.VR)
             {
@@ -25,5 +24,4 @@ namespace GUZ.HVR
 #endif
         }
     }
-
 }
