@@ -7,9 +7,9 @@ using UnityEngine.XR.OpenXR;
 using UnityEngine.XR.OpenXR.Features.Interactions;
 using UnityEngine.XR.OpenXR.Features.MetaQuestSupport;
 
-namespace GUZ.Core.Editor.Builds.UnityBuildTools
+namespace GUZ.HVR.Editor
 {
-    public class UnityBuilderAction
+    public class VRBuilderActions
     {
         private static string[] SCENES = FindEnabledEditorScenes();
 

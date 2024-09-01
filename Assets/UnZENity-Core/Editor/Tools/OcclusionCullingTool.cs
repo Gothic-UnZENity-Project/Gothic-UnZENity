@@ -1,7 +1,6 @@
 using System;
 using GUZ.Core.Creator;
 using GUZ.Core.Globals;
-using GUZ.Core.Manager;
 using GUZ.Core.Manager.Settings;
 using UnityEditor;
 using UnityEngine;
@@ -9,10 +8,10 @@ using UnityEngine;
 namespace GUZ.Core.Editor.Tools
 {
     /// HOW TO USE:
-    /// 1. LOAD THE SCENE FOR WHICH YOU WANT OCCULUSION CULLING
-    /// 2. RUN Gothic-UnZENity/Tools/Load world meshes in editor
+    /// 1. LOAD THE SCENE FOR WHICH YOU WANT OCCLUSION CULLING
+    /// 2. RUN UnZENity/Tools/Load world meshes in editor
     /// 3. Window/Rendering/Occlusion Culling
-    /// 4. BAKE THE OCCULUSION CULLING
+    /// 4. BAKE THE OCCLUSION CULLING
     /// 5. SAVE THE SCENE
     public class OcclusionCullingTool : EditorWindow
     {

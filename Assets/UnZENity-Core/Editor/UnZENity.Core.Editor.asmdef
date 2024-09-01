@@ -1,11 +1,13 @@
 {
     "name": "UnZENity.Core.Editor",
-    "rootNamespace": "",
-    "references": [],
-    "includePlatforms": [],
-    "excludePlatforms": [
+    "rootNamespace": "GUZ.Core.Editor",
+    "references": [
+        "GUID:3c55a630855939f438e03e553f37a68f"
+    ],
+    "includePlatforms": [
         "Editor"
     ],
+    "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": false,
     "precompiledReferences": [],
