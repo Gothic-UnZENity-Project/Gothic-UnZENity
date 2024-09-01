@@ -1,4 +1,5 @@
-﻿using HurricaneVR.Framework.ControllerInput;
+﻿#if GUZ_HVR_INSTALLED
+using HurricaneVR.Framework.ControllerInput;
 using HurricaneVR.Framework.Shared;
 using MyBox;
 using UnityEngine.InputSystem;
@@ -73,3 +74,5 @@ namespace GUZ.HVR.Components
 
     }
 }
+#endif
+

@@ -1,3 +1,4 @@
+#if GUZ_HVR_INSTALLED
 using GUZ.Core;
 using GUZ.Core.Manager;
 using HurricaneVR.Framework.Core.Player;
@@ -90,3 +91,4 @@ namespace GUZ.HVR.Components
         }
     }
 }
+#endif
