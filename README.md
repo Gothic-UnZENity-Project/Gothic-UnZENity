@@ -41,15 +41,13 @@ If you're interested in Core Unity development, C# coding, or you're seasoned wi
 
 ## Dependencies
 Gothic-UnZENity is using the following projects:
-* [ZenKit](https://github.com/GothicKit/ZenKit) (Gothic asset parser)
-* [ZenKitCAPI](https://github.com/GothicKit/ZenKitCAPI) (C++ -> C interface)
-* [ZenKitCS](https://github.com/GothicKit/ZenKitCS) (C# endpoint for C interface)
-
+* [GothicKit/ZenKit](https://github.com/GothicKit/ZenKit) - Gothic asset parser
+* [GothicKit/dmusic](https://github.com/GothicKit/dmusic) - Open Source reimplementation of DirectMusic.
 
 ## Credits
 Big shoutout towards
 * [ZenKit](https://github.com/GothicKit/ZenKit) - Our single source of truth for parsing Gothic assets at runtime.
-* [OpenGothic](https://github.com/Try/OpenGothic) - Our reliable inspiration and code support on how to remake the classic Gothic games.
+* [OpenGothic](https://github.com/Try/OpenGothic) - Our reliable inspiration and code support on how to rebuild the classic Gothic games.
 
 
 ## FAQ
