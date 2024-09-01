@@ -1,0 +1,95 @@
+using System;
+using System.Linq;
+using UnityEngine;
+
+namespace GUZ.Core.Extensions
+{
+    public static class GameObjectExtension
+    {
+        public static void SetParent(this GameObject obj, GameObject parent, bool resetLocation = false,
+            bool resetRotation = false, bool worldPositionStays = false)
+        {
+            if (parent != null)
+            {
+                obj.transform.SetParent(parent.transform, worldPositionStays);
+            }
+
+            // FIXME - I don't know why, but Unity adds location, rotation, and scale to newly attached sub elements.
+            // This is how we clean it up right now.
+            if (resetLocation)
+            {
+                obj.transform.localPosition = Vector3.zero;
+            }
+
+            if (resetRotation)
+            {
+                obj.transform.localRotation = Quaternion.identity;
+            }
+        }
+
+        public static GameObject FindChildRecursively(this GameObject go, string name)
+        {
+            if (go == null)
+            {
+                Debug.LogError("Empty GameObject provided.");
+                return null;
+            }
+            
+            Transform result;
+            try
+            {
+                result = go.transform.Find(name);
+            }
+            catch (Exception)
+            {
+                Debug.LogError($"Couldn't find GameObject with name >{name}< in parent >{go.name}<");
+                return null;
+            }
+
+            // The child object was found and isn't ourself
+            if (result != null && result != go.transform)
+            {
+                return result.gameObject;
+            }
+
+            // Search recursively in the children of the current object
+            foreach (Transform child in go.transform)
+            {
+                var resultGo = child.gameObject.FindChildRecursively(name);
+
+                // The child object was found in a recursive call
+                if (resultGo != null)
+                {
+                    return resultGo;
+                }
+            }
+
+            // The child object was not found
+            return null;
+        }
+
+        /// <summary>
+        /// Returns direct Children of a GameObject. Non-recursive! 
+        /// </summary>
+        public static GameObject[] GetAllDirectChildren(this GameObject go)
+        {
+            return Enumerable
+                .Range(0, go.transform.childCount)
+                .Select(i => go.transform.GetChild(i).gameObject)
+                .ToArray();
+        }
+
+        /// <summary>
+        /// Either add or get existing component on GameObject.
+        /// </summary>
+        public static T TryAddComponent<T>(this GameObject go) where T : Component
+        {
+            if (go.TryGetComponent<T>(out var component))
+            {
+                return component;
+            }
+
+            return go.AddComponent<T>();
+        }
+    }
+}

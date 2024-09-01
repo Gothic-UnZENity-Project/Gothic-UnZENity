@@ -6,16 +6,16 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Gothic-UnZENity-Core/Scenes/Bootstrap.unity
+    path: Assets/UnZENity-Core/Scenes/Bootstrap.unity
     guid: 9fc0d4010bbf28b4594072e72b8655ab
   - enabled: 1
-    path: Assets/Gothic-UnZENity-Core/Scenes/General.unity
+    path: Assets/UnZENity-Core/Scenes/General.unity
     guid: 7fb2dedbd5edb7d4a92ee584eec7cc33
   - enabled: 1
-    path: Assets/Gothic-UnZENity-Core/Scenes/Loading.unity
+    path: Assets/UnZENity-Core/Scenes/Loading.unity
     guid: 4aeb2cb64559fae4aaff124c2e25ca03
   - enabled: 1
-    path: Assets/Gothic-UnZENity-Core/Scenes/MainMenu.unity
+    path: Assets/UnZENity-Core/Scenes/MainMenu.unity
     guid: 6e747099bda99cc43bf32dda1d9360e1
   - enabled: 1
     path: Packages/com.unzenity.core.binaries/Scenes/Worlds/world.zen.unity
