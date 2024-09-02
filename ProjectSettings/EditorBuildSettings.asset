@@ -18,20 +18,33 @@ EditorBuildSettings:
     path: Assets/Gothic-UnZENity-Core/Scenes/MainMenu.unity
     guid: 6e747099bda99cc43bf32dda1d9360e1
   - enabled: 1
-    path: Packages/com.unzenity.core.binaries/Scenes/Worlds/world.zen.unity
+    path: Packages/com.unzenity.core.binaries/Scenes/Worlds/Gothic1/world.zen.unity
     guid: 0fe2ff4c941e7e7498ba4cf8c563338d
   - enabled: 1
-    path: Packages/com.unzenity.core.binaries/Scenes/Worlds/oldmine.zen.unity
+    path: Packages/com.unzenity.core.binaries/Scenes/Worlds/Gothic1/oldmine.zen.unity
     guid: 537096dc28f78d8498238aadb1891078
   - enabled: 1
-    path: Packages/com.unzenity.core.binaries/Scenes/Worlds/freemine.zen.unity
+    path: Packages/com.unzenity.core.binaries/Scenes/Worlds/Gothic1/freemine.zen.unity
     guid: 73e071db0b192434eb8ae34bd7f9a457
   - enabled: 1
-    path: Packages/com.unzenity.core.binaries/Scenes/Worlds/orcgraveyard.zen.unity
+    path: Packages/com.unzenity.core.binaries/Scenes/Worlds/Gothic1/orcgraveyard.zen.unity
     guid: 50c5068d37210f841880449595d88775
   - enabled: 1
-    path: Packages/com.unzenity.core.binaries/Scenes/Worlds/orctempel.zen.unity
+    path: Packages/com.unzenity.core.binaries/Scenes/Worlds/Gothic1/orctempel.zen.unity
     guid: da94ca4a10a02944caa45fdd93d3bb09
+  - enabled: 1
+    path: Packages/com.unzenity.core.binaries/Scenes/Worlds/Gothic2-NotR/addonworld.zen.unity
+    guid: 99a4bc785623c0442bc0f112d724b7d2
+  - enabled: 1
+    path: Packages/com.unzenity.core.binaries/Scenes/Worlds/Gothic2-NotR/dragonisland.zen.unity
+    guid: 1eaa34c9912354f4b9fcd47adcda7bc6
+  - enabled: 1
+    path: Packages/com.unzenity.core.binaries/Scenes/Worlds/Gothic2-NotR/newworld.zen.unity
+    guid: 42e32e33e780ff94bbe68b9a7999c13d
+  - enabled: 1
+    path: Packages/com.unzenity.core.binaries/Scenes/Worlds/Gothic2-NotR/oldworld.zen.unity
+    guid: 6a11964fa8f1b314c9f2ee6c546edf3f
+
   m_configObjects:
     com.unity.xr.management.loader_settings: {fileID: 11400000, guid: ea302bef6e5dfab4abc884c353c0926d, type: 2}
     com.unity.xr.openxr.settings4: {fileID: 11400000, guid: af3964d8a6279b54a9254cbe6379b9d1, type: 2}
