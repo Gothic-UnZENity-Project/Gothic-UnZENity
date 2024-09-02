@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using GUZ.Core;
 using GUZ.Core.Globals;
 using UnityEngine;
@@ -13,20 +14,21 @@ namespace GUZ.Tests.PlayMode
         protected Scene MainScene => SceneManager.GetActiveScene();
         protected Scene GeneralScene => SceneManager.GetSceneByName(Constants.SceneGeneral);
         
-        protected GameConfiguration Config { get; private set;  }
-
         private readonly InputTestFixture _inputSimulator = new ();
         protected Keyboard Keyboard { get; private set; }
         protected Mouse Mouse { get; private set; }
-        
+
+        /// <summary>
+        /// Unity seems to cache loading of Scriptable Objects. We therefore load it before entering Bootstrap scene and updating it.
+        /// Bootstrap.GameManager.Config will then leverage the same _altered_ GameConfiguration we load in here.
+        /// </summary>
+        protected GameConfiguration GetConfiguration()
+        {
+            return Resources.Load<GameConfiguration>("GameConfigurations/Production");
+        }
+
         protected IEnumerator PrepareTest()
         {
-            // Only UnitySetup which will be called with every test can handle coroutine-waits. Therefore check if Bootstrap.scene is already loaded.
-            if (SceneManager.GetSceneByName(Constants.SceneBootstrap).IsValid())
-            {
-                yield break;
-            }
-
             _inputSimulator.Setup();
             Keyboard = InputSystem.AddDevice<Keyboard>();
             Mouse = InputSystem.AddDevice<Mouse>();
@@ -35,17 +37,19 @@ namespace GUZ.Tests.PlayMode
 
             // Wait for 1 frame to successfully load Bootstrap scene.
             yield return null;
-
-            var gameManager = SceneManager.GetActiveScene().GetRootGameObjects()[0]
-                .GetComponentInChildren<GameManager>();
-            gameManager.Config = Resources.Load<GameConfiguration>("GameConfigurations/Production");
-            Config = gameManager.Config;
         }
 
         protected IEnumerator WaitForSceneLoaded(string sceneName)
         {
+            var timeout = 30f;
             while (!SceneManager.GetSceneByName(sceneName).IsValid())
             {
+                timeout -= Time.deltaTime;
+                if (timeout < 0)
+                {
+                    throw new TimeoutException("Loading the scene took to long. Are you stuck in a wrong scene?");
+                }
+
                 yield return null;
             }
 

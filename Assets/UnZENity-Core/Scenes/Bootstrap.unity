@@ -134,7 +134,7 @@ GameObject:
   - component: {fileID: 295308733}
   - component: {fileID: 295308732}
   m_Layer: 0
-  m_Name: Modules
+  m_Name: ModuleBootstrap
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
