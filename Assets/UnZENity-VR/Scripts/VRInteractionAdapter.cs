@@ -15,11 +15,11 @@ namespace GUZ.VR
 {
     public class VRInteractionAdapter : IInteractionAdapter
     {
-        private const string CONTEXT_NAME = "HVR";
+        private const string _contextName = "VR";
 
         public string GetContextName()
         {
-            return CONTEXT_NAME;
+            return _contextName;
         }
 
         public GameObject CreatePlayerController(Scene scene, Vector3 position = default, Quaternion rotation = default)

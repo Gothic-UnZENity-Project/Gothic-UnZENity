@@ -8,11 +8,11 @@ namespace GUZ.Flat
 {
     public class FlatInteractionAdapter : IInteractionAdapter
     {
-        private const string CONTEXT_NAME = "Flat";
+        private const string _contextName = "Flat";
 
         public string GetContextName()
         {
-            return CONTEXT_NAME;
+            return _contextName;
         }
 
         public GameObject CreatePlayerController(Scene scene, Vector3 position = default, Quaternion rotation = default)
