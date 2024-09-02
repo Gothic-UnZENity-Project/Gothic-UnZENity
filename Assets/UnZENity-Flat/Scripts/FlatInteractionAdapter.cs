@@ -8,11 +8,11 @@ namespace GUZ.Flat
 {
     public class FlatInteractionAdapter : IInteractionAdapter
     {
-        private const string CONTEXT_NAME = "Flat";
+        private const string _contextName = "Flat";
 
         public string GetContextName()
         {
-            return CONTEXT_NAME;
+            return _contextName;
         }
 
         public GameObject CreatePlayerController(Scene scene, Vector3 position = default, Quaternion rotation = default)
@@ -31,6 +31,11 @@ namespace GUZ.Flat
         public void CreateVRDeviceSimulator()
         {
             throw new NotImplementedException("This method should never been called on Flat adapter.");
+        }
+
+        public void SetTeleportationArea(GameObject teleportationGo)
+        {
+            // NOP
         }
 
         public void IntroduceChapter(string chapter, string text, string texture, string wav, int time)
