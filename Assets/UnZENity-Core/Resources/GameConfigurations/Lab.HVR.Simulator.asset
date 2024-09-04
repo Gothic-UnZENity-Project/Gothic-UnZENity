@@ -1,0 +1,62 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 355b4ad0092f448a80ea647207f12648, type: 3}
+  m_Name: Lab.HVR.Simulator
+  m_EditorClassIdentifier: 
+  GameControls: 0
+  EnableVRDeviceSimulator: 1
+  ZenKitLogLevel: 1
+  EnableZSpyLogs: 0
+  DirectMusicLogLevel: 30
+  EnableBarrierLogs: 0
+  EnableMainMenu: 0
+  LoadFromSaveSlot: 0
+  SaveSlotToLoad: 1
+  EnableVOBs: 0
+  SpawnVOBTypes:
+    Value: 
+  EnableVOBMeshCulling: 0
+  SmallVOBMeshCullingGroup:
+    MaximumObjectSize: 0.2
+    CullingDistance: 50
+  MediumVOBMeshCullingGroup:
+    MaximumObjectSize: 5
+    CullingDistance: 100
+  LargeVOBMeshCullingGroup:
+    MaximumObjectSize: 100
+    CullingDistance: 200
+  ShowVOBMeshCullingGizmos: 0
+  BrightenUpHoveredVOBs: 1
+  ShowNamesOnHoveredVOBs: 1
+  EnableNpcs: 0
+  EnableNpcMeshCulling: 1
+  NpcCullingDistance: 50
+  SpawnNpcInstances:
+    Value: 
+  EnableNpcEyeBlinking: 0
+  ShowFreePoints: 0
+  ShowWayPoints: 0
+  ShowWayEdges: 0
+  SpawnAtWaypoint: 
+  EnableGameMusic: 1
+  EnableGameSounds: 1
+  SunLightColor: {r: 0.6901961, g: 0.6901961, b: 0.6901961, a: 1}
+  SunLightIntensity: 1
+  SunUpdateInterval: 2
+  AmbientLightColor: {r: 0.10196079, g: 0.10196079, b: 0.10196079, a: 1}
+  StartTimeHour: 8
+  StartTimeMinute: 0
+  TimeSpeedMultiplier: 1
+  EnableWorldMesh: 0
+  EnableBarrierVisual: 0
+  EnableDecalVisuals: 0
+  EnableParticleEffects: 0

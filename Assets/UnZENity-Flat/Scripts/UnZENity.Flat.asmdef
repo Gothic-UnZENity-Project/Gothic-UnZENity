@@ -1,0 +1,17 @@
+{
+    "name": "UnZENity.Flat",
+    "rootNamespace": "GUZ.Flat",
+    "references": [
+        "GUID:3c55a630855939f438e03e553f37a68f",
+        "GUID:75469ad4d38634e559750d17036d5f7c"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
