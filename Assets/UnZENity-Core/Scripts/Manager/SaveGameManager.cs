@@ -109,7 +109,7 @@ namespace GUZ.Core.Manager
                 uWorld = new WorldData
                 {
                     // Not contained inside saveGame
-                    Mesh = (CachedMesh)world.Mesh.Cache(),
+                    Mesh = world.Mesh,
                     BspTree = (CachedBspTree)world.BspTree.Cache(),
                     // Contained inside normal .zen file and also saveGame.
                     Vobs = saveGameWorld == null ? world.RootObjects : saveGameWorld.RootObjects,

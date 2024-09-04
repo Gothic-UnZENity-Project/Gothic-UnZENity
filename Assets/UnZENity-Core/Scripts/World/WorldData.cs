@@ -16,7 +16,7 @@ namespace GUZ.Core.World
         public List<IVirtualObject> Vobs;
 
         // Cached objects - For performance reasons we only allow them cached. Otherwise every loop and getter will load them again.
-        public CachedMesh Mesh;
+        public IMesh Mesh;
         public CachedBspTree BspTree;
         public CachedWayNet WayNet;
 

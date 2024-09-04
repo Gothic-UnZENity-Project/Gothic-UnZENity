@@ -38,7 +38,7 @@ namespace GUZ.Core.Creator
                                   );
 
             SaveGameManager.CurrentWorldData.SubMeshes = await BuildBspTree(
-                SaveGameManager.CurrentWorldData.Mesh.Cache(),
+                SaveGameManager.CurrentWorldData.Mesh,
                 SaveGameManager.CurrentWorldData.BspTree.Cache(),
                 lightingEnabled);
 
@@ -166,7 +166,7 @@ namespace GUZ.Core.Creator
                     // Add the leaf node geometry.
                     for (var i = node.PolygonIndex; i < node.PolygonIndex + node.PolygonCount; i++)
                     {
-                        var polygon = zkMesh.Polygons[bspTree.PolygonIndices[i]];
+                        var polygon = zkMesh.GetPolygon(bspTree.PolygonIndices[i]);
                         if (polygon.IsPortal || _claimedPolygons.Contains(polygon))
                         {
                             continue;
@@ -179,7 +179,7 @@ namespace GUZ.Core.Creator
                         for (var p = 1; p < polygon.PositionIndices.Count - 1; p++)
                         {
                             // Add the texture to the texture array or retrieve its existing slice.
-                            var zkMaterial = zkMesh.Materials[polygon.MaterialIndex];
+                            var zkMaterial = zkMesh.GetMaterial(polygon.MaterialIndex);
                             TextureCache.GetTextureArrayIndex(TextureCache.TextureTypes.World, zkMaterial,
                                 out var textureArrayTpe, out var textureArrayIndex, out var textureScale,
                                 out var maxMipLevel);
@@ -242,23 +242,23 @@ namespace GUZ.Core.Creator
         {
             // For every vertexIndex we store a new vertex. (i.e. no reuse of Vector3-vertices for later texture/uv attachment)
             var positionIndex = polygon.PositionIndices[index];
-            currentSubMesh.Vertices.Add(zkMesh.Positions[positionIndex].ToUnityVector());
+            currentSubMesh.Vertices.Add(zkMesh.GetPosition(positionIndex).ToUnityVector());
 
             // This triangle (index where Vector 3 lies inside vertices, points to the newly added vertex (Vector3) as we don't reuse vertices.
             currentSubMesh.Triangles.Add(currentSubMesh.Vertices.Count - 1);
 
             var featureIndex = polygon.FeatureIndices[index];
-            var feature = zkMesh.Features[featureIndex];
+            var feature = zkMesh.GetFeature(featureIndex);
             var uv = Vector2.Scale(scaleInTextureArray, feature.Texture.ToUnityVector());
             currentSubMesh.Uvs.Add(new Vector4(uv.x, uv.y, textureArrayIndex, maxMipLevel));
             currentSubMesh.Normals.Add(feature.Normal.ToUnityVector());
             currentSubMesh.BakedLightColors.Add(new Color32((byte)(feature.Light >> 16), (byte)(feature.Light >> 8),
                 (byte)feature.Light, (byte)(feature.Light >> 24)));
 
-            if (zkMesh.Materials[polygon.MaterialIndex].TextureAnimationMapping == AnimationMapping.Linear)
+            var material = zkMesh.GetMaterial(polygon.MaterialIndex);
+            if (material.TextureAnimationMapping == AnimationMapping.Linear)
             {
-                var uvAnimation = zkMesh.Materials[polygon.MaterialIndex].TextureAnimationMappingDirection
-                    .ToUnityVector();
+                var uvAnimation = material.TextureAnimationMappingDirection.ToUnityVector();
                 currentSubMesh.TextureAnimations.Add(uvAnimation);
             }
             else
