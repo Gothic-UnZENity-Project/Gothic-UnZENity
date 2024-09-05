@@ -10,9 +10,9 @@
 Fan project recreating Piranha Bytes' evergreens Gothic I and Gothic II in Unity Engine. Currently focussing on VR.
 
 ## Usage
-For instructions on playing the game or adding contributions, please check our [Docs](Docs).
+For instructions on playing the game or adding contributions, please check our [Wiki](https://github.com/Gothic-UnZENity-Project/Gothic-UnZENity/wiki).
 
-(🤫 Shortcut to the installation instructions: [here](Docs/setup/player.md). Thank me later. 😉)
+(🤫 Shortcut to the installation instructions: [here](https://github.com/Gothic-UnZENity-Project/Gothic-UnZENity/wiki/Player%27s-Guide#1-setup). Thank me later. 😉)
 
 ## Roadmap
 
