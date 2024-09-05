@@ -19,6 +19,30 @@ jobs:
   #########
   # TESTS #
   #########
+  Build_test_without_HVR:
+    name: Test if flat player can be build (without HVR)
+    runs-on: self-hosted
+    strategy:
+      fail-fast: true
+      matrix:
+        include:
+          - targetPlatform: StandaloneWindows64
+            targetDevice: Windows64
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: Build project
+        uses: game-ci/unity-builder@v4
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+        with:
+          targetPlatform: ${{ matrix.targetPlatform }}
+          allowDirtyBuild: true
+          buildMethod: GVR.Editor.Builds.UnityBuildTools.UnityBuilderAction.Perform${{ matrix.targetDevice }}Build
   
   # Unit_Tests:
   #   if: ${{ github.event.label.name == 'Pipeline' }}
