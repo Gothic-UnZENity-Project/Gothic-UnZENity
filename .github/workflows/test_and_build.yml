@@ -45,7 +45,7 @@ jobs:
         with:
           targetPlatform: ${{ matrix.targetPlatform }}
           allowDirtyBuild: true
-          buildMethod: GVR.Editor.Builds.UnityBuildTools.UnityBuilderAction.Perform${{ matrix.targetDevice }}Build
+          buildMethod: GUZ.HVR.Editor.VRBuilderActions.Perform${{ matrix.targetDevice }}Build
   
   # Unit_Tests:
   #   if: ${{ github.event.label.name == 'Pipeline' }}
