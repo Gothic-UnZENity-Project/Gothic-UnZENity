@@ -2,9 +2,9 @@ name: GothicVR Build Jobs
 
 on:
   pull_request:
-    branches:
-      - main
-    types: [labeled]
+#    branches:
+#      - main
+#    types: [labeled]
 
 # We will reuse it once we define release pipeline
 #  push:
