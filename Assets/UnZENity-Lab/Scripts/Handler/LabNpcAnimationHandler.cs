@@ -18,7 +18,7 @@ using ZenKit.Daedalus;
 
 namespace GUZ.Lab.Handler
 {
-    public class LabNpcAnimationHandler : MonoBehaviour, ILabHandler
+    public class LabNpcAnimationHandler : AbstractLabHandler
     {
         [FormerlySerializedAs("npcDropdown")] public TMP_Dropdown NpcDropdown;
 
@@ -105,7 +105,7 @@ namespace GUZ.Lab.Handler
             }
         };
 
-        public void Bootstrap()
+        public override void Bootstrap()
         {
             NpcDropdown.options = _npcs.Keys.Select(item => new TMP_Dropdown.OptionData(item)).ToList();
             AnimationDropdown.options = _animations.Keys.Select(item => new TMP_Dropdown.OptionData(item)).ToList();

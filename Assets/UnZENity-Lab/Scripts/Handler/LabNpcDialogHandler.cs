@@ -11,7 +11,7 @@ using ZenKit.Daedalus;
 
 namespace GUZ.Lab.Handler
 {
-    public class LabNpcDialogHandler : MonoBehaviour, ILabHandler
+    public class LabNpcDialogHandler : AbstractLabHandler
     {
         public GameObject NpcSlotGo;
 
@@ -19,7 +19,7 @@ namespace GUZ.Lab.Handler
         private NpcInstance _bloodwynInstance;
 
 
-        public void Bootstrap()
+        public override void Bootstrap()
         {
             BootstrapBloodwyn();
         }

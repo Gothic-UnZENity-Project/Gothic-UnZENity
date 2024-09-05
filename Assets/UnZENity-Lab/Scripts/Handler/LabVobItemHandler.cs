@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using GUZ.Core;
-using GUZ.Core.Context;
 using GUZ.Core.Creator.Meshes.V2;
 using GUZ.Core.Globals;
 using GUZ.Core.Properties;
@@ -14,7 +13,7 @@ using ZenKit.Daedalus;
 
 namespace GUZ.Lab.Handler
 {
-    public class LabVobItemHandler : MonoBehaviour, ILabHandler
+    public class LabVobItemHandler : AbstractLabHandler
     {
         public TMP_Dropdown VobCategoryDropdown;
 
@@ -26,7 +25,7 @@ namespace GUZ.Lab.Handler
 
         private Dictionary<string, ItemInstance> _items = new();
 
-        public void Bootstrap()
+        public override void Bootstrap()
         {
             /*
              * 1. Load Vdfs
