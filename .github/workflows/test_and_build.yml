@@ -1,4 +1,4 @@
-name: GothicVR Build Jobs
+name: Gothic-UnZENity Build Jobs
 
 on:
   pull_request:
