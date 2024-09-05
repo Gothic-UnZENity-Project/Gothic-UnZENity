@@ -34,18 +34,18 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Remove PlayerSetting's Scripting Define Symbol
-        run: ls -lah
+        run: sed -i 's/GUZ_HVR_INSTALLED/GUZ_PLACEHOLDER/g' ProjectSettings/ProjectSettings.asset
       
-#      - name: Build project
-#        uses: game-ci/unity-builder@v4
-#        env:
-#          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
-#          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
-#          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
-#        with:
-#          targetPlatform: ${{ matrix.targetPlatform }}
-#          allowDirtyBuild: true
-#          buildMethod: GVR.Editor.Builds.UnityBuildTools.UnityBuilderAction.Perform${{ matrix.targetDevice }}Build
+      - name: Build project
+        uses: game-ci/unity-builder@v4
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+        with:
+          targetPlatform: ${{ matrix.targetPlatform }}
+          allowDirtyBuild: true
+          buildMethod: GVR.Editor.Builds.UnityBuildTools.UnityBuilderAction.Perform${{ matrix.targetDevice }}Build
   
   # Unit_Tests:
   #   if: ${{ github.event.label.name == 'Pipeline' }}
