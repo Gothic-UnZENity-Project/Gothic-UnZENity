@@ -93,6 +93,6 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         with:
-          name: Build-${{ matrix.targetDevice }}
-          path: build/${{ matrix.targetDevice }}
+          name: Gothic-UnZENity-${{ matrix.targetDevice }}
+          path: Builds/${{ matrix.targetDevice }}
           expire-in: 7 days
