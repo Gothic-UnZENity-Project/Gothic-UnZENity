@@ -99,11 +99,6 @@ namespace GUZ.VR.Editor
             // OpenXRSettings.ActiveBuildTargetInstance.GetFeature<MetaQuestTouchProControllerProfile>().enabled = false;
             OpenXRSettings.ActiveBuildTargetInstance.GetFeature<OculusTouchControllerProfile>().enabled = false;
 
-            foreach (var item in OpenXRSettings.ActiveBuildTargetInstance.GetFeatures())
-            {
-                Debug.Log(item.name);
-            }
-
             Debug.Log("OpenXR settings set for: Pico");
         }
 
