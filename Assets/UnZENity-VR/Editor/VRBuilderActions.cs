@@ -93,7 +93,11 @@ namespace GUZ.VR.Editor
             //Enable Pico
             Debug.LogError("SetPicoSettings1: " + OpenXRSettings.ActiveBuildTargetInstance);
             Debug.LogError("SetPicoSettings2: " + OpenXRSettings.ActiveBuildTargetInstance.GetFeature<PICO4ControllerProfile>());
-
+            foreach (var v in OpenXRSettings.ActiveBuildTargetInstance.GetFeatures())
+            {
+                Debug.LogError(v);
+            }
+            
             OpenXRSettings.ActiveBuildTargetInstance.GetFeature<PICO4ControllerProfile>().enabled = true;
             OpenXRSettings.ActiveBuildTargetInstance.GetFeature<PICOFeature>().enabled = true;
 
@@ -114,6 +118,14 @@ namespace GUZ.VR.Editor
             
             //Enable Meta
             // OpenXRSettings.ActiveBuildTargetInstance.GetFeature<MetaQuestTouchProControllerProfile>().enabled = true;
+
+            Debug.LogError("SetQuestSettings1: " + OpenXRSettings.ActiveBuildTargetInstance);
+            Debug.LogError("SetQuestSettings2: " + OpenXRSettings.ActiveBuildTargetInstance.GetFeature<OculusTouchControllerProfile>());
+            foreach (var v in OpenXRSettings.ActiveBuildTargetInstance.GetFeatures())
+            {
+                Debug.LogError(v);
+            }
+
             OpenXRSettings.ActiveBuildTargetInstance.GetFeature<OculusTouchControllerProfile>().enabled = true;
             OpenXRSettings.ActiveBuildTargetInstance.GetFeature<MetaQuestFeature>().enabled = true;
 
