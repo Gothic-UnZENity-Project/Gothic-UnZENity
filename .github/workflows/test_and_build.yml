@@ -62,7 +62,7 @@ jobs:
           allowDirtyBuild: true
           buildMethod: GUZ.VR.Editor.VRBuilderActions.ImportHVRPackage
       - name: List installed HVR files
-        run: ls -lah Assets/ && ls -lah Assets/HurricaneVR
+        run: pwd && ls -lah . && ls -lah Assets/ && ls -lah Assets/HurricaneVR
       - name: Re-add PlayerSetting HVR symbol for builds
         run: sed -i 's/GUZ_PLACEHOLDER/GUZ_HVR_INSTALLED/g' ProjectSettings/ProjectSettings.asset
 
