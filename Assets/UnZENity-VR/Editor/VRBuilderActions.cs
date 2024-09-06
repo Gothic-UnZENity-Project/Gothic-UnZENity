@@ -91,6 +91,9 @@ namespace GUZ.VR.Editor
             PlayerSettings.Android.targetArchitectures = AndroidArchitecture.ARM64;
 
             //Enable Pico
+            Debug.LogError("SetPicoSettings1: " + OpenXRSettings.ActiveBuildTargetInstance);
+            Debug.LogError("SetPicoSettings2: " + OpenXRSettings.ActiveBuildTargetInstance.GetFeature<PICO4ControllerProfile>());
+
             OpenXRSettings.ActiveBuildTargetInstance.GetFeature<PICO4ControllerProfile>().enabled = true;
             OpenXRSettings.ActiveBuildTargetInstance.GetFeature<PICOFeature>().enabled = true;
 
