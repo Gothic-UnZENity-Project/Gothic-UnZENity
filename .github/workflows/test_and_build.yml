@@ -45,8 +45,10 @@ jobs:
           ref: main
           path: Checkout/AssetRepo
           token: ${{ secrets.PAT_ASSET_REPO_CHECKOUT }}
-      - name: Assemble HVR unitypackage tar
-        run: cat Checkout/AssetRepo/HVR/${{env.HVRversion}}/HVR-${{env.HVRversion}}.unitypackage.* > HVR.unitypackage
+      - name: Copy HVR package
+        run: |
+          mkdir Assets/HuricaneVR;
+          mv Checkout/AssetRepo/HVR/${{env.HVRversion}}/ Assets/HurricaneVR;
         # We need to temporarily disable VR module as any unity-builder action will trigger a compilation.
         # But we can compile VR module when HurricaneVR is imported earliest.
       - name: Remove PlayerSetting HVR symbol temporarily
