@@ -2,122 +2,19 @@ name: Gothic-UnZENity Build Jobs
 
 on:
   pull_request
-#    branches:
-#      - main
-#    types: [labeled]
-
-# We will reuse it once we define release pipeline
-#  push:
-#    branches:
-#      - main
-#    paths-ignore:
-#      - 'docs/**'
-#      - "README.md"
+  
 env:
   HVRversion: 'v2.9.2'
 
 jobs:
   #########
-  # TESTS #
-  #########
-
-  Build_test_without_HVR:
-    if: false
-    name: Test if game can be build without HVR
-    runs-on: self-hosted
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Remove PlayerSetting's Scripting Define Symbol
-        run: sed -i 's/GUZ_HVR_INSTALLED/GUZ_PLACEHOLDER/g' ProjectSettings/ProjectSettings.asset
-      
-      - name: Build project
-        uses: game-ci/unity-builder@v4
-        env:
-          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
-          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
-          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
-        with:
-          targetPlatform: StandaloneWindows64
-          allowDirtyBuild: true
-          buildMethod: GUZ.VR.Editor.VRBuilderActions.PerformWindows64Build
-
-
-  Build_with_HVR:
-    name: Build with HVR included
-    runs-on: self-hosted
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      # PAT_ASSET_REPO_CHECKOUT expires once per year. An Admin need to create a new one as ORG_PAT if expired.
-      - name: Check out HVR .unitypackage
-        uses: actions/checkout@v4
-        with:
-          repository: Gothic-UnZENity-Project/asset-dependencies
-          ref: main
-          path: Checkout/AssetRepo
-          token: ${{ secrets.PAT_ASSET_REPO_CHECKOUT }}
-
-      - name: rebuild unitypackage
-        run: cat Checkout/AssetRepo/HVR/${{env.HVRversion}}/HVR-${{env.HVRversion}}.unitypackage.* > HVR.unitypackage
-
-  
-  # Unit_Tests:
-  #   if: ${{ github.event.label.name == 'Pipeline' }}
-  #   name: Test in ${{ matrix.testMode }}
-  #   runs-on: self-hosted
-  #   strategy:
-  #     fail-fast: false
-  #     matrix:
-  #       testMode:
-  #         - playmode
-  #         - editmode
-  #   steps:
-  #     - uses: actions/checkout@v3
-  #       with:
-  #         lfs: true
-  #         fetch-depth: 0
-  #         clean: true
-  #     - uses: actions/cache@v3
-  #       with:
-  #         path: ${{ matrix.projectPath }}/Library
-  #         key: Library-${{ matrix.projectPath }}
-  #         restore-keys: |
-  #           Library-
-  #     - uses: game-ci/unity-test-runner@v3
-  #       id: tests
-  #       env:
-  #         UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
-  #       with:
-  #         testMode: ${{ matrix.testMode }}
-  #         artifactsPath: ${{ matrix.testMode }}-artifacts
-  #         githubToken: ${{ secrets.GITHUB_TOKEN }}
-  #         checkName: ${{ matrix.testMode }} Test Results
-  #         coverageOptions: 'generateAdditionalMetrics;generateHtmlReport;generateBadgeReport;assemblyFilters:+my.assembly.*'
-  #     - uses: actions/upload-artifact@v3
-  #       if: always()
-  #       with:
-  #         name: Test results for ${{ matrix.testMode }}
-  #         path: ${{ steps.tests.outputs.artifactsPath }}
-  #     - uses: actions/upload-artifact@v3
-  #       if: always()
-  #       with:
-  #         name: Coverage results for ${{ matrix.testMode }}
-  #         path: ${{ steps.tests.outputs.coveragePath }}
-
-  #########
   # BUILD #
   #########
-
   buildForAllPlatforms:
-    if: ${{ github.event.label.name == 'Pipeline' }}
-    name: Build GothicVR for ${{ matrix.targetDevice }}
-    #needs: Unit_Tests
+    name: Build Gothic-UnZENity
     runs-on: self-hosted
     strategy:
-      fail-fast: false
+      fail-fast: true
       matrix:
         include:
           - targetPlatform: StandaloneWindows64
@@ -127,39 +24,53 @@ jobs:
           - targetPlatform: Android
             targetDevice: Quest
     steps:
-      # Checkout without LFS
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          #lfs: true
-          fetch-depth: 0
           clean: true
-
-      # Git LFS
-      - name: Create LFS file list
-        run: git lfs ls-files -l | cut -d' ' -f1 | sort > .lfs-assets-id
-
-      - name: Restore LFS cache
-        uses: actions/cache@v4
-        id: lfs-cache
-        with:
-          path: .git/lfs
-          key: ${{ runner.os }}-lfs-${{ hashFiles('.lfs-assets-id') }}
-
-      - name: Git LFS Pull
-        run: |
-          git lfs pull
-          git add .
-          git reset --hard
-
-      # Cache
       - uses: actions/cache@v4
         with:
           path: Library
           key: Library-${{ matrix.targetPlatform }}
           restore-keys: Library-
 
+      ###
+      # Checkout and install HurricaneVR
+      ###
+      # PAT_ASSET_REPO_CHECKOUT expires once per year. An Admin need to create a new one as ORG_PAT if expired.
+      - name: Check out HVR .unitypackage from private repository
+        uses: actions/checkout@v4
+        with:
+          repository: Gothic-UnZENity-Project/asset-dependencies
+          ref: main
+          path: Checkout/AssetRepo
+          token: ${{ secrets.PAT_ASSET_REPO_CHECKOUT }}
+      - name: Assemble HVR unitypackage tar
+        run: cat Checkout/AssetRepo/HVR/${{env.HVRversion}}/HVR-${{env.HVRversion}}.unitypackage.* > HVR.unitypackage
+        # We need to temporarily disable VR module as any unity-builder action will trigger a compilation.
+        # But we can compile VR module when HurricaneVR is imported earliest.
+      - name: Remove PlayerSetting HVR symbol temporarily
+        run: sed -i 's/GUZ_HVR_INSTALLED/GUZ_PLACEHOLDER/g' ProjectSettings/ProjectSettings.asset
+      - name: Import HVR.unitypacke into /Assets/HurricaneVR folder
+        uses: game-ci/unity-builder@v4
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+        with:
+          customParameters: -packagePath HVR.unitypackage
+          targetPlatform: StandaloneWindows64
+          allowDirtyBuild: true
+          buildMethod: GUZ.VR.Editor.VRBuilderActions.ImportPackage
+      - name: List installed HVR files
+        run: ls -lah Assets/HurricaneVR/
+      - name: Re-add PlayerSetting HVR symbol for builds
+        run: sed -i 's/GUZ_PLACEHOLDER/GUZ_HVR_INSTALLED/g' ProjectSettings/ProjectSettings.asset
+
+      
+      ###
       # Build
+      ###
       - name: Build project
         uses: game-ci/unity-builder@v4
         env:
@@ -175,4 +86,4 @@ jobs:
         with:
           name: Build-${{ matrix.targetDevice }}
           path: build/${{ matrix.targetDevice }}
-          expire-in: 2 days
+          expire-in: 7 days
