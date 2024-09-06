@@ -95,10 +95,10 @@ jobs:
 
   buildForAllPlatforms:
     name: Build Gothic-UnZENity
-    #needs: Unit_Tests
+    needs: compileWithoutHVR
     runs-on: self-hosted
     strategy:
-      fail-fast: false
+      fail-fast: true
       matrix:
         include:
           - targetPlatform: StandaloneWindows64
@@ -142,6 +142,9 @@ jobs:
           targetPlatform: StandaloneWindows64
           allowDirtyBuild: true
           buildMethod: GUZ.VR.Editor.VRBuilderActions.ImportPackage
+      - name: List installed HVR files
+        run: ls -lah Assets/HurricaneVR/
+
       
       ###
       # Build
@@ -161,4 +164,4 @@ jobs:
         with:
           name: Build-${{ matrix.targetDevice }}
           path: build/${{ matrix.targetDevice }}
-          expire-in: 2 days
+          expire-in: 7 days
