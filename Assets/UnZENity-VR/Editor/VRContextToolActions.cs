@@ -6,7 +6,7 @@ using UnityEditor;
 using UnityEditor.Build;
 using UnityEngine;
 
-namespace GUZ.HVR.Editor
+namespace GUZ.VR.Editor
 {
     public class VRContextToolActions
     {
