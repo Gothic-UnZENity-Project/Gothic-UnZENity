@@ -68,7 +68,9 @@ namespace GUZ.VR.Editor
         /// </summary>
         public static void ImportHVRPackage()
         {
+            Debug.Log("BEFORE: ImportHVRPackage");
             AssetDatabase.ImportPackage("HVR.unitypackage", false);
+            Debug.Log("AFTER: ImportHVRPackage");
         }
 
         private static string[] FindEnabledEditorScenes()
