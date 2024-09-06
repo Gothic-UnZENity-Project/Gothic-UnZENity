@@ -98,7 +98,6 @@ Assets/XR/Settings/OpenXR Package Settings.asset
 *CullingData.asset.meta
 
 # Ignore paid assets from repository
-Assets/HurricaneVR.meta
 Assets/HurricaneVR/
 
 # Do not commit local development settings

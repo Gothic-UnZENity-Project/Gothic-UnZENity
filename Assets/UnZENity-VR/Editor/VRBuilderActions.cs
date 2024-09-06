@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using Unity.XR.OpenXR.Features.PICOSupport;
 using UnityEditor;
@@ -62,17 +61,6 @@ namespace GUZ.VR.Editor
 
             // Build the project
             BuildPipeline.BuildPlayer(options);
-        }
-
-        /// <summary>
-        /// Used to import HurricaneVR which was downloaded before.
-        /// </summary>
-        public static void ImportHVRPackage()
-        {
-            Debug.LogError("BEFORE: ImportHVRPackage");
-            AssetDatabase.ImportPackage("HVR.unitypackage", false);
-            Debug.LogError("AFTER: ImportHVRPackage");
-            throw new Exception("ImportHVRPackage");
         }
 
         private static string[] FindEnabledEditorScenes()
