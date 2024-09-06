@@ -1,7 +1,8 @@
 name: Gothic-UnZENity Build Jobs
 
 on:
-  pull_request
+  pull_request:
+    types: [
   
 env:
   HVRversion: 'v2.9.2'
@@ -95,4 +96,4 @@ jobs:
         with:
           name: Gothic-UnZENity-${{ matrix.targetDevice }}
           path: Builds/${{ matrix.targetDevice }}
-          expire-in: 7 days
+          retention-days: 7
