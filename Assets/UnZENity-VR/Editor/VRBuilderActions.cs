@@ -63,6 +63,14 @@ namespace GUZ.VR.Editor
             BuildPipeline.BuildPlayer(options);
         }
 
+        /// <summary>
+        /// Used to import HurricaneVR which was downloaded before.
+        /// </summary>
+        public static void ImportPackage(string packagePath)
+        {
+            AssetDatabase.ImportPackage(packagePath, false);
+        }
+
         private static string[] FindEnabledEditorScenes()
         {
             var editorScenes = new List<string>();
