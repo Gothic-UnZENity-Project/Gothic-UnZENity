@@ -39,7 +39,8 @@ jobs:
         with:
           repository: Gothic-UnZENity-Project/asset-dependencies
           ref: main
-          path: HVR/v2.9.2
+          path: Checkout/AssetRepo
+          token: ${{ secrets.PAT_ASSET_REPO_CHECKOUT }}
       
       - name: check
         run: ls -lah
