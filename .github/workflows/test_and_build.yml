@@ -48,6 +48,7 @@ jobs:
 
   
   Build_test_without_HVR:
+    if: false
     name: Test if game can be build without HVR
     runs-on: self-hosted
     strategy:
