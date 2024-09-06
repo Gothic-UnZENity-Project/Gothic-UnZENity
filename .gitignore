@@ -86,7 +86,6 @@ Assets/Pickle.meta
 Assets/Pickle/
 ProjectSettings/ShaderGraphSettings.asset
 ProjectSettings/Packages/com.unity.testtools.codecoverage/Settings.json
-Assets/XR/Settings/OpenXR Package Settings.asset
 
 # Large/Binary files which will be fetched from
 # https://github.com/Gothic-UnZENity-Project/binary-dependencies instead of LFS
