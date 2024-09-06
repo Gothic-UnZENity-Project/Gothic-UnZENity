@@ -8,6 +8,32 @@ env:
 
 jobs:
   #########
+  # DEV COMPILE WITHOUT HVR #
+  #########
+  testCompileWithoutHVR:
+    name: Compile test without HVR installation
+    runs-on: self-hosted
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          clean: true
+      - name: Remove PlayerSetting HVR symbol temporarily
+        run: sed -i 's/GUZ_HVR_INSTALLED/GUZ_PLACEHOLDER/g' ProjectSettings/ProjectSettings.asset
+      - name: Build project
+        uses: game-ci/unity-builder@v4
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+        with:
+          targetPlatform: StandaloneWindows64
+          allowDirtyBuild: true
+          buildMethod: GUZ.VR.Editor.VRBuilderActions.Perform$Windows64Build
+
+
+
+  #########
   # BUILD #
   #########
   buildForAllPlatforms:
@@ -49,24 +75,6 @@ jobs:
         run: |
           mkdir Assets/HuricaneVR;
           mv Checkout/AssetRepo/HVR/${{env.HVRversion}}/ Assets/HurricaneVR;
-        # We need to temporarily disable VR module as any unity-builder action will trigger a compilation.
-        # But we can compile VR module when HurricaneVR is imported earliest.
-      - name: Remove PlayerSetting HVR symbol temporarily
-        run: sed -i 's/GUZ_HVR_INSTALLED/GUZ_PLACEHOLDER/g' ProjectSettings/ProjectSettings.asset
-      - name: Import HVR.unitypacke into /Assets/HurricaneVR folder
-        uses: game-ci/unity-builder@v4
-        env:
-          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
-          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
-          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
-        with:
-          targetPlatform: StandaloneWindows64
-          allowDirtyBuild: true
-          buildMethod: GUZ.VR.Editor.VRBuilderActions.ImportHVRPackage
-      - name: List installed HVR files
-        run: pwd && ls -lah . && ls -lah Assets/ && ls -lah Assets/HurricaneVR
-      - name: Re-add PlayerSetting HVR symbol for builds
-        run: sed -i 's/GUZ_PLACEHOLDER/GUZ_HVR_INSTALLED/g' ProjectSettings/ProjectSettings.asset
 
       
       ###
