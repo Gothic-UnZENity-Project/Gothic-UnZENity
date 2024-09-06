@@ -60,7 +60,7 @@ jobs:
         with:
           targetPlatform: StandaloneWindows64
           allowDirtyBuild: true
-          buildMethod: GUZ.VR.Editor.VRBuilderActions.ImportPackage
+          buildMethod: GUZ.VR.Editor.VRBuilderActions.ImportHVRPackage
       - name: List installed HVR files
         run: ls -lah Assets/HurricaneVR/
       - name: Re-add PlayerSetting HVR symbol for builds
