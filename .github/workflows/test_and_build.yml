@@ -58,7 +58,6 @@ jobs:
           UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
         with:
-          customParameters: -packagePath HVR.unitypackage
           targetPlatform: StandaloneWindows64
           allowDirtyBuild: true
           buildMethod: GUZ.VR.Editor.VRBuilderActions.ImportPackage
