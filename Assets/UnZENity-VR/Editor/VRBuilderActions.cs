@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Unity.XR.OpenXR.Features.PICOSupport;
 using UnityEditor;
@@ -68,9 +69,10 @@ namespace GUZ.VR.Editor
         /// </summary>
         public static void ImportHVRPackage()
         {
-            Debug.Log("BEFORE: ImportHVRPackage");
+            Debug.LogError("BEFORE: ImportHVRPackage");
             AssetDatabase.ImportPackage("HVR.unitypackage", false);
-            Debug.Log("AFTER: ImportHVRPackage");
+            Debug.LogError("AFTER: ImportHVRPackage");
+            throw new Exception("ImportHVRPackage");
         }
 
         private static string[] FindEnabledEditorScenes()
