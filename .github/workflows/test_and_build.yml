@@ -13,7 +13,8 @@ on:
 #    paths-ignore:
 #      - 'docs/**'
 #      - "README.md"
-
+env:
+  HVRversion: 'v2.9.2'
 
 jobs:
   #########
@@ -43,10 +44,10 @@ jobs:
           token: ${{ secrets.PAT_ASSET_REPO_CHECKOUT }}
 
       - name: check
-        run: ls -lah ./Checkout/AssetRepo
+        run: ls -lah ./Checkout/AssetRepo/HVR/${{env.HVRversion}}/
 
       - name: rebuild unitypackage
-        run: cat Checkout/AssetRepo/HVR-v2.9.2.unitypackage.* > HVR-v2.9.2.unitypackage
+        run: cat Checkout/AssetRepo/HVR/${{env.HVRversion}}/HVR-${{env.HVRversion}}.unitypackage.* > HVR-v2.9.2.unitypackage
 
           
 
