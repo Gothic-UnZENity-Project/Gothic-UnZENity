@@ -19,6 +19,34 @@ jobs:
   #########
   # TESTS #
   #########
+
+  Build_with_HVR:
+    name: Build with HVR included
+    runs-on: self-hosted
+    strategy:
+      fail-fast: true
+      matrix:
+        include:
+          - targetPlatform: StandaloneWindows64
+            targetDevice: Windows64
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Check out HVR .unitypackage
+        uses: actions/checkout@v4
+        with:
+          repository: Gothic-UnZENity-Project/asset-dependencies
+          ref: main
+          path: HVR/v2.9.2
+      
+      - name: check
+        run: ls -lah
+          
+
+
+  
   Build_test_without_HVR:
     name: Test if game can be build without HVR
     runs-on: self-hosted
