@@ -21,8 +21,9 @@ jobs:
   # TESTS #
   #########
 
-  Build_test_without_HVR:
-    if: false
+  # Developers who don't own HVR or just want to help with some other dev tasks shouldn't be forced to own HVR.
+  # We therefore check if the build is properly working without HVR.
+  compileWithoutHVR:
     name: Test if game can be build without HVR
     runs-on: self-hosted
     steps:
@@ -44,37 +45,6 @@ jobs:
           buildMethod: GUZ.VR.Editor.VRBuilderActions.PerformWindows64Build
 
 
-  Build_with_HVR:
-    name: Build with HVR included
-    runs-on: self-hosted
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      # PAT_ASSET_REPO_CHECKOUT expires once per year. An Admin need to create a new one as ORG_PAT if expired.
-      - name: Check out HVR .unitypackage
-        uses: actions/checkout@v4
-        with:
-          repository: Gothic-UnZENity-Project/asset-dependencies
-          ref: main
-          path: Checkout/AssetRepo
-          token: ${{ secrets.PAT_ASSET_REPO_CHECKOUT }}
-
-      - name: rebuild unitypackage
-        run: cat Checkout/AssetRepo/HVR/${{env.HVRversion}}/HVR-${{env.HVRversion}}.unitypackage.* > HVR.unitypackage
-
-      - name: Build project
-        uses: game-ci/unity-builder@v4
-        env:
-          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
-          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
-          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
-        with:
-          customParameters: -packagePath Checkout/AssetRepo/HVR/${{env.HVRversion}}/HVR.unitypackage
-          targetPlatform: StandaloneWindows64
-          allowDirtyBuild: true
-          buildMethod: GUZ.VR.Editor.VRBuilderActions.ImportPackage
-  
   # Unit_Tests:
   #   if: ${{ github.event.label.name == 'Pipeline' }}
   #   name: Test in ${{ matrix.testMode }}
@@ -122,9 +92,9 @@ jobs:
   # BUILD #
   #########
 
+
   buildForAllPlatforms:
-    if: ${{ github.event.label.name == 'Pipeline' }}
-    name: Build GothicVR for ${{ matrix.targetDevice }}
+    name: Build Gothic-UnZENity
     #needs: Unit_Tests
     runs-on: self-hosted
     strategy:
@@ -138,39 +108,44 @@ jobs:
           - targetPlatform: Android
             targetDevice: Quest
     steps:
-      # Checkout without LFS
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          #lfs: true
-          fetch-depth: 0
           clean: true
-
-      # Git LFS
-      - name: Create LFS file list
-        run: git lfs ls-files -l | cut -d' ' -f1 | sort > .lfs-assets-id
-
-      - name: Restore LFS cache
-        uses: actions/cache@v4
-        id: lfs-cache
-        with:
-          path: .git/lfs
-          key: ${{ runner.os }}-lfs-${{ hashFiles('.lfs-assets-id') }}
-
-      - name: Git LFS Pull
-        run: |
-          git lfs pull
-          git add .
-          git reset --hard
-
-      # Cache
       - uses: actions/cache@v4
         with:
           path: Library
           key: Library-${{ matrix.targetPlatform }}
           restore-keys: Library-
 
+      ###
+      # Checkout and install HurricaneVR
+      ###
+      # PAT_ASSET_REPO_CHECKOUT expires once per year. An Admin need to create a new one as ORG_PAT if expired.
+      - name: Check out HVR .unitypackage from private repository
+        uses: actions/checkout@v4
+        with:
+          repository: Gothic-UnZENity-Project/asset-dependencies
+          ref: main
+          path: Checkout/AssetRepo
+          token: ${{ secrets.PAT_ASSET_REPO_CHECKOUT }}
+      - name: Assemble HVR unitypackage tar
+        run: cat Checkout/AssetRepo/HVR/${{env.HVRversion}}/HVR-${{env.HVRversion}}.unitypackage.* > HVR.unitypackage
+      - name: Import HVR.unitypacke into /Assets/HurricaneVR folder
+        uses: game-ci/unity-builder@v4
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+        with:
+          customParameters: -packagePath HVR.unitypackage
+          targetPlatform: StandaloneWindows64
+          allowDirtyBuild: true
+          buildMethod: GUZ.VR.Editor.VRBuilderActions.ImportPackage
+      
+      ###
       # Build
+      ###
       - name: Build project
         uses: game-ci/unity-builder@v4
         env:
