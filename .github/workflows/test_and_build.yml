@@ -21,49 +21,10 @@ jobs:
   # TESTS #
   #########
 
-  Build_with_HVR:
-    name: Build with HVR included
-    runs-on: self-hosted
-    strategy:
-      fail-fast: true
-      matrix:
-        include:
-          - targetPlatform: StandaloneWindows64
-            targetDevice: Windows64
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Check out HVR .unitypackage
-        uses: actions/checkout@v4
-        with:
-          repository: Gothic-UnZENity-Project/asset-dependencies
-          ref: main
-          path: Checkout/AssetRepo
-          token: ${{ secrets.PAT_ASSET_REPO_CHECKOUT }}
-
-      - name: check
-        run: ls -lah ./Checkout/AssetRepo/HVR/${{env.HVRversion}}/
-
-      - name: rebuild unitypackage
-        run: cat Checkout/AssetRepo/HVR/${{env.HVRversion}}/HVR-${{env.HVRversion}}.unitypackage.* > HVR-v2.9.2.unitypackage
-
-          
-
-
-  
   Build_test_without_HVR:
     if: false
     name: Test if game can be build without HVR
     runs-on: self-hosted
-    strategy:
-      fail-fast: true
-      matrix:
-        include:
-          - targetPlatform: StandaloneWindows64
-            targetDevice: Windows64
-    
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -78,9 +39,30 @@ jobs:
           UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
         with:
-          targetPlatform: ${{ matrix.targetPlatform }}
+          targetPlatform: StandaloneWindows64
           allowDirtyBuild: true
-          buildMethod: GUZ.VR.Editor.VRBuilderActions.Perform${{ matrix.targetDevice }}Build
+          buildMethod: GUZ.VR.Editor.VRBuilderActions.PerformWindows64Build
+
+
+  Build_with_HVR:
+    name: Build with HVR included
+    runs-on: self-hosted
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # PAT_ASSET_REPO_CHECKOUT expires once per year. An Admin need to create a new one as ORG_PAT if expired.
+      - name: Check out HVR .unitypackage
+        uses: actions/checkout@v4
+        with:
+          repository: Gothic-UnZENity-Project/asset-dependencies
+          ref: main
+          path: Checkout/AssetRepo
+          token: ${{ secrets.PAT_ASSET_REPO_CHECKOUT }}
+
+      - name: rebuild unitypackage
+        run: cat Checkout/AssetRepo/HVR/${{env.HVRversion}}/HVR-${{env.HVRversion}}.unitypackage.* > HVR.unitypackage
+
   
   # Unit_Tests:
   #   if: ${{ github.event.label.name == 'Pipeline' }}
