@@ -5,7 +5,7 @@ using UnityEditor.Rendering;
 using UnityEditor.Rendering.Universal;
 using UnityEngine;
 
-namespace GUZ.HVR.Editor
+namespace GUZ.VR.Editor
 {
     public class HurricaneActions
     {

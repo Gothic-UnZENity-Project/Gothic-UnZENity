@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿#if GUZ_HVR_INSTALLED
+using System.Collections.Generic;
 using System.Linq;
 using GUZ.Core;
 using GUZ.Core.Extensions;
@@ -64,3 +65,4 @@ namespace GUZ.VR.Components
         }
     }
 }
+#endif
