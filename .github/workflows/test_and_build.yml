@@ -41,9 +41,12 @@ jobs:
           ref: main
           path: Checkout/AssetRepo
           token: ${{ secrets.PAT_ASSET_REPO_CHECKOUT }}
-      
+
+      - name: rebuild unitypackage
+        run: cat Checkout/AssetRepo/HVR-v2.9.2.unitypackage.* > HVR-v2.9.2.unitypackage
+
       - name: check
-        run: ls -lah
+        run: ls -lah ./Checkout/AssetRepo
           
 
 
