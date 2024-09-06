@@ -66,9 +66,9 @@ namespace GUZ.VR.Editor
         /// <summary>
         /// Used to import HurricaneVR which was downloaded before.
         /// </summary>
-        public static void ImportPackage(string packagePath)
+        public static void ImportHVRPackage()
         {
-            AssetDatabase.ImportPackage(packagePath, false);
+            AssetDatabase.ImportPackage("HVR.unitypackage", false);
         }
 
         private static string[] FindEnabledEditorScenes()
