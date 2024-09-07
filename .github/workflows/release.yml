@@ -5,6 +5,8 @@ on:
     types:
       - published
 
+env:
+  HVRversion: 'v2.9.2'
 
 jobs:
   #########
