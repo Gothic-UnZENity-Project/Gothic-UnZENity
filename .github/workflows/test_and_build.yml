@@ -1,7 +1,11 @@
 name: Gothic-UnZENity Build Jobs
 
 on:
-  pull_request
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - labeled
   
 env:
   HVRversion: 'v2.9.2'
@@ -37,6 +41,7 @@ jobs:
   # BUILD #
   #########
   buildForAllPlatforms:
+    if: ${{ github.event.label.name == 'pipeline-test-build' }}
     name: Build Gothic-UnZENity
     runs-on: self-hosted
     strategy:
