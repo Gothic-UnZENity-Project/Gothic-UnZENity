@@ -1,8 +1,7 @@
 name: Gothic-UnZENity Build Jobs
 
 on:
-  pull_request:
-    types: [
+  pull_request
   
 env:
   HVRversion: 'v2.9.2'
