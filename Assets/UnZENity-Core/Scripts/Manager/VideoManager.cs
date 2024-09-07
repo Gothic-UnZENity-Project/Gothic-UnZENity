@@ -34,7 +34,7 @@ namespace GUZ.Core.Manager
             VideoFileNamesBik = VideoFilePathsBik.Select(Path.GetFileName).ToList();
             
             VideoFilePathsMp4 = Directory.EnumerateFiles(videoFileFolder, "*.mp4").ToList();
-            VideoFileNamesMp4 = VideoFilePathsBik.Select(Path.GetFileName).ToList();
+            VideoFileNamesMp4 = VideoFilePathsMp4.Select(Path.GetFileName).ToList();
         }
     }
 }
