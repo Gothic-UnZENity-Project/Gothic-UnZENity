@@ -47,7 +47,7 @@ namespace GUZ.Core.Debugging
             _fileWriter.WriteLine("OperatingSystem: " + SystemInfo.operatingSystem);
             _fileWriter.WriteLine("OperatingSystemFamily: " + SystemInfo.operatingSystemFamily);
             _fileWriter.WriteLine("MemorySize: " + SystemInfo.systemMemorySize);
-            _fileWriter.WriteLine("GUZ Version: " + Application.version);
+            _fileWriter.WriteLine("Gothic-UnZENity Version: " + Application.version);
             _fileWriter.WriteLine();
             _fileWriter.Flush();
         }

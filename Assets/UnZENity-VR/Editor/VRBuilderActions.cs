@@ -38,9 +38,9 @@ namespace GUZ.VR.Editor
         [MenuItem("UnZENity/Build/Quest")]
         private static void PerformQuestBuild()
         {
-            var target_path = _targetDir + "/Quest/" + _appName + ".apk";
+            var targetPath = _targetDir + "/Quest/" + _appName + ".apk";
             SetQuestSettings();
-            GenericBuild(_scenes, target_path, BuildTargetGroup.Android, BuildTarget.Android, BuildOptions.None);
+            GenericBuild(_scenes, targetPath, BuildTargetGroup.Android, BuildTarget.Android, BuildOptions.None);
         }
 
         private static void GenericBuild(string[] scenes, string targetPath, BuildTargetGroup buildTargetGroup,
@@ -91,22 +91,13 @@ namespace GUZ.VR.Editor
             PlayerSettings.Android.targetArchitectures = AndroidArchitecture.ARM64;
 
             //Enable Pico
-            Debug.LogError("SetPicoSettings1: " + OpenXRSettings.ActiveBuildTargetInstance);
-            Debug.LogError("SetPicoSettings2: " + OpenXRSettings.ActiveBuildTargetInstance.GetFeature<PICO4ControllerProfile>());
-            foreach (var v in OpenXRSettings.ActiveBuildTargetInstance.GetFeatures())
-            {
-                Debug.LogError(v);
-            }
-            
             OpenXRSettings.ActiveBuildTargetInstance.GetFeature<PICO4ControllerProfile>().enabled = true;
             OpenXRSettings.ActiveBuildTargetInstance.GetFeature<PICOFeature>().enabled = true;
 
             //Disable Meta
             OpenXRSettings.ActiveBuildTargetInstance.GetFeature<MetaQuestFeature>().enabled = false;
-            // OpenXRSettings.ActiveBuildTargetInstance.GetFeature<MetaQuestTouchProControllerProfile>().enabled = false;
             OpenXRSettings.ActiveBuildTargetInstance.GetFeature<OculusTouchControllerProfile>().enabled = false;
 
-            
             Debug.Log("OpenXR settings set for: Pico");
         }
 
@@ -117,15 +108,6 @@ namespace GUZ.VR.Editor
             PlayerSettings.Android.targetArchitectures = AndroidArchitecture.ARM64;
             
             //Enable Meta
-            // OpenXRSettings.ActiveBuildTargetInstance.GetFeature<MetaQuestTouchProControllerProfile>().enabled = true;
-
-            Debug.LogError("SetQuestSettings1: " + OpenXRSettings.ActiveBuildTargetInstance);
-            Debug.LogError("SetQuestSettings2: " + OpenXRSettings.ActiveBuildTargetInstance.GetFeature<OculusTouchControllerProfile>());
-            foreach (var v in OpenXRSettings.ActiveBuildTargetInstance.GetFeatures())
-            {
-                Debug.LogError(v);
-            }
-
             OpenXRSettings.ActiveBuildTargetInstance.GetFeature<OculusTouchControllerProfile>().enabled = true;
             OpenXRSettings.ActiveBuildTargetInstance.GetFeature<MetaQuestFeature>().enabled = true;
 
