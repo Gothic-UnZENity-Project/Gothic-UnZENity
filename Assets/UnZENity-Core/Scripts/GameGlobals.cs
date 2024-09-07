@@ -1,4 +1,3 @@
-using System;
 using GUZ.Core.Manager;
 using GUZ.Core.Manager.Culling;
 using GUZ.Core.Manager.Settings;
@@ -10,18 +9,18 @@ namespace GUZ.Core
     {
         public static IGlobalDataProvider Instance;
 
-        [Obsolete("Don't use globals.")] public static GameConfiguration Config => Instance.Config;
-        [Obsolete("Don't use globals.")] public static GameSettings Settings => Instance.Settings;
-        [Obsolete("Don't use globals.")] public static SkyManager Sky => Instance.Sky;
-        [Obsolete("Don't use globals.")] public static GameTime Time => Instance.Time;
-        [Obsolete("Don't use globals.")] public static RoutineManager Routines => Instance.Routines;
-        [Obsolete("Don't use globals.")] public static TextureManager Textures => Instance.Textures;
-        [Obsolete("Don't use globals.")] public static GuzSceneManager Scene => Instance.Scene;
-        [Obsolete("Don't use globals.")] public static StoryManager Story => Instance.Story;
-        [Obsolete("Don't use globals.")] public static FontManager Font => Instance.Font;
-        [Obsolete("Don't use globals.")] public static StationaryLightsManager Lights => Instance.Lights;
-        [Obsolete("Don't use globals.")] public static VobMeshCullingManager VobMeshCulling => Instance.VobMeshCulling;
-        [Obsolete("Don't use globals.")] public static NpcMeshCullingManager NpcMeshCulling => Instance.NpcMeshCulling;
-        [Obsolete("Don't use globals.")] public static VobSoundCullingManager SoundCulling => Instance.SoundCulling;
+        public static GameConfiguration Config => Instance.Config;
+        public static GameSettings Settings => Instance.Settings;
+        public static SkyManager Sky => Instance.Sky;
+        public static GameTime Time => Instance.Time;
+        public static RoutineManager Routines => Instance.Routines;
+        public static TextureManager Textures => Instance.Textures;
+        public static GuzSceneManager Scene => Instance.Scene;
+        public static StoryManager Story => Instance.Story;
+        public static FontManager Font => Instance.Font;
+        public static StationaryLightsManager Lights => Instance.Lights;
+        public static VobMeshCullingManager VobMeshCulling => Instance.VobMeshCulling;
+        public static NpcMeshCullingManager NpcMeshCulling => Instance.NpcMeshCulling;
+        public static VobSoundCullingManager SoundCulling => Instance.SoundCulling;
     }
 }
