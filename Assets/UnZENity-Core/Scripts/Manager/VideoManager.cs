@@ -7,12 +7,17 @@ namespace GUZ.Core.Manager
 {
     public class VideoManager
     {
-        public List<string> VideoFileNames = new();
-        public List<string> VideoFilePaths = new();
+        public List<string> VideoFileNamesBik = new();
+        public List<string> VideoFilePathsBik = new();
         
-        
+        public List<string> VideoFileNamesMp4 = new();
+        public List<string> VideoFilePathsMp4 = new();
+
+
         public VideoManager(GameConfiguration config)
-        { }
+        {
+            // NOP
+        }
         
         // TODO - We can trigger conversion from here later.
         public void Init()
@@ -25,8 +30,11 @@ namespace GUZ.Core.Manager
                 return;
             }
 
-            VideoFilePaths = Directory.EnumerateFiles(videoFileFolder, "*.bik").ToList();
-            VideoFileNames = VideoFilePaths.Select(i => Path.GetFileName(i)).ToList();
+            VideoFilePathsBik = Directory.EnumerateFiles(videoFileFolder, "*.bik").ToList();
+            VideoFileNamesBik = VideoFilePathsBik.Select(Path.GetFileName).ToList();
+            
+            VideoFilePathsMp4 = Directory.EnumerateFiles(videoFileFolder, "*.mp4").ToList();
+            VideoFileNamesMp4 = VideoFilePathsBik.Select(Path.GetFileName).ToList();
         }
     }
 }
