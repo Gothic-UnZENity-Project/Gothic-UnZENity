@@ -1,4 +1,4 @@
-name: GothicVR Release Job
+name: Gothic-UnZENity Release Job
 
 on:
   release:
@@ -14,7 +14,7 @@ jobs:
   #########
 
   buildForAllPlatforms:
-    name: Build GothicVR for ${{ matrix.targetDevice }}
+    name: Build Gothic-UnZENity for ${{ matrix.targetDevice }}
     runs-on: self-hosted
     strategy:
       fail-fast: true
