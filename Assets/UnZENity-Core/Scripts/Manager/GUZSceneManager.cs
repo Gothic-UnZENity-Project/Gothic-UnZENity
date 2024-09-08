@@ -59,8 +59,14 @@ namespace GUZ.Core.Manager
             {
                 if (_config.EnableMainMenu)
                 {
-                    // TODO - read INI setting if we should skip boot logos.
-                    await LoadLogoScene();
+                    if (Constants.GothicIni.PlayLogoVideos)
+                    {
+                        await LoadLogoScene();
+                    }
+                    else
+                    {
+                        await LoadMainMenuScene();
+                    }
                 }
                 else if (_config.LoadFromSaveSlot)
                 {
