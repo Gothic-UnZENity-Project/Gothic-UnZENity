@@ -36,9 +36,12 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder.Textures
                 PrepareWorldMeshRenderer(rendererData.Renderer, rendererData.SubmeshData);
             }
 
-            foreach (var mesh in TextureCache.VobMeshRenderersForTextureArray)
+            foreach (TextureCache.VobMeshData meshData in TextureCache.VobMeshesForTextureArray.Values)
             {
-                PrepareVobMeshRenderer(mesh.Renderer, mesh.Data.Mrm, mesh.Data.TextureArrayTypes);
+                foreach (MeshRenderer renderer in meshData.Renderers)
+                {
+                    PrepareVobMeshRenderer(renderer, meshData.Mrm, meshData.TextureArrayTypes);
+                }
             }
         }
 

@@ -24,7 +24,7 @@ namespace GUZ.Core.Caches
 
         public static Dictionary<TextureArrayTypes, Texture> TextureArrays { get; } = new();
         public static List<(MeshRenderer Renderer, WorldData.SubMeshData SubmeshData)> WorldMeshRenderersForTextureArray = new();
-        public static List<(MeshRenderer Renderer, (IMultiResolutionMesh Mrm, List<TextureArrayTypes> TextureArrayTypes) Data)> VobMeshRenderersForTextureArray = new();
+        public static Dictionary<UnityEngine.Mesh, VobMeshData> VobMeshesForTextureArray = new();
 
         private static readonly Dictionary<string, Texture2D> _texture2DCache = new();
         private static readonly Dictionary<TextureArrayTypes, List<(string PreparedKey, ITexture Texture)>> _texturesToIncludeInArray = new();
@@ -34,6 +34,23 @@ namespace GUZ.Core.Caches
             Opaque,
             Transparent,
             Water
+        }
+
+        public class VobMeshData
+        {
+            public IMultiResolutionMesh Mrm { get; set; }
+            public List<TextureArrayTypes> TextureArrayTypes { get; set; }
+            public List<MeshRenderer> Renderers { get; set; } = new();
+
+            public VobMeshData(IMultiResolutionMesh mrm, List<TextureArrayTypes> textureArrayTypes, MeshRenderer renderer = null)
+            {
+                Mrm = mrm;
+                TextureArrayTypes = textureArrayTypes;
+                if (renderer != null)
+                {
+                    Renderers.Add(renderer);
+                }
+            }
         }
 
         [CanBeNull]

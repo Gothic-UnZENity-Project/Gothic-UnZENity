@@ -81,7 +81,7 @@ namespace GUZ.Core.Creator.Meshes.V2
             vobBuilder.SetRootPosAndRot(position, rotation);
             vobBuilder.SetGameObject(rootGo, objectName);
             vobBuilder.SetParent(parent, resetRotation: true);
-            vobBuilder.SetMrm(mrm);
+            vobBuilder.SetMrm(objectName, mrm);
             vobBuilder.SetUseTextureArray(useTextureArray);
 
             if (!withCollider)
@@ -105,7 +105,7 @@ namespace GUZ.Core.Creator.Meshes.V2
             vobBuilder.SetGameObject(rootGo, objectName);
             vobBuilder.SetParent(parent,
                 resetRotation: true); // If we don't reset these, all objects will be rotated wrong!
-            vobBuilder.SetMdl(mdl);
+            vobBuilder.SetMdl(objectName, mdl);
             vobBuilder.SetUseTextureArray(useTextureArray);
 
             return vobBuilder.Build();
@@ -118,7 +118,7 @@ namespace GUZ.Core.Creator.Meshes.V2
             vobBuilder.SetRootPosAndRot(position, rotation);
             vobBuilder.SetGameObject(rootGo, objectName);
             vobBuilder.SetParent(parent);
-            vobBuilder.SetMmb(mmb);
+            vobBuilder.SetMmb(objectName, mmb);
             vobBuilder.SetUseTextureArray(true);
 
             return vobBuilder.Build();
@@ -137,8 +137,8 @@ namespace GUZ.Core.Creator.Meshes.V2
             vobBuilder.SetRootPosAndRot(position, rotation);
             vobBuilder.SetGameObject(rootGo, objectName);
             vobBuilder.SetParent(parent, resetRotation: true);
-            vobBuilder.SetMdh(mdh);
-            vobBuilder.SetMdm(mdm);
+            vobBuilder.SetMdh(objectName, mdh);
+            vobBuilder.SetMdm(objectName, mdm);
             vobBuilder.SetUseTextureArray(useTextureArray);
 
             return vobBuilder.Build();
