@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using GUZ.Core.Caches;
 using UnityEngine;
 using ZenKit;
@@ -16,8 +16,6 @@ namespace GUZ.Core.World
         public List<IVirtualObject> Vobs;
 
         // Cached objects - For performance reasons we only allow them cached. Otherwise every loop and getter will load them again.
-        public IMesh Mesh;
-        public CachedBspTree BspTree;
         public CachedWayNet WayNet;
 
         public List<SubMeshData> SubMeshes;

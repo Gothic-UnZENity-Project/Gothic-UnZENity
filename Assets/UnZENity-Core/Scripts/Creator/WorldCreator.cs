@@ -38,16 +38,15 @@ namespace GUZ.Core.Creator
                                   );
 
             SaveGameManager.CurrentWorldData.SubMeshes = await BuildBspTree(
-                SaveGameManager.CurrentWorldData.Mesh,
-                SaveGameManager.CurrentWorldData.BspTree.Cache(),
+                SaveGameManager.CurrentZkWorld.Mesh.Cache(),
+                SaveGameManager.CurrentZkWorld.BspTree.Cache(),
                 lightingEnabled);
 
             await MeshFactory.CreateWorld(SaveGameManager.CurrentWorldData, loading, _worldGo, Constants.MeshPerFrame);
             await MeshFactory.CreateTextureArray();
         }
 
-        public static async Task<List<WorldData.SubMeshData>> BuildBspTree(IMesh zkMesh, IBspTree zkBspTree,
-            bool lightingEnabled)
+        public static async Task<List<WorldData.SubMeshData>> BuildBspTree(IMesh zkMesh, IBspTree zkBspTree, bool lightingEnabled)
         {
             _claimedPolygons = new HashSet<IPolygon>();
             Dictionary<int, List<WorldData.SubMeshData>> subMeshesPerParentNode = new();
@@ -66,8 +65,7 @@ namespace GUZ.Core.Creator
             var mergedSubMeshesPerParentNode = subMeshesPerParentNode;
             while (true)
             {
-                mergedSubMeshesPerParentNode =
-                    MergeWorldChunksByLightCount(zkBspTree, subMeshesPerParentNode, lightingEnabled);
+                mergedSubMeshesPerParentNode = MergeWorldChunksByLightCount(zkBspTree, subMeshesPerParentNode, lightingEnabled);
                 if (mergedSubMeshesPerParentNode.Count == subMeshesPerParentNode.Count)
                 {
                     break;
@@ -82,8 +80,7 @@ namespace GUZ.Core.Creator
 
             stopwatch.Restart();
             // Merge the water until a given level in the BSP tree to it a few large chunks.
-            subMeshesPerParentNode = MergeShaderTypeWorldChunksToTreeHeight(TextureCache.TextureArrayTypes.Water, 3,
-                zkBspTree, subMeshesPerParentNode);
+            subMeshesPerParentNode = MergeShaderTypeWorldChunksToTreeHeight(TextureCache.TextureArrayTypes.Water, 3, zkBspTree, subMeshesPerParentNode);
             stopwatch.Stop();
             Debug.Log($"Merging water: {stopwatch.ElapsedMilliseconds / 1000f} s");
 
@@ -166,7 +163,7 @@ namespace GUZ.Core.Creator
                     // Add the leaf node geometry.
                     for (var i = node.PolygonIndex; i < node.PolygonIndex + node.PolygonCount; i++)
                     {
-                        var polygon = zkMesh.GetPolygon(bspTree.PolygonIndices[i]);
+                        var polygon = zkMesh.Polygons[bspTree.PolygonIndices[i]];
                         if (polygon.IsPortal || _claimedPolygons.Contains(polygon))
                         {
                             continue;
@@ -240,23 +237,23 @@ namespace GUZ.Core.Creator
         {
             // For every vertexIndex we store a new vertex. (i.e. no reuse of Vector3-vertices for later texture/uv attachment)
             var positionIndex = polygon.PositionIndices[index];
-            currentSubMesh.Vertices.Add(zkMesh.GetPosition(positionIndex).ToUnityVector());
+            currentSubMesh.Vertices.Add(zkMesh.Positions[positionIndex].ToUnityVector());
 
             // This triangle (index where Vector 3 lies inside vertices, points to the newly added vertex (Vector3) as we don't reuse vertices.
             currentSubMesh.Triangles.Add(currentSubMesh.Vertices.Count - 1);
 
             var featureIndex = polygon.FeatureIndices[index];
-            var feature = zkMesh.GetFeature(featureIndex);
+            var feature = zkMesh.Features[featureIndex];
             var uv = Vector2.Scale(scaleInTextureArray, feature.Texture.ToUnityVector());
             currentSubMesh.Uvs.Add(new Vector4(uv.x, uv.y, textureArrayIndex, maxMipLevel));
             currentSubMesh.Normals.Add(feature.Normal.ToUnityVector());
             currentSubMesh.BakedLightColors.Add(new Color32((byte)(feature.Light >> 16), (byte)(feature.Light >> 8),
                 (byte)feature.Light, (byte)(feature.Light >> 24)));
 
-            var material = zkMesh.GetMaterial(polygon.MaterialIndex);
-            if (material.TextureAnimationMapping == AnimationMapping.Linear)
+            if (zkMesh.Materials[polygon.MaterialIndex].TextureAnimationMapping == AnimationMapping.Linear)
             {
-                var uvAnimation = material.TextureAnimationMappingDirection.ToUnityVector();
+                var uvAnimation = zkMesh.Materials[polygon.MaterialIndex].TextureAnimationMappingDirection
+                    .ToUnityVector();
                 currentSubMesh.TextureAnimations.Add(uvAnimation);
             }
             else

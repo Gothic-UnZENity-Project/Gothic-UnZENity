@@ -45,7 +45,6 @@ namespace GUZ.Core.Manager
         public static ZenKit.World CurrentZkWorld => _worlds[CurrentWorldName].zkWorld;
         public static WorldData CurrentWorldData => _worlds[CurrentWorldName].uWorld;
 
-
         public static void LoadNewGame()
         {
             SaveGameId = 0;
@@ -108,9 +107,6 @@ namespace GUZ.Core.Manager
                 zkWorld = world,
                 uWorld = new WorldData
                 {
-                    // Not contained inside saveGame
-                    Mesh = world.Mesh,
-                    BspTree = (CachedBspTree)world.BspTree.Cache(),
                     // Contained inside normal .zen file and also saveGame.
                     Vobs = saveGameWorld == null ? world.RootObjects : saveGameWorld.RootObjects,
                     WayNet = (CachedWayNet)(saveGameWorld == null ? world.WayNet.Cache() : saveGameWorld.WayNet.Cache())
