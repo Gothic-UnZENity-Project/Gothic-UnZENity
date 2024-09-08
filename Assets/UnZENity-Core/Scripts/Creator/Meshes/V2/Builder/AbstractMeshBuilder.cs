@@ -466,10 +466,6 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
 
             TextureCache.VobMeshesForTextureArray.Add(mesh, new TextureCache.VobMeshData(mrmData, submeshPerTextureFormat.Keys.ToList(), UseTextureArray ? meshRenderer : null));
 
-            if (Mmb == null && Mdm == null)
-            {
-                mesh.UploadMeshData(true);
-            }
             MeshCache.Meshes.Add(MeshName, mesh);
         }
 
@@ -567,10 +563,6 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
                 mesh.SetTriangles(preparedTriangles[i], i);
             }
 
-            if (Mmb == null && Mdm == null)
-            {
-                mesh.UploadMeshData(true);
-            }
             MeshCache.Meshes.Add(MeshName, mesh);
         }
 
