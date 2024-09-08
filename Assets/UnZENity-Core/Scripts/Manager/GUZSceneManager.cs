@@ -59,7 +59,8 @@ namespace GUZ.Core.Manager
             {
                 if (_config.EnableMainMenu)
                 {
-                    await LoadMainMenu();
+                    // TODO - read INI setting if we should skip boot logos.
+                    await LoadLogoScene();
                 }
                 else if (_config.LoadFromSaveSlot)
                 {
@@ -79,7 +80,12 @@ namespace GUZ.Core.Manager
             }
         }
 
-        private async Task LoadMainMenu()
+        private async Task LoadLogoScene()
+        {
+            await LoadScene(Constants.SceneLogo);
+        }
+        
+        public async Task LoadMainMenuScene()
         {
             GameGlobals.Textures.LoadLoadingDefaultTextures();
             await LoadScene(Constants.SceneMainMenu);

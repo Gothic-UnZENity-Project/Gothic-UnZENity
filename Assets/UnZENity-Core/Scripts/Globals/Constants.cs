@@ -46,6 +46,7 @@ namespace GUZ.Core.Globals
 
         public const string SceneBootstrap = "Bootstrap";
         public const string SceneGeneral = "General";
+        public const string SceneLogo = "Logo";
         public const string SceneMainMenu = "MainMenu";
         public const string SceneLoading = "Loading";
         public const string SceneLab = "Lab";
