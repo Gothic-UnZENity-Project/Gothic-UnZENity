@@ -376,12 +376,11 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
             {
                 // When using the texture array, get the index of the array of the matching texture format. Build submeshes for each texture format, i.e. separating opaque and alpha cutout textures.
                 int textureArrayIndex = 0, maxMipLevel = 0;
-                var textureScale = Vector2.one;
-                var textureArrayType = TextureCache.TextureArrayTypes.Opaque;
+                Vector2 textureScale = Vector2.one;
+                TextureCache.TextureArrayTypes textureArrayType = TextureCache.TextureArrayTypes.Opaque;
                 if (UseTextureArray)
                 {
-                    TextureCache.GetTextureArrayIndex(TextureCache.TextureTypes.Vob, subMesh.Material,
-                        out textureArrayType, out textureArrayIndex, out textureScale, out maxMipLevel);
+                    TextureCache.GetTextureArrayIndex(subMesh.Material, out textureArrayType, out textureArrayIndex, out textureScale, out maxMipLevel);
                     if (!submeshPerTextureFormat.ContainsKey(textureArrayType))
                     {
                         submeshPerTextureFormat.Add(textureArrayType, preparedTriangles.Count);

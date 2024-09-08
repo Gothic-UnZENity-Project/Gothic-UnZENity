@@ -43,7 +43,7 @@ namespace GUZ.Core.Creator
                 lightingEnabled);
 
             await MeshFactory.CreateWorld(SaveGameManager.CurrentWorldData, loading, _worldGo, Constants.MeshPerFrame);
-            await MeshFactory.CreateWorldTextureArray();
+            await MeshFactory.CreateTextureArray();
         }
 
         public static async Task<List<WorldData.SubMeshData>> BuildBspTree(IMesh zkMesh, IBspTree zkBspTree,
@@ -180,9 +180,7 @@ namespace GUZ.Core.Creator
                         {
                             // Add the texture to the texture array or retrieve its existing slice.
                             var zkMaterial = zkMesh.GetMaterial(polygon.MaterialIndex);
-                            TextureCache.GetTextureArrayIndex(TextureCache.TextureTypes.World, zkMaterial,
-                                out var textureArrayTpe, out var textureArrayIndex, out var textureScale,
-                                out var maxMipLevel);
+                            TextureCache.GetTextureArrayIndex(zkMaterial, out TextureCache.TextureArrayTypes textureArrayTpe, out int textureArrayIndex, out Vector2 textureScale, out int maxMipLevel);
                             if (textureArrayIndex == -1)
                             {
                                 continue;
@@ -203,7 +201,7 @@ namespace GUZ.Core.Creator
                             {
                                 nodeSubmeshes.Add(shader,
                                     new WorldData.SubMeshData
-                                        { Material = zkMaterial, TextureArrayType = textureArrayTpe });
+                                    { Material = zkMaterial, TextureArrayType = textureArrayTpe });
                                 if (!allSubmeshesPerParentNodeIndex.ContainsKey(submeshParentIndex))
                                 {
                                     allSubmeshesPerParentNodeIndex.Add(submeshParentIndex,
@@ -432,7 +430,7 @@ namespace GUZ.Core.Creator
             GuzContext.InteractionAdapter.SetTeleportationArea(_worldGo);
         }
 
-        
+
 #if UNITY_EDITOR
         /// <summary>
         /// Loads the world for occlusion culling.

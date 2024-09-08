@@ -174,14 +174,9 @@ namespace GUZ.Core.Creator.Meshes.V2
             return vobDecalBuilder.Build();
         }
 
-        public static async Task CreateWorldTextureArray()
+        public static async Task CreateTextureArray()
         {
-            await new WorldTextureArrayBuilder().BuildAsync();
-        }
-
-        public static async Task CreateVobTextureArray()
-        {
-            await new VobTextureArrayBuilder().BuildAsync();
+            await new TextureArrayBuilder().BuildAsync();
         }
 
         public static GameObject CreateBarrier(string objectName, IMesh mesh)
