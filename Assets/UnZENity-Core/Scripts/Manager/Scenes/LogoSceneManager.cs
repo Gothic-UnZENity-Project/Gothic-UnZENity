@@ -16,7 +16,7 @@ namespace GUZ.Core.Manager.Scenes
         {
             _videoPlayer.loopPointReached += LoadNextLogo;
 
-            logoVideos = new Queue<string>(GameGlobals.Video.VideoFilePathsMp4.Where(i => i.ContainsIgnoreCase("logo")));
+            logoVideos = new Queue<string>(GameGlobals.Video.VideoFilePathsMp4.Where(i => i.StartsWithIgnoreCase("logo")));
             
             // Start first logo
             LoadNextLogo(_videoPlayer);
