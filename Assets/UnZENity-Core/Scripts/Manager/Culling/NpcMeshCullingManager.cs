@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using System.ComponentModel;
+using GUZ.Core.Creator;
 using GUZ.Core.Extensions;
 using GUZ.Core.Npc;
 using GUZ.Core.Npc.Routines;
@@ -70,21 +72,28 @@ namespace GUZ.Core.Manager.Culling
 
         protected override void VisibilityChanged(CullingGroupEvent evt)
         {
+            var go = Objects[evt.index];
+
             // A higher distance level means "invisible" as we only leverage: 0 -> in-range; 1 -> out-of-range.
             var isInVisibleRange = evt.currentDistance == 0;
             var wasOutOfDistance = evt.previousDistance != 0;
 
-            Objects[evt.index].SetActive(isInVisibleRange);
+            if (!isInVisibleRange)
+            {
+                AnimationCreator.StopAnimation(go);
+            }
+
+            go.SetActive(isInVisibleRange);
 
             // Alter position tracking of NPC
             if (isInVisibleRange)
             {
-                _visibleNpcs.Add(evt.index, Objects[evt.index].transform);
+                _visibleNpcs.Add(evt.index, go.transform);
             }
             // When an NPC gets invisible, we need to check for their next respawn from their initially spawned position.
             else
             {
-                Objects[evt.index].TryGetComponent<Routine>(out var routine);
+                go.TryGetComponent<Routine>(out var routine);
 
                 if (routine.CurrentRoutine != null)
                 {
@@ -105,7 +114,7 @@ namespace GUZ.Core.Manager.Culling
             if (isInVisibleRange && wasOutOfDistance)
             {
                 // If we walked to an NPC in our game, the NPC will be re-enabled and Routines get reset.
-                Objects[evt.index].GetComponent<AiHandler>().ReEnableNpc();
+                go.GetComponent<AiHandler>().ReEnableNpc();
             }
         }
 
