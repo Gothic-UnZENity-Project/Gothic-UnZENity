@@ -3563,7 +3563,10 @@ PrefabInstance:
       objectReference: {fileID: 2100000, guid: d862c4d6d47b37348a252ad3f6139791, type: 2}
     - target: {fileID: 8228542742798409357, guid: 30a1e77eafe8f644dba70315d5f67504, type: 3}
       propertyPath: m_text
-      value: Video demo
+      value: 'Video demo -
+
+
+        (For converted .mp4 files only)'
       objectReference: {fileID: 0}
     - target: {fileID: 8228542742798409357, guid: 30a1e77eafe8f644dba70315d5f67504, type: 3}
       propertyPath: m_fontSize
