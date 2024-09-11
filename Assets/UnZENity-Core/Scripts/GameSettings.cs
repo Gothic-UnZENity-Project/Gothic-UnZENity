@@ -17,7 +17,10 @@ namespace GUZ.Core.Manager.Settings
         public string GothicIPath;
         public string LogLevel;
 
-        public Dictionary<string, Dictionary<string, string>> GothicIniSettings = new();
+        public Dictionary<string, string> GothicIniSettings = new();
+
+        public string IniSkyDayColor(int index) => GothicIniSettings.TryGetValue($"zDayColor{index}", out var value) ? value : "0 0 0";
+        public bool IniPlayLogoVideos => GothicIniSettings.TryGetValue("playLogoVideos", out var value) ? Convert.ToBoolean(Convert.ToInt16(value)) : true;
 
 
         public static GameSettings Load()
@@ -162,10 +165,10 @@ namespace GUZ.Core.Manager.Settings
             if (!File.Exists(iniFilePath))
             {
                 Debug.LogError("The gothic.ini file does not exist at the specified path :" + iniFilePath);
+                return;
             }
 
-            var data = new Dictionary<string, Dictionary<string, string>>();
-            string currentSection = null;
+            var data = new Dictionary<string, string>();
 
             foreach (var line in File.ReadLines(iniFilePath))
             {
@@ -175,17 +178,17 @@ namespace GUZ.Core.Manager.Settings
                     continue;
                 }
 
+                // We don't need to store [section] information. Every property name is unique.
                 if (trimmedLine.StartsWith("[") && trimmedLine.EndsWith("]"))
                 {
-                    currentSection = trimmedLine.Substring(1, trimmedLine.Length - 2);
-                    data[currentSection] = new Dictionary<string, string>();
+                    continue;
                 }
                 else
                 {
                     var keyValue = trimmedLine.Split(new[] { '=' }, 2);
-                    if (keyValue.Length == 2 && currentSection != null)
+                    if (keyValue.Length == 2)
                     {
-                        data[currentSection][keyValue[0].Trim()] = keyValue[1].Trim();
+                        data[keyValue[0].Trim()] = keyValue[1].Trim();
                     }
                 }
             }

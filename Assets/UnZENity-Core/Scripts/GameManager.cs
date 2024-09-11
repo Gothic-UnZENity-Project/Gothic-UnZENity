@@ -97,7 +97,7 @@ namespace GUZ.Core
             Video = new VideoManager(Config);
             Sky = new SkyManager(Config, Time, Settings);
             _gameMusicManager = new MusicManager(Config);
-            Scene = new GuzSceneManager(Config, _gameLoadingManager, XRInteractionManager);
+            Scene = new GuzSceneManager(Config, _gameLoadingManager, XRInteractionManager, Settings);
             Story = new StoryManager(Config);
             Routines = new RoutineManager(Config);
         }

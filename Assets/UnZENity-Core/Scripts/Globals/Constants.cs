@@ -1,16 +1,9 @@
-using System;
 using UnityEngine;
 
 namespace GUZ.Core.Globals
 {
     public static class Constants
     {
-        public static class GothicIni
-        {
-            private const string _gameSection = "GAME";
-            public static bool PlayLogoVideos => GameGlobals.Settings.GothicIniSettings[_gameSection].TryGetValue("playLogoVideos", out var value) ? Convert.ToBoolean(Convert.ToInt16(value)) : true;
-        }
-        
         public static readonly Material LoadingMaterial; // Used for Vobs and World before applying TextureArray.
 
         // Unity shaders
