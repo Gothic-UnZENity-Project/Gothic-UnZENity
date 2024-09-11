@@ -38,9 +38,9 @@ namespace GUZ.VR.Editor
         [MenuItem("UnZENity/Build/Quest")]
         private static void PerformQuestBuild()
         {
-            var target_path = _targetDir + "/Quest/" + _appName + ".apk";
+            var targetPath = _targetDir + "/Quest/" + _appName + ".apk";
             SetQuestSettings();
-            GenericBuild(_scenes, target_path, BuildTargetGroup.Android, BuildTarget.Android, BuildOptions.None);
+            GenericBuild(_scenes, targetPath, BuildTargetGroup.Android, BuildTarget.Android, BuildOptions.None);
         }
 
         private static void GenericBuild(string[] scenes, string targetPath, BuildTargetGroup buildTargetGroup,
@@ -96,10 +96,8 @@ namespace GUZ.VR.Editor
 
             //Disable Meta
             OpenXRSettings.ActiveBuildTargetInstance.GetFeature<MetaQuestFeature>().enabled = false;
-            // OpenXRSettings.ActiveBuildTargetInstance.GetFeature<MetaQuestTouchProControllerProfile>().enabled = false;
             OpenXRSettings.ActiveBuildTargetInstance.GetFeature<OculusTouchControllerProfile>().enabled = false;
 
-            
             Debug.Log("OpenXR settings set for: Pico");
         }
 
@@ -110,7 +108,6 @@ namespace GUZ.VR.Editor
             PlayerSettings.Android.targetArchitectures = AndroidArchitecture.ARM64;
             
             //Enable Meta
-            // OpenXRSettings.ActiveBuildTargetInstance.GetFeature<MetaQuestTouchProControllerProfile>().enabled = true;
             OpenXRSettings.ActiveBuildTargetInstance.GetFeature<OculusTouchControllerProfile>().enabled = true;
             OpenXRSettings.ActiveBuildTargetInstance.GetFeature<MetaQuestFeature>().enabled = true;
 
