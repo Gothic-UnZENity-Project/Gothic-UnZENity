@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.ComponentModel;
 using GUZ.Core.Creator;
 using GUZ.Core.Extensions;
 using GUZ.Core.Npc;
@@ -126,7 +125,9 @@ namespace GUZ.Core.Manager.Culling
         {
             foreach (var npc in _visibleNpcs)
             {
-                UpdatePosition(npc.Key, npc.Value.position);
+                // NPCRoot is only updated after a walking animation's loop is done.
+                // child[0] == NPCRoot/BIP01 -> We need to fetch this one as it's the walking animation root which updates every frame.
+                UpdatePosition(npc.Key, npc.Value.GetChild(0).position);
             }
         }
 

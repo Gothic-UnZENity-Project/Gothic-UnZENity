@@ -223,7 +223,6 @@ namespace GUZ.Core.Npc
         {
             var eventData = JsonUtility.FromJson<SerializableEventEndSignal>(eventEndSignalParam);
 
-            // FIXME ! We need to re-add physics when e.g. looping walk animation!
             Properties.CurrentAction.AnimationEndEventCallback(eventData);
         }
 
@@ -246,7 +245,7 @@ namespace GUZ.Core.Npc
             // WayNet handling
             if (Properties.CurrentFreePoint != null)
             {
-                // If we despawn an NPC, the FP needs to be cleared as well.
+                // FIXME - If we despawn an NPC, the FP needs to be cleared as well.
                 Properties.CurrentFreePoint.IsLocked = false;
             }
             Properties.CurrentFreePoint = null;
