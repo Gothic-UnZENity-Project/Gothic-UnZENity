@@ -21,7 +21,7 @@ namespace GUZ.Core.Manager.Settings
 
         public string IniSkyDayColor(int index) => GothicIniSettings.TryGetValue($"zDayColor{index}", out var value) ? value : "0 0 0";
         public bool IniPlayLogoVideos => GothicIniSettings.TryGetValue("playLogoVideos", out var value) ? Convert.ToBoolean(Convert.ToInt16(value)) : true;
-
+        public string IniPlayerInstanceName => GothicIniSettings.GetValueOrDefault("playerInstanceName", "PC_HERO");
 
         public static GameSettings Load()
         {

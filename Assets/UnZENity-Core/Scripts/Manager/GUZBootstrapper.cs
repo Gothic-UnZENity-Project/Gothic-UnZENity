@@ -96,7 +96,6 @@ namespace GUZ.Core.Manager
 
             VmGothicExternals.RegisterExternals();
 
-            NpcHelper.LoadHero();
             NpcHelper.Init();
         }
 

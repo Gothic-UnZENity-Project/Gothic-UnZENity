@@ -107,6 +107,7 @@ namespace GUZ.Core.Vm
             vm.RegisterExternal<int, NpcInstance, string>("Npc_GetDistToWP", Npc_GetDistToWP);
             vm.RegisterExternal<NpcInstance, int>("Npc_PercDisable", Npc_PercDisable);
             vm.RegisterExternal<int, NpcInstance, NpcInstance>("Npc_CanSeeNpc", Npc_CanSeeNpc);
+            vm.RegisterExternal<int, NpcInstance, NpcInstance>("Npc_CanSeeNpcFreeLOS", Npc_CanSeeNpcFreeLOS);
             vm.RegisterExternal<NpcInstance>("Npc_ClearAiQueue", Npc_ClearAiQueue);
             // vm.RegisterExternal<NpcInstance>("Npc_ClearInventory", Npc_ClearInventory);
             vm.RegisterExternal<string, NpcInstance>("Npc_GetNextWp", Npc_GetNextWp);
@@ -690,7 +691,12 @@ namespace GUZ.Core.Vm
 
         public static int Npc_CanSeeNpc(NpcInstance npc, NpcInstance target)
         {
-            return Convert.ToInt32(NpcHelper.ExtNpcCanSeeNpc(npc, target));
+            return Convert.ToInt32(NpcHelper.ExtNpcCanSeeNpc(npc, target, false));
+        }
+
+        public static int Npc_CanSeeNpcFreeLOS(NpcInstance npc, NpcInstance target)
+        {
+            return Convert.ToInt32(NpcHelper.ExtNpcCanSeeNpc(npc, target, true));
         }
 
         public static void Npc_ClearAiQueue(NpcInstance npc)

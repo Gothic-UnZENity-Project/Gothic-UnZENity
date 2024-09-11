@@ -10,6 +10,7 @@ using GUZ.Core.Properties;
 using GUZ.Core.Vm;
 using UnityEngine;
 using ZenKit;
+using ZenKit.Daedalus;
 
 namespace GUZ.Core.Npc
 {
@@ -144,14 +145,14 @@ namespace GUZ.Core.Npc
                 return;
             }
 
-            ExecutePerception(VmGothicEnums.PerceptionType.AssessPlayer);
+            ExecutePerception(VmGothicEnums.PerceptionType.AssessPlayer, (NpcInstance)GameData.GothicVm.GlobalHero);
 
 
             // Reset timer if we executed Perceptions.
             Properties.PerceptionTime = 0f;
         }
 
-        private void ExecutePerception(VmGothicEnums.PerceptionType type)
+        private void ExecutePerception(VmGothicEnums.PerceptionType type, NpcInstance other)
         {
             // Perception isn't set
             if (!Properties.Perceptions.TryGetValue(type, out var perceptionFunction))
@@ -164,6 +165,7 @@ namespace GUZ.Core.Npc
                 return;
             }
 
+            GameData.GothicVm.GlobalOther = other;
             GameData.GothicVm.Call(perceptionFunction);
         }
 
