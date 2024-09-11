@@ -94,9 +94,10 @@ namespace GUZ.Core.Manager
         {
             GameData.GothicVm = ResourceLoader.TryGetDaedalusVm("GOTHIC");
 
-            NpcHelper.LoadHero();
-
             VmGothicExternals.RegisterExternals();
+
+            NpcHelper.LoadHero();
+            NpcHelper.Init();
         }
 
         /// <summary>
