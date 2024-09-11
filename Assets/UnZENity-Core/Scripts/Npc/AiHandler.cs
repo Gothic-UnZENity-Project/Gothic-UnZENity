@@ -7,6 +7,7 @@ using GUZ.Core.Npc.Actions;
 using GUZ.Core.Npc.Actions.AnimationActions;
 using GUZ.Core.Npc.Routines;
 using GUZ.Core.Properties;
+using GUZ.Core.Vm;
 using UnityEngine;
 using ZenKit;
 
@@ -31,6 +32,8 @@ namespace GUZ.Core.Npc
         /// </summary>
         private void Update()
         {
+            ExecutePerceptions();
+
             Properties.CurrentAction.Tick();
 
             // Add new milliseconds when stateTime shall be measured.
@@ -128,6 +131,40 @@ namespace GUZ.Core.Npc
                 Debug.Log($"Start playing >{Properties.AnimationQueue.Peek().GetType()}< on >{Properties.Go.name}<");
                 PlayNextAnimation(Properties.AnimationQueue.Dequeue());
             }
+        }
+
+        /// <summary>
+        /// Execute perceptions if it's about time.
+        /// </summary>
+        private void ExecutePerceptions()
+        {
+            Properties.CurrentPerceptionTime += Time.deltaTime;
+            if (Properties.CurrentPerceptionTime < Properties.PerceptionTime)
+            {
+                return;
+            }
+
+            ExecutePerception(VmGothicEnums.PerceptionType.AssessPlayer);
+
+
+            // Reset timer if we executed Perceptions.
+            Properties.PerceptionTime = 0f;
+        }
+
+        private void ExecutePerception(VmGothicEnums.PerceptionType type)
+        {
+            // Perception isn't set
+            if (!Properties.Perceptions.TryGetValue(type, out var perceptionFunction))
+            {
+                return;
+            }
+            // Perception is disabled
+            else if (perceptionFunction < 0)
+            {
+                return;
+            }
+
+            GameData.GothicVm.Call(perceptionFunction);
         }
 
         public void StartRoutine(int action, string wayPointName)

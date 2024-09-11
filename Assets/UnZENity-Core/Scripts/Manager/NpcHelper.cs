@@ -24,7 +24,7 @@ namespace GUZ.Core.Manager
         ///
         /// FIXME - We should use PERC_ASSESSTALK range to leverage HVR's Grabbable hover and remote grab distance!
         /// </summary>
-        public static readonly Dictionary<int, int> PerceptionRanges = new ();
+        public static readonly Dictionary<VmGothicEnums.PerceptionType, int> PerceptionRanges = new ();
 
 
         private const float _fpLookupDistance = 7f; // meter
@@ -51,7 +51,7 @@ namespace GUZ.Core.Manager
 
         public static void ExtPErcSetRange(int perceptionId, int rangeInCm)
         {
-            PerceptionRanges[perceptionId] = rangeInCm / 100;
+            PerceptionRanges[(VmGothicEnums.PerceptionType)perceptionId] = rangeInCm / 100;
         }
 
         public static bool ExtIsMobAvailable(NpcInstance npcInstance, string vobName)
