@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using GUZ.Core.Caches;
 using GUZ.Core.Extensions;
@@ -12,12 +13,22 @@ using GUZ.Core.Vm;
 using JetBrains.Annotations;
 using UnityEngine;
 using ZenKit.Daedalus;
+using Object = UnityEngine.Object;
 
 namespace GUZ.Core.Manager
 {
     public static class NpcHelper
     {
+        /// <summary>
+        /// Ranges are in meter.
+        ///
+        /// FIXME - We should use PERC_ASSESSTALK range to leverage HVR's Grabbable hover and remote grab distance!
+        /// </summary>
+        public static readonly Dictionary<int, int> PerceptionRanges = new ();
+
+
         private const float _fpLookupDistance = 7f; // meter
+
 
         static NpcHelper()
         {
@@ -36,6 +47,11 @@ namespace GUZ.Core.Manager
 
             // Cache hero for future lookups.
             LookupCache.NpcCache[heroIndex] = (instance: npcInstance, properties: playerProperties);
+        }
+
+        public static void ExtPErcSetRange(int perceptionId, int rangeInCm)
+        {
+            PerceptionRanges[perceptionId] = rangeInCm / 100;
         }
 
         public static bool ExtIsMobAvailable(NpcInstance npcInstance, string vobName)
@@ -582,7 +598,7 @@ namespace GUZ.Core.Manager
             var slotGo = npcProperties.Go.FindChildRecursively(npcProperties.UsedItemSlot);
             var item = slotGo!.transform.GetChild(0);
 
-            UnityEngine.Object.Destroy(item.gameObject);
+            Object.Destroy(item.gameObject);
         }
 
         public static void ExchangeRoutine(GameObject go, NpcInstance npcInstance, int routineIndex)
@@ -607,6 +623,20 @@ namespace GUZ.Core.Manager
 
             var startRoutine = routineComp.CurrentRoutine;
             go.GetComponent<AiHandler>().StartRoutine(startRoutine.Action, startRoutine.Waypoint);
+        }
+
+        public static void Init()
+        {
+            // Perceptions
+            var percInitSymbol = GameData.GothicVm.GetSymbolByName("InitPerceptions");
+            if (percInitSymbol == null)
+            {
+                Debug.LogError("InitPerceptions symbol not found.");
+            }
+            else
+            {
+                GameData.GothicVm.Call(percInitSymbol.Index);
+            }
         }
 
         public static void LoadHero()

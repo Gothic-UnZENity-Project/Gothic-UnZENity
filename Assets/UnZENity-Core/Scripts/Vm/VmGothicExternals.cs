@@ -148,6 +148,7 @@ namespace GUZ.Core.Vm
             vm.RegisterExternal<int, int, int>("Wld_GetGuildAttitude", Wld_GetGuildAttitude);
 
             // Misc
+            vm.RegisterExternal<int, int>("Perc_SetRange", Perc_SetRange);
             vm.RegisterExternal<string, string, string>("ConcatStrings", ConcatStrings);
             vm.RegisterExternal<string, int>("IntToString", IntToString);
             vm.RegisterExternal<string, float>("FloatToString", FloatToString);
@@ -873,6 +874,11 @@ namespace GUZ.Core.Vm
         #endregion
 
         #region Misc
+
+        public static void Perc_SetRange(int perceptionId, int rangeInCm)
+        {
+            NpcHelper.ExtPErcSetRange(perceptionId, rangeInCm);
+        }
 
         public static string ConcatStrings(string str1, string str2)
         {

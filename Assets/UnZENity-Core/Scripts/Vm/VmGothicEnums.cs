@@ -37,8 +37,7 @@ namespace GUZ.Core.Vm
             Assesscaster = 29,
             Assesssurprise = 30,
             Assessenterroom = 31,
-            Assessusemob = 32,
-            Count
+            Assessusemob = 32
         }
 
         public enum WalkMode
