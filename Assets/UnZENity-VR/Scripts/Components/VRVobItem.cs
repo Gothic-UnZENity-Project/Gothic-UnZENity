@@ -65,6 +65,10 @@ namespace GUZ.VR.Components
             }
 
             GameGlobals.VobMeshCulling?.StartTrackVobPositionUpdates(gameObject);
+
+            _properties.CurrentGrabStatus |= grabber.GetComponentInParent<HVRHandGrabber>().IsLeftHand
+                ? VRVobItemProperties.GrabStatus.LeftHand
+                : VRVobItemProperties.GrabStatus.RightHand;
         }
 
         public void OnReleased(HVRGrabberBase grabber, HVRGrabbable grabbable)
@@ -75,6 +79,13 @@ namespace GUZ.VR.Components
 
             // Disable "ghostification" of object.
             DynamicMaterialManager.ResetDynamicValue(gameObject, Constants.ShaderPropertyTransparency, Constants.ShaderPropertyTransparencyDefault);
+
+            GameGlobals.VobMeshCulling?.StartTrackVobPositionUpdates(gameObject);
+
+            // Remove flag of hand which released only.
+            _properties.CurrentGrabStatus &= grabber.GetComponentInParent<HVRHandGrabber>().IsLeftHand
+                ? ~VRVobItemProperties.GrabStatus.LeftHand
+                : ~VRVobItemProperties.GrabStatus.RightHand;
         }
 
         /// <summary>
