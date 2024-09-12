@@ -26,15 +26,15 @@ namespace GUZ.Lab.Handler
                 rootGo: prefab, parent: parentGo, useTextureArray: false);
         }
         
-        protected GameObject SpawnItem(string itemName, GameObject parentGo, Vector3 position = default)
+        protected GameObject SpawnItem(string itemName, GameObject parentGo, Vector3 position = default, PrefabType type = PrefabType.VobItem)
         {
-            var itemPrefab = ResourceLoader.TryGetPrefabObject(PrefabType.VobItem);
+            var itemPrefab = ResourceLoader.TryGetPrefabObject(type);
             var item = VmInstanceManager.TryGetItemData(itemName);
             var mrm = ResourceLoader.TryGetMultiResolutionMesh(item.Visual);
             var itemGo = MeshFactory.CreateVob(item.Visual, mrm, position, default, true,
                 rootGo: itemPrefab, parent: parentGo, useTextureArray: false);
 
-            itemGo.GetComponent<VobItemProperties>().SetData(null, item);
+            itemGo.GetComponentInChildren<VobItemProperties>().SetData(null, item);
 
             return gameObject;
         }

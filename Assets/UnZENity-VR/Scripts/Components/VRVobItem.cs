@@ -13,7 +13,7 @@ namespace GUZ.VR.Components
 {
     public class VRVobItem : MonoBehaviour
     {
-        [SerializeField] private HVRVobItemProperties _properties;
+        [SerializeField] private VRVobItemProperties _properties;
         [SerializeField] private MeshCollider _meshCollider;
 
         // We pre-allocate enough entries to fetch at least one entry which is not ourselves.

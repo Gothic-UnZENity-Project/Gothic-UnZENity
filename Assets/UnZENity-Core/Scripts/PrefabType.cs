@@ -8,7 +8,6 @@ namespace GUZ.Core
         Vob,
         Npc,
         VobAnimate,
-        VobItem,
         VobContainer,
         VobDoor,
         VobFire,
@@ -24,6 +23,9 @@ namespace GUZ.Core
         VobSoundDaytime,
         VobLadder,
 
+        VobItem,
+        VobItemLockPick,
+        
         Player,
         MainMenu,
         XRDeviceSimulator,
@@ -40,7 +42,6 @@ namespace GUZ.Core
                 PrefabType.Vob => "Prefabs/Vobs/Vob",
                 PrefabType.Npc => "Prefabs/Vobs/oCNpc",
                 PrefabType.VobAnimate => "Prefabs/Vobs/zCVobAnimate",
-                PrefabType.VobItem => "Prefabs/Vobs/oCItem",
                 PrefabType.VobContainer => "Prefabs/Vobs/oCMobContainer",
                 PrefabType.VobDoor => "Prefabs/Vobs/oCMobDoor",
                 PrefabType.VobFire => "Prefabs/Vobs/oCMobFire",
@@ -56,6 +57,9 @@ namespace GUZ.Core
                 PrefabType.VobSoundDaytime => "Prefabs/Vobs/zCVobSoundDaytime",
                 PrefabType.VobLadder => "Prefabs/Vobs/oCMobLadder",
 
+                PrefabType.VobItem => "Prefabs/Vobs/oCItem",
+                PrefabType.VobItemLockPick => "Prefabs/Vobs/oCItem/LockPick",
+                
                 PrefabType.Player => "Prefabs/Player",
                 PrefabType.MainMenu => "Prefabs/Menus/MainMenu",
                 PrefabType.XRDeviceSimulator => "Prefabs/VRPlayer/XR Device Simulator",
