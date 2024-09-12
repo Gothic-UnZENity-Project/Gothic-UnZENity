@@ -20,17 +20,13 @@ namespace GUZ.Lab
         public GameConfiguration Config { get; private set; }
 
         public LabMusicHandler LabMusicHandler;
-
         public LabNpcDialogHandler NpcDialogHandler;
-
         public LabInteractableHandler InteractableHandler;
-
         public LabLadderLabHandler LadderLabHandler;
-
         public LabVobItemHandler VobItemHandler;
-
         public LabNpcAnimationHandler LabNpcAnimationHandler;
-
+        public LabLockHandler LabLockHandler;
+        
         private VRDeviceSimulatorManager _deviceSimulatorManager;
         private MusicManager _gameMusicManager;
         private RoutineManager _npcRoutineManager;
@@ -95,6 +91,7 @@ namespace GUZ.Lab
             InteractableHandler.Bootstrap();
             LadderLabHandler.Bootstrap();
             VobItemHandler.Bootstrap();
+            LabLockHandler.Bootstrap();
         }
 
         private void BootLab()
