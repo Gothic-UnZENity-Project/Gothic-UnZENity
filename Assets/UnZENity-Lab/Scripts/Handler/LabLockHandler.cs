@@ -12,6 +12,7 @@ namespace GUZ.Lab.Handler
         public override void Bootstrap()
         {
             SpawnInteractable("DOOR_WOODEN", PrefabType.VobDoor, _doorSlot);
+            SpawnItem("ItKeLockpick", _lockPickSlot, new (0, -0.5f, 0));
         }
     }
 }

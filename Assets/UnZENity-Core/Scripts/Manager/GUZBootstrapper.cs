@@ -33,6 +33,7 @@ namespace GUZ.Core.Manager
             LoadGothicVm(g1Dir);
             SetLanguage();
             LoadDialogs();
+            LoadVideos();
             LoadSfxVm(g1Dir);
             LoadPfxVm(g1Dir);
             LoadFonts();
@@ -108,6 +109,11 @@ namespace GUZ.Core.Manager
                 .ToList();
 
             infoInstances.ForEach(i => GameData.Dialogs.Instances.Add(i));
+        }
+        
+        private static void LoadVideos()
+        {
+            GameGlobals.Video.Init();
         }
 
         private static void LoadSfxVm(string g1Dir)

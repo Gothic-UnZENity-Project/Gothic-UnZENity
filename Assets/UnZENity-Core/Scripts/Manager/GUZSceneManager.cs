@@ -59,7 +59,14 @@ namespace GUZ.Core.Manager
             {
                 if (_config.EnableMainMenu)
                 {
-                    await LoadMainMenu();
+                    if (Constants.GothicIni.PlayLogoVideos)
+                    {
+                        await LoadLogoScene();
+                    }
+                    else
+                    {
+                        await LoadMainMenuScene();
+                    }
                 }
                 else if (_config.LoadFromSaveSlot)
                 {
@@ -79,7 +86,12 @@ namespace GUZ.Core.Manager
             }
         }
 
-        private async Task LoadMainMenu()
+        private async Task LoadLogoScene()
+        {
+            await LoadScene(Constants.SceneLogo);
+        }
+        
+        public async Task LoadMainMenuScene()
         {
             GameGlobals.Textures.LoadLoadingDefaultTextures();
             await LoadScene(Constants.SceneMainMenu);
