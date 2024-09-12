@@ -82,7 +82,7 @@ namespace GUZ.VR.Components
         /// </summary>
         private void OnDrawGizmos()
         {
-            if (!GameGlobals.Config.ShowCapsuleOverlapGizmos)
+            if (!Application.isPlaying || !GameGlobals.Config.ShowCapsuleOverlapGizmos)
             {
                 return;
             }
