@@ -57,7 +57,11 @@ namespace GUZ.Core.Vm
             vm.RegisterExternal<int, ItemInstance>("Hlp_IsValidItem", Hlp_IsValidItem);
             vm.RegisterExternal<int, NpcInstance>("Hlp_IsValidNpc", Hlp_IsValidNpc);
             vm.RegisterExternal<NpcInstance, int>("Hlp_GetNpc", Hlp_GetNpc);
-            vm.RegisterExternal<int, DaedalusInstance>("Hlp_GetInstanceId", Hlp_GetInstanceId);
+
+            // FIXME - 2024-09-12 - ZenKitCS isn't recognizing abstract class DaedalusInstance. Therefore using NpcInstance for now.
+            // FIXME - But it will fail once Daedalus is requesting ItemInstance.
+            // FIXME - Can be fixed properly once issue is solved: https://github.com/GothicKit/ZenKitCS/issues/11
+            vm.RegisterExternal<int, NpcInstance>("Hlp_GetInstanceID", Hlp_GetInstanceID);
 
             // Info
             vm.RegisterExternal<int>("Info_ClearChoices", Info_ClearChoices);
@@ -114,6 +118,7 @@ namespace GUZ.Core.Vm
             // vm.RegisterExternal<int, NpcInstance, int>("Npc_GetTalentSkill", Npc_GetTalentSkill);
             vm.RegisterExternal<int, NpcInstance, int>("Npc_GetTalentValue", Npc_GetTalentValue);
             vm.RegisterExternal<int, NpcInstance, int>("Npc_KnowsInfo", Npc_KnowsInfo);
+            vm.RegisterExternal<int, NpcInstance, int>("Npc_CheckInfo", Npc_CheckInfo);
             vm.RegisterExternal<int, NpcInstance>("Npc_IsDead", Npc_IsDead);
             vm.RegisterExternal<int, NpcInstance, int>("Npc_IsInState", Npc_IsInState);
             vm.RegisterExternal<NpcInstance>("Npc_SetToFistMode", Npc_SetToFistMode);
@@ -355,7 +360,10 @@ namespace GUZ.Core.Vm
             return NpcCreator.ExtHlpGetNpc(instanceId);
         }
 
-        public static int Hlp_GetInstanceId(DaedalusInstance instanceId)
+        // FIXME - 2024-09-12 - ZenKitCS isn't recognizing abstract class DaedalusInstance. Therefore using NpcInstance for now.
+        // FIXME - But it will fail once Daedalus is requesting ItemInstance.
+        // FIXME - Can be fixed properly once issue is solved: https://github.com/GothicKit/ZenKitCS/issues/11
+        public static int Hlp_GetInstanceID(NpcInstance instanceId)
         {
             return NpcCreator.ExtHlpGetInstanceId(instanceId);
         }
@@ -728,6 +736,11 @@ namespace GUZ.Core.Vm
         {
             var res = DialogManager.ExtNpcKnowsInfo(npc, infoInstance);
             return Convert.ToInt32(res);
+        }
+
+        public static int Npc_CheckInfo(NpcInstance npc, int important)
+        {
+            return Convert.ToInt32(DialogManager.ExtCheckInfo(npc, Convert.ToBoolean(important)));
         }
         
         public static int Npc_IsDead(NpcInstance npc)

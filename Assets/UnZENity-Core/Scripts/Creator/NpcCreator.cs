@@ -449,11 +449,10 @@ namespace GUZ.Core.Creator
                 return null;
             }
 
-
             return npcData.instance;
         }
 
-        public static int ExtHlpGetInstanceId(DaedalusInstance instance)
+        public static int ExtHlpGetInstanceId(NpcInstance instance)
         {
             if (instance == null)
             {

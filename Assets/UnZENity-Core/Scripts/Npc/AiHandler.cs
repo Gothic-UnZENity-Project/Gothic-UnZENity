@@ -165,6 +165,7 @@ namespace GUZ.Core.Npc
                 return;
             }
 
+            GameData.GothicVm.GlobalSelf = Properties.NpcInstance;
             GameData.GothicVm.GlobalOther = other;
             GameData.GothicVm.Call(perceptionFunction);
         }

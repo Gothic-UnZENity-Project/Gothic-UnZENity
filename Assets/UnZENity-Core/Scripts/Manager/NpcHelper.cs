@@ -51,6 +51,18 @@ namespace GUZ.Core.Manager
 
             playerProperties.NpcInstance = heroInstance;
             playerProperties.Head = Camera.main!.transform;
+
+            // FIXME - 2024-09-12 - FIX for ZenKit not allowing Hlp_GetNpc() to return null (needed for B_AssessSc())
+            // FIXME - Can be removed once issue is solved: https://github.com/GothicKit/ZenKitCS/issues/10
+            {
+                var rockefellerGo = new GameObject("PC_Rockefeller");
+                var rockefellerProperties = rockefellerGo.AddComponent<NpcProperties>();
+
+                var rockefellerInstance = GameData.GothicVm.AllocInstance<NpcInstance>("PC_Rockefeller");
+                LookupCache.NpcCache[rockefellerInstance.Index] = (instance: rockefellerInstance, properties: rockefellerProperties);
+
+                GameData.GothicVm.InitInstance(rockefellerInstance);
+            }
         }
 
         public static void ExtPErcSetRange(int perceptionId, int rangeInCm)
