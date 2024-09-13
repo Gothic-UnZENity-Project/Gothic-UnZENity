@@ -1,5 +1,6 @@
 using System.Reflection;
 using GUZ.Core.Caches;
+using GUZ.Core.Globals;
 using GUZ.Core.Util;
 using TMPro;
 using UnityEngine;
@@ -71,12 +72,10 @@ namespace GUZ.Core.Manager
                 };
 
                 spriteAsset.spriteGlyphTable.Add(spriteGlyph);
-
-                // Create an encoding for Windows-1250 (Latin-2)
-                var windows1250 = System.Text.Encoding.GetEncoding("windows-1250");
                 // Convert the glyph index (treated as a byte) to its Unicode equivalent
                 var bytes = new byte[] { (byte)i };
-                var unicodeChars = windows1250.GetChars(bytes);
+                var currentEncoding = Globals.GameData.Encoding;
+                var unicodeChars = currentEncoding.GetChars(bytes);
 
                 var unicodeValue = (uint)unicodeChars[0];  // Return the Unicode character's code point
 
