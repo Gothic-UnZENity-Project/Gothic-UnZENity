@@ -13,8 +13,9 @@ namespace GUZ.Core.Globals
 {
     public static class GameData
     {
-        // Language encoding
-
+        /// <summary>
+        /// Represents the currently installed Gothic language (windows-1250,1251,1252)
+        /// </summary>
         public static Encoding Encoding;
         public static DaedalusVm GothicVm;
         public static DaedalusVm SfxVm; // Sound FX

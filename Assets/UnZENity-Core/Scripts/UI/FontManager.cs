@@ -71,15 +71,13 @@ namespace GUZ.Core.Manager
                     scale = -1
                 };
 
-                spriteAsset.spriteGlyphTable.Add(spriteGlyph);
-                // Convert the glyph index (treated as a byte) to its Unicode equivalent
-                var bytes = new byte[] { (byte)i };
-                var currentEncoding = Globals.GameData.Encoding;
-                var unicodeChars = currentEncoding.GetChars(bytes);
-
+                
+                // Convert the glyph index (treated as a codepage-byte) to its Unicode equivalent
+                var unicodeChars = GameData.Encoding.GetChars(new[]{(byte)i});
                 var unicodeValue = (uint)unicodeChars[0];  // Return the Unicode character's code point
-
                 var spriteCharacter = new TMP_SpriteCharacter(unicodeValue, spriteGlyph);
+
+                spriteAsset.spriteGlyphTable.Add(spriteGlyph);
                 spriteAsset.spriteCharacterTable.Add(spriteCharacter);
             }
 
