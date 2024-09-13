@@ -15,7 +15,6 @@ namespace GUZ.Core.Manager
         public TMP_SpriteAsset DefaultSpriteAsset;
         public TMP_SpriteAsset HighlightSpriteAsset;
 
-        
         public void Create()
         {
             DefaultSpriteAsset = LoadFont("font_old_20_white.FNT");
@@ -23,6 +22,8 @@ namespace GUZ.Core.Manager
 
             TMP_Settings.defaultSpriteAsset = DefaultSpriteAsset;
             TMP_Settings.defaultFontAsset = DefaultFont;
+
+
         }
 
         private TMP_SpriteAsset LoadFont(string fontName)
@@ -68,8 +69,50 @@ namespace GUZ.Core.Manager
                     sprite = newSprite,
                     scale = -1
                 };
+
                 spriteAsset.spriteGlyphTable.Add(spriteGlyph);
-                var spriteCharacter = new TMP_SpriteCharacter((uint)i, spriteGlyph);
+                // Manually map known glyphs to polish characters
+                var unicodeValue = i switch
+                {
+                    // Ś
+                    140 => (uint)0x015A,
+                    // Ź
+                    143 => (uint)0x0179,
+                    // ś
+                    156 => (uint)0x015B,
+                    // ź
+                    159 => (uint)0x017A,
+                    // Ł
+                    163 => (uint)0x0141,
+                    // Ą
+                    165 => (uint)0x0104,
+                    // Ż
+                    175 => (uint)0x017B,
+                    // ł
+                    179 => (uint)0x0142,
+                    // ą
+                    185 => (uint)0x0105,
+                    // ż
+                    191 => (uint)0x017C,
+                    // Ć
+                    198 => (uint)0x0106,
+                    // Ę
+                    202 => (uint)0x0118,
+                    // Ń
+                    209 => (uint)0x0143,
+                    // Ó
+                    211 => (uint)0x00D3,
+                    // ć
+                    230 => (uint)0x0107,
+                    // ę
+                    234 => (uint)0x0119,
+                    // ń
+                    241 => (uint)0x0144,
+                    // ó
+                    243 => (uint)0x00F3,
+                    _ => (uint)i,// Default mapping for other glyphs
+                };
+                var spriteCharacter = new TMP_SpriteCharacter(unicodeValue, spriteGlyph);
                 spriteAsset.spriteCharacterTable.Add(spriteCharacter);
             }
 
