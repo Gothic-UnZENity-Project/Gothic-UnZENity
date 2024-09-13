@@ -71,47 +71,15 @@ namespace GUZ.Core.Manager
                 };
 
                 spriteAsset.spriteGlyphTable.Add(spriteGlyph);
-                // Manually map known glyphs to polish characters
-                var unicodeValue = i switch
-                {
-                    // Ś
-                    140 => (uint)0x015A,
-                    // Ź
-                    143 => (uint)0x0179,
-                    // ś
-                    156 => (uint)0x015B,
-                    // ź
-                    159 => (uint)0x017A,
-                    // Ł
-                    163 => (uint)0x0141,
-                    // Ą
-                    165 => (uint)0x0104,
-                    // Ż
-                    175 => (uint)0x017B,
-                    // ł
-                    179 => (uint)0x0142,
-                    // ą
-                    185 => (uint)0x0105,
-                    // ż
-                    191 => (uint)0x017C,
-                    // Ć
-                    198 => (uint)0x0106,
-                    // Ę
-                    202 => (uint)0x0118,
-                    // Ń
-                    209 => (uint)0x0143,
-                    // Ó
-                    211 => (uint)0x00D3,
-                    // ć
-                    230 => (uint)0x0107,
-                    // ę
-                    234 => (uint)0x0119,
-                    // ń
-                    241 => (uint)0x0144,
-                    // ó
-                    243 => (uint)0x00F3,
-                    _ => (uint)i,// Default mapping for other glyphs
-                };
+
+                // Create an encoding for Windows-1250 (Latin-2)
+                var windows1250 = System.Text.Encoding.GetEncoding("windows-1250");
+                // Convert the glyph index (treated as a byte) to its Unicode equivalent
+                var bytes = new byte[] { (byte)i };
+                var unicodeChars = windows1250.GetChars(bytes);
+
+                var unicodeValue = (uint)unicodeChars[0];  // Return the Unicode character's code point
+
                 var spriteCharacter = new TMP_SpriteCharacter(unicodeValue, spriteGlyph);
                 spriteAsset.spriteCharacterTable.Add(spriteCharacter);
             }
