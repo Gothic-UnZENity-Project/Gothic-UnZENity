@@ -1,4 +1,5 @@
-﻿using HurricaneVR.Framework.Core;
+﻿#if GUZ_HVR_INSTALLED
+using HurricaneVR.Framework.Core;
 using HurricaneVR.Framework.Core.Grabbers;
 using UnityEngine;
 
@@ -39,3 +40,4 @@ namespace GUZ.VR.Manager
         }
     }
 }
+#endif
