@@ -1,3 +1,4 @@
+using GUZ.VR.Manager;
 using GUZ.VR.Properties.VobItem;
 using UnityEngine;
 
@@ -6,17 +7,33 @@ namespace GUZ.VR.Components.VobItem
     public class VRLockPickInteraction : MonoBehaviour
     {
         [SerializeField] private VRVobLockPickProperties _properties;
+ 
+        private bool _firstFrameHandlingStarted;
+        private GameObject _handGrabber;
+        private Quaternion _initialRotation;
 
         private void Update()
         {
             if (!_properties.IsInsideLock)
             {
+                _firstFrameHandlingStarted = false;
                 return;
             }
 
-
+            if (!_firstFrameHandlingStarted)
+            {
+                StartTracking();
+                _firstFrameHandlingStarted = true;
+            }
+            
+            CalculateRotation();
         }
-
+ 
+        private void StartTracking()
+        {
+            _initialRotation = VRPlayerManager.GrabbedItemLeft.transform.rotation;
+        }
+        
         private void CalculateRotation()
         {
             /**
@@ -24,6 +41,12 @@ namespace GUZ.VR.Components.VobItem
              * 1.a If rotation is ~45° right - trigger right-information to currently active door
              * 1.b ~45° left - same
              */
+            
+            var rotation = VRPlayerManager.GrabbedItemLeft.transform.rotation;
+            var _rotationAxis = Vector3.forward;
+            var currentRotation = Vector3.Angle(_initialRotation.eulerAngles, rotation * _rotationAxis);
+            
+            Debug.Log("rotation: " + currentRotation);
         }
     }
 }
