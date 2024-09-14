@@ -8,22 +8,37 @@ namespace GUZ.VR.Components.VobItem
     {
         [SerializeField] private VRVobLockPickProperties _properties;
  
-        private bool _firstFrameHandlingStarted;
+        private bool _firstFrameHandlingStarted = true;
         private GameObject _handGrabber;
-        private Quaternion _initialRotation;
+        private float _initialZRotation;
+
+        /// <summary>
+        /// A hand rotation with lock pick always need to go:
+        /// a.) Normal -> Right -> Normal
+        /// b) Normal -> Left -> Normal
+        /// (We need to ensure that e.g. a left-left-right combination needs to be recognized properly.)
+        /// </summary>
+        private RotationState _handRotationState;
+
+        private enum RotationState
+        {
+            Normal,
+            Left,
+            Right
+        }
 
         private void Update()
         {
             if (!_properties.IsInsideLock)
             {
-                _firstFrameHandlingStarted = false;
+                _firstFrameHandlingStarted = true;
                 return;
             }
 
-            if (!_firstFrameHandlingStarted)
+            if (_firstFrameHandlingStarted)
             {
                 StartTracking();
-                _firstFrameHandlingStarted = true;
+                _firstFrameHandlingStarted = false;
             }
             
             CalculateRotation();
@@ -31,9 +46,9 @@ namespace GUZ.VR.Components.VobItem
  
         private void StartTracking()
         {
-            _initialRotation = VRPlayerManager.GrabbedItemLeft.transform.rotation;
+            _initialZRotation = VRPlayerManager.GrabbedItemLeft.transform.rotation.eulerAngles.z;
         }
-        
+
         private void CalculateRotation()
         {
             /**
@@ -41,12 +56,40 @@ namespace GUZ.VR.Components.VobItem
              * 1.a If rotation is ~45° right - trigger right-information to currently active door
              * 1.b ~45° left - same
              */
-            
-            var rotation = VRPlayerManager.GrabbedItemLeft.transform.rotation;
-            var _rotationAxis = Vector3.forward;
-            var currentRotation = Vector3.Angle(_initialRotation.eulerAngles, rotation * _rotationAxis);
-            
-            Debug.Log("rotation: " + currentRotation);
+
+            var rotationDiff = Mathf.DeltaAngle(_initialZRotation,
+                VRPlayerManager.GrabbedItemLeft.transform.rotation.eulerAngles.z);
+
+            // Check for specific rotation thresholds
+            switch (_handRotationState)
+            {
+                case RotationState.Normal:
+                    if (rotationDiff >= 45f)
+                    {
+                        _handRotationState = RotationState.Right;
+                        // Trigger right-information to currently active door
+                        _properties.ActiveDoorLock.UpdateCombination(false);
+                    }
+                    else if (rotationDiff <= -45f)
+                    {
+                        _handRotationState = RotationState.Left;
+                        // Trigger left-information to currently active door
+                        _properties.ActiveDoorLock.UpdateCombination(true);
+                    }
+                    break;
+                case RotationState.Left:
+                    if (rotationDiff > -10)
+                    {
+                        _handRotationState = RotationState.Normal;
+                    }
+                    break;
+                case RotationState.Right:
+                    if (rotationDiff < 10f)
+                    {
+                        _handRotationState = RotationState.Normal;
+                    }
+                    break;
+            }
         }
     }
 }
