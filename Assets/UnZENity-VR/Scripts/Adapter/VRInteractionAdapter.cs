@@ -5,13 +5,14 @@ using GUZ.Core.Context;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.VR.Components;
+using HurricaneVR.Framework.Core;
 using HurricaneVRExtensions.Simulator;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.XR.Interaction.Toolkit;
 using PrefabType = GUZ.Core.PrefabType;
 
-namespace GUZ.VR
+namespace GUZ.VR.Adapter
 {
     public class VRInteractionAdapter : IInteractionAdapter
     {
@@ -79,8 +80,8 @@ namespace GUZ.VR
             }
 
             var simulatorGo = new GameObject("HVR - XRDeviceSimulator");
-            // We assume, that this Component (HVRPlayerManager) is set inside the HVR root for a player rig.
-            var playerRig = currentScene.GetRootGameObjects().First(i => i.GetComponentInChildren<VRPlayerManager>());
+            // We assume, that this Component (HVRManager) is set inside the HVR root for a player rig.
+            var playerRig = currentScene.GetRootGameObjects().First(i => i.GetComponentInChildren<HVRManager>());
 
             simulatorGo.AddComponent<HVRBodySimulator>().Rig = playerRig;
             simulatorGo.AddComponent<HVRHandsSimulator>().Rig = playerRig;

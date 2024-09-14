@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace GUZ.VR.Components
 {
-    public class VRPlayerManager : SingletonBehaviour<VRPlayerManager>
+    public class VRCanvasManager : SingletonBehaviour<VRCanvasManager>
     {
         private void Start()
         {

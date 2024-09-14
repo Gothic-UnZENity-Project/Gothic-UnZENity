@@ -9,7 +9,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using ZenKit.Daedalus;
 
-namespace GUZ.VR
+namespace GUZ.VR.Adapter
 {
     public class VRDialogAdapter : IDialogAdapter
     {
