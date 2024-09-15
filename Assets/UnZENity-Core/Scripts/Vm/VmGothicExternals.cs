@@ -57,11 +57,7 @@ namespace GUZ.Core.Vm
             vm.RegisterExternal<int, ItemInstance>("Hlp_IsValidItem", Hlp_IsValidItem);
             vm.RegisterExternal<int, NpcInstance>("Hlp_IsValidNpc", Hlp_IsValidNpc);
             vm.RegisterExternal<NpcInstance, int>("Hlp_GetNpc", Hlp_GetNpc);
-
-            // FIXME - 2024-09-12 - ZenKitCS isn't recognizing abstract class DaedalusInstance. Therefore using NpcInstance for now.
-            // FIXME - But it will fail once Daedalus is requesting ItemInstance.
-            // FIXME - Can be fixed properly once issue is solved: https://github.com/GothicKit/ZenKitCS/issues/11
-            vm.RegisterExternal<int, NpcInstance>("Hlp_GetInstanceID", Hlp_GetInstanceID);
+            vm.RegisterExternal<int, DaedalusInstance>("Hlp_GetInstanceID", Hlp_GetInstanceID);
 
             // Info
             vm.RegisterExternal<int>("Info_ClearChoices", Info_ClearChoices);
@@ -360,12 +356,14 @@ namespace GUZ.Core.Vm
             return NpcCreator.ExtHlpGetNpc(instanceId);
         }
 
-        // FIXME - 2024-09-12 - ZenKitCS isn't recognizing abstract class DaedalusInstance. Therefore using NpcInstance for now.
-        // FIXME - But it will fail once Daedalus is requesting ItemInstance.
-        // FIXME - Can be fixed properly once issue is solved: https://github.com/GothicKit/ZenKitCS/issues/11
-        public static int Hlp_GetInstanceID(NpcInstance instanceId)
+        public static int Hlp_GetInstanceID(DaedalusInstance instance)
         {
-            return NpcCreator.ExtHlpGetInstanceId(instanceId);
+            if (instance == null)
+            {
+                return -1;
+            }
+
+            return instance.Index;
         }
 
         #endregion
