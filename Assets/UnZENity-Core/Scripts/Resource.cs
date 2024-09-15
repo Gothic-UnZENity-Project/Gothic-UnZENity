@@ -63,5 +63,11 @@ namespace GUZ.Core
             _cache[key] = default;
             return false;
         }
+
+        public void Dispose()
+        {
+            _cache.Clear();
+            _cache.TrimExcess();
+        }
     }
 }

@@ -1,5 +1,5 @@
-﻿using System;
-using System.Text;
+using System;
+using System.IO;
 using GUZ.Core.Data;
 using UnityEngine;
 
@@ -9,8 +9,8 @@ namespace GUZ.Core.Creator.Sounds
     {
         private enum BitDepth
         {
-            BIT8 = 8,
-            BIT16 = 16
+            Bit8 = 8,
+            Bit16 = 16
         }
 
         /// <summary>
@@ -19,35 +19,36 @@ namespace GUZ.Core.Creator.Sounds
         /// </summary>
         public static AudioClip ToAudioClip(string fileName)
         {
-            var soundData = ResourceLoader.TryGetSound(fileName);
-            return ToAudioClip(soundData);
-        }
-        
-        public static AudioClip ToAudioClip(SoundData wavFile)
-        {
+            fileName = Path.GetFileNameWithoutExtension(fileName);
+
+            if (AudioCache.AudioClips.TryGetValue(fileName, out AudioClip cachedClip))
+            {
+                return cachedClip;
+            }
+
+            SoundData soundData = ResourceLoader.TryGetSound(fileName);
             AudioClip audioClip;
 
             try
             {
-                audioClip =
-                    AudioClip.Create("Sound", wavFile.Sound.Length / wavFile.Channels, wavFile.Channels,
-                        wavFile.SampleRate, false);
-                audioClip.SetData(wavFile.Sound, 0);
+                audioClip = AudioClip.Create(fileName, soundData.Sound.Length / soundData.Channels, soundData.Channels, soundData.SampleRate, false);
+                audioClip.SetData(soundData.Sound, 0);
             }
             catch (Exception e)
             {
                 Debug.LogError(e);
-                audioClip = AudioClip.Create("Sound", 1, 1, 44100, false);
+                audioClip = AudioClip.Create(fileName, 1, 1, 44100, false);
                 audioClip.SetData(new float[] { 0 }, 0); // almost empty audio
             }
 
+            AudioCache.AudioClips.Add(fileName, audioClip);
             return audioClip;
         }
 
         public static SoundData ConvertWavByteArrayToFloatArray(byte[] fileBytes)
         {
-            var riff = Encoding.ASCII.GetString(fileBytes, 0, 4);
-            var wave = Encoding.ASCII.GetString(fileBytes, 8, 4);
+            //var riff = Encoding.ASCII.GetString(fileBytes, 0, 4);
+            //var wave = Encoding.ASCII.GetString(fileBytes, 8, 4);
             var subchunk1 = BitConverter.ToInt32(fileBytes, 16);
             var audioFormat = BitConverter.ToUInt16(fileBytes, 20);
 
@@ -55,8 +56,8 @@ namespace GUZ.Core.Creator.Sounds
 
             var channels = BitConverter.ToUInt16(fileBytes, 22);
             var sampleRate = BitConverter.ToInt32(fileBytes, 24);
-            var byteRate = BitConverter.ToInt32(fileBytes, 28);
-            var blockAlign = BitConverter.ToUInt16(fileBytes, 32);
+            //var byteRate = BitConverter.ToInt32(fileBytes, 28);
+            //var blockAlign = BitConverter.ToUInt16(fileBytes, 32);
             var bitDepth = BitConverter.ToUInt16(fileBytes, 34);
 
             // Calculate header offset and data size
@@ -98,40 +99,40 @@ namespace GUZ.Core.Creator.Sounds
         {
             switch (bit)
             {
-                case BitDepth.BIT8:
-                {
-                    var wavSize = BitConverter.ToInt32(source, headerOffset);
-
-                    var data = new float[wavSize];
-
-                    var maxValue = sbyte.MaxValue;
-
-                    for (var i = 0; i < wavSize; i++)
+                case BitDepth.Bit8:
                     {
-                        data[i] = (float)source[i] / maxValue;
+                        var wavSize = BitConverter.ToInt32(source, headerOffset);
+
+                        var data = new float[wavSize];
+
+                        var maxValue = sbyte.MaxValue;
+
+                        for (var i = 0; i < wavSize; i++)
+                        {
+                            data[i] = (float)source[i] / maxValue;
+                        }
+
+                        return data;
                     }
-
-                    return data;
-                }
-                case BitDepth.BIT16:
-                {
-                    var bytesPerSample = sizeof(short); // block size = 2
-                    var sampleCount = source.Length / bytesPerSample;
-
-                    var data = new float[sampleCount];
-
-                    var maxValue = short.MaxValue;
-
-                    for (var i = 0; i < sampleCount; i++)
+                case BitDepth.Bit16:
                     {
-                        var offset = i * bytesPerSample;
-                        var sample = BitConverter.ToInt16(source, offset);
-                        var floatSample = (float)sample / maxValue;
-                        data[i] = floatSample;
-                    }
+                        var bytesPerSample = sizeof(short); // block size = 2
+                        var sampleCount = source.Length / bytesPerSample;
 
-                    return data;
-                }
+                        var data = new float[sampleCount];
+
+                        var maxValue = short.MaxValue;
+
+                        for (var i = 0; i < sampleCount; i++)
+                        {
+                            var offset = i * bytesPerSample;
+                            var sample = BitConverter.ToInt16(source, offset);
+                            var floatSample = (float)sample / maxValue;
+                            data[i] = floatSample;
+                        }
+
+                        return data;
+                    }
                 default:
                     throw new Exception(bit + " bit depth is not supported.");
             }

@@ -301,7 +301,7 @@ namespace GUZ.Core.Manager
             _rainParticleSystem.Stop();
 
             _rainParticleSound = rainParticlesGameObject.GetComponentInChildren<AudioSource>();
-            _rainParticleSound.clip = SoundCreator.ToAudioClip(ResourceLoader.TryGetSound("RAIN_01.WAV"));
+            _rainParticleSound.clip = SoundCreator.ToAudioClip("RAIN_01");
             _rainParticleSound.volume = 0;
             _rainParticleSound.Stop();
         }

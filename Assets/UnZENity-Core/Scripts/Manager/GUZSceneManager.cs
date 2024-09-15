@@ -154,6 +154,8 @@ namespace GUZ.Core.Manager
 
             GameGlobals.Sky.InitSky();
             StationaryLight.InitStationaryLights();
+
+            ResourceLoader.ReleaseLoadedData();
         }
 
         private async Task LoadScene(string worldName)
