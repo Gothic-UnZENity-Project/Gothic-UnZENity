@@ -170,9 +170,14 @@ namespace GUZ.Core.Manager
         {
             var zoneName = _musicZones
                 .OrderBy(i => i.GetComponent<VobMusicProperties>().MusicData.Priority)
-                .Last()
+                .LastOrDefault()?
                 .GetComponent<VobMusicProperties>().MusicData.Name;
 
+            if (zoneName == null)
+            {
+                return;
+            }
+            
             var isDay = (tags & SegmentTags.Ngt) == 0;
             var result = zoneName.Substring(zoneName.IndexOf("_") + 1);
             var musicTag = "STD";
