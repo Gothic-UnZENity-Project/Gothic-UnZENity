@@ -7,9 +7,10 @@ using ZenKit.Daedalus;
 namespace GUZ.Core.Caches
 {
     /// <summary>
-    /// Contains lookup caches for GameObjects for faster use.
+    /// Contains lookup caches for GameObjects, AudioClips and other Unity objects for faster use.
+    /// Caching of ZenKit data is done inside ResourceLoader.cs
     /// </summary>
-    public static class LookupCache
+    public static class MultiTypeCache
     {
         /// <summary>
         /// [symbolIndex] = {zkInstance => NpcInstance from ZenKit, properties => Properties component (MonoBehaviour)}
@@ -29,7 +30,16 @@ namespace GUZ.Core.Caches
         /// This dictionary caches the sprite assets for fonts.
         /// </summary>
         public static Dictionary<string, TMP_SpriteAsset> FontCache = new();
+        
+        /// <summary>
+        /// Caching all types of Meshes (World?, Vob, Npc) to optimize memory usage of meshes if duplicated
+        /// (e.g. multiple VOBs sharing the same mesh)
+        /// </summary>
+        public static Dictionary<string, Mesh> Meshes = new();
+        
+        public static Dictionary<string, AudioClip> AudioClips = new();
 
+        
         public static void Init()
         {
             GlobalEventDispatcher.GeneralSceneUnloaded.AddListener(delegate
@@ -43,6 +53,8 @@ namespace GUZ.Core.Caches
             NpcCache.Clear();
             AnimationClipCache.Clear();
             FontCache.Clear();
+            Meshes.Clear();
+            AudioClips.Clear();
         }
     }
 }

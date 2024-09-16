@@ -66,10 +66,10 @@ namespace GUZ.Core.Creator
             }
 
             // Try to load from cache
-            if (!LookupCache.AnimationClipCache.TryGetValue(mdsAnimationKeyName, out var clip))
+            if (!MultiTypeCache.AnimationClipCache.TryGetValue(mdsAnimationKeyName, out var clip))
             {
                 clip = LoadAnimationClip(modelAnimation, mdh, go, repeat, mdsAnimationKeyName);
-                LookupCache.AnimationClipCache[mdsAnimationKeyName] = clip;
+                MultiTypeCache.AnimationClipCache[mdsAnimationKeyName] = clip;
 
                 AddClipEvents(clip, modelAnimation, anim);
                 AddClipEndEvent(anim, clip);
@@ -162,10 +162,10 @@ namespace GUZ.Core.Creator
             }
 
             // Try to load from cache
-            if (!LookupCache.AnimationClipCache.TryGetValue(mdsAnimationKeyName, out var clip) || !excludeBones.IsNullOrEmpty())
+            if (!MultiTypeCache.AnimationClipCache.TryGetValue(mdsAnimationKeyName, out var clip) || !excludeBones.IsNullOrEmpty())
             {
                 clip = LoadAnimationClip(modelAnimation, mdh, go, repeat, mdsAnimationKeyName, excludeBones);
-                LookupCache.AnimationClipCache[mdsAnimationKeyName] = clip;
+                MultiTypeCache.AnimationClipCache[mdsAnimationKeyName] = clip;
 
                 AddClipEvents(clip, modelAnimation, anim);
                 AddClipEndEvent(anim, clip);

@@ -1,5 +1,4 @@
 using System.Linq;
-using GUZ.Core.Caches;
 using GUZ.Core.Creator;
 using GUZ.Core.Creator.Sounds;
 using GUZ.Core.Extensions;
@@ -23,10 +22,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
 
         public override void Start()
         {
-            var x = LookupCache.NpcCache;
-
-            var soundData = ResourceLoader.TryGetSound(OutputName);
-            var audioClip = SoundCreator.ToAudioClip(soundData);
+            AudioClip audioClip = SoundCreator.ToAudioClip(OutputName);
             _audioPlaySeconds = audioClip.length;
 
             // Hero

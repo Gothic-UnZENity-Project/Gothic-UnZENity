@@ -29,7 +29,7 @@ namespace GUZ.Core.Manager
 
         private TMP_SpriteAsset LoadFont(string fontName)
         {
-            if (LookupCache.FontCache.TryGetValue(fontName.ToUpper(), out var data))
+            if (MultiTypeCache.FontCache.TryGetValue(fontName.ToUpper(), out var data))
             {
                 return data;
             }
@@ -95,7 +95,7 @@ namespace GUZ.Core.Manager
 
             spriteAsset.UpdateLookupTables();
 
-            LookupCache.FontCache[fontName.ToUpper()] = spriteAsset;
+            MultiTypeCache.FontCache[fontName.ToUpper()] = spriteAsset;
 
             return spriteAsset;
         }

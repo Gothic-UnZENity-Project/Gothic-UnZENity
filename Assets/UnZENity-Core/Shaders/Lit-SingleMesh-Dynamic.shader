@@ -22,6 +22,7 @@ Shader "Lit/SingleMesh-Dynamic"
             HLSLPROGRAM
             #pragma vertex vert
             #pragma fragment frag
+            #pragma multi_compile_fog
 
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
@@ -87,7 +88,9 @@ Shader "Lit/SingleMesh-Dynamic"
                 half4 albedo = tex2D(_MainTex, i.uv);
                 half3 diffuse = albedo * i.diffuse * _FocusBrightness;
 
+#if FOG_LINEAR || FOG_EXP || FOG_EXP2
                 diffuse = ApplyFog(diffuse, i.worldPos);
+#endif
                 return half4(diffuse, _Alpha);
             }
             ENDHLSL
