@@ -21,6 +21,7 @@ Shader "Lit/AlphaToCoverage"
             HLSLPROGRAM
             #pragma vertex vert
             #pragma fragment frag
+            #pragma multi_compile_fog
 
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
@@ -110,7 +111,9 @@ Shader "Lit/AlphaToCoverage"
                                                       saturate(max(i.distance, 0.0001) / _DistanceFade));
 
                 half3 diffuse = albedo.rgb * i.diffuse;
+#if FOG_LINEAR || FOG_EXP || FOG_EXP2
                 diffuse = ApplyFog(diffuse, i.worldPos);
+#endif
                 return half4(diffuse, albedo.a);
             }
             ENDHLSL

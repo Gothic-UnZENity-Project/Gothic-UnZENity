@@ -113,6 +113,7 @@ namespace GUZ.Core.Globals
         public const string PlayerPrefSoundEffectsVolume = "SoundEffectsVolume";
         public const string PlayerPrefItemCollisionWhileDragged = "ItemCollisionWhileDragged";
         
+        // FIXME - load from INI file!
         public static string SelectedWorld { get; set; } = "world.zen";
         public static string SelectedWaypoint { get; set; } = "START";
 
@@ -128,7 +129,6 @@ namespace GUZ.Core.Globals
 
         public static int DaedalusAIVItemStatusKey;
         public static int DaedalusAIVItemFreqKey;
-
         public static int DaedalusTAITNone;
 
         

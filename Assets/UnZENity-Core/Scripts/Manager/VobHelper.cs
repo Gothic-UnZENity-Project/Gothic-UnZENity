@@ -1,7 +1,6 @@
 using System.Linq;
 using GUZ.Core.Creator;
 using GUZ.Core.Creator.Sounds;
-using GUZ.Core.Data;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Properties;
@@ -61,20 +60,18 @@ namespace GUZ.Core.Manager
 
         public static AudioClip GetSoundClip(string soundName)
         {
-            SoundData soundData;
+            AudioClip clip;
 
-            // FIXME - move to EqualsIgnoreCase()
-            if (soundName.ToLower() == "nosound.wav")
+            if (soundName.EqualsIgnoreCase("nosound.wav"))
             {
                 //instead of decoding nosound.wav which might be decoded incorrectly, just return null
                 return null;
             }
 
             // Bugfix - Normally the data is to get C_SFX_DEF entries from VM. But sometimes there might be the real .wav file stored.
-            // FIXME - Move to EndsWithIgnoreCase()
-            if (soundName.ToLower().EndsWith(".wav"))
+            if (soundName.EndsWith(".wav", System.StringComparison.InvariantCultureIgnoreCase))
             {
-                soundData = ResourceLoader.TryGetSound(soundName);
+                clip = SoundCreator.ToAudioClip(soundName);
             }
             else
             {
@@ -85,15 +82,10 @@ namespace GUZ.Core.Manager
                     return null;
                 }
 
-                soundData = ResourceLoader.TryGetSound(sfxData.File);
+                clip = SoundCreator.ToAudioClip(sfxData.File);
             }
 
-            if (soundData == null)
-            {
-                return null;
-            }
-
-            return SoundCreator.ToAudioClip(soundData);
+            return clip;
         }
     }
 }

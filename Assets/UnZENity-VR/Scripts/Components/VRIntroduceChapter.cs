@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using GUZ.Core;
 using GUZ.Core.Creator.Sounds;
 using GUZ.Core.Extensions;
@@ -51,8 +51,7 @@ namespace GUZ.VR.Components
 
         private void PlayAudio(string wav)
         {
-            var soundData = ResourceLoader.TryGetSound(wav);
-            _audioSource.clip = SoundCreator.ToAudioClip(soundData);
+            _audioSource.clip = SoundCreator.ToAudioClip(wav);
             _audioSource.Play();
         }
 

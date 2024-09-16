@@ -1,5 +1,6 @@
 using System.Reflection;
 using GUZ.Core.Caches;
+using GUZ.Core.Globals;
 using GUZ.Core.Util;
 using TMPro;
 using UnityEngine;
@@ -15,7 +16,6 @@ namespace GUZ.Core.Manager
         public TMP_SpriteAsset DefaultSpriteAsset;
         public TMP_SpriteAsset HighlightSpriteAsset;
 
-        
         public void Create()
         {
             DefaultSpriteAsset = LoadFont("font_old_20_white.FNT");
@@ -23,11 +23,13 @@ namespace GUZ.Core.Manager
 
             TMP_Settings.defaultSpriteAsset = DefaultSpriteAsset;
             TMP_Settings.defaultFontAsset = DefaultFont;
+
+
         }
 
         private TMP_SpriteAsset LoadFont(string fontName)
         {
-            if (LookupCache.FontCache.TryGetValue(fontName.ToUpper(), out var data))
+            if (MultiTypeCache.FontCache.TryGetValue(fontName.ToUpper(), out var data))
             {
                 return data;
             }
@@ -68,8 +70,14 @@ namespace GUZ.Core.Manager
                     sprite = newSprite,
                     scale = -1
                 };
+
+                
+                // Convert the glyph index (treated as a codepage-byte) to its Unicode equivalent
+                var unicodeChars = GameData.Encoding.GetChars(new[]{(byte)i});
+                var unicodeValue = (uint)unicodeChars[0];  // Return the Unicode character's code point
+                var spriteCharacter = new TMP_SpriteCharacter(unicodeValue, spriteGlyph);
+
                 spriteAsset.spriteGlyphTable.Add(spriteGlyph);
-                var spriteCharacter = new TMP_SpriteCharacter((uint)i, spriteGlyph);
                 spriteAsset.spriteCharacterTable.Add(spriteCharacter);
             }
 
@@ -87,7 +95,7 @@ namespace GUZ.Core.Manager
 
             spriteAsset.UpdateLookupTables();
 
-            LookupCache.FontCache[fontName.ToUpper()] = spriteAsset;
+            MultiTypeCache.FontCache[fontName.ToUpper()] = spriteAsset;
 
             return spriteAsset;
         }

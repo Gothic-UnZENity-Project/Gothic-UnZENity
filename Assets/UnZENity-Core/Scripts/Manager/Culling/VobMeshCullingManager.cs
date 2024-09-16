@@ -287,7 +287,7 @@ namespace GUZ.Core.Manager.Culling
                     return new Bounds(Vector3.zero, Vector3.one * stationaryLight.Range * 2);
                 }
 
-                return go.GetComponentInChildren<MeshFilter>().mesh.bounds;
+                return go.GetComponentInChildren<MeshFilter>().sharedMesh.bounds;
             }
             catch (Exception e)
             {

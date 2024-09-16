@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -20,10 +21,6 @@ namespace GUZ.Core
     {
         private static readonly Vfs _vfs = new();
         private static readonly Loader _dmLoader = Loader.Create(LoaderOptions.Default | LoaderOptions.Download);
-
-        private static readonly Resource<ITexture> _textures = new(
-            s => new Texture(_vfs, s).Cache()
-        );
 
         private static readonly Resource<IModelScript> _modelScript = new(
             s => new ModelScript(_vfs, s).Cache()
@@ -61,14 +58,6 @@ namespace GUZ.Core
             s => new Font(_vfs, s).Cache()
         );
 
-        private static readonly Resource<SoundData> _sound = new(
-            s =>
-            {
-                var node = _vfs.Find(s);
-                return node == null ? null : SoundCreator.ConvertWavByteArrayToFloatArray(node.Buffer.Bytes);
-            }
-        );
-
         private static readonly Resource<GameObject> _prefab = new(s =>
         {
             // Lookup is done in following places:
@@ -97,7 +86,27 @@ namespace GUZ.Core
         [CanBeNull]
         public static ITexture TryGetTexture([NotNull] string key)
         {
-            return _textures.TryLoad($"{GetPreparedKey(key)}-c.tex", out var item) ? item : null;
+            // Zen texture data is not cached as we do not need to keep the pixel data in memory as managed objects.
+            // Instead, TextureCache loads the texture data when need and creates a Texture2D.
+            try
+            {
+                return new Texture(_vfs, $"{GetPreparedKey(key)}-c.tex");
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Once a world is loaded, release data which was cached during loading. We don't need it any longer and free up memory.
+        /// </summary>
+        public static void ReleaseLoadedData()
+        {
+            _mesh.Dispose();
+            _model.Dispose();
+            _modelMesh.Dispose();
+            _multiResolutionMesh.Dispose();
         }
 
         [CanBeNull]
@@ -155,10 +164,15 @@ namespace GUZ.Core
             return _font.TryLoad($"{GetPreparedKey(key)}.fnt", out var item) ? item : null;
         }
 
+        /// <summary>
+        /// Loading of binary .wav data. For internal use within SoundCreator only.
+        /// Please consider using SoundCreator.ToAudioClip() instead.
+        /// </summary>
         [CanBeNull]
         public static SoundData TryGetSound([NotNull] string key)
         {
-            return _sound.TryLoad($"{GetPreparedKey(key)}.wav", out var item) ? item : null;
+            var node = _vfs.Find($"{GetPreparedKey(key)}.wav");
+            return node == null ? null : SoundCreator.ConvertWavByteArrayToFloatArray(node.Buffer.Bytes);
         }
 
         [CanBeNull]
@@ -209,9 +223,7 @@ namespace GUZ.Core
         [NotNull]
         private static string GetPreparedKey([NotNull] string key)
         {
-            var extension = Path.GetExtension(key);
-            var withoutExtension = extension == string.Empty ? key : key.Replace(extension, "");
-            return withoutExtension.ToLower();
+            return Path.GetFileNameWithoutExtension(key).ToLower();
         }
 
 
