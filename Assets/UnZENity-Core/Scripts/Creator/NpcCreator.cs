@@ -77,7 +77,7 @@ namespace GUZ.Core.Creator
 
         private static NpcProperties GetProperties(NpcInstance npc)
         {
-            return LookupCache.NpcCache[npc.Index].properties;
+            return MultiTypeCache.NpcCache[npc.Index].properties;
         }
 
         private static GameObject GetNpcGo(NpcInstance npcInstance)
@@ -101,12 +101,12 @@ namespace GUZ.Core.Creator
         {
             // We allocate memory for the NpcInstance only once per symbolIndex (via AllocInstance<> in ZenKit).
             // Monsters can be spawned multiple times, but they will be ignored the second time.
-            if (!LookupCache.NpcCache.ContainsKey(npcInstanceIndex))
+            if (!MultiTypeCache.NpcCache.ContainsKey(npcInstanceIndex))
             {
                 var npcSymbol = Vm.GetSymbolByIndex(npcInstanceIndex);
                 var npcInstance = Vm.AllocInstance<NpcInstance>(npcSymbol);
 
-                LookupCache.NpcCache.Add(npcInstanceIndex, (instance: npcInstance, properties: null));
+                MultiTypeCache.NpcCache.Add(npcInstanceIndex, (instance: npcInstance, properties: null));
             }
 
             // Nevertheless, for mesh creation later, we need to store, that there is a new NPC or a duplicate Monster to be spawned.
@@ -173,13 +173,13 @@ namespace GUZ.Core.Creator
             // 1. NPCs/Monsters which are loaded from a save game (not from Wld_InsertNpc)
             // There is no pre-allocated NpcInstance inside cache
             // Therefore call AllocInstance<> now for the first time
-            if (!LookupCache.NpcCache.TryGetValue(npcInstanceIndex, out var cachedValue))
+            if (!MultiTypeCache.NpcCache.TryGetValue(npcInstanceIndex, out var cachedValue))
             {
                 var npcSymbol = Vm.GetSymbolByIndex(npcInstanceIndex);
                 var npcInstance = Vm.AllocInstance<NpcInstance>(npcSymbol);
 
                 cachedValue = (instance: npcInstance, properties: null);
-                LookupCache.NpcCache.Add(npcInstanceIndex, cachedValue);
+                MultiTypeCache.NpcCache.Add(npcInstanceIndex, cachedValue);
             }
 
             // 2. NPCs/Monsters which are spawned the first time
@@ -189,7 +189,7 @@ namespace GUZ.Core.Creator
                 // At that point we need to have our properties component set inside our lookup to fill the data properly.
                 cachedValue.properties = newNpc.GetComponent<NpcProperties>();
                 cachedValue.properties.NpcInstance = cachedValue.instance;
-                LookupCache.NpcCache[npcInstanceIndex] =
+                MultiTypeCache.NpcCache[npcInstanceIndex] =
                     cachedValue; // Tuples are structs. We therefore need to update the whole struct instead of a single property only.
                 Vm.InitInstance(cachedValue.instance);
 
@@ -201,7 +201,7 @@ namespace GUZ.Core.Creator
             // 3. Monsters which are spawned more than once
             else
             {
-                var origNpc = LookupCache.NpcCache[npcInstanceIndex];
+                var origNpc = MultiTypeCache.NpcCache[npcInstanceIndex];
                 var origProps = origNpc.properties.GetComponent<NpcProperties>();
                 // Clone Properties as they're required from the first instance and fetched via e.g. Mdl_SetVisualBody().
                 // As we won't call it multiple times, we will only copy the data but not reinvoke it on ZenKit.
@@ -212,7 +212,7 @@ namespace GUZ.Core.Creator
             if (GameGlobals.Config.SpawnNpcInstances.Value.Any() &&
                 !GameGlobals.Config.SpawnNpcInstances.Value.Contains(cachedValue.instance.Id))
             {
-                LookupCache.NpcCache.Remove(cachedValue.instance.Index);
+                MultiTypeCache.NpcCache.Remove(cachedValue.instance.Index);
                 Object.Destroy(newNpc);
                 return null;
             }
@@ -242,7 +242,7 @@ namespace GUZ.Core.Creator
                 // As per the original game we don't spawn the NPC if the WayNet point doesn't exist.
                 if (WayNetHelper.GetWayNetPoint(routine.CurrentRoutine.Waypoint) == null)
                 {
-                    LookupCache.NpcCache.Remove(cachedValue.instance.Index);
+                    MultiTypeCache.NpcCache.Remove(cachedValue.instance.Index);
                     Object.Destroy(newNpc);
                     return null;
                 }
@@ -441,7 +441,7 @@ namespace GUZ.Core.Creator
 
         public static NpcInstance ExtHlpGetNpc(int instanceId)
         {
-            if (!LookupCache.NpcCache.TryGetValue(instanceId, out var npcData))
+            if (!MultiTypeCache.NpcCache.TryGetValue(instanceId, out var npcData))
             {
                 var instanceName = GameData.GothicVm.GetSymbolByIndex(instanceId).Name;
                 Debug.LogError(

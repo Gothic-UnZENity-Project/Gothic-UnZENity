@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using GUZ.Core.Caches;
 using GUZ.Core.Data;
 using UnityEngine;
 
@@ -21,7 +22,7 @@ namespace GUZ.Core.Creator.Sounds
         {
             fileName = Path.GetFileNameWithoutExtension(fileName);
 
-            if (AudioCache.AudioClips.TryGetValue(fileName, out AudioClip cachedClip))
+            if (MultiTypeCache.AudioClips.TryGetValue(fileName, out AudioClip cachedClip))
             {
                 return cachedClip;
             }
@@ -41,7 +42,7 @@ namespace GUZ.Core.Creator.Sounds
                 audioClip.SetData(new float[] { 0 }, 0); // almost empty audio
             }
 
-            AudioCache.AudioClips.Add(fileName, audioClip);
+            MultiTypeCache.AudioClips.Add(fileName, audioClip);
             return audioClip;
         }
 

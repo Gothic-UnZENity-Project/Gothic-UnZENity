@@ -78,7 +78,7 @@ namespace GUZ.Core
             _fileLoggingHandler = new FileLoggingHandler();
 
             GameGlobals.Instance = this;
-            LookupCache.Init();
+            MultiTypeCache.Init();
 
             Textures = GetComponent<TextureManager>();
             Font = GetComponent<FontManager>();

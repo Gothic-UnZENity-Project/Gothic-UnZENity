@@ -1,9 +1,7 @@
-using System;
 using System.Collections.Generic;
 using GUZ.Core.Caches;
 using GUZ.Core.Creator;
 using GUZ.Core.Data.ZkEvents;
-using GUZ.Core.Vm;
 using UnityEngine;
 
 namespace GUZ.Core.Npc.Actions.AnimationActions
@@ -36,7 +34,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
 
         private Quaternion GetDesiredHeadRotation()
         {
-            var destination = LookupCache.NpcCache[_otherIndex].properties.transform.position;
+            var destination = MultiTypeCache.NpcCache[_otherIndex].properties.transform.position;
             var lookRotationVector = destination - _npcHeadTransform.position;
             var lookRotation = Quaternion.LookRotation(lookRotationVector);
 

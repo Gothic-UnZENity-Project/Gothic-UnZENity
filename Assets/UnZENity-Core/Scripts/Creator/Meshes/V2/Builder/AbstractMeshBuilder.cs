@@ -363,7 +363,7 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
         {
             var submeshPerTextureFormat = new Dictionary<TextureCache.TextureArrayTypes, int>();
 
-            if (MeshCache.Meshes.TryGetValue(MeshName, out Mesh mesh))
+            if (MultiTypeCache.Meshes.TryGetValue(MeshName, out Mesh mesh))
             {
                 meshFilter.sharedMesh = mesh;
                 if (UseTextureArray)
@@ -466,12 +466,12 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
 
             TextureCache.VobMeshesForTextureArray.Add(mesh, new TextureCache.VobMeshData(mrmData, submeshPerTextureFormat.Keys.ToList(), UseTextureArray ? meshRenderer : null));
 
-            MeshCache.Meshes.Add(MeshName, mesh);
+            MultiTypeCache.Meshes.Add(MeshName, mesh);
         }
 
         protected void PrepareMeshFilter(MeshFilter meshFilter, ISoftSkinMesh soft)
         {
-            if (MeshCache.Meshes.TryGetValue(MeshName, out Mesh mesh))
+            if (MultiTypeCache.Meshes.TryGetValue(MeshName, out Mesh mesh))
             {
                 meshFilter.sharedMesh = mesh;
                 return;
@@ -563,7 +563,7 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
                 mesh.SetTriangles(preparedTriangles[i], i);
             }
 
-            MeshCache.Meshes.Add(MeshName, mesh);
+            MultiTypeCache.Meshes.Add(MeshName, mesh);
         }
 
         protected virtual List<System.Numerics.Vector3> GetSoftSkinMeshPositions(ISoftSkinMesh softSkinMesh)

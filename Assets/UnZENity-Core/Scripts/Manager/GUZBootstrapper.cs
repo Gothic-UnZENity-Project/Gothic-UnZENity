@@ -1,6 +1,5 @@
 using System;
 using System.Diagnostics;
-using System.Globalization;
 using System.Linq;
 using GUZ.Core.Caches;
 using GUZ.Core.Context;
@@ -20,7 +19,7 @@ namespace GUZ.Core.Manager
             GameData.Dispose();
             VmInstanceManager.Dispose();
             TextureCache.Dispose();
-            LookupCache.Dispose();
+            MultiTypeCache.Dispose();
             MorphMeshCache.Dispose();
         }
 
