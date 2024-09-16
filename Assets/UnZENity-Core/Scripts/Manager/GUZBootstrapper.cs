@@ -1,6 +1,8 @@
 using System;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
+using System.Text;
 using GUZ.Core.Caches;
 using GUZ.Core.Context;
 using GUZ.Core.Globals;
@@ -57,7 +59,7 @@ namespace GUZ.Core.Manager
                 Debug.Log($"Selecting StringEncoding={StringEncoding.CentralEurope}");
                 StringEncodingController.SetEncoding(StringEncoding.CentralEurope);
 
-                GameData.Encoding = System.Text.Encoding.GetEncoding((int)StringEncoding.CentralEurope);;
+                GameData.Encoding = Encoding.GetEncoding((int)StringEncoding.CentralEurope);;
             }
             // ru
             else if (CheckEncoding(StringEncoding.EastEurope, "MOBNAME_CRATE", "Коробка"))
@@ -65,7 +67,7 @@ namespace GUZ.Core.Manager
                 Debug.Log($"Selecting StringEncoding={StringEncoding.EastEurope}");
                 StringEncodingController.SetEncoding(StringEncoding.EastEurope);
 
-                GameData.Encoding = System.Text.Encoding.GetEncoding((int)StringEncoding.EastEurope);
+                GameData.Encoding = Encoding.GetEncoding((int)StringEncoding.EastEurope);
             }
             // de, en, es, fr, it
             else if (CheckEncoding(StringEncoding.WestEurope, "MOBNAME_CRATE", "Kiste", "Box", "Caja", "Boite", "Cassa"))
@@ -73,7 +75,7 @@ namespace GUZ.Core.Manager
                 Debug.Log($"Selecting StringEncoding={StringEncoding.WestEurope}");
                 StringEncodingController.SetEncoding(StringEncoding.WestEurope);
 
-                GameData.Encoding = System.Text.Encoding.GetEncoding((int)StringEncoding.WestEurope);
+                GameData.Encoding = Encoding.GetEncoding((int)StringEncoding.WestEurope);
             }
             // Nothing found
             // TODO - Potentially re-enable error label on screen to say: We couldn't identify your language.
@@ -81,7 +83,7 @@ namespace GUZ.Core.Manager
             // TODO - Add values for Gothic 2
             else
             {
-                // throw new CultureNotFoundException("Language couldn't be identified based on current Gothic installation.");
+                throw new CultureNotFoundException("Language couldn't be identified based on current Gothic installation.");
             }
         }
 

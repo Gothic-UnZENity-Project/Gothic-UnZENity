@@ -102,7 +102,8 @@ namespace GUZ.Core.Globals
         public const string PlayerPrefSoundEffectsVolume = "SoundEffectsVolume";
         public const string PlayerPrefItemCollisionWhileDragged = "ItemCollisionWhileDragged";
         
-        public static string SelectedWorld { get; set; } = "newworld.zen";
+        // FIXME - load from INI file!
+        public static string SelectedWorld { get; set; } = "world.zen";
         public static string SelectedWaypoint { get; set; } = "START";
 
         // We need to set the scale so that collision and NPC animation is starting at the right spot.
@@ -117,7 +118,6 @@ namespace GUZ.Core.Globals
 
         public static int DaedalusAIVItemStatusKey;
         public static int DaedalusAIVItemFreqKey;
-
         public static int DaedalusTAITNone;
 
         
@@ -209,9 +209,9 @@ namespace GUZ.Core.Globals
 
         private static void Init()
         {
-            // DaedalusAIVItemStatusKey = GameData.GothicVm.GetSymbolByName("AIV_ITEMSTATUS").GetInt(0);
-            // DaedalusAIVItemFreqKey = GameData.GothicVm.GetSymbolByName("AIV_ITEMFREQ").GetInt(0);
-            // DaedalusTAITNone = GameData.GothicVm.GetSymbolByName("TA_IT_NONE").GetInt(0);
+            DaedalusAIVItemStatusKey = GameData.GothicVm.GetSymbolByName("AIV_ITEMSTATUS").GetInt(0);
+            DaedalusAIVItemFreqKey = GameData.GothicVm.GetSymbolByName("AIV_ITEMFREQ").GetInt(0);
+            DaedalusTAITNone = GameData.GothicVm.GetSymbolByName("TA_IT_NONE").GetInt(0);
         }
     }
 }

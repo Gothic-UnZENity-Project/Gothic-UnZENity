@@ -357,7 +357,7 @@ namespace GUZ.Core.Creator
 
             if (!_vobTreeCache.TryGetValue(vob.VobTree.ToLower(), out var vobTree))
             {
-                vobTree = ResourceLoader.TryGetWorld(vob.VobTree, GameVersion.Gothic2);
+                vobTree = ResourceLoader.TryGetWorld(vob.VobTree, GameVersion.Gothic1);
                 _vobTreeCache.Add(vob.VobTree.ToLower(), vobTree);
             }
 
