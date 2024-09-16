@@ -5,6 +5,7 @@ using GUZ.Core.Caches;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using JetBrains.Annotations;
+using MyBox;
 using UnityEngine;
 using UnityEngine.Rendering;
 using ZenKit;
@@ -66,33 +67,37 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
             RootRotation = rotation;
         }
 
-        public void SetMdl(string meshName, IModel mdl)
+        /// <summary>
+        /// Meshes of this object will be cached based on this name.
+        /// </summary>
+        public void SetMeshName(string meshName)
         {
             MeshName = meshName;
-            SetMdh(MeshName, mdl.Hierarchy);
-            SetMdm(meshName, mdl.Mesh);
         }
 
-        public void SetMdh(string meshName)
+        public void SetMdl(IModel mdl)
         {
-            MeshName = meshName;
-            Mdh = ResourceLoader.TryGetModelHierarchy(meshName);
+            SetMdh(mdl.Hierarchy);
+            SetMdm(mdl.Mesh);
+        }
+
+        public void SetMdh(string mdhName)
+        {
+            Mdh = ResourceLoader.TryGetModelHierarchy(mdhName);
 
             if (Mdh == null)
             {
-                Debug.LogError($"MDH from name >{meshName}< for object >{RootGo.name}< not found.");
+                Debug.LogError($"MDH from name >{mdhName}< for object >{RootGo.name}< not found.");
             }
         }
 
-        public void SetMdh(string meshName, IModelHierarchy mdh)
+        public void SetMdh(IModelHierarchy mdh)
         {
-            MeshName = meshName;
             Mdh = mdh;
         }
 
         public void SetMdm(string mdmName)
         {
-            MeshName = mdmName;
             Mdm = ResourceLoader.TryGetModelMesh(mdmName);
 
             if (Mdm == null)
@@ -101,27 +106,23 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
             }
         }
 
-        public void SetMdm(string meshName, IModelMesh mdm)
+        public void SetMdm(IModelMesh mdm)
         {
-            MeshName = meshName;
             Mdm = mdm;
         }
 
-        public void SetMrm(string meshName, IMultiResolutionMesh mrm)
+        public void SetMrm(IMultiResolutionMesh mrm)
         {
-            MeshName = meshName;
             Mrm = mrm;
         }
 
-        public void SetMmb(string meshName, IMorphMesh mmb)
+        public void SetMmb(IMorphMesh mmb)
         {
-            MeshName = meshName;
             Mmb = mmb;
         }
 
         public void SetMrm(string mrmName)
         {
-            MeshName = mrmName;
             Mrm = ResourceLoader.TryGetMultiResolutionMesh(mrmName);
 
             if (Mrm == null)
@@ -141,7 +142,6 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
                 return;
             }
 
-            MeshName = mmbName;
             Mmb = ResourceLoader.TryGetMorphMesh(mmbName);
 
             if (Mmb == null)
@@ -466,7 +466,10 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
 
             TextureCache.VobMeshesForTextureArray.Add(mesh, new TextureCache.VobMeshData(mrmData, submeshPerTextureFormat.Keys.ToList(), UseTextureArray ? meshRenderer : null));
 
-            MultiTypeCache.Meshes.Add(MeshName, mesh);
+            if (!MeshName.IsNullOrEmpty())
+            {
+                MultiTypeCache.Meshes.Add(MeshName, mesh);
+            }
         }
 
         protected void PrepareMeshFilter(MeshFilter meshFilter, ISoftSkinMesh soft)
@@ -563,7 +566,10 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
                 mesh.SetTriangles(preparedTriangles[i], i);
             }
 
-            MultiTypeCache.Meshes.Add(MeshName, mesh);
+            if (!MeshName.IsNullOrEmpty())
+            {
+                MultiTypeCache.Meshes.Add(MeshName, mesh);
+            }
         }
 
         protected virtual List<System.Numerics.Vector3> GetSoftSkinMeshPositions(ISoftSkinMesh softSkinMesh)

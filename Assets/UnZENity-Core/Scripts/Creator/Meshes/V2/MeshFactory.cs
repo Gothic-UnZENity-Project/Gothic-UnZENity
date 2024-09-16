@@ -31,6 +31,7 @@ namespace GUZ.Core.Creator.Meshes.V2
             var npcBuilder = new NpcMeshBuilder();
             npcBuilder.SetGameObject(root, npcName);
             npcBuilder.SetParent(parent);
+            npcBuilder.SetMeshName(mdmName);
             npcBuilder.SetMdh(mdhName);
             npcBuilder.SetMdm(mdmName);
             npcBuilder.SetBodyData(bodyData);
@@ -40,6 +41,7 @@ namespace GUZ.Core.Creator.Meshes.V2
             var npcHeadBuilder = new NpcHeadMeshBuilder();
             npcHeadBuilder.SetGameObject(npcGo);
             npcHeadBuilder.SetBodyData(bodyData);
+            npcHeadBuilder.SetMeshName(bodyData.Head);
             npcHeadBuilder.SetMmb(bodyData.Head);
 
             // returns body+head
@@ -51,6 +53,7 @@ namespace GUZ.Core.Creator.Meshes.V2
         {
             var npcWeaponBuilder = new NpcWeaponMeshBuilder();
             npcWeaponBuilder.SetWeaponData(npcGo, itemData, mainFlag, flags);
+            npcWeaponBuilder.SetMeshName(itemData.Visual);
 
             switch (mainFlag)
             {
@@ -81,7 +84,8 @@ namespace GUZ.Core.Creator.Meshes.V2
             vobBuilder.SetRootPosAndRot(position, rotation);
             vobBuilder.SetGameObject(rootGo, objectName);
             vobBuilder.SetParent(parent, resetRotation: true);
-            vobBuilder.SetMrm(objectName, mrm);
+            vobBuilder.SetMeshName(objectName);
+            vobBuilder.SetMrm(mrm);
             vobBuilder.SetUseTextureArray(useTextureArray);
 
             if (!withCollider)
@@ -103,9 +107,9 @@ namespace GUZ.Core.Creator.Meshes.V2
             var vobBuilder = new VobMeshBuilder();
             vobBuilder.SetRootPosAndRot(position, rotation);
             vobBuilder.SetGameObject(rootGo, objectName);
-            vobBuilder.SetParent(parent,
-                resetRotation: true); // If we don't reset these, all objects will be rotated wrong!
-            vobBuilder.SetMdl(objectName, mdl);
+            vobBuilder.SetParent(parent, resetRotation: true); // If we don't reset these, all objects will be rotated wrong!
+            vobBuilder.SetMeshName(objectName);
+            vobBuilder.SetMdl(mdl);
             vobBuilder.SetUseTextureArray(useTextureArray);
 
             return vobBuilder.Build();
@@ -118,7 +122,8 @@ namespace GUZ.Core.Creator.Meshes.V2
             vobBuilder.SetRootPosAndRot(position, rotation);
             vobBuilder.SetGameObject(rootGo, objectName);
             vobBuilder.SetParent(parent);
-            vobBuilder.SetMmb(objectName, mmb);
+            vobBuilder.SetMeshName(objectName);
+            vobBuilder.SetMmb(mmb);
             vobBuilder.SetUseTextureArray(true);
 
             return vobBuilder.Build();
@@ -137,8 +142,9 @@ namespace GUZ.Core.Creator.Meshes.V2
             vobBuilder.SetRootPosAndRot(position, rotation);
             vobBuilder.SetGameObject(rootGo, objectName);
             vobBuilder.SetParent(parent, resetRotation: true);
-            vobBuilder.SetMdh(objectName, mdh);
-            vobBuilder.SetMdm(objectName, mdm);
+            vobBuilder.SetMeshName(objectName);
+            vobBuilder.SetMdh(mdh);
+            vobBuilder.SetMdm(mdm);
             vobBuilder.SetUseTextureArray(useTextureArray);
 
             return vobBuilder.Build();
