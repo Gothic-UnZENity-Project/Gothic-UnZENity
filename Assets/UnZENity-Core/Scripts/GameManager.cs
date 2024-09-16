@@ -1,3 +1,4 @@
+using GUZ.Core.Caches;
 using GUZ.Core.Debugging;
 using GUZ.Core.Manager;
 using GUZ.Core.Manager.Culling;

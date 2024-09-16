@@ -29,7 +29,7 @@ namespace GUZ.Core.Manager
         {
             var watch = Stopwatch.StartNew();
 
-            GuzContext.SetContext(config.GameControls);
+            GuzContext.SetContext(config.GameControls, config.GameVersion);
 
             LoadGothicVm(g1Dir);
             SetLanguage();

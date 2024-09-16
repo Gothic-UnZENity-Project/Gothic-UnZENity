@@ -1,5 +1,6 @@
 using System;
 using UnityEngine.Events;
+using ZenKit;
 #if GUZ_HVR_INSTALLED
 #endif
 
@@ -9,10 +10,11 @@ namespace GUZ.Core.Context
     {
         // We need to ensure, that other modules will register themselves based on current Control setting.
         // Since we can't call them (e.g. Flat/VR) directly, we need to leverage this IoC pattern.
-        public static readonly UnityEvent<Controls> RegisterAdapters = new();
+        public static readonly UnityEvent<Controls, GameVersion> RegisterAdapters = new();
 
         public static IInteractionAdapter InteractionAdapter;
         public static IDialogAdapter DialogAdapter;
+        public static IGameVersionAdapter GameVersionAdapter;
 
         public enum Controls
         {
@@ -20,31 +22,19 @@ namespace GUZ.Core.Context
             Flat
         }
 
-        public static void SetContext(Controls controls)
+        public static void SetContext(Controls controls, GameVersion version)
         {
-            RegisterAdapters.Invoke(controls);
+            RegisterAdapters.Invoke(controls, version);
             
             if (InteractionAdapter == null)
             {
                 throw new ArgumentOutOfRangeException($"No control module registered for {controls}");
             }
-        }
 
-//         private static void SetFlatContext()
-//         {
-//             Debug.Log("Selecting Context: Flat");
-//             InteractionAdapter = new FlatInteractionAdapter();
-//         }
-//
-//         private static void SetVRContext()
-//         {
-// #if GUZ_HVR_INSTALLED
-//             Debug.Log("Selecting Context: VR");
-//             InteractionAdapter = new HVRInteractionAdapter();
-//             DialogAdapter = new HVRDialogAdapter();
-// #else
-//             throw new Exception("Hurricane VR isn't activated inside Player Settings. Please do before you use it.");
-// #endif
-//         }
+            if (GameVersionAdapter == null)
+            {
+                throw new ArgumentOutOfRangeException($"No version module registered for {version}");
+            }
+        }
     }
 }

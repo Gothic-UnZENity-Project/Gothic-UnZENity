@@ -1,0 +1,16 @@
+{
+    "name": "UnZENity.Gothic2",
+    "rootNamespace": "GUZ.G2",
+    "references": [
+        "GUID:3c55a630855939f438e03e553f37a68f"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
