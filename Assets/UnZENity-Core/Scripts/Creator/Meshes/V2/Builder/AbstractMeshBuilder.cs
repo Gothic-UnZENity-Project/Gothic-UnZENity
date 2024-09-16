@@ -470,6 +470,12 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
             {
                 MultiTypeCache.Meshes.Add(MeshName, mesh);
             }
+            else
+            {
+                Debug.LogWarning($"No MeshName for >{RootGo.name} provided. " +
+                                 "Therefore no caching is possible. " +
+                                 "Please consider providing a mesh name to optimize loading memory and times.");
+            }
         }
 
         protected void PrepareMeshFilter(MeshFilter meshFilter, ISoftSkinMesh soft)
@@ -569,6 +575,12 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
             if (!MeshName.IsNullOrEmpty())
             {
                 MultiTypeCache.Meshes.Add(MeshName, mesh);
+            }
+            else
+            {
+                Debug.LogWarning($"No MeshName for >{RootGo.name} provided. " +
+                                 "Therefore no caching is possible. " +
+                                 "Please consider providing a mesh name to optimize loading memory and times.");
             }
         }
 
