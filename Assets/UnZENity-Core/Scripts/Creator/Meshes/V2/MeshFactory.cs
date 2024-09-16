@@ -1,7 +1,6 @@
 using System.Linq;
 using System.Threading.Tasks;
 using GUZ.Core.Creator.Meshes.V2.Builder;
-using GUZ.Core.Creator.Meshes.V2.Builder.Textures;
 using GUZ.Core.Extensions;
 using GUZ.Core.Manager;
 using GUZ.Core.Vm;
