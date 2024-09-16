@@ -6,5 +6,10 @@ namespace GUZ.Core.Context
     {
         GameVersion Version { get; }
         string RootPath { get; }
+        
+        /// <summary>
+        /// Start world from GothicGame.ini
+        /// </summary>
+        string InitialWorld { get;  }
     }
 }

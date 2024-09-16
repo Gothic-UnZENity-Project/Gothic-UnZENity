@@ -77,7 +77,8 @@ namespace GUZ.Core.Manager
                 else
                 {
                     SaveGameManager.LoadNewGame();
-                    await LoadWorld(Constants.SelectedWorld, Constants.SelectedWaypoint);
+
+                    await LoadWorld(GuzContext.GameVersionAdapter.InitialWorld, Constants.SelectedWaypoint);
                 }
             }
             catch (Exception e)
