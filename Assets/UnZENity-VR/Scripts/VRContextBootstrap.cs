@@ -1,4 +1,7 @@
-﻿using GUZ.Core.Context;
+using GUZ.Core.Context;
+#if !GUZ_HVR_INSTALLED
+using System;
+#endif
 
 namespace GUZ.VR
 {

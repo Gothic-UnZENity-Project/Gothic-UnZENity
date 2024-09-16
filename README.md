@@ -2,7 +2,7 @@
 
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 ![Platforms](https://img.shields.io/static/v1?label=Platforms&message=PCVR%20|%20Quest2%20|%20Pico4&color=darkgreen)
-[![Release](https://img.shields.io/github/release-pre/GothicVRProject/GothicVR)](https://github.com/GothicVRProject/GothicVR/releases/latest)
+[![Release](https://img.shields.io/github/release-pre/Gothic-UnZENity-Project/Gothic-UnZENity)](https://github.com/Gothic-UnZENity-Project/Gothic-UnZENity/releases/latest)
 
 <p align="center">
   <img src="./Docs/development/images/Gothic-UnZENity-logo.png" width="300" alt="Gothic-UnZENity logo" />
@@ -10,9 +10,9 @@
 Fan project recreating Piranha Bytes' evergreens Gothic I and Gothic II in Unity Engine. Currently focussing on VR.
 
 ## Usage
-For instructions on playing the game or adding contributions, please check our [Docs](Docs).
+For instructions on playing the game or adding contributions, please check our [Wiki](https://github.com/Gothic-UnZENity-Project/Gothic-UnZENity/wiki).
 
-(🤫 Shortcut to the installation instructions: [here](Docs/setup/player.md). Thank me later. 😉)
+(🤫 Shortcut to the installation instructions: [here](https://github.com/Gothic-UnZENity-Project/Gothic-UnZENity/wiki/Player%27s-Guide#1-setup). Thank me later. 😉)
 
 ## Roadmap
 

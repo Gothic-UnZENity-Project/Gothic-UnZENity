@@ -158,7 +158,7 @@ namespace GUZ.Core.Manager.Settings
                 return;
             }
 
-            var iniFilePath = Path.Combine(loadedSettings.GothicIPath, "system", "gothic.ini");
+            var iniFilePath = $"{loadedSettings.GothicIPath}/system/Gothic.ini";
             if (!File.Exists(iniFilePath))
             {
                 Debug.LogError("The gothic.ini file does not exist at the specified path :" + iniFilePath);

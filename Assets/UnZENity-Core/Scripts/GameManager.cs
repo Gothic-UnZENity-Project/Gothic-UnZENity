@@ -31,6 +31,8 @@ namespace GUZ.Core
         public SkyManager Sky { get; private set; }
 
         public GameTime Time { get; private set; }
+        
+        public VideoManager Video { get; private set; }
 
         public RoutineManager Routines { get; private set; }
 
@@ -92,6 +94,7 @@ namespace GUZ.Core
             _playerManager = new PlayerManager(Config);
             _vrSimulatorManager = new VRDeviceSimulatorManager(Config);
             Time = new GameTime(Config, this);
+            Video = new VideoManager(Config);
             Sky = new SkyManager(Config, Time, Settings);
             _gameMusicManager = new MusicManager(Config);
             Scene = new GuzSceneManager(Config, _gameLoadingManager, XRInteractionManager);
@@ -110,6 +113,7 @@ namespace GUZ.Core
             NpcMeshCulling.Init();
             SoundCulling.Init();
             Time.Init();
+            Video.Init();
             Sky.Init();
             _playerManager.Init();
             _vrSimulatorManager.Init();

@@ -11,6 +11,7 @@ namespace GUZ.Core
         public GameSettings Settings { get; }
         public SkyManager Sky { get; }
         public GameTime Time { get; }
+        public VideoManager Video { get; }
         public RoutineManager Routines { get; }
         public TextureManager Textures { get; }
         public GuzSceneManager Scene { get; }

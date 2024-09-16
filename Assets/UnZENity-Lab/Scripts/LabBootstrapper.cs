@@ -21,6 +21,8 @@ namespace GUZ.Lab
 
         public LabMusicHandler LabMusicHandler;
 
+        public LabVideoHandler LabVideoHandler;
+
         public LabNpcDialogHandler NpcDialogHandler;
 
         public LabInteractableHandler InteractableHandler;
@@ -33,6 +35,7 @@ namespace GUZ.Lab
 
         private VRDeviceSimulatorManager _deviceSimulatorManager;
         private MusicManager _gameMusicManager;
+        private VideoManager _videoManager;
         private RoutineManager _npcRoutineManager;
         private GameSettings _settings;
         private GuzSceneManager _sceneManager;
@@ -52,6 +55,7 @@ namespace GUZ.Lab
         public NpcMeshCullingManager NpcMeshCulling => null;
         public VobSoundCullingManager SoundCulling => null;
         public StoryManager Story => null;
+        public VideoManager Video => _videoManager;
 
 
         private void Awake()
@@ -65,11 +69,13 @@ namespace GUZ.Lab
             _deviceSimulatorManager = new VRDeviceSimulatorManager(Config);
             _npcRoutineManager = new RoutineManager(Config);
             _gameMusicManager = new MusicManager(Config);
+            _videoManager = new VideoManager(Config);
 
             ResourceLoader.Init(_settings.GothicIPath);
             _sceneManager.Init();
             _gameMusicManager.Init();
             _npcRoutineManager.Init();
+            _videoManager.Init();
         }
 
         /// <summary>
@@ -91,6 +97,7 @@ namespace GUZ.Lab
 
             LabNpcAnimationHandler.Bootstrap();
             LabMusicHandler.Bootstrap();
+            LabVideoHandler.Bootstrap();
             NpcDialogHandler.Bootstrap();
             InteractableHandler.Bootstrap();
             LadderLabHandler.Bootstrap();
