@@ -1,4 +1,5 @@
 using GUZ.Core.Caches;
+using GUZ.Core.Context;
 using GUZ.Core.Debugging;
 using GUZ.Core.Manager;
 using GUZ.Core.Manager.Culling;
@@ -51,40 +52,22 @@ namespace GUZ.Core
         public NpcMeshCullingManager NpcMeshCulling { get; private set; }
 
         public VobSoundCullingManager SoundCulling { get; private set; }
-
-        private void Load()
-        {
-            // If the Gothic installation directory is not set, show an error message and exit.
-            if (!Settings.CheckIfGothic1InstallationExists())
-            {
-                InvalidInstallationPathMessage.SetActive(true);
-                return;
-            }
-
-            // Otherwise, continue loading Gothic.
-            ResourceLoader.Init(Settings.Gothic1Path);
-
-            _gameMusicManager.Init();
-
-            GuzBootstrapper.BootGothicUnZeNity(Config, Settings.Gothic1Path);
-            Scene.LoadStartupScenes();
-
-            if (Config.EnableBarrierVisual)
-            {
-                GlobalEventDispatcher.WorldSceneLoaded.AddListener(() => { _barrierManager.CreateBarrier(); });
-            }
-        }
+        
 
         private void Awake()
         {
             _fileLoggingHandler = new FileLoggingHandler();
 
             GameGlobals.Instance = this;
+            
+            // Set Context as early as possible to ensure everything else boots based on the activated modules.
+            GuzContext.SetContext(Config.GameControls, Config.GameVersion);
+            Settings = GameSettings.Load(Config.GameVersion);
+            
             MultiTypeCache.Init();
 
             Textures = GetComponent<TextureManager>();
             Font = GetComponent<FontManager>();
-            Settings = GameSettings.Load();
             _gameLoadingManager = new LoadingManager();
             VobMeshCulling = new VobMeshCullingManager(Config, this);
             NpcMeshCulling = new NpcMeshCullingManager(Config);
@@ -123,7 +106,31 @@ namespace GUZ.Core
             // Just in case we forgot to disable it in scene view. ;-)
             InvalidInstallationPathMessage.SetActive(false);
 
-            Load();
+            Load(GuzContext.GameVersionAdapter.RootPath);
+        }
+        
+        private void Load(string gothicRootPath)
+        {
+            // If the Gothic installation directory is not set, show an error message and exit.
+            if (!Settings.CheckIfGothicInstallationExists(gothicRootPath))
+            {
+                InvalidInstallationPathMessage.SetActive(true);
+                return;
+            }
+
+            // Otherwise, continue loading Gothic.
+            
+            ResourceLoader.Init(gothicRootPath);
+
+            _gameMusicManager.Init();
+
+            GuzBootstrapper.BootGothicUnZeNity(Config, gothicRootPath);
+            Scene.LoadStartupScenes();
+
+            if (Config.EnableBarrierVisual)
+            {
+                GlobalEventDispatcher.WorldSceneLoaded.AddListener(() => { _barrierManager.CreateBarrier(); });
+            }
         }
 
         private void Update()

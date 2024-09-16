@@ -4,7 +4,6 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using GUZ.Core.Caches;
-using GUZ.Core.Context;
 using GUZ.Core.Globals;
 using GUZ.Core.Vm;
 using ZenKit;
@@ -25,18 +24,16 @@ namespace GUZ.Core.Manager
             MorphMeshCache.Dispose();
         }
 
-        public static void BootGothicUnZeNity(GameConfiguration config, string g1Dir)
+        public static void BootGothicUnZeNity(GameConfiguration config, string gothicDir)
         {
             var watch = Stopwatch.StartNew();
-
-            GuzContext.SetContext(config.GameControls, config.GameVersion);
-
-            LoadGothicVm(g1Dir);
+            
+            LoadGothicVm(gothicDir);
             SetLanguage();
             LoadDialogs();
             LoadVideos();
-            LoadSfxVm(g1Dir);
-            LoadPfxVm(g1Dir);
+            LoadSfxVm(gothicDir);
+            LoadPfxVm(gothicDir);
             LoadFonts();
             LoadGuildData();
 

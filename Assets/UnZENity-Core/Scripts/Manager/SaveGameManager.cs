@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.IO;
+using GUZ.Core.Context;
 using GUZ.Core.World;
 using JetBrains.Annotations;
 using UnityEngine;
@@ -161,8 +162,8 @@ namespace GUZ.Core.Manager
 
         private static string GetSaveGamePath(int folderSaveId)
         {
-            var g1Dir = GameGlobals.Settings.Gothic1Path;
-            return Path.GetFullPath(Path.Join(g1Dir, $"Saves/savegame{folderSaveId}"));
+            var gothicDir = GuzContext.GameVersionAdapter.RootPath;
+            return Path.GetFullPath(Path.Join(gothicDir, $"Saves/savegame{folderSaveId}"));
         }
     }
 }

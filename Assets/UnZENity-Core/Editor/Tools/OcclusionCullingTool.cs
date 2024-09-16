@@ -4,6 +4,7 @@ using GUZ.Core.Globals;
 using GUZ.Core.Manager.Settings;
 using UnityEditor;
 using UnityEngine;
+using ZenKit;
 
 namespace GUZ.Core.Editor.Tools
 {
@@ -33,7 +34,10 @@ namespace GUZ.Core.Editor.Tools
                 return;
             }
 
-            var settings = GameSettings.Load();
+            // TODO - We need to add a popup to decide which Game Version to load.
+            var settings = GameSettings.Load(GameVersion.Gothic1);
+            
+            // TODO - Add parameter to switch between G1 and G2
             ResourceLoader.Init(settings.Gothic1Path);
 
             WorldCreator.LoadEditorWorld();

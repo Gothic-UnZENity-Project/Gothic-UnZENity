@@ -12,7 +12,9 @@ namespace GUZ.Core.Manager.Settings
     {
         private const string _settingsFileName = "GameSettings.json";
         private const string _settingsFileNameDev = "GameSettings.dev.json";
-        private const string _defaultSteamGothicFolder = @"C:\Program Files (x86)\Steam\steamapps\common\Gothic\";
+        private const string _defaultSteamGothic1Folder = @"C:\Program Files (x86)\Steam\steamapps\common\Gothic\";
+        private const string _defaultSteamGothic2Folder = @"C:\Program Files (x86)\Steam\steamapps\common\Gothic II\";
+
 
 
         public string Gothic1Path;
@@ -22,7 +24,7 @@ namespace GUZ.Core.Manager.Settings
         public Dictionary<string, Dictionary<string, string>> GothicIniSettings = new();
 
 
-        public static GameSettings Load()
+        public static GameSettings Load(GameVersion version)
         {
             PrepareAndroidFolders();
             
@@ -50,7 +52,7 @@ namespace GUZ.Core.Manager.Settings
             loadedSettings.Gothic2Path = AlterGothicInstallationPath(loadedSettings.Gothic2Path, GameVersion.Gothic2);
 
 
-            LoadIniFile(loadedSettings);
+            LoadIniFile(loadedSettings, version);
             
             return loadedSettings;
         }
@@ -150,27 +152,30 @@ namespace GUZ.Core.Manager.Settings
             // Standalone
             else
             {
-                return _defaultSteamGothicFolder;
+                if (version == GameVersion.Gothic1)
+                {
+                    return _defaultSteamGothic1Folder;
+                }
+                else
+                {
+                    return _defaultSteamGothic2Folder;
+                }
             }
         }
 
-        public bool CheckIfGothic1InstallationExists()
+        public bool CheckIfGothicInstallationExists(string gothicRootPath)
         {
-            var g1DataPath = Path.GetFullPath(Path.Join(Gothic1Path, "Data"));
-            var g1WorkPath = Path.GetFullPath(Path.Join(Gothic1Path, "_work"));
+            var gothicDataPath = $"{gothicRootPath}/Data";
+            var gothicWorkPath = $"{gothicRootPath}/_work";
 
-            return Directory.Exists(g1WorkPath) && Directory.Exists(g1DataPath);
+            return Directory.Exists(gothicWorkPath) && Directory.Exists(gothicDataPath);
         }
 
-        private static void LoadIniFile(GameSettings loadedSettings)
+        private static void LoadIniFile(GameSettings loadedSettings, GameVersion version)
         {
-            // We load Ini file only, if we already stored Gothic installation data.
-            if (!loadedSettings.CheckIfGothic1InstallationExists())
-            {
-                return;
-            }
-
-            var iniFilePath = $"{loadedSettings.Gothic1Path}/system/Gothic.ini";
+            var gothicRoot = version == GameVersion.Gothic1 ? loadedSettings.Gothic1Path : loadedSettings.Gothic2Path;
+            
+            var iniFilePath = $"{gothicRoot}/system/Gothic.ini";
             if (!File.Exists(iniFilePath))
             {
                 Debug.LogError("The gothic.ini file does not exist at the specified path :" + iniFilePath);

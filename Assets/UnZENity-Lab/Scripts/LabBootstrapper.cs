@@ -62,7 +62,7 @@ namespace GUZ.Lab
         {
             GameGlobals.Instance = this;
 
-            _settings = GameSettings.Load();
+            _settings = GameSettings.Load(Config.GameVersion);
             _textureManager = GetComponent<TextureManager>();
             _fontManager = GetComponent<FontManager>();
             _sceneManager = new GuzSceneManager(Config, null, null);
