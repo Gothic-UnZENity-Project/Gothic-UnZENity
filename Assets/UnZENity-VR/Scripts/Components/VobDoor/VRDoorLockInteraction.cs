@@ -3,7 +3,6 @@ using GUZ.Core.Globals;
 using GUZ.Core.Properties;
 using GUZ.VR.Properties.VobItem;
 using UnityEngine;
-using ResourceLoader = GUZ.Core.ResourceLoader;
 
 namespace GUZ.VR.Components.VobDoor
 {
@@ -93,15 +92,15 @@ namespace GUZ.VR.Components.VobDoor
 
         private void PlaySound(string soundName, string fallback = null)
         {
-            var sound = ResourceLoader.TryGetSound(soundName);
-
-            if (sound == null && fallback != null)
+            var clip = SoundCreator.ToAudioClip(soundName);
+            
+            if (clip == null && fallback != null)
             {
                 PlaySound(fallback);
                 return;
             }
                 
-            _audioSource.PlayOneShot(SoundCreator.ToAudioClip(sound));
+            _audioSource.PlayOneShot(clip);
         }
     }
 }
