@@ -85,7 +85,8 @@ namespace GUZ.Core
         [CanBeNull]
         public static ITexture TryGetTexture([NotNull] string key)
         {
-            // Zen texture data is not cached as we do not need to keep the pixel data in memory as managed objects. Instead, TextureCache loads the texture data when need and creates a Texture2D.
+            // Zen texture data is not cached as we do not need to keep the pixel data in memory as managed objects.
+            // Instead, TextureCache loads the texture data when need and creates a Texture2D.
             try
             {
                 return new Texture(_vfs, $"{GetPreparedKey(key)}-c.tex");
@@ -96,6 +97,9 @@ namespace GUZ.Core
             }
         }
 
+        /// <summary>
+        /// Once a world is loaded, release data which was cached during loading. We don't need it any longer and free up memory.
+        /// </summary>
         public static void ReleaseLoadedData()
         {
             _mesh.Dispose();

@@ -31,6 +31,10 @@ namespace GUZ.Core.Caches
         /// </summary>
         public static Dictionary<string, TMP_SpriteAsset> FontCache = new();
         
+        /// <summary>
+        /// Caching all types of Meshes (World?, Vob, Npc) to optimize memory usage of meshes if duplicated
+        /// (e.g. multiple VOBs sharing the same mesh)
+        /// </summary>
         public static Dictionary<string, Mesh> Meshes = new();
         
         public static Dictionary<string, AudioClip> AudioClips = new();
