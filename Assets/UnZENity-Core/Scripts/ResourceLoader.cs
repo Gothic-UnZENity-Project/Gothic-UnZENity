@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -91,7 +92,7 @@ namespace GUZ.Core
             {
                 return new Texture(_vfs, $"{GetPreparedKey(key)}-c.tex");
             }
-            catch (System.Exception)
+            catch (Exception)
             {
                 return null;
             }
@@ -163,6 +164,10 @@ namespace GUZ.Core
             return _font.TryLoad($"{GetPreparedKey(key)}.fnt", out var item) ? item : null;
         }
 
+        /// <summary>
+        /// Loading of binary .wav data. For internal use within SoundCreator only.
+        /// Please consider using SoundCreator.ToAudioClip() instead.
+        /// </summary>
         [CanBeNull]
         public static SoundData TryGetSound([NotNull] string key)
         {
