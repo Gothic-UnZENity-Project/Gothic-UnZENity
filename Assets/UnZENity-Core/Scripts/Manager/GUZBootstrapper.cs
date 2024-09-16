@@ -66,8 +66,8 @@ namespace GUZ.Core.Manager
 
                 GameData.Encoding = Encoding.GetEncoding((int)StringEncoding.EastEurope);
             }
-            // de, en, es, fr, it
-            else if (CheckEncoding(StringEncoding.WestEurope, "MOBNAME_CRATE", "Kiste", "Box", "Caja", "Boite", "Cassa"))
+            // de, en (2x), es, fr, it
+            else if (CheckEncoding(StringEncoding.WestEurope, "MOBNAME_CRATE", "Kiste", "Crate", "Box", "Caja", "Boite", "Cassa"))
             {
                 Debug.Log($"Selecting StringEncoding={StringEncoding.WestEurope}");
                 StringEncodingController.SetEncoding(StringEncoding.WestEurope);
