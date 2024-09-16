@@ -8,8 +8,10 @@ using UnityEngine;
 using UnityEngine.Rendering;
 using ZenKit;
 using Material = UnityEngine.Material;
+using Texture = UnityEngine.Texture;
+using TextureFormat = UnityEngine.TextureFormat;
 
-namespace GUZ.Core.Creator.Meshes.V2.Builder.Textures
+namespace GUZ.Core.Creator.Meshes.V2.Builder
 {
     /// <summary>
     /// Create texture array for all meshes. Basically no MeshBuilder,
@@ -47,7 +49,7 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder.Textures
 
         private void PrepareWorldMeshRenderer(Renderer rend, WorldData.SubMeshData subMesh)
         {
-            UnityEngine.Texture texture = TextureCache.TextureArrays[subMesh.TextureArrayType];
+            Texture texture = TextureCache.TextureArrays[subMesh.TextureArrayType];
             Material material;
             if (subMesh.Material.Group == MaterialGroup.Water)
             {
@@ -83,8 +85,8 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder.Textures
 
             for (int i = 0; i < submeshCount; i++)
             {
-                UnityEngine.Texture texture = TextureCache.TextureArrays[textureArrayTypes[i]];
-                Material material = GetDefaultMaterial(texture && ((Texture2DArray)texture).format == UnityEngine.TextureFormat.RGBA32);
+                Texture texture = TextureCache.TextureArrays[textureArrayTypes[i]];
+                Material material = GetDefaultMaterial(texture && ((Texture2DArray)texture).format == TextureFormat.RGBA32);
 
                 material.mainTexture = texture;
                 renderer.material = material;
