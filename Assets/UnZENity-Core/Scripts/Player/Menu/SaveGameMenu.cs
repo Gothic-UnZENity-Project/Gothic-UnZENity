@@ -30,7 +30,7 @@ namespace GUZ.Core.Player.Menu
             Thumbnail.GetComponent<MeshRenderer>().material =
                 GameGlobals.Textures.GetEmptyMaterial(MaterialExtension.BlendMode.Opaque);
 
-            var g1Dir = GameGlobals.Settings.GothicIPath;
+            var g1Dir = GameGlobals.Settings.Gothic1Path;
             var saveGameListPath = Path.GetFullPath(Path.Join(g1Dir, "Saves"));
 
             foreach (var fullPath in Directory.EnumerateDirectories(saveGameListPath))

@@ -34,7 +34,7 @@ namespace GUZ.Core.Editor.Tools
             }
 
             var settings = GameSettings.Load();
-            ResourceLoader.Init(settings.GothicIPath);
+            ResourceLoader.Init(settings.Gothic1Path);
 
             WorldCreator.LoadEditorWorld();
         }

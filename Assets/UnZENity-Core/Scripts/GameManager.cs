@@ -1,4 +1,3 @@
-using GUZ.Core.Caches;
 using GUZ.Core.Debugging;
 using GUZ.Core.Manager;
 using GUZ.Core.Manager.Culling;
@@ -62,11 +61,11 @@ namespace GUZ.Core
             }
 
             // Otherwise, continue loading Gothic.
-            ResourceLoader.Init(Settings.GothicIPath);
+            ResourceLoader.Init(Settings.Gothic1Path);
 
             _gameMusicManager.Init();
 
-            GuzBootstrapper.BootGothicUnZeNity(Config, Settings.GothicIPath);
+            GuzBootstrapper.BootGothicUnZeNity(Config, Settings.Gothic1Path);
             Scene.LoadStartupScenes();
 
             if (Config.EnableBarrierVisual)

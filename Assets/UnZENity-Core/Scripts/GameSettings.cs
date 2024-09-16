@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 using UnityEngine.Networking;
+using ZenKit;
 
 namespace GUZ.Core.Manager.Settings
 {
@@ -14,7 +15,8 @@ namespace GUZ.Core.Manager.Settings
         private const string _defaultSteamGothicFolder = @"C:\Program Files (x86)\Steam\steamapps\common\Gothic\";
 
 
-        public string GothicIPath;
+        public string Gothic1Path;
+        public string Gothic2Path;
         public string LogLevel;
 
         public Dictionary<string, Dictionary<string, string>> GothicIniSettings = new();
@@ -44,7 +46,9 @@ namespace GUZ.Core.Manager.Settings
             }
 
             // We need to do a final check for Gothic installation path and which one to ultimately use.
-            loadedSettings.GothicIPath = AlterGothicInstallationPath(loadedSettings.GothicIPath);
+            loadedSettings.Gothic1Path = AlterGothicInstallationPath(loadedSettings.Gothic1Path, GameVersion.Gothic1);
+            loadedSettings.Gothic2Path = AlterGothicInstallationPath(loadedSettings.Gothic2Path, GameVersion.Gothic2);
+
 
             LoadIniFile(loadedSettings);
             
@@ -75,6 +79,7 @@ namespace GUZ.Core.Manager.Settings
             
             // Create folder(s)
             Directory.CreateDirectory($"{Application.persistentDataPath}/Gothic1");
+            Directory.CreateDirectory($"{Application.persistentDataPath}/Gothic2");
             
             // Copy GameSettings.json into app's shared folder
             var gameSettingsPath = Path.Combine($"{Application.streamingAssetsPath}/{_settingsFileName}");
@@ -122,7 +127,7 @@ namespace GUZ.Core.Manager.Settings
         /// Standalone: C:\Program Files (x86)\Steam\steamapps\common\Gothic\
         /// Android: /storage/emulated/0/Android/data/com.GothicUnZENity/files/Gothic1/
         /// </summary>
-        private static string AlterGothicInstallationPath(string gothicInstallationPath)
+        private static string AlterGothicInstallationPath(string gothicInstallationPath, GameVersion version)
         {
             // GameSettings (or its dev) entry already provides a valid installation directory.
             if (Directory.Exists(gothicInstallationPath))
@@ -133,7 +138,14 @@ namespace GUZ.Core.Manager.Settings
             // Try platform specific fallbacks.
             if (Application.platform == RuntimePlatform.Android)
             {
-                return $"{Application.persistentDataPath}/Gothic1";
+                if (version == GameVersion.Gothic1)
+                {
+                    return $"{Application.persistentDataPath}/Gothic1";
+                }
+                else
+                {
+                    return $"{Application.persistentDataPath}/Gothic2";
+                }
             }
             // Standalone
             else
@@ -144,8 +156,8 @@ namespace GUZ.Core.Manager.Settings
 
         public bool CheckIfGothic1InstallationExists()
         {
-            var g1DataPath = Path.GetFullPath(Path.Join(GothicIPath, "Data"));
-            var g1WorkPath = Path.GetFullPath(Path.Join(GothicIPath, "_work"));
+            var g1DataPath = Path.GetFullPath(Path.Join(Gothic1Path, "Data"));
+            var g1WorkPath = Path.GetFullPath(Path.Join(Gothic1Path, "_work"));
 
             return Directory.Exists(g1WorkPath) && Directory.Exists(g1DataPath);
         }
@@ -158,7 +170,7 @@ namespace GUZ.Core.Manager.Settings
                 return;
             }
 
-            var iniFilePath = $"{loadedSettings.GothicIPath}/system/Gothic.ini";
+            var iniFilePath = $"{loadedSettings.Gothic1Path}/system/Gothic.ini";
             if (!File.Exists(iniFilePath))
             {
                 Debug.LogError("The gothic.ini file does not exist at the specified path :" + iniFilePath);

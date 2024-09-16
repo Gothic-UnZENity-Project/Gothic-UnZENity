@@ -71,7 +71,7 @@ namespace GUZ.Lab
             _gameMusicManager = new MusicManager(Config);
             _videoManager = new VideoManager(Config);
 
-            ResourceLoader.Init(_settings.GothicIPath);
+            ResourceLoader.Init(_settings.Gothic1Path);
             _sceneManager.Init();
             _gameMusicManager.Init();
             _npcRoutineManager.Init();
@@ -91,7 +91,7 @@ namespace GUZ.Lab
             _isBooted = true;
 
             var settings = _settings;
-            GuzBootstrapper.BootGothicUnZeNity(Config, settings.GothicIPath);
+            GuzBootstrapper.BootGothicUnZeNity(Config, settings.Gothic1Path);
 
             BootLab();
 

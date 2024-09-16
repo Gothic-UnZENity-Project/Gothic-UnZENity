@@ -161,7 +161,7 @@ namespace GUZ.Core.Manager
 
         private static string GetSaveGamePath(int folderSaveId)
         {
-            var g1Dir = GameGlobals.Settings.GothicIPath;
+            var g1Dir = GameGlobals.Settings.Gothic1Path;
             return Path.GetFullPath(Path.Join(g1Dir, $"Saves/savegame{folderSaveId}"));
         }
     }
