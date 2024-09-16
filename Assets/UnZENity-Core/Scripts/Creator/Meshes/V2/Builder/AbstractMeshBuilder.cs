@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -171,6 +172,8 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
 
         protected void BuildViaMrm()
         {
+            CheckPreconditions();
+            
             var meshFilter = RootGo.TryAddComponent<MeshFilter>();
             var meshRenderer = RootGo.TryAddComponent<MeshRenderer>();
             meshRenderer.material = Constants.LoadingMaterial;
@@ -193,6 +196,8 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
 
         protected void BuildViaMdmAndMdh()
         {
+            CheckPreconditions();
+            
             var nodeObjects = new GameObject[Mdh.Nodes.Count];
 
             // Create empty GameObjects from hierarchy
@@ -300,6 +305,8 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
 
         protected GameObject BuildViaMmb()
         {
+            CheckPreconditions();
+
             var meshFilter = RootGo.TryAddComponent<MeshFilter>();
             var meshRenderer = RootGo.TryAddComponent<MeshRenderer>();
 
@@ -311,6 +318,21 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
             return RootGo;
         }
 
+        protected void CheckPreconditions()
+        {
+            if (RootGo == null)
+            {
+                throw new ArgumentNullException("Main GameObject is null. Please provide one or force creation " +
+                                                "of a new one via SetGameObject().");
+            }
+            
+            if (MeshName.IsNullOrEmpty())
+            {
+                throw new ArgumentNullException($"No MeshName for >{RootGo.name} provided. " +
+                                            "Please provide a mesh name via SetMeshName() which is used for caching of mesh data at runtime.");
+            }
+        }
+        
         protected void PrepareMeshRenderer(Renderer rend, IMultiResolutionMesh mrmData)
         {
             if (null == mrmData)
@@ -466,16 +488,7 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
 
             TextureCache.VobMeshesForTextureArray.Add(mesh, new TextureCache.VobMeshData(mrmData, submeshPerTextureFormat.Keys.ToList(), UseTextureArray ? meshRenderer : null));
 
-            if (!MeshName.IsNullOrEmpty())
-            {
-                MultiTypeCache.Meshes.Add(MeshName, mesh);
-            }
-            else
-            {
-                Debug.LogWarning($"No MeshName for >{RootGo.name} provided. " +
-                                 "Therefore no caching is possible. " +
-                                 "Please consider providing a mesh name to optimize loading memory and times.");
-            }
+            MultiTypeCache.Meshes.Add(MeshName, mesh);
         }
 
         protected void PrepareMeshFilter(MeshFilter meshFilter, ISoftSkinMesh soft)
@@ -572,16 +585,7 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
                 mesh.SetTriangles(preparedTriangles[i], i);
             }
 
-            if (!MeshName.IsNullOrEmpty())
-            {
-                MultiTypeCache.Meshes.Add(MeshName, mesh);
-            }
-            else
-            {
-                Debug.LogWarning($"No MeshName for >{RootGo.name} provided. " +
-                                 "Therefore no caching is possible. " +
-                                 "Please consider providing a mesh name to optimize loading memory and times.");
-            }
+            MultiTypeCache.Meshes.Add(MeshName, mesh);
         }
 
         protected virtual List<System.Numerics.Vector3> GetSoftSkinMeshPositions(ISoftSkinMesh softSkinMesh)
