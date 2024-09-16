@@ -9,6 +9,7 @@ using GUZ.Core.Creator.Meshes.V2;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
+using GUZ.Core.Manager.Settings;
 using GUZ.Core.Properties;
 using GUZ.Core.Vm;
 using GUZ.Core.Vob;
@@ -358,7 +359,7 @@ namespace GUZ.Core.Creator
 
             if (!_vobTreeCache.TryGetValue(vob.VobTree.ToLower(), out var vobTree))
             {
-                vobTree = ResourceLoader.TryGetWorld(vob.VobTree, GameVersion.Gothic1);
+                vobTree = ResourceLoader.TryGetWorld(vob.VobTree, config.GameVersion);
                 _vobTreeCache.Add(vob.VobTree.ToLower(), vobTree);
             }
 
