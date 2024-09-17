@@ -8,11 +8,13 @@ namespace GUZ.VR.Components.VobDoor
 {
     public class VRDoorLockInteraction : MonoBehaviour
     {
+        [SerializeField] private GameObject _rootGO;
         [SerializeField] private VobDoorProperties _properties;
         [SerializeField] private AudioSource _audioSource;
-        
+
         private const string _lockInteractionColliderName = "LockPickInteraction";
 
+        // FIXME - Move into IDoor lab instance once provided by ZenKit.
         private string _combination = "LLRRL";
         private int _combinationPos = 0;
         
@@ -20,12 +22,19 @@ namespace GUZ.VR.Components.VobDoor
         {
             StepSuccess,
             StepFailure,
-            DoorUnlocked
+            Unlocked
         }
         
         private void OnTriggerEnter(Collider other)
         {
             if (!other.gameObject.name.Equals(_lockInteractionColliderName))
+            {
+                return;
+            }
+
+            // FIXME - For lab only. Remove once Interface of Door (IDoor) exists: https://github.com/GothicKit/ZenKitCS/pull/12
+            // Mark all doors as locked in lab
+            if (_properties.DoorProperties != null && !_properties.DoorProperties.IsLocked)
             {
                 return;
             }
@@ -65,9 +74,15 @@ namespace GUZ.VR.Components.VobDoor
 
                 if (_combinationPos == _combination.Length)
                 {
-                    // FIXME - Handle "DoorUnlocked" (activate rotation of door).
+                    // FIXME - Set door properties once IDoor interface is used with Lab implementation.
+                    // _properties.DoorProperties.IsLocked = false;
+
+                    // Reactivate rotation
+                    _rootGO.GetComponentInChildren<ConfigurableJoint>().axis = Vector3.up;
+
                     PlaySound(Constants.Daedalus.PickLockUnlockSoundName, Constants.Daedalus.DoorUnlockSoundName);
-                    return DoorLockStatus.DoorUnlocked;
+
+                    return DoorLockStatus.Unlocked;
                 }
 
                 PlaySound(Constants.Daedalus.PickLockSuccessSoundName);

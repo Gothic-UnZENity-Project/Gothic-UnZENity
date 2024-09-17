@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using GUZ.Core.Caches;
 using GUZ.Core.Data;
+using JetBrains.Annotations;
 using UnityEngine;
 
 namespace GUZ.Core.Creator.Sounds
@@ -18,6 +19,7 @@ namespace GUZ.Core.Creator.Sounds
         /// Create AudioClip from a file inside .vdf containers.
         /// Usage: ToAudioClip("fileName"):
         /// </summary>
+        [CanBeNull]
         public static AudioClip ToAudioClip(string fileName)
         {
             fileName = Path.GetFileNameWithoutExtension(fileName);
@@ -27,20 +29,14 @@ namespace GUZ.Core.Creator.Sounds
                 return cachedClip;
             }
 
-            SoundData soundData = ResourceLoader.TryGetSound(fileName);
-            AudioClip audioClip;
+            var soundData = ResourceLoader.TryGetSound(fileName);
+            if (soundData == null)
+            {
+                return null;
+            }
 
-            try
-            {
-                audioClip = AudioClip.Create(fileName, soundData.Sound.Length / soundData.Channels, soundData.Channels, soundData.SampleRate, false);
-                audioClip.SetData(soundData.Sound, 0);
-            }
-            catch (Exception e)
-            {
-                Debug.LogError(e);
-                audioClip = AudioClip.Create(fileName, 1, 1, 44100, false);
-                audioClip.SetData(new float[] { 0 }, 0); // almost empty audio
-            }
+            var audioClip = AudioClip.Create(fileName, soundData.Sound.Length / soundData.Channels, soundData.Channels, soundData.SampleRate, false);
+            audioClip.SetData(soundData.Sound, 0);
 
             MultiTypeCache.AudioClips.Add(fileName, audioClip);
             return audioClip;

@@ -7379,7 +7379,9 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8228542742798409357, guid: 30a1e77eafe8f644dba70315d5f67504, type: 3}
       propertyPath: m_text
-      value: Locked door demo
+      value: 'Locked door demo
+
+        (Combination is: LLRRL)'
       objectReference: {fileID: 0}
     - target: {fileID: 8228542742798409357, guid: 30a1e77eafe8f644dba70315d5f67504, type: 3}
       propertyPath: m_fontSize

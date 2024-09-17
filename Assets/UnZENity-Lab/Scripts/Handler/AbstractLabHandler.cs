@@ -11,7 +11,7 @@ namespace GUZ.Lab.Handler
         public abstract void Bootstrap();
         
         
-        protected void SpawnInteractable(string mdlName, PrefabType type, GameObject parentGo, Vector3 position = default, Quaternion rotation = default)
+        protected GameObject SpawnInteractable(string mdlName, PrefabType type, GameObject parentGo, Vector3 position = default, Quaternion rotation = default)
         {
             var prefab = ResourceLoader.TryGetPrefabObject(type);
             var mdl = ResourceLoader.TryGetModel(mdlName);
@@ -19,10 +19,10 @@ namespace GUZ.Lab.Handler
             if (mdl == null)
             {
                 Debug.LogError("LabInteractableHandler: Element has no .mdl file: " + mdlName);
-                return;
+                return null;
             }
 
-            MeshFactory.CreateVob(mdlName, mdl, position, rotation,
+            return MeshFactory.CreateVob(mdlName, mdl, position, rotation,
                 rootGo: prefab, parent: parentGo, useTextureArray: false);
         }
         

@@ -1,3 +1,4 @@
+using GUZ.VR.Components.VobDoor;
 using GUZ.VR.Manager;
 using GUZ.VR.Properties.VobItem;
 using UnityEngine;
@@ -43,20 +44,21 @@ namespace GUZ.VR.Components.VobItem
             
             CalculateRotation();
         }
- 
+
+        /// <summary>
+        /// Set start rotation of hand(s) which grab item. (As we have 2 hands, we need to check via array[2] for both items always!
+        /// </summary>
         private void StartTracking()
         {
             _initialZRotation = VRPlayerManager.GrabbedItemLeft.transform.rotation.eulerAngles.z;
         }
 
+        /// <summary>
+        /// 1. If rotation is ~45° right/left - trigger information to currently active door
+        /// 2. Once we're in a left/right state, rotate back to ~10° where the status gets cleared and a new left/right can be triggered
+        /// </summary>
         private void CalculateRotation()
         {
-            /**
-             * 0. Set start rotation of hand(s) which grab item. (As we have 2 hands, we need to check via array[2] for both items always!
-             * 1.a If rotation is ~45° right - trigger right-information to currently active door
-             * 1.b ~45° left - same
-             */
-
             var rotationDiff = Mathf.DeltaAngle(_initialZRotation,
                 VRPlayerManager.GrabbedItemLeft.transform.rotation.eulerAngles.z);
 
@@ -66,15 +68,11 @@ namespace GUZ.VR.Components.VobItem
                 case RotationState.Normal:
                     if (rotationDiff >= 45f)
                     {
-                        _handRotationState = RotationState.Right;
-                        // Trigger right-information to currently active door
-                        _properties.ActiveDoorLock.UpdateCombination(false);
+                        UpdateStatus(RotationState.Right);
                     }
                     else if (rotationDiff <= -45f)
                     {
-                        _handRotationState = RotationState.Left;
-                        // Trigger left-information to currently active door
-                        _properties.ActiveDoorLock.UpdateCombination(true);
+                        UpdateStatus(RotationState.Left);
                     }
                     break;
                 case RotationState.Left:
@@ -88,6 +86,28 @@ namespace GUZ.VR.Components.VobItem
                     {
                         _handRotationState = RotationState.Normal;
                     }
+                    break;
+            }
+        }
+
+        private void UpdateStatus(RotationState state)
+        {
+            _handRotationState = state;
+
+            // Trigger right/left information to currently active door
+            var doorState = _properties.ActiveDoorLock.UpdateCombination(_handRotationState == RotationState.Left);
+
+            switch (doorState)
+            {
+                case VRDoorLockInteraction.DoorLockStatus.StepFailure:
+                    // FIXME - Handle break of a Lock Pick based on heros skill level
+                    break;
+                case VRDoorLockInteraction.DoorLockStatus.StepSuccess:
+                    break;
+                case VRDoorLockInteraction.DoorLockStatus.Unlocked:
+                    // We immediately reset current door as it's unlocked, and we don't need to use lock pick any longer.
+                    _properties.IsInsideLock = false;
+                    _properties.ActiveDoorLock = null;
                     break;
             }
         }

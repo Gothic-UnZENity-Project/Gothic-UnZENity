@@ -231,12 +231,6 @@ MonoBehaviour:
   UnSocketed:
     m_PersistentCalls:
       m_Calls: []
-  DistanceGrabbed:
-    m_PersistentCalls:
-      m_Calls: []
-  DistanceReleased:
-    m_PersistentCalls:
-      m_Calls: []
   GrabPointsMeta: []
   Grabbers: []
   HandGrabbers: []
@@ -503,7 +497,7 @@ Transform:
   m_GameObject: {fileID: 3397705996622112300}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.25, y: 0.75, z: 0}
+  m_LocalPosition: {x: -0.5, y: 0.75, z: 0.15}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -521,6 +515,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9d17628e45ec40eda22323a8f4579285, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _rootGO: {fileID: 6503575194566409312}
   _properties: {fileID: 2607151182155886275}
   _audioSource: {fileID: 4670513280573296585}
 --- !u!135 &827370569709809547
