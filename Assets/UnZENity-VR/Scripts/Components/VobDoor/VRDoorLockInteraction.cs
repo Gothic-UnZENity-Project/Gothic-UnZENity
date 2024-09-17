@@ -2,6 +2,8 @@
 using GUZ.Core.Creator.Sounds;
 using GUZ.Core.Globals;
 using GUZ.Core.Properties;
+using GUZ.VR.Components.VobItem;
+using GUZ.VR.Manager;
 using GUZ.VR.Properties.VobItem;
 using UnityEngine;
 
@@ -40,12 +42,25 @@ namespace GUZ.VR.Components.VobDoor
                 return;
             }
 
+            _combinationPos = 0;
             PlaySound(Constants.Daedalus.DoorLockSoundName);
-            
+
             var lockPickProperties = other.gameObject.GetComponentInParent<VRVobLockPickProperties>();
             lockPickProperties.IsInsideLock = true;
             lockPickProperties.ActiveDoorLock = this;
-            _combinationPos = 0;
+
+            if (VRPlayerManager.GrabbedItemLeft?.GetComponentInChildren<VRLockPickInteraction>().gameObject == other.gameObject)
+            {
+                lockPickProperties.HoldingHand = VRPlayerManager.GrabbedItemLeft!.transform;
+            }
+            else if (VRPlayerManager.GrabbedObjectRight?.GetComponentInChildren<VRLockPickInteraction>().gameObject == other.gameObject)
+            {
+                lockPickProperties.HoldingHand = VRPlayerManager.GrabbedObjectRight!.transform;
+            }
+            else
+            {
+                Debug.LogError($"VRDoorLockInteraction: No hand found for grabbed object >{other.gameObject.name}<.", other.gameObject);
+            }
         }
         
         private void OnTriggerExit(Collider other)
@@ -60,6 +75,7 @@ namespace GUZ.VR.Components.VobDoor
             var lockPickProperties = other.gameObject.GetComponentInParent<VRVobLockPickProperties>();
             lockPickProperties.IsInsideLock = false;
             lockPickProperties.ActiveDoorLock = null;
+            lockPickProperties.HoldingHand = null;
         }
 
         public DoorLockStatus UpdateCombination(bool isLeft)

@@ -1,6 +1,5 @@
 #if GUZ_HVR_INSTALLED
 using GUZ.VR.Components.VobDoor;
-using GUZ.VR.Manager;
 using GUZ.VR.Properties.VobItem;
 using UnityEngine;
 
@@ -11,7 +10,6 @@ namespace GUZ.VR.Components.VobItem
         [SerializeField] private VRVobLockPickProperties _properties;
  
         private bool _firstFrameHandlingStarted = true;
-        private GameObject _handGrabber;
         private float _initialZRotation;
 
         /// <summary>
@@ -51,7 +49,7 @@ namespace GUZ.VR.Components.VobItem
         /// </summary>
         private void StartTracking()
         {
-            _initialZRotation = VRPlayerManager.GrabbedItemLeft.transform.rotation.eulerAngles.z;
+            _initialZRotation = _properties.HoldingHand.rotation.eulerAngles.z;
         }
 
         /// <summary>
@@ -61,7 +59,7 @@ namespace GUZ.VR.Components.VobItem
         private void CalculateRotation()
         {
             var rotationDiff = Mathf.DeltaAngle(_initialZRotation,
-                VRPlayerManager.GrabbedItemLeft.transform.rotation.eulerAngles.z);
+                _properties.HoldingHand.transform.rotation.eulerAngles.z);
 
             // Check for specific rotation thresholds
             switch (_handRotationState)
@@ -109,6 +107,7 @@ namespace GUZ.VR.Components.VobItem
                     // We immediately reset current door as it's unlocked, and we don't need to use lock pick any longer.
                     _properties.IsInsideLock = false;
                     _properties.ActiveDoorLock = null;
+                    _properties.HoldingHand = null;
                     break;
             }
         }

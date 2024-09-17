@@ -12,8 +12,14 @@ namespace GUZ.VR.Manager
     {
         public static GameObject GrabbedItemLeft;
         public static GameObject GrabbedObjectRight;
-        
-        public static bool DualGrabbedObject => GrabbedItemLeft != null && GrabbedItemLeft == GrabbedObjectRight;
+
+        public enum HandType
+        {
+            Left,
+            Right
+        }
+
+        public static bool IsDualGrabbed => GrabbedItemLeft != null && GrabbedItemLeft == GrabbedObjectRight;
 
         public static void SetGrab(HVRGrabberBase grabber, HVRGrabbable grabbable)
         {
