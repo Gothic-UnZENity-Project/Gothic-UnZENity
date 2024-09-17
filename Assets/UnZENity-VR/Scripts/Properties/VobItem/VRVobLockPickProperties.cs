@@ -1,4 +1,5 @@
-﻿using GUZ.VR.Components.VobDoor;
+﻿#if GUZ_HVR_INSTALLED
+using GUZ.VR.Components.VobDoor;
 using UnityEngine;
 
 namespace GUZ.VR.Properties.VobItem
@@ -10,3 +11,4 @@ namespace GUZ.VR.Properties.VobItem
         public Transform HoldingHand;
     }
 }
+#endif
