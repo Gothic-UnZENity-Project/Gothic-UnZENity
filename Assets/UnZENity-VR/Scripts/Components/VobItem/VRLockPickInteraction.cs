@@ -1,3 +1,4 @@
+#if GUZ_HVR_INSTALLED
 using GUZ.VR.Components.VobDoor;
 using GUZ.VR.Manager;
 using GUZ.VR.Properties.VobItem;
@@ -113,3 +114,4 @@ namespace GUZ.VR.Components.VobItem
         }
     }
 }
+#endif

@@ -1,4 +1,5 @@
-﻿using GUZ.Core.Creator.Sounds;
+﻿#if GUZ_HVR_INSTALLED
+using GUZ.Core.Creator.Sounds;
 using GUZ.Core.Globals;
 using GUZ.Core.Properties;
 using GUZ.VR.Properties.VobItem;
@@ -119,3 +120,5 @@ namespace GUZ.VR.Components.VobDoor
         }
     }
 }
+#endif
+
