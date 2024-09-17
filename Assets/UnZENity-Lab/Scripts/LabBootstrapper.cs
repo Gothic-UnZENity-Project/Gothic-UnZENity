@@ -10,6 +10,7 @@ using GUZ.Core.World;
 using GUZ.Lab.Handler;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Logger = ZenKit.Logger;
 
 namespace GUZ.Lab
 {
@@ -57,6 +58,9 @@ namespace GUZ.Lab
         {
             GameGlobals.Instance = this;
 
+            Logger.Set(Config.ZenKitLogLevel, Logging.OnZenKitLogMessage);
+            DirectMusic.Logger.Set(Config.DirectMusicLogLevel, Logging.OnDirectMusicLogMessage);
+            
             _settings = GameSettings.Load();
             _textureManager = GetComponent<TextureManager>();
             _fontManager = GetComponent<FontManager>();
