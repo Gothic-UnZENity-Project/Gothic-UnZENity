@@ -1,6 +1,7 @@
 using GUZ.Core.Context;
+#if GUZ_HVR_INSTALLED
 using GUZ.VR.Adapter;
-#if !GUZ_HVR_INSTALLED
+#else
 using System;
 #endif
 

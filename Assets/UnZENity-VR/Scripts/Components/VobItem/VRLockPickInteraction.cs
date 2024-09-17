@@ -58,8 +58,10 @@ namespace GUZ.VR.Components.VobItem
         /// </summary>
         private void CalculateRotation()
         {
+            Debug.Log($"InitialRotZ={_initialZRotation}, CurrentRotZ={_properties.HoldingHand.rotation.eulerAngles.z}");
+
             var rotationDiff = Mathf.DeltaAngle(_initialZRotation,
-                _properties.HoldingHand.transform.rotation.eulerAngles.z);
+                _properties.HoldingHand.rotation.eulerAngles.z);
 
             // Check for specific rotation thresholds
             switch (_handRotationState)
@@ -99,7 +101,7 @@ namespace GUZ.VR.Components.VobItem
             switch (doorState)
             {
                 case VRDoorLockInteraction.DoorLockStatus.StepFailure:
-                    // FIXME - Handle break of a Lock Pick based on heros skill level
+                    // FIXME - Handle break of a Lock Pick based on hero's skill level
                     break;
                 case VRDoorLockInteraction.DoorLockStatus.StepSuccess:
                     break;
