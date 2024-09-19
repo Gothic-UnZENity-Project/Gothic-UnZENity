@@ -53,4 +53,6 @@ To assist consistent development styles, we:
 By contributing, you agree that your contributions will be licensed under its GPL-3.0 License.
 
 ### Becoming a maintainer
-If you want to build Gothic-UnZENity together, then you're encouraged to join our active developer base. Feel free to reach out to #JaXt0r on Discord.
+> You'll find our current feature development status at the [Projects](https://github.com/Gothic-UnZENity-Project/Gothic-UnZENity/projects?query=is%3Aopen) page.
+
+If you want to build Gothic-UnZENity together, then you're encouraged to join our active developer base. Feel free to grab a ticket you'd like to drive and reach out to #JaXt0r on Discord for further questions.
