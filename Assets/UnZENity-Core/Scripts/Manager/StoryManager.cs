@@ -25,7 +25,7 @@ namespace GUZ.Core.Manager
                 return;
             }
 
-            GuzContext.InteractionAdapter.IntroduceChapter(
+            GUZContext.InteractionAdapter.IntroduceChapter(
                 _chapterSwitchData.chapter,
                 _chapterSwitchData.text,
                 _chapterSwitchData.texture,

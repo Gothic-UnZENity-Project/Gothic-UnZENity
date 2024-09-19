@@ -43,8 +43,8 @@ namespace GUZ.Core.Manager
             // We are already inside a sub-dialog
             if (GameData.Dialogs.CurrentDialog.Options.Any())
             {
-                GuzContext.DialogAdapter.FillDialog(properties.NpcInstance.Index, GameData.Dialogs.CurrentDialog.Options);
-                GuzContext.DialogAdapter.ShowDialog(npcGo);
+                GUZContext.DialogAdapter.FillDialog(properties.NpcInstance.Index, GameData.Dialogs.CurrentDialog.Options);
+                GUZContext.DialogAdapter.ShowDialog(npcGo);
             }
             // There is at least one important entry, the NPC wants to talk to the hero about.
             else if (initialDialogStarting && TryGetImportant(properties.Dialogs, out var infoInstance))
@@ -81,8 +81,8 @@ namespace GUZ.Core.Manager
                 }
 
                 selectableDialogs = selectableDialogs.OrderBy(d => d.Nr).ToList();
-                GuzContext.DialogAdapter.FillDialog(properties.NpcInstance.Index, selectableDialogs);
-                GuzContext.DialogAdapter.ShowDialog(npcGo);
+                GUZContext.DialogAdapter.FillDialog(properties.NpcInstance.Index, selectableDialogs);
+                GUZContext.DialogAdapter.ShowDialog(npcGo);
             }
         }
 
@@ -220,7 +220,7 @@ namespace GUZ.Core.Manager
             GameData.Dialogs.CurrentDialog.Options.Clear();
             GameData.Dialogs.IsInDialog = false;
 
-            GuzContext.DialogAdapter.HideDialog();
+            GUZContext.DialogAdapter.HideDialog();
         }
 
         private static void CallInformation(int npcInstanceIndex, int information, bool isMainDialog)
@@ -234,7 +234,7 @@ namespace GUZ.Core.Manager
                     .First(d => d.Information == information);
             }
 
-            GuzContext.DialogAdapter.HideDialog();
+            GUZContext.DialogAdapter.HideDialog();
 
             // We always need to set "self" before executing any Daedalus function.
             GameData.GothicVm.GlobalSelf = npcData.instance;

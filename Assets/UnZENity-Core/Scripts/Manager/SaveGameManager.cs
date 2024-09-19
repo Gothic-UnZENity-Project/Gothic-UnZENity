@@ -162,7 +162,7 @@ namespace GUZ.Core.Manager
 
         private static string GetSaveGamePath(int folderSaveId)
         {
-            var gothicDir = GuzContext.GameVersionAdapter.RootPath;
+            var gothicDir = GUZContext.GameVersionAdapter.RootPath;
             return Path.GetFullPath(Path.Join(gothicDir, $"Saves/savegame{folderSaveId}"));
         }
     }

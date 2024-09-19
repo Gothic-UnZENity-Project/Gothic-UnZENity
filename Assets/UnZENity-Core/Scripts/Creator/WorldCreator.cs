@@ -426,7 +426,7 @@ namespace GUZ.Core.Creator
 
         private static void WorldLoaded(GameObject playerGo)
         {
-            GuzContext.InteractionAdapter.SetTeleportationArea(_worldGo);
+            GUZContext.InteractionAdapter.SetTeleportationArea(_worldGo);
         }
 
 

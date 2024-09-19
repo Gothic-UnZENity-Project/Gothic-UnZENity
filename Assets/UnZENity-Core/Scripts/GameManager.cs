@@ -61,7 +61,9 @@ namespace GUZ.Core
             GameGlobals.Instance = this;
             
             // Set Context as early as possible to ensure everything else boots based on the activated modules.
-            GuzContext.SetContext(Config.GameControls, Config.GameVersion);
+            GUZContext.SetControlContext(Config.GameControls);
+            GUZContext.SetGameVersionContext(Config.GameVersion);
+            
             Settings = GameSettings.Load(Config.GameVersion);
             
             MultiTypeCache.Init();
@@ -106,7 +108,7 @@ namespace GUZ.Core
             // Just in case we forgot to disable it in scene view. ;-)
             InvalidInstallationPathMessage.SetActive(false);
 
-            Load(GuzContext.GameVersionAdapter.RootPath);
+            Load(GUZContext.GameVersionAdapter.RootPath);
         }
         
         private void Load(string gothicRootPath)

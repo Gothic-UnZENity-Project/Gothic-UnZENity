@@ -9,7 +9,6 @@ using GUZ.Core.Creator.Meshes.V2;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
-using GUZ.Core.Manager.Settings;
 using GUZ.Core.Properties;
 using GUZ.Core.Vm;
 using GUZ.Core.Vob;
@@ -63,7 +62,7 @@ namespace GUZ.Core.Creator
 
         private static void PostWorldLoaded(GameObject playerGo)
         {
-            GuzContext.InteractionAdapter.SetTeleportationArea(_teleportGo);
+            GUZContext.InteractionAdapter.SetTeleportationArea(_teleportGo);
         }
 
         public static async Task CreateAsync(GameConfiguration config, LoadingManager loading, List<IVirtualObject> vobs, int vobsPerFrame)

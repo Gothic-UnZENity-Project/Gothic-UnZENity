@@ -8,15 +8,20 @@ namespace GUZ.Flat
     /// </summary>
     public class FlatContextBootstrap : AbstractContextBootstrap
     {
-        protected override void RegisterModule(GuzContext.Controls controls, GameVersion _)
+        protected override void RegisterControlModule(GUZContext.Controls controls)
         {
-            if (controls != GuzContext.Controls.Flat)
+            if (controls != GUZContext.Controls.Flat)
             {
                 return;
             }
 
-            GuzContext.InteractionAdapter = new FlatInteractionAdapter();
-            GuzContext.DialogAdapter = null; // TBD
+            GUZContext.InteractionAdapter = new FlatInteractionAdapter();
+            GUZContext.DialogAdapter = null; // TBD
+        }
+
+        protected override void RegisterGameVersionModule(GameVersion version)
+        {
+            // NOP
         }
     }
 }

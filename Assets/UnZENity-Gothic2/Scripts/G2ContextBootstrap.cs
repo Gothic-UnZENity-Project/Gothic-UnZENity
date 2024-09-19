@@ -8,14 +8,19 @@ namespace GUZ.G2
     /// </summary>
     public class G2ContextBootstrap : AbstractContextBootstrap
     {
-        protected override void RegisterModule(GuzContext.Controls _, GameVersion version)
+        protected override void RegisterControlModule(GUZContext.Controls controls)
+        {
+            // NOP
+        }
+
+        protected override void RegisterGameVersionModule(GameVersion version)
         {
             if (version != GameVersion.Gothic2)
             {
                 return;
             }
 
-            GuzContext.GameVersionAdapter = new G2Adapter();
+            GUZContext.GameVersionAdapter = new G2Adapter();
         }
     }
 }

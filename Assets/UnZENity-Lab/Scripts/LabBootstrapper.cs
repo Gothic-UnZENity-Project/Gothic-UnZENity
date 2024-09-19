@@ -106,7 +106,7 @@ namespace GUZ.Lab
 
         private void BootLab()
         {
-            var playerGo = GuzContext.InteractionAdapter.CreatePlayerController(SceneManager.GetActiveScene());
+            var playerGo = GUZContext.InteractionAdapter.CreatePlayerController(SceneManager.GetActiveScene());
             _deviceSimulatorManager.AddVRDeviceSimulator();
             NpcHelper.CacheHero(playerGo);
         }

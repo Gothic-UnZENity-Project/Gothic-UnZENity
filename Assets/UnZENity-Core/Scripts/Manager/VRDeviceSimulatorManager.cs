@@ -8,7 +8,7 @@ namespace GUZ.Core.Manager
 
         public VRDeviceSimulatorManager(GameConfiguration config)
         {
-            _enabled = config.GameControls == GuzContext.Controls.VR && config.EnableVRDeviceSimulator;
+            _enabled = config.GameControls == GUZContext.Controls.VR && config.EnableVRDeviceSimulator;
         }
 
         public void Init()
@@ -24,7 +24,7 @@ namespace GUZ.Core.Manager
                 return;
             }
 
-            GuzContext.InteractionAdapter.CreateVRDeviceSimulator();
+            GUZContext.InteractionAdapter.CreateVRDeviceSimulator();
         }
     }
 }
