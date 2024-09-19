@@ -5,7 +5,7 @@
 [![Release](https://img.shields.io/github/release-pre/Gothic-UnZENity-Project/Gothic-UnZENity)](https://github.com/Gothic-UnZENity-Project/Gothic-UnZENity/releases/latest)
 
 <p align="center">
-  <img src="./Docs/development/images/Gothic-UnZENity-logo.png" width="300" alt="Gothic-UnZENity logo" />
+  <img src="./Docs/Gothic-UnZENity-logo.png" width="300" alt="Gothic-UnZENity logo" />
 </p>
 Fan project recreating Piranha Bytes' evergreens Gothic I and Gothic II in Unity Engine. Currently focussing on VR.
 
@@ -16,7 +16,7 @@ For instructions on playing the game or adding contributions, please check our [
 
 ## Roadmap
 
-![Gothic-UnZENity - Roadmap](./Docs/development/diagrams/Gothic-UnZENity-roadmap.png)
+![Gothic-UnZENity - Roadmap](./Docs/Gothic-UnZENity-roadmap.png)
 
 (You'll find our current feature development status at the [Projects](https://github.com/Gothic-UnZENity-Project/Gothic-UnZENity/projects?query=is%3Aopen) page.)
 
@@ -32,7 +32,7 @@ If you're interested in Core Unity development, C# coding, or you're seasoned wi
 
 ## Workflow/Gameflow
 
-![data flow](Docs/development/diagrams/data-flow.drawio.png)
+![data flow](Docs/data-flow.drawio.png)
 
 
 1. Gothic-UnZENity requests data from ZenKit.dll (.net standard 2.1 shared library which is cross-OS compatibel).
