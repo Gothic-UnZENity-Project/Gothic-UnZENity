@@ -44,7 +44,7 @@ namespace GUZ.Core.Manager
             var playerProperties = playerGo.GetComponent<NpcProperties>();
 
             var heroInstance = GameData.GothicVm.AllocInstance<NpcInstance>(GameGlobals.Settings.IniPlayerInstanceName);
-            LookupCache.NpcCache[heroInstance.Index] = (instance: heroInstance, properties: playerProperties);
+            MultiTypeCache.NpcCache[heroInstance.Index] = (instance: heroInstance, properties: playerProperties);
 
             GameData.GothicVm.InitInstance(heroInstance);
             GameData.GothicVm.GlobalHero = heroInstance;
