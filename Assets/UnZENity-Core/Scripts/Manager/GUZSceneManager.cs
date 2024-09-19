@@ -19,7 +19,7 @@ namespace GUZ.Core.Manager
         public GameObject InteractionManager;
 
 
-        private static readonly string _generalSceneName = Constants.SceneGeneral;
+        private static readonly string _generalSceneName = Constants.ScenePlayer;
         private const int _ensureLoadingBarDelayMilliseconds = 5;
 
         private string _newWorldName;
@@ -248,7 +248,7 @@ namespace GUZ.Core.Manager
                     SceneManager.SetActiveScene(scene);
                     GlobalEventDispatcher.LoadingSceneLoaded.Invoke();
                     break;
-                case Constants.SceneGeneral:
+                case Constants.ScenePlayer:
                     SceneManager.MoveGameObjectToScene(InteractionManager, _generalScene);
 
                     var playerGo = GuzContext.InteractionAdapter.CreatePlayerController(scene, _heroStartPosition, _heroStartRotation);

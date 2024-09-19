@@ -59,7 +59,7 @@ namespace GUZ.VR.Components.UI
         public void HideDialog()
         {
             _dialogRoot.SetActive(false);
-            _dialogRoot.SetParent(SceneManager.GetSceneByName(Constants.SceneGeneral).GetRootGameObjects()[0], worldPositionStays: true);
+            _dialogRoot.SetParent(SceneManager.GetSceneByName(Constants.ScenePlayer).GetRootGameObjects()[0], worldPositionStays: true);
         }
         
         public void FillDialog(int npcInstanceIndex, List<DialogOption> dialogOptions)

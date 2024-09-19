@@ -20,7 +20,7 @@ namespace GUZ.VR
             // The component is stored in General scene. We therefore load it when accessing for the first time.
             if (_dialogComponent == null)
             {
-                var scene = SceneManager.GetSceneByName(Constants.SceneGeneral);
+                var scene = SceneManager.GetSceneByName(Constants.ScenePlayer);
 
                 // Try a second time with main scene. Used for Lab.
                 if (!scene.IsValid())

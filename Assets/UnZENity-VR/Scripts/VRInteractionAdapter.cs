@@ -58,7 +58,7 @@ namespace GUZ.VR
         public void CreateVRDeviceSimulator()
         {
             // As we reference components from HVRPlayer inside HVRSimulator, we need to create the SimulatorGO on the same scene.
-            var generalScene = SceneManager.GetSceneByName(Constants.SceneGeneral);
+            var generalScene = SceneManager.GetSceneByName(Constants.ScenePlayer);
             var mainMenuScene = SceneManager.GetSceneByName(Constants.SceneMainMenu);
             var labScene = SceneManager.GetSceneByName(Constants.SceneLab);
 
@@ -104,7 +104,7 @@ namespace GUZ.VR
 
         public void IntroduceChapter(string chapter, string text, string texture, string wav, int time)
         {
-            var generalScene = SceneManager.GetSceneByName(Constants.SceneGeneral);
+            var generalScene = SceneManager.GetSceneByName(Constants.ScenePlayer);
             
             // Check if we already loaded the Chapter change prefab
             GameObject chapterPrefab = generalScene.GetRootGameObjects()
