@@ -1,18 +1,21 @@
 using GUZ.Core.Caches;
 using GUZ.Core.Context;
 using GUZ.Core.Debugging;
+using GUZ.Core.Extensions;
 using GUZ.Core.Manager;
 using GUZ.Core.Manager.Culling;
+using GUZ.Core.Manager.Scenes;
 using GUZ.Core.Manager.Settings;
 using GUZ.Core.Util;
 using GUZ.Core.World;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using Logger = ZenKit.Logger;
 
 namespace GUZ.Core
 {
     [RequireComponent(typeof(TextureManager), typeof(FontManager))]
-    public class GameManager : MonoBehaviour, ICoroutineManager, IGlobalDataProvider
+    public class GameManager : SingletonBehaviour<GameManager>, ICoroutineManager, IGlobalDataProvider
     {
         [field: SerializeField] public GameConfiguration Config { get; set; }
 
@@ -54,16 +57,17 @@ namespace GUZ.Core
         public VobSoundCullingManager SoundCulling { get; private set; }
         
 
-        private void Awake()
+        protected override void Awake()
         {
+            base.Awake();
+
             _fileLoggingHandler = new FileLoggingHandler();
 
             GameGlobals.Instance = this;
             
             // Set Context as early as possible to ensure everything else boots based on the activated modules.
             GUZContext.SetControlContext(Config.GameControls);
-            GUZContext.SetGameVersionContext(Config.GameVersion);
-            
+
             Settings = GameSettings.Load(Config.GameVersion);
             
             MultiTypeCache.Init();
@@ -89,6 +93,20 @@ namespace GUZ.Core
 
         private void Start()
         {
+            InitPhase1();
+        }
+
+        /// <summary>
+        /// Init when game starts and Controls are set already, but no Gothic game version is selected so far.
+        /// </summary>
+        private void InitPhase1()
+        {
+            // Call init function of BootstrapSceneManager directly as it kicks off cleaning up of further loaded scenes.
+            SceneManager.GetActiveScene().GetComponentInChildren<BootstrapSceneManager>()!.Init();
+
+            SceneManager.sceneLoaded += OnSceneLoaded;
+            SceneManager.sceneUnloaded += OnSceneUnloaded;
+
             Logger.Set(Config.ZenKitLogLevel, Logging.OnZenKitLogMessage);
             DirectMusic.Logger.Set(Config.DirectMusicLogLevel, Logging.OnDirectMusicLogMessage);
 
@@ -98,21 +116,25 @@ namespace GUZ.Core
             NpcMeshCulling.Init();
             SoundCulling.Init();
             Time.Init();
-            Video.Init();
             Sky.Init();
             _playerManager.Init();
             _vrSimulatorManager.Init();
-            Scene.Init();
+            // Scene.Init();
             Routines.Init();
 
             // Just in case we forgot to disable it in scene view. ;-)
             InvalidInstallationPathMessage.SetActive(false);
-
-            Load(GUZContext.GameVersionAdapter.RootPath);
         }
-        
-        private void Load(string gothicRootPath)
+
+        /// <summary>
+        /// Once Gothic version is selected, we can now initialize remaining managers.
+        /// </summary>
+        private void InitPhase2()
         {
+            GUZContext.SetGameVersionContext(Config.GameVersion);
+
+            var gothicRootPath = GUZContext.GameVersionAdapter.RootPath;
+
             // If the Gothic installation directory is not set, show an error message and exit.
             if (!Settings.CheckIfGothicInstallationExists(gothicRootPath))
             {
@@ -121,10 +143,11 @@ namespace GUZ.Core
             }
 
             // Otherwise, continue loading Gothic.
-            
+
             ResourceLoader.Init(gothicRootPath);
 
             _gameMusicManager.Init();
+            Video.Init();
 
             GuzBootstrapper.BootGothicUnZeNity(Config, gothicRootPath);
             Scene.LoadStartupScenes();
@@ -133,6 +156,34 @@ namespace GUZ.Core
             {
                 GlobalEventDispatcher.WorldSceneLoaded.AddListener(() => { _barrierManager.CreateBarrier(); });
             }
+        }
+
+        public void LoadScene(string sceneName, bool unloadCurrentActiveScene)
+        {
+            if (unloadCurrentActiveScene)
+            {
+                SceneManager.UnloadSceneAsync(SceneManager.GetActiveScene());
+            }
+
+            SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
+        }
+
+        private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+        {
+            Debug.Log("Scene loaded: " + scene.name);
+            var sceneManager = scene.GetComponentInChildren<ISceneManager>();
+
+            if (sceneManager == null)
+            {
+                Debug.LogError($"{nameof(ISceneManager)} for scene >{scene.name}< not found. Game won't proceed as bootstrapper for scene is invalid/non-existant.");
+                return;
+            }
+            sceneManager.Init();
+        }
+
+        private void OnSceneUnloaded(Scene scene)
+        {
+
         }
 
         private void Update()

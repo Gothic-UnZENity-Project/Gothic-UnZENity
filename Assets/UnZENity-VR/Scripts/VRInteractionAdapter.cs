@@ -57,6 +57,11 @@ namespace GUZ.VR
 
         public void CreateVRDeviceSimulator()
         {
+            if (!GameGlobals.Config.EnableVRDeviceSimulator)
+            {
+                return;
+            }
+
             // As we reference components from HVRPlayer inside HVRSimulator, we need to create the SimulatorGO on the same scene.
             var generalScene = SceneManager.GetSceneByName(Constants.ScenePlayer);
             var mainMenuScene = SceneManager.GetSceneByName(Constants.SceneMainMenu);
