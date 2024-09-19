@@ -15,7 +15,7 @@ Fan project recreating Piranha Bytes' evergreens Gothic I and Gothic II in Unity
 > For instructions on playing the game or adding contributions, please check our [Wiki](https://github.com/Gothic-UnZENity-Project/Gothic-UnZENity/wiki).
 
 > [!TIP]
-> 🤫 Shortcut to the installation instructions is [here](https://github.com/Gothic-UnZENity-Project/Gothic-UnZENity/wiki/Player%27s-Guide#installing-the-game-assets). You can thank me later. 😉
+> 🤫 Shortcut to the installation instructions is [here](https://github.com/Gothic-UnZENity-Project/Gothic-UnZENity/wiki/Player%27s-Guide#setup). You can thank me later. 😉
 
 
 ## Roadmap
