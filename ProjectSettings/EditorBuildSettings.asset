@@ -12,7 +12,7 @@ EditorBuildSettings:
     path: Assets/UnZENity-Core/Scenes/Logo.unity
     guid: 1115c2e9a64d55d4590acb2de3e58a61
   - enabled: 1
-    path: Assets/UnZENity-Core/Scenes/General.unity
+    path: Assets/UnZENity-Core/Scenes/Player.unity
     guid: 7fb2dedbd5edb7d4a92ee584eec7cc33
   - enabled: 1
     path: Assets/UnZENity-Core/Scenes/Loading.unity
