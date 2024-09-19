@@ -1,4 +1,5 @@
 using GUZ.Core.Context;
+using ZenKit;
 #if !GUZ_HVR_INSTALLED
 using System;
 #endif
@@ -10,7 +11,7 @@ namespace GUZ.VR
     /// </summary>
     public class VRContextBootstrap : AbstractContextBootstrap
     {
-        protected override void RegisterModule(GuzContext.Controls controls)
+        protected override void RegisterModule(GuzContext.Controls controls, GameVersion _)
         {
             if (controls != GuzContext.Controls.VR)
             {

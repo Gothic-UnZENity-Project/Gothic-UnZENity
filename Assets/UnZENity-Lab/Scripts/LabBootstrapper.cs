@@ -62,16 +62,16 @@ namespace GUZ.Lab
         {
             GameGlobals.Instance = this;
 
-            _settings = GameSettings.Load();
+            _settings = GameSettings.Load(Config.GameVersion);
             _textureManager = GetComponent<TextureManager>();
             _fontManager = GetComponent<FontManager>();
-            _sceneManager = new GuzSceneManager(Config, null, null);
+            _sceneManager = new GuzSceneManager(Config, null, null, null);
             _deviceSimulatorManager = new VRDeviceSimulatorManager(Config);
             _npcRoutineManager = new RoutineManager(Config);
             _gameMusicManager = new MusicManager(Config);
             _videoManager = new VideoManager(Config);
 
-            ResourceLoader.Init(_settings.GothicIPath);
+            ResourceLoader.Init(_settings.Gothic1Path);
             _sceneManager.Init();
             _gameMusicManager.Init();
             _npcRoutineManager.Init();
@@ -91,7 +91,7 @@ namespace GUZ.Lab
             _isBooted = true;
 
             var settings = _settings;
-            GuzBootstrapper.BootGothicUnZeNity(Config, settings.GothicIPath);
+            GuzBootstrapper.BootGothicUnZeNity(Config, settings.Gothic1Path);
 
             BootLab();
 

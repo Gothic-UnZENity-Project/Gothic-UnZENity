@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using GUZ.Core.Caches;
 using GUZ.Core.Extensions;
@@ -18,25 +19,43 @@ namespace GUZ.Core.Manager
 {
     public static class NpcHelper
     {
+        /// <summary>
+        /// Ranges are in meter.
+        ///
+        /// FIXME - We should use PERC_ASSESSTALK range to leverage HVR's Grabbable hover and remote grab distance!
+        /// </summary>
+        public static readonly Dictionary<VmGothicEnums.PerceptionType, int> PerceptionRanges = new ();
+
+
         private const float _fpLookupDistance = 7f; // meter
+
 
         static NpcHelper()
         {
             GlobalEventDispatcher.GeneralSceneLoaded.AddListener(CacheHero);
         }
 
+        /// <summary>
+        /// We need to first Alloc() hero data space and put the instance to the cache.
+        /// Then we initialize it. (During Init, PC_HERO:Npc_Default->Prototype:Npc_Default will call SetTalentValue where we need the lookup to fetch the NpcInstance).
+        /// </summary>
         public static void CacheHero(GameObject playerGo)
         {
-            var heroIndex = GameData.GothicVm.GlobalHero!.Index;
             var playerProperties = playerGo.GetComponent<NpcProperties>();
 
-            // Set data for NPC.
-            var npcInstance = (NpcInstance)GameData.GothicVm.GlobalHero;
-            playerProperties.NpcInstance = npcInstance;
-            playerProperties.Head = Camera.main.transform;
+            var heroInstance = GameData.GothicVm.AllocInstance<NpcInstance>(GameGlobals.Settings.IniPlayerInstanceName);
+            MultiTypeCache.NpcCache[heroInstance.Index] = (instance: heroInstance, properties: playerProperties);
 
-            // Cache hero for future lookups.
-            MultiTypeCache.NpcCache[heroIndex] = (instance: npcInstance, properties: playerProperties);
+            GameData.GothicVm.InitInstance(heroInstance);
+            GameData.GothicVm.GlobalHero = heroInstance;
+
+            playerProperties.NpcInstance = heroInstance;
+            playerProperties.Head = Camera.main!.transform;
+        }
+
+        public static void ExtPErcSetRange(int perceptionId, int rangeInCm)
+        {
+            PerceptionRanges[(VmGothicEnums.PerceptionType)perceptionId] = rangeInCm / 100;
         }
 
         public static bool ExtIsMobAvailable(NpcInstance npcInstance, string vobName)
@@ -245,7 +264,10 @@ namespace GUZ.Core.Manager
             return (int)Vector3.Distance(npcPos, waypoint.Position);
         }
 
-        public static bool ExtNpcCanSeeNpc(NpcInstance self, NpcInstance other)
+        /// <summary>
+        /// freeLOS - Free Line Of Sight == ignoreFOV
+        /// </summary>
+        public static bool ExtNpcCanSeeNpc(NpcInstance self, NpcInstance other, bool freeLOS)
         {
             var selfProps = GetProperties(self);
             var otherProps = GetProperties(other);
@@ -261,14 +283,14 @@ namespace GUZ.Core.Manager
             var distanceToNpc = Vector3.Distance(selfProps.transform.position, otherHeadBone.position);
             var inSightRange =  distanceToNpc <= self.SensesRange;
 
+            var layersToIgnore = Constants.HandLayer | Constants.GrabbableLayer;
+            var hasLineOfSightCollisions = Physics.Linecast(selfHeadBone.position, otherHeadBone.position, layersToIgnore);
+
             var directionToTarget = (otherHeadBone.position - selfHeadBone.position).normalized;
             var angleToTarget = Vector3.Angle(selfHeadBone.forward, directionToTarget);
             var inFov = angleToTarget <= 50.0f; // OpenGothic assumes 100 fov for NPCs
 
-            var layersToIgnore = Constants.HandLayer | Constants.GrabbableLayer;
-            var hasLineOfSightCollisions = Physics.Linecast(selfHeadBone.position, otherHeadBone.position, layersToIgnore);
-
-            return inSightRange && inFov && !hasLineOfSightCollisions;
+            return inSightRange && !hasLineOfSightCollisions && (freeLOS || inFov);
         }
 
         public static void ExtNpcClearAiQueue(NpcInstance npc)
@@ -610,10 +632,18 @@ namespace GUZ.Core.Manager
             go.GetComponent<AiHandler>().StartRoutine(startRoutine.Action, startRoutine.Waypoint);
         }
 
-        public static void LoadHero()
+        public static void Init()
         {
-            var hero = GameData.GothicVm.InitInstance<NpcInstance>("hero");
-            GameData.GothicVm.GlobalHero = hero;
+            // Perceptions
+            var percInitSymbol = GameData.GothicVm.GetSymbolByName("InitPerceptions");
+            if (percInitSymbol == null)
+            {
+                Debug.LogError("InitPerceptions symbol not found.");
+            }
+            else
+            {
+                GameData.GothicVm.Call(percInitSymbol.Index);
+            }
         }
 
         public static GameObject GetHeroGameObject()

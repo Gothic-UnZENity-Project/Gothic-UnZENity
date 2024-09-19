@@ -47,7 +47,7 @@ We use GitHub issues to track public bugs. Report a bug by [opening a new issue]
 ### Use a Consistent Coding Style
 To assist consistent development styles, we:
 1. set up an .editorconfig file which is automatically used by Rider and VS22+
-2. wrote an exhaustive example at our docs: [Style-Guide.md](./Docs/development/style-guide.md)
+2. wrote an exhaustive example at our docs: [Coding Style Guide](https://github.com/Gothic-UnZENity-Project/Gothic-UnZENity/wiki/Coding-Style-Guide)
 
 ### License
 By contributing, you agree that your contributions will be licensed under its GPL-3.0 License.

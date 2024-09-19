@@ -17,8 +17,24 @@ namespace GUZ.Core.Manager
     public static class DialogManager
     {
         /// <summary>
+        /// Check if NPC has at least one dialog which isn't told and Hero should know about.
+        /// important
+        ///     - TRUE - check if there's one important dialog untold.
+        ///     - FALSE - check if there's one unimportant dialog untold. (unused in G1)
+        /// </summary>
+        public static bool ExtCheckInfo(NpcInstance npc, bool important)
+        {
+            if (!important)
+            {
+                // Don't worry. I assume this even makes no sense at all, as also the "END" dialog would always trigger a return true.
+                Debug.LogError("Npc_CheckInfo isn't implemented for important=0.");
+            }
+            return TryGetImportant(MultiTypeCache.NpcCache[npc.Index].properties.Dialogs, out _);
+        }
+
+        /// <summary>
         /// initialDialogStarting - We only stop current AI routine if this is the first time the dialog box opens/NPC
-        ///     talks important things. Otherwise the ZS_*_End will get called every time we re-open a dialog in between.
+        ///     talks important things. Otherwise, the ZS_*_End will get called every time we re-open a dialog in between.
         /// </summary>
         public static void StartDialog(GameObject npcGo, NpcProperties properties, bool initialDialogStarting)
         {

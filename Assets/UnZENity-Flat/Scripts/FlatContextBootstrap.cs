@@ -1,4 +1,5 @@
 ﻿using GUZ.Core.Context;
+using ZenKit;
 
 namespace GUZ.Flat
 {
@@ -7,7 +8,7 @@ namespace GUZ.Flat
     /// </summary>
     public class FlatContextBootstrap : AbstractContextBootstrap
     {
-        protected override void RegisterModule(GuzContext.Controls controls)
+        protected override void RegisterModule(GuzContext.Controls controls, GameVersion _)
         {
             if (controls != GuzContext.Controls.Flat)
             {
