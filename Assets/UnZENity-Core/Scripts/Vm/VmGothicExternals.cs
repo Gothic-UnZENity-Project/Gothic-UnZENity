@@ -172,7 +172,7 @@ namespace GUZ.Core.Vm
                 }
                 else
                 {
-                    var npcName = LookupCache.NpcCache[GameData.GothicVm.GlobalSelf.Index].properties.Go.name;
+                    var npcName = MultiTypeCache.NpcCache[GameData.GothicVm.GlobalSelf.Index].properties.Go.name;
                     Debug.LogWarning($"Method >{sym.Name}< not yet implemented in DaedalusVM (called on >{npcName}<).");
                 }
             }

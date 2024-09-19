@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Text;
 using GUZ.Core.Data;
 using GUZ.Core.Npc.Routines;
 using GUZ.Core.Properties;
@@ -12,6 +13,10 @@ namespace GUZ.Core.Globals
 {
     public static class GameData
     {
+        /// <summary>
+        /// Represents the currently installed Gothic language (windows-1250,1251,1252)
+        /// </summary>
+        public static Encoding Encoding;
         public static DaedalusVm GothicVm;
         public static DaedalusVm SfxVm; // Sound FX
         public static DaedalusVm PfxVm; // Particle FX

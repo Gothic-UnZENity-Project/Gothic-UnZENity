@@ -1,7 +1,6 @@
 using System.Linq;
 using System.Threading.Tasks;
 using GUZ.Core.Creator.Meshes.V2.Builder;
-using GUZ.Core.Creator.Meshes.V2.Builder.Textures;
 using GUZ.Core.Extensions;
 using GUZ.Core.Manager;
 using GUZ.Core.Vm;
@@ -31,6 +30,7 @@ namespace GUZ.Core.Creator.Meshes.V2
             var npcBuilder = new NpcMeshBuilder();
             npcBuilder.SetGameObject(root, npcName);
             npcBuilder.SetParent(parent);
+            npcBuilder.SetMeshName(mdmName);
             npcBuilder.SetMdh(mdhName);
             npcBuilder.SetMdm(mdmName);
             npcBuilder.SetBodyData(bodyData);
@@ -40,10 +40,12 @@ namespace GUZ.Core.Creator.Meshes.V2
             var npcHeadBuilder = new NpcHeadMeshBuilder();
             npcHeadBuilder.SetGameObject(npcGo);
             npcHeadBuilder.SetBodyData(bodyData);
+            npcHeadBuilder.SetMeshName(bodyData.Head);
             npcHeadBuilder.SetMmb(bodyData.Head);
 
-            // returns body+head
-            return npcHeadBuilder.Build();
+            npcHeadBuilder.Build();
+
+            return npcGo;
         }
 
         public static GameObject CreateNpcWeapon(GameObject npcGo, ItemInstance itemData,
@@ -51,6 +53,7 @@ namespace GUZ.Core.Creator.Meshes.V2
         {
             var npcWeaponBuilder = new NpcWeaponMeshBuilder();
             npcWeaponBuilder.SetWeaponData(npcGo, itemData, mainFlag, flags);
+            npcWeaponBuilder.SetMeshName(itemData.Visual);
 
             switch (mainFlag)
             {
@@ -81,6 +84,7 @@ namespace GUZ.Core.Creator.Meshes.V2
             vobBuilder.SetRootPosAndRot(position, rotation);
             vobBuilder.SetGameObject(rootGo, objectName);
             vobBuilder.SetParent(parent, resetRotation: true);
+            vobBuilder.SetMeshName(objectName);
             vobBuilder.SetMrm(mrm);
             vobBuilder.SetUseTextureArray(useTextureArray);
 
@@ -103,8 +107,8 @@ namespace GUZ.Core.Creator.Meshes.V2
             var vobBuilder = new VobMeshBuilder();
             vobBuilder.SetRootPosAndRot(position, rotation);
             vobBuilder.SetGameObject(rootGo, objectName);
-            vobBuilder.SetParent(parent,
-                resetRotation: true); // If we don't reset these, all objects will be rotated wrong!
+            vobBuilder.SetParent(parent, resetRotation: true); // If we don't reset these, all objects will be rotated wrong!
+            vobBuilder.SetMeshName(objectName);
             vobBuilder.SetMdl(mdl);
             vobBuilder.SetUseTextureArray(useTextureArray);
 
@@ -118,6 +122,7 @@ namespace GUZ.Core.Creator.Meshes.V2
             vobBuilder.SetRootPosAndRot(position, rotation);
             vobBuilder.SetGameObject(rootGo, objectName);
             vobBuilder.SetParent(parent);
+            vobBuilder.SetMeshName(objectName);
             vobBuilder.SetMmb(mmb);
             vobBuilder.SetUseTextureArray(true);
 
@@ -137,6 +142,7 @@ namespace GUZ.Core.Creator.Meshes.V2
             vobBuilder.SetRootPosAndRot(position, rotation);
             vobBuilder.SetGameObject(rootGo, objectName);
             vobBuilder.SetParent(parent, resetRotation: true);
+            vobBuilder.SetMeshName(objectName);
             vobBuilder.SetMdh(mdh);
             vobBuilder.SetMdm(mdm);
             vobBuilder.SetUseTextureArray(useTextureArray);
@@ -174,14 +180,9 @@ namespace GUZ.Core.Creator.Meshes.V2
             return vobDecalBuilder.Build();
         }
 
-        public static async Task CreateWorldTextureArray()
+        public static async Task CreateTextureArray()
         {
-            await new WorldTextureArrayBuilder().BuildAsync();
-        }
-
-        public static async Task CreateVobTextureArray()
-        {
-            await new VobTextureArrayBuilder().BuildAsync();
+            await new TextureArrayBuilder().BuildAsync();
         }
 
         public static GameObject CreateBarrier(string objectName, IMesh mesh)

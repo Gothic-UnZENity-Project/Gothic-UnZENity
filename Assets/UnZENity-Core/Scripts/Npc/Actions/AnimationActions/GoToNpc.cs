@@ -18,7 +18,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
         {
             base.Start();
 
-            _destinationTransform = LookupCache.NpcCache[OtherIndex].properties.transform;
+            _destinationTransform = MultiTypeCache.NpcCache[OtherIndex].properties.transform;
         }
 
         protected override Vector3 GetWalkDestination()

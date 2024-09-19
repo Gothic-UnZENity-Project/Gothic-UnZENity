@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -5,6 +6,7 @@ using GUZ.Core.Caches;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using JetBrains.Annotations;
+using MyBox;
 using UnityEngine;
 using UnityEngine.Rendering;
 using ZenKit;
@@ -30,9 +32,9 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
 
         protected Vector3 RootPosition;
         protected Quaternion RootRotation;
+        protected string MeshName;
 
         protected bool IsMorphMeshMappingAlreadyCached;
-
 
         public abstract GameObject Build();
 
@@ -64,6 +66,14 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
         {
             RootPosition = position;
             RootRotation = rotation;
+        }
+
+        /// <summary>
+        /// Meshes of this object will be cached based on this name.
+        /// </summary>
+        public void SetMeshName(string meshName)
+        {
+            MeshName = meshName;
         }
 
         public void SetMdl(IModel mdl)
@@ -162,10 +172,12 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
 
         protected void BuildViaMrm()
         {
+            CheckPreconditions();
+            
             var meshFilter = RootGo.TryAddComponent<MeshFilter>();
             var meshRenderer = RootGo.TryAddComponent<MeshRenderer>();
             meshRenderer.material = Constants.LoadingMaterial;
-            PrepareMeshFilter(meshFilter, Mrm, meshRenderer);
+            PrepareMeshFilter(meshFilter, Mrm, meshRenderer, 0);
 
             // If we use TextureArray, we apply textures later.
             // But if we want to create the mrm based texture now, we do it now. ;-)
@@ -184,6 +196,8 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
 
         protected void BuildViaMdmAndMdh()
         {
+            CheckPreconditions();
+            
             var nodeObjects = new GameObject[Mdh.Nodes.Count];
 
             // Create empty GameObjects from hierarchy
@@ -244,7 +258,7 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
             {
                 var mesh = softSkinMesh.Mesh;
 
-                var meshObj = new GameObject($"ZM_{meshCounter++}");
+                var meshObj = new GameObject($"ZM_{meshCounter}");
                 meshObj.SetParent(RootGo);
 
                 var meshFilter = meshObj.AddComponent<MeshFilter>();
@@ -254,11 +268,13 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
                 meshRenderer.rootBone = nodeObjects[0].transform;
 
                 PrepareMeshRenderer(meshRenderer, mesh);
-                PrepareMeshFilter(meshFilter, softSkinMesh);
+                PrepareMeshFilter(meshFilter, softSkinMesh, meshCounter);
 
-                meshRenderer.sharedMesh = meshFilter.mesh;
+                meshRenderer.sharedMesh = meshFilter.sharedMesh;
 
                 CreateBonesData(RootGo, nodeObjects, meshRenderer, softSkinMesh);
+
+                meshCounter++;
             }
 
             var attachments = GetFilteredAttachments(Mdm.Attachments);
@@ -271,7 +287,7 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
                 var meshRenderer = meshObj.TryAddComponent<MeshRenderer>();
                 meshRenderer.material = Constants.LoadingMaterial;
 
-                PrepareMeshFilter(meshFilter, subMesh.Value, meshRenderer);
+                PrepareMeshFilter(meshFilter, subMesh.Value, meshRenderer, meshCounter);
 
                 if (!UseTextureArray)
                 {
@@ -279,6 +295,9 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
                 }
 
                 PrepareMeshCollider(meshObj, meshFilter.sharedMesh, subMesh.Value.Materials);
+
+                // As Attachments are also just meshes, we need to increase the mesh counter for Filter's meshCache index.
+                meshCounter++;
             }
 
             SetPosAndRot(RootGo, RootPosition, RootRotation);
@@ -291,10 +310,12 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
 
         protected GameObject BuildViaMmb()
         {
+            CheckPreconditions();
+
             var meshFilter = RootGo.TryAddComponent<MeshFilter>();
             var meshRenderer = RootGo.TryAddComponent<MeshRenderer>();
 
-            PrepareMeshFilter(meshFilter, Mmb.Mesh, meshRenderer);
+            PrepareMeshFilter(meshFilter, Mmb.Mesh, meshRenderer, 0);
             PrepareMeshRenderer(meshRenderer, Mmb.Mesh);
 
             SetPosAndRot(RootGo, RootPosition, RootRotation);
@@ -302,6 +323,21 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
             return RootGo;
         }
 
+        protected void CheckPreconditions()
+        {
+            if (RootGo == null)
+            {
+                throw new ArgumentNullException("Main GameObject is null. Please provide one or force creation " +
+                                                "of a new one via SetGameObject().");
+            }
+            
+            if (MeshName.IsNullOrEmpty())
+            {
+                throw new ArgumentNullException($"No MeshName for >{RootGo.name} provided. " +
+                                            "Please provide a mesh name via SetMeshName() which is used for caching of mesh data at runtime.");
+            }
+        }
+        
         protected void PrepareMeshRenderer(Renderer rend, IMultiResolutionMesh mrmData)
         {
             if (null == mrmData)
@@ -350,10 +386,29 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
             rend.SetMaterials(finalMaterials);
         }
 
-        protected void PrepareMeshFilter(MeshFilter meshFilter, IMultiResolutionMesh mrmData, MeshRenderer meshRenderer)
+        protected void PrepareMeshFilter(MeshFilter meshFilter, IMultiResolutionMesh mrmData, MeshRenderer meshRenderer, int meshIndex)
         {
-            var mesh = new Mesh();
-            meshFilter.mesh = mesh;
+            var submeshPerTextureFormat = new Dictionary<TextureCache.TextureArrayTypes, int>();
+
+            if (MultiTypeCache.Meshes.TryGetValue($"{MeshName}_{meshIndex}", out Mesh mesh))
+            {
+                meshFilter.sharedMesh = mesh;
+                if (UseTextureArray)
+                {
+                    if (TextureCache.VobMeshesForTextureArray.ContainsKey(mesh))
+                    {
+                        TextureCache.VobMeshesForTextureArray[mesh].Renderers.Add(meshRenderer);
+                    }
+                    else
+                    {
+                        Debug.LogWarning($"[{GetType()}] Mesh {mesh.name} is unexpectedly not int the {nameof(TextureCache.VobMeshesForTextureArray)} array.");
+                    }
+                }
+                return;
+            }
+
+            mesh = new Mesh() { name = MeshName };
+            meshFilter.sharedMesh = mesh;
 
             if (null == mrmData)
             {
@@ -363,25 +418,23 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
 
             CreateMorphMeshBegin(mrmData, mesh);
 
-            var triangleCount = mrmData.SubMeshes.Sum(i => i.Triangles.Count);
-            var vertexCount = triangleCount * 3;
+            int triangleCount = mrmData.SubMeshes.Sum(i => i.Triangles.Count);
+            int vertexCount = triangleCount * 3;
+            int index = 0;
             var preparedVertices = new List<Vector3>(vertexCount);
             var preparedUVs = new List<Vector4>(vertexCount);
             var normals = new List<Vector3>(vertexCount);
             var preparedTriangles = new List<List<int>>();
-            var index = 0;
-            var submeshPerTextureFormat = new Dictionary<TextureCache.TextureArrayTypes, int>();
 
             foreach (var subMesh in mrmData.SubMeshes)
             {
                 // When using the texture array, get the index of the array of the matching texture format. Build submeshes for each texture format, i.e. separating opaque and alpha cutout textures.
                 int textureArrayIndex = 0, maxMipLevel = 0;
-                var textureScale = Vector2.one;
-                var textureArrayType = TextureCache.TextureArrayTypes.Opaque;
+                Vector2 textureScale = Vector2.one;
+                TextureCache.TextureArrayTypes textureArrayType = TextureCache.TextureArrayTypes.Opaque;
                 if (UseTextureArray)
                 {
-                    TextureCache.GetTextureArrayIndex(TextureCache.TextureTypes.Vob, subMesh.Material,
-                        out textureArrayType, out textureArrayIndex, out textureScale, out maxMipLevel);
+                    TextureCache.GetTextureArrayIndex(subMesh.Material, out textureArrayType, out textureArrayIndex, out textureScale, out maxMipLevel);
                     if (!submeshPerTextureFormat.ContainsKey(textureArrayType))
                     {
                         submeshPerTextureFormat.Add(textureArrayType, preparedTriangles.Count);
@@ -438,15 +491,20 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
 
             CreateMorphMeshEnd(preparedVertices);
 
-            if (UseTextureArray)
-            {
-                TextureCache.VobMeshRenderersForTextureArray.Add((meshRenderer,
-                    (mrmData, submeshPerTextureFormat.Keys.ToList())));
-            }
+            TextureCache.VobMeshesForTextureArray.Add(mesh, new TextureCache.VobMeshData(mrmData, submeshPerTextureFormat.Keys.ToList(), UseTextureArray ? meshRenderer : null));
+
+            MultiTypeCache.Meshes.Add($"{MeshName}_{meshIndex}", mesh);
         }
 
-        protected void PrepareMeshFilter(MeshFilter meshFilter, ISoftSkinMesh soft)
+        protected void PrepareMeshFilter(MeshFilter meshFilter, ISoftSkinMesh soft, int meshIndex)
         {
+            // Elements like NPC armors might have multiple meshes. We therefore need to store each mesh with it's associated index.
+            if (MultiTypeCache.Meshes.TryGetValue($"{MeshName}_{meshIndex}", out Mesh mesh))
+            {
+                meshFilter.sharedMesh = mesh;
+                return;
+            }
+
             /*
              * Ok, brace yourself:
              * There are three parameters of interest when it comes to creating meshes for items (etc.).
@@ -465,11 +523,11 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
              *  triangles = 0, 2, 3 --> (indices for position items); ATTENTION: index 3 would normally be index 2, but! we can never reuse positions. We always need to create new ones. (Reason: uvs demand the same size as vertices.)
              *  uvs = [wedge[0].texture], [wedge[2].texture], [wedge[1].texture]
              */
-            var mesh = new Mesh();
+            mesh = new Mesh() { name = MeshName };
             var zkMesh = soft.Mesh;
             var weights = soft.Weights;
 
-            meshFilter.mesh = mesh;
+            meshFilter.sharedMesh = mesh;
             mesh.subMeshCount = soft!.Mesh.SubMeshes.Count;
 
             var verticesAndUvSize = zkMesh.SubMeshes.Sum(i => i.Triangles!.Count) * 3;
@@ -532,6 +590,8 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
             {
                 mesh.SetTriangles(preparedTriangles[i], i);
             }
+
+            MultiTypeCache.Meshes.Add($"{MeshName}_{meshIndex}", mesh);
         }
 
         protected virtual List<System.Numerics.Vector3> GetSoftSkinMeshPositions(ISoftSkinMesh softSkinMesh)

@@ -116,7 +116,7 @@ namespace GUZ.Lab
             GameData.Dispose();
             VmInstanceManager.Dispose();
             TextureCache.Dispose();
-            LookupCache.Dispose();
+            MultiTypeCache.Dispose();
             MorphMeshCache.Dispose();
         }
     }

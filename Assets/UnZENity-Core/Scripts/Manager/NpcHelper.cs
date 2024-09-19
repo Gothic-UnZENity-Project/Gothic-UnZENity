@@ -216,7 +216,7 @@ namespace GUZ.Core.Manager
 
             // FIXME - Add Guild check
             // FIXME - add range check based on perceiveAll's range (npc.sense_range)
-            var foundNpc = LookupCache.NpcCache.Values
+            var foundNpc = MultiTypeCache.NpcCache.Values
                 .Where(i => i.properties != null) // ignore empty (safe check)
                 .Where(i => i.properties.Go != null) // ignore empty (safe check)
                 .Where(i => i.instance.Index != npcInstance.Index) // ignore self
@@ -333,7 +333,7 @@ namespace GUZ.Core.Manager
 
         private static NpcProperties GetProperties([CanBeNull] NpcInstance npc)
         {
-            return npc == null ? null : LookupCache.NpcCache[npc.Index].properties;
+            return npc == null ? null : MultiTypeCache.NpcCache[npc.Index].properties;
         }
 
         public static void ExtAiWait(NpcInstance npc, float seconds)
@@ -537,7 +537,7 @@ namespace GUZ.Core.Manager
                 return int.MaxValue;
             }
 
-            var npc1Pos = LookupCache.NpcCache[npc1.Index].properties.Go.transform.position;
+            var npc1Pos = MultiTypeCache.NpcCache[npc1.Index].properties.Go.transform.position;
 
             Vector3 npc2Pos;
             // If hero
@@ -547,7 +547,7 @@ namespace GUZ.Core.Manager
             }
             else
             {
-                npc2Pos = LookupCache.NpcCache[npc2.Index].properties.Go.transform.position;
+                npc2Pos = MultiTypeCache.NpcCache[npc2.Index].properties.Go.transform.position;
             }
 
             return (int)(Vector3.Distance(npc1Pos, npc2Pos) * 100);
@@ -571,7 +571,7 @@ namespace GUZ.Core.Manager
                 return;
             }
 
-            var npcGo = LookupCache.NpcCache[npcInstance.Index];
+            var npcGo = MultiTypeCache.NpcCache[npcInstance.Index];
             ExchangeRoutine(npcGo.properties.Go, npcInstance, newRoutine.Index);
         }
 
@@ -650,7 +650,7 @@ namespace GUZ.Core.Manager
         {
             var heroIndex = GameData.GothicVm.GlobalHero!.Index;
 
-            return LookupCache.NpcCache[heroIndex].properties.Go;
+            return MultiTypeCache.NpcCache[heroIndex].properties.Go;
         }
     }
 }

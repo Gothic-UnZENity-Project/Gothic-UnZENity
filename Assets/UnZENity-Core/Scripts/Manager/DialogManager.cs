@@ -225,7 +225,7 @@ namespace GUZ.Core.Manager
 
         private static void CallInformation(int npcInstanceIndex, int information, bool isMainDialog)
         {
-            var npcData = LookupCache.NpcCache[npcInstanceIndex];
+            var npcData = MultiTypeCache.NpcCache[npcInstanceIndex];
 
             // If a C_Info is clicked, then set a new CurrentInstance.
             if (isMainDialog)
@@ -275,7 +275,7 @@ namespace GUZ.Core.Manager
 
         private static NpcProperties GetProperties(NpcInstance npc)
         {
-            return LookupCache.NpcCache[npc.Index].properties;
+            return MultiTypeCache.NpcCache[npc.Index].properties;
         }
     }
 }
