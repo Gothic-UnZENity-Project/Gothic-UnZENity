@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using GUZ.Core.Npc;
 using GUZ.Core.Npc.Actions.AnimationActions;
@@ -46,8 +45,8 @@ namespace GUZ.Core.Properties
 
         // Perceptions
         public Dictionary<VmGothicEnums.PerceptionType, int> Perceptions = new();
-
         public float PerceptionTime;
+        public float CurrentPerceptionTime;
 
         // NPC items/talents/...
         public Dictionary<VmGothicEnums.Talent, int> Talents = new();

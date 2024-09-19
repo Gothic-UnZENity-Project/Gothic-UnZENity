@@ -310,11 +310,11 @@
       "hash": "96e2d8c4eac1e71eae1e66c8a4879e39d8cd503b"
     },
     "com.unzenity.core.binaries": {
-      "version": "https://github.com/Gothic-UnZENity-Project/binary-dependencies.git?path=/Gothic-UnZENity-Core",
+      "version": "https://github.com/Gothic-UnZENity-Project/binary-dependencies.git?path=/UnZENity-Core",
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "b2a5547f086efb92224f055736ef8beac9084a0c"
+      "hash": "7bda6bcfb8bf453c36f585fbf563d2c0e12f0f05"
     },
     "com.unity.modules.ai": {
       "version": "1.0.0",

@@ -15,9 +15,6 @@ namespace GUZ.Core.Vob.WayNet
 
         public abstract bool IsFreePoint();
 
-        public bool IsWayPoint()
-        {
-            return IsFreePoint();
-        }
+        public bool IsWayPoint => !IsFreePoint();
     }
 }

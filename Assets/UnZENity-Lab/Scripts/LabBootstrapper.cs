@@ -65,7 +65,7 @@ namespace GUZ.Lab
             _settings = GameSettings.Load(Config.GameVersion);
             _textureManager = GetComponent<TextureManager>();
             _fontManager = GetComponent<FontManager>();
-            _sceneManager = new GuzSceneManager(Config, null, null);
+            _sceneManager = new GuzSceneManager(Config, null, null, null);
             _deviceSimulatorManager = new VRDeviceSimulatorManager(Config);
             _npcRoutineManager = new RoutineManager(Config);
             _gameMusicManager = new MusicManager(Config);

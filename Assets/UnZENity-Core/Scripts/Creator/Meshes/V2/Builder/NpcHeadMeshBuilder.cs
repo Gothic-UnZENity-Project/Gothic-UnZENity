@@ -33,7 +33,7 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
 
             var headMeshFilter = headGo.AddComponent<MeshFilter>();
             var headMeshRenderer = headGo.AddComponent<MeshRenderer>();
-            PrepareMeshFilter(headMeshFilter, Mmb.Mesh, headMeshRenderer);
+            PrepareMeshFilter(headMeshFilter, Mmb.Mesh, headMeshRenderer, 0);
             PrepareMeshRenderer(headMeshRenderer, Mmb.Mesh);
 
             return RootGo;

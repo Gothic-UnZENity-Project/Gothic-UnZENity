@@ -138,26 +138,24 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
 
         /// <summary>
         /// Most of our animations are fine if we just set this flag and return it via IsFinished()
-        /// If an animation has also a next animation set, we will call it automatically.
-        /// If this is not intended, the overwriting class can always reset the animation being played at the same frame.
+        /// If an animation has also a next animation set, we will call it automatically. Alternatively we play an idle animation.
+        /// If the overall behaviour isn't intended, the overwriting class can always reset/alter the animation being played at the same frame.
         /// </summary>
         public virtual void AnimationEndEventCallback(SerializableEventEndSignal eventData)
         {
-            // e.g. T_STAND_2_WASH -> S_WASH -> S_WASH ... -> T_WASH_2_STAND
-            // Inside daedalus there is no information about S_WASH, but we need this animation automatically being played.
             if (eventData.NextAnimation.Any())
             {
                 PhysicsHelper.DisablePhysicsForNpc(Props);
                 AnimationCreator.PlayAnimation(Props.MdsNames, eventData.NextAnimation, Props.Go);
             }
             // Play Idle animation
-            // But only if NPC isn't using an item right now. Otherwise breathing will spawn hand to hips which looks wrong when (e.g.) drinking beer.
+            // But only if NPC isn't using an item right now. Otherwise, breathing will spawn hand to hips which looks wrong when (e.g.) drinking beer.
             else if (Props.CurrentItem < 0)
             {
                 var weaponState = Props.WeaponState == VmGothicEnums.WeaponState.NoWeapon ? "" : Props.WeaponState.ToString();
                 var animName = Props.WalkMode switch
                 {
-                    VmGothicEnums.WalkMode.Walk => $"S_{weaponState}WALKL",
+                    VmGothicEnums.WalkMode.Walk => $"S_{weaponState}WALK",
                     VmGothicEnums.WalkMode.Sneak => $"S_{weaponState}SNEAK",
                     VmGothicEnums.WalkMode.Swim => $"S_{weaponState}SWIM",
                     VmGothicEnums.WalkMode.Dive => $"S_{weaponState}DIVE",

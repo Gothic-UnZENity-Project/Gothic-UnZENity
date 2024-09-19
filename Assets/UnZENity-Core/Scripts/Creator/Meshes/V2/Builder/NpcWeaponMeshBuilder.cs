@@ -78,7 +78,7 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
                 meshRenderer = weaponGo.AddComponent<MeshRenderer>();
             }
 
-            PrepareMeshFilter(meshFilter, Mrm, meshRenderer);
+            PrepareMeshFilter(meshFilter, Mrm, meshRenderer, 0);
             PrepareMeshRenderer(meshRenderer, Mrm);
 
             return weaponGo;
@@ -117,7 +117,7 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
             var meshFilter = weaponGo.AddComponent<MeshFilter>();
             var meshRenderer = weaponGo.AddComponent<MeshRenderer>();
 
-            PrepareMeshFilter(meshFilter, Mmb.Mesh, meshRenderer);
+            PrepareMeshFilter(meshFilter, Mmb.Mesh, meshRenderer, 0);
             PrepareMeshRenderer(meshRenderer, Mmb.Mesh);
 
             return weaponGo;

@@ -7,6 +7,7 @@ using GUZ.Core.Creator;
 using GUZ.Core.Creator.Meshes.V2;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
+using GUZ.Core.Manager.Settings;
 using MyBox;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -33,12 +34,14 @@ namespace GUZ.Core.Manager
 
         private GameConfiguration _config;
         private LoadingManager _loading;
+        private bool _settingPlayLogoVideos;
 
-        public GuzSceneManager(GameConfiguration config, LoadingManager loading, GameObject interactionManagerObject)
+        public GuzSceneManager(GameConfiguration config, LoadingManager loading, GameObject interactionManagerObject, GameSettings settings)
         {
             InteractionManager = interactionManagerObject;
             _config = config;
             _loading = loading;
+            _settingPlayLogoVideos = settings?.IniPlayLogoVideos ?? false;
         }
 
         public void Init()
@@ -59,7 +62,7 @@ namespace GUZ.Core.Manager
             {
                 if (_config.EnableMainMenu)
                 {
-                    if (Constants.GothicIni.PlayLogoVideos)
+                    if (_settingPlayLogoVideos)
                     {
                         await LoadLogoScene();
                     }
