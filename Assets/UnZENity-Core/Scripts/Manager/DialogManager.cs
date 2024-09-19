@@ -29,7 +29,7 @@ namespace GUZ.Core.Manager
                 // Don't worry. I assume this even makes no sense at all, as also the "END" dialog would always trigger a return true.
                 Debug.LogError("Npc_CheckInfo isn't implemented for important=0.");
             }
-            return TryGetImportant(LookupCache.NpcCache[npc.Index].properties.Dialogs, out _);
+            return TryGetImportant(MultiTypeCache.NpcCache[npc.Index].properties.Dialogs, out _);
         }
 
         /// <summary>

@@ -3,7 +3,6 @@ using GUZ.Core.Context;
 using GUZ.Core.World;
 using MyBox;
 using UnityEngine;
-using UnityEngine.Serialization;
 using ZenKit;
 using ZenKit.Vobs;
 
@@ -42,11 +41,13 @@ namespace GUZ.Core
 
         /**
          * ##########
-         * Controls
+         * Context
          * ##########
          */
 
-        [Foldout("Controls", true)]
+        [Foldout("Context", true)]
+        public GameVersion GameVersion = GameVersion.Gothic1;
+        
         public GuzContext.Controls GameControls = GuzContext.Controls.VR;
         
         [ConditionalField(fieldToCheck: nameof(GameControls), compareValues: GuzContext.Controls.VR)]

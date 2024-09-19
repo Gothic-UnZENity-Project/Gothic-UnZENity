@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using ZenKit;
 
 namespace GUZ.Core.Context
 {
@@ -8,7 +9,7 @@ namespace GUZ.Core.Context
     /// </summary>
     public abstract class AbstractContextBootstrap : MonoBehaviour
     {
-        protected abstract void RegisterModule(GuzContext.Controls controls);
+        protected abstract void RegisterModule(GuzContext.Controls controls, GameVersion version);
         
         private void Awake()
         {

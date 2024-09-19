@@ -109,10 +109,13 @@ namespace GUZ.Core.Globals
         public const string DaedalusHeroInstanceName = "PC_HERO"; // TODO - can be read from .ini file.
 
 
-        public static int DaedalusAIVItemStatusKey;
-        public static int DaedalusAIVItemFreqKey;
-        public static int DaedalusTAITNone;
-
+        public static class DaedalusConst
+        {
+            public static int AIVItemStatusKey => GameData.GothicVm.GetSymbolByName("AIV_ITEMSTATUS").GetInt(0);
+            public static int AIVItemFreqKey => GameData.GothicVm.GetSymbolByName("AIV_ITEMFREQ").GetInt(0);
+            public static int TAITNone => GameData.GothicVm.GetSymbolByName("TA_IT_NONE").GetInt(0);
+        }
+        
         
         public static string YesLabel = "Yes";
         public static string NoLabel = "No";
@@ -197,14 +200,6 @@ namespace GUZ.Core.Globals
         static Constants()
         {
             LoadingMaterial = new Material(ShaderWorldLit);
-            GlobalEventDispatcher.ZenKitBootstrapped.AddListener(Init);
-        }
-
-        private static void Init()
-        {
-            DaedalusAIVItemStatusKey = GameData.GothicVm.GetSymbolByName("AIV_ITEMSTATUS").GetInt(0);
-            DaedalusAIVItemFreqKey = GameData.GothicVm.GetSymbolByName("AIV_ITEMFREQ").GetInt(0);
-            DaedalusTAITNone = GameData.GothicVm.GetSymbolByName("TA_IT_NONE").GetInt(0);
         }
     }
 }

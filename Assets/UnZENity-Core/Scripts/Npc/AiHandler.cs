@@ -321,7 +321,12 @@ namespace GUZ.Core.Npc
             Properties.CurrentItem = -1;
 
             // Reset "currently" used item
-            Properties.NpcInstance.SetAiVar(Constants.DaedalusAIVItemStatusKey, Constants.DaedalusTAITNone);
+
+            // FIXME - We need to properly set this value for Gothic2 as well.
+            if (GameGlobals.Config.GameVersion == GameVersion.Gothic1)
+            {
+                Properties.NpcInstance.SetAiVar(Constants.DaedalusConst.AIVItemStatusKey, Constants.DaedalusConst.TAITNone);
+            }
 
             // Start over
             if (currentRoutine != null)

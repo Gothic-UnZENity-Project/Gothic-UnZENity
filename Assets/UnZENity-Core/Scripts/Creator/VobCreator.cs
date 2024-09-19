@@ -9,6 +9,7 @@ using GUZ.Core.Creator.Meshes.V2;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
+using GUZ.Core.Manager.Settings;
 using GUZ.Core.Properties;
 using GUZ.Core.Vm;
 using GUZ.Core.Vob;
@@ -335,8 +336,9 @@ namespace GUZ.Core.Creator
                 }
                 default:
                 {
-                    throw new Exception(
+                    Debug.Log(
                         $"VobType={vob.Type} not yet handled. And we didn't know we need to do so. ;-)");
+                    break;
                 }
             }
 
@@ -357,7 +359,7 @@ namespace GUZ.Core.Creator
 
             if (!_vobTreeCache.TryGetValue(vob.VobTree.ToLower(), out var vobTree))
             {
-                vobTree = ResourceLoader.TryGetWorld(vob.VobTree, GameVersion.Gothic1);
+                vobTree = ResourceLoader.TryGetWorld(vob.VobTree, config.GameVersion);
                 _vobTreeCache.Add(vob.VobTree.ToLower(), vobTree);
             }
 
@@ -839,7 +841,15 @@ namespace GUZ.Core.Creator
             UnityEngine.Vector3 position = default)
         {
             var mrm = ResourceLoader.TryGetMultiResolutionMesh(item.Visual);
-            return MeshFactory.CreateVob(item.Visual, mrm, position, default, false, parentGo, useTextureArray: false);
+            if( mrm != null )
+                return MeshFactory.CreateVob(item.Visual, mrm, position, default, false, parentGo, useTextureArray: false);
+            
+            // shortbow (itrw_bow_l_01) has no mrm, but has mmb
+            var mmb = ResourceLoader.TryGetMorphMesh(item.Visual);
+
+            return MeshFactory.CreateVob(item.Visual, mmb, position,
+                default, parentGo, null);
+            
         }
 
         private static GameObject CreateDecal(IVirtualObject vob, GameObject parent = null)
