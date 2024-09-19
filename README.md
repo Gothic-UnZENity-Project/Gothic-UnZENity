@@ -18,6 +18,8 @@ For instructions on playing the game or adding contributions, please check our [
 
 ![Gothic-UnZENity - Roadmap](./Docs/development/diagrams/Gothic-UnZENity-roadmap.png)
 
+(You'll find our current feature development status at the [Projects](https://github.com/Gothic-UnZENity-Project/Gothic-UnZENity/projects?query=is%3Aopen) page.
+
 ## Our Tenets (until you know better ones)
 1. We preserve native Gothic experience -  To achieve it we will import original Gothic assets from local installations. Dynamically and during runtime. Do you still remember Bloodwyn forcing you to pay your protection money? You'll experience it again. And you'll pay... We promise!
 2. We add best in class VR mechanics - VR offers new ways of being immersed into the world of Gothic. How about crafting a blade with your hammer blow, drawing a two-handed weapon from your left shoulder, or casting a spell with hand gestures? You dream it, we build it.
