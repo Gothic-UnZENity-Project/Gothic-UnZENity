@@ -7,8 +7,10 @@ using GUZ.Core.Npc.Actions;
 using GUZ.Core.Npc.Actions.AnimationActions;
 using GUZ.Core.Npc.Routines;
 using GUZ.Core.Properties;
+using GUZ.Core.Vm;
 using UnityEngine;
 using ZenKit;
+using ZenKit.Daedalus;
 
 namespace GUZ.Core.Npc
 {
@@ -31,6 +33,8 @@ namespace GUZ.Core.Npc
         /// </summary>
         private void Update()
         {
+            ExecutePerceptions();
+
             Properties.CurrentAction.Tick();
 
             // Add new milliseconds when stateTime shall be measured.
@@ -130,6 +134,45 @@ namespace GUZ.Core.Npc
             }
         }
 
+        /// <summary>
+        /// Execute perceptions if it's about time.
+        /// </summary>
+        private void ExecutePerceptions()
+        {
+            // FIXME - Perceptions aren't yet ready to be executed. Please debug with caution.
+            return;
+
+            Properties.CurrentPerceptionTime += Time.deltaTime;
+            if (Properties.CurrentPerceptionTime < Properties.PerceptionTime)
+            {
+                return;
+            }
+
+            ExecutePerception(VmGothicEnums.PerceptionType.AssessPlayer, (NpcInstance)GameData.GothicVm.GlobalHero);
+
+
+            // Reset timer if we executed Perceptions.
+            Properties.PerceptionTime = 0f;
+        }
+
+        private void ExecutePerception(VmGothicEnums.PerceptionType type, NpcInstance other)
+        {
+            // Perception isn't set
+            if (!Properties.Perceptions.TryGetValue(type, out var perceptionFunction))
+            {
+                return;
+            }
+            // Perception is disabled
+            else if (perceptionFunction < 0)
+            {
+                return;
+            }
+
+            GameData.GothicVm.GlobalSelf = Properties.NpcInstance;
+            GameData.GothicVm.GlobalOther = other;
+            GameData.GothicVm.Call(perceptionFunction);
+        }
+
         public void StartRoutine(int action, string wayPointName)
         {
             // We need to set WayPoint within Daedalus instance as it calls _self.wp_ during routine loops.
@@ -223,7 +266,6 @@ namespace GUZ.Core.Npc
         {
             var eventData = JsonUtility.FromJson<SerializableEventEndSignal>(eventEndSignalParam);
 
-            // FIXME ! We need to re-add physics when e.g. looping walk animation!
             Properties.CurrentAction.AnimationEndEventCallback(eventData);
         }
 
@@ -246,7 +288,7 @@ namespace GUZ.Core.Npc
             // WayNet handling
             if (Properties.CurrentFreePoint != null)
             {
-                // If we despawn an NPC, the FP needs to be cleared as well.
+                // FIXME - If we despawn an NPC, the FP needs to be cleared as well.
                 Properties.CurrentFreePoint.IsLocked = false;
             }
             Properties.CurrentFreePoint = null;

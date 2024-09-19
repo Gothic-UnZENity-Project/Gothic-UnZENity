@@ -57,7 +57,7 @@ namespace GUZ.Core.Vm
             vm.RegisterExternal<int, ItemInstance>("Hlp_IsValidItem", Hlp_IsValidItem);
             vm.RegisterExternal<int, NpcInstance>("Hlp_IsValidNpc", Hlp_IsValidNpc);
             vm.RegisterExternal<NpcInstance, int>("Hlp_GetNpc", Hlp_GetNpc);
-            vm.RegisterExternal<int, DaedalusInstance>("Hlp_GetInstanceId", Hlp_GetInstanceId);
+            vm.RegisterExternal<int, DaedalusInstance>("Hlp_GetInstanceID", Hlp_GetInstanceID);
 
             // Info
             vm.RegisterExternal<int>("Info_ClearChoices", Info_ClearChoices);
@@ -107,12 +107,14 @@ namespace GUZ.Core.Vm
             vm.RegisterExternal<int, NpcInstance, string>("Npc_GetDistToWP", Npc_GetDistToWP);
             vm.RegisterExternal<NpcInstance, int>("Npc_PercDisable", Npc_PercDisable);
             vm.RegisterExternal<int, NpcInstance, NpcInstance>("Npc_CanSeeNpc", Npc_CanSeeNpc);
+            vm.RegisterExternal<int, NpcInstance, NpcInstance>("Npc_CanSeeNpcFreeLOS", Npc_CanSeeNpcFreeLOS);
             vm.RegisterExternal<NpcInstance>("Npc_ClearAiQueue", Npc_ClearAiQueue);
             // vm.RegisterExternal<NpcInstance>("Npc_ClearInventory", Npc_ClearInventory);
             vm.RegisterExternal<string, NpcInstance>("Npc_GetNextWp", Npc_GetNextWp);
             // vm.RegisterExternal<int, NpcInstance, int>("Npc_GetTalentSkill", Npc_GetTalentSkill);
             vm.RegisterExternal<int, NpcInstance, int>("Npc_GetTalentValue", Npc_GetTalentValue);
             vm.RegisterExternal<int, NpcInstance, int>("Npc_KnowsInfo", Npc_KnowsInfo);
+            vm.RegisterExternal<int, NpcInstance, int>("Npc_CheckInfo", Npc_CheckInfo);
             vm.RegisterExternal<int, NpcInstance>("Npc_IsDead", Npc_IsDead);
             vm.RegisterExternal<int, NpcInstance, int>("Npc_IsInState", Npc_IsInState);
             vm.RegisterExternal<NpcInstance>("Npc_SetToFistMode", Npc_SetToFistMode);
@@ -148,6 +150,7 @@ namespace GUZ.Core.Vm
             vm.RegisterExternal<int, int, int>("Wld_GetGuildAttitude", Wld_GetGuildAttitude);
 
             // Misc
+            vm.RegisterExternal<int, int>("Perc_SetRange", Perc_SetRange);
             vm.RegisterExternal<string, string, string>("ConcatStrings", ConcatStrings);
             vm.RegisterExternal<string, int>("IntToString", IntToString);
             vm.RegisterExternal<string, float>("FloatToString", FloatToString);
@@ -353,9 +356,14 @@ namespace GUZ.Core.Vm
             return NpcCreator.ExtHlpGetNpc(instanceId);
         }
 
-        public static int Hlp_GetInstanceId(DaedalusInstance instanceId)
+        public static int Hlp_GetInstanceID(DaedalusInstance instance)
         {
-            return NpcCreator.ExtHlpGetInstanceId(instanceId);
+            if (instance == null)
+            {
+                return -1;
+            }
+
+            return instance.Index;
         }
 
         #endregion
@@ -689,7 +697,12 @@ namespace GUZ.Core.Vm
 
         public static int Npc_CanSeeNpc(NpcInstance npc, NpcInstance target)
         {
-            return Convert.ToInt32(NpcHelper.ExtNpcCanSeeNpc(npc, target));
+            return Convert.ToInt32(NpcHelper.ExtNpcCanSeeNpc(npc, target, false));
+        }
+
+        public static int Npc_CanSeeNpcFreeLOS(NpcInstance npc, NpcInstance target)
+        {
+            return Convert.ToInt32(NpcHelper.ExtNpcCanSeeNpc(npc, target, true));
         }
 
         public static void Npc_ClearAiQueue(NpcInstance npc)
@@ -721,6 +734,11 @@ namespace GUZ.Core.Vm
         {
             var res = DialogManager.ExtNpcKnowsInfo(npc, infoInstance);
             return Convert.ToInt32(res);
+        }
+
+        public static int Npc_CheckInfo(NpcInstance npc, int important)
+        {
+            return Convert.ToInt32(DialogManager.ExtCheckInfo(npc, Convert.ToBoolean(important)));
         }
         
         public static int Npc_IsDead(NpcInstance npc)
@@ -873,6 +891,11 @@ namespace GUZ.Core.Vm
         #endregion
 
         #region Misc
+
+        public static void Perc_SetRange(int perceptionId, int rangeInCm)
+        {
+            NpcHelper.ExtPErcSetRange(perceptionId, rangeInCm);
+        }
 
         public static string ConcatStrings(string str1, string str2)
         {
