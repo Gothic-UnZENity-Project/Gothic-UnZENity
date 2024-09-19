@@ -139,6 +139,9 @@ namespace GUZ.Core.Npc
         /// </summary>
         private void ExecutePerceptions()
         {
+            // FIXME - Perceptions aren't yet ready to be executed. Please debug with caution.
+            return;
+
             Properties.CurrentPerceptionTime += Time.deltaTime;
             if (Properties.CurrentPerceptionTime < Properties.PerceptionTime)
             {
