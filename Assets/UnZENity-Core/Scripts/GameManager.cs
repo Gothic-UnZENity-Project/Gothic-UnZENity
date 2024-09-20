@@ -1,6 +1,7 @@
 using GUZ.Core.Caches;
 using GUZ.Core.Debugging;
 using GUZ.Core.Extensions;
+using GUZ.Core.Globals;
 using GUZ.Core.Manager;
 using GUZ.Core.Manager.Culling;
 using GUZ.Core.Manager.Scenes;
@@ -11,6 +12,7 @@ using MyBox;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using ZenKit;
+using Debug = UnityEngine.Debug;
 using Logger = ZenKit.Logger;
 
 namespace GUZ.Core
@@ -155,6 +157,34 @@ namespace GUZ.Core
             }
 
             SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
+        }
+
+        public WorldSpawnInformation CurrentWorldSpawnInformation;
+
+        public struct WorldSpawnInformation
+        {
+            public Vector3 PlayerStartPosition;
+            public Quaternion PlayerStartRotation;
+            public string StartVobAfterLoading;
+        }
+
+        /// <summary>
+        /// saveGameId - 0==newGame (Gothic saves start with number 1)
+        /// </summary>
+        public void LoadWorld(string worldName, int saveGameId, string sceneToUnload = null)
+        {
+            // Pre-load ZenKit savegame data now. Can be reused by LoadingSceneManager later.
+            if (saveGameId < 1)
+            {
+                SaveGameManager.LoadNewGame();
+            }
+            else
+            {
+                SaveGameManager.LoadSavedGame(saveGameId);
+            }
+            SaveGameManager.ChangeWorld(worldName);
+
+            LoadScene(Constants.SceneLoading, sceneToUnload);
         }
 
         private void OnSceneLoaded(Scene scene, LoadSceneMode mode)

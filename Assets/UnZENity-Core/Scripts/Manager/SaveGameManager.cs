@@ -48,7 +48,7 @@ namespace GUZ.Core.Manager
         public static void LoadNewGame()
         {
             SaveGameId = 0;
-            Save = new SaveGame(GameVersion.Gothic1);
+            Save = new SaveGame(GameContext.GameVersionAdapter.Version);
         }
 
         /// <summary>
