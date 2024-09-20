@@ -15,7 +15,7 @@ namespace GUZ.Core.Manager.Scenes
             GUZContext.InteractionAdapter.CreatePlayerController(SceneManager.GetSceneByName(Constants.ScenePlayer));
             GUZContext.InteractionAdapter.CreateVRDeviceSimulator();
 
-            // GameManager.I.LoadScene(Constants.SceneGameVersion);
+            GameManager.I.LoadScene(Constants.SceneGameVersion, false);
         }
     }
 }

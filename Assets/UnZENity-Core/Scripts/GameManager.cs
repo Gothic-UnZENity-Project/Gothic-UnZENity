@@ -170,7 +170,7 @@ namespace GUZ.Core
 
         private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
-            Debug.Log("Scene loaded: " + scene.name);
+            Debug.Log($"Scene loaded: {scene.name}");
             var sceneManager = scene.GetComponentInChildren<ISceneManager>();
 
             if (sceneManager == null)
@@ -183,7 +183,7 @@ namespace GUZ.Core
 
         private void OnSceneUnloaded(Scene scene)
         {
-
+            Debug.Log($"Scene unloaded: {scene.name}");
         }
 
         private void Update()
