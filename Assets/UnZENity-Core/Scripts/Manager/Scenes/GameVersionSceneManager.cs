@@ -18,7 +18,7 @@ namespace GUZ.Core.Manager.Scenes
             var isG1Installed = GameGlobals.Settings.CheckIfGothicInstallationExists(GameVersion.Gothic1);
             var isG2Installed = GameGlobals.Settings.CheckIfGothicInstallationExists(GameVersion.Gothic2);
 
-            if (GameGlobals.Config.OverwriteGameVersionUse)
+            if (GameGlobals.Config.PreselectGameVersionUse)
             {
                 var isInstalled = GameGlobals.Config.GameVersion == GameVersion.Gothic1 ? isG1Installed : isG2Installed;
 

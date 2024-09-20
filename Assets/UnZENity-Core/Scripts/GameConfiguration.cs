@@ -46,8 +46,9 @@ namespace GUZ.Core
          */
 
         [Foldout("Context", true)]
-        public bool OverwriteGameVersionUse = true;
-        [ConditionalField(fieldToCheck: nameof(OverwriteGameVersionUse), compareValues: true)]
+        [Tooltip("If set, the Gothic version named below will be auto-selected when the game starts.")]
+        public bool PreselectGameVersionUse = true;
+        [ConditionalField(fieldToCheck: nameof(PreselectGameVersionUse), compareValues: true)]
         public GameVersion GameVersion = GameVersion.Gothic1;
         
         public GUZContext.Controls GameControls = GUZContext.Controls.VR;
