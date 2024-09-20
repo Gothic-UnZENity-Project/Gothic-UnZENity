@@ -1,6 +1,8 @@
 ﻿using System;
+using GUZ.Core.Context;
 using UnityEngine;
 using UnityEngine.Events;
+using ZenKit;
 
 namespace GUZ.Core
 {
@@ -10,6 +12,11 @@ namespace GUZ.Core
     /// </summary>
     public static class GlobalEventDispatcher
     {
+        // We need to ensure, that other modules will register themselves based on current Control+GameMode setting.
+        // Since we can't call them (e.g. Flat/VR) directly, we need to leverage this IoC pattern.
+        public static readonly UnityEvent<GUZContext.Controls> RegisterControlAdapters = new();
+        public static readonly UnityEvent<GameVersion> RegisterGameVersionAdapters = new();
+
         public static readonly UnityEvent ZenKitBootstrapped = new();
 
         public static readonly UnityEvent MainMenuSceneLoaded = new();

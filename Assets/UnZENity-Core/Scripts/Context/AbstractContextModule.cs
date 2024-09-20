@@ -14,8 +14,8 @@ namespace GUZ.Core.Context
         
         private void Awake()
         {
-            GUZContext.RegisterControlAdapters.AddListener(RegisterControlModule);
-            GUZContext.RegisterGameVersionAdapters.AddListener(RegisterGameVersionModule);
+            GlobalEventDispatcher.RegisterControlAdapters.AddListener(RegisterControlModule);
+            GlobalEventDispatcher.RegisterGameVersionAdapters.AddListener(RegisterGameVersionModule);
         }
     }
 }

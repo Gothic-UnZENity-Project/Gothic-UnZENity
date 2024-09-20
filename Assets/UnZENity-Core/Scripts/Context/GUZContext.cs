@@ -11,11 +11,6 @@ namespace GUZ.Core.Context
         public static bool IsControlsInitialized;
         public static bool IsGameVersionInitialized;
 
-        // We need to ensure, that other modules will register themselves based on current Control+GameMode setting.
-        // Since we can't call them (e.g. Flat/VR) directly, we need to leverage this IoC pattern.
-        public static readonly UnityEvent<Controls> RegisterControlAdapters = new();
-        public static readonly UnityEvent<GameVersion> RegisterGameVersionAdapters = new();
-
         public static IInteractionAdapter InteractionAdapter;
         public static IDialogAdapter DialogAdapter;
         public static IGameVersionAdapter GameVersionAdapter;
@@ -28,7 +23,7 @@ namespace GUZ.Core.Context
 
         public static void SetControlContext(Controls controls)
         {
-            RegisterControlAdapters.Invoke(controls);
+            GlobalEventDispatcher.RegisterControlAdapters.Invoke(controls);
             
             if (InteractionAdapter == null)
             {
@@ -40,7 +35,7 @@ namespace GUZ.Core.Context
         
         public static void SetGameVersionContext(GameVersion version)
         {
-            RegisterGameVersionAdapters.Invoke(version);
+            GlobalEventDispatcher.RegisterGameVersionAdapters.Invoke(version);
             
             if (GameVersionAdapter == null)
             {
