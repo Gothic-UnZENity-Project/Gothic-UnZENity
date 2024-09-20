@@ -1,6 +1,6 @@
 using System;
 using GUZ.Core;
-using GUZ.Core.Context;
+using GUZ.Core.Adapter;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 

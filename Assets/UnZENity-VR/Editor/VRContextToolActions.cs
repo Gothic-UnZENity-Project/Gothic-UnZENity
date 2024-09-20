@@ -1,7 +1,6 @@
 using System.IO;
 using System.Linq;
 using GUZ.Core;
-using GUZ.Core.Context;
 using UnityEditor;
 using UnityEditor.Build;
 using UnityEngine;
@@ -22,7 +21,7 @@ namespace GUZ.VR.Editor
             var hvrCompilerSettingAndroidExists = PlayerSettings.GetScriptingDefineSymbols(NamedBuildTarget.Android)
                 .Contains(HVR_COMPILER_FLAG);
             var hvrSceneSetting = Object.FindObjectOfType<GameManager>()?.Config.GameControls ==
-                                  GUZContext.Controls.VR;
+                                  GameContext.Controls.VR;
 
             var message =
                 $"{hvrExists} - Plugin installed\n" +

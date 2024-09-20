@@ -2,7 +2,6 @@ using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
-using GUZ.Core.Context;
 using GUZ.Core.Creator;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
@@ -69,7 +68,7 @@ namespace GUZ.Core.Manager
                 {
                     SaveGameManager.LoadNewGame();
 
-                    await LoadWorld(GUZContext.GameVersionAdapter.InitialWorld, Constants.SelectedWaypoint);
+                    await LoadWorld(GameContext.GameVersionAdapter.InitialWorld, Constants.SelectedWaypoint);
                 }
             }
             catch (Exception e)
@@ -229,7 +228,7 @@ namespace GUZ.Core.Manager
                 case Constants.ScenePlayer:
                     SceneManager.MoveGameObjectToScene(InteractionManager, _generalScene);
 
-                    var playerGo = GUZContext.InteractionAdapter.CreatePlayerController(scene, _heroStartPosition, _heroStartRotation);
+                    var playerGo = GameContext.InteractionAdapter.CreatePlayerController(scene, _heroStartPosition, _heroStartRotation);
 
                     GlobalEventDispatcher.GeneralSceneLoaded.Invoke(playerGo);
 

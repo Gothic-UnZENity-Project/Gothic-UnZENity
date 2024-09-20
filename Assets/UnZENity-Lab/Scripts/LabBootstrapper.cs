@@ -1,6 +1,5 @@
 using GUZ.Core;
 using GUZ.Core.Caches;
-using GUZ.Core.Context;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
 using GUZ.Core.Manager.Culling;
@@ -106,7 +105,7 @@ namespace GUZ.Lab
 
         private void BootLab()
         {
-            var playerGo = GUZContext.InteractionAdapter.CreatePlayerController(SceneManager.GetActiveScene());
+            var playerGo = GameContext.InteractionAdapter.CreatePlayerController(SceneManager.GetActiveScene());
             _deviceSimulatorManager.AddVRDeviceSimulator();
             NpcHelper.CacheHero(playerGo);
         }

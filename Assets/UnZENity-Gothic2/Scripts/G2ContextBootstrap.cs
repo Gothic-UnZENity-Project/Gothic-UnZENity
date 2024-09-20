@@ -1,4 +1,5 @@
-﻿using GUZ.Core.Context;
+﻿using GUZ.Core;
+using GUZ.Core.Adapter;
 using ZenKit;
 
 namespace GUZ.G2
@@ -7,8 +8,9 @@ namespace GUZ.G2
     /// Bootstrap class which will register listener to set this module as Active if GameSettings.Controls match.
     /// </summary>
     public class G2ContextBootstrap : AbstractContextBootstrap
+
     {
-        protected override void RegisterControlModule(GUZContext.Controls controls)
+        protected override void RegisterControlModule(GameContext.Controls controls)
         {
             // NOP
         }
@@ -20,7 +22,7 @@ namespace GUZ.G2
                 return;
             }
 
-            GUZContext.GameVersionAdapter = new G2Adapter();
+            GameContext.GameVersionAdapter = new G2Adapter();
         }
     }
 }

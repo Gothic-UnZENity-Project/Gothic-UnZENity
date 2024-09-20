@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using DirectMusic;
-using GUZ.Core.Context;
 using GUZ.Core.Creator.Sounds;
 using GUZ.Core.Data;
 using GUZ.Core.Globals;
@@ -63,7 +62,7 @@ namespace GUZ.Core
             // Lookup is done in following places:
             // 1. CONTEXT_NAME/Prefabs/... - overwrites lookup path below, used for specific prefabs, for current context (HVR, Flat, ...)
             // 2. Prefabs/... - Located inside core module (UnZENity-Core), if we don't need special handling.
-            var contextPrefixPath = $"{GUZContext.InteractionAdapter.GetContextName()}/{s}";
+            var contextPrefixPath = $"{GameContext.InteractionAdapter.GetContextName()}/{s}";
             return new[] { contextPrefixPath, s }.Select(Resources.Load<GameObject>)
                 .FirstOrDefault(newPrefab => newPrefab != null);
         });

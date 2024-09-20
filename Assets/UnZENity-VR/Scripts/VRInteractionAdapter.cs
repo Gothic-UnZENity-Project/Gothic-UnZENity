@@ -1,7 +1,7 @@
 #if GUZ_HVR_INSTALLED
 using System.Linq;
 using GUZ.Core;
-using GUZ.Core.Context;
+using GUZ.Core.Adapter;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.VR.Components;

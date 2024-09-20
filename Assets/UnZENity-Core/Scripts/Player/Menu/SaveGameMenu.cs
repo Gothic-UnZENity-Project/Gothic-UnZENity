@@ -1,6 +1,5 @@
 using System.IO;
 using GUZ.Core.Caches;
-using GUZ.Core.Context;
 using GUZ.Core.Extensions;
 using GUZ.Core.Manager;
 using GUZ.Core.Util;
@@ -15,11 +14,11 @@ namespace GUZ.Core.Player.Menu
     {
         public GameObject[] SaveSlots;
 
-        [FormerlySerializedAs("thumbnail")] public GameObject Thumbnail;
-        [FormerlySerializedAs("world")] public TMP_Text World;
-        [FormerlySerializedAs("savedAt")] public TMP_Text SavedAt;
-        [FormerlySerializedAs("gameTime")] public TMP_Text GameTime;
-        [FormerlySerializedAs("version")] public TMP_Text Version;
+        public GameObject Thumbnail;
+        public TMP_Text World;
+        public TMP_Text SavedAt;
+        public TMP_Text GameTime;
+        public TMP_Text Version;
 
         private readonly SaveGame[] _saves = new SaveGame[15];
 
@@ -31,7 +30,7 @@ namespace GUZ.Core.Player.Menu
             Thumbnail.GetComponent<MeshRenderer>().material =
                 GameGlobals.Textures.GetEmptyMaterial(MaterialExtension.BlendMode.Opaque);
 
-            var gothicDir = GUZContext.GameVersionAdapter.RootPath;
+            var gothicDir = GameContext.GameVersionAdapter.RootPath;
             var saveGameListPath = Path.GetFullPath(Path.Join(gothicDir, "Saves"));
 
             foreach (var fullPath in Directory.EnumerateDirectories(saveGameListPath))

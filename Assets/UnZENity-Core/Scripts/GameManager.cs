@@ -1,5 +1,4 @@
 using GUZ.Core.Caches;
-using GUZ.Core.Context;
 using GUZ.Core.Debugging;
 using GUZ.Core.Extensions;
 using GUZ.Core.Manager;
@@ -66,7 +65,7 @@ namespace GUZ.Core
             GameGlobals.Instance = this;
             
             // Set Context as early as possible to ensure everything else boots based on the activated modules.
-            GUZContext.SetControlContext(Config.GameControls);
+            GameContext.SetControlContext(Config.GameControls);
 
             Settings = GameSettings.Load(Config.GameVersion);
             
@@ -128,9 +127,9 @@ namespace GUZ.Core
         /// </summary>
         public void InitPhase2(GameVersion version)
         {
-            GUZContext.SetGameVersionContext(version);
+            GameContext.SetGameVersionContext(version);
 
-            var gothicRootPath = GUZContext.GameVersionAdapter.RootPath;
+            var gothicRootPath = GameContext.GameVersionAdapter.RootPath;
 
             // Otherwise, continue loading Gothic.
             Debug.Log($"Initializing Gothic installation at: {gothicRootPath}");

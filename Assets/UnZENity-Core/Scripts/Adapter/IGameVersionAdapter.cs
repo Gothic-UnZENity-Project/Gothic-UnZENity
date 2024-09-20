@@ -1,6 +1,6 @@
 ﻿using ZenKit;
 
-namespace GUZ.Core.Context
+namespace GUZ.Core.Adapter
 {
     public interface IGameVersionAdapter
     {

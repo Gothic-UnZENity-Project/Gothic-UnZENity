@@ -1,12 +1,12 @@
 using System;
-using UnityEngine.Events;
+using GUZ.Core.Adapter;
 using ZenKit;
 #if GUZ_HVR_INSTALLED
 #endif
 
-namespace GUZ.Core.Context
+namespace GUZ.Core
 {
-    public static class GUZContext
+    public static class GameContext
     {
         public static bool IsControlsInitialized;
         public static bool IsGameVersionInitialized;

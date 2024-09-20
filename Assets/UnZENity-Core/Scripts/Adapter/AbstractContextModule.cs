@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using ZenKit;
 
-namespace GUZ.Core.Context
+namespace GUZ.Core.Adapter
 {
     /// <summary>
     /// We need to find a way to properly instantiate every module which wants to listen to GUZContext.Register() event.
@@ -9,7 +9,7 @@ namespace GUZ.Core.Context
     /// </summary>
     public abstract class AbstractContextBootstrap : MonoBehaviour
     {
-        protected abstract void RegisterControlModule(GUZContext.Controls controls);
+        protected abstract void RegisterControlModule(GameContext.Controls controls);
         protected abstract void RegisterGameVersionModule(GameVersion version);
         
         private void Awake()

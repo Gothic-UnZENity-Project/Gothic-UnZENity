@@ -1,5 +1,4 @@
-﻿using GUZ.Core.Context;
-using GUZ.Core.Globals;
+﻿using GUZ.Core.Globals;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -12,8 +11,8 @@ namespace GUZ.Core.Manager.Scenes
             // TODO - Needed?
             // SceneManager.MoveGameObjectToScene(InteractionManager, _generalScene);
 
-            GUZContext.InteractionAdapter.CreatePlayerController(SceneManager.GetSceneByName(Constants.ScenePlayer));
-            GUZContext.InteractionAdapter.CreateVRDeviceSimulator();
+            GameContext.InteractionAdapter.CreatePlayerController(SceneManager.GetSceneByName(Constants.ScenePlayer));
+            GameContext.InteractionAdapter.CreateVRDeviceSimulator();
 
             GameManager.I.LoadScene(Constants.SceneGameVersion);
         }

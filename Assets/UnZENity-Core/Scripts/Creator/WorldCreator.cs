@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using GUZ.Core.Caches;
-using GUZ.Core.Context;
 using GUZ.Core.Creator.Meshes.V2;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
@@ -426,7 +425,7 @@ namespace GUZ.Core.Creator
 
         private static void WorldLoaded(GameObject playerGo)
         {
-            GUZContext.InteractionAdapter.SetTeleportationArea(_worldGo);
+            GameContext.InteractionAdapter.SetTeleportationArea(_worldGo);
         }
 
 

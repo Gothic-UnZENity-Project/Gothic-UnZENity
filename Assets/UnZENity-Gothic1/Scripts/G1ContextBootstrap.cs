@@ -1,4 +1,5 @@
-﻿using GUZ.Core.Context;
+﻿using GUZ.Core;
+using GUZ.Core.Adapter;
 using ZenKit;
 
 namespace GUZ.G1
@@ -8,7 +9,7 @@ namespace GUZ.G1
     /// </summary>
     public class G1ContextBootstrap : AbstractContextBootstrap
     {
-        protected override void RegisterControlModule(GUZContext.Controls controls)
+        protected override void RegisterControlModule(GameContext.Controls controls)
         {
             // NOP
         }
@@ -20,7 +21,7 @@ namespace GUZ.G1
                 return;
             }
 
-            GUZContext.GameVersionAdapter = new G1Adapter();
+            GameContext.GameVersionAdapter = new G1Adapter();
         }
     }
 }
