@@ -30,7 +30,7 @@ namespace GUZ.Flat
 
         public void CreateVRDeviceSimulator()
         {
-            throw new NotImplementedException("This method should never been called on Flat adapter.");
+            // NOP
         }
 
         public void SetTeleportationArea(GameObject teleportationGo)
