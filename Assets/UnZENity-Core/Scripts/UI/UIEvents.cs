@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using GUZ.Core.Context;
 using GUZ.Core.Creator.Sounds;
 using GUZ.Core.Extensions;
 using TMPro;
@@ -20,7 +21,12 @@ namespace GUZ.Core.UI
         private static AudioClip _uiClick;
         private static AudioClip _uiReturnClick;
 
-        private void Awake()
+        private void Start()
+        {
+            GUZContext.OnGameVersionInitialized.AddListener(OnGameVersionContextInitialized);
+        }
+
+        private void OnGameVersionContextInitialized()
         {
             // Set sound files for button clicks initially.
             if (_uiHover == null)
@@ -124,6 +130,11 @@ namespace GUZ.Core.UI
             }
 
             _audioSource.PlayOneShot(_uiReturnClick);
+        }
+
+        private void OnDestroy()
+        {
+            GUZContext.OnGameVersionInitialized.RemoveListener(OnGameVersionContextInitialized);
         }
     }
 }
