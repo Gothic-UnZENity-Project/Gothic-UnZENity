@@ -16,11 +16,6 @@ namespace GUZ.Core.Context
         public static readonly UnityEvent<Controls> RegisterControlAdapters = new();
         public static readonly UnityEvent<GameVersion> RegisterGameVersionAdapters = new();
 
-        // Some objects (like sounds from VR Player) are initialized before the GameVersion is set.
-        // We therefore provide a way to get notified the delayed initialization.
-        public static readonly UnityEvent OnControlsInitialized = new();
-        public static readonly UnityEvent OnGameVersionInitialized = new();
-
         public static IInteractionAdapter InteractionAdapter;
         public static IDialogAdapter DialogAdapter;
         public static IGameVersionAdapter GameVersionAdapter;
@@ -41,7 +36,6 @@ namespace GUZ.Core.Context
             }
 
             IsControlsInitialized = true;
-            OnControlsInitialized.Invoke();
         }
         
         public static void SetGameVersionContext(GameVersion version)
@@ -54,7 +48,6 @@ namespace GUZ.Core.Context
             }
 
             IsGameVersionInitialized = true;
-            OnGameVersionInitialized.Invoke();
         }
     }
 }

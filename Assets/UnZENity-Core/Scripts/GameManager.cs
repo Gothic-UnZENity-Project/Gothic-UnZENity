@@ -8,6 +8,7 @@ using GUZ.Core.Manager.Scenes;
 using GUZ.Core.Manager.Settings;
 using GUZ.Core.Util;
 using GUZ.Core.World;
+using MyBox;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using ZenKit;
@@ -139,7 +140,6 @@ namespace GUZ.Core
             Video.Init();
 
             GuzBootstrapper.BootGothicUnZeNity(Config, gothicRootPath);
-            Scene.LoadStartupScenes();
 
             if (Config.EnableBarrierVisual)
             {
@@ -147,11 +147,11 @@ namespace GUZ.Core
             }
         }
 
-        public void LoadScene(string sceneName, bool unloadCurrentActiveScene)
+        public void LoadScene(string sceneName, string unloadScene = null)
         {
-            if (unloadCurrentActiveScene)
+            if (unloadScene.NotNullOrEmpty())
             {
-                SceneManager.UnloadSceneAsync(SceneManager.GetActiveScene());
+                SceneManager.UnloadSceneAsync(SceneManager.GetSceneByName(unloadScene));
             }
 
             SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
@@ -160,11 +160,14 @@ namespace GUZ.Core
         private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
             Debug.Log($"Scene loaded: {scene.name}");
-            var sceneManager = scene.GetComponentInChildren<ISceneManager>();
 
+            // Newly created scenes are always the ones which we set as main scenes (i.e. new GameObjects will spawn in here automatically)
+            SceneManager.SetActiveScene(scene);
+
+            var sceneManager = scene.GetComponentInChildren<ISceneManager>();
             if (sceneManager == null)
             {
-                Debug.LogError($"{nameof(ISceneManager)} for scene >{scene.name}< not found. Game won't proceed as bootstrapper for scene is invalid/non-existant.");
+                Debug.LogError($"{nameof(ISceneManager)} for scene >{scene.name}< not found. Game won't proceed as bootstrapper for scene is invalid/non-existent.");
                 return;
             }
             sceneManager.Init();

@@ -1,39 +1,43 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using GUZ.Core.Extensions;
+using GUZ.Core.Globals;
 using UnityEngine;
 using UnityEngine.Video;
 
 namespace GUZ.Core.Manager.Scenes
 {
-    public class LogoSceneManager : MonoBehaviour
+    public class LogoSceneManager : MonoBehaviour , ISceneManager
     {
         [SerializeField] private VideoPlayer _videoPlayer;
 
-        private Queue<string> logoVideos = new();
+        private Queue<string> _logoVideos = new();
 
-        private void Start()
+        public void Init()
         {
             _videoPlayer.loopPointReached += LoadNextLogo;
 
-            logoVideos = new Queue<string>(GameGlobals.Video.VideoFilePathsMp4.Where(i => i.StartsWithIgnoreCase("logo")));
-            
+            _logoVideos = new Queue<string>(GameGlobals.Video.VideoFilePathsMp4.Where(i => i.StartsWithIgnoreCase("logo")));
+
+            if (_logoVideos.IsEmpty())
+            {
+                Debug.Log("No logo videos in format .mp4 found. Skipping scene.");
+            }
+
             // Start first logo
-            LoadNextLogo(_videoPlayer);
+            LoadNextLogo(null);
         }
 
-        private void LoadNextLogo(VideoPlayer player)
+        private void LoadNextLogo(VideoPlayer _)
         {
-            if (logoVideos.IsEmpty())
+            if (_logoVideos.IsEmpty())
             {
-#pragma warning disable CS4014 // Do not wait. Just go on.
-                GameGlobals.Scene.LoadMainMenuScene();
-#pragma warning restore CS4014
+                GameManager.I.LoadScene(Constants.SceneMainMenu, Constants.SceneLogo);
                 return;
             }
             
-            player.url = logoVideos.Dequeue();
-            player.Play();
+            _videoPlayer.url = _logoVideos.Dequeue();
+            _videoPlayer.Play();
         }
     }
 }

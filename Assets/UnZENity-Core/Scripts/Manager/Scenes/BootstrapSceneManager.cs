@@ -40,7 +40,7 @@ namespace GUZ.Core.Manager.Scenes
             }
             
             // Load Player scene
-            GameManager.I.LoadScene(Constants.ScenePlayer, false);
+            GameManager.I.LoadScene(Constants.ScenePlayer);
         }
 
         // FIXME - Move to Player.unity scene

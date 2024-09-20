@@ -35,7 +35,7 @@ namespace GUZ.Core.Manager.Scenes
                 if (isInstalled)
                 {
                     GameManager.I.InitPhase2(GameGlobals.Config.GameVersion);
-                    GameManager.I.LoadScene(Constants.SceneMainMenu, true);
+                    GameManager.I.LoadScene(Constants.SceneLogo, Constants.SceneGameVersion);
                 }
                 else
                 {
@@ -67,7 +67,7 @@ namespace GUZ.Core.Manager.Scenes
                 Debug.Log($"Installation for {version} found only.");
 
                 GameManager.I.InitPhase2(version);
-                GameManager.I.LoadScene(Constants.SceneMainMenu, true);
+                GameManager.I.LoadScene(Constants.SceneLogo, Constants.SceneGameVersion);
             }
         }
     }

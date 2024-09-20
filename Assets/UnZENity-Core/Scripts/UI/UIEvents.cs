@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using GUZ.Core.Context;
 using GUZ.Core.Creator.Sounds;
 using GUZ.Core.Extensions;
 using TMPro;
@@ -23,10 +22,10 @@ namespace GUZ.Core.UI
 
         private void Start()
         {
-            GUZContext.OnGameVersionInitialized.AddListener(OnGameVersionContextInitialized);
+            GlobalEventDispatcher.ZenKitBootstrapped.AddListener(OnZenKitInitialized);
         }
 
-        private void OnGameVersionContextInitialized()
+        private void OnZenKitInitialized()
         {
             // Set sound files for button clicks initially.
             if (_uiHover == null)
@@ -134,7 +133,7 @@ namespace GUZ.Core.UI
 
         private void OnDestroy()
         {
-            GUZContext.OnGameVersionInitialized.RemoveListener(OnGameVersionContextInitialized);
+            GlobalEventDispatcher.ZenKitBootstrapped.RemoveListener(OnZenKitInitialized);
         }
     }
 }
