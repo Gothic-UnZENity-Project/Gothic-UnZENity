@@ -1,4 +1,5 @@
 using System;
+using GUZ.Core.Context;
 using GUZ.Core.World;
 using MyBox;
 using UnityEngine;
@@ -45,11 +46,12 @@ namespace GUZ.Core
          */
 
         [Foldout("Context", true)]
+        public bool OverwriteGameVersionUse = true;
+        [ConditionalField(fieldToCheck: nameof(OverwriteGameVersionUse), compareValues: true)]
         public GameVersion GameVersion = GameVersion.Gothic1;
         
-        public Context.GUZContext.Controls GameControls = Context.GUZContext.Controls.VR;
-        
-        [ConditionalField(fieldToCheck: nameof(GameControls), compareValues: Context.GUZContext.Controls.VR)]
+        public GUZContext.Controls GameControls = GUZContext.Controls.VR;
+        [ConditionalField(fieldToCheck: nameof(GameControls), compareValues: GUZContext.Controls.VR)]
         public bool EnableVRDeviceSimulator;
 
 

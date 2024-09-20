@@ -10,6 +10,7 @@ using GUZ.Core.Util;
 using GUZ.Core.World;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using ZenKit;
 using Logger = ZenKit.Logger;
 
 namespace GUZ.Core
@@ -129,14 +130,14 @@ namespace GUZ.Core
         /// <summary>
         /// Once Gothic version is selected, we can now initialize remaining managers.
         /// </summary>
-        private void InitPhase2()
+        public void InitPhase2(GameVersion version)
         {
-            GUZContext.SetGameVersionContext(Config.GameVersion);
+            GUZContext.SetGameVersionContext(version);
 
             var gothicRootPath = GUZContext.GameVersionAdapter.RootPath;
 
             // If the Gothic installation directory is not set, show an error message and exit.
-            if (!Settings.CheckIfGothicInstallationExists(gothicRootPath))
+            if (!Settings.CheckIfGothicInstallationExists(version))
             {
                 InvalidInstallationPathMessage.SetActive(true);
                 return;
