@@ -5,6 +5,7 @@ using GUZ.Core.Adapter;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.VR.Components;
+using HurricaneVR.Framework.Core.UI;
 using HurricaneVRExtensions.Simulator;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -86,8 +87,9 @@ namespace GUZ.VR
             }
 
             var simulatorGo = new GameObject("HVR - XRDeviceSimulator");
-            // We assume, that this Component (HVRPlayerManager) is set inside the HVR root for a player rig.
-            var playerRig = currentScene.GetRootGameObjects().First(i => i.GetComponentInChildren<VRPlayerManager>());
+            // We assume, that this Component (VRPlayerController) is set 1-level inside the HVR root for a player rig.
+            var playerRig = currentScene.GetComponentInChildren<VRPlayerController>()!
+                .transform.parent.gameObject;
 
             simulatorGo.AddComponent<HVRBodySimulator>().Rig = playerRig;
             simulatorGo.AddComponent<HVRHandsSimulator>().Rig = playerRig;
@@ -104,6 +106,14 @@ namespace GUZ.VR
         public void TeleportTo(Vector3 position, Quaternion rotation = default)
         {
             _playerController.Teleporter.Teleport(position, rotation.eulerAngles);
+        }
+
+        public void InitUIInteraction()
+        {
+            // Find all ui canvases and add to HVR Input module (To activate red laser pointer for clicking/grabbing)
+            // WARNING: As it leverages FindObjectsOfType which looks through all opened scenes trees, this can become quite slow. Execute very carefully!
+            var allCanvases = Object.FindObjectsOfType<Canvas>(true);
+            HVRInputModule.Instance.UICanvases = allCanvases.ToList();
         }
 
         public void SetTeleportationArea(GameObject teleportationGo)

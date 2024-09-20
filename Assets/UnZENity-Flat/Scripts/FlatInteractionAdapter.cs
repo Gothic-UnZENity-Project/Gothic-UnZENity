@@ -43,6 +43,11 @@ namespace GUZ.Flat
             // Not yet implemented
         }
 
+        public void InitUIInteraction()
+        {
+            // NOP
+        }
+
         public void SetTeleportationArea(GameObject teleportationGo)
         {
             // NOP

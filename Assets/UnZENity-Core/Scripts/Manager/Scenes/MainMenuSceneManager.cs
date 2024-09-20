@@ -15,6 +15,8 @@ namespace GUZ.Core.Manager.Scenes
             // We set the gothic background image in MainMenu with this material.
             _mainMenuImageBackground.GetComponent<MeshRenderer>().material =
                 GameGlobals.Textures.MainMenuImageBackgroundMaterial;
+
+            GameContext.InteractionAdapter.InitUIInteraction();
         }
     }
 }

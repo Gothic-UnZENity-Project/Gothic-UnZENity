@@ -10,6 +10,7 @@ namespace GUZ.Core.Adapter
         void CreateVRDeviceSimulator();
         void LockPlayerInPlace();
         public void TeleportTo(Vector3 position, Quaternion rotation = default);
+        void InitUIInteraction();
         void SetTeleportationArea(GameObject teleportationGo);
         void IntroduceChapter(string chapter, string text, string texture, string wav, int time);
     }
