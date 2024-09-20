@@ -10,9 +10,9 @@ namespace GUZ.Core.Manager.Scenes
         [SerializeField]
         private GameObject _mainMenuImageBackground;
 
-
         public void Init()
         {
+            // We set the gothic background image in MainMenu with this material.
             _mainMenuImageBackground.GetComponent<MeshRenderer>().material =
                 GameGlobals.Textures.MainMenuImageBackgroundMaterial;
         }

@@ -33,6 +33,16 @@ namespace GUZ.Flat
             // NOP
         }
 
+        public void LockPlayerInPlace()
+        {
+            // Not yet implemented
+        }
+
+        public void TeleportTo(Vector3 position, Quaternion rotation = default)
+        {
+            // Not yet implemented
+        }
+
         public void SetTeleportationArea(GameObject teleportationGo)
         {
             // NOP

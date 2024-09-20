@@ -17,6 +17,8 @@ namespace GUZ.VR
     {
         private const string _contextName = "VR";
 
+        private VRPlayerController _playerController;
+
         public string GetContextName()
         {
             return _contextName;
@@ -25,7 +27,7 @@ namespace GUZ.VR
         public GameObject CreatePlayerController(Scene scene, Vector3 position = default, Quaternion rotation = default)
         {
             var go = ResourceLoader.TryGetPrefabObject(PrefabType.Player, position, rotation);
-            var playerController = go.GetComponentInChildren<VRPlayerController>();
+            _playerController = go.GetComponentInChildren<VRPlayerController>();
 
             go.name = "Player - VR";
 
@@ -35,24 +37,24 @@ namespace GUZ.VR
 
             if (scene.name is Constants.SceneMainMenu or Constants.SceneLoading)
             {
-                playerController.SetLockedControls();
+                _playerController.SetLockedControls();
             }
             // Normal game
             else
             {
-                playerController.SetNormalControls();
+                _playerController.SetNormalControls();
 
                 // Add MainMenu entry to the game
                 var mainMenuPrefab = ResourceLoader.TryGetPrefabObject(PrefabType.MainMenu);
-                playerController.MainMenu = mainMenuPrefab;
+                _playerController.MainMenu = mainMenuPrefab;
 
-                mainMenuPrefab.SetParent(playerController.gameObject, true, true);
+                mainMenuPrefab.SetParent(_playerController.gameObject, true, true);
                 mainMenuPrefab.SetActive(false);
                 // TODO: Same as on MainMenu.unity scene. Will be replaced by a proper FollowPlayer component later.
                 mainMenuPrefab.transform.localPosition = new(0, 1.5f, 4);
             }
 
-            return playerController.gameObject;
+            return _playerController.gameObject;
         }
 
         public void CreateVRDeviceSimulator()
@@ -92,6 +94,16 @@ namespace GUZ.VR
             simulatorGo.AddComponent<HVRSimulatorControlsGUI>();
 
             SceneManager.MoveGameObjectToScene(simulatorGo, currentScene);
+        }
+
+        public void LockPlayerInPlace()
+        {
+            _playerController.SetLockedControls();
+        }
+
+        public void TeleportTo(Vector3 position, Quaternion rotation = default)
+        {
+            _playerController.Teleporter.Teleport(position, rotation.eulerAngles);
         }
 
         public void SetTeleportationArea(GameObject teleportationGo)

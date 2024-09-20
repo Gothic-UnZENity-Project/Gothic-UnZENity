@@ -25,6 +25,9 @@ namespace GUZ.Core.Manager.Scenes
              * 4. If there are two, show selection between these two games. Once one is selected, call GUZContext.SetGameVersion(version)
              */
 
+            // Whatever comes next, we don't want the player to move around right now.
+            GameContext.InteractionAdapter.LockPlayerInPlace();
+
             var isG1Installed = GameGlobals.Settings.CheckIfGothicInstallationExists(GameVersion.Gothic1);
             var isG2Installed = GameGlobals.Settings.CheckIfGothicInstallationExists(GameVersion.Gothic2);
 
