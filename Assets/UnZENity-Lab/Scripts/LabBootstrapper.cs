@@ -43,6 +43,7 @@ namespace GUZ.Lab
         private bool _isBooted;
 
         public GameSettings Settings => _settings;
+        public LoadingManager Loading => null;
         public SkyManager Sky => null;
         public GameTime Time => null;
         public RoutineManager Routines => _npcRoutineManager;

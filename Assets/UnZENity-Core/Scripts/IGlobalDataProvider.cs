@@ -9,6 +9,7 @@ namespace GUZ.Core
     {
         public GameConfiguration Config { get; }
         public GameSettings Settings { get; }
+        public LoadingManager Loading { get; }
         public SkyManager Sky { get; }
         public GameTime Time { get; }
         public VideoManager Video { get; }

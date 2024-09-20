@@ -103,7 +103,7 @@ namespace GUZ.VR
             _playerController.SetLockedControls();
         }
 
-        public void TeleportTo(Vector3 position, Quaternion rotation = default)
+        public void TeleportPlayerTo(Vector3 position, Quaternion rotation = default)
         {
             _playerController.Teleporter.Teleport(position, rotation.eulerAngles);
         }

@@ -29,9 +29,10 @@ namespace GUZ.Core
         private PlayerManager _playerManager;
         private VRDeviceSimulatorManager _vrSimulatorManager;
         private MusicManager _gameMusicManager;
-        private LoadingManager _gameLoadingManager;
 
         public GameSettings Settings { get; private set; }
+        
+        public LoadingManager Loading { get; private set; }
 
         public SkyManager Sky { get; private set; }
 
@@ -75,7 +76,7 @@ namespace GUZ.Core
 
             Textures = GetComponent<TextureManager>();
             Font = GetComponent<FontManager>();
-            _gameLoadingManager = new LoadingManager();
+            Loading = new LoadingManager();
             VobMeshCulling = new VobMeshCullingManager(Config, this);
             NpcMeshCulling = new NpcMeshCullingManager(Config);
             SoundCulling = new VobSoundCullingManager(Config);
@@ -87,7 +88,7 @@ namespace GUZ.Core
             Video = new VideoManager(Config);
             Sky = new SkyManager(Config, Time, Settings);
             _gameMusicManager = new MusicManager(Config);
-            Scene = new GuzSceneManager(Config, _gameLoadingManager, XRInteractionManager, Settings);
+            Scene = new GuzSceneManager(Config, Loading, XRInteractionManager, Settings);
             Story = new StoryManager(Config);
             Routines = new RoutineManager(Config);
         }
@@ -112,7 +113,7 @@ namespace GUZ.Core
             DirectMusic.Logger.Set(Config.DirectMusicLogLevel, Logging.OnDirectMusicLogMessage);
 
             _fileLoggingHandler.Init(Settings);
-            _gameLoadingManager.Init();
+            Loading.Init();
             VobMeshCulling.Init();
             NpcMeshCulling.Init();
             SoundCulling.Init();
@@ -241,7 +242,7 @@ namespace GUZ.Core
             _fileLoggingHandler.Destroy();
 
             Settings = null;
-            _gameLoadingManager = null;
+            Loading = null;
             VobMeshCulling = null;
             NpcMeshCulling = null;
             SoundCulling = null;

@@ -1,4 +1,6 @@
+using GUZ.Core.Globals;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace GUZ.Core.Manager.Scenes
 {
@@ -16,6 +18,14 @@ namespace GUZ.Core.Manager.Scenes
             _mainMenuImageBackground.GetComponent<MeshRenderer>().material =
                 GameGlobals.Textures.MainMenuImageBackgroundMaterial;
 
+            if (!GameGlobals.Config.EnableMainMenu)
+            {
+                // Load world.zen
+                // TODO - In future, we can also fetch name of scene to load from another config setting.
+                GameManager.I.LoadWorld(Constants.SelectedWorld, -1, SceneManager.GetActiveScene().name);
+                return;
+            }
+            
             GameContext.InteractionAdapter.InitUIInteraction();
         }
     }
