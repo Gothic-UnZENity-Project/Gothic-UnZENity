@@ -1,3 +1,4 @@
+using System;
 using GUZ.Core.Globals;
 using UnityEngine;
 using ZenKit;
@@ -6,6 +7,15 @@ namespace GUZ.Core.Manager.Scenes
 {
     public class GameVersionSceneManager : MonoBehaviour, ISceneManager
     {
+        [SerializeField] private GameObject _invalidInstallationDir;
+
+
+        private void Awake()
+        {
+            // Just in case we forgot to disable it in scene view. ;-)
+            _invalidInstallationDir.SetActive(false);
+        }
+
         public void Init()
         {
             /*
@@ -18,13 +28,20 @@ namespace GUZ.Core.Manager.Scenes
             var isG1Installed = GameGlobals.Settings.CheckIfGothicInstallationExists(GameVersion.Gothic1);
             var isG2Installed = GameGlobals.Settings.CheckIfGothicInstallationExists(GameVersion.Gothic2);
 
-            if (GameGlobals.Config.PreselectGameVersionUse)
+            if (GameGlobals.Config.PreselectGameVersion)
             {
                 var isInstalled = GameGlobals.Config.GameVersion == GameVersion.Gothic1 ? isG1Installed : isG2Installed;
 
                 if (isInstalled)
                 {
                     GameManager.I.InitPhase2(GameGlobals.Config.GameVersion);
+                    GameManager.I.LoadScene(Constants.SceneMainMenu, true);
+                }
+                else
+                {
+                    // If the Gothic installation directory is not set, show an error message and exit.
+                    _invalidInstallationDir.SetActive(true);
+                    throw new ArgumentException($"{GameGlobals.Config.GameVersion} installation couldn't be found inside >GameSettings.json< file.");
                 }
 
                 return;
@@ -34,6 +51,8 @@ namespace GUZ.Core.Manager.Scenes
             if (!isG1Installed && !isG2Installed)
             {
                 Debug.Log("No installation of Gothic1 nor Gothic2 found.");
+
+                _invalidInstallationDir.SetActive(true);
             }
             // Both are installed
             else if (isG1Installed && isG2Installed)

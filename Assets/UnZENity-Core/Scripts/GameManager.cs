@@ -22,8 +22,6 @@ namespace GUZ.Core
 
         public GameObject XRInteractionManager;
 
-        public GameObject InvalidInstallationPathMessage;
-
         private FileLoggingHandler _fileLoggingHandler;
         private BarrierManager _barrierManager;
         private PlayerManager _playerManager;
@@ -122,9 +120,6 @@ namespace GUZ.Core
             _vrSimulatorManager.Init();
             // Scene.Init();
             Routines.Init();
-
-            // Just in case we forgot to disable it in scene view. ;-)
-            InvalidInstallationPathMessage.SetActive(false);
         }
 
         /// <summary>
@@ -136,15 +131,8 @@ namespace GUZ.Core
 
             var gothicRootPath = GUZContext.GameVersionAdapter.RootPath;
 
-            // If the Gothic installation directory is not set, show an error message and exit.
-            if (!Settings.CheckIfGothicInstallationExists(version))
-            {
-                InvalidInstallationPathMessage.SetActive(true);
-                return;
-            }
-
             // Otherwise, continue loading Gothic.
-
+            Debug.Log($"Initializing Gothic installation at: {gothicRootPath}");
             ResourceLoader.Init(gothicRootPath);
 
             _gameMusicManager.Init();
