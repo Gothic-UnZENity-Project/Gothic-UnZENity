@@ -137,6 +137,7 @@ namespace GUZ.Core
             ResourceLoader.Init(gothicRootPath);
 
             _gameMusicManager.Init();
+            Textures.Init();
             Video.Init();
 
             GuzBootstrapper.BootGothicUnZeNity(Config, gothicRootPath);

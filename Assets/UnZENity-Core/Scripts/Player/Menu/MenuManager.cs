@@ -1,14 +1,13 @@
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
 using GUZ.Core.UI;
-using GUZ.Core.Util;
 using MyBox;
 using TMPro;
 using UnityEngine;
 
 namespace GUZ.Core.Player.Menu
 {
-    public class MenuManager : SingletonBehaviour<MenuManager>
+    public class MenuManager : MonoBehaviour
     {
         public GameObject MainMenu;
         public GameObject LoadMenu;

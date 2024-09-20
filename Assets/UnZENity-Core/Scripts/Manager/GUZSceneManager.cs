@@ -59,18 +59,7 @@ namespace GUZ.Core.Manager
         {
             try
             {
-                if (_config.EnableMainMenu)
-                {
-                    if (_settingPlayLogoVideos)
-                    {
-                        await LoadLogoScene();
-                    }
-                    else
-                    {
-                        await LoadMainMenuScene();
-                    }
-                }
-                else if (_config.LoadFromSaveSlot)
+                if (_config.LoadFromSaveSlot)
                 {
                     SaveGameManager.LoadSavedGame(_config.SaveSlotToLoad);
 
@@ -87,17 +76,6 @@ namespace GUZ.Core.Manager
             {
                 Debug.LogError(e);
             }
-        }
-
-        private async Task LoadLogoScene()
-        {
-            await LoadScene(Constants.SceneLogo);
-        }
-        
-        public async Task LoadMainMenuScene()
-        {
-            GameGlobals.Textures.LoadLoadingDefaultTextures();
-            await LoadScene(Constants.SceneMainMenu);
         }
 
         public async Task LoadWorld(string worldName, string startVob = "")
@@ -196,8 +174,6 @@ namespace GUZ.Core.Manager
         /// </summary>
         private async Task ShowLoadingScene(string worldName)
         {
-            GameGlobals.Textures.LoadLoadingDefaultTextures();
-
             _generalScene = SceneManager.GetSceneByName(_generalSceneName);
             if (_generalScene.isLoaded)
             {
@@ -248,7 +224,6 @@ namespace GUZ.Core.Manager
                 case Constants.SceneBootstrap:
                     break;
                 case Constants.SceneLoading:
-                    SceneManager.SetActiveScene(scene);
                     GlobalEventDispatcher.LoadingSceneLoaded.Invoke();
                     break;
                 case Constants.ScenePlayer:
@@ -260,12 +235,10 @@ namespace GUZ.Core.Manager
 
                     break;
                 case Constants.SceneMainMenu:
-                    SceneManager.SetActiveScene(scene);
                     GlobalEventDispatcher.MainMenuSceneLoaded.Invoke();
                     break;
                 // any World
                 default:
-                    SceneManager.SetActiveScene(scene);
                     GlobalEventDispatcher.WorldSceneLoaded.Invoke();
                     break;
             }
@@ -273,12 +246,6 @@ namespace GUZ.Core.Manager
 
         private void OnSceneUnloaded(Scene scene)
         {
-            if (scene.name == Constants.SceneLoading && !_generalSceneLoaded)
-            {
-                _generalScene =
-                    SceneManager.LoadScene(_generalSceneName, new LoadSceneParameters(LoadSceneMode.Additive));
-                _generalSceneLoaded = true;
-            }
         }
 
         private void SetSpawnPoint()

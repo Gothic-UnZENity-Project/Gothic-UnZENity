@@ -15,6 +15,13 @@ namespace GUZ.Core.Manager.Scenes
 
         public void Init()
         {
+            Debug.Log("$INI: playLogoVideos = {GameGlobals.Settings.IniPlayLogoVideos}");
+            if (GameGlobals.Settings.IniPlayLogoVideos)
+            {
+                GameManager.I.LoadScene(Constants.SceneMainMenu, Constants.SceneLogo);
+                return;
+            }
+
             _videoPlayer.loopPointReached += LoadNextLogo;
 
             _logoVideos = new Queue<string>(GameGlobals.Video.VideoFilePathsMp4.Where(i => i.StartsWithIgnoreCase("logo")));

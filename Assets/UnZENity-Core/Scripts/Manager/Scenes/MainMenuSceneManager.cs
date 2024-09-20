@@ -5,16 +5,16 @@ namespace GUZ.Core.Manager.Scenes
     /// <summary>
     /// Specific manager for MainMenu.unity scene tasks only.
     /// </summary>
-    public class MainMenuSceneManager : MonoBehaviour
+    public class MainMenuSceneManager : MonoBehaviour, ISceneManager
     {
         [SerializeField]
         private GameObject _mainMenuImageBackground;
 
-        private void Start()
+
+        public void Init()
         {
             _mainMenuImageBackground.GetComponent<MeshRenderer>().material =
                 GameGlobals.Textures.MainMenuImageBackgroundMaterial;
         }
-
     }
 }
