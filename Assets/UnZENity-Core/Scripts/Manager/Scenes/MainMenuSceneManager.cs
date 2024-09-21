@@ -14,10 +14,6 @@ namespace GUZ.Core.Manager.Scenes
 
         public void Init()
         {
-            // We set the gothic background image in MainMenu with this material.
-            _mainMenuImageBackground.GetComponent<MeshRenderer>().material =
-                GameGlobals.Textures.MainMenuImageBackgroundMaterial;
-
             if (!GameGlobals.Config.EnableMainMenu)
             {
                 // Load world.zen
@@ -26,6 +22,10 @@ namespace GUZ.Core.Manager.Scenes
                 return;
             }
             
+            // We set the gothic background image in MainMenu with this material.
+            _mainMenuImageBackground.GetComponent<MeshRenderer>().material =
+                GameGlobals.Textures.MainMenuImageBackgroundMaterial;
+
             GameContext.InteractionAdapter.InitUIInteraction();
         }
     }
