@@ -50,13 +50,11 @@ namespace GUZ.Core.Manager
                 : $"LOADING_{SaveGameManager.CurrentWorldName.ToUpper().RemoveEnd(".ZEN")}.TGA";
             GameGlobals.Textures.SetTexture(textureNameForLoadingScreen, GameGlobals.Textures.GothicLoadingMenuMaterial);
             
-            var sphere = loadingArea.FindChildRecursively("LoadingSphere");
-
             var tm = GameGlobals.Textures;
-            sphere.GetComponent<MeshRenderer>().material = tm.LoadingSphereMaterial;
-            sphere.FindChildRecursively("LoadingImage").GetComponent<Image>().material = tm.GothicLoadingMenuMaterial;
-            sphere.FindChildRecursively("ProgressBackground").GetComponent<Image>().material = tm.LoadingBarBackgroundMaterial;
-            sphere.FindChildRecursively("ProgressBar").GetComponent<Image>().material = tm.LoadingBarMaterial;
+            loadingArea.GetComponent<MeshRenderer>().material = tm.LoadingSphereMaterial;
+            loadingArea.FindChildRecursively("LoadingImage").GetComponent<Image>().material = tm.GothicLoadingMenuMaterial;
+            loadingArea.FindChildRecursively("ProgressBackground").GetComponent<Image>().material = tm.LoadingBarBackgroundMaterial;
+            loadingArea.FindChildRecursively("ProgressBar").GetComponent<Image>().material = tm.LoadingBarMaterial;
         }
         
         public void ResetProgress()

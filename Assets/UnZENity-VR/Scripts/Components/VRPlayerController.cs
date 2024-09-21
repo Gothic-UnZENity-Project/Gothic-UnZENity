@@ -54,9 +54,9 @@ namespace GUZ.VR.Components
         /// </summary>
         public void SetLockedControls()
         {
-            // Disable physics
-            Gravity = 0f;
-            MaxFallSpeed = 0f;
+            // HINT: Disable physics
+            // We can't disable physics as it would prevent HVRTeleport.Teleport() from finishing (as it checks for Player.IsGrounded every frame).
+            // Therefore, we need to ground the player always on a plane and disable movement only.
 
             // Disable movement
             MovementEnabled = false;

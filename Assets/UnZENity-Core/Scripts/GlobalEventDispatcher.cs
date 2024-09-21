@@ -17,6 +17,8 @@ namespace GUZ.Core
         public static readonly UnityEvent<GameVersion> RegisterGameVersionAdapters = new();
 
         public static readonly UnityEvent ZenKitBootstrapped = new();
+        
+        public static readonly UnityEvent WorldFullyLoaded = new ();
 
         public static readonly UnityEvent MainMenuSceneLoaded = new();
         public static readonly UnityEvent MainMenuSceneUnloaded = new();

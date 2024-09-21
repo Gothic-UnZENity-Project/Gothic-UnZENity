@@ -51,6 +51,8 @@ namespace GUZ.Core.Manager.Scenes
             StationaryLight.InitStationaryLights();
 
             ResourceLoader.ReleaseLoadedData();
+            
+            GlobalEventDispatcher.WorldFullyLoaded.Invoke();
         }
     }
 }
