@@ -68,8 +68,7 @@ namespace GUZ.Core.Vm
             // Model
             vm.RegisterExternal<NpcInstance, string>("Mdl_SetVisual", Mdl_SetVisual);
             vm.RegisterExternal<NpcInstance, string>("Mdl_ApplyOverlayMds", Mdl_ApplyOverlayMds);
-            vm.RegisterExternal<NpcInstance, string, int, int, string, int, int, int>("Mdl_SetVisualBody",
-                Mdl_SetVisualBody);
+            vm.RegisterExternal<NpcInstance, string, int, int, string, int, int, int>("Mdl_SetVisualBody", Mdl_SetVisualBody);
             vm.RegisterExternal<NpcInstance, float, float, float>("Mdl_SetModelScale", Mdl_SetModelScale);
             vm.RegisterExternal<NpcInstance, float>("Mdl_SetModelFatness", Mdl_SetModelFatness);
 
@@ -124,7 +123,6 @@ namespace GUZ.Core.Vm
             vm.RegisterExternal<int, string>("PrintDebugCh", PrintDebugCh);
             vm.RegisterExternal<string>("PrintDebugInst", PrintDebugInst);
             vm.RegisterExternal<int, string>("PrintDebugInstCh", PrintDebugInstCh);
-            vm.RegisterExternal<int, string>("PrintDebugNpc", PrintDebugNpc);
 
             // Sound
 
@@ -482,16 +480,6 @@ namespace GUZ.Core.Vm
 
 
         public static void PrintDebugInstCh(int channel, string message)
-        {
-            if (!GameGlobals.Config.EnableZSpyLogs)
-            {
-                return;
-            }
-
-            Debug.Log($"[zspy,{channel}]: {message}");
-        }
-
-        public static void PrintDebugNpc(int channel, string message)
         {
             if (!GameGlobals.Config.EnableZSpyLogs)
             {
