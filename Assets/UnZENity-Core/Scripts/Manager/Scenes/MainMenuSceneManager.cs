@@ -27,6 +27,7 @@ namespace GUZ.Core.Manager.Scenes
                 GameGlobals.Textures.MainMenuImageBackgroundMaterial;
 
             GameContext.InteractionAdapter.InitUIInteraction();
+            GameContext.InteractionAdapter.TeleportPlayerTo(Vector3.zero);
         }
     }
 }
