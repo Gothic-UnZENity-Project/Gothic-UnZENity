@@ -49,6 +49,7 @@ namespace GUZ.Core.Manager
         {
             SaveGameId = 0;
             Save = new SaveGame(GameContext.GameVersionAdapter.Version);
+            IsFirstWorldLoadingFromSaveGame = true;
         }
 
         /// <summary>

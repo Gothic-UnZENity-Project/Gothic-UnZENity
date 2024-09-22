@@ -292,7 +292,8 @@ namespace GUZ.Core.Creator
                 {
                     if (vob.Name.EqualsIgnoreCase(Constants.DaedalusHeroInstanceName))
                     {
-                        GameGlobals.Scene.SetStart(vob.Position.ToUnityVector(), vob.Rotation.ToUnityQuaternion());
+                        GameGlobals.Player.HeroSpawnPosition = vob.Position.ToUnityVector();
+                        GameGlobals.Player.HeroSpawnRotation = vob.Rotation.ToUnityQuaternion();
                         break;
                     }
 

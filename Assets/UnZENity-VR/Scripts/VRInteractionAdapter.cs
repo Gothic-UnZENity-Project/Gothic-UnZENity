@@ -105,7 +105,10 @@ namespace GUZ.VR
 
         public void TeleportPlayerTo(Vector3 position, Quaternion rotation = default)
         {
-            _playerController.Teleporter.Teleport(position, rotation.eulerAngles);
+            _playerController.Teleporter.Teleport(position);
+            
+            // Changing the rotation inside HVRTeleporter didn't work for y-axis. Therefore, setting it now.
+            _playerController.transform.rotation = rotation;
         }
 
         public void InitUIInteraction()

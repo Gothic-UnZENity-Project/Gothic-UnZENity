@@ -1,7 +1,11 @@
+using System.Linq;
 using System.Threading.Tasks;
 using GUZ.Core.Creator;
+using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
+using MyBox;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace GUZ.Core.Manager.Scenes
 {
@@ -9,7 +13,9 @@ namespace GUZ.Core.Manager.Scenes
     {
         public void Init()
         {
+#pragma warning disable CS4014 // Do not wait. We want to update player movement (VR) and camera view (progress bar) 
             LoadWorldContentAsync();
+#pragma warning restore CS4014
         }
         
         /// <summary>
@@ -50,9 +56,64 @@ namespace GUZ.Core.Manager.Scenes
             GameGlobals.Sky.InitSky();
             StationaryLight.InitStationaryLights();
 
+            // World fully loaded
             ResourceLoader.ReleaseLoadedData();
+            TeleportPlayerToStart();
+            SceneManager.UnloadSceneAsync(Constants.SceneLoading);
+        }
+        
+        /// <summary>
+        /// There are three options, where the player can spawn:
+        /// 1. We set it inside GameConfiguration.SpawnAtWaypoint (only during first load of the game)
+        /// 2. We got the spawn information from a loaded SaveGame from the Hero's VOB
+        /// 3. We load the START_* waypoint 
+        /// </summary>
+        private void TeleportPlayerToStart()
+        {
+            // 1.
+            var debugSpawnAtWayPoint = GameGlobals.Config.SpawnAtWaypoint;
+
+            // If we currently load world from a save game, we will use the stored hero position which was set during VOB loading.
+            if (SaveGameManager.IsFirstWorldLoadingFromSaveGame)
+            {
+                // We only use the Vob location once per save game loading.
+                SaveGameManager.IsFirstWorldLoadingFromSaveGame = false;
+
+                if (debugSpawnAtWayPoint.NotNullOrEmpty())
+                {
+                    // We need to look up WPs and FPs. Therefore this slow check (which is fine, as it's only done for debugging purposes)
+                    var debugGo = GameObject.Find(debugSpawnAtWayPoint);
+
+                    if (debugGo != null)
+                    {
+                        GameContext.InteractionAdapter.TeleportPlayerTo(debugGo.transform.position,
+                            debugGo.transform.rotation);
+                        return;
+                    }
+                }
+            }
             
-            GlobalEventDispatcher.WorldFullyLoaded.Invoke();
+            // 2.
+            if (GameGlobals.Player.HeroSpawnPosition != default)
+            {
+                GameContext.InteractionAdapter.TeleportPlayerTo(GameGlobals.Player.HeroSpawnPosition, GameGlobals.Player.HeroSpawnRotation);
+                GameGlobals.Player.ResetSpawn();
+                return;
+            }
+            
+            // 3.
+            var spots = GameObject.FindGameObjectsWithTag(Constants.SpotTag);
+            var startPoint = spots.FirstOrDefault(
+                go => go.name.EqualsIgnoreCase("START") || go.name.EqualsIgnoreCase("START_GOTHIC2")
+            );
+
+            if (startPoint == null)
+            {
+                Debug.LogError("No suitable START_* waypoint found!");
+                return;
+            }
+            
+            GameContext.InteractionAdapter.TeleportPlayerTo(startPoint.transform.position, startPoint.transform.rotation);
         }
     }
 }

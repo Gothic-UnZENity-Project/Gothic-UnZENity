@@ -26,7 +26,6 @@ namespace GUZ.Core
 
         private FileLoggingHandler _fileLoggingHandler;
         private BarrierManager _barrierManager;
-        private PlayerManager _playerManager;
         private VRDeviceSimulatorManager _vrSimulatorManager;
         private MusicManager _gameMusicManager;
 
@@ -34,6 +33,7 @@ namespace GUZ.Core
         
         public LoadingManager Loading { get; private set; }
 
+        public PlayerManager Player { get; private set; }
         public SkyManager Sky { get; private set; }
 
         public GameTime Time { get; private set; }
@@ -82,7 +82,7 @@ namespace GUZ.Core
             SoundCulling = new VobSoundCullingManager(Config);
             _barrierManager = new BarrierManager(Config);
             Lights = new StationaryLightsManager();
-            _playerManager = new PlayerManager(Config);
+            Player = new PlayerManager(Config);
             _vrSimulatorManager = new VRDeviceSimulatorManager(Config);
             Time = new GameTime(Config, this);
             Video = new VideoManager(Config);
@@ -119,7 +119,7 @@ namespace GUZ.Core
             SoundCulling.Init();
             Time.Init();
             Sky.Init();
-            _playerManager.Init();
+            Player.Init();
             _vrSimulatorManager.Init();
             // Scene.Init();
             Routines.Init();

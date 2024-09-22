@@ -44,6 +44,7 @@ namespace GUZ.Lab
 
         public GameSettings Settings => _settings;
         public LoadingManager Loading => null;
+        public PlayerManager Player => null;
         public SkyManager Sky => null;
         public GameTime Time => null;
         public RoutineManager Routines => _npcRoutineManager;
