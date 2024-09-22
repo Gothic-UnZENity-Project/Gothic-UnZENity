@@ -37,7 +37,6 @@ namespace GUZ.Lab
         private VideoManager _videoManager;
         private RoutineManager _npcRoutineManager;
         private GameSettings _settings;
-        private GuzSceneManager _sceneManager;
         private TextureManager _textureManager;
         private FontManager _fontManager;
         private bool _isBooted;
@@ -48,7 +47,6 @@ namespace GUZ.Lab
         public SkyManager Sky => null;
         public GameTime Time => null;
         public RoutineManager Routines => _npcRoutineManager;
-        public GuzSceneManager Scene => _sceneManager;
         public TextureManager Textures => _textureManager;
         public FontManager Font => _fontManager;
         public StationaryLightsManager Lights => null;
@@ -66,14 +64,12 @@ namespace GUZ.Lab
             _settings = GameSettings.Load(Config.GameVersion);
             _textureManager = GetComponent<TextureManager>();
             _fontManager = GetComponent<FontManager>();
-            _sceneManager = new GuzSceneManager(Config, null, null, null);
             _deviceSimulatorManager = new VRDeviceSimulatorManager(Config);
             _npcRoutineManager = new RoutineManager(Config);
             _gameMusicManager = new MusicManager(Config);
             _videoManager = new VideoManager(Config);
 
             ResourceLoader.Init(_settings.Gothic1Path);
-            _sceneManager.Init();
             _gameMusicManager.Init();
             _npcRoutineManager.Init();
             _videoManager.Init();

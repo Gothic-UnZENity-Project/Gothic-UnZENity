@@ -44,8 +44,6 @@ namespace GUZ.Core
 
         public TextureManager Textures { get; private set; }
 
-        public GuzSceneManager Scene { get; private set; }
-
         public StoryManager Story { get; private set; }
 
         public FontManager Font { get; private set; }
@@ -88,7 +86,6 @@ namespace GUZ.Core
             Video = new VideoManager(Config);
             Sky = new SkyManager(Config, Time, Settings);
             _gameMusicManager = new MusicManager(Config);
-            Scene = new GuzSceneManager(Config, Loading, XRInteractionManager, Settings);
             Story = new StoryManager(Config);
             Routines = new RoutineManager(Config);
         }
@@ -252,7 +249,6 @@ namespace GUZ.Core
             Time = null;
             Sky = null;
             _gameMusicManager = null;
-            Scene = null;
             Routines = null;
         }
 

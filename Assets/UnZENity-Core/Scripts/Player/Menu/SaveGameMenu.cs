@@ -1,11 +1,11 @@
 using System.IO;
 using GUZ.Core.Caches;
 using GUZ.Core.Extensions;
+using GUZ.Core.Globals;
 using GUZ.Core.Manager;
 using GUZ.Core.Util;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Serialization;
 using ZenKit;
 
 namespace GUZ.Core.Player.Menu
@@ -91,10 +91,7 @@ namespace GUZ.Core.Player.Menu
                 return;
             }
 
-#pragma warning disable CS4014 // It's intended, that this async call is not awaited.
-            SaveGameManager.LoadSavedGame(id, save);
-            GameGlobals.Scene.LoadWorld(save.Metadata.World);
-#pragma warning restore CS4014
+            GameManager.I.LoadWorld(save.Metadata.World, id, Constants.SceneMainMenu);
         }
     }
 }
