@@ -91,7 +91,7 @@ namespace GUZ.Lab
 
             var playerGo = GameContext.InteractionAdapter.CreatePlayerController(SceneManager.GetActiveScene());
             GameContext.InteractionAdapter.CreateVRDeviceSimulator();
-            NpcHelper.CacheHero(playerGo);
+            NpcHelper.CacheHero();
 
             LabNpcAnimationHandler.Bootstrap();
             LabMusicHandler.Bootstrap();

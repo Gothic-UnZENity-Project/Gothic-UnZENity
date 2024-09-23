@@ -49,7 +49,7 @@ namespace GUZ.Core.World
             _minutesInHour = _featureStartMinute;
 
             GlobalEventDispatcher.LoadingSceneLoaded.AddListener(PreWorldLoaded);
-            GlobalEventDispatcher.GeneralSceneLoaded.AddListener(PostWorldLoaded);
+            GlobalEventDispatcher.WorldSceneLoaded.AddListener(PostWorldLoaded);
         }
 
         private void PreWorldLoaded()
@@ -61,7 +61,7 @@ namespace GUZ.Core.World
             }
         }
 
-        private void PostWorldLoaded(GameObject playerGo)
+        private void PostWorldLoaded()
         {
             _timeTickCoroutineHandler = _coroutineManager.StartCoroutine(TimeTick());
         }

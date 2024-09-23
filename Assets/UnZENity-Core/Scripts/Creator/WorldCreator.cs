@@ -23,7 +23,7 @@ namespace GUZ.Core.Creator
 
         static WorldCreator()
         {
-            GlobalEventDispatcher.GeneralSceneLoaded.AddListener(WorldLoaded);
+            GlobalEventDispatcher.WorldSceneLoaded.AddListener(WorldLoaded);
         }
 
         public static async Task CreateAsync(GameConfiguration config, LoadingManager loading)
@@ -423,7 +423,7 @@ namespace GUZ.Core.Creator
             return mergedChunks;
         }
 
-        private static void WorldLoaded(GameObject playerGo)
+        private static void WorldLoaded()
         {
             GameContext.InteractionAdapter.SetTeleportationArea(_worldGo);
         }

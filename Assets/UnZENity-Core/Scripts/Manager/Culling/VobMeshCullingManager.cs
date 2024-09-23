@@ -68,7 +68,7 @@ namespace GUZ.Core.Manager.Culling
             }
 
             GlobalEventDispatcher.LoadingSceneLoaded.AddListener(PreWorldCreate);
-            GlobalEventDispatcher.GeneralSceneLoaded.AddListener(PostWorldCreate);
+            GlobalEventDispatcher.WorldSceneLoaded.AddListener(PostWorldCreate);
 
             // Unity demands CullingGroups to be created in Awake() or Start() earliest.
             _vobCullingGroupSmall = new CullingGroup();
@@ -300,7 +300,7 @@ namespace GUZ.Core.Manager.Culling
         /// Set main camera once world is loaded fully.
         /// Doesn't work at loading time as we change scenes etc.
         /// </summary>
-        private void PostWorldCreate(GameObject playerGo)
+        private void PostWorldCreate()
         {
             foreach (var group in new[] { _vobCullingGroupSmall, _vobCullingGroupMedium, _vobCullingGroupLarge })
             {

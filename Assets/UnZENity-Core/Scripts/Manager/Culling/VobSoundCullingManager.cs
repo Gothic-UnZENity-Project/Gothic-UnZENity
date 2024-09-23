@@ -32,9 +32,9 @@ namespace GUZ.Core.Manager.Culling
         /// Set main camera once world is loaded fully.
         /// Doesn't work at loading time as we change scenes etc.
         /// </summary>
-        protected override void PostWorldCreate(GameObject playerGo)
+        protected override void PostWorldCreate()
         {
-            base.PostWorldCreate(playerGo);
+            base.PostWorldCreate();
 
             // Disable sounds if we're leaving the area and therefore last audible location.
             // Hint: As there are non-spatial sounds (always same volume wherever we are),

@@ -56,10 +56,10 @@ namespace GUZ.Core.Creator
 
         static VobCreator()
         {
-            GlobalEventDispatcher.GeneralSceneLoaded.AddListener(PostWorldLoaded);
+            GlobalEventDispatcher.WorldSceneLoaded.AddListener(PostWorldLoaded);
         }
 
-        private static void PostWorldLoaded(GameObject playerGo)
+        private static void PostWorldLoaded()
         {
             GameContext.InteractionAdapter.SetTeleportationArea(_teleportGo);
         }

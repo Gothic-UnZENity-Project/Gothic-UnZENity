@@ -12,10 +12,11 @@ namespace GUZ.Core.Manager.Scenes
 
             GameContext.InteractionAdapter.TeleportPlayerTo(_loadingArea.transform.position);
             
+            GlobalEventDispatcher.LoadingSceneLoaded.Invoke();
+
             // Start loading world!
             GameManager.I.LoadScene(SaveGameManager.CurrentWorldName);
 
-            GlobalEventDispatcher.LoadingSceneLoaded.Invoke();
         }
     }
 }
