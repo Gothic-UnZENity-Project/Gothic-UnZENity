@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using GUZ.Core.Context;
 using GUZ.Core.Extensions;
 using UnityEngine;
 
@@ -21,7 +20,7 @@ namespace GUZ.Core.Manager
         // TODO - We can trigger conversion from here later.
         public void Init()
         {
-            var videoFileFolder = $"{GuzContext.GameVersionAdapter.RootPath}/_work/DATA/video/";
+            var videoFileFolder = $"{GameContext.GameVersionAdapter.RootPath}/_work/DATA/video/";
 
             if (!Directory.Exists(videoFileFolder))
             {

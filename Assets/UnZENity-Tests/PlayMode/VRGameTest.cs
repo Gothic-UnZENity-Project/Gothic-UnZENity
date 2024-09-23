@@ -50,7 +50,7 @@ namespace GUZ.Tests.PlayMode
 
             // Act - Start and Wait for game to run properly.
             EditorApplication.EnterPlaymode();
-            yield return WaitForSceneLoaded(Constants.SceneGeneral);
+            yield return WaitForSceneLoaded(Constants.ScenePlayer);
         }
         
         

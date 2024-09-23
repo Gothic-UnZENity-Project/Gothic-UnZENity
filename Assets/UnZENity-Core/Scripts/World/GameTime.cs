@@ -48,19 +48,22 @@ namespace GUZ.Core.World
                 _time.Second);
             _minutesInHour = _featureStartMinute;
 
-            GlobalEventDispatcher.GeneralSceneLoaded.AddListener(WorldLoaded);
-            GlobalEventDispatcher.GeneralSceneUnloaded.AddListener(WorldUnloaded);
+            GlobalEventDispatcher.LoadingSceneLoaded.AddListener(PreWorldLoaded);
+            GlobalEventDispatcher.WorldSceneLoaded.AddListener(PostWorldLoaded);
         }
 
-        private void WorldLoaded(GameObject playerGo)
-        {
-            _timeTickCoroutineHandler = _coroutineManager.StartCoroutine(TimeTick());
-        }
-
-        private void WorldUnloaded()
+        private void PreWorldLoaded()
         {
             // Pause Coroutine until next world is loaded.
-            _coroutineManager.StopCoroutine(_timeTickCoroutineHandler);
+            if (_timeTickCoroutineHandler != null)
+            {
+                _coroutineManager.StopCoroutine(_timeTickCoroutineHandler);
+            }
+        }
+
+        private void PostWorldLoaded()
+        {
+            _timeTickCoroutineHandler = _coroutineManager.StartCoroutine(TimeTick());
         }
 
         public DateTime GetCurrentDateTime()

@@ -43,11 +43,11 @@ namespace GUZ.Core.Manager.Culling
         /// <summary>
         /// Set main camera once world is loaded fully. Doesn't work at loading time as we change scenes etc.
         /// </summary>
-        protected override void PostWorldCreate(GameObject playerGo)
+        protected override void PostWorldCreate()
         {
             if (_featureEnableCulling)
             {
-                base.PostWorldCreate(playerGo);
+                base.PostWorldCreate();
 
                 // For performance reasons, we initially used a List during creation.
                 // Now we move to an array which is copied by reference to CullingGroup and can be updated later via Update().

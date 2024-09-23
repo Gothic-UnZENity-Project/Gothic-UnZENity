@@ -166,8 +166,10 @@ namespace GUZ.Core.Manager.Settings
             }
         }
 
-        public bool CheckIfGothicInstallationExists(string gothicRootPath)
+        public bool CheckIfGothicInstallationExists(GameVersion version)
         {
+            var gothicRootPath = version == GameVersion.Gothic1 ? Gothic1Path : Gothic2Path;
+
             var gothicDataPath = $"{gothicRootPath}/Data";
             var gothicWorkPath = $"{gothicRootPath}/_work";
 

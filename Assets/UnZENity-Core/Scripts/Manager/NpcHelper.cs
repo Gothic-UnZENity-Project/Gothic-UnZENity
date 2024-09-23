@@ -32,25 +32,40 @@ namespace GUZ.Core.Manager
 
         static NpcHelper()
         {
-            GlobalEventDispatcher.GeneralSceneLoaded.AddListener(CacheHero);
+            GlobalEventDispatcher.WorldSceneLoaded.AddListener(CacheHero);
         }
 
         /// <summary>
         /// We need to first Alloc() hero data space and put the instance to the cache.
         /// Then we initialize it. (During Init, PC_HERO:Npc_Default->Prototype:Npc_Default will call SetTalentValue where we need the lookup to fetch the NpcInstance).
+        ///
+        /// This method will get called every time we spawn into another world. We therefore need to check if initialize the first time or we only need to set the lookup cache.
         /// </summary>
-        public static void CacheHero(GameObject playerGo)
+        public static void CacheHero()
         {
-            var playerProperties = playerGo.GetComponent<NpcProperties>();
+            // Initial setup
+            if (GameData.GothicVm.GlobalHero == null)
+            {
+                var playerGo = GameObject.FindWithTag(Constants.PlayerTag);
+                var playerProperties = playerGo.GetComponent<NpcProperties>();
 
-            var heroInstance = GameData.GothicVm.AllocInstance<NpcInstance>(GameGlobals.Settings.IniPlayerInstanceName);
-            MultiTypeCache.NpcCache[heroInstance.Index] = (instance: heroInstance, properties: playerProperties);
+                var heroInstance = GameData.GothicVm.AllocInstance<NpcInstance>(GameGlobals.Settings.IniPlayerInstanceName);
+                MultiTypeCache.NpcCache[heroInstance.Index] = (instance: heroInstance, properties: playerProperties);
 
-            GameData.GothicVm.InitInstance(heroInstance);
-            GameData.GothicVm.GlobalHero = heroInstance;
+                GameData.GothicVm.InitInstance(heroInstance);
+                GameData.GothicVm.GlobalHero = heroInstance;
 
-            playerProperties.NpcInstance = heroInstance;
-            playerProperties.Head = Camera.main!.transform;
+                playerProperties.NpcInstance = heroInstance;
+                playerProperties.Head = Camera.main!.transform;
+            }
+            // Re-init cache after world switching only
+            else
+            {
+                var heroInstance = (NpcInstance)GameData.GothicVm.GlobalHero;
+                var playerProperties = GameObject.FindWithTag(Constants.PlayerTag).GetComponent<NpcProperties>();
+
+                MultiTypeCache.NpcCache[heroInstance.Index] = (instance: heroInstance, properties: playerProperties);
+            }
         }
 
         public static void ExtPErcSetRange(int perceptionId, int rangeInCm)

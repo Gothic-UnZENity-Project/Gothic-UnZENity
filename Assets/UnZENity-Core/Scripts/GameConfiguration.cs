@@ -1,5 +1,4 @@
 using System;
-using GUZ.Core.Context;
 using GUZ.Core.World;
 using MyBox;
 using UnityEngine;
@@ -46,11 +45,13 @@ namespace GUZ.Core
          */
 
         [Foldout("Context", true)]
+        [Tooltip("If set, the Gothic version named below will be auto-selected when the game starts.")]
+        public bool PreselectGameVersion = true;
+        [ConditionalField(fieldToCheck: nameof(PreselectGameVersion), compareValues: true)]
         public GameVersion GameVersion = GameVersion.Gothic1;
         
-        public GuzContext.Controls GameControls = GuzContext.Controls.VR;
-        
-        [ConditionalField(fieldToCheck: nameof(GameControls), compareValues: GuzContext.Controls.VR)]
+        public GameContext.Controls GameControls = GameContext.Controls.VR;
+        [ConditionalField(fieldToCheck: nameof(GameControls), compareValues: GameContext.Controls.VR)]
         public bool EnableVRDeviceSimulator;
 
 

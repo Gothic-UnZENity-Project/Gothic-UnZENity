@@ -42,7 +42,7 @@ namespace GUZ.Core.Caches
         
         public static void Init()
         {
-            GlobalEventDispatcher.GeneralSceneUnloaded.AddListener(delegate
+            GlobalEventDispatcher.LoadingSceneLoaded.AddListener(delegate
             {
                 NpcCache.Clear();
             });

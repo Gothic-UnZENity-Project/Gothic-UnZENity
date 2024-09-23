@@ -4,12 +4,10 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
-using GUZ.Core.Context;
 using GUZ.Core.Creator.Meshes.V2;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
-using GUZ.Core.Manager.Settings;
 using GUZ.Core.Properties;
 using GUZ.Core.Vm;
 using GUZ.Core.Vob;
@@ -58,12 +56,12 @@ namespace GUZ.Core.Creator
 
         static VobCreator()
         {
-            GlobalEventDispatcher.GeneralSceneLoaded.AddListener(PostWorldLoaded);
+            GlobalEventDispatcher.WorldSceneLoaded.AddListener(PostWorldLoaded);
         }
 
-        private static void PostWorldLoaded(GameObject playerGo)
+        private static void PostWorldLoaded()
         {
-            GuzContext.InteractionAdapter.SetTeleportationArea(_teleportGo);
+            GameContext.InteractionAdapter.SetTeleportationArea(_teleportGo);
         }
 
         public static async Task CreateAsync(GameConfiguration config, LoadingManager loading, List<IVirtualObject> vobs, int vobsPerFrame)
@@ -294,7 +292,8 @@ namespace GUZ.Core.Creator
                 {
                     if (vob.Name.EqualsIgnoreCase(Constants.DaedalusHeroInstanceName))
                     {
-                        GameGlobals.Scene.SetStart(vob.Position.ToUnityVector(), vob.Rotation.ToUnityQuaternion());
+                        GameGlobals.Player.HeroSpawnPosition = vob.Position.ToUnityVector();
+                        GameGlobals.Player.HeroSpawnRotation = vob.Rotation.ToUnityQuaternion();
                         break;
                     }
 

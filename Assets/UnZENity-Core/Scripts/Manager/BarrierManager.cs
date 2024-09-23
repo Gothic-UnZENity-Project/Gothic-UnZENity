@@ -39,17 +39,26 @@ namespace GUZ.Core.Manager
         private const float _timeToStayHidden = 1200;
         private const float _timeStepToUpdateFade = 0.001f;
 
+        private readonly bool _featureShowBarrierVisual;
         private readonly bool _featureEnableSounds;
         private readonly bool _featureShowBarrierLogs;
 
         public BarrierManager(GameConfiguration config)
         {
+            _featureShowBarrierVisual = config.EnableBarrierVisual;
             _featureEnableSounds = config.EnableGameSounds;
             _featureShowBarrierLogs = config.EnableBarrierLogs;
+
+            GlobalEventDispatcher.WorldSceneLoaded.AddListener(CreateBarrier);
         }
 
-        public void CreateBarrier()
+        private void CreateBarrier()
         {
+            if (!_featureShowBarrierVisual)
+            {
+                return;
+            }
+
             var barrierMesh = ResourceLoader.TryGetMesh("MAGICFRONTIER_OUT.MSH");
             _barrier = MeshFactory.CreateBarrier("Barrier", barrierMesh)
                 .GetAllDirectChildren()[0];

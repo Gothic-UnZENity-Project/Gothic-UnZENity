@@ -45,7 +45,8 @@ namespace GUZ.Core.Globals
         public static readonly float ShaderPropertyTransparencyValue = 0.60f;
 
         public const string SceneBootstrap = "Bootstrap";
-        public const string SceneGeneral = "General";
+        public const string ScenePlayer = "Player";
+        public const string SceneGameVersion = "GameVersion";
         public const string SceneLogo = "Logo";
         public const string SceneMainMenu = "MainMenu";
         public const string SceneLoading = "Loading";

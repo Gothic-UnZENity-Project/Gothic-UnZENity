@@ -16,6 +16,8 @@ namespace GUZ.Core.Manager
 {
     public class SkyManager
     {
+        private bool _alreadyInitialized;
+
         private Vector3 _sunDirection;
         private readonly Color _sunColor;
         private readonly Color _ambientColor;
@@ -79,9 +81,9 @@ namespace GUZ.Core.Manager
 
         public void Init()
         {
+            GlobalEventDispatcher.WorldSceneLoaded.AddListener(WorldLoaded);
             GlobalEventDispatcher.GameTimeSecondChangeCallback.AddListener(Interpolate);
             GlobalEventDispatcher.GameTimeHourChangeCallback.AddListener(UpdateRainTime);
-            GlobalEventDispatcher.GeneralSceneLoaded.AddListener(GeneralSceneLoaded);
         }
 
         public void InitSky()
@@ -281,11 +283,18 @@ namespace GUZ.Core.Manager
             Shader.SetGlobalFloat(_pointLightIntensityShaderId, _pointLightIntensity);
         }
 
-        private void GeneralSceneLoaded(GameObject playerGo)
+        private void WorldLoaded()
         {
+            if (_alreadyInitialized)
+            {
+                return;
+            }
+
             RenderSettings.skybox = Object.Instantiate(GameGlobals.Textures.SkyMaterial);
 
             InitRainGo();
+
+            _alreadyInitialized = true;
         }
 
         private void InitRainGo()

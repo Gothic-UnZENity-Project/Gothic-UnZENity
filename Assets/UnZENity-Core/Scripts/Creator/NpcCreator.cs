@@ -32,7 +32,7 @@ namespace GUZ.Core.Creator
 
         static NpcCreator()
         {
-            GlobalEventDispatcher.GeneralSceneLoaded.AddListener(PostWorldLoaded);
+            GlobalEventDispatcher.WorldSceneLoaded.AddListener(PostWorldLoaded);
         }
 
         /// <summary>
@@ -355,7 +355,7 @@ namespace GUZ.Core.Creator
             npcGo.transform.SetPositionAndRotation(position, rotation);
         }
 
-        private static void PostWorldLoaded(GameObject playerGo)
+        private static void PostWorldLoaded()
         {
             // FIXME - We need to activate physics (kinetic=false) and routines now. (After world mesh is loaded and player sees game for the first frame)
 

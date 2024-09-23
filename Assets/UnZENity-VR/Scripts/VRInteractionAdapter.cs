@@ -1,14 +1,14 @@
 #if GUZ_HVR_INSTALLED
 using System.Linq;
 using GUZ.Core;
-using GUZ.Core.Context;
+using GUZ.Core.Adapter;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.VR.Components;
+using HurricaneVR.Framework.Core.UI;
 using HurricaneVRExtensions.Simulator;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.XR.Interaction.Toolkit;
 using PrefabType = GUZ.Core.PrefabType;
 
 namespace GUZ.VR
@@ -16,6 +16,8 @@ namespace GUZ.VR
     public class VRInteractionAdapter : IInteractionAdapter
     {
         private const string _contextName = "VR";
+
+        private VRPlayerController _playerController;
 
         public string GetContextName()
         {
@@ -25,7 +27,7 @@ namespace GUZ.VR
         public GameObject CreatePlayerController(Scene scene, Vector3 position = default, Quaternion rotation = default)
         {
             var go = ResourceLoader.TryGetPrefabObject(PrefabType.Player, position, rotation);
-            var playerController = go.GetComponentInChildren<VRPlayerController>();
+            _playerController = go.GetComponentInChildren<VRPlayerController>();
 
             go.name = "Player - VR";
 
@@ -35,30 +37,35 @@ namespace GUZ.VR
 
             if (scene.name is Constants.SceneMainMenu or Constants.SceneLoading)
             {
-                playerController.SetLockedControls();
+                _playerController.SetLockedControls();
             }
             // Normal game
             else
             {
-                playerController.SetNormalControls();
+                _playerController.SetNormalControls();
 
                 // Add MainMenu entry to the game
                 var mainMenuPrefab = ResourceLoader.TryGetPrefabObject(PrefabType.MainMenu);
-                playerController.MainMenu = mainMenuPrefab;
+                _playerController.MainMenu = mainMenuPrefab;
 
-                mainMenuPrefab.SetParent(playerController.gameObject, true, true);
+                mainMenuPrefab.SetParent(_playerController.gameObject, true, true);
                 mainMenuPrefab.SetActive(false);
                 // TODO: Same as on MainMenu.unity scene. Will be replaced by a proper FollowPlayer component later.
                 mainMenuPrefab.transform.localPosition = new(0, 1.5f, 4);
             }
 
-            return playerController.gameObject;
+            return _playerController.gameObject;
         }
 
         public void CreateVRDeviceSimulator()
         {
+            if (!GameGlobals.Config.EnableVRDeviceSimulator)
+            {
+                return;
+            }
+
             // As we reference components from HVRPlayer inside HVRSimulator, we need to create the SimulatorGO on the same scene.
-            var generalScene = SceneManager.GetSceneByName(Constants.SceneGeneral);
+            var generalScene = SceneManager.GetSceneByName(Constants.ScenePlayer);
             var mainMenuScene = SceneManager.GetSceneByName(Constants.SceneMainMenu);
             var labScene = SceneManager.GetSceneByName(Constants.SceneLab);
 
@@ -79,8 +86,9 @@ namespace GUZ.VR
             }
 
             var simulatorGo = new GameObject("HVR - XRDeviceSimulator");
-            // We assume, that this Component (HVRPlayerManager) is set inside the HVR root for a player rig.
-            var playerRig = currentScene.GetRootGameObjects().First(i => i.GetComponentInChildren<VRPlayerManager>());
+            // We assume, that this Component (VRPlayerController) is set 1-level inside the HVR root for a player rig.
+            var playerRig = currentScene.GetComponentInChildren<VRPlayerController>()!
+                .transform.parent.gameObject;
 
             simulatorGo.AddComponent<HVRBodySimulator>().Rig = playerRig;
             simulatorGo.AddComponent<HVRHandsSimulator>().Rig = playerRig;
@@ -89,22 +97,49 @@ namespace GUZ.VR
             SceneManager.MoveGameObjectToScene(simulatorGo, currentScene);
         }
 
+        public void LockPlayerInPlace()
+        {
+            _playerController.SetLockedControls();
+        }
+
+        public void UnlockPlayer()
+        {
+            _playerController.SetUnlockedControls();
+        }
+
+        public void TeleportPlayerTo(Vector3 position, Quaternion rotation = default)
+        {
+            _playerController.Teleporter.Teleport(position);
+            
+            // Changing the rotation inside HVRTeleporter didn't work for y-axis. Therefore, setting it now.
+            _playerController.transform.rotation = rotation;
+        }
+
+        public void InitUIInteraction()
+        {
+            // Find all ui canvases and add to HVR Input module (To activate red laser pointer for clicking/grabbing)
+            // WARNING: As it leverages FindObjectsOfType which looks through all opened scenes trees, this can become quite slow. Execute very carefully!
+            var allCanvases = Object.FindObjectsOfType<Canvas>(true);
+            HVRInputModule.Instance.UICanvases = allCanvases.ToList();
+        }
+
+        // FIXME - Still needed? Test with VR teleportation in game
         public void SetTeleportationArea(GameObject teleportationGo)
         {
             /*
              * We need to set the Teleportation area after adding mesh to VOBs. Therefore we call it via event after world was loaded.
              */
-            var interactionManager = GameGlobals.Scene.InteractionManager.GetComponent<XRInteractionManager>();
-            var teleportationArea = teleportationGo.AddComponent<TeleportationArea>();
-            if (interactionManager != null)
-            {
-                teleportationArea.interactionManager = interactionManager;
-            }
+            // var interactionManager = GameGlobals.Scene.InteractionManager.GetComponent<XRInteractionManager>();
+            // var teleportationArea = teleportationGo.AddComponent<TeleportationArea>();
+            // if (interactionManager != null)
+            // {
+            //     teleportationArea.interactionManager = interactionManager;
+            // }
         }
 
         public void IntroduceChapter(string chapter, string text, string texture, string wav, int time)
         {
-            var generalScene = SceneManager.GetSceneByName(Constants.SceneGeneral);
+            var generalScene = SceneManager.GetSceneByName(Constants.ScenePlayer);
             
             // Check if we already loaded the Chapter change prefab
             GameObject chapterPrefab = generalScene.GetRootGameObjects()

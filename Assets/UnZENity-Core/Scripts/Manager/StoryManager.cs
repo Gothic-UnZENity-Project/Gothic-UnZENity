@@ -1,6 +1,4 @@
-﻿using GUZ.Core.Context;
-
-namespace GUZ.Core.Manager
+﻿namespace GUZ.Core.Manager
 {
     public class StoryManager
     {
@@ -25,7 +23,7 @@ namespace GUZ.Core.Manager
                 return;
             }
 
-            GuzContext.InteractionAdapter.IntroduceChapter(
+            GameContext.InteractionAdapter.IntroduceChapter(
                 _chapterSwitchData.chapter,
                 _chapterSwitchData.text,
                 _chapterSwitchData.texture,

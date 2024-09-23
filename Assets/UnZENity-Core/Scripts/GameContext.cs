@@ -1,16 +1,15 @@
 using System;
-using UnityEngine.Events;
+using GUZ.Core.Adapter;
 using ZenKit;
 #if GUZ_HVR_INSTALLED
 #endif
 
-namespace GUZ.Core.Context
+namespace GUZ.Core
 {
-    public static class GuzContext
+    public static class GameContext
     {
-        // We need to ensure, that other modules will register themselves based on current Control setting.
-        // Since we can't call them (e.g. Flat/VR) directly, we need to leverage this IoC pattern.
-        public static readonly UnityEvent<Controls, GameVersion> RegisterAdapters = new();
+        public static bool IsControlsInitialized;
+        public static bool IsGameVersionInitialized;
 
         public static IInteractionAdapter InteractionAdapter;
         public static IDialogAdapter DialogAdapter;
@@ -22,19 +21,28 @@ namespace GUZ.Core.Context
             Flat
         }
 
-        public static void SetContext(Controls controls, GameVersion version)
+        public static void SetControlContext(Controls controls)
         {
-            RegisterAdapters.Invoke(controls, version);
+            GlobalEventDispatcher.RegisterControlAdapters.Invoke(controls);
             
             if (InteractionAdapter == null)
             {
                 throw new ArgumentOutOfRangeException($"No control module registered for {controls}");
             }
 
+            IsControlsInitialized = true;
+        }
+        
+        public static void SetGameVersionContext(GameVersion version)
+        {
+            GlobalEventDispatcher.RegisterGameVersionAdapters.Invoke(version);
+            
             if (GameVersionAdapter == null)
             {
                 throw new ArgumentOutOfRangeException($"No version module registered for {version}");
             }
+
+            IsGameVersionInitialized = true;
         }
     }
 }

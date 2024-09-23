@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.IO;
-using GUZ.Core.Context;
 using GUZ.Core.World;
 using JetBrains.Annotations;
 using UnityEngine;
@@ -49,7 +48,8 @@ namespace GUZ.Core.Manager
         public static void LoadNewGame()
         {
             SaveGameId = 0;
-            Save = new SaveGame(GameVersion.Gothic1);
+            Save = new SaveGame(GameContext.GameVersionAdapter.Version);
+            IsFirstWorldLoadingFromSaveGame = true;
         }
 
         /// <summary>
@@ -162,7 +162,7 @@ namespace GUZ.Core.Manager
 
         private static string GetSaveGamePath(int folderSaveId)
         {
-            var gothicDir = GuzContext.GameVersionAdapter.RootPath;
+            var gothicDir = GameContext.GameVersionAdapter.RootPath;
             return Path.GetFullPath(Path.Join(gothicDir, $"Saves/savegame{folderSaveId}"));
         }
     }

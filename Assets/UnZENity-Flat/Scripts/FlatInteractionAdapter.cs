@@ -1,6 +1,6 @@
 using System;
 using GUZ.Core;
-using GUZ.Core.Context;
+using GUZ.Core.Adapter;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -30,7 +30,27 @@ namespace GUZ.Flat
 
         public void CreateVRDeviceSimulator()
         {
-            throw new NotImplementedException("This method should never been called on Flat adapter.");
+            // NOP
+        }
+
+        public void LockPlayerInPlace()
+        {
+            // Not yet implemented
+        }
+
+        public void UnlockPlayer()
+        {
+            // Not yet implemented
+        }
+
+        public void  TeleportPlayerTo(Vector3 position, Quaternion rotation = default)
+        {
+            // Not yet implemented
+        }
+
+        public void InitUIInteraction()
+        {
+            // NOP
         }
 
         public void SetTeleportationArea(GameObject teleportationGo)

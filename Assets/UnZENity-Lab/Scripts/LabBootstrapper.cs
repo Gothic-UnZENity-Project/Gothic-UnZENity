@@ -1,6 +1,6 @@
+using System.Collections;
 using GUZ.Core;
 using GUZ.Core.Caches;
-using GUZ.Core.Context;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
 using GUZ.Core.Manager.Culling;
@@ -33,21 +33,19 @@ namespace GUZ.Lab
 
         public LabNpcAnimationHandler LabNpcAnimationHandler;
 
-        private VRDeviceSimulatorManager _deviceSimulatorManager;
         private MusicManager _gameMusicManager;
         private VideoManager _videoManager;
         private RoutineManager _npcRoutineManager;
         private GameSettings _settings;
-        private GuzSceneManager _sceneManager;
         private TextureManager _textureManager;
         private FontManager _fontManager;
-        private bool _isBooted;
 
         public GameSettings Settings => _settings;
+        public LoadingManager Loading => null;
+        public PlayerManager Player => null;
         public SkyManager Sky => null;
         public GameTime Time => null;
         public RoutineManager Routines => _npcRoutineManager;
-        public GuzSceneManager Scene => _sceneManager;
         public TextureManager Textures => _textureManager;
         public FontManager Font => _fontManager;
         public StationaryLightsManager Lights => null;
@@ -65,35 +63,35 @@ namespace GUZ.Lab
             _settings = GameSettings.Load(Config.GameVersion);
             _textureManager = GetComponent<TextureManager>();
             _fontManager = GetComponent<FontManager>();
-            _sceneManager = new GuzSceneManager(Config, null, null, null);
-            _deviceSimulatorManager = new VRDeviceSimulatorManager(Config);
             _npcRoutineManager = new RoutineManager(Config);
             _gameMusicManager = new MusicManager(Config);
             _videoManager = new VideoManager(Config);
 
             ResourceLoader.Init(_settings.Gothic1Path);
-            _sceneManager.Init();
+
+            GameContext.SetControlContext(Config.GameControls);
+            GameContext.SetGameVersionContext(Config.GameVersion);
+
             _gameMusicManager.Init();
             _npcRoutineManager.Init();
             _videoManager.Init();
+
+            StartCoroutine(BootLab());
         }
 
         /// <summary>
         /// It's easiest to wait for Start() to initialize all the MonoBehaviours first.
         /// </summary>
-        private void Update()
+        private IEnumerator BootLab()
         {
-            if (_isBooted)
-            {
-                return;
-            }
-
-            _isBooted = true;
+            yield return new WaitForSeconds(0.5f);
 
             var settings = _settings;
             GuzBootstrapper.BootGothicUnZeNity(Config, settings.Gothic1Path);
 
-            BootLab();
+            var playerGo = GameContext.InteractionAdapter.CreatePlayerController(SceneManager.GetActiveScene());
+            GameContext.InteractionAdapter.CreateVRDeviceSimulator();
+            NpcHelper.CacheHero();
 
             LabNpcAnimationHandler.Bootstrap();
             LabMusicHandler.Bootstrap();
@@ -102,13 +100,6 @@ namespace GUZ.Lab
             InteractableHandler.Bootstrap();
             LadderLabHandler.Bootstrap();
             VobItemHandler.Bootstrap();
-        }
-
-        private void BootLab()
-        {
-            var playerGo = GuzContext.InteractionAdapter.CreatePlayerController(SceneManager.GetActiveScene());
-            _deviceSimulatorManager.AddVRDeviceSimulator();
-            NpcHelper.CacheHero(playerGo);
         }
 
         private void OnDestroy()

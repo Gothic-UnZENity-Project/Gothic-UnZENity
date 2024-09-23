@@ -70,7 +70,7 @@ namespace GUZ.Core.Manager
 
             GlobalEventDispatcher.MainMenuSceneLoaded.AddListener(OnMainMenuLoaded);
             GlobalEventDispatcher.LoadingSceneLoaded.AddListener(OnLoadingSceneLoaded);
-            GlobalEventDispatcher.GeneralSceneLoaded.AddListener(OnWorldLoaded);
+            GlobalEventDispatcher.WorldSceneLoaded.AddListener(OnWorldLoaded);
 
             GlobalEventDispatcher.MusicZoneEntered.AddListener(go =>
             {
@@ -109,7 +109,7 @@ namespace GUZ.Core.Manager
             Play("SYS_LOADING");
         }
 
-        private void OnWorldLoaded(GameObject playerGo)
+        private void OnWorldLoaded()
         {
             _musicZones.Clear();
 
@@ -211,7 +211,7 @@ namespace GUZ.Core.Manager
             }
 
             // Do not restart the current theme if already playing.
-            // Multiple MusicThemeInstances can reference the same audio. Therefore checking actual files only.
+            // Multiple MusicThemeInstances can reference the same audio. Therefore, checking actual files only.
             if (_currentTheme != null && theme.File == _currentTheme.File)
             {
                 return;

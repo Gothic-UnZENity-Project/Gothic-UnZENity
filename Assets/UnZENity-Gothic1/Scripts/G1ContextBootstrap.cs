@@ -1,4 +1,5 @@
-﻿using GUZ.Core.Context;
+﻿using GUZ.Core;
+using GUZ.Core.Adapter;
 using ZenKit;
 
 namespace GUZ.G1
@@ -8,14 +9,19 @@ namespace GUZ.G1
     /// </summary>
     public class G1ContextBootstrap : AbstractContextBootstrap
     {
-        protected override void RegisterModule(GuzContext.Controls _, GameVersion version)
+        protected override void RegisterControlModule(GameContext.Controls controls)
+        {
+            // NOP
+        }
+
+        protected override void RegisterGameVersionModule(GameVersion version)
         {
             if (version != GameVersion.Gothic1)
             {
                 return;
             }
 
-            GuzContext.GameVersionAdapter = new G1Adapter();
+            GameContext.GameVersionAdapter = new G1Adapter();
         }
     }
 }

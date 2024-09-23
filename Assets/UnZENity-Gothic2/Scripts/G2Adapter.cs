@@ -1,5 +1,5 @@
 ﻿using GUZ.Core;
-using GUZ.Core.Context;
+using GUZ.Core.Adapter;
 using ZenKit;
 
 namespace GUZ.G2
