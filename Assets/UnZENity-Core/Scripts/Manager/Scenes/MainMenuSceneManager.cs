@@ -14,6 +14,8 @@ namespace GUZ.Core.Manager.Scenes
 
         public void Init()
         {
+            GameContext.InteractionAdapter.InitUIInteraction();
+
             if (!GameGlobals.Config.EnableMainMenu)
             {
                 // We need to invoke this event, even when we skip MainMenu (for event listeners, main menu is 'loaded')
@@ -28,7 +30,6 @@ namespace GUZ.Core.Manager.Scenes
             // We set the gothic background image in MainMenu with this material.
             _mainMenuImageBackground.GetComponent<MeshRenderer>().material = GameGlobals.Textures.MainMenuImageBackgroundMaterial;
 
-            GameContext.InteractionAdapter.InitUIInteraction();
             GameContext.InteractionAdapter.TeleportPlayerTo(Vector3.zero);
 
             GlobalEventDispatcher.MainMenuSceneLoaded.Invoke();
