@@ -22,8 +22,6 @@ namespace GUZ.Core
     {
         [field: SerializeField] public GameConfiguration Config { get; set; }
 
-        public GameObject XRInteractionManager;
-
         private FileLoggingHandler _fileLoggingHandler;
         private BarrierManager _barrierManager;
         private MusicManager _gameMusicManager;
