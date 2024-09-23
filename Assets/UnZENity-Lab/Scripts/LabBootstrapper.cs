@@ -32,7 +32,6 @@ namespace GUZ.Lab
 
         public LabNpcAnimationHandler LabNpcAnimationHandler;
 
-        private VRDeviceSimulatorManager _deviceSimulatorManager;
         private MusicManager _gameMusicManager;
         private VideoManager _videoManager;
         private RoutineManager _npcRoutineManager;
@@ -64,12 +63,15 @@ namespace GUZ.Lab
             _settings = GameSettings.Load(Config.GameVersion);
             _textureManager = GetComponent<TextureManager>();
             _fontManager = GetComponent<FontManager>();
-            _deviceSimulatorManager = new VRDeviceSimulatorManager(Config);
             _npcRoutineManager = new RoutineManager(Config);
             _gameMusicManager = new MusicManager(Config);
             _videoManager = new VideoManager(Config);
 
             ResourceLoader.Init(_settings.Gothic1Path);
+
+            GameContext.SetControlContext(Config.GameControls);
+            GameContext.SetGameVersionContext(Config.GameVersion);
+
             _gameMusicManager.Init();
             _npcRoutineManager.Init();
             _videoManager.Init();
@@ -104,7 +106,7 @@ namespace GUZ.Lab
         private void BootLab()
         {
             var playerGo = GameContext.InteractionAdapter.CreatePlayerController(SceneManager.GetActiveScene());
-            _deviceSimulatorManager.AddVRDeviceSimulator();
+            GameContext.InteractionAdapter.CreateVRDeviceSimulator();
             NpcHelper.CacheHero(playerGo);
         }
 
