@@ -211,7 +211,7 @@ namespace GUZ.Core.Manager
             }
 
             // Do not restart the current theme if already playing.
-            // Multiple MusicThemeInstances can reference the same audio. Therefore checking actual files only.
+            // Multiple MusicThemeInstances can reference the same audio. Therefore, checking actual files only.
             if (_currentTheme != null && theme.File == _currentTheme.File)
             {
                 return;

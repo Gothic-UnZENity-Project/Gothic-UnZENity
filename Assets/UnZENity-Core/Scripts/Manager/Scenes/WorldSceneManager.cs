@@ -115,6 +115,8 @@ namespace GUZ.Core.Manager.Scenes
             
             GameContext.InteractionAdapter.TeleportPlayerTo(startPoint.transform.position, startPoint.transform.rotation);
             GameContext.InteractionAdapter.UnlockPlayer();
+
+            GlobalEventDispatcher.WorldSceneLoaded.Invoke();
         }
     }
 }

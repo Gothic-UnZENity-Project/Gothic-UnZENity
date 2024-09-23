@@ -28,6 +28,8 @@ namespace GUZ.Core.Manager.Scenes
 
             GameContext.InteractionAdapter.InitUIInteraction();
             GameContext.InteractionAdapter.TeleportPlayerTo(Vector3.zero);
+
+            GlobalEventDispatcher.MainMenuSceneLoaded.Invoke();
         }
     }
 }

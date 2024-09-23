@@ -19,10 +19,8 @@ namespace GUZ.Core
         public static readonly UnityEvent ZenKitBootstrapped = new();
         
         public static readonly UnityEvent MainMenuSceneLoaded = new();
-        public static readonly UnityEvent MainMenuSceneUnloaded = new();
 
         public static readonly UnityEvent LoadingSceneLoaded = new();
-        public static readonly UnityEvent LoadingSceneUnloaded = new();
 
         // Hint: Scene general is always loaded >after< world is fully filled with vobs etc.
         /// <summary>
@@ -34,7 +32,6 @@ namespace GUZ.Core
         public static readonly UnityEvent GeneralSceneUnloaded = new();
 
         public static readonly UnityEvent WorldSceneLoaded = new();
-        public static readonly UnityEvent WorldSceneUnloaded = new();
 
         public static readonly UnityEvent<DateTime> GameTimeSecondChangeCallback = new();
         public static readonly UnityEvent<DateTime> GameTimeMinuteChangeCallback = new();

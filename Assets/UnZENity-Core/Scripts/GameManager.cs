@@ -135,11 +135,6 @@ namespace GUZ.Core
             Video.Init();
 
             GuzBootstrapper.BootGothicUnZeNity(Config, gothicRootPath);
-
-            if (Config.EnableBarrierVisual)
-            {
-                GlobalEventDispatcher.WorldSceneLoaded.AddListener(() => { _barrierManager.CreateBarrier(); });
-            }
         }
 
         public void LoadScene(string sceneName, string unloadScene = null)
