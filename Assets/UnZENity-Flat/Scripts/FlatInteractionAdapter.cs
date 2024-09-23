@@ -38,6 +38,11 @@ namespace GUZ.Flat
             // Not yet implemented
         }
 
+        public void UnlockPlayer()
+        {
+            // Not yet implemented
+        }
+
         public void  TeleportPlayerTo(Vector3 position, Quaternion rotation = default)
         {
             // Not yet implemented

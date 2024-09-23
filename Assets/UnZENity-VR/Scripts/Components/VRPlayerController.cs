@@ -58,15 +58,14 @@ namespace GUZ.VR.Components
             // We can't disable physics as it would prevent HVRTeleport.Teleport() from finishing (as it checks for Player.IsGrounded every frame).
             // Therefore, we need to ground the player always on a plane and disable movement only.
 
-            // Disable movement
             MovementEnabled = false;
-            MoveSpeed = 0f;
-            RunSpeed = 0f;
-
-            // Disable rotation
             RotationEnabled = false;
-            SmoothTurnSpeed = 0f;
-            SnapAmount = 0f;
+        }
+
+        public void SetUnlockedControls()
+        {
+            MovementEnabled = true;
+            RotationEnabled = true;
         }
 
         private void OnPlayerPrefsUpdated(string preferenceKey, object value)
