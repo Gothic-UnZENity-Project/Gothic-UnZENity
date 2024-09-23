@@ -55,4 +55,4 @@ By contributing, you agree that your contributions will be licensed under its GP
 ### Becoming a maintainer
 > You'll find our current feature development status at the [Projects](https://github.com/Gothic-UnZENity-Project/Gothic-UnZENity/projects?query=is%3Aopen) page.
 
-If you want to build Gothic-UnZENity together, then you're encouraged to join our active developer base. Feel free to grab a ticket you'd like to drive and reach out to #JaXt0r on Discord for further questions.
+If you want to build Gothic-UnZENity together, then you're encouraged to join our active developer base. Feel free to grab a ticket you'd like to drive and reach out to us on our [Discord](https://discord.gg/nvnaWwEu5Y) Server for further questions.
