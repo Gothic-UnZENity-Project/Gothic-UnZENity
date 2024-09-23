@@ -29,8 +29,6 @@ namespace GUZ.Core
         /// </summary>
         public static readonly UnityEvent<GameObject> GeneralSceneLoaded = new();
 
-        public static readonly UnityEvent GeneralSceneUnloaded = new();
-
         public static readonly UnityEvent WorldSceneLoaded = new();
 
         public static readonly UnityEvent<DateTime> GameTimeSecondChangeCallback = new();

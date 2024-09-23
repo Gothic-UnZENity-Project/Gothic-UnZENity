@@ -67,7 +67,7 @@ namespace GUZ.Core.Manager.Culling
                 return;
             }
 
-            GlobalEventDispatcher.GeneralSceneUnloaded.AddListener(PreWorldCreate);
+            GlobalEventDispatcher.LoadingSceneLoaded.AddListener(PreWorldCreate);
             GlobalEventDispatcher.GeneralSceneLoaded.AddListener(PostWorldCreate);
 
             // Unity demands CullingGroups to be created in Awake() or Start() earliest.
