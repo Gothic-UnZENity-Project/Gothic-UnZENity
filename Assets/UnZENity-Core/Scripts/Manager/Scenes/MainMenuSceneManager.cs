@@ -23,7 +23,7 @@ namespace GUZ.Core.Manager.Scenes
 
                 // Load world.zen
                 // TODO - In future, we can also fetch name of scene to load from another config setting.
-                GameManager.I.LoadWorld(Constants.SelectedWorld, -1, SceneManager.GetActiveScene().name);
+                GameManager.I.LoadWorld(GetWorldNameToSpawn(), -1, SceneManager.GetActiveScene().name);
                 return;
             }
             
@@ -33,6 +33,21 @@ namespace GUZ.Core.Manager.Scenes
             GameContext.InteractionAdapter.TeleportPlayerTo(Vector3.zero);
 
             GlobalEventDispatcher.MainMenuSceneLoaded.Invoke();
+        }
+
+        private string GetWorldNameToSpawn()
+        {
+            var world = GameGlobals.Config.PreselectWorldToSpawn;
+
+            if (world == WorldToSpawn.None)
+            {
+                // FIXME - Read default from INI file
+                return Constants.SelectedWorld;
+            }
+            else
+            {
+                return GameConfiguration.WorldMappings[world];
+            }
         }
     }
 }

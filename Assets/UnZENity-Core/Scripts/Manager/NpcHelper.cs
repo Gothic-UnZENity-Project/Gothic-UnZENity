@@ -47,6 +47,13 @@ namespace GUZ.Core.Manager
             if (GameData.GothicVm.GlobalHero == null)
             {
                 var playerGo = GameObject.FindWithTag(Constants.PlayerTag);
+
+                // Flat player
+                if (playerGo == null)
+                {
+                    playerGo = GameObject.FindWithTag(Constants.MainCameraTag);
+                }
+
                 var playerProperties = playerGo.GetComponent<NpcProperties>();
 
                 var heroInstance = GameData.GothicVm.AllocInstance<NpcInstance>(GameGlobals.Settings.IniPlayerInstanceName);
