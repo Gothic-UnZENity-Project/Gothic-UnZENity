@@ -54,7 +54,7 @@ namespace GUZ.Core.Manager.Settings
             loadedSettings.Gothic1Path = AlterGothicInstallationPath(loadedSettings.Gothic1Path, GameVersion.Gothic1);
             loadedSettings.Gothic2Path = AlterGothicInstallationPath(loadedSettings.Gothic2Path, GameVersion.Gothic2);
 
-
+            // FIXME - Need to be moved to a later stage. Right now we don't know which game version to load!
             LoadIniFile(loadedSettings, version);
             
             return loadedSettings;
