@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using GUZ.Core.Creator.Meshes.V2.Builder;
@@ -14,12 +15,12 @@ namespace GUZ.Core.Creator.Meshes.V2
 {
     public static class MeshFactory
     {
-        public static async Task CreateWorld(WorldData world, LoadingManager loading, GameObject rootGo,
+        public static async Task CreateWorld(List<WorldData.SubMeshData> subMeshes, LoadingManager loading, GameObject rootGo,
             int meshesPerFrame)
         {
             var worldBuilder = new WorldMeshBuilder();
             worldBuilder.SetGameObject(rootGo);
-            worldBuilder.SetWorldData(world, meshesPerFrame);
+            worldBuilder.SetWorldData(subMeshes, meshesPerFrame);
 
             await worldBuilder.BuildAsync(loading);
         }

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using GUZ.Core.Caches;
 using GUZ.Core.Extensions;
@@ -14,12 +15,12 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
 {
     public class WorldMeshBuilder : AbstractMeshBuilder
     {
-        private WorldData _world;
+        private List<WorldData.SubMeshData> _subMeshData;
         private int _meshesPerFrame;
 
-        public void SetWorldData(WorldData world, int meshesPerFrame)
+        public void SetWorldData(List<WorldData.SubMeshData> subMeshData, int meshesPerFrame)
         {
-            _world = world;
+            _subMeshData = subMeshData;
             _meshesPerFrame = meshesPerFrame;
         }
 
@@ -33,10 +34,10 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
             RootGo.isStatic = true;
 
             // Track the progress of each sub-mesh creation separately
-            var numSubMeshes = _world.SubMeshes.Count;
+            var numSubMeshes = _subMeshData.Count;
             var meshesCreated = 0;
 
-            foreach (var subMesh in _world.SubMeshes)
+            foreach (var subMesh in _subMeshData)
             {
                 // No texture to add.
                 // For G1 this is: material.name == [KEINE, KEINETEXTUREN, DEFAULT, BRETT2, BRETT1, SUMPFWAASER, S:PSIT01_ABODEN]

@@ -26,6 +26,24 @@ namespace GUZ.Core.Creator
             GlobalEventDispatcher.WorldSceneLoaded.AddListener(WorldLoaded);
         }
 
+        public static async Task CreateMesh(ZenKit.World world, GameObject rootGo, LoadingManager loading)
+        {
+            try
+            {
+                var subMeshData = await BuildBspTree(
+                    world.Mesh,
+                    world.BspTree.Cache(),
+                    true);
+
+                await MeshFactory.CreateWorld(subMeshData, loading, rootGo, Constants.MeshPerFrame);
+            }
+            catch (Exception e)
+            {
+                Debug.LogError(e);
+                throw new Exception("Failed to create world", e);
+            }
+        }
+        
         public static async Task CreateAsync(GameConfiguration config, LoadingManager loading)
         {
             _worldGo = new GameObject("World");
@@ -41,7 +59,7 @@ namespace GUZ.Core.Creator
                 SaveGameManager.CurrentZkWorld.BspTree.Cache(),
                 lightingEnabled);
 
-            await MeshFactory.CreateWorld(SaveGameManager.CurrentWorldData, loading, _worldGo, Constants.MeshPerFrame);
+            await MeshFactory.CreateWorld(SaveGameManager.CurrentWorldData.SubMeshes, loading, _worldGo, Constants.MeshPerFrame);
             await MeshFactory.CreateTextureArray();
         }
 

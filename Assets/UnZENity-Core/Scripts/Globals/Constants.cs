@@ -47,6 +47,7 @@ namespace GUZ.Core.Globals
         public const string SceneBootstrap = "Bootstrap";
         public const string ScenePlayer = "Player";
         public const string SceneGameVersion = "GameVersion";
+        public const string ScenePreCaching = "PreCaching";
         public const string SceneLogo = "Logo";
         public const string SceneMainMenu = "MainMenu";
         public const string SceneLoading = "Loading";
