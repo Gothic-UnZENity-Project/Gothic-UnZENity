@@ -4,6 +4,7 @@ using GLTFast;
 using GLTFast.Export;
 using GUZ.Core.Creator;
 using GUZ.Core.Extensions;
+using GUZ.Core.Manager.Vobs;
 using UnityEngine;
 using ZenKit;
 
@@ -47,25 +48,36 @@ namespace GUZ.Core.Manager.Scenes
             var levelsToLoad = GameContext.GameVersionAdapter.Version == GameVersion.Gothic1 ? _gothic1Worlds : _gothic2Worlds;
             
             /*
-             * Fetch all existing worlds (done)
-             * Load world mesh of a level
-             *  Sliced by lighting VOBs
-             * Cache it
+             * 1. Fetch all existing worlds (done)
              *
-             * Load static VOBs (man elements except Spot+Startpoint+Iems+[Elements with have no mesh]
-             * Cache them
+             * 1.1 Load static VOBs (man elements except Spot+Startpoint+Iems+[Elements with have no mesh]
+             *   Cache them
+             *
+             * 1.2 Load world mesh of a level
+             *  Sliced by lighting VOBs
+             *   Cache it
              */
             
             foreach (var level in levelsToLoad)
             {
                 var worldData = ResourceLoader.TryGetWorld(level, GameContext.GameVersionAdapter.Version);
-                var rootGo = new GameObject("World");
-                
-                await WorldCreator.CreateMesh(worldData, rootGo, GameGlobals.Loading);
 
-                await SaveGlt(rootGo);
+                // VOBs
+                {
+                    var rootGo = new GameObject("VOBs");
 
-                // DEBUG
+                    // FIXME 10 is hard coded! Alter!
+                    await new VobCacheManager().CreateForCache(worldData!.RootObjects, GameGlobals.Loading, rootGo);
+                }
+
+                // World
+                {
+                    var rootGo = new GameObject("World");
+                    await WorldCreator.CreateForCache(worldData, rootGo, GameGlobals.Loading);
+                    await SaveGlt(rootGo);
+                }
+
+                // DEBUG restore
                 {
                     var loadRoot = new GameObject("TestRestore");
                     loadRoot.transform.position = new(10, 10, 0);
@@ -75,7 +87,7 @@ namespace GUZ.Core.Manager.Scenes
                 return;
             }
         }
-        
+
         private async Task SaveGlt(GameObject worldRootGo)
         {
             var path = Application.persistentDataPath + "/test.gltf";

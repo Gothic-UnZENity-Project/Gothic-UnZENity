@@ -256,7 +256,7 @@ namespace GUZ.VR.Components.VobContainer
                 // We need to parent our item to the normal Vob tree. Because putting it into a slot changes the parent to the slot-GO.
                 // And when grabbed out of the chest, HVR will re-parent the object to it's original parent.
                 // If the chest or sth. else ist the parent, a culling of the chest will hide the item (e.g. in our hand).
-                var parentGo = VobCreator.GetRootGameObjectOfType(VirtualObjectType.oCItem);
+                var parentGo = GameGlobals.Vobs.GetRootGameObjectOfType(VirtualObjectType.oCItem);
                 go.SetParent(parentGo);
 
                 // With this, we move the object into the chest and the "auto-collector" will trigger and move the object to the first free Socket.

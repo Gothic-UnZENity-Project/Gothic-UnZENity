@@ -26,7 +26,7 @@ namespace GUZ.Core.Creator
             GlobalEventDispatcher.WorldSceneLoaded.AddListener(WorldLoaded);
         }
 
-        public static async Task CreateMesh(ZenKit.World world, GameObject rootGo, LoadingManager loading)
+        public static async Task CreateForCache(ZenKit.World world, GameObject rootGo, LoadingManager loading)
         {
             try
             {

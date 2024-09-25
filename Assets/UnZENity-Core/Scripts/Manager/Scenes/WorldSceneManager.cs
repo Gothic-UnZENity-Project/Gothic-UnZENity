@@ -34,7 +34,8 @@ namespace GUZ.Core.Manager.Scenes
             // We need to start creating Vobs as we need to calculate world slicing based on amount of lights at a certain space afterwards.
             if (config.EnableVOBs)
             {
-                await VobCreator.CreateAsync(config, GameGlobals.Loading, SaveGameManager.CurrentWorldData.Vobs, Constants.VobsPerFrame);
+                // FIXME - Set rootGO from glTF cache values.
+                await GameGlobals.Vobs.CreateAsync(GameGlobals.Loading, SaveGameManager.CurrentWorldData.Vobs, null);
             }
 
             // 2.

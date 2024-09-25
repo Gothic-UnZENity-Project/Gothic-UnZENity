@@ -5,6 +5,7 @@ using GUZ.Core.Globals;
 using GUZ.Core.Manager;
 using GUZ.Core.Manager.Culling;
 using GUZ.Core.Manager.Settings;
+using GUZ.Core.Manager.Vobs;
 using GUZ.Core.Vm;
 using GUZ.Core.World;
 using GUZ.Lab.Handler;
@@ -48,6 +49,7 @@ namespace GUZ.Lab
         public RoutineManager Routines => _npcRoutineManager;
         public TextureManager Textures => _textureManager;
         public FontManager Font => _fontManager;
+        public VobManager Vobs => null;
         public StationaryLightsManager Lights => null;
         public VobMeshCullingManager VobMeshCulling => null;
         public NpcMeshCullingManager NpcMeshCulling => null;

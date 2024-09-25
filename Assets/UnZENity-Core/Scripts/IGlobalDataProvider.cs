@@ -1,6 +1,7 @@
 using GUZ.Core.Manager;
 using GUZ.Core.Manager.Culling;
 using GUZ.Core.Manager.Settings;
+using GUZ.Core.Manager.Vobs;
 using GUZ.Core.World;
 
 namespace GUZ.Core
@@ -17,6 +18,7 @@ namespace GUZ.Core
         public RoutineManager Routines { get; }
         public TextureManager Textures { get; }
         public FontManager Font { get; }
+        public VobManager Vobs { get; }
         public StationaryLightsManager Lights { get; }
         public StoryManager Story { get; }
         public VobMeshCullingManager VobMeshCulling { get; }

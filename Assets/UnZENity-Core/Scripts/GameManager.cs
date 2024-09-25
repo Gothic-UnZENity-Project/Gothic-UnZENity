@@ -6,6 +6,7 @@ using GUZ.Core.Manager;
 using GUZ.Core.Manager.Culling;
 using GUZ.Core.Manager.Scenes;
 using GUZ.Core.Manager.Settings;
+using GUZ.Core.Manager.Vobs;
 using GUZ.Core.Util;
 using GUZ.Core.World;
 using MyBox;
@@ -44,6 +45,7 @@ namespace GUZ.Core
         public StoryManager Story { get; private set; }
 
         public FontManager Font { get; private set; }
+        public VobManager Vobs { get; private set; }
 
         public StationaryLightsManager Lights { get; private set; }
 
@@ -76,6 +78,7 @@ namespace GUZ.Core
             NpcMeshCulling = new NpcMeshCullingManager(Config);
             SoundCulling = new VobSoundCullingManager(Config);
             _barrierManager = new BarrierManager(Config);
+            Vobs = new VobManager(Config);
             Lights = new StationaryLightsManager();
             Player = new PlayerManager(Config);
             Time = new GameTime(Config, this);

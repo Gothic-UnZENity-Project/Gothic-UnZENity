@@ -36,7 +36,7 @@ namespace GUZ.Core.Manager
             var activeTypes = config.SpawnVOBTypes.Value;
             if (config.EnableVOBs && (activeTypes.IsEmpty() || activeTypes.Contains(VirtualObjectType.oCItem)))
             {
-                VobCreator.CreateItemMesh(itemInstance, spawnpoint, null);
+                GameGlobals.Vobs.CreateItemMesh(itemInstance, spawnpoint, null);
             }
         }
 
