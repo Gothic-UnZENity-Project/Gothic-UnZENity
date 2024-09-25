@@ -266,9 +266,14 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
 
                 // FIXME - hard coded as it's the right value for BSFire. Need to be more dynamic by using element which has parent=-1.
                 meshRenderer.rootBone = nodeObjects[0].transform;
+                meshRenderer.material = Constants.LoadingMaterial;
 
-                PrepareMeshRenderer(meshRenderer, mesh);
-                PrepareMeshFilter(meshFilter, softSkinMesh, meshCounter);
+                PrepareMeshFilter(meshFilter, softSkinMesh.Mesh, meshRenderer, meshCounter);
+                
+                if (!UseTextureArray)
+                {
+                    PrepareMeshRenderer(meshRenderer, mesh);
+                }
 
                 meshRenderer.sharedMesh = meshFilter.sharedMesh;
 
@@ -386,7 +391,7 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
             rend.SetMaterials(finalMaterials);
         }
 
-        protected void PrepareMeshFilter(MeshFilter meshFilter, IMultiResolutionMesh mrmData, MeshRenderer meshRenderer, int meshIndex)
+        protected void PrepareMeshFilter(MeshFilter meshFilter, IMultiResolutionMesh mrmData, Renderer meshRenderer, int meshIndex)
         {
             var submeshPerTextureFormat = new Dictionary<TextureCache.TextureArrayTypes, int>();
 

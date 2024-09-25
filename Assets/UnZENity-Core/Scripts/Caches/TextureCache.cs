@@ -11,6 +11,7 @@ using UnityEngine;
 using UnityEngine.Rendering;
 using ZenKit;
 using Debug = UnityEngine.Debug;
+using Mesh = UnityEngine.Mesh;
 using Object = UnityEngine.Object;
 using Texture = UnityEngine.Texture;
 using TextureFormat = ZenKit.TextureFormat;
@@ -24,7 +25,7 @@ namespace GUZ.Core.Caches
 
         public static Dictionary<TextureArrayTypes, Texture> TextureArrays { get; } = new();
         public static List<(MeshRenderer Renderer, WorldData.SubMeshData SubmeshData)> WorldMeshRenderersForTextureArray = new();
-        public static Dictionary<UnityEngine.Mesh, VobMeshData> VobMeshesForTextureArray = new();
+        public static Dictionary<Mesh, VobMeshData> VobMeshesForTextureArray = new();
 
         private static readonly Dictionary<string, Texture2D> _texture2DCache = new();
         private static readonly Dictionary<TextureArrayTypes, List<(string PreparedKey, ZkTextureData TextureData)>> _texturesToIncludeInArray = new();
@@ -40,9 +41,9 @@ namespace GUZ.Core.Caches
         {
             public IMultiResolutionMesh Mrm { get; set; }
             public List<TextureArrayTypes> TextureArrayTypes { get; set; }
-            public List<MeshRenderer> Renderers { get; set; } = new();
+            public List<Renderer> Renderers { get; set; } = new();
 
-            public VobMeshData(IMultiResolutionMesh mrm, List<TextureArrayTypes> textureArrayTypes, MeshRenderer renderer = null)
+            public VobMeshData(IMultiResolutionMesh mrm, List<TextureArrayTypes> textureArrayTypes, Renderer renderer = null)
             {
                 Mrm = mrm;
                 TextureArrayTypes = textureArrayTypes;
