@@ -1,4 +1,6 @@
 ﻿using System.Threading.Tasks;
+using GLTFast;
+using GLTFast.Export;
 using GUZ.Core.Creator;
 using UnityEngine;
 using ZenKit;
@@ -59,9 +61,49 @@ namespace GUZ.Core.Manager.Scenes
                 
                 await WorldCreator.CreateMesh(worldData, rootGo, GameGlobals.Loading);
 
+                await SaveGlt(rootGo);
+
+                // DEBUG
+                {
+                    var loadRoot = new GameObject("TestRestore");
+                    loadRoot.transform.position = new(10, 10, 0);
+                    await LoadGlt(loadRoot, "test.gltf");
+                }
 
                 return;
             }
+        }
+        
+        private async Task SaveGlt(GameObject worldRootGo)
+        {
+            var path = Application.persistentDataPath + "/test.gltf";
+            
+            
+            // Create a new export settings instance
+            var exportSettings = new ExportSettings()
+            {
+                Format = GltfFormat.Json, // FIXME - Move to Binary to save space later!
+                ComponentMask = ComponentType.Mesh
+            };
+            
+            var export = new GameObjectExport(exportSettings);
+            
+            // A scene is a structure for glTF to structure GameObjects. We will use it to separate VOBs and World meshes.
+            export.AddScene(new []{worldRootGo}, "WorldMesh");
+
+            var success = await export.SaveToFileAndDispose(path);
+
+            if (!success)
+            {
+                Debug.LogError("Something went wrong exporting the World+VOB glTF");
+            }
+        }
+        
+        private async Task LoadGlt(GameObject rootGo, string path)
+        {
+            var gltfComp = rootGo.AddComponent<GltfAsset>();
+                
+            gltfComp.Url = Application.persistentDataPath + "/" + path;
         }
     }
 }
