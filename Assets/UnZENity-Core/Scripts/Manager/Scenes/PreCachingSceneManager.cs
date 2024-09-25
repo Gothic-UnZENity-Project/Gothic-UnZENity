@@ -1,7 +1,9 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using GLTFast;
 using GLTFast.Export;
 using GUZ.Core.Creator;
+using GUZ.Core.Extensions;
 using UnityEngine;
 using ZenKit;
 
@@ -13,7 +15,7 @@ namespace GUZ.Core.Manager.Scenes
         
         private static readonly string[] _gothic1Worlds = 
         {
-            // FIXME reoder
+            // FIXME reoder: Freemine after World
             "Freemine.zen",
             "World.zen",
             "Oldmine.zen",
@@ -104,6 +106,29 @@ namespace GUZ.Core.Manager.Scenes
             var gltfComp = rootGo.AddComponent<GltfAsset>();
                 
             gltfComp.Url = Application.persistentDataPath + "/" + path;
+
+            while (!gltfComp.IsDone)
+            {
+                await Task.Yield();
+            }
+            await Task.Yield();
+
+            var gameObjects = new List<GameObject>();
+            GetAllChildGameObjects(rootGo.transform.GetChild(0).gameObject, gameObjects);
+
+            // We need to re-add MeshCollider as it isn't cached by glTF
+            gameObjects.ForEach(go => go.AddComponent<MeshCollider>());
+        }
+
+        private void GetAllChildGameObjects(GameObject root, List<GameObject> returnGameObjects)
+        {
+            var currentGOs = root.GetAllDirectChildren();
+            returnGameObjects.AddRange(currentGOs);
+
+            foreach (var go in currentGOs)
+            {
+                GetAllChildGameObjects(go, returnGameObjects);
+            }
         }
     }
 }
