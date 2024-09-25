@@ -21,6 +21,7 @@ namespace GUZ.Core.Manager.Vobs
             VirtualObjectType.oCMobDoor,
             VirtualObjectType.oCMobFire,
             VirtualObjectType.oCMobInter,
+            VirtualObjectType.zCVob,
             VirtualObjectType.oCMobLadder,
             VirtualObjectType.oCMobSwitch,
             VirtualObjectType.oCMobWheel,
