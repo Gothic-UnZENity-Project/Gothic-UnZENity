@@ -26,6 +26,7 @@ namespace GUZ.Core.Manager.Vobs
             VirtualObjectType.oCMobSwitch,
             VirtualObjectType.oCMobWheel,
             VirtualObjectType.zCVobAnimate,
+            VirtualObjectType.zCVobLight, // Important at caching time as it will add StationaryLight components to calculate world mesh chunks later.
             VirtualObjectType.zCVobStair,
             VirtualObjectType.oCMOB
         };

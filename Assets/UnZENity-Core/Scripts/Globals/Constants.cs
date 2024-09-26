@@ -7,6 +7,7 @@ namespace GUZ.Core.Globals
         public static readonly Material LoadingMaterial; // Used for Vobs and World before applying TextureArray.
 
         // Unity shaders
+        public static readonly Shader ShaderLit = Shader.Find("Universal Render Pipeline/Lit");
         public static readonly Shader ShaderUnlit = Shader.Find("Universal Render Pipeline/Unlit");
         public static readonly Shader ShaderUnlitParticles = Shader.Find("Universal Render Pipeline/Particles/Unlit");
         public static readonly Shader ShaderTMPSprite = Shader.Find("TextMeshPro/Sprite");

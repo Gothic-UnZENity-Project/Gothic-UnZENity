@@ -1,9 +1,12 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using GLTFast;
 using GLTFast.Export;
+using GUZ.Core.Caches;
 using GUZ.Core.Creator;
+using GUZ.Core.Globals;
 using GUZ.Core.Manager.Vobs;
 using UnityEngine;
 using ZenKit;
@@ -16,9 +19,8 @@ namespace GUZ.Core.Manager.Scenes
         
         private static readonly string[] _gothic1Worlds = 
         {
-            // FIXME reoder: Freemine after World
-            "Freemine.zen",
             "World.zen",
+            "Freemine.zen",
             "Oldmine.zen",
             "OrcGraveyard.zen",
             "OrcTempel.zen"
@@ -43,42 +45,82 @@ namespace GUZ.Core.Manager.Scenes
 #pragma warning restore CS4014
         }
 
+        /// <summary>
+        /// 1. Fetch all existing worlds (done)
+        ///
+        /// 1.1 Load static VOBs (many elements except like Spot+Startpoint+Iems+[Elements with have no mesh])
+        ///   Cache them
+        ///
+        /// 1.2 Load world mesh of a level
+        ///   Sliced by lighting VOBs
+        ///   Cache it
+        /// </summary>
         private async Task CreateCaches()
         {
             var levelsToLoad = GameContext.GameVersionAdapter.Version == GameVersion.Gothic1 ? _gothic1Worlds : _gothic2Worlds;
-            
-            /*
-             * 1. Fetch all existing worlds (done)
-             *
-             * 1.1 Load static VOBs (many elements except like Spot+Startpoint+Iems+[Elements with have no mesh])
-             *   Cache them
-             *
-             * 1.2 Load world mesh of a level
-             *  Sliced by lighting VOBs
-             *   Cache it
-             */
 
             foreach (var worldName in levelsToLoad)
             {
+                Debug.Log($"### PreCaching meshes for world: {worldName}");
                 var worldData = ResourceLoader.TryGetWorld(worldName, GameContext.GameVersionAdapter.Version);
 
                 var vobsRootGo = new GameObject("Vobs");
                 var worldRootGo = new GameObject("World");
 
+                Debug.Log("### PreCaching static VOB meshes.");
                 await new VobCacheManager().CreateForCache(worldData!.RootObjects, GameGlobals.Loading, vobsRootGo);
+                // During loading, the texture array gets filled. It's easier for now to simply dispose the data instead
+                // of altering its collection with IF-ELSE statements in code.
+                TextureCache.RemoveCachedTextureArrayData();
+                CheckForInvalidData(vobsRootGo);
+
+                Debug.Log("### PreCaching World meshes.");
                 await WorldCreator.CreateForCache(worldData, worldRootGo, GameGlobals.Loading);
+                CheckForInvalidData(worldRootGo);
+
 
                 await SaveGLTF(worldRootGo, vobsRootGo, worldName);
 
-                // DEBUG restore
-                {
-                    var loadRoot = new GameObject("TestRestore");
-                    loadRoot.transform.position = new(100, 0, 0);
-                    await LoadGlt(loadRoot, worldName);
-                }
+                // Clean up memory
+                Destroy(vobsRootGo);
+                Destroy(worldRootGo);
 
-                // DEBUG - Currently pausing after first world creation!
-                return;
+                // DEBUG restore
+                // {
+                //     var loadRoot = new GameObject("TestRestore");
+                //     loadRoot.transform.position = new(1000, 0, 0);
+                //     await LoadGlt(loadRoot, worldName);
+                // }
+            }
+        }
+
+        /// <summary>
+        /// We want to store meshes only. We therefore need to check if textures are also included and raise an exception if so.
+        /// Textures should always be created via TextureArray. This pre-check is a good performance check if something is wrong with mesh generation in general.
+        /// </summary>
+        private void CheckForInvalidData(GameObject rootGo)
+        {
+            var renderers = rootGo.GetComponentsInChildren<MeshRenderer>(true);
+
+            var allowedShaderNames = new string[]
+            {
+                Constants.ShaderWorldLitName,
+                Constants.ShaderLit.name
+
+            };
+
+            var nonTextureArrayMeshes = renderers
+                .Where(i => i.materials.Length != 1 || !allowedShaderNames.Contains(i.material.shader.name))
+                .ToList();
+
+            if (nonTextureArrayMeshes.Any())
+            {
+                Debug.LogError("Bug: Meshes are loaded which should be inside texture array instead of loading textures now. We don't want to have these textures (*.jpg) inside cache and stop now!");
+                foreach (var invalidElement in nonTextureArrayMeshes)
+                {
+                    Debug.LogError($"Invalid mesh where texture is assigned during caching time: {invalidElement.name}", invalidElement);
+                }
+                throw new ArgumentException("See Error log");
             }
         }
 
@@ -89,7 +131,7 @@ namespace GUZ.Core.Manager.Scenes
             // Create a new export settings instance
             var exportSettings = new ExportSettings()
             {
-                Format = GltfFormat.Binary,
+                Format = GltfFormat.Binary, // If you want to test something change to GltFormat.Json (e.g. check for extracted texture.jpgs and object structure)
                 ComponentMask = ComponentType.Mesh,
                 FileConflictResolution = FileConflictResolution.Overwrite
             };
@@ -117,7 +159,7 @@ namespace GUZ.Core.Manager.Scenes
             }
         }
         
-        private async Task LoadGlt(GameObject rootGo, string worldName)
+        private async Task DebugLoadGlt(GameObject rootGo, string worldName)
         {
             var filePathName = $"{Application.persistentDataPath}/Cache/{GameContext.GameVersionAdapter.Version}/glTF/{worldName}.glb";
 
