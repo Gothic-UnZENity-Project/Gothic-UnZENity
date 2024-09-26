@@ -319,9 +319,14 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
 
             var meshFilter = RootGo.TryAddComponent<MeshFilter>();
             var meshRenderer = RootGo.TryAddComponent<MeshRenderer>();
+            meshRenderer.material = Constants.LoadingMaterial;
 
             PrepareMeshFilter(meshFilter, Mmb.Mesh, meshRenderer, 0);
-            PrepareMeshRenderer(meshRenderer, Mmb.Mesh);
+
+            if (!UseTextureArray)
+            {
+                PrepareMeshRenderer(meshRenderer, Mmb.Mesh);
+            }
 
             SetPosAndRot(RootGo, RootPosition, RootRotation);
 
