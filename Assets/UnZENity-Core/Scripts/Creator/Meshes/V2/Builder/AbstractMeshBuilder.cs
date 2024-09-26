@@ -266,9 +266,14 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
 
                 // FIXME - hard coded as it's the right value for BSFire. Need to be more dynamic by using element which has parent=-1.
                 meshRenderer.rootBone = nodeObjects[0].transform;
+                meshRenderer.material = Constants.LoadingMaterial;
 
-                PrepareMeshRenderer(meshRenderer, mesh);
-                PrepareMeshFilter(meshFilter, softSkinMesh, meshCounter);
+                PrepareMeshFilter(meshFilter, softSkinMesh, meshRenderer, meshCounter);
+                
+                if (!UseTextureArray)
+                {
+                    PrepareMeshRenderer(meshRenderer, mesh);
+                }
 
                 meshRenderer.sharedMesh = meshFilter.sharedMesh;
 
@@ -386,10 +391,29 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
             rend.SetMaterials(finalMaterials);
         }
 
-        protected void PrepareMeshFilter(MeshFilter meshFilter, IMultiResolutionMesh mrmData, MeshRenderer meshRenderer, int meshIndex)
+        /// <summary>
+        /// Ok, brace yourself:
+        /// There are three parameters of interest when it comes to creating meshes for items (etc.).
+        /// 1. positions - Unity: vertices (=Vector3)
+        /// 2. triangles - contains 3 indices to wedges.
+        /// 3. wedges - contains indices (Unity: triangles) to the positions (Unity: vertices) and textures (Unity: uvs (=Vector2)).
+        ///
+        /// Data example:
+        ///  positions: 0=>[x1,x2,x3], 0=>[x2,y2,z2], 0=>[x3,y3,z3]
+        ///  subMesh:
+        ///    triangles: [0, 2, 1], [1, 2, 3]
+        ///    wedges: 0=>[index=0, texture=...], 1=>[index=2, texture=...], 2=>[index=2, texture=...]
+        ///
+        ///  If we now take first triangle and prepare it for Unity, we would get the following:
+        ///  vertices = 0[x0,...], 2[x2,...], 1[x1,...] --> as triangles point to a wedge and wedge index points to the position-index itself.
+        ///  triangles = 0, 2, 3 --> (indices for position items); ATTENTION: index 3 would normally be index 2, but! we can never reuse positions. We always need to create new ones. (Reason: uvs demand the same size as vertices.)
+        ///  uvs = [wedge[0].texture], [wedge[2].texture], [wedge[1].texture]
+        /// </summary>
+        protected void PrepareMeshFilter(MeshFilter meshFilter, IMultiResolutionMesh mrmData, Renderer meshRenderer, int meshIndex)
         {
-            var submeshPerTextureFormat = new Dictionary<TextureCache.TextureArrayTypes, int>();
+            var subMeshPerTextureFormat = new Dictionary<TextureCache.TextureArrayTypes, int>();
 
+            // Elements like NPC armors might have multiple meshes. We therefore need to store each mesh with it's associated index.
             if (MultiTypeCache.Meshes.TryGetValue($"{MeshName}_{meshIndex}", out Mesh mesh))
             {
                 meshFilter.sharedMesh = mesh;
@@ -428,16 +452,16 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
 
             foreach (var subMesh in mrmData.SubMeshes)
             {
-                // When using the texture array, get the index of the array of the matching texture format. Build submeshes for each texture format, i.e. separating opaque and alpha cutout textures.
+                // When using the texture array, get the index of the array of the matching texture format. Build sub meshes for each texture format, i.e. separating opaque and alpha cutout textures.
                 int textureArrayIndex = 0, maxMipLevel = 0;
                 Vector2 textureScale = Vector2.one;
                 TextureCache.TextureArrayTypes textureArrayType = TextureCache.TextureArrayTypes.Opaque;
                 if (UseTextureArray)
                 {
                     TextureCache.GetTextureArrayIndex(subMesh.Material, out textureArrayType, out textureArrayIndex, out textureScale, out maxMipLevel);
-                    if (!submeshPerTextureFormat.ContainsKey(textureArrayType))
+                    if (!subMeshPerTextureFormat.ContainsKey(textureArrayType))
                     {
-                        submeshPerTextureFormat.Add(textureArrayType, preparedTriangles.Count);
+                        subMeshPerTextureFormat.Add(textureArrayType, preparedTriangles.Count);
                         preparedTriangles.Add(new List<int>());
                     }
                 }
@@ -460,7 +484,7 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
                         preparedVertices.Add(mrmData.Positions[wedges[w].Index].ToUnityVector());
                         if (UseTextureArray)
                         {
-                            preparedTriangles[submeshPerTextureFormat[textureArrayType]].Add(index++);
+                            preparedTriangles[subMeshPerTextureFormat[textureArrayType]].Add(index++);
                         }
                         else
                         {
@@ -478,7 +502,7 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
 
             // Unity 1/ handles vertices on mesh level, but triangles (aka vertex-indices) on submesh level.
             // and 2/ demands vertices to be stored before triangles/uvs.
-            // Therefore we prepare the full data once and assign it afterwards.
+            // Therefore, we prepare the full data once and assign it afterward.
             // @see: https://answers.unity.com/questions/531968/submesh-vertices.html
             mesh.subMeshCount = preparedTriangles.Count;
             mesh.SetVertices(preparedVertices);
@@ -491,107 +515,44 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
 
             CreateMorphMeshEnd(preparedVertices);
 
-            TextureCache.VobMeshesForTextureArray.Add(mesh, new TextureCache.VobMeshData(mrmData, submeshPerTextureFormat.Keys.ToList(), UseTextureArray ? meshRenderer : null));
+            // TODO - Why adding a null-renderer if !UseTextureArray? Couldn't we just disable this Add() call fully?
+            TextureCache.VobMeshesForTextureArray.Add(mesh, new TextureCache.VobMeshData(mrmData, subMeshPerTextureFormat.Keys.ToList(), UseTextureArray ? meshRenderer : null));
 
             MultiTypeCache.Meshes.Add($"{MeshName}_{meshIndex}", mesh);
         }
 
-        protected void PrepareMeshFilter(MeshFilter meshFilter, ISoftSkinMesh soft, int meshIndex)
+        protected void PrepareMeshFilter(MeshFilter meshFilter, ISoftSkinMesh soft, Renderer renderer, int meshIndex)
         {
-            // Elements like NPC armors might have multiple meshes. We therefore need to store each mesh with it's associated index.
-            if (MultiTypeCache.Meshes.TryGetValue($"{MeshName}_{meshIndex}", out Mesh mesh))
-            {
-                meshFilter.sharedMesh = mesh;
-                return;
-            }
+            // Delegate actual mesh filter creation to function handling the MRM itself.
+            PrepareMeshFilter(meshFilter, soft.Mesh, renderer, meshIndex);
 
-            /*
-             * Ok, brace yourself:
-             * There are three parameters of interest when it comes to creating meshes for items (etc.).
-             * 1. positions - Unity: vertices (=Vector3)
-             * 2. triangles - contains 3 indices to wedges.
-             * 3. wedges - contains indices (Unity: triangles) to the positions (Unity: vertices) and textures (Unity: uvs (=Vector2)).
-             *
-             * Data example:
-             *  positions: 0=>[x1,x2,x3], 0=>[x2,y2,z2], 0=>[x3,y3,z3]
-             *  submesh:
-             *    triangles: [0, 2, 1], [1, 2, 3]
-             *    wedges: 0=>[index=0, texture=...], 1=>[index=2, texture=...], 2=>[index=2, texture=...]
-             *
-             *  If we now take first triangle and prepare it for Unity, we would get the following:
-             *  vertices = 0[x0,...], 2[x2,...], 1[x1,...] --> as triangles point to a wedge and wedge index points to the position-index itself.
-             *  triangles = 0, 2, 3 --> (indices for position items); ATTENTION: index 3 would normally be index 2, but! we can never reuse positions. We always need to create new ones. (Reason: uvs demand the same size as vertices.)
-             *  uvs = [wedge[0].texture], [wedge[2].texture], [wedge[1].texture]
-             */
-            mesh = new Mesh() { name = MeshName };
+
+            // Now let's add bone data.
             var zkMesh = soft.Mesh;
             var weights = soft.Weights;
 
-            meshFilter.sharedMesh = mesh;
-            mesh.subMeshCount = soft!.Mesh.SubMeshes.Count;
-
             var verticesAndUvSize = zkMesh.SubMeshes.Sum(i => i.Triangles!.Count) * 3;
-            var preparedVertices = new List<Vector3>(verticesAndUvSize);
-            var preparedUVs = new List<Vector2>(verticesAndUvSize);
             var preparedBoneWeights = new List<BoneWeight>(verticesAndUvSize);
-
-            // 2-dimensional arrays (as there are segregated by submeshes)
-            var preparedTriangles = new List<List<int>>(zkMesh.SubMeshes.Count);
-            var vertices = GetSoftSkinMeshPositions(soft);
 
             foreach (var subMesh in zkMesh.SubMeshes)
             {
                 var triangles = subMesh.Triangles;
                 var wedges = subMesh.Wedges;
 
-                // every triangle is attached to a new vertex.
-                // Therefore new submesh triangles start referencing their vertices with an offset from previous runs.
-                var verticesIndexOffset = preparedVertices.Count;
-
-                var subMeshTriangles = new List<int>(triangles.Count * 3);
                 for (var i = 0; i < triangles.Count; i++)
                 {
-                    // One triangle is made of 3 elements for Unity. We therefore need to prepare 3 elements within one loop.
-                    var preparedIndex = i * 3 + verticesIndexOffset;
-
                     var index1 = wedges![triangles[i].Wedge2];
                     var index2 = wedges[triangles[i].Wedge1];
                     var index3 = wedges[triangles[i].Wedge0];
-
-                    preparedVertices.Add(vertices![index1.Index].ToUnityVector());
-                    preparedVertices.Add(vertices[index2.Index].ToUnityVector());
-                    preparedVertices.Add(vertices[index3.Index].ToUnityVector());
-
-                    subMeshTriangles.Add(preparedIndex);
-                    subMeshTriangles.Add(preparedIndex + 1);
-                    subMeshTriangles.Add(preparedIndex + 2);
-
-                    preparedUVs.Add(index1.Texture.ToUnityVector());
-                    preparedUVs.Add(index2.Texture.ToUnityVector());
-                    preparedUVs.Add(index3.Texture.ToUnityVector());
 
                     preparedBoneWeights.Add(weights[index1.Index].ToBoneWeight(soft.Nodes));
                     preparedBoneWeights.Add(weights[index2.Index].ToBoneWeight(soft.Nodes));
                     preparedBoneWeights.Add(weights[index3.Index].ToBoneWeight(soft.Nodes));
                 }
-
-                preparedTriangles.Add(subMeshTriangles);
             }
 
-            // Unity 1/ handles vertices on mesh level, but triangles (aka vertex-indices) on submesh level.
-            // and 2/ demands vertices to be stored before triangles/uvs.
-            // Therefore we prepare the full data once and assign it afterwards.
-            // @see: https://answers.unity.com/questions/531968/submesh-vertices.html
-            mesh.SetVertices(preparedVertices);
-            mesh.SetUVs(0, preparedUVs);
-
-            mesh.boneWeights = preparedBoneWeights.ToArray();
-            for (var i = 0; i < zkMesh.SubMeshes.Count; i++)
-            {
-                mesh.SetTriangles(preparedTriangles[i], i);
-            }
-
-            MultiTypeCache.Meshes.Add($"{MeshName}_{meshIndex}", mesh);
+            // PrepareMeshFilter() on top filled the mesh itself. We now need to set bone data only!
+            meshFilter.sharedMesh.boneWeights = preparedBoneWeights.ToArray();
         }
 
         protected virtual List<System.Numerics.Vector3> GetSoftSkinMeshPositions(ISoftSkinMesh softSkinMesh)
