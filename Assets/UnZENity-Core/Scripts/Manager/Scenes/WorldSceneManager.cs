@@ -30,7 +30,9 @@ namespace GUZ.Core.Manager.Scenes
             var config = GameGlobals.Config;
 
             // 01. Load world and VOB caches.
-            // GameGlobals.Glt.LoadGlt();
+
+            var root = new GameObject("Data");
+            await GameGlobals.Glt.LoadGlt(root, SaveGameManager.CurrentWorldName);
 
             // 1.
             // Build the world and vob meshes, populating the texture arrays.
