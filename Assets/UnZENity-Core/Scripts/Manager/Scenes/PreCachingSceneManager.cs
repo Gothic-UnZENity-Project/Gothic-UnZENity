@@ -28,8 +28,8 @@ namespace GUZ.Core.Manager.Scenes
         
         private static readonly string[] _gothic2Worlds =
         {
-            "NewWorld.zen",
             "OldWorld.zen",
+            "NewWorld.zen",
             "AddonWorld.zen",
             "DragonIsland.zen"
         };
@@ -69,6 +69,7 @@ namespace GUZ.Core.Manager.Scenes
 
                 Debug.Log("### PreCaching static VOB meshes.");
                 await new VobCacheManager().CreateForCache(worldData!.RootObjects, GameGlobals.Loading, vobsRootGo);
+
                 // During loading, the texture array gets filled. It's easier for now to simply dispose the data instead
                 // of altering its collection with IF-ELSE statements in code.
                 TextureCache.RemoveCachedTextureArrayData();
@@ -79,7 +80,7 @@ namespace GUZ.Core.Manager.Scenes
                 CheckForInvalidData(worldRootGo);
 
 
-                await SaveGLTF(worldRootGo, vobsRootGo, worldName);
+                await SaveGLT(worldRootGo, vobsRootGo, worldName);
 
                 // Clean up memory
                 Destroy(vobsRootGo);
@@ -92,6 +93,9 @@ namespace GUZ.Core.Manager.Scenes
                 //     await LoadGlt(loadRoot, worldName);
                 // }
             }
+
+            // Every world of the game is cached successfully. Now let's move on!
+            GameManager.I.LoadScene(Constants.SceneMainMenu, Constants.ScenePreCaching);
         }
 
         /// <summary>
@@ -104,9 +108,10 @@ namespace GUZ.Core.Manager.Scenes
 
             var allowedShaderNames = new string[]
             {
-                Constants.ShaderWorldLitName,
-                Constants.ShaderLit.name
-
+                // TODO - This shader is used for materials used from e.g. HurricaneVR (chest and the inventory rings inside).
+                // TODO   We can safely remove this once we load only Gothic data without prefabs at cache time.
+                Constants.ShaderLit.name,
+                Constants.ShaderWorldLitName
             };
 
             var nonTextureArrayMeshes = renderers
@@ -124,7 +129,7 @@ namespace GUZ.Core.Manager.Scenes
             }
         }
 
-        private async Task SaveGLTF(GameObject worldRootGo, GameObject vobsRootGo, string worldName)
+        private async Task SaveGLT(GameObject worldRootGo, GameObject vobsRootGo, string worldName)
         {
             var folder = $"{Application.persistentDataPath}/Cache/{GameContext.GameVersionAdapter.Version}/glTF";
 
@@ -159,7 +164,7 @@ namespace GUZ.Core.Manager.Scenes
             }
         }
         
-        private async Task DebugLoadGlt(GameObject rootGo, string worldName)
+        private async Task DebugLoadGLT(GameObject rootGo, string worldName)
         {
             var filePathName = $"{Application.persistentDataPath}/Cache/{GameContext.GameVersionAdapter.Version}/glTF/{worldName}.glb";
 

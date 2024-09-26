@@ -204,7 +204,15 @@ namespace GUZ.Core
         [CanBeNull]
         public static ZenKit.World TryGetWorld([NotNull] string key, GameVersion version)
         {
-            return new ZenKit.World(_vfs, $"{GetPreparedKey(key)}.zen", version);
+            try
+            {
+                return new ZenKit.World(_vfs, $"{GetPreparedKey(key)}.zen", version);
+            }
+            // If a world couldn't be loaded, we get an exception from ZenKit.
+            catch (Exception e)
+            {
+                return null;
+            }
         }
 
         [CanBeNull]

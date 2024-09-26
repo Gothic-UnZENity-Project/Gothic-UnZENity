@@ -12,6 +12,7 @@ using GUZ.Core.Vm;
 using GUZ.Core.Vob;
 using GUZ.Core.Vob.WayNet;
 using JetBrains.Annotations;
+using MyBox;
 using UnityEngine;
 using UnityEngine.Rendering;
 using ZenKit;
@@ -74,10 +75,19 @@ namespace GUZ.Core.Manager.Vobs
             {
                 GameObject go = null;
 
-                // Debug - Skip loading if not wanted.
-                if (SpawnObjectType(vob.Type))
+                try
                 {
-                    go = reparent ? CreateVob(vob, parent) : CreateVob(vob);
+                    // Debug - Skip loading if not wanted.
+                    if (SpawnObjectType(vob.Type))
+                    {
+                        go = reparent ? CreateVob(vob, parent) : CreateVob(vob);
+                    }
+                }
+                catch (Exception e)
+                {
+                    Debug.LogError($"Error while creating vob: {vob.Visual?.Name}. Ignoring for now.", parent);
+                    Debug.LogError(e);
+                    continue;
                 }
 
                 AddToMobInteractableList(vob, go);
@@ -96,7 +106,9 @@ namespace GUZ.Core.Manager.Vobs
 
         [CanBeNull]
         private GameObject CreateVob(IVirtualObject vob, GameObject parent = null)
-        {
+         {
+            Debug.Log(CreatedCount);
+
             GameObject go = null;
             switch (vob.Type)
             {
@@ -298,7 +310,7 @@ namespace GUZ.Core.Manager.Vobs
         {
             var go = CreateDefaultMesh(vob, parent);
 
-            if (vob.VobTree == "")
+            if (vob.VobTree.IsNullOrEmpty())
             {
                 return go;
             }
@@ -306,7 +318,14 @@ namespace GUZ.Core.Manager.Vobs
             if (!FireTreeCache.TryGetValue(vob.VobTree.ToLower(), out var vobTree))
             {
                 vobTree = ResourceLoader.TryGetWorld(vob.VobTree, GameContext.GameVersionAdapter.Version);
+
                 FireTreeCache.Add(vob.VobTree.ToLower(), vobTree);
+            }
+
+            // FIXME - FIRETREE_LARGE.zen doesn't exist inside G2 vdf files. We skip it for now but need to check if original G2 ignores it or uses it differently.
+            if (vobTree == null)
+            {
+                return null;
             }
 
             foreach (var vobRoot in vobTree.RootObjects)
