@@ -76,7 +76,7 @@ namespace GUZ.Core.Manager.Vobs
         /// * The caching mechanism should be stable after created once. If we alter a prefab, we always need to tell our players: Recreate cache.
         /// * We don't know if there will be any side effects if we cache additional GOs and Components.
         /// </summary>
-        protected virtual GameObject GetPrefab(IVirtualObject vob)
+        protected override GameObject GetPrefab(IVirtualObject vob)
         {
             return new GameObject();
         }
