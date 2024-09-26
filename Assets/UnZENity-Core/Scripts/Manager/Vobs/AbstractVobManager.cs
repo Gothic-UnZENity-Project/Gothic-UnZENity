@@ -107,8 +107,6 @@ namespace GUZ.Core.Manager.Vobs
         [CanBeNull]
         private GameObject CreateVob(IVirtualObject vob, GameObject parent = null)
          {
-            Debug.Log(CreatedCount);
-
             GameObject go = null;
             switch (vob.Type)
             {

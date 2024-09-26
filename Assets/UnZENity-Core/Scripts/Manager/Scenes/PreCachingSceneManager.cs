@@ -15,8 +15,11 @@ namespace GUZ.Core.Manager.Scenes
 {
     public class PreCachingSceneManager : MonoBehaviour, ISceneManager
     {
+        public static string GLTCacheFilePath { get; private set; }
+        public static string GLTCacheFileEnding = "glb";
+
         [SerializeField] private GameObject _loadingArea;
-        
+
         private static readonly string[] _gothic1Worlds = 
         {
             "World.zen",
@@ -28,8 +31,8 @@ namespace GUZ.Core.Manager.Scenes
         
         private static readonly string[] _gothic2Worlds =
         {
-            "OldWorld.zen",
             "NewWorld.zen",
+            "OldWorld.zen",
             "AddonWorld.zen",
             "DragonIsland.zen"
         };
@@ -39,7 +42,10 @@ namespace GUZ.Core.Manager.Scenes
         {
             GameGlobals.Loading.InitLoading(_loadingArea);
             GameContext.InteractionAdapter.TeleportPlayerTo(_loadingArea.transform.position);
-            
+
+            // We're not allowed to call Application.* from a static field directly. Loading it now.
+            GLTCacheFilePath = $"{Application.persistentDataPath}/Cache/{GameContext.GameVersionAdapter.Version}/";
+
 #pragma warning disable CS4014 // Do not wait. We want to update player movement (VR) and camera view (progress bar) 
             CreateCaches();
 #pragma warning restore CS4014
@@ -57,10 +63,16 @@ namespace GUZ.Core.Manager.Scenes
         /// </summary>
         private async Task CreateCaches()
         {
-            var levelsToLoad = GameContext.GameVersionAdapter.Version == GameVersion.Gothic1 ? _gothic1Worlds : _gothic2Worlds;
+            var worldsToLoad = GameContext.GameVersionAdapter.Version == GameVersion.Gothic1 ? _gothic1Worlds : _gothic2Worlds;
 
-            foreach (var worldName in levelsToLoad)
+            foreach (var worldName in worldsToLoad)
             {
+                if (DoesCacheFileExist(worldName))
+                {
+                    Debug.Log($"{worldName} already cached. Skipping...");
+                    continue;
+                }
+
                 Debug.Log($"### PreCaching meshes for world: {worldName}");
                 var worldData = ResourceLoader.TryGetWorld(worldName, GameContext.GameVersionAdapter.Version);
 
@@ -98,6 +110,11 @@ namespace GUZ.Core.Manager.Scenes
             GameManager.I.LoadScene(Constants.SceneMainMenu, Constants.ScenePreCaching);
         }
 
+        private bool DoesCacheFileExist(string worldName)
+        {
+            return File.Exists($"{GLTCacheFilePath}/{worldName}.{GLTCacheFileEnding}");
+        }
+
         /// <summary>
         /// We want to store meshes only. We therefore need to check if textures are also included and raise an exception if so.
         /// Textures should always be created via TextureArray. This pre-check is a good performance check if something is wrong with mesh generation in general.
@@ -131,8 +148,6 @@ namespace GUZ.Core.Manager.Scenes
 
         private async Task SaveGLT(GameObject worldRootGo, GameObject vobsRootGo, string worldName)
         {
-            var folder = $"{Application.persistentDataPath}/Cache/{GameContext.GameVersionAdapter.Version}/glTF";
-
             // Create a new export settings instance
             var exportSettings = new ExportSettings()
             {
@@ -149,9 +164,9 @@ namespace GUZ.Core.Manager.Scenes
 
             try
             {
-                Directory.CreateDirectory(folder);
+                Directory.CreateDirectory(GLTCacheFilePath);
 
-                var success = await export.SaveToFileAndDispose($"{folder}/{worldName}.glb");
+                var success = await export.SaveToFileAndDispose($"{GLTCacheFilePath}/{worldName}.{GLTCacheFileEnding}");
                 if (!success)
                 {
                     Debug.LogError("Something went wrong exporting the World+VOB glTF");
@@ -166,7 +181,7 @@ namespace GUZ.Core.Manager.Scenes
         
         private async Task DebugLoadGLT(GameObject rootGo, string worldName)
         {
-            var filePathName = $"{Application.persistentDataPath}/Cache/{GameContext.GameVersionAdapter.Version}/glTF/{worldName}.glb";
+            var filePathName = $"{GLTCacheFilePath}/{worldName}.{GLTCacheFileEnding}";
 
             var gltf = new GltfImport();
             var loading = gltf.LoadFile(filePathName);
