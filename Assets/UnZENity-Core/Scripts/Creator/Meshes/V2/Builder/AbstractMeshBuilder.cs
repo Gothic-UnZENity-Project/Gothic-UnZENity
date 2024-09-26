@@ -400,7 +400,7 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
         ///
         /// Data example:
         ///  positions: 0=>[x1,x2,x3], 0=>[x2,y2,z2], 0=>[x3,y3,z3]
-        ///  submesh:
+        ///  subMesh:
         ///    triangles: [0, 2, 1], [1, 2, 3]
         ///    wedges: 0=>[index=0, texture=...], 1=>[index=2, texture=...], 2=>[index=2, texture=...]
         ///
@@ -411,7 +411,7 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
         /// </summary>
         protected void PrepareMeshFilter(MeshFilter meshFilter, IMultiResolutionMesh mrmData, Renderer meshRenderer, int meshIndex)
         {
-            var submeshPerTextureFormat = new Dictionary<TextureCache.TextureArrayTypes, int>();
+            var subMeshPerTextureFormat = new Dictionary<TextureCache.TextureArrayTypes, int>();
 
             // Elements like NPC armors might have multiple meshes. We therefore need to store each mesh with it's associated index.
             if (MultiTypeCache.Meshes.TryGetValue($"{MeshName}_{meshIndex}", out Mesh mesh))
@@ -452,16 +452,16 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
 
             foreach (var subMesh in mrmData.SubMeshes)
             {
-                // When using the texture array, get the index of the array of the matching texture format. Build submeshes for each texture format, i.e. separating opaque and alpha cutout textures.
+                // When using the texture array, get the index of the array of the matching texture format. Build sub meshes for each texture format, i.e. separating opaque and alpha cutout textures.
                 int textureArrayIndex = 0, maxMipLevel = 0;
                 Vector2 textureScale = Vector2.one;
                 TextureCache.TextureArrayTypes textureArrayType = TextureCache.TextureArrayTypes.Opaque;
                 if (UseTextureArray)
                 {
                     TextureCache.GetTextureArrayIndex(subMesh.Material, out textureArrayType, out textureArrayIndex, out textureScale, out maxMipLevel);
-                    if (!submeshPerTextureFormat.ContainsKey(textureArrayType))
+                    if (!subMeshPerTextureFormat.ContainsKey(textureArrayType))
                     {
-                        submeshPerTextureFormat.Add(textureArrayType, preparedTriangles.Count);
+                        subMeshPerTextureFormat.Add(textureArrayType, preparedTriangles.Count);
                         preparedTriangles.Add(new List<int>());
                     }
                 }
@@ -484,7 +484,7 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
                         preparedVertices.Add(mrmData.Positions[wedges[w].Index].ToUnityVector());
                         if (UseTextureArray)
                         {
-                            preparedTriangles[submeshPerTextureFormat[textureArrayType]].Add(index++);
+                            preparedTriangles[subMeshPerTextureFormat[textureArrayType]].Add(index++);
                         }
                         else
                         {
@@ -502,7 +502,7 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
 
             // Unity 1/ handles vertices on mesh level, but triangles (aka vertex-indices) on submesh level.
             // and 2/ demands vertices to be stored before triangles/uvs.
-            // Therefore we prepare the full data once and assign it afterwards.
+            // Therefore, we prepare the full data once and assign it afterward.
             // @see: https://answers.unity.com/questions/531968/submesh-vertices.html
             mesh.subMeshCount = preparedTriangles.Count;
             mesh.SetVertices(preparedVertices);
@@ -515,7 +515,8 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
 
             CreateMorphMeshEnd(preparedVertices);
 
-            TextureCache.VobMeshesForTextureArray.Add(mesh, new TextureCache.VobMeshData(mrmData, submeshPerTextureFormat.Keys.ToList(), UseTextureArray ? meshRenderer : null));
+            // TODO - Why adding a null-renderer if !UseTextureArray? Couldn't we just disable this Add() call fully?
+            TextureCache.VobMeshesForTextureArray.Add(mesh, new TextureCache.VobMeshData(mrmData, subMeshPerTextureFormat.Keys.ToList(), UseTextureArray ? meshRenderer : null));
 
             MultiTypeCache.Meshes.Add($"{MeshName}_{meshIndex}", mesh);
         }
@@ -524,6 +525,7 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
         {
             // Delegate actual mesh filter creation to function handling the MRM itself.
             PrepareMeshFilter(meshFilter, soft.Mesh, renderer, meshIndex);
+
 
             // Now let's add bone data.
             var zkMesh = soft.Mesh;

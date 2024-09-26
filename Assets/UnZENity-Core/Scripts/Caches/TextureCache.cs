@@ -18,6 +18,17 @@ using TextureFormat = ZenKit.TextureFormat;
 
 namespace GUZ.Core.Caches
 {
+    /// <summary>
+    /// Texture Array is used for the following improvements:
+    /// 1. World mesh chunks are merged into sliced with specific bound. Without the texture array, we would need to separate each small floor mesh if it has a different texture.
+    /// 2. Static VOBs will merge multiple textures into one. This reduces draw calls. (e.g. various complex VOBs have multiple textures).
+    ///
+    /// Once world is loaded, The texture cache is released to free memory of our calculated data. Only texture array itself remains in memory.
+    ///
+    /// Not in Texture Array:
+    /// 1. NPCs and their armors (as they alter their armaments during runtime)
+    /// 2. VOB Items which spawn at a later state (e.g. Player puts an item out of inventory)
+    /// </summary>
     public static class TextureCache
     {
         public const int ReferenceTextureSize = 256;
