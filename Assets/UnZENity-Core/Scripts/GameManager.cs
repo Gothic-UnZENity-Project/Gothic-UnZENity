@@ -30,7 +30,7 @@ namespace GUZ.Core
         public GameSettings Settings { get; private set; }
         
         public LoadingManager Loading { get; private set; }
-
+        public GltManager Glt { get; private set; }
         public PlayerManager Player { get; private set; }
         public SkyManager Sky { get; private set; }
 
@@ -74,6 +74,7 @@ namespace GUZ.Core
             Textures = GetComponent<TextureManager>();
             Font = GetComponent<FontManager>();
             Loading = new LoadingManager();
+            Glt = new GltManager();
             VobMeshCulling = new VobMeshCullingManager(Config, this);
             NpcMeshCulling = new NpcMeshCullingManager(Config);
             SoundCulling = new VobSoundCullingManager(Config);
@@ -134,6 +135,7 @@ namespace GUZ.Core
             ResourceLoader.Init(gothicRootPath);
 
             _gameMusicManager.Init();
+            Glt.Init();
             Textures.Init();
             Video.Init();
 

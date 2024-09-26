@@ -28,7 +28,10 @@ namespace GUZ.Core.Manager.Scenes
         private async Task LoadWorldContentAsync()
         {
             var config = GameGlobals.Config;
-            
+
+            // 01. Load world and VOB caches.
+            // GameGlobals.Glt.LoadGlt();
+
             // 1.
             // Build the world and vob meshes, populating the texture arrays.
             // We need to start creating Vobs as we need to calculate world slicing based on amount of lights at a certain space afterwards.
