@@ -47,7 +47,7 @@ namespace GUZ.Core.Manager.Vobs
             Debug.Log($"Created VOBs for caching in {stopwatch.Elapsed.TotalSeconds} s");
         }
 
-        protected override void PreCreateVobs(List<IVirtualObject> vobs, GameObject rootGo)
+        private void PreCreateVobs(List<IVirtualObject> vobs, GameObject rootGo)
         {
             TotalVObs = GetTotalVobCount(vobs);
             CreatedCount = 0;
@@ -64,7 +64,7 @@ namespace GUZ.Core.Manager.Vobs
             CreateParentVobObjectNonTeleport();
         }
 
-        protected override void PostCreateVobs()
+        private void PostCreateVobs()
         {
             // Nothing to do for now.
         }
@@ -79,6 +79,11 @@ namespace GUZ.Core.Manager.Vobs
         protected override GameObject GetPrefab(IVirtualObject vob)
         {
             return new GameObject();
+        }
+
+        protected override void AddToMobInteractableList(IVirtualObject vob, GameObject go)
+        {
+            // Nothing to do at caching stage
         }
 
         private void CreateParentVobObjectTeleport()
