@@ -39,7 +39,7 @@ namespace GUZ.Core.Manager
             PreSaveCheck(vobsRootGo);
 
             // Create a new export settings instance
-            var exportSettings = new ExportSettings()
+            var exportSettings = new ExportSettings
             {
                 Format = GltfFormat.Binary, // If you want to test something change to GltFormat.Json (e.g. check for extracted texture.jpgs and object structure)
                 ComponentMask = ComponentType.Mesh,
@@ -91,6 +91,10 @@ namespace GUZ.Core.Manager
                         await Task.Yield();
                     }
                 }
+            }
+            else
+            {
+                Debug.LogError(loading.Exception);
             }
         }
 

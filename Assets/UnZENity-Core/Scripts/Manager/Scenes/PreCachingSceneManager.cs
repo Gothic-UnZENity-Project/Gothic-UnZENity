@@ -1,9 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using GLTFast;
-using GLTFast.Export;
+﻿using System.Threading.Tasks;
 using GUZ.Core.Caches;
 using GUZ.Core.Creator;
 using GUZ.Core.Globals;
@@ -75,7 +70,6 @@ namespace GUZ.Core.Manager.Scenes
 
                 Debug.Log("### PreCaching static VOB meshes.");
                 await new VobCacheManager().CreateForCache(worldData!.RootObjects, GameGlobals.Loading, vobsRootGo);
-
                 // During loading, the texture array gets filled. It's easier for now to simply dispose the data instead
                 // of altering its collection with IF-ELSE statements in code.
                 TextureCache.RemoveCachedTextureArrayData();
@@ -83,21 +77,20 @@ namespace GUZ.Core.Manager.Scenes
                 Debug.Log("### PreCaching World meshes.");
                 await WorldCreator.CreateForCache(worldData, worldRootGo, GameGlobals.Loading);
 
+                await GameGlobals.Glt.SaveGlt(worldRootGo, vobsRootGo, worldName);
 
-                GameGlobals.Glt.SaveGlt(worldRootGo, vobsRootGo, worldName);
-
-                // Clean up memory
+                // Clean up scene memory
                 Destroy(vobsRootGo);
                 Destroy(worldRootGo);
 
                 // DEBUG restore
-                {
-                    var loadRoot = new GameObject("DebugRestore");
-                    loadRoot.transform.position = new(1000, 0, 0);
-
-                    await GameGlobals.Glt.LoadGlt(loadRoot, worldName);
-                    return;
-                }
+                // {
+                //     var loadRoot = new GameObject("DebugRestore");
+                //     loadRoot.transform.position = new(1000, 0, 0);
+                //
+                //     await GameGlobals.Glt.LoadGlt(loadRoot, worldName);
+                //     return;
+                // }
             }
 
             // Every world of the game is cached successfully. Now let's move on!
