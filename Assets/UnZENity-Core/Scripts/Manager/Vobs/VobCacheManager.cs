@@ -69,6 +69,18 @@ namespace GUZ.Core.Manager.Vobs
             // Nothing to do for now.
         }
 
+        /// <summary>
+        /// During caching, we only want to cache standard Gothic data. It means we will never ever load additional prefab data into the VOBs.
+        ///
+        /// Justification:
+        /// * The caching mechanism should be stable after created once. If we alter a prefab, we always need to tell our players: Recreate cache.
+        /// * We don't know if there will be any side effects if we cache additional GOs and Components.
+        /// </summary>
+        protected virtual GameObject GetPrefab(IVirtualObject vob)
+        {
+            return new GameObject();
+        }
+
         private void CreateParentVobObjectTeleport()
         {
             var allTypes = (VirtualObjectType[])Enum.GetValues(typeof(VirtualObjectType));

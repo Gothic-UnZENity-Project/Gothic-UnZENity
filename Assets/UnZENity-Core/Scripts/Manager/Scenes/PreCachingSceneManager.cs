@@ -98,11 +98,11 @@ namespace GUZ.Core.Manager.Scenes
                 Destroy(vobsRootGo);
                 Destroy(worldRootGo);
 
-                // DEBUG restore
+                // // DEBUG restore
                 // {
                 //     var loadRoot = new GameObject("TestRestore");
                 //     loadRoot.transform.position = new(1000, 0, 0);
-                //     await LoadGlt(loadRoot, worldName);
+                //     await DebugLoadGLT(loadRoot, worldName);
                 // }
             }
 

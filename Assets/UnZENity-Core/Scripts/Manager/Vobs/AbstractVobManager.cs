@@ -364,7 +364,7 @@ namespace GUZ.Core.Manager.Vobs
             }
         }
 
-        private GameObject GetPrefab(IVirtualObject vob)
+        protected virtual GameObject GetPrefab(IVirtualObject vob)
         {
             GameObject go;
             var name = vob.Name;
