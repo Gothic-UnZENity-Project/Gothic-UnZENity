@@ -1,9 +1,11 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using GLTFast;
 using GLTFast.Export;
+using GUZ.Core.Caches;
 using GUZ.Core.Globals;
 using UnityEngine;
 
@@ -28,9 +30,16 @@ namespace GUZ.Core.Manager
             return File.Exists(BuildFilePathName(fileName));
         }
 
-        private string BuildFilePathName(string fileName)
+        private string BuildFilePathName(string fileName, bool withEnding = true)
         {
-            return $"{_gltCacheFilePath}/{fileName}.{_gltCacheFileEnding}";
+            if (withEnding)
+            {
+                return $"{_gltCacheFilePath}/{fileName}.{_gltCacheFileEnding}";
+            }
+            else
+            {
+                return $"{_gltCacheFilePath}/{fileName}";
+            }
         }
 
         public async Task SaveGlt(GameObject worldRootGo, GameObject vobsRootGo, string fileName)
@@ -38,6 +47,12 @@ namespace GUZ.Core.Manager
             PreSaveCheck(worldRootGo);
             PreSaveCheck(vobsRootGo);
 
+            await SaveGltFile(worldRootGo, vobsRootGo, fileName);
+            SaveMetadataFile(fileName);
+        }
+
+        private async Task SaveGltFile(GameObject worldRootGo, GameObject vobsRootGo, string fileName)
+        {
             // Create a new export settings instance
             var exportSettings = new ExportSettings
             {
@@ -67,6 +82,27 @@ namespace GUZ.Core.Manager
                 Debug.LogError(e);
                 throw new Exception("Error exporting glTF", e);
             }
+        }
+
+        private void SaveMetadataFile(string fileName)
+        {
+            var dataToSave = new TextureArrayContainer();
+
+            foreach (var data in TextureCache.TexturesToIncludeInArray)
+            {
+                var entries = new TextureArrayContainer.TextureTypeEntry()
+                {
+                    TextureType = data.Key,
+                    TextureNames = data.Value.Select(i => i.PreparedKey).ToList()
+                };
+
+                dataToSave.WorldChunkTypes.Add(entries);
+            }
+
+            var metadataFileName = $"{BuildFilePathName(fileName, false)}.metadata";
+            var json = JsonUtility.ToJson(dataToSave);
+
+            File.WriteAllText(metadataFileName, json);
         }
 
         public async Task LoadGlt(GameObject rootGo, string fileName)
@@ -127,6 +163,28 @@ namespace GUZ.Core.Manager
                 }
                 throw new ArgumentException("See Error log");
             }
+        }
+    }
+
+
+    /// <summary>
+    /// HINT: JsonUtility doesn't support Dictionaries. Therefore using subclasses in lists.
+    /// </summary>
+    [Serializable]
+    public class TextureArrayContainer
+    {
+        public List<TextureTypeEntry> WorldChunkTypes = new();
+
+        [Serializable]
+        public class TextureTypeEntry
+        {
+            public TextureCache.TextureArrayTypes TextureType;
+
+            /// <summary>
+            /// Every time a texture would be needed for a mesh the first time, its entry is added here.
+            /// UV values of meshes already contain this information (e.g. v4(0,0,2,0) -> 2 would be marking index 3 of these entries below)
+            /// </summary>
+            public List<string> TextureNames = new();
         }
     }
 }

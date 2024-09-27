@@ -39,7 +39,7 @@ namespace GUZ.Core.Caches
         public static Dictionary<Mesh, VobMeshData> VobMeshesForTextureArray = new();
 
         private static readonly Dictionary<string, Texture2D> _texture2DCache = new();
-        private static readonly Dictionary<TextureArrayTypes, List<(string PreparedKey, ZkTextureData TextureData)>> _texturesToIncludeInArray = new();
+        public static readonly Dictionary<TextureArrayTypes, List<(string PreparedKey, ZkTextureData TextureData)>> TexturesToIncludeInArray = new();
 
         public enum TextureArrayTypes
         {
@@ -65,7 +65,7 @@ namespace GUZ.Core.Caches
             }
         }
 
-        private class ZkTextureData
+        public class ZkTextureData
         {
             public string Key { get; set; }
             public Vector2 Scale { get; set; }
@@ -159,18 +159,18 @@ namespace GUZ.Core.Caches
 
             for (int i = 0; i < Enum.GetValues(typeof(TextureArrayTypes)).Length; i++)
             {
-                if (!_texturesToIncludeInArray.ContainsKey((TextureArrayTypes)i))
+                if (!TexturesToIncludeInArray.ContainsKey((TextureArrayTypes)i))
                 {
                     continue;
                 }
 
-                (string, ZkTextureData) cachedTextureData = _texturesToIncludeInArray[(TextureArrayTypes)i].FirstOrDefault(k => k.PreparedKey == key);
+                (string, ZkTextureData) cachedTextureData = TexturesToIncludeInArray[(TextureArrayTypes)i].FirstOrDefault(k => k.PreparedKey == key);
                 if (cachedTextureData != default)
                 {
                     textureArrayType = (TextureArrayTypes)i;
 
-                    arrayIndex = _texturesToIncludeInArray[textureArrayType].IndexOf(cachedTextureData);
-                    ZkTextureData zkData = _texturesToIncludeInArray[textureArrayType][arrayIndex].TextureData;
+                    arrayIndex = TexturesToIncludeInArray[textureArrayType].IndexOf(cachedTextureData);
+                    ZkTextureData zkData = TexturesToIncludeInArray[textureArrayType][arrayIndex].TextureData;
                     maxMipLevel = zkData.MipmapCount - 1;
                     textureScale = zkData.Scale;
                     return;
@@ -203,13 +203,13 @@ namespace GUZ.Core.Caches
             }
 
             textureScale = new Vector2((float)zenTextureData.Width / ReferenceTextureSize, (float)zenTextureData.Height / ReferenceTextureSize);
-            if (!_texturesToIncludeInArray.ContainsKey(textureArrayType))
+            if (!TexturesToIncludeInArray.ContainsKey(textureArrayType))
             {
-                _texturesToIncludeInArray.Add(textureArrayType, new List<(string, ZkTextureData)>());
+                TexturesToIncludeInArray.Add(textureArrayType, new List<(string, ZkTextureData)>());
             }
 
-            _texturesToIncludeInArray[textureArrayType].Add((key, new ZkTextureData(key, zenTextureData)));
-            arrayIndex = _texturesToIncludeInArray[textureArrayType].Count - 1;
+            TexturesToIncludeInArray[textureArrayType].Add((key, new ZkTextureData(key, zenTextureData)));
+            arrayIndex = TexturesToIncludeInArray[textureArrayType].Count - 1;
         }
 
         public static async Task BuildTextureArrays()
@@ -217,26 +217,26 @@ namespace GUZ.Core.Caches
             Stopwatch stopwatch = new();
             stopwatch.Start();
 
-            foreach (TextureArrayTypes textureArrayType in _texturesToIncludeInArray.Keys)
+            foreach (TextureArrayTypes textureArrayType in TexturesToIncludeInArray.Keys)
             {
                 if (Application.isEditor)
                 {
                     for (int i = 16; i <= 2048; i *= 2)
                     {
-                        int resCount = _texturesToIncludeInArray[textureArrayType].Where(t => Mathf.Max(t.TextureData.Width, t.TextureData.Height) == i).Count();
-                        Debug.Log($"[{nameof(TextureCache)}] {textureArrayType}: {resCount} textures ({Mathf.RoundToInt(100 * (float)resCount / _texturesToIncludeInArray[textureArrayType].Count)}%) with dimension {i}.");
+                        int resCount = TexturesToIncludeInArray[textureArrayType].Where(t => Mathf.Max(t.TextureData.Width, t.TextureData.Height) == i).Count();
+                        Debug.Log($"[{nameof(TextureCache)}] {textureArrayType}: {resCount} textures ({Mathf.RoundToInt(100 * (float)resCount / TexturesToIncludeInArray[textureArrayType].Count)}%) with dimension {i}.");
                     }
                 }
 
                 // Create the texture array with the max size of the contained textures, limited by the max texture size.
-                int maxSize = Mathf.Min(MaxTextureSize, _texturesToIncludeInArray[textureArrayType].Max(p => p.TextureData.Width));
-                ZkTextureData textureWithMaxAllowedSize = _texturesToIncludeInArray[textureArrayType].Where(t => t.TextureData.Width == maxSize && t.TextureData.Height == maxSize).Select(t => t.TextureData).FirstOrDefault();
+                int maxSize = Mathf.Min(MaxTextureSize, TexturesToIncludeInArray[textureArrayType].Max(p => p.TextureData.Width));
+                ZkTextureData textureWithMaxAllowedSize = TexturesToIncludeInArray[textureArrayType].Where(t => t.TextureData.Width == maxSize && t.TextureData.Height == maxSize).Select(t => t.TextureData).FirstOrDefault();
                 // Find the max mip depth defined for the max allowed texture size.
                 int maxMipDepth = 0;
                 if (textureWithMaxAllowedSize == null)
                 {
                     Debug.LogError($"[{nameof(TextureCache)}] No texture with size {maxSize}x{maxSize} was found to determine max allowed mip level. Falling back to texture with highest mip count.");
-                    maxMipDepth = _texturesToIncludeInArray[textureArrayType].Max(t => t.TextureData.MipmapCount);
+                    maxMipDepth = TexturesToIncludeInArray[textureArrayType].Max(t => t.TextureData.MipmapCount);
                 }
                 else
                 {
@@ -252,7 +252,7 @@ namespace GUZ.Core.Caches
                 Texture texArray;
                 if (textureArrayType != TextureArrayTypes.Water)
                 {
-                    texArray = new Texture2DArray(maxSize, maxSize, _texturesToIncludeInArray[textureArrayType].Count, textureFormat, maxMipDepth, false, true)
+                    texArray = new Texture2DArray(maxSize, maxSize, TexturesToIncludeInArray[textureArrayType].Count, textureFormat, maxMipDepth, false, true)
                     {
                         filterMode = FilterMode.Trilinear,
                         wrapMode = TextureWrapMode.Repeat
@@ -266,15 +266,15 @@ namespace GUZ.Core.Caches
                         autoGenerateMips = false,
                         filterMode = FilterMode.Trilinear,
                         useMipMap = true,
-                        volumeDepth = _texturesToIncludeInArray[textureArrayType].Count,
+                        volumeDepth = TexturesToIncludeInArray[textureArrayType].Count,
                         wrapMode = TextureWrapMode.Repeat
                     };
                 }
 
                 // Copy all the textures and their mips into the array. Textures which are smaller are tiled so bilinear sampling isn't broken - this is why it's not possible to pack different textures together in the same slice.
-                for (int i = 0; i < _texturesToIncludeInArray[textureArrayType].Count; i++)
+                for (int i = 0; i < TexturesToIncludeInArray[textureArrayType].Count; i++)
                 {
-                    Texture2D sourceTex = TryGetTexture(_texturesToIncludeInArray[textureArrayType][i].PreparedKey, false);
+                    Texture2D sourceTex = TryGetTexture(TexturesToIncludeInArray[textureArrayType][i].PreparedKey, false);
 
                     int sourceMip = 0;
                     int sourceMaxDim = Mathf.Max(sourceTex.width, sourceTex.height);
@@ -328,7 +328,7 @@ namespace GUZ.Core.Caches
             }
 
             // Clear cached texture data to save storage.
-            foreach (List<(string PreparedKey, ZkTextureData Texture)> textureList in _texturesToIncludeInArray.Values)
+            foreach (List<(string PreparedKey, ZkTextureData Texture)> textureList in TexturesToIncludeInArray.Values)
             {
                 textureList.Clear();
                 textureList.TrimExcess();
@@ -363,8 +363,8 @@ namespace GUZ.Core.Caches
             TextureArrays.Clear();
             TextureArrays.TrimExcess();
 
-            _texturesToIncludeInArray.Clear();
-            _texturesToIncludeInArray.TrimExcess();
+            TexturesToIncludeInArray.Clear();
+            TexturesToIncludeInArray.TrimExcess();
 
             WorldMeshRenderersForTextureArray.Clear();
             WorldMeshRenderersForTextureArray.TrimExcess();
@@ -390,7 +390,7 @@ namespace GUZ.Core.Caches
             TextureArrays.Clear();
             TextureArrays.TrimExcess();
 
-            foreach (var textureList in _texturesToIncludeInArray.Values)
+            foreach (var textureList in TexturesToIncludeInArray.Values)
             {
                 textureList.Clear();
                 textureList.TrimExcess();
