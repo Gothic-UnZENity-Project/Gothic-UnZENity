@@ -17,6 +17,7 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
     /// Create texture array for all meshes. Basically no MeshBuilder,
     /// but we inherit the abstract builder to leverage some methods.
     /// </summary>
+    [Obsolete("Use >TextureArrayManager< instead.")]
     public class TextureArrayBuilder : AbstractMeshBuilder
     {
         public override GameObject Build()

@@ -20,6 +20,7 @@ namespace GUZ.Core
         public static VideoManager Video => Instance.Video;
         public static RoutineManager Routines => Instance.Routines;
         public static TextureManager Textures => Instance.Textures;
+        public static TextureArrayManager TextureArray => Instance.TextureArray;
         public static VobManager Vobs => Instance.Vobs;
         public static StationaryLightsManager Lights => Instance.Lights;
         public static StoryManager Story => Instance.Story;

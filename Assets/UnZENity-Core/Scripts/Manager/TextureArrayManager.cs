@@ -1,0 +1,205 @@
+﻿using System;
+using System.Diagnostics;
+using System.Linq;
+using System.Threading.Tasks;
+using GUZ.Core.Caches;
+using GUZ.Core.Globals;
+using UnityEngine;
+using UnityEngine.Rendering;
+using Debug = UnityEngine.Debug;
+using Object = UnityEngine.Object;
+
+namespace GUZ.Core.Manager
+{
+
+    public class TextureArrayManager
+    {
+        public const int MaxTextureSize = 512;
+
+        public void Init()
+        {
+            // Nothing to do for now. Can be reused later.
+        }
+
+        public async Task BuildTextureArraysFromCache(TextureArrayContainer data)
+        {
+            Stopwatch stopwatch = new();
+            stopwatch.Start();
+            try
+            {
+                foreach (var entry in data.WorldChunkTypes)
+                {
+                    var textureArrayType = entry.TextureType;
+                    var textures = entry.Textures;
+
+                    if (Application.isEditor)
+                    {
+                        for (int i = 16; i <= 2048; i *= 2)
+                        {
+                            int resCount = textures.Where(t => Mathf.Max(t.Width, t.Height) == i).Count();
+                            Debug.Log($"[{nameof(TextureCache)}] {textureArrayType}: {resCount} textures ({Mathf.RoundToInt(100 * (float)resCount / textures.Count)}%) with dimension {i}.");
+                        }
+                    }
+
+                    // Create the texture array with the max size of the contained textures, limited by the max texture size.
+                    int maxSize = Mathf.Min(MaxTextureSize, textures.Max(p => p.Width));
+                    TextureCache.ZkTextureData textureWithMaxAllowedSize = textures.Where(t => t.Width == maxSize && t.Height == maxSize).FirstOrDefault();
+                    // Find the max mip depth defined for the max allowed texture size.
+                    int maxMipDepth = 0;
+                    if (textureWithMaxAllowedSize == null)
+                    {
+                        Debug.LogError($"[{nameof(TextureCache)}] No texture with size {maxSize}x{maxSize} was found to determine max allowed mip level. Falling back to texture with highest mip count.");
+                        maxMipDepth = textures.Max(t => t.MipmapCount);
+                    }
+                    else
+                    {
+                        maxMipDepth = textureWithMaxAllowedSize.MipmapCount;
+                    }
+
+                    TextureFormat textureFormat = TextureFormat.RGBA32;
+                    if (textureArrayType == TextureCache.TextureArrayTypes.Opaque)
+                    {
+                        textureFormat = TextureFormat.DXT1;
+                    }
+
+                    Texture texArray;
+                    if (textureArrayType != TextureCache.TextureArrayTypes.Water)
+                    {
+                        texArray = new Texture2DArray(maxSize, maxSize, textures.Count, textureFormat, maxMipDepth, false, true)
+                        {
+                            filterMode = FilterMode.Trilinear,
+                            wrapMode = TextureWrapMode.Repeat
+                        };
+                    }
+                    else
+                    {
+                        texArray = new RenderTexture(maxSize, maxSize, 0, RenderTextureFormat.ARGB32, maxMipDepth)
+                        {
+                            dimension = TextureDimension.Tex2DArray,
+                            autoGenerateMips = false,
+                            filterMode = FilterMode.Trilinear,
+                            useMipMap = true,
+                            volumeDepth = textures.Count,
+                            wrapMode = TextureWrapMode.Repeat
+                        };
+                    }
+
+                    // Copy all the textures and their mips into the array. Textures which are smaller are tiled so bilinear sampling isn't broken - this is why it's not possible to pack different textures together in the same slice.
+                    for (int i = 0; i < textures.Count; i++)
+                    {
+                        Texture2D sourceTex = TextureCache.TryGetTexture(textures[i].Key, false);
+
+                        int sourceMip = 0;
+                        int sourceMaxDim = Mathf.Max(sourceTex.width, sourceTex.height);
+                        int sourceWidth = sourceTex.width;
+                        int sourceHeight = sourceTex.height;
+                        while (sourceMaxDim > MaxTextureSize)
+                        {
+                            sourceMip++;
+                            sourceMaxDim /= 2;
+                            sourceWidth /= 2;
+                            sourceHeight /= 2;
+                        }
+
+                        for (int mip = sourceMip; mip < sourceTex.mipmapCount; mip++)
+                        {
+                            int targetMip = mip - sourceMip;
+                            for (int x = 0; x < texArray.width / sourceWidth; x++)
+                            {
+                                for (int y = 0; y < texArray.height / sourceHeight; y++)
+                                {
+                                    if (texArray is Texture2DArray)
+                                    {
+                                        Graphics.CopyTexture(sourceTex, 0, mip, 0, 0, sourceTex.width >> mip,
+                                            sourceTex.height >> mip, texArray, i, targetMip, (sourceTex.width >> mip) * x,
+                                            (sourceTex.height >> mip) * y);
+                                    }
+                                    else
+                                    {
+                                        CommandBuffer cmd = CommandBufferPool.Get();
+                                        RenderTexture rt = (RenderTexture)texArray;
+                                        cmd.SetRenderTarget(new RenderTargetBinding(new RenderTargetSetup(rt.colorBuffer, rt.depthBuffer, targetMip, CubemapFace.Unknown, i)));
+                                        Vector2 scale = new Vector2((float)sourceTex.width / texArray.width, (float)sourceTex.height / texArray.height);
+                                        Blitter.BlitQuad(cmd, sourceTex, new Vector4(1, 1, 0, 0), new Vector4(scale.x, scale.y, scale.x * x, scale.y * y), mip, false);
+                                        Graphics.ExecuteCommandBuffer(cmd);
+                                        cmd.Clear();
+                                        CommandBufferPool.Release(cmd);
+                                    }
+                                }
+                            }
+                        }
+
+                        Object.Destroy(sourceTex);
+
+                        if (i % 20 == 0)
+                        {
+                            await Task.Yield();
+                        }
+                    }
+
+                    TextureCache.TextureArrays.Add(textureArrayType, texArray);
+                }
+
+                stopwatch.Stop();
+                Debug.Log($"Built tex array in {stopwatch.ElapsedMilliseconds / 1000f} s");
+            }
+            catch (Exception e)
+            {
+                Debug.LogError(e);
+                Debug.LogError("BuildTextureArray failed. Please read exception above.");
+                throw;
+            }
+        }
+
+        public void AssignTextureArraysForWorld(TextureArrayContainer data, GameObject worldRootGo)
+        {
+            var renderer = worldRootGo.GetComponentsInChildren<Renderer>();
+
+            if (renderer.Length != data.WorldChunks.Count)
+            {
+                Debug.LogError($"Number of texture arrays from cached world metadata ({data.WorldChunks.Count}) " +
+                               $"does not match number of mesh renderers in glTF cached file ({renderer.Length}). " +
+                               "Please recreate your cache.");
+            }
+
+            for (var i = 0; i < data.WorldChunks.Count; i++)
+            {
+                var chunk = data.WorldChunks[i];
+                var rend = renderer[i];
+                var mesh = rend.gameObject.GetComponent<MeshFilter>().sharedMesh;
+
+                Texture texture = TextureCache.TextureArrays[chunk.TextureArrayType];
+                Material material;
+
+                // FIXME - We need to store this information in metadata and retrieve it now (MaterialGroup)
+                // if (subMesh.Material.Group == MaterialGroup.Water)
+                // {
+                //     material = GetWaterMaterial();
+                // }
+                // else
+                // {
+                material = GetDefaultMaterial(chunk.TextureArrayType == TextureCache.TextureArrayTypes.Transparent);
+                // }
+
+                material.mainTexture = texture;
+                rend.material = material;
+                mesh.SetUVs(0, chunk.UVs);
+                mesh.SetColors(chunk.Colors);
+            }
+        }
+
+        private Material GetDefaultMaterial(bool isAlphaTest)
+        {
+            Shader shader = isAlphaTest ? Constants.ShaderLitAlphaToCoverage : Constants.ShaderWorldLit;
+            Material material = new Material(shader);
+
+            if (isAlphaTest)
+            {
+                // Manually correct the render queue for alpha test, as Unity doesn't want to do it from the shader's render queue tag.
+                material.renderQueue = (int)RenderQueue.AlphaTest;
+            }
+
+            return material;
+        }
+    }
+}

@@ -41,9 +41,8 @@ namespace GUZ.Core
         public RoutineManager Routines { get; private set; }
 
         public TextureManager Textures { get; private set; }
-
+        public TextureArrayManager TextureArray { get; private set; }
         public StoryManager Story { get; private set; }
-
         public FontManager Font { get; private set; }
         public VobManager Vobs { get; private set; }
 
@@ -75,6 +74,7 @@ namespace GUZ.Core
             Font = GetComponent<FontManager>();
             Loading = new LoadingManager();
             Glt = new GltManager();
+            TextureArray = new TextureArrayManager();
             VobMeshCulling = new VobMeshCullingManager(Config, this);
             NpcMeshCulling = new NpcMeshCullingManager(Config);
             SoundCulling = new VobSoundCullingManager(Config);
@@ -111,6 +111,7 @@ namespace GUZ.Core
 
             _fileLoggingHandler.Init(Settings);
             Loading.Init();
+            TextureArray.Init();
             VobMeshCulling.Init();
             NpcMeshCulling.Init();
             SoundCulling.Init();

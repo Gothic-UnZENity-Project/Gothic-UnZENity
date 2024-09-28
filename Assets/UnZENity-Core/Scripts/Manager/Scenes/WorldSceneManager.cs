@@ -29,21 +29,21 @@ namespace GUZ.Core.Manager.Scenes
         {
             var config = GameGlobals.Config;
 
-            // 01. Load world and VOB caches.
-
-            var root = new GameObject("Data");
-            await GameGlobals.Glt.LoadGlt(root, SaveGameManager.CurrentWorldName);
-
             // 1.
-            // Build the world and vob meshes, populating the texture arrays.
-            // We need to start creating Vobs as we need to calculate world slicing based on amount of lights at a certain space afterwards.
-            if (config.EnableVOBs)
-            {
-                // FIXME - Set rootGO from glTF cache values.
-                await GameGlobals.Vobs.CreateAsync(GameGlobals.Loading, SaveGameManager.CurrentWorldData.Vobs, null);
-            }
+            // Load world and VOB caches.
+
+            var cacheRoot = new GameObject("Data");
+            await GameGlobals.Glt.LoadGlt(cacheRoot, SaveGameManager.CurrentWorldName);
 
             // 2.
+            // FIXME - Re-enable
+            // if (config.EnableVOBs)
+            // {
+            //     // FIXME - Set rootGO from glTF cache values.
+            //     await GameGlobals.Vobs.CreateAsync(GameGlobals.Loading, SaveGameManager.CurrentWorldData.Vobs, GameGlobals.Glt.GetVobsRoot(cacheRoot));
+            // }
+
+            // 3.
             WayNetCreator.Create(config, SaveGameManager.CurrentWorldData);
 
             // 3.
@@ -51,12 +51,6 @@ namespace GUZ.Core.Manager.Scenes
             if (config.EnableNpcs)
             {
                 await NpcCreator.CreateAsync(config, GameGlobals.Loading, Constants.NpcsPerFrame);
-            }
-
-            // 4.
-            if (config.EnableWorldMesh)
-            {
-                await WorldCreator.CreateAsync(config, GameGlobals.Loading);
             }
 
             GameGlobals.Sky.InitSky();

@@ -18,6 +18,7 @@ namespace GUZ.Core
         public VideoManager Video { get; }
         public RoutineManager Routines { get; }
         public TextureManager Textures { get; }
+        public TextureArrayManager TextureArray { get; }
         public FontManager Font { get; }
         public VobManager Vobs { get; }
         public StationaryLightsManager Lights { get; }

@@ -28,8 +28,8 @@ namespace GUZ.Core.Manager.Scenes
             "AddonWorld.zen",
             "DragonIsland.zen"
         };
-        
-        
+
+
         public void Init()
         {
             GameGlobals.Loading.InitLoading(_loadingArea);
@@ -56,6 +56,7 @@ namespace GUZ.Core.Manager.Scenes
 
             foreach (var worldName in worldsToLoad)
             {
+                // DEBUG Enforce recreation of cache if commented out.
                 if (GameGlobals.Glt.DoesCacheFileExist(worldName))
                 {
                     Debug.Log($"{worldName} already cached. Skipping...");
@@ -68,20 +69,21 @@ namespace GUZ.Core.Manager.Scenes
                 var vobsRootGo = new GameObject("Vobs");
                 var worldRootGo = new GameObject("World");
 
+                // Build the world and vob meshes, populating the texture arrays.
+                // We need to start creating Vobs as we need to calculate world slicing based on amount of lights at a certain space afterwards.
                 Debug.Log("### PreCaching static VOB meshes.");
                 await new VobCacheManager().CreateForCache(worldData!.RootObjects, GameGlobals.Loading, vobsRootGo);
                 // During loading, the texture array gets filled. It's easier for now to simply dispose the data instead
                 // of altering its collection with IF-ELSE statements in code.
-                TextureCache.RemoveCachedTextureArrayData();
+                // TextureCache.RemoveCachedTextureArrayData();
 
                 Debug.Log("### PreCaching World meshes.");
                 await WorldCreator.CreateForCache(worldData, worldRootGo, GameGlobals.Loading);
 
-
                 await GameGlobals.Glt.SaveGlt(worldRootGo, vobsRootGo, worldName);
-                TextureCache.RemoveCachedTextureArrayData();
 
                 // Clean up scene memory
+                TextureCache.RemoveCachedTextureArrayData();
                 Destroy(vobsRootGo);
                 Destroy(worldRootGo);
 
@@ -91,6 +93,8 @@ namespace GUZ.Core.Manager.Scenes
                 //     loadRoot.transform.position = new(1000, 0, 0);
                 //
                 //     await GameGlobals.Glt.LoadGlt(loadRoot, worldName);
+                //
+                //     Debug.Log("DEBUG Loading done!");
                 //     return;
                 // }
             }

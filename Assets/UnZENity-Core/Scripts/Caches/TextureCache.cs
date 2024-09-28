@@ -65,13 +65,14 @@ namespace GUZ.Core.Caches
             }
         }
 
+        [Serializable]
         public class ZkTextureData
         {
-            public string Key { get; set; }
-            public Vector2 Scale { get; set; }
-            public int Width { get; set; }
-            public int Height { get; set; }
-            public int MipmapCount { get; set; }
+            public string Key;
+            public Vector2 Scale;
+            public int Width;
+            public int Height;
+            public int MipmapCount;
 
             public ZkTextureData(string key, ITexture zkTexture)
             {

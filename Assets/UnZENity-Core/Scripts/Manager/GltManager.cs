@@ -5,9 +5,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using GLTFast;
 using GLTFast.Export;
+using GLTFast.Logging;
 using GUZ.Core.Caches;
 using GUZ.Core.Globals;
 using UnityEngine;
+using Debug = UnityEngine.Debug;
 
 namespace GUZ.Core.Manager
 {
@@ -51,6 +53,35 @@ namespace GUZ.Core.Manager
             SaveMetadataFile(fileName);
         }
 
+        public async Task LoadGlt(GameObject rootGo, string fileName)
+        {
+            await LoadGltFile(rootGo, fileName);
+
+            var worldRootGo = GetWorldRoot(rootGo);
+            var vobsRootGo = GetVobsRoot(rootGo);
+
+            var data = LoadMetadataFile(fileName);
+
+            await GameGlobals.TextureArray.BuildTextureArraysFromCache(data);
+            GameGlobals.TextureArray.AssignTextureArraysForWorld(data, worldRootGo);
+        }
+
+        /// <summary>
+        /// Glt stores elements in _scenes_, which are basically children inside our rootGo. We therefore fetch them by restore index.
+        /// </summary>
+        public GameObject GetWorldRoot(GameObject rootGo)
+        {
+            return rootGo.transform.GetChild(0).gameObject;
+        }
+
+        /// <summary>
+        /// Glt stores elements in _scenes_, which are basically children inside our rootGo. We therefore fetch them by restore index.
+        /// </summary>
+        public GameObject GetVobsRoot(GameObject rootGo)
+        {
+            return rootGo.transform.GetChild(1).gameObject;
+        }
+
         private async Task SaveGltFile(GameObject worldRootGo, GameObject vobsRootGo, string fileName)
         {
             // Create a new export settings instance
@@ -61,7 +92,8 @@ namespace GUZ.Core.Manager
                 FileConflictResolution = FileConflictResolution.Overwrite
             };
 
-            var export = new GameObjectExport(exportSettings);
+            var logger = new CollectingLogger();
+            var export = new GameObjectExport(exportSettings, logger: logger);
 
             // A scene is a structure for glTF to structure GameObjects. We will use it to separate VOBs and World meshes.
             export.AddScene(new []{worldRootGo}, "WorldCache");
@@ -82,21 +114,41 @@ namespace GUZ.Core.Manager
                 Debug.LogError(e);
                 throw new Exception("Error exporting glTF", e);
             }
+
+            foreach (var logItem in logger.Items)
+            {
+                Debug.Log($"glTSave log message: Code={logItem.Code}, Message={logItem.Messages}");
+            }
         }
 
         private void SaveMetadataFile(string fileName)
         {
             var dataToSave = new TextureArrayContainer();
 
+            // Set texture information.
+            // i.e. Which texture type (and ultimately which world chunk based on texture type) has the following textures.?
             foreach (var data in TextureCache.TexturesToIncludeInArray)
             {
-                var entries = new TextureArrayContainer.TextureTypeEntry()
+                var entry = new TextureArrayContainer.TextureTypeEntry()
                 {
                     TextureType = data.Key,
-                    TextureNames = data.Value.Select(i => i.PreparedKey).ToList()
+                    Textures = data.Value.Select(t => t.TextureData).ToList()
                 };
 
-                dataToSave.WorldChunkTypes.Add(entries);
+                dataToSave.WorldChunkTypes.Add(entry);
+            }
+
+            // Now add GameObject mapping to store certain data which isn't inside glTF files.
+            foreach (var chunk in TextureCache.WorldMeshRenderersForTextureArray)
+            {
+                var entry = new TextureArrayContainer.WorldChunk()
+                {
+                    TextureArrayType = chunk.SubmeshData.TextureArrayType,
+                    UVs = chunk.SubmeshData.Uvs,
+                    Colors = chunk.SubmeshData.BakedLightColors
+                };
+
+                dataToSave.WorldChunks.Add(entry);
             }
 
             var metadataFileName = $"{BuildFilePathName(fileName, false)}.metadata";
@@ -105,7 +157,7 @@ namespace GUZ.Core.Manager
             File.WriteAllText(metadataFileName, json);
         }
 
-        public async Task LoadGlt(GameObject rootGo, string fileName)
+        private async Task LoadGltFile(GameObject rootGo, string fileName)
         {
             var filePathName = BuildFilePathName(fileName);
 
@@ -132,6 +184,12 @@ namespace GUZ.Core.Manager
             {
                 Debug.LogError(loading.Exception);
             }
+        }
+
+        private TextureArrayContainer LoadMetadataFile(string fileName)
+        {
+            var json = File.ReadAllText($"{BuildFilePathName(fileName, false)}.metadata");
+            return JsonUtility.FromJson<TextureArrayContainer>(json);
         }
 
         /// <summary>
@@ -173,7 +231,23 @@ namespace GUZ.Core.Manager
     [Serializable]
     public class TextureArrayContainer
     {
+        /// <summary>
+        /// Mapping:
+        /// [index] => TextureArrayType
+        /// Each merged world chunk will be added to one TextureArrayType.
+        /// We are fine with a list, as the order of creation is the index itself.
+        /// </summary>
+        public List<WorldChunk> WorldChunks = new();
         public List<TextureTypeEntry> WorldChunkTypes = new();
+
+
+        [Serializable]
+        public class WorldChunk
+        {
+            public TextureCache.TextureArrayTypes TextureArrayType;
+            public List<Vector4> UVs;
+            public List<Color32> Colors;
+        }
 
         [Serializable]
         public class TextureTypeEntry
@@ -184,7 +258,7 @@ namespace GUZ.Core.Manager
             /// Every time a texture would be needed for a mesh the first time, its entry is added here.
             /// UV values of meshes already contain this information (e.g. v4(0,0,2,0) -> 2 would be marking index 3 of these entries below)
             /// </summary>
-            public List<string> TextureNames = new();
+            public List<TextureCache.ZkTextureData> Textures = new();
         }
     }
 }

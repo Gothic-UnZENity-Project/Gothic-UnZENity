@@ -11,7 +11,6 @@ using GUZ.Core.Manager;
 using GUZ.Core.World;
 using UnityEngine;
 using ZenKit;
-using ZenKit.Vobs;
 using Debug = UnityEngine.Debug;
 
 namespace GUZ.Core.Creator
@@ -44,25 +43,6 @@ namespace GUZ.Core.Creator
             }
         }
         
-        public static async Task CreateAsync(GameConfiguration config, LoadingManager loading)
-        {
-            _worldGo = new GameObject("World");
-
-            var lightingEnabled = config.EnableVOBs &&
-                                  (
-                                      config.SpawnVOBTypes.Value.IsEmpty() ||
-                                      config.SpawnVOBTypes.Value.Contains(VirtualObjectType.zCVobLight)
-                                  );
-
-            SaveGameManager.CurrentWorldData.SubMeshes = await BuildBspTree(
-                SaveGameManager.CurrentZkWorld.Mesh,
-                SaveGameManager.CurrentZkWorld.BspTree.Cache(),
-                lightingEnabled);
-
-            await MeshFactory.CreateWorld(SaveGameManager.CurrentWorldData.SubMeshes, loading, _worldGo, Constants.MeshPerFrame);
-            await MeshFactory.CreateTextureArray();
-        }
-
         public static async Task<List<WorldData.SubMeshData>> BuildBspTree(IMesh zkMesh, IBspTree zkBspTree, bool lightingEnabled)
         {
             _claimedPolygons = new HashSet<IPolygon>();
