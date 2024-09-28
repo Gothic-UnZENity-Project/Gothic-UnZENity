@@ -1,24 +1,120 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using GUZ.Core.Caches;
+using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
+using GUZ.Core.World;
 using UnityEngine;
 using UnityEngine.Rendering;
+using ZenKit;
 using Debug = UnityEngine.Debug;
+using Material = UnityEngine.Material;
 using Object = UnityEngine.Object;
+using Texture = UnityEngine.Texture;
+using TextureFormat = UnityEngine.TextureFormat;
 
 namespace GUZ.Core.Manager
 {
 
     public class TextureArrayManager
     {
+        public const int ReferenceTextureSize = 256;
         public const int MaxTextureSize = 512;
+
+        public readonly Dictionary<TextureArrayTypes, List<(string PreparedKey, ZkTextureData TextureData)>> TexturesToIncludeInArray = new();
+        public readonly List<(MeshRenderer Renderer, WorldData.SubMeshData SubmeshData)> WorldMeshRenderersForTextureArray = new();
+
+        public enum TextureArrayTypes
+        {
+            Opaque,
+            Transparent,
+            Water
+        }
+
+        [Serializable]
+        public class ZkTextureData
+        {
+            public string Key;
+            public Vector2 Scale;
+            public int Width;
+            public int Height;
+            public int MipmapCount;
+
+            public ZkTextureData(string key, ITexture zkTexture)
+            {
+                Key = key;
+                MipmapCount = zkTexture.MipmapCount;
+                Width = zkTexture.Width;
+                Height = zkTexture.Height;
+                Scale = new Vector2((float)zkTexture.Width / ReferenceTextureSize, (float)zkTexture.Height / ReferenceTextureSize);
+            }
+        }
 
         public void Init()
         {
             // Nothing to do for now. Can be reused later.
+        }
+
+        public void GetTextureArrayIndex(IMaterial materialData, out TextureArrayTypes textureArrayType, out int arrayIndex, out Vector2 textureScale, out int maxMipLevel)
+        {
+            string key = materialData.Texture;
+
+            for (int i = 0; i < Enum.GetValues(typeof(TextureArrayTypes)).Length; i++)
+            {
+                if (!TexturesToIncludeInArray.ContainsKey((TextureArrayTypes)i))
+                {
+                    continue;
+                }
+
+                (string, ZkTextureData) cachedTextureData = TexturesToIncludeInArray[(TextureArrayTypes)i].FirstOrDefault(k => k.PreparedKey == key);
+                if (cachedTextureData != default)
+                {
+                    textureArrayType = (TextureArrayTypes)i;
+
+                    arrayIndex = TexturesToIncludeInArray[textureArrayType].IndexOf(cachedTextureData);
+                    ZkTextureData zkData = TexturesToIncludeInArray[textureArrayType][arrayIndex].TextureData;
+                    maxMipLevel = zkData.MipmapCount - 1;
+                    textureScale = zkData.Scale;
+                    return;
+                }
+            }
+
+            ITexture zenTextureData = ResourceLoader.TryGetTexture(key);
+
+            if (zenTextureData == null)
+            {
+                textureArrayType = default;
+                arrayIndex = -1;
+                textureScale = Vector2.zero;
+                maxMipLevel = 0;
+                return;
+            }
+
+            maxMipLevel = zenTextureData.MipmapCount - 1;
+            TextureFormat textureFormat = zenTextureData.Format.AsUnityTextureFormat();
+
+            if (materialData.Group == MaterialGroup.Water)
+            {
+                textureArrayType = TextureArrayTypes.Water;
+            }
+            else
+            {
+                textureArrayType = textureFormat == TextureFormat.DXT1
+                    ? TextureArrayTypes.Opaque
+                    : TextureArrayTypes.Transparent;
+            }
+
+            textureScale = new Vector2((float)zenTextureData.Width / ReferenceTextureSize, (float)zenTextureData.Height / ReferenceTextureSize);
+            if (!TexturesToIncludeInArray.ContainsKey(textureArrayType))
+            {
+                TexturesToIncludeInArray.Add(textureArrayType, new List<(string, ZkTextureData)>());
+            }
+
+            TexturesToIncludeInArray[textureArrayType].Add((key, new ZkTextureData(key, zenTextureData)));
+            arrayIndex = TexturesToIncludeInArray[textureArrayType].Count - 1;
         }
 
         public async Task BuildTextureArraysFromCache(TextureArrayContainer data)
@@ -37,13 +133,13 @@ namespace GUZ.Core.Manager
                         for (int i = 16; i <= 2048; i *= 2)
                         {
                             int resCount = textures.Where(t => Mathf.Max(t.Width, t.Height) == i).Count();
-                            Debug.Log($"[{nameof(TextureCache)}] {textureArrayType}: {resCount} textures ({Mathf.RoundToInt(100 * (float)resCount / textures.Count)}%) with dimension {i}.");
+                            Debug.Log($"[{nameof(TextureArrayManager)}] {textureArrayType}: {resCount} textures ({Mathf.RoundToInt(100 * (float)resCount / textures.Count)}%) with dimension {i}.");
                         }
                     }
 
                     // Create the texture array with the max size of the contained textures, limited by the max texture size.
                     int maxSize = Mathf.Min(MaxTextureSize, textures.Max(p => p.Width));
-                    TextureCache.ZkTextureData textureWithMaxAllowedSize = textures.Where(t => t.Width == maxSize && t.Height == maxSize).FirstOrDefault();
+                    ZkTextureData textureWithMaxAllowedSize = textures.Where(t => t.Width == maxSize && t.Height == maxSize).FirstOrDefault();
                     // Find the max mip depth defined for the max allowed texture size.
                     int maxMipDepth = 0;
                     if (textureWithMaxAllowedSize == null)
@@ -57,13 +153,13 @@ namespace GUZ.Core.Manager
                     }
 
                     TextureFormat textureFormat = TextureFormat.RGBA32;
-                    if (textureArrayType == TextureCache.TextureArrayTypes.Opaque)
+                    if (textureArrayType == TextureArrayTypes.Opaque)
                     {
                         textureFormat = TextureFormat.DXT1;
                     }
 
                     Texture texArray;
-                    if (textureArrayType != TextureCache.TextureArrayTypes.Water)
+                    if (textureArrayType != TextureArrayTypes.Water)
                     {
                         texArray = new Texture2DArray(maxSize, maxSize, textures.Count, textureFormat, maxMipDepth, false, true)
                         {
@@ -178,7 +274,7 @@ namespace GUZ.Core.Manager
                 // }
                 // else
                 // {
-                material = GetDefaultMaterial(chunk.TextureArrayType == TextureCache.TextureArrayTypes.Transparent);
+                material = GetDefaultMaterial(chunk.TextureArrayType == TextureArrayTypes.Transparent);
                 // }
 
                 material.mainTexture = texture;
@@ -200,6 +296,22 @@ namespace GUZ.Core.Manager
             }
 
             return material;
+        }
+
+        /// <summary>
+        /// Once a TextureArray is build and assigned to renderers, we can safely clear these lists to free managed memory.
+        /// </summary>
+        public void Dispose()
+        {
+            // TODO
+            // TextureArrays.Clear();
+            // TextureArrays.TrimExcess();
+
+            TexturesToIncludeInArray.Clear();
+            TexturesToIncludeInArray.TrimExcess();
+
+            WorldMeshRenderersForTextureArray.Clear();
+            WorldMeshRenderersForTextureArray.TrimExcess();
         }
     }
 }

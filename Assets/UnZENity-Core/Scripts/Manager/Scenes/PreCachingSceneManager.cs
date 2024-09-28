@@ -1,5 +1,4 @@
 ﻿using System.Threading.Tasks;
-using GUZ.Core.Caches;
 using GUZ.Core.Creator;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager.Vobs;
@@ -83,7 +82,7 @@ namespace GUZ.Core.Manager.Scenes
                 await GameGlobals.Glt.SaveGlt(worldRootGo, vobsRootGo, worldName);
 
                 // Clean up scene memory
-                TextureCache.RemoveCachedTextureArrayData();
+                GameGlobals.TextureArray.Dispose();
                 Destroy(vobsRootGo);
                 Destroy(worldRootGo);
 

@@ -19,7 +19,6 @@ namespace GUZ.Core.Manager
         {
             GameData.Dispose();
             VmInstanceManager.Dispose();
-            TextureCache.Dispose();
             MultiTypeCache.Dispose();
             MorphMeshCache.Dispose();
         }

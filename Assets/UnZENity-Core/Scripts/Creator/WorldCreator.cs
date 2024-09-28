@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
-using GUZ.Core.Caches;
 using GUZ.Core.Creator.Meshes.V2;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
@@ -77,7 +76,7 @@ namespace GUZ.Core.Creator
 
             stopwatch.Restart();
             // Merge the water until a given level in the BSP tree to it a few large chunks.
-            subMeshesPerParentNode = MergeShaderTypeWorldChunksToTreeHeight(TextureCache.TextureArrayTypes.Water, 3, zkBspTree, subMeshesPerParentNode);
+            subMeshesPerParentNode = MergeShaderTypeWorldChunksToTreeHeight(TextureArrayManager.TextureArrayTypes.Water, 3, zkBspTree, subMeshesPerParentNode);
             stopwatch.Stop();
             Debug.Log($"Merging water: {stopwatch.ElapsedMilliseconds / 1000f} s");
 
@@ -176,7 +175,7 @@ namespace GUZ.Core.Creator
                             {
                                 // Add the texture to the texture array or retrieve its existing slice.
                                 var zkMaterial = zkMesh.GetMaterial(polygon.MaterialIndex);
-                                TextureCache.GetTextureArrayIndex(zkMaterial, out TextureCache.TextureArrayTypes textureArrayTpe, out int textureArrayIndex, out Vector2 textureScale, out int maxMipLevel);
+                                GameGlobals.TextureArray.GetTextureArrayIndex(zkMaterial, out var textureArrayTpe, out var textureArrayIndex, out var textureScale, out int maxMipLevel);
                                 if (textureArrayIndex == -1)
                                 {
                                     continue;
@@ -184,11 +183,11 @@ namespace GUZ.Core.Creator
 
                                 // Build submeshes for each unique shader: Water, opaque, and alpha cutout.
                                 var shader = Constants.ShaderWorldLit;
-                                if (textureArrayTpe == TextureCache.TextureArrayTypes.Transparent)
+                                if (textureArrayTpe == TextureArrayManager.TextureArrayTypes.Transparent)
                                 {
                                     shader = Constants.ShaderLitAlphaToCoverage;
                                 }
-                                else if (textureArrayTpe == TextureCache.TextureArrayTypes.Water)
+                                else if (textureArrayTpe == TextureArrayManager.TextureArrayTypes.Water)
                                 {
                                     shader = Constants.ShaderWater;
                                 }
@@ -262,7 +261,7 @@ namespace GUZ.Core.Creator
         }
 
         private static Dictionary<int, List<WorldData.SubMeshData>> MergeShaderTypeWorldChunksToTreeHeight(
-            TextureCache.TextureArrayTypes textureArrayType, int treeHeightLimit, IBspTree bspTree,
+            TextureArrayManager.TextureArrayTypes textureArrayType, int treeHeightLimit, IBspTree bspTree,
             Dictionary<int, List<WorldData.SubMeshData>> submeshesPerParentNode)
         {
             // Group the submeshes by parent nodes until max height.
@@ -355,8 +354,8 @@ namespace GUZ.Core.Creator
                 if (intersectingLights < maxLightsPerChunk && grandParentNodeIndex != -1)
                 {
                     // Merge all shader types under the parent node.
-                    foreach (TextureCache.TextureArrayTypes textureArrayType in Enum.GetValues(
-                                 typeof(TextureCache.TextureArrayTypes)))
+                    foreach (TextureArrayManager.TextureArrayTypes textureArrayType in Enum.GetValues(
+                                 typeof(TextureArrayManager.TextureArrayTypes)))
                     {
                         var meshes = submeshesPerParentNode[parentNodeIndex]
                             .Where(s => s.TextureArrayType == textureArrayType);

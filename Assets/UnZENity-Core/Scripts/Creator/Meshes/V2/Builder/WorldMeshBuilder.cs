@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using GUZ.Core.Caches;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
@@ -59,7 +58,7 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
                 var meshRenderer = subMeshObj.AddComponent<MeshRenderer>();
 
                 meshRenderer.material = Constants.LoadingMaterial;
-                TextureCache.WorldMeshRenderersForTextureArray.Add((meshRenderer, subMesh));
+                GameGlobals.TextureArray.WorldMeshRenderersForTextureArray.Add((meshRenderer, subMesh));
                 PrepareMeshFilter(meshFilter, subMesh);
                 PrepareMeshCollider(subMeshObj, meshFilter.sharedMesh, subMesh.Material);
 
@@ -103,7 +102,7 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
                 return false;
             }
 
-            return subMeshData.TextureArrayType != TextureCache.TextureArrayTypes.Opaque;
+            return subMeshData.TextureArrayType != TextureArrayManager.TextureArrayTypes.Opaque;
         }
     }
 }

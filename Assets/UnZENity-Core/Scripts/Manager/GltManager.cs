@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using GLTFast;
 using GLTFast.Export;
 using GLTFast.Logging;
-using GUZ.Core.Caches;
 using GUZ.Core.Globals;
 using UnityEngine;
 using Debug = UnityEngine.Debug;
@@ -127,7 +126,7 @@ namespace GUZ.Core.Manager
 
             // Set texture information.
             // i.e. Which texture type (and ultimately which world chunk based on texture type) has the following textures.?
-            foreach (var data in TextureCache.TexturesToIncludeInArray)
+            foreach (var data in GameGlobals.TextureArray.TexturesToIncludeInArray)
             {
                 var entry = new TextureArrayContainer.TextureTypeEntry()
                 {
@@ -139,7 +138,7 @@ namespace GUZ.Core.Manager
             }
 
             // Now add GameObject mapping to store certain data which isn't inside glTF files.
-            foreach (var chunk in TextureCache.WorldMeshRenderersForTextureArray)
+            foreach (var chunk in GameGlobals.TextureArray.WorldMeshRenderersForTextureArray)
             {
                 var entry = new TextureArrayContainer.WorldChunk()
                 {
@@ -244,7 +243,7 @@ namespace GUZ.Core.Manager
         [Serializable]
         public class WorldChunk
         {
-            public TextureCache.TextureArrayTypes TextureArrayType;
+            public TextureArrayManager.TextureArrayTypes TextureArrayType;
             public List<Vector4> UVs;
             public List<Color32> Colors;
         }
@@ -252,13 +251,13 @@ namespace GUZ.Core.Manager
         [Serializable]
         public class TextureTypeEntry
         {
-            public TextureCache.TextureArrayTypes TextureType;
+            public TextureArrayManager.TextureArrayTypes TextureType;
 
             /// <summary>
             /// Every time a texture would be needed for a mesh the first time, its entry is added here.
             /// UV values of meshes already contain this information (e.g. v4(0,0,2,0) -> 2 would be marking index 3 of these entries below)
             /// </summary>
-            public List<TextureCache.ZkTextureData> Textures = new();
+            public List<TextureArrayManager.ZkTextureData> Textures = new();
         }
     }
 }

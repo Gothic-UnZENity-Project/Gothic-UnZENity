@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using GUZ.Core.Caches;
+using GUZ.Core.Manager;
 using UnityEngine;
 using ZenKit;
 using ZenKit.Vobs;
@@ -24,7 +24,7 @@ namespace GUZ.Core.World
         public class SubMeshData
         {
             public IMaterial Material;
-            public TextureCache.TextureArrayTypes TextureArrayType;
+            public TextureArrayManager.TextureArrayTypes TextureArrayType;
 
             public readonly List<Vector3> Vertices = new();
             public readonly List<int> Triangles = new();

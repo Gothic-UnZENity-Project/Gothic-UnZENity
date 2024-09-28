@@ -5,6 +5,7 @@ using System.Text.RegularExpressions;
 using GUZ.Core.Caches;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
+using GUZ.Core.Manager;
 using JetBrains.Annotations;
 using MyBox;
 using UnityEngine;
@@ -416,7 +417,7 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
         /// </summary>
         protected void PrepareMeshFilter(MeshFilter meshFilter, IMultiResolutionMesh mrmData, Renderer meshRenderer, int meshIndex)
         {
-            var subMeshPerTextureFormat = new Dictionary<TextureCache.TextureArrayTypes, int>();
+            var subMeshPerTextureFormat = new Dictionary<TextureArrayManager.TextureArrayTypes, int>();
 
             // Elements like NPC armors might have multiple meshes. We therefore need to store each mesh with it's associated index.
             if (MultiTypeCache.Meshes.TryGetValue($"{MeshName}_{meshIndex}", out Mesh mesh))
@@ -460,10 +461,10 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
                 // When using the texture array, get the index of the array of the matching texture format. Build sub meshes for each texture format, i.e. separating opaque and alpha cutout textures.
                 int textureArrayIndex = 0, maxMipLevel = 0;
                 Vector2 textureScale = Vector2.one;
-                TextureCache.TextureArrayTypes textureArrayType = TextureCache.TextureArrayTypes.Opaque;
+                TextureArrayManager.TextureArrayTypes textureArrayType = TextureArrayManager.TextureArrayTypes.Opaque;
                 if (UseTextureArray)
                 {
-                    TextureCache.GetTextureArrayIndex(subMesh.Material, out textureArrayType, out textureArrayIndex, out textureScale, out maxMipLevel);
+                    GameGlobals.TextureArray.GetTextureArrayIndex(subMesh.Material, out textureArrayType, out textureArrayIndex, out textureScale, out maxMipLevel);
                     if (!subMeshPerTextureFormat.ContainsKey(textureArrayType))
                     {
                         subMeshPerTextureFormat.Add(textureArrayType, preparedTriangles.Count);

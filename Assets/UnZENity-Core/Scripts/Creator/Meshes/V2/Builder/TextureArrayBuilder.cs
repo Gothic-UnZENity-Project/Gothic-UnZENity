@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using GUZ.Core.Caches;
 using GUZ.Core.Globals;
+using GUZ.Core.Manager;
 using GUZ.Core.World;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -27,18 +28,12 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
 
         public async Task BuildAsync()
         {
-            await TextureCache.BuildTextureArrays();
             AssignTextureArrays();
             TextureCache.RemoveCachedTextureArrayData();
         }
 
         private void AssignTextureArrays()
         {
-            foreach (var rendererData in TextureCache.WorldMeshRenderersForTextureArray)
-            {
-                PrepareWorldMeshRenderer(rendererData.Renderer, rendererData.SubmeshData);
-            }
-
             foreach (TextureCache.VobMeshData meshData in TextureCache.VobMeshesForTextureArray.Values)
             {
                 foreach (Renderer renderer in meshData.Renderers)
@@ -58,14 +53,14 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
             }
             else
             {
-                material = GetDefaultMaterial(subMesh.TextureArrayType == TextureCache.TextureArrayTypes.Transparent);
+                material = GetDefaultMaterial(subMesh.TextureArrayType == TextureArrayManager.TextureArrayTypes.Transparent);
             }
 
             material.mainTexture = texture;
             rend.material = material;
         }
 
-        private void PrepareVobMeshRenderer(Renderer renderer, IMultiResolutionMesh mrmData, List<TextureCache.TextureArrayTypes> textureArrayTypes)
+        private void PrepareVobMeshRenderer(Renderer renderer, IMultiResolutionMesh mrmData, List<TextureArrayManager.TextureArrayTypes> textureArrayTypes)
         {
             if (mrmData == null)
             {
