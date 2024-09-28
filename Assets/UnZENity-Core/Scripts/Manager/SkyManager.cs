@@ -16,8 +16,6 @@ namespace GUZ.Core.Manager
 {
     public class SkyManager
     {
-        private bool _alreadyInitialized;
-
         private Vector3 _sunDirection;
         private readonly Color _sunColor;
         private readonly Color _ambientColor;
@@ -81,11 +79,18 @@ namespace GUZ.Core.Manager
 
         public void Init()
         {
-            GlobalEventDispatcher.WorldSceneLoaded.AddListener(WorldLoaded);
             GlobalEventDispatcher.GameTimeSecondChangeCallback.AddListener(Interpolate);
             GlobalEventDispatcher.GameTimeHourChangeCallback.AddListener(UpdateRainTime);
+
+            RenderSettings.skybox = Object.Instantiate(GameGlobals.Textures.SkyMaterial);
+            InitRainGo();
+            InitSky();
         }
 
+        /// <summary>
+        /// We need to initialize sky with its colors to show mesh textures.
+        /// Otherwise, our Lit/World and Lit/SingleMesh shaders will show black textures only.
+        /// </summary>
         public void InitSky()
         {
             RotateSun(_gameTime.GetCurrentDateTime());
@@ -281,20 +286,6 @@ namespace GUZ.Core.Manager
             Shader.SetGlobalColor(_sunColorShaderId, _sunColor);
             Shader.SetGlobalColor(_ambientShaderId, _ambientColor);
             Shader.SetGlobalFloat(_pointLightIntensityShaderId, _pointLightIntensity);
-        }
-
-        private void WorldLoaded()
-        {
-            if (_alreadyInitialized)
-            {
-                return;
-            }
-
-            RenderSettings.skybox = Object.Instantiate(GameGlobals.Textures.SkyMaterial);
-
-            InitRainGo();
-
-            _alreadyInitialized = true;
         }
 
         private void InitRainGo()
