@@ -46,40 +46,33 @@ namespace GUZ.Core.Creator.Sounds
 
         public static SoundData ConvertWavByteArrayToFloatArray(byte[] fileBytes)
         {
-            string riffHeader = Encoding.ASCII.GetString(fileBytes, 0, 4);
+            // HINT: Commented out elements are there for reference only.
 
-            int fileSize = BitConverter.ToInt32(fileBytes, 4);
-
-            string waveHeader = Encoding.ASCII.GetString(fileBytes, 8, 4);
-
-            string fmtHeader = Encoding.ASCII.GetString(fileBytes, 12, 4);
-
-            int fmtLength = BitConverter.ToInt32(fileBytes, 16);
+            // string riffHeader = Encoding.ASCII.GetString(fileBytes, 0, 4);
+            // int fileSize = BitConverter.ToInt32(fileBytes, 4);
+            // string waveHeader = Encoding.ASCII.GetString(fileBytes, 8, 4);
+            // string fmtHeader = Encoding.ASCII.GetString(fileBytes, 12, 4);
+            // int fmtLength = BitConverter.ToInt32(fileBytes, 16);
 
             ushort formatType = BitConverter.ToUInt16(fileBytes, 20);
-
             string formatCode = FormatCode(formatType);
-
             ushort numChannels = BitConverter.ToUInt16(fileBytes, 22);
-
             int sampleRate = BitConverter.ToInt32(fileBytes, 24);
 
-            int byteRate = BitConverter.ToInt32(fileBytes, 28);
-
-            short blockAlign = BitConverter.ToInt16(fileBytes, 32);
+            // int byteRate = BitConverter.ToInt32(fileBytes, 28);
+            // short blockAlign = BitConverter.ToInt16(fileBytes, 32);
 
             short bitsPerSample = BitConverter.ToInt16(fileBytes, 34);
-            
             string dataHeader = Encoding.ASCII.GetString(fileBytes, 36, 4);
             
             // Check for "PAD" header and skip it if present
             int padSize = 0;
             while (dataHeader == "PAD ")
             {
-                padSize = padSize + BitConverter.ToInt32(fileBytes, 40);
+                padSize += BitConverter.ToInt32(fileBytes, 40);
                 
                 // we add 8 bits to padding as to skip the pad subchunk header + data
-                padSize = padSize + 8;
+                padSize += 8;
                 
                 // Skip the PAD section
                 dataHeader = Encoding.ASCII.GetString(fileBytes, 36 + padSize, 4);
@@ -106,7 +99,6 @@ namespace GUZ.Core.Creator.Sounds
                 SampleRate = sampleRate
             };
         }
-
 
         private static float[] ConvertByteArrayToFloatArray(byte[] source, int headerOffset, BitDepth bit)
         {
