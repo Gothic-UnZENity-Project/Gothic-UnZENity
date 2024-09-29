@@ -17,6 +17,7 @@ jobs:
   testCompileWithoutHVR:
     name: Compile test without HVR installation
     runs-on: self-hosted
+    if: github.event.pull_request.draft == false
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
