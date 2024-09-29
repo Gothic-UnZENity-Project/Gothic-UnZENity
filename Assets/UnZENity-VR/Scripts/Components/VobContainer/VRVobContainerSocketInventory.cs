@@ -14,12 +14,12 @@ namespace GUZ.VR.Components.VobContainer
 
         public void OnBeforeGrabbed(HVRGrabberBase grabber, HVRGrabbable grabbable)
         {
-            grabbable.GetComponent<HVRVobItemProperties>().IsSocketed = true;
+            grabbable.GetComponent<VRVobItemProperties>().IsSocketed = true;
         }
 
         public void OnReleased(HVRGrabberBase grabber, HVRGrabbable grabbable)
         {
-            grabbable.GetComponent<HVRVobItemProperties>().IsSocketed = false;
+            grabbable.GetComponent<VRVobItemProperties>().IsSocketed = false;
         }
 
     }
