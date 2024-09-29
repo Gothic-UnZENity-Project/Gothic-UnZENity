@@ -9,11 +9,9 @@ using GUZ.Core.Manager;
 using JetBrains.Annotations;
 using MyBox;
 using UnityEngine;
-using UnityEngine.Rendering;
 using ZenKit;
 using Material = UnityEngine.Material;
 using Matrix4x4 = System.Numerics.Matrix4x4;
-using TextureFormat = UnityEngine.TextureFormat;
 using Mesh = UnityEngine.Mesh;
 using Texture = UnityEngine.Texture;
 
@@ -387,7 +385,7 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
                     continue;
                 }
 
-                var material = GetDefaultMaterial(texture && ((Texture2D)texture).format == TextureFormat.RGBA32);
+                var material = GetDefaultMaterial();
 
                 material.mainTexture = texture;
                 rend.material = material;
@@ -679,17 +677,9 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
             return TextureCache.TryGetTexture(name);
         }
 
-        protected virtual Material GetDefaultMaterial(bool isAlphaTest)
+        protected Material GetDefaultMaterial()
         {
             return new Material(Constants.ShaderSingleMeshLit);
-        }
-
-        protected Material GetWaterMaterial()
-        {
-            var material = new Material(Constants.ShaderWater);
-            // Manually correct the render queue for alpha test, as Unity doesn't want to do it from the shader's render queue tag.
-            material.renderQueue = (int)RenderQueue.Transparent;
-            return material;
         }
 
         protected void SetPosAndRot(GameObject obj, Matrix4x4 matrix)

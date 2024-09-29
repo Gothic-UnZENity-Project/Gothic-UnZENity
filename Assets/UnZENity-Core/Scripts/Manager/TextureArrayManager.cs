@@ -268,14 +268,14 @@ namespace GUZ.Core.Manager
                 Material material;
 
                 // FIXME - We need to store this information in metadata and retrieve it now (MaterialGroup)
-                // if (subMesh.Material.Group == MaterialGroup.Water)
-                // {
-                //     material = GetWaterMaterial();
-                // }
-                // else
-                // {
-                material = GetDefaultMaterial(chunk.TextureArrayType == TextureArrayTypes.Transparent);
-                // }
+                if (chunk.MaterialGroup == MaterialGroup.Water)
+                {
+                    material = GetWaterMaterial();
+                }
+                else
+                {
+                    material = GetDefaultMaterial(chunk.TextureArrayType == TextureArrayTypes.Transparent);
+                }
 
                 material.mainTexture = texture;
                 rend.material = material;
@@ -295,6 +295,14 @@ namespace GUZ.Core.Manager
                 material.renderQueue = (int)RenderQueue.AlphaTest;
             }
 
+            return material;
+        }
+
+        private Material GetWaterMaterial()
+        {
+            var material = new Material(Constants.ShaderWater);
+            // Manually correct the render queue for alpha test, as Unity doesn't want to do it from the shader's render queue tag.
+            material.renderQueue = (int)RenderQueue.Transparent;
             return material;
         }
 

@@ -8,6 +8,7 @@ using GLTFast.Export;
 using GLTFast.Logging;
 using GUZ.Core.Globals;
 using UnityEngine;
+using ZenKit;
 using Debug = UnityEngine.Debug;
 
 namespace GUZ.Core.Manager
@@ -143,6 +144,7 @@ namespace GUZ.Core.Manager
                 var entry = new TextureArrayContainer.WorldChunk()
                 {
                     TextureArrayType = chunk.SubmeshData.TextureArrayType,
+                    MaterialGroup = chunk.SubmeshData.Material.Group,
                     UVs = chunk.SubmeshData.Uvs,
                     Colors = chunk.SubmeshData.BakedLightColors
                 };
@@ -244,6 +246,7 @@ namespace GUZ.Core.Manager
         public class WorldChunk
         {
             public TextureArrayManager.TextureArrayTypes TextureArrayType;
+            public MaterialGroup MaterialGroup;
             public List<Vector4> UVs;
             public List<Color32> Colors;
         }

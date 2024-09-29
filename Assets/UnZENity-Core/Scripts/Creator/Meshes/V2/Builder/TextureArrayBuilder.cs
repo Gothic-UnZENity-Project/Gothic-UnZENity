@@ -2,15 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using GUZ.Core.Caches;
-using GUZ.Core.Globals;
 using GUZ.Core.Manager;
-using GUZ.Core.World;
 using UnityEngine;
-using UnityEngine.Rendering;
 using ZenKit;
 using Material = UnityEngine.Material;
 using Texture = UnityEngine.Texture;
-using TextureFormat = UnityEngine.TextureFormat;
 
 namespace GUZ.Core.Creator.Meshes.V2.Builder
 {
@@ -43,23 +39,6 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
             }
         }
 
-        private void PrepareWorldMeshRenderer(Renderer rend, WorldData.SubMeshData subMesh)
-        {
-            Texture texture = TextureCache.TextureArrays[subMesh.TextureArrayType];
-            Material material;
-            if (subMesh.Material.Group == MaterialGroup.Water)
-            {
-                material = GetWaterMaterial();
-            }
-            else
-            {
-                material = GetDefaultMaterial(subMesh.TextureArrayType == TextureArrayManager.TextureArrayTypes.Transparent);
-            }
-
-            material.mainTexture = texture;
-            rend.material = material;
-        }
-
         private void PrepareVobMeshRenderer(Renderer renderer, IMultiResolutionMesh mrmData, List<TextureArrayManager.TextureArrayTypes> textureArrayTypes)
         {
             if (mrmData == null)
@@ -80,7 +59,9 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
             for (int i = 0; i < submeshCount; i++)
             {
                 Texture texture = TextureCache.TextureArrays[textureArrayTypes[i]];
-                Material material = GetDefaultMaterial(texture && ((Texture2DArray)texture).format == TextureFormat.RGBA32);
+                // FIXME - re-enable
+                // Material material = GetDefaultMaterial(texture && ((Texture2DArray)texture).format == TextureFormat.RGBA32);
+                Material material = null;
 
                 material.mainTexture = texture;
                 renderer.material = material;
@@ -88,20 +69,6 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
             }
 
             renderer.SetMaterials(finalMaterials);
-        }
-
-        protected override Material GetDefaultMaterial(bool isAlphaTest)
-        {
-            Shader shader = isAlphaTest ? Constants.ShaderLitAlphaToCoverage : Constants.ShaderWorldLit;
-            Material material = new Material(shader);
-
-            if (isAlphaTest)
-            {
-                // Manually correct the render queue for alpha test, as Unity doesn't want to do it from the shader's render queue tag.
-                material.renderQueue = (int)RenderQueue.AlphaTest;
-            }
-
-            return material;
         }
     }
 }

@@ -122,7 +122,8 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
             switch (subMesh.Material.Group)
             {
                 case MaterialGroup.Water:
-                    material = GetWaterMaterial();
+                    Debug.LogError("Barrier is of type Water material? Please re-enable if needed. Otherwise fix it.");
+                    throw new Exception("Barrier is of type Water material? Please re-enable if needed. Otherwise fix it.");
                     break;
                 default:
                     material = new Material(Constants.ShaderBarrier);
