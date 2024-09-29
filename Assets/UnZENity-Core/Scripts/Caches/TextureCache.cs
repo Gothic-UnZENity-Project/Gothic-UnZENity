@@ -11,12 +11,24 @@ using UnityEngine;
 using UnityEngine.Rendering;
 using ZenKit;
 using Debug = UnityEngine.Debug;
+using Mesh = UnityEngine.Mesh;
 using Object = UnityEngine.Object;
 using Texture = UnityEngine.Texture;
 using TextureFormat = ZenKit.TextureFormat;
 
 namespace GUZ.Core.Caches
 {
+    /// <summary>
+    /// Texture Array is used for the following improvements:
+    /// 1. World mesh chunks are merged into sliced with specific bound. Without the texture array, we would need to separate each small floor mesh if it has a different texture.
+    /// 2. Static VOBs will merge multiple textures into one. This reduces draw calls. (e.g. various complex VOBs have multiple textures).
+    ///
+    /// Once world is loaded, The texture cache is released to free memory of our calculated data. Only texture array itself remains in memory.
+    ///
+    /// Not in Texture Array:
+    /// 1. NPCs and their armors (as they alter their armaments during runtime)
+    /// 2. VOB Items which spawn at a later state (e.g. Player puts an item out of inventory)
+    /// </summary>
     public static class TextureCache
     {
         public const int ReferenceTextureSize = 256;
@@ -24,7 +36,7 @@ namespace GUZ.Core.Caches
 
         public static Dictionary<TextureArrayTypes, Texture> TextureArrays { get; } = new();
         public static List<(MeshRenderer Renderer, WorldData.SubMeshData SubmeshData)> WorldMeshRenderersForTextureArray = new();
-        public static Dictionary<UnityEngine.Mesh, VobMeshData> VobMeshesForTextureArray = new();
+        public static Dictionary<Mesh, VobMeshData> VobMeshesForTextureArray = new();
 
         private static readonly Dictionary<string, Texture2D> _texture2DCache = new();
         private static readonly Dictionary<TextureArrayTypes, List<(string PreparedKey, ZkTextureData TextureData)>> _texturesToIncludeInArray = new();
@@ -40,9 +52,9 @@ namespace GUZ.Core.Caches
         {
             public IMultiResolutionMesh Mrm { get; set; }
             public List<TextureArrayTypes> TextureArrayTypes { get; set; }
-            public List<MeshRenderer> Renderers { get; set; } = new();
+            public List<Renderer> Renderers { get; set; } = new();
 
-            public VobMeshData(IMultiResolutionMesh mrm, List<TextureArrayTypes> textureArrayTypes, MeshRenderer renderer = null)
+            public VobMeshData(IMultiResolutionMesh mrm, List<TextureArrayTypes> textureArrayTypes, Renderer renderer = null)
             {
                 Mrm = mrm;
                 TextureArrayTypes = textureArrayTypes;

@@ -17,8 +17,9 @@ namespace GUZ.VR.Components
         [SerializeField]
         public GameObject MainMenu;
 
-        private void Start()
+        protected override void Start()
         {
+            base.Start();
             GlobalEventDispatcher.PlayerPrefUpdated.AddListener(OnPlayerPrefsUpdated);
         }
 
