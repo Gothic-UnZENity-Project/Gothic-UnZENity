@@ -24,19 +24,7 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
 
         public async Task BuildAsync()
         {
-            AssignTextureArrays();
             TextureCache.RemoveCachedTextureArrayData();
-        }
-
-        private void AssignTextureArrays()
-        {
-            foreach (TextureCache.VobMeshData meshData in TextureCache.VobMeshesForTextureArray.Values)
-            {
-                foreach (Renderer renderer in meshData.Renderers)
-                {
-                    PrepareVobMeshRenderer(renderer, meshData.Mrm, meshData.TextureArrayTypes);
-                }
-            }
         }
 
         private void PrepareVobMeshRenderer(Renderer renderer, IMultiResolutionMesh mrmData, List<TextureArrayManager.TextureArrayTypes> textureArrayTypes)

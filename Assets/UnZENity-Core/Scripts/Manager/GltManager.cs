@@ -64,6 +64,7 @@ namespace GUZ.Core.Manager
 
             await GameGlobals.TextureArray.BuildTextureArraysFromCache(data);
             GameGlobals.TextureArray.AssignTextureArraysForWorld(data, worldRootGo);
+            GameGlobals.TextureArray.AssignTextureArraysForVobs(data, vobsRootGo);
         }
 
         /// <summary>
@@ -141,15 +142,33 @@ namespace GUZ.Core.Manager
             // Now add GameObject mapping to store certain data which isn't inside glTF files.
             foreach (var chunk in GameGlobals.TextureArray.WorldMeshRenderersForTextureArray)
             {
-                var entry = new TextureArrayContainer.WorldChunk()
+                var entry = new TextureArrayContainer.MeshEntry()
                 {
-                    TextureArrayType = chunk.SubmeshData.TextureArrayType,
+                    Name = null, // Not needed for world meshes
+                    TextureTypes = new() {chunk.SubmeshData.TextureArrayType}, // We only support single-material world chunks.
                     MaterialGroup = chunk.SubmeshData.Material.Group,
                     UVs = chunk.SubmeshData.Uvs,
                     Colors = chunk.SubmeshData.BakedLightColors
                 };
 
                 dataToSave.WorldChunks.Add(entry);
+            }
+
+            foreach (var vob in GameGlobals.TextureArray.VobMeshesForTextureArray)
+            {
+                List<Vector4> uvs = new();
+                vob.Key.GetUVs(0, uvs);
+
+                var entry = new TextureArrayContainer.MeshEntry()
+                {
+                    Name = $"{vob.Key.name}-{vob.Value.Renderers.First().name}", // We build the lookup name for later like this: ROOT_GO-ACTUAL_GO
+                    TextureTypes = vob.Value.TextureArrayTypes,
+                    MaterialGroup = MaterialGroup.Undefined, // Not needed for VOBs
+                    UVs = uvs,
+                    Colors = vob.Key.colors32.ToList()
+                };
+
+                dataToSave.Vobs.Add(entry);
             }
 
             var metadataFileName = $"{BuildFilePathName(fileName, false)}.metadata";
@@ -238,14 +257,19 @@ namespace GUZ.Core.Manager
         /// Each merged world chunk will be added to one TextureArrayType.
         /// We are fine with a list, as the order of creation is the index itself.
         /// </summary>
-        public List<WorldChunk> WorldChunks = new();
+        public List<MeshEntry> WorldChunks = new();
         public List<TextureTypeEntry> WorldChunkTypes = new();
+
+        // FIXME - Each VOB is added only once. We need to fetch its corresponding entry from GO name (and GO type).
+        // FIXME - Are meshes reused when loaded from glTF file? How can we test that?
+        public List<MeshEntry> Vobs = new();
 
 
         [Serializable]
-        public class WorldChunk
+        public class MeshEntry
         {
-            public TextureArrayManager.TextureArrayTypes TextureArrayType;
+            public string Name;
+            public List<TextureArrayManager.TextureArrayTypes> TextureTypes = new();
             public MaterialGroup MaterialGroup;
             public List<Vector4> UVs;
             public List<Color32> Colors;

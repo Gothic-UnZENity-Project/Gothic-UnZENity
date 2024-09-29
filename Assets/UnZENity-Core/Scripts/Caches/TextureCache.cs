@@ -5,7 +5,6 @@ using GUZ.Core.Manager;
 using JetBrains.Annotations;
 using UnityEngine;
 using ZenKit;
-using Mesh = UnityEngine.Mesh;
 using Object = UnityEngine.Object;
 using Texture = UnityEngine.Texture;
 using TextureFormat = ZenKit.TextureFormat;
@@ -26,26 +25,9 @@ namespace GUZ.Core.Caches
     public static class TextureCache
     {
         public static Dictionary<TextureArrayManager.TextureArrayTypes, Texture> TextureArrays { get; } = new();
-        public static Dictionary<Mesh, VobMeshData> VobMeshesForTextureArray = new();
 
         private static readonly Dictionary<string, Texture2D> _texture2DCache = new();
 
-        public class VobMeshData
-        {
-            public IMultiResolutionMesh Mrm { get; set; }
-            public List<TextureArrayManager.TextureArrayTypes> TextureArrayTypes { get; set; }
-            public List<Renderer> Renderers { get; set; } = new();
-
-            public VobMeshData(IMultiResolutionMesh mrm, List<TextureArrayManager.TextureArrayTypes> textureArrayTypes, Renderer renderer = null)
-            {
-                Mrm = mrm;
-                TextureArrayTypes = textureArrayTypes;
-                if (renderer != null)
-                {
-                    Renderers.Add(renderer);
-                }
-            }
-        }
 
         [CanBeNull]
         public static Texture2D TryGetTexture(string key, bool includeInCache = true)

@@ -96,10 +96,9 @@ namespace GUZ.Core.Globals
         /*
          * ### Tags
          */
-        public const string ClimbableTag = "Climbable";
-        public const string SpotTag = "PxVob_zCVobSpot";
         public const string PlayerTag = "Player";
         public const string MainCameraTag = "MainCamera";
+        public const string SpotTag = "Vob_zCVobSpot";
 
         
         public static int MeshPerFrame { get; } = 10;

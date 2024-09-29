@@ -423,13 +423,13 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
                 meshFilter.sharedMesh = mesh;
                 if (UseTextureArray)
                 {
-                    if (TextureCache.VobMeshesForTextureArray.ContainsKey(mesh))
+                    if (GameGlobals.TextureArray.VobMeshesForTextureArray.ContainsKey(mesh))
                     {
-                        TextureCache.VobMeshesForTextureArray[mesh].Renderers.Add(meshRenderer);
+                        GameGlobals.TextureArray.VobMeshesForTextureArray[mesh].Renderers.Add(meshRenderer);
                     }
                     else
                     {
-                        Debug.LogWarning($"[{GetType()}] Mesh {mesh.name} is unexpectedly not int the {nameof(TextureCache.VobMeshesForTextureArray)} array.");
+                        Debug.LogWarning($"[{GetType()}] Mesh {mesh.name} is unexpectedly not int the {nameof(GameGlobals.TextureArray.VobMeshesForTextureArray)} array.");
                     }
                 }
                 return;
@@ -520,7 +520,7 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
             CreateMorphMeshEnd(preparedVertices);
 
             // TODO - Why adding a null-renderer if !UseTextureArray? Couldn't we just disable this Add() call fully?
-            TextureCache.VobMeshesForTextureArray.Add(mesh, new TextureCache.VobMeshData(mrmData, subMeshPerTextureFormat.Keys.ToList(), UseTextureArray ? meshRenderer : null));
+            GameGlobals.TextureArray.VobMeshesForTextureArray.Add(mesh, new TextureArrayManager.VobMeshData(mrmData, subMeshPerTextureFormat.Keys.ToList(), UseTextureArray ? meshRenderer : null));
 
             MultiTypeCache.Meshes.Add($"{MeshName}_{meshIndex}", mesh);
         }

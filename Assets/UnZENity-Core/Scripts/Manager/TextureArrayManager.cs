@@ -12,6 +12,7 @@ using UnityEngine.Rendering;
 using ZenKit;
 using Debug = UnityEngine.Debug;
 using Material = UnityEngine.Material;
+using Mesh = UnityEngine.Mesh;
 using Object = UnityEngine.Object;
 using Texture = UnityEngine.Texture;
 using TextureFormat = UnityEngine.TextureFormat;
@@ -26,6 +27,7 @@ namespace GUZ.Core.Manager
 
         public readonly Dictionary<TextureArrayTypes, List<(string PreparedKey, ZkTextureData TextureData)>> TexturesToIncludeInArray = new();
         public readonly List<(MeshRenderer Renderer, WorldData.SubMeshData SubmeshData)> WorldMeshRenderersForTextureArray = new();
+        public readonly Dictionary<Mesh, VobMeshData> VobMeshesForTextureArray = new();
 
         public enum TextureArrayTypes
         {
@@ -50,6 +52,23 @@ namespace GUZ.Core.Manager
                 Width = zkTexture.Width;
                 Height = zkTexture.Height;
                 Scale = new Vector2((float)zkTexture.Width / ReferenceTextureSize, (float)zkTexture.Height / ReferenceTextureSize);
+            }
+        }
+
+        public class VobMeshData
+        {
+            public IMultiResolutionMesh Mrm { get; set; }
+            public List<TextureArrayTypes> TextureArrayTypes { get; set; }
+            public List<Renderer> Renderers { get; set; } = new();
+
+            public VobMeshData(IMultiResolutionMesh mrm, List<TextureArrayTypes> textureArrayTypes, Renderer renderer = null)
+            {
+                Mrm = mrm;
+                TextureArrayTypes = textureArrayTypes;
+                if (renderer != null)
+                {
+                    Renderers.Add(renderer);
+                }
             }
         }
 
@@ -249,38 +268,108 @@ namespace GUZ.Core.Manager
 
         public void AssignTextureArraysForWorld(TextureArrayContainer data, GameObject worldRootGo)
         {
-            var renderer = worldRootGo.GetComponentsInChildren<Renderer>();
+            var renderers = worldRootGo.GetComponentsInChildren<Renderer>();
 
-            if (renderer.Length != data.WorldChunks.Count)
+            if (renderers.Length != data.WorldChunks.Count)
             {
                 Debug.LogError($"Number of texture arrays from cached world metadata ({data.WorldChunks.Count}) " +
-                               $"does not match number of mesh renderers in glTF cached file ({renderer.Length}). " +
+                               $"does not match number of mesh renderers in glTF cached file ({renderers.Length}). " +
                                "Please recreate your cache.");
             }
 
             for (var i = 0; i < data.WorldChunks.Count; i++)
             {
                 var chunk = data.WorldChunks[i];
-                var rend = renderer[i];
+                var textureType = chunk.TextureTypes.First();
+                var rend = renderers[i];
                 var mesh = rend.gameObject.GetComponent<MeshFilter>().sharedMesh;
 
-                Texture texture = TextureCache.TextureArrays[chunk.TextureArrayType];
-                Material material;
+                if (mesh.subMeshCount != 1)
+                {
+                    Debug.LogError("World meshes with multiple submeshes (aka multiple shaders to render in the end) aren't supported.");
+                    return;
+                }
 
-                // FIXME - We need to store this information in metadata and retrieve it now (MaterialGroup)
+                var texture = TextureCache.TextureArrays[textureType];
+
+                Material material;
                 if (chunk.MaterialGroup == MaterialGroup.Water)
                 {
                     material = GetWaterMaterial();
                 }
                 else
                 {
-                    material = GetDefaultMaterial(chunk.TextureArrayType == TextureArrayTypes.Transparent);
+                    material = GetDefaultMaterial(textureType == TextureArrayTypes.Transparent);
                 }
 
                 material.mainTexture = texture;
                 rend.material = material;
                 mesh.SetUVs(0, chunk.UVs);
                 mesh.SetColors(chunk.Colors);
+            }
+        }
+
+        public void AssignTextureArraysForVobs(TextureArrayContainer data, GameObject vobsRootGo)
+        {
+            // For faster lookup
+            Dictionary<string, TextureArrayContainer.MeshEntry> vobLookup;
+            try
+            {
+                 vobLookup = data.Vobs.ToDictionary(i => i.Name, i => i);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+
+            var renderers = vobsRootGo.GetComponentsInChildren<Renderer>();
+
+            foreach (var rend in renderers)
+            {
+                Transform rootGo = rend.transform;
+                TextureArrayContainer.MeshEntry vob = null;
+                string vobEntryName = $"{rootGo.name}-{rend.name}";
+                while (rootGo != null && !vobLookup.TryGetValue(vobEntryName, out vob))
+                {
+                    rootGo = rootGo.parent;
+
+                    // We build the entry name always like this: ROOT_GO-RENDERER_GO
+                    vobEntryName = $"{rootGo.name}-{rend.name}";
+                }
+
+                if (vob == null)
+                {
+                    Debug.LogError($"Couldn't find VOB root on {rend.gameObject.name}. Skipping...");
+                    continue;
+                }
+
+                var finalMaterials = new List<Material>(vob.TextureTypes.Count);
+                var mesh = rend.GetComponent<MeshFilter>().sharedMesh;
+                var subMeshCount = mesh.subMeshCount;
+
+                if (vob.TextureTypes.Count != subMeshCount)
+                {
+                    Debug.LogError($"Number of texture types ({vob.TextureTypes.Count}) does not match number of subMeshes " +
+                                   $"({subMeshCount}) in cached VOB {vob.Name}. This is mainly a bug or the world.zen is updated " +
+                                   "(via installing a mod) after cache was created.");
+                    return;
+                }
+
+                for (var i = 0; i < subMeshCount; i++)
+                {
+                    var textureType = vob.TextureTypes[i];
+                    var texture = TextureCache.TextureArrays[textureType];
+                    var material = GetDefaultMaterial(texture && ((Texture2DArray)texture).format == TextureFormat.RGBA32);
+
+                    material.mainTexture = texture;
+                    rend.material = material;
+                    finalMaterials.Add(material);
+                }
+
+                rend.SetMaterials(finalMaterials);
+                mesh.SetUVs(0, vob.UVs);
+                mesh.SetColors(vob.Colors);
             }
         }
 
