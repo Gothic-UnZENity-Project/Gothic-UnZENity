@@ -40,7 +40,7 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
 
             foreach (TextureCache.VobMeshData meshData in TextureCache.VobMeshesForTextureArray.Values)
             {
-                foreach (MeshRenderer renderer in meshData.Renderers)
+                foreach (Renderer renderer in meshData.Renderers)
                 {
                     PrepareVobMeshRenderer(renderer, meshData.Mrm, meshData.TextureArrayTypes);
                 }
@@ -79,9 +79,7 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
             }
 
             List<Material> finalMaterials = new List<Material>(mrmData.SubMeshes.Count);
-            int submeshCount = renderer is MeshRenderer
-                ? renderer.GetComponent<MeshFilter>().sharedMesh.subMeshCount
-                : mrmData.SubMeshCount;
+            int submeshCount = renderer.GetComponent<MeshFilter>().sharedMesh.subMeshCount;
 
             for (int i = 0; i < submeshCount; i++)
             {

@@ -23,6 +23,8 @@ MonoBehaviour:
   EnableMainMenu: 1
   LoadFromSaveSlot: 0
   SaveSlotToLoad: 0
+  PreselectWorldToSpawn: 0
+  SpawnAtWaypoint: 
   EnableVOBs: 1
   SpawnVOBTypes:
     Value: 
@@ -49,7 +51,6 @@ MonoBehaviour:
   ShowFreePoints: 0
   ShowWayPoints: 0
   ShowWayEdges: 0
-  SpawnAtWaypoint: 
   EnableGameMusic: 1
   EnableGameSounds: 1
   SunLightColor: {r: 0.69, g: 0.69, b: 0.69, a: 1}
