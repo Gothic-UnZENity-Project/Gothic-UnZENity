@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Text;
 using GUZ.Core.Caches;
 using GUZ.Core.Data;
 using JetBrains.Annotations;
@@ -35,7 +36,8 @@ namespace GUZ.Core.Creator.Sounds
                 return null;
             }
 
-            var audioClip = AudioClip.Create(fileName, soundData.Sound.Length / soundData.Channels, soundData.Channels, soundData.SampleRate, false);
+            var audioClip = AudioClip.Create(fileName, soundData.Sound.Length / soundData.Channels, soundData.Channels,
+                soundData.SampleRate, false);
             audioClip.SetData(soundData.Sound, 0);
 
             MultiTypeCache.AudioClips.Add(fileName, audioClip);
@@ -44,49 +46,63 @@ namespace GUZ.Core.Creator.Sounds
 
         public static SoundData ConvertWavByteArrayToFloatArray(byte[] fileBytes)
         {
-            //var riff = Encoding.ASCII.GetString(fileBytes, 0, 4);
-            //var wave = Encoding.ASCII.GetString(fileBytes, 8, 4);
-            var subchunk1 = BitConverter.ToInt32(fileBytes, 16);
-            var audioFormat = BitConverter.ToUInt16(fileBytes, 20);
+            string riffHeader = Encoding.ASCII.GetString(fileBytes, 0, 4);
 
-            var formatCode = FormatCode(audioFormat);
+            int fileSize = BitConverter.ToInt32(fileBytes, 4);
 
-            var channels = BitConverter.ToUInt16(fileBytes, 22);
-            var sampleRate = BitConverter.ToInt32(fileBytes, 24);
-            //var byteRate = BitConverter.ToInt32(fileBytes, 28);
-            //var blockAlign = BitConverter.ToUInt16(fileBytes, 32);
-            var bitDepth = BitConverter.ToUInt16(fileBytes, 34);
+            string waveHeader = Encoding.ASCII.GetString(fileBytes, 8, 4);
 
-            // Calculate header offset and data size
-            var headerOffset = 20 + subchunk1;
-            var dataSizeOffset = headerOffset + 4;
-            if (dataSizeOffset + 4 > fileBytes.Length)
+            string fmtHeader = Encoding.ASCII.GetString(fileBytes, 12, 4);
+
+            int fmtLength = BitConverter.ToInt32(fileBytes, 16);
+
+            ushort formatType = BitConverter.ToUInt16(fileBytes, 20);
+
+            string formatCode = FormatCode(formatType);
+
+            ushort numChannels = BitConverter.ToUInt16(fileBytes, 22);
+
+            int sampleRate = BitConverter.ToInt32(fileBytes, 24);
+
+            int byteRate = BitConverter.ToInt32(fileBytes, 28);
+
+            short blockAlign = BitConverter.ToInt16(fileBytes, 32);
+
+            short bitsPerSample = BitConverter.ToInt16(fileBytes, 34);
+            
+            string dataHeader = Encoding.ASCII.GetString(fileBytes, 36, 4);
+            
+            // Check for "PAD" header and skip it if present
+            int padSize = 0;
+            while (dataHeader == "PAD ")
             {
-                throw new ArgumentException("Invalid WAV file structure.");
+                padSize = padSize + BitConverter.ToInt32(fileBytes, 40);
+                
+                // we add 8 bits to padding as to skip the pad subchunk header + data
+                padSize = padSize + 8;
+                
+                // Skip the PAD section
+                dataHeader = Encoding.ASCII.GetString(fileBytes, 36 + padSize, 4);
             }
 
-            var subchunk2 = BitConverter.ToInt32(fileBytes, dataSizeOffset);
-
-            // Ensure that subchunk2 does not exceed fileBytes length
-            var dataAvailable = fileBytes.Length - (dataSizeOffset + 4);
-            if (subchunk2 > dataAvailable)
-            {
-                subchunk2 = dataAvailable;
-            }
+            int dataSize = BitConverter.ToInt32(fileBytes, 40 + padSize);
 
             if (formatCode == "IMA ADPCM")
             {
                 return ConvertWavByteArrayToFloatArray(ImaadpcmDecoder.Decode(fileBytes));
             }
+            
+            // sometimes a file has more data than is specified after the RIFF header
+            long stopPosition = Math.Min(dataSize, (fileBytes.Length - 44));
 
             // Copy WAV data section into a new array
-            var data = new byte[subchunk2];
-            Array.Copy(fileBytes, dataSizeOffset + 4, data, 0, subchunk2);
+            var audioData = new byte[stopPosition];
+            Array.Copy(fileBytes, 44+padSize, audioData, 0, stopPosition);
 
             return new SoundData
             {
-                Sound = ConvertByteArrayToFloatArray(data, 0, (BitDepth)bitDepth),
-                Channels = channels,
+                Sound = ConvertByteArrayToFloatArray(audioData, 0, (BitDepth)bitsPerSample),
+                Channels = numChannels,
                 SampleRate = sampleRate
             };
         }
