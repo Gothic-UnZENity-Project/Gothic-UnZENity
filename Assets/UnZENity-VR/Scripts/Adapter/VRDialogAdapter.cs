@@ -1,7 +1,7 @@
 ﻿#if GUZ_HVR_INSTALLED
 using System.Collections.Generic;
 using System.Linq;
-using GUZ.Core.Context;
+using GUZ.Core.Adapter;
 using GUZ.Core.Data;
 using GUZ.Core.Globals;
 using GUZ.VR.Components.UI;
@@ -20,7 +20,7 @@ namespace GUZ.VR.Adapter
             // The component is stored in General scene. We therefore load it when accessing for the first time.
             if (_dialogComponent == null)
             {
-                var scene = SceneManager.GetSceneByName(Constants.SceneGeneral);
+                var scene = SceneManager.GetSceneByName(Constants.ScenePlayer);
 
                 // Try a second time with main scene. Used for Lab.
                 if (!scene.IsValid())

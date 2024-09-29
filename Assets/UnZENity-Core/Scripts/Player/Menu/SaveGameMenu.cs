@@ -1,11 +1,11 @@
 using System.IO;
 using GUZ.Core.Caches;
 using GUZ.Core.Extensions;
+using GUZ.Core.Globals;
 using GUZ.Core.Manager;
 using GUZ.Core.Util;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Serialization;
 using ZenKit;
 
 namespace GUZ.Core.Player.Menu
@@ -14,11 +14,11 @@ namespace GUZ.Core.Player.Menu
     {
         public GameObject[] SaveSlots;
 
-        [FormerlySerializedAs("thumbnail")] public GameObject Thumbnail;
-        [FormerlySerializedAs("world")] public TMP_Text World;
-        [FormerlySerializedAs("savedAt")] public TMP_Text SavedAt;
-        [FormerlySerializedAs("gameTime")] public TMP_Text GameTime;
-        [FormerlySerializedAs("version")] public TMP_Text Version;
+        public GameObject Thumbnail;
+        public TMP_Text World;
+        public TMP_Text SavedAt;
+        public TMP_Text GameTime;
+        public TMP_Text Version;
 
         private readonly SaveGame[] _saves = new SaveGame[15];
 
@@ -30,8 +30,8 @@ namespace GUZ.Core.Player.Menu
             Thumbnail.GetComponent<MeshRenderer>().material =
                 GameGlobals.Textures.GetEmptyMaterial(MaterialExtension.BlendMode.Opaque);
 
-            var g1Dir = GameGlobals.Settings.GothicIPath;
-            var saveGameListPath = Path.GetFullPath(Path.Join(g1Dir, "Saves"));
+            var gothicDir = GameContext.GameVersionAdapter.RootPath;
+            var saveGameListPath = Path.GetFullPath(Path.Join(gothicDir, "Saves"));
 
             foreach (var fullPath in Directory.EnumerateDirectories(saveGameListPath))
             {
@@ -91,10 +91,7 @@ namespace GUZ.Core.Player.Menu
                 return;
             }
 
-#pragma warning disable CS4014 // It's intended, that this async call is not awaited.
-            SaveGameManager.LoadSavedGame(id, save);
-            GameGlobals.Scene.LoadWorld(save.Metadata.World);
-#pragma warning restore CS4014
+            GameManager.I.LoadWorld(save.Metadata.World, id, Constants.SceneMainMenu);
         }
     }
 }

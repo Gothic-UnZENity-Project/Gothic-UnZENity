@@ -1,8 +1,9 @@
-using GUZ.Core.Context;
+using GUZ.Core;
+using GUZ.Core.Adapter;
+using ZenKit;
 #if GUZ_HVR_INSTALLED
 using GUZ.VR.Adapter;
 #else
-using System;
 #endif
 
 namespace GUZ.VR
@@ -12,21 +13,26 @@ namespace GUZ.VR
     /// </summary>
     public class VRContextBootstrap : AbstractContextBootstrap
     {
-        protected override void RegisterModule(GuzContext.Controls controls)
+        protected override void RegisterControlModule(GameContext.Controls controls)
         {
-            if (controls != GuzContext.Controls.VR)
+            if (controls != GameContext.Controls.VR)
             {
                 return;
             }
 
 // We register VR only if we have HVR installed.
 #if GUZ_HVR_INSTALLED
-            GuzContext.InteractionAdapter = new VRInteractionAdapter();
-            GuzContext.DialogAdapter = new VRDialogAdapter();
+            GameContext.InteractionAdapter = new VRInteractionAdapter();
+            GameContext.DialogAdapter = new VRDialogAdapter();
 #else
             throw new ArgumentException(
                 "VR context is set, but compiler directive >GUZ_HVR_INSTALLED< isn't set. Did you set up Hurricane VR properly?");
 #endif
+        }
+
+        protected override void RegisterGameVersionModule(GameVersion version)
+        {
+            // NOP
         }
     }
 }

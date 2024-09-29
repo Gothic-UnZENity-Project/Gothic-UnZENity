@@ -32,7 +32,7 @@ namespace GUZ.Core.Creator
 
         static NpcCreator()
         {
-            GlobalEventDispatcher.GeneralSceneLoaded.AddListener(PostWorldLoaded);
+            GlobalEventDispatcher.WorldSceneLoaded.AddListener(PostWorldLoaded);
         }
 
         /// <summary>
@@ -355,7 +355,7 @@ namespace GUZ.Core.Creator
             npcGo.transform.SetPositionAndRotation(position, rotation);
         }
 
-        private static void PostWorldLoaded(GameObject playerGo)
+        private static void PostWorldLoaded()
         {
             // FIXME - We need to activate physics (kinetic=false) and routines now. (After world mesh is loaded and player sees game for the first frame)
 
@@ -443,24 +443,10 @@ namespace GUZ.Core.Creator
         {
             if (!MultiTypeCache.NpcCache.TryGetValue(instanceId, out var npcData))
             {
-                var instanceName = GameData.GothicVm.GetSymbolByIndex(instanceId).Name;
-                Debug.LogError(
-                    $"Couldn't find NPC {instanceId} inside cache. Please ensure {instanceName}'s NPC.id is added inside GameConfiguration.");
                 return null;
             }
 
-
             return npcData.instance;
-        }
-
-        public static int ExtHlpGetInstanceId(DaedalusInstance instance)
-        {
-            if (instance == null)
-            {
-                return -1;
-            }
-
-            return instance.Index;
         }
 
         public static void ExtNpcPerceptionEnable(NpcInstance npc, VmGothicEnums.PerceptionType perception,

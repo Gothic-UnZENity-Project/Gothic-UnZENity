@@ -1,4 +1,6 @@
-﻿using GUZ.Core.Context;
+﻿using GUZ.Core;
+using GUZ.Core.Adapter;
+using ZenKit;
 
 namespace GUZ.Flat
 {
@@ -7,15 +9,20 @@ namespace GUZ.Flat
     /// </summary>
     public class FlatContextBootstrap : AbstractContextBootstrap
     {
-        protected override void RegisterModule(GuzContext.Controls controls)
+        protected override void RegisterControlModule(GameContext.Controls controls)
         {
-            if (controls != GuzContext.Controls.Flat)
+            if (controls != GameContext.Controls.Flat)
             {
                 return;
             }
 
-            GuzContext.InteractionAdapter = new FlatInteractionAdapter();
-            GuzContext.DialogAdapter = null; // TBD
+            GameContext.InteractionAdapter = new FlatInteractionAdapter();
+            GameContext.DialogAdapter = null; // TBD
+        }
+
+        protected override void RegisterGameVersionModule(GameVersion version)
+        {
+            // NOP
         }
     }
 }

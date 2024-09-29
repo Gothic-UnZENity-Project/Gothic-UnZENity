@@ -46,7 +46,7 @@ public class TextureManager : MonoBehaviour
         LoadingSphereMaterial.color = new Color(.25f, .25f, .25f, 1f); // dark gray
     }
 
-    public void LoadLoadingDefaultTextures()
+    public void Init()
     {
         MainMenuImageBackgroundMaterial.mainTexture = TextureCache.TryGetTexture("STARTSCREEN.TGA");
         MainMenuBackgroundMaterial.mainTexture = TextureCache.TryGetTexture("MENU_INGAME.TGA");

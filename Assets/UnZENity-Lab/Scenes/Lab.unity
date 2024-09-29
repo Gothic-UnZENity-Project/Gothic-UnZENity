@@ -6042,6 +6042,8 @@ GameObject:
   - component: {fileID: 930871482}
   - component: {fileID: 930871484}
   - component: {fileID: 930871483}
+  - component: {fileID: 930871486}
+  - component: {fileID: 930871485}
   m_Layer: 0
   m_Name: ModuleBootstrap
   m_TagString: Untagged
@@ -6086,6 +6088,30 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 36c6650e16f74e819884826f6e18a047, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &930871485
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 930871481}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ddf9ec467e47479a990d498b2d9883e2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &930871486
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 930871481}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f276a8169a284e678c587268a94a97a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &946990589
@@ -14707,7 +14733,6 @@ MonoBehaviour:
   VobItemHandler: {fileID: 330949651}
   LabNpcAnimationHandler: {fileID: 501618520}
   LabLockHandler: {fileID: 640496639}
-  Validate: 0
 --- !u!114 &2101890271
 MonoBehaviour:
   m_ObjectHideFlags: 0

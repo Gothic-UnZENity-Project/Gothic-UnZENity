@@ -1,4 +1,5 @@
 ﻿{
-    "GothicIPath": "---(PCVR only) Please set it to the path where your game is installed---",
+    "Gothic1Path": "---Defaults to Steam installation path (PCVR) or files/Gothic1 (Mobile VR)---",
+    "Gothic2Path": "---Defaults to Steam installation path (PCVR) or files/Gothic2 (Mobile VR)---",
     "LogLevel": "---Set log level to one of these values: Debug/Warning/Error/Exception---"
 }

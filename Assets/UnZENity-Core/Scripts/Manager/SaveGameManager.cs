@@ -48,7 +48,8 @@ namespace GUZ.Core.Manager
         public static void LoadNewGame()
         {
             SaveGameId = 0;
-            Save = new SaveGame(GameVersion.Gothic1);
+            Save = new SaveGame(GameContext.GameVersionAdapter.Version);
+            IsFirstWorldLoadingFromSaveGame = true;
         }
 
         /// <summary>
@@ -161,8 +162,8 @@ namespace GUZ.Core.Manager
 
         private static string GetSaveGamePath(int folderSaveId)
         {
-            var g1Dir = GameGlobals.Settings.GothicIPath;
-            return Path.GetFullPath(Path.Join(g1Dir, $"Saves/savegame{folderSaveId}"));
+            var gothicDir = GameContext.GameVersionAdapter.RootPath;
+            return Path.GetFullPath(Path.Join(gothicDir, $"Saves/savegame{folderSaveId}"));
         }
     }
 }

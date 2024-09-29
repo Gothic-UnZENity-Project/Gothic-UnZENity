@@ -20,7 +20,12 @@ namespace GUZ.Core.UI
         private static AudioClip _uiClick;
         private static AudioClip _uiReturnClick;
 
-        private void Awake()
+        private void Start()
+        {
+            GlobalEventDispatcher.ZenKitBootstrapped.AddListener(OnZenKitInitialized);
+        }
+
+        private void OnZenKitInitialized()
         {
             // Set sound files for button clicks initially.
             if (_uiHover == null)
@@ -124,6 +129,11 @@ namespace GUZ.Core.UI
             }
 
             _audioSource.PlayOneShot(_uiReturnClick);
+        }
+
+        private void OnDestroy()
+        {
+            GlobalEventDispatcher.ZenKitBootstrapped.RemoveListener(OnZenKitInitialized);
         }
     }
 }

@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
-using GUZ.Core.Context;
 using GUZ.Core.Creator.Meshes.V2;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
@@ -57,12 +56,12 @@ namespace GUZ.Core.Creator
 
         static VobCreator()
         {
-            GlobalEventDispatcher.GeneralSceneLoaded.AddListener(PostWorldLoaded);
+            GlobalEventDispatcher.WorldSceneLoaded.AddListener(PostWorldLoaded);
         }
 
-        private static void PostWorldLoaded(GameObject playerGo)
+        private static void PostWorldLoaded()
         {
-            GuzContext.InteractionAdapter.SetTeleportationArea(_teleportGo);
+            GameContext.InteractionAdapter.SetTeleportationArea(_teleportGo);
         }
 
         public static async Task CreateAsync(GameConfiguration config, LoadingManager loading, List<IVirtualObject> vobs, int vobsPerFrame)
@@ -293,7 +292,8 @@ namespace GUZ.Core.Creator
                 {
                     if (vob.Name.EqualsIgnoreCase(Constants.DaedalusHeroInstanceName))
                     {
-                        GameGlobals.Scene.SetStart(vob.Position.ToUnityVector(), vob.Rotation.ToUnityQuaternion());
+                        GameGlobals.Player.HeroSpawnPosition = vob.Position.ToUnityVector();
+                        GameGlobals.Player.HeroSpawnRotation = vob.Rotation.ToUnityQuaternion();
                         break;
                     }
 
@@ -335,8 +335,9 @@ namespace GUZ.Core.Creator
                 }
                 default:
                 {
-                    throw new Exception(
+                    Debug.Log(
                         $"VobType={vob.Type} not yet handled. And we didn't know we need to do so. ;-)");
+                    break;
                 }
             }
 
@@ -357,7 +358,7 @@ namespace GUZ.Core.Creator
 
             if (!_vobTreeCache.TryGetValue(vob.VobTree.ToLower(), out var vobTree))
             {
-                vobTree = ResourceLoader.TryGetWorld(vob.VobTree, GameVersion.Gothic1);
+                vobTree = ResourceLoader.TryGetWorld(vob.VobTree, config.GameVersion);
                 _vobTreeCache.Add(vob.VobTree.ToLower(), vobTree);
             }
 
@@ -839,7 +840,15 @@ namespace GUZ.Core.Creator
             UnityEngine.Vector3 position = default)
         {
             var mrm = ResourceLoader.TryGetMultiResolutionMesh(item.Visual);
-            return MeshFactory.CreateVob(item.Visual, mrm, position, default, false, parentGo, useTextureArray: false);
+            if( mrm != null )
+                return MeshFactory.CreateVob(item.Visual, mrm, position, default, false, parentGo, useTextureArray: false);
+            
+            // shortbow (itrw_bow_l_01) has no mrm, but has mmb
+            var mmb = ResourceLoader.TryGetMorphMesh(item.Visual);
+
+            return MeshFactory.CreateVob(item.Visual, mmb, position,
+                default, parentGo, null);
+            
         }
 
         private static GameObject CreateDecal(IVirtualObject vob, GameObject parent = null)

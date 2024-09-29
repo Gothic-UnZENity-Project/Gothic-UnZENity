@@ -1,6 +1,6 @@
 using System;
 using GUZ.Core;
-using GUZ.Core.Context;
+using GUZ.Core.Adapter;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -8,6 +8,9 @@ namespace GUZ.Flat
 {
     public class FlatInteractionAdapter : IInteractionAdapter
     {
+        private GameObject _playerController;
+
+
         private const string _contextName = "Flat";
 
         public string GetContextName()
@@ -25,12 +28,34 @@ namespace GUZ.Flat
             // world scene and removed whenever we change the world.
             SceneManager.MoveGameObjectToScene(go, scene);
 
-            return go.GetComponentInChildren<Rigidbody>().gameObject;
+            _playerController = go.GetComponentInChildren<Rigidbody>().gameObject;
+
+            return _playerController;
         }
 
         public void CreateVRDeviceSimulator()
         {
-            throw new NotImplementedException("This method should never been called on Flat adapter.");
+            // NOP
+        }
+
+        public void LockPlayerInPlace()
+        {
+            // Not yet implemented
+        }
+
+        public void UnlockPlayer()
+        {
+            // Not yet implemented
+        }
+
+        public void  TeleportPlayerTo(Vector3 position, Quaternion rotation = default)
+        {
+            _playerController.transform.SetLocalPositionAndRotation(position, rotation);
+        }
+
+        public void InitUIInteraction()
+        {
+            // NOP
         }
 
         public void SetTeleportationArea(GameObject teleportationGo)

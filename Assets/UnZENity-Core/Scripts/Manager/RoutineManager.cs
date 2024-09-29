@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using GUZ.Core.Npc.Routines;
-using UnityEngine;
 
 namespace GUZ.Core.Manager
 {
@@ -24,11 +23,11 @@ namespace GUZ.Core.Manager
         public void Init()
         {
             //Init starting position
-            GlobalEventDispatcher.GeneralSceneLoaded.AddListener(WorldLoadedEvent);
+            GlobalEventDispatcher.WorldSceneLoaded.AddListener(WorldLoadedEvent);
             GlobalEventDispatcher.GameTimeMinuteChangeCallback.AddListener(Invoke);
         }
 
-        private void WorldLoadedEvent(GameObject playerGo)
+        private void WorldLoadedEvent()
         {
             var time = new DateTime(1, 1, 1, _featureStartHour, _featureStartMinute, 0);
 

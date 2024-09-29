@@ -9,17 +9,20 @@ EditorBuildSettings:
     path: Assets/UnZENity-Core/Scenes/Bootstrap.unity
     guid: 9fc0d4010bbf28b4594072e72b8655ab
   - enabled: 1
+    path: Assets/UnZENity-Core/Scenes/Player.unity
+    guid: 7fb2dedbd5edb7d4a92ee584eec7cc33
+  - enabled: 1
+    path: Assets/UnZENity-Core/Scenes/GameVersion.unity
+    guid: 1535f2639ebe98e4fb89e286ff0e5da1
+  - enabled: 1
     path: Assets/UnZENity-Core/Scenes/Logo.unity
     guid: 1115c2e9a64d55d4590acb2de3e58a61
   - enabled: 1
-    path: Assets/UnZENity-Core/Scenes/General.unity
-    guid: 7fb2dedbd5edb7d4a92ee584eec7cc33
+    path: Assets/UnZENity-Core/Scenes/MainMenu.unity
+    guid: 6e747099bda99cc43bf32dda1d9360e1
   - enabled: 1
     path: Assets/UnZENity-Core/Scenes/Loading.unity
     guid: 4aeb2cb64559fae4aaff124c2e25ca03
-  - enabled: 1
-    path: Assets/UnZENity-Core/Scenes/MainMenu.unity
-    guid: 6e747099bda99cc43bf32dda1d9360e1
   - enabled: 1
     path: Packages/com.unzenity.core.binaries/Scenes/Worlds/Gothic1/world.zen.unity
     guid: 0fe2ff4c941e7e7498ba4cf8c563338d
@@ -47,7 +50,6 @@ EditorBuildSettings:
   - enabled: 1
     path: Packages/com.unzenity.core.binaries/Scenes/Worlds/Gothic2-NotR/oldworld.zen.unity
     guid: 6a11964fa8f1b314c9f2ee6c546edf3f
-
   m_configObjects:
-    com.unity.xr.management.loader_settings: {fileID: 11400000, guid: ea302bef6e5dfab4abc884c353c0926d, type: 2}
-    com.unity.xr.openxr.settings4: {fileID: 11400000, guid: af3964d8a6279b54a9254cbe6379b9d1, type: 2}
+    com.unity.xr.management.loader_settings: {fileID: 11400000, guid: 62335432a157ca04fa416f6c859c1ce4, type: 2}
+    com.unity.xr.openxr.settings4: {fileID: 11400000, guid: bf3e862595e1e234bb413ecbf9a1156d, type: 2}

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using GUZ.Core.Caches;
-using GUZ.Core.Context;
 using GUZ.Core.Data;
 using GUZ.Core.Globals;
 using GUZ.Core.Npc;
@@ -17,8 +16,24 @@ namespace GUZ.Core.Manager
     public static class DialogManager
     {
         /// <summary>
+        /// Check if NPC has at least one dialog which isn't told and Hero should know about.
+        /// important
+        ///     - TRUE - check if there's one important dialog untold.
+        ///     - FALSE - check if there's one unimportant dialog untold. (unused in G1)
+        /// </summary>
+        public static bool ExtCheckInfo(NpcInstance npc, bool important)
+        {
+            if (!important)
+            {
+                // Don't worry. I assume this even makes no sense at all, as also the "END" dialog would always trigger a return true.
+                Debug.LogError("Npc_CheckInfo isn't implemented for important=0.");
+            }
+            return TryGetImportant(MultiTypeCache.NpcCache[npc.Index].properties.Dialogs, out _);
+        }
+
+        /// <summary>
         /// initialDialogStarting - We only stop current AI routine if this is the first time the dialog box opens/NPC
-        ///     talks important things. Otherwise the ZS_*_End will get called every time we re-open a dialog in between.
+        ///     talks important things. Otherwise, the ZS_*_End will get called every time we re-open a dialog in between.
         /// </summary>
         public static void StartDialog(GameObject npcGo, NpcProperties properties, bool initialDialogStarting)
         {
@@ -27,8 +42,8 @@ namespace GUZ.Core.Manager
             // We are already inside a sub-dialog
             if (GameData.Dialogs.CurrentDialog.Options.Any())
             {
-                GuzContext.DialogAdapter.FillDialog(properties.NpcInstance.Index, GameData.Dialogs.CurrentDialog.Options);
-                GuzContext.DialogAdapter.ShowDialog(npcGo);
+                GameContext.DialogAdapter.FillDialog(properties.NpcInstance.Index, GameData.Dialogs.CurrentDialog.Options);
+                GameContext.DialogAdapter.ShowDialog(npcGo);
             }
             // There is at least one important entry, the NPC wants to talk to the hero about.
             else if (initialDialogStarting && TryGetImportant(properties.Dialogs, out var infoInstance))
@@ -65,8 +80,8 @@ namespace GUZ.Core.Manager
                 }
 
                 selectableDialogs = selectableDialogs.OrderBy(d => d.Nr).ToList();
-                GuzContext.DialogAdapter.FillDialog(properties.NpcInstance.Index, selectableDialogs);
-                GuzContext.DialogAdapter.ShowDialog(npcGo);
+                GameContext.DialogAdapter.FillDialog(properties.NpcInstance.Index, selectableDialogs);
+                GameContext.DialogAdapter.ShowDialog(npcGo);
             }
         }
 
@@ -204,7 +219,7 @@ namespace GUZ.Core.Manager
             GameData.Dialogs.CurrentDialog.Options.Clear();
             GameData.Dialogs.IsInDialog = false;
 
-            GuzContext.DialogAdapter.HideDialog();
+            GameContext.DialogAdapter.HideDialog();
         }
 
         private static void CallInformation(int npcInstanceIndex, int information, bool isMainDialog)
@@ -218,7 +233,7 @@ namespace GUZ.Core.Manager
                     .First(d => d.Information == information);
             }
 
-            GuzContext.DialogAdapter.HideDialog();
+            GameContext.DialogAdapter.HideDialog();
 
             // We always need to set "self" before executing any Daedalus function.
             GameData.GothicVm.GlobalSelf = npcData.instance;

@@ -16,6 +16,8 @@ namespace GUZ.Core.Manager
 {
     public class SkyManager
     {
+        private bool _alreadyInitialized;
+
         private Vector3 _sunDirection;
         private readonly Color _sunColor;
         private readonly Color _ambientColor;
@@ -79,9 +81,9 @@ namespace GUZ.Core.Manager
 
         public void Init()
         {
+            GlobalEventDispatcher.WorldSceneLoaded.AddListener(WorldLoaded);
             GlobalEventDispatcher.GameTimeSecondChangeCallback.AddListener(Interpolate);
             GlobalEventDispatcher.GameTimeHourChangeCallback.AddListener(UpdateRainTime);
-            GlobalEventDispatcher.GeneralSceneLoaded.AddListener(GeneralSceneLoaded);
         }
 
         public void InitSky()
@@ -123,39 +125,35 @@ namespace GUZ.Core.Manager
 
         private void UpdateStateTexAndFog()
         {
-            if (_gameSettings.GothicIniSettings.ContainsKey("SKY_OUTDOOR"))
+            var currentDay = _gameTime.GetDay();
+            var day = currentDay + 1;
+
+            float[] colorValues;
+
+            try
             {
-                var currentDay = _gameTime.GetDay();
-                var day = currentDay + 1;
+                // hacky way to use the proper color for the current day until animTex is implemented
+                // % 2 is used as there are only 2 textures for the sky, consistent between G1 and G2
+                colorValues = _gameSettings.IniSkyDayColor(day % 2).Split(' ').Select(float.Parse).ToArray();
+            }
+            catch (Exception e)
+            {
+                Debug.LogError(e);
+                return;
+            }
 
-                float[] colorValues;
-
-                try
+            foreach (var state in _stateList)
+            {
+                // all states that contain day sky layer dawn, evening and day 0 to 3
+                if (state.Time < 0.35 || state.Time > 0.65)
                 {
-                    // hacky way to use the proper color for the current day until animTex is implemented
-                    // % 2 is used as there are only 2 textures for the sky, consistent between G1 and G2 
-                    colorValues = _gameSettings.GothicIniSettings["SKY_OUTDOOR"]["zDayColor" + day % 2]
-                        .Split(' ').Select(float.Parse).ToArray();
-                }
-                catch (Exception e)
-                {
-                    Debug.LogError(e);
-                    return;
-                }
-
-                foreach (var state in _stateList)
-                {
-                    // all states that contain day sky layer dawn, evening and day 0 to 3
-                    if (state.Time < 0.35 || state.Time > 0.65)
+                    state.Layer[0].TEXName = "SKYDAY_LAYER0_A" + day % 2 + ".TGA";
+                    // day states that contain sky cloud layer day 0 to 3
+                    if (state.Time < 0.3 || state.Time > 0.7)
                     {
-                        state.Layer[0].TEXName = "SKYDAY_LAYER0_A" + day % 2 + ".TGA";
-                        // day states that contain sky cloud layer day 0 to 3
-                        if (state.Time < 0.3 || state.Time > 0.7)
-                        {
-                            state.Layer[1].TEXName = "SKYDAY_LAYER1_A" + day % 2 + ".TGA";
-                            state.FogColor = new Vector3(colorValues[0], colorValues[1], colorValues[2]);
-                            state.DomeColor0 = new Vector3(colorValues[0], colorValues[1], colorValues[2]);
-                        }
+                        state.Layer[1].TEXName = "SKYDAY_LAYER1_A" + day % 2 + ".TGA";
+                        state.FogColor = new Vector3(colorValues[0], colorValues[1], colorValues[2]);
+                        state.DomeColor0 = new Vector3(colorValues[0], colorValues[1], colorValues[2]);
                     }
                 }
             }
@@ -285,11 +283,18 @@ namespace GUZ.Core.Manager
             Shader.SetGlobalFloat(_pointLightIntensityShaderId, _pointLightIntensity);
         }
 
-        private void GeneralSceneLoaded(GameObject playerGo)
+        private void WorldLoaded()
         {
+            if (_alreadyInitialized)
+            {
+                return;
+            }
+
             RenderSettings.skybox = Object.Instantiate(GameGlobals.Textures.SkyMaterial);
 
             InitRainGo();
+
+            _alreadyInitialized = true;
         }
 
         private void InitRainGo()

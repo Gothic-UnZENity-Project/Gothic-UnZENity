@@ -1,14 +1,13 @@
 using GUZ.Core.Globals;
-using GUZ.Core.Manager;
 using GUZ.Core.UI;
-using GUZ.Core.Util;
 using MyBox;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace GUZ.Core.Player.Menu
 {
-    public class MenuManager : SingletonBehaviour<MenuManager>
+    public class MenuManager : MonoBehaviour
     {
         public GameObject MainMenu;
         public GameObject LoadMenu;
@@ -46,8 +45,7 @@ namespace GUZ.Core.Player.Menu
         public void PlayFunction()
         {
 #pragma warning disable CS4014 // It's intended, that this async call is not awaited.
-            SaveGameManager.LoadNewGame();
-            GameGlobals.Scene.LoadWorld(Constants.SelectedWorld, Constants.SelectedWaypoint);
+            GameManager.I.LoadWorld(Constants.SelectedWorld, -1, SceneManager.GetActiveScene().name);
 #pragma warning restore CS4014
         }
 

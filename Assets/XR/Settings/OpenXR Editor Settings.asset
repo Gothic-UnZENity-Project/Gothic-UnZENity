@@ -15,3 +15,4 @@ MonoBehaviour:
   Keys: 07000000
   Values:
   - featureSets: []
+  m_vulkanAdditionalGraphicsQueue: 0

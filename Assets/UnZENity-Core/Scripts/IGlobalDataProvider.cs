@@ -9,12 +9,13 @@ namespace GUZ.Core
     {
         public GameConfiguration Config { get; }
         public GameSettings Settings { get; }
+        public LoadingManager Loading { get; }
+        public PlayerManager Player { get; }
         public SkyManager Sky { get; }
         public GameTime Time { get; }
         public VideoManager Video { get; }
         public RoutineManager Routines { get; }
         public TextureManager Textures { get; }
-        public GuzSceneManager Scene { get; }
         public FontManager Font { get; }
         public StationaryLightsManager Lights { get; }
         public StoryManager Story { get; }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 using UnityEngine.Networking;
+using ZenKit;
 
 namespace GUZ.Core.Manager.Settings
 {
@@ -11,16 +12,22 @@ namespace GUZ.Core.Manager.Settings
     {
         private const string _settingsFileName = "GameSettings.json";
         private const string _settingsFileNameDev = "GameSettings.dev.json";
-        private const string _defaultSteamGothicFolder = @"C:\Program Files (x86)\Steam\steamapps\common\Gothic\";
+        private const string _defaultSteamGothic1Folder = @"C:\Program Files (x86)\Steam\steamapps\common\Gothic\";
+        private const string _defaultSteamGothic2Folder = @"C:\Program Files (x86)\Steam\steamapps\common\Gothic II\";
 
 
-        public string GothicIPath;
+
+        public string Gothic1Path;
+        public string Gothic2Path;
         public string LogLevel;
 
-        public Dictionary<string, Dictionary<string, string>> GothicIniSettings = new();
+        public Dictionary<string, string> GothicIniSettings = new();
 
+        public string IniSkyDayColor(int index) => GothicIniSettings.TryGetValue($"zDayColor{index}", out var value) ? value : "0 0 0";
+        public bool IniPlayLogoVideos => GothicIniSettings.TryGetValue("playLogoVideos", out var value) ? Convert.ToBoolean(Convert.ToInt16(value)) : true;
+        public string IniPlayerInstanceName => GothicIniSettings.GetValueOrDefault("playerInstanceName", "PC_HERO");
 
-        public static GameSettings Load()
+        public static GameSettings Load(GameVersion version)
         {
             PrepareAndroidFolders();
             
@@ -44,9 +51,11 @@ namespace GUZ.Core.Manager.Settings
             }
 
             // We need to do a final check for Gothic installation path and which one to ultimately use.
-            loadedSettings.GothicIPath = AlterGothicInstallationPath(loadedSettings.GothicIPath);
+            loadedSettings.Gothic1Path = AlterGothicInstallationPath(loadedSettings.Gothic1Path, GameVersion.Gothic1);
+            loadedSettings.Gothic2Path = AlterGothicInstallationPath(loadedSettings.Gothic2Path, GameVersion.Gothic2);
 
-            LoadIniFile(loadedSettings);
+
+            LoadIniFile(loadedSettings, version);
             
             return loadedSettings;
         }
@@ -75,6 +84,7 @@ namespace GUZ.Core.Manager.Settings
             
             // Create folder(s)
             Directory.CreateDirectory($"{Application.persistentDataPath}/Gothic1");
+            Directory.CreateDirectory($"{Application.persistentDataPath}/Gothic2");
             
             // Copy GameSettings.json into app's shared folder
             var gameSettingsPath = Path.Combine($"{Application.streamingAssetsPath}/{_settingsFileName}");
@@ -122,7 +132,7 @@ namespace GUZ.Core.Manager.Settings
         /// Standalone: C:\Program Files (x86)\Steam\steamapps\common\Gothic\
         /// Android: /storage/emulated/0/Android/data/com.GothicUnZENity/files/Gothic1/
         /// </summary>
-        private static string AlterGothicInstallationPath(string gothicInstallationPath)
+        private static string AlterGothicInstallationPath(string gothicInstallationPath, GameVersion version)
         {
             // GameSettings (or its dev) entry already provides a valid installation directory.
             if (Directory.Exists(gothicInstallationPath))
@@ -133,39 +143,51 @@ namespace GUZ.Core.Manager.Settings
             // Try platform specific fallbacks.
             if (Application.platform == RuntimePlatform.Android)
             {
-                return $"{Application.persistentDataPath}/Gothic1";
+                if (version == GameVersion.Gothic1)
+                {
+                    return $"{Application.persistentDataPath}/Gothic1";
+                }
+                else
+                {
+                    return $"{Application.persistentDataPath}/Gothic2";
+                }
             }
             // Standalone
             else
             {
-                return _defaultSteamGothicFolder;
+                if (version == GameVersion.Gothic1)
+                {
+                    return _defaultSteamGothic1Folder;
+                }
+                else
+                {
+                    return _defaultSteamGothic2Folder;
+                }
             }
         }
 
-        public bool CheckIfGothic1InstallationExists()
+        public bool CheckIfGothicInstallationExists(GameVersion version)
         {
-            var g1DataPath = Path.GetFullPath(Path.Join(GothicIPath, "Data"));
-            var g1WorkPath = Path.GetFullPath(Path.Join(GothicIPath, "_work"));
+            var gothicRootPath = version == GameVersion.Gothic1 ? Gothic1Path : Gothic2Path;
 
-            return Directory.Exists(g1WorkPath) && Directory.Exists(g1DataPath);
+            var gothicDataPath = $"{gothicRootPath}/Data";
+            var gothicWorkPath = $"{gothicRootPath}/_work";
+
+            return Directory.Exists(gothicWorkPath) && Directory.Exists(gothicDataPath);
         }
 
-        private static void LoadIniFile(GameSettings loadedSettings)
+        private static void LoadIniFile(GameSettings loadedSettings, GameVersion version)
         {
-            // We load Ini file only, if we already stored Gothic installation data.
-            if (!loadedSettings.CheckIfGothic1InstallationExists())
-            {
-                return;
-            }
-
-            var iniFilePath = $"{loadedSettings.GothicIPath}/system/Gothic.ini";
+            var gothicRoot = version == GameVersion.Gothic1 ? loadedSettings.Gothic1Path : loadedSettings.Gothic2Path;
+            
+            var iniFilePath = $"{gothicRoot}/system/Gothic.ini";
             if (!File.Exists(iniFilePath))
             {
                 Debug.LogError("The gothic.ini file does not exist at the specified path :" + iniFilePath);
+                return;
             }
 
-            var data = new Dictionary<string, Dictionary<string, string>>();
-            string currentSection = null;
+            var data = new Dictionary<string, string>();
 
             foreach (var line in File.ReadLines(iniFilePath))
             {
@@ -175,17 +197,17 @@ namespace GUZ.Core.Manager.Settings
                     continue;
                 }
 
+                // We don't need to store [section] information. Every property name is unique.
                 if (trimmedLine.StartsWith("[") && trimmedLine.EndsWith("]"))
                 {
-                    currentSection = trimmedLine.Substring(1, trimmedLine.Length - 2);
-                    data[currentSection] = new Dictionary<string, string>();
+                    continue;
                 }
                 else
                 {
                     var keyValue = trimmedLine.Split(new[] { '=' }, 2);
-                    if (keyValue.Length == 2 && currentSection != null)
+                    if (keyValue.Length == 2)
                     {
-                        data[currentSection][keyValue[0].Trim()] = keyValue[1].Trim();
+                        data[keyValue[0].Trim()] = keyValue[1].Trim();
                     }
                 }
             }

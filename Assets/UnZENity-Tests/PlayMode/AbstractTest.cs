@@ -12,7 +12,7 @@ namespace GUZ.Tests.PlayMode
     public abstract class AbstractTest
     {
         protected Scene MainScene => SceneManager.GetActiveScene();
-        protected Scene GeneralScene => SceneManager.GetSceneByName(Constants.SceneGeneral);
+        protected Scene GeneralScene => SceneManager.GetSceneByName(Constants.ScenePlayer);
         
         private readonly InputTestFixture _inputSimulator = new ();
         protected Keyboard Keyboard { get; private set; }

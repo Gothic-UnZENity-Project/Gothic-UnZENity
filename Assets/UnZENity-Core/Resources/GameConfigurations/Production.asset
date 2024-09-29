@@ -12,6 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 355b4ad0092f448a80ea647207f12648, type: 3}
   m_Name: Production
   m_EditorClassIdentifier: 
+  PreselectGameVersion: 1
+  GameVersion: 0
   GameControls: 0
   EnableVRDeviceSimulator: 0
   ZenKitLogLevel: 1
@@ -21,6 +23,8 @@ MonoBehaviour:
   EnableMainMenu: 1
   LoadFromSaveSlot: 0
   SaveSlotToLoad: 0
+  PreselectWorldToSpawn: 0
+  SpawnAtWaypoint: 
   EnableVOBs: 1
   SpawnVOBTypes:
     Value: 
@@ -47,7 +51,6 @@ MonoBehaviour:
   ShowFreePoints: 0
   ShowWayPoints: 0
   ShowWayEdges: 0
-  SpawnAtWaypoint: 
   EnableGameMusic: 1
   EnableGameSounds: 1
   SunLightColor: {r: 0.69, g: 0.69, b: 0.69, a: 1}

@@ -21,8 +21,8 @@ namespace GUZ.Core.Manager.Culling
 
         public virtual void Init()
         {
-            GlobalEventDispatcher.GeneralSceneUnloaded.AddListener(PreWorldCreate);
-            GlobalEventDispatcher.GeneralSceneLoaded.AddListener(PostWorldCreate);
+            GlobalEventDispatcher.LoadingSceneLoaded.AddListener(PreWorldCreate);
+            GlobalEventDispatcher.WorldSceneLoaded.AddListener(PostWorldCreate);
 
             // Unity demands CullingGroups to be created in Awake() or Start() earliest.
             CullingGroup = new CullingGroup();
@@ -39,7 +39,7 @@ namespace GUZ.Core.Manager.Culling
         /// Set main camera once world is loaded fully.
         /// Doesn't work at loading time as we change scenes etc.
         /// </summary>
-        protected virtual void PostWorldCreate(GameObject playerGo)
+        protected virtual void PostWorldCreate()
         {
             // Set main camera as reference point
             var mainCamera = Camera.main!;

@@ -7,8 +7,7 @@ namespace GUZ.Core.Globals
     {
         public static class GothicIni
         {
-            private const string _gameSection = "GAME";
-            public static bool PlayLogoVideos => GameGlobals.Settings.GothicIniSettings[_gameSection].TryGetValue("playLogoVideos", out var value) ? Convert.ToBoolean(Convert.ToInt16(value)) : true;
+            public static bool PlayLogoVideos => GameGlobals.Settings.GothicIniSettings.TryGetValue("playLogoVideos", out var value) ? Convert.ToBoolean(Convert.ToInt16(value)) : true;
         }
 
         public static class Daedalus
@@ -19,7 +18,6 @@ namespace GUZ.Core.Globals
             public static string PickLockSuccessSoundName => GameData.GothicVm.GetSymbolByName("_STR_SOUND_PICKLOCK_SUCCESS").GetString(0);
             public static string PickLockUnlockSoundName => GameData.GothicVm.GetSymbolByName("_STR_SOUND_PICKLOCK_UNLOCK").GetString(0);
             public static string DoorUnlockSoundName => "DOOR_UNLOCK.WAV"; // _STR_*_UNLOCK value above couldn't be found/isn't used in G1, therefore we use this as fallback.
-            
         }
         
         public static readonly Material LoadingMaterial; // Used for Vobs and World before applying TextureArray.
@@ -63,7 +61,8 @@ namespace GUZ.Core.Globals
         public static readonly float ShaderPropertyTransparencyValue = 0.60f;
 
         public const string SceneBootstrap = "Bootstrap";
-        public const string SceneGeneral = "General";
+        public const string ScenePlayer = "Player";
+        public const string SceneGameVersion = "GameVersion";
         public const string SceneLogo = "Logo";
         public const string SceneMainMenu = "MainMenu";
         public const string SceneLoading = "Loading";
@@ -98,6 +97,7 @@ namespace GUZ.Core.Globals
         public const string ClimbableTag = "Climbable";
         public const string SpotTag = "PxVob_zCVobSpot";
         public const string PlayerTag = "Player";
+        public const string MainCameraTag = "MainCamera";
 
         
         public static int MeshPerFrame { get; } = 10;
@@ -127,10 +127,13 @@ namespace GUZ.Core.Globals
         public const string DaedalusHeroInstanceName = "PC_HERO"; // TODO - can be read from .ini file.
 
 
-        public static int DaedalusAIVItemStatusKey;
-        public static int DaedalusAIVItemFreqKey;
-        public static int DaedalusTAITNone;
-
+        public static class DaedalusConst
+        {
+            public static int AIVItemStatusKey => GameData.GothicVm.GetSymbolByName("AIV_ITEMSTATUS").GetInt(0);
+            public static int AIVItemFreqKey => GameData.GothicVm.GetSymbolByName("AIV_ITEMFREQ").GetInt(0);
+            public static int TAITNone => GameData.GothicVm.GetSymbolByName("TA_IT_NONE").GetInt(0);
+        }
+        
         
         public static string YesLabel = "Yes";
         public static string NoLabel = "No";
@@ -215,14 +218,6 @@ namespace GUZ.Core.Globals
         static Constants()
         {
             LoadingMaterial = new Material(ShaderWorldLit);
-            GlobalEventDispatcher.ZenKitBootstrapped.AddListener(Init);
-        }
-
-        private static void Init()
-        {
-            DaedalusAIVItemStatusKey = GameData.GothicVm.GetSymbolByName("AIV_ITEMSTATUS").GetInt(0);
-            DaedalusAIVItemFreqKey = GameData.GothicVm.GetSymbolByName("AIV_ITEMFREQ").GetInt(0);
-            DaedalusTAITNone = GameData.GothicVm.GetSymbolByName("TA_IT_NONE").GetInt(0);
         }
     }
 }

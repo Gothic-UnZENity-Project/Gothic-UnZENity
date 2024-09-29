@@ -4,7 +4,6 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using GUZ.Core.Caches;
-using GUZ.Core.Context;
 using GUZ.Core.Globals;
 using GUZ.Core.Vm;
 using ZenKit;
@@ -25,18 +24,16 @@ namespace GUZ.Core.Manager
             MorphMeshCache.Dispose();
         }
 
-        public static void BootGothicUnZeNity(GameConfiguration config, string g1Dir)
+        public static void BootGothicUnZeNity(GameConfiguration config, string gothicDir)
         {
             var watch = Stopwatch.StartNew();
-
-            GuzContext.SetContext(config.GameControls);
-
-            LoadGothicVm(g1Dir);
+            
+            LoadGothicVm(gothicDir);
             SetLanguage();
             LoadDialogs();
             LoadVideos();
-            LoadSfxVm(g1Dir);
-            LoadPfxVm(g1Dir);
+            LoadSfxVm(gothicDir);
+            LoadPfxVm(gothicDir);
             LoadFonts();
             LoadGuildData();
 
@@ -69,8 +66,8 @@ namespace GUZ.Core.Manager
 
                 GameData.Encoding = Encoding.GetEncoding((int)StringEncoding.EastEurope);
             }
-            // de, en, es, fr, it
-            else if (CheckEncoding(StringEncoding.WestEurope, "MOBNAME_CRATE", "Kiste", "Box", "Caja", "Boite", "Cassa"))
+            // de, en (2x), es, fr, it
+            else if (CheckEncoding(StringEncoding.WestEurope, "MOBNAME_CRATE", "Kiste", "Crate", "Box", "Caja", "Boite", "Cassa"))
             {
                 Debug.Log($"Selecting StringEncoding={StringEncoding.WestEurope}");
                 StringEncodingController.SetEncoding(StringEncoding.WestEurope);
@@ -102,9 +99,9 @@ namespace GUZ.Core.Manager
         {
             GameData.GothicVm = ResourceLoader.TryGetDaedalusVm("GOTHIC");
 
-            NpcHelper.LoadHero();
-
             VmGothicExternals.RegisterExternals();
+
+            NpcHelper.Init();
         }
 
         /// <summary>

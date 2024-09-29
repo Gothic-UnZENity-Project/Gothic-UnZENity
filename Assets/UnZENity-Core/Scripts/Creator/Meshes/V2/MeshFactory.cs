@@ -43,8 +43,9 @@ namespace GUZ.Core.Creator.Meshes.V2
             npcHeadBuilder.SetMeshName(bodyData.Head);
             npcHeadBuilder.SetMmb(bodyData.Head);
 
-            // returns body+head
-            return npcHeadBuilder.Build();
+            npcHeadBuilder.Build();
+
+            return npcGo;
         }
 
         public static GameObject CreateNpcWeapon(GameObject npcGo, ItemInstance itemData,
