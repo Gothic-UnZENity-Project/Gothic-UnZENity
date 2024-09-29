@@ -22,6 +22,7 @@ namespace GUZ.Lab
         public GameConfiguration Config { get; private set; }
 
         public LabMusicHandler LabMusicHandler;
+        public LabSoundHandler LabSoundHandler;
         public LabVideoHandler LabVideoHandler;
         public LabNpcDialogHandler NpcDialogHandler;
         public LabInteractableHandler InteractableHandler;
@@ -97,6 +98,7 @@ namespace GUZ.Lab
 
             LabNpcAnimationHandler.Bootstrap();
             LabMusicHandler.Bootstrap();
+            LabSoundHandler.Bootstrap();
             LabVideoHandler.Bootstrap();
             NpcDialogHandler.Bootstrap();
             InteractableHandler.Bootstrap();
