@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using GUZ.Core.Creator;
@@ -59,6 +60,17 @@ namespace GUZ.Core.Manager.Scenes
             // World fully loaded
             ResourceLoader.ReleaseLoadedData();
             TeleportPlayerToStart();
+
+            // There are many handlers which listen to this event. If any of these fails, we won't get notified without a try-catch.
+            try
+            {
+                GlobalEventDispatcher.WorldSceneLoaded.Invoke();
+            }
+            catch (Exception e)
+            {
+                Debug.LogError(e);
+            }
+
             SceneManager.UnloadSceneAsync(Constants.SceneLoading);
         }
         
@@ -115,8 +127,6 @@ namespace GUZ.Core.Manager.Scenes
             
             GameContext.InteractionAdapter.TeleportPlayerTo(startPoint.transform.position, startPoint.transform.rotation);
             GameContext.InteractionAdapter.UnlockPlayer();
-
-            GlobalEventDispatcher.WorldSceneLoaded.Invoke();
         }
     }
 }

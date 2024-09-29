@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using GUZ.Core.World;
 using MyBox;
 using UnityEngine;
@@ -17,10 +18,43 @@ namespace GUZ.Core
         public float CullingDistance;
     }
 
+    public enum WorldToSpawn
+    {
+        None,
+        // G1
+        G1World,
+        G1OldMine,
+        G1FreeMine,
+        G1OrcGraveyard,
+        G1OrcTempel,
+        // G2
+        G2Newworld,
+        G2OldWorld,
+        G2AddonWorld,
+        G2DragonIsland,
+    }
+
 
     [CreateAssetMenu(fileName = "NewGameConfiguration", menuName = "UnZENity/ScriptableObjects/GameConfiguration", order = 1)]
     public class GameConfiguration : ScriptableObject
     {
+
+        [NonSerialized]
+        public static Dictionary<WorldToSpawn, string> WorldMappings = new()
+        {
+            { WorldToSpawn.None, "NO MAPPING AVAILABLE. LOAD WORLD AS STATED IN NEW GAME/SAVE GAME!" },
+            // G1
+            { WorldToSpawn.G1World, "world.zen" },
+            { WorldToSpawn.G1OldMine, "oldmine.zen" },
+            { WorldToSpawn.G1FreeMine, "freemine.zen" },
+            { WorldToSpawn.G1OrcGraveyard, "orcgraveyard.zen" },
+            { WorldToSpawn.G1OrcTempel, "orctempel.zen" },
+            // G2
+            { WorldToSpawn.G2Newworld, "newworld.zen" },
+            { WorldToSpawn.G2OldWorld, "oldworld.zen" },
+            { WorldToSpawn.G2AddonWorld, "addonworld.zen" },
+            { WorldToSpawn.G2DragonIsland, "dragonisland.zen" }
+        };
 
         /**
          * ##########
@@ -90,6 +124,12 @@ namespace GUZ.Core
         [Range(1, 15)]
         public int SaveSlotToLoad;
         private bool SaveSlotFieldCondition() => !EnableMainMenu && LoadFromSaveSlot;
+
+        public WorldToSpawn PreselectWorldToSpawn;
+
+        [Tooltip("Covers Free Points and Way Points.")]
+        public string SpawnAtWaypoint = string.Empty;
+
 
 
         /**
@@ -178,9 +218,6 @@ namespace GUZ.Core
 
         [OverrideLabel("Show Way Point Edge Meshes")]
         public bool ShowWayEdges;
-
-        [Tooltip("Covers Free Points and Way Points.")]
-        public string SpawnAtWaypoint = string.Empty;
 
 
         /**

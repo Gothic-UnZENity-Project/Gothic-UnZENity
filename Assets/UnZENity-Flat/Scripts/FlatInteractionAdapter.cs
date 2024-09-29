@@ -8,6 +8,9 @@ namespace GUZ.Flat
 {
     public class FlatInteractionAdapter : IInteractionAdapter
     {
+        private GameObject _playerController;
+
+
         private const string _contextName = "Flat";
 
         public string GetContextName()
@@ -25,7 +28,9 @@ namespace GUZ.Flat
             // world scene and removed whenever we change the world.
             SceneManager.MoveGameObjectToScene(go, scene);
 
-            return go.GetComponentInChildren<Rigidbody>().gameObject;
+            _playerController = go.GetComponentInChildren<Rigidbody>().gameObject;
+
+            return _playerController;
         }
 
         public void CreateVRDeviceSimulator()
@@ -45,7 +50,7 @@ namespace GUZ.Flat
 
         public void  TeleportPlayerTo(Vector3 position, Quaternion rotation = default)
         {
-            // Not yet implemented
+            _playerController.transform.SetLocalPositionAndRotation(position, rotation);
         }
 
         public void InitUIInteraction()
