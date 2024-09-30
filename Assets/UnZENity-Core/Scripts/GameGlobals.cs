@@ -14,6 +14,7 @@ namespace GUZ.Core
         public static GameSettings Settings => Instance.Settings;
         public static LoadingManager Loading => Instance.Loading;
         public static GltManager Glt => Instance.Glt;
+        public static StaticCacheManager StaticCache => Instance.StaticCache;
         public static PlayerManager Player => Instance.Player;
         public static SkyManager Sky => Instance.Sky;
         public static GameTime Time => Instance.Time;

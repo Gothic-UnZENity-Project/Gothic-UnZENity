@@ -10,9 +10,9 @@ using CompressionLevel = System.IO.Compression.CompressionLevel;
 
 namespace GUZ.Core.Manager
 {
-    public class CacheManager
+    public class StaticCacheManager
     {
-        private static string _cacheRootFolderPath;
+        private string _cacheRootFolderPath;
 
 
         /// <summary>
@@ -72,7 +72,7 @@ namespace GUZ.Core.Manager
         }
 
 
-        static CacheManager()
+        public void Init()
         {
             // FIXME Hardcoded G1
             _cacheRootFolderPath = $"{Application.persistentDataPath}/Cache/Gothic1/";
@@ -80,7 +80,7 @@ namespace GUZ.Core.Manager
 
 
 
-        public static async Task SaveCache(GameObject worldRootGo, GameObject vobsRootGo, string fileName)
+        public async Task SaveCache(GameObject worldRootGo, GameObject vobsRootGo, string fileName)
         {
             try
             {
@@ -101,7 +101,7 @@ namespace GUZ.Core.Manager
         }
 
 
-        private static TextureArrayContainer CollectTextureData()
+        private TextureArrayContainer CollectTextureData()
         {
             var dataToSave = new TextureArrayContainer();
 
@@ -121,7 +121,7 @@ namespace GUZ.Core.Manager
             return  dataToSave;
         }
 
-        private static CacheContainer CollectWorldData(Transform worldRoot)
+        private CacheContainer CollectWorldData(Transform worldRoot)
         {
             var data = new CacheContainer();
 
@@ -130,7 +130,7 @@ namespace GUZ.Core.Manager
             return data;
         }
 
-        private static CacheContainer CollectVobsData(Transform vobsRoot)
+        private CacheContainer CollectVobsData(Transform vobsRoot)
         {
             var data = new CacheContainer();
 
@@ -139,7 +139,7 @@ namespace GUZ.Core.Manager
             return data;
         }
 
-        private static CacheEntry WalkWorld(Transform currentElement)
+        private CacheEntry WalkWorld(Transform currentElement)
         {
             var entry = new CacheEntry()
             {
@@ -155,7 +155,7 @@ namespace GUZ.Core.Manager
             return entry;
         }
 
-        private static CacheEntry WalkVob(Transform currentElement)
+        private CacheEntry WalkVob(Transform currentElement)
         {
             var entry = new CacheEntry()
             {
@@ -171,7 +171,7 @@ namespace GUZ.Core.Manager
             return entry;
         }
 
-        private static MeshCacheEntry GetWorldMeshData(GameObject currentElement)
+        private MeshCacheEntry GetWorldMeshData(GameObject currentElement)
         {
             if (!currentElement.TryGetComponent<MeshFilter>(out var meshFilter) || !currentElement.TryGetComponent<Renderer>(out var renderer))
             {
@@ -204,7 +204,7 @@ namespace GUZ.Core.Manager
             return data;
         }
 
-        private static MeshCacheEntry GetVobsMeshData(GameObject currentElement)
+        private MeshCacheEntry GetVobsMeshData(GameObject currentElement)
         {
             if (!currentElement.TryGetComponent<MeshFilter>(out var meshFilter) || !currentElement.TryGetComponent<Renderer>(out var renderer))
             {
@@ -242,7 +242,7 @@ namespace GUZ.Core.Manager
             return data;
         }
 
-        private static async Task SaveCacheFile(TextureArrayContainer textureData, CacheContainer worldData, CacheContainer vobsData, string fileName)
+        private async Task SaveCacheFile(TextureArrayContainer textureData, CacheContainer worldData, CacheContainer vobsData, string fileName)
         {
             // var stream = new FileStream(BuildFilePathName(fileName, ".json"), FileMode.CreateNew);
 
@@ -255,7 +255,7 @@ namespace GUZ.Core.Manager
             await WriteCompressedData(vobsJson, BuildFilePathName(fileName, "vobMeshes.json.gz"));
         }
 
-        private static async Task WriteCompressedData(string data, string filePath)
+        private async Task WriteCompressedData(string data, string filePath)
         {
             using (var fileStream = new FileStream(filePath, FileMode.Create))
             using (var gzipStream = new GZipStream(fileStream, CompressionLevel.Optimal))
@@ -266,7 +266,7 @@ namespace GUZ.Core.Manager
         }
 
 
-        private static string BuildFilePathName(string fileName, string fileEnding)
+        private string BuildFilePathName(string fileName, string fileEnding)
         {
             return $"{_cacheRootFolderPath}/{fileName}.{fileEnding}";
         }
