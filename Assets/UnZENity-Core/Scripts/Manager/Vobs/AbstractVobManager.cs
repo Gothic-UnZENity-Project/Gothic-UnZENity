@@ -888,8 +888,11 @@ namespace GUZ.Core.Manager.Vobs
         private GameObject CreateAnimatedVob(Animate vob, GameObject parent = null)
         {
             var go = CreateDefaultMesh(vob, parent, true);
-            var morph = go.AddComponent<VobAnimateMorph>();
-            morph.StartAnimation(vob.Visual!.Name);
+
+            // FIXME - Load component from Prefab
+            // var morph = go.AddComponent<VobAnimateMorph>();
+            // morph.StartAnimation(vob.Visual!.Name);
+
             return go;
         }
 
@@ -916,8 +919,7 @@ namespace GUZ.Core.Manager.Vobs
             return newNpc;
         }
 
-        private GameObject CreateDefaultMesh(IVirtualObject vob, GameObject parent = null,
-            bool nonTeleport = false)
+        private GameObject CreateDefaultMesh(IVirtualObject vob, GameObject parent = null, bool nonTeleport = false)
         {
             var parentGo = nonTeleport ? ParentGosNonTeleport[vob.Type] : ParentGosTeleport[vob.Type];
             var meshName = vob.ShowVisual ? vob.Visual!.Name : vob.Name;
@@ -968,8 +970,6 @@ namespace GUZ.Core.Manager.Vobs
             {
                 var ret = MeshFactory.CreateVob(meshName, mmb, vob.Position.ToUnityVector(),
                     vob.Rotation.ToUnityQuaternion(), parent ?? parentGo, go);
-
-                // this is a dynamic object
 
                 // A few objects are broken and have no meshes. We need to destroy them immediately again.
                 if (ret == null)

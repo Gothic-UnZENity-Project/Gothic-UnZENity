@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using GUZ.Core.Caches;
 using GUZ.Core.Creator;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager.Vobs;
@@ -79,18 +80,16 @@ namespace GUZ.Core.Manager.Scenes
                 Debug.Log("### PreCaching World meshes.");
                 await WorldCreator.CreateForCache(worldData, worldRootGo, GameGlobals.Loading);
 
-
-                Debug.Log("### DEBUG Saving cache DONE.");
                 await GameGlobals.StaticCache.SaveCache(worldRootGo, vobsRootGo, worldName);
-
-                return;
-
-                // await GameGlobals.Glt.SaveCache(worldRootGo, vobsRootGo, worldName);
 
                 // Clean up scene memory
                 GameGlobals.TextureArray.Dispose();
                 Destroy(vobsRootGo);
                 Destroy(worldRootGo);
+                // We accidentally create morph caches (as we didn't update the AbstractMeshCreator logic and added IF CacheState==true
+                MorphMeshCache.Dispose();
+                Debug.Log("### DEBUG Saving cache DONE.");
+
 
                 // DEBUG restore
                 // {

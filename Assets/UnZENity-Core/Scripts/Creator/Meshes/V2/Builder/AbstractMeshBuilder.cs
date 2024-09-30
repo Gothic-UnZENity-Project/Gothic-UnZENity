@@ -312,7 +312,7 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
             nodeObjects[0].transform.localPosition = Vector3.zero;
         }
 
-        protected GameObject BuildViaMmb()
+        protected void BuildViaMmb()
         {
             CheckPreconditions();
 
@@ -328,8 +328,6 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
             }
 
             SetPosAndRot(RootGo, RootPosition, RootRotation);
-
-            return RootGo;
         }
 
         protected void CheckPreconditions()
@@ -429,7 +427,7 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
                     }
                     else
                     {
-                        Debug.LogWarning($"[{GetType()}] Mesh {mesh.name} is unexpectedly not int the {nameof(GameGlobals.TextureArray.VobMeshesForTextureArray)} array.");
+                        Debug.LogWarning($"[{GetType()}] Mesh {mesh.name} is unexpectedly not in the {nameof(GameGlobals.TextureArray.VobMeshesForTextureArray)} array.");
                     }
                 }
                 return;
@@ -623,6 +621,7 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
             }
         }
 
+        // FIXME - Do not execute when we create VobAnimate during PreCache state. (Unnecessary calculations at that time.)
         private void CreateMorphMeshBegin(IMultiResolutionMesh mrm, Mesh mesh)
         {
             if (Mmb == null)
@@ -642,6 +641,7 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
             MorphMeshCache.AddVertexMapping(Mmb.Name, mrm.PositionCount);
         }
 
+        // FIXME - Do not execute when we create VobAnimate during PreCache state. (Unnecessary calculations at that time.)
         private void CreateMorphMeshEntry(int index1, int preparedVerticesCount)
         {
             // We add mapping data to later reuse for IMorphAnimation samples
@@ -653,6 +653,7 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
             MorphMeshCache.AddVertexMappingEntry(Mmb.Name, index1, preparedVerticesCount - 1);
         }
 
+        // FIXME - Do not execute when we create VobAnimate during PreCache state. (Unnecessary calculations at that time.)
         private void CreateMorphMeshEnd(List<Vector3> preparedVertices)
         {
             if (Mmb == null || IsMorphMeshMappingAlreadyCached)

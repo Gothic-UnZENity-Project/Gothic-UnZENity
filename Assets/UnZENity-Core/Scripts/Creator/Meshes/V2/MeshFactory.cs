@@ -117,7 +117,7 @@ namespace GUZ.Core.Creator.Meshes.V2
         }
 
         public static GameObject CreateVob(string objectName, IMorphMesh mmb, Vector3 position, Quaternion rotation,
-            GameObject parent = null, GameObject rootGo = null)
+            GameObject parent = null, GameObject rootGo = null, bool useTextureArray = true)
         {
             var vobBuilder = new VobMeshBuilder();
             vobBuilder.SetRootPosAndRot(position, rotation);
@@ -125,7 +125,7 @@ namespace GUZ.Core.Creator.Meshes.V2
             vobBuilder.SetParent(parent);
             vobBuilder.SetMeshName(objectName);
             vobBuilder.SetMmb(mmb);
-            vobBuilder.SetUseTextureArray(true);
+            vobBuilder.SetUseTextureArray(useTextureArray);
 
             return vobBuilder.Build();
         }

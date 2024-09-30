@@ -212,12 +212,6 @@ namespace GUZ.Core.Manager
             }
 
             var mesh = meshFilter.sharedMesh;
-
-            if (mesh.name == "WATERPLANT_1.MMS Instance")
-            {
-                return null;
-            }
-
             var textureArrayElement = GameGlobals.TextureArray.VobMeshesForTextureArray[mesh];
 
             if (textureArrayElement == null)
