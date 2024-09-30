@@ -11,24 +11,17 @@ using TextureFormat = ZenKit.TextureFormat;
 
 namespace GUZ.Core.Caches
 {
-    /// <summary>
-    /// Texture Array is used for the following improvements:
-    /// 1. World mesh chunks are merged into sliced with specific bound. Without the texture array, we would need to separate each small floor mesh if it has a different texture.
-    /// 2. Static VOBs will merge multiple textures into one. This reduces draw calls. (e.g. various complex VOBs have multiple textures).
-    ///
-    /// Once world is loaded, The texture cache is released to free memory of our calculated data. Only texture array itself remains in memory.
-    ///
-    /// Not in Texture Array:
-    /// 1. NPCs and their armors (as they alter their armaments during runtime)
-    /// 2. VOB Items which spawn at a later state (e.g. Player puts an item out of inventory)
-    /// </summary>
+
     public static class TextureCache
     {
-        public static Dictionary<TextureArrayManager.TextureArrayTypes, Texture> TextureArrays { get; } = new();
-
         private static readonly Dictionary<string, Texture2D> _texture2DCache = new();
 
 
+        /// <summary>
+        /// Param: includeInCache=true is used,
+        ///     when the texture is created for a TextureArray. Then we need it only once,
+        ///     and it can be immediately disposed as it's stored in Texture2DArray in the future.
+        /// </summary>
         [CanBeNull]
         public static Texture2D TryGetTexture(string key, bool includeInCache = true)
         {
@@ -116,15 +109,6 @@ namespace GUZ.Core.Caches
             return texture;
         }
 
-        /// <summary>
-        /// Once a TextureArray is build and assigned to renderers, we can safely clear these lists to free managed memory.
-        /// </summary>
-        public static void RemoveCachedTextureArrayData()
-        {
-            TextureArrays.Clear();
-            TextureArrays.TrimExcess();
-        }
-
         private static string GetPreparedKey(string key)
         {
             var lowerKey = key.ToLower();
@@ -141,9 +125,6 @@ namespace GUZ.Core.Caches
         public static void Dispose()
         {
             _texture2DCache.Clear();
-
-            TextureArrays.Clear();
-            TextureArrays.TrimExcess();
         }
     }
 }

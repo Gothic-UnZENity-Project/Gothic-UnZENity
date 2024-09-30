@@ -82,6 +82,9 @@ namespace GUZ.Core
             });
         }
 
+        /// <summary>
+        /// If you want to get a Unity.Texture2D, call TextureCache.TryGetTexture()
+        /// </summary>
         [CanBeNull]
         public static ITexture TryGetTexture([NotNull] string key)
         {

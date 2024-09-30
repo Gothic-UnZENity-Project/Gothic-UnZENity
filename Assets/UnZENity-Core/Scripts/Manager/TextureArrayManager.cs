@@ -20,14 +20,33 @@ using TextureFormat = UnityEngine.TextureFormat;
 namespace GUZ.Core.Manager
 {
 
+    /// <summary>
+    /// Texture Arrays are used for the following improvements:
+    /// 1. World mesh chunks are merged into sliced with specific bound. Without the texture array, we would need to separate each small floor mesh if it has a different texture.
+    /// 2. Static VOBs will merge multiple textures into one. This reduces draw calls. (e.g. various complex VOBs have multiple textures).
+    ///
+    /// Once world is loaded from cache and texture array data is applied, the texture cache is released to free memory of our calculated data.
+    /// Only the created texture array itself remains in memory.
+    ///
+    /// Not in Texture Array:
+    /// 0. Basically everything which is created dynamically at runtime:
+    /// 1. NPCs and their armors (as they alter their armaments during runtime)
+    /// 2. VOB Items which spawn at a later state (e.g. Player puts an item out of inventory)
+    /// </summary>
     public class TextureArrayManager
     {
-        public const int ReferenceTextureSize = 256;
-        public const int MaxTextureSize = 512;
+        private const int _referenceTextureSize = 256;
+        private const int _maxTextureSize = 512;
 
-        public readonly Dictionary<TextureArrayTypes, List<(string PreparedKey, ZkTextureData TextureData)>> TexturesToIncludeInArray = new();
+        public readonly Dictionary<TextureArrayTypes, List<(string PreparedKey, TextureData TextureData)>> TexturesToIncludeInArray = new();
         public readonly List<(MeshRenderer Renderer, WorldData.SubMeshData SubmeshData)> WorldMeshRenderersForTextureArray = new();
         public readonly Dictionary<Mesh, VobMeshData> VobMeshesForTextureArray = new();
+
+        /// <summary>
+        /// Created Texture Arrays via BuildTextureArrays(). Will be applied immediately via AssignTextureArraysFor*() and released afterwards.
+        /// </summary>
+        private static Dictionary<TextureArrayTypes, Texture> _tempTextureArrays { get; } = new();
+
 
         public enum TextureArrayTypes
         {
@@ -37,21 +56,23 @@ namespace GUZ.Core.Manager
         }
 
         [Serializable]
-        public class ZkTextureData
+        public class TextureData
         {
             public string Key;
-            public Vector2 Scale;
             public int Width;
             public int Height;
             public int MipmapCount;
 
-            public ZkTextureData(string key, ITexture zkTexture)
+            [NonSerialized] // Not needed inside glTF cache (excluded to save storage space)
+            public Vector2 Scale;
+
+            public TextureData(string key, ITexture zkTexture)
             {
                 Key = key;
                 MipmapCount = zkTexture.MipmapCount;
                 Width = zkTexture.Width;
                 Height = zkTexture.Height;
-                Scale = new Vector2((float)zkTexture.Width / ReferenceTextureSize, (float)zkTexture.Height / ReferenceTextureSize);
+                Scale = new Vector2((float)zkTexture.Width / _referenceTextureSize, (float)zkTexture.Height / _referenceTextureSize);
             }
         }
 
@@ -88,15 +109,15 @@ namespace GUZ.Core.Manager
                     continue;
                 }
 
-                (string, ZkTextureData) cachedTextureData = TexturesToIncludeInArray[(TextureArrayTypes)i].FirstOrDefault(k => k.PreparedKey == key);
+                (string, TextureData) cachedTextureData = TexturesToIncludeInArray[(TextureArrayTypes)i].FirstOrDefault(k => k.PreparedKey == key);
                 if (cachedTextureData != default)
                 {
                     textureArrayType = (TextureArrayTypes)i;
 
                     arrayIndex = TexturesToIncludeInArray[textureArrayType].IndexOf(cachedTextureData);
-                    ZkTextureData zkData = TexturesToIncludeInArray[textureArrayType][arrayIndex].TextureData;
-                    maxMipLevel = zkData.MipmapCount - 1;
-                    textureScale = zkData.Scale;
+                    TextureData data = TexturesToIncludeInArray[textureArrayType][arrayIndex].TextureData;
+                    maxMipLevel = data.MipmapCount - 1;
+                    textureScale = data.Scale;
                     return;
                 }
             }
@@ -126,13 +147,13 @@ namespace GUZ.Core.Manager
                     : TextureArrayTypes.Transparent;
             }
 
-            textureScale = new Vector2((float)zenTextureData.Width / ReferenceTextureSize, (float)zenTextureData.Height / ReferenceTextureSize);
+            textureScale = new Vector2((float)zenTextureData.Width / _referenceTextureSize, (float)zenTextureData.Height / _referenceTextureSize);
             if (!TexturesToIncludeInArray.ContainsKey(textureArrayType))
             {
-                TexturesToIncludeInArray.Add(textureArrayType, new List<(string, ZkTextureData)>());
+                TexturesToIncludeInArray.Add(textureArrayType, new List<(string, TextureData)>());
             }
 
-            TexturesToIncludeInArray[textureArrayType].Add((key, new ZkTextureData(key, zenTextureData)));
+            TexturesToIncludeInArray[textureArrayType].Add((key, new TextureData(key, zenTextureData)));
             arrayIndex = TexturesToIncludeInArray[textureArrayType].Count - 1;
         }
 
@@ -142,7 +163,7 @@ namespace GUZ.Core.Manager
             stopwatch.Start();
             try
             {
-                foreach (var entry in data.WorldChunkTypes)
+                foreach (var entry in data.TextureTypeEntries)
                 {
                     var textureArrayType = entry.TextureType;
                     var textures = entry.Textures;
@@ -157,8 +178,8 @@ namespace GUZ.Core.Manager
                     }
 
                     // Create the texture array with the max size of the contained textures, limited by the max texture size.
-                    int maxSize = Mathf.Min(MaxTextureSize, textures.Max(p => p.Width));
-                    ZkTextureData textureWithMaxAllowedSize = textures.Where(t => t.Width == maxSize && t.Height == maxSize).FirstOrDefault();
+                    int maxSize = Mathf.Min(_maxTextureSize, textures.Max(p => p.Width));
+                    TextureData textureWithMaxAllowedSize = textures.Where(t => t.Width == maxSize && t.Height == maxSize).FirstOrDefault();
                     // Find the max mip depth defined for the max allowed texture size.
                     int maxMipDepth = 0;
                     if (textureWithMaxAllowedSize == null)
@@ -208,7 +229,7 @@ namespace GUZ.Core.Manager
                         int sourceMaxDim = Mathf.Max(sourceTex.width, sourceTex.height);
                         int sourceWidth = sourceTex.width;
                         int sourceHeight = sourceTex.height;
-                        while (sourceMaxDim > MaxTextureSize)
+                        while (sourceMaxDim > _maxTextureSize)
                         {
                             sourceMip++;
                             sourceMaxDim /= 2;
@@ -252,7 +273,7 @@ namespace GUZ.Core.Manager
                         }
                     }
 
-                    TextureCache.TextureArrays.Add(textureArrayType, texArray);
+                    _tempTextureArrays.Add(textureArrayType, texArray);
                 }
 
                 stopwatch.Stop();
@@ -290,7 +311,7 @@ namespace GUZ.Core.Manager
                     return;
                 }
 
-                var texture = TextureCache.TextureArrays[textureType];
+                var texture = _tempTextureArrays[textureType];
 
                 Material material;
                 if (chunk.MaterialGroup == MaterialGroup.Water)
@@ -359,7 +380,7 @@ namespace GUZ.Core.Manager
                 for (var i = 0; i < subMeshCount; i++)
                 {
                     var textureType = vob.TextureTypes[i];
-                    var texture = TextureCache.TextureArrays[textureType];
+                    var texture = _tempTextureArrays[textureType];
                     var material = GetDefaultMaterial(texture && ((Texture2DArray)texture).format == TextureFormat.RGBA32);
 
                     material.mainTexture = texture;
@@ -400,15 +421,9 @@ namespace GUZ.Core.Manager
         /// </summary>
         public void Dispose()
         {
-            // TODO
-            // TextureArrays.Clear();
-            // TextureArrays.TrimExcess();
-
-            TexturesToIncludeInArray.Clear();
-            TexturesToIncludeInArray.TrimExcess();
-
-            WorldMeshRenderersForTextureArray.Clear();
-            WorldMeshRenderersForTextureArray.TrimExcess();
+            TexturesToIncludeInArray.ClearAndReleaseMemory();
+            WorldMeshRenderersForTextureArray.ClearAndReleaseMemory();
+            VobMeshesForTextureArray.ClearAndReleaseMemory();
         }
     }
 }

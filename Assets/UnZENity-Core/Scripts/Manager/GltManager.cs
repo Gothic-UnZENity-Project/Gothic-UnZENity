@@ -136,7 +136,7 @@ namespace GUZ.Core.Manager
                     Textures = data.Value.Select(t => t.TextureData).ToList()
                 };
 
-                dataToSave.WorldChunkTypes.Add(entry);
+                dataToSave.TextureTypeEntries.Add(entry);
             }
 
             // Now add GameObject mapping to store certain data which isn't inside glTF files.
@@ -251,6 +251,8 @@ namespace GUZ.Core.Manager
     [Serializable]
     public class TextureArrayContainer
     {
+        public List<TextureTypeEntry> TextureTypeEntries = new();
+
         /// <summary>
         /// Mapping:
         /// [index] => TextureArrayType
@@ -258,10 +260,8 @@ namespace GUZ.Core.Manager
         /// We are fine with a list, as the order of creation is the index itself.
         /// </summary>
         public List<MeshEntry> WorldChunks = new();
-        public List<TextureTypeEntry> WorldChunkTypes = new();
 
-        // FIXME - Each VOB is added only once. We need to fetch its corresponding entry from GO name (and GO type).
-        // FIXME - Are meshes reused when loaded from glTF file? How can we test that?
+        // FIXME - Meshes need to be reused when loaded from glTF file!
         public List<MeshEntry> Vobs = new();
 
 
@@ -284,7 +284,7 @@ namespace GUZ.Core.Manager
             /// Every time a texture would be needed for a mesh the first time, its entry is added here.
             /// UV values of meshes already contain this information (e.g. v4(0,0,2,0) -> 2 would be marking index 3 of these entries below)
             /// </summary>
-            public List<TextureArrayManager.ZkTextureData> Textures = new();
+            public List<TextureArrayManager.TextureData> Textures = new();
         }
     }
 }
