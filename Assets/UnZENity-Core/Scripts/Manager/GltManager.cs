@@ -162,7 +162,7 @@ namespace GUZ.Core.Manager
                 var entry = new TextureArrayContainer.MeshEntry()
                 {
                     Name = $"{vob.Key.name}-{vob.Value.Renderers.First().name}", // We build the lookup name for later like this: ROOT_GO-ACTUAL_GO
-                    TextureTypes = vob.Value.TextureArrayTypes,
+                    TextureTypes = vob.Value.TextureTypes,
                     MaterialGroup = MaterialGroup.Undefined, // Not needed for VOBs
                     UVs = uvs,
                     Colors = vob.Key.colors32.ToList()

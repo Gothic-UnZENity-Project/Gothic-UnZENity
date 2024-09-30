@@ -58,13 +58,13 @@ namespace GUZ.Core.Manager
         public class VobMeshData
         {
             public IMultiResolutionMesh Mrm { get; set; }
-            public List<TextureArrayTypes> TextureArrayTypes { get; set; }
+            public List<TextureArrayTypes> TextureTypes { get; set; }
             public List<Renderer> Renderers { get; set; } = new();
 
-            public VobMeshData(IMultiResolutionMesh mrm, List<TextureArrayTypes> textureArrayTypes, Renderer renderer = null)
+            public VobMeshData(IMultiResolutionMesh mrm, List<TextureArrayTypes> textureTypes, Renderer renderer = null)
             {
                 Mrm = mrm;
-                TextureArrayTypes = textureArrayTypes;
+                TextureTypes = textureTypes;
                 if (renderer != null)
                 {
                     Renderers.Add(renderer);
