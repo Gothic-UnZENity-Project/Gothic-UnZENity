@@ -79,7 +79,12 @@ namespace GUZ.Core.Manager.Scenes
                 Debug.Log("### PreCaching World meshes.");
                 await WorldCreator.CreateForCache(worldData, worldRootGo, GameGlobals.Loading);
 
-                await GameGlobals.Glt.SaveGlt(worldRootGo, vobsRootGo, worldName);
+
+                await CacheManager.SaveCache(worldRootGo, vobsRootGo, worldName);
+
+                return;
+
+                // await GameGlobals.Glt.SaveCache(worldRootGo, vobsRootGo, worldName);
 
                 // Clean up scene memory
                 GameGlobals.TextureArray.Dispose();

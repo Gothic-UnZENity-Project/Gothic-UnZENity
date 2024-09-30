@@ -417,7 +417,7 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
         {
             var subMeshPerTextureFormat = new Dictionary<TextureArrayManager.TextureArrayTypes, int>();
 
-            // Elements like NPC armors might have multiple meshes. We therefore need to store each mesh with it's associated index.
+            // Elements like NPC armors might have multiple meshes. We therefore need to store each mesh with its associated index.
             if (MultiTypeCache.Meshes.TryGetValue($"{MeshName}_{meshIndex}", out Mesh mesh))
             {
                 meshFilter.sharedMesh = mesh;
