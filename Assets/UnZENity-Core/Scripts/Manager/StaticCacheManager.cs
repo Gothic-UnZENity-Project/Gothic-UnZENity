@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using UnityEngine;
 using ZenKit;
 using CompressionLevel = System.IO.Compression.CompressionLevel;
+using Mesh = UnityEngine.Mesh;
 
 namespace GUZ.Core.Manager
 {
@@ -74,8 +75,7 @@ namespace GUZ.Core.Manager
 
         public void Init()
         {
-            // FIXME Hardcoded G1
-            _cacheRootFolderPath = $"{Application.persistentDataPath}/Cache/Gothic1/";
+            _cacheRootFolderPath = $"{Application.persistentDataPath}/Cache/{GameContext.GameVersionAdapter.Version}/";
         }
 
 
@@ -96,6 +96,26 @@ namespace GUZ.Core.Manager
             catch (Exception e)
             {
                 Debug.LogError($"There was some error while storing Mesh Cache: {e}");
+                throw;
+            }
+        }
+
+        public async Task LoadCache(GameObject rootGo, string fileName)
+        {
+            try
+            {
+                var textureJson = JsonUtility.FromJson<TextureArrayContainer>(ReadCompressedData(BuildFilePathName(fileName, "textureData.json.gz")));
+                var worldJson = JsonUtility.FromJson<CacheContainer>(ReadCompressedData(BuildFilePathName(fileName, "worldMeshes.json.gz")));
+                var vobsJson = JsonUtility.FromJson<CacheContainer>(ReadCompressedData(BuildFilePathName(fileName, "vobMeshes.json.gz")));
+
+                await GameGlobals.TextureArray.BuildTextureArraysFromCache(textureJson);
+                await CreateFromCache(rootGo, worldJson.Root);
+                // GameGlobals.TextureArray.AssignTextureArraysForVobs(data, vobsRootGo);
+                GameGlobals.TextureArray.Dispose();
+            }
+            catch (Exception e)
+            {
+                Debug.LogError(e);
                 throw;
             }
         }
@@ -236,10 +256,35 @@ namespace GUZ.Core.Manager
             return data;
         }
 
+        private async Task CreateFromCache(GameObject parentGo, CacheEntry entry)
+        {
+            var go = new GameObject(entry.Name);
+            go.transform.SetParent(parentGo.transform);
+
+            // Unity's JsonSerialize will always store empty classes with default values. We therefore check if MeshData has no triangles (aka is NULL).
+            if (entry.MeshData.TriangleCount != 0)
+            {
+                var mesh = new Mesh();
+                mesh.vertices = entry.MeshData.Vertices;
+                mesh.triangles = Enumerable.Range(0, entry.MeshData.TriangleCount).ToArray(); // Create entries like: [0, 1, 2, ..., n-1)
+                mesh.SetUVs(0, entry.MeshData.UVs);
+                mesh.colors32 = entry.MeshData.Colors;
+
+                var meshFilter = go.AddComponent<MeshFilter>();
+                meshFilter.sharedMesh = mesh;
+
+                var meshRenderer = go.AddComponent<MeshRenderer>();
+                GameGlobals.TextureArray.AssignTextureArray(entry, meshRenderer);
+            }
+
+            foreach (var child in entry.Children)
+            {
+                await CreateFromCache(go, child);
+            }
+        }
+
         private async Task SaveCacheFile(TextureArrayContainer textureData, CacheContainer worldData, CacheContainer vobsData, string fileName)
         {
-            // var stream = new FileStream(BuildFilePathName(fileName, ".json"), FileMode.CreateNew);
-
             var textureJson = JsonUtility.ToJson(textureData);
             var worldJson = JsonUtility.ToJson(worldData);
             var vobsJson = JsonUtility.ToJson(vobsData);
@@ -256,6 +301,16 @@ namespace GUZ.Core.Manager
             using (var writer = new StreamWriter(gzipStream))
             {
                 await writer.WriteAsync(data);
+            }
+        }
+
+        private string ReadCompressedData(string filePath)
+        {
+            using (var fileStream = new FileStream(filePath, FileMode.Open))
+            using (var gzipStream = new GZipStream(fileStream, CompressionMode.Decompress))
+            using (var reader = new StreamReader(gzipStream))
+            {
+                return reader.ReadToEnd();
             }
         }
 

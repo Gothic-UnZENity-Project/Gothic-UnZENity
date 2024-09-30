@@ -34,7 +34,7 @@ namespace GUZ.Core.Manager.Scenes
             // Load world and VOB caches.
 
             var cacheRoot = new GameObject("Data");
-            await GameGlobals.Glt.LoadGlt(cacheRoot, SaveGameManager.CurrentWorldName);
+            await GameGlobals.StaticCache.LoadCache(cacheRoot, SaveGameManager.CurrentWorldName);
 
             // 2.
             // FIXME - Re-enable

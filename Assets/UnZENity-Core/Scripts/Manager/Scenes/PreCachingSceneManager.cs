@@ -86,7 +86,7 @@ namespace GUZ.Core.Manager.Scenes
                 GameGlobals.TextureArray.Dispose();
                 Destroy(vobsRootGo);
                 Destroy(worldRootGo);
-                // We accidentally create morph caches (as we didn't update the AbstractMeshCreator logic and added IF CacheState==true
+                // We _accidentally_ create morph caches (as we didn't update the AbstractMeshCreator logic and added IF CacheState==true
                 MorphMeshCache.Dispose();
                 Debug.Log("### DEBUG Saving cache DONE.");
 

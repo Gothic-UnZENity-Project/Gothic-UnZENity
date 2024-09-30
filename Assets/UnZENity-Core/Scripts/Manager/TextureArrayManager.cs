@@ -157,7 +157,7 @@ namespace GUZ.Core.Manager
             arrayIndex = TexturesToIncludeInArray[textureArrayType].Count - 1;
         }
 
-        public async Task BuildTextureArraysFromCache(TextureArrayContainer data)
+        public async Task BuildTextureArraysFromCache(StaticCacheManager.TextureArrayContainer data)
         {
             Stopwatch stopwatch = new();
             stopwatch.Start();
@@ -285,6 +285,22 @@ namespace GUZ.Core.Manager
                 Debug.LogError("BuildTextureArray failed. Please read exception above.");
                 throw;
             }
+        }
+
+        public void AssignTextureArray(StaticCacheManager.CacheEntry entry, MeshRenderer renderer)
+        {
+            Material material;
+            if (entry.MeshData.MaterialGroup == MaterialGroup.Water)
+            {
+                material = GetWaterMaterial();
+            }
+            else
+            {
+                material = GetDefaultMaterial(entry.MeshData.TextureTypes.First() == TextureArrayTypes.Transparent);
+            }
+
+            material.mainTexture = _tempTextureArrays[entry.MeshData.TextureTypes.First()]; // FIXME - We need to set sub-Textures/Meshes for VOBs!
+            renderer.material = material;
         }
 
         public void AssignTextureArraysForWorld(TextureArrayContainer data, GameObject worldRootGo)

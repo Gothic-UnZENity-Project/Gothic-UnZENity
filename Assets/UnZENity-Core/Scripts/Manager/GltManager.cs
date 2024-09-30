@@ -62,7 +62,7 @@ namespace GUZ.Core.Manager
 
             var data = LoadMetadataFile(fileName);
 
-            await GameGlobals.TextureArray.BuildTextureArraysFromCache(data);
+            // await GameGlobals.TextureArray.BuildTextureArraysFromCache(data);
             GameGlobals.TextureArray.AssignTextureArraysForWorld(data, worldRootGo);
             GameGlobals.TextureArray.AssignTextureArraysForVobs(data, vobsRootGo);
             GameGlobals.TextureArray.Dispose();
