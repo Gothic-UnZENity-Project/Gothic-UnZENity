@@ -65,6 +65,7 @@ namespace GUZ.Core.Manager
             await GameGlobals.TextureArray.BuildTextureArraysFromCache(data);
             GameGlobals.TextureArray.AssignTextureArraysForWorld(data, worldRootGo);
             GameGlobals.TextureArray.AssignTextureArraysForVobs(data, vobsRootGo);
+            GameGlobals.TextureArray.Dispose();
         }
 
         /// <summary>
