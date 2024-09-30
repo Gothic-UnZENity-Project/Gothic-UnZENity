@@ -96,8 +96,11 @@ namespace GUZ.Core.Globals
         /*
          * ### Tags
          */
+        // Default Tags
         public const string PlayerTag = "Player";
         public const string MainCameraTag = "MainCamera";
+
+        // Custom Tags
         public const string SpotTag = "Vob_zCVobSpot";
 
         

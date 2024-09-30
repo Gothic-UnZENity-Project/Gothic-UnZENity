@@ -4,8 +4,6 @@
 TagManager:
   serializedVersion: 2
   tags:
-  - Player
-  - MainCamera
   - Vob_zCVobSpot
   layers:
   - Default
