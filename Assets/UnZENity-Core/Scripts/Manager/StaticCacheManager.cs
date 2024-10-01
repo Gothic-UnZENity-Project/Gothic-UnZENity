@@ -52,6 +52,9 @@ namespace GUZ.Core.Manager
         public class CacheEntry
         {
             public string Name;
+            public Vector3 LocalPosition;
+            public Quaternion LocalRotation;
+
             public List<CacheEntry> Children = new();
 
             /// If a GameObject contains a mesh, we store this information here.
@@ -110,7 +113,7 @@ namespace GUZ.Core.Manager
 
                 await GameGlobals.TextureArray.BuildTextureArraysFromCache(textureJson);
                 await CreateFromCache(rootGo, worldJson.Root);
-                // GameGlobals.TextureArray.AssignTextureArraysForVobs(data, vobsRootGo);
+                await CreateFromCache(rootGo, vobsJson.Root);
                 GameGlobals.TextureArray.Dispose();
             }
             catch (Exception e)
@@ -164,6 +167,8 @@ namespace GUZ.Core.Manager
             var entry = new CacheEntry()
             {
                 Name = currentElement.name,
+                LocalPosition = currentElement.localPosition,
+                LocalRotation = currentElement.localRotation,
                 MeshData = GetWorldMeshData(currentElement.gameObject)
             };
 
@@ -180,6 +185,8 @@ namespace GUZ.Core.Manager
             var entry = new CacheEntry()
             {
                 Name = currentElement.name,
+                LocalPosition = currentElement.localPosition,
+                LocalRotation = currentElement.localRotation,
                 MeshData = GetVobsMeshData(currentElement.gameObject)
             };
 
@@ -260,9 +267,10 @@ namespace GUZ.Core.Manager
         {
             var go = new GameObject(entry.Name);
             go.transform.SetParent(parentGo.transform);
+            go.transform.SetLocalPositionAndRotation(entry.LocalPosition, entry.LocalRotation);
 
-            // Unity's JsonSerialize will always store empty classes with default values. We therefore check if MeshData has no triangles (aka is NULL).
-            if (entry.MeshData.TriangleCount != 0)
+            // Unity's JsonSerialize will (mostly) always store empty classes with default values. We therefore check if MeshData has no triangles (aka is NULL).
+            if (entry.MeshData != null && entry.MeshData.TriangleCount != 0)
             {
                 var mesh = new Mesh();
                 mesh.vertices = entry.MeshData.Vertices;

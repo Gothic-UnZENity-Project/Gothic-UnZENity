@@ -96,7 +96,7 @@ namespace GUZ.Core.Manager.Scenes
                 //     var loadRoot = new GameObject("DebugRestore");
                 //     loadRoot.transform.position = new(1000, 0, 0);
                 //
-                //     await GameGlobals.Glt.LoadGlt(loadRoot, worldName);
+                //     await GameGlobals.StaticCache.LoadCache(loadRoot, worldName);
                 //
                 //     Debug.Log("DEBUG Loading done!");
                 //     return;
