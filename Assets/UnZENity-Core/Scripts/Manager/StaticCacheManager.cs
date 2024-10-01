@@ -1,13 +1,16 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Threading.Tasks;
 using GUZ.Core.Caches;
+using GUZ.Core.Extensions;
 using UnityEngine;
 using ZenKit;
 using CompressionLevel = System.IO.Compression.CompressionLevel;
+using Debug = UnityEngine.Debug;
 using Mesh = UnityEngine.Mesh;
 
 namespace GUZ.Core.Manager
@@ -118,13 +121,18 @@ namespace GUZ.Core.Manager
             }
         }
 
-        public async Task LoadCache(GameObject rootGo, string fileName)
+        public async Task LoadCache(GameObject rootGo, string worldName)
         {
+            var stopwatch = Stopwatch.StartNew();
             try
             {
-                var textureJson = JsonUtility.FromJson<TextureArrayContainer>(ReadCompressedData(BuildFilePathName(fileName, _fileEndingTextures)));
-                var worldJson = JsonUtility.FromJson<CacheContainer>(ReadCompressedData(BuildFilePathName(fileName, _fileEndingWorld)));
-                var vobsJson = JsonUtility.FromJson<CacheContainer>(ReadCompressedData(BuildFilePathName(fileName, _fileEndingVobs)));
+                var textureString = await ReadCompressedData(BuildFilePathName(worldName, _fileEndingTextures));
+                var worldString = await ReadCompressedData(BuildFilePathName(worldName, _fileEndingWorld));
+                var vobsString = await ReadCompressedData(BuildFilePathName(worldName, _fileEndingVobs));
+
+                var textureJson = await ParseJson<TextureArrayContainer>(textureString);
+                var worldJson = await ParseJson<CacheContainer>(worldString);
+                var vobsJson = await ParseJson<CacheContainer>(vobsString);
 
                 await GameGlobals.TextureArray.BuildTextureArraysFromCache(textureJson);
                 await CreateFromCache(rootGo, worldJson.Root);
@@ -138,6 +146,10 @@ namespace GUZ.Core.Manager
             {
                 Debug.LogError(e);
                 throw;
+            }
+            finally
+            {
+                stopwatch.Log("Loading cache done.");
             }
         }
 
@@ -333,9 +345,18 @@ namespace GUZ.Core.Manager
 
         private async Task SaveCacheFile(TextureArrayContainer textureData, CacheContainer worldData, CacheContainer vobsData, string fileName)
         {
-            var textureJson = JsonUtility.ToJson(textureData);
-            var worldJson = JsonUtility.ToJson(worldData);
-            var vobsJson = JsonUtility.ToJson(vobsData);
+
+            string textureJson = null;
+            string worldJson = null;
+            string vobsJson = null;
+
+            // We need to call loading the data in a separate thread to unblock main thread (VR movement etc.) during this IO heavy operation.
+            await Task.Run(() =>
+            {
+                textureJson = JsonUtility.ToJson(textureData);
+                worldJson = JsonUtility.ToJson(worldData);
+                vobsJson = JsonUtility.ToJson(vobsData);
+            });
 
             await WriteCompressedData(textureJson, BuildFilePathName(fileName, _fileEndingTextures));
             await WriteCompressedData(worldJson, BuildFilePathName(fileName, _fileEndingWorld));
@@ -352,14 +373,38 @@ namespace GUZ.Core.Manager
             }
         }
 
-        private string ReadCompressedData(string filePath)
+        private async Task<string> ReadCompressedData(string filePath)
         {
+            string data = null;
+
             using (var fileStream = new FileStream(filePath, FileMode.Open))
             using (var gzipStream = new GZipStream(fileStream, CompressionMode.Decompress))
             using (var reader = new StreamReader(gzipStream))
             {
-                return reader.ReadToEnd();
+                // We need to call loading the data in a separate thread to unblock main thread (VR movement etc.) during this IO heavy operation.
+                await Task.Run(() =>
+                {
+                    data = reader.ReadToEnd();
+                });
+
+                return data;
             }
+        }
+
+        /// <summary>
+        /// Parse string to json dynamically.
+        /// </summary>
+        private async Task<T> ParseJson<T>(string json)
+        {
+            T data = default;
+
+            // We need to call parsing the data in a separate thread to unblock main thread (VR movement etc.) during this CPU heavy operation.
+            await Task.Run(() =>
+            {
+                data = JsonUtility.FromJson<T>(json);
+            });
+
+            return data;
         }
 
 
