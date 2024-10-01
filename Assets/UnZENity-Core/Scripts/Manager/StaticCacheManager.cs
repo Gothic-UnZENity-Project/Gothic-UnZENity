@@ -76,7 +76,8 @@ namespace GUZ.Core.Manager
             public int[] SubMeshTriangleCounts;
             public MaterialGroup MaterialGroup;
             public Vector3[] Vertices;
-            public Vector4[] UVs;
+            public Vector4[] UV0;
+            public Vector2[] UV1;
             public Color32[] Colors;
         }
 
@@ -248,13 +249,17 @@ namespace GUZ.Core.Manager
             var uvs = new List<Vector4>();
             mesh.GetUVs(0, uvs);
 
+            var uv1 = new List<Vector2>();
+            mesh.GetUVs(1, uv1);
+
             var data = new MeshCacheEntry()
             {
                 TextureTypes = new[] {textureArrayElement.SubmeshData.TextureArrayType}, // We have only one single entry per world mesh chunk.
                 MaterialGroup = textureArrayElement.SubmeshData.Material.Group,
                 Vertices = mesh.vertices,
                 SubMeshTriangleCounts = new int[]{mesh.triangles.Length}, // There's only one SubMesh per world chunk. No submeshing needed and therefore we always fetch whole length.
-                UVs = uvs.ToArray(),
+                UV0 = uvs.ToArray(),
+                UV1 = uv1.ToArray(),
                 Colors = mesh.colors32 // TODO - Do we use colors or colors32 for World and/or VOBs?
             };
 
@@ -277,8 +282,8 @@ namespace GUZ.Core.Manager
                 return null;
             }
 
-            var uvs = new List<Vector4>();
-            mesh.GetUVs(0, uvs);
+            var uv0 = new List<Vector4>();
+            mesh.GetUVs(0, uv0);
 
             var triangleCounts = new int[mesh.subMeshCount];
             for (var i = 0; i < mesh.subMeshCount; i++)
@@ -293,7 +298,7 @@ namespace GUZ.Core.Manager
                 MaterialGroup = MaterialGroup.Undefined, // Not needed for VOBs
                 Vertices = mesh.vertices,
                 SubMeshTriangleCounts = triangleCounts,
-                UVs = uvs.ToArray(),
+                UV0 = uv0.ToArray(),
                 Colors = mesh.colors32, // TODO - Do we use colors or colors32 for World and/or VOBs?
             };
 
@@ -313,8 +318,14 @@ namespace GUZ.Core.Manager
             {
                 var mesh = new Mesh();
                 mesh.vertices = meshData.Vertices;
-                mesh.SetUVs(0, meshData.UVs);
+                mesh.SetUVs(0, meshData.UV0);
                 mesh.colors32 = meshData.Colors;
+
+                // We leverage this one for water world chunks.
+                if (meshData.UV1 != null && meshData.UV1.Any())
+                {
+                    mesh.SetUVs(1, meshData.UV1);
+                }
 
                 mesh.subMeshCount = meshData.SubMeshTriangleCounts.Length;
                 var triangleStartOffset = 0;
