@@ -289,18 +289,20 @@ namespace GUZ.Core.Manager
 
         public void AssignTextureArray(StaticCacheManager.CacheEntry entry, MeshRenderer renderer)
         {
-            Material material;
-            if (entry.MeshData.MaterialGroup == MaterialGroup.Water)
+            var finalMaterials = new List<Material>(entry.MeshData.TextureTypes.Length);
+
+            foreach (var textureType in entry.MeshData.TextureTypes)
             {
-                material = GetWaterMaterial();
-            }
-            else
-            {
-                material = GetDefaultMaterial(entry.MeshData.TextureTypes.First() == TextureArrayTypes.Transparent);
+                var texture = _tempTextureArrays[textureType];
+                var material = entry.MeshData.MaterialGroup == MaterialGroup.Water
+                    ? GetWaterMaterial()
+                    : GetDefaultMaterial(textureType == TextureArrayTypes.Transparent);
+
+                material.mainTexture = texture;
+                finalMaterials.Add(material);
             }
 
-            material.mainTexture = _tempTextureArrays[entry.MeshData.TextureTypes.First()]; // FIXME - We need to set sub-Textures/Meshes for VOBs!
-            renderer.material = material;
+            renderer.SetMaterials(finalMaterials);
         }
 
         public void AssignTextureArraysForWorld(TextureArrayContainer data, GameObject worldRootGo)

@@ -68,8 +68,8 @@ namespace GUZ.Core.Manager
         public class MeshCacheEntry
         {
             public TextureArrayManager.TextureArrayTypes[] TextureTypes;
+            public int[] SubMeshTriangleCounts;
             public MaterialGroup MaterialGroup;
-            public int TriangleCount;
             public Vector3[] Vertices;
             public Vector4[] UVs;
             public Color32[] Colors;
@@ -223,7 +223,7 @@ namespace GUZ.Core.Manager
                 TextureTypes = new[] {textureArrayElement.SubmeshData.TextureArrayType}, // We have only one single entry per world mesh chunk.
                 MaterialGroup = textureArrayElement.SubmeshData.Material.Group,
                 Vertices = mesh.vertices,
-                TriangleCount = mesh.triangles.Length, // We never ever reuse triangles. We can therefore simply store the length of array and later recreate it with Range(0,n).
+                SubMeshTriangleCounts = new int[]{mesh.triangles.Length}, // There's only one SubMesh per world chunk. No submeshing needed and therefore we always fetch whole length.
                 UVs = uvs.ToArray(),
                 Colors = mesh.colors32 // TODO - Do we use colors or colors32 for World and/or VOBs?
             };
@@ -250,12 +250,19 @@ namespace GUZ.Core.Manager
             var uvs = new List<Vector4>();
             mesh.GetUVs(0, uvs);
 
+            var triangleCounts = new int[mesh.subMeshCount];
+            for (var i = 0; i < mesh.subMeshCount; i++)
+            {
+                // We never ever reuse triangles. We can therefore simply store the length of array and later recreate it with Range(0,n).
+                triangleCounts[i] = mesh.GetTriangles(i).Length;
+            }
+
             var data = new MeshCacheEntry()
             {
                 TextureTypes = textureArrayElement.TextureTypes.ToArray(),
                 MaterialGroup = MaterialGroup.Undefined, // Not needed for VOBs
                 Vertices = mesh.vertices,
-                TriangleCount = mesh.triangles.Length, // We never ever reuse triangles. We can therefore simply store the length of array and later recreate it with Range(0,n).
+                SubMeshTriangleCounts = triangleCounts,
                 UVs = uvs.ToArray(),
                 Colors = mesh.colors32, // TODO - Do we use colors or colors32 for World and/or VOBs?
             };
@@ -269,14 +276,29 @@ namespace GUZ.Core.Manager
             go.transform.SetParent(parentGo.transform);
             go.transform.SetLocalPositionAndRotation(entry.LocalPosition, entry.LocalRotation);
 
+            var meshData = entry.MeshData;
+
             // Unity's JsonSerialize will (mostly) always store empty classes with default values. We therefore check if MeshData has no triangles (aka is NULL).
-            if (entry.MeshData != null && entry.MeshData.TriangleCount != 0)
+            if (meshData != null && meshData.Vertices != null)
             {
                 var mesh = new Mesh();
-                mesh.vertices = entry.MeshData.Vertices;
-                mesh.triangles = Enumerable.Range(0, entry.MeshData.TriangleCount).ToArray(); // Create entries like: [0, 1, 2, ..., n-1)
-                mesh.SetUVs(0, entry.MeshData.UVs);
-                mesh.colors32 = entry.MeshData.Colors;
+                mesh.vertices = meshData.Vertices;
+                mesh.SetUVs(0, meshData.UVs);
+                mesh.colors32 = meshData.Colors;
+
+                mesh.subMeshCount = meshData.SubMeshTriangleCounts.Length;
+                var triangleStartOffset = 0;
+                for (var i = 0; i < mesh.subMeshCount; i++)
+                {
+                    var currentTriangleCount = meshData.SubMeshTriangleCounts[i];
+                    // Create entries like: [0, 1, 2, ..., n-1)
+                    var currentTriangles = Enumerable.Range(triangleStartOffset, currentTriangleCount).ToArray();
+                    mesh.SetTriangles(currentTriangles, i);
+
+                    // Triangles are never reused. i.e. when submeshing, we have first part triangles for submesh0, then submesh1, ...
+                    // As triangles aren't reused, we need to count up. e.g. submesh1 might start with triangleIndex=10, but not 0!
+                    triangleStartOffset += currentTriangleCount;
+                }
 
                 var meshFilter = go.AddComponent<MeshFilter>();
                 meshFilter.sharedMesh = mesh;
