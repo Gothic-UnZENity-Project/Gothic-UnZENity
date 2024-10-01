@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using GUZ.Core.Caches;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
+using GUZ.Core.Util;
 using GUZ.Core.World;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -159,8 +160,7 @@ namespace GUZ.Core.Manager
 
         public async Task BuildTextureArraysFromCache(StaticCacheManager.TextureArrayContainer data)
         {
-            Stopwatch stopwatch = new();
-            stopwatch.Start();
+            Stopwatch stopwatch = Stopwatch.StartNew();
             try
             {
                 foreach (var entry in data.TextureTypeEntries)
@@ -267,17 +267,13 @@ namespace GUZ.Core.Manager
 
                         Object.Destroy(sourceTex);
 
-                        if (i % 20 == 0)
-                        {
-                            await Task.Yield();
-                        }
+                        await FrameSkipper.TrySkipToNextFrame();
                     }
 
                     _tempTextureArrays.Add(textureArrayType, texArray);
                 }
 
-                stopwatch.Stop();
-                Debug.Log($"Built tex array in {stopwatch.ElapsedMilliseconds / 1000f} s");
+                stopwatch.Log("Built tex array");
             }
             catch (Exception e)
             {
