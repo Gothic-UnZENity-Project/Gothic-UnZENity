@@ -11,6 +11,7 @@ using GUZ.Core.Util;
 using UnityEngine;
 using ZenKit;
 using CompressionLevel = System.IO.Compression.CompressionLevel;
+using Constants = GUZ.Core.Globals.Constants;
 using Debug = UnityEngine.Debug;
 using Mesh = UnityEngine.Mesh;
 
@@ -19,9 +20,16 @@ namespace GUZ.Core.Manager
     public class StaticCacheManager
     {
         private string _cacheRootFolderPath;
+        private string _fileEndingMetadata = "metadata.json";
         private string _fileEndingTextures = "textures.json.gz";
         private string _fileEndingWorld = "world.json.gz";
         private string _fileEndingVobs = "vobs.json.gz";
+
+        public class MetadataContainer
+        {
+            public string Revision;
+            public string CreationTime;
+        }
 
         /// <summary>
         /// Store information about TextureArrays which will be used to recreate texture array once loaded.
@@ -93,9 +101,16 @@ namespace GUZ.Core.Manager
         /// </summary>
         public bool DoCacheFilesExist(string worldName)
         {
-            return File.Exists(BuildFilePathName(worldName, _fileEndingTextures)) &&
+            return File.Exists(BuildFilePathName(worldName, _fileEndingMetadata)) &&
+                   File.Exists(BuildFilePathName(worldName, _fileEndingTextures)) &&
                    File.Exists(BuildFilePathName(worldName, _fileEndingWorld)) &&
                    File.Exists(BuildFilePathName(worldName, _fileEndingVobs));
+        }
+
+        public MetadataContainer ReadMetadata(string worldName)
+        {
+            var metadataString = File.ReadAllText(BuildFilePathName(worldName, _fileEndingMetadata));
+            return JsonUtility.FromJson<MetadataContainer>(metadataString);
         }
 
         public async Task SaveCache(GameObject worldRootGo, GameObject vobsRootGo, string fileName)
@@ -104,11 +119,16 @@ namespace GUZ.Core.Manager
             {
                 Directory.CreateDirectory(_cacheRootFolderPath);
 
+                var metadata = new MetadataContainer()
+                {
+                    Revision = Constants.StaticCacheRevision,
+                    CreationTime = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.K")
+                };
                 var textureData = CollectTextureData();
                 var worldData = CollectWorldData(worldRootGo.transform);
                 var vobsData = CollectVobsData(vobsRootGo.transform);
 
-                await SaveCacheFile(textureData, worldData, vobsData, fileName);
+                await SaveCacheFile(metadata, textureData, worldData, vobsData, fileName);
 
                 // As we stored the Meshes and TextureArrays, we can safely remove all the data from Managers now.
                 GameGlobals.TextureArray.Dispose();
@@ -357,9 +377,9 @@ namespace GUZ.Core.Manager
             }
         }
 
-        private async Task SaveCacheFile(TextureArrayContainer textureData, CacheContainer worldData, CacheContainer vobsData, string fileName)
+        private async Task SaveCacheFile(MetadataContainer metadata, TextureArrayContainer textureData, CacheContainer worldData, CacheContainer vobsData, string fileName)
         {
-
+            string metadataJson = null;
             string textureJson = null;
             string worldJson = null;
             string vobsJson = null;
@@ -367,14 +387,25 @@ namespace GUZ.Core.Manager
             // We need to call loading the data in a separate thread to unblock main thread (VR movement etc.) during this IO heavy operation.
             await Task.Run(() =>
             {
+                metadataJson = JsonUtility.ToJson(metadata, true);
                 textureJson = JsonUtility.ToJson(textureData);
                 worldJson = JsonUtility.ToJson(worldData);
                 vobsJson = JsonUtility.ToJson(vobsData);
             });
 
+            await WriteData(metadataJson, BuildFilePathName(fileName, _fileEndingMetadata));
             await WriteCompressedData(textureJson, BuildFilePathName(fileName, _fileEndingTextures));
             await WriteCompressedData(worldJson, BuildFilePathName(fileName, _fileEndingWorld));
             await WriteCompressedData(vobsJson, BuildFilePathName(fileName, _fileEndingVobs));
+        }
+
+        private async Task WriteData(string data, string filePath)
+        {
+            using (var fileStream = new FileStream(filePath, FileMode.Create))
+            using (var writer = new StreamWriter(fileStream))
+            {
+                await writer.WriteAsync(data);
+            }
         }
 
         private async Task WriteCompressedData(string data, string filePath)

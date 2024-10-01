@@ -1,5 +1,4 @@
 ﻿using System.Threading.Tasks;
-using GUZ.Core.Caches;
 using GUZ.Core.Creator;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager.Vobs;
@@ -59,8 +58,11 @@ namespace GUZ.Core.Manager.Scenes
                 // DEBUG Enforce recreation of cache if commented out.
                 if (GameGlobals.StaticCache.DoCacheFilesExist(worldName))
                 {
-                    Debug.Log($"{worldName} already cached. Skipping...");
-                    continue;
+                    if (GameGlobals.StaticCache.ReadMetadata(worldName).Revision == Constants.StaticCacheRevision)
+                    {
+                        Debug.Log($"{worldName} already cached and metadata version matches. Skipping...");
+                        continue;
+                    }
                 }
 
                 Debug.Log($"### PreCaching meshes for world: {worldName}");
