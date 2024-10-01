@@ -43,7 +43,7 @@ namespace GUZ.Core.Manager
         public readonly Dictionary<Mesh, VobMeshData> VobMeshesForTextureArray = new();
 
         /// <summary>
-        /// Created Texture Arrays via BuildTextureArrays(). Will be applied immediately via AssignTextureArraysFor*() and released afterwards.
+        /// Created Texture Arrays via BuildTextureArrays(). Will be applied immediately via AssignTextureArraysFor*() and released afterward.
         /// </summary>
         private static Dictionary<TextureArrayTypes, Texture> _tempTextureArrays { get; } = new();
 
@@ -335,6 +335,7 @@ namespace GUZ.Core.Manager
             TexturesToIncludeInArray.ClearAndReleaseMemory();
             WorldMeshRenderersForTextureArray.ClearAndReleaseMemory();
             VobMeshesForTextureArray.ClearAndReleaseMemory();
+            _tempTextureArrays.ClearAndReleaseMemory();
         }
     }
 }

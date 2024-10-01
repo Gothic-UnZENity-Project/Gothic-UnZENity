@@ -70,25 +70,22 @@ namespace GUZ.Core.Manager.Scenes
                 var worldRootGo = new GameObject("World");
 
                 // Build the world and vob meshes, populating the texture arrays.
-                // We need to start creating Vobs as we need to calculate world slicing based on amount of lights at a certain space afterwards.
+
+                // We need to start creating Vobs as we need to calculate world slicing based on amount of lights at a certain space afterward.
                 Debug.Log("### PreCaching static VOB meshes.");
                 await new VobCacheManager().CreateForCache(worldData!.RootObjects, GameGlobals.Loading, vobsRootGo);
-                // During loading, the texture array gets filled. It's easier for now to simply dispose the data instead
-                // of altering its collection with IF-ELSE statements in code.
-                // TextureCache.RemoveCachedTextureArrayData();
 
                 Debug.Log("### PreCaching World meshes.");
                 await WorldCreator.CreateForCache(worldData, worldRootGo, GameGlobals.Loading);
 
+                Debug.Log("## Saving caches.");
                 await GameGlobals.StaticCache.SaveCache(worldRootGo, vobsRootGo, worldName);
 
-                // Clean up scene memory
-                GameGlobals.TextureArray.Dispose();
+                // Clean up scene memory (Hint: TextureArray data is removed from within StaticCache.SaveCache itself)
                 Destroy(vobsRootGo);
                 Destroy(worldRootGo);
-                // We _accidentally_ create morph caches (as we didn't update the AbstractMeshCreator logic and added IF CacheState==true
-                MorphMeshCache.Dispose();
-                Debug.Log("### DEBUG Saving cache DONE.");
+
+                Debug.Log($"### Saving cache for {worldName} done.");
 
 
                 // DEBUG restore

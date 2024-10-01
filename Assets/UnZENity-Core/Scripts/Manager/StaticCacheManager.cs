@@ -4,6 +4,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Threading.Tasks;
+using GUZ.Core.Caches;
 using UnityEngine;
 using ZenKit;
 using CompressionLevel = System.IO.Compression.CompressionLevel;
@@ -14,7 +15,9 @@ namespace GUZ.Core.Manager
     public class StaticCacheManager
     {
         private string _cacheRootFolderPath;
-
+        private string _fileEndingTextures = "textures.json.gz";
+        private string _fileEndingWorld = "world.json.gz";
+        private string _fileEndingVobs = "vobs.json.gz";
 
         /// <summary>
         /// Store information about TextureArrays which will be used to recreate texture array once loaded.
@@ -95,6 +98,11 @@ namespace GUZ.Core.Manager
 
                 await SaveCacheFile(textureData, worldData, vobsData, fileName);
 
+                // As we stored the Meshes and TextureArrays, we can safely remove all the data from Managers now.
+                GameGlobals.TextureArray.Dispose();
+                TextureCache.Dispose();
+                MultiTypeCache.Dispose();
+                MorphMeshCache.Dispose(); // We _accidentally_ create morph caches (as we didn't update the AbstractMeshBuilder logic)
             }
             catch (Exception e)
             {
@@ -107,14 +115,17 @@ namespace GUZ.Core.Manager
         {
             try
             {
-                var textureJson = JsonUtility.FromJson<TextureArrayContainer>(ReadCompressedData(BuildFilePathName(fileName, "textureData.json.gz")));
-                var worldJson = JsonUtility.FromJson<CacheContainer>(ReadCompressedData(BuildFilePathName(fileName, "worldMeshes.json.gz")));
-                var vobsJson = JsonUtility.FromJson<CacheContainer>(ReadCompressedData(BuildFilePathName(fileName, "vobMeshes.json.gz")));
+                var textureJson = JsonUtility.FromJson<TextureArrayContainer>(ReadCompressedData(BuildFilePathName(fileName, _fileEndingTextures)));
+                var worldJson = JsonUtility.FromJson<CacheContainer>(ReadCompressedData(BuildFilePathName(fileName, _fileEndingWorld)));
+                var vobsJson = JsonUtility.FromJson<CacheContainer>(ReadCompressedData(BuildFilePathName(fileName, _fileEndingVobs)));
 
                 await GameGlobals.TextureArray.BuildTextureArraysFromCache(textureJson);
                 await CreateFromCache(rootGo, worldJson.Root);
                 await CreateFromCache(rootGo, vobsJson.Root);
+
+                // As we created the Meshes and TextureArrays, we can safely remove all the data from Managers now.
                 GameGlobals.TextureArray.Dispose();
+                MultiTypeCache.Dispose();
             }
             catch (Exception e)
             {
@@ -319,9 +330,9 @@ namespace GUZ.Core.Manager
             var worldJson = JsonUtility.ToJson(worldData);
             var vobsJson = JsonUtility.ToJson(vobsData);
 
-            await WriteCompressedData(textureJson, BuildFilePathName(fileName, "textureData.json.gz"));
-            await WriteCompressedData(worldJson, BuildFilePathName(fileName, "worldMeshes.json.gz"));
-            await WriteCompressedData(vobsJson, BuildFilePathName(fileName, "vobMeshes.json.gz"));
+            await WriteCompressedData(textureJson, BuildFilePathName(fileName, _fileEndingTextures));
+            await WriteCompressedData(worldJson, BuildFilePathName(fileName, _fileEndingWorld));
+            await WriteCompressedData(vobsJson, BuildFilePathName(fileName, _fileEndingVobs));
         }
 
         private async Task WriteCompressedData(string data, string filePath)
