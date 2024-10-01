@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using GUZ.Core.Caches;
 using GUZ.Core.Extensions;
+using GUZ.Core.Util;
 using UnityEngine;
 using ZenKit;
 using CompressionLevel = System.IO.Compression.CompressionLevel;
@@ -347,6 +348,8 @@ namespace GUZ.Core.Manager
                 var meshRenderer = go.AddComponent<MeshRenderer>();
                 GameGlobals.TextureArray.AssignTextureArray(entry, meshRenderer);
             }
+
+            await FrameSkipper.TrySkipToNextFrame();
 
             foreach (var child in entry.Children)
             {
