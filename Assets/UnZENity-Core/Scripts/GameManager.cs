@@ -30,7 +30,6 @@ namespace GUZ.Core
         public GameSettings Settings { get; private set; }
         
         public LoadingManager Loading { get; private set; }
-        public GltManager Glt { get; private set; }
         public StaticCacheManager StaticCache { get; private set; }
         public PlayerManager Player { get; private set; }
         public SkyManager Sky { get; private set; }
@@ -74,7 +73,6 @@ namespace GUZ.Core
             Textures = GetComponent<TextureManager>();
             Font = GetComponent<FontManager>();
             Loading = new LoadingManager();
-            Glt = new GltManager();
             StaticCache = new StaticCacheManager();
             TextureArray = new TextureArrayManager();
             VobMeshCulling = new VobMeshCullingManager(Config, this);
@@ -138,7 +136,6 @@ namespace GUZ.Core
 
             _gameMusicManager.Init();
             Sky.Init();
-            Glt.Init();
             StaticCache.Init();
             Textures.Init();
             Video.Init();
