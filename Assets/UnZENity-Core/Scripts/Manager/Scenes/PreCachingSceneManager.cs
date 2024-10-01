@@ -57,11 +57,11 @@ namespace GUZ.Core.Manager.Scenes
             foreach (var worldName in worldsToLoad)
             {
                 // DEBUG Enforce recreation of cache if commented out.
-                // if (GameGlobals.Glt.DoesCacheFileExist(worldName))
-                // {
-                //     Debug.Log($"{worldName} already cached. Skipping...");
-                //     continue;
-                // }
+                if (GameGlobals.StaticCache.DoCacheFilesExist(worldName))
+                {
+                    Debug.Log($"{worldName} already cached. Skipping...");
+                    continue;
+                }
 
                 Debug.Log($"### PreCaching meshes for world: {worldName}");
                 var worldData = ResourceLoader.TryGetWorld(worldName, GameContext.GameVersionAdapter.Version);

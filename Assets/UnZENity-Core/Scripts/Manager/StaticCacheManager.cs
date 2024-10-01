@@ -41,7 +41,6 @@ namespace GUZ.Core.Manager
             public List<TextureArrayManager.TextureData> Textures = new();
         }
 
-
         [Serializable]
         public class CacheContainer
         {
@@ -84,7 +83,15 @@ namespace GUZ.Core.Manager
             _cacheRootFolderPath = $"{Application.persistentDataPath}/Cache/{GameContext.GameVersionAdapter.Version}/";
         }
 
-
+        /// <summary>
+        /// We check for all required cache files once. If any of these are missing, the whole cache is marked as invalid.
+        /// </summary>
+        public bool DoCacheFilesExist(string worldName)
+        {
+            return File.Exists(BuildFilePathName(worldName, _fileEndingTextures)) &&
+                   File.Exists(BuildFilePathName(worldName, _fileEndingWorld)) &&
+                   File.Exists(BuildFilePathName(worldName, _fileEndingVobs));
+        }
 
         public async Task SaveCache(GameObject worldRootGo, GameObject vobsRootGo, string fileName)
         {
