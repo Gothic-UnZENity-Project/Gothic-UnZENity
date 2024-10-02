@@ -157,28 +157,30 @@ namespace GUZ.Core.Caches
         {
             string key = materialData.Texture;
 
-            for (int i = 0; i < Enum.GetValues(typeof(TextureArrayTypes)).Length; i++)
+            if (materialData.Group == MaterialGroup.Water)
             {
-                if (!_texturesToIncludeInArray.ContainsKey((TextureArrayTypes)i))
+                textureArrayType = TextureArrayTypes.Water;
+                if (GetAlreadyIncludedTexture(textureArrayType, key, out arrayIndex, out maxMipLevel, out textureScale))
                 {
-                    continue;
+                    return;
+                }
+            }
+            else
+            {
+                textureArrayType = TextureArrayTypes.Opaque;
+                if (GetAlreadyIncludedTexture(textureArrayType, key, out arrayIndex, out maxMipLevel, out textureScale))
+                {
+                    return;
                 }
 
-                (string, ZkTextureData) cachedTextureData = _texturesToIncludeInArray[(TextureArrayTypes)i].FirstOrDefault(k => k.PreparedKey == key);
-                if (cachedTextureData != default)
+                textureArrayType = TextureArrayTypes.Transparent;
+                if (GetAlreadyIncludedTexture(textureArrayType, key, out arrayIndex, out maxMipLevel, out textureScale))
                 {
-                    textureArrayType = (TextureArrayTypes)i;
-
-                    arrayIndex = _texturesToIncludeInArray[textureArrayType].IndexOf(cachedTextureData);
-                    ZkTextureData zkData = _texturesToIncludeInArray[textureArrayType][arrayIndex].TextureData;
-                    maxMipLevel = zkData.MipmapCount - 1;
-                    textureScale = zkData.Scale;
                     return;
                 }
             }
 
             ITexture zenTextureData = ResourceLoader.TryGetTexture(key);
-
             if (zenTextureData == null)
             {
                 textureArrayType = default;
@@ -188,19 +190,18 @@ namespace GUZ.Core.Caches
                 return;
             }
 
-            maxMipLevel = zenTextureData.MipmapCount - 1;
             UnityEngine.TextureFormat textureFormat = zenTextureData.Format.AsUnityTextureFormat();
 
-            if (materialData.Group == MaterialGroup.Water)
-            {
-                textureArrayType = TextureArrayTypes.Water;
-            }
-            else
+            if (materialData.Group != MaterialGroup.Water)
             {
                 textureArrayType = textureFormat == UnityEngine.TextureFormat.DXT1
                     ? TextureArrayTypes.Opaque
                     : TextureArrayTypes.Transparent;
             }
+
+
+
+            maxMipLevel = zenTextureData.MipmapCount - 1;
 
             textureScale = new Vector2((float)zenTextureData.Width / ReferenceTextureSize, (float)zenTextureData.Height / ReferenceTextureSize);
             if (!_texturesToIncludeInArray.ContainsKey(textureArrayType))
@@ -336,6 +337,27 @@ namespace GUZ.Core.Caches
 
             stopwatch.Stop();
             Debug.Log($"Built tex array in {stopwatch.ElapsedMilliseconds / 1000f} s");
+        }
+
+        private static bool GetAlreadyIncludedTexture(TextureArrayTypes textureArrayType, string key, out int arrayIndex, out int maxMipLevel, out Vector2 textureScale)
+        {
+            if (_texturesToIncludeInArray.ContainsKey(textureArrayType))
+            {
+                (string, ZkTextureData) cachedTextureData = _texturesToIncludeInArray[textureArrayType].FirstOrDefault(k => k.PreparedKey == key);
+                if (cachedTextureData != default)
+                {
+                    arrayIndex = _texturesToIncludeInArray[textureArrayType].IndexOf(cachedTextureData);
+                    ZkTextureData zkData = _texturesToIncludeInArray[textureArrayType][arrayIndex].TextureData;
+                    maxMipLevel = zkData.MipmapCount - 1;
+                    textureScale = zkData.Scale;
+                    return true;
+                }
+            }
+
+            arrayIndex = -1;
+            maxMipLevel = -1;
+            textureScale = default;
+            return false;
         }
 
         /// <summary>
