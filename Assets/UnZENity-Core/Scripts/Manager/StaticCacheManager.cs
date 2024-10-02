@@ -9,6 +9,7 @@ using GUZ.Core.Caches;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Util;
+using MyBox;
 using UnityEngine;
 using ZenKit;
 using CompressionLevel = System.IO.Compression.CompressionLevel;
@@ -131,7 +132,10 @@ namespace GUZ.Core.Manager
         {
             try
             {
+                // Create cache folder if it doesn't exist
                 Directory.CreateDirectory(BuildFilePathName(worldName, ""));
+                // Cleanup existing files (if we renamed some with a new version, these stalled files will be deleted as well)
+                Directory.EnumerateFiles(BuildFilePathName(worldName, "")).ForEach(File.Delete);
 
                 var metadata = new MetadataContainer()
                 {
