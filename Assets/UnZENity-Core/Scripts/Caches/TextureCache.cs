@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using GUZ.Core.Creator.Meshes;
 using GUZ.Core.Extensions;
 using GUZ.Core.World;
 using JetBrains.Annotations;
@@ -219,9 +221,7 @@ namespace GUZ.Core.Caches
                     ? TextureArrayTypes.Opaque
                     : TextureArrayTypes.Transparent;
             }
-
-
-
+            
             maxMipLevel = zenTextureData.MipmapCount - 1;
 
             textureScale = new Vector2((float)zenTextureData.Width / ReferenceTextureSize, (float)zenTextureData.Height / ReferenceTextureSize);
@@ -232,6 +232,9 @@ namespace GUZ.Core.Caches
 
             _texturesToIncludeInArray[textureArrayType].Add((key, new ZkTextureData(key, zenTextureData)));
             arrayIndex = _texturesToIncludeInArray[textureArrayType].Count - 1;
+            
+            if(materialData.TextureAnimationFps > 0)
+                TextureAnimator.I.matList.Add((key, materialData.TextureAnimationFps, textureArrayType, arrayIndex));
         }
 
         public static async Task BuildTextureArrays()
@@ -403,9 +406,6 @@ namespace GUZ.Core.Caches
         /// </summary>
         public static void RemoveCachedTextureArrayData()
         {
-            TextureArrays.Clear();
-            TextureArrays.TrimExcess();
-
             _texturesToIncludeInArray.Clear();
             _texturesToIncludeInArray.TrimExcess();
 
