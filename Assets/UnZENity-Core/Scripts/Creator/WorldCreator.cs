@@ -146,7 +146,7 @@ namespace GUZ.Core.Creator
         {
             await Task.Run(async () =>
             {
-                var node = bspTree.GetNode(nodeIndex);
+                BspNode node = bspTree.GetNode(nodeIndex);
 
                 if (node.PolygonCount > 0)
                 {
@@ -162,9 +162,9 @@ namespace GUZ.Core.Creator
                     if (node.FrontIndex == -1 && node.BackIndex == -1)
                     {
                         // Add the leaf node geometry.
-                        for (var i = node.PolygonIndex; i < node.PolygonIndex + node.PolygonCount; i++)
+                        for (int i = node.PolygonIndex; i < node.PolygonIndex + node.PolygonCount; i++)
                         {
-                            var polygon = zkMesh.GetPolygon(bspTree.PolygonIndices[i]);
+                            IPolygon polygon = zkMesh.IsCached() ? zkMesh.Polygons[bspTree.PolygonIndices[i]] : zkMesh.GetPolygon(bspTree.PolygonIndices[i]);
                             if (polygon.IsPortal || _claimedPolygons.Contains(polygon))
                             {
                                 continue;
@@ -174,46 +174,43 @@ namespace GUZ.Core.Creator
                             _claimedPolygons.Add(polygon);
 
                             // As we always use element 0 and i+1, we skip it in the loop.
-                            for (var p = 1; p < polygon.PositionIndices.Count - 1; p++)
+                            for (int p = 1; p < polygon.PositionIndices.Count - 1; p++)
                             {
                                 // Add the texture to the texture array or retrieve its existing slice.
-                                var zkMaterial = zkMesh.GetMaterial(polygon.MaterialIndex);
-                                TextureCache.GetTextureArrayIndex(zkMaterial, out TextureCache.TextureArrayTypes textureArrayTpe, out int textureArrayIndex, out Vector2 textureScale, out int maxMipLevel);
+                                IMaterial zkMaterial = zkMesh.IsCached() ? zkMesh.Materials[polygon.MaterialIndex] : zkMesh.GetMaterial(polygon.MaterialIndex);
+                                TextureCache.GetTextureArrayIndex(zkMaterial, out TextureCache.TextureArrayTypes textureArrayType, out int textureArrayIndex, out Vector2 textureScale, out int maxMipLevel);
                                 if (textureArrayIndex == -1)
                                 {
                                     continue;
                                 }
 
                                 // Build submeshes for each unique shader: Water, opaque, and alpha cutout.
-                                var shader = Constants.ShaderWorldLit;
-                                if (textureArrayTpe == TextureCache.TextureArrayTypes.Transparent)
+                                Shader shader = Constants.ShaderWorldLit;
+                                if (textureArrayType == TextureCache.TextureArrayTypes.Transparent)
                                 {
                                     shader = Constants.ShaderLitAlphaToCoverage;
                                 }
-                                else if (textureArrayTpe == TextureCache.TextureArrayTypes.Water)
+                                else if (textureArrayType == TextureCache.TextureArrayTypes.Water)
                                 {
                                     shader = Constants.ShaderWater;
                                 }
 
                                 if (!nodeSubmeshes.ContainsKey(shader))
                                 {
-                                    nodeSubmeshes.Add(shader,
-                                        new WorldData.SubMeshData
-                                        { Material = zkMaterial, TextureArrayType = textureArrayTpe });
+                                    nodeSubmeshes.Add(shader, new WorldData.SubMeshData { Material = zkMaterial, TextureArrayType = textureArrayType });
                                     if (!allSubmeshesPerParentNodeIndex.ContainsKey(submeshParentIndex))
                                     {
-                                        allSubmeshesPerParentNodeIndex.Add(submeshParentIndex,
-                                            new List<WorldData.SubMeshData>());
+                                        allSubmeshesPerParentNodeIndex.Add(submeshParentIndex, new List<WorldData.SubMeshData>());
                                     }
 
                                     allSubmeshesPerParentNodeIndex[submeshParentIndex].Add(nodeSubmeshes[shader]);
                                 }
 
-                                var nodeSubmesh = nodeSubmeshes[shader];
+                                WorldData.SubMeshData nodeSubmesh = nodeSubmeshes[shader];
                                 // Triangle Fan - We need to add element 0 (A) before every triangle 2 elements.
-                                AddEntry(zkMesh, polygon, nodeSubmesh, 0, textureArrayIndex, textureScale, maxMipLevel);
-                                AddEntry(zkMesh, polygon, nodeSubmesh, p, textureArrayIndex, textureScale, maxMipLevel);
-                                AddEntry(zkMesh, polygon, nodeSubmesh, p + 1, textureArrayIndex, textureScale, maxMipLevel);
+                                AddEntry(zkMesh, polygon, zkMaterial, nodeSubmesh, 0, textureArrayIndex, textureScale, maxMipLevel);
+                                AddEntry(zkMesh, polygon, zkMaterial, nodeSubmesh, p, textureArrayIndex, textureScale, maxMipLevel);
+                                AddEntry(zkMesh, polygon, zkMaterial, nodeSubmesh, p + 1, textureArrayIndex, textureScale, maxMipLevel);
                             }
                         }
                     }
@@ -222,39 +219,36 @@ namespace GUZ.Core.Creator
                 // Expand the child nodes. Spawn new threads if no geometry is added yet.
                 if (node.FrontIndex != -1)
                 {
-                    await ExpandBspTreeIntoMeshes(zkMesh, bspTree, node.FrontIndex, allSubmeshesPerParentNodeIndex, nodeSubmeshes,
-                        submeshParentIndex);
+                    await ExpandBspTreeIntoMeshes(zkMesh, bspTree, node.FrontIndex, allSubmeshesPerParentNodeIndex, nodeSubmeshes, submeshParentIndex);
                 }
 
                 if (node.BackIndex != -1)
                 {
-                    await ExpandBspTreeIntoMeshes(zkMesh, bspTree, node.BackIndex, allSubmeshesPerParentNodeIndex, nodeSubmeshes,
-                        submeshParentIndex);
+                    await ExpandBspTreeIntoMeshes(zkMesh, bspTree, node.BackIndex, allSubmeshesPerParentNodeIndex, nodeSubmeshes, submeshParentIndex);
                 }
             });
         }
 
-        private static void AddEntry(IMesh zkMesh, IPolygon polygon, WorldData.SubMeshData currentSubMesh, int index,
+        private static void AddEntry(IMesh zkMesh, IPolygon polygon, IMaterial material, WorldData.SubMeshData currentSubMesh, int index,
             int textureArrayIndex, Vector2 scaleInTextureArray, int maxMipLevel = 16)
         {
             // For every vertexIndex we store a new vertex. (i.e. no reuse of Vector3-vertices for later texture/uv attachment)
             var positionIndex = polygon.PositionIndices[index];
-            currentSubMesh.Vertices.Add(zkMesh.GetPosition(positionIndex).ToUnityVector());
+            currentSubMesh.Vertices.Add((zkMesh.IsCached() ? zkMesh.Positions[positionIndex] : zkMesh.GetPosition(positionIndex)).ToUnityVector());
 
             // This triangle (index where Vector 3 lies inside vertices, points to the newly added vertex (Vector3) as we don't reuse vertices.
             currentSubMesh.Triangles.Add(currentSubMesh.Vertices.Count - 1);
 
             var featureIndex = polygon.FeatureIndices[index];
-            var feature = zkMesh.GetFeature(featureIndex);
+            var feature = zkMesh.IsCached() ? zkMesh.Features[featureIndex] : zkMesh.GetFeature(featureIndex);
             var uv = Vector2.Scale(scaleInTextureArray, feature.Texture.ToUnityVector());
             currentSubMesh.Uvs.Add(new Vector4(uv.x, uv.y, textureArrayIndex, maxMipLevel));
             currentSubMesh.Normals.Add(feature.Normal.ToUnityVector());
             currentSubMesh.BakedLightColors.Add(new Color32((byte)(feature.Light >> 16), (byte)(feature.Light >> 8), (byte)feature.Light, (byte)(feature.Light >> 24)));
 
-            IMaterial meshMaterial = zkMesh.GetMaterial(polygon.MaterialIndex);
-            if (meshMaterial.TextureAnimationMapping == AnimationMapping.Linear)
+            if (material.TextureAnimationMapping == AnimationMapping.Linear)
             {
-                var uvAnimation = meshMaterial.TextureAnimationMappingDirection.ToUnityVector();
+                var uvAnimation = material.TextureAnimationMappingDirection.ToUnityVector();
                 currentSubMesh.TextureAnimations.Add(uvAnimation);
             }
             else
