@@ -29,6 +29,8 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
             await TextureCache.BuildTextureArrays();
             AssignTextureArrays();
             TextureCache.RemoveCachedTextureArrayData();
+            // FIXME: find a better spot for this function
+            TextureAnimator.I.Begin();
         }
 
         private void AssignTextureArrays()
