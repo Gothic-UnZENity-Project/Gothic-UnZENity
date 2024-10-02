@@ -283,14 +283,14 @@ namespace GUZ.Core.Manager
             }
         }
 
-        public void AssignTextureArray(StaticCacheManager.CacheEntry entry, MeshRenderer renderer)
+        public void AssignTextureArray(StaticCacheManager.MeshCacheEntry entry, MeshRenderer renderer)
         {
-            var finalMaterials = new List<Material>(entry.MeshData.TextureTypes.Length);
+            var finalMaterials = new List<Material>(entry.TextureTypes.Length);
 
-            foreach (var textureType in entry.MeshData.TextureTypes)
+            foreach (var textureType in entry.TextureTypes)
             {
                 var texture = _tempTextureArrays[textureType];
-                var material = entry.MeshData.MaterialGroup == MaterialGroup.Water
+                var material = entry.MaterialGroup == MaterialGroup.Water
                     ? GetWaterMaterial()
                     : GetDefaultMaterial(textureType == TextureArrayTypes.Transparent);
 

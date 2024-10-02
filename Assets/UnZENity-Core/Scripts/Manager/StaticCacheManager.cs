@@ -7,11 +7,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using GUZ.Core.Caches;
 using GUZ.Core.Extensions;
+using GUZ.Core.Globals;
 using GUZ.Core.Util;
 using UnityEngine;
 using ZenKit;
 using CompressionLevel = System.IO.Compression.CompressionLevel;
-using Constants = GUZ.Core.Globals.Constants;
 using Debug = UnityEngine.Debug;
 using Mesh = UnityEngine.Mesh;
 
@@ -20,15 +20,43 @@ namespace GUZ.Core.Manager
     public class StaticCacheManager
     {
         private string _cacheRootFolderPath;
-        private string _fileEndingMetadata = "metadata.json";
-        private string _fileEndingTextures = "textures.json.gz";
-        private string _fileEndingWorld = "world.json.gz";
-        private string _fileEndingVobs = "vobs.json.gz";
+        private const string _fileNameMetadata = "metadata.json";
+        private const string _fileNameMeshes = "meshes.json.gz";
+        private const string _fileNameTextures = "textures.json.gz";
+        private const string _fileNameWorld = "world.json.gz";
+        private const string _fileNameVobs = "vobs.json.gz";
 
+
+        // Will be used for storing and retrieving world+static vobs.
+        // It helps us to store a mesh for a VOB only once as objects will reference its index when a VOB is created multiple times.
+        private List<(Mesh Mesh, MeshCacheEntry CacheEntry)> _tempMeshCacheEntries = new();
+
+        [Serializable]
         public class MetadataContainer
         {
             public string Revision;
             public string CreationTime;
+        }
+
+        [Serializable]
+        public class MeshContainer
+        {
+            public List<MeshCacheEntry> Meshes;
+        }
+        
+        /// <summary>
+        /// Mesh data of a GameObject
+        /// </summary>
+        [Serializable]
+        public class MeshCacheEntry
+        {
+            public TextureArrayManager.TextureArrayTypes[] TextureTypes;
+            public int[] SubMeshTriangleCounts;
+            public MaterialGroup MaterialGroup;
+            public Vector3[] Vertices;
+            public Vector4[] UV0;
+            public Vector2[] UV1;
+            public Color32[] Colors;
         }
 
         /// <summary>
@@ -71,23 +99,8 @@ namespace GUZ.Core.Manager
 
             public List<CacheEntry> Children = new();
 
-            /// If a GameObject contains a mesh, we store this information here.
-            public MeshCacheEntry MeshData;
-        }
-
-        /// <summary>
-        /// Mesh data of a GameObject
-        /// </summary>
-        [Serializable]
-        public class MeshCacheEntry
-        {
-            public TextureArrayManager.TextureArrayTypes[] TextureTypes;
-            public int[] SubMeshTriangleCounts;
-            public MaterialGroup MaterialGroup;
-            public Vector3[] Vertices;
-            public Vector4[] UV0;
-            public Vector2[] UV1;
-            public Color32[] Colors;
+            /// If a GameObject contains a mesh, we fetch the corresponding mesh from cache and store its ID here.
+            public int MeshCacheEntryId = -1;
         }
 
 
@@ -101,23 +114,24 @@ namespace GUZ.Core.Manager
         /// </summary>
         public bool DoCacheFilesExist(string worldName)
         {
-            return File.Exists(BuildFilePathName(worldName, _fileEndingMetadata)) &&
-                   File.Exists(BuildFilePathName(worldName, _fileEndingTextures)) &&
-                   File.Exists(BuildFilePathName(worldName, _fileEndingWorld)) &&
-                   File.Exists(BuildFilePathName(worldName, _fileEndingVobs));
+            return File.Exists(BuildFilePathName(worldName, _fileNameMetadata)) &&
+                   File.Exists(BuildFilePathName(worldName, _fileNameMeshes)) &&
+                   File.Exists(BuildFilePathName(worldName, _fileNameTextures)) &&
+                   File.Exists(BuildFilePathName(worldName, _fileNameWorld)) &&
+                   File.Exists(BuildFilePathName(worldName, _fileNameVobs));
         }
 
         public MetadataContainer ReadMetadata(string worldName)
         {
-            var metadataString = File.ReadAllText(BuildFilePathName(worldName, _fileEndingMetadata));
+            var metadataString = File.ReadAllText(BuildFilePathName(worldName, _fileNameMetadata));
             return JsonUtility.FromJson<MetadataContainer>(metadataString);
         }
 
-        public async Task SaveCache(GameObject worldRootGo, GameObject vobsRootGo, string fileName)
+        public async Task SaveCache(GameObject worldRootGo, GameObject vobsRootGo, string worldName)
         {
             try
             {
-                Directory.CreateDirectory(_cacheRootFolderPath);
+                Directory.CreateDirectory(BuildFilePathName(worldName, ""));
 
                 var metadata = new MetadataContainer()
                 {
@@ -127,10 +141,15 @@ namespace GUZ.Core.Manager
                 var textureData = CollectTextureData();
                 var worldData = CollectWorldData(worldRootGo.transform);
                 var vobsData = CollectVobsData(vobsRootGo.transform);
+                var meshData = new MeshContainer()
+                {
+                    Meshes = _tempMeshCacheEntries.Select(i => i.CacheEntry).ToList()
+                };
 
-                await SaveCacheFile(metadata, textureData, worldData, vobsData, fileName);
+                await SaveCacheFile(metadata, meshData, textureData, worldData, vobsData, worldName);
 
                 // As we stored the Meshes and TextureArrays, we can safely remove all the data from Managers now.
+                _tempMeshCacheEntries.ClearAndReleaseMemory();
                 GameGlobals.TextureArray.Dispose();
                 TextureCache.Dispose();
                 MultiTypeCache.Dispose();
@@ -148,19 +167,23 @@ namespace GUZ.Core.Manager
             var stopwatch = Stopwatch.StartNew();
             try
             {
-                var textureString = await ReadCompressedData(BuildFilePathName(worldName, _fileEndingTextures));
-                var worldString = await ReadCompressedData(BuildFilePathName(worldName, _fileEndingWorld));
-                var vobsString = await ReadCompressedData(BuildFilePathName(worldName, _fileEndingVobs));
+                var meshString = await ReadCompressedData(BuildFilePathName(worldName, _fileNameMeshes));
+                var textureString = await ReadCompressedData(BuildFilePathName(worldName, _fileNameTextures));
+                var worldString = await ReadCompressedData(BuildFilePathName(worldName, _fileNameWorld));
+                var vobsString = await ReadCompressedData(BuildFilePathName(worldName, _fileNameVobs));
 
+                var meshJson = await ParseJson<MeshContainer>(meshString);
                 var textureJson = await ParseJson<TextureArrayContainer>(textureString);
                 var worldJson = await ParseJson<CacheContainer>(worldString);
                 var vobsJson = await ParseJson<CacheContainer>(vobsString);
 
                 await GameGlobals.TextureArray.BuildTextureArraysFromCache(textureJson);
+                await RestoreMeshesFromCache(meshJson);
                 await CreateFromCache(rootGo, worldJson.Root);
                 await CreateFromCache(rootGo, vobsJson.Root);
 
                 // As we created the Meshes and TextureArrays, we can safely remove all the data from Managers now.
+                _tempMeshCacheEntries.ClearAndReleaseMemory();
                 GameGlobals.TextureArray.Dispose();
                 MultiTypeCache.Dispose();
             }
@@ -221,7 +244,7 @@ namespace GUZ.Core.Manager
                 Name = currentElement.name,
                 LocalPosition = currentElement.localPosition,
                 LocalRotation = currentElement.localRotation,
-                MeshData = GetWorldMeshData(currentElement.gameObject)
+                MeshCacheEntryId = TryGetWorldMeshDataId(currentElement.gameObject)
             };
 
             for (var i = 0; i < currentElement.childCount; i++)
@@ -239,7 +262,7 @@ namespace GUZ.Core.Manager
                 Name = currentElement.name,
                 LocalPosition = currentElement.localPosition,
                 LocalRotation = currentElement.localRotation,
-                MeshData = GetVobsMeshData(currentElement.gameObject)
+                MeshCacheEntryId = TryGetVobMeshDataId(currentElement.gameObject)
             };
 
             for (var i = 0; i < currentElement.childCount; i++)
@@ -250,11 +273,15 @@ namespace GUZ.Core.Manager
             return entry;
         }
 
-        private MeshCacheEntry GetWorldMeshData(GameObject currentElement)
+        /// <summary>
+        /// We store Meshes on a separate List. We therefore need to fetch the corresponding ID for our mesh only.
+        /// Yes, World chunk meshes aren't reused, but leveraging the same logic as with VOBs helps us to simplify loading logic.
+        /// </summary>
+        private int TryGetWorldMeshDataId(GameObject currentElement)
         {
             if (!currentElement.TryGetComponent<MeshFilter>(out var meshFilter) || !currentElement.TryGetComponent<Renderer>(out var renderer))
             {
-                return null;
+                return -1;
             }
 
             var textureArrayElement = GameGlobals.TextureArray.WorldMeshRenderersForTextureArray
@@ -263,35 +290,29 @@ namespace GUZ.Core.Manager
             if (textureArrayElement == default)
             {
                 Debug.LogError("No TextureArray element for this renderer found. Skipping entry...");
-                return null;
+                return -1;
             }
 
             var mesh = meshFilter.sharedMesh;
-            var uvs = new List<Vector4>();
-            mesh.GetUVs(0, uvs);
 
-            var uv1 = new List<Vector2>();
-            mesh.GetUVs(1, uv1);
-
-            var data = new MeshCacheEntry()
+            if (GetOrCreateMeshCacheEntry(mesh, out var meshCacheEntry))
             {
-                TextureTypes = new[] {textureArrayElement.SubmeshData.TextureArrayType}, // We have only one single entry per world mesh chunk.
-                MaterialGroup = textureArrayElement.SubmeshData.Material.Group,
-                Vertices = mesh.vertices,
-                SubMeshTriangleCounts = new int[]{mesh.triangles.Length}, // There's only one SubMesh per world chunk. No submeshing needed and therefore we always fetch whole length.
-                UV0 = uvs.ToArray(),
-                UV1 = uv1.ToArray(),
-                Colors = mesh.colors32 // TODO - Do we use colors or colors32 for World and/or VOBs?
-            };
+                // Set specific data for World mesh chunks
+                meshCacheEntry.TextureTypes = new[] { textureArrayElement.SubmeshData.TextureArrayType };
+                meshCacheEntry.MaterialGroup = textureArrayElement.SubmeshData.Material.Group;
+            }
 
-            return data;
+            return _tempMeshCacheEntries.IndexOf((mesh, meshCacheEntry));
         }
 
-        private MeshCacheEntry GetVobsMeshData(GameObject currentElement)
+        /// <summary>
+        /// We store Meshes on a separate List. We therefore need to fetch the corresponding ID for our mesh only.
+        /// </summary>
+        private int TryGetVobMeshDataId(GameObject currentElement)
         {
             if (!currentElement.TryGetComponent<MeshFilter>(out var meshFilter) || !currentElement.TryGetComponent<Renderer>(out var renderer))
             {
-                return null;
+                return -1;
             }
 
             var mesh = meshFilter.sharedMesh;
@@ -300,11 +321,39 @@ namespace GUZ.Core.Manager
             if (textureArrayElement == null)
             {
                 Debug.LogError("No TextureArray element for this renderer found. Skipping entry...");
-                return null;
+                return -1;
             }
 
+            if (GetOrCreateMeshCacheEntry(mesh, out var meshCacheEntry))
+            {
+                meshCacheEntry.TextureTypes = textureArrayElement.TextureTypes.ToArray();
+                meshCacheEntry.MaterialGroup = MaterialGroup.Undefined; // Not needed for VOBs
+            }
+
+            return _tempMeshCacheEntries.IndexOf((mesh, meshCacheEntry));
+        }
+
+        /// <summary>
+        /// Return meshCacheEntry.
+        /// If it's a new one, we return true.
+        /// </summary>
+        private bool /*isNew*/ GetOrCreateMeshCacheEntry(Mesh mesh, out MeshCacheEntry meshCacheEntry)
+        {
+            var foundItem = _tempMeshCacheEntries.FirstOrDefault(i => i.Mesh == mesh);
+
+            if (foundItem != default)
+            {
+                meshCacheEntry = foundItem.CacheEntry;
+                return false;
+            }
+
+
+            // Now let's create a new one.
             var uv0 = new List<Vector4>();
             mesh.GetUVs(0, uv0);
+
+            var uv1 = new List<Vector2>();
+            mesh.GetUVs(1, uv1);
 
             var triangleCounts = new int[mesh.subMeshCount];
             for (var i = 0; i < mesh.subMeshCount; i++)
@@ -313,17 +362,58 @@ namespace GUZ.Core.Manager
                 triangleCounts[i] = mesh.GetTriangles(i).Length;
             }
 
-            var data = new MeshCacheEntry()
+            var newEntry = new MeshCacheEntry()
             {
-                TextureTypes = textureArrayElement.TextureTypes.ToArray(),
-                MaterialGroup = MaterialGroup.Undefined, // Not needed for VOBs
                 Vertices = mesh.vertices,
                 SubMeshTriangleCounts = triangleCounts,
                 UV0 = uv0.ToArray(),
+                UV1 = uv1.ToArray(),
                 Colors = mesh.colors32, // TODO - Do we use colors or colors32 for World and/or VOBs?
             };
 
-            return data;
+            _tempMeshCacheEntries.Add((mesh, newEntry));
+
+            meshCacheEntry = newEntry;
+            return true;
+        }
+
+        private async Task RestoreMeshesFromCache(MeshContainer meshContainer)
+        {
+            foreach (var meshData in meshContainer.Meshes)
+            {
+                // Unity's JsonSerialize will (mostly) always store empty classes with default values. We therefore check if MeshData has no triangles (aka is NULL).
+                if (meshData != null && meshData.Vertices != null)
+                {
+                    var mesh = new Mesh();
+                    mesh.vertices = meshData.Vertices;
+                    mesh.SetUVs(0, meshData.UV0);
+                    mesh.colors32 = meshData.Colors;
+
+                    // We leverage this one for water world chunks.
+                    if (meshData.UV1 != null && meshData.UV1.Any())
+                    {
+                        mesh.SetUVs(1, meshData.UV1);
+                    }
+
+                    mesh.subMeshCount = meshData.SubMeshTriangleCounts.Length;
+                    var triangleStartOffset = 0;
+                    for (var i = 0; i < mesh.subMeshCount; i++)
+                    {
+                        var currentTriangleCount = meshData.SubMeshTriangleCounts[i];
+                        // Create entries like: [0, 1, 2, ..., n-1)
+                        var currentTriangles = Enumerable.Range(triangleStartOffset, currentTriangleCount).ToArray();
+                        mesh.SetTriangles(currentTriangles, i);
+
+                        // Triangles are never reused. i.e. when submeshing, we have first part triangles for submesh0, then submesh1, ...
+                        // As triangles aren't reused, we need to count up. e.g. submesh1 might start with triangleIndex=10, but not 0!
+                        triangleStartOffset += currentTriangleCount;
+                    }
+
+                    _tempMeshCacheEntries.Add((mesh, meshData));
+
+                    await FrameSkipper.TrySkipToNextFrame();
+                }
+            }
         }
 
         private async Task CreateFromCache(GameObject parentGo, CacheEntry entry)
@@ -332,41 +422,13 @@ namespace GUZ.Core.Manager
             go.transform.SetParent(parentGo.transform);
             go.transform.SetLocalPositionAndRotation(entry.LocalPosition, entry.LocalRotation);
 
-            var meshData = entry.MeshData;
-
-            // Unity's JsonSerialize will (mostly) always store empty classes with default values. We therefore check if MeshData has no triangles (aka is NULL).
-            if (meshData != null && meshData.Vertices != null)
+            if (entry.MeshCacheEntryId >= 0)
             {
-                var mesh = new Mesh();
-                mesh.vertices = meshData.Vertices;
-                mesh.SetUVs(0, meshData.UV0);
-                mesh.colors32 = meshData.Colors;
-
-                // We leverage this one for water world chunks.
-                if (meshData.UV1 != null && meshData.UV1.Any())
-                {
-                    mesh.SetUVs(1, meshData.UV1);
-                }
-
-                mesh.subMeshCount = meshData.SubMeshTriangleCounts.Length;
-                var triangleStartOffset = 0;
-                for (var i = 0; i < mesh.subMeshCount; i++)
-                {
-                    var currentTriangleCount = meshData.SubMeshTriangleCounts[i];
-                    // Create entries like: [0, 1, 2, ..., n-1)
-                    var currentTriangles = Enumerable.Range(triangleStartOffset, currentTriangleCount).ToArray();
-                    mesh.SetTriangles(currentTriangles, i);
-
-                    // Triangles are never reused. i.e. when submeshing, we have first part triangles for submesh0, then submesh1, ...
-                    // As triangles aren't reused, we need to count up. e.g. submesh1 might start with triangleIndex=10, but not 0!
-                    triangleStartOffset += currentTriangleCount;
-                }
-
                 var meshFilter = go.AddComponent<MeshFilter>();
-                meshFilter.sharedMesh = mesh;
+                meshFilter.sharedMesh = _tempMeshCacheEntries[entry.MeshCacheEntryId].Mesh;
 
                 var meshRenderer = go.AddComponent<MeshRenderer>();
-                GameGlobals.TextureArray.AssignTextureArray(entry, meshRenderer);
+                GameGlobals.TextureArray.AssignTextureArray(_tempMeshCacheEntries[entry.MeshCacheEntryId].CacheEntry, meshRenderer);
             }
 
             await FrameSkipper.TrySkipToNextFrame();
@@ -377,9 +439,10 @@ namespace GUZ.Core.Manager
             }
         }
 
-        private async Task SaveCacheFile(MetadataContainer metadata, TextureArrayContainer textureData, CacheContainer worldData, CacheContainer vobsData, string fileName)
+        private async Task SaveCacheFile(MetadataContainer metadata, MeshContainer meshData, TextureArrayContainer textureData, CacheContainer worldData, CacheContainer vobsData, string fileName)
         {
             string metadataJson = null;
+            string meshJson = null;
             string textureJson = null;
             string worldJson = null;
             string vobsJson = null;
@@ -388,15 +451,17 @@ namespace GUZ.Core.Manager
             await Task.Run(() =>
             {
                 metadataJson = JsonUtility.ToJson(metadata, true);
+                meshJson = JsonUtility.ToJson(meshData);
                 textureJson = JsonUtility.ToJson(textureData);
                 worldJson = JsonUtility.ToJson(worldData);
                 vobsJson = JsonUtility.ToJson(vobsData);
             });
 
-            await WriteData(metadataJson, BuildFilePathName(fileName, _fileEndingMetadata));
-            await WriteCompressedData(textureJson, BuildFilePathName(fileName, _fileEndingTextures));
-            await WriteCompressedData(worldJson, BuildFilePathName(fileName, _fileEndingWorld));
-            await WriteCompressedData(vobsJson, BuildFilePathName(fileName, _fileEndingVobs));
+            await WriteData(metadataJson, BuildFilePathName(fileName, _fileNameMetadata));
+            await WriteCompressedData(meshJson, BuildFilePathName(fileName, _fileNameMeshes));
+            await WriteCompressedData(textureJson, BuildFilePathName(fileName, _fileNameTextures));
+            await WriteCompressedData(worldJson, BuildFilePathName(fileName, _fileNameWorld));
+            await WriteCompressedData(vobsJson, BuildFilePathName(fileName, _fileNameVobs));
         }
 
         private async Task WriteData(string data, string filePath)
@@ -453,9 +518,9 @@ namespace GUZ.Core.Manager
         }
 
 
-        private string BuildFilePathName(string fileName, string fileEnding)
+        private string BuildFilePathName(string worldName, string fileName)
         {
-            return $"{_cacheRootFolderPath}/{fileName}.{fileEnding}";
+            return $"{_cacheRootFolderPath}/{worldName}/{fileName}";
         }
     }
 }
