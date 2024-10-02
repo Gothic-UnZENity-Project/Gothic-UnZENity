@@ -58,7 +58,7 @@ namespace GUZ.Core.Manager.Scenes
                 // DEBUG Enforce recreation of cache if commented out.
                 if (GameGlobals.StaticCache.DoCacheFilesExist(worldName))
                 {
-                    if (GameGlobals.StaticCache.ReadMetadata(worldName).Revision == Constants.StaticCacheRevision)
+                    if (GameGlobals.StaticCache.ReadMetadata(worldName).Version == Constants.StaticCacheVersion)
                     {
                         Debug.Log($"{worldName} already cached and metadata version matches. Skipping...");
                         continue;

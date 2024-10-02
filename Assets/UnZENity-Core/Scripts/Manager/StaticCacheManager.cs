@@ -34,7 +34,7 @@ namespace GUZ.Core.Manager
         [Serializable]
         public class MetadataContainer
         {
-            public string Revision;
+            public string Version;
             public string CreationTime;
         }
 
@@ -43,7 +43,7 @@ namespace GUZ.Core.Manager
         {
             public List<MeshCacheEntry> Meshes;
         }
-        
+
         /// <summary>
         /// Mesh data of a GameObject
         /// </summary>
@@ -135,7 +135,7 @@ namespace GUZ.Core.Manager
 
                 var metadata = new MetadataContainer()
                 {
-                    Revision = Constants.StaticCacheRevision,
+                    Version = Constants.StaticCacheVersion,
                     CreationTime = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.K")
                 };
                 var textureData = CollectTextureData();

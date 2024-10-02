@@ -132,7 +132,7 @@ namespace GUZ.Core.Globals
 
 
         // Alter this value to enforce game to recreate cache during next start.
-        public const string StaticCacheRevision = "1";
+        public const string StaticCacheVersion = "1";
 
         public static class DaedalusConst
         {

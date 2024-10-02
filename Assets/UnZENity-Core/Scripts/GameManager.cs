@@ -132,6 +132,8 @@ namespace GUZ.Core
 
             // Otherwise, continue loading Gothic.
             Debug.Log($"Initializing Gothic installation at: {gothicRootPath}");
+
+            // TODO - Loading all the VFS files takes up to 12 seconds. Consider using async or leave it as it is.
             ResourceLoader.Init(gothicRootPath);
 
             _gameMusicManager.Init();
