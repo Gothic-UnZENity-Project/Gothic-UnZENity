@@ -84,6 +84,27 @@ namespace GUZ.Core.Caches
         }
 
         [CanBeNull]
+        public static Texture2D[] TryGetAnimTextures(string key)
+        {
+            var preparedKey = GetPreparedKey(key);
+            List<Texture2D> textures = new List<Texture2D>();
+            if (!key.Contains("_A0") && !key.Contains("_a0"))
+                return textures.ToArray();
+            for (int id = 0;; ++id)
+            {
+                // Replace the frame number in the key with the current id
+                string frameKey = Regex.Replace(key, "_[Aa]0", $"_A{id}");
+                frameKey = frameKey.ToUpper();
+                Texture2D texture = TryGetTexture(frameKey);
+                if (texture == null)
+                    break;
+                textures.Add(texture);
+            }
+
+            return textures.ToArray();
+        }
+
+        [CanBeNull]
         public static Texture2D TryGetTexture(string key, bool includeInCache = true)
         {
             string preparedKey = GetPreparedKey(key);
