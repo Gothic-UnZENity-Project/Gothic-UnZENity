@@ -339,7 +339,10 @@ namespace GUZ.Core.Manager
 
         /// <summary>
         /// Return meshCacheEntry.
-        /// If it's a new one, we return true.
+        /// If it's a new one, we return _true_.
+        ///
+        /// IMPORTANT: We assume, that meshes are already referenced inside same VOBs.
+        ///   If they're all created new, we can't do our lookup as the objectIDs would differ.
         /// </summary>
         private bool /*isNew*/ GetOrCreateMeshCacheEntry(Mesh mesh, out MeshCacheEntry meshCacheEntry)
         {

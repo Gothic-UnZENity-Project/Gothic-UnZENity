@@ -1,5 +1,5 @@
+using System;
 using System.Linq;
-using GUZ.Core.Creator;
 using GUZ.Core.Creator.Sounds;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
@@ -7,7 +7,6 @@ using GUZ.Core.Properties;
 using GUZ.Core.Vm;
 using JetBrains.Annotations;
 using UnityEngine;
-using ZenKit.Vobs;
 
 namespace GUZ.Core.Manager
 {
@@ -32,12 +31,7 @@ namespace GUZ.Core.Manager
                 return;
             }
 
-            var config = GameGlobals.Config;
-            var activeTypes = config.SpawnVOBTypes.Value;
-            if (config.EnableVOBs && (activeTypes.IsEmpty() || activeTypes.Contains(VirtualObjectType.oCItem)))
-            {
-                GameGlobals.Vobs.CreateItemMesh(itemInstance, spawnpoint, null);
-            }
+            GameGlobals.Vobs.CreateItemMesh(itemInstance, spawnpoint, null);
         }
 
         [CanBeNull]
@@ -69,7 +63,7 @@ namespace GUZ.Core.Manager
             }
 
             // Bugfix - Normally the data is to get C_SFX_DEF entries from VM. But sometimes there might be the real .wav file stored.
-            if (soundName.EndsWith(".wav", System.StringComparison.InvariantCultureIgnoreCase))
+            if (soundName.EndsWith(".wav", StringComparison.InvariantCultureIgnoreCase))
             {
                 clip = SoundCreator.ToAudioClip(soundName);
             }

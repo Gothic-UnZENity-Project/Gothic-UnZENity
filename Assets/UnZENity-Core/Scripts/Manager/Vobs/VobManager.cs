@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Threading.Tasks;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
@@ -13,9 +12,6 @@ namespace GUZ.Core.Manager.Vobs
 {
     public class VobManager : AbstractVobManager
     {
-        private List<VirtualObjectType> _featureTypesToSpawn;
-
-
         public VobManager(GameConfiguration config)
         {
             FeatureEnableSounds = config.EnableGameSounds;
@@ -24,8 +20,6 @@ namespace GUZ.Core.Manager.Vobs
             FeatureEnableNpcs = config.EnableNpcs;
             FeatureShowParticleEffects = config.EnableParticleEffects;
             FeatureShowDecals = config.EnableDecalVisuals;
-
-            _featureTypesToSpawn = config.SpawnVOBTypes.Value.ToList();
 
             GlobalEventDispatcher.WorldSceneLoaded.AddListener(PostWorldLoaded);
         }
@@ -37,13 +31,13 @@ namespace GUZ.Core.Manager.Vobs
 
         public async Task CreateAsync(LoadingManager loading, List<IVirtualObject> vobs, GameObject rootGo)
         {
-            Stopwatch stopwatch = new();
-            stopwatch.Start();
+            var stopwatch = Stopwatch.StartNew();
+
             PreCreateVobs(vobs, rootGo);
             await CreateVobs(loading, vobs);
             PostCreateVobs();
-            stopwatch.Stop();
-            Debug.Log($"Created vobs in {stopwatch.Elapsed.TotalSeconds} s");
+
+            stopwatch.Log("Vobs created");
         }
 
         public GameObject GetRootGameObjectOfType(VirtualObjectType type)
@@ -67,9 +61,9 @@ namespace GUZ.Core.Manager.Vobs
 
         private void PreCreateVobs(List<IVirtualObject> vobs, GameObject rootGo)
         {
-            // The elements are already created by glTF cache.
-            TeleportParentGo = rootGo.transform.Find("Teleport").gameObject;
-            NonTeleportParentGo = rootGo.transform.Find("NonTeleport").gameObject;
+            // The elements are already created by static cache.
+            TeleportParentGo = rootGo.FindChildRecursively("Teleport").gameObject;
+            NonTeleportParentGo = rootGo.FindChildRecursively("NonTeleport").gameObject;
 
             TotalVObs = GetTotalVobCount(vobs);
 
@@ -101,9 +95,13 @@ namespace GUZ.Core.Manager.Vobs
             }
         }
 
+        /// <summary>
+        /// 90% of all VOBs with meshes are loaded already (except Items).
+        /// Let's not filter anything out as it is super fast to load from here on.
+        /// </summary>
         protected override bool SpawnObjectType(VirtualObjectType type)
         {
-            return _featureTypesToSpawn.IsEmpty() || _featureTypesToSpawn.Contains(type);
+            return true;
         }
 
          protected override GameObject GetPrefab(IVirtualObject vob)

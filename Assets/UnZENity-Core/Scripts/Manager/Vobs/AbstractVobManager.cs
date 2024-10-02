@@ -8,6 +8,7 @@ using GUZ.Core.Creator.Meshes.V2;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Properties;
+using GUZ.Core.Util;
 using GUZ.Core.Vm;
 using GUZ.Core.Vob;
 using GUZ.Core.Vob.WayNet;
@@ -36,7 +37,6 @@ namespace GUZ.Core.Manager.Vobs
         protected GameObject TeleportParentGo;
         protected GameObject NonTeleportParentGo;
 
-        protected int FeatureVobsPerFrame = Constants.VobsPerFrame;
         protected bool FeatureEnableSounds;
         protected bool FeatureEnableMusic;
         protected bool FeatureShowFreePoints;
@@ -64,8 +64,7 @@ namespace GUZ.Core.Manager.Vobs
         protected abstract GameObject GetPrefab(IVirtualObject vob);
 
 
-
-
+        // FIXME - This method is broken as it won't distinguish between types to cache at PreCaching stage and types to create when world is loaded.
         protected int GetTotalVobCount(List<IVirtualObject> vobs)
         {
             return vobs.Count + vobs.Sum(vob => GetTotalVobCount(vob.Children));
@@ -94,12 +93,10 @@ namespace GUZ.Core.Manager.Vobs
 
                 AddToMobInteractableList(vob, go);
 
-                if (++CreatedCount % FeatureVobsPerFrame == 0)
-                {
-                    await Task.Yield(); // Wait for the next frame
-                }
-
                 loading?.AddProgress(LoadingManager.LoadingProgressType.VOb, 1f / TotalVObs);
+
+                // Wait for the next frame if needed
+                await FrameSkipper.TrySkipToNextFrame();
 
                 // Recursive creating sub-vobs
                 await CreateVobs(loading, vob.Children, go, reparent);

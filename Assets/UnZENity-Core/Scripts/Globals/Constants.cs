@@ -103,11 +103,6 @@ namespace GUZ.Core.Globals
         // Custom Tags
         public const string SpotTag = "Vob_zCVobSpot";
 
-        
-        public static int MeshPerFrame { get; } = 10;
-        public static int VobsPerFrame { get; } = 75;
-        public static int NpcsPerFrame { get; } = 75;
-
         //Collection of PlayerPref entries for VR settings
         public const string PlayerPrefDirectionMode = "DirectionMode";
         public const string PlayerPrefRotationType = "RotationType";

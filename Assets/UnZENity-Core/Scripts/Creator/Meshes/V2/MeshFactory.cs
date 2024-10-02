@@ -15,12 +15,11 @@ namespace GUZ.Core.Creator.Meshes.V2
 {
     public static class MeshFactory
     {
-        public static async Task CreateWorld(List<WorldData.SubMeshData> subMeshes, LoadingManager loading, GameObject rootGo,
-            int meshesPerFrame)
+        public static async Task CreateWorld(List<WorldData.SubMeshData> subMeshes, LoadingManager loading, GameObject rootGo)
         {
             var worldBuilder = new WorldMeshBuilder();
             worldBuilder.SetGameObject(rootGo);
-            worldBuilder.SetWorldData(subMeshes, meshesPerFrame);
+            worldBuilder.SetWorldData(subMeshes);
 
             await worldBuilder.BuildAsync(loading);
         }

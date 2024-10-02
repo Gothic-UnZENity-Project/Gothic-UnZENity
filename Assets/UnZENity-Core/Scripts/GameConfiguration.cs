@@ -4,7 +4,6 @@ using GUZ.Core.World;
 using MyBox;
 using UnityEngine;
 using ZenKit;
-using ZenKit.Vobs;
 
 namespace GUZ.Core
 {
@@ -67,9 +66,6 @@ namespace GUZ.Core
 
         [Serializable]
         public class IntCollection : CollectionWrapper<int> {}
-
-        [Serializable]
-        public class VOBTypesCollection : CollectionWrapper<VirtualObjectType> { }
 
 
         /**
@@ -139,15 +135,6 @@ namespace GUZ.Core
          */
 
         [Foldout("VOBs", true)]
-        [Separator("General")]
-        [Tooltip("Enable World objects.")]
-        [OverrideLabel("Enable VOBs")]
-        public bool EnableVOBs = true;
-
-        [ConditionalField(fieldToCheck: nameof(EnableVOBs), compareValues: true)]
-        [Tooltip("Spawn only specific VOBs by naming their types in here.")]
-        public VOBTypesCollection SpawnVOBTypes = new();
-
         [Separator("Culling")]
         public bool EnableVOBMeshCulling = true;
 

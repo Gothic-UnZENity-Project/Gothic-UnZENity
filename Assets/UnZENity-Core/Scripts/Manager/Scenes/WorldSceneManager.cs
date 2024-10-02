@@ -36,13 +36,11 @@ namespace GUZ.Core.Manager.Scenes
             var cacheRoot = new GameObject("Data");
             await GameGlobals.StaticCache.LoadCache(cacheRoot, SaveGameManager.CurrentWorldName);
 
+            var worldRoot = cacheRoot.transform.GetChild(0).gameObject;
+            var vobsRoot = cacheRoot.transform.GetChild(1).gameObject;
+
             // 2.
-            // FIXME - Re-enable
-            // if (config.EnableVOBs)
-            // {
-            //     // FIXME - Set rootGO from glTF cache values.
-            //     await GameGlobals.Vobs.CreateAsync(GameGlobals.Loading, SaveGameManager.CurrentWorldData.Vobs, GameGlobals.Glt.GetVobsRoot(cacheRoot));
-            // }
+            await GameGlobals.Vobs.CreateAsync(GameGlobals.Loading, SaveGameManager.CurrentWorldData.Vobs, vobsRoot);
 
             // 3.
             WayNetCreator.Create(config, SaveGameManager.CurrentWorldData);
@@ -51,7 +49,7 @@ namespace GUZ.Core.Manager.Scenes
             // If the world is visited for the first time, then we need to load Npcs via Wld_InsertNpc()
             if (config.EnableNpcs)
             {
-                await NpcCreator.CreateAsync(config, GameGlobals.Loading, Constants.NpcsPerFrame);
+                await NpcCreator.CreateAsync(config, GameGlobals.Loading);
             }
 
             GameGlobals.Sky.InitSky();

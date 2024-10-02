@@ -33,7 +33,7 @@ namespace GUZ.Core.Creator
                     world.BspTree.Cache(),
                     true);
 
-                await MeshFactory.CreateWorld(subMeshData, loading, rootGo, Constants.MeshPerFrame);
+                await MeshFactory.CreateWorld(subMeshData, loading, rootGo);
             }
             catch (Exception e)
             {

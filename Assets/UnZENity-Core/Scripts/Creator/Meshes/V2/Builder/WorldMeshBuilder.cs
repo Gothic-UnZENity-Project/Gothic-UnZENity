@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
+using GUZ.Core.Util;
 using GUZ.Core.World;
 using UnityEditor;
 using UnityEngine;
@@ -15,12 +16,10 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
     public class WorldMeshBuilder : AbstractMeshBuilder
     {
         private List<WorldData.SubMeshData> _subMeshData;
-        private int _meshesPerFrame;
 
-        public void SetWorldData(List<WorldData.SubMeshData> subMeshData, int meshesPerFrame)
+        public void SetWorldData(List<WorldData.SubMeshData> subMeshData)
         {
             _subMeshData = subMeshData;
-            _meshesPerFrame = meshesPerFrame;
         }
 
         public override GameObject Build()
@@ -73,10 +72,8 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
 
                 loading?.AddProgress(LoadingManager.LoadingProgressType.WorldMesh, 1f / numSubMeshes);
 
-                if (++meshesCreated % _meshesPerFrame == 0)
-                {
-                    await Task.Yield(); // Yield to allow other operations to run in the frame
-                }
+                // Yield to allow other operations to run in this frame
+                await FrameSkipper.TrySkipToNextFrame();
             }
         }
 

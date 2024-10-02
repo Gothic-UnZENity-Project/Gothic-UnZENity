@@ -12,9 +12,7 @@ namespace GUZ.Core.Manager.Vobs
 {
     public class VobCacheManager : AbstractVobManager
     {
-        // TODO - We can say ~thisList to load all the remaining types normally when game boots.
-        // TODO - But only if we don't need to add data to an object!
-        private List<VirtualObjectType> _vobTypesToCache = new()
+        public static readonly List<VirtualObjectType> VobTypesToCache = new()
         {
             VirtualObjectType.oCMobBed,
             VirtualObjectType.oCMobContainer,
@@ -33,23 +31,23 @@ namespace GUZ.Core.Manager.Vobs
 
         protected override bool SpawnObjectType(VirtualObjectType type)
         {
-            return _vobTypesToCache.Contains(type);
+            return VobTypesToCache.Contains(type);
         }
 
-        public async Task CreateForCache(List<IVirtualObject> vobs, LoadingManager loading, GameObject rootGo)
+        public async Task CreateForCache(List<IVirtualObject> rootVobs, LoadingManager loading, GameObject rootGo)
         {
             Stopwatch stopwatch = new();
             stopwatch.Start();
-            PreCreateVobs(vobs, rootGo);
-            await CreateVobs(loading, vobs);
+            PreCreateVobs(rootVobs, rootGo);
+            await CreateVobs(loading, rootVobs);
             stopwatch.Stop();
 
             Debug.Log($"Created VOBs for caching in {stopwatch.Elapsed.TotalSeconds} s");
         }
 
-        private void PreCreateVobs(List<IVirtualObject> vobs, GameObject rootGo)
+        private void PreCreateVobs(List<IVirtualObject> rootVobs, GameObject rootGo)
         {
-            TotalVObs = GetTotalVobCount(vobs);
+            TotalVObs = GetTotalVobCount(rootVobs);
             CreatedCount = 0;
 
             TeleportParentGo = new GameObject("Teleport");
