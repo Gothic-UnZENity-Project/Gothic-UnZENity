@@ -6,6 +6,11 @@ namespace GUZ.Core.Extensions
 {
     public static class GameObjectExtension
     {
+        public static GameObject GetParent(this GameObject go)
+        {
+            return go.transform.parent.gameObject;
+        }
+
         public static void SetParent(this GameObject obj, GameObject parent, bool resetLocation = false,
             bool resetRotation = false, bool worldPositionStays = false)
         {

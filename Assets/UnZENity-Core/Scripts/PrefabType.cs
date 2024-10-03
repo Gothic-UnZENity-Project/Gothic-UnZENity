@@ -5,6 +5,7 @@ namespace GUZ.Core
     public enum PrefabType
     {
         WayPoint,
+        VobDefault,
         Vob,
         Npc,
         VobAnimate,
@@ -39,6 +40,7 @@ namespace GUZ.Core
             return type switch
             {
                 PrefabType.WayPoint => "Prefabs/WayPoint",
+                PrefabType.VobDefault => "Prefabs/Vobs/Default",
                 PrefabType.Vob => "Prefabs/Vobs/Vob",
                 PrefabType.Npc => "Prefabs/Vobs/oCNpc",
                 PrefabType.VobAnimate => "Prefabs/Vobs/zCVobAnimate",

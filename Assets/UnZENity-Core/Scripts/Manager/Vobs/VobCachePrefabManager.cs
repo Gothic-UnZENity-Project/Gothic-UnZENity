@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using GUZ.Core.Extensions;
+using GUZ.Core.Properties;
 using UnityEngine;
 using ZenKit.Vobs;
+using Object = UnityEngine.Object;
 
 namespace GUZ.Core.Manager.Vobs
 {
@@ -17,20 +19,24 @@ namespace GUZ.Core.Manager.Vobs
         private Dictionary<VirtualObjectType, Queue<GameObject>> _cachedGOs = new();
 
         /// <summary>
-        /// When we load prefabs, we can't alter their GameObjects' parent-child relationship at the end (when we skipped at least 1 frame).
+        /// When we load prefabs, we can't alter their GameObjects' parent-child relationship immediately (earliest when we skipped at least 1 frame).
+        /// We therefore cache these elements and merge them ad PostCreateVobs() stage.
         /// </summary>
         private List<MergingTreeNode> _prefabsToMerge = new();
 
+        /// <summary>
+        /// Temp GameObject where we store StaticCache GO replacements before removing them fully at the end of Prefab->CacheGO transition.
+        /// </summary>
+        private GameObject _graveyard;
+
         private class MergingTreeNode
         {
-            public string Name;
             public GameObject Go;
             public GameObject PrefabGo; // Will be used as new Go after Mesh* Components are copied over.
             public List<MergingTreeNode> Children = new();
 
-            public MergingTreeNode(string name, GameObject go)
+            public MergingTreeNode(GameObject go)
             {
-                Name = name;
                 Go = go;
             }
         }
@@ -44,14 +50,21 @@ namespace GUZ.Core.Manager.Vobs
             CreateParentVobStructure();
 
             PreFillCachedGoList();
+
+            // We will remove everything below this GameObject once Prefabs are merged with StaticVob GOs.
+            _graveyard = new GameObject("Graveyard");
         }
 
         protected override void PostCreateVobs()
         {
             foreach (var mergingPrefab in _prefabsToMerge)
             {
-                MovePrefabElementsToExisting(mergingPrefab);
+                PostBuildVobTree(mergingPrefab, mergingPrefab.Go.GetParent());
+
+                AddToMobInteractableList(mergingPrefab.PrefabGo.GetComponent<VobProperties>().Properties.Type, mergingPrefab.Go);
             }
+
+            Object.Destroy(_graveyard);
         }
 
         /// <summary>
@@ -118,10 +131,12 @@ namespace GUZ.Core.Manager.Vobs
 
         protected override GameObject CreateDefaultMesh(IVirtualObject vob, GameObject parent = null, bool nonTeleport = false)
         {
-            // The VOB is a new one. We create its mesh normally.
-            if (!VobCacheManager.VobTypesToCache.Contains(vob.Type))
+            // We need to check if there is a VOB which isn't inside the StaticCache GOs.
+            // e.g. Harp has no meshes but is still inside VOBs. We need to skip it as it has no StaticCache GO representation in scene.
+            var vobName = vob.ShowVisual ? vob.Visual.Name : vob.Name;
+            if (_cachedGOs[vob.Type].Peek().name != vobName)
             {
-                return base.CreateDefaultMesh(vob, parent, nonTeleport);
+                return null;
             }
 
             // Now load the GameObject from cached List and apply Prefab components to it
@@ -137,14 +152,16 @@ namespace GUZ.Core.Manager.Vobs
         /// Apply prefab elements onto the existing object.
         ///
         /// It's easier this way, as Unity has no option to Move a Component to another GameObject.
-        /// We would therefore need to know every! Component type and how to copy data.
+        /// We would therefore need to know every! Component type and how to copy data from Prefab to existing GO.
         /// In this case it's easier to simply copy MeshFilter+MeshRenderer (the only two elements inside Cached GOs) over.
         ///
-        /// Stages are:
-        /// 1. Prefab might contain GameObjects in regex style (e.g. BIP01*_SMALL). Find matching GO from existing GO and apply name.
+        /// Options for merging are:
+        /// 1. Existing StaticCache GO has no corresponding Prefab entry - no change
+        /// 2. Existing StaticCache GO has a Prefab entry to overwrite - switch the existing GO with Prefab GO at the end
+        /// 3. No existing StaticCache GO but a Prefab entry - simply add prefab entry to GO
+        ///
+        /// When we have an existing StaticCache GO and Prefab entry, then we will copy *Renderer and MeshFilter values over to Prefab before making it new master
         /// 2. Now create all MeshRenderer + MeshFilter on prefab objects mapping existing GOs component hierarchy.
-        ///   2.1 Apply existing Meshes and Materials to Prefab objects
-        ///   2.2 Exchange previously existing GO with the one from prefab (replace parent assignment only; new prefab GO contains all the Components now)
         ///
         /// Example existing hierarchy:
         /// BIP01
@@ -157,13 +174,13 @@ namespace GUZ.Core.Manager.Vobs
         ///
         /// Merged GOs:
         /// BIP01
-        ///   |- BIP01 CHESTLOCK     - from nodes; existing and nothing changed.
+        ///   |- BIP01 CHESTLOCK     - from existing GO; nothing changed.
         ///   |- BIP01 CHEST_SMALL_1 - merged from Prefab and existing object. If Mesh* existed, they are copied over.
         /// </summary>
         private void MergePrefabWithExistingGo(GameObject prefab, GameObject existingGo)
         {
-            var existingTree = new MergingTreeNode("Root", existingGo);
-            var prefabTree = new MergingTreeNode("Root", prefab);
+            var existingTree = new MergingTreeNode(existingGo);
+            var prefabTree = new MergingTreeNode(prefab);
             existingTree.PrefabGo = prefab; // Some GOs have their Mesh* Components directly attached to root. We ensure they will get merged as well.
 
             var mergedTree = MergeTrees(existingTree, prefabTree);
@@ -172,42 +189,44 @@ namespace GUZ.Core.Manager.Vobs
         }
 
         /// <summary>
-        /// We create a containerized tree of a merged GameObject tree
-        /// tree1 -> Primary
-        /// tree2 -> Secondary (everything from this one will be replaced by tree1 if duplicate)
+        /// We create a containerized tree of a merged GameObject tree without need to set parent-child relationship of GameObjects now.
+        /// (It's easier to walk the tree now and apply mergings at the end)
         /// </summary>
         private MergingTreeNode MergeTrees(MergingTreeNode existingMergingTree, MergingTreeNode prefabMergingTree)
         {
             if (prefabMergingTree == null)
+            {
                 return existingMergingTree;
-            if (existingMergingTree == null)
+            }
+            else if (existingMergingTree == null)
+            {
                 return prefabMergingTree;
+            }
 
-            MergingTreeNode mergedNode = existingMergingTree;
+            var mergedNode = existingMergingTree;
 
             // Create a dictionary to hold all children, using their values as keys
-            Dictionary<string, MergingTreeNode> mergedChildren = new Dictionary<string, MergingTreeNode>();
+            var mergedChildren = new Dictionary<string, MergingTreeNode>();
 
             // Add children from existingTree
             foreach (var child in existingMergingTree.Go.GetAllDirectChildren())
             {
-                mergedChildren[child.name] = new MergingTreeNode(child.name, child);
+                mergedChildren[child.name] = new MergingTreeNode(child);
             }
 
             // Merge or add children from prefabTree
             foreach (var child in prefabMergingTree.Go.GetAllDirectChildren())
             {
+                // If the child already exists, merge it
                 if (mergedChildren.TryGetValue(child.name, out MergingTreeNode existingChild))
                 {
-                    existingChild.PrefabGo = child;
-                    MoveMeshComponentsFromPrefab(child, existingChild.Go);
-                    // If the child already exists, merge it
-                    mergedChildren[child.name] = MergeTrees(existingChild, new MergingTreeNode(child.name, child));
+                    existingChild.PrefabGo = child; // This information will tell us later to merge both GOs together.
+                    mergedChildren[child.name] = MergeTrees(existingChild, new MergingTreeNode(child));
                 }
+                // If it doesn't exist simply add it
                 else
                 {
-                    // If it doesn't exist, add it
-                    mergedChildren[child.name] = new MergingTreeNode(child.name, child);
+                    mergedChildren[child.name] = new MergingTreeNode(child);
                 }
             }
 
@@ -216,7 +235,42 @@ namespace GUZ.Core.Manager.Vobs
             return mergedNode;
         }
 
-        private void MoveMeshComponentsFromPrefab(GameObject prefab, GameObject existing)
+        /// <summary>
+        /// We build new parent-child relationship of GameObject
+        /// </summary>
+        private void PostBuildVobTree(MergingTreeNode node, GameObject parent)
+        {
+            // It means a GameObject was in both trees. We now leverage the prefab one as the new one by:
+            // 1. changing parent relationship of existing and prefab GO
+            // 2. Copying data from MeshFilter+MeshRenderer from existing to prefab GO
+            if (node.PrefabGo != null)
+            {
+                PostMoveMeshComponentsFromPrefab(node.PrefabGo, node.Go);
+
+                // We move Prefab GO at spot where existing go was previously located
+                node.PrefabGo.SetParent(parent);
+
+                // As we don't need the existing GO any longer, we move it to the Graveyard.
+                node.Go.SetParent(_graveyard);
+            }
+            else
+            {
+                node.Go.SetParent(parent);
+            }
+
+            foreach (var child in node.Children)
+            {
+                PostBuildVobTree(child, node.PrefabGo ?? node.Go);
+            }
+        }
+
+        /// <summary>
+        /// We move Mesh Components from existing GO to prefab GO.
+        ///
+        /// Background: During time of StaticCache apply, we create only MeshFilter and *Renderer data.
+        /// Now we copy over this data to Prefab GOs as the prefab ones can have many more components and it's easier this way around.
+        /// </summary>
+        private void PostMoveMeshComponentsFromPrefab(GameObject prefab, GameObject existing)
         {
             // Copy MeshFilter+MeshRenderer data from existing to prefab GO
             if (prefab.TryGetComponent<MeshFilter>(out var prefabMeshFilter))
@@ -231,34 +285,6 @@ namespace GUZ.Core.Manager.Vobs
                 prefabRenderer.sharedMaterials = existingRenderer.sharedMaterials;
 
                 // FIXME - Move also SkinnedMeshRenderer Bones and BoneWeights
-            }
-
-            // First we move existing GO below parent of Prefab GO
-            existing.SetParent(prefab.transform.parent.gameObject);
-        }
-
-        /// <summary>
-        ///
-        /// </summary>
-        private void MovePrefabElementsToExisting(MergingTreeNode node)
-        {
-            foreach (var child in node.Children)
-            {
-                // It means a GameObject was in both trees. We now leverage the prefab one as the new one by:
-                // 1. changing parent relationship of existing and prefab GO
-                // 2. Copying data from MeshFilter+MeshRenderer from existing to prefab GO
-                if (child.PrefabGo != null)
-                {
-
-                    // Now we move Prefab GO at spot where Child GO was previously
-                    child.PrefabGo.SetParent(node.Go);
-                }
-                else
-                {
-                    child.Go.SetParent(node.Go);
-                }
-
-                MovePrefabElementsToExisting(child);
             }
         }
     }

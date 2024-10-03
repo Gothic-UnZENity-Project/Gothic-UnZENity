@@ -73,6 +73,9 @@ namespace GUZ.Core.Manager.Vobs
 
             PreCreateVobs(vobs, rootGo);
             await CreateVobs(loading, vobs);
+
+            // Wait one additional frame to ensure everything is set up in scene properly (e.g. prefab GOs can be found)
+            await Task.Yield();
             PostCreateVobs();
 
             stopwatch.Log($"{GetType()} - Vobs created");
@@ -368,13 +371,13 @@ namespace GUZ.Core.Manager.Vobs
                     go = ResourceLoader.TryGetPrefabObject(PrefabType.VobAnimate);
                     break;
                 default:
-                    return new GameObject(name);
+                    go = ResourceLoader.TryGetPrefabObject(PrefabType.VobDefault);
+                    break;
             }
 
             go.name = name;
 
-            // Fill Property data into prefab here
-            // Can also be outsourced to a proper method if it becomes a lot.
+            // Fill Property data into prefab immediately
             go.GetComponent<VobProperties>().SetData(vob);
 
             return go;

@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 2022050282646122291}
   - component: {fileID: 5252305678164495226}
   m_Layer: 0
-  m_Name: Vob
+  m_Name: Default
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
