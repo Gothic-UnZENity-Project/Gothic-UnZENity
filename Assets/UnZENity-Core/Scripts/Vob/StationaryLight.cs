@@ -146,6 +146,7 @@ namespace GUZ.Core
 
         private void Awake()
         {
+            // FIXME - Move this logic inside VobManager to handle on Manager level, not individual GO level.
             Lights.Add(this);
             _threadSafeLightData.Add((transform.position, Range));
         }
@@ -165,13 +166,10 @@ namespace GUZ.Core
 
         private void OnEnable()
         {
-            Profiler.BeginSample("Stationary light enabled");
             for (var i = 0; i < _affectedRenderers.Count; i++)
             {
                 GameGlobals.Lights.AddLightOnRenderer(this, _affectedRenderers[i]);
             }
-
-            Profiler.EndSample();
         }
 
         private void OnDisable()

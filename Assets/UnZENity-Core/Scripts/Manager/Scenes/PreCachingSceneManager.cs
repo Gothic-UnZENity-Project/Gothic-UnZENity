@@ -70,7 +70,9 @@ namespace GUZ.Core.Manager.Scenes
                 var worldData = ResourceLoader.TryGetWorld(worldName, GameContext.GameVersionAdapter.Version);
 
                 var vobsRootGo = new GameObject("Vobs");
+                // vobsRootGo.SetActive(false); // Save some frames as we don't render the created meshes in 1km distance. ;-)
                 var worldRootGo = new GameObject("World");
+                worldRootGo.SetActive(false); // Save some frames as we don't render the created meshes in 1km distance. ;-)
 
                 // Build the world and vob meshes, populating the texture arrays.
 

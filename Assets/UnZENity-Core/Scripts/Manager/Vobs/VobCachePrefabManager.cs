@@ -284,11 +284,11 @@ namespace GUZ.Core.Manager.Vobs
             if (existing.TryGetComponent<Renderer>(out var existingRenderer))
             {
                 Renderer prefabRenderer = null;
-                if (existingRenderer is MeshRenderer existingMeshRenderer)
+                if (existingRenderer is MeshRenderer)
                 {
                     prefabRenderer = prefab.GetOrAddComponent<MeshRenderer>();
                 }
-                else if (existingRenderer is SkinnedMeshRenderer existingSkinnedMeshRenderer)
+                else if (existingRenderer is SkinnedMeshRenderer)
                 {
                     // FIXME - Move also SkinnedMeshRenderer Bones and BoneWeights
                 }
