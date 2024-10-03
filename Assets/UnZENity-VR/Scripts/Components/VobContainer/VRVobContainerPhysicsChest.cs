@@ -4,7 +4,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using GUZ.Core;
-using GUZ.Core.Creator;
 using GUZ.Core.Creator.Meshes.V2;
 using GUZ.Core.Extensions;
 using GUZ.Core.Properties;
@@ -206,7 +205,7 @@ namespace GUZ.VR.Components.VobContainer
                     count = int.Parse(nameCountSplit[1]);
                 }
 
-                if (name.IsNullOrEmpty())
+                if (nameCountSplit[0].IsNullOrEmpty())
                 {
                     continue;
                 }
