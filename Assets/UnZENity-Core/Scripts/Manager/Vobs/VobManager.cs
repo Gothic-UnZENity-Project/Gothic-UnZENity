@@ -1,12 +1,18 @@
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using GUZ.Core.Creator.Meshes.V2;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Properties;
+using GUZ.Core.Vm;
+using JetBrains.Annotations;
 using UnityEngine;
+using ZenKit.Daedalus;
 using ZenKit.Vobs;
 using Debug = UnityEngine.Debug;
+using Object = UnityEngine.Object;
 
 namespace GUZ.Core.Manager.Vobs
 {
@@ -24,6 +30,9 @@ namespace GUZ.Core.Manager.Vobs
             GlobalEventDispatcher.WorldSceneLoaded.AddListener(PostWorldLoaded);
         }
 
+        public Dictionary<VirtualObjectType, Queue<GameObject>> CachedGOs = new();
+
+
         private void PostWorldLoaded()
         {
             GameContext.InteractionAdapter.SetTeleportationArea(TeleportParentGo);
@@ -34,6 +43,14 @@ namespace GUZ.Core.Manager.Vobs
             var stopwatch = Stopwatch.StartNew();
 
             PreCreateVobs(vobs, rootGo);
+
+            /*
+             * VOBs are created in three flavours:
+             * 1. If an object is from cache, we load its vobType prefab and apply the (already loaded) mesh on it.
+             *   HINT: We need to apply VobData on the cached mesh vobs one-by-one.
+             *         e.g. a door might be locked or unlocked. We need to apply this data on the correct items.
+             * 2. If the object is new, we create it with Prefab and create a new GameObject
+             */
             await CreateVobs(loading, vobs);
             PostCreateVobs();
 
@@ -65,10 +82,37 @@ namespace GUZ.Core.Manager.Vobs
             TeleportParentGo = rootGo.FindChildRecursively("Teleport").gameObject;
             NonTeleportParentGo = rootGo.FindChildRecursively("NonTeleport").gameObject;
 
+            PreFillCachedGoList();
             TotalVObs = GetTotalVobCount(vobs);
 
             CreatedCount = 0;
             CullingVobObjects.Clear();
+        }
+
+        /// <summary>
+        /// As a result we get something like:
+        ///   _cachedGOs = {
+        ///     zCVob => [GameObject, GameObject, ...]
+        ///     zCVobAnimate => [GameObject]
+        ///      ...
+        ///   }
+        /// </summary>
+        private void PreFillCachedGoList()
+        {
+            // We fill list of static cache GameObjects to apply prefab data onto it when looped.
+            foreach (var rootGo in new[]{TeleportParentGo, NonTeleportParentGo})
+            {
+                foreach (var vobTypeGOs in rootGo.GetAllDirectChildren())
+                {
+                    Enum.TryParse(vobTypeGOs.name, out VirtualObjectType type); // Name of GameObject == a VobType enum label
+                    CachedGOs.Add(type, new Queue<GameObject>()); // Init
+
+                    foreach (var cachedGo in vobTypeGOs.GetAllDirectChildren())
+                    {
+                        CachedGOs[type].Enqueue(cachedGo);
+                    }
+                }
+            }
         }
 
         private void PostCreateVobs()
@@ -170,6 +214,7 @@ namespace GUZ.Core.Manager.Vobs
             return go;
         }
 
+
         protected override void AddToMobInteractableList(IVirtualObject vob, GameObject go)
         {
             if (go == null)
@@ -199,5 +244,112 @@ namespace GUZ.Core.Manager.Vobs
             }
         }
 
+        [CanBeNull]
+        protected override GameObject CreateItem(Item vob, GameObject parent = null)
+        {
+            string itemName;
+
+            if (!string.IsNullOrEmpty(vob.Instance))
+            {
+                itemName = vob.Instance;
+            }
+            else if (!string.IsNullOrEmpty(vob.Name))
+            {
+                itemName = vob.Name;
+            }
+            else
+            {
+                throw new Exception("Vob Item -> no usable name found.");
+            }
+
+            var item = VmInstanceManager.TryGetItemData(itemName);
+
+            if (item == null)
+            {
+                return null;
+            }
+
+            var prefabInstance = GetPrefab(vob);
+            var vobObj = CreateItemMesh(vob, item, prefabInstance, parent);
+
+            if (vobObj == null)
+            {
+                Object.Destroy(prefabInstance); // No mesh created. Delete the prefab instance again.
+                Debug.LogError(
+                    $"There should be no! object which can't be found n:{vob.Name} i:{vob.Instance}. We need to use >PxVobItem.instance< to do it right!");
+                return null;
+            }
+
+            vobObj.GetComponent<VobItemProperties>().SetData(vob, item);
+
+            return vobObj;
+        }
+
+        public void CreateItemMesh(int itemId, string spawnPoint, GameObject go)
+        {
+            var item = VmInstanceManager.TryGetItemData(itemId);
+
+            var position = WayNetHelper.GetWayNetPoint(spawnPoint).Position;
+
+            CreateItemMesh(item, go, position);
+        }
+
+        /// <summary>
+        /// Create item with mesh only. No special handling like grabbing etc.
+        /// e.g. used for NPCs drinking beer mesh in their hand.
+        /// </summary>
+        public void CreateItemMesh(int itemId, GameObject go)
+        {
+            var item = VmInstanceManager.TryGetItemData(itemId);
+
+            CreateItemMesh(item, go);
+        }
+
+        /// <summary>
+        /// Create item with mesh only. No special handling like grabbing etc.
+        /// e.g. used for NPCs drinking beer mesh in their hand.
+        /// </summary>
+        public void CreateItemMesh(string itemName, GameObject go)
+        {
+            if (itemName == "")
+            {
+                return;
+            }
+
+            var item = VmInstanceManager.TryGetItemData(itemName);
+
+            CreateItemMesh(item, go);
+        }
+
+        private GameObject CreateItemMesh(Item vob, ItemInstance item, GameObject go, GameObject parent = null)
+        {
+            var mrm = ResourceLoader.TryGetMultiResolutionMesh(item.Visual);
+
+            if (mrm != null)
+            {
+                return MeshFactory.CreateVob(item.Visual, mrm, vob.Position.ToUnityVector(),
+                    vob.Rotation.ToUnityQuaternion(),
+                    true, parent ?? ParentGosNonTeleport[vob.Type], go, false);
+            }
+
+            // shortbow (itrw_bow_l_01) has no mrm, but has mmb
+            var mmb = ResourceLoader.TryGetMorphMesh(item.Visual);
+
+            return MeshFactory.CreateVob(item.Visual, mmb, vob.Position.ToUnityVector(),
+                vob.Rotation.ToUnityQuaternion(), parent ?? ParentGosNonTeleport[vob.Type], go);
+        }
+
+        private GameObject CreateItemMesh(ItemInstance item, GameObject parentGo, Vector3 position = default)
+        {
+            var mrm = ResourceLoader.TryGetMultiResolutionMesh(item.Visual);
+            if( mrm != null )
+                return MeshFactory.CreateVob(item.Visual, mrm, position, default, false, parentGo, useTextureArray: false);
+
+            // shortbow (itrw_bow_l_01) has no mrm, but has mmb
+            var mmb = ResourceLoader.TryGetMorphMesh(item.Visual);
+
+            return MeshFactory.CreateVob(item.Visual, mmb, position,
+                default, parentGo);
+        }
     }
 }
