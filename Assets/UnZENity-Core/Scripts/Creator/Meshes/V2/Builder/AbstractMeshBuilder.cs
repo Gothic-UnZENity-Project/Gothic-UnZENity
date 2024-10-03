@@ -458,7 +458,7 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
                 TextureCache.TextureArrayTypes textureArrayType = TextureCache.TextureArrayTypes.Opaque;
                 if (UseTextureArray)
                 {
-                    TextureCache.GetTextureArrayIndex(subMesh.Material, out textureArrayType, out textureArrayIndex, out textureScale, out maxMipLevel);
+                    TextureCache.GetTextureArrayIndex(subMesh.Material, out textureArrayType, out textureArrayIndex, out textureScale, out maxMipLevel, out _);
                     if (!subMeshPerTextureFormat.ContainsKey(textureArrayType))
                     {
                         subMeshPerTextureFormat.Add(textureArrayType, preparedTriangles.Count);
