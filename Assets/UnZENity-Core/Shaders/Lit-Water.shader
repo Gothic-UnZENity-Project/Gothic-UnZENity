@@ -31,7 +31,7 @@ Shader "Lit/Water"
                 half4 color : COLOR;
                 half3 normal : NORMAL;
                 float4 uv : TEXCOORD0; // uv, array slice, max mip level
-                float2 textureAnimation : TEXCOORD1;
+                float4 textureAnimation : TEXCOORD1; // linear anim x, linear anim y, frame count, fps
 
                 UNITY_VERTEX_INPUT_INSTANCE_ID
             };
@@ -43,6 +43,7 @@ Shader "Lit/Water"
                 float4 uv : TEXCOORD0;
                 float3 worldPos : TEXCOORD1;
                 half3 diffuse : COLOR;
+                int frameIndex : TEXCOORD2;
 
                 UNITY_VERTEX_OUTPUT_STEREO
             };
@@ -79,19 +80,18 @@ Shader "Lit/Water"
 
                 o.worldPos = TransformObjectToWorld(v.vertex);
                 o.vertex = TransformObjectToHClip(v.vertex);
-                float2 movingUv = v.uv.xy * REFERENCE_TEX_ARRAY_SIZE * _MainTex_TexelSize.xy + v.textureAnimation *
-                    _Time.y * 1000;
+                float2 movingUv = v.uv.xy * REFERENCE_TEX_ARRAY_SIZE * _MainTex_TexelSize.xy + v.textureAnimation.xy * _Time.y * 1000;
                 o.uv = float4(movingUv, v.uv.zw);
                 o.normal = TransformObjectToWorldNormal(v.normal);
                 o.diffuse = DiffuseLighting(o, v);
+                o.frameIndex = (_Time.y * v.textureAnimation.w) % v.textureAnimation.z;
                 return o;
             }
 
             half4 frag(v2f i) : SV_Target
             {
                 float mipLevel = CalcMipLevel(i.uv.xy * _MainTex_TexelSize.zw);
-                half4 albedo = SAMPLE_TEXTURE2D_ARRAY_LOD(_MainTex, sampler_MainTex, i.uv.xy, i.uv.z,
-                                                             clamp(mipLevel, 0, i.uv.w));
+                half4 albedo = SAMPLE_TEXTURE2D_ARRAY_LOD(_MainTex, sampler_MainTex, i.uv.xy, i.uv.z + i.frameIndex, clamp(mipLevel, 0, i.uv.w));
                 half3 diffuse = albedo * i.diffuse;
 
 #if FOG_LINEAR || FOG_EXP || FOG_EXP2
