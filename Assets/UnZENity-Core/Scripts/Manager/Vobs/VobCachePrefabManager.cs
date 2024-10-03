@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using GUZ.Core.Extensions;
 using GUZ.Core.Properties;
+using MyBox;
 using UnityEngine;
 using ZenKit.Vobs;
 using Object = UnityEngine.Object;
@@ -247,6 +248,8 @@ namespace GUZ.Core.Manager.Vobs
             {
                 PostMoveMeshComponentsFromPrefab(node.PrefabGo, node.Go);
 
+                node.PrefabGo.transform.SetLocalPositionAndRotation(node.Go.transform.localPosition, node.Go.transform.localRotation);
+
                 // We move Prefab GO at spot where existing go was previously located
                 node.PrefabGo.SetParent(parent);
 
@@ -272,19 +275,25 @@ namespace GUZ.Core.Manager.Vobs
         /// </summary>
         private void PostMoveMeshComponentsFromPrefab(GameObject prefab, GameObject existing)
         {
-            // Copy MeshFilter+MeshRenderer data from existing to prefab GO
-            if (prefab.TryGetComponent<MeshFilter>(out var prefabMeshFilter))
+            if (existing.TryGetComponent<MeshFilter>(out var existingMeshFilter))
             {
-                var existingMeshFilter = existing.GetComponent<MeshFilter>();
+                var prefabMeshFilter = prefab.GetOrAddComponent<MeshFilter>();
                 prefabMeshFilter.sharedMesh = existingMeshFilter.sharedMesh;
             }
 
-            if (prefab.TryGetComponent<Renderer>(out var prefabRenderer))
+            if (existing.TryGetComponent<Renderer>(out var existingRenderer))
             {
-                var existingRenderer = existing.GetComponent<Renderer>();
+                Renderer prefabRenderer = null;
+                if (existingRenderer is MeshRenderer existingMeshRenderer)
+                {
+                    prefabRenderer = prefab.GetOrAddComponent<MeshRenderer>();
+                }
+                else if (existingRenderer is SkinnedMeshRenderer existingSkinnedMeshRenderer)
+                {
+                    // FIXME - Move also SkinnedMeshRenderer Bones and BoneWeights
+                }
                 prefabRenderer.sharedMaterials = existingRenderer.sharedMaterials;
 
-                // FIXME - Move also SkinnedMeshRenderer Bones and BoneWeights
             }
         }
     }
