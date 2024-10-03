@@ -108,11 +108,11 @@ namespace GUZ.Core.Manager.Vobs
 
         /// <summary>
         /// 90% of all VOBs with meshes are loaded already (except Items).
-        /// Let's not filter anything out as it is super fast to load from here on.
+        /// Let's not filter anything out as it is fast to load from here on.
         /// </summary>
         protected override bool SpawnObjectType(VirtualObjectType type)
         {
-            return true;
+            return !VobCacheManager.VobTypesToCache.Contains(type);
         }
 
         [CanBeNull]
