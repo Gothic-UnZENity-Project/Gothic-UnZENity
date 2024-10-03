@@ -1,11 +1,47 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using UnityEngine;
 
 namespace GUZ.Core.Extensions
 {
     public static class BuiltInTypeExtension
     {
+        /// <summary>
+        /// await (async Task) calls silently drop exceptions.
+        /// This call logs them at least to make it easier to debug.
+        /// </summary>
+        public static async Task AwaitAndLog(this Task awaitable)
+        {
+            try
+            {
+                await awaitable;
+            }
+            catch (Exception e)
+            {
+                Debug.LogError(e);
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// await (async Task&lt;T&gt;) calls silently drop exceptions.
+        /// This call logs them at least to make it easier to debug.
+        /// </summary>
+        public static async Task<T> AwaitAndLog<T>(this Task<T> awaitable)
+        {
+            try
+            {
+                return await awaitable;
+            }
+            catch (Exception e)
+            {
+                Debug.LogError(e);
+                throw;
+            }
+        }
+
         public static bool IsEmpty(this string self)
         {
             return !self.Any();
