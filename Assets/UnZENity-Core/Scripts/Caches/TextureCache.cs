@@ -224,7 +224,7 @@ namespace GUZ.Core.Caches
 
         public static async Task BuildTextureArrays()
         {
-            // Unload the previous texture arrays..
+            // Unload the previous texture arrays.
             foreach (TextureArrayTypes item in TextureArrays.Keys)
             {
                 Object.Destroy(TextureArrays[item]);
