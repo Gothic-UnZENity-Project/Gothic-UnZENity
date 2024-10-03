@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using GUZ.Core.Creator;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
+using GUZ.Core.Manager.Vobs;
 using MyBox;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -21,31 +22,41 @@ namespace GUZ.Core.Manager.Scenes
         
         /// <summary>
         /// Order of loading:
-        /// 1. VOBs - First entry, as we slice world chunks based on light VOBs
-        /// 2. WayPoints - Needed for spawning NPCs when world is loaded the first time
-        /// 3. NPCs - If we load the world for the first time, we leverage their current routine's values
-        /// 4. World - Mesh of the world
+        /// 1. Load world and VOB caches
+        /// 2. VOBs
+        ///   2.1 Merge StaticCache GameObjects with Prefab data
+        ///   2.2 Load new GameObjects normally (without StaticCache meshes and without TextureArrays)
+        /// 3. WayPoints - Needed for spawning NPCs when world is loaded the first time
+        /// 4. NPCs - If we load the world for the first time, we leverage their current routine's values
         /// </summary>
         private async Task LoadWorldContentAsync()
         {
             var config = GameGlobals.Config;
 
-            // 1.
-            // Load world and VOB caches.
-
+            // 1. StaticCache
             var cacheRoot = new GameObject("Data");
             await GameGlobals.StaticCache.LoadCache(cacheRoot, SaveGameManager.CurrentWorldName);
 
             var worldRoot = cacheRoot.transform.GetChild(0).gameObject;
             var vobsRoot = cacheRoot.transform.GetChild(1).gameObject;
 
-            // 2.
-            await GameGlobals.Vobs.CreateAsync(GameGlobals.Loading, SaveGameManager.CurrentWorldData.Vobs, vobsRoot);
+            // 2. VOBs
+            // 2.1
+            Debug.Log("VobImport - Phase 2 - Merge prefabs with existing GameObjects from StaticCache.");
+            await new VobCachePrefabManager()
+                .CreateAsync(GameGlobals.Loading, SaveGameManager.CurrentWorldData.Vobs, vobsRoot)
+                .AwaitAndLog();
+
+            // 2.2
+            Debug.Log("VobImport - Phase 3 - Create dynamic GameObjects.");
+            await GameGlobals.Vobs
+                .CreateAsync(GameGlobals.Loading, SaveGameManager.CurrentWorldData.Vobs, vobsRoot)
+                .AwaitAndLog();
 
             // 3.
             WayNetCreator.Create(config, SaveGameManager.CurrentWorldData);
 
-            // 3.
+            // 4.
             // If the world is visited for the first time, then we need to load Npcs via Wld_InsertNpc()
             if (config.EnableNpcs)
             {

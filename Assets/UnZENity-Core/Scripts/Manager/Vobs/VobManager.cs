@@ -1,7 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Threading.Tasks;
 using GUZ.Core.Creator.Meshes.V2;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
@@ -30,31 +28,23 @@ namespace GUZ.Core.Manager.Vobs
             GlobalEventDispatcher.WorldSceneLoaded.AddListener(PostWorldLoaded);
         }
 
-        public Dictionary<VirtualObjectType, Queue<GameObject>> CachedGOs = new();
+        protected override void PreCreateVobs(List<IVirtualObject> vobs, GameObject rootGo)
+        {
+            // The elements are already created by static cache.
+            TeleportParentGo = rootGo.FindChildRecursively("Teleport").gameObject;
+            NonTeleportParentGo = rootGo.FindChildRecursively("NonTeleport").gameObject;
 
+            CreateParentVobStructure();
+
+            TotalVObs = GetTotalVobCount(vobs);
+
+            CreatedCount = 0;
+            CullingVobObjects.Clear();
+        }
 
         private void PostWorldLoaded()
         {
             GameContext.InteractionAdapter.SetTeleportationArea(TeleportParentGo);
-        }
-
-        public async Task CreateAsync(LoadingManager loading, List<IVirtualObject> vobs, GameObject rootGo)
-        {
-            var stopwatch = Stopwatch.StartNew();
-
-            PreCreateVobs(vobs, rootGo);
-
-            /*
-             * VOBs are created in three flavours:
-             * 1. If an object is from cache, we load its vobType prefab and apply the (already loaded) mesh on it.
-             *   HINT: We need to apply VobData on the cached mesh vobs one-by-one.
-             *         e.g. a door might be locked or unlocked. We need to apply this data on the correct items.
-             * 2. If the object is new, we create it with Prefab and create a new GameObject
-             */
-            await CreateVobs(loading, vobs);
-            PostCreateVobs();
-
-            stopwatch.Log("Vobs created");
         }
 
         public GameObject GetRootGameObjectOfType(VirtualObjectType type)
@@ -76,46 +66,24 @@ namespace GUZ.Core.Manager.Vobs
             }
         }
 
-        private void PreCreateVobs(List<IVirtualObject> vobs, GameObject rootGo)
+        private void CreateParentVobStructure()
         {
-            // The elements are already created by static cache.
-            TeleportParentGo = rootGo.FindChildRecursively("Teleport").gameObject;
-            NonTeleportParentGo = rootGo.FindChildRecursively("NonTeleport").gameObject;
-
-            PreFillCachedGoList();
-            TotalVObs = GetTotalVobCount(vobs);
-
-            CreatedCount = 0;
-            CullingVobObjects.Clear();
-        }
-
-        /// <summary>
-        /// As a result we get something like:
-        ///   _cachedGOs = {
-        ///     zCVob => [GameObject, GameObject, ...]
-        ///     zCVobAnimate => [GameObject]
-        ///      ...
-        ///   }
-        /// </summary>
-        private void PreFillCachedGoList()
-        {
-            // We fill list of static cache GameObjects to apply prefab data onto it when looped.
-            foreach (var rootGo in new[]{TeleportParentGo, NonTeleportParentGo})
+            foreach (var child in TeleportParentGo.GetAllDirectChildren())
             {
-                foreach (var vobTypeGOs in rootGo.GetAllDirectChildren())
-                {
-                    Enum.TryParse(vobTypeGOs.name, out VirtualObjectType type); // Name of GameObject == a VobType enum label
-                    CachedGOs.Add(type, new Queue<GameObject>()); // Init
+                Enum.TryParse(child.name, out VirtualObjectType type);
 
-                    foreach (var cachedGo in vobTypeGOs.GetAllDirectChildren())
-                    {
-                        CachedGOs[type].Enqueue(cachedGo);
-                    }
-                }
+                ParentGosTeleport.Add(type, child);
+            }
+
+            foreach (var child in NonTeleportParentGo.GetAllDirectChildren())
+            {
+                Enum.TryParse(child.name, out VirtualObjectType type);
+
+                ParentGosNonTeleport.Add(type, child);
             }
         }
 
-        private void PostCreateVobs()
+        protected override void PostCreateVobs()
         {
             GameGlobals.VobMeshCulling.PrepareVobCulling(CullingVobObjects);
 
@@ -147,73 +115,6 @@ namespace GUZ.Core.Manager.Vobs
         {
             return true;
         }
-
-         protected override GameObject GetPrefab(IVirtualObject vob)
-        {
-            GameObject go;
-            var name = vob.Name;
-
-            switch (vob.Type)
-            {
-                case VirtualObjectType.oCItem:
-                    go = ResourceLoader.TryGetPrefabObject(PrefabType.VobItem);
-                    break;
-                case VirtualObjectType.zCVobSpot:
-                case VirtualObjectType.zCVobStartpoint:
-                    go = ResourceLoader.TryGetPrefabObject(PrefabType.VobSpot);
-                    break;
-                case VirtualObjectType.zCVobSound:
-                    go = ResourceLoader.TryGetPrefabObject(PrefabType.VobSound);
-                    break;
-                case VirtualObjectType.zCVobSoundDaytime:
-                    go = ResourceLoader.TryGetPrefabObject(PrefabType.VobSoundDaytime);
-                    break;
-                case VirtualObjectType.oCZoneMusic:
-                    go = ResourceLoader.TryGetPrefabObject(PrefabType.VobMusic);
-                    break;
-                case VirtualObjectType.oCMOB:
-                    go = ResourceLoader.TryGetPrefabObject(PrefabType.Vob);
-                    break;
-                case VirtualObjectType.oCMobFire:
-                    go = ResourceLoader.TryGetPrefabObject(PrefabType.VobFire);
-                    break;
-                case VirtualObjectType.oCMobInter:
-                    go = ResourceLoader.TryGetPrefabObject(PrefabType.VobInteractable);
-                    break;
-                case VirtualObjectType.oCMobBed:
-                    go = ResourceLoader.TryGetPrefabObject(PrefabType.VobBed);
-                    break;
-                case VirtualObjectType.oCMobWheel:
-                    go = ResourceLoader.TryGetPrefabObject(PrefabType.VobWheel);
-                    break;
-                case VirtualObjectType.oCMobSwitch:
-                    go = ResourceLoader.TryGetPrefabObject(PrefabType.VobSwitch);
-                    break;
-                case VirtualObjectType.oCMobDoor:
-                    go = ResourceLoader.TryGetPrefabObject(PrefabType.VobDoor);
-                    break;
-                case VirtualObjectType.oCMobContainer:
-                    go = ResourceLoader.TryGetPrefabObject(PrefabType.VobContainer);
-                    break;
-                case VirtualObjectType.oCMobLadder:
-                    go = ResourceLoader.TryGetPrefabObject(PrefabType.VobLadder);
-                    break;
-                case VirtualObjectType.zCVobAnimate:
-                    go = ResourceLoader.TryGetPrefabObject(PrefabType.VobAnimate);
-                    break;
-                default:
-                    return new GameObject(name);
-            }
-
-            go.name = name;
-
-            // Fill Property data into prefab here
-            // Can also be outsourced to a proper method if it becomes a lot.
-            go.GetComponent<VobProperties>().SetData(vob);
-
-            return go;
-        }
-
 
         protected override void AddToMobInteractableList(IVirtualObject vob, GameObject go)
         {

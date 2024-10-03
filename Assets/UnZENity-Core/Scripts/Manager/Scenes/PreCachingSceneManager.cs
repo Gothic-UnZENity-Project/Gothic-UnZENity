@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using GUZ.Core.Creator;
+using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager.Vobs;
 using UnityEngine;
@@ -75,13 +76,19 @@ namespace GUZ.Core.Manager.Scenes
 
                 // We need to start creating Vobs as we need to calculate world slicing based on amount of lights at a certain space afterward.
                 Debug.Log("### PreCaching static VOB meshes.");
-                await new VobCacheManager().CreateForCache(worldData!.RootObjects, GameGlobals.Loading, vobsRootGo);
+                await new VobCacheManager()
+                    .CreateAsync(GameGlobals.Loading, worldData!.RootObjects, vobsRootGo)
+                    .AwaitAndLog();
 
                 Debug.Log("### PreCaching World meshes.");
-                await WorldCreator.CreateForCache(worldData, worldRootGo, GameGlobals.Loading);
+                await WorldCreator
+                    .CreateForCache(worldData, worldRootGo, GameGlobals.Loading)
+                    .AwaitAndLog();
 
                 Debug.Log("## Saving caches.");
-                await GameGlobals.StaticCache.SaveCache(worldRootGo, vobsRootGo, worldName);
+                await GameGlobals.StaticCache
+                    .SaveCache(worldRootGo, vobsRootGo, worldName)
+                    .AwaitAndLog();
 
                 // Clean up scene memory (Hint: TextureArray data is removed from within StaticCache.SaveCache itself)
                 Destroy(vobsRootGo);

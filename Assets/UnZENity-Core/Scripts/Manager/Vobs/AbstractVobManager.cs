@@ -120,7 +120,7 @@ namespace GUZ.Core.Manager.Vobs
 
         [CanBeNull]
         private GameObject CreateVob(IVirtualObject vob, GameObject parent = null)
-         {
+        {
             GameObject go = null;
             switch (vob.Type)
             {
