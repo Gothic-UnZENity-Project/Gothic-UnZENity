@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using GUZ.Core.Extensions;
 using GUZ.Core.Properties;
 using MyBox;
@@ -126,8 +127,7 @@ namespace GUZ.Core.Manager.Vobs
 
         protected override void AddToMobInteractableList(VirtualObjectType type, GameObject go)
         {
-            // When this method is called during Prefab loading, we don't have the proper VobProperties applied. Therefore skip this to a later stage.
-            // FIXME - We need to fill a temp list with all objects and apply it in PostCreateVobs() via base.AddMobInteractableList() at the end.
+            // When this method is called during Prefab loading, we don't have the proper VobProperties applied. Therefore, skip this to a later stage.
         }
 
         protected override GameObject CreateDefaultMesh(IVirtualObject vob, GameObject parent = null, bool nonTeleport = false)
@@ -216,18 +216,22 @@ namespace GUZ.Core.Manager.Vobs
             }
 
             // Merge or add children from prefabTree
-            foreach (var child in prefabMergingTree.Go.GetAllDirectChildren())
+            foreach (var prefabChild in prefabMergingTree.Go.GetAllDirectChildren())
             {
-                // If the child already exists, merge it
-                if (mergedChildren.TryGetValue(child.name, out MergingTreeNode existingChild))
-                {
-                    existingChild.PrefabGo = child; // This information will tell us later to merge both GOs together.
-                    mergedChildren[child.name] = MergeTrees(existingChild, new MergingTreeNode(child));
-                }
+                var regexPrefabName = new Regex(prefabChild.name);
+                var existingTreeNode = mergedChildren.Values.FirstOrDefault(i => regexPrefabName.IsMatch(i.Go.name));
+
                 // If it doesn't exist simply add it
+                if (existingTreeNode == null)
+                {
+                    mergedChildren[prefabChild.name] = new MergingTreeNode(prefabChild);
+                }
+                // If the child already exists, merge it
                 else
                 {
-                    mergedChildren[child.name] = new MergingTreeNode(child);
+                    prefabChild.name = existingTreeNode.Go.name; // Get rid of Regex name inside Prefab object
+                    existingTreeNode.PrefabGo = prefabChild; // This information will tell us later to merge both GOs together.
+                    mergedChildren[prefabChild.name] = MergeTrees(existingTreeNode, new MergingTreeNode(prefabChild));
                 }
             }
 
