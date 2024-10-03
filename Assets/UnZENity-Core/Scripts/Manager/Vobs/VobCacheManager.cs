@@ -66,7 +66,7 @@ namespace GUZ.Core.Manager.Vobs
             return new GameObject();
         }
 
-        protected override void AddToMobInteractableList(IVirtualObject vob, GameObject go)
+        protected override void AddToMobInteractableList(VirtualObjectType type, GameObject go)
         {
             // Nothing to do at caching stage
         }

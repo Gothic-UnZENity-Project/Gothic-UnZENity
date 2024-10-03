@@ -37,6 +37,12 @@ namespace GUZ.Core.Manager.Vobs
 
         protected override void PreCreateVobs(List<IVirtualObject> rootVobs, GameObject rootGo)
         {
+            // The elements are already created by static cache.
+            TeleportParentGo = rootGo.FindChildRecursively("Teleport").gameObject;
+            NonTeleportParentGo = rootGo.FindChildRecursively("NonTeleport").gameObject;
+
+            CreateParentVobStructure();
+
             PreFillCachedGoList();
         }
 
@@ -56,14 +62,26 @@ namespace GUZ.Core.Manager.Vobs
             return VobCacheManager.VobTypesToCache.Contains(type);
         }
 
-        protected override void AddToMobInteractableList(IVirtualObject vob, GameObject go)
+        protected override GameObject CreateItem(Item vob, GameObject parent = null)
         {
             throw new NotImplementedException();
         }
 
-        protected override GameObject CreateItem(Item vob, GameObject parent = null)
+        private void CreateParentVobStructure()
         {
-            throw new NotImplementedException();
+            foreach (var child in TeleportParentGo.GetAllDirectChildren())
+            {
+                Enum.TryParse(child.name, out VirtualObjectType type);
+
+                ParentGosTeleport.Add(type, child);
+            }
+
+            foreach (var child in NonTeleportParentGo.GetAllDirectChildren())
+            {
+                Enum.TryParse(child.name, out VirtualObjectType type);
+
+                ParentGosNonTeleport.Add(type, child);
+            }
         }
 
         /// <summary>
@@ -92,6 +110,11 @@ namespace GUZ.Core.Manager.Vobs
             }
         }
 
+        protected override void AddToMobInteractableList(VirtualObjectType type, GameObject go)
+        {
+            // When this method is called during Prefab loading, we don't have the proper VobProperties applied. Therefore skip this to a later stage.
+            // FIXME - We need to fill a temp list with all objects and apply it in PostCreateVobs() via base.AddMobInteractableList() at the end.
+        }
 
         protected override GameObject CreateDefaultMesh(IVirtualObject vob, GameObject parent = null, bool nonTeleport = false)
         {

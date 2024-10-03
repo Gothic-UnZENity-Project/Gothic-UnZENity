@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using GUZ.Core.Creator.Meshes.V2;
 using GUZ.Core.Extensions;
-using GUZ.Core.Globals;
 using GUZ.Core.Properties;
 using GUZ.Core.Vm;
 using JetBrains.Annotations;
@@ -114,35 +113,6 @@ namespace GUZ.Core.Manager.Vobs
         protected override bool SpawnObjectType(VirtualObjectType type)
         {
             return true;
-        }
-
-        protected override void AddToMobInteractableList(IVirtualObject vob, GameObject go)
-        {
-            if (go == null)
-            {
-                return;
-            }
-
-            switch (vob.Type)
-            {
-                case VirtualObjectType.oCMOB:
-                case VirtualObjectType.oCMobFire:
-                case VirtualObjectType.oCMobInter:
-                case VirtualObjectType.oCMobBed:
-                case VirtualObjectType.oCMobDoor:
-                case VirtualObjectType.oCMobContainer:
-                case VirtualObjectType.oCMobSwitch:
-                case VirtualObjectType.oCMobWheel:
-                    var propertiesComponent = go.GetComponent<VobProperties>();
-
-                    if (propertiesComponent == null)
-                    {
-                        Debug.LogError($"VobProperties component missing on {go.name} ({vob.Type})");
-                    }
-
-                    GameData.VobsInteractable.Add(go.GetComponent<VobProperties>());
-                    break;
-            }
         }
 
         [CanBeNull]

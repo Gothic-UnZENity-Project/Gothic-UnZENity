@@ -64,7 +64,6 @@ namespace GUZ.Core.Manager.Vobs
         protected abstract void PostCreateVobs();
 
         protected abstract bool SpawnObjectType(VirtualObjectType type);
-        protected abstract void AddToMobInteractableList(IVirtualObject vob, GameObject go);
         protected abstract GameObject CreateItem(Item vob, GameObject parent = null);
 
 
@@ -101,12 +100,12 @@ namespace GUZ.Core.Manager.Vobs
                 }
                 catch (Exception e)
                 {
-                    Debug.LogError($"Error while creating vob: {vob.Visual?.Name}. Ignoring for now.", parent);
                     Debug.LogError(e);
+                    Debug.LogError($"Error while creating vob: {vob.Visual?.Name}. Ignoring for now.", parent);
                     continue;
                 }
 
-                AddToMobInteractableList(vob, go);
+                AddToMobInteractableList(vob.Type, go);
 
                 loading?.AddProgress(LoadingManager.LoadingProgressType.VOb, 1f / TotalVObs);
 
@@ -379,6 +378,35 @@ namespace GUZ.Core.Manager.Vobs
             go.GetComponent<VobProperties>().SetData(vob);
 
             return go;
+        }
+
+        protected virtual void AddToMobInteractableList(VirtualObjectType type, GameObject go)
+        {
+            if (go == null)
+            {
+                return;
+            }
+
+            switch (type)
+            {
+                case VirtualObjectType.oCMOB:
+                case VirtualObjectType.oCMobFire:
+                case VirtualObjectType.oCMobInter:
+                case VirtualObjectType.oCMobBed:
+                case VirtualObjectType.oCMobDoor:
+                case VirtualObjectType.oCMobContainer:
+                case VirtualObjectType.oCMobSwitch:
+                case VirtualObjectType.oCMobWheel:
+                    var propertiesComponent = go.GetComponent<VobProperties>();
+
+                    if (propertiesComponent == null)
+                    {
+                        Debug.LogError($"VobProperties component missing on {go.name} ({type})");
+                    }
+
+                    GameData.VobsInteractable.Add(go.GetComponent<VobProperties>());
+                    break;
+            }
         }
 
         /// <summary>
