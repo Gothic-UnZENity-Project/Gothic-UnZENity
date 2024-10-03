@@ -205,6 +205,11 @@ namespace GUZ.VR.Components.VobContainer
                 {
                     count = int.Parse(nameCountSplit[1]);
                 }
+
+                if (name.IsNullOrEmpty())
+                {
+                    continue;
+                }
         
                 result.Add(new ContentItem
                 {
