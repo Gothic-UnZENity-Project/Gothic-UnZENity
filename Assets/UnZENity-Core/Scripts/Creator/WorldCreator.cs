@@ -178,7 +178,7 @@ namespace GUZ.Core.Creator
                             {
                                 // Add the texture to the texture array or retrieve its existing slice.
                                 IMaterial zkMaterial = zkMesh.IsCached() ? zkMesh.Materials[polygon.MaterialIndex] : zkMesh.GetMaterial(polygon.MaterialIndex);
-                                TextureCache.GetTextureArrayIndex(zkMaterial, out TextureCache.TextureArrayTypes textureArrayType, out int textureArrayIndex, out Vector2 textureScale, out int maxMipLevel);
+                                TextureCache.GetTextureArrayIndex(zkMaterial, out TextureCache.TextureArrayTypes textureArrayType, out int textureArrayIndex, out Vector2 textureScale, out int maxMipLevel, out int animFrameCount);
                                 if (textureArrayIndex == -1)
                                 {
                                     continue;
@@ -208,9 +208,9 @@ namespace GUZ.Core.Creator
 
                                 WorldData.SubMeshData nodeSubmesh = nodeSubmeshes[shader];
                                 // Triangle Fan - We need to add element 0 (A) before every triangle 2 elements.
-                                AddEntry(zkMesh, polygon, zkMaterial, nodeSubmesh, 0, textureArrayIndex, textureScale, maxMipLevel);
-                                AddEntry(zkMesh, polygon, zkMaterial, nodeSubmesh, p, textureArrayIndex, textureScale, maxMipLevel);
-                                AddEntry(zkMesh, polygon, zkMaterial, nodeSubmesh, p + 1, textureArrayIndex, textureScale, maxMipLevel);
+                                AddEntry(zkMesh, polygon, zkMaterial, nodeSubmesh, 0, textureArrayIndex, textureScale, maxMipLevel, animFrameCount);
+                                AddEntry(zkMesh, polygon, zkMaterial, nodeSubmesh, p, textureArrayIndex, textureScale, maxMipLevel, animFrameCount);
+                                AddEntry(zkMesh, polygon, zkMaterial, nodeSubmesh, p + 1, textureArrayIndex, textureScale, maxMipLevel, animFrameCount);
                             }
                         }
                     }
@@ -230,30 +230,30 @@ namespace GUZ.Core.Creator
         }
 
         private static void AddEntry(IMesh zkMesh, IPolygon polygon, IMaterial material, WorldData.SubMeshData currentSubMesh, int index,
-            int textureArrayIndex, Vector2 scaleInTextureArray, int maxMipLevel = 16)
+            int textureArrayIndex, Vector2 scaleInTextureArray, int maxMipLevel = 16, int animFrameCount = 0)
         {
             // For every vertexIndex we store a new vertex. (i.e. no reuse of Vector3-vertices for later texture/uv attachment)
-            var positionIndex = polygon.PositionIndices[index];
+            int positionIndex = polygon.PositionIndices[index];
             currentSubMesh.Vertices.Add((zkMesh.IsCached() ? zkMesh.Positions[positionIndex] : zkMesh.GetPosition(positionIndex)).ToUnityVector());
 
             // This triangle (index where Vector 3 lies inside vertices, points to the newly added vertex (Vector3) as we don't reuse vertices.
             currentSubMesh.Triangles.Add(currentSubMesh.Vertices.Count - 1);
 
-            var featureIndex = polygon.FeatureIndices[index];
-            var feature = zkMesh.IsCached() ? zkMesh.Features[featureIndex] : zkMesh.GetFeature(featureIndex);
-            var uv = Vector2.Scale(scaleInTextureArray, feature.Texture.ToUnityVector());
+            int featureIndex = polygon.FeatureIndices[index];
+            Vertex feature = zkMesh.IsCached() ? zkMesh.Features[featureIndex] : zkMesh.GetFeature(featureIndex);
+            Vector2 uv = Vector2.Scale(scaleInTextureArray, feature.Texture.ToUnityVector());
             currentSubMesh.Uvs.Add(new Vector4(uv.x, uv.y, textureArrayIndex, maxMipLevel));
             currentSubMesh.Normals.Add(feature.Normal.ToUnityVector());
             currentSubMesh.BakedLightColors.Add(new Color32((byte)(feature.Light >> 16), (byte)(feature.Light >> 8), (byte)feature.Light, (byte)(feature.Light >> 24)));
 
             if (material.TextureAnimationMapping == AnimationMapping.Linear)
             {
-                var uvAnimation = material.TextureAnimationMappingDirection.ToUnityVector();
-                currentSubMesh.TextureAnimations.Add(uvAnimation);
+                Vector2 uvAnimation = material.TextureAnimationMappingDirection.ToUnityVector();
+                currentSubMesh.TextureAnimations.Add(new Vector4(uvAnimation.x, uvAnimation.y, animFrameCount, material.TextureAnimationFps));
             }
             else
             {
-                currentSubMesh.TextureAnimations.Add(Vector2.zero);
+                currentSubMesh.TextureAnimations.Add(new Vector4(0, 0, animFrameCount, material.TextureAnimationFps));
             }
         }
 
