@@ -100,9 +100,6 @@ namespace GUZ.Core.Globals
         public const string PlayerTag = "Player";
         public const string MainCameraTag = "MainCamera";
 
-        // Custom Tags
-        public const string SpotTag = "Vob_zCVobSpot";
-
         //Collection of PlayerPref entries for VR settings
         public const string PlayerPrefDirectionMode = "DirectionMode";
         public const string PlayerPrefRotationType = "RotationType";

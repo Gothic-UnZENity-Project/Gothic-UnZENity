@@ -376,6 +376,7 @@ namespace GUZ.Core.Manager.Vobs
             }
 
             go.name = name;
+            go.SetActive(false);
 
             // Fill Property data into prefab immediately
             go.GetComponent<VobProperties>().SetData(vob);
