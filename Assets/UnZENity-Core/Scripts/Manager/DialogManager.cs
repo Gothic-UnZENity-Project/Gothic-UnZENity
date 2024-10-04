@@ -148,6 +148,11 @@ namespace GUZ.Core.Manager
                 props.Go));
         }
 
+        public static bool ExtInfoManagerHasFinished()
+        {
+            return GameData.Dialogs.IsInDialog;
+        }
+
         /// <summary>
         /// We update the Unity cached/created elements only.
         /// </summary>
@@ -248,7 +253,7 @@ namespace GUZ.Core.Manager
             {
                 return;
             }
-            // Else we want to have a the dialog menu back once all dialog lines are talked.
+            // Else we want to have the dialog menu back once all dialog lines are talked.
             else
             {
                 animationQueue.Enqueue(new StartProcessInfos(

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Globalization;
-using AOT;
 using GUZ.Core.Caches;
 using GUZ.Core.Creator;
 using GUZ.Core.Globals;
@@ -60,6 +59,7 @@ namespace GUZ.Core.Vm
             vm.RegisterExternal<int, DaedalusInstance>("Hlp_GetInstanceID", Hlp_GetInstanceID);
 
             // Info
+            vm.RegisterExternal<int>("InfoManager_HasFinished", InfoManager_HasFinished);
             vm.RegisterExternal<int>("Info_ClearChoices", Info_ClearChoices);
             vm.RegisterExternal<int, string, int>("Info_AddChoice", Info_AddChoice);
 
@@ -257,7 +257,6 @@ namespace GUZ.Core.Vm
             NpcHelper.ExtAiGoToNextFp(npc, fpNamePart);
         }
 
-        [MonoPInvokeCallback(typeof(DaedalusVm.ExternalFuncV))]
         public static void AI_DrawWeapon(NpcInstance npc)
         {
             NpcHelper.ExtAiDrawWeapon(npc);
@@ -369,13 +368,16 @@ namespace GUZ.Core.Vm
 
         #region Info
 
-        [MonoPInvokeCallback(typeof(DaedalusVm.ExternalFuncV))]
+        public static int InfoManager_HasFinished()
+        {
+            return Convert.ToInt32(DialogManager.ExtInfoManagerHasFinished());
+        }
+
         public static void Info_ClearChoices(int info)
         {
             DialogManager.ExtInfoClearChoices(info);
         }
 
-        [MonoPInvokeCallback(typeof(DaedalusVm.ExternalFuncV))]
         public static void Info_AddChoice(int info, string text, int function)
         {
             DialogManager.ExtInfoAddChoice(info, text, function);
