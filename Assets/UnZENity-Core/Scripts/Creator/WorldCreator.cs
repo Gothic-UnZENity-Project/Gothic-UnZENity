@@ -26,9 +26,9 @@ namespace GUZ.Core.Creator
             GlobalEventDispatcher.WorldSceneLoaded.AddListener(WorldLoaded);
         }
 
-        public static async Task CreateAsync(GameConfiguration config, LoadingManager loading)
+        public static async Task CreateAsync(GameConfiguration config, LoadingManager loading, GameObject root)
         {
-            _worldGo = new GameObject("World");
+            _worldGo = root;
 
             var lightingEnabled = config.EnableVOBs &&
                                   (
@@ -41,7 +41,7 @@ namespace GUZ.Core.Creator
                 SaveGameManager.CurrentZkWorld.BspTree.Cache(),
                 lightingEnabled);
 
-            await MeshFactory.CreateWorld(SaveGameManager.CurrentWorldData, loading, _worldGo, Constants.MeshPerFrame);
+            await MeshFactory.CreateWorld(SaveGameManager.CurrentWorldData, loading, _worldGo);
             await MeshFactory.CreateTextureArray();
         }
 

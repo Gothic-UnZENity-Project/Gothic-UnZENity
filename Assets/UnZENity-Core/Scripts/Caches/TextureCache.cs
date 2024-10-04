@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -6,6 +5,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using GUZ.Core.Extensions;
+using GUZ.Core.Util;
 using GUZ.Core.World;
 using JetBrains.Annotations;
 using UnityEngine;
@@ -335,10 +335,7 @@ namespace GUZ.Core.Caches
 
                     Object.Destroy(sourceTex);
 
-                    if (i % 20 == 0)
-                    {
-                        await Task.Yield();
-                    }
+                    await FrameSkipper.TrySkipToNextFrame();
                 }
 
                 TextureArrays.Add(textureArrayType, texArray);

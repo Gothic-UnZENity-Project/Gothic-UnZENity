@@ -8,6 +8,7 @@ using GUZ.Core.Globals;
 using GUZ.Core.Manager;
 using GUZ.Core.Npc.Routines;
 using GUZ.Core.Properties;
+using GUZ.Core.Util;
 using GUZ.Core.Vm;
 using GUZ.Core.Vob.WayNet;
 using JetBrains.Annotations;
@@ -38,7 +39,7 @@ namespace GUZ.Core.Creator
         /// <summary>
         /// If the current world is visited for the first time, we call Wld_InsertNpc() to "spawn" them for the first time.
         /// </summary>
-        public static async Task CreateAsync(GameConfiguration config, LoadingManager loading, int npcsPerFrame)
+        public static async Task CreateAsync(GameConfiguration config, LoadingManager loading)
         {
             // We load NPCs only! if we enter the world for the first time (e.g. when having a fresh game start).
             // If we loaded the data from a save game or previous visit in this game session, we have our NPCs already loaded via Vobs + SaveGame state.
@@ -59,7 +60,7 @@ namespace GUZ.Core.Creator
 
             // Daedalus will walk through the whole Wld_InsertNpc() calls once.
             // Afterwards we will crate the NPCs step-by-step to ensure smooth loading screen fps.
-            await InitializeNpcs(loading, npcsPerFrame);
+            await InitializeNpcs(loading);
         }
 
         private static GameObject GetRootGo()
@@ -113,7 +114,7 @@ namespace GUZ.Core.Creator
             _tmpWldInsertNpcData.Add((npcInstanceIndex, spawnPoint));
         }
 
-        private static async Task InitializeNpcs(LoadingManager loading, int npcsPerFrame)
+        private static async Task InitializeNpcs(LoadingManager loading)
         {
             var createdCount = 0;
             var totalNpcs = _tmpWldInsertNpcData.Count;
@@ -122,10 +123,8 @@ namespace GUZ.Core.Creator
             {
                 // Update progress bar and check if we need to wait for next frame.
                 loading.AddProgress(LoadingManager.LoadingProgressType.VOb, 1f / totalNpcs);
-                if (++createdCount % npcsPerFrame == 0)
-                {
-                    await Task.Yield(); // Wait for the next frame
-                }
+
+                await FrameSkipper.TrySkipToNextFrame();
 
                 if (WayNetHelper.GetWayNetPoint(npcData.spawnPoint) is null)
                 {
