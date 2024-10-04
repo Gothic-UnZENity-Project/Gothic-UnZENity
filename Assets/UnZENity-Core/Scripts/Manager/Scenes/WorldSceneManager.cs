@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using GUZ.Core.Creator;
@@ -7,6 +8,7 @@ using GUZ.Core.Globals;
 using MyBox;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Debug = UnityEngine.Debug;
 
 namespace GUZ.Core.Manager.Scenes
 {
@@ -28,6 +30,7 @@ namespace GUZ.Core.Manager.Scenes
         /// </summary>
         private async Task LoadWorldContentAsync()
         {
+            var watch = Stopwatch.StartNew();
             var config = GameGlobals.Config;
 
             try
@@ -78,6 +81,10 @@ namespace GUZ.Core.Manager.Scenes
             catch(Exception ex)
             {
                 Debug.LogException(ex);
+            }
+            finally
+            {
+                watch.Log("Full world loaded in");
             }
         }
         
