@@ -45,7 +45,7 @@ namespace GUZ.Core.Properties
 
         // Perceptions
         public Dictionary<VmGothicEnums.PerceptionType, int> Perceptions = new();
-        public float PerceptionTime;
+        public float PerceptionTime = 5f; // Default in seconds
         public float CurrentPerceptionTime;
 
         // NPC items/talents/...

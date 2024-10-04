@@ -113,7 +113,7 @@ namespace GUZ.Core.Npc
                             switch (symbol.ReturnType)
                             {
                                 case DaedalusDataType.Int:
-                                    var loopResponse = Vm.Call<int>(Properties.StateEnd);
+                                    Vm.Call<int>(Properties.StateEnd);
                                     break;
                                 default:
                                     Vm.Call(Properties.StateEnd);
@@ -139,9 +139,6 @@ namespace GUZ.Core.Npc
         /// </summary>
         private void ExecutePerceptions()
         {
-            // FIXME - Perceptions aren't yet ready to be executed. Please debug with caution.
-            return;
-
             Properties.CurrentPerceptionTime += Time.deltaTime;
             if (Properties.CurrentPerceptionTime < Properties.PerceptionTime)
             {
@@ -150,9 +147,8 @@ namespace GUZ.Core.Npc
 
             ExecutePerception(VmGothicEnums.PerceptionType.AssessPlayer, (NpcInstance)GameData.GothicVm.GlobalHero);
 
-
             // Reset timer if we executed Perceptions.
-            Properties.PerceptionTime = 0f;
+            Properties.CurrentPerceptionTime = 0f;
         }
 
         private void ExecutePerception(VmGothicEnums.PerceptionType type, NpcInstance other)
