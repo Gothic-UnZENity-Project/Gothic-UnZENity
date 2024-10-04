@@ -64,9 +64,12 @@ namespace GUZ.Core.Creator
             GameContext.InteractionAdapter.SetTeleportationArea(_teleportGo);
         }
 
-        public static async Task CreateAsync(GameConfiguration config, LoadingManager loading, List<IVirtualObject> vobs)
+        public static async Task CreateAsync(GameConfiguration config, LoadingManager loading, List<IVirtualObject> vobs, GameObject root)
         {
             Stopwatch stopwatch = new();
+
+            _vobsGo = root;
+
             stopwatch.Start();
             PreCreateVobs(vobs);
             await CreateVobs(config, loading, vobs);
@@ -101,7 +104,6 @@ namespace GUZ.Core.Creator
             _createdCount = 0;
             _cullingVobObjects.Clear();
 
-            _vobsGo = new GameObject("VOBs");
             _teleportGo = new GameObject("Teleport");
             _nonTeleportGo = new GameObject("NonTeleport");
             _teleportGo.SetParent(_vobsGo);

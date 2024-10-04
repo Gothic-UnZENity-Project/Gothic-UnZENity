@@ -33,6 +33,12 @@ namespace GUZ.Core.Manager.Scenes
             var watch = Stopwatch.StartNew();
             var config = GameGlobals.Config;
 
+            var worldRoot = new GameObject("World");
+            var vobRoot = new GameObject("VOBs");
+            // We need to disable all vob meshed during loading. Otherwise loading time will increase from 10 seconds to 10 minutes. ;-)
+            worldRoot.SetActive(false);
+            vobRoot.SetActive(false);
+
             try
             {
                 // 1.
@@ -40,7 +46,7 @@ namespace GUZ.Core.Manager.Scenes
                 // We need to start creating Vobs as we need to calculate world slicing based on amount of lights at a certain space afterwards.
                 if (config.EnableVOBs)
                 {
-                    await VobCreator.CreateAsync(config, GameGlobals.Loading, SaveGameManager.CurrentWorldData.Vobs);
+                    await VobCreator.CreateAsync(config, GameGlobals.Loading, SaveGameManager.CurrentWorldData.Vobs, vobRoot);
                 }
 
                 // 2.
@@ -56,7 +62,7 @@ namespace GUZ.Core.Manager.Scenes
                 // 4.
                 if (config.EnableWorldMesh)
                 {
-                    await WorldCreator.CreateAsync(config, GameGlobals.Loading);
+                    await WorldCreator.CreateAsync(config, GameGlobals.Loading, worldRoot);
                 }
 
                 GameGlobals.Sky.InitSky();
@@ -64,6 +70,10 @@ namespace GUZ.Core.Manager.Scenes
 
                 // World fully loaded
                 ResourceLoader.ReleaseLoadedData();
+
+                worldRoot.SetActive(true);
+                vobRoot.SetActive(true);
+                
                 TeleportPlayerToStart();
 
                 // There are many handlers which listen to this event. If any of these fails, we won't get notified without a try-catch.

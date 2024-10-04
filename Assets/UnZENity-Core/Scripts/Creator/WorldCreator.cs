@@ -26,9 +26,9 @@ namespace GUZ.Core.Creator
             GlobalEventDispatcher.WorldSceneLoaded.AddListener(WorldLoaded);
         }
 
-        public static async Task CreateAsync(GameConfiguration config, LoadingManager loading)
+        public static async Task CreateAsync(GameConfiguration config, LoadingManager loading, GameObject root)
         {
-            _worldGo = new GameObject("World");
+            _worldGo = root;
 
             var lightingEnabled = config.EnableVOBs &&
                                   (
