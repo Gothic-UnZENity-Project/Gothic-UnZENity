@@ -3,6 +3,7 @@ using System.Collections;
 using GUZ.Core;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
+using GUZ.VR.Manager;
 using GUZ.VR.Properties;
 using HurricaneVR.Framework.Core;
 using HurricaneVR.Framework.Core.Grabbers;
@@ -13,7 +14,7 @@ namespace GUZ.VR.Components
 {
     public class VRVobItem : MonoBehaviour
     {
-        [SerializeField] private HVRVobItemProperties _properties;
+        [SerializeField] private VRVobItemProperties _properties;
         [SerializeField] private MeshCollider _meshCollider;
 
         // We pre-allocate enough entries to fetch at least one entry which is not ourselves.
@@ -65,6 +66,7 @@ namespace GUZ.VR.Components
             }
 
             GameGlobals.VobMeshCulling?.StartTrackVobPositionUpdates(gameObject);
+            VRPlayerManager.SetGrab(grabber, grabbable);
         }
 
         public void OnReleased(HVRGrabberBase grabber, HVRGrabbable grabbable)
@@ -75,6 +77,9 @@ namespace GUZ.VR.Components
 
             // Disable "ghostification" of object.
             DynamicMaterialManager.ResetDynamicValue(gameObject, Constants.ShaderPropertyTransparency, Constants.ShaderPropertyTransparencyDefault);
+
+            GameGlobals.VobMeshCulling?.StartTrackVobPositionUpdates(gameObject);
+            VRPlayerManager.UnsetGrab(grabber, grabbable);
         }
 
         /// <summary>
@@ -82,7 +87,7 @@ namespace GUZ.VR.Components
         /// </summary>
         private void OnDrawGizmos()
         {
-            if (!GameGlobals.Config.ShowCapsuleOverlapGizmos)
+            if (!Application.isPlaying || !GameGlobals.Config.ShowCapsuleOverlapGizmos)
             {
                 return;
             }

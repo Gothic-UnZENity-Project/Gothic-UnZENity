@@ -2,7 +2,7 @@
 
 namespace GUZ.VR.Properties
 {
-    public class HVRVobItemProperties : VobItemProperties
+    public class VRVobItemProperties : VobItemProperties
     {
         public bool IsSocketed;
     }

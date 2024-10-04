@@ -1,9 +1,25 @@
+using System;
 using UnityEngine;
 
 namespace GUZ.Core.Globals
 {
     public static class Constants
     {
+        public static class GothicIni
+        {
+            public static bool PlayLogoVideos => GameGlobals.Settings.GothicIniSettings.TryGetValue("playLogoVideos", out var value) ? Convert.ToBoolean(Convert.ToInt16(value)) : true;
+        }
+
+        public static class Daedalus
+        {
+            public static string DoorLockSoundName => "DOOR_LOCK.WAV";
+            public static string PickLockFailureSoundName => GameData.GothicVm.GetSymbolByName("_STR_SOUND_PICKLOCK_FAILURE").GetString(0);
+            public static string PickLockBrokenSoundName => GameData.GothicVm.GetSymbolByName("_STR_SOUND_PICKLOCK_BROKEN").GetString(0);
+            public static string PickLockSuccessSoundName => GameData.GothicVm.GetSymbolByName("_STR_SOUND_PICKLOCK_SUCCESS").GetString(0);
+            public static string PickLockUnlockSoundName => GameData.GothicVm.GetSymbolByName("_STR_SOUND_PICKLOCK_UNLOCK").GetString(0);
+            public static string DoorUnlockSoundName => "DOOR_UNLOCK.WAV"; // _STR_*_UNLOCK value above couldn't be found/isn't used in G1, therefore we use this as fallback.
+        }
+        
         public static readonly Material LoadingMaterial; // Used for Vobs and World before applying TextureArray.
 
         // Unity shaders

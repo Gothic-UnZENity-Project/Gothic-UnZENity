@@ -6,13 +6,13 @@ using UnityEngine.Video;
 
 namespace GUZ.Lab.Handler
 {
-    public class LabVideoHandler : MonoBehaviour, ILabHandler
+    public class LabVideoHandler : AbstractLabHandler
     {
         [SerializeField] private TMP_Dropdown _fileSelector;
         [SerializeField] private VideoPlayer _videoPlayer;
         
 
-        public void Bootstrap()
+        public override void Bootstrap()
         {
             _fileSelector.options = GameGlobals.Video.VideoFileNamesMp4.Select(i => new TMP_Dropdown.OptionData(i)).ToList();
         }

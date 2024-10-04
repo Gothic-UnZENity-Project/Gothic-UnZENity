@@ -5,11 +5,13 @@ using GUZ.Core.Globals;
 using GUZ.Core.Manager;
 using GUZ.Core.Manager.Culling;
 using GUZ.Core.Manager.Settings;
+using GUZ.Core.Util;
 using GUZ.Core.Vm;
 using GUZ.Core.World;
 using GUZ.Lab.Handler;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Logger = ZenKit.Logger;
 
 namespace GUZ.Lab
 {
@@ -20,19 +22,14 @@ namespace GUZ.Lab
         public GameConfiguration Config { get; private set; }
 
         public LabMusicHandler LabMusicHandler;
-
+        public LabSoundHandler LabSoundHandler;
         public LabVideoHandler LabVideoHandler;
-
         public LabNpcDialogHandler NpcDialogHandler;
-
         public LabInteractableHandler InteractableHandler;
-
         public LabLadderLabHandler LadderLabHandler;
-
         public LabVobItemHandler VobItemHandler;
-
         public LabNpcAnimationHandler LabNpcAnimationHandler;
-
+        public LabLockHandler LabLockHandler;
         private MusicManager _gameMusicManager;
         private VideoManager _videoManager;
         private RoutineManager _npcRoutineManager;
@@ -60,6 +57,8 @@ namespace GUZ.Lab
         {
             GameGlobals.Instance = this;
 
+            Logger.Set(Config.ZenKitLogLevel, Logging.OnZenKitLogMessage);
+            DirectMusic.Logger.Set(Config.DirectMusicLogLevel, Logging.OnDirectMusicLogMessage);
             _settings = GameSettings.Load(Config.GameVersion);
             _textureManager = GetComponent<TextureManager>();
             _fontManager = GetComponent<FontManager>();
@@ -95,11 +94,13 @@ namespace GUZ.Lab
 
             LabNpcAnimationHandler.Bootstrap();
             LabMusicHandler.Bootstrap();
+            LabSoundHandler.Bootstrap();
             LabVideoHandler.Bootstrap();
             NpcDialogHandler.Bootstrap();
             InteractableHandler.Bootstrap();
             LadderLabHandler.Bootstrap();
             VobItemHandler.Bootstrap();
+            LabLockHandler.Bootstrap();
         }
 
         private void OnDestroy()

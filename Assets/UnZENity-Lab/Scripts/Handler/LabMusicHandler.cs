@@ -7,12 +7,12 @@ using UnityEngine.Serialization;
 
 namespace GUZ.Lab.Handler
 {
-    public class LabMusicHandler : MonoBehaviour, ILabHandler
+    public class LabMusicHandler : AbstractLabHandler
     {
         [FormerlySerializedAs("fileSelector")] public TMP_Dropdown FileSelector;
 
 
-        public void Bootstrap()
+        public override void Bootstrap()
         {
             var vm = ResourceLoader.TryGetDaedalusVm("MUSIC");
 

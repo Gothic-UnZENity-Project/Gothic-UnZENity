@@ -1,8 +1,8 @@
 using GUZ.Core;
 using GUZ.Core.Adapter;
 using ZenKit;
-#if !GUZ_HVR_INSTALLED
-using System;
+#if GUZ_HVR_INSTALLED
+using GUZ.VR.Adapter;
 #endif
 
 namespace GUZ.VR
@@ -24,7 +24,7 @@ namespace GUZ.VR
             GameContext.InteractionAdapter = new VRInteractionAdapter();
             GameContext.DialogAdapter = new VRDialogAdapter();
 #else
-            throw new ArgumentException(
+            throw new System.ArgumentException(
                 "VR context is set, but compiler directive >GUZ_HVR_INSTALLED< isn't set. Did you set up Hurricane VR properly?");
 #endif
         }

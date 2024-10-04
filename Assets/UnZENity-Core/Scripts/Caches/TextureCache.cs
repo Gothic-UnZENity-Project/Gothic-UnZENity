@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using GUZ.Core.Extensions;
 using GUZ.Core.World;
@@ -72,6 +73,7 @@ namespace GUZ.Core.Caches
             public int Width { get; set; }
             public int Height { get; set; }
             public int MipmapCount { get; set; }
+            public int AnimFrameCount { get; set; }
 
             public ZkTextureData(string key, ITexture zkTexture)
             {
@@ -153,32 +155,35 @@ namespace GUZ.Core.Caches
             return texture;
         }
 
-        public static void GetTextureArrayIndex(IMaterial materialData, out TextureArrayTypes textureArrayType, out int arrayIndex, out Vector2 textureScale, out int maxMipLevel)
+        public static void GetTextureArrayIndex(IMaterial materialData, out TextureArrayTypes textureArrayType, out int arrayIndex, out Vector2 textureScale, out int maxMipLevel, out int animFrameCount)
         {
             string key = materialData.Texture;
+            animFrameCount = 0;
 
-            for (int i = 0; i < Enum.GetValues(typeof(TextureArrayTypes)).Length; i++)
+            if (materialData.Group == MaterialGroup.Water)
             {
-                if (!_texturesToIncludeInArray.ContainsKey((TextureArrayTypes)i))
+                textureArrayType = TextureArrayTypes.Water;
+                if (GetAlreadyIncludedTexture(textureArrayType, key, out arrayIndex, out maxMipLevel, out textureScale, out animFrameCount))
                 {
-                    continue;
+                    return;
+                }
+            }
+            else
+            {
+                textureArrayType = TextureArrayTypes.Opaque;
+                if (GetAlreadyIncludedTexture(textureArrayType, key, out arrayIndex, out maxMipLevel, out textureScale, out animFrameCount))
+                {
+                    return;
                 }
 
-                (string, ZkTextureData) cachedTextureData = _texturesToIncludeInArray[(TextureArrayTypes)i].FirstOrDefault(k => k.PreparedKey == key);
-                if (cachedTextureData != default)
+                textureArrayType = TextureArrayTypes.Transparent;
+                if (GetAlreadyIncludedTexture(textureArrayType, key, out arrayIndex, out maxMipLevel, out textureScale, out animFrameCount))
                 {
-                    textureArrayType = (TextureArrayTypes)i;
-
-                    arrayIndex = _texturesToIncludeInArray[textureArrayType].IndexOf(cachedTextureData);
-                    ZkTextureData zkData = _texturesToIncludeInArray[textureArrayType][arrayIndex].TextureData;
-                    maxMipLevel = zkData.MipmapCount - 1;
-                    textureScale = zkData.Scale;
                     return;
                 }
             }
 
             ITexture zenTextureData = ResourceLoader.TryGetTexture(key);
-
             if (zenTextureData == null)
             {
                 textureArrayType = default;
@@ -188,19 +193,16 @@ namespace GUZ.Core.Caches
                 return;
             }
 
-            maxMipLevel = zenTextureData.MipmapCount - 1;
             UnityEngine.TextureFormat textureFormat = zenTextureData.Format.AsUnityTextureFormat();
 
-            if (materialData.Group == MaterialGroup.Water)
-            {
-                textureArrayType = TextureArrayTypes.Water;
-            }
-            else
+            if (materialData.Group != MaterialGroup.Water)
             {
                 textureArrayType = textureFormat == UnityEngine.TextureFormat.DXT1
                     ? TextureArrayTypes.Opaque
                     : TextureArrayTypes.Transparent;
             }
+
+            maxMipLevel = zenTextureData.MipmapCount - 1;
 
             textureScale = new Vector2((float)zenTextureData.Width / ReferenceTextureSize, (float)zenTextureData.Height / ReferenceTextureSize);
             if (!_texturesToIncludeInArray.ContainsKey(textureArrayType))
@@ -210,10 +212,25 @@ namespace GUZ.Core.Caches
 
             _texturesToIncludeInArray[textureArrayType].Add((key, new ZkTextureData(key, zenTextureData)));
             arrayIndex = _texturesToIncludeInArray[textureArrayType].Count - 1;
+
+            if (materialData.TextureAnimationFps > 0)
+            {
+                List<(string, ZkTextureData)> animTextures = TryGetAnimTextures(key);
+                animFrameCount = animTextures.Count + 1;
+                _texturesToIncludeInArray[textureArrayType][arrayIndex].TextureData.AnimFrameCount = animFrameCount;
+                _texturesToIncludeInArray[textureArrayType].AddRange(animTextures);
+            }
         }
 
         public static async Task BuildTextureArrays()
         {
+            // Unload the previous texture arrays.
+            foreach (TextureArrayTypes item in TextureArrays.Keys)
+            {
+                Object.Destroy(TextureArrays[item]);
+            }
+            TextureArrays.Clear();
+
             Stopwatch stopwatch = new();
             stopwatch.Start();
 
@@ -338,6 +355,52 @@ namespace GUZ.Core.Caches
             Debug.Log($"Built tex array in {stopwatch.ElapsedMilliseconds / 1000f} s");
         }
 
+        private static bool GetAlreadyIncludedTexture(TextureArrayTypes textureArrayType, string key, out int arrayIndex, out int maxMipLevel, out Vector2 textureScale, out int animFrameCount)
+        {
+            if (_texturesToIncludeInArray.ContainsKey(textureArrayType))
+            {
+                (string, ZkTextureData) cachedTextureData = _texturesToIncludeInArray[textureArrayType].FirstOrDefault(k => k.PreparedKey == key);
+                if (cachedTextureData != default)
+                {
+                    arrayIndex = _texturesToIncludeInArray[textureArrayType].IndexOf(cachedTextureData);
+                    ZkTextureData zkData = _texturesToIncludeInArray[textureArrayType][arrayIndex].TextureData;
+                    maxMipLevel = zkData.MipmapCount - 1;
+                    textureScale = zkData.Scale;
+                    animFrameCount = zkData.AnimFrameCount;
+                    return true;
+                }
+            }
+
+            arrayIndex = -1;
+            maxMipLevel = -1;
+            textureScale = default;
+            animFrameCount = 0;
+            return false;
+        }
+
+        private static List<(string, ZkTextureData)> TryGetAnimTextures(string key)
+        {
+            List<(string, ZkTextureData)> textures = new();
+            if (!key.Contains("_A0") && !key.Contains("_a0"))
+            {
+                return textures;
+            }
+            for (int id = 1; ; id++)
+            {
+                // Replace the frame number in the key with the current id
+                string frameKey = Regex.Replace(key, "_[Aa]0", $"_A{id}");
+                frameKey = frameKey.ToUpper();
+                ITexture zkTex = ResourceLoader.TryGetTexture(frameKey);
+                if (zkTex == null)
+                {
+                    break;
+                }
+                textures.Add((frameKey, new ZkTextureData(frameKey, zkTex)));
+            }
+
+            return textures;
+        }
+
         /// <summary>
         /// Unity doesn't want to create mips for DXT1 textures. Recreate them as RGB24.
         /// </summary>
@@ -360,9 +423,6 @@ namespace GUZ.Core.Caches
         /// </summary>
         public static void RemoveCachedTextureArrayData()
         {
-            TextureArrays.Clear();
-            TextureArrays.TrimExcess();
-
             _texturesToIncludeInArray.Clear();
             _texturesToIncludeInArray.TrimExcess();
 

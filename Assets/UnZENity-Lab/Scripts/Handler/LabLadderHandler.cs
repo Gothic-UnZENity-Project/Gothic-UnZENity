@@ -4,11 +4,11 @@ using UnityEngine;
 
 namespace GUZ.Lab.Handler
 {
-    public class LabLadderLabHandler : MonoBehaviour, ILabHandler
+    public class LabLadderLabHandler : AbstractLabHandler
     {
         public GameObject LadderSlot;
 
-        public void Bootstrap()
+        public override void Bootstrap()
         {
             var itemPrefab = ResourceLoader.TryGetPrefabObject(PrefabType.VobLadder);
             var ladderName = "LADDER_3.MDL";
