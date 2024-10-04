@@ -630,6 +630,11 @@ namespace GUZ.Core.Manager
             Object.Destroy(item.gameObject);
         }
 
+        public static bool ExtNpcIsPlayer(NpcInstance npc)
+        {
+            return npc.Index == GameData.GothicVm.GlobalHero!.Index;
+        }
+
         public static void ExchangeRoutine(GameObject go, NpcInstance npcInstance, int routineIndex)
         {
             // e.g. Monsters have no routine and we just need to send ai
