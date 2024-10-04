@@ -37,7 +37,7 @@ namespace GUZ.Core.Manager.Scenes
                 // We need to start creating Vobs as we need to calculate world slicing based on amount of lights at a certain space afterwards.
                 if (config.EnableVOBs)
                 {
-                    await VobCreator.CreateAsync(config, GameGlobals.Loading, SaveGameManager.CurrentWorldData.Vobs, Constants.VobsPerFrame);
+                    await VobCreator.CreateAsync(config, GameGlobals.Loading, SaveGameManager.CurrentWorldData.Vobs);
                 }
 
                 // 2.
@@ -47,7 +47,7 @@ namespace GUZ.Core.Manager.Scenes
                 // If the world is visited for the first time, then we need to load Npcs via Wld_InsertNpc()
                 if (config.EnableNpcs)
                 {
-                    await NpcCreator.CreateAsync(config, GameGlobals.Loading, Constants.NpcsPerFrame);
+                    await NpcCreator.CreateAsync(config, GameGlobals.Loading);
                 }
 
                 // 4.

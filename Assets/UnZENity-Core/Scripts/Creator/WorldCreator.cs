@@ -41,7 +41,7 @@ namespace GUZ.Core.Creator
                 SaveGameManager.CurrentZkWorld.BspTree.Cache(),
                 lightingEnabled);
 
-            await MeshFactory.CreateWorld(SaveGameManager.CurrentWorldData, loading, _worldGo, Constants.MeshPerFrame);
+            await MeshFactory.CreateWorld(SaveGameManager.CurrentWorldData, loading, _worldGo);
             await MeshFactory.CreateTextureArray();
         }
 

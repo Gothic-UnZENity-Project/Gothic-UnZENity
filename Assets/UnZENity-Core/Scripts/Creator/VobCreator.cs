@@ -9,6 +9,7 @@ using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
 using GUZ.Core.Properties;
+using GUZ.Core.Util;
 using GUZ.Core.Vm;
 using GUZ.Core.Vob;
 using GUZ.Core.Vob.WayNet;
@@ -49,7 +50,6 @@ namespace GUZ.Core.Creator
         private static GameObject _nonTeleportGo;
 
         private static int _totalVObs;
-        private static int _vobsPerFrame;
         private static int _createdCount;
         private static List<GameObject> _cullingVobObjects = new();
         private static Dictionary<string, IWorld> _vobTreeCache = new();
@@ -64,11 +64,11 @@ namespace GUZ.Core.Creator
             GameContext.InteractionAdapter.SetTeleportationArea(_teleportGo);
         }
 
-        public static async Task CreateAsync(GameConfiguration config, LoadingManager loading, List<IVirtualObject> vobs, int vobsPerFrame)
+        public static async Task CreateAsync(GameConfiguration config, LoadingManager loading, List<IVirtualObject> vobs)
         {
             Stopwatch stopwatch = new();
             stopwatch.Start();
-            PreCreateVobs(vobs, vobsPerFrame);
+            PreCreateVobs(vobs);
             await CreateVobs(config, loading, vobs);
             PostCreateVobs();
             stopwatch.Stop();
@@ -94,13 +94,12 @@ namespace GUZ.Core.Creator
             }
         }
 
-        private static void PreCreateVobs(List<IVirtualObject> vobs, int vobsPerFrame)
+        private static void PreCreateVobs(List<IVirtualObject> vobs)
         {
             _totalVObs = GetTotalVobCount(vobs);
 
             _createdCount = 0;
             _cullingVobObjects.Clear();
-            _vobsPerFrame = vobsPerFrame;
 
             _vobsGo = new GameObject("VOBs");
             _teleportGo = new GameObject("Teleport");
@@ -135,10 +134,7 @@ namespace GUZ.Core.Creator
 
                 AddToMobInteractableList(vob, go);
 
-                if (++_createdCount % _vobsPerFrame == 0)
-                {
-                    await Task.Yield(); // Wait for the next frame
-                }
+                await FrameSkipper.TrySkipToNextFrame();
 
                 loading?.AddProgress(LoadingManager.LoadingProgressType.VOb, 1f / _totalVObs);
 
