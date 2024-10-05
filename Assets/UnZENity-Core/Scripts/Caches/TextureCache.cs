@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -85,28 +84,43 @@ namespace GUZ.Core.Caches
             }
         }
 
+        /// <summary>
+        /// useCache - We don't use Cache for TextureArrays.
+        ///            As the textures are copied and original Texture2D gets invalidated by Unity during creation of TextureArrays.
+        /// </summary>
         [CanBeNull]
-        public static Texture2D TryGetTexture(string key, bool includeInCache = true)
+        public static Texture2D TryGetTexture(string key, bool useCache = true)
         {
             string preparedKey = GetPreparedKey(key);
-            if (_texture2DCache.TryGetValue(preparedKey, out Texture2D cachedTexture))
+
+            if (useCache)
             {
-                return cachedTexture;
+                if (_texture2DCache.TryGetValue(preparedKey, out Texture2D cachedTexture))
+                {
+                    return cachedTexture;
+                }
             }
 
-            return TryGetTexture(ResourceLoader.TryGetTexture(key), preparedKey, includeInCache);
+            return TryGetTexture(ResourceLoader.TryGetTexture(key), preparedKey, useCache);
         }
 
-        public static Texture2D TryGetTexture(ITexture zkTexture, string key, bool includeInCache = true)
+        /// <summary>
+        /// useCache - We don't use Cache for TextureArrays.
+        ///            As the textures are copied and original Texture2D gets invalidated by Unity during creation of TextureArrays.
+        /// </summary>
+        public static Texture2D TryGetTexture(ITexture zkTexture, string key, bool useCache = true)
         {
             if (zkTexture == null)
             {
                 return null;
             }
 
-            if (_texture2DCache.TryGetValue(key, out Texture2D cachedTexture))
+            if (useCache)
             {
-                return cachedTexture;
+                if (_texture2DCache.TryGetValue(key, out Texture2D cachedTexture))
+                {
+                    return cachedTexture;
+                }
             }
 
             Texture2D texture;
@@ -147,7 +161,7 @@ namespace GUZ.Core.Caches
             texture.filterMode = FilterMode.Trilinear;
             texture.name = key;
 
-            if (includeInCache)
+            if (useCache)
             {
                 _texture2DCache[preparedKey] = texture;
             }
