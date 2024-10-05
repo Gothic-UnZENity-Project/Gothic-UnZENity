@@ -179,11 +179,12 @@ namespace GUZ.Core.Npc
         public void StartRoutine(int action)
         {
             // End original loop first
-            if (Properties.CurrentLoopState == NpcProperties.LoopState.Loop)
-            {
-                // We reuse this function as it is doing what we need.
-                ClearState(false);
-            }
+            // TODO - Calling ClearState(false) was buggy when e.g. Diego dialog "END" was clicked. Then the dialog lines were skipped.
+            // if (Properties.CurrentLoopState == NpcProperties.LoopState.Loop)
+            // {
+            //     // We reuse this function as it is doing what we need.
+            //     ClearState(false);
+            // }
 
             Properties.StateStart = action;
 
