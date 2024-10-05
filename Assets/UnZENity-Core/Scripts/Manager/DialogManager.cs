@@ -150,7 +150,7 @@ namespace GUZ.Core.Manager
 
         public static bool ExtInfoManagerHasFinished()
         {
-            return GameData.Dialogs.IsInDialog;
+            return !GameData.Dialogs.IsInDialog;
         }
 
         /// <summary>
@@ -184,6 +184,11 @@ namespace GUZ.Core.Manager
                 Text = text,
                 Function = function
             });
+        }
+
+        public static void ExtAiProcessInfos(NpcInstance npc)
+        {
+            StartDialog(GetNpc(npc), GetProperties(npc), true);
         }
 
         public static void ExtAiStopProcessInfos(NpcInstance npc)

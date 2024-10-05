@@ -38,6 +38,7 @@ namespace GUZ.Core.Vm
             vm.RegisterExternal<NpcInstance, string>("AI_GoToNextFP", AI_GoToNextFP);
             vm.RegisterExternal<NpcInstance>("AI_DrawWeapon", AI_DrawWeapon);
             vm.RegisterExternal<NpcInstance, NpcInstance, string>("AI_Output", AI_Output);
+            vm.RegisterExternal<NpcInstance>("AI_ProcessInfos", AI_ProcessInfos);
             vm.RegisterExternal<NpcInstance>("AI_StopProcessInfos", AI_StopProcessInfos);
             vm.RegisterExternal<NpcInstance, string>("AI_LookAt", AI_LookAt);
             vm.RegisterExternal<NpcInstance, NpcInstance>("AI_LookAtNPC", AI_LookAtNPC);
@@ -265,6 +266,11 @@ namespace GUZ.Core.Vm
         public static void AI_Output(NpcInstance self, NpcInstance target, string outputName)
         {
             DialogManager.ExtAiOutput(self, target, outputName);
+        }
+
+        public static void AI_ProcessInfos(NpcInstance npc)
+        {
+            DialogManager.ExtAiProcessInfos(npc);
         }
 
         public static void AI_StopProcessInfos(NpcInstance npc)
