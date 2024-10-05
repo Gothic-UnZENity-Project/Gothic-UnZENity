@@ -146,7 +146,10 @@ namespace GUZ.Core.Npc
             }
 
             ExecutePerception(VmGothicEnums.PerceptionType.AssessPlayer, (NpcInstance)GameData.GothicVm.GlobalHero);
-
+            // FIXME - We need to add other active perceptions here:
+            //         PERC_ASSESSBODY, PERC_ASSESSITEM, PERC_ASSESSENEMY, PERC_ASSESSFIGHTER
+            //         But at best when we test it immediately
+            
             // Reset timer if we executed Perceptions.
             Properties.CurrentPerceptionTime = 0f;
         }
