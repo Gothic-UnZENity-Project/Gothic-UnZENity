@@ -33,7 +33,7 @@ namespace GUZ.Core.Npc
         /// </summary>
         private void Update()
         {
-            ExecutePerceptions();
+            ExecuteActivePerceptions();
 
             Properties.CurrentAction.Tick();
 
@@ -137,7 +137,7 @@ namespace GUZ.Core.Npc
         /// <summary>
         /// Execute perceptions if it's about time.
         /// </summary>
-        private void ExecutePerceptions()
+        private void ExecuteActivePerceptions()
         {
             Properties.CurrentPerceptionTime += Time.deltaTime;
             if (Properties.CurrentPerceptionTime < Properties.PerceptionTime)
@@ -145,31 +145,13 @@ namespace GUZ.Core.Npc
                 return;
             }
 
-            ExecutePerception(VmGothicEnums.PerceptionType.AssessPlayer, (NpcInstance)GameData.GothicVm.GlobalHero);
+            NpcHelper.ExecutePerception(VmGothicEnums.PerceptionType.AssessPlayer, Properties, Properties.NpcInstance, (NpcInstance)GameData.GothicVm.GlobalHero);
             // FIXME - We need to add other active perceptions here:
             //         PERC_ASSESSBODY, PERC_ASSESSITEM, PERC_ASSESSENEMY, PERC_ASSESSFIGHTER
             //         But at best when we test it immediately
             
             // Reset timer if we executed Perceptions.
             Properties.CurrentPerceptionTime = 0f;
-        }
-
-        private void ExecutePerception(VmGothicEnums.PerceptionType type, NpcInstance other)
-        {
-            // Perception isn't set
-            if (!Properties.Perceptions.TryGetValue(type, out var perceptionFunction))
-            {
-                return;
-            }
-            // Perception is disabled
-            else if (perceptionFunction < 0)
-            {
-                return;
-            }
-
-            GameData.GothicVm.GlobalSelf = Properties.NpcInstance;
-            GameData.GothicVm.GlobalOther = other;
-            GameData.GothicVm.Call(perceptionFunction);
         }
 
         public void StartRoutine(int action, string wayPointName)
