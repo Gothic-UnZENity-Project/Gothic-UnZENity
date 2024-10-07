@@ -38,7 +38,7 @@ namespace GUZ.Core.Npc
             Properties.CurrentAction.Tick();
 
             // Add new milliseconds when stateTime shall be measured.
-            if (Properties.IsStateTimeActive)
+            if (Properties.IsStateTimeActive && Properties.CurrentLoopState == NpcProperties.LoopState.Loop)
             {
                 Properties.StateTime += Time.deltaTime;
             }
