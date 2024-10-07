@@ -122,7 +122,19 @@ namespace GUZ.Core.Npc
                         }
 
                         // We filled the AnimationQueue with the ZS_*_End() animations. Do not fill it again until a new behaviour is triggered.
-                        Properties.CurrentLoopState = NpcProperties.LoopState.None;
+                        Properties.CurrentLoopState = NpcProperties.LoopState.AfterEnd;
+                        break;
+                    case NpcProperties.LoopState.AfterEnd:
+                        // We're done. Restart normal routine.
+                        Properties.CurrentLoopState = NpcProperties.LoopState.Start;
+
+                        // If we're inside another ZS_*_ loop via Ai_StartState(), we will exit it now. If not, we will simply restart current ZS_* routine.
+                        var currentRoutine = gameObject.GetComponent<Routine>().CurrentRoutine;
+                        if (currentRoutine != null)
+                        {
+                            StartRoutine(currentRoutine.Action);
+                        }
+
                         break;
                 }
             }
@@ -171,6 +183,8 @@ namespace GUZ.Core.Npc
             //     ClearState(false);
             // }
 
+            var didRoutineChange = Properties.StateStart != action;
+
             Properties.StateStart = action;
 
             var routineSymbol = Vm.GetSymbolByIndex(action);
@@ -192,7 +206,12 @@ namespace GUZ.Core.Npc
             // We need to properly start state time as e.g. ZS_Cook won't call AI_StartState() or Npc_SetStateTime()
             // But it's required as it checks immediately how long the Cauldron is already been whirled.
             Properties.IsStateTimeActive = true;
-            Properties.StateTime = 0;
+
+            // When we reached end of ZS_*_END, we also call this method. Check if we really altered the routine action or just restarted it.
+            if (didRoutineChange)
+            {
+                Properties.StateTime = 0;
+            }
         }
 
         /// <summary>

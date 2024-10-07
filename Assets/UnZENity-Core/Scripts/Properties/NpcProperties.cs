@@ -99,7 +99,8 @@ namespace GUZ.Core.Properties
             None,
             Start,
             Loop,
-            End
+            End,
+            AfterEnd
         }
 
 #pragma warning disable CS0414 // Just a debug flag for easier debugging if we missed to copy something in the future. 
