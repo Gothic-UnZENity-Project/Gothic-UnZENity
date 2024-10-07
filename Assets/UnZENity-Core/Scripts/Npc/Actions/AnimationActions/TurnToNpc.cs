@@ -1,5 +1,6 @@
 using GUZ.Core.Caches;
 using GUZ.Core.Data.ZkEvents;
+using GUZ.Core.Extensions;
 using UnityEngine;
 
 namespace GUZ.Core.Npc.Actions.AnimationActions
@@ -15,7 +16,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
 
         protected override Quaternion GetRotationDirection()
         {
-            var destinationTransform = MultiTypeCache.NpcCache[OtherIndex].properties.transform;
+            var destinationTransform = Action.Instance0.GetUserData().Properties.transform;
             // var temp = destinationTransform.position - NpcGo.transform.position;
             // return Quaternion.LookRotation(temp, Vector3.up);
             // }

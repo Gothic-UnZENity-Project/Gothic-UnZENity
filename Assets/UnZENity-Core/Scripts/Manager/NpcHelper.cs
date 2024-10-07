@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using GUZ.Core.Caches;
+using GUZ.Core.Data;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Npc;
@@ -43,36 +44,36 @@ namespace GUZ.Core.Manager
         /// </summary>
         public static void CacheHero()
         {
+            if (GameData.GothicVm.GlobalHero != null)
+            {
+                return;
+            }
+
+
             // Initial setup
-            if (GameData.GothicVm.GlobalHero == null)
+            var playerGo = GameObject.FindWithTag(Constants.PlayerTag);
+
+            // Flat player
+            if (playerGo == null)
             {
-                var playerGo = GameObject.FindWithTag(Constants.PlayerTag);
-
-                // Flat player
-                if (playerGo == null)
-                {
-                    playerGo = GameObject.FindWithTag(Constants.MainCameraTag);
-                }
-
-                var playerProperties = playerGo.GetComponent<NpcProperties>();
-
-                var heroInstance = GameData.GothicVm.AllocInstance<NpcInstance>(GameGlobals.Settings.IniPlayerInstanceName);
-                MultiTypeCache.NpcCache[heroInstance.Index] = (instance: heroInstance, properties: playerProperties);
-
-                GameData.GothicVm.InitInstance(heroInstance);
-                GameData.GothicVm.GlobalHero = heroInstance;
-
-                playerProperties.NpcInstance = heroInstance;
-                playerProperties.Head = Camera.main!.transform;
+                playerGo = GameObject.FindWithTag(Constants.MainCameraTag);
             }
-            // Re-init cache after world switching only
-            else
+
+
+            var heroInstance = GameData.GothicVm.InitInstance<NpcInstance>(GameGlobals.Settings.IniPlayerInstanceName);
+            GameData.GothicVm.GlobalHero = heroInstance;
+
+            var playerProperties = playerGo.GetComponent<NpcProperties>();
+            playerProperties.NpcInstance = heroInstance;
+            playerProperties.Head = Camera.main!.transform;
+
+            var npcData = new NpcData
             {
-                var heroInstance = (NpcInstance)GameData.GothicVm.GlobalHero;
-                var playerProperties = GameObject.FindWithTag(Constants.PlayerTag).GetComponent<NpcProperties>();
+                Instance = heroInstance,
+                Properties = playerProperties
+            };
 
-                MultiTypeCache.NpcCache[heroInstance.Index] = (instance: heroInstance, properties: playerProperties);
-            }
+            MultiTypeCache.NpcCache.Add(npcData);
         }
 
         public static void ExtPErcSetRange(int perceptionId, int rangeInCm)
@@ -238,27 +239,27 @@ namespace GUZ.Core.Manager
 
             // FIXME - Add Guild check
             // FIXME - add range check based on perceiveAll's range (npc.sense_range)
-            var foundNpc = MultiTypeCache.NpcCache.Values
-                .Where(i => i.properties != null) // ignore empty (safe check)
-                .Where(i => i.properties.Go != null) // ignore empty (safe check)
-                .Where(i => i.instance.Index != npcInstance.Index) // ignore self
+            var foundNpc = MultiTypeCache.NpcCache
+                .Where(i => i.Properties != null) // ignore empty (safe check)
+                .Where(i => i.Properties.Go != null) // ignore empty (safe check)
+                .Where(i => i.Instance.Index != npcInstance.Index) // ignore self
                 .Where(i => detectPlayer ||
-                            i.instance.Index !=
+                            i.Instance.Index !=
                             GameData.GothicVm.GlobalHero!.Index) // if we don't detect player, then skip it
                 .Where(i => specificNpcIndex < 0 ||
-                            specificNpcIndex == i.instance.Index) // Specific NPC is found right now?
-                .Where(i => aiState < 0 || npc.State == i.properties.State)
-                .OrderBy(i => Vector3.Distance(i.properties.transform.position, npcPos)) // get nearest
+                            specificNpcIndex == i.Instance.Index) // Specific NPC is found right now?
+                .Where(i => aiState < 0 || npc.State == i.Properties.State)
+                .OrderBy(i => Vector3.Distance(i.Properties.transform.position, npcPos)) // get nearest
                 .FirstOrDefault();
 
             // We need to set it, as there are calls where we immediately need _other_. e.g.:
             // if (Wld_DetectNpc(self, ...) && (Npc_GetDistToNpc(self, other)<HAI_DIST_SMALLTALK)
-            if (foundNpc.instance != null)
+            if (foundNpc.Instance != null)
             {
-                GameData.GothicVm.GlobalOther = foundNpc.instance;
+                GameData.GothicVm.GlobalOther = foundNpc.Instance;
             }
 
-            return foundNpc.instance != null;
+            return foundNpc.Instance != null;
         }
 
         public static int ExtNpcHasItems(NpcInstance npc, uint itemId)
@@ -355,7 +356,7 @@ namespace GUZ.Core.Manager
 
         private static NpcProperties GetProperties([CanBeNull] NpcInstance npc)
         {
-            return npc == null ? null : MultiTypeCache.NpcCache[npc.Index].properties;
+            return npc?.GetUserData().Properties;
         }
 
         public static void ExtAiWait(NpcInstance npc, float seconds)
@@ -421,7 +422,7 @@ namespace GUZ.Core.Manager
 
             var props = GetProperties(self);
             props.AnimationQueue.Enqueue(new GoToNpc(
-                new AnimationAction(int0: other.Id, int1: other.Index),
+                new AnimationAction(instance0: other),
                 props.Go));
         }
 
@@ -466,7 +467,7 @@ namespace GUZ.Core.Manager
 
             var props = GetProperties(npc);
             props.AnimationQueue.Enqueue(new LookAtNpc(
-                new AnimationAction(int0: other.Id, int1: other.Index),
+                new AnimationAction(instance0: other),
                 props.Go));
         }
 
@@ -485,7 +486,7 @@ namespace GUZ.Core.Manager
 
             var props = GetProperties(npc);
             props.AnimationQueue.Enqueue(new TurnToNpc(
-                new AnimationAction(int0: other.Id, int1: other.Index),
+                new AnimationAction(instance0: other),
                 props.Go));
         }
 
@@ -559,7 +560,7 @@ namespace GUZ.Core.Manager
                 return int.MaxValue;
             }
 
-            var npc1Pos = MultiTypeCache.NpcCache[npc1.Index].properties.Go.transform.position;
+            var npc1Pos = npc1.GetUserData().Go.transform.position;
 
             Vector3 npc2Pos;
             // If hero
@@ -569,7 +570,7 @@ namespace GUZ.Core.Manager
             }
             else
             {
-                npc2Pos = MultiTypeCache.NpcCache[npc2.Index].properties.Go.transform.position;
+                npc2Pos = npc2.GetUserData().Go.transform.position;
             }
 
             return (int)(Vector3.Distance(npc1Pos, npc2Pos) * 100);
@@ -593,8 +594,7 @@ namespace GUZ.Core.Manager
                 return;
             }
 
-            var npcGo = MultiTypeCache.NpcCache[npcInstance.Index];
-            ExchangeRoutine(npcGo.properties.Go, npcInstance, newRoutine.Index);
+            ExchangeRoutine(npcInstance, newRoutine.Index);
         }
 
         public static bool ExtNpcIsDead(NpcInstance npcInstance)
@@ -630,8 +630,9 @@ namespace GUZ.Core.Manager
             Object.Destroy(item.gameObject);
         }
 
-        public static void ExchangeRoutine(GameObject go, NpcInstance npcInstance, int routineIndex)
+        public static void ExchangeRoutine(NpcInstance npcInstance, int routineIndex)
         {
+            var go = npcInstance.GetUserData().Go;
             // e.g. Monsters have no routine and we just need to send ai
             if (routineIndex == 0)
             {
@@ -670,9 +671,7 @@ namespace GUZ.Core.Manager
 
         public static GameObject GetHeroGameObject()
         {
-            var heroIndex = GameData.GothicVm.GlobalHero!.Index;
-
-            return MultiTypeCache.NpcCache[heroIndex].properties.Go;
+            return ((NpcInstance)GameData.GothicVm.GlobalHero).GetUserData().Go;
         }
     }
 }

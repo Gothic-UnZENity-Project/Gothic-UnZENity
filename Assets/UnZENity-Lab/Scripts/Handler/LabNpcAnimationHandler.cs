@@ -4,6 +4,7 @@ using System.Linq;
 using GUZ.Core;
 using GUZ.Core.Caches;
 using GUZ.Core.Creator.Meshes.V2;
+using GUZ.Core.Data;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Npc.Actions;
@@ -124,13 +125,17 @@ namespace GUZ.Lab.Handler
             newNpc.name = npcData.Name;
 
             var npcSymbol = GameData.GothicVm.GetSymbolByName(npcInstanceName);
-            var npcInstance = GameData.GothicVm.AllocInstance<NpcInstance>(npcSymbol!);
+            var npcInstance = GameData.GothicVm.InitInstance<NpcInstance>(npcSymbol!);
             var npcProps = newNpc.GetComponent<NpcProperties>();
 
             npcProps.NpcInstance = npcInstance;
-            MultiTypeCache.NpcCache[npcInstance.Index] = (instance: npcInstance, properties: npcProps);
 
-            GameData.GothicVm.InitInstance(npcInstance);
+            var npcContainerData = new NpcData
+            {
+                Instance = npcInstance,
+                Properties =  npcProps
+            };
+            MultiTypeCache.NpcCache.Add(npcContainerData);
 
             npcProps.NpcInstance = npcInstance;
             npcProps.OverlayMdsName = npcData.MdhMds;
