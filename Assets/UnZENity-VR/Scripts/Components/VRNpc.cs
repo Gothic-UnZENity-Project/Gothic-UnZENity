@@ -18,6 +18,7 @@ namespace GUZ.VR.Components
             }
             else
             {
+                // FIXME - We need to call passive Perception Perc_ASSESSTALK rather than starting the dialog this way.
                 DialogManager.StartDialog(gameObject, GetComponent<NpcProperties>(), true);
             }
         }
