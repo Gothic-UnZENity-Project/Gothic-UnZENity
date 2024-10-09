@@ -1,7 +1,9 @@
+using GUZ.Core.Globals;
 using GUZ.Core.Manager;
 using GUZ.Core.Manager.Culling;
 using GUZ.Core.Properties;
 using UnityEngine;
+using ZenKit.Daedalus;
 
 namespace GUZ.Core.Npc.Actions.AnimationActions
 {
@@ -17,12 +19,9 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
 
         public override void Start()
         {
-            IsFinishedFlag = true;
-            
             DialogManager.StopDialog();
             GameGlobals.Story.SwitchChapterIfPending();
-            // ReEnable NPCs after Dialog is finished. This should probably live somewhere else than NpcMeshCullingManager
-            NpcMeshCullingManager.ReEnableNpc();
+            IsFinishedFlag = true;
         }
     }
 }

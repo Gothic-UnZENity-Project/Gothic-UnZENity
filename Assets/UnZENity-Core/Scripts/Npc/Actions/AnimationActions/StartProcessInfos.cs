@@ -35,6 +35,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
                 }
             }
 
+            Debug.Log("StartProcessInfos: " + _dialogId + " " + isInSubDialog);
             DialogManager.StartDialog(NpcGo, Props, false);
         }
     }
