@@ -1,9 +1,5 @@
-using GUZ.Core.Globals;
 using GUZ.Core.Manager;
-using GUZ.Core.Manager.Culling;
-using GUZ.Core.Properties;
 using UnityEngine;
-using ZenKit.Daedalus;
 
 namespace GUZ.Core.Npc.Actions.AnimationActions
 {
