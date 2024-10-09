@@ -8,8 +8,13 @@ using GUZ.Core.Npc;
 using GUZ.Core.Npc.Actions;
 using GUZ.Core.Npc.Actions.AnimationActions;
 using GUZ.Core.Properties;
+using GUZ.Core.Vm;
+using UnityEditor.SearchService;
 using UnityEngine;
+using UnityEngine.InputSystem.EnhancedTouch;
+using UnityEngine.TextCore;
 using ZenKit.Daedalus;
+using ZenKit.Vobs;
 
 namespace GUZ.Core.Manager
 {
@@ -51,12 +56,15 @@ namespace GUZ.Core.Manager
                 GameData.Dialogs.CurrentDialog.Instance = infoInstance;
                 properties.Go.GetComponent<AiHandler>().ClearState(true);
 
+                // NpcHelper.ExecutePerception(VmGothicEnums.PerceptionType.AssessTalk, properties, properties.NpcInstance, (NpcInstance)GameData.GothicVm.GlobalHero);
+
                 CallMainInformation(properties.NpcInstance.Index, infoInstance);
             }
             else
             {
                 if (initialDialogStarting)
                 {
+                    Debug.Log("StartDialog: initialDialogStarting");
                     properties.Go.GetComponent<AiHandler>().ClearState(false);
                 }
                 var selectableDialogs = new List<InfoInstance>();
@@ -78,6 +86,11 @@ namespace GUZ.Core.Manager
                     // We can now add the dialog
                     selectableDialogs.Add(dialog);
                 }
+
+                // set AIVAR for invincible while in dialog
+                Debug.Log("StartDialog: set AIV_INVINCIBLE to 1");
+                var foo =MultiTypeCache.NpcCache[GameData.GothicVm.GlobalOther.Index];
+                foo.instance.SetAiVar(Constants.DaedalusConst.AIVInvincibleKey,1);
 
                 selectableDialogs = selectableDialogs.OrderBy(d => d.Nr).ToList();
                 GameContext.DialogAdapter.FillDialog(properties.NpcInstance.Index, selectableDialogs);
@@ -225,8 +238,13 @@ namespace GUZ.Core.Manager
             GameData.Dialogs.CurrentDialog.Instance = null;
             GameData.Dialogs.CurrentDialog.Options.Clear();
             GameData.Dialogs.IsInDialog = false;
+            
 
             GameContext.DialogAdapter.HideDialog();
+            // set AIV_INVINCIBLE to 0
+            Debug.Log("StopDialog: set AIV_INVINCIBLE back to 0");
+            var foo =MultiTypeCache.NpcCache[GameData.GothicVm.GlobalOther.Index];
+            foo.instance.SetAiVar(Constants.DaedalusConst.AIVInvincibleKey,0);
         }
 
         /// <summary>
