@@ -87,11 +87,6 @@ namespace GUZ.Core.Manager
                     selectableDialogs.Add(dialog);
                 }
 
-                // set AIVAR for invincible while in dialog
-                Debug.Log("StartDialog: set AIV_INVINCIBLE to 1");
-                var foo =MultiTypeCache.NpcCache[GameData.GothicVm.GlobalOther.Index];
-                foo.instance.SetAiVar(Constants.DaedalusConst.AIVInvincibleKey,1);
-
                 selectableDialogs = selectableDialogs.OrderBy(d => d.Nr).ToList();
                 GameContext.DialogAdapter.FillDialog(properties.NpcInstance.Index, selectableDialogs);
                 GameContext.DialogAdapter.ShowDialog(npcGo);
@@ -238,13 +233,9 @@ namespace GUZ.Core.Manager
             GameData.Dialogs.CurrentDialog.Instance = null;
             GameData.Dialogs.CurrentDialog.Options.Clear();
             GameData.Dialogs.IsInDialog = false;
-            
+
 
             GameContext.DialogAdapter.HideDialog();
-            // set AIV_INVINCIBLE to 0
-            Debug.Log("StopDialog: set AIV_INVINCIBLE back to 0");
-            var foo =MultiTypeCache.NpcCache[GameData.GothicVm.GlobalOther.Index];
-            foo.instance.SetAiVar(Constants.DaedalusConst.AIVInvincibleKey,0);
         }
 
         /// <summary>
@@ -294,7 +285,7 @@ namespace GUZ.Core.Manager
                     npcData.properties.Go));
             }
         }
-        
+
         public static bool ExtNpcKnowsInfo(NpcInstance npc, int infoInstance)
         {
             return GameData.KnownDialogInfos.Contains(infoInstance);
