@@ -9,7 +9,7 @@
 <p align="center">
   <img src="./Docs/Gothic-UnZENity-logo.png" width="300" alt="Gothic-UnZENity logo" />
 </p>
-Fan project recreating Piranha Bytes' evergreens Gothic I and Gothic II in Unity Engine. Currently focussing on VR.
+Community rebuild of classical Gothic 1 and 2 in Unity engine. Currently focusing on a native VR implementation.
 
 
 ## Usage
