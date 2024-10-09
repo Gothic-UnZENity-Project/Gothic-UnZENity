@@ -1,4 +1,5 @@
 using GUZ.Core.Manager;
+using GUZ.Core.Manager.Culling;
 using GUZ.Core.Properties;
 using UnityEngine;
 
@@ -20,6 +21,8 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             
             DialogManager.StopDialog();
             GameGlobals.Story.SwitchChapterIfPending();
+            // ReEnable NPCs after Dialog is finished. This should probably live somewhere else than NpcMeshCullingManager
+            NpcMeshCullingManager.ReEnableNpc();
         }
     }
 }

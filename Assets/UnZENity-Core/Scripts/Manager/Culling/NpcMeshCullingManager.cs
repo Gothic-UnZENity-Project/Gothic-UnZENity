@@ -3,6 +3,7 @@ using GUZ.Core.Creator;
 using GUZ.Core.Extensions;
 using GUZ.Core.Npc;
 using GUZ.Core.Npc.Routines;
+using UnityEditor;
 using UnityEngine;
 
 namespace GUZ.Core.Manager.Culling
@@ -11,6 +12,8 @@ namespace GUZ.Core.Manager.Culling
     {
         private readonly bool _featureEnableCulling;
         private readonly float _featureCullingDistance;
+
+        public static AiHandler _aiHandler;
 
         // Sphere values to track and update when visible NPCs move.
         private BoundingSphere[] _spheres;
@@ -113,10 +116,14 @@ namespace GUZ.Core.Manager.Culling
             if (isInVisibleRange && wasOutOfDistance)
             {
                 // If we walked to an NPC in our game, the NPC will be re-enabled and Routines get reset.
+                _aiHandler = go.GetComponent<AiHandler>();
                 go.GetComponent<AiHandler>().ReEnableNpc();
             }
         }
 
+        public static void ReEnableNpc(){
+            _aiHandler.ReEnableNpc();
+        }
 
         /// <summary>
         /// Each frame, we update the visible NPCs' current position.
