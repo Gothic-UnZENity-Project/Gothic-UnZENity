@@ -13,8 +13,6 @@ namespace GUZ.Core.Manager.Culling
         private readonly bool _featureEnableCulling;
         private readonly float _featureCullingDistance;
 
-        public static AiHandler _aiHandler;
-
         // Sphere values to track and update when visible NPCs move.
         private BoundingSphere[] _spheres;
         private readonly Dictionary<int, Transform> _visibleNpcs = new();
@@ -116,13 +114,8 @@ namespace GUZ.Core.Manager.Culling
             if (isInVisibleRange && wasOutOfDistance)
             {
                 // If we walked to an NPC in our game, the NPC will be re-enabled and Routines get reset.
-                _aiHandler = go.GetComponent<AiHandler>();
                 go.GetComponent<AiHandler>().ReEnableNpc();
             }
-        }
-
-        public static void ReEnableNpc(){
-            _aiHandler.ReEnableNpc();
         }
 
         /// <summary>

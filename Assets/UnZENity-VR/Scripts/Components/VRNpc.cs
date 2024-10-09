@@ -13,9 +13,8 @@ namespace GUZ.VR.Components
     {
         public void OnGrabbed(HVRGrabberBase grabber, HVRGrabbable grabbable)
         {
-            var foo = MultiTypeCache.NpcCache[GameData.GothicVm.GlobalOther.Index];
-            var isPlayerInvincible = foo.instance.GetAiVar(Constants.DaedalusConst.AIVInvincibleKey);
-            Debug.Log($"NPC Grabbes: IsInDialog = {GameData.Dialogs.IsInDialog}, AIVInvincible = {isPlayerInvincible}");
+            var isPlayerInvincible = MultiTypeCache.NpcCache[GameData.GothicVm.GlobalOther.Index].instance.GetAiVar(Constants.DaedalusConst.AIVInvincibleKey);
+            Debug.Log($"NPC Grabbed: IsInDialog = {GameData.Dialogs.IsInDialog}, AIVInvincible = {isPlayerInvincible}");
             if (GameData.Dialogs.IsInDialog && isPlayerInvincible == 1)
             {
                 DialogManager.SkipCurrentDialogLine(GetComponent<NpcProperties>());

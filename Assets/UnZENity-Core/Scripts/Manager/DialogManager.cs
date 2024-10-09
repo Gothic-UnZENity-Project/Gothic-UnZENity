@@ -8,13 +8,8 @@ using GUZ.Core.Npc;
 using GUZ.Core.Npc.Actions;
 using GUZ.Core.Npc.Actions.AnimationActions;
 using GUZ.Core.Properties;
-using GUZ.Core.Vm;
-using UnityEditor.SearchService;
 using UnityEngine;
-using UnityEngine.InputSystem.EnhancedTouch;
-using UnityEngine.TextCore;
 using ZenKit.Daedalus;
-using ZenKit.Vobs;
 
 namespace GUZ.Core.Manager
 {
@@ -55,8 +50,6 @@ namespace GUZ.Core.Manager
             {
                 GameData.Dialogs.CurrentDialog.Instance = infoInstance;
                 properties.Go.GetComponent<AiHandler>().ClearState(true);
-
-                // NpcHelper.ExecutePerception(VmGothicEnums.PerceptionType.AssessTalk, properties, properties.NpcInstance, (NpcInstance)GameData.GothicVm.GlobalHero);
 
                 CallMainInformation(properties.NpcInstance.Index, infoInstance);
             }
@@ -233,7 +226,6 @@ namespace GUZ.Core.Manager
             GameData.Dialogs.CurrentDialog.Instance = null;
             GameData.Dialogs.CurrentDialog.Options.Clear();
             GameData.Dialogs.IsInDialog = false;
-
 
             GameContext.DialogAdapter.HideDialog();
         }
