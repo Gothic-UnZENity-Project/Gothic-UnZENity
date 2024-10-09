@@ -184,6 +184,13 @@ namespace GUZ.Core.Npc
 
         public void StartRoutine(int action)
         {
+            var actionName = Vm.GetSymbolByIndex(action).Name;
+            if (actionName == "ZS_TALK")
+            {
+                // Logic to resume walking to waypoint would probably go here
+                StartRoutineImmediately(action);
+                return;
+            }
             if (Properties.CurrentLoopState == NpcProperties.LoopState.Loop)
             {
                 // Cache the new action and force the current loop to end

@@ -15,7 +15,7 @@ namespace GUZ.VR.Components
         {
             var isPlayerInvincible = MultiTypeCache.NpcCache[GameData.GothicVm.GlobalOther.Index].instance.GetAiVar(Constants.DaedalusConst.AIVInvincibleKey);
             Debug.Log($"NPC Grabbed: IsInDialog = {GameData.Dialogs.IsInDialog}, AIVInvincible = {isPlayerInvincible}");
-            if (GameData.Dialogs.IsInDialog && isPlayerInvincible == 1)
+            if (GameData.Dialogs.IsInDialog)
             {
                 DialogManager.SkipCurrentDialogLine(GetComponent<NpcProperties>());
                 Debug.Log("Skipping current dialog line");
@@ -23,7 +23,7 @@ namespace GUZ.VR.Components
             else
             {
                 // FIXME - We need to call passive Perception Perc_ASSESSTALK rather than starting the dialog this way.
-                DialogManager.StartDialog(gameObject, GetComponent<NpcProperties>(), true);
+                DialogManager.StartDialog(gameObject, GetComponent<NpcProperties>(), true, true);
                 Debug.Log("Starting dialog");
             }
         }
