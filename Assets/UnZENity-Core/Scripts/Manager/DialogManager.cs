@@ -8,7 +8,6 @@ using GUZ.Core.Npc;
 using GUZ.Core.Npc.Actions;
 using GUZ.Core.Npc.Actions.AnimationActions;
 using GUZ.Core.Properties;
-using GUZ.Core.Vm;
 using UnityEngine;
 using ZenKit.Daedalus;
 
@@ -36,7 +35,7 @@ namespace GUZ.Core.Manager
         /// initialDialogStarting - We only stop current AI routine if this is the first time the dialog box opens/NPC
         ///     talks important things. Otherwise, the ZS_*_End will get called every time we re-open a dialog in between.
         /// </summary>
-        public static void StartDialog(GameObject npcGo, NpcProperties properties, bool initialDialogStarting, bool initiatedByPlayer = false)
+        public static void StartDialog(GameObject npcGo, NpcProperties properties, bool initialDialogStarting)
         {
             GameData.Dialogs.IsInDialog = true;
 
@@ -60,10 +59,6 @@ namespace GUZ.Core.Manager
                 {
                     Debug.Log("StartDialog: initialDialogStarting");
                     properties.Go.GetComponent<AiHandler>().ClearState(false);
-                    if (initiatedByPlayer)
-                    {
-                        NpcHelper.ExecutePerception(VmGothicEnums.PerceptionType.AssessTalk, properties, properties.NpcInstance, (NpcInstance)GameData.GothicVm.GlobalHero);
-                    }
                 }
                 var selectableDialogs = new List<InfoInstance>();
 
