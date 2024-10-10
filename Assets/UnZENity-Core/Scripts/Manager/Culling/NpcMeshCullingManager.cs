@@ -3,6 +3,7 @@ using GUZ.Core.Creator;
 using GUZ.Core.Extensions;
 using GUZ.Core.Npc;
 using GUZ.Core.Npc.Routines;
+using UnityEditor;
 using UnityEngine;
 
 namespace GUZ.Core.Manager.Culling
@@ -116,7 +117,6 @@ namespace GUZ.Core.Manager.Culling
                 go.GetComponent<AiHandler>().ReEnableNpc();
             }
         }
-
 
         /// <summary>
         /// Each frame, we update the visible NPCs' current position.
