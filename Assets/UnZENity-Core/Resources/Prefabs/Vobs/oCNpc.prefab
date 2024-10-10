@@ -28,14 +28,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2202926895728732233}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.0044286796, y: -0.46735078, z: 0.0030868165, w: 0.8840555}
-  m_LocalPosition: {x: -65.10339, y: 8.841797, z: 35.572765}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 8679908380237941234}
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0.614, y: -55.725, z: 0.076}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &4778879049934742964
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -56,8 +56,10 @@ MonoBehaviour:
   MdmName: 
   BaseMdsName: 
   OverlayMdsName: 
-  PerceptionTime: 0
+  PerceptionTime: 5
+  CurrentPerceptionTime: 0
   WalkMode: 0
+  WeaponState: 0
   BodyState: 0
   CurrentInteractable: {fileID: 0}
   CurrentInteractableSlot: {fileID: 0}
@@ -256,7 +258,6 @@ GameObject:
   - component: {fileID: 3620496381512049433}
   - component: {fileID: 8720130747125307888}
   - component: {fileID: 957202922675155714}
-  - component: {fileID: 712981900298770246}
   m_Layer: 0
   m_Name: RootMotionCollider
   m_TagString: Untagged
@@ -339,20 +340,6 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e31e900fff574068b5e83a20a4f2df42, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  NpcRoot: {fileID: 2202926895728732233}
-  Properties: {fileID: 4778879049934742964}
---- !u!114 &712981900298770246
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3647559741746323219}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6b485183a82257e47a2eea67e7716ef2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   NpcRoot: {fileID: 2202926895728732233}

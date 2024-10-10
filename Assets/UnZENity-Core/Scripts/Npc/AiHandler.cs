@@ -33,12 +33,12 @@ namespace GUZ.Core.Npc
         /// </summary>
         private void Update()
         {
-            ExecutePerceptions();
+            ExecuteActivePerceptions();
 
             Properties.CurrentAction.Tick();
 
             // Add new milliseconds when stateTime shall be measured.
-            if (Properties.IsStateTimeActive)
+            if (Properties.IsStateTimeActive && Properties.CurrentLoopState == NpcProperties.LoopState.Loop)
             {
                 Properties.StateTime += Time.deltaTime;
             }
@@ -61,6 +61,10 @@ namespace GUZ.Core.Npc
                 DaedalusSymbol symbol;
                 switch (Properties.CurrentLoopState)
                 {
+                    // None means, the NPC is newly created and didn't execute any Routine as of now.
+                    case NpcProperties.LoopState.None:
+                        RestartCurrentRoutine();
+                        break;
                     case NpcProperties.LoopState.Start:
                         if (Properties.StateStart == 0)
                         {
@@ -87,7 +91,7 @@ namespace GUZ.Core.Npc
                             Properties.CurrentLoopState = NpcProperties.LoopState.Start;
                             return;
                         }
-                        
+
                         symbol = Vm.GetSymbolByIndex(Properties.StateLoop);
                         switch (symbol.ReturnType)
                         {
@@ -105,7 +109,7 @@ namespace GUZ.Core.Npc
                         }
 
                         break;
-                    
+
                     case NpcProperties.LoopState.End:
                         if (Properties.StateEnd != 0)
                         {
@@ -113,7 +117,7 @@ namespace GUZ.Core.Npc
                             switch (symbol.ReturnType)
                             {
                                 case DaedalusDataType.Int:
-                                    var loopResponse = Vm.Call<int>(Properties.StateEnd);
+                                    Vm.Call<int>(Properties.StateEnd);
                                     break;
                                 default:
                                     Vm.Call(Properties.StateEnd);
@@ -121,8 +125,16 @@ namespace GUZ.Core.Npc
                             }
                         }
 
-                        // We filled the AnimationQueue with the ZS_*_End() animations. Do not fill it again until a new behaviour is triggered.
-                        Properties.CurrentLoopState = NpcProperties.LoopState.None;
+                        // We filled the AnimationQueue with the ZS_*_End() animations once. END isn't looping.
+                        Properties.CurrentLoopState = NpcProperties.LoopState.AfterEnd;
+                        break;
+                    case NpcProperties.LoopState.AfterEnd:
+                        // We're done. Restart normal routine.
+                        Properties.CurrentLoopState = NpcProperties.LoopState.Start;
+
+                        // If we're inside another ZS_*_ loop via Ai_StartState(), we will exit it now. If not, we will simply restart current ZS_* routine.
+                        RestartCurrentRoutine();
+
                         break;
                 }
             }
@@ -137,40 +149,35 @@ namespace GUZ.Core.Npc
         /// <summary>
         /// Execute perceptions if it's about time.
         /// </summary>
-        private void ExecutePerceptions()
+        private void ExecuteActivePerceptions()
         {
-            // FIXME - Perceptions aren't yet ready to be executed. Please debug with caution.
-            return;
-
             Properties.CurrentPerceptionTime += Time.deltaTime;
             if (Properties.CurrentPerceptionTime < Properties.PerceptionTime)
             {
                 return;
             }
 
-            ExecutePerception(VmGothicEnums.PerceptionType.AssessPlayer, (NpcInstance)GameData.GothicVm.GlobalHero);
-
+            NpcHelper.ExecutePerception(VmGothicEnums.PerceptionType.AssessPlayer, Properties, Properties.NpcInstance, (NpcInstance)GameData.GothicVm.GlobalHero);
+            // FIXME - We need to add other active perceptions here:
+            //         PERC_ASSESSBODY, PERC_ASSESSITEM, PERC_ASSESSENEMY, PERC_ASSESSFIGHTER
+            //         But at best when we test it immediately
 
             // Reset timer if we executed Perceptions.
-            Properties.PerceptionTime = 0f;
+            Properties.CurrentPerceptionTime = 0f;
         }
 
-        private void ExecutePerception(VmGothicEnums.PerceptionType type, NpcInstance other)
+        /// <summary>
+        /// Restart means:
+        /// 1. Either restart currently looping one or
+        /// 2. Start the new one after Ai_ExchangeRoutine() got called and ZS_*END of previous one is done
+        /// </summary>
+        public void RestartCurrentRoutine()
         {
-            // Perception isn't set
-            if (!Properties.Perceptions.TryGetValue(type, out var perceptionFunction))
+            var currentRoutine = gameObject.GetComponent<Routine>().CurrentRoutine;
+            if (currentRoutine != null)
             {
-                return;
+                StartRoutine(currentRoutine.Action, currentRoutine.Waypoint);
             }
-            // Perception is disabled
-            else if (perceptionFunction < 0)
-            {
-                return;
-            }
-
-            GameData.GothicVm.GlobalSelf = Properties.NpcInstance;
-            GameData.GothicVm.GlobalOther = other;
-            GameData.GothicVm.Call(perceptionFunction);
         }
 
         public void StartRoutine(int action, string wayPointName)
@@ -183,11 +190,14 @@ namespace GUZ.Core.Npc
         public void StartRoutine(int action)
         {
             // End original loop first
-            if (Properties.CurrentLoopState == NpcProperties.LoopState.Loop)
-            {
-                // We reuse this function as it is doing what we need.
-                ClearState(false);
-            }
+            // TODO - Calling ClearState(false) was buggy when e.g. Diego dialog "END" was clicked. Then the dialog lines were skipped.
+            // if (Properties.CurrentLoopState == NpcProperties.LoopState.Loop)
+            // {
+            //     // We reuse this function as it is doing what we need.
+            //     ClearState(false);
+            // }
+
+            var didRoutineChange = Properties.StateStart != action;
 
             Properties.StateStart = action;
 
@@ -210,7 +220,13 @@ namespace GUZ.Core.Npc
             // We need to properly start state time as e.g. ZS_Cook won't call AI_StartState() or Npc_SetStateTime()
             // But it's required as it checks immediately how long the Cauldron is already been whirled.
             Properties.IsStateTimeActive = true;
-            Properties.StateTime = 0;
+
+            // When we reached end of ZS_*_END, we also call this method. Check if we really altered the routine action or just restarted it.
+            if (didRoutineChange)
+            {
+                Debug.Log($"Start new routine >{routineSymbol.Name}< on >{Properties.Go.name}<");
+                Properties.StateTime = 0;
+            }
         }
 
         /// <summary>
