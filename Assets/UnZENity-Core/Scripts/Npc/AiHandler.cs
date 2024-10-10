@@ -17,7 +17,6 @@ namespace GUZ.Core.Npc
     public class AiHandler : BasePlayerBehaviour, IAnimationCallbacks
     {
         private static DaedalusVm Vm => GameData.GothicVm;
-        private int? _cachedRoutineAction = null;
         private const int _daedalusLoopContinue = 0; // Id taken from a Daedalus constant.
 
         private void Start()
@@ -126,24 +125,16 @@ namespace GUZ.Core.Npc
                         Properties.CurrentLoopState = NpcProperties.LoopState.AfterEnd;
                         break;
                     case NpcProperties.LoopState.AfterEnd:
-                        // Check if we have a cached routine to start
-                        if (_cachedRoutineAction.HasValue)
-                        {
-                            StartRoutineImmediately(_cachedRoutineAction.Value);
-                            _cachedRoutineAction = null;
-                        }
-                        else
-                        {
-                            // We're done. Restart normal routine.
-                            Properties.CurrentLoopState = NpcProperties.LoopState.Start;
+                        // We're done. Restart normal routine.
+                        Properties.CurrentLoopState = NpcProperties.LoopState.Start;
 
-                            // If we're inside another ZS_*_ loop via Ai_StartState(), we will exit it now. If not, we will simply restart current ZS_* routine.
-                            var currentRoutine = gameObject.GetComponent<Routine>().CurrentRoutine;
-                            if (currentRoutine != null)
-                            {
-                                StartRoutine(currentRoutine.Action);
-                            }
+                        // If we're inside another ZS_*_ loop via Ai_StartState(), we will exit it now. If not, we will simply restart current ZS_* routine.
+                        var currentRoutine = gameObject.GetComponent<Routine>().CurrentRoutine;
+                        if (currentRoutine != null)
+                        {
+                            StartRoutine(currentRoutine.Action);
                         }
+
                         break;
                 }
             }
@@ -184,35 +175,15 @@ namespace GUZ.Core.Npc
 
         public void StartRoutine(int action)
         {
-            var actionName = Vm.GetSymbolByIndex(action).Name;
-            if (actionName == "ZS_TALK")
-            {
-                // Logic to resume walking to waypoint would probably go here
-                StartRoutineImmediately(action);
-                return;
-            }
-            if (Properties.CurrentLoopState == NpcProperties.LoopState.Loop)
-            {
-                // Cache the new action and force the current loop to end
-                _cachedRoutineAction = action;
-            }
-            else
-            {
-                // If we're not in a loop, start the new routine immediately
-                StartRoutineImmediately(action);
-            }
-        }
-
-        public void StartRoutineImmediately(int action)
-        {
+            // End original loop first
+            // TODO - Calling ClearState(false) was buggy when e.g. Diego dialog "END" was clicked. Then the dialog lines were skipped.
+            // if (Properties.CurrentLoopState == NpcProperties.LoopState.Loop)
+            // {
+            //     // We reuse this function as it is doing what we need.
+            //     ClearState(false);
+            // }
 
             var didRoutineChange = Properties.StateStart != action;
-
-            if (didRoutineChange && Vm.GetSymbolByIndex(Properties.StateStart).Name == "ZS_TALK")
-            {
-                Debug.Log($"NPC:{Properties.NpcInstance.Id} new routine after ZS_TALK!! THIS SKIPS ZS_TALK_END");
-                Debug.Log($"Current state is {Vm.GetSymbolByIndex(action).Name} {Properties.CurrentLoopState}");
-            }
 
             Properties.StateStart = action;
 
@@ -309,10 +280,7 @@ namespace GUZ.Core.Npc
             // Spawn to initial spawn location
             var currentRoutine = gameObject.GetComponent<Routine>().CurrentRoutine;
             if (currentRoutine != null)
-            {
                 gameObject.transform.position = WayNetHelper.GetWayNetPoint(currentRoutine.Waypoint).Position;
-                GameData.WayPoints.TryGetValue(currentRoutine.Waypoint, out Properties.CurrentWayPoint);
-            }
 
             // Animation state handling
             Properties.AnimationQueue.Clear();
@@ -326,7 +294,7 @@ namespace GUZ.Core.Npc
                 Properties.CurrentFreePoint.IsLocked = false;
             }
             Properties.CurrentFreePoint = null;
-            // Properties.CurrentWayPoint = null;
+            Properties.CurrentWayPoint = null;
 
             // CurrentItem handling
             Properties.ItemAnimationState = -1;
