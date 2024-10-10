@@ -670,6 +670,10 @@ namespace GUZ.Core.Manager
             return npc.Index == GameData.GothicVm.GlobalHero!.Index;
         }
 
+        /// <summary>
+        /// We only fully reload routines for an NPC, but do not execute any of them.
+        /// This is done at a later stage when ZS_*_END of "old" routine is finalized.
+        /// </summary>
         public static void ExchangeRoutine(GameObject go, NpcInstance npcInstance, int routineIndex)
         {
             // e.g. Monsters have no routine and we just need to send ai
@@ -689,9 +693,6 @@ namespace GUZ.Core.Manager
             GameData.GothicVm.Call(routineIndex);
 
             routineComp.CalculateCurrentRoutine();
-
-            var startRoutine = routineComp.CurrentRoutine;
-            go.GetComponent<AiHandler>().StartRoutine(startRoutine.Action, startRoutine.Waypoint);
         }
 
         public static GameObject GetHeroGameObject()

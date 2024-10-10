@@ -61,6 +61,10 @@ namespace GUZ.Core.Npc
                 DaedalusSymbol symbol;
                 switch (Properties.CurrentLoopState)
                 {
+                    // None means, the NPC is newly created and didn't execute any Routine as of now.
+                    case NpcProperties.LoopState.None:
+                        RestartCurrentRoutine();
+                        break;
                     case NpcProperties.LoopState.Start:
                         if (Properties.StateStart == 0)
                         {
@@ -121,7 +125,7 @@ namespace GUZ.Core.Npc
                             }
                         }
 
-                        // We filled the AnimationQueue with the ZS_*_End() animations. Do not fill it again until a new behaviour is triggered.
+                        // We filled the AnimationQueue with the ZS_*_End() animations once. END isn't looping.
                         Properties.CurrentLoopState = NpcProperties.LoopState.AfterEnd;
                         break;
                     case NpcProperties.LoopState.AfterEnd:
@@ -129,11 +133,7 @@ namespace GUZ.Core.Npc
                         Properties.CurrentLoopState = NpcProperties.LoopState.Start;
 
                         // If we're inside another ZS_*_ loop via Ai_StartState(), we will exit it now. If not, we will simply restart current ZS_* routine.
-                        var currentRoutine = gameObject.GetComponent<Routine>().CurrentRoutine;
-                        if (currentRoutine != null)
-                        {
-                            StartRoutine(currentRoutine.Action);
-                        }
+                        RestartCurrentRoutine();
 
                         break;
                 }
@@ -164,6 +164,20 @@ namespace GUZ.Core.Npc
 
             // Reset timer if we executed Perceptions.
             Properties.CurrentPerceptionTime = 0f;
+        }
+
+        /// <summary>
+        /// Restart means:
+        /// 1. Either restart currently looping one or
+        /// 2. Start the new one after Ai_ExchangeRoutine() got called and ZS_*END of previous one is done
+        /// </summary>
+        public void RestartCurrentRoutine()
+        {
+            var currentRoutine = gameObject.GetComponent<Routine>().CurrentRoutine;
+            if (currentRoutine != null)
+            {
+                StartRoutine(currentRoutine.Action, currentRoutine.Waypoint);
+            }
         }
 
         public void StartRoutine(int action, string wayPointName)
