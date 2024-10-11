@@ -90,27 +90,38 @@ namespace GUZ.Core.Manager
                 return;
             }
 
-            var world = ResourceLoader.TryGetWorld(worldName);
             ZenKit.World saveGameWorld = null;
+            bool worldFoundInSaveGame = false;
 
             // 2. Try to load world from save game.
             if (IsLoadedGame)
             {
                 saveGameWorld = Save.LoadWorld(worldName);
+                worldFoundInSaveGame = saveGameWorld != null;
             }
 
-            // If there is no world saved, we visit it for the first time.
-            IsWorldLoadedForTheFirstTime = saveGameWorld == null;
+            ZenKit.World worldToUse;
+            if (worldFoundInSaveGame)
+            {
+                worldToUse = saveGameWorld;
+            }
+            else
+            {
+                // If there is no save game used or world not saved, we visit it for the first time.
+                IsWorldLoadedForTheFirstTime = true;
+                worldToUse = ResourceLoader.TryGetWorld(worldName);
+            }
+
 
             // 3. Store this world into runtime data as it's now loaded and cached during gameplay. (To save later when needed.)
             _worlds[worldName] = new()
             {
-                zkWorld = world,
+                zkWorld = worldToUse,
                 uWorld = new WorldData
                 {
                     // Contained inside normal .zen file and also saveGame.
-                    Vobs = saveGameWorld == null ? world.RootObjects : saveGameWorld.RootObjects,
-                    WayNet = (CachedWayNet)(saveGameWorld == null ? world.WayNet.Cache() : saveGameWorld.WayNet.Cache())
+                    Vobs = worldToUse!.RootObjects,
+                    WayNet = (CachedWayNet)worldToUse.WayNet.Cache()
                 }
             };
         }
