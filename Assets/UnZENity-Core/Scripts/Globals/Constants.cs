@@ -100,10 +100,6 @@ namespace GUZ.Core.Globals
         public const string MainCameraTag = "MainCamera";
 
         
-        public static int MeshPerFrame { get; } = 10;
-        public static int VobsPerFrame { get; } = 75;
-        public static int NpcsPerFrame { get; } = 75;
-
         //Collection of PlayerPref entries for VR settings
         public const string PlayerPrefDirectionMode = "DirectionMode";
         public const string PlayerPrefRotationType = "RotationType";
