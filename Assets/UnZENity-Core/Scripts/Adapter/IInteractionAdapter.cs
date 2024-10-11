@@ -6,6 +6,7 @@ namespace GUZ.Core.Adapter
     public interface IInteractionAdapter
     {
         string GetContextName();
+        float GetFrameRate();
         GameObject CreatePlayerController(Scene scene, Vector3 position = default, Quaternion rotation = default);
         void CreateVRDeviceSimulator();
         void LockPlayerInPlace();

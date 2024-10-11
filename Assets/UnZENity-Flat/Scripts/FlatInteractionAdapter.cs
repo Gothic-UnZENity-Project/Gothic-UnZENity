@@ -18,6 +18,11 @@ namespace GUZ.Flat
             return _contextName;
         }
 
+        public float GetFrameRate()
+        {
+            return Application.targetFrameRate;
+        }
+
         public GameObject CreatePlayerController(Scene scene, Vector3 position = default, Quaternion rotation = default)
         {
             var go = ResourceLoader.TryGetPrefabObject(PrefabType.Player, position, rotation);

@@ -3,7 +3,7 @@ using System.IO;
 using GUZ.Core.Manager.Settings;
 using UnityEngine;
 
-namespace GUZ.Core.Debugging
+namespace GUZ.Core.Util
 {
     public class FileLoggingHandler
     {
