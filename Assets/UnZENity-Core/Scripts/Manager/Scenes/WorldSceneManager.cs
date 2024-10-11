@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using GUZ.Core.Creator;
@@ -7,6 +8,7 @@ using GUZ.Core.Globals;
 using MyBox;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Debug = UnityEngine.Debug;
 
 namespace GUZ.Core.Manager.Scenes
 {
@@ -28,7 +30,14 @@ namespace GUZ.Core.Manager.Scenes
         /// </summary>
         private async Task LoadWorldContentAsync()
         {
+            var watch = Stopwatch.StartNew();
             var config = GameGlobals.Config;
+
+            var worldRoot = new GameObject("World");
+            var vobRoot = new GameObject("VOBs");
+            // We need to disable all vob meshed during loading. Otherwise loading time will increase from 10 seconds to 10 minutes. ;-)
+            worldRoot.SetActive(false);
+            vobRoot.SetActive(false);
 
             try
             {
@@ -37,7 +46,7 @@ namespace GUZ.Core.Manager.Scenes
                 // We need to start creating Vobs as we need to calculate world slicing based on amount of lights at a certain space afterwards.
                 if (config.EnableVOBs)
                 {
-                    await VobCreator.CreateAsync(config, GameGlobals.Loading, SaveGameManager.CurrentWorldData.Vobs, Constants.VobsPerFrame);
+                    await VobCreator.CreateAsync(config, GameGlobals.Loading, SaveGameManager.CurrentWorldData.Vobs, vobRoot);
                 }
 
                 // 2.
@@ -47,13 +56,13 @@ namespace GUZ.Core.Manager.Scenes
                 // If the world is visited for the first time, then we need to load Npcs via Wld_InsertNpc()
                 if (config.EnableNpcs)
                 {
-                    await NpcCreator.CreateAsync(config, GameGlobals.Loading, Constants.NpcsPerFrame);
+                    await NpcCreator.CreateAsync(config, GameGlobals.Loading);
                 }
 
                 // 4.
                 if (config.EnableWorldMesh)
                 {
-                    await WorldCreator.CreateAsync(config, GameGlobals.Loading);
+                    await WorldCreator.CreateAsync(config, GameGlobals.Loading, worldRoot);
                 }
 
                 GameGlobals.Sky.InitSky();
@@ -61,6 +70,10 @@ namespace GUZ.Core.Manager.Scenes
 
                 // World fully loaded
                 ResourceLoader.ReleaseLoadedData();
+
+                worldRoot.SetActive(true);
+                vobRoot.SetActive(true);
+                
                 TeleportPlayerToStart();
 
                 // There are many handlers which listen to this event. If any of these fails, we won't get notified without a try-catch.
@@ -78,6 +91,10 @@ namespace GUZ.Core.Manager.Scenes
             catch(Exception ex)
             {
                 Debug.LogException(ex);
+            }
+            finally
+            {
+                watch.Log("Full world loaded in");
             }
         }
         
@@ -105,8 +122,7 @@ namespace GUZ.Core.Manager.Scenes
 
                     if (debugGo != null)
                     {
-                        GameContext.InteractionAdapter.TeleportPlayerTo(debugGo.transform.position,
-                            debugGo.transform.rotation);
+                        TeleportPlayerToStart(debugGo.transform.position, debugGo.transform.rotation);
                         return;
                     }
                 }
@@ -115,8 +131,7 @@ namespace GUZ.Core.Manager.Scenes
             // 2.
             if (GameGlobals.Player.HeroSpawnPosition != default)
             {
-                GameContext.InteractionAdapter.TeleportPlayerTo(GameGlobals.Player.HeroSpawnPosition, GameGlobals.Player.HeroSpawnRotation);
-                GameGlobals.Player.ResetSpawn();
+                TeleportPlayerToStart(GameGlobals.Player.HeroSpawnPosition, GameGlobals.Player.HeroSpawnRotation);
                 return;
             }
             
@@ -131,9 +146,15 @@ namespace GUZ.Core.Manager.Scenes
                 Debug.LogError("No suitable START_* waypoint found!");
                 return;
             }
-            
-            GameContext.InteractionAdapter.TeleportPlayerTo(startPoint.transform.position, startPoint.transform.rotation);
+
+            TeleportPlayerToStart(startPoint.transform.position, startPoint.transform.rotation);
+        }
+
+        private void TeleportPlayerToStart(Vector3 position, Quaternion rotation)
+        {
+            GameContext.InteractionAdapter.TeleportPlayerTo(position, rotation);
             GameContext.InteractionAdapter.UnlockPlayer();
+            GameGlobals.Player.ResetSpawn();
         }
     }
 }

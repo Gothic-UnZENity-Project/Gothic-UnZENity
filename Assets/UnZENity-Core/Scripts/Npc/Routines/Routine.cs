@@ -30,7 +30,9 @@ namespace GUZ.Core.Npc.Routines
                 return;
             }
 
-            GetComponent<AiHandler>().StartRoutine(CurrentRoutine.Action, CurrentRoutine.Waypoint);
+            // FIXME - We need to set! routine, not Start() it immediately. Please check with G1 if we should
+            //         changeRoutine and execute ZS_*_END normally or change immediately.
+            // GetComponent<AiHandler>().StartRoutine(CurrentRoutine.Action, CurrentRoutine.Waypoint);
         }
 
         /// <summary>

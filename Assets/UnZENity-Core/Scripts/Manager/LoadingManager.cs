@@ -51,7 +51,6 @@ namespace GUZ.Core.Manager
             GameGlobals.Textures.SetTexture(textureNameForLoadingScreen, GameGlobals.Textures.GothicLoadingMenuMaterial);
             
             var tm = GameGlobals.Textures;
-            loadingArea.GetComponent<MeshRenderer>().material = tm.LoadingSphereMaterial;
             loadingArea.FindChildRecursively("LoadingImage").GetComponent<Image>().material = tm.GothicLoadingMenuMaterial;
             loadingArea.FindChildRecursively("ProgressBackground").GetComponent<Image>().material = tm.LoadingBarBackgroundMaterial;
             loadingArea.FindChildRecursively("ProgressBar").GetComponent<Image>().material = tm.LoadingBarMaterial;

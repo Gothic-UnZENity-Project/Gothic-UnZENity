@@ -35,6 +35,20 @@ namespace GUZ.Core.Manager
             GlobalEventDispatcher.WorldSceneLoaded.AddListener(CacheHero);
         }
 
+        public static void Init()
+        {
+            // Perceptions
+            var percInitSymbol = GameData.GothicVm.GetSymbolByName("InitPerceptions");
+            if (percInitSymbol == null)
+            {
+                Debug.LogError("InitPerceptions symbol not found.");
+            }
+            else
+            {
+                GameData.GothicVm.Call(percInitSymbol.Index);
+            }
+        }
+
         /// <summary>
         /// We need to first Alloc() hero data space and put the instance to the cache.
         /// Then we initialize it. (During Init, PC_HERO:Npc_Default->Prototype:Npc_Default will call SetTalentValue where we need the lookup to fetch the NpcInstance).
@@ -73,6 +87,27 @@ namespace GUZ.Core.Manager
 
                 MultiTypeCache.NpcCache[heroInstance.Index] = (instance: heroInstance, properties: playerProperties);
             }
+        }
+
+        /// <summary>
+        /// Call an NPC Perception (active like Assess_Player or passive like Assess_Talk are possible).
+        /// </summary>
+        public static void ExecutePerception(VmGothicEnums.PerceptionType type, NpcProperties properties, NpcInstance self, NpcInstance other)
+        {
+            // Perception isn't set
+            if (!properties.Perceptions.TryGetValue(type, out var perceptionFunction))
+            {
+                return;
+            }
+            // Perception is disabled
+            else if (perceptionFunction < 0)
+            {
+                return;
+            }
+
+            GameData.GothicVm.GlobalSelf = self;
+            GameData.GothicVm.GlobalOther = other;
+            GameData.GothicVm.Call(perceptionFunction);
         }
 
         public static void ExtPErcSetRange(int perceptionId, int rangeInCm)
@@ -630,6 +665,15 @@ namespace GUZ.Core.Manager
             Object.Destroy(item.gameObject);
         }
 
+        public static bool ExtNpcIsPlayer(NpcInstance npc)
+        {
+            return npc.Index == GameData.GothicVm.GlobalHero!.Index;
+        }
+
+        /// <summary>
+        /// We only fully reload routines for an NPC, but do not execute any of them.
+        /// This is done at a later stage when ZS_*_END of "old" routine is finalized.
+        /// </summary>
         public static void ExchangeRoutine(GameObject go, NpcInstance npcInstance, int routineIndex)
         {
             // e.g. Monsters have no routine and we just need to send ai
@@ -649,23 +693,6 @@ namespace GUZ.Core.Manager
             GameData.GothicVm.Call(routineIndex);
 
             routineComp.CalculateCurrentRoutine();
-
-            var startRoutine = routineComp.CurrentRoutine;
-            go.GetComponent<AiHandler>().StartRoutine(startRoutine.Action, startRoutine.Waypoint);
-        }
-
-        public static void Init()
-        {
-            // Perceptions
-            var percInitSymbol = GameData.GothicVm.GetSymbolByName("InitPerceptions");
-            if (percInitSymbol == null)
-            {
-                Debug.LogError("InitPerceptions symbol not found.");
-            }
-            else
-            {
-                GameData.GothicVm.Call(percInitSymbol.Index);
-            }
         }
 
         public static GameObject GetHeroGameObject()

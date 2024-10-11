@@ -9,6 +9,8 @@ using HurricaneVR.Framework.Core.UI;
 using HurricaneVRExtensions.Simulator;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.XR;
+using UnityEngine.XR.Management;
 
 namespace GUZ.VR.Adapter
 {
@@ -21,6 +23,14 @@ namespace GUZ.VR.Adapter
         public string GetContextName()
         {
             return _contextName;
+        }
+
+        public float GetFrameRate()
+        {
+            var xrDisplay = XRGeneralSettings.Instance.Manager.activeLoader.GetLoadedSubsystem<XRDisplaySubsystem>();
+            xrDisplay.TryGetDisplayRefreshRate(out var xrRefresh);
+
+            return xrRefresh;
         }
 
         public GameObject CreatePlayerController(Scene scene, Vector3 position = default, Quaternion rotation = default)
