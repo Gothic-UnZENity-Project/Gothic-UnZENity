@@ -409,8 +409,11 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
         ///  triangles = 0, 2, 3 --> (indices for position items); ATTENTION: index 3 would normally be index 2, but! we can never reuse positions. We always need to create new ones. (Reason: uvs demand the same size as vertices.)
         ///  uvs = [wedge[0].texture], [wedge[2].texture], [wedge[1].texture]
         /// </summary>
-        protected void PrepareMeshFilter(MeshFilter meshFilter, IMultiResolutionMesh mrmData, Renderer meshRenderer, int meshIndex)
+        protected void PrepareMeshFilter(MeshFilter meshFilter, IMultiResolutionMesh mrmData, Renderer meshRenderer, int meshIndex, List<System.Numerics.Vector3> calculatedVertices = null)
         {
+            // ISoftSkinMeshes will be prepared before reaching this method. This is due to NPC armors having dedicated offsets per item.
+            calculatedVertices ??= mrmData.Positions;
+
             var subMeshPerTextureFormat = new Dictionary<TextureCache.TextureArrayTypes, int>();
 
             // Elements like NPC armors might have multiple meshes. We therefore need to store each mesh with it's associated index.
@@ -453,9 +456,10 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
             foreach (var subMesh in mrmData.SubMeshes)
             {
                 // When using the texture array, get the index of the array of the matching texture format. Build sub meshes for each texture format, i.e. separating opaque and alpha cutout textures.
-                int textureArrayIndex = 0, maxMipLevel = 0;
-                Vector2 textureScale = Vector2.one;
-                TextureCache.TextureArrayTypes textureArrayType = TextureCache.TextureArrayTypes.Opaque;
+                var textureArrayIndex = 0;
+                var maxMipLevel = 0;
+                var textureScale = Vector2.one;
+                var textureArrayType = TextureCache.TextureArrayTypes.Opaque;
                 if (UseTextureArray)
                 {
                     TextureCache.GetTextureArrayIndex(subMesh.Material, out textureArrayType, out textureArrayIndex, out textureScale, out maxMipLevel, out _);
@@ -481,7 +485,7 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
 
                     for (var w = 0; w < wedges.Length; w++)
                     {
-                        preparedVertices.Add(mrmData.Positions[wedges[w].Index].ToUnityVector());
+                        preparedVertices.Add(calculatedVertices[wedges[w].Index].ToUnityVector());
                         if (UseTextureArray)
                         {
                             preparedTriangles[subMeshPerTextureFormat[textureArrayType]].Add(index++);
@@ -523,8 +527,10 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
 
         protected void PrepareMeshFilter(MeshFilter meshFilter, ISoftSkinMesh soft, Renderer renderer, int meshIndex)
         {
+            var vertices = GetSoftSkinMeshPositions(soft);
+
             // Delegate actual mesh filter creation to function handling the MRM itself.
-            PrepareMeshFilter(meshFilter, soft.Mesh, renderer, meshIndex);
+            PrepareMeshFilter(meshFilter, soft.Mesh, renderer, meshIndex, vertices);
 
 
             // Now let's add bone data.
