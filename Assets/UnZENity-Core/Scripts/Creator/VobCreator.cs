@@ -1076,7 +1076,7 @@ namespace GUZ.Core.Creator
         private static GameObject CreateNpc(ZenKit.Vobs.Npc vob)
         {
             var npcSymbol = GameData.GothicVm.GetSymbolByName(vob.Name);
-            var newNpc = NpcCreator.InitializeNpc(npcSymbol.Index);
+            var newNpc = NpcCreator.InitializeNpc(npcSymbol.Index, true);
 
             if (newNpc == null)
             {

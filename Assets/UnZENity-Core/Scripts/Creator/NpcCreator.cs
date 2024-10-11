@@ -164,8 +164,9 @@ namespace GUZ.Core.Creator
         ///
         /// Once one of these options is executed, we will go on with creating the meshes itself.
         /// </summary>
+        /// <param name="fromSaveGame">We will ignore certain aspects of spawning if NPC is created from a saved VOB.</param>
         [CanBeNull]
-        public static GameObject InitializeNpc(int npcInstanceIndex)
+        public static GameObject InitializeNpc(int npcInstanceIndex, bool fromSaveGame = false)
         {
             var newNpc = ResourceLoader.TryGetPrefabObject(PrefabType.Npc);
 
@@ -236,8 +237,8 @@ namespace GUZ.Core.Creator
 
             newNpc.TryGetComponent<Routine>(out var routine);
 
-            if (routine.CurrentRoutine != null)
-
+            if (routine.CurrentRoutine != null && !fromSaveGame)
+            {
                 // As per the original game we don't spawn the NPC if the WayNet point doesn't exist.
                 if (WayNetHelper.GetWayNetPoint(routine.CurrentRoutine.Waypoint) == null)
                 {
@@ -245,7 +246,7 @@ namespace GUZ.Core.Creator
                     Object.Destroy(newNpc);
                     return null;
                 }
-
+            }
 
             // As they're loaded asynchronously, we need to disable every NPC/Monster during loading.
             // We will enable them via Culling once everything is loaded.
