@@ -27,10 +27,16 @@ namespace GUZ.VR.Adapter
 
         public float GetFrameRate()
         {
-            var xrDisplay = XRGeneralSettings.Instance.Manager.activeLoader.GetLoadedSubsystem<XRDisplaySubsystem>();
-            xrDisplay.TryGetDisplayRefreshRate(out var xrRefresh);
+            // If we have no VR device attached to our computer, we will get an NPE for activeLoader.
+            if (GameGlobals.Config.EnableVRDeviceSimulator)
+            {
+                return 0;
+            }
 
-            return xrRefresh;
+            var xrDisplay = XRGeneralSettings.Instance.Manager.activeLoader.GetLoadedSubsystem<XRDisplaySubsystem>();
+            xrDisplay.TryGetDisplayRefreshRate(out var xrRefreshRate);
+
+            return xrRefreshRate;
         }
 
         public GameObject CreatePlayerController(Scene scene, Vector3 position = default, Quaternion rotation = default)
