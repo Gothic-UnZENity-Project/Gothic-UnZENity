@@ -125,9 +125,11 @@ namespace GUZ.Core
         public int SaveSlotToLoad;
         private bool SaveSlotFieldCondition() => !EnableMainMenu && LoadFromSaveSlot;
 
+        [ConditionalField(useMethod: true, method: nameof(SaveSlotFieldCondition), inverse: true)]
         public WorldToSpawn PreselectWorldToSpawn;
 
         [Tooltip("Covers Free Points and Way Points.")]
+        [ConditionalField(useMethod: true, method: nameof(SaveSlotFieldCondition), inverse: true)]
         public string SpawnAtWaypoint = string.Empty;
 
 
