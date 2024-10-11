@@ -122,8 +122,7 @@ namespace GUZ.Core.Manager.Scenes
 
                     if (debugGo != null)
                     {
-                        GameContext.InteractionAdapter.TeleportPlayerTo(debugGo.transform.position,
-                            debugGo.transform.rotation);
+                        TeleportPlayerToStart(debugGo.transform.position, debugGo.transform.rotation);
                         return;
                     }
                 }
@@ -132,8 +131,7 @@ namespace GUZ.Core.Manager.Scenes
             // 2.
             if (GameGlobals.Player.HeroSpawnPosition != default)
             {
-                GameContext.InteractionAdapter.TeleportPlayerTo(GameGlobals.Player.HeroSpawnPosition, GameGlobals.Player.HeroSpawnRotation);
-                GameGlobals.Player.ResetSpawn();
+                TeleportPlayerToStart(GameGlobals.Player.HeroSpawnPosition, GameGlobals.Player.HeroSpawnRotation);
                 return;
             }
             
@@ -148,9 +146,15 @@ namespace GUZ.Core.Manager.Scenes
                 Debug.LogError("No suitable START_* waypoint found!");
                 return;
             }
-            
-            GameContext.InteractionAdapter.TeleportPlayerTo(startPoint.transform.position, startPoint.transform.rotation);
+
+            TeleportPlayerToStart(startPoint.transform.position, startPoint.transform.rotation);
+        }
+
+        private void TeleportPlayerToStart(Vector3 position, Quaternion rotation)
+        {
+            GameContext.InteractionAdapter.TeleportPlayerTo(position, rotation);
             GameContext.InteractionAdapter.UnlockPlayer();
+            GameGlobals.Player.ResetSpawn();
         }
     }
 }
