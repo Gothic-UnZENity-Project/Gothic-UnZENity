@@ -1,5 +1,4 @@
 using GUZ.Core.Caches;
-using GUZ.Core.Debugging;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
@@ -17,12 +16,13 @@ using Logger = ZenKit.Logger;
 
 namespace GUZ.Core
 {
-    [RequireComponent(typeof(TextureManager), typeof(FontManager))]
+    [RequireComponent(typeof(TextureManager), typeof(FontManager), typeof(FrameSkipper))]
     public class GameManager : SingletonBehaviour<GameManager>, ICoroutineManager, IGlobalDataProvider
     {
         [field: SerializeField] public GameConfiguration Config { get; set; }
 
         private FileLoggingHandler _fileLoggingHandler;
+        private FrameSkipper _frameSkipper;
         private BarrierManager _barrierManager;
         private MusicManager _gameMusicManager;
 
@@ -59,6 +59,7 @@ namespace GUZ.Core
             base.Awake();
 
             _fileLoggingHandler = new FileLoggingHandler();
+            _frameSkipper = GetComponent<FrameSkipper>();
 
             GameGlobals.Instance = this;
             
@@ -106,6 +107,7 @@ namespace GUZ.Core
             DirectMusic.Logger.Set(Config.DirectMusicLogLevel, Logging.OnDirectMusicLogMessage);
 
             _fileLoggingHandler.Init(Settings);
+            _frameSkipper.Init();
             Loading.Init();
             VobMeshCulling.Init();
             NpcMeshCulling.Init();
@@ -113,7 +115,6 @@ namespace GUZ.Core
             Time.Init();
             Sky.Init();
             Player.Init();
-            // Scene.Init();
             Routines.Init();
         }
 

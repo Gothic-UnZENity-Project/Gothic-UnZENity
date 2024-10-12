@@ -117,7 +117,6 @@ namespace GUZ.Core.Manager.Culling
             }
         }
 
-
         /// <summary>
         /// Each frame, we update the visible NPCs' current position.
         /// </summary>

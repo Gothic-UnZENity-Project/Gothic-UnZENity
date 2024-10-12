@@ -218,6 +218,7 @@ GameObject:
   - component: {fileID: 583338022}
   - component: {fileID: 583338021}
   - component: {fileID: 583338020}
+  - component: {fileID: 583338023}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -294,7 +295,6 @@ MonoBehaviour:
   FillerMaterial: {fileID: 2100000, guid: 7f15366450c487344a1e66a13b22a847, type: 2}
   LoadingBarBackgroundMaterial: {fileID: 0}
   LoadingBarMaterial: {fileID: 0}
-  LoadingSphereMaterial: {fileID: 0}
   SkyMaterial: {fileID: 2100000, guid: 39ac659c922b5b1489714aacd9b952e9, type: 2}
   MapMaterial: {fileID: 2100000, guid: 6edba26a8e8b5c3488fd2eb615350942, type: 2}
   BackgroundMaterial: {fileID: 2100000, guid: 1e349bd46543d684da0fd00dfcc78b72, type: 2}
@@ -311,6 +311,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _music: {fileID: 1283201087}
+--- !u!114 &583338023
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 583338016}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e3ab1468d9384058a5aa41d9991012f6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1283201085
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Globalization;
 using System.Linq;
-using AOT;
 using GUZ.Core.Caches;
 using GUZ.Core.Creator;
 using GUZ.Core.Globals;
@@ -40,6 +39,7 @@ namespace GUZ.Core.Vm
             vm.RegisterExternal<NpcInstance, string>("AI_GoToNextFP", AI_GoToNextFP);
             vm.RegisterExternal<NpcInstance>("AI_DrawWeapon", AI_DrawWeapon);
             vm.RegisterExternal<NpcInstance, NpcInstance, string>("AI_Output", AI_Output);
+            vm.RegisterExternal<NpcInstance>("AI_ProcessInfos", AI_ProcessInfos);
             vm.RegisterExternal<NpcInstance>("AI_StopProcessInfos", AI_StopProcessInfos);
             vm.RegisterExternal<NpcInstance, string>("AI_LookAt", AI_LookAt);
             vm.RegisterExternal<NpcInstance, NpcInstance>("AI_LookAtNPC", AI_LookAtNPC);
@@ -61,6 +61,7 @@ namespace GUZ.Core.Vm
             vm.RegisterExternal<int, DaedalusInstance>("Hlp_GetInstanceID", Hlp_GetInstanceID);
 
             // Info
+            vm.RegisterExternal<int>("InfoManager_HasFinished", InfoManager_HasFinished);
             vm.RegisterExternal<int>("Info_ClearChoices", Info_ClearChoices);
             vm.RegisterExternal<int, string, int>("Info_AddChoice", Info_AddChoice);
 
@@ -118,6 +119,7 @@ namespace GUZ.Core.Vm
             vm.RegisterExternal<int, NpcInstance>("Npc_IsDead", Npc_IsDead);
             vm.RegisterExternal<int, NpcInstance, int>("Npc_IsInState", Npc_IsInState);
             vm.RegisterExternal<NpcInstance>("Npc_SetToFistMode", Npc_SetToFistMode);
+            vm.RegisterExternal<int, NpcInstance>("Npc_IsPlayer", Npc_IsPlayer);
 
             // Print
             vm.RegisterExternal<string>("PrintDebug", PrintDebug);
@@ -258,7 +260,6 @@ namespace GUZ.Core.Vm
             NpcHelper.ExtAiGoToNextFp(npc, fpNamePart);
         }
 
-        [MonoPInvokeCallback(typeof(DaedalusVm.ExternalFuncV))]
         public static void AI_DrawWeapon(NpcInstance npc)
         {
             NpcHelper.ExtAiDrawWeapon(npc);
@@ -267,6 +268,11 @@ namespace GUZ.Core.Vm
         public static void AI_Output(NpcInstance self, NpcInstance target, string outputName)
         {
             DialogManager.ExtAiOutput(self, target, outputName);
+        }
+
+        public static void AI_ProcessInfos(NpcInstance npc)
+        {
+            DialogManager.ExtAiProcessInfos(npc);
         }
 
         public static void AI_StopProcessInfos(NpcInstance npc)
@@ -370,13 +376,16 @@ namespace GUZ.Core.Vm
 
         #region Info
 
-        [MonoPInvokeCallback(typeof(DaedalusVm.ExternalFuncV))]
+        public static int InfoManager_HasFinished()
+        {
+            return Convert.ToInt32(DialogManager.ExtInfoManagerHasFinished());
+        }
+
         public static void Info_ClearChoices(int info)
         {
             DialogManager.ExtInfoClearChoices(info);
         }
 
-        [MonoPInvokeCallback(typeof(DaedalusVm.ExternalFuncV))]
         public static void Info_AddChoice(int info, string text, int function)
         {
             DialogManager.ExtInfoAddChoice(info, text, function);
@@ -744,6 +753,11 @@ namespace GUZ.Core.Vm
         public static void Npc_SetToFistMode(NpcInstance npc)
         {
             NpcHelper.ExtNpcSetToFistMode(npc);
+        }
+
+        public static int Npc_IsPlayer(NpcInstance npc)
+        {
+            return Convert.ToInt32(NpcHelper.ExtNpcIsPlayer(npc));
         }
 
         #endregion

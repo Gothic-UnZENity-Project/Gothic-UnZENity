@@ -100,10 +100,6 @@ namespace GUZ.Core.Globals
         public const string MainCameraTag = "MainCamera";
 
         
-        public static int MeshPerFrame { get; } = 10;
-        public static int VobsPerFrame { get; } = 75;
-        public static int NpcsPerFrame { get; } = 75;
-
         //Collection of PlayerPref entries for VR settings
         public const string PlayerPrefDirectionMode = "DirectionMode";
         public const string PlayerPrefRotationType = "RotationType";
@@ -129,6 +125,7 @@ namespace GUZ.Core.Globals
 
         public static class DaedalusConst
         {
+            public static int AIVInvincibleKey => GameData.GothicVm.GetSymbolByName("AIV_INVINCIBLE").GetInt(0);
             public static int AIVItemStatusKey => GameData.GothicVm.GetSymbolByName("AIV_ITEMSTATUS").GetInt(0);
             public static int AIVItemFreqKey => GameData.GothicVm.GetSymbolByName("AIV_ITEMFREQ").GetInt(0);
             public static int TAITNone => GameData.GothicVm.GetSymbolByName("TA_IT_NONE").GetInt(0);

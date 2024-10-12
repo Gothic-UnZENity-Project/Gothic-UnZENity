@@ -58,8 +58,10 @@ MonoBehaviour:
   MdmName: 
   BaseMdsName: 
   OverlayMdsName: 
-  PerceptionTime: 0
+  PerceptionTime: 5
+  CurrentPerceptionTime: 0
   WalkMode: 0
+  WeaponState: 0
   BodyState: 0
   CurrentInteractable: {fileID: 0}
   CurrentInteractableSlot: {fileID: 0}
@@ -513,6 +515,12 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   UnSocketed:
+    m_PersistentCalls:
+      m_Calls: []
+  DistanceGrabbed:
+    m_PersistentCalls:
+      m_Calls: []
+  DistanceReleased:
     m_PersistentCalls:
       m_Calls: []
   GrabPointsMeta: []

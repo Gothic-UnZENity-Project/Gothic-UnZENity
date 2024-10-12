@@ -23,7 +23,6 @@ public class TextureManager : MonoBehaviour
     // Loading
     public Material LoadingBarBackgroundMaterial;
     public Material LoadingBarMaterial;
-    public Material LoadingSphereMaterial;
 
     // Misc
     public Material SkyMaterial;
@@ -41,9 +40,6 @@ public class TextureManager : MonoBehaviour
         GothicLoadingMenuMaterial = GetEmptyMaterial(MaterialExtension.BlendMode.Opaque);
         LoadingBarBackgroundMaterial = GetEmptyMaterial(MaterialExtension.BlendMode.Opaque);
         LoadingBarMaterial = GetEmptyMaterial(MaterialExtension.BlendMode.Opaque);
-
-        LoadingSphereMaterial = GetEmptyMaterial(MaterialExtension.BlendMode.Opaque);
-        LoadingSphereMaterial.color = new Color(.25f, .25f, .25f, 1f); // dark gray
     }
 
     public void Init()
