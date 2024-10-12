@@ -8,14 +8,11 @@ using GUZ.Core.Globals;
 using GUZ.Core.Manager;
 using GUZ.Core.Npc.Routines;
 using GUZ.Core.Properties;
-using GUZ.Core.Util;
 using GUZ.Core.Vm;
 using GUZ.Core.Vob.WayNet;
 using JetBrains.Annotations;
 using MyBox;
 using UnityEngine;
-using ZenKit;
-using ZenKit.Daedalus;
 using Object = UnityEngine.Object;
 using WayNet_WayPoint = GUZ.Core.Vob.WayNet.WayPoint;
 
@@ -41,19 +38,28 @@ namespace GUZ.Core.Creator
         /// </summary>
         public static async Task CreateAsync(GameConfiguration config, LoadingManager loading)
         {
-            // We load NPCs only! if we enter the world for the first time (e.g. when having a fresh game start).
-            // If we loaded the data from a save game or previous visit in this game session, we have our NPCs already loaded via Vobs + SaveGame state.
-            if (!SaveGameManager.IsWorldLoadedForTheFirstTime)
-            {
-                return;
-            }
-
             // Final debug check if we really want to load NPCs.
             if (!config.EnableNpcs)
             {
                 return;
             }
 
+            if (SaveGameManager.IsWorldLoadedForTheFirstTime)
+            {
+                await InitializeNpcsFirstTime(loading);
+            }
+            else
+            {
+                await InitializeNpcsFromSaveGame();
+            }
+        }
+
+        /// <summary>
+        /// We load NPCs via Daedalus Init_*() only! if we enter the world for the first time
+        /// when reaching a world for the first time.
+        /// </summary>
+        private static async Task InitializeNpcsFirstTime(LoadingManager loading)
+        {
             // Inside Startup.d, it's always STARTUP_{MAPNAME} and INIT_{MAPNAME}
             // FIXME - Inside Startup.d some Startup_*() functions also call Init_*() some not. How to handle properly? (Force calling it here? Even if done twice?)
             GameData.GothicVm.Call($"STARTUP_{SaveGameManager.CurrentWorldName.ToUpper().RemoveEnd(".ZEN")}");
@@ -61,6 +67,21 @@ namespace GUZ.Core.Creator
             // Daedalus will walk through the whole Wld_InsertNpc() calls once.
             // Afterwards we will crate the NPCs step-by-step to ensure smooth loading screen fps.
             await InitializeNpcs(loading);
+        }
+
+        /// <summary>
+        /// If we loaded the data from a save game or previous visit in this game session,
+        /// we have our NPCs nearby already loaded via Vobs and load remaining (far) NPCs now.
+        /// </summary>
+        private static async Task InitializeNpcsFromSaveGame()
+        {
+            foreach (var npc in SaveGameManager.CurrentZkWorld.Npcs)
+            {
+                // FIXME - 1. Init NPC (to get an NpcInstance object)
+                // FIXME - 2. Create mesh of NPC
+                // FIXME - 3. Put NpcInstance + NpcProperties into cache
+                // FIXME - 4. await FrameSkipper() for loading async
+            }
         }
 
         private static GameObject GetRootGo()
