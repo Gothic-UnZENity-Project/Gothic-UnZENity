@@ -39,6 +39,9 @@ namespace GUZ.Core.Globals
             public static List<InfoInstance> Instances = new();
             public static bool IsInDialog;
 
+            // I'm too stupid to make it work through vfs need someone to help here
+            public static CutsceneLibrary CutsceneLibrary = new($"{GameGlobals.Settings.Gothic1Path}\\_work\\DATA\\scripts\\Content\\CUTSCENE\\Ou.csl");
+
             public static int GestureCount;
 
             public static class CurrentDialog

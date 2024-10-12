@@ -5,6 +5,7 @@ using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
 using UnityEngine;
+using ZenKit;
 using Random = UnityEngine.Random;
 
 namespace GUZ.Core.Npc.Actions.AnimationActions
@@ -31,8 +32,11 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
                 // If NPC talked before, we stop it immediately (As some audio samples are shorter than the actual animation)
                 AnimationCreator.StopAnimation(NpcGo);
 
+
                 NpcHelper.GetHeroGameObject().GetComponent<AudioSource>().PlayOneShot(audioClip);
-                // FIXME - Show subtitles somewhere next to Hero (== ourself/main camera)
+                // FIXME - Show subtitles somewhere next to Hero (== ourself/main camera) PrintDialog()
+                PrintDialog();
+
             }
             // NPC
             else
@@ -46,6 +50,19 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
                 Props.NpcSound.PlayOneShot(audioClip);
 
                 // FIXME - Show subtitles above NPC
+                PrintDialog();
+            }
+        }
+
+        private void PrintDialog()
+        {
+            // FIXME - Show subtitles somewhere next to Hero (== ourself/main camera)
+            var currentMessage = GameData.Dialogs.CutsceneLibrary.Blocks.Find(x => x.Name == OutputName).Message;
+            if(_isHeroSpeaking){
+                Debug.Log($"PrintDialog: {{ Hero: {currentMessage.Text}}}");
+            }
+            else{
+                Debug.Log($"PrintDialog: {{ NPC: {currentMessage.Text}}}");
             }
         }
 
