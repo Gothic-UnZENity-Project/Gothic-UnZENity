@@ -54,6 +54,7 @@ namespace GUZ.VR.Components.UI
 
         private System.Collections.IEnumerator ShowDialogWithDelay()
         {
+            // Skipping first frame of when dialog activates to let it fully rotate towards Player Camera
             yield return new WaitForEndOfFrame();
             _dialogRoot.SetActive(true);
         }
