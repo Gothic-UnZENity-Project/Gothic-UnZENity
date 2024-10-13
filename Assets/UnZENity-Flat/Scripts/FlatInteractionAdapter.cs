@@ -53,6 +53,16 @@ namespace GUZ.Flat
             // Not yet implemented
         }
 
+        public void LockPlayerInPlaceCutscene()
+        {
+            // Not yet implemented
+        }
+
+        public void UnlockPlayerInPlaceCutscene()
+        {
+            // Not yet implemented
+        }
+
         public void  TeleportPlayerTo(Vector3 position, Quaternion rotation = default)
         {
             _playerController.transform.SetLocalPositionAndRotation(position, rotation);

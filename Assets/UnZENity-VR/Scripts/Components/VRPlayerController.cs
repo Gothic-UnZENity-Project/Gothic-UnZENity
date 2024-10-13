@@ -51,6 +51,15 @@ namespace GUZ.VR.Components
         }
 
         /// <summary>
+        /// Disable certain actions to keep player stuck in current position during cutscene.
+        /// </summary>
+        public void SetLockedControlsCutscene()
+        {
+            MovementEnabled = false;
+            RotationEnabled = true;
+        }
+
+        /// <summary>
         /// Disable certain actions to keep player stuck in current position.
         /// </summary>
         public void SetLockedControls()
