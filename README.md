@@ -61,11 +61,7 @@ Big shoutout towards
 ## FAQ
 
 **Q: Why do you use an external framework to parse Gothic assets?**  
-A: ZenKit is a full Gothic asset parser and already used by OpenGothic. It is feature complete and works with Gothic1, Gothic2, and Gothic2 the Night of the Raven assets. Why reinventing the wheel? ¯\_(ツ)_/¯
-
-**Q: Why do you integrate ZenKit as shared library (DLL) instead of using its code directly?**  
-A: As ZenKit is written in C++, we need a way to communicate with C#. The way to go is shared libraries as they can be used within C# via _DllImport_.
+A: ZenKit is a full Gothic asset parser. It is feature complete and works with Gothic1, Gothic2, and Gothic2 the Night of the Raven assets. Last but not least, it's already used by OpenGothic as another reimplementation of Gothic Classic. Why reinventing the wheel? ¯\_(ツ)_/¯
 
 **Q: What an interesting project name...**  
-A: We're glad you asked! We chose the name _Gothic-UnZENity_ as our goal is to preserve Gothic in its classical form for modern systems and play types.
-It's a combination of Gothic, Unity, Zen (original 3D engine for Gothic I/II Classic), unleash, and a grain of insanity. ;-)
+A: We're glad you asked! _Gothic-UnZENity_ is a combination of Gothic, Unity, Zen (original 3D engine for Gothic I/II Classic), unleash, and a grain of insanity. ;-)
