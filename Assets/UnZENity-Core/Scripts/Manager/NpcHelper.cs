@@ -74,8 +74,7 @@ namespace GUZ.Core.Manager
             }
 
 
-            var heroInstance = GameData.GothicVm.InitInstance<NpcInstance>(GameGlobals.Settings.IniPlayerInstanceName);
-            GameData.GothicVm.GlobalHero = heroInstance;
+            var heroInstance = GameData.GothicVm.AllocInstance<NpcInstance>(GameGlobals.Settings.IniPlayerInstanceName);
 
             var playerProperties = playerGo.GetComponent<NpcProperties>();
             playerProperties.NpcInstance = heroInstance;
@@ -87,7 +86,12 @@ namespace GUZ.Core.Manager
                 Properties = playerProperties
             };
 
+            heroInstance.UserData = npcData;
+
             MultiTypeCache.NpcCache.Add(npcData);
+            
+            GameData.GothicVm.InitInstance(heroInstance);
+            GameData.GothicVm.GlobalHero = heroInstance;
         }
 
         /// <summary>
