@@ -49,14 +49,14 @@ namespace GUZ.VR.Adapter
             GetDialog().HideDialog();
         }
 
-        public void FillDialog(int npcInstanceIndex, List<DialogOption> dialogOptions)
+        public void FillDialog(NpcInstance instance, List<DialogOption> dialogOptions)
         {
-            GetDialog().FillDialog(npcInstanceIndex, dialogOptions);
+            GetDialog().FillDialog(instance, dialogOptions);
         }
 
-        public void FillDialog(int npcInstanceIndex, List<InfoInstance> dialogOptions)
+        public void FillDialog(NpcInstance instance, List<InfoInstance> dialogOptions)
         {
-            GetDialog().FillDialog(npcInstanceIndex, dialogOptions);
+            GetDialog().FillDialog(instance, dialogOptions);
         }
     }
 }

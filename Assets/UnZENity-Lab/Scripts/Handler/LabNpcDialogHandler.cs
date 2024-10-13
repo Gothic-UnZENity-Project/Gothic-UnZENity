@@ -2,6 +2,7 @@ using System.Linq;
 using GUZ.Core;
 using GUZ.Core.Caches;
 using GUZ.Core.Creator.Meshes.V2;
+using GUZ.Core.Data;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Properties;
@@ -30,17 +31,22 @@ namespace GUZ.Lab.Handler
             newNpc.SetParent(NpcSlotGo);
 
             var npcSymbol = GameData.GothicVm.GetSymbolByName(_bloodwynInstanceId);
-            _bloodwynInstance = GameData.GothicVm.AllocInstance<NpcInstance>(npcSymbol!);
+            _bloodwynInstance = GameData.GothicVm.InitInstance<NpcInstance>(npcSymbol!);
             var properties = newNpc.GetComponent<NpcProperties>();
-            MultiTypeCache.NpcCache[_bloodwynInstance.Index] = (instance: _bloodwynInstance, properties: properties);
             properties.NpcInstance = _bloodwynInstance;
 
-            GameData.GothicVm.InitInstance(_bloodwynInstance);
+            var npcData = new NpcData
+            {
+                Instance = _bloodwynInstance,
+                Properties = properties
+            };
+            MultiTypeCache.NpcCache.Add(npcData);
 
             properties.Dialogs = GameData.Dialogs.Instances
                 .Where(dialog => dialog.Npc == _bloodwynInstance.Index)
                 .OrderByDescending(dialog => dialog.Important)
                 .ToList();
+
             newNpc.name = _bloodwynInstance.GetName(NpcNameSlot.Slot0);
             GameData.GothicVm.GlobalSelf = _bloodwynInstance;
 

@@ -1,16 +1,13 @@
 using System.Collections.Generic;
-using GUZ.Core.Caches;
 using GUZ.Core.Creator;
 using GUZ.Core.Data.ZkEvents;
+using GUZ.Core.Extensions;
 using UnityEngine;
 
 namespace GUZ.Core.Npc.Actions.AnimationActions
 {
     public class LookAtNpc : AbstractAnimationAction
     {
-        private int _otherId => Action.Int0;
-        private int _otherIndex => Action.Int1;
-
         private Transform _npcHeadTransform => Props.Head;
         private Quaternion _finalRotation;
 
@@ -34,7 +31,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
 
         private Quaternion GetDesiredHeadRotation()
         {
-            var destination = MultiTypeCache.NpcCache[_otherIndex].properties.transform.position;
+            var destination = Action.Instance0.GetUserData().Go.transform.position;
             var lookRotationVector = destination - _npcHeadTransform.position;
             var lookRotation = Quaternion.LookRotation(lookRotationVector);
 

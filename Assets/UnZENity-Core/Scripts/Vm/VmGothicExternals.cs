@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Globalization;
+using System.Linq;
 using GUZ.Core.Caches;
 using GUZ.Core.Creator;
 using GUZ.Core.Globals;
@@ -172,7 +173,8 @@ namespace GUZ.Core.Vm
                 }
                 else
                 {
-                    var npcName = MultiTypeCache.NpcCache[GameData.GothicVm.GlobalSelf.Index].properties.Go.name;
+                    // Add additional log information if existing.
+                    var npcName = MultiTypeCache.NpcCache.FirstOrDefault(x => x.Instance == GameData.GothicVm.GlobalSelf)?.Properties.Go.name;
                     Debug.LogWarning($"Method >{sym.Name}< not yet implemented in DaedalusVM (called on >{npcName}<).");
                 }
             }

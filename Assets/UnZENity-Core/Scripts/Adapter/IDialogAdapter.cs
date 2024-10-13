@@ -9,7 +9,7 @@ namespace GUZ.Core.Adapter
     {
         public void ShowDialog(GameObject npcGo);
         public void HideDialog();
-        public void FillDialog(int npcInstanceIndex, List<DialogOption> dialogOptions);
-        public void FillDialog(int npcInstanceIndex, List<InfoInstance> dialogOptions);
+        public void FillDialog(NpcInstance instance, List<DialogOption> dialogOptions);
+        public void FillDialog(NpcInstance instance, List<InfoInstance> dialogOptions);
     }
 }
