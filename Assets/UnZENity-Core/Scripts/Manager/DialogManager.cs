@@ -228,6 +228,7 @@ namespace GUZ.Core.Manager
             GameData.Dialogs.IsInDialog = false;
 
             GameContext.DialogAdapter.HideDialog();
+            GameContext.SubtitlesAdapter.HideDialog();
         }
 
         /// <summary>

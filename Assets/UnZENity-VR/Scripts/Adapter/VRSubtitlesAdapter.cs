@@ -44,6 +44,10 @@ namespace GUZ.VR.Adapter
             dialog.ShowDialog(npcGo);
         }
 
+        public void HideDialogImmediate(){
+            GetDialog().HideDialogImmediate();
+        }
+
         public void HideDialog()
         {
             GetDialog().HideDialog();

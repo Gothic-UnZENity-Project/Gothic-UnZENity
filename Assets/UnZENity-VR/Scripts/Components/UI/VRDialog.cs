@@ -49,6 +49,12 @@ namespace GUZ.VR.Components.UI
             hoverElements.AddRange(_dialogItems.Select(i => i.GetComponentInChildren<TMP_Text>().gameObject).ToList());
             _uiEventsHandler.SetElementsToHover(hoverElements, true);
             
+            StartCoroutine(ShowDialogWithDelay());
+        }
+
+        private System.Collections.IEnumerator ShowDialogWithDelay()
+        {
+            yield return new WaitForEndOfFrame();
             _dialogRoot.SetActive(true);
         }
 

@@ -9,6 +9,7 @@ namespace GUZ.Core.Adapter
     {
         public void ShowDialog(GameObject npcGo);
         public void HideDialog();
+        public void HideDialogImmediate();
         public void FillDialog(string npcName, string text);
     }
 }

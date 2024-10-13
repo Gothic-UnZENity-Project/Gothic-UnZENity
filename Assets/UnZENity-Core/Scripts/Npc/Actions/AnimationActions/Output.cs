@@ -103,7 +103,6 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
                 Props.NpcSound.Stop();
                 AnimationCreator.StopAnimation(NpcGo);
             }
-            GameContext.SubtitlesAdapter.HideDialog();
         }
 
         public override bool IsFinished()

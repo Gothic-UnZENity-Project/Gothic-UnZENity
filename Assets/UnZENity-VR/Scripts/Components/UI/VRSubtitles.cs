@@ -1,18 +1,11 @@
 ﻿#if GUZ_HVR_INSTALLED
-using System.Collections.Generic;
-using System.Linq;
 using GUZ.Core;
-using GUZ.Core.Data;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
-using GUZ.Core.Manager;
-using GUZ.Core.UI;
 using MyBox;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.UI;
-using ZenKit.Daedalus;
 
 namespace GUZ.VR.Components.UI
 {
@@ -24,6 +17,9 @@ namespace GUZ.VR.Components.UI
 
         private float _dialogItemHeight;
         private float _dialogNpcNameItemHeight;
+
+        private Coroutine _hideDialogCoroutine;
+        private float _hideDialogDelay = 0.1f;
 
         private void Awake()
         {
@@ -38,13 +34,32 @@ namespace GUZ.VR.Components.UI
 
         public void ShowDialog(GameObject npcGo)
         {
+            // If there's a pending hide operation, stop it
+        if (_hideDialogCoroutine != null)
+        {
+            StopCoroutine(_hideDialogCoroutine);
+            _hideDialogCoroutine = null;
+        }
             var npcDialog = npcGo.FindChildRecursively("DialogMenuRootPos");
             _dialogRoot.SetParent(npcDialog, true, true, true);
 
             var rootRectHeight = _dialogItemHeight + _dialogNpcNameItemHeight;
             _dialogRoot.GetComponent<RectTransform>().SetHeight(rootRectHeight);
 
+            StartCoroutine(ShowDialogWithDelay());
+        }
+
+        private System.Collections.IEnumerator ShowDialogWithDelay()
+        {
+            yield return new WaitForEndOfFrame();
             _dialogRoot.SetActive(true);
+        }
+
+        private System.Collections.IEnumerator HideDialogWithDelay()
+        {
+            yield return new WaitForSeconds(_hideDialogDelay);
+            _dialogRoot.SetActive(false);
+            _dialogRoot.SetParent(SceneManager.GetSceneByName(Constants.ScenePlayer).GetRootGameObjects()[0], worldPositionStays: true);
         }
 
         /// <summary>
@@ -52,6 +67,11 @@ namespace GUZ.VR.Components.UI
         /// (or something without any object which might be destroyed (like an NPC after dying)).
         /// </summary>
         public void HideDialog()
+        {
+            _hideDialogCoroutine = StartCoroutine(HideDialogWithDelay());
+        }
+
+        public void HideDialogImmediate()
         {
             _dialogRoot.SetActive(false);
             _dialogRoot.SetParent(SceneManager.GetSceneByName(Constants.ScenePlayer).GetRootGameObjects()[0], worldPositionStays: true);
