@@ -6,6 +6,7 @@ using GUZ.Core.Globals;
 using GUZ.Core.Manager;
 using UnityEngine;
 using ZenKit;
+using ZenKit.Daedalus;
 using Random = UnityEngine.Random;
 
 namespace GUZ.Core.Npc.Actions.AnimationActions
@@ -58,12 +59,16 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
         {
             // FIXME - Show subtitles somewhere next to Hero (== ourself/main camera)
             var currentMessage = GameData.Dialogs.CutsceneLibrary.Blocks.Find(x => x.Name == OutputName).Message;
+            NpcInstance foo = (NpcInstance)GameData.GothicVm.GlobalHero;
             if(_isHeroSpeaking){
                 Debug.Log($"PrintDialog: {{ Hero: {currentMessage.Text}}}");
+                GameContext.SubtitlesAdapter.FillDialog(foo.GetName(NpcNameSlot.Slot0), currentMessage.Text);
             }
             else{
                 Debug.Log($"PrintDialog: {{ NPC: {currentMessage.Text}}}");
+                GameContext.SubtitlesAdapter.FillDialog(Props.NpcInstance.GetName(ZenKit.Daedalus.NpcNameSlot.Slot0), currentMessage.Text);
             }
+            GameContext.SubtitlesAdapter.ShowDialog(Props.Go);
         }
 
         /// <summary>
@@ -98,6 +103,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
                 Props.NpcSound.Stop();
                 AnimationCreator.StopAnimation(NpcGo);
             }
+            GameContext.SubtitlesAdapter.HideDialog();
         }
 
         public override bool IsFinished()
@@ -112,6 +118,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
                     AnimationCreator.StopHeadMorphAnimation(Props, HeadMorph.HeadMorphType.Viseme);
                 }
 
+                GameContext.SubtitlesAdapter.HideDialog();
                 return true;
             }
 
