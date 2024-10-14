@@ -15,7 +15,7 @@ namespace GUZ.VR.Adapter
     {
         private VRSubtitles _subtitlesComponent; 
 
-        private VRSubtitles GetDialog()
+        private VRSubtitles GetSubtitles()
         {
             // The component is stored in General scene. We therefore load it when accessing for the first time.
             if (_subtitlesComponent == null)
@@ -28,7 +28,7 @@ namespace GUZ.VR.Adapter
                     scene = SceneManager.GetActiveScene();
                 }
                 
-                // We need to look through all RootGOs and fetch the first matching HVRDialog Component.
+                // We need to look through all RootGOs and fetch the first matching VRSubtitles Component.
                 _subtitlesComponent = scene.GetRootGameObjects()
                     .Select(i => i.GetComponentInChildren<VRSubtitles>())
                     .First(i => i != null);
@@ -38,24 +38,24 @@ namespace GUZ.VR.Adapter
         }
         
 
-        public void ShowDialog(GameObject npcGo)
+        public void ShowSubtitles(GameObject npcGo)
         {
-            var dialog = GetDialog();
-            dialog.ShowDialog(npcGo);
+            var dialog = GetSubtitles();
+            dialog.ShowSubtitles(npcGo);
         }
 
-        public void HideDialogImmediate(){
-            GetDialog().HideDialogImmediate();
+        public void HideSubtitlesImmediate(){
+            GetSubtitles().HideSubtitlesImmediate();
         }
 
-        public void HideDialog()
+        public void HideSubtitles()
         {
-            GetDialog().HideDialog();
+            GetSubtitles().HideSubtitles();
         }
 
-        public void FillDialog(string npcName, string subtitles)
+        public void FillSubtitles(string npcName, string subtitles)
         {
-            GetDialog().FillDialog(npcName, subtitles);
+            GetSubtitles().FillSubtitles(npcName, subtitles);
         }
     }
 }
