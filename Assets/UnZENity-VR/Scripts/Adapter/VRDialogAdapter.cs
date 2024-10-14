@@ -42,7 +42,7 @@ namespace GUZ.VR.Adapter
         public void ShowDialog(GameObject npcGo)
         {
             // Hide any subtitles that might be active.
-            GameContext.SubtitlesAdapter.HideDialogImmediate();
+            GameContext.SubtitlesAdapter.HideSubtitlesImmediate();
             var dialog = GetDialog();
             dialog.ShowDialog(npcGo);
         }

@@ -7,9 +7,9 @@ namespace GUZ.Core.Adapter
 {
     public interface ISubtitlesAdapter
     {
-        public void ShowDialog(GameObject npcGo);
-        public void HideDialog();
-        public void HideDialogImmediate();
-        public void FillDialog(string npcName, string text);
+        public void ShowSubtitles(GameObject npcGo);
+        public void HideSubtitles();
+        public void HideSubtitlesImmediate();
+        public void FillSubtitles(string npcName, string text);
     }
 }

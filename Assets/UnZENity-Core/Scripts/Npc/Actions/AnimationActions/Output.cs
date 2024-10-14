@@ -60,12 +60,12 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             var currentMessage = GameData.Dialogs.CutsceneLibrary.Blocks.Find(x => x.Name == OutputName).Message;
             NpcInstance globalHero = (NpcInstance)GameData.GothicVm.GlobalHero;
             if(_isHeroSpeaking){
-                GameContext.SubtitlesAdapter.FillDialog(globalHero.GetName(NpcNameSlot.Slot0), currentMessage.Text);
+                GameContext.SubtitlesAdapter.FillSubtitles(globalHero.GetName(NpcNameSlot.Slot0), currentMessage.Text);
             }
             else{
-                GameContext.SubtitlesAdapter.FillDialog(Props.NpcInstance.GetName(ZenKit.Daedalus.NpcNameSlot.Slot0), currentMessage.Text);
+                GameContext.SubtitlesAdapter.FillSubtitles(Props.NpcInstance.GetName(ZenKit.Daedalus.NpcNameSlot.Slot0), currentMessage.Text);
             }
-            GameContext.SubtitlesAdapter.ShowDialog(Props.Go);
+            GameContext.SubtitlesAdapter.ShowSubtitles(Props.Go);
         }
 
         /// <summary>
@@ -114,7 +114,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
                     AnimationCreator.StopHeadMorphAnimation(Props, HeadMorph.HeadMorphType.Viseme);
                 }
 
-                GameContext.SubtitlesAdapter.HideDialog();
+                GameContext.SubtitlesAdapter.HideSubtitles();
                 return true;
             }
 

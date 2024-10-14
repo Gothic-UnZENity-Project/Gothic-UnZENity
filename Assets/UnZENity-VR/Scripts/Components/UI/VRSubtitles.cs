@@ -32,7 +32,7 @@ namespace GUZ.VR.Components.UI
             }
         }
 
-        public void ShowDialog(GameObject npcGo)
+        public void ShowSubtitles(GameObject npcGo)
         {
             // If there's a pending hide operation, stop it
         if (_hideDialogCoroutine != null)
@@ -46,16 +46,16 @@ namespace GUZ.VR.Components.UI
             var rootRectHeight = _dialogItemHeight + _dialogNpcNameItemHeight;
             _dialogRoot.GetComponent<RectTransform>().SetHeight(rootRectHeight);
 
-            StartCoroutine(ShowDialogWithDelay());
+            StartCoroutine(ShowSubtitlesWithDelay());
         }
 
-        private System.Collections.IEnumerator ShowDialogWithDelay()
+        private System.Collections.IEnumerator ShowSubtitlesWithDelay()
         {
             yield return new WaitForEndOfFrame();
             _dialogRoot.SetActive(true);
         }
 
-        private System.Collections.IEnumerator HideDialogWithDelay()
+        private System.Collections.IEnumerator HideSubtitlesWithDelay()
         {
             yield return new WaitForSeconds(_hideDialogDelay);
             _dialogRoot.SetActive(false);
@@ -66,20 +66,20 @@ namespace GUZ.VR.Components.UI
         /// Once we close the dialog, we need to move the dialog box back to the General scene
         /// (or something without any object which might be destroyed (like an NPC after dying)).
         /// </summary>
-        public void HideDialog()
+        public void HideSubtitles()
         {
-            _hideDialogCoroutine = StartCoroutine(HideDialogWithDelay());
+            _hideDialogCoroutine = StartCoroutine(HideSubtitlesWithDelay());
         }
 
-        public void HideDialogImmediate()
+        public void HideSubtitlesImmediate()
         {
             _dialogRoot.SetActive(false);
             _dialogRoot.SetParent(SceneManager.GetSceneByName(Constants.ScenePlayer).GetRootGameObjects()[0], worldPositionStays: true);
         }
 
-        public void FillDialog(string npcName, string text)
+        public void FillSubtitles(string npcName, string text)
         {
-            ClearDialogOptions();
+            ClearSubtitlesOptions();
 
             _dialogNpcNameItem.FindChildRecursively("Label").GetComponent<TMP_Text>().text = npcName;
             _dialogNpcNameItem.FindChildRecursively("Label").GetComponent<TMP_Text>().spriteAsset = GameGlobals.Font.HighlightSpriteAsset;
@@ -87,7 +87,7 @@ namespace GUZ.VR.Components.UI
             _dialogItem.FindChildRecursively("Label").GetComponent<TMP_Text>().text = text;
         }
 
-        private void ClearDialogOptions()
+        private void ClearSubtitlesOptions()
         {
             _dialogItem.FindChildRecursively("Label").GetComponent<TMP_Text>().text = "";
             _dialogNpcNameItem.FindChildRecursively("Label").GetComponent<TMP_Text>().text = "";

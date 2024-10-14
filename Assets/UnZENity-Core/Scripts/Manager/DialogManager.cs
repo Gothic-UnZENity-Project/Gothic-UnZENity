@@ -234,7 +234,7 @@ namespace GUZ.Core.Manager
             GameContext.InteractionAdapter.UnlockPlayer();
 
             GameContext.DialogAdapter.HideDialog();
-            GameContext.SubtitlesAdapter.HideDialog();
+            GameContext.SubtitlesAdapter.HideSubtitles();
         }
 
         /// <summary>
