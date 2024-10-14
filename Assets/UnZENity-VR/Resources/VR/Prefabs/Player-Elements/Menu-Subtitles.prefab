@@ -590,7 +590,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7369722077890996068}
-  - component: {fileID: 1617092714476345731}
   - component: {fileID: 840386729682481267}
   m_Layer: 5
   m_Name: Menu-Subtitles
@@ -615,20 +614,6 @@ Transform:
   - {fileID: 4300127462305303291}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1617092714476345731
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7339275886835513150}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 259b3da9f06f4b7791b2297e57967369, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _elementsToFilter: []
-  _audioSource: {fileID: 0}
 --- !u!114 &840386729682481267
 MonoBehaviour:
   m_ObjectHideFlags: 0
