@@ -291,6 +291,11 @@ namespace GUZ.Core.Manager
                 .OrderBy(i => Vector3.Distance(i.Properties.transform.position, npcPos)) // get nearest
                 .FirstOrDefault();
 
+            // without this Dialog box stops and breaks the entire NPC logic
+            if(foundNpc == null){
+                return false;
+            }
+
             // We need to set it, as there are calls where we immediately need _other_. e.g.:
             // if (Wld_DetectNpc(self, ...) && (Npc_GetDistToNpc(self, other)<HAI_DIST_SMALLTALK)
             if (foundNpc.Instance != null)
