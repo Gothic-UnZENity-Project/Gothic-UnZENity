@@ -103,21 +103,6 @@ namespace GUZ.Core.Properties
             AfterEnd
         }
 
-#pragma warning disable CS0414 // Just a debug flag for easier debugging if we missed to copy something in the future. 
-        public bool IsClonedFromAnother;
-#pragma warning restore CS0414
-        public void Copy(NpcProperties other)
-        {
-            IsClonedFromAnother = true;
-
-            MdmName = other.MdmName;
-            BaseMdsName = other.BaseMdsName;
-            OverlayMdsName = other.OverlayMdsName;
-            BodyData = other.BodyData;
-            Perceptions = other.Perceptions;
-            PerceptionTime = other.PerceptionTime;
-        }
-
         public override string GetFocusName()
         {
             return NpcInstance.GetName(0);

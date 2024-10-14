@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using GUZ.Core.Data;
 using UnityEngine;
 using ZenKit;
 using ZenKit.Daedalus;
@@ -11,6 +12,14 @@ namespace GUZ.Core.Extensions
 {
     public static class ZenKitExtension
     {
+        /// <summary>
+        /// Convenient shortcut to retrieve and cast NpcData object from NpcInstance property.
+        /// </summary>
+        public static NpcData GetUserData(this NpcInstance instance)
+        {
+            return instance.UserData as NpcData;
+        }
+
         public static TextureFormat AsUnityTextureFormat(this ZenKit.TextureFormat format)
         {
             return format switch

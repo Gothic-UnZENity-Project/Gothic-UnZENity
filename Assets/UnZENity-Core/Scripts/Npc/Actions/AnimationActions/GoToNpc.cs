@@ -1,5 +1,5 @@
-using GUZ.Core.Caches;
 using GUZ.Core.Data.ZkEvents;
+using GUZ.Core.Extensions;
 using UnityEngine;
 
 namespace GUZ.Core.Npc.Actions.AnimationActions
@@ -7,8 +7,6 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
     public class GoToNpc : AbstractWalkAnimationAction
     {
         private Transform _destinationTransform;
-        private int OtherId => Action.Int0;
-        private int OtherIndex => Action.Int1;
 
         public GoToNpc(AnimationAction action, GameObject npcGo) : base(action, npcGo)
         {
@@ -18,7 +16,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
         {
             base.Start();
 
-            _destinationTransform = MultiTypeCache.NpcCache[OtherIndex].properties.transform;
+            _destinationTransform = Action.Instance0.GetUserData().Go.transform;
         }
 
         protected override Vector3 GetWalkDestination()
