@@ -40,7 +40,7 @@ namespace GUZ.Core.Manager
             GameData.Dialogs.IsInDialog = true;
 
             // WIP: locking movement 
-            GameContext.InteractionAdapter.LockPlayerInPlaceCutscene();
+            GameContext.InteractionAdapter.LockPlayerInPlace();
 
             // We are already inside a sub-dialog
             if (GameData.Dialogs.CurrentDialog.Options.Any())

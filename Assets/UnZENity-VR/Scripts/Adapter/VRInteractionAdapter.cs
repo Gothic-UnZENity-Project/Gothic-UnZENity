@@ -116,10 +116,6 @@ namespace GUZ.VR.Adapter
             _playerController.SetLockedControls();
         }
 
-        public void LockPlayerInPlaceCutscene(){
-            _playerController.SetLockedControlsCutscene();
-        }
-
         public void UnlockPlayer()
         {
             _playerController.SetUnlockedControls();
