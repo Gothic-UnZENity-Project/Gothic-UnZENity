@@ -146,8 +146,11 @@ namespace GUZ.Core
 
         private void Awake()
         {
-            Lights.Add(this);
-            _threadSafeLightData.Add((transform.position, Range));
+            if (!Lights.Contains(this))
+            {
+                Lights.Add(this);
+                _threadSafeLightData.Add((transform.position, Range));
+            }
         }
 
         private void OnDestroy()
@@ -241,6 +244,21 @@ namespace GUZ.Core
                 {
                     _affectedRenderers.Add(renderer);
                 }
+            }
+        }
+
+        public static void InitializeAllLights()
+        {
+            Lights.Clear();
+            _threadSafeLightData.Clear();
+
+            // Find all StationaryLight components, including those on inactive GameObjects
+            StationaryLight[] allLights = Resources.FindObjectsOfTypeAll<StationaryLight>();
+
+            foreach (StationaryLight light in allLights)
+            {
+                Lights.Add(light);
+                _threadSafeLightData.Add((light.transform.position, light.Range));
             }
         }
     }
