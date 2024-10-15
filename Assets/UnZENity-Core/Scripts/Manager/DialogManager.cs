@@ -39,6 +39,9 @@ namespace GUZ.Core.Manager
         {
             GameData.Dialogs.IsInDialog = true;
 
+            // WIP: locking movement 
+            GameContext.InteractionAdapter.LockPlayerInPlace();
+
             // We are already inside a sub-dialog
             if (GameData.Dialogs.CurrentDialog.Options.Any())
             {
@@ -227,7 +230,11 @@ namespace GUZ.Core.Manager
             GameData.Dialogs.CurrentDialog.Options.Clear();
             GameData.Dialogs.IsInDialog = false;
 
+            // WIP: unlocking movement
+            GameContext.InteractionAdapter.UnlockPlayer();
+
             GameContext.DialogAdapter.HideDialog();
+            GameContext.SubtitlesAdapter.HideSubtitles();
         }
 
         /// <summary>

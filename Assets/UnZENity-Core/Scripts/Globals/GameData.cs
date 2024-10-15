@@ -39,6 +39,8 @@ namespace GUZ.Core.Globals
             public static List<InfoInstance> Instances = new();
             public static bool IsInDialog;
 
+            public static CutsceneLibrary CutsceneLibrary;
+
             public static int GestureCount;
 
             public static class CurrentDialog

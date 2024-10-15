@@ -5,6 +5,8 @@ using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
 using UnityEngine;
+using ZenKit;
+using ZenKit.Daedalus;
 using Random = UnityEngine.Random;
 
 namespace GUZ.Core.Npc.Actions.AnimationActions
@@ -31,8 +33,11 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
                 // If NPC talked before, we stop it immediately (As some audio samples are shorter than the actual animation)
                 AnimationCreator.StopAnimation(NpcGo);
 
+
                 NpcHelper.GetHeroGameObject().GetComponent<AudioSource>().PlayOneShot(audioClip);
-                // FIXME - Show subtitles somewhere next to Hero (== ourself/main camera)
+                // FIXME - Show subtitles somewhere next to Hero (== ourself/main camera) PrintDialog()
+                PrintDialog();
+
             }
             // NPC
             else
@@ -45,8 +50,22 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
 
                 Props.NpcSound.PlayOneShot(audioClip);
 
-                // FIXME - Show subtitles above NPC
+                PrintDialog();
             }
+        }
+
+        private void PrintDialog()
+        {
+            // FIXME - Show subtitles somewhere next to Hero (== ourself/main camera)
+            var currentMessage = GameData.Dialogs.CutsceneLibrary.Blocks.Find(x => x.Name == OutputName).Message;
+            NpcInstance globalHero = (NpcInstance)GameData.GothicVm.GlobalHero;
+            if(_isHeroSpeaking){
+                GameContext.SubtitlesAdapter.FillSubtitles(globalHero.GetName(NpcNameSlot.Slot0), currentMessage.Text);
+            }
+            else{
+                GameContext.SubtitlesAdapter.FillSubtitles(Props.NpcInstance.GetName(ZenKit.Daedalus.NpcNameSlot.Slot0), currentMessage.Text);
+            }
+            GameContext.SubtitlesAdapter.ShowSubtitles(Props.Go);
         }
 
         /// <summary>
@@ -95,6 +114,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
                     AnimationCreator.StopHeadMorphAnimation(Props, HeadMorph.HeadMorphType.Viseme);
                 }
 
+                GameContext.SubtitlesAdapter.HideSubtitles();
                 return true;
             }
 

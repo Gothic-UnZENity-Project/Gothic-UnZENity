@@ -1,6 +1,7 @@
 ﻿#if GUZ_HVR_INSTALLED
 using System.Collections.Generic;
 using System.Linq;
+using GUZ.Core;
 using GUZ.Core.Adapter;
 using GUZ.Core.Data;
 using GUZ.Core.Globals;
@@ -40,6 +41,8 @@ namespace GUZ.VR.Adapter
 
         public void ShowDialog(GameObject npcGo)
         {
+            // Hide any subtitles that might be active.
+            GameContext.SubtitlesAdapter.HideSubtitlesImmediate();
             var dialog = GetDialog();
             dialog.ShowDialog(npcGo);
         }

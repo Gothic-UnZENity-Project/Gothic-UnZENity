@@ -31,6 +31,7 @@ namespace GUZ.Core.Manager
             LoadGothicVm(gothicDir);
             SetLanguage();
             LoadDialogs();
+            LoadSubtitles();
             LoadVideos();
             LoadSfxVm(gothicDir);
             LoadPfxVm(gothicDir);
@@ -116,6 +117,11 @@ namespace GUZ.Core.Manager
             infoInstances.ForEach(i => GameData.Dialogs.Instances.Add(i));
         }
         
+        private static void LoadSubtitles()
+        {
+            GameData.Dialogs.CutsceneLibrary = new($"{GameContext.GameVersionAdapter.RootPath}\\_work\\DATA\\scripts\\Content\\CUTSCENE\\Ou.csl");
+        }
+
         private static void LoadVideos()
         {
             GameGlobals.Video.Init();
