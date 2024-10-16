@@ -113,7 +113,6 @@ namespace GUZ.Core
             NpcMeshCulling.Init();
             SoundCulling.Init();
             Time.Init();
-            Sky.Init();
             Player.Init();
             Routines.Init();
         }
@@ -132,6 +131,7 @@ namespace GUZ.Core
             ResourceLoader.Init(gothicRootPath);
 
             _gameMusicManager.Init();
+            Sky.Init();
             Textures.Init();
             Video.Init();
 

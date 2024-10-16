@@ -65,7 +65,6 @@ namespace GUZ.Core.Manager.Scenes
                     await WorldCreator.CreateAsync(config, GameGlobals.Loading, worldRoot);
                 }
 
-                GameGlobals.Sky.InitSky();
                 StationaryLight.InitStationaryLights();
 
                 // World fully loaded
