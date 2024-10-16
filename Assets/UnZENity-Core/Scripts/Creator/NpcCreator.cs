@@ -79,12 +79,21 @@ namespace GUZ.Core.Creator
         /// </summary>
         private static async Task InitializeNpcsFromSaveGame()
         {
-            foreach (var npc in SaveGameManager.CurrentZkWorld.Npcs)
+            foreach (var npcVob in SaveGameManager.CurrentZkWorld.Npcs)
             {
-                // FIXME - 1. Init NPC (to get an NpcInstance object)
-                // FIXME - 2. Create mesh of NPC
-                // FIXME - 3. Put NpcInstance + NpcProperties into cache
-                // FIXME - 4. await FrameSkipper() for loading async
+                var instance = Vm.AllocInstance<NpcInstance>(npcVob.Name);
+                var npcData = new NpcData()
+                {
+                    Instance = instance,
+                    Npc = npcVob
+                };
+                instance.UserData = npcData;
+
+                MultiTypeCache.NpcCache.Add(npcData);
+
+                InitializeNpc(instance, true);
+
+                await FrameSkipper.TrySkipToNextFrame();
             }
         }
 
@@ -162,7 +171,7 @@ namespace GUZ.Core.Creator
                     continue;
                 }
 
-                var newNpc = InitializeNpc(npcData.instance);
+                var newNpc = InitializeNpc(npcData.instance, false);
                 if (newNpc == null)
                 {
                     continue;
@@ -196,7 +205,7 @@ namespace GUZ.Core.Creator
         /// </summary>
         /// <param name="fromSaveGame">We will ignore certain aspects of spawning if NPC is created from a saved VOB.</param>
         [CanBeNull]
-        public static GameObject InitializeNpc(NpcInstance npcInstance, bool fromSaveGame = false)
+        public static GameObject InitializeNpc(NpcInstance npcInstance, bool fromSaveGame)
         {
             var npcData = npcInstance.GetUserData();
             var newNpc = ResourceLoader.TryGetPrefabObject(PrefabType.Npc);
@@ -486,6 +495,13 @@ namespace GUZ.Core.Creator
 
         public static void ExtCreateInvItems(NpcInstance npc, uint itemId, int amount)
         {
+            // We also initialize NPCs inside Daedalus when we load a save game. It's needed as some data isn't stored on save games.
+            // But e.g. inventory items will be skipped as they are stored inside save game VOBs.
+            if (!SaveGameManager.IsWorldLoadedForTheFirstTime)
+            {
+                return;
+            }
+
             var props = GetProperties(npc);
             if (props == null)
             {

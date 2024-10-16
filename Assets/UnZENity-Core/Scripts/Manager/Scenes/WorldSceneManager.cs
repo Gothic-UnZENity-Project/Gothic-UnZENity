@@ -35,7 +35,7 @@ namespace GUZ.Core.Manager.Scenes
 
             var worldRoot = new GameObject("World");
             var vobRoot = new GameObject("VOBs");
-            // We need to disable all vob meshed during loading. Otherwise loading time will increase from 10 seconds to 10 minutes. ;-)
+            // We need to disable all vob meshed during loading. Otherwise, loading time will increase from 10 seconds to 10 minutes. ;-)
             worldRoot.SetActive(false);
             vobRoot.SetActive(false);
 
@@ -43,8 +43,8 @@ namespace GUZ.Core.Manager.Scenes
             {
                 // 1.
                 // Build the world and vob meshes, populating the texture arrays.
-                // We need to start creating Vobs as we need to calculate world slicing based on amount of lights at a certain space afterwards.
                 if (config.EnableVOBs)
+                // We need to start creating Vobs as we need to calculate world slicing based on amount of lights at a certain space afterward.
                 {
                     await VobCreator.CreateAsync(config, GameGlobals.Loading, SaveGameManager.CurrentWorldData.Vobs, vobRoot);
                 }
