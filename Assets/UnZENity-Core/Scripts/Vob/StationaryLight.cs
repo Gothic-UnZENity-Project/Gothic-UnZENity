@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using GUZ.Core.Extensions;
+using GUZ.Core.Manager;
+using GUZ.Core.Util;
 using UnityEngine;
 using UnityEngine.Profiling;
 
@@ -146,11 +149,8 @@ namespace GUZ.Core
 
         private void Awake()
         {
-            if (!Lights.Contains(this))
-            {
-                Lights.Add(this);
-                _threadSafeLightData.Add((transform.position, Range));
-            }
+            Lights.Add(this);
+            _threadSafeLightData.Add((transform.position, Range));
         }
 
         private void OnDestroy()
@@ -215,7 +215,11 @@ namespace GUZ.Core
             Shader.SetGlobalVectorArray(GlobalStationaryLightPositionsAndAttenuationShaderId,
                 lightPositionsAndAttenuation);
             Shader.SetGlobalVectorArray(GlobalStationaryLightColorsShaderId, lightColors);
-            _threadSafeLightData.Clear(); // Clear the thread safe data as it is no longer needed.
+        }
+
+        public static void ClearThreadSafeData()
+        {
+            _threadSafeLightData.Clear();
         }
 
         public static int CountLightsInBounds(Bounds bounds)
@@ -247,18 +251,32 @@ namespace GUZ.Core
             }
         }
 
-        public static void InitializeAllLights()
+        public static async Task InitializeThreadSafeLightData()
         {
             Lights.Clear();
             _threadSafeLightData.Clear();
 
             // Find all StationaryLight components, including those on inactive GameObjects
-            StationaryLight[] allLights = Resources.FindObjectsOfTypeAll<StationaryLight>();
+            var allLights = Resources.FindObjectsOfTypeAll<StationaryLight>(); // ~350 for G1
 
-            foreach (StationaryLight light in allLights)
+            var lightsPerFrame = 30;
+            var processedLights = 0;
+
+            for (var i = 0; i < allLights.Length; i++)
             {
+                StationaryLight light = allLights[i];
                 Lights.Add(light);
                 _threadSafeLightData.Add((light.transform.position, light.Range));
+
+                GameGlobals.Loading?.AddProgress(LoadingManager.LoadingProgressType.WorldMesh, 1f / allLights.Length);
+
+                processedLights++;
+
+                if (processedLights >= lightsPerFrame || i == allLights.Length - 1)
+                {
+                    processedLights = 0;
+                    await FrameSkipper.TrySkipToNextFrame();
+                }
             }
         }
     }
