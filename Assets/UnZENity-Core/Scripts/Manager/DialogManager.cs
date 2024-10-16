@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using GUZ.Core.Caches;
 using GUZ.Core.Data;
+using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Npc;
 using GUZ.Core.Npc.Actions;
@@ -28,7 +28,7 @@ namespace GUZ.Core.Manager
                 // Don't worry. I assume this even makes no sense at all, as also the "END" dialog would always trigger a return true.
                 Debug.LogError("Npc_CheckInfo isn't implemented for important=0.");
             }
-            return TryGetImportant(MultiTypeCache.NpcCache[npc.Index].properties.Dialogs, out _);
+            return TryGetImportant(npc.GetUserData().Properties.Dialogs, out _);
         }
 
         /// <summary>
@@ -39,10 +39,13 @@ namespace GUZ.Core.Manager
         {
             GameData.Dialogs.IsInDialog = true;
 
+            // WIP: locking movement 
+            GameContext.InteractionAdapter.LockPlayerInPlace();
+
             // We are already inside a sub-dialog
             if (GameData.Dialogs.CurrentDialog.Options.Any())
             {
-                GameContext.DialogAdapter.FillDialog(properties.NpcInstance.Index, GameData.Dialogs.CurrentDialog.Options);
+                GameContext.DialogAdapter.FillDialog(properties.NpcInstance, GameData.Dialogs.CurrentDialog.Options);
                 GameContext.DialogAdapter.ShowDialog(npcGo);
             }
             // There is at least one important entry, the NPC wants to talk to the hero about.
@@ -51,7 +54,7 @@ namespace GUZ.Core.Manager
                 GameData.Dialogs.CurrentDialog.Instance = infoInstance;
                 properties.Go.GetComponent<AiHandler>().ClearState(true);
 
-                CallMainInformation(properties.NpcInstance.Index, infoInstance);
+                CallMainInformation(properties.NpcInstance, infoInstance);
             }
             else
             {
@@ -81,7 +84,7 @@ namespace GUZ.Core.Manager
                 }
 
                 selectableDialogs = selectableDialogs.OrderBy(d => d.Nr).ToList();
-                GameContext.DialogAdapter.FillDialog(properties.NpcInstance.Index, selectableDialogs);
+                GameContext.DialogAdapter.FillDialog(properties.NpcInstance, selectableDialogs);
                 GameContext.DialogAdapter.ShowDialog(npcGo);
             }
         }
@@ -199,14 +202,14 @@ namespace GUZ.Core.Manager
             props.AnimationQueue.Enqueue(new StopProcessInfos(new AnimationAction(), props.Go));
         }
 
-        public static void MainSelectionClicked(int npcInstanceIndex, InfoInstance infoInstance)
+        public static void MainSelectionClicked(NpcInstance instance, InfoInstance infoInstance)
         {
-            CallMainInformation(npcInstanceIndex, infoInstance);
+            CallMainInformation(instance, infoInstance);
         }
 
-        public static void SubSelectionClicked(int npcInstanceIndex, int dialogId)
+        public static void SubSelectionClicked(NpcInstance instance, int dialogId)
         {
-            CallInformation(npcInstanceIndex, dialogId);
+            CallInformation(instance, dialogId);
         }
 
         /// <summary>
@@ -227,18 +230,22 @@ namespace GUZ.Core.Manager
             GameData.Dialogs.CurrentDialog.Options.Clear();
             GameData.Dialogs.IsInDialog = false;
 
+            // WIP: unlocking movement
+            GameContext.InteractionAdapter.UnlockPlayer();
+
             GameContext.DialogAdapter.HideDialog();
+            GameContext.SubtitlesAdapter.HideSubtitles();
         }
 
         /// <summary>
         /// A C_Info is clicked (main dialog entry)
         /// </summary>
-        private static void CallMainInformation(int npcInstanceIndex, InfoInstance infoInstance)
+        private static void CallMainInformation(NpcInstance npcInstance, InfoInstance infoInstance)
         {
-            var npcData = MultiTypeCache.NpcCache[npcInstanceIndex];
+            var properties = npcInstance.GetUserData().Properties;
 
             // Set a new CurrentInstance for potential sub-dialog choices to fetch later.
-            GameData.Dialogs.CurrentDialog.Instance = npcData.properties.Dialogs
+            GameData.Dialogs.CurrentDialog.Instance = properties.Dialogs
                 .First(d => d.Information == infoInstance.Information);
 
             // Add entry to list of "told" information if it is main element only. (Sub-dialogs will never be reached again as main one (entry point) is already told)
@@ -246,23 +253,23 @@ namespace GUZ.Core.Manager
 
 
             // Delegate remaining tasks to general implementation of CallInformation
-            CallInformation(npcInstanceIndex, infoInstance.Information);
+            CallInformation(npcInstance, infoInstance.Information);
         }
 
-        private static void CallInformation(int npcInstanceIndex, int information)
+        private static void CallInformation(NpcInstance npcInstance, int information)
         {
-            var npcData = MultiTypeCache.NpcCache[npcInstanceIndex];
+            var properties = npcInstance.GetUserData().Properties;
 
             GameContext.DialogAdapter.HideDialog();
 
             // We always need to set "self" before executing any Daedalus function.
-            GameData.GothicVm.GlobalSelf = npcData.instance;
+            GameData.GothicVm.GlobalSelf = npcInstance;
             GameData.GothicVm.GlobalOther = GameData.GothicVm.GlobalHero;
 
             GameData.GothicVm.Call(information);
 
 
-            var animationQueue = npcData.properties.AnimationQueue;
+            var animationQueue = properties.AnimationQueue;
 
             // If Daedalus tells us, that the dialog is stopped after this chat (AI_StopProcessInfos), then we're done.
             if (animationQueue.Any(i => i.GetType() == typeof(StopProcessInfos)))
@@ -273,8 +280,7 @@ namespace GUZ.Core.Manager
             else
             {
                 animationQueue.Enqueue(new StartProcessInfos(
-                    new AnimationAction(int0: information),
-                    npcData.properties.Go));
+                    new AnimationAction(int0: information), properties.Go));
             }
         }
 
@@ -295,7 +301,7 @@ namespace GUZ.Core.Manager
 
         private static NpcProperties GetProperties(NpcInstance npc)
         {
-            return MultiTypeCache.NpcCache[npc.Index].properties;
+            return npc.GetUserData().Properties;
         }
     }
 }

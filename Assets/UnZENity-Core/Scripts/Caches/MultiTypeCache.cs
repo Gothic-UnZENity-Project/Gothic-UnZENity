@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using GUZ.Core.Data;
 using GUZ.Core.Properties;
 using TMPro;
 using UnityEngine;
@@ -13,13 +14,13 @@ namespace GUZ.Core.Caches
     public static class MultiTypeCache
     {
         /// <summary>
-        /// [symbolIndex] = {zkInstance => NpcInstance from ZenKit, properties => Properties component (MonoBehaviour)}
         /// Hints:
         ///     * Includes NPCs and Hero (Easier for lookups like "what is the nearest enemy in range".)
-        ///     * Doesn't include all the Monsters Properties as they have same symbolIndex for multiple GOs. But it's not needed to look them up.
-        ///     * During loading time, we have no option to understand what is an NPC and what a Monster. We therefore have the first entry of each monster Id in here.
+        ///     * Also includes all monsters
+        ///     * We need to ensure that any time an NpcInstance.UserData contains an NpcData object, that it is stored here.
+        ///       Otherwise, UserData's WeakReference pointer gets cleared.
         /// </summary>
-        public static readonly Dictionary<int, (NpcInstance instance, NpcProperties properties)> NpcCache = new();
+        public static readonly List<NpcData> NpcCache = new();
 
         /// <summary>
         /// Already created AnimationData (Clips + RootMotions) can be reused.

@@ -49,6 +49,13 @@ namespace GUZ.VR.Components.UI
             hoverElements.AddRange(_dialogItems.Select(i => i.GetComponentInChildren<TMP_Text>().gameObject).ToList());
             _uiEventsHandler.SetElementsToHover(hoverElements, true);
             
+            StartCoroutine(ShowDialogWithDelay());
+        }
+
+        private System.Collections.IEnumerator ShowDialogWithDelay()
+        {
+            // Skipping first frame of when dialog activates to let it fully rotate towards Player Camera
+            yield return new WaitForEndOfFrame();
             _dialogRoot.SetActive(true);
         }
 
@@ -62,7 +69,7 @@ namespace GUZ.VR.Components.UI
             _dialogRoot.SetParent(SceneManager.GetSceneByName(Constants.ScenePlayer).GetRootGameObjects()[0], worldPositionStays: true);
         }
         
-        public void FillDialog(int npcInstanceIndex, List<DialogOption> dialogOptions)
+        public void FillDialog(NpcInstance instance, List<DialogOption> dialogOptions)
         {
             CreateAdditionalDialogOptions(dialogOptions.Count);
             ClearDialogOptions();
@@ -75,14 +82,14 @@ namespace GUZ.VR.Components.UI
                 var dialogOption = dialogOptions[i];
 
                 dialogItem.GetComponent<Button>().onClick.AddListener(
-                    () => OnDialogClicked(npcInstanceIndex, dialogOption.Function));
+                    () => OnDialogClicked(instance, dialogOption.Function));
                 dialogItem.FindChildRecursively("Label").GetComponent<TMP_Text>().text = dialogOption.Text;
             }
 
             _dialogItemsInUse = dialogOptions.Count;
         }
 
-        public void FillDialog(int npcInstanceIndex, List<InfoInstance> dialogOptions)
+        public void FillDialog(NpcInstance instance, List<InfoInstance> dialogOptions)
         {
             CreateAdditionalDialogOptions(dialogOptions.Count);
             ClearDialogOptions();
@@ -93,7 +100,7 @@ namespace GUZ.VR.Components.UI
                 var dialogOption = dialogOptions[i];
 
                 dialogItem.GetComponent<Button>().onClick.AddListener(
-                    () => OnDialogClicked(npcInstanceIndex, dialogOption));
+                    () => OnDialogClicked(instance, dialogOption));
                 dialogItem.FindChildRecursively("Label").GetComponent<TMP_Text>().text = dialogOption.Description;
             }
             
@@ -136,15 +143,14 @@ namespace GUZ.VR.Components.UI
             }
         }
 
-        private void OnDialogClicked(int npcInstanceIndex, InfoInstance infoInstance)
+        private void OnDialogClicked(NpcInstance instance, InfoInstance infoInstance)
         {
-            DialogManager.MainSelectionClicked(npcInstanceIndex, infoInstance);
+            DialogManager.MainSelectionClicked(instance, infoInstance);
         }
 
-        private void OnDialogClicked(int npcInstanceIndex, int informationId)
+        private void OnDialogClicked(NpcInstance instance, int informationId)
         {
-            DialogManager.SubSelectionClicked(npcInstanceIndex, informationId);
-
+            DialogManager.SubSelectionClicked(instance, informationId);
         }
     }
 }

@@ -3,16 +3,20 @@ using System.Linq;
 using System.Threading.Tasks;
 using GUZ.Core.Caches;
 using GUZ.Core.Creator.Meshes.V2;
+using GUZ.Core.Data;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
 using GUZ.Core.Npc.Routines;
 using GUZ.Core.Properties;
+using GUZ.Core.Util;
 using GUZ.Core.Vm;
 using GUZ.Core.Vob.WayNet;
 using JetBrains.Annotations;
 using MyBox;
 using UnityEngine;
+using ZenKit;
+using ZenKit.Daedalus;
 using Object = UnityEngine.Object;
 using WayNet_WayPoint = GUZ.Core.Vob.WayNet.WayPoint;
 
@@ -26,7 +30,7 @@ namespace GUZ.Core.Creator
         // Hint - If this scale ratio isn't looking well, feel free to change it.
         private const float _fatnessScale = 0.1f;
 
-        private static readonly List<(int npcInstance, string spawnPoint)> _tmpWldInsertNpcData = new();
+        private static readonly List<(NpcInstance instance, string spawnPoint)> _tmpWldInsertNpcData = new();
 
         static NpcCreator()
         {
@@ -99,7 +103,7 @@ namespace GUZ.Core.Creator
 
         private static NpcProperties GetProperties(NpcInstance npc)
         {
-            return MultiTypeCache.NpcCache[npc.Index].properties;
+            return npc.GetUserData().Properties;
         }
 
         private static GameObject GetNpcGo(NpcInstance npcInstance)
@@ -121,18 +125,23 @@ namespace GUZ.Core.Creator
         /// </summary>
         public static void ExtWldInsertNpc(int npcInstanceIndex, string spawnPoint)
         {
-            // We allocate memory for the NpcInstance only once per symbolIndex (via AllocInstance<> in ZenKit).
-            // Monsters can be spawned multiple times, but they will be ignored the second time.
-            if (!MultiTypeCache.NpcCache.ContainsKey(npcInstanceIndex))
+            var npcSymbol = Vm.GetSymbolByIndex(npcInstanceIndex)!;
+            var npcInstance = Vm.AllocInstance<NpcInstance>(npcSymbol);
+
+            var userDataObject = new NpcData
             {
-                var npcSymbol = Vm.GetSymbolByIndex(npcInstanceIndex);
-                var npcInstance = Vm.AllocInstance<NpcInstance>(npcSymbol);
+                Instance = npcInstance
+            };
 
-                MultiTypeCache.NpcCache.Add(npcInstanceIndex, (instance: npcInstance, properties: null));
-            }
+            // We reference our object as user data to retrieve it whenever a Daedalus External provides an NpcInstance as input.
+            // With this, we can always switch between our UnZENity data and ZenKit data.
+            npcInstance.UserData = userDataObject;
 
-            // Nevertheless, for mesh creation later, we need to store, that there is a new NPC or a duplicate Monster to be spawned.
-            _tmpWldInsertNpcData.Add((npcInstanceIndex, spawnPoint));
+            // IMPORTANT!: NpcInstance.UserData stores a weak pointer. i.e. if we do not store the local variable it would get removed.
+            MultiTypeCache.NpcCache.Add(userDataObject);
+
+            // For mesh creation later, we need to store, that there is a new NPC or a duplicate Monster to be spawned.
+            _tmpWldInsertNpcData.Add((npcInstance, spawnPoint));
         }
 
         private static async Task InitializeNpcs(LoadingManager loading)
@@ -153,7 +162,7 @@ namespace GUZ.Core.Creator
                     continue;
                 }
 
-                var newNpc = InitializeNpc(npcData.npcInstance);
+                var newNpc = InitializeNpc(npcData.instance);
                 if (newNpc == null)
                 {
                     continue;
@@ -187,73 +196,51 @@ namespace GUZ.Core.Creator
         /// </summary>
         /// <param name="fromSaveGame">We will ignore certain aspects of spawning if NPC is created from a saved VOB.</param>
         [CanBeNull]
-        public static GameObject InitializeNpc(int npcInstanceIndex, bool fromSaveGame = false)
+        public static GameObject InitializeNpc(NpcInstance npcInstance, bool fromSaveGame = false)
         {
+            var npcData = npcInstance.GetUserData();
             var newNpc = ResourceLoader.TryGetPrefabObject(PrefabType.Npc);
+            var properties = newNpc.GetComponent<NpcProperties>();
 
-            // 1. NPCs/Monsters which are loaded from a save game (not from Wld_InsertNpc)
-            // There is no pre-allocated NpcInstance inside cache
-            // Therefore call AllocInstance<> now for the first time
-            if (!MultiTypeCache.NpcCache.TryGetValue(npcInstanceIndex, out var cachedValue))
-            {
-                var npcSymbol = Vm.GetSymbolByIndex(npcInstanceIndex);
-                var npcInstance = Vm.AllocInstance<NpcInstance>(npcSymbol);
+            npcData.Properties = properties;
+            npcData.Properties.NpcInstance = npcInstance;
 
-                cachedValue = (instance: npcInstance, properties: null);
-                MultiTypeCache.NpcCache.Add(npcInstanceIndex, cachedValue);
-            }
+            // As we have our back reference between NpcInstance and NpcData, we can now initialize the object on ZenKit side.
+            // Lookups like Npc_SetTalentValue() will work now as NpcInstance.UserData() points to our object which stores the information.
+            Vm.InitInstance(npcInstance);
 
-            // 2. NPCs/Monsters which are spawned the first time
-            if (cachedValue.properties == null)
-            {
-                // IMPORTANT: When calling InitInstance(), we will trigger Daedalus to call us via Externals and fill up data.
-                // At that point we need to have our properties component set inside our lookup to fill the data properly.
-                cachedValue.properties = newNpc.GetComponent<NpcProperties>();
-                cachedValue.properties.NpcInstance = cachedValue.instance;
-                MultiTypeCache.NpcCache[npcInstanceIndex] =
-                    cachedValue; // Tuples are structs. We therefore need to update the whole struct instead of a single property only.
-                Vm.InitInstance(cachedValue.instance);
-
-                cachedValue.properties.Dialogs = GameData.Dialogs.Instances
-                    .Where(dialog => dialog.Npc == cachedValue.instance.Index)
-                    .OrderByDescending(dialog => dialog.Important)
-                    .ToList();
-            }
-            // 3. Monsters which are spawned more than once
-            else
-            {
-                var origNpc = MultiTypeCache.NpcCache[npcInstanceIndex];
-                var origProps = origNpc.properties.GetComponent<NpcProperties>();
-                // Clone Properties as they're required from the first instance and fetched via e.g. Mdl_SetVisualBody().
-                // As we won't call it multiple times, we will only copy the data but not reinvoke it on ZenKit.
-                cachedValue.properties.Copy(origProps);
-            }
+            npcData.Properties.Dialogs = GameData.Dialogs.Instances
+                .Where(dialog => dialog.Npc == npcInstance.Index)
+                .OrderByDescending(dialog => dialog.Important)
+                .ToList();
 
             // Hint: If we filter out NPCs to spawn, we will never get any Monster as they have no Ids set. Except default: 0.
             if (GameGlobals.Config.SpawnNpcInstances.Value.Any() &&
-                !GameGlobals.Config.SpawnNpcInstances.Value.Contains(cachedValue.instance.Id))
+                !GameGlobals.Config.SpawnNpcInstances.Value.Contains(npcInstance.Id))
             {
-                MultiTypeCache.NpcCache.Remove(cachedValue.instance.Index);
-                Object.Destroy(newNpc);
+                Object.Destroy(newNpc);                                                                         // 1
+                MultiTypeCache.NpcCache.Remove(MultiTypeCache.NpcCache.First(i => i.Instance == npcInstance));  // 2
+                // Hint: We don't destroy NpcInstance object. As this is a debug IF statement only, it's fine.  // 3
+
                 return null;
             }
 
-            newNpc.name = $"{cachedValue.instance.GetName(NpcNameSlot.Slot0)} ({cachedValue.instance.Id})";
+            newNpc.name = $"{npcInstance.GetName(NpcNameSlot.Slot0)} ({npcInstance.Id})";
 
-            var mdhName = string.IsNullOrEmpty(cachedValue.properties.OverlayMdhName)
-                ? cachedValue.properties.BaseMdhName
-                : cachedValue.properties.OverlayMdhName;
-            MeshFactory.CreateNpc(newNpc.name, cachedValue.properties.MdmName, mdhName, cachedValue.properties.BodyData,
+            var mdhName = string.IsNullOrEmpty(properties.OverlayMdhName)
+                ? properties.BaseMdhName
+                : properties.OverlayMdhName;
+            MeshFactory.CreateNpc(newNpc.name, properties.MdmName, mdhName, properties.BodyData,
                 newNpc, GetRootGo());
 
-            foreach (var equippedItem in cachedValue.properties.EquippedItems)
+            foreach (var equippedItem in properties.EquippedItems)
             {
                 MeshFactory.CreateNpcWeapon(newNpc, equippedItem, (VmGothicEnums.ItemFlags)equippedItem.MainFlag,
                     (VmGothicEnums.ItemFlags)equippedItem.Flags);
             }
 
-            var npcRoutine = cachedValue.instance.DailyRoutine;
-            NpcHelper.ExchangeRoutine(newNpc, cachedValue.instance, npcRoutine);
+            var npcRoutine = npcInstance.DailyRoutine;
+            NpcHelper.ExchangeRoutine(npcInstance, npcRoutine);
 
 
             newNpc.TryGetComponent<Routine>(out var routine);
@@ -263,8 +250,9 @@ namespace GUZ.Core.Creator
                 // As per the original game we don't spawn the NPC if the WayNet point doesn't exist.
                 if (WayNetHelper.GetWayNetPoint(routine.CurrentRoutine.Waypoint) == null)
                 {
-                    MultiTypeCache.NpcCache.Remove(cachedValue.instance.Index);
-                    Object.Destroy(newNpc);
+                    Object.Destroy(newNpc);                                                                         // 1
+                    MultiTypeCache.NpcCache.Remove(MultiTypeCache.NpcCache.First(i => i.Instance == npcInstance));  // 2
+                    // Hint: We don't destroy NpcInstance object. But in G1 there's only one NPC with this issue.   // 3
                     return null;
                 }
             }
@@ -460,14 +448,15 @@ namespace GUZ.Core.Creator
             npcGo.transform.localScale = new Vector3(oldScale.x + bonusFat, oldScale.y, oldScale.z + bonusFat);
         }
 
+        /// <summary>
+        /// Hint: This lookup is exclusively used for Npcs as elements for Monsters will be stored multiple times with the same index.
+        /// (An NpcInstance.index always correlates to a specific Daedalus C_Class instance)
+        /// </summary>
         public static NpcInstance ExtHlpGetNpc(int instanceId)
         {
-            if (!MultiTypeCache.NpcCache.TryGetValue(instanceId, out var npcData))
-            {
-                return null;
-            }
-
-            return npcData.instance;
+            return MultiTypeCache.NpcCache
+                .FirstOrDefault(i => i.Instance.Index == instanceId)?
+                .Instance;
         }
 
         public static void ExtNpcPerceptionEnable(NpcInstance npc, VmGothicEnums.PerceptionType perception,

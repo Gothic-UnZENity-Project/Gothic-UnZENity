@@ -13,6 +13,7 @@ namespace GUZ.Core
 
         public static IInteractionAdapter InteractionAdapter;
         public static IDialogAdapter DialogAdapter;
+        public static ISubtitlesAdapter SubtitlesAdapter;
         public static IGameVersionAdapter GameVersionAdapter;
 
         public enum Controls
