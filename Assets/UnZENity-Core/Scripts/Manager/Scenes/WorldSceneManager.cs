@@ -62,7 +62,10 @@ namespace GUZ.Core.Manager.Scenes
                 // 4.
                 if (config.EnableWorldMesh)
                 {
+                    // initialize Lights before world creation
+                    await StationaryLight.InitializeThreadSafeLightData();
                     await WorldCreator.CreateAsync(config, GameGlobals.Loading, worldRoot);
+                    StationaryLight.ClearThreadSafeData();
                 }
 
                 GameGlobals.Sky.InitSky();
