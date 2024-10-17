@@ -37,8 +37,8 @@ namespace GUZ.Core.Creator
                                   );
 
             SaveGameManager.CurrentWorldData.SubMeshes = await BuildBspTree(
-                SaveGameManager.CurrentZkWorld.Mesh,
-                SaveGameManager.CurrentZkWorld.BspTree.Cache(),
+                SaveGameManager.CurrentWorldData.Mesh,
+                SaveGameManager.CurrentWorldData.BspTree,
                 lightingEnabled);
 
             await MeshFactory.CreateWorld(SaveGameManager.CurrentWorldData, loading, _worldGo);

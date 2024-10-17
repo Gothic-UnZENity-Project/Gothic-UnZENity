@@ -79,7 +79,7 @@ namespace GUZ.Core.Creator
         /// </summary>
         private static async Task InitializeNpcsFromSaveGame()
         {
-            foreach (var npcVob in SaveGameManager.CurrentZkWorld.Npcs)
+            foreach (var npcVob in SaveGameManager.CurrentWorldData.Npcs)
             {
                 var instance = Vm.AllocInstance<NpcInstance>(npcVob.Name);
                 var npcData = new NpcData()
