@@ -48,8 +48,8 @@ namespace GUZ.Core.Manager
         // When we load data like World.Mesh, we can't cache it for memory reasons.
         // But we need to store the reference to the parent object (World) in here as long as we want to work with the sub-data.
         // FIXME - During world change, when we get rid of world data, some elements (like Mesh) will become invalid. Need to fix it!
-        private static ZenKit.World newWorld;
-        private static ZenKit.World saveGameWorld;
+        private static ZenKit.World _newWorld;
+        private static ZenKit.World _saveGameWorld;
 
 
         static SaveGameManager()
@@ -60,8 +60,8 @@ namespace GUZ.Core.Manager
         private static void OnWorldSceneLoaded()
         {
             // Save memory when world is loaded fully
-            newWorld = null;
-            saveGameWorld = null;
+            _newWorld = null;
+            _saveGameWorld = null;
         }
 
         public static void LoadNewGame()
@@ -110,25 +110,25 @@ namespace GUZ.Core.Manager
             }
 
             IsWorldLoadedForTheFirstTime = true;
-            newWorld = ResourceLoader.TryGetWorld(worldName)!; // Always needed for some data not present in SaveGame.
+            _newWorld = ResourceLoader.TryGetWorld(worldName)!; // Always needed for some data not present in SaveGame.
             var worldFoundInSaveGame = false;
 
             // 2. Try to load world from save game.
             if (IsLoadedGame)
             {
-                saveGameWorld = Save.LoadWorld(worldName);
-                worldFoundInSaveGame = saveGameWorld != null;
+                _saveGameWorld = Save.LoadWorld(worldName);
+                worldFoundInSaveGame = _saveGameWorld != null;
             }
 
             ZenKit.World worldToUse;
             if (worldFoundInSaveGame)
             {
-                worldToUse = saveGameWorld;
+                worldToUse = _saveGameWorld;
             }
             else
             {
                 // If there is no save game used or world not saved, we visit it for the first time.
-                worldToUse = newWorld;
+                worldToUse = _newWorld;
                 IsWorldLoadedForTheFirstTime = false;
             }
 
@@ -137,8 +137,8 @@ namespace GUZ.Core.Manager
             _worlds[worldName] = new WorldData
             {
                 // Only existing in normal world
-                Mesh = (Mesh)newWorld.Mesh, // Do not cache or memory consumption will be way too high
-                BspTree = (CachedBspTree)newWorld.BspTree.Cache(),
+                Mesh = (Mesh)_newWorld.Mesh, // Do not cache or memory consumption will be way too high
+                BspTree = (CachedBspTree)_newWorld.BspTree.Cache(),
 
                 // Only existing in SaveGame world
                 Npcs = worldToUse.Npcs, // (if it's a new world, it's simply null)

@@ -30,7 +30,7 @@ namespace GUZ.Core.Creator
         // Hint - If this scale ratio isn't looking well, feel free to change it.
         private const float _fatnessScale = 0.1f;
 
-        private static readonly List<(NpcInstance instance, string spawnPoint)> _tmpWldInsertNpcData = new();
+        private static readonly List<(NpcData npcData, string spawnPoint)> _tmpWldInsertNpcData = new();
 
         static NpcCreator()
         {
@@ -48,7 +48,7 @@ namespace GUZ.Core.Creator
                 return;
             }
 
-            if (SaveGameManager.IsWorldLoadedForTheFirstTime)
+            if (!SaveGameManager.IsLoadedGame)
             {
                 await InitializeNpcsFirstTime(loading);
             }
@@ -85,16 +85,19 @@ namespace GUZ.Core.Creator
                 var npcData = new NpcData()
                 {
                     Instance = instance,
-                    Npc = npcVob
+                    Vob = npcVob
                 };
                 instance.UserData = npcData;
 
                 MultiTypeCache.NpcCache.Add(npcData);
 
-                var newNpc = InitializeNpc(instance, false);
-                SetSpawnPoint(newNpc, npcVob.ScriptWaypoint);
+                var newNpc = InitializeNpc(instance, true);
+                var isSpawned = SetSpawnPoint(npcData, npcVob.ScriptWaypoint);
 
-                GameGlobals.NpcMeshCulling.AddCullingEntry(newNpc);
+                if (isSpawned)
+                {
+                    GameGlobals.NpcMeshCulling.AddCullingEntry(newNpc);
+                }
 
                 await FrameSkipper.TrySkipToNextFrame();
             }
@@ -153,7 +156,7 @@ namespace GUZ.Core.Creator
             MultiTypeCache.NpcCache.Add(userDataObject);
 
             // For mesh creation later, we need to store, that there is a new NPC or a duplicate Monster to be spawned.
-            _tmpWldInsertNpcData.Add((npcInstance, spawnPoint));
+            _tmpWldInsertNpcData.Add((userDataObject, spawnPoint));
         }
 
         private static async Task InitializeNpcs(LoadingManager loading)
@@ -161,27 +164,31 @@ namespace GUZ.Core.Creator
             var createdCount = 0;
             var totalNpcs = _tmpWldInsertNpcData.Count;
 
-            foreach (var npcData in _tmpWldInsertNpcData)
+            foreach (var npc in _tmpWldInsertNpcData)
             {
                 // Update progress bar and check if we need to wait for next frame.
                 loading.AddProgress(LoadingManager.LoadingProgressType.VOb, 1f / totalNpcs);
 
                 await FrameSkipper.TrySkipToNextFrame();
 
-                if (WayNetHelper.GetWayNetPoint(npcData.spawnPoint) is null)
+                if (WayNetHelper.GetWayNetPoint(npc.spawnPoint) is null)
                 {
-                    Debug.LogWarning($"Cannot spawn NPC as waypoint ${npcData.spawnPoint} does not exist.");
+                    Debug.LogWarning($"Cannot spawn NPC as waypoint ${npc.spawnPoint} does not exist.");
                     continue;
                 }
 
-                var newNpc = InitializeNpc(npcData.instance, false);
+                var newNpc = InitializeNpc(npc.npcData.Instance, false);
                 if (newNpc == null)
                 {
                     continue;
                 }
 
-                SetSpawnPoint(newNpc, npcData.spawnPoint);
-                GameGlobals.NpcMeshCulling.AddCullingEntry(newNpc);
+                var isSpawned = SetSpawnPoint(npc.npcData, npc.spawnPoint);
+
+                if (isSpawned)
+                {
+                    GameGlobals.NpcMeshCulling.AddCullingEntry(newNpc);
+                }
             }
 
             // Full loading of NPCs is done.
@@ -206,9 +213,9 @@ namespace GUZ.Core.Creator
         ///
         /// Once one of these options is executed, we will go on with creating the meshes itself.
         /// </summary>
-        /// <param name="fromSaveGame">We will ignore certain aspects of spawning if NPC is created from a saved VOB.</param>
+        /// <param name="isFromSaveGame">We will alter certain aspects of initializing if NPC is created from a saved VOB.</param>
         [CanBeNull]
-        public static GameObject InitializeNpc(NpcInstance npcInstance, bool fromSaveGame)
+        public static GameObject InitializeNpc(NpcInstance npcInstance, bool isFromSaveGame)
         {
             var npcData = npcInstance.GetUserData();
             var newNpc = ResourceLoader.TryGetPrefabObject(PrefabType.Npc);
@@ -220,6 +227,8 @@ namespace GUZ.Core.Creator
             // As we have our back reference between NpcInstance and NpcData, we can now initialize the object on ZenKit side.
             // Lookups like Npc_SetTalentValue() will work now as NpcInstance.UserData() points to our object which stores the information.
             Vm.InitInstance(npcInstance);
+
+            OverwriteInitDataWithSaveGameData(isFromSaveGame, npcData);
 
             npcData.Properties.Dialogs = GameData.Dialogs.Instances
                 .Where(dialog => dialog.Npc == npcInstance.Index)
@@ -251,23 +260,10 @@ namespace GUZ.Core.Creator
                     (VmGothicEnums.ItemFlags)equippedItem.Flags);
             }
 
-            // FIXME - If we load a save game, the NPCs (like Diego) might have different Routines from VOB state already. We need to handle it here.
             var npcRoutine = npcInstance.DailyRoutine;
             NpcHelper.ExchangeRoutine(npcInstance, npcRoutine);
 
             newNpc.TryGetComponent<Routine>(out var routine);
-
-            if (routine.CurrentRoutine != null && !fromSaveGame)
-            {
-                // As per the original game we don't spawn the NPC if the WayNet point doesn't exist.
-                if (WayNetHelper.GetWayNetPoint(routine.CurrentRoutine.Waypoint) == null)
-                {
-                    Object.Destroy(newNpc);                                                                         // 1
-                    MultiTypeCache.NpcCache.Remove(MultiTypeCache.NpcCache.First(i => i.Instance == npcInstance));  // 2
-                    // Hint: We don't destroy NpcInstance object. But in G1 there's only one NPC with this issue.   // 3
-                    return null;
-                }
-            }
 
             // As they're loaded asynchronously, we need to disable every NPC/Monster during loading.
             // We will enable them via Culling once everything is loaded.
@@ -278,25 +274,49 @@ namespace GUZ.Core.Creator
         }
 
         /// <summary>
+        /// If we load a game from SaveGame (and the world is not visited for the first time), we need to exchange some
+        /// values between NpcInstance and Vobs.Npc
+        /// e.g. DailyRoutine is updated in VOB
+        /// </summary>
+        private static void OverwriteInitDataWithSaveGameData(bool isFromSaveGame, NpcData data)
+        {
+            if (!isFromSaveGame)
+            {
+                return;
+            }
+
+            var instance = data.Instance;
+            var vob = data.Vob;
+
+            // FIXME - There are more properties we need to overwrite.
+            if (vob.HasRoutine)
+            {
+                instance.DailyRoutine = Vm.GetSymbolByName(vob.CurrentRoutine)!.Index;
+            }
+        }
+
+        /// <summary>
         /// The startpoint to create NPCs isn't necessarily the spawnpoint mentioned here.
         /// It can also be the currently active routine point to walk to.
         /// We therefore execute the daily routines to collect current location and use this as spawn location.
         /// </summary>
-        private static void SetSpawnPoint(GameObject npcGo, string spawnPoint)
+        private static bool SetSpawnPoint(NpcData npc, string spawnPoint)
         {
             WayNetPoint initialSpawnPoint;
 
             // Find the right spawn point based on currently active routine.
-            if (npcGo.GetComponent<Routine>().Routines.Any())
+            if (npc.Go.GetComponent<Routine>().Routines.Any())
             {
-                var routineSpawnPointName = npcGo.GetComponent<Routine>().CurrentRoutine.Waypoint;
+                var routineSpawnPointName = npc.Go.GetComponent<Routine>().CurrentRoutine.Waypoint;
                 initialSpawnPoint = WayNetHelper.GetWayNetPoint(routineSpawnPointName);
 
-                // Fallback: No WP found? Try one more time with the previous (most likely "earlier") routine waypoint.
-                if (initialSpawnPoint == null)
+                // As per the original game we don't spawn the NPC if the WayNet point doesn't exist.
+                if (WayNetHelper.GetWayNetPoint(routineSpawnPointName) == null)
                 {
-                    routineSpawnPointName = npcGo.GetComponent<Routine>().GetPreviousRoutine().Waypoint;
-                    initialSpawnPoint = WayNetHelper.GetWayNetPoint(routineSpawnPointName);
+                    Object.Destroy(npc.Go);                                                                         // 1
+                    MultiTypeCache.NpcCache.Remove(MultiTypeCache.NpcCache.First(i => i.Instance == npc.Instance)); // 2
+                    // Hint: We don't destroy NpcInstance object. But in G1 there's only one NPC with this issue.   // 3
+                    return false;
                 }
             }
             // Fallback: If no routine exists, spawn at the spot which is named inside Wld_insertNpc()
@@ -308,7 +328,7 @@ namespace GUZ.Core.Creator
             if (initialSpawnPoint == null)
             {
                 Debug.LogWarning($"spawnPoint={spawnPoint} couldn't be found.");
-                return;
+                return false;
             }
 
             var isPositionFound = false;
@@ -320,9 +340,9 @@ namespace GUZ.Core.Creator
             // Check if the spawn point is free.
             if (!Physics.CheckSphere(initialSpawnPointGroundControl, testRadius / 2))
             {
-                npcGo.transform.position = initialSpawnPoint.Position;
+                npc.Go.transform.position = initialSpawnPoint.Position;
                 // There are three options to sync the Physics information for collision check. This is the most performant one as it only alters the single V3.
-                npcGo.GetComponentInChildren<Rigidbody>().position = initialSpawnPoint.Position;
+                npc.Go.GetComponentInChildren<Rigidbody>().position = initialSpawnPoint.Position;
                 isPositionFound = true;
             }
             // Alternatively let's circle around the spawn point if multiple NPCs spawn onto the same one.
@@ -342,9 +362,9 @@ namespace GUZ.Core.Creator
                         // Check if the point is clear (no obstacles)
                         if (!Physics.CheckSphere(checkPointGroundControl, testRadius / 2))
                         {
-                            npcGo.transform.position = initialSpawnPoint.Position + offsetPoint;
+                            npc.Go.transform.position = initialSpawnPoint.Position + offsetPoint;
                             // There are three options to sync the Physics information for collision check. This is the most performant one as it only alters the single V3.
-                            npcGo.GetComponentInChildren<Rigidbody>().position =
+                            npc.Go.GetComponentInChildren<Rigidbody>().position =
                                 initialSpawnPoint.Position + offsetPoint;
                             isPositionFound = true;
                             break;
@@ -356,19 +376,21 @@ namespace GUZ.Core.Creator
             if (!isPositionFound)
             {
                 Debug.LogError(
-                    $"No suitable spawn point found for NPC >{npcGo.name}<. Circle search didn't find anything!");
-                return;
+                    $"No suitable spawn point found for NPC >{npc.Go.name}<. Circle search didn't find anything!");
+                return false;
             }
 
             // Some data to be used for later.
             if (initialSpawnPoint.IsFreePoint())
             {
-                npcGo.GetComponent<NpcProperties>().CurrentFreePoint = (FreePoint)initialSpawnPoint;
+                npc.Go.GetComponent<NpcProperties>().CurrentFreePoint = (FreePoint)initialSpawnPoint;
             }
             else
             {
-                npcGo.GetComponent<NpcProperties>().CurrentWayPoint = (WayNet_WayPoint)initialSpawnPoint;
+                npc.Go.GetComponent<NpcProperties>().CurrentWayPoint = (WayNet_WayPoint)initialSpawnPoint;
             }
+
+            return true;
         }
 
         public static void SetSpawnPoint(GameObject npcGo, Vector3 position, Quaternion rotation)
