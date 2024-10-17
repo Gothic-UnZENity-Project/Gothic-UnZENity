@@ -91,7 +91,10 @@ namespace GUZ.Core.Creator
 
                 MultiTypeCache.NpcCache.Add(npcData);
 
-                InitializeNpc(instance, true);
+                var newNpc = InitializeNpc(instance, false);
+                SetSpawnPoint(newNpc, npcVob.ScriptWaypoint);
+
+                GameGlobals.NpcMeshCulling.AddCullingEntry(newNpc);
 
                 await FrameSkipper.TrySkipToNextFrame();
             }
@@ -248,9 +251,9 @@ namespace GUZ.Core.Creator
                     (VmGothicEnums.ItemFlags)equippedItem.Flags);
             }
 
+            // FIXME - If we load a save game, the NPCs (like Diego) might have different Routines from VOB state already. We need to handle it here.
             var npcRoutine = npcInstance.DailyRoutine;
             NpcHelper.ExchangeRoutine(npcInstance, npcRoutine);
-
 
             newNpc.TryGetComponent<Routine>(out var routine);
 
