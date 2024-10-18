@@ -4,7 +4,9 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
+using GUZ.Core.Caches;
 using GUZ.Core.Creator.Meshes.V2;
+using GUZ.Core.Data;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
@@ -1073,35 +1075,26 @@ namespace GUZ.Core.Creator
             return go;
         }
 
-        private static GameObject CreateNpc(ZenKit.Vobs.Npc vob)
+        /// <summary>
+        /// Initialize NPC and set it's data from SaveGame (VOB entry).
+        /// </summary>
+        private static GameObject CreateNpc(ZenKit.Vobs.Npc npcVob)
         {
-            var npcSymbol = GameData.GothicVm.GetSymbolByName(vob.Name);
+            var instance = GameData.GothicVm.AllocInstance<NpcInstance>(npcVob.Name);
+            var npcData = new NpcData()
+            {
+                Instance = instance,
+                Vob = npcVob
+            };
+            instance.UserData = npcData;
+            MultiTypeCache.NpcCache.Add(npcData);
 
-            // FIXME - We need to create an NPCInstance before sending it to NpcCreator. Like:
-            //         Create NpcInstance
-            //         Create NpcData, assign Vob.Npc
-            //         Assign NpcData to NpcInstance
+            var newNpc = NpcCreator.InitializeNpc(instance, true);
 
-            return null;
+            SetPosAndRot(newNpc, npcVob.Position, npcVob.Rotation);
+            GameGlobals.NpcMeshCulling.AddCullingEntry(newNpc);
 
-            // var newNpc = NpcCreator.InitializeNpc(npcSymbol.Index);
-            //
-            // if (newNpc == null)
-            // {
-            //     return null;
-            // }
-            //
-            // NpcCreator.SetSpawnPoint(newNpc, vob.Position.ToUnityVector(), vob.Rotation.ToUnityQuaternion());
-            // GameGlobals.NpcMeshCulling.AddCullingEntry(newNpc);
-            //
-            // var loadedRoutineSymbol = GameData.GothicVm.GetSymbolByName(vob.CurrentRoutine);
-            // var properties = newNpc.GetComponent<NpcProperties>();
-            //
-            // // If we get an NPC from VOBTree, it means the NPC was very close/visible when saving the game.
-            // // Inside Vob, we have the information of the last executed routine. Let's exchange it instead having the initial one.
-            // NpcHelper.ExchangeRoutine(properties.NpcInstance, loadedRoutineSymbol.Index);
-            //
-            // return newNpc;
+            return newNpc;
         }
 
         private static GameObject CreateDefaultMesh(IVirtualObject vob, GameObject parent = null,

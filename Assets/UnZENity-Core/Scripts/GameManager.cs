@@ -113,7 +113,6 @@ namespace GUZ.Core
             NpcMeshCulling.Init();
             SoundCulling.Init();
             Time.Init();
-            Sky.Init();
             Player.Init();
             Routines.Init();
         }
@@ -132,6 +131,7 @@ namespace GUZ.Core
             ResourceLoader.Init(gothicRootPath);
 
             _gameMusicManager.Init();
+            Sky.Init();
             Textures.Init();
             Video.Init();
 
@@ -162,7 +162,10 @@ namespace GUZ.Core
         /// </summary>
         public void LoadWorld(string worldName, int saveGameId, string sceneToUnload = null)
         {
-            // Pre-load ZenKit savegame data now. Can be reused by LoadingSceneManager later.
+            // We need to add .zen as early as possible as all related data needs the file ending.
+            worldName += worldName.EndsWithIgnoreCase(".zen") ? "" : ".zen";
+
+            // Pre-load ZenKit save game data now. Can be reused by LoadingSceneManager later.
             if (saveGameId < 1)
             {
                 SaveGameManager.LoadNewGame();

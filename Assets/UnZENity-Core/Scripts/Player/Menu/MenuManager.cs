@@ -51,7 +51,7 @@ namespace GUZ.Core.Player.Menu
 
         public void SwitchMenu(GameObject menu)
         {
-            // Reset fonts of all newly-visible menu items. Otherwise the previously hovered elements will be visible again when going "Back".
+            // Reset fonts of all newly-visible menu items. Otherwise, the previously hovered elements will be visible again when going "Back".
             menu.GetComponentsInChildren<TMP_Text>()
                 .ForEach(i => i.spriteAsset = GameGlobals.Font.DefaultSpriteAsset);
             

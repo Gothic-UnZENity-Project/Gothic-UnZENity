@@ -3,6 +3,7 @@ using GUZ.Core.Caches;
 using UnityEngine;
 using ZenKit;
 using ZenKit.Vobs;
+using Mesh = ZenKit.Mesh;
 
 namespace GUZ.Core.World
 {
@@ -12,12 +13,17 @@ namespace GUZ.Core.World
     /// </summary>
     public class WorldData
     {
+        // VOB related objects
         // We need to store it as we need the pointer to it for load+save of un-cached vobs.
         public List<IVirtualObject> Vobs;
+        public List<ZenKit.Vobs.Npc> Npcs;
 
         // Cached objects - For performance reasons we only allow them cached. Otherwise every loop and getter will load them again.
         public CachedWayNet WayNet;
 
+        // World related objects
+        public Mesh Mesh;
+        public CachedBspTree BspTree;
         public List<SubMeshData> SubMeshes;
 
 

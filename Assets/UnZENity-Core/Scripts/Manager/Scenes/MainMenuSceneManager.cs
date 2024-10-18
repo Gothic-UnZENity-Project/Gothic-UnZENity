@@ -1,6 +1,5 @@
 using GUZ.Core.Globals;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 namespace GUZ.Core.Manager.Scenes
 {
@@ -21,9 +20,17 @@ namespace GUZ.Core.Manager.Scenes
                 // We need to invoke this event, even when we skip MainMenu (for event listeners, main menu is 'loaded')
                 GlobalEventDispatcher.MainMenuSceneLoaded.Invoke();
 
-                // Load world.zen
-                // TODO - In future, we can also fetch name of scene to load from another config setting.
-                GameManager.I.LoadWorld(GetWorldNameToSpawn(), -1, SceneManager.GetActiveScene().name);
+                if (GameGlobals.Config.LoadFromSaveSlot)
+                {
+                    var saveId = GameGlobals.Config.SaveSlotToLoad;
+                    var save = SaveGameManager.GetSaveGame(saveId);
+                    GameManager.I.LoadWorld(save.Metadata.World, GameGlobals.Config.SaveSlotToLoad, Constants.SceneMainMenu);
+                }
+                else
+                {
+                    // Load New game at certain world
+                    GameManager.I.LoadWorld(GetWorldNameToSpawn(), -1, Constants.SceneMainMenu);
+                }
                 return;
             }
             
