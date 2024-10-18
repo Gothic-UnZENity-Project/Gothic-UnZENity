@@ -439,11 +439,6 @@ namespace GUZ.Core.Creator
             return true;
         }
 
-        public static void SetSpawnPoint(GameObject npcGo, Vector3 position, Quaternion rotation)
-        {
-            npcGo.transform.SetPositionAndRotation(position, rotation);
-        }
-
         private static void PostWorldLoaded()
         {
             // FIXME - We need to activate physics (kinetic=false) and routines now. (After world mesh is loaded and player sees game for the first frame)
