@@ -293,6 +293,52 @@ namespace GUZ.Core.Creator
             {
                 instance.DailyRoutine = Vm.GetSymbolByName(vob.CurrentRoutine)!.Index;
             }
+
+            if (vob.StartAiState.NotNullOrEmpty())
+            {
+                instance.StartAiState = Vm.GetSymbolByName(vob.StartAiState)!.Index;
+            }
+
+            instance.Guild = vob.Guild;
+            instance.Level = vob.Level;
+            instance.FightTactic = vob.FightTactic;
+            instance.SpawnDelay = vob.RespawnTime;
+            instance.Exp = vob.Xp;
+            instance.ExpNext = vob.XpNextLevel;
+            instance.Lp = vob.Lp;
+            instance.BodyStateInterruptableOverride = vob.BsInterruptableOverride;
+
+            // FIXME - Throws issues. Discussed inside https://github.com/GothicKit/ZenKitCS/issues/13
+            // var vobMissions = vob.Missions;
+            // for (var i = 0; i < vobMissions.Count; i++)
+            // {
+            //     instance.SetMission((NpcMissionSlot)i, vobMissions[i]);
+            // }
+
+            var vobAttributes = vob.Attributes;
+            for (var i = 0; i < vobAttributes.Count; i++)
+            {
+                instance.SetAttribute((NpcAttribute)i, vobAttributes[i]);
+            }
+
+            // FIXME - Throws issues. Discussed inside https://github.com/GothicKit/ZenKitCS/issues/13
+            // var vobHitChances = vob.HitChance;
+            // for (var i = 0; i < vobHitChances.Count; i++)
+            // {
+            //     instance.SetHitChance((NpcTalent)i, vobHitChances[i]);
+            // }
+
+            var vobProtections = vob.Protection;
+            for (var i = 0; i < vobProtections.Count; i++)
+            {
+                instance.SetProtection((DamageType)i, vobProtections[i]);
+            }
+
+            var vobAiVars = vob.AiVars;
+            for (var i = 0; i < vobAiVars.Length; i++)
+            {
+                instance.SetAiVar(i, vobAiVars[i]);
+            }
         }
 
         /// <summary>
