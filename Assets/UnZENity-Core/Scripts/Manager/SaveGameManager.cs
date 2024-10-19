@@ -41,27 +41,17 @@ namespace GUZ.Core.Manager
 
         public SaveGame Save;
 
-        private readonly Dictionary<string, WorldData> _worlds = new();
+        private readonly Dictionary<string, WorldContainer> _worlds = new();
         public string CurrentWorldName;
-        public WorldData CurrentWorldData => _worlds[CurrentWorldName];
+        public WorldContainer CurrentWorldData => _worlds[CurrentWorldName];
 
         // When we load data like World.Mesh, we can't cache it for memory reasons.
         // But we need to store the reference to the parent object (World) in here as long as we want to work with the sub-data.
-        // FIXME - During world change, when we get rid of world data, some elements (like Mesh) will become invalid. Need to fix it!
-        private ZenKit.World _newWorld;
-        private ZenKit.World _saveGameWorld;
 
 
         public void Init()
         {
-            GlobalEventDispatcher.WorldSceneLoaded.AddListener(OnWorldSceneLoaded);
-        }
-
-        private void OnWorldSceneLoaded()
-        {
-            // Save memory when world is loaded fully
-            _newWorld = null;
-            _saveGameWorld = null;
+            // Nothing to do for now.
         }
 
         public void LoadNewGame()
@@ -110,35 +100,39 @@ namespace GUZ.Core.Manager
             }
 
             IsWorldLoadedForTheFirstTime = true;
-            _newWorld = ResourceLoader.TryGetWorld(worldName)!; // Always needed for some data not present in SaveGame.
-            var worldFoundInSaveGame = false;
+            ZenKit.World originalWorld = ResourceLoader.TryGetWorld(worldName)!; // Always needed for some data not present in SaveGame.
+            ZenKit.World saveGameWorld = null;
+            bool worldFoundInSaveGame = false;
 
             // 2. Try to load world from save game.
             if (IsLoadedGame)
             {
-                _saveGameWorld = Save.LoadWorld(worldName);
-                worldFoundInSaveGame = _saveGameWorld != null;
+                saveGameWorld = Save.LoadWorld(worldName);
+                worldFoundInSaveGame = saveGameWorld != null;
             }
 
             ZenKit.World worldToUse;
             if (worldFoundInSaveGame)
             {
-                worldToUse = _saveGameWorld;
+                worldToUse = saveGameWorld;
             }
             else
             {
                 // If there is no save game used or world not saved, we visit it for the first time.
-                worldToUse = _newWorld;
+                worldToUse = originalWorld;
                 IsWorldLoadedForTheFirstTime = false;
             }
 
             // 3. Store this world into runtime data as it's now loaded and cached during gameplay. (To save later when needed.)
             // TODO - If we get memory consumption issue, we can consider removing some data to free memory once world is loaded later.
-            _worlds[worldName] = new WorldData
+            _worlds[worldName] = new WorldContainer
             {
+                OriginalWorld = originalWorld,
+                SaveGameWorld = saveGameWorld,
+
                 // Only existing in normal world
-                Mesh = (Mesh)_newWorld.Mesh, // Do not cache or memory consumption will be way too high
-                BspTree = (CachedBspTree)_newWorld.BspTree.Cache(),
+                Mesh = (Mesh)originalWorld.Mesh, // Do not cache or memory consumption will be way too high
+                BspTree = (CachedBspTree)originalWorld.BspTree.Cache(),
 
                 // Only existing in SaveGame world
                 Npcs = worldToUse.Npcs, // (if it's a new world, it's simply null)
@@ -176,12 +170,15 @@ namespace GUZ.Core.Manager
         //FIXME - untested!
         public void SaveGame(int saveGameId)
         {
-            foreach (var world in _worlds)
-            {
+            var saveGame = new SaveGame(GameContext.GameVersionAdapter.Version);
+            saveGame.Metadata.Title = "TestSave";
 
+            foreach (var worldData in _worlds)
+            {
+                var world = worldData.Value.OriginalWorld;
                 // FIXME - We need to create a new combined world first.
-                // PrepareWorldDataForSaving(world.Value);
-                // Save.Save(GetSaveGamePath(saveGameId), world.Value, world.Key);
+                PrepareWorldDataForSaving(worldData.Value);
+                saveGame.Save(GetSaveGamePath(saveGameId), world, worldData.Key);
             }
         }
 
@@ -191,9 +188,10 @@ namespace GUZ.Core.Manager
         /// We therefore only set what's needed.
         /// </summary>
         //FIXME - untested!
-        private void PrepareWorldDataForSaving(ZenKit.World zkWorld, WorldData uWorld)
+        private void PrepareWorldDataForSaving(WorldContainer data)
         {
-            zkWorld.RootObjects = uWorld.Vobs;
+            // data.OriginalWorld.RootObjects.ConvertAll(). = ...;
+            // FIXME - TBD
         }
 
         private string GetSaveGamePath(int folderSaveId)

@@ -71,6 +71,7 @@ namespace GUZ.Core
             
             MultiTypeCache.Init();
 
+            SaveGame = new SaveGameManager();
             Textures = GetComponent<TextureManager>();
             Font = GetComponent<FontManager>();
             Loading = new LoadingManager();

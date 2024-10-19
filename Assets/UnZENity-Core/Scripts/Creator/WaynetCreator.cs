@@ -12,7 +12,7 @@ namespace GUZ.Core.Creator
 {
     public static class WayNetCreator
     {
-        public static void Create(GameConfiguration config, WorldData world)
+        public static void Create(GameConfiguration config, WorldContainer world)
         {
             var waynetObj = new GameObject("WayNet");
 
@@ -98,7 +98,7 @@ namespace GUZ.Core.Creator
             }
         }
 
-        private static void CreateWaypoints(GameObject parent, WorldData world, bool debugDraw)
+        private static void CreateWaypoints(GameObject parent, WorldContainer world, bool debugDraw)
         {
             var waypointsObj = new GameObject("WayPoints");
             waypointsObj.SetParent(parent);
@@ -121,7 +121,7 @@ namespace GUZ.Core.Creator
             }
         }
 
-        private static void CreateWaypointEdges(GameObject parent, WorldData world, bool debugDraw)
+        private static void CreateWaypointEdges(GameObject parent, WorldContainer world, bool debugDraw)
         {
             var waypointEdgesObj = new GameObject("WayPointEdges");
             waypointEdgesObj.SetParent(parent);

@@ -15,9 +15,9 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
 {
     public class WorldMeshBuilder : AbstractMeshBuilder
     {
-        private WorldData _world;
+        private WorldContainer _world;
 
-        public void SetWorldData(WorldData world)
+        public void SetWorldData(WorldContainer world)
         {
             _world = world;
         }
@@ -76,7 +76,7 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
             }
         }
 
-        private void PrepareMeshFilter(MeshFilter meshFilter, WorldData.SubMeshData subMesh)
+        private void PrepareMeshFilter(MeshFilter meshFilter, WorldContainer.SubMeshData subMesh)
         {
             var mesh = new Mesh();
             meshFilter.sharedMesh = mesh;
@@ -91,7 +91,7 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
             }
         }
 
-        private static bool IsTransparentShader(WorldData.SubMeshData subMeshData)
+        private static bool IsTransparentShader(WorldContainer.SubMeshData subMeshData)
         {
             if (subMeshData == null)
             {
