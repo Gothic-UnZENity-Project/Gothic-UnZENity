@@ -27,7 +27,8 @@ namespace GUZ.Core
         private MusicManager _gameMusicManager;
 
         public GameSettings Settings { get; private set; }
-        
+        public SaveGameManager SaveGame { get; private set; }
+
         public LoadingManager Loading { get; private set; }
 
         public PlayerManager Player { get; private set; }
@@ -168,13 +169,13 @@ namespace GUZ.Core
             // Pre-load ZenKit save game data now. Can be reused by LoadingSceneManager later.
             if (saveGameId < 1)
             {
-                SaveGameManager.LoadNewGame();
+                SaveGame.LoadNewGame();
             }
             else
             {
-                SaveGameManager.LoadSavedGame(saveGameId);
+                SaveGame.LoadSavedGame(saveGameId);
             }
-            SaveGameManager.ChangeWorld(worldName);
+            SaveGame.ChangeWorld(worldName);
 
             LoadScene(Constants.SceneLoading, sceneToUnload);
         }

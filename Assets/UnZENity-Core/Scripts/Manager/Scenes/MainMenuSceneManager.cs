@@ -23,7 +23,7 @@ namespace GUZ.Core.Manager.Scenes
                 if (GameGlobals.Config.LoadFromSaveSlot)
                 {
                     var saveId = GameGlobals.Config.SaveSlotToLoad;
-                    var save = SaveGameManager.GetSaveGame(saveId);
+                    var save = GameGlobals.SaveGame.GetSaveGame(saveId);
                     GameManager.I.LoadWorld(save.Metadata.World, GameGlobals.Config.SaveSlotToLoad, Constants.SceneMainMenu);
                 }
                 else

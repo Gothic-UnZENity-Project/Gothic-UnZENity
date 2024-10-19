@@ -48,7 +48,7 @@ namespace GUZ.Core.Creator
                 return;
             }
 
-            if (!SaveGameManager.IsLoadedGame)
+            if (!GameGlobals.SaveGame.IsLoadedGame)
             {
                 await InitializeNpcsFirstTime(loading);
             }
@@ -66,7 +66,7 @@ namespace GUZ.Core.Creator
         {
             // Inside Startup.d, it's always STARTUP_{MAPNAME} and INIT_{MAPNAME}
             // FIXME - Inside Startup.d some Startup_*() functions also call Init_*() some not. How to handle properly? (Force calling it here? Even if done twice?)
-            GameData.GothicVm.Call($"STARTUP_{SaveGameManager.CurrentWorldName.ToUpper().RemoveEnd(".ZEN")}");
+            GameData.GothicVm.Call($"STARTUP_{GameGlobals.SaveGame.CurrentWorldName.ToUpper().RemoveEnd(".ZEN")}");
 
             // Daedalus will walk through the whole Wld_InsertNpc() calls once.
             // Afterwards we will crate the NPCs step-by-step to ensure smooth loading screen fps.
@@ -79,7 +79,7 @@ namespace GUZ.Core.Creator
         /// </summary>
         private static async Task InitializeNpcsFromSaveGame()
         {
-            foreach (var npcVob in SaveGameManager.CurrentWorldData.Npcs)
+            foreach (var npcVob in GameGlobals.SaveGame.CurrentWorldData.Npcs)
             {
                 var instance = Vm.AllocInstance<NpcInstance>(npcVob.Name);
                 var npcData = new NpcData()
@@ -561,7 +561,7 @@ namespace GUZ.Core.Creator
         {
             // We also initialize NPCs inside Daedalus when we load a save game. It's needed as some data isn't stored on save games.
             // But e.g. inventory items will be skipped as they are stored inside save game VOBs.
-            if (!SaveGameManager.IsWorldLoadedForTheFirstTime)
+            if (!GameGlobals.SaveGame.IsWorldLoadedForTheFirstTime)
             {
                 return;
             }

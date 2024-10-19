@@ -2,7 +2,6 @@ using System.IO;
 using GUZ.Core.Caches;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
-using GUZ.Core.Manager;
 using GUZ.Core.Util;
 using TMPro;
 using UnityEngine;
@@ -46,7 +45,7 @@ namespace GUZ.Core.Player.Menu
                 var folderSaveId = int.Parse(saveGameFolderName.Remove(0, "savegame".Length));
 
                 // Load metadata
-                var save = SaveGameManager.GetSaveGame(folderSaveId);
+                var save = GameGlobals.SaveGame.GetSaveGame(folderSaveId);
                 _saves[folderSaveId - 1] = save;
 
                 // Set metadata to slot

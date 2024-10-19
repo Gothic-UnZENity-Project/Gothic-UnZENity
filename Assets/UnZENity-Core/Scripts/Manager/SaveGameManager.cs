@@ -22,12 +22,12 @@ namespace GUZ.Core.Manager
     /// Helper methods:
     /// * GetSaveGame(saveGameId:int)       -> Return a save game object (or null) if requested. (e.g. used for LoadMenu to prepare data.
     /// </summary>
-    public static class SaveGameManager
+    public class SaveGameManager
     {
-        public static int SaveGameId;
-        public static bool IsNewGame => SaveGameId <= 0;
-        public static bool IsLoadedGame => !IsNewGame;
-        public static bool IsFirstWorldLoadingFromSaveGame; // Check if we load save game right now!
+        public int SaveGameId;
+        public bool IsNewGame => SaveGameId <= 0;
+        public bool IsLoadedGame => !IsNewGame;
+        public bool IsFirstWorldLoadingFromSaveGame; // Check if we load save game right now!
 
         /// <summary>
         /// Values can be:
@@ -37,34 +37,34 @@ namespace GUZ.Core.Manager
         /// Visiting a world for the first time can be triggered with or without leveraging a save game.
         /// It only matters if it's the first time! (Save games only include world saves if we visited it before.)
         /// </summary>
-        public static bool IsWorldLoadedForTheFirstTime;
+        public bool IsWorldLoadedForTheFirstTime;
 
-        public static SaveGame Save;
+        public SaveGame Save;
 
-        private static readonly Dictionary<string, WorldData> _worlds = new();
-        public static string CurrentWorldName;
-        public static WorldData CurrentWorldData => _worlds[CurrentWorldName];
+        private readonly Dictionary<string, WorldData> _worlds = new();
+        public string CurrentWorldName;
+        public WorldData CurrentWorldData => _worlds[CurrentWorldName];
 
         // When we load data like World.Mesh, we can't cache it for memory reasons.
         // But we need to store the reference to the parent object (World) in here as long as we want to work with the sub-data.
         // FIXME - During world change, when we get rid of world data, some elements (like Mesh) will become invalid. Need to fix it!
-        private static ZenKit.World _newWorld;
-        private static ZenKit.World _saveGameWorld;
+        private ZenKit.World _newWorld;
+        private ZenKit.World _saveGameWorld;
 
 
-        static SaveGameManager()
+        public void Init()
         {
             GlobalEventDispatcher.WorldSceneLoaded.AddListener(OnWorldSceneLoaded);
         }
 
-        private static void OnWorldSceneLoaded()
+        private void OnWorldSceneLoaded()
         {
             // Save memory when world is loaded fully
             _newWorld = null;
             _saveGameWorld = null;
         }
 
-        public static void LoadNewGame()
+        public void LoadNewGame()
         {
             SaveGameId = 0;
             Save = new SaveGame(GameContext.GameVersionAdapter.Version);
@@ -74,12 +74,12 @@ namespace GUZ.Core.Manager
         /// <summary>
         /// Hint: G1 save game folders start with 1. We leverage the same numbering.
         /// </summary>
-        public static void LoadSavedGame(int saveGameId)
+        public void LoadSavedGame(int saveGameId)
         {
             LoadSavedGame(saveGameId, GetSaveGame(saveGameId));
         }
 
-        public static void LoadSavedGame(int saveGameId, SaveGame save)
+        public void LoadSavedGame(int saveGameId, SaveGame save)
         {
             if (save == null)
             {
@@ -98,7 +98,7 @@ namespace GUZ.Core.Manager
         /// 2. Try to load the world state from the save game
         /// 3. Either use this saved world data or load it from normal .zen file
         /// </summary>
-        public static void ChangeWorld(string worldName)
+        public void ChangeWorld(string worldName)
         {
             CurrentWorldName = worldName;
 
@@ -150,7 +150,7 @@ namespace GUZ.Core.Manager
         }
 
         [CanBeNull]
-        public static SaveGame GetSaveGame(int folderSaveId)
+        public SaveGame GetSaveGame(int folderSaveId)
         {
             // Load metadata
             var save = new SaveGame(GameVersion.Gothic1);
@@ -174,7 +174,7 @@ namespace GUZ.Core.Manager
         /// 3. Save world-by-world into the save game itself
         /// </summary>
         //FIXME - untested!
-        public static void SaveGame(int saveGameId)
+        public void SaveGame(int saveGameId)
         {
             foreach (var world in _worlds)
             {
@@ -191,12 +191,12 @@ namespace GUZ.Core.Manager
         /// We therefore only set what's needed.
         /// </summary>
         //FIXME - untested!
-        private static void PrepareWorldDataForSaving(ZenKit.World zkWorld, WorldData uWorld)
+        private void PrepareWorldDataForSaving(ZenKit.World zkWorld, WorldData uWorld)
         {
             zkWorld.RootObjects = uWorld.Vobs;
         }
 
-        private static string GetSaveGamePath(int folderSaveId)
+        private string GetSaveGamePath(int folderSaveId)
         {
             var gothicDir = GameContext.GameVersionAdapter.RootPath;
             return Path.GetFullPath(Path.Join(gothicDir, $"Saves/savegame{folderSaveId}"));

@@ -36,12 +36,12 @@ namespace GUZ.Core.Creator
                                       config.SpawnVOBTypes.Value.Contains(VirtualObjectType.zCVobLight)
                                   );
 
-            SaveGameManager.CurrentWorldData.SubMeshes = await BuildBspTree(
-                SaveGameManager.CurrentWorldData.Mesh,
-                SaveGameManager.CurrentWorldData.BspTree,
+            GameGlobals.SaveGame.CurrentWorldData.SubMeshes = await BuildBspTree(
+                GameGlobals.SaveGame.CurrentWorldData.Mesh,
+                GameGlobals.SaveGame.CurrentWorldData.BspTree,
                 lightingEnabled);
 
-            await MeshFactory.CreateWorld(SaveGameManager.CurrentWorldData, loading, _worldGo);
+            await MeshFactory.CreateWorld(GameGlobals.SaveGame.CurrentWorldData, loading, _worldGo);
             await MeshFactory.CreateTextureArray();
         }
 
