@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System.IO;
+using UnityEngine;
+using ZenKit;
 
 namespace GUZ.Core.Debugging
 {
@@ -8,12 +10,19 @@ namespace GUZ.Core.Debugging
 
         private void OnValidate()
         {
-            if (DoSaveGame)
+            if (!DoSaveGame)
             {
-                DoSaveGame = false;
-
-                GameGlobals.SaveGame.SaveGame(5);
+                return;
             }
+            DoSaveGame = false;
+
+            var world = ResourceLoader.TryGetWorld("world.zen")!;
+            var save = new SaveGame(GameVersion.Gothic1);
+            var saveGamePath = Path.GetFullPath(Path.Join(GameContext.GameVersionAdapter.RootPath, $"Saves/savegame{15}"));
+
+            save.Metadata.Title = "UnZENity-TestSave";
+
+            save.Save(saveGamePath, world, "world");
         }
     }
 }
