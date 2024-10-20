@@ -117,27 +117,16 @@ namespace GUZ.Core.Manager
 
         public static async Task InitializeThreadSafeLightData()
         {
-
             // Find all StationaryLight components, including those on inactive GameObjects
             var allLights = Resources.FindObjectsOfTypeAll<StationaryLight>(); // ~350 for G1
-
-            var lightsPerFrame = 30;
-            var processedLights = 0;
 
             for (var i = 0; i < allLights.Length; i++)
             {
                 StationaryLight light = allLights[i];
                 ThreadSafeLightData.Add((light.transform.position, light.Range));
 
+                await FrameSkipper.TrySkipToNextFrame();
                 GameGlobals.Loading?.AddProgress(LoadingManager.LoadingProgressType.WorldMesh, 1f / allLights.Length);
-
-                processedLights++;
-
-                if (processedLights >= lightsPerFrame || i == allLights.Length - 1)
-                {
-                    processedLights = 0;
-                    await FrameSkipper.TrySkipToNextFrame();
-                }
             }
         }
     }
