@@ -64,11 +64,11 @@ namespace GUZ.Core.Manager.Scenes
                 {
                     // initialize Lights before world creation
                     vobRoot.SetActive(true); // temporary enable vobRoot
-                    await StationaryLight.InitializeThreadSafeLightData();
+                    await StationaryLightsManager.InitializeThreadSafeLightData();
                     vobRoot.SetActive(false); // disable to save some seconds in loading time ;p
 
                     await WorldCreator.CreateAsync(config, GameGlobals.Loading, worldRoot);
-                    StationaryLight.ClearThreadSafeData();
+                    GameGlobals.Lights.ClearThreadSafeLights();
                 }
 
                 // World fully loaded
