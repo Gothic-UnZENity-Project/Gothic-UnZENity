@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using GUZ.Core.Extensions;
+using GUZ.Core.Manager;
+using GUZ.Core.Util;
 using UnityEngine;
 using UnityEngine.Profiling;
 
@@ -137,7 +140,6 @@ namespace GUZ.Core
 
         private List<MeshRenderer> _affectedRenderers = new();
         private Light _unityLight;
-        private static readonly List<(Vector3 Position, float Range)> _threadSafeLightData = new();
 
         private void OnDrawGizmosSelected()
         {
@@ -147,7 +149,7 @@ namespace GUZ.Core
         private void Awake()
         {
             Lights.Add(this);
-            _threadSafeLightData.Add((transform.position, Range));
+            GameGlobals.Lights.AddThreadSafeLight(transform.position, Range);
         }
 
         private void OnDestroy()
@@ -212,16 +214,16 @@ namespace GUZ.Core
             Shader.SetGlobalVectorArray(GlobalStationaryLightPositionsAndAttenuationShaderId,
                 lightPositionsAndAttenuation);
             Shader.SetGlobalVectorArray(GlobalStationaryLightColorsShaderId, lightColors);
-            _threadSafeLightData.Clear(); // Clear the thread safe data as it is no longer needed.
         }
 
         public static int CountLightsInBounds(Bounds bounds)
         {
             var count = 0;
+            var threadSafeLightData = GameGlobals.Lights.GetThreadSafeLiftData();
             for (var i = 0; i < Lights.Count; i++)
             {
-                var lightBounds = new Bounds(_threadSafeLightData[i].Position,
-                    Vector3.one * _threadSafeLightData[i].Range * 2);
+                var lightBounds = new Bounds(threadSafeLightData[i].Position,
+                    Vector3.one * threadSafeLightData[i].Range * 2);
                 if (bounds.Intersects(lightBounds))
                 {
                     count++;
@@ -243,5 +245,6 @@ namespace GUZ.Core
                 }
             }
         }
+
     }
 }

@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
+using GUZ.Core.Util;
 using UnityEngine;
 using UnityEngine.Profiling;
 
@@ -9,6 +11,23 @@ namespace GUZ.Core.Manager
         private readonly HashSet<MeshRenderer> _dirtiedMeshes = new();
         private readonly Dictionary<MeshRenderer, List<StationaryLight>> _lightsPerRenderer = new();
         private readonly List<Material> _nonAllocMaterials = new();
+
+        public readonly static List<(Vector3 Position, float Range)> ThreadSafeLightData = new();
+
+        public List<(Vector3 Position, float Range)> GetThreadSafeLiftData(){
+            return ThreadSafeLightData;
+        }
+
+
+        public void AddThreadSafeLight(Vector3 position, float range)
+        {
+            ThreadSafeLightData.Add((position, range));
+        }
+
+        public void ClearThreadSafeLights()
+        {
+            ThreadSafeLightData.Clear();
+        }
 
         public void LateUpdate()
         {
@@ -93,6 +112,21 @@ namespace GUZ.Core.Manager
                         _nonAllocMaterials[i].SetMatrix(StationaryLight.StationaryLightIndices2ShaderId, indicesMatrix);
                     }
                 }
+            }
+        }
+
+        public static async Task InitializeThreadSafeLightData()
+        {
+            // Find all StationaryLight components, including those on inactive GameObjects
+            var allLights = Resources.FindObjectsOfTypeAll<StationaryLight>(); // ~350 for G1
+
+            for (var i = 0; i < allLights.Length; i++)
+            {
+                StationaryLight light = allLights[i];
+                ThreadSafeLightData.Add((light.transform.position, light.Range));
+
+                await FrameSkipper.TrySkipToNextFrame();
+                GameGlobals.Loading?.AddProgress(LoadingManager.LoadingProgressType.WorldMesh, 1f / allLights.Length);
             }
         }
     }
