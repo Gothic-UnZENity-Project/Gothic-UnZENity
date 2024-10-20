@@ -11,6 +11,7 @@ namespace GUZ.Core
 
         public static GameConfiguration Config => Instance.Config;
         public static GameSettings Settings => Instance.Settings;
+        public static SaveGameManager SaveGame => Instance.SaveGame;
         public static LoadingManager Loading => Instance.Loading;
         public static PlayerManager Player => Instance.Player;
         public static SkyManager Sky => Instance.Sky;

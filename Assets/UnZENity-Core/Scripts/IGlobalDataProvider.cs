@@ -9,6 +9,7 @@ namespace GUZ.Core
     {
         public GameConfiguration Config { get; }
         public GameSettings Settings { get; }
+        public SaveGameManager SaveGame { get; }
         public LoadingManager Loading { get; }
         public PlayerManager Player { get; }
         public SkyManager Sky { get; }

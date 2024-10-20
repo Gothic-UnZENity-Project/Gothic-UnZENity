@@ -36,7 +36,7 @@ namespace GUZ.Core.Caches
         public const int MaxTextureSize = 512;
 
         public static Dictionary<TextureArrayTypes, Texture> TextureArrays { get; } = new();
-        public static List<(MeshRenderer Renderer, WorldData.SubMeshData SubmeshData)> WorldMeshRenderersForTextureArray = new();
+        public static List<(MeshRenderer Renderer, WorldContainer.SubMeshData SubmeshData)> WorldMeshRenderersForTextureArray = new();
         public static Dictionary<Mesh, VobMeshData> VobMeshesForTextureArray = new();
 
         private static readonly Dictionary<string, Texture2D> _texture2DCache = new();

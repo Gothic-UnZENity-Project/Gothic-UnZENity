@@ -38,6 +38,7 @@ namespace GUZ.Lab
         private FontManager _fontManager;
 
         public GameSettings Settings => _settings;
+        public SaveGameManager SaveGame => null;
         public LoadingManager Loading => null;
         public PlayerManager Player => null;
         public SkyManager Sky => null;

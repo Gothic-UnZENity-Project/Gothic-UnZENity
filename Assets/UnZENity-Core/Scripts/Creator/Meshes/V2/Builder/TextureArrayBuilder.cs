@@ -47,7 +47,7 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
             }
         }
 
-        private void PrepareWorldMeshRenderer(Renderer rend, WorldData.SubMeshData subMesh)
+        private void PrepareWorldMeshRenderer(Renderer rend, WorldContainer.SubMeshData subMesh)
         {
             Texture texture = TextureCache.TextureArrays[subMesh.TextureArrayType];
             Material material;

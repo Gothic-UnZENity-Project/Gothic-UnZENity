@@ -14,7 +14,7 @@ namespace GUZ.Core.Creator.Meshes.V2
 {
     public static class MeshFactory
     {
-        public static async Task CreateWorld(WorldData world, LoadingManager loading, GameObject rootGo)
+        public static async Task CreateWorld(WorldContainer world, LoadingManager loading, GameObject rootGo)
         {
             var worldBuilder = new WorldMeshBuilder();
             worldBuilder.SetGameObject(rootGo);

@@ -4,6 +4,7 @@ using GUZ.Core.World;
 using JetBrains.Annotations;
 using UnityEngine;
 using ZenKit;
+using Mesh = ZenKit.Mesh;
 
 namespace GUZ.Core.Manager
 {
@@ -21,12 +22,12 @@ namespace GUZ.Core.Manager
     /// Helper methods:
     /// * GetSaveGame(saveGameId:int)       -> Return a save game object (or null) if requested. (e.g. used for LoadMenu to prepare data.
     /// </summary>
-    public static class SaveGameManager
+    public class SaveGameManager
     {
-        public static int SaveGameId;
-        public static bool IsNewGame => SaveGameId <= 0;
-        public static bool IsLoadedGame => !IsNewGame;
-        public static bool IsFirstWorldLoadingFromSaveGame; // Check if we load save game right now!
+        public int SaveGameId;
+        public bool IsNewGame => SaveGameId <= 0;
+        public bool IsLoadedGame => !IsNewGame;
+        public bool IsFirstWorldLoadingFromSaveGame; // Check if we load save game right now!
 
         /// <summary>
         /// Values can be:
@@ -36,16 +37,24 @@ namespace GUZ.Core.Manager
         /// Visiting a world for the first time can be triggered with or without leveraging a save game.
         /// It only matters if it's the first time! (Save games only include world saves if we visited it before.)
         /// </summary>
-        public static bool IsWorldLoadedForTheFirstTime;
+        public bool IsWorldLoadedForTheFirstTime;
 
-        public static SaveGame Save;
+        public SaveGame Save;
 
-        private static readonly Dictionary<string, (ZenKit.World zkWorld, WorldData uWorld)> _worlds = new();
-        public static string CurrentWorldName;
-        public static ZenKit.World CurrentZkWorld => _worlds[CurrentWorldName].zkWorld;
-        public static WorldData CurrentWorldData => _worlds[CurrentWorldName].uWorld;
+        private readonly Dictionary<string, WorldContainer> _worlds = new();
+        public string CurrentWorldName;
+        public WorldContainer CurrentWorldData => _worlds[CurrentWorldName];
 
-        public static void LoadNewGame()
+        // When we load data like World.Mesh, we can't cache it for memory reasons.
+        // But we need to store the reference to the parent object (World) in here as long as we want to work with the sub-data.
+
+
+        public void Init()
+        {
+            // Nothing to do for now.
+        }
+
+        public void LoadNewGame()
         {
             SaveGameId = 0;
             Save = new SaveGame(GameContext.GameVersionAdapter.Version);
@@ -55,12 +64,12 @@ namespace GUZ.Core.Manager
         /// <summary>
         /// Hint: G1 save game folders start with 1. We leverage the same numbering.
         /// </summary>
-        public static void LoadSavedGame(int saveGameId)
+        public void LoadSavedGame(int saveGameId)
         {
             LoadSavedGame(saveGameId, GetSaveGame(saveGameId));
         }
 
-        public static void LoadSavedGame(int saveGameId, SaveGame save)
+        public void LoadSavedGame(int saveGameId, SaveGame save)
         {
             if (save == null)
             {
@@ -79,44 +88,63 @@ namespace GUZ.Core.Manager
         /// 2. Try to load the world state from the save game
         /// 3. Either use this saved world data or load it from normal .zen file
         /// </summary>
-        public static void ChangeWorld(string worldName)
+        public void ChangeWorld(string worldName)
         {
             CurrentWorldName = worldName;
 
             // 1. World was already loaded.
             if (_worlds.ContainsKey(worldName))
             {
-                IsWorldLoadedForTheFirstTime = true;
+                IsWorldLoadedForTheFirstTime = false;
                 return;
             }
 
-            var world = ResourceLoader.TryGetWorld(worldName);
+            IsWorldLoadedForTheFirstTime = true;
+            ZenKit.World originalWorld = ResourceLoader.TryGetWorld(worldName)!; // Always needed for some data not present in SaveGame.
             ZenKit.World saveGameWorld = null;
+            bool worldFoundInSaveGame = false;
 
             // 2. Try to load world from save game.
             if (IsLoadedGame)
             {
                 saveGameWorld = Save.LoadWorld(worldName);
+                worldFoundInSaveGame = saveGameWorld != null;
             }
 
-            // If there is no world saved, we visit it for the first time.
-            IsWorldLoadedForTheFirstTime = saveGameWorld == null;
+            ZenKit.World worldToUse;
+            if (worldFoundInSaveGame)
+            {
+                worldToUse = saveGameWorld;
+            }
+            else
+            {
+                // If there is no save game used or world not saved, we visit it for the first time.
+                worldToUse = originalWorld;
+                IsWorldLoadedForTheFirstTime = false;
+            }
 
             // 3. Store this world into runtime data as it's now loaded and cached during gameplay. (To save later when needed.)
-            _worlds[worldName] = new()
+            // TODO - If we get memory consumption issue, we can consider removing some data to free memory once world is loaded later.
+            _worlds[worldName] = new WorldContainer
             {
-                zkWorld = world,
-                uWorld = new WorldData
-                {
-                    // Contained inside normal .zen file and also saveGame.
-                    Vobs = saveGameWorld == null ? world.RootObjects : saveGameWorld.RootObjects,
-                    WayNet = (CachedWayNet)(saveGameWorld == null ? world.WayNet.Cache() : saveGameWorld.WayNet.Cache())
-                }
+                OriginalWorld = originalWorld,
+                SaveGameWorld = saveGameWorld,
+
+                // Only existing in normal world
+                Mesh = (Mesh)originalWorld.Mesh, // Do not cache or memory consumption will be way too high
+                BspTree = (CachedBspTree)originalWorld.BspTree.Cache(),
+
+                // Only existing in SaveGame world
+                Npcs = worldToUse.Npcs, // (if it's a new world, it's simply null)
+
+                // Contained inside both: normal .zen file and also saveGame.
+                Vobs = worldToUse!.RootObjects,
+                WayNet = (CachedWayNet)worldToUse.WayNet.Cache()
             };
         }
 
         [CanBeNull]
-        public static SaveGame GetSaveGame(int folderSaveId)
+        public SaveGame GetSaveGame(int folderSaveId)
         {
             // Load metadata
             var save = new SaveGame(GameVersion.Gothic1);
@@ -140,12 +168,17 @@ namespace GUZ.Core.Manager
         /// 3. Save world-by-world into the save game itself
         /// </summary>
         //FIXME - untested!
-        public static void SaveGame(int saveGameId)
+        public void SaveGame(int saveGameId)
         {
-            foreach (var world in _worlds)
+            var saveGame = new SaveGame(GameContext.GameVersionAdapter.Version);
+            saveGame.Metadata.Title = "TestSave";
+
+            foreach (var worldData in _worlds)
             {
-                PrepareWorldDataForSaving(world.Value.zkWorld, world.Value.uWorld);
-                Save.Save(GetSaveGamePath(saveGameId), world.Value.zkWorld, world.Key);
+                var world = worldData.Value.OriginalWorld;
+                // FIXME - We need to create a new combined world first.
+                PrepareWorldDataForSaving(worldData.Value);
+                saveGame.Save(GetSaveGamePath(saveGameId), world, worldData.Key);
             }
         }
 
@@ -155,12 +188,13 @@ namespace GUZ.Core.Manager
         /// We therefore only set what's needed.
         /// </summary>
         //FIXME - untested!
-        private static void PrepareWorldDataForSaving(ZenKit.World zkWorld, WorldData uWorld)
+        private void PrepareWorldDataForSaving(WorldContainer data)
         {
-            zkWorld.RootObjects = uWorld.Vobs;
+            // data.OriginalWorld.RootObjects.ConvertAll(). = ...;
+            // FIXME - TBD
         }
 
-        private static string GetSaveGamePath(int folderSaveId)
+        private string GetSaveGamePath(int folderSaveId)
         {
             var gothicDir = GameContext.GameVersionAdapter.RootPath;
             return Path.GetFullPath(Path.Join(gothicDir, $"Saves/savegame{folderSaveId}"));
