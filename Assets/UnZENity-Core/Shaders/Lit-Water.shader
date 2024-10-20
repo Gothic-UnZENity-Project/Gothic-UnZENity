@@ -59,7 +59,7 @@ Shader "Lit/Water"
 
             half3 DiffuseLighting(v2f i, appdata v)
             {
-                half3 diffuse = (_SunColor * _SunIntensity) + (_AmbientColor * _AmbientIntensity);
+                half3 diffuse = _SunColor + _AmbientColor;
 
                 //for (int j = 0; j < min(MAX_VISIBLE_LIGHTS, unity_LightData.y); j++)
                 //{

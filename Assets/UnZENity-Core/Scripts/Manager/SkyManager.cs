@@ -41,8 +41,6 @@ namespace GUZ.Core.Manager
         private static readonly int _sunColorShaderId = Shader.PropertyToID("_SunColor");
         private static readonly int _ambientShaderId = Shader.PropertyToID("_AmbientColor");
         private static readonly int _pointLightIntensityShaderId = Shader.PropertyToID("_PointLightIntensity");
-        private static readonly int _sunIntensityShaderId = Shader.PropertyToID("_SunIntensity");
-        private static readonly int _ambientIntensityShaderId = Shader.PropertyToID("_AmbientIntensity");
 
         private SkyStateRain _rainState = new();
         private ParticleSystem _rainParticleSystem;
@@ -180,8 +178,8 @@ namespace GUZ.Core.Manager
             UpdateStateTexAndFog();
             if (_enableLightingIntensityByTimeOfDay)
             {
-                UpdateLightingIntensityByTimeOfDay();
                 _ambientColor = RenderSettings.fogColor; // Updating ambientColor with fogColor
+                UpdateLightingIntensityByTimeOfDay();
             }
 
             if (_isRaining)
@@ -291,11 +289,9 @@ namespace GUZ.Core.Manager
         private void SetShaderProperties()
         {
             Shader.SetGlobalVector(_sunDirectionShaderId, _sunDirection);
-            Shader.SetGlobalColor(_sunColorShaderId, _sunColor);
-            Shader.SetGlobalColor(_ambientShaderId, _ambientColor);
+            Shader.SetGlobalColor(_sunColorShaderId, _sunColor * _sunIntensity);
+            Shader.SetGlobalColor(_ambientShaderId, _ambientColor * _ambientIntensity);
             Shader.SetGlobalFloat(_pointLightIntensityShaderId, _pointLightIntensity);
-            Shader.SetGlobalFloat(_sunIntensityShaderId, _sunIntensity);
-            Shader.SetGlobalFloat(_ambientIntensityShaderId, _ambientIntensity);
         }
 
         private void WorldLoaded()

@@ -5,9 +5,7 @@
 
 float3 _SunDirection;
 real3 _SunColor;
-real _SunIntensity;
 real3 _AmbientColor;
-real _AmbientIntensity;
 real _PointLightIntensity;
 
 float3 ApplyFog(float3 color, float3 worldPos)
@@ -78,7 +76,7 @@ half3 AdditionalUnityLightDiffuse(Light light, real3 normal)
 half3 SunAndAmbientDiffuse(float3 normal, half3 vertexShadowmap)
 {
     half diffuseDot = saturate(dot(normal, -_SunDirection));
-    return saturate(diffuseDot * (_SunColor * _SunIntensity ) * vertexShadowmap + (_AmbientColor * _AmbientIntensity));
+    return saturate(diffuseDot * _SunColor * vertexShadowmap + _AmbientColor);
 }
 
 #endif
