@@ -19,9 +19,14 @@ namespace GUZ.Core.Manager
         private bool _alreadyInitialized;
 
         private Vector3 _sunDirection;
-        private readonly Color _sunColor;
-        private readonly Color _ambientColor;
+        private Color _sunColor;
+        private Color _ambientColor;
+
+        private float _sunIntensity = 1f;
+        private float _ambientIntensity = 1f;
         private readonly float _pointLightIntensity = 1f;
+
+        private readonly bool _enableLightingIntensityByTimeOfDay = false;
         private bool _isRaining;
         private readonly GameTimeInterval _sunPerformanceSetting;
         private readonly GameSettings _gameSettings;
@@ -72,6 +77,7 @@ namespace GUZ.Core.Manager
             _sunPerformanceSetting = config.SunUpdateInterval;
             _gameSettings = settings;
             _gameSounds = config.EnableGameSounds;
+            _enableLightingIntensityByTimeOfDay = config.EnableLightingIntensityByTimeOfDay;
         }
 
         public void OnValidate()
@@ -170,6 +176,14 @@ namespace GUZ.Core.Manager
             _isRaining = _masterTime > _rainState.Time && _masterTime < _rainState.EndTime;
 
             UpdateStateTexAndFog();
+            // Update Colors depending on the current Color state.
+            _ambientColor = RenderSettings.ambientLight; 
+            _sunColor = RenderSettings.fogColor;
+
+            if (_enableLightingIntensityByTimeOfDay)
+            {
+                UpdateLightingIntensityByTimeOfDay(); // Calculate lighting intensity (darker nights)
+            }
 
             if (_isRaining)
             {
@@ -278,8 +292,8 @@ namespace GUZ.Core.Manager
         private void SetShaderProperties()
         {
             Shader.SetGlobalVector(_sunDirectionShaderId, _sunDirection);
-            Shader.SetGlobalColor(_sunColorShaderId, _sunColor);
-            Shader.SetGlobalColor(_ambientShaderId, _ambientColor);
+            Shader.SetGlobalColor(_sunColorShaderId, _sunColor * _sunIntensity);
+            Shader.SetGlobalColor(_ambientShaderId, _ambientColor * _ambientIntensity);
             Shader.SetGlobalFloat(_pointLightIntensityShaderId, _pointLightIntensity);
         }
 
@@ -295,6 +309,77 @@ namespace GUZ.Core.Manager
             InitRainGo();
 
             _alreadyInitialized = true;
+        }
+
+        private void UpdateLightingIntensityByTimeOfDay()
+        {
+            // Time configuration
+            float dawnTime = 6.0f;
+            float duskTime = 18.0f;
+            float nightTime = 20.0f;
+            float sunsetStart = duskTime - 1.5f;
+            float sunriseEnd = dawnTime + 1.5f;
+
+            float maxSunIntensity = 1.0f;
+            float minSunIntensity = 0.0f;
+            float maxAmbientIntensity = 1.0f;
+            float minAmbientIntensity = 0.2f;
+            float duskAmbientIntensity = 0.5f;
+
+            var currentTimeOfDay = _gameTime.GetCurrentTime().Hours + (_gameTime.GetCurrentTime().Minutes / 60.0f);
+            float timeOfDay = currentTimeOfDay;
+
+            float sunIntensity = CalculateSunIntensity(timeOfDay, dawnTime, sunriseEnd, sunsetStart, duskTime, maxSunIntensity, minSunIntensity);
+            float ambientIntensity = CalculateAmbientIntensity(timeOfDay, dawnTime, sunriseEnd, sunsetStart, duskTime, nightTime, minAmbientIntensity, maxAmbientIntensity, duskAmbientIntensity);
+
+            // Set intensity
+            _sunIntensity = sunIntensity;
+            _ambientIntensity = ambientIntensity;
+        }
+
+        private float CalculateSunIntensity(float timeOfDay, float dawnTime, float sunriseEnd, float sunsetStart, float duskTime, float maxSunIntensity, float minSunIntensity)
+        {
+            if (timeOfDay >= dawnTime && timeOfDay <= duskTime)
+            {
+                if (timeOfDay <= sunriseEnd)
+                {
+                    return Mathf.Lerp(0.0f, maxSunIntensity, (timeOfDay - dawnTime) / (sunriseEnd - dawnTime));
+                }
+                else if (timeOfDay >= sunsetStart)
+                {
+                    return Mathf.Lerp(maxSunIntensity, 0.0f, (timeOfDay - sunsetStart) / (duskTime - sunsetStart));
+                }
+                else
+                {
+                    return maxSunIntensity;
+                }
+            }
+            return minSunIntensity; // Night
+        }
+
+        private float CalculateAmbientIntensity(float timeOfDay, float dawnTime, float sunriseEnd, float sunsetStart, float duskTime, float nightTime, float minAmbientIntensity, float maxAmbientIntensity, float duskAmbientIntensity)
+        {
+            if (timeOfDay < dawnTime || timeOfDay > nightTime)
+            {
+                // Night
+                return minAmbientIntensity;
+            }
+            else if (timeOfDay >= dawnTime && timeOfDay <= sunriseEnd)
+            {
+                // Dawn
+                return Mathf.Lerp(minAmbientIntensity, maxAmbientIntensity, (timeOfDay - dawnTime) / (sunriseEnd - dawnTime));
+            }
+            else if (timeOfDay >= sunsetStart && timeOfDay <= duskTime)
+            {
+                // Dusk
+                return Mathf.Lerp(maxAmbientIntensity, duskAmbientIntensity, (timeOfDay - sunsetStart) / (duskTime - sunsetStart));
+            }
+            else if (timeOfDay >= duskTime && timeOfDay <= nightTime)
+            {
+                // Night
+                return Mathf.Lerp(duskAmbientIntensity, minAmbientIntensity, (timeOfDay - duskTime) / (nightTime - duskTime));
+            }
+            return maxAmbientIntensity; // Full day
         }
 
         private void InitRainGo()
