@@ -244,6 +244,7 @@ namespace GUZ.Core
         public float SunLightIntensity = 1;
         public GameTimeInterval SunUpdateInterval = GameTimeInterval.EveryGameMinute;
         public Color AmbientLightColor = new(0.1f, 0.1f, 0.1f, 1);
+        public bool EnableLightingIntensityByTimeOfDay = false;
 
 
         /**
