@@ -19,7 +19,7 @@ namespace GUZ.Core.Manager
         private bool _alreadyInitialized;
 
         private Vector3 _sunDirection;
-        private readonly Color _sunColor;
+        private Color _sunColor;
         private Color _ambientColor;
 
         private float _sunIntensity = 1f;
@@ -176,10 +176,13 @@ namespace GUZ.Core.Manager
             _isRaining = _masterTime > _rainState.Time && _masterTime < _rainState.EndTime;
 
             UpdateStateTexAndFog();
+            // Update Colors depending on the current Color state.
+            _ambientColor = RenderSettings.ambientLight; 
+            _sunColor = RenderSettings.fogColor;
+
             if (_enableLightingIntensityByTimeOfDay)
             {
-                _ambientColor = RenderSettings.fogColor; // Updating ambientColor with fogColor
-                UpdateLightingIntensityByTimeOfDay();
+                UpdateLightingIntensityByTimeOfDay(); // Calculate lighting intensity (darker nights)
             }
 
             if (_isRaining)
@@ -320,7 +323,7 @@ namespace GUZ.Core.Manager
             float maxSunIntensity = 1.0f;
             float minSunIntensity = 0.0f;
             float maxAmbientIntensity = 1.0f;
-            float minAmbientIntensity = 0.4f;
+            float minAmbientIntensity = 0.2f;
             float duskAmbientIntensity = 0.5f;
 
             var currentTimeOfDay = _gameTime.GetCurrentTime().Hours + (_gameTime.GetCurrentTime().Minutes / 60.0f);
