@@ -135,18 +135,17 @@ namespace GUZ.Core.Manager.Scenes
             }
             
             // 3.
-            var spots = GameObject.FindGameObjectsWithTag(Constants.SpotTag);
-            var startPoint = spots.FirstOrDefault(
-                go => go.name.EqualsIgnoreCase("START") || go.name.EqualsIgnoreCase("START_GOTHIC2")
+            var startPoint = GameData.FreePoints.FirstOrDefault(
+                i => i.Key.EqualsIgnoreCase("START") || i.Key.EqualsIgnoreCase("START_GOTHIC2")
             );
 
-            if (startPoint == null)
+            if (startPoint.Key.IsNullOrEmpty())
             {
                 Debug.LogError("No suitable START_* waypoint found!");
                 return;
             }
 
-            TeleportPlayerToStart(startPoint.transform.position, startPoint.transform.rotation);
+            TeleportPlayerToStart(startPoint.Value.Position, startPoint.Value.Rotation);
         }
 
         private void TeleportPlayerToStart(Vector3 position, Quaternion rotation)

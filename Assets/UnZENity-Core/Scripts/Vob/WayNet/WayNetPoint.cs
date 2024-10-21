@@ -11,6 +11,7 @@ namespace GUZ.Core.Vob.WayNet
         public string Name;
         public Vector3 Position;
         public Vector3 Direction;
+        public Quaternion Rotation => Quaternion.Euler(Direction);
         public bool IsLocked;
 
         public abstract bool IsFreePoint();

@@ -3,13 +3,7 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags:
-  - PxVob_zCVobSpot
-  - Climbable
-  - Title
-  - IngameText
-  - Subtitle
-  - projectile
+  tags: []
   layers:
   - Default
   - TransparentFX

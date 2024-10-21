@@ -94,10 +94,13 @@ namespace GUZ.Core.Globals
         /*
          * ### Tags
          */
-        public const string ClimbableTag = "Climbable";
-        public const string SpotTag = "PxVob_zCVobSpot";
+
+        // Default Tags
         public const string PlayerTag = "Player";
         public const string MainCameraTag = "MainCamera";
+
+        // Custom Tags
+        public const string VobTag = "Vob";
 
         
         //Collection of PlayerPref entries for VR settings
