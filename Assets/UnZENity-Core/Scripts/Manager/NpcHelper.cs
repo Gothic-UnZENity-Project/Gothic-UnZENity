@@ -75,14 +75,17 @@ namespace GUZ.Core.Manager
 
 
             var heroInstance = GameData.GothicVm.AllocInstance<NpcInstance>(GameGlobals.Settings.IniPlayerInstanceName);
-
             var playerProperties = playerGo.GetComponent<NpcProperties>();
+            var vobNpc = new ZenKit.Vobs.Npc();
+
+            playerProperties.SetData(vobNpc);
             playerProperties.NpcInstance = heroInstance;
             playerProperties.Head = Camera.main!.transform;
 
             var npcData = new NpcData
             {
                 Instance = heroInstance,
+                Vob = vobNpc,
                 Properties = playerProperties
             };
 

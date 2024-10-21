@@ -1,5 +1,7 @@
 ﻿using System.Collections;
+using System.Linq;
 using UnityEngine;
+using ZenKit.Vobs;
 
 namespace GUZ.Core.Debugging
 {
@@ -7,14 +9,26 @@ namespace GUZ.Core.Debugging
     {
         public bool DoSaveGame;
 
+        public bool CompareSaveGames;
+        [Range(1, 15)]
+        public int SaveSlot1 = 1;
+        [Range(1, 15)]
+        public int SaveSlot2 = 15;
+        public string WorldToCompare = "WORLD.zen";
+
         private void OnValidate()
         {
-            if (!DoSaveGame)
+            if (DoSaveGame)
             {
-                return;
+                DoSaveGame = false;
+                StartCoroutine(ExecuteSave());
             }
-            DoSaveGame = false;
-            StartCoroutine(ExecuteSave());
+
+            if (CompareSaveGames)
+            {
+                CompareSaveGames = false;
+                CompareSaves();
+            }
         }
 
         /// <summary>
@@ -27,6 +41,22 @@ namespace GUZ.Core.Debugging
             GameGlobals.SaveGame.SaveGame(15, "UnZENity-Test Save");
 
             Debug.Log("DONE");
+        }
+
+        private void CompareSaves()
+        {
+            var save1 = GameGlobals.SaveGame.GetSaveGame(SaveSlot1)!;
+            var save2 = GameGlobals.SaveGame.GetSaveGame(SaveSlot2)!;
+
+            var world1 = save1.LoadWorld(WorldToCompare)!;
+            var world2 = save2.LoadWorld(WorldToCompare)!;
+
+            // Compare counts
+            {
+                Debug.Assert(world1.RootObjects.Count == world2.RootObjects.Count, "VOBs inside RootObjects do not match.");
+                Debug.Assert(world1.RootObjects.Count(i => i.Type == VirtualObjectType.oCNpc) == world2.RootObjects.Count(i => i.Type == VirtualObjectType.oCNpc),
+                    "oCNpc VOBs inside RootObjects do not match.");
+            }
         }
     }
 }

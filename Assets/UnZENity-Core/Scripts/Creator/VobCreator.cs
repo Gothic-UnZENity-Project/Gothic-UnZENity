@@ -1076,7 +1076,7 @@ namespace GUZ.Core.Creator
         }
 
         /// <summary>
-        /// Initialize NPC and set it's data from SaveGame (VOB entry).
+        /// Initialize NPC and set its data from SaveGame (VOB entry).
         /// </summary>
         private static GameObject CreateNpc(ZenKit.Vobs.Npc npcVob)
         {
@@ -1089,7 +1089,7 @@ namespace GUZ.Core.Creator
             instance.UserData = npcData;
             MultiTypeCache.NpcCache.Add(npcData);
 
-            var newNpc = NpcCreator.InitializeNpc(instance, true);
+            var newNpc = NpcCreator.InitializeNpc(instance, true, npcVob);
 
             SetPosAndRot(newNpc, npcVob.Position, npcVob.Rotation);
             GameGlobals.NpcMeshCulling.AddCullingEntry(newNpc);

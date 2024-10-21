@@ -81,6 +81,8 @@ namespace GUZ.Core.Creator
         {
             foreach (var npcVob in GameGlobals.SaveGame.CurrentWorldData.Npcs)
             {
+                await FrameSkipper.TrySkipToNextFrame();
+
                 var instance = Vm.AllocInstance<NpcInstance>(npcVob.Name);
                 var npcData = new NpcData()
                 {
@@ -91,15 +93,19 @@ namespace GUZ.Core.Creator
 
                 MultiTypeCache.NpcCache.Add(npcData);
 
-                var newNpc = InitializeNpc(instance, true);
+                var newNpc = InitializeNpc(instance, true, npcVob);
+
+                if (newNpc == null)
+                {
+                    continue;
+                }
+
                 var isSpawned = SetSpawnPoint(npcData, npcVob.ScriptWaypoint);
 
                 if (isSpawned)
                 {
                     GameGlobals.NpcMeshCulling.AddCullingEntry(newNpc);
                 }
-
-                await FrameSkipper.TrySkipToNextFrame();
             }
         }
 
@@ -166,9 +172,8 @@ namespace GUZ.Core.Creator
 
             foreach (var npc in _tmpWldInsertNpcData)
             {
-                // Update progress bar and check if we need to wait for next frame.
+                // Update progress bar and check if we need to wait for next frame now (As some conditions skip -continue- end of loop and would skip check)
                 loading.AddProgress(LoadingManager.LoadingProgressType.VOb, 1f / totalNpcs);
-
                 await FrameSkipper.TrySkipToNextFrame();
 
                 if (WayNetHelper.GetWayNetPoint(npc.spawnPoint) is null)
@@ -177,7 +182,7 @@ namespace GUZ.Core.Creator
                     continue;
                 }
 
-                var newNpc = InitializeNpc(npc.npcData.Instance, false);
+                var newNpc = InitializeNpc(npc.npcData.Instance, false, new ZenKit.Vobs.Npc());
                 if (newNpc == null)
                 {
                     continue;
@@ -215,7 +220,7 @@ namespace GUZ.Core.Creator
         /// </summary>
         /// <param name="isFromSaveGame">We will alter certain aspects of initializing if NPC is created from a saved VOB.</param>
         [CanBeNull]
-        public static GameObject InitializeNpc(NpcInstance npcInstance, bool isFromSaveGame)
+        public static GameObject InitializeNpc(NpcInstance npcInstance, bool isFromSaveGame, ZenKit.Vobs.Npc npcVob)
         {
             var npcData = npcInstance.GetUserData();
             var newNpc = ResourceLoader.TryGetPrefabObject(PrefabType.Npc);
@@ -223,6 +228,8 @@ namespace GUZ.Core.Creator
 
             npcData.Properties = properties;
             npcData.Properties.NpcInstance = npcInstance;
+
+            properties.SetData(npcVob);
 
             // As we have our back reference between NpcInstance and NpcData, we can now initialize the object on ZenKit side.
             // Lookups like Npc_SetTalentValue() will work now as NpcInstance.UserData() points to our object which stores the information.
