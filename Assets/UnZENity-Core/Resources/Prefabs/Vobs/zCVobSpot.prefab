@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 3429925256554951498}
   m_Layer: 2
   m_Name: zCVobSpot
-  m_TagString: PxVob_zCVobSpot
+  m_TagString: GUZVob
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -46,7 +46,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 13f4f324c4e84a1b8d8427d29f1d2deb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <visualScheme>k__BackingField: 
+  <VisualScheme>k__BackingField: 
 --- !u!33 &4250102412515220408
 MeshFilter:
   m_ObjectHideFlags: 0

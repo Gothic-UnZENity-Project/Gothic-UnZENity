@@ -171,7 +171,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b3d4d12525e40a7ac803add610db925, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ChangeKinematicOnGrab: 0
   _properties: {fileID: 548201418151480555}
   _nameCanvas: {fileID: 2393729959941540289}
 --- !u!114 &6907302684280751333
@@ -304,6 +303,12 @@ MonoBehaviour:
   UnSocketed:
     m_PersistentCalls:
       m_Calls: []
+  DistanceGrabbed:
+    m_PersistentCalls:
+      m_Calls: []
+  DistanceReleased:
+    m_PersistentCalls:
+      m_Calls: []
   GrabPointsMeta: []
   Grabbers: []
   HandGrabbers: []
@@ -321,7 +326,7 @@ GameObject:
   - component: {fileID: 548201418151480555}
   m_Layer: 0
   m_Name: oCMobBed
-  m_TagString: Untagged
+  m_TagString: GUZVob
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 9153673172185523688}
   m_Layer: 0
   m_Name: vobPfx
-  m_TagString: Untagged
+  m_TagString: GUZVob
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -4769,62 +4769,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e442a6fb43774cd69d56104d908e18dd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <visual>k__BackingField: 
-  <visualScheme>k__BackingField: 
-  pfxData:
-    symbolIndex: 0
-    ppsValue: 0
-    ppsScaleKeys: 
-    ppsIsLooping: 0
-    ppsIsSmooth: 0
-    ppsFPS: 0
-    ppsCreateEm: 
-    ppsCreateEmDelay: 0
-    shpType: 
-    shpFOR: 
-    shpOffsetVec: 
-    shpDistribType: 
-    shpDistribWalkSpeed: 0
-    shpIsVolume: 0
-    shpDim: 
-    shpMesh: 
-    shpMeshRender: 0
-    shpScaleKeys: 
-    shpScaleIsLooping: 0
-    shpScaleIsSmooth: 0
-    shpScaleFPS: 0
-    dirMode: 
-    dirFOR: 
-    dirModeTargetFOR: 
-    dirModeTargetPos: 
-    dirAngleHead: 0
-    dirAngleHeadVar: 0
-    dirAngleElev: 0
-    dirAngleElevVar: 0
-    velAvg: 0
-    velVar: 0
-    lspPartAvg: 0
-    lspPartVar: 0
-    flyGravity: 
-    flyCollDet: 0
-    visName: 
-    visOrientation: 
-    visTexIsQuadPoly: 0
-    visTexAniFPS: 0
-    visTexAniIsLooping: 0
-    visTexColorStart: 
-    visTexColorEnd: 
-    visSizeStart: 
-    visSizeEndScale: 0
-    visAlphaFunc: 
-    visAlphaStart: 0
-    visAlphaEnd: 0
-    trlFadeSpeed: 0
-    trlTexture: 
-    trlWidth: 0
-    mrkFadeSpeed: 0
-    mrkTexture: 
-    mrkSize: 0
+  <VisualScheme>k__BackingField: 
 --- !u!199 &9153673172185523688
 ParticleSystemRenderer:
   serializedVersion: 6
