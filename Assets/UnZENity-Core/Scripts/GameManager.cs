@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using GUZ.Core.Caches;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
@@ -124,6 +125,8 @@ namespace GUZ.Core
         /// </summary>
         public void InitPhase2(GameVersion version)
         {
+            var watch = Stopwatch.StartNew();
+
             GameContext.SetGameVersionContext(version);
 
             var gothicRootPath = GameContext.GameVersionAdapter.RootPath;
@@ -138,6 +141,8 @@ namespace GUZ.Core
             Video.Init();
 
             GuzBootstrapper.BootGothicUnZeNity(Config, gothicRootPath);
+
+            watch.Log("Phase2 (mostly ZenKit) initialized in");
         }
 
         public void LoadScene(string sceneName, string unloadScene = null)
