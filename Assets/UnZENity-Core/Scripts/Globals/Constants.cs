@@ -100,7 +100,7 @@ namespace GUZ.Core.Globals
         public const string MainCameraTag = "MainCamera";
 
         // Custom Tags
-        public const string VobTag = "Vob";
+        public const string VobTag = "GUZVob";
 
         
         //Collection of PlayerPref entries for VR settings

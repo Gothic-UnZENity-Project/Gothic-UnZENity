@@ -1,10 +1,14 @@
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using GUZ.Core.Globals;
+using GUZ.Core.Properties;
 using GUZ.Core.World;
 using JetBrains.Annotations;
 using UnityEngine;
 using ZenKit;
 using Mesh = ZenKit.Mesh;
+using Texture = ZenKit.Texture;
 
 namespace GUZ.Core.Manager
 {
@@ -168,10 +172,11 @@ namespace GUZ.Core.Manager
         /// 3. Save world-by-world into the save game itself
         /// </summary>
         //FIXME - untested!
-        public void SaveGame(int saveGameId)
+        public void SaveGame(int saveGameId, string title)
         {
             var saveGame = new SaveGame(GameContext.GameVersionAdapter.Version);
-            saveGame.Metadata.Title = "TestSave";
+            saveGame.Metadata.Title = title;
+            saveGame.Thumbnail = CreateThumbnail();
 
             foreach (var worldData in _worlds)
             {
@@ -182,16 +187,56 @@ namespace GUZ.Core.Manager
             }
         }
 
+        private Texture CreateThumbnail()
+        {
+            var screenshot = ScreenCapture.CaptureScreenshotAsTexture(ScreenCapture.StereoScreenCaptureMode.BothEyes);
+
+            // FIXME - Parse from Unity texture into ZenKit texture one new ZK.Texture() initializer without parameters exist.
+            // var texture = new ZenKit.Texture();
+
+            return null;
+        }
+
         /// <summary>
         /// We write data from Unity data back into ZenKit data.
         /// Hint: Not all elements need to be replaced and therefore have no setter (e.g. .Mesh, .WayNet).
         /// We therefore only set what's needed.
+        ///
+        /// This includes:
+        /// 1. Collect all VOBs in a plain structure (except Npcs)
+        /// 2. Add only nearby (visible) NPCs+Monsters as VOB
+        /// 3. Collect Hero
+        /// 4. Add all far-away NPCs+Monsters to the .Npcs list
         /// </summary>
         //FIXME - untested!
+        // FIXME - TBD
         private void PrepareWorldDataForSaving(WorldContainer data)
         {
-            // data.OriginalWorld.RootObjects.ConvertAll(). = ...;
-            // FIXME - TBD
+            // 1. Collect all VOBs in a plain structure (except Npcs)
+            // Every VOB is created via Prefab and it's root GameObject has the VobTag and a VobProperties component with the actual ZenKit.VirtualObject property.
+            // If the saving crashes here based on NPEs, then a Prefab isn't set correctly.
+            {
+                var vobs = GameObject
+                    .FindGameObjectsWithTag(Constants.VobTag)
+                    .Select(i => i.GetComponent<VobProperties>().Properties)
+                    .ToList();
+                data.OriginalWorld.RootObjects = vobs;
+            }
+
+            // 2. Add only nearby (visible) NPCs+Monsters as VOB
+            {
+
+            }
+
+            // 3. Collect Hero
+            {
+
+            }
+
+            // 4. Add all far-away NPCs+Monsters to the .Npcs list
+            {
+
+            }
         }
 
         private string GetSaveGamePath(int folderSaveId)

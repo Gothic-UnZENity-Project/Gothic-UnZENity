@@ -1,6 +1,5 @@
-﻿using System.IO;
+﻿using System.Collections;
 using UnityEngine;
-using ZenKit;
 
 namespace GUZ.Core.Debugging
 {
@@ -15,14 +14,19 @@ namespace GUZ.Core.Debugging
                 return;
             }
             DoSaveGame = false;
+            StartCoroutine(ExecuteSave());
+        }
 
-            var world = ResourceLoader.TryGetWorld("world.zen")!;
-            var save = new SaveGame(GameVersion.Gothic1);
-            var saveGamePath = Path.GetFullPath(Path.Join(GameContext.GameVersionAdapter.RootPath, $"Saves/savegame{15}"));
+        /// <summary>
+        /// We need to start saving at the end of the frame so that a Screenshot can be taken. Otherwise, it's null.
+        /// </summary>
+        private IEnumerator ExecuteSave()
+        {
+            yield return new WaitForEndOfFrame();
 
-            save.Metadata.Title = "UnZENity-TestSave";
+            GameGlobals.SaveGame.SaveGame(15, "UnZENity-Test Save");
 
-            save.Save(saveGamePath, world, "world");
+            Debug.Log("DONE");
         }
     }
 }
