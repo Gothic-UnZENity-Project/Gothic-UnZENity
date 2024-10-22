@@ -60,6 +60,10 @@ namespace GUZ.Core.Manager
         {
             if (GameData.GothicVm.GlobalHero != null)
             {
+                // We assume, that this call is only made when the cache got cleared before as we loaded another world.
+                // Therefore, we re-add it now.
+                MultiTypeCache.NpcCache.Add(((NpcInstance)GameData.GothicVm.GlobalHero).GetUserData());
+
                 return;
             }
 
@@ -76,7 +80,9 @@ namespace GUZ.Core.Manager
 
             var heroInstance = GameData.GothicVm.AllocInstance<NpcInstance>(GameGlobals.Settings.IniPlayerInstanceName);
             var playerProperties = playerGo.GetComponent<NpcProperties>();
+
             var vobNpc = new ZenKit.Vobs.Npc();
+            vobNpc.Name = GameGlobals.Settings.IniPlayerInstanceName;
 
             playerProperties.SetData(vobNpc);
             playerProperties.NpcInstance = heroInstance;

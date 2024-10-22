@@ -1,12 +1,12 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using GUZ.Core.Globals;
 using GUZ.Core.Properties;
 using GUZ.Core.World;
 using JetBrains.Annotations;
 using UnityEngine;
 using ZenKit;
+using ZenKit.Vobs;
 using Mesh = ZenKit.Mesh;
 using Texture = ZenKit.Texture;
 
@@ -203,39 +203,68 @@ namespace GUZ.Core.Manager
         /// We therefore only set what's needed.
         ///
         /// This includes:
-        /// 1. Collect all VOBs in a plain structure (except Npcs)
-        /// 2. Add only nearby (visible) NPCs+Monsters as VOB
-        /// 3. Collect Hero
-        /// 4. Add all far-away NPCs+Monsters to the .Npcs list
+        /// 1. Fill all the different VOB types which we need to store separately.
+        /// 2. Collect all VOBs in a plain structure (except Npcs far away)
+        /// 3. Add all far-away NPCs+Monsters to the .Npcs list
         /// </summary>
         //FIXME - untested!
         // FIXME - TBD
         private void PrepareWorldDataForSaving(WorldContainer data)
         {
-            // 1. Collect all VOBs in a plain structure (except Npcs)
-            // Every VOB is created via Prefab and it's root GameObject has the VobTag and a VobProperties component with the actual ZenKit.VirtualObject property.
+            VobProperties[] allVobs = GameObject.FindObjectsOfType<VobProperties>(includeInactive: true);
+            List<VobProperties> allVobsExcludingNpcs = new List<VobProperties>();
+            List<VobProperties> allVisibleNpcs = new List<VobProperties>();
+            List<VobProperties> allFarAwayNpcs = new List<VobProperties>();
+            VobProperties hero = null;
+
+            // 1. Fill all the different VOB types which we need to store separately.
+            foreach (var vobComp in allVobs)
+            {
+                var vobData = vobComp.Properties;
+                if (vobData == null)
+                {
+                    Debug.LogError("A VOB has no ZenKit.Vobs.* property attached and therefore can't be stored inside SaveGame.", vobComp);
+                    continue;
+                }
+
+                if (vobData.Type == VirtualObjectType.oCNpc)
+                {
+                    if (vobData.Name == GameGlobals.Settings.IniPlayerInstanceName)
+                    {
+                        hero = vobComp;
+                    }
+                    else if (vobComp.gameObject.activeInHierarchy)
+                    {
+                        allVisibleNpcs.Add(vobComp);
+                    }
+                    else
+                    {
+                        allFarAwayNpcs.Add(vobComp);
+                    }
+                }
+                else
+                {
+                    allVobsExcludingNpcs.Add(vobComp);
+                }
+            }
+
+            // 2. Collect all VOBs in a plain structure (except Npcs far away)
+            // Every VOB is created via Prefab, it's root GameObject has the VobTag and a VobProperties component with the actual ZenKit.VirtualObject property.
             // If the saving crashes here based on NPEs, then a Prefab isn't set correctly.
             {
-                var vobs = GameObject
-                    .FindGameObjectsWithTag(Constants.VobTag)
-                    .Select(i => i.GetComponent<VobProperties>().Properties)
-                    .ToList();
-                data.OriginalWorld.RootObjects = vobs;
+                var rootObjects = new List<IVirtualObject>();
+
+                // Add elements in order of appearance in an original save game file.
+                rootObjects.AddRange(allVisibleNpcs.Select(i => i.Properties));
+                rootObjects.Add(hero.Properties);
+                rootObjects.AddRange(allVobsExcludingNpcs.Select(i => i.Properties));
+
+                data.OriginalWorld.RootObjects = rootObjects;
             }
 
-            // 2. Add only nearby (visible) NPCs+Monsters as VOB
+            // 3. Add all far-away NPCs+Monsters to the .Npcs list
             {
-
-            }
-
-            // 3. Collect Hero
-            {
-
-            }
-
-            // 4. Add all far-away NPCs+Monsters to the .Npcs list
-            {
-
+                data.OriginalWorld.Npcs = allFarAwayNpcs.Select(i => (ZenKit.Vobs.Npc)i.Properties).ToList();
             }
         }
 
