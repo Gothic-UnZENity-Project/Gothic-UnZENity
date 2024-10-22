@@ -83,6 +83,7 @@ namespace GUZ.Core.Manager
 
             var vobNpc = new ZenKit.Vobs.Npc();
             vobNpc.Name = GameGlobals.Settings.IniPlayerInstanceName;
+            vobNpc.Player = true;
 
             playerProperties.SetData(vobNpc);
             playerProperties.NpcInstance = heroInstance;

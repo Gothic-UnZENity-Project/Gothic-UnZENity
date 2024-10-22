@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Linq;
 using UnityEngine;
 using ZenKit.Vobs;
@@ -38,7 +39,7 @@ namespace GUZ.Core.Debugging
         {
             yield return new WaitForEndOfFrame();
 
-            GameGlobals.SaveGame.SaveGame(15, "UnZENity-Test Save");
+            GameGlobals.SaveGame.SaveGame(15, $"UnZENity-TestSave - {DateTime.Now}");
 
             Debug.Log("DONE");
         }

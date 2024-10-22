@@ -36,6 +36,11 @@ namespace GUZ.Core.Extensions
             return vector;
         }
 
+        public static System.Numerics.Vector3 ToNumericsVector(this Vector3 vector3)
+        {
+            return new System.Numerics.Vector3(vector3.x / 100, vector3.y / 100, vector3.z / 100);
+        }
+
         public static Bounds ToUnityBounds(this AxisAlignedBoundingBox bounds)
         {
             var max = bounds.Max.ToUnityVector();

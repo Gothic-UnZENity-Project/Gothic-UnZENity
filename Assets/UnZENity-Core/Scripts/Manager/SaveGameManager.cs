@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using GUZ.Core.Extensions;
 using GUZ.Core.Properties;
 using GUZ.Core.World;
 using JetBrains.Annotations;
@@ -119,12 +120,12 @@ namespace GUZ.Core.Manager
             if (worldFoundInSaveGame)
             {
                 worldToUse = saveGameWorld;
+                IsWorldLoadedForTheFirstTime = false;
             }
             else
             {
                 // If there is no save game used or world not saved, we visit it for the first time.
                 worldToUse = originalWorld;
-                IsWorldLoadedForTheFirstTime = false;
             }
 
             // 3. Store this world into runtime data as it's now loaded and cached during gameplay. (To save later when needed.)
@@ -177,13 +178,14 @@ namespace GUZ.Core.Manager
             var saveGame = new SaveGame(GameContext.GameVersionAdapter.Version);
             saveGame.Metadata.Title = title;
             saveGame.Thumbnail = CreateThumbnail();
+            saveGame.Metadata.World = CurrentWorldName.ToUpper();
 
             foreach (var worldData in _worlds)
             {
                 var world = worldData.Value.OriginalWorld;
                 // FIXME - We need to create a new combined world first.
                 PrepareWorldDataForSaving(worldData.Value);
-                saveGame.Save(GetSaveGamePath(saveGameId), world, worldData.Key);
+                saveGame.Save(GetSaveGamePath(saveGameId), world, worldData.Key.TrimEndIgnoreCase(".ZEN").ToUpper());
             }
         }
 
@@ -246,6 +248,13 @@ namespace GUZ.Core.Manager
                 {
                     allVobsExcludingNpcs.Add(vobComp);
                 }
+            }
+
+            // 1.1 Store current position of all NPCs into their VOBs
+            foreach (var npc in allVisibleNpcs)
+            {
+                npc.Properties.Position = npc.gameObject.transform.position.ToNumericsVector();
+                npc.Properties.Rotation = npc.gameObject.transform.position.
             }
 
             // 2. Collect all VOBs in a plain structure (except Npcs far away)
