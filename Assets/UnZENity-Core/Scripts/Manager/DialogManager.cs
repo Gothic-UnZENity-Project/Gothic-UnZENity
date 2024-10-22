@@ -4,6 +4,7 @@ using System.Linq;
 using GUZ.Core.Data;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
+using GUZ.Core.Manager.Scenes;
 using GUZ.Core.Npc;
 using GUZ.Core.Npc.Actions;
 using GUZ.Core.Npc.Actions.AnimationActions;
@@ -35,18 +36,20 @@ namespace GUZ.Core.Manager
         /// initialDialogStarting - We only stop current AI routine if this is the first time the dialog box opens/NPC
         ///     talks important things. Otherwise, the ZS_*_End will get called every time we re-open a dialog in between.
         /// </summary>
-        public static void StartDialog(GameObject npcGo, NpcProperties properties, bool initialDialogStarting)
+        public static void StartDialog(NpcProperties properties, bool initialDialogStarting)
         {
             GameData.Dialogs.IsInDialog = true;
 
             // WIP: locking movement 
             GameContext.InteractionAdapter.LockPlayerInPlace();
+            PlayerSceneManager.UICamera.GetComponent<Camera>().farClipPlane = 5f;
+            PlayerSceneManager.UICamera.SetActive(true);
 
             // We are already inside a sub-dialog
             if (GameData.Dialogs.CurrentDialog.Options.Any())
             {
                 GameContext.DialogAdapter.FillDialog(properties.NpcInstance, GameData.Dialogs.CurrentDialog.Options);
-                GameContext.DialogAdapter.ShowDialog(npcGo);
+                GameContext.DialogAdapter.ShowDialog();
             }
             // There is at least one important entry, the NPC wants to talk to the hero about.
             else if (initialDialogStarting && TryGetImportant(properties.Dialogs, out var infoInstance))
@@ -85,7 +88,7 @@ namespace GUZ.Core.Manager
 
                 selectableDialogs = selectableDialogs.OrderBy(d => d.Nr).ToList();
                 GameContext.DialogAdapter.FillDialog(properties.NpcInstance, selectableDialogs);
-                GameContext.DialogAdapter.ShowDialog(npcGo);
+                GameContext.DialogAdapter.ShowDialog();
             }
         }
 
@@ -192,7 +195,7 @@ namespace GUZ.Core.Manager
 
         public static void ExtAiProcessInfos(NpcInstance npc)
         {
-            StartDialog(GetNpc(npc), GetProperties(npc), true);
+            StartDialog(GetProperties(npc), true);
         }
 
         public static void ExtAiStopProcessInfos(NpcInstance npc)
@@ -232,6 +235,7 @@ namespace GUZ.Core.Manager
 
             // WIP: unlocking movement
             GameContext.InteractionAdapter.UnlockPlayer();
+            PlayerSceneManager.UICamera.SetActive(false);
 
             GameContext.DialogAdapter.HideDialog();
             GameContext.SubtitlesAdapter.HideSubtitles();

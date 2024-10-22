@@ -5,6 +5,7 @@ using GUZ.Core.Data;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
+using GUZ.Core.Manager.Scenes;
 using GUZ.Core.UI;
 using MyBox;
 using TMPro;
@@ -35,10 +36,11 @@ namespace GUZ.VR.Components.UI
             }
         }
         
-        public void ShowDialog(GameObject npcGo)
+        public void ShowDialog()
         {
-            var npcDialog = npcGo.FindChildRecursively("DialogMenuRootPos");
-            _dialogRoot.SetParent(npcDialog, true, true, true);
+            var playerControllerGo = PlayerSceneManager.PlayerController;
+            var playerDialog = playerControllerGo.FindChildRecursively("DialogMenuRootPos");
+            _dialogRoot.SetParent(playerDialog, true, true, true);
 
             var rootRectHeight = _dialogItemHeight * _dialogItemsInUse;
             _dialogRoot.GetComponent<RectTransform>().SetHeight(rootRectHeight);
