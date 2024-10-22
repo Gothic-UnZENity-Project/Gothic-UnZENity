@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Linq;
+using MyBox;
 using UnityEngine;
 using ZenKit.Vobs;
 
@@ -8,8 +9,10 @@ namespace GUZ.Core.Debugging
 {
     public class SaveGameDebugger : MonoBehaviour
     {
+        [Separator("Save")]
         public bool DoSaveGame;
 
+        [Separator("Compare")]
         public bool CompareSaveGames;
         [Range(1, 15)]
         public int SaveSlot1 = 1;

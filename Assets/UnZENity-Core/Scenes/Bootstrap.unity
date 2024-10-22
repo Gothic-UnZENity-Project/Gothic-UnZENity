@@ -518,7 +518,7 @@ Transform:
   m_GameObject: {fileID: 2014673629}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 53.365734, y: 57.024136, z: 356.2155}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -550,6 +550,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   DoSaveGame: 0
+  CompareSaveGames: 0
+  SaveSlot1: 1
+  SaveSlot2: 15
+  WorldToCompare: WORLD.ZEN
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

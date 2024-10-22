@@ -253,9 +253,12 @@ namespace GUZ.Core.Manager
             // 1.1 Store current position of all NPCs into their VOBs
             foreach (var npc in allVisibleNpcs)
             {
-                npc.Properties.Position = npc.gameObject.transform.position.ToNumericsVector();
-                npc.Properties.Rotation = npc.gameObject.transform.position.
+                npc.Properties.Position = npc.transform.position.ToNumericsVector();
+                npc.Properties.Rotation = npc.transform.rotation.ToMatrix3x3();
             }
+
+            hero.Properties.Position = hero.transform.position.ToNumericsVector();
+            hero.Properties.Rotation = hero.transform.rotation.ToMatrix3x3();
 
             // 2. Collect all VOBs in a plain structure (except Npcs far away)
             // Every VOB is created via Prefab, it's root GameObject has the VobTag and a VobProperties component with the actual ZenKit.VirtualObject property.
