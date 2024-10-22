@@ -2,6 +2,7 @@ using System.Collections;
 using GUZ.Core;
 using GUZ.Core.Creator.Sounds;
 using GUZ.Core.Extensions;
+using GUZ.Core.Manager.Scenes;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -57,6 +58,7 @@ namespace GUZ.VR.Components
 
         private void ShowChapterCanvas(string chapter, string text, string texture)
         {
+            PlayerSceneManager.UICamera.SetActive(true);
             // Set texture for cover
             _chapterImage.material = GameGlobals.Textures.GetEmptyMaterial(MaterialExtension.BlendMode.Opaque);
             GameGlobals.Textures.SetTexture(texture, _chapterImage.material);
@@ -79,6 +81,7 @@ namespace GUZ.VR.Components
 
             _canvasMoveVelocity = Vector3.zero;
             gameObject.SetActive(false);
+            PlayerSceneManager.UICamera.SetActive(true);
         }
     }
 }

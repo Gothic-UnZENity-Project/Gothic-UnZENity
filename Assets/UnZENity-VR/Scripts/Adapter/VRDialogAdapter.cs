@@ -6,7 +6,6 @@ using GUZ.Core.Adapter;
 using GUZ.Core.Data;
 using GUZ.Core.Globals;
 using GUZ.VR.Components.UI;
-using UnityEngine;
 using UnityEngine.SceneManagement;
 using ZenKit.Daedalus;
 
@@ -39,12 +38,12 @@ namespace GUZ.VR.Adapter
         }
         
 
-        public void ShowDialog(GameObject npcGo)
+        public void ShowDialog()
         {
             // Hide any subtitles that might be active.
             GameContext.SubtitlesAdapter.HideSubtitlesImmediate();
             var dialog = GetDialog();
-            dialog.ShowDialog(npcGo);
+            dialog.ShowDialog();
         }
 
         public void HideDialog()

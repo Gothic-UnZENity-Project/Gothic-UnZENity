@@ -774,6 +774,37 @@ Transform:
   - {fileID: 7147928086921161637}
   m_Father: {fileID: 8283658960366426537}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &4439853292305295584
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6757358920306921309}
+  m_Layer: 0
+  m_Name: DialogMenuRootPos
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6757358920306921309
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4439853292305295584}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 1, z: 2}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8391885030387849268}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &6311541220095459959
 GameObject:
   m_ObjectHideFlags: 0
@@ -906,7 +937,7 @@ Camera:
     width: 1
     height: 1
   near clip plane: 0.01
-  far clip plane: 20
+  far clip plane: 40
   field of view: 90
   orthographic: 0
   orthographic size: 5
@@ -3083,6 +3114,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 7486009836569372951, guid: a0de35f4e16efb54ba0281586c17416f, type: 3}
       insertIndex: 6
       addedObject: {fileID: 4931888112518750926}
+    - targetCorrespondingSourceObject: {fileID: 7486009837194656688, guid: a0de35f4e16efb54ba0281586c17416f, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6757358920306921309}
     - targetCorrespondingSourceObject: {fileID: 7486009837306776690, guid: a0de35f4e16efb54ba0281586c17416f, type: 3}
       insertIndex: -1
       addedObject: {fileID: 2426142447982879684}
@@ -3369,6 +3403,11 @@ MonoBehaviour:
     m_MipBias: 0
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
+--- !u!4 &8391885030387849268 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 7486009837194656688, guid: a0de35f4e16efb54ba0281586c17416f, type: 3}
+  m_PrefabInstance: {fileID: 1411404257910760324}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &8391885030387849269 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7486009837194656689, guid: a0de35f4e16efb54ba0281586c17416f, type: 3}
@@ -3388,7 +3427,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   CanJump: 1
   CanSteerWhileJumping: 1
-  CanSteerWhileCutscene: 0
   CanSprint: 1
   CanCrouch: 1
   DirectionStyle: 0
@@ -3553,7 +3591,6 @@ MonoBehaviour:
   CurrentItem: 0
   UsedItemSlot: 
   ItemAnimationState: -1
-  IsClonedFromAnother: 0
 --- !u!82 &2100257876914915749
 AudioSource:
   m_ObjectHideFlags: 0
