@@ -5,7 +5,7 @@ using ZenKit;
 using ZenKit.Vobs;
 using Mesh = ZenKit.Mesh;
 
-namespace GUZ.Core.World
+namespace GUZ.Core.Data.Container
 {
     /// <summary>
     /// Parsed ZenKit World data is arranged in a way to easily be usable by Unity objects.

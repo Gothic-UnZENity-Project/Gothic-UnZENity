@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using GUZ.Core.Caches;
 using GUZ.Core.Creator.Meshes.V2;
 using GUZ.Core.Data;
+using GUZ.Core.Data.Container;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
@@ -30,7 +31,7 @@ namespace GUZ.Core.Creator
         // Hint - If this scale ratio isn't looking well, feel free to change it.
         private const float _fatnessScale = 0.1f;
 
-        private static readonly List<(NpcData npcData, string spawnPoint)> _tmpWldInsertNpcData = new();
+        private static readonly List<(NpcContainer npcData, string spawnPoint)> _tmpWldInsertNpcData = new();
 
         static NpcCreator()
         {
@@ -84,7 +85,7 @@ namespace GUZ.Core.Creator
                 await FrameSkipper.TrySkipToNextFrame();
 
                 var instance = Vm.AllocInstance<NpcInstance>(npcVob.Name);
-                var npcData = new NpcData()
+                var npcData = new NpcContainer()
                 {
                     Instance = instance,
                     Vob = npcVob
@@ -149,7 +150,7 @@ namespace GUZ.Core.Creator
             var npcSymbol = Vm.GetSymbolByIndex(npcInstanceIndex)!;
             var npcInstance = Vm.AllocInstance<NpcInstance>(npcSymbol);
 
-            var userDataObject = new NpcData
+            var userDataObject = new NpcContainer
             {
                 Instance = npcInstance
             };
@@ -227,7 +228,7 @@ namespace GUZ.Core.Creator
             var properties = newNpc.GetComponent<NpcProperties>();
 
             npcData.Properties = properties;
-            npcData.Properties.NpcInstance = npcInstance;
+            npcData.Properties.NpcData = npcData;
 
             properties.SetData(npcVob);
 
@@ -285,7 +286,7 @@ namespace GUZ.Core.Creator
         /// values between NpcInstance and Vobs.Npc
         /// e.g. DailyRoutine is updated in VOB
         /// </summary>
-        private static void OverwriteInitDataWithSaveGameData(bool isFromSaveGame, NpcData data)
+        private static void OverwriteInitDataWithSaveGameData(bool isFromSaveGame, NpcContainer data)
         {
             if (!isFromSaveGame)
             {
@@ -351,7 +352,7 @@ namespace GUZ.Core.Creator
         /// It can also be the currently active routine point to walk to.
         /// We therefore execute the daily routines to collect current location and use this as spawn location.
         /// </summary>
-        private static bool SetSpawnPoint(NpcData npc, string spawnPoint)
+        private static bool SetSpawnPoint(NpcContainer npc, string spawnPoint)
         {
             WayNetPoint initialSpawnPoint;
 

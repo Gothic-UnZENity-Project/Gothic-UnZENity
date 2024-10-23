@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using GUZ.Core.Data;
+using GUZ.Core.Data.Container;
 using UnityEngine;
 using ZenKit;
 using ZenKit.Daedalus;
@@ -15,9 +16,9 @@ namespace GUZ.Core.Extensions
         /// <summary>
         /// Convenient shortcut to retrieve and cast NpcData object from NpcInstance property.
         /// </summary>
-        public static NpcData GetUserData(this NpcInstance instance)
+        public static NpcContainer GetUserData(this NpcInstance instance)
         {
-            return instance.UserData as NpcData;
+            return instance.UserData as NpcContainer;
         }
 
         public static TextureFormat AsUnityTextureFormat(this ZenKit.TextureFormat format)

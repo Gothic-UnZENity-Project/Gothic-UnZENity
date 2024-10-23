@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using GUZ.Core.Caches;
 using GUZ.Core.Creator.Meshes.V2;
 using GUZ.Core.Data;
+using GUZ.Core.Data.Container;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
@@ -1081,7 +1082,7 @@ namespace GUZ.Core.Creator
         private static GameObject CreateNpc(ZenKit.Vobs.Npc npcVob)
         {
             var instance = GameData.GothicVm.AllocInstance<NpcInstance>(npcVob.Name);
-            var npcData = new NpcData()
+            var npcData = new NpcContainer()
             {
                 Instance = instance,
                 Vob = npcVob
