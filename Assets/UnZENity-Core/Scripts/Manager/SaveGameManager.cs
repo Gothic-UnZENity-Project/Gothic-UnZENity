@@ -1,18 +1,18 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using GUZ.Core.Data;
 using GUZ.Core.Data.Container;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Properties;
-using GUZ.Core.World;
 using JetBrains.Annotations;
 using UnityEngine;
 using ZenKit;
+using ZenKit.Daedalus;
 using ZenKit.Vobs;
 using Mesh = ZenKit.Mesh;
 using Texture = ZenKit.Texture;
+using Vector3 = System.Numerics.Vector3;
 
 namespace GUZ.Core.Manager
 {
@@ -292,12 +292,58 @@ namespace GUZ.Core.Manager
             var go = data.Go;
             vob.NpcInstance = GameData.GothicVm.GetSymbolByIndex(instance.Index)!.Name;
 
-            vob.Name = instance.GetName(0); // e.g. PC_THIEF
+            vob.Name = GameData.GothicVm.GetSymbolByIndex(instance.Index)!.Name; // e.g. PC_THIEF
             vob.Position = go.transform.position.ToNumericsVector();
             vob.Rotation = go.transform.rotation.ToMatrix3x3();
+
+            vob.HasRoutine = instance.DailyRoutine > 0;
+            if (instance.DailyRoutine > 0)
+            {
+                vob.CurrentRoutine = GameData.GothicVm.GetSymbolByIndex(instance.DailyRoutine)!.Name;
+            }
+
+            if (instance.StartAiState > 0)
+            {
+                vob.StartAiState = GameData.GothicVm.GetSymbolByIndex(instance.StartAiState)!.Name;
+            }
+
+            vob.Guild = instance.Guild;
+            vob.Level = instance.Level;
+            vob.FightTactic = instance.FightTactic;
+            vob.RespawnTime = instance.SpawnDelay;
+            vob.Xp = instance.Exp;
+            vob.XpNextLevel = instance.ExpNext;
+            vob.Lp = instance.Lp;
+            vob.BsInterruptableOverride = instance.BodyStateInterruptableOverride;
+            vob.ModelScale = vob.ModelScale.Length() == 0 ? Vector3.One : vob.ModelScale; // Set default if empty.
+
+            for (var i = 0; i < 5; i++)
+            {
+                vob.SetMission(i, instance.GetMission((NpcMissionSlot)i));
+            }
+
+            for (var i = 0; i < 8; i++)
+            {
+                vob.SetAttribute(i, instance.GetAttribute((NpcAttribute)i));
+            }
+
+            for (var i = 0; i < 4; i++)
+            {
+                vob.SetHitChance(i, instance.GetHitChance((NpcTalent)i));
+            }
+
+            for (var i = 0; i < 8; i++)
+            {
+                vob.SetProtection(i, instance.GetProtection((DamageType)i));
+            }
+
+            var vobAiVars = new int[100];
+            for (var i = 0; i < vobAiVars.Length; i++)
+            {
+                vobAiVars[i] = instance.GetAiVar(i);
+            }
+            vob.AiVars = vobAiVars;
         }
-
-
 
         private string GetSaveGamePath(int folderSaveId)
         {

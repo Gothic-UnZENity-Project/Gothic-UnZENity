@@ -296,7 +296,6 @@ namespace GUZ.Core.Creator
             var instance = data.Instance;
             var vob = data.Vob;
 
-            // FIXME - There are more properties we need to overwrite.
             if (vob.HasRoutine)
             {
                 instance.DailyRoutine = Vm.GetSymbolByName(vob.CurrentRoutine)!.Index;
@@ -522,6 +521,8 @@ namespace GUZ.Core.Creator
 
         public static void ExtSetModelFatness(NpcInstance npc, float fatness)
         {
+            npc.GetUserData().Vob.ModelFatness = fatness;
+
             var npcGo = GetNpcGo(npc);
             var oldScale = npcGo.transform.localScale;
             var bonusFat = fatness * _fatnessScale;
