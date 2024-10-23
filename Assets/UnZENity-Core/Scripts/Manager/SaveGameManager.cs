@@ -1,7 +1,10 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using GUZ.Core.Data;
+using GUZ.Core.Data.Container;
 using GUZ.Core.Extensions;
+using GUZ.Core.Globals;
 using GUZ.Core.Properties;
 using GUZ.Core.World;
 using JetBrains.Annotations;
@@ -213,6 +216,8 @@ namespace GUZ.Core.Manager
         // FIXME - TBD
         private void PrepareWorldDataForSaving(WorldContainer data)
         {
+            data.OriginalWorld.NpcSpawnEnabled = true;
+
             VobProperties[] allVobs = GameObject.FindObjectsOfType<VobProperties>(includeInactive: true);
             List<VobProperties> allVobsExcludingNpcs = new List<VobProperties>();
             List<VobProperties> allVisibleNpcs = new List<VobProperties>();
@@ -233,7 +238,8 @@ namespace GUZ.Core.Manager
                 {
                     if (vobData.Name == GameGlobals.Settings.IniPlayerInstanceName)
                     {
-                        hero = vobComp;
+                        hero = vobComp; // For special temp reasons.
+                        allVisibleNpcs.Add(vobComp);
                     }
                     else if (vobComp.gameObject.activeInHierarchy)
                     {
@@ -253,12 +259,9 @@ namespace GUZ.Core.Manager
             // 1.1 Store current position of all NPCs into their VOBs
             foreach (var npc in allVisibleNpcs)
             {
-                npc.Properties.Position = npc.transform.position.ToNumericsVector();
-                npc.Properties.Rotation = npc.transform.rotation.ToMatrix3x3();
+                var npcData = ((NpcProperties)npc).NpcData;
+                PrepareNpcForSaving(npcData);
             }
-
-            hero.Properties.Position = hero.transform.position.ToNumericsVector();
-            hero.Properties.Rotation = hero.transform.rotation.ToMatrix3x3();
 
             // 2. Collect all VOBs in a plain structure (except Npcs far away)
             // Every VOB is created via Prefab, it's root GameObject has the VobTag and a VobProperties component with the actual ZenKit.VirtualObject property.
@@ -268,7 +271,6 @@ namespace GUZ.Core.Manager
 
                 // Add elements in order of appearance in an original save game file.
                 rootObjects.AddRange(allVisibleNpcs.Select(i => i.Properties));
-                rootObjects.Add(hero.Properties);
                 rootObjects.AddRange(allVobsExcludingNpcs.Select(i => i.Properties));
 
                 data.OriginalWorld.RootObjects = rootObjects;
@@ -279,6 +281,22 @@ namespace GUZ.Core.Manager
                 data.OriginalWorld.Npcs = allFarAwayNpcs.Select(i => (ZenKit.Vobs.Npc)i.Properties).ToList();
             }
         }
+
+        /// <summary>
+        /// When a NpcInstance is initialized or saved, we afterward need to copy some data to VOB for handling and saving.
+        /// </summary>
+        private void PrepareNpcForSaving(NpcContainer data)
+        {
+            var instance = data.Instance;
+            var vob = data.Vob;
+            var go = data.Go;
+            vob.NpcInstance = GameData.GothicVm.GetSymbolByIndex(instance.Index)!.Name;
+
+            vob.Position = go.transform.position.ToNumericsVector();
+            vob.Rotation = go.transform.rotation.ToMatrix3x3();
+        }
+
+
 
         private string GetSaveGamePath(int folderSaveId)
         {

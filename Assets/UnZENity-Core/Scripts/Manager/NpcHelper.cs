@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using GUZ.Core.Caches;
-using GUZ.Core.Data;
+using GUZ.Core.Data.Container;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Npc;
@@ -85,22 +85,22 @@ namespace GUZ.Core.Manager
             vobNpc.Name = GameGlobals.Settings.IniPlayerInstanceName;
             vobNpc.Player = true;
 
-            playerProperties.SetData(vobNpc);
-            playerProperties.NpcInstance = heroInstance;
-            playerProperties.Head = Camera.main!.transform;
-
-            var npcData = new NpcData
+            var npcData = new NpcContainer
             {
                 Instance = heroInstance,
                 Vob = vobNpc,
                 Properties = playerProperties
             };
 
+            playerProperties.SetData(vobNpc);
+            playerProperties.NpcData = npcData;
+            playerProperties.Head = Camera.main!.transform;
+
             heroInstance.UserData = npcData;
 
             MultiTypeCache.NpcCache.Add(npcData);
-            
             GameData.GothicVm.InitInstance(heroInstance);
+
             GameData.GothicVm.GlobalHero = heroInstance;
         }
 

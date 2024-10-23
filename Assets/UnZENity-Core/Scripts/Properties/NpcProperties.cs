@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using GUZ.Core.Data;
+using GUZ.Core.Data.Container;
 using GUZ.Core.Npc;
 using GUZ.Core.Npc.Actions.AnimationActions;
 using GUZ.Core.Vm;
@@ -14,7 +16,8 @@ namespace GUZ.Core.Properties
     /// </summary>
     public class NpcProperties : VobProperties
     {
-        public NpcInstance NpcInstance;
+        public NpcContainer NpcData;
+        public NpcInstance NpcInstance => NpcData.Instance;
 
         public AudioSource NpcSound;
         public Transform Bip01;

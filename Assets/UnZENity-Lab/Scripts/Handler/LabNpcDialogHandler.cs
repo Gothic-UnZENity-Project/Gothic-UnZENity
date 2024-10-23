@@ -3,6 +3,7 @@ using GUZ.Core;
 using GUZ.Core.Caches;
 using GUZ.Core.Creator.Meshes.V2;
 using GUZ.Core.Data;
+using GUZ.Core.Data.Container;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Properties;
@@ -33,9 +34,9 @@ namespace GUZ.Lab.Handler
             var npcSymbol = GameData.GothicVm.GetSymbolByName(_bloodwynInstanceId);
             _bloodwynInstance = GameData.GothicVm.InitInstance<NpcInstance>(npcSymbol!);
             var properties = newNpc.GetComponent<NpcProperties>();
-            properties.NpcInstance = _bloodwynInstance;
+            properties.NpcData.Instance = _bloodwynInstance;
 
-            var npcData = new NpcData
+            var npcData = new NpcContainer
             {
                 Instance = _bloodwynInstance,
                 Properties = properties
