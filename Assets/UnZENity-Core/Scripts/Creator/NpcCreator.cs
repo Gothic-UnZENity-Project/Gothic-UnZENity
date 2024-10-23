@@ -3,7 +3,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using GUZ.Core.Caches;
 using GUZ.Core.Creator.Meshes.V2;
-using GUZ.Core.Data;
 using GUZ.Core.Data.Container;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
@@ -225,12 +224,13 @@ namespace GUZ.Core.Creator
         {
             var npcData = npcInstance.GetUserData();
             var newNpc = ResourceLoader.TryGetPrefabObject(PrefabType.Npc);
-            var properties = newNpc.GetComponent<NpcProperties>();
+            var propertiesComp = newNpc.GetComponent<NpcProperties>();
 
-            npcData.Properties = properties;
+            npcData.Vob = npcVob;
+            npcData.Properties = propertiesComp;
             npcData.Properties.NpcData = npcData;
 
-            properties.SetData(npcVob);
+            propertiesComp.SetData(npcVob);
 
             // As we have our back reference between NpcInstance and NpcData, we can now initialize the object on ZenKit side.
             // Lookups like Npc_SetTalentValue() will work now as NpcInstance.UserData() points to our object which stores the information.
@@ -256,13 +256,13 @@ namespace GUZ.Core.Creator
 
             newNpc.name = $"{npcInstance.GetName(NpcNameSlot.Slot0)} ({npcInstance.Id})";
 
-            var mdhName = string.IsNullOrEmpty(properties.OverlayMdhName)
-                ? properties.BaseMdhName
-                : properties.OverlayMdhName;
-            MeshFactory.CreateNpc(newNpc.name, properties.MdmName, mdhName, properties.BodyData,
+            var mdhName = string.IsNullOrEmpty(propertiesComp.OverlayMdhName)
+                ? propertiesComp.BaseMdhName
+                : propertiesComp.OverlayMdhName;
+            MeshFactory.CreateNpc(newNpc.name, propertiesComp.MdmName, mdhName, propertiesComp.BodyData,
                 newNpc, GetRootGo());
 
-            foreach (var equippedItem in properties.EquippedItems)
+            foreach (var equippedItem in propertiesComp.EquippedItems)
             {
                 MeshFactory.CreateNpcWeapon(newNpc, equippedItem, (VmGothicEnums.ItemFlags)equippedItem.MainFlag,
                     (VmGothicEnums.ItemFlags)equippedItem.Flags);

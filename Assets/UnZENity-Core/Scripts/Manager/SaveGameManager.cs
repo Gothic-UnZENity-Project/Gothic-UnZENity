@@ -292,6 +292,7 @@ namespace GUZ.Core.Manager
             var go = data.Go;
             vob.NpcInstance = GameData.GothicVm.GetSymbolByIndex(instance.Index)!.Name;
 
+            vob.Name = instance.GetName(0); // e.g. PC_THIEF
             vob.Position = go.transform.position.ToNumericsVector();
             vob.Rotation = go.transform.rotation.ToMatrix3x3();
         }
