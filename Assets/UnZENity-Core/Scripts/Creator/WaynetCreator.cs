@@ -7,6 +7,7 @@ using GUZ.Core.World;
 using UnityEngine;
 using ZenKit;
 using Material = UnityEngine.Material;
+using Mesh = UnityEngine.Mesh;
 using WayPoint = GUZ.Core.Vob.WayNet.WayPoint;
 
 namespace GUZ.Core.Creator
@@ -106,13 +107,14 @@ namespace GUZ.Core.Creator
 
             foreach (var waypoint in world.WayNet.Points)
             {
-                var wpObject = ResourceLoader.TryGetPrefabObject(PrefabType.WayPoint);
+                var wpObject = ResourceLoader.TryGetPrefabObject(PrefabType.WayPoint)!;
 
-                // We remove the Renderer only if not wanted.
-                // TODO - Can be outsourced to a different Prefab-variant without Renderer for a fractal of additional performance. ;-)
-                if (!debugDraw)
+                if (debugDraw)
                 {
-                    Object.Destroy(wpObject.GetComponent<MeshRenderer>());
+                    var rend = wpObject.AddComponent<MeshRenderer>();
+                    var filter = wpObject.AddComponent<MeshFilter>();
+                    filter.sharedMesh = Resources.GetBuiltinResource<Mesh>("Cube.fbx");
+                    rend.sharedMaterial = Constants.DebugMaterial;
                 }
 
                 wpObject.name = waypoint.Name;

@@ -6,7 +6,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using GUZ.Core.Caches;
 using GUZ.Core.Creator.Meshes.V2;
-using GUZ.Core.Data;
 using GUZ.Core.Data.Container;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
@@ -27,6 +26,7 @@ using Debug = UnityEngine.Debug;
 using Light = ZenKit.Vobs.Light;
 using LightType = ZenKit.Vobs.LightType;
 using Material = UnityEngine.Material;
+using Mesh = UnityEngine.Mesh;
 using Object = UnityEngine.Object;
 using Vector3 = System.Numerics.Vector3;
 
@@ -781,10 +781,12 @@ namespace GUZ.Core.Creator
             // FIXME - change to a Prefab in the future.
             var vobObj = GetPrefab(vob);
 
-            if (!debugDraw)
+            if (debugDraw)
             {
-                // Quick win: If we don't want to render the spots, we just remove the Renderer.
-                Object.Destroy(vobObj.GetComponent<MeshRenderer>());
+                var rend = vobObj.AddComponent<MeshRenderer>();
+                var filter = vobObj.AddComponent<MeshFilter>();
+                filter.sharedMesh = Resources.GetBuiltinResource<Mesh>("Sphere.fbx");
+                rend.sharedMaterial = Constants.DebugMaterial;
             }
 
             var fpName = vob.Name.IsEmpty() ? "START" : vob.Name;
