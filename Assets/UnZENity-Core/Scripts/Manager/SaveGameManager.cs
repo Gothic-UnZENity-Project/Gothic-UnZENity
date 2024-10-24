@@ -263,6 +263,16 @@ namespace GUZ.Core.Manager
                 PrepareNpcForSaving(npcData);
             }
 
+            // 1.2 Do the same for all the other NPCs
+            foreach (var npc in allFarAwayNpcs)
+            {
+                var npcData = ((NpcProperties)npc).NpcData;
+                PrepareNpcForSaving(npcData);
+            }
+
+            // 1.3 We assume, that all VOBs (Doors, etc.) have their settings already inside the VOBs. Therefore, no additional handling needed.
+            // ...
+
             // 2. Collect all VOBs in a plain structure (except Npcs far away)
             // Every VOB is created via Prefab, it's root GameObject has the VobTag and a VobProperties component with the actual ZenKit.VirtualObject property.
             // If the saving crashes here based on NPEs, then a Prefab isn't set correctly.
