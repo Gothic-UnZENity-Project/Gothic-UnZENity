@@ -35,6 +35,7 @@ namespace GUZ.Core.Manager.Scenes
 
             var worldRoot = new GameObject("World");
             var vobRoot = new GameObject("VOBs");
+
             // We need to disable all vob meshed during loading. Otherwise, loading time will increase from 10 seconds to 10 minutes. ;-)
             worldRoot.SetActive(false);
             vobRoot.SetActive(false);
@@ -62,16 +63,23 @@ namespace GUZ.Core.Manager.Scenes
                 // 4.
                 if (config.EnableWorldMesh)
                 {
-                    await WorldCreator.CreateAsync(config, GameGlobals.Loading, worldRoot);
-                }
+                    // initialize Lights before world creation
+                    vobRoot.SetActive(true); // temporary enable vobRoot
+                    await StationaryLightsManager.InitializeThreadSafeLightData();
+                    vobRoot.SetActive(false); // disable to save some seconds in loading time ;p
 
-                StationaryLight.InitStationaryLights();
+                    await WorldCreator.CreateAsync(config, GameGlobals.Loading, worldRoot);
+                    GameGlobals.Lights.ClearThreadSafeLights();
+                }
 
                 // World fully loaded
                 ResourceLoader.ReleaseLoadedData();
 
                 worldRoot.SetActive(true);
                 vobRoot.SetActive(true);
+
+                GameGlobals.Sky.InitSky(); // we need to initialise lighting after activating roots
+                StationaryLight.InitStationaryLights();
                 
                 TeleportPlayerToStart();
 
