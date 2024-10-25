@@ -340,8 +340,7 @@ namespace GUZ.Core.Creator
                 }
                 default:
                 {
-                    Debug.Log(
-                        $"VobType={vob.Type} not yet handled. And we didn't know we need to do so. ;-)");
+                    Debug.LogError($"VobType={vob.Type} not yet handled. And we didn't know we need to do so. ;-)");
                     break;
                 }
             }
@@ -450,6 +449,7 @@ namespace GUZ.Core.Creator
                     go = ResourceLoader.TryGetPrefabObject(PrefabType.VobSoundDaytime);
                     break;
                 case VirtualObjectType.oCZoneMusic:
+                case VirtualObjectType.oCZoneMusicDefault:
                     go = ResourceLoader.TryGetPrefabObject(PrefabType.VobMusic);
                     break;
                 case VirtualObjectType.oCMOB:
@@ -633,7 +633,8 @@ namespace GUZ.Core.Creator
                 return null;
             }
 
-            var vobObj = new GameObject($"{vob.LightType} Light {vob.Name}");
+            var vobObj = GetPrefab(vob);
+            vobObj.name = $"{vob.LightType} Light {vob.Name}";
             vobObj.SetParent(parent ?? _parentGosNonTeleport[vob.Type], true, true);
             SetPosAndRot(vobObj, vob.Position, vob.Rotation);
 
@@ -696,7 +697,7 @@ namespace GUZ.Core.Creator
         [CanBeNull]
         private static GameObject CreateSoundDaytime(SoundDaytime vob, GameObject parent = null)
         {
-            var go = ResourceLoader.TryGetPrefabObject(PrefabType.VobSoundDaytime);
+            var go = GetPrefab(vob);
             go.name = $"{vob.SoundName}-{vob.SoundNameDaytime}";
             
             // We don't want to have sound when we boot the game async for 30 seconds in non-spatial blend mode.
@@ -731,7 +732,7 @@ namespace GUZ.Core.Creator
 
         private static GameObject CreateZoneMusic(ZoneMusic vob, GameObject parent = null)
         {
-            var go = ResourceLoader.TryGetPrefabObject(PrefabType.VobMusic);
+            var go = GetPrefab(vob);
             go.SetParent(parent ?? _parentGosNonTeleport[vob.Type], true, true);
             go.name = vob.Name;
 
@@ -750,7 +751,7 @@ namespace GUZ.Core.Creator
 
         private static GameObject CreateTriggerChangeLevel(TriggerChangeLevel vob, GameObject parent = null)
         {
-            var vobObj = new GameObject(vob.Name);
+            var vobObj = GetPrefab(vob);
             vobObj.SetParent(parent ?? _parentGosNonTeleport[vob.Type], true, true);
 
             vobObj.layer = Constants.IgnoreRaycastLayer;
