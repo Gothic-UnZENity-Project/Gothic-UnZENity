@@ -37,18 +37,20 @@ namespace GUZ.Core.Creator
         private static Dictionary<VirtualObjectType, GameObject> _parentGosTeleport = new();
         private static Dictionary<VirtualObjectType, GameObject> _parentGosNonTeleport = new();
 
-        private static VirtualObjectType[] _nonTeleportTypes =
+        private static readonly VirtualObjectType[] _teleportTypes =
         {
-            VirtualObjectType.oCItem,
-            VirtualObjectType.oCMobLadder,
-            VirtualObjectType.oCZoneMusic,
-            VirtualObjectType.oCZoneMusicDefault,
-            VirtualObjectType.zCVobSound,
-            VirtualObjectType.zCVobSoundDaytime,
-            VirtualObjectType.zCVobAnimate
+            VirtualObjectType.oCMOB,
+            VirtualObjectType.oCMobBed,
+            VirtualObjectType.oCMobContainer,
+            VirtualObjectType.oCMobDoor,
+            VirtualObjectType.oCMobInter,
+            VirtualObjectType.oCMobSwitch,
+            VirtualObjectType.oCMobWheel,
+            VirtualObjectType.zCVob,
+            VirtualObjectType.zCVobStair
         };
 
-        private static GameObject _vobsGo;
+        private static GameObject _rootVobsGo;
         private static GameObject _teleportGo;
         private static GameObject _nonTeleportGo;
 
@@ -71,7 +73,7 @@ namespace GUZ.Core.Creator
         {
             Stopwatch stopwatch = new();
 
-            _vobsGo = root;
+            _rootVobsGo = root;
 
             stopwatch.Start();
             PreCreateVobs(vobs);
@@ -109,14 +111,13 @@ namespace GUZ.Core.Creator
 
             _teleportGo = new GameObject("Teleport");
             _nonTeleportGo = new GameObject("NonTeleport");
-            _teleportGo.SetParent(_vobsGo);
-            _nonTeleportGo.SetParent(_vobsGo);
+            _teleportGo.SetParent(_rootVobsGo);
+            _nonTeleportGo.SetParent(_rootVobsGo);
 
             _parentGosTeleport = new Dictionary<VirtualObjectType, GameObject>();
             _parentGosNonTeleport = new Dictionary<VirtualObjectType, GameObject>();
 
-            CreateParentVobObjectTeleport(_teleportGo);
-            CreateParentVobObjectNonTeleport(_nonTeleportGo);
+            CreateRootVobs();
         }
 
         private static int GetTotalVobCount(List<IVirtualObject> vobs)
@@ -331,7 +332,10 @@ namespace GUZ.Core.Creator
                 case VirtualObjectType.Ignored:
                 case VirtualObjectType.Unknown:
                 {
-                    // FIXME - not yet implemented.
+                    // For SaveGame comparison, we load our fallback Prefab and set VobProperties.
+                    // Remove it from here once we properly implement and handle it.
+                    go = CreateDefaultVob(vob);
+
                     break;
                 }
                 default:
@@ -350,7 +354,7 @@ namespace GUZ.Core.Creator
         /// </summary>
         private static GameObject CreateFire(GameConfiguration config, Fire vob, GameObject parent = null)
         {
-            var go = CreateDefaultMesh(vob, parent);
+            var go = CreateDefaultMesh(vob, parent, true);
 
             if (vob.VobTree == "")
             {
@@ -379,8 +383,6 @@ namespace GUZ.Core.Creator
         /// In the zen files all the vobs have the position represented for the world not per parent
         /// and as we might load multiple copies of the same vob tree but for different parents we need to reset the position
         /// </summary>
-        /// <param name="vobList"></param>
-        /// <param name="position"></param>
         private static void ResetVobTreePositions(List<IVirtualObject> vobList, Vector3 position = default,
             Matrix3x3 rotation = default)
         {
@@ -481,7 +483,8 @@ namespace GUZ.Core.Creator
                     go = ResourceLoader.TryGetPrefabObject(PrefabType.VobAnimate);
                     break;
                 default:
-                    return new GameObject(name);
+                    go = ResourceLoader.TryGetPrefabObject(PrefabType.Vob);
+                    break;
             }
 
             go.name = name;
@@ -522,29 +525,24 @@ namespace GUZ.Core.Creator
             }
         }
 
-        private static void CreateParentVobObjectTeleport(GameObject root)
+        private static void CreateRootVobs()
         {
             var allTypes = (VirtualObjectType[])Enum.GetValues(typeof(VirtualObjectType));
-            foreach (var type in allTypes.Except(_nonTeleportTypes))
+
+            // Vobs to teleport on top
+            foreach (var type in allTypes.Intersect(_teleportTypes))
             {
                 var newGo = new GameObject(type.ToString());
-                newGo.SetParent(root);
+                newGo.SetParent(_teleportGo);
 
                 _parentGosTeleport.Add(type, newGo);
             }
-        }
 
-        /// <summary>
-        /// As PxVobType.PxVob_oCItem get Grabbable Component, they already own a Collider
-        /// AND we don't want to teleport on top of them. We therefore exclude them from being added to Teleporter.
-        /// </summary>
-        private static void CreateParentVobObjectNonTeleport(GameObject root)
-        {
-            var allTypes = (VirtualObjectType[])Enum.GetValues(typeof(VirtualObjectType));
-            foreach (var type in allTypes.Intersect(_nonTeleportTypes))
+            // Vobs to not teleport onto (e.g. music zone volumes)
+            foreach (var type in allTypes.Except(_teleportTypes))
             {
                 var newGo = new GameObject(type.ToString());
-                newGo.SetParent(root);
+                newGo.SetParent(_nonTeleportGo);
 
                 _parentGosNonTeleport.Add(type, newGo);
             }
@@ -636,7 +634,7 @@ namespace GUZ.Core.Creator
             }
 
             var vobObj = new GameObject($"{vob.LightType} Light {vob.Name}");
-            vobObj.SetParent(parent ?? _parentGosTeleport[vob.Type], true, true);
+            vobObj.SetParent(parent ?? _parentGosNonTeleport[vob.Type], true, true);
             SetPosAndRot(vobObj, vob.Position, vob.Rotation);
 
             var lightComp = vobObj.AddComponent<StationaryLight>();
@@ -753,7 +751,7 @@ namespace GUZ.Core.Creator
         private static GameObject CreateTriggerChangeLevel(TriggerChangeLevel vob, GameObject parent = null)
         {
             var vobObj = new GameObject(vob.Name);
-            vobObj.SetParent(parent ?? _parentGosTeleport[vob.Type], true, true);
+            vobObj.SetParent(parent ?? _parentGosNonTeleport[vob.Type], true, true);
 
             vobObj.layer = Constants.IgnoreRaycastLayer;
 
@@ -791,7 +789,7 @@ namespace GUZ.Core.Creator
 
             var fpName = vob.Name.IsEmpty() ? "START" : vob.Name;
             vobObj.name = fpName;
-            vobObj.SetParent(parent ?? _parentGosTeleport[vob.Type], true, true);
+            vobObj.SetParent(parent ?? _parentGosNonTeleport[vob.Type], true, true);
 
             var freePointData = new FreePoint
             {
@@ -1100,8 +1098,7 @@ namespace GUZ.Core.Creator
             return newNpc;
         }
 
-        private static GameObject CreateDefaultMesh(IVirtualObject vob, GameObject parent = null,
-            bool nonTeleport = false)
+        private static GameObject CreateDefaultMesh(IVirtualObject vob, GameObject parent = null, bool nonTeleport = false)
         {
             var parentGo = nonTeleport ? _parentGosNonTeleport[vob.Type] : _parentGosTeleport[vob.Type];
             var meshName = vob.ShowVisual ? vob.Visual!.Name : vob.Name;
@@ -1187,6 +1184,20 @@ namespace GUZ.Core.Creator
             return null;
         }
 
+        /// <summary>
+        /// Create nothing than an empty Prefab GO with VobProperties.
+        /// Needed for proper SaveGame comparison (VOB counts)
+        /// </summary>
+        private static GameObject CreateDefaultVob(IVirtualObject vob)
+        {
+            var parentGo = _parentGosNonTeleport[vob.Type];
+            var go = GetPrefab(vob);
+
+            go.SetParent(parentGo);
+
+            return go;
+        }
+
         private static void SetPosAndRot(GameObject obj, Vector3 position, Matrix3x3 rotation)
         {
             SetPosAndRot(obj, position.ToUnityVector(), rotation.ToUnityQuaternion());
@@ -1198,7 +1209,7 @@ namespace GUZ.Core.Creator
         }
 
         /// <summary>
-        /// Some object are kind of null. We have Position only. this method is to compare with Gothic Spacer and remove if not needed later.
+        /// Some objects are kind of null. We have Position only. this method is to compare with Gothic Spacer and remove if not needed later.
         /// </summary>
         private static GameObject CreateDebugObject(IVirtualObject vob, GameObject parent = null)
         {
