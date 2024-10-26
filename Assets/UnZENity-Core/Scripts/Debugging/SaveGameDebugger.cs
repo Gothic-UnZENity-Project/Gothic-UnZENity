@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using MyBox;
 using UnityEngine;
+using ZenKit.Util;
 using ZenKit.Vobs;
 using Vector3 = System.Numerics.Vector3;
 
@@ -86,7 +87,7 @@ namespace GUZ.Core.Debugging
                     }
                 }
 
-                // Check if there is any VobType which isn't in SaveGame1, but SaveGame2
+                // Check if there are any VobTypes which aren't in SaveGame1, but SaveGame2
                 vobsCountB
                     .Where(i => !vobsCountA.Keys.Contains(i.Key))
                     .ToList()
@@ -176,10 +177,61 @@ namespace GUZ.Core.Debugging
             }
         }
 
+
+        // Properties which we won't compare.
+        private Dictionary<string, List<string>> _elementsToIgnore = new (){
+            {
+               typeof(VirtualObject).FullName!, new()
+               {
+                   nameof(VirtualObject.Id) // Includes the Index of current VM. Different for G1 and UnZENity.
+               }
+            }
+        };
+
         private void ComparePropertiesByType(VirtualObjectType type, List<IVirtualObject> slotA, List<IVirtualObject> slotB)
         {
             for (var i = 0; i < slotA.Count(); i++)
             {
+                // We loop through all the types from top to bottom.
+                // We basically check all Properties except the ones we specifically exclude or handle manually.
+                var properties = slotA[i].GetType().GetProperties();
+                foreach (var property in properties)
+                {
+                    var declaringType = property.DeclaringType!.ToString();
+                    var propertyName = property.Name;
+
+                    if (_elementsToIgnore.TryGetValue(declaringType, out var typeToIgnore))
+                    {
+                        if (typeToIgnore.Contains(propertyName))
+                        {
+                            continue;
+                        }
+                    }
+
+                    var valueA = property.GetValue(slotA[i]);
+                    var valueB = property.GetValue(slotB[i]);
+
+                    switch (property.GetMethod.ReturnParameter!.ToString().Trim())
+                    {
+                        case "ZenKit.Util.Matrix3x3":
+                            var rotationA = (Matrix3x3)valueA;
+                            var rotationB = (Matrix3x3)valueB;
+
+                            // Identity comparison doesn't work. Therefore, we use a string comparison. (Please don't judge ;-D )
+                            var vobAMatrix =
+                                $"{rotationA.M11}, {rotationA.M12}, {rotationA.M13}, {rotationA.M21}, {rotationA.M22}, {rotationA.M23}, {rotationA.M31}, {rotationA.M32}, {rotationA.M33}";
+                            var vobBMatrix =
+                                $"{rotationB.M11}, {rotationB.M12}, {rotationB.M13}, {rotationB.M21}, {rotationB.M22}, {rotationB.M23}, {rotationB.M31}, {rotationB.M32}, {rotationB.M33}";
+                            Debug.Assert(vobAMatrix == vobBMatrix, $"VOB property >{property.Name}< of type >{nameof(Matrix3x3)}< does not match: slotA={vobAMatrix}, slotB={vobBMatrix}");
+
+                            continue;
+                    }
+
+
+                    Debug.Assert(valueA.Equals(valueB), $"{slotA[i].Name}: Property {property.DeclaringType}.{property.Name} does not match.");
+                }
+
+                continue;
                 switch (type)
                 {
                     case VirtualObjectType.oCMobDoor:
@@ -234,7 +286,7 @@ namespace GUZ.Core.Debugging
                         CompareStartpoint((IStartPoint)slotA[i], (IStartPoint)slotB[i]);
                         break;
                     case VirtualObjectType.oCMOB:
-                        CompareMob((IVirtualObject)slotA[i], (IVirtualObject)slotB[i]);
+                        CompareMob((IMovableObject)slotA[i], (IMovableObject)slotB[i]);
                         break;
                     case VirtualObjectType.zCTriggerList:
                         CompareTriggerList((ITriggerList)slotA[i], (ITriggerList)slotB[i]);
@@ -348,13 +400,16 @@ namespace GUZ.Core.Debugging
         {
             CompareDefaultVob(vobA, vobB);
 
+            // Nothing else to do
         }
 
-        private void CompareMob(IVirtualObject vobA, IVirtualObject vobB)
-        {
-            CompareDefaultVob(vobA, vobB);
 
-            // FIXME check proper type!
+
+
+        private void CompareMob(IMovableObject vobA, IMovableObject vobB)
+        {
+
+
         }
 
         private void CompareTriggerList(ITriggerList vobA, ITriggerList vobB)
