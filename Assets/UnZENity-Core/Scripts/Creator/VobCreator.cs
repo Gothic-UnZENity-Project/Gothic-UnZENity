@@ -307,6 +307,18 @@ namespace GUZ.Core.Creator
                     go = CreateNpc((ZenKit.Vobs.Npc)vob);
                     break;
                 }
+                case VirtualObjectType.zCMover:
+                {
+                    // Each mover starts "Closed", when game boots. (At least for a new game.)
+                    // TODO - We need to check if it's the case for a loaded game
+                    ((IMover)vob).MoverState = (int)VmGothicEnums.MoverState.Closed;
+
+                    // For SaveGame comparison, we load our fallback Prefab and set VobProperties.
+                    // Remove it from here once we properly implement and handle it.
+                    go = CreateDefaultVob(vob);
+
+                    break;
+                }
                 case VirtualObjectType.zCVobScreenFX:
                 case VirtualObjectType.zCTriggerWorldStart:
                 case VirtualObjectType.zCTriggerList:
@@ -315,7 +327,6 @@ namespace GUZ.Core.Creator
                 case VirtualObjectType.zCVobLensFlare:
                 case VirtualObjectType.zCMoverController:
                 case VirtualObjectType.zCPFXController:
-                case VirtualObjectType.zCMover:
                 case VirtualObjectType.zCVobLevelCompo:
                 case VirtualObjectType.zCZoneZFog:
                 case VirtualObjectType.zCZoneZFogDefault:

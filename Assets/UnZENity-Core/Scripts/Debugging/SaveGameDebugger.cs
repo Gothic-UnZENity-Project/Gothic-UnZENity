@@ -64,8 +64,8 @@ namespace GUZ.Core.Debugging
 
             Debug.Log("Comparing VOB counts");
             {
-                var vobsCountA = vobsByTypeA.ToDictionary(i => i.Key, i => i.Value.Count());
-                var vobsCountB = vobsByTypeB.ToDictionary(i => i.Key, i => i.Value.Count());
+                var vobsCountA = vobsByTypeA.ToDictionary(i => i.Key, i => i.Value.Count);
+                var vobsCountB = vobsByTypeB.ToDictionary(i => i.Key, i => i.Value.Count);
 
                 foreach (var countA in vobsCountA)
                 {
@@ -73,17 +73,7 @@ namespace GUZ.Core.Debugging
 
                     Debug.Log("---------");
                     Debug.Log($"### Checking VOB type >{countA.Key}<");
-                    if (countA.Value == countB)
-                    {
-                        Debug.Log($"VOBs of type >{countA.Key}< matches slotA={countA.Value}, slotB={countB}.");
-
-                        ComparePropertiesByType(countA.Key, vobsByTypeA[countA.Key], vobsByTypeB[countA.Key]);
-                    }
-                    else
-                    {
-                        Debug.LogError(
-                            $"VOBs of type >{countA.Key}< does not match slotA={countA.Value}, slotB={countB}.");
-                    }
+                    ComparePropertiesByType(vobsByTypeA[countA.Key], vobsByTypeB[countA.Key]);
                 }
 
                 // Check if there are any VobTypes which aren't in SaveGame1, but SaveGame2
@@ -92,7 +82,6 @@ namespace GUZ.Core.Debugging
                     .ToList()
                     .ForEach(i => Debug.LogError($"VOBs of type >{i.Key}< are missing in slotB."));
             }
-
 
             return;
 
@@ -192,20 +181,42 @@ namespace GUZ.Core.Debugging
             {
                 typeof(VirtualObject).FullName!, new()
                 {
-                    nameof(VirtualObject.Id) // Includes the Index of current VM. Different for G1 and UnZENity.
+                    nameof(VirtualObject.Id), // Includes the Index of current VM. Different for G1 and UnZENity
+                    // TODO - It defines recurring events like heat damage over time (every x-milliseconds).
+                    // TODO - Currently not handled within UnZENity, but could be useful in the future.
+                    nameof(VirtualObject.NextOnTimer),
+                }
+            },
+            {
+                typeof(ZoneMusic).FullName!, new()
+                {
+                    //  Both *Done properties handle some initial loading of music files in G1, but the actual .sgt file
+                    // isn't store in save file, therefore we ignore set/get it in UnZENity.
+                    nameof(ZoneMusic.DayEntranceDone),
+                    nameof(ZoneMusic.NightEntranceDone)
                 }
             }
         };
 
-        private void ComparePropertiesByType(VirtualObjectType type, List<IVirtualObject> slotA,
-            List<IVirtualObject> slotB)
+        private void ComparePropertiesByType(List<IVirtualObject> slotA, List<IVirtualObject> slotB)
         {
+            if (slotA.Count == slotB.Count)
+            {
+                Debug.Log($"VOBs of type >{slotA.FirstOrDefault()?.Type}< matches slotA={slotA.Count}, slotB={slotB.Count}.");
+            }
+            else
+            {
+                Debug.LogError($"VOBs of type >{slotA.FirstOrDefault()?.Type}< does not match slotA={slotA.Count}, slotB={slotB.Count}.");
+                return;
+            }
+
             for (var i = 0; i < slotA.Count; i++)
             {
+                var objectName = slotA[i].Name;
+
                 // We loop through all the types from top to bottom.
                 // We basically check all Properties except the ones we specifically exclude or handle manually.
                 var properties = slotA[i].GetType().GetProperties();
-                Debug.Log(i);
                 foreach (var property in properties)
                 {
                     var declaringType = property.DeclaringType!.ToString();
@@ -222,8 +233,35 @@ namespace GUZ.Core.Debugging
                     var valueA = property.GetValue(slotA[i]);
                     var valueB = property.GetValue(slotB[i]);
 
+                    // Some PresetNames are empty on Gothic1, but exists on UnZNity (e.g. type=DOOR, PresetName=DOOR_WOODEN (on slotB only))
+                    // Should be safe to ignore
+                    if (property.Name == "PresetName" && ((string)valueA).IsNullOrEmpty())
+                    {
+                        continue;
+                    }
+
                     switch (property.GetMethod.ReturnParameter!.ToString().Trim())
                     {
+                        case "System.Collections.Generic.List`1[ZenKit.Vobs.IVirtualObject]":
+                            var listA = (List<IVirtualObject>)valueA;
+                            var listB = (List<IVirtualObject>)valueB;
+
+                            if (listA.NotNullOrEmpty())
+                            {
+                                Debug.Log($"### Checking VOB Children of {objectName}");
+                                ComparePropertiesByType(listA, listB);
+                            }
+                            // Else - all good
+                            break;
+                        case "ZenKit.Vobs.IVisual":
+                            var visualA = (IVisual)valueA;
+                            var visualB = (IVisual)valueB;
+
+                            Debug.Assert(visualA?.Type == visualB?.Type,
+                                $"VOB property >{property.Name}< of type >{nameof(IVisual)}< does not match: slotA={visualA?.Type}, slotB={visualB?.Type}");
+                            Debug.Assert(visualA?.Name == visualB?.Name,
+                                $"VOB property >{property.Name}< of type >{nameof(IVisual)}< does not match: slotA={visualA?.Name}, slotB={visualB?.Name}");
+                            break;
                         case "ZenKit.Util.Matrix3x3":
                             var rotationA = (Matrix3x3)valueA;
                             var rotationB = (Matrix3x3)valueB;
@@ -236,7 +274,7 @@ namespace GUZ.Core.Debugging
                             Debug.Assert(vobAMatrix == vobBMatrix,
                                 $"VOB property >{property.Name}< of type >{nameof(Matrix3x3)}< does not match: slotA={vobAMatrix}, slotB={vobBMatrix}");
 
-                            break; // Checked. Skip to next property.
+                            break;
                         default:
                             // Last but not least, normal check of values.
                             Debug.Assert(valueA == null && valueB == null || valueA.Equals(valueB),

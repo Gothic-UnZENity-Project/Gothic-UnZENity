@@ -181,5 +181,13 @@ namespace GUZ.Core.Vm
             CBow,
             Mage
         }
+
+        public enum MoverState
+        {
+            Open,
+            Opening,
+            Closed,
+            Closing
+        }
     }
 }

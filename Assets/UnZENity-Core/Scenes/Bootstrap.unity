@@ -550,9 +550,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   DoSaveGame: 0
+  SaveSlot: 15
   CompareSaveGames: 0
-  SaveSlot1: 1
-  SaveSlot2: 15
+  SaveSlot1ToCompare: 14
+  SaveSlot2ToCompare: 15
   WorldToCompare: WORLD.ZEN
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
