@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -12,6 +13,7 @@ using ZenKit.Daedalus;
 using ZenKit.Vobs;
 using Mesh = ZenKit.Mesh;
 using Texture = ZenKit.Texture;
+using TextureFormat = ZenKit.TextureFormat;
 using Vector3 = System.Numerics.Vector3;
 
 namespace GUZ.Core.Manager
@@ -174,12 +176,15 @@ namespace GUZ.Core.Manager
         /// 1. Collect changed data from all the worlds visited during this gameplay
         /// 2. Alter its values inside the ZenKit data
         /// 3. Save world-by-world into the save game itself
+        ///
+        /// Hint: Needs to be called after EndOfFrame to ensure we can do a screenshot as thumbnail.
         /// </summary>
         //FIXME - untested!
         public void SaveGame(int saveGameId, string title)
         {
             var saveGame = new SaveGame(GameContext.GameVersionAdapter.Version);
             saveGame.Metadata.Title = title;
+            saveGame.Metadata.SaveDate = DateTime.Now.ToString();
             saveGame.Thumbnail = CreateThumbnail();
             saveGame.Metadata.World = CurrentWorldName.ToUpper();
 
@@ -194,12 +199,41 @@ namespace GUZ.Core.Manager
 
         private Texture CreateThumbnail()
         {
-            var screenshot = ScreenCapture.CaptureScreenshotAsTexture(ScreenCapture.StereoScreenCaptureMode.BothEyes);
+            int pixelsPerAxis = 256; // Default size of a G1 Thumbnail
+            Texture2D screenshot = ScreenCapture.CaptureScreenshotAsTexture(ScreenCapture.StereoScreenCaptureMode.BothEyes);
+            Texture2D formattedScreenshot;
 
-            // FIXME - Parse from Unity texture into ZenKit texture one new ZK.Texture() initializer without parameters exist.
-            // var texture = new ZenKit.Texture();
+            // Alter dimensions of screenshots to align with Gothic thumbnail format.
+            {
+                RenderTexture rt = RenderTexture.GetTemporary(pixelsPerAxis, pixelsPerAxis);
+                rt.filterMode = FilterMode.Bilinear;
 
-            return null;
+                RenderTexture.active = rt;
+                Graphics.Blit(screenshot, rt);
+
+                formattedScreenshot = new Texture2D(pixelsPerAxis, pixelsPerAxis, UnityEngine.TextureFormat.RGB565, false);
+                formattedScreenshot.ReadPixels(new Rect(0, 0, pixelsPerAxis, pixelsPerAxis), 0, 0);
+                formattedScreenshot.Apply();
+
+                RenderTexture.active = null;
+                RenderTexture.ReleaseTemporary(rt);
+
+                // Gothic textures need to be flipped to be shown correctly.
+                var originalPixels = formattedScreenshot.GetPixels();
+                var yFlippedPixels = new Color[originalPixels.Length];
+                for (var row = 0; row < pixelsPerAxis; ++row)
+                {
+                    // We iterate through every row and reverse the whole row (aka flipping y-axis)
+                    Array.Copy(originalPixels, row * pixelsPerAxis, yFlippedPixels, (pixelsPerAxis - row - 1) * pixelsPerAxis, pixelsPerAxis);
+                }
+                formattedScreenshot.SetPixels(yFlippedPixels);
+            }
+
+            TextureBuilder builder = new TextureBuilder(pixelsPerAxis, pixelsPerAxis);
+
+            builder.AddMipmap(formattedScreenshot.GetRawTextureData(), TextureFormat.R5G6B5);
+
+            return builder.Build(TextureFormat.R5G6B5);
         }
 
         /// <summary>
