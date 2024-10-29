@@ -106,7 +106,7 @@ namespace GUZ.VR.Adapter
 
             simulatorGo.AddComponent<HVRBodySimulator>().Rig = playerRig;
             simulatorGo.AddComponent<HVRHandsSimulator>().Rig = playerRig;
-            simulatorGo.AddComponent<HVRSimulatorControlsGUI>();
+            simulatorGo.AddComponent<VRSimulatorControlsGUI>();
 
             SceneManager.MoveGameObjectToScene(simulatorGo, currentScene);
         }
