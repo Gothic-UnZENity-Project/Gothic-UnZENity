@@ -35,7 +35,7 @@ namespace GUZ.Core.Manager
     public class SaveGameManager
     {
         public int SaveGameId;
-        public bool IsNewGame => SaveGameId <= 0;
+        public bool IsNewGame => SaveGameId < 1;
         public bool IsLoadedGame => !IsNewGame;
         public bool IsFirstWorldLoadingFromSaveGame; // Check if we load save game right now!
 
@@ -179,7 +179,6 @@ namespace GUZ.Core.Manager
         ///
         /// Hint: Needs to be called after EndOfFrame to ensure we can do a screenshot as thumbnail.
         /// </summary>
-        //FIXME - untested!
         public void SaveGame(int saveGameId, string title)
         {
             var saveGame = new SaveGame(GameContext.GameVersionAdapter.Version);
@@ -246,8 +245,6 @@ namespace GUZ.Core.Manager
         /// 2. Collect all VOBs in a plain structure (except Npcs far away)
         /// 3. Add all far-away NPCs+Monsters to the .Npcs list
         /// </summary>
-        //FIXME - untested!
-        // FIXME - TBD
         private void PrepareWorldDataForSaving(WorldContainer data)
         {
             data.OriginalWorld.NpcSpawnEnabled = true;

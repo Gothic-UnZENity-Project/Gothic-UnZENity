@@ -167,6 +167,7 @@ namespace GUZ.Core
         /// <summary>
         /// saveGameId - 0==newGame (Gothic saves start with number 1)
         /// </summary>
+        /// <param name="saveGameId">1-15</param>
         public void LoadWorld(string worldName, int saveGameId, string sceneToUnload = null)
         {
             // We need to add .zen as early as possible as all related data needs the file ending.

@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using GUZ.Core.Caches;
 using GUZ.Core.Extensions;
@@ -13,6 +14,7 @@ namespace GUZ.Core.Player.Menu
     {
         public GameObject[] SaveSlots;
 
+        public TMP_Text Title;
         public GameObject Thumbnail;
         public TMP_Text World;
         public TMP_Text SavedAt;
@@ -21,6 +23,10 @@ namespace GUZ.Core.Player.Menu
 
         private readonly SaveGame[] _saves = new SaveGame[15];
 
+        private bool _isSaving;
+        private bool _isLoading => !_isSaving;
+
+
         /// <summary>
         /// Pre-fill the Load Game entries with names and textures (if existing)
         /// </summary>
@@ -28,7 +34,24 @@ namespace GUZ.Core.Player.Menu
         {
             Thumbnail.GetComponent<MeshRenderer>().material =
                 GameGlobals.Textures.GetEmptyMaterial(MaterialExtension.BlendMode.Opaque);
+        }
 
+        public void SetIsLoading()
+        {
+            FillSaveGameEntries();
+            Title.text = "LOAD GAME";
+            _isSaving = false;
+        }
+
+        public void SetIsSaving()
+        {
+            FillSaveGameEntries();
+            Title.text = "SAVE GAME";
+            _isSaving = true;
+        }
+
+        private void FillSaveGameEntries()
+        {
             var gothicDir = GameContext.GameVersionAdapter.RootPath;
             var saveGameListPath = Path.GetFullPath(Path.Join(gothicDir, "Saves"));
 
@@ -56,7 +79,7 @@ namespace GUZ.Core.Player.Menu
 
         public void OnLoadGameSlotPointerEnter(int id)
         {
-            var save = _saves[id];
+            var save = _saves[id - 1];
 
             if (save == null)
             {
@@ -83,14 +106,22 @@ namespace GUZ.Core.Player.Menu
 
         public void OnLoadGameSlotClick(int id)
         {
-            var save = _saves[id];
-
-            if (save == null)
+            if (_isLoading)
             {
-                return;
-            }
+                var save = _saves[id];
 
-            GameManager.I.LoadWorld(save.Metadata.World, id, Constants.SceneMainMenu);
+                if (save == null)
+                {
+                    return;
+                }
+
+                GameManager.I.LoadWorld(save.Metadata.World, id, Constants.SceneMainMenu);
+            }
+            else
+            {
+                GameGlobals.SaveGame.SaveGame(id, $"UnZENity-Test - {DateTime.Now}");
+                FillSaveGameEntries();
+            }
         }
     }
 }
