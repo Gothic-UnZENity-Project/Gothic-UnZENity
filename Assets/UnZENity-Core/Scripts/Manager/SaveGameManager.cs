@@ -181,7 +181,7 @@ namespace GUZ.Core.Manager
         ///
         /// Hint: Needs to be called after EndOfFrame to ensure we can do a screenshot as thumbnail.
         /// </summary>
-        public void SaveGame(int saveGameId, string title)
+        public void SaveCurrentGame(int saveGameId, string title)
         {
             var saveGame = new SaveGame(GameContext.GameVersionAdapter.Version);
             saveGame.Metadata.Title = title;
@@ -193,7 +193,7 @@ namespace GUZ.Core.Manager
             {
                 var world = worldData.Value.OriginalWorld;
                 // FIXME - We need to create a new combined world first.
-                PrepareWorldDataForSaving(worldData.Value);
+                PrepareWorldDataForSaving(worldData.Value.OriginalWorld);
                 saveGame.Save(GetSaveGamePath(saveGameId), world, worldData.Key.TrimEndIgnoreCase(".ZEN").ToUpper());
             }
         }
@@ -247,9 +247,9 @@ namespace GUZ.Core.Manager
         /// 2. Collect all VOBs in a plain structure (except Npcs far away)
         /// 3. Add all far-away NPCs+Monsters to the .Npcs list
         /// </summary>
-        private void PrepareWorldDataForSaving(WorldContainer data)
+        private void PrepareWorldDataForSaving(ZenKit.World world)
         {
-            data.OriginalWorld.NpcSpawnEnabled = true;
+            world.NpcSpawnEnabled = true;
 
             VobProperties[] allVobs = GameObject.FindObjectsOfType<VobProperties>(includeInactive: true);
             List<VobProperties> allVobsExcludingNpcs = new List<VobProperties>();
@@ -316,12 +316,12 @@ namespace GUZ.Core.Manager
                 rootObjects.AddRange(allVisibleNpcs.Select(i => i.Properties));
                 rootObjects.AddRange(allVobsExcludingNpcs.Select(i => i.Properties));
 
-                data.OriginalWorld.RootObjects = rootObjects;
+                world.RootObjects = rootObjects;
             }
 
             // 3. Add all far-away NPCs+Monsters to the .Npcs list
             {
-                data.OriginalWorld.Npcs = allFarAwayNpcs.Select(i => (ZenKit.Vobs.Npc)i.Properties).ToList();
+                world.Npcs = allFarAwayNpcs.Select(i => (ZenKit.Vobs.Npc)i.Properties).ToList();
             }
         }
 

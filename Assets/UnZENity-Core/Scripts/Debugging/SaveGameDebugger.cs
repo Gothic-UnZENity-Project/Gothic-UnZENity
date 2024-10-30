@@ -44,7 +44,7 @@ namespace GUZ.Core.Debugging
         {
             yield return new WaitForEndOfFrame();
 
-            GameGlobals.SaveGame.SaveGame(SaveSlot, $"UnZENity-Test - {DateTime.Now}");
+            GameGlobals.SaveGame.SaveCurrentGame(SaveSlot, $"UnZENity-DEBUG - {DateTime.Now}");
 
             Debug.Log("DONE");
         }
