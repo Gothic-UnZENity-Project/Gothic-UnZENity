@@ -108,7 +108,7 @@ namespace GUZ.Core.Player.Menu
         {
             if (_isLoading)
             {
-                var save = _saves[id];
+                var save = _saves[id - 1];
 
                 if (save == null)
                 {
