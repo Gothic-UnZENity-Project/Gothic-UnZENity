@@ -69,6 +69,7 @@ namespace GUZ.Core.Manager
             SaveGameId = 0;
             Save = new SaveGame(GameContext.GameVersionAdapter.Version);
             IsFirstWorldLoadingFromSaveGame = true;
+            _worlds.ClearAndReleaseMemory();
         }
 
         /// <summary>
@@ -90,6 +91,7 @@ namespace GUZ.Core.Manager
             SaveGameId = saveGameId;
             Save = save;
             IsFirstWorldLoadingFromSaveGame = true;
+            _worlds.ClearAndReleaseMemory();
         }
 
         /// <summary>

@@ -20,9 +20,19 @@ namespace GUZ.VR.Adapter
 
         private VRPlayerController _playerController;
 
+        public VRInteractionAdapter()
+        {
+            GlobalEventDispatcher.LoadingSceneLoaded.AddListener(OnLoadingSceneLoaded);
+        }
+
         public string GetContextName()
         {
             return _contextName;
+        }
+
+        private void OnLoadingSceneLoaded()
+        {
+            _playerController.MainMenu.SetActive(false); // Needed for: World -> Open MainMenu -> Hit "Load"/"New Game"
         }
 
         public float GetFrameRate()

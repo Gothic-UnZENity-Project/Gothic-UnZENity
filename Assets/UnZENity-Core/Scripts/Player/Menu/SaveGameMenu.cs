@@ -2,10 +2,10 @@ using System;
 using System.IO;
 using GUZ.Core.Caches;
 using GUZ.Core.Extensions;
-using GUZ.Core.Globals;
 using GUZ.Core.Util;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using ZenKit;
 
 namespace GUZ.Core.Player.Menu
@@ -115,11 +115,12 @@ namespace GUZ.Core.Player.Menu
                     return;
                 }
 
-                GameManager.I.LoadWorld(save.Metadata.World, id, Constants.SceneMainMenu);
+                // Can be triggered from Scene:mainMenu or Scene:AnyWorld, therefore removing active scene.
+                GameManager.I.LoadWorld(save.Metadata.World, id, SceneManager.GetActiveScene().name);
             }
             else
             {
-                GameGlobals.SaveGame.SaveGame(id, $"UnZENity-Test - {DateTime.Now}");
+                GameGlobals.SaveGame.SaveGame(id, $"UnZENity - {DateTime.Now}");
                 FillSaveGameEntries();
             }
         }

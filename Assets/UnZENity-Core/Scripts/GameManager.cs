@@ -155,15 +155,6 @@ namespace GUZ.Core
             SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
         }
 
-        public WorldSpawnInformation CurrentWorldSpawnInformation;
-
-        public struct WorldSpawnInformation
-        {
-            public Vector3 PlayerStartPosition;
-            public Quaternion PlayerStartRotation;
-            public string StartVobAfterLoading;
-        }
-
         /// <summary>
         /// saveGameId - 0==newGame (Gothic saves start with number 1)
         /// </summary>
