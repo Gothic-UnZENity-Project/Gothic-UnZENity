@@ -5,6 +5,7 @@ using GUZ.Core.Adapter;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.VR.Components;
+using GUZ.VR.Components.HVROverrides;
 using HurricaneVR.Framework.Core.UI;
 using HurricaneVRExtensions.Simulator;
 using UnityEngine;

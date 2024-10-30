@@ -1,7 +1,7 @@
 ﻿using HurricaneVRExtensions.Simulator;
 using UnityEngine;
 
-namespace GUZ.VR.Components
+namespace GUZ.VR.Components.HVROverrides
 {
     /// <summary>
     /// Overwritten to update some GUI elements.

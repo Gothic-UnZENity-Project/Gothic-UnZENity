@@ -7,7 +7,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using Constants = GUZ.Core.Globals.Constants;
 
-namespace GUZ.VR.Components
+namespace GUZ.VR.Components.HVROverrides
 {
     public class VRPlayerController : HVRPlayerController
     {
