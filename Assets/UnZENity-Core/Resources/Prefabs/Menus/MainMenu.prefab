@@ -13271,7 +13271,7 @@ GameObject:
   m_Component:
   - component: {fileID: 135058072969220654}
   m_Layer: 5
-  m_Name: Menu
+  m_Name: RootMenu
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -14749,7 +14749,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e065799a6a7f6fd479084e99f2b8cf90, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MainMenu: {fileID: 4860330748303639356}
+  RootMenu: {fileID: 4860330748303639356}
   LoadMenu: {fileID: 7898755163371611760}
   SettingsMenu: {fileID: 1157635153384266114}
   MovementMenu: {fileID: 2970808030810714954}

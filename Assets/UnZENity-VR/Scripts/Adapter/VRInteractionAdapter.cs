@@ -4,6 +4,7 @@ using GUZ.Core;
 using GUZ.Core.Adapter;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
+using GUZ.Core.Player.Menu;
 using GUZ.VR.Components;
 using GUZ.VR.Components.HVROverrides;
 using HurricaneVR.Framework.Core.UI;
@@ -33,7 +34,8 @@ namespace GUZ.VR.Adapter
 
         private void OnLoadingSceneLoaded()
         {
-            _playerController.MainMenu.SetActive(false); // Needed for: World -> Open MainMenu -> Hit "Load"/"New Game"
+            // Needed for: World -> Open MainMenu -> Hit "Load"/"New Game"
+            _playerController.MainMenu.gameObject.SetActive(false);
         }
 
         public float GetFrameRate()
@@ -72,7 +74,7 @@ namespace GUZ.VR.Adapter
 
                 // Add MainMenu entry to the game
                 var mainMenuPrefab = ResourceLoader.TryGetPrefabObject(PrefabType.MainMenu);
-                _playerController.MainMenu = mainMenuPrefab;
+                _playerController.MainMenu = mainMenuPrefab!.GetComponent<MainMenu>();
 
                 mainMenuPrefab.SetParent(_playerController.gameObject, true, true);
                 mainMenuPrefab.SetActive(false);

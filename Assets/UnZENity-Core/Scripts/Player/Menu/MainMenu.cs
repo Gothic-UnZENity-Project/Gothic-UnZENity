@@ -7,9 +7,9 @@ using UnityEngine.SceneManagement;
 
 namespace GUZ.Core.Player.Menu
 {
-    public class MenuManager : MonoBehaviour
+    public class MainMenu : MonoBehaviour
     {
-        public GameObject MainMenu;
+        public GameObject RootMenu;
         public GameObject LoadMenu;
         public GameObject SettingsMenu;
         public GameObject MovementMenu;
@@ -27,6 +27,18 @@ namespace GUZ.Core.Player.Menu
         {
             SetSettingsValues();
             SetMaterials();
+        }
+
+        public void ToggleVisibility()
+        {
+            // Toggle visibility
+            gameObject.SetActive(!gameObject.activeSelf);
+
+            if (gameObject.activeSelf)
+            {
+                // Reset if we were in a sub menu last time.
+                SwitchMenu(RootMenu);
+            }
         }
 
         public void SetMaterials()
@@ -55,7 +67,7 @@ namespace GUZ.Core.Player.Menu
             menu.GetComponentsInChildren<TMP_Text>()
                 .ForEach(i => i.spriteAsset = GameGlobals.Font.DefaultSpriteAsset);
             
-            MainMenu.SetActive(menu == MainMenu);
+            RootMenu.SetActive(menu == RootMenu);
             LoadMenu.SetActive(menu == LoadMenu);
             SettingsMenu.SetActive(menu == SettingsMenu);
             MovementMenu.SetActive(menu == MovementMenu);
