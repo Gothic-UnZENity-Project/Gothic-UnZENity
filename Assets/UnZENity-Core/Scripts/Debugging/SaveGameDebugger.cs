@@ -69,8 +69,6 @@ namespace GUZ.Core.Debugging
 
                 foreach (var countA in vobsCountA)
                 {
-                    var countB = vobsCountB.ContainsKey(countA.Key) ? vobsCountB[countA.Key] : 0;
-
                     Debug.Log("---------");
                     Debug.Log($"### Checking VOB type >{countA.Key}<");
                     ComparePropertiesByType(vobsByTypeA[countA.Key], vobsByTypeB[countA.Key]);
@@ -243,8 +241,10 @@ namespace GUZ.Core.Debugging
                     switch (property.GetMethod.ReturnParameter!.ToString().Trim())
                     {
                         case "System.Collections.Generic.List`1[ZenKit.Vobs.IVirtualObject]":
-                            var listA = (List<IVirtualObject>)valueA;
-                            var listB = (List<IVirtualObject>)valueB;
+                            // There are Vobs where their children are in different order and different type. (e.g. Milton.pfx.children)
+                            // If we don't sort now, the property comparison would fail due to different property types.
+                            var listA = ((List<IVirtualObject>)valueA).OrderBy(i => i.Type).ToList();
+                            var listB = ((List<IVirtualObject>)valueB).OrderBy(i => i.Type).ToList();
 
                             if (listA.NotNullOrEmpty())
                             {

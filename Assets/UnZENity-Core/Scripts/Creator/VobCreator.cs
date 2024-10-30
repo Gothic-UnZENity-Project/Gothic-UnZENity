@@ -16,6 +16,7 @@ using GUZ.Core.Vm;
 using GUZ.Core.Vob;
 using GUZ.Core.Vob.WayNet;
 using JetBrains.Annotations;
+using MyBox;
 using UnityEngine;
 using UnityEngine.Rendering;
 using ZenKit;
@@ -319,6 +320,20 @@ namespace GUZ.Core.Creator
 
                     break;
                 }
+                case VirtualObjectType.zCPFXController:
+                {
+                    // A Particle controller makes no sense without a proper visual set.
+                    // Therefore, removing it now (as it's also not included in official G1 saves)
+                    if (vob.Visual == null || vob.Visual.Name.IsNullOrEmpty())
+                    {
+                        break;
+                    }
+
+                    // For SaveGame comparison, we load our fallback Prefab and set VobProperties.
+                    // Remove it from here once we properly implement and handle it.
+                    go = CreateDefaultVob(vob);
+                    break;
+                }
                 case VirtualObjectType.zCVobScreenFX:
                 case VirtualObjectType.zCTriggerWorldStart:
                 case VirtualObjectType.zCTriggerList:
@@ -326,7 +341,6 @@ namespace GUZ.Core.Creator
                 case VirtualObjectType.oCTriggerScript:
                 case VirtualObjectType.zCVobLensFlare:
                 case VirtualObjectType.zCMoverController:
-                case VirtualObjectType.zCPFXController:
                 case VirtualObjectType.zCVobLevelCompo:
                 case VirtualObjectType.zCZoneZFog:
                 case VirtualObjectType.zCZoneZFogDefault:

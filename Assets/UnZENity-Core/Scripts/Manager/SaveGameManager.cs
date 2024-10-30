@@ -285,7 +285,12 @@ namespace GUZ.Core.Manager
                 }
                 else
                 {
-                    allVobsExcludingNpcs.Add(vobComp);
+                    // The two named types aren't present in a G1 save. We therefore ignore them as well.
+                    if (vobData.Type != VirtualObjectType.zCVobLevelCompo &&
+                        vobData.Type != VirtualObjectType.zCVobLensFlare)
+                    {
+                        allVobsExcludingNpcs.Add(vobComp);
+                    }
                 }
             }
 
