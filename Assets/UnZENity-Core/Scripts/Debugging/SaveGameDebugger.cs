@@ -180,7 +180,7 @@ namespace GUZ.Core.Debugging
                     nameof(VirtualObject.Id), // Includes the Index of current VM. Different for G1 and UnZENity
                     // TODO - It defines recurring events like heat damage over time (every x-milliseconds).
                     // TODO - Currently not handled within UnZENity, but could be useful in the future.
-                    nameof(VirtualObject.NextOnTimer),
+                    nameof(VirtualObject.NextOnTimer)
                 }
             },
             {
@@ -190,6 +190,17 @@ namespace GUZ.Core.Debugging
                     // isn't store in save file, therefore we ignore set/get it in UnZENity.
                     nameof(ZoneMusic.DayEntranceDone),
                     nameof(ZoneMusic.NightEntranceDone)
+                }
+            },
+            {
+                typeof(Mover).FullName!, new()
+                {
+                    // Seems like a physics topic for G1. We handle the speed of animations and their colliders differently in UnZENity.
+                    nameof(Mover.MoveSpeedUnit),
+
+                    // Only FREEMINEGATE has wrong values, ignoring for now
+                    nameof(Mover.LerpType),
+                    nameof(Mover.SpeedType)
                 }
             }
         };
