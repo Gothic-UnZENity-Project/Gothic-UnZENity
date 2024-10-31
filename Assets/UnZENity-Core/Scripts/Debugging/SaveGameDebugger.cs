@@ -64,10 +64,7 @@ namespace GUZ.Core.Debugging
 
             Debug.Log("Comparing VOB counts");
             {
-                var vobsCountA = vobsByTypeA.ToDictionary(i => i.Key, i => i.Value.Count);
-                var vobsCountB = vobsByTypeB.ToDictionary(i => i.Key, i => i.Value.Count);
-
-                foreach (var countA in vobsCountA)
+                foreach (var countA in vobsByTypeA)
                 {
                     Debug.Log("---------");
                     Debug.Log($"### Checking VOB type >{countA.Key}<");
@@ -75,8 +72,8 @@ namespace GUZ.Core.Debugging
                 }
 
                 // Check if there are any VobTypes which aren't in SaveGame1, but SaveGame2
-                vobsCountB
-                    .Where(i => !vobsCountA.Keys.Contains(i.Key))
+                vobsByTypeB
+                    .Where(i => !vobsByTypeA.Keys.Contains(i.Key))
                     .ToList()
                     .ForEach(i => Debug.LogError($"VOBs of type >{i.Key}< are missing in slotB."));
             }
@@ -250,6 +247,21 @@ namespace GUZ.Core.Debugging
                                 ComparePropertiesByType(listA, listB);
                             }
                             // Else - all good
+                            break;
+                        // TriggerListTarget isn't extending IVirtualObject, we therefore check their values manually.
+                        case "System.Collections.Generic.List`1[ZenKit.Vobs.ITriggerListTarget]":
+                            var triggerListA = (List<ITriggerListTarget>)valueA;
+                            var triggerListB = (List<ITriggerListTarget>)valueB;
+
+                            Debug.Assert(triggerListA.Count == triggerListB.Count,
+                                $"VOB property >{property.Name}< of type >{nameof(ITriggerListTarget)}< does not match: slotA={triggerListA.Count}, slotB={triggerListB.Count}");
+                            for (var j = 0; j < triggerListA.Count; j++)
+                            {  
+                                Debug.Assert(triggerListA[j].Name == triggerListB[j].Name,
+                                    $"VOB property >{property.Name}< of type >{nameof(ITriggerListTarget)}< does not match: slotA={triggerListA[j].Name}, slotB={triggerListB[j].Name}");
+                                Debug.Assert(triggerListA[j].Delay == triggerListB[j].Delay,
+                                    $"VOB property >{property.Name}< of type >{nameof(ITriggerListTarget)}< does not match: slotA={triggerListA[j].Delay}, slotB={triggerListB[j].Delay}");
+                            }
                             break;
                         case "ZenKit.Vobs.IVisual":
                             var visualA = (IVisual)valueA;

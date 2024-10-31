@@ -16,7 +16,6 @@ using GUZ.Core.Vm;
 using GUZ.Core.Vob;
 using GUZ.Core.Vob.WayNet;
 using JetBrains.Annotations;
-using MyBox;
 using UnityEngine;
 using UnityEngine.Rendering;
 using ZenKit;
@@ -358,9 +357,19 @@ namespace GUZ.Core.Creator
                     go = CreateDefaultVob(vob);
                     break;
                 }
+                case VirtualObjectType.zCTriggerList:
+                {
+                    // This value is always true when a new game/world is loaded. (Compared with G1 save game.)
+                    ((TriggerList)vob).SendOnTrigger = true;
+
+                    // For SaveGame comparison, we load our fallback Prefab and set VobProperties.
+                    // Remove it from here once we properly implement and handle it.
+                    go = CreateDefaultVob(vob);
+
+                    break;
+                }
                 case VirtualObjectType.zCVobScreenFX:
                 case VirtualObjectType.zCTriggerWorldStart:
-                case VirtualObjectType.zCTriggerList:
                 case VirtualObjectType.oCCSTrigger:
                 case VirtualObjectType.oCTriggerScript:
                 case VirtualObjectType.zCVobLensFlare:
