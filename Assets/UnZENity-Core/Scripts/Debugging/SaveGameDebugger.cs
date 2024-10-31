@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using MyBox;
 using UnityEngine;
+using ZenKit;
 using ZenKit.Util;
 using ZenKit.Vobs;
 using Vector3 = System.Numerics.Vector3;
@@ -263,6 +264,19 @@ namespace GUZ.Core.Debugging
                                     $"VOB property >{property.Name}< of type >{nameof(ITriggerListTarget)}< does not match: slotA={triggerListA[j].Delay}, slotB={triggerListB[j].Delay}");
                             }
                             break;
+                        case "System.Collections.Generic.List`1[ZenKit.AnimationSample]":
+                                var animationSamplesA = (List<AnimationSample>)valueA;
+                                var animationSamplesB = (List<AnimationSample>)valueB;
+                                Debug.Assert(animationSamplesA.Count == animationSamplesB.Count,
+                                    $"VOB property >{property.Name}< of type >{nameof(AnimationSample)}< does not match: slotA={animationSamplesA.Count}, slotB={animationSamplesB.Count}");
+                                for (var j = 0; j < animationSamplesA.Count; j++)
+                                {
+                                    Debug.Assert(animationSamplesA[j].Position == animationSamplesB[j].Position,
+                                        $"VOB property >Position< of type >{nameof(AnimationSample)}< does not match: slotA={animationSamplesA[j].Position}, slotB={animationSamplesB[j].Position}");
+                                    Debug.Assert(animationSamplesA[j].Rotation == animationSamplesB[j].Rotation,
+                                        $"VOB property >Rotation< of type >{nameof(AnimationSample)}< does not match: slotA={animationSamplesA[j].Rotation}, slotB={animationSamplesB[j].Rotation}");
+                                }
+                                break;
                         case "ZenKit.Vobs.IVisual":
                             var visualA = (IVisual)valueA;
                             var visualB = (IVisual)valueB;
