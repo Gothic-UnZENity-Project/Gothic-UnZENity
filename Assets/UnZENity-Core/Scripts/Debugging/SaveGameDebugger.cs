@@ -241,10 +241,8 @@ namespace GUZ.Core.Debugging
                     switch (property.GetMethod.ReturnParameter!.ToString().Trim())
                     {
                         case "System.Collections.Generic.List`1[ZenKit.Vobs.IVirtualObject]":
-                            // There are Vobs where their children are in different order and different type. (e.g. Milton.pfx.children)
-                            // If we don't sort now, the property comparison would fail due to different property types.
-                            var listA = ((List<IVirtualObject>)valueA).OrderBy(i => i.Type).ToList();
-                            var listB = ((List<IVirtualObject>)valueB).OrderBy(i => i.Type).ToList();
+                            var listA = (List<IVirtualObject>)valueA;
+                            var listB = (List<IVirtualObject>)valueB;
 
                             if (listA.NotNullOrEmpty())
                             {
