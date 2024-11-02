@@ -35,8 +35,7 @@ namespace GUZ.Core.Manager.Scenes
 
             var worldRoot = new GameObject("World");
             var vobRoot = new GameObject("VOBs");
-
-            // We need to disable all vob meshed during loading. Otherwise, loading time will increase from 10 seconds to 10 minutes. ;-)
+            // We need to disable all vob meshes during loading. Otherwise loading time will increase from 10 seconds to 10 minutes. ;-)
             worldRoot.SetActive(false);
             vobRoot.SetActive(false);
 
@@ -44,14 +43,14 @@ namespace GUZ.Core.Manager.Scenes
             {
                 // 1.
                 // Build the world and vob meshes, populating the texture arrays.
+                // We need to start creating Vobs as we need to calculate world slicing based on amount of lights at a certain space afterwards.
                 if (config.EnableVOBs)
-                // We need to start creating Vobs as we need to calculate world slicing based on amount of lights at a certain space afterward.
                 {
-                    await VobCreator.CreateAsync(config, GameGlobals.Loading, GameGlobals.SaveGame.CurrentWorldData.Vobs, vobRoot);
+                    await VobCreator.CreateAsync(config, GameGlobals.Loading, SaveGameManager.CurrentWorldData.Vobs, vobRoot);
                 }
 
                 // 2.
-                WayNetCreator.Create(config, GameGlobals.SaveGame.CurrentWorldData);
+                WayNetCreator.Create(config, SaveGameManager.CurrentWorldData);
 
                 // 3.
                 // If the world is visited for the first time, then we need to load Npcs via Wld_InsertNpc()
@@ -78,9 +77,8 @@ namespace GUZ.Core.Manager.Scenes
                 worldRoot.SetActive(true);
                 vobRoot.SetActive(true);
 
-                GameGlobals.Sky.InitSky(); // we need to initialise lighting after activating roots
                 StationaryLight.InitStationaryLights();
-                
+
                 TeleportPlayerToStart();
 
                 // There are many handlers which listen to this event. If any of these fails, we won't get notified without a try-catch.
@@ -104,12 +102,12 @@ namespace GUZ.Core.Manager.Scenes
                 watch.Log("Full world loaded in");
             }
         }
-        
+
         /// <summary>
         /// There are three options, where the player can spawn:
         /// 1. We set it inside GameConfiguration.SpawnAtWaypoint (only during first load of the game)
         /// 2. We got the spawn information from a loaded SaveGame from the Hero's VOB
-        /// 3. We load the START_* waypoint 
+        /// 3. We load the START_* waypoint
         /// </summary>
         private void TeleportPlayerToStart()
         {
@@ -117,10 +115,10 @@ namespace GUZ.Core.Manager.Scenes
             var debugSpawnAtWayPoint = GameGlobals.Config.SpawnAtWaypoint;
 
             // If we currently load world from a save game, we will use the stored hero position which was set during VOB loading.
-            if (GameGlobals.SaveGame.IsFirstWorldLoadingFromSaveGame)
+            if (SaveGameManager.IsFirstWorldLoadingFromSaveGame)
             {
                 // We only use the Vob location once per save game loading.
-                GameGlobals.SaveGame.IsFirstWorldLoadingFromSaveGame = false;
+                SaveGameManager.IsFirstWorldLoadingFromSaveGame = false;
 
                 if (debugSpawnAtWayPoint.NotNullOrEmpty())
                 {
@@ -134,26 +132,27 @@ namespace GUZ.Core.Manager.Scenes
                     }
                 }
             }
-            
+
             // 2.
             if (GameGlobals.Player.HeroSpawnPosition != default)
             {
                 TeleportPlayerToStart(GameGlobals.Player.HeroSpawnPosition, GameGlobals.Player.HeroSpawnRotation);
                 return;
             }
-            
+
             // 3.
-            var startPoint = GameData.FreePoints.FirstOrDefault(
-                i => i.Key.EqualsIgnoreCase("START") || i.Key.EqualsIgnoreCase("START_GOTHIC2")
+            var spots = GameObject.FindGameObjectsWithTag(Constants.SpotTag);
+            var startPoint = spots.FirstOrDefault(
+                go => go.name.EqualsIgnoreCase("START") || go.name.EqualsIgnoreCase("START_GOTHIC2")
             );
 
-            if (startPoint.Key.IsNullOrEmpty())
+            if (startPoint == null)
             {
                 Debug.LogError("No suitable START_* waypoint found!");
                 return;
             }
 
-            TeleportPlayerToStart(startPoint.Value.Position, startPoint.Value.Rotation);
+            TeleportPlayerToStart(startPoint.transform.position, startPoint.transform.rotation);
         }
 
         private void TeleportPlayerToStart(Vector3 position, Quaternion rotation)
