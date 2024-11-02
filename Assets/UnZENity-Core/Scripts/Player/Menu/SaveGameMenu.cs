@@ -1,11 +1,11 @@
+using System;
 using System.IO;
 using GUZ.Core.Caches;
 using GUZ.Core.Extensions;
-using GUZ.Core.Globals;
-using GUZ.Core.Manager;
 using GUZ.Core.Util;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using ZenKit;
 
 namespace GUZ.Core.Player.Menu
@@ -14,6 +14,7 @@ namespace GUZ.Core.Player.Menu
     {
         public GameObject[] SaveSlots;
 
+        public TMP_Text Title;
         public GameObject Thumbnail;
         public TMP_Text World;
         public TMP_Text SavedAt;
@@ -22,6 +23,10 @@ namespace GUZ.Core.Player.Menu
 
         private readonly SaveGame[] _saves = new SaveGame[15];
 
+        private bool _isSaving;
+        private bool _isLoading => !_isSaving;
+
+
         /// <summary>
         /// Pre-fill the Load Game entries with names and textures (if existing)
         /// </summary>
@@ -29,7 +34,24 @@ namespace GUZ.Core.Player.Menu
         {
             Thumbnail.GetComponent<MeshRenderer>().material =
                 GameGlobals.Textures.GetEmptyMaterial(MaterialExtension.BlendMode.Opaque);
+        }
 
+        public void SetIsLoading()
+        {
+            FillSaveGameEntries();
+            Title.text = "LOAD GAME";
+            _isSaving = false;
+        }
+
+        public void SetIsSaving()
+        {
+            FillSaveGameEntries();
+            Title.text = "SAVE GAME";
+            _isSaving = true;
+        }
+
+        private void FillSaveGameEntries()
+        {
             var gothicDir = GameContext.GameVersionAdapter.RootPath;
             var saveGameListPath = Path.GetFullPath(Path.Join(gothicDir, "Saves"));
 
@@ -46,7 +68,7 @@ namespace GUZ.Core.Player.Menu
                 var folderSaveId = int.Parse(saveGameFolderName.Remove(0, "savegame".Length));
 
                 // Load metadata
-                var save = SaveGameManager.GetSaveGame(folderSaveId);
+                var save = GameGlobals.SaveGame.GetSaveGame(folderSaveId);
                 _saves[folderSaveId - 1] = save;
 
                 // Set metadata to slot
@@ -57,7 +79,7 @@ namespace GUZ.Core.Player.Menu
 
         public void OnLoadGameSlotPointerEnter(int id)
         {
-            var save = _saves[id];
+            var save = _saves[id - 1];
 
             if (save == null)
             {
@@ -84,14 +106,23 @@ namespace GUZ.Core.Player.Menu
 
         public void OnLoadGameSlotClick(int id)
         {
-            var save = _saves[id];
-
-            if (save == null)
+            if (_isLoading)
             {
-                return;
-            }
+                var save = _saves[id - 1];
 
-            GameManager.I.LoadWorld(save.Metadata.World, id, Constants.SceneMainMenu);
+                if (save == null)
+                {
+                    return;
+                }
+
+                // Can be triggered from Scene:mainMenu or Scene:AnyWorld, therefore removing active scene.
+                GameManager.I.LoadWorld(save.Metadata.World, id, SceneManager.GetActiveScene().name);
+            }
+            else
+            {
+                GameGlobals.SaveGame.SaveGame(id, $"UnZENity - {DateTime.Now}");
+                FillSaveGameEntries();
+            }
         }
     }
 }

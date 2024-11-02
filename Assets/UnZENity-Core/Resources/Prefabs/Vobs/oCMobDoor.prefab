@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 2607151182155886275}
   m_Layer: 0
   m_Name: oCMobDoor
-  m_TagString: Untagged
+  m_TagString: GUZVob
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -44,4 +44,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa8549f9b79448e4b3ebd6901ded3136, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <visualScheme>k__BackingField: 
+  <VisualScheme>k__BackingField: 

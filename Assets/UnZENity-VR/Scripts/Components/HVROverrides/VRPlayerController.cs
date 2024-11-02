@@ -1,13 +1,14 @@
 #if GUZ_HVR_INSTALLED
 using GUZ.Core;
 using GUZ.Core.Manager;
+using GUZ.Core.Player.Menu;
 using HurricaneVR.Framework.Core.Player;
 using MyBox;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Constants = GUZ.Core.Globals.Constants;
 
-namespace GUZ.VR.Components
+namespace GUZ.VR.Components.HVROverrides
 {
     public class VRPlayerController : HVRPlayerController
     {
@@ -15,7 +16,7 @@ namespace GUZ.VR.Components
 
         [Separator("GUZ - Settings")]
         [SerializeField]
-        public GameObject MainMenu;
+        public MainMenu MainMenu;
 
         protected override void Start()
         {
@@ -30,7 +31,7 @@ namespace GUZ.VR.Components
             if (_guzInputs.IsMenuActivated && IsGameScene())
             {
                 // Toggle visibility
-                MainMenu.SetActive(!MainMenu.activeSelf);
+                MainMenu.ToggleVisibility();
             }
         }
 

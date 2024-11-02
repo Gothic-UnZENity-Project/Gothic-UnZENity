@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using GUZ.Core.Caches;
-using GUZ.Core.Data;
+using GUZ.Core.Data.Container;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Npc;
@@ -60,6 +60,10 @@ namespace GUZ.Core.Manager
         {
             if (GameData.GothicVm.GlobalHero != null)
             {
+                // We assume, that this call is only made when the cache got cleared before as we loaded another world.
+                // Therefore, we re-add it now.
+                MultiTypeCache.NpcCache.Add(((NpcInstance)GameData.GothicVm.GlobalHero).GetUserData());
+
                 return;
             }
 
@@ -75,22 +79,28 @@ namespace GUZ.Core.Manager
 
 
             var heroInstance = GameData.GothicVm.AllocInstance<NpcInstance>(GameGlobals.Settings.IniPlayerInstanceName);
-
             var playerProperties = playerGo.GetComponent<NpcProperties>();
-            playerProperties.NpcInstance = heroInstance;
-            playerProperties.Head = Camera.main!.transform;
 
-            var npcData = new NpcData
+            var vobNpc = new ZenKit.Vobs.Npc();
+            vobNpc.Name = GameGlobals.Settings.IniPlayerInstanceName;
+            vobNpc.Player = true;
+
+            var npcData = new NpcContainer
             {
                 Instance = heroInstance,
+                Vob = vobNpc,
                 Properties = playerProperties
             };
+
+            playerProperties.SetData(vobNpc);
+            playerProperties.NpcData = npcData;
+            playerProperties.Head = Camera.main!.transform;
 
             heroInstance.UserData = npcData;
 
             MultiTypeCache.NpcCache.Add(npcData);
-            
             GameData.GothicVm.InitInstance(heroInstance);
+
             GameData.GothicVm.GlobalHero = heroInstance;
         }
 

@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using GUZ.Core.Caches;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
@@ -27,7 +28,8 @@ namespace GUZ.Core
         private MusicManager _gameMusicManager;
 
         public GameSettings Settings { get; private set; }
-        
+        public SaveGameManager SaveGame { get; private set; }
+
         public LoadingManager Loading { get; private set; }
 
         public PlayerManager Player { get; private set; }
@@ -70,6 +72,7 @@ namespace GUZ.Core
             
             MultiTypeCache.Init();
 
+            SaveGame = new SaveGameManager();
             Textures = GetComponent<TextureManager>();
             Font = GetComponent<FontManager>();
             Loading = new LoadingManager();
@@ -122,6 +125,8 @@ namespace GUZ.Core
         /// </summary>
         public void InitPhase2(GameVersion version)
         {
+            var watch = Stopwatch.StartNew();
+
             GameContext.SetGameVersionContext(version);
 
             var gothicRootPath = GameContext.GameVersionAdapter.RootPath;
@@ -136,6 +141,8 @@ namespace GUZ.Core
             Video.Init();
 
             GuzBootstrapper.BootGothicUnZeNity(Config, gothicRootPath);
+
+            watch.Log("Phase2 (mostly ZenKit) initialized in");
         }
 
         public void LoadScene(string sceneName, string unloadScene = null)
@@ -148,18 +155,10 @@ namespace GUZ.Core
             SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
         }
 
-        public WorldSpawnInformation CurrentWorldSpawnInformation;
-
-        public struct WorldSpawnInformation
-        {
-            public Vector3 PlayerStartPosition;
-            public Quaternion PlayerStartRotation;
-            public string StartVobAfterLoading;
-        }
-
         /// <summary>
         /// saveGameId - 0==newGame (Gothic saves start with number 1)
         /// </summary>
+        /// <param name="saveGameId">1-15</param>
         public void LoadWorld(string worldName, int saveGameId, string sceneToUnload = null)
         {
             // We need to add .zen as early as possible as all related data needs the file ending.
@@ -168,13 +167,13 @@ namespace GUZ.Core
             // Pre-load ZenKit save game data now. Can be reused by LoadingSceneManager later.
             if (saveGameId < 1)
             {
-                SaveGameManager.LoadNewGame();
+                SaveGame.LoadNewGame();
             }
             else
             {
-                SaveGameManager.LoadSavedGame(saveGameId);
+                SaveGame.LoadSavedGame(saveGameId);
             }
-            SaveGameManager.ChangeWorld(worldName);
+            SaveGame.ChangeWorld(worldName);
 
             LoadScene(Constants.SceneLoading, sceneToUnload);
         }

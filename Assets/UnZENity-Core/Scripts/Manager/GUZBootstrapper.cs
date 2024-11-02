@@ -26,8 +26,6 @@ namespace GUZ.Core.Manager
 
         public static void BootGothicUnZeNity(GameConfiguration config, string gothicDir)
         {
-            var watch = Stopwatch.StartNew();
-            
             LoadGothicVm(gothicDir);
             SetLanguage();
             LoadDialogs();
@@ -37,9 +35,6 @@ namespace GUZ.Core.Manager
             LoadPfxVm(gothicDir);
             LoadFonts();
             LoadGuildData();
-
-            watch.Stop();
-            Debug.Log($"Time spent for Bootstrapping ZenKit: {watch.Elapsed}");
 
             GlobalEventDispatcher.ZenKitBootstrapped.Invoke();
         }

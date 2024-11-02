@@ -5,14 +5,21 @@ using ZenKit;
 using ZenKit.Vobs;
 using Mesh = ZenKit.Mesh;
 
-namespace GUZ.Core.World
+namespace GUZ.Core.Data.Container
 {
     /// <summary>
     /// Parsed ZenKit World data is arranged in a way to easily be usable by Unity objects.
     /// E.g. by providing sub meshes.
     /// </summary>
-    public class WorldData
+    // FIXME - If we struggle memory issues, we should consider removing some data from memory (like cached BspTree) when switching worlds.
+    public class WorldContainer
     {
+        // Storing referenced to both worlds to keep shortcut data (child properties) below in memory and to later
+        // Reuse for storing in between world switches and during save game creation.
+        public ZenKit.World OriginalWorld;
+        public ZenKit.World SaveGameWorld;
+
+
         // VOB related objects
         // We need to store it as we need the pointer to it for load+save of un-cached vobs.
         public List<IVirtualObject> Vobs;

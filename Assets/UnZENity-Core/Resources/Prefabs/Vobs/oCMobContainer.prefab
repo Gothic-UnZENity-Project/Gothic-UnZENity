@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 6383736313796596418}
   m_Layer: 0
   m_Name: oCMobContainer
-  m_TagString: Untagged
+  m_TagString: GUZVob
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -44,4 +44,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3647fae04a904a6dbba443f755b63a7d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <visualScheme>k__BackingField: 
+  <VisualScheme>k__BackingField: 

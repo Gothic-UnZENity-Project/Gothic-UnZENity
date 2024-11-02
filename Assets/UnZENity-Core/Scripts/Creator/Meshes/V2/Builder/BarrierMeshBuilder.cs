@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using GUZ.Core.Data.Container;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.World;
@@ -28,10 +29,10 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
             var maxSkyY = _barrierMesh.BoundingBox.Max.Y; // Assuming AxisAlignedBoundingBox has Min and Max as Vector3
             var minSkyY = maxSkyY * 0.925f;
 
-            var subMeshesData = new Dictionary<int, WorldData.SubMeshData>();
+            var subMeshesData = new Dictionary<int, WorldContainer.SubMeshData>();
             for (var i = 0; i < _barrierMesh.MaterialCount; i++)
             {
-                subMeshesData[i] = new WorldData.SubMeshData { Material = _barrierMesh.Materials[i] };
+                subMeshesData[i] = new WorldContainer.SubMeshData { Material = _barrierMesh.Materials[i] };
             }
 
             foreach (var polygon in _barrierMesh.Polygons)
@@ -100,7 +101,7 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
             return RootGo;
         }
 
-        private void PrepareBarrierMeshRenderer(Renderer rend, WorldData.SubMeshData subMesh)
+        private void PrepareBarrierMeshRenderer(Renderer rend, WorldContainer.SubMeshData subMesh)
         {
             var bMaterial = subMesh.Material;
 
@@ -148,7 +149,7 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
             rend.materials = new[] { material, material2 };
         }
 
-        private void PrepareBarrierMeshFilter(MeshFilter meshFilter, WorldData.SubMeshData subMesh,
+        private void PrepareBarrierMeshFilter(MeshFilter meshFilter, WorldContainer.SubMeshData subMesh,
             Color[] colors = null)
         {
             var mesh = new Mesh();
@@ -167,7 +168,7 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
 
         private static void AddEntry(List<Vector3> zkPositions, List<Vertex> features, IPolygon polygon,
             List<Color> meshColors, float alpha,
-            WorldData.SubMeshData currentSubMesh, int index)
+            WorldContainer.SubMeshData currentSubMesh, int index)
         {
             // For every vertexIndex we store a new vertex. (i.e. no reuse of Vector3-vertices for later texture/uv attachment)
             var positionIndex = polygon.PositionIndices[index];

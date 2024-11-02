@@ -15,8 +15,7 @@ namespace GUZ.Core.Manager.Scenes
             GlobalEventDispatcher.LoadingSceneLoaded.Invoke();
 
             // Start loading world!
-            GameManager.I.LoadScene(SaveGameManager.CurrentWorldName);
-
+            GameManager.I.LoadScene(GameGlobals.SaveGame.CurrentWorldName);
         }
     }
 }

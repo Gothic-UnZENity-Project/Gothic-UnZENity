@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using GUZ.Core.Data;
+using GUZ.Core.Data.Container;
 using GUZ.Core.Npc;
 using GUZ.Core.Npc.Actions.AnimationActions;
 using GUZ.Core.Vm;
@@ -12,9 +14,10 @@ namespace GUZ.Core.Properties
     /// This component is attached to the root of NPC/Monster prefab.
     /// It's data is filled, whenever we call GothicVM.InitNpc(). This call triggers DaedalusVM to execute INSTANCE logic and we will fetch it with this object.
     /// </summary>
-    public class NpcProperties : AbstractProperties
+    public class NpcProperties : VobProperties
     {
-        public NpcInstance NpcInstance;
+        public NpcContainer NpcData;
+        public NpcInstance NpcInstance => NpcData.Instance;
 
         public AudioSource NpcSound;
         public Transform Bip01;

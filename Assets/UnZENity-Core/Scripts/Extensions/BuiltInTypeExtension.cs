@@ -36,6 +36,21 @@ namespace GUZ.Core.Extensions
             return self.EndsWith(other, StringComparison.OrdinalIgnoreCase);
         }
 
+        public static string TrimEndIgnoreCase(this string self, string pattern)
+        {
+            if (string.IsNullOrEmpty(self) || string.IsNullOrEmpty(pattern))
+            {
+                return self;
+            }
+
+            if (self.EndsWithIgnoreCase(pattern))
+            {
+                self = self.Substring(0, self.Length - pattern.Length);
+            }
+
+            return self;
+        }
+
         /// <summary>
         /// For huge lists and elements where data is (e.g.) structs, it makes sense to set Capacity=0,
         /// which releases the elements finally. If you have a smaller Collection with references only, it's not needed.

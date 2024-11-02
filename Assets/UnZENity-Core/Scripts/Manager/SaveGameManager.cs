@@ -1,10 +1,20 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
-using GUZ.Core.World;
+using System.Linq;
+using GUZ.Core.Data.Container;
+using GUZ.Core.Extensions;
+using GUZ.Core.Globals;
+using GUZ.Core.Properties;
 using JetBrains.Annotations;
 using UnityEngine;
 using ZenKit;
+using ZenKit.Daedalus;
+using ZenKit.Vobs;
 using Mesh = ZenKit.Mesh;
+using Texture = ZenKit.Texture;
+using TextureFormat = ZenKit.TextureFormat;
+using Vector3 = System.Numerics.Vector3;
 
 namespace GUZ.Core.Manager
 {
@@ -22,12 +32,12 @@ namespace GUZ.Core.Manager
     /// Helper methods:
     /// * GetSaveGame(saveGameId:int)       -> Return a save game object (or null) if requested. (e.g. used for LoadMenu to prepare data.
     /// </summary>
-    public static class SaveGameManager
+    public class SaveGameManager
     {
-        public static int SaveGameId;
-        public static bool IsNewGame => SaveGameId <= 0;
-        public static bool IsLoadedGame => !IsNewGame;
-        public static bool IsFirstWorldLoadingFromSaveGame; // Check if we load save game right now!
+        public int SaveGameId;
+        public bool IsNewGame => SaveGameId < 1;
+        public bool IsLoadedGame => !IsNewGame;
+        public bool IsFirstWorldLoadingFromSaveGame; // Check if we load save game right now!
 
         /// <summary>
         /// Values can be:
@@ -37,49 +47,40 @@ namespace GUZ.Core.Manager
         /// Visiting a world for the first time can be triggered with or without leveraging a save game.
         /// It only matters if it's the first time! (Save games only include world saves if we visited it before.)
         /// </summary>
-        public static bool IsWorldLoadedForTheFirstTime;
+        public bool IsWorldLoadedForTheFirstTime;
 
-        public static SaveGame Save;
+        public SaveGame Save;
 
-        private static readonly Dictionary<string, WorldData> _worlds = new();
-        public static string CurrentWorldName;
-        public static WorldData CurrentWorldData => _worlds[CurrentWorldName];
+        private readonly Dictionary<string, WorldContainer> _worlds = new();
+        public string CurrentWorldName;
+        public WorldContainer CurrentWorldData => _worlds[CurrentWorldName];
 
         // When we load data like World.Mesh, we can't cache it for memory reasons.
         // But we need to store the reference to the parent object (World) in here as long as we want to work with the sub-data.
-        // FIXME - During world change, when we get rid of world data, some elements (like Mesh) will become invalid. Need to fix it!
-        private static ZenKit.World _newWorld;
-        private static ZenKit.World _saveGameWorld;
 
 
-        static SaveGameManager()
+        public void Init()
         {
-            GlobalEventDispatcher.WorldSceneLoaded.AddListener(OnWorldSceneLoaded);
+            // Nothing to do for now.
         }
 
-        private static void OnWorldSceneLoaded()
-        {
-            // Save memory when world is loaded fully
-            _newWorld = null;
-            _saveGameWorld = null;
-        }
-
-        public static void LoadNewGame()
+        public void LoadNewGame()
         {
             SaveGameId = 0;
             Save = new SaveGame(GameContext.GameVersionAdapter.Version);
             IsFirstWorldLoadingFromSaveGame = true;
+            _worlds.ClearAndReleaseMemory();
         }
 
         /// <summary>
         /// Hint: G1 save game folders start with 1. We leverage the same numbering.
         /// </summary>
-        public static void LoadSavedGame(int saveGameId)
+        public void LoadSavedGame(int saveGameId)
         {
             LoadSavedGame(saveGameId, GetSaveGame(saveGameId));
         }
 
-        public static void LoadSavedGame(int saveGameId, SaveGame save)
+        public void LoadSavedGame(int saveGameId, SaveGame save)
         {
             if (save == null)
             {
@@ -90,6 +91,7 @@ namespace GUZ.Core.Manager
             SaveGameId = saveGameId;
             Save = save;
             IsFirstWorldLoadingFromSaveGame = true;
+            _worlds.ClearAndReleaseMemory();
         }
 
         /// <summary>
@@ -98,7 +100,7 @@ namespace GUZ.Core.Manager
         /// 2. Try to load the world state from the save game
         /// 3. Either use this saved world data or load it from normal .zen file
         /// </summary>
-        public static void ChangeWorld(string worldName)
+        public void ChangeWorld(string worldName)
         {
             CurrentWorldName = worldName;
 
@@ -110,35 +112,39 @@ namespace GUZ.Core.Manager
             }
 
             IsWorldLoadedForTheFirstTime = true;
-            _newWorld = ResourceLoader.TryGetWorld(worldName)!; // Always needed for some data not present in SaveGame.
-            var worldFoundInSaveGame = false;
+            ZenKit.World originalWorld = ResourceLoader.TryGetWorld(worldName)!; // Always needed for some data not present in SaveGame.
+            ZenKit.World saveGameWorld = null;
+            bool worldFoundInSaveGame = false;
 
             // 2. Try to load world from save game.
             if (IsLoadedGame)
             {
-                _saveGameWorld = Save.LoadWorld(worldName);
-                worldFoundInSaveGame = _saveGameWorld != null;
+                saveGameWorld = Save.LoadWorld(worldName);
+                worldFoundInSaveGame = saveGameWorld != null;
             }
 
             ZenKit.World worldToUse;
             if (worldFoundInSaveGame)
             {
-                worldToUse = _saveGameWorld;
+                worldToUse = saveGameWorld;
+                IsWorldLoadedForTheFirstTime = false;
             }
             else
             {
                 // If there is no save game used or world not saved, we visit it for the first time.
-                worldToUse = _newWorld;
-                IsWorldLoadedForTheFirstTime = false;
+                worldToUse = originalWorld;
             }
 
             // 3. Store this world into runtime data as it's now loaded and cached during gameplay. (To save later when needed.)
             // TODO - If we get memory consumption issue, we can consider removing some data to free memory once world is loaded later.
-            _worlds[worldName] = new WorldData
+            _worlds[worldName] = new WorldContainer
             {
+                OriginalWorld = originalWorld,
+                SaveGameWorld = saveGameWorld,
+
                 // Only existing in normal world
-                Mesh = (Mesh)_newWorld.Mesh, // Do not cache or memory consumption will be way too high
-                BspTree = (CachedBspTree)_newWorld.BspTree.Cache(),
+                Mesh = (Mesh)originalWorld.Mesh, // Do not cache or memory consumption will be way too high
+                BspTree = (CachedBspTree)originalWorld.BspTree.Cache(),
 
                 // Only existing in SaveGame world
                 Npcs = worldToUse.Npcs, // (if it's a new world, it's simply null)
@@ -150,7 +156,7 @@ namespace GUZ.Core.Manager
         }
 
         [CanBeNull]
-        public static SaveGame GetSaveGame(int folderSaveId)
+        public SaveGame GetSaveGame(int folderSaveId)
         {
             // Load metadata
             var save = new SaveGame(GameVersion.Gothic1);
@@ -172,31 +178,217 @@ namespace GUZ.Core.Manager
         /// 1. Collect changed data from all the worlds visited during this gameplay
         /// 2. Alter its values inside the ZenKit data
         /// 3. Save world-by-world into the save game itself
+        ///
+        /// Hint: Needs to be called after EndOfFrame to ensure we can do a screenshot as thumbnail.
         /// </summary>
-        //FIXME - untested!
-        public static void SaveGame(int saveGameId)
+        public void SaveGame(int saveGameId, string title)
         {
-            foreach (var world in _worlds)
-            {
+            var saveGame = new SaveGame(GameContext.GameVersionAdapter.Version);
+            saveGame.Metadata.Title = title;
+            saveGame.Metadata.SaveDate = DateTime.Now.ToString();
+            saveGame.Thumbnail = CreateThumbnail();
+            saveGame.Metadata.World = CurrentWorldName.ToUpper();
 
+            foreach (var worldData in _worlds)
+            {
+                var world = worldData.Value.OriginalWorld;
                 // FIXME - We need to create a new combined world first.
-                // PrepareWorldDataForSaving(world.Value);
-                // Save.Save(GetSaveGamePath(saveGameId), world.Value, world.Key);
+                PrepareWorldDataForSaving(worldData.Value);
+                saveGame.Save(GetSaveGamePath(saveGameId), world, worldData.Key.TrimEndIgnoreCase(".ZEN").ToUpper());
             }
+        }
+
+        private Texture CreateThumbnail()
+        {
+            int pixelsPerAxis = 256; // Default size of a G1 Thumbnail
+            Texture2D screenshot = ScreenCapture.CaptureScreenshotAsTexture(ScreenCapture.StereoScreenCaptureMode.BothEyes);
+            Texture2D formattedScreenshot;
+
+            // Alter dimensions of screenshots to align with Gothic thumbnail format.
+            {
+                RenderTexture rt = RenderTexture.GetTemporary(pixelsPerAxis, pixelsPerAxis);
+                rt.filterMode = FilterMode.Bilinear;
+
+                RenderTexture.active = rt;
+                Graphics.Blit(screenshot, rt);
+
+                formattedScreenshot = new Texture2D(pixelsPerAxis, pixelsPerAxis, UnityEngine.TextureFormat.RGB565, false);
+                formattedScreenshot.ReadPixels(new Rect(0, 0, pixelsPerAxis, pixelsPerAxis), 0, 0);
+                formattedScreenshot.Apply();
+
+                RenderTexture.active = null;
+                RenderTexture.ReleaseTemporary(rt);
+
+                // Gothic textures need to be flipped to be shown correctly.
+                var originalPixels = formattedScreenshot.GetPixels();
+                var yFlippedPixels = new Color[originalPixels.Length];
+                for (var row = 0; row < pixelsPerAxis; ++row)
+                {
+                    // We iterate through every row and reverse the whole row (aka flipping y-axis)
+                    Array.Copy(originalPixels, row * pixelsPerAxis, yFlippedPixels, (pixelsPerAxis - row - 1) * pixelsPerAxis, pixelsPerAxis);
+                }
+                formattedScreenshot.SetPixels(yFlippedPixels);
+            }
+
+            TextureBuilder builder = new TextureBuilder(pixelsPerAxis, pixelsPerAxis);
+
+            builder.AddMipmap(formattedScreenshot.GetRawTextureData(), TextureFormat.R5G6B5);
+
+            return builder.Build(TextureFormat.R5G6B5);
         }
 
         /// <summary>
         /// We write data from Unity data back into ZenKit data.
         /// Hint: Not all elements need to be replaced and therefore have no setter (e.g. .Mesh, .WayNet).
         /// We therefore only set what's needed.
+        ///
+        /// This includes:
+        /// 1. Fill all the different VOB types which we need to store separately.
+        /// 2. Collect all VOBs in a plain structure (except Npcs far away)
+        /// 3. Add all far-away NPCs+Monsters to the .Npcs list
         /// </summary>
-        //FIXME - untested!
-        private static void PrepareWorldDataForSaving(ZenKit.World zkWorld, WorldData uWorld)
+        private void PrepareWorldDataForSaving(WorldContainer data)
         {
-            zkWorld.RootObjects = uWorld.Vobs;
+            data.OriginalWorld.NpcSpawnEnabled = true;
+
+            VobProperties[] allVobs = GameObject.FindObjectsOfType<VobProperties>(includeInactive: true);
+            List<VobProperties> allVobsExcludingNpcs = new List<VobProperties>();
+            List<VobProperties> allVisibleNpcs = new List<VobProperties>();
+            List<VobProperties> allFarAwayNpcs = new List<VobProperties>();
+            VobProperties hero = null;
+
+            // 1. Fill all the different VOB types which we need to store separately.
+            foreach (var vobComp in allVobs)
+            {
+                var vobData = vobComp.Properties;
+                if (vobData == null)
+                {
+                    Debug.LogError("A VOB has no ZenKit.Vobs.* property attached and therefore can't be stored inside SaveGame.", vobComp);
+                    continue;
+                }
+
+                if (vobData.Type == VirtualObjectType.oCNpc)
+                {
+                    if (vobData.Name == GameGlobals.Settings.IniPlayerInstanceName)
+                    {
+                        hero = vobComp; // For special temp reasons.
+                        allVisibleNpcs.Add(vobComp);
+                    }
+                    else if (vobComp.gameObject.activeInHierarchy)
+                    {
+                        allVisibleNpcs.Add(vobComp);
+                    }
+                    else
+                    {
+                        allFarAwayNpcs.Add(vobComp);
+                    }
+                }
+                else
+                {
+                    allVobsExcludingNpcs.Add(vobComp);
+                }
+            }
+
+            // 1.1 Store current position of all NPCs into their VOBs
+            foreach (var npc in allVisibleNpcs)
+            {
+                var npcData = ((NpcProperties)npc).NpcData;
+                PrepareNpcForSaving(npcData);
+            }
+
+            // 1.2 Do the same for all the other NPCs
+            foreach (var npc in allFarAwayNpcs)
+            {
+                var npcData = ((NpcProperties)npc).NpcData;
+                PrepareNpcForSaving(npcData);
+            }
+
+            // 1.3 We assume, that all VOBs (Doors, etc.) have their settings already inside the VOBs. Therefore, no additional handling needed.
+            // ...
+
+            // 2. Collect all VOBs in a plain structure (except Npcs far away)
+            // Every VOB is created via Prefab, it's root GameObject has the VobTag and a VobProperties component with the actual ZenKit.VirtualObject property.
+            // If the saving crashes here based on NPEs, then a Prefab isn't set correctly.
+            {
+                var rootObjects = new List<IVirtualObject>();
+
+                // Add elements in order of appearance in an original save game file.
+                rootObjects.AddRange(allVisibleNpcs.Select(i => i.Properties));
+                rootObjects.AddRange(allVobsExcludingNpcs.Select(i => i.Properties));
+
+                data.OriginalWorld.RootObjects = rootObjects;
+            }
+
+            // 3. Add all far-away NPCs+Monsters to the .Npcs list
+            {
+                data.OriginalWorld.Npcs = allFarAwayNpcs.Select(i => (ZenKit.Vobs.Npc)i.Properties).ToList();
+            }
         }
 
-        private static string GetSaveGamePath(int folderSaveId)
+        /// <summary>
+        /// When a NpcInstance is initialized or saved, we afterward need to copy some data to VOB for handling and saving.
+        /// </summary>
+        private void PrepareNpcForSaving(NpcContainer data)
+        {
+            var instance = data.Instance;
+            var vob = data.Vob;
+            var go = data.Go;
+            vob.NpcInstance = GameData.GothicVm.GetSymbolByIndex(instance.Index)!.Name;
+
+            vob.Name = GameData.GothicVm.GetSymbolByIndex(instance.Index)!.Name; // e.g. PC_THIEF
+            vob.Position = go.transform.position.ToNumericsVector();
+            vob.Rotation = go.transform.rotation.ToMatrix3x3();
+
+            vob.HasRoutine = instance.DailyRoutine > 0;
+            if (instance.DailyRoutine > 0)
+            {
+                vob.CurrentRoutine = GameData.GothicVm.GetSymbolByIndex(instance.DailyRoutine)!.Name;
+            }
+
+            if (instance.StartAiState > 0)
+            {
+                vob.StartAiState = GameData.GothicVm.GetSymbolByIndex(instance.StartAiState)!.Name;
+            }
+
+            vob.Guild = instance.Guild;
+            vob.Level = instance.Level;
+            vob.FightTactic = instance.FightTactic;
+            vob.RespawnTime = instance.SpawnDelay;
+            vob.Xp = instance.Exp;
+            vob.XpNextLevel = instance.ExpNext;
+            vob.Lp = instance.Lp;
+            vob.BsInterruptableOverride = instance.BodyStateInterruptableOverride;
+            vob.ModelScale = vob.ModelScale.Length() == 0 ? Vector3.One : vob.ModelScale; // Set default if empty.
+
+            for (var i = 0; i < 5; i++)
+            {
+                vob.SetMission(i, instance.GetMission((NpcMissionSlot)i));
+            }
+
+            for (var i = 0; i < 8; i++)
+            {
+                vob.SetAttribute(i, instance.GetAttribute((NpcAttribute)i));
+            }
+
+            for (var i = 0; i < 4; i++)
+            {
+                vob.SetHitChance(i, instance.GetHitChance((NpcTalent)i));
+            }
+
+            for (var i = 0; i < 8; i++)
+            {
+                vob.SetProtection(i, instance.GetProtection((DamageType)i));
+            }
+
+            var vobAiVars = new int[100];
+            for (var i = 0; i < vobAiVars.Length; i++)
+            {
+                vobAiVars[i] = instance.GetAiVar(i);
+            }
+            vob.AiVars = vobAiVars;
+        }
+
+        private string GetSaveGamePath(int folderSaveId)
         {
             var gothicDir = GameContext.GameVersionAdapter.RootPath;
             return Path.GetFullPath(Path.Join(gothicDir, $"Saves/savegame{folderSaveId}"));
