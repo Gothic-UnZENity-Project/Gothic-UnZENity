@@ -1,3 +1,4 @@
+using System.Linq;
 using UnityEngine;
 using ZenKit;
 
@@ -5,6 +6,9 @@ namespace GUZ.Core.Util
 {
     public static class Logging
     {
+        private static string[] _ignoredLogWarningNames = new[] { "CutsceneLibrary" };
+
+
         public static void OnZenKitLogMessage(LogLevel level, string name, string message)
         {
             // Using the fastest string concatenation as we might have a lot of logs here.
@@ -16,6 +20,10 @@ namespace GUZ.Core.Util
                     Debug.LogError(messageString);
                     break;
                 case LogLevel.Warning:
+                    if (_ignoredLogWarningNames.Contains(name))
+                    {
+                        break;
+                    }
                     Debug.LogWarning(messageString);
                     break;
                 case LogLevel.Info:

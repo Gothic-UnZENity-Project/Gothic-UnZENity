@@ -14,7 +14,7 @@ namespace GUZ.Core.Data
     public class NpcData
     {
         public NpcInstance Instance;
-        public ZenKit.Vobs.Npc Npc;
+        public ZenKit.Vobs.Npc Vob;
         public NpcProperties Properties;
         public GameObject Go => Properties.gameObject;
     }

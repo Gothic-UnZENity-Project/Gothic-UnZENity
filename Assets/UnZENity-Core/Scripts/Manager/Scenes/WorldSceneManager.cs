@@ -77,9 +77,8 @@ namespace GUZ.Core.Manager.Scenes
                 worldRoot.SetActive(true);
                 vobRoot.SetActive(true);
 
-                GameGlobals.Sky.InitSky(); // we need to initialise lighting after activating roots
                 StationaryLight.InitStationaryLights();
-                
+
                 TeleportPlayerToStart();
 
                 // There are many handlers which listen to this event. If any of these fails, we won't get notified without a try-catch.
@@ -103,12 +102,12 @@ namespace GUZ.Core.Manager.Scenes
                 watch.Log("Full world loaded in");
             }
         }
-        
+
         /// <summary>
         /// There are three options, where the player can spawn:
         /// 1. We set it inside GameConfiguration.SpawnAtWaypoint (only during first load of the game)
         /// 2. We got the spawn information from a loaded SaveGame from the Hero's VOB
-        /// 3. We load the START_* waypoint 
+        /// 3. We load the START_* waypoint
         /// </summary>
         private void TeleportPlayerToStart()
         {
@@ -133,14 +132,14 @@ namespace GUZ.Core.Manager.Scenes
                     }
                 }
             }
-            
+
             // 2.
             if (GameGlobals.Player.HeroSpawnPosition != default)
             {
                 TeleportPlayerToStart(GameGlobals.Player.HeroSpawnPosition, GameGlobals.Player.HeroSpawnRotation);
                 return;
             }
-            
+
             // 3.
             var spots = GameObject.FindGameObjectsWithTag(Constants.SpotTag);
             var startPoint = spots.FirstOrDefault(
