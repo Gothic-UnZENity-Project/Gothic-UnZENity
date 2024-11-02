@@ -1,4 +1,5 @@
-﻿using HurricaneVRExtensions.Simulator;
+﻿#if GUZ_HVR_INSTALLED
+using HurricaneVRExtensions.Simulator;
 using UnityEngine;
 
 namespace GUZ.VR.Components.HVROverrides
@@ -126,3 +127,4 @@ Joystick button -> {5}";
         }
     }
 }
+#endif
