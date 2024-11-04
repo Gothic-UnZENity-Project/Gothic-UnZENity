@@ -56,6 +56,22 @@ namespace GUZ.Lab
 
         private void Awake()
         {
+            StartCoroutine(BootLab());
+        }
+
+        /// <summary>
+        /// It's easiest to wait for Start() to initialize all the MonoBehaviours first.
+        /// </summary>
+        private IEnumerator BootLab()
+        {
+            yield return new WaitForSeconds(0.5f);
+
+            InitManager();
+            InitLab();
+        }
+
+        private void InitManager()
+        {
             GameGlobals.Instance = this;
 
             Logger.Set(Config.ZenKitLogLevel, Logging.OnZenKitLogMessage);
@@ -75,29 +91,25 @@ namespace GUZ.Lab
             _gameMusicManager.Init();
             _npcRoutineManager.Init();
             _videoManager.Init();
-
-            StartCoroutine(BootLab());
+            _textureManager.Init();
         }
 
-        /// <summary>
-        /// It's easiest to wait for Start() to initialize all the MonoBehaviours first.
-        /// </summary>
-        private IEnumerator BootLab()
+        private void InitLab()
         {
-            yield return new WaitForSeconds(0.5f);
 
-            var settings = _settings;
-            GuzBootstrapper.BootGothicUnZeNity(Config, settings.Gothic1Path);
+            GuzBootstrapper.BootGothicUnZeNity(Config, _settings.Gothic1Path);
 
-            var playerGo = GameContext.InteractionAdapter.CreatePlayerController(SceneManager.GetActiveScene());
+            GameContext.InteractionAdapter.CreatePlayerController(SceneManager.GetActiveScene());
             GameContext.InteractionAdapter.CreateVRDeviceSimulator();
-            NpcHelper.CacheHero();
+            // TODO - Broken. Fix before use.
+            // NpcHelper.CacheHero();
 
             LabNpcAnimationHandler.Bootstrap();
             LabMusicHandler.Bootstrap();
             LabSoundHandler.Bootstrap();
             LabVideoHandler.Bootstrap();
-            NpcDialogHandler.Bootstrap();
+            // TODO - Broken. Fix before use.
+            // NpcDialogHandler.Bootstrap();
             InteractableHandler.Bootstrap();
             LadderLabHandler.Bootstrap();
             VobItemHandler.Bootstrap();
