@@ -19,6 +19,7 @@ public class TextureManager : MonoBehaviour
     public Material SliderPositionMaterial;
     public Material ArrowMaterial;
     public Material FillerMaterial;
+    public Material QuestLogMenuMaterial;
     
     // Loading
     public Material LoadingBarBackgroundMaterial;
@@ -40,6 +41,7 @@ public class TextureManager : MonoBehaviour
         GothicLoadingMenuMaterial = GetEmptyMaterial(MaterialExtension.BlendMode.Opaque);
         LoadingBarBackgroundMaterial = GetEmptyMaterial(MaterialExtension.BlendMode.Opaque);
         LoadingBarMaterial = GetEmptyMaterial(MaterialExtension.BlendMode.Opaque);
+        QuestLogMenuMaterial = GetEmptyMaterial(MaterialExtension.BlendMode.Opaque);
     }
 
     public void Init()
@@ -51,6 +53,7 @@ public class TextureManager : MonoBehaviour
         MenuChoiceBackMaterial.mainTexture = TextureCache.TryGetTexture("MENU_CHOICE_BACK.TGA");
 
         GothicLoadingMenuMaterial.mainTexture = TextureCache.TryGetTexture("LOADING.TGA");
+        QuestLogMenuMaterial.mainTexture = TextureCache.TryGetTexture("LOG_BACK.TGA");
         LoadingBarBackgroundMaterial.mainTexture = TextureCache.TryGetTexture("PROGRESS.TGA");
         LoadingBarMaterial.mainTexture = TextureCache.TryGetTexture("PROGRESS_BAR.TGA");
         BackgroundMaterial.mainTexture = TextureCache.TryGetTexture("LOG_PAPER.TGA");
