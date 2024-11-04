@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using GUZ.Core.Globals;
+using UnityEngine;
+using ZenKit.Daedalus;
 
 namespace GUZ.Core.UI
 {
@@ -8,12 +10,13 @@ namespace GUZ.Core.UI
 
         private void Start()
         {
-            SetMaterials();
+            LoadFromVM();
         }
 
-        private void SetMaterials()
+        private void LoadFromVM()
         {
-            _background.GetComponent<MeshRenderer>().material = GameGlobals.Textures.QuestLogMenuMaterial;
+            var menuInstance = GameData.MenuVm.InitInstance<MenuInstance>("MENU_LOG");
+            _background.GetComponent<MeshRenderer>().material = GameGlobals.Textures.GetMaterial(menuInstance.BackPic);
         }
 
         public void ToggleVisibility()
