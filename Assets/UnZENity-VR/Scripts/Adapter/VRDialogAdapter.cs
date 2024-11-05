@@ -31,13 +31,23 @@ namespace GUZ.VR.Adapter
                 
                 // We need to look through all RootGOs and fetch the first matching HVRDialog Component.
                 _dialogComponent = scene.GetRootGameObjects()
-                    .Select(i => i.GetComponentInChildren<VRDialog>())
+                    .Select(i => i.GetComponentInChildren<VRDialog>(true))
                     .First(i => i != null);
             }
 
             return _dialogComponent;
         }
-        
+
+
+        public void StartDialogInitially()
+        {
+            GetDialog().StartDialogInitially();
+        }
+
+        public void EndDialog()
+        {
+            GetDialog().EndDialog();
+        }
 
         public void ShowDialog(GameObject npcGo)
         {
