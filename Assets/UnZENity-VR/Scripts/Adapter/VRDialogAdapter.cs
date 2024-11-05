@@ -38,7 +38,6 @@ namespace GUZ.VR.Adapter
             return _dialogComponent;
         }
 
-
         public void StartDialogInitially()
         {
             GetDialog().StartDialogInitially();

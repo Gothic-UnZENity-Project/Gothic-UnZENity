@@ -40,6 +40,7 @@ namespace GUZ.Core.Manager
             if (initialDialogStarting)
             {
                 GameContext.DialogAdapter.StartDialogInitially();
+                GameContext.SubtitlesAdapter.StartDialogInitially();
             }
 
             GameData.Dialogs.IsInDialog = true;
@@ -239,7 +240,7 @@ namespace GUZ.Core.Manager
             GameContext.InteractionAdapter.UnlockPlayer();
 
             GameContext.DialogAdapter.EndDialog();
-            GameContext.SubtitlesAdapter.HideSubtitles();
+            GameContext.SubtitlesAdapter.EndDialog();
         }
 
         /// <summary>

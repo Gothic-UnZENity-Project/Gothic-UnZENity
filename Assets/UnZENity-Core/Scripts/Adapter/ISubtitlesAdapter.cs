@@ -1,12 +1,11 @@
-﻿using System.Collections.Generic;
-using GUZ.Core.Data;
-using UnityEngine;
-using ZenKit.Daedalus;
+﻿using UnityEngine;
 
 namespace GUZ.Core.Adapter
 {
     public interface ISubtitlesAdapter
     {
+        public void StartDialogInitially();
+        public void EndDialog();
         public void ShowSubtitles(GameObject npcGo);
         public void HideSubtitles();
         public void HideSubtitlesImmediate();
