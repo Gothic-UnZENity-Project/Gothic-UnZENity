@@ -1,4 +1,5 @@
-﻿using GUZ.Core.Globals;
+﻿using GUZ.Core.Extensions;
+using GUZ.Core.Globals;
 using MyBox;
 using TMPro;
 using UnityEngine;
@@ -21,7 +22,23 @@ namespace GUZ.Core.UI
         private void LoadFromVM()
         {
             var menuInstance = GameData.MenuVm.InitInstance<MenuInstance>("MENU_LOG");
-            _background.GetComponent<MeshRenderer>().material = GameGlobals.Textures.GetMaterial(menuInstance.BackPic);
+
+            var backPic = GameGlobals.Textures.GetMaterial(menuInstance.BackPic);
+            _background.GetComponent<MeshRenderer>().material = backPic;
+
+            // Set canvas size based on texture size of background
+            var canvasRect = _canvas.GetComponent<RectTransform>();
+            canvasRect.SetWidth(backPic.mainTexture.width);
+            canvasRect.SetHeight(backPic.mainTexture.height);
+
+            // Calculate pixelRatio for virtual positions of child elements.
+            var virtualPixelX = menuInstance.DimX;
+            var virtualPixelY = menuInstance.DimY;
+            var realPixelX = backPic.mainTexture.width;
+            var realPixelY = backPic.mainTexture.height;
+
+            var pixelRatioX = virtualPixelX / realPixelX; // for normal G1, should be 16 (=8192 / 512)
+            var pixelRatioY = virtualPixelY / realPixelY;
 
             for (var i = 0; ; i++)
             {
@@ -33,11 +50,12 @@ namespace GUZ.Core.UI
                     break;
                 }
 
-                LoadMenuItem(menuItemName);
+                LoadMenuItem(pixelRatioX, pixelRatioY, menuItemName);
+                // break; // DEBUG
             }
         }
 
-        private void LoadMenuItem(string menuItemName)
+        private void LoadMenuItem(int pixelRatioX, int pixelRatioY, string menuItemName)
         {
             var item = GameData.MenuVm.InitInstance<MenuItemInstance>(menuItemName);
 
@@ -45,7 +63,14 @@ namespace GUZ.Core.UI
             itemGo.name = menuItemName;
             itemGo.SetActive(true);
 
-            itemGo.transform.localPosition = new Vector2(item.PosX / 100, item.PosY / 100);
+            var rect = itemGo.GetComponent<RectTransform>();
+            rect.SetLeft((float)item.PosX / pixelRatioX);
+            rect.SetTop((float)item.PosY / pixelRatioY);
+            // rect.SetWidth(item.DimX - item.PosX);
+            // rect.SetHeight(item.DimY - item.PosY);
+
+            // itemGo.GetComponent<RectTransform>().
+
             itemGo.GetComponentInChildren<TMP_Text>().text = item.GetText(0);
         }
 
