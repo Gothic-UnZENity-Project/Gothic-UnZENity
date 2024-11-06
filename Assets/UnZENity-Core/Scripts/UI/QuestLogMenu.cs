@@ -1,5 +1,6 @@
 ﻿using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
+using GUZ.Core.Vm;
 using MyBox;
 using TMPro;
 using UnityEngine;
@@ -32,13 +33,13 @@ namespace GUZ.Core.UI
             canvasRect.SetHeight(backPic.mainTexture.height);
 
             // Calculate pixelRatio for virtual positions of child elements.
-            var virtualPixelX = menuInstance.DimX;
-            var virtualPixelY = menuInstance.DimY;
+            var virtualPixelX = menuInstance.DimX + 1;
+            var virtualPixelY = menuInstance.DimY + 1;
             var realPixelX = backPic.mainTexture.width;
             var realPixelY = backPic.mainTexture.height;
 
-            var pixelRatioX = virtualPixelX / realPixelX; // for normal G1, should be 16 (=8192 / 512)
-            var pixelRatioY = virtualPixelY / realPixelY;
+            var pixelRatioX = (float)virtualPixelX / realPixelX; // for normal G1, should be 16 (=8192 / 512)
+            var pixelRatioY = (float)virtualPixelY / realPixelY;
 
             for (var i = 0; ; i++)
             {
@@ -50,12 +51,12 @@ namespace GUZ.Core.UI
                     break;
                 }
 
-                LoadMenuItem(pixelRatioX, pixelRatioY, menuItemName);
+                LoadMenuItem(menuInstance, pixelRatioX, pixelRatioY, menuItemName);
                 // break; // DEBUG
             }
         }
 
-        private void LoadMenuItem(int pixelRatioX, int pixelRatioY, string menuItemName)
+        private void LoadMenuItem(MenuInstance main, float pixelRatioX, float pixelRatioY, string menuItemName)
         {
             var item = GameData.MenuVm.InitInstance<MenuItemInstance>(menuItemName);
 
@@ -64,14 +65,17 @@ namespace GUZ.Core.UI
             itemGo.SetActive(true);
 
             var rect = itemGo.GetComponent<RectTransform>();
-            rect.SetLeft((float)item.PosX / pixelRatioX);
-            rect.SetTop((float)item.PosY / pixelRatioY);
-            // rect.SetWidth(item.DimX - item.PosX);
-            // rect.SetHeight(item.DimY - item.PosY);
+            rect.SetLeft(item.PosX / pixelRatioX);
+            rect.SetTop(item.PosY / pixelRatioY);
+            rect.SetRight((main.DimX - item.PosX - item.DimX) / pixelRatioX);
 
-            // itemGo.GetComponent<RectTransform>().
+            var textComp = itemGo.GetComponentInChildren<TMP_Text>();
+            textComp.text = item.GetText(0);
 
-            itemGo.GetComponentInChildren<TMP_Text>().text = item.GetText(0);
+            if (item.Flags.HasFlag(MenuItemFlag.Centered))
+            {
+                textComp.alignment = TextAlignmentOptions.TopGeoAligned;
+            }
         }
 
         public void ToggleVisibility()
