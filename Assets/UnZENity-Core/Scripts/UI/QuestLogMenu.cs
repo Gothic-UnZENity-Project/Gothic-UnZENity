@@ -67,7 +67,11 @@ namespace GUZ.Core.UI
             var rect = itemGo.GetComponent<RectTransform>();
             rect.SetLeft(item.PosX / pixelRatioX);
             rect.SetTop(item.PosY / pixelRatioY);
-            rect.SetRight((main.DimX - item.PosX - item.DimX) / pixelRatioX);
+
+            if (item.DimX > 0)
+            {
+                rect.SetRight((main.DimX - item.PosX - item.DimX) / pixelRatioX);
+            }
 
             var textComp = itemGo.GetComponentInChildren<TMP_Text>();
             textComp.text = item.GetText(0);
