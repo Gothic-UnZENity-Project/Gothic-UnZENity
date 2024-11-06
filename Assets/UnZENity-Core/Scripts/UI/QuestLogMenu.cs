@@ -1,4 +1,5 @@
-﻿using GUZ.Core.Extensions;
+﻿using System.Linq;
+using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using MyBox;
 using TMPro;
@@ -15,6 +16,14 @@ namespace GUZ.Core.UI
         [SerializeField] private GameObject _textTemplate;
         [SerializeField] private GameObject _buttonTemplate;
         [SerializeField] private GameObject _background;
+
+        // Sub-elements which need to be disabled initially.
+        private string[] _initiallyDisabledMenuItems =
+        {
+            "MENU_ITEM_LIST_MISSIONS_ACT", "MENU_ITEM_LIST_MISSIONS_FAILED", "MENU_ITEM_LIST_MISSIONS_OLD",
+            "MENU_ITEM_LIST_LOG", "MENU_ITEM_CONTENT_VIEWER"
+        };
+
 
         private void Start()
         {
@@ -97,6 +106,11 @@ namespace GUZ.Core.UI
             if (item.Flags.HasFlag(MenuItemFlag.Centered))
             {
                 textComp.alignment = TextAlignmentOptions.TopGeoAligned;
+            }
+
+            if (_initiallyDisabledMenuItems.Contains(menuItemName))
+            {
+                itemGo.SetActive(false);
             }
         }
 
