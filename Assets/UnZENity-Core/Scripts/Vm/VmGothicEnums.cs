@@ -189,17 +189,5 @@ namespace GUZ.Core.Vm
             Closed,
             Closing
         }
-
-        public enum MenuSelectionAction
-        {
-            Undef,
-            Back,
-            StartMenu,
-            StartItem,
-            Close,
-            ConCommands,
-            PlaySound,
-            ExecCommands
-        }
     }
 }

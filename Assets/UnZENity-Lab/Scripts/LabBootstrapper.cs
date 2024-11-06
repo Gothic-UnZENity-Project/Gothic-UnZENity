@@ -114,6 +114,8 @@ namespace GUZ.Lab
             LadderLabHandler.Bootstrap();
             VobItemHandler.Bootstrap();
             LabLockHandler.Bootstrap();
+
+            GameContext.InteractionAdapter.InitUIInteraction(); // For (e.g.) QuestLog to enable hand pointer.
         }
 
         private void OnDestroy()

@@ -1,9 +1,9 @@
 ﻿using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
-using GUZ.Core.Vm;
 using MyBox;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 using ZenKit.Daedalus;
 
 namespace GUZ.Core.UI
@@ -12,7 +12,8 @@ namespace GUZ.Core.UI
     {
         [SerializeField] private GameObject _canvas;
         // Menu entries (e.g. text:Current missions) are created dynamically. We therefore use this GO as reference (kind of Prefab).
-        [SerializeField] private GameObject _itemTemplate;
+        [SerializeField] private GameObject _textTemplate;
+        [SerializeField] private GameObject _buttonTemplate;
         [SerializeField] private GameObject _background;
 
         private void Start()
@@ -60,7 +61,24 @@ namespace GUZ.Core.UI
         {
             var item = GameData.MenuVm.InitInstance<MenuItemInstance>(menuItemName);
 
-            var itemGo = Instantiate(_itemTemplate, _canvas.transform, false);
+            GameObject itemGo;
+
+            if (item.Flags.HasFlag(MenuItemFlag.Selectable))
+            {
+                itemGo = Instantiate(_buttonTemplate, _canvas.transform, false);
+                var button = itemGo.GetComponentInChildren<Button>();
+
+                // FIXME - Won't register as of now.
+                button.onClick.AddListener(() =>
+                {
+                    OnMenuItemClicked(item.GetOnSelAction(0), item.GetOnSelActionS(0));
+                });
+            }
+            else
+            {
+                itemGo = Instantiate(_textTemplate, _canvas.transform, false);
+            }
+
             itemGo.name = menuItemName;
             itemGo.SetActive(true);
 
@@ -91,6 +109,24 @@ namespace GUZ.Core.UI
             {
                 // TBD
             }
+        }
+
+        public void OnMenuItemClicked(MenuItemSelectAction action, string commandName)
+        {
+            switch (action)
+            {
+                case MenuItemSelectAction.ExecuteCommand:
+                    ExecuteCommand(commandName);
+                    break;
+                default:
+                    Debug.LogError($"Unknown command {commandName}({action})");
+                    break;
+            }
+        }
+
+        private void ExecuteCommand(string commandName)
+        {
+            // TBD
         }
     }
 }
