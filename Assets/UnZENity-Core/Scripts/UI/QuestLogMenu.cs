@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using MyBox;
@@ -23,6 +24,8 @@ namespace GUZ.Core.UI
             "MENU_ITEM_LIST_MISSIONS_ACT", "MENU_ITEM_LIST_MISSIONS_FAILED", "MENU_ITEM_LIST_MISSIONS_OLD",
             "MENU_ITEM_LIST_LOG", "MENU_ITEM_CONTENT_VIEWER"
         };
+
+        private Dictionary<string, (MenuItemInstance item, GameObject go)> _menuCache = new();
 
 
         private void Start()
@@ -62,7 +65,6 @@ namespace GUZ.Core.UI
                 }
 
                 LoadMenuItem(menuInstance, pixelRatioX, pixelRatioY, menuItemName);
-                // break; // DEBUG
             }
         }
 
@@ -77,7 +79,6 @@ namespace GUZ.Core.UI
                 itemGo = Instantiate(_buttonTemplate, _canvas.transform, false);
                 var button = itemGo.GetComponentInChildren<Button>();
 
-                // FIXME - Won't register as of now.
                 button.onClick.AddListener(() =>
                 {
                     OnMenuItemClicked(item.GetOnSelAction(0), item.GetOnSelActionS(0));
@@ -87,6 +88,8 @@ namespace GUZ.Core.UI
             {
                 itemGo = Instantiate(_textTemplate, _canvas.transform, false);
             }
+
+            _menuCache[menuItemName] = (item, itemGo);
 
             itemGo.name = menuItemName;
             itemGo.SetActive(true);
@@ -98,6 +101,11 @@ namespace GUZ.Core.UI
             if (item.DimX > 0)
             {
                 rect.SetRight((main.DimX - item.PosX - item.DimX) / pixelRatioX);
+            }
+
+            if (item.DimY > 0)
+            {
+                rect.SetBottom((main.DimY - item.PosY - item.DimY) / pixelRatioY);
             }
 
             var textComp = itemGo.GetComponentInChildren<TMP_Text>();
@@ -140,7 +148,13 @@ namespace GUZ.Core.UI
 
         private void ExecuteCommand(string commandName)
         {
-            // TBD
+            var split = commandName.Split(' ');
+
+            // Some commands are named like "EFFECTS MENU_ITEM_X". We remove the unnecessary prefix.
+            var command = split.Last();
+
+            var itemCache = _menuCache[command];
+            itemCache.go.SetActive(true);
         }
     }
 }
