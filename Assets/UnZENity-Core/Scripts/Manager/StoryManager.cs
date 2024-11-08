@@ -17,7 +17,6 @@ namespace GUZ.Core.Manager
             // For later. ;-)
         }
 
-
         public void ExtLogCreateTopic(string name, SaveTopicSection section)
         {
             // Does entry already exist?
@@ -67,6 +66,23 @@ namespace GUZ.Core.Manager
         {
             _isChapterSwitchPending = true;
             _chapterSwitchData = (chapter, text, texture, wav, time);
+        }
+
+        public List<SaveLogTopic> GetLogTopics(SaveTopicSection section, SaveTopicStatus status)
+        {
+            var ret = new List<SaveLogTopic>();
+
+            for (var i = 0; i < _saveState.LogTopicCount; i++)
+            {
+                var topic = _saveState.GetLogTopic(i);
+
+                if (topic.Section == section && topic.Status == status)
+                {
+                    ret.Add(topic);
+                }
+            }
+
+            return ret;
         }
 
         public void SwitchChapterIfPending()

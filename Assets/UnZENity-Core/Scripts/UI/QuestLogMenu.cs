@@ -6,6 +6,7 @@ using MyBox;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using ZenKit;
 using ZenKit.Daedalus;
 
 namespace GUZ.Core.UI
@@ -16,13 +17,19 @@ namespace GUZ.Core.UI
         // Menu entries (e.g. text:Current missions) are created dynamically. We therefore use this GO as reference (kind of Prefab).
         [SerializeField] private GameObject _textTemplate;
         [SerializeField] private GameObject _buttonTemplate;
+        [SerializeField] private GameObject _listMenuTemplate;
         [SerializeField] private GameObject _background;
 
+        private const string _instanceNameActiveMissions = "MENU_ITEM_LIST_MISSIONS_ACT";
+        private const string _instanceNameFailedMissions = "MENU_ITEM_LIST_MISSIONS_FAILED";
+        private const string _instanceNameSuccessMissions = "MENU_ITEM_LIST_MISSIONS_OLD";
+        private const string _instanceNameLog = "MENU_ITEM_LIST_LOG";
+
         // Sub-elements which need to be disabled initially.
-        private string[] _initiallyDisabledMenuItems =
+        private static readonly string[] _initiallyDisabledMenuItems =
         {
-            "MENU_ITEM_LIST_MISSIONS_ACT", "MENU_ITEM_LIST_MISSIONS_FAILED", "MENU_ITEM_LIST_MISSIONS_OLD",
-            "MENU_ITEM_LIST_LOG", "MENU_ITEM_CONTENT_VIEWER"
+            _instanceNameActiveMissions, _instanceNameFailedMissions, _instanceNameSuccessMissions,
+            _instanceNameLog, "MENU_ITEM_CONTENT_VIEWER"
         };
 
         private Dictionary<string, (MenuItemInstance item, GameObject go)> _menuCache = new();
@@ -66,6 +73,8 @@ namespace GUZ.Core.UI
 
                 LoadMenuItem(menuInstance, pixelRatioX, pixelRatioY, menuItemName);
             }
+
+            FillLists();
         }
 
         private void LoadMenuItem(MenuInstance main, float pixelRatioX, float pixelRatioY, string menuItemName)
@@ -74,7 +83,11 @@ namespace GUZ.Core.UI
 
             GameObject itemGo;
 
-            if (item.Flags.HasFlag(MenuItemFlag.Selectable))
+            if (item.MenuItemType == MenuItemType.ListBox)
+            {
+                itemGo = Instantiate(_listMenuTemplate, _canvas.transform, false);
+            }
+            else if (item.Flags.HasFlag(MenuItemFlag.Selectable))
             {
                 itemGo = Instantiate(_buttonTemplate, _canvas.transform, false);
                 var button = itemGo.GetComponentInChildren<Button>();
@@ -109,9 +122,8 @@ namespace GUZ.Core.UI
             }
 
             var textComp = itemGo.GetComponentInChildren<TMP_Text>();
-            textComp.text = item.GetText(0);
 
-            if (item.Flags.HasFlag(MenuItemFlag.Centered))
+            if (item.MenuItemType == MenuItemType.Text && item.Flags.HasFlag(MenuItemFlag.Centered))
             {
                 textComp.alignment = TextAlignmentOptions.TopGeoAligned;
             }
@@ -119,6 +131,29 @@ namespace GUZ.Core.UI
             if (_initiallyDisabledMenuItems.Contains(menuItemName))
             {
                 itemGo.SetActive(false);
+            }
+            else if (item.MenuItemType == MenuItemType.Text)
+            {
+                textComp.text = item.GetText(0);
+            }
+        }
+
+        private void FillLists()
+        {
+            var activeMissions = GameGlobals.Story.GetLogTopics(SaveTopicSection.Missions, SaveTopicStatus.Running);
+            var successmissions = GameGlobals.Story.GetLogTopics(SaveTopicSection.Missions, SaveTopicStatus.Success);
+            var failedMissions = GameGlobals.Story.GetLogTopics(SaveTopicSection.Missions, SaveTopicStatus.Failure);
+            var notes = GameGlobals.Story.GetLogTopics(SaveTopicSection.Notes, SaveTopicStatus.Free);
+
+            var activeMissionsGo = _menuCache[_instanceNameActiveMissions].go;
+            var successMissionsGo = _menuCache[_instanceNameSuccessMissions].go;
+            var failedMissionsGo = _menuCache[_instanceNameFailedMissions].go;
+            var notesGo = _menuCache[_instanceNameLog].go;
+
+            for (var i = 0; i < activeMissions.Count; i++)
+            {
+                var listItem = Instantiate(_textTemplate, activeMissionsGo.transform, false);
+                listItem.GetComponent<TMP_Text>().text = activeMissions[i].Description;
             }
         }
 
@@ -150,7 +185,7 @@ namespace GUZ.Core.UI
         {
             var split = commandName.Split(' ');
 
-            // Some commands are named like "EFFECTS MENU_ITEM_X". We remove the unnecessary prefix.
+            // Some commands are named like "EFFECTS MENU_ITEM_XYZ". We remove the unnecessary prefix (e.g. EFFECT).
             var command = split.Last();
 
             var itemCache = _menuCache[command];
