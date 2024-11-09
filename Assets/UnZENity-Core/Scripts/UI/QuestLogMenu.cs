@@ -20,6 +20,8 @@ namespace GUZ.Core.UI
         [SerializeField] private GameObject _listMenuTemplate;
         [SerializeField] private GameObject _background;
 
+        // Create 22 buttons as list elements for all lists
+        // TODO - Gothic handled it via FontSize. But for now, we can go with a fixed amount.
         private const int _visibleListItemAmount = 22;
         private const string _instanceNameActiveMissions = "MENU_ITEM_LIST_MISSIONS_ACT";
         private const string _instanceNameFailedMissions = "MENU_ITEM_LIST_MISSIONS_FAILED";
@@ -42,8 +44,21 @@ namespace GUZ.Core.UI
         };
 
         private Dictionary<string, (MenuItemInstance item, GameObject go)> _menuCache = new();
-        private Dictionary<SaveTopicStatus, List<SaveLogTopic>> _logTopicsCache = new();
+        private Dictionary<string, ListItemContainer> _listMenuCache = new();
+        private ListItemContainer _activeListMenu;
 
+
+        private class ListItemContainer
+        {
+            public string InstanceName;
+            public MenuItemInstance Instance;
+            public List<SaveLogTopic> LogTopics;
+            public GameObject RootGo;
+            public GameObject[] ItemGOs;
+            public int CurrentListScrollValue; // When we use arrows to move up and down, we store where we are.
+            public GameObject ArrowUpGo;
+            public GameObject ArrowDownGo;
+        }
 
         /// <summary>
         /// When opening the Log for the first time:
@@ -174,45 +189,107 @@ namespace GUZ.Core.UI
 
         private void CreateLists()
         {
-            // Create 22 buttons as list elements for all lists
-            // TODO - Gothic handled it via FontSize. For now, we can go with a fixed amount.
+            foreach (var entryName in _listItemInstanceNames)
             {
-                foreach (var entryName in _listItemInstanceNames)
+                var listEntry = _menuCache[entryName];
+                var container = new ListItemContainer()
                 {
-                    var listEntry = _menuCache[entryName];
-                    for (var i = 0; i < _visibleListItemAmount; i++)
+                    InstanceName = entryName,
+                    Instance = listEntry.item,
+                    RootGo = listEntry.go,
+                    ItemGOs = new GameObject[_visibleListItemAmount]
+                };
+
+                // Create Item GameObjects (22x)
+                for (var i = 0; i < _visibleListItemAmount; i++)
+                {
+                    var itemGo = Instantiate(_buttonTemplate, listEntry.go.transform, false);
+                    itemGo.name = $"{i}";
+                    container.ItemGOs[i] = itemGo;
+                }
+
+                // Create arrow buttons
+                {
+                    // UP
                     {
-                        var itemGo = Instantiate(_buttonTemplate, listEntry.go.transform, false);
-                        itemGo.name = $"{i}";
+                        var arrowUpGo = Instantiate(_buttonTemplate, listEntry.go.transform, false);
+                        container.ArrowUpGo = arrowUpGo;
+
+                        arrowUpGo.name = "ARROW_UP";
+                        arrowUpGo.GetComponent<MeshRenderer>().material = GameGlobals.Textures.ArrowUpMaterial;
+
+                        // FIXME - Set Position!
+                        var arrowUpRect = arrowUpGo.GetComponentInChildren<RectTransform>();
+
+                        var arrowUpButton = arrowUpGo.GetComponentInChildren<Button>();
+                        arrowUpButton.onClick.AddListener(() =>
+                        {
+                            OnArrowUpClick();
+                        });
+                    }
+
+                    // DOWN
+                    {
+                        var arrowDownGo = Instantiate(_buttonTemplate, listEntry.go.transform, false);
+                        container.ArrowDownGo = arrowDownGo;
+
+                        arrowDownGo.name = "ARROW_DOWN";
+                        arrowDownGo.GetComponent<MeshRenderer>().material = GameGlobals.Textures.ArrowDownMaterial;
+
+                        // FIXME - Set Position!
+                        var arrowUpRect = arrowDownGo.GetComponentInChildren<RectTransform>();
+
+                        var arrowDownButton = arrowDownGo.GetComponentInChildren<Button>();
+                        arrowDownButton.onClick.AddListener(() =>
+                        {
+                            OnArrowDownClick();
+                        });
                     }
                 }
+
+                _listMenuCache[entryName] = container;
             }
         }
 
         private void ResetView()
         {
+            _listMenuCache.ForEach(i => i.Value.CurrentListScrollValue = 0);
+
             // Reset visibility for List menus
-            foreach (var entryName in _listItemInstanceNames)
+            foreach (var list in _listMenuCache.Values)
             {
-                var listEntry = _menuCache[entryName];
-                listEntry.go.SetActive(false);
+                list.RootGo.SetActive(false);
+                list.ArrowUpGo.SetActive(false);
+                list.ArrowDownGo.SetActive(false);
             }
         }
 
         private void FillLists()
         {
-            _logTopicsCache.Add(SaveTopicStatus.Running, GameGlobals.Story.GetLogTopics(SaveTopicSection.Missions, SaveTopicStatus.Running));
-            _logTopicsCache.Add(SaveTopicStatus.Success, GameGlobals.Story.GetLogTopics(SaveTopicSection.Missions, SaveTopicStatus.Success));
-            _logTopicsCache.Add(SaveTopicStatus.Failure, GameGlobals.Story.GetLogTopics(SaveTopicSection.Missions, SaveTopicStatus.Failure));
-            _logTopicsCache.Add(SaveTopicStatus.Free, GameGlobals.Story.GetLogTopics(SaveTopicSection.Notes, SaveTopicStatus.Free));
+            _listMenuCache[_instanceNameActiveMissions].LogTopics = GameGlobals.Story.GetLogTopics(SaveTopicSection.Missions, SaveTopicStatus.Running);
+            _listMenuCache[_instanceNameSuccessMissions].LogTopics = GameGlobals.Story.GetLogTopics(SaveTopicSection.Missions, SaveTopicStatus.Success);
+            _listMenuCache[_instanceNameFailedMissions].LogTopics = GameGlobals.Story.GetLogTopics(SaveTopicSection.Missions, SaveTopicStatus.Failure);
+            _listMenuCache[_instanceNameLog].LogTopics = GameGlobals.Story.GetLogTopics(SaveTopicSection.Notes, SaveTopicStatus.Free);
 
-            foreach (var entryName in _listItemInstanceNames)
+            foreach (var list in _listMenuCache.Values)
             {
-                var listEntry = _menuCache[entryName];
-
+                FillList(list);
             }
         }
 
+        private void FillList(ListItemContainer list)
+        {
+            for (var i = 0; i < _visibleListItemAmount; i++)
+            {
+                var logItemOffset = i + list.CurrentListScrollValue;
+                list.ItemGOs[i].GetComponentInChildren<TMP_Text>().text = list.LogTopics[logItemOffset].Description;
+
+                // FIXME - Set OnClick(index)
+            }
+
+            list.ArrowUpGo.SetActive(list.CurrentListScrollValue > 0);
+            list.ArrowDownGo.SetActive(list.LogTopics.Count > list.CurrentListScrollValue - _visibleListItemAmount);
+        }
 
         public void OnMenuItemClicked(MenuItemSelectAction action, string commandName)
         {
@@ -227,15 +304,32 @@ namespace GUZ.Core.UI
             }
         }
 
+        private void OnArrowUpClick()
+        {
+            --_activeListMenu.CurrentListScrollValue;
+
+            FillList(_activeListMenu);
+        }
+
+        private void OnArrowDownClick()
+        {
+            ++_activeListMenu.CurrentListScrollValue;
+
+            FillList(_activeListMenu);
+        }
+
         private void ExecuteCommand(string commandName)
         {
             var split = commandName.Split(' ');
 
             // Some commands are named like "EFFECTS MENU_ITEM_XYZ". We remove the unnecessary prefix (e.g. EFFECT).
-            var command = split.Last();
+            var menuItemName = split.Last();
 
-            var itemCache = _menuCache[command];
+            var itemCache = _menuCache[menuItemName];
             itemCache.go.SetActive(true);
+
+            // If the Command==ListMenu, then we set it as currently active.
+            _listMenuCache.TryGetValue(menuItemName, out _activeListMenu);
         }
     }
 }

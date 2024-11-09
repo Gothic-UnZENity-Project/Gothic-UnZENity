@@ -1,3 +1,4 @@
+using System;
 using GUZ.Core.Caches;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
@@ -17,8 +18,9 @@ public class TextureManager : MonoBehaviour
     public Material ButtonMaterial;
     public Material SliderMaterial;
     public Material SliderPositionMaterial;
-    public Material ArrowMaterial;
     public Material FillerMaterial;
+    [NonSerialized] public Material ArrowUpMaterial;
+    [NonSerialized] public Material ArrowDownMaterial;
 
     // Loading
     public Material LoadingBarBackgroundMaterial;
@@ -40,6 +42,10 @@ public class TextureManager : MonoBehaviour
         GothicLoadingMenuMaterial = GetEmptyMaterial(MaterialExtension.BlendMode.Opaque);
         LoadingBarBackgroundMaterial = GetEmptyMaterial(MaterialExtension.BlendMode.Opaque);
         LoadingBarMaterial = GetEmptyMaterial(MaterialExtension.BlendMode.Opaque);
+
+        // Menu
+        ArrowUpMaterial = GetEmptyMaterial(MaterialExtension.BlendMode.Opaque);
+        ArrowDownMaterial = GetEmptyMaterial(MaterialExtension.BlendMode.Opaque);
     }
 
     public void Init()
@@ -58,8 +64,11 @@ public class TextureManager : MonoBehaviour
         SliderMaterial.mainTexture = TextureCache.TryGetTexture("MENU_SLIDER_BACK.TGA");
         SliderPositionMaterial.mainTexture = TextureCache.TryGetTexture("MENU_SLIDER_POS.TGA");
         FillerMaterial.mainTexture = TextureCache.TryGetTexture("MENU_BUTTONBACK.TGA");
-        ArrowMaterial.mainTexture = TextureCache.TryGetTexture("U.TGA");
         MapMaterial.mainTexture = TextureCache.TryGetTexture("MAP_WORLD_ORC.TGA");
+
+        // Menu
+        ArrowUpMaterial.mainTexture = TextureCache.TryGetTexture("O.TGA");
+        ArrowDownMaterial.mainTexture = TextureCache.TryGetTexture("U.TGA");
     }
 
     public void SetTexture(string texture, Material material)
