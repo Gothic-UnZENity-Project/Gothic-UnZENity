@@ -11,13 +11,23 @@ using ZenKit.Daedalus;
 
 namespace GUZ.Core.UI
 {
+    /// <summary>
+    /// The quest log contains of three major areas:
+    /// 1. Left area with clickable elements for e.g. ActiveMissions.
+    /// 2. List area where the clickable topics for e.g. ActiveMissions are visible.
+    /// 3. Once a list item is clicked on the right, the whole UI changes and shows the topic texts alone.
+    ///
+    /// |-----------------|----------|            |----------------------------|
+    /// | Active Missions | Mission1 |            |  Detail description        |
+    /// |-----------------| Mission2 | --click--> |  with all log              |
+    /// |                 | ...      |            |  ------------------------  |
+    /// |                 |          |            |  entries below each other  |
+    /// |-----------------|----------|            |----------------------------|
+    /// </summary>
     public class QuestLogMenu : MonoBehaviour
     {
         [SerializeField] private GameObject _canvas;
         // Menu entries (e.g. text:Current missions) are created dynamically. We therefore use this GO as reference (kind of Prefab).
-        [SerializeField] private GameObject _textTemplate;
-        [SerializeField] private GameObject _buttonTemplate;
-        [SerializeField] private GameObject _listMenuTemplate;
         [SerializeField] private GameObject _background;
 
         // Create 22 buttons as list elements for all lists
@@ -134,11 +144,12 @@ namespace GUZ.Core.UI
 
             if (item.MenuItemType == MenuItemType.ListBox)
             {
-                itemGo = Instantiate(_listMenuTemplate, _canvas.transform, false);
+                itemGo = new GameObject(menuItemName);
+                itemGo.SetParent(_canvas);
             }
             else if (item.Flags.HasFlag(MenuItemFlag.Selectable))
             {
-                itemGo = Instantiate(_buttonTemplate, _canvas.transform, false);
+                itemGo = ResourceLoader.TryGetPrefabObject(PrefabType.UiButton, name: menuItemName, parent: _canvas)!;
                 var button = itemGo.GetComponentInChildren<Button>();
 
                 button.onClick.AddListener(() =>
@@ -148,13 +159,10 @@ namespace GUZ.Core.UI
             }
             else
             {
-                itemGo = Instantiate(_textTemplate, _canvas.transform, false);
+                itemGo = ResourceLoader.TryGetPrefabObject(PrefabType.UiText, name: menuItemName, parent: _canvas)!;
             }
 
             _menuCache[menuItemName] = (item, itemGo);
-
-            itemGo.name = menuItemName;
-            itemGo.SetActive(true);
 
             var rect = itemGo.GetComponent<RectTransform>();
             rect.SetLeft(item.PosX / pixelRatioX);
@@ -203,8 +211,7 @@ namespace GUZ.Core.UI
                 // Create Item GameObjects (22x)
                 for (var i = 0; i < _visibleListItemAmount; i++)
                 {
-                    var itemGo = Instantiate(_buttonTemplate, listEntry.go.transform, false);
-                    itemGo.name = $"{i}";
+                    var itemGo = ResourceLoader.TryGetPrefabObject(PrefabType.UiButton, name: $"{i}", parent: listEntry.go)!;
                     container.ItemGOs[i] = itemGo;
                 }
 
@@ -212,7 +219,7 @@ namespace GUZ.Core.UI
                 {
                     // UP
                     {
-                        var arrowUpGo = Instantiate(_buttonTemplate, listEntry.go.transform, false);
+                        var arrowUpGo = ResourceLoader.TryGetPrefabObject(PrefabType.UiButton, name: "ARROW_UP", parent: listEntry.go)!;
                         container.ArrowUpGo = arrowUpGo;
 
                         arrowUpGo.name = "ARROW_UP";
@@ -230,7 +237,7 @@ namespace GUZ.Core.UI
 
                     // DOWN
                     {
-                        var arrowDownGo = Instantiate(_buttonTemplate, listEntry.go.transform, false);
+                        var arrowDownGo = ResourceLoader.TryGetPrefabObject(PrefabType.UiButton, name: "ARROW_DOWN", parent: listEntry.go)!;
                         container.ArrowDownGo = arrowDownGo;
 
                         arrowDownGo.name = "ARROW_DOWN";

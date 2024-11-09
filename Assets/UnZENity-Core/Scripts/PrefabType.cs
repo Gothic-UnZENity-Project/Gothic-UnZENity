@@ -4,6 +4,9 @@ namespace GUZ.Core
 {
     public enum PrefabType
     {
+        UiText,
+        UiButton,
+
         WayPoint,
         Vob,
         Npc,
@@ -38,6 +41,9 @@ namespace GUZ.Core
         {
             return type switch
             {
+                PrefabType.UiText => "Prefabs/UI/Text",
+                PrefabType.UiButton => "Prefabs/UI/Button",
+
                 PrefabType.WayPoint => "Prefabs/WayPoint",
                 PrefabType.Vob => "Prefabs/Vobs/Vob",
                 PrefabType.Npc => "Prefabs/Vobs/oCNpc",
