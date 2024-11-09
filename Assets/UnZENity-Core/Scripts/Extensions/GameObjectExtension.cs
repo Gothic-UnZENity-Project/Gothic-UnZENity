@@ -68,6 +68,11 @@ namespace GUZ.Core.Extensions
             return null;
         }
 
+        public static void ToggleActive(this GameObject go)
+        {
+            go.SetActive(!go.activeSelf);
+        }
+
         /// <summary>
         /// Returns direct Children of a GameObject. Non-recursive! 
         /// </summary>

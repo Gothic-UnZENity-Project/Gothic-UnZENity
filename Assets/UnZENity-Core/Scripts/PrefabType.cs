@@ -4,6 +4,7 @@ namespace GUZ.Core
 {
     public enum PrefabType
     {
+        UiEmpty, // Contains a RectTransform only
         UiText,
         UiButton,
 
@@ -41,6 +42,7 @@ namespace GUZ.Core
         {
             return type switch
             {
+                PrefabType.UiEmpty => "Prefabs/UI/Empty",
                 PrefabType.UiText => "Prefabs/UI/Text",
                 PrefabType.UiButton => "Prefabs/UI/Button",
 

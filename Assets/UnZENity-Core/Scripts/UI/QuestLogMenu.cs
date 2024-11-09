@@ -76,7 +76,7 @@ namespace GUZ.Core.UI
         /// 3. Use this data to create GameObjects dynamically based on Template elements (button, text, ...)
         /// 3. For lists (e.g. active missions), create the list items and arrows (do not them fill yet)
         /// </summary>
-        private void Start()
+        private void Awake()
         {
             Setup();
         }
@@ -144,8 +144,7 @@ namespace GUZ.Core.UI
 
             if (item.MenuItemType == MenuItemType.ListBox)
             {
-                itemGo = new GameObject(menuItemName);
-                itemGo.SetParent(_canvas);
+                itemGo = ResourceLoader.TryGetPrefabObject(PrefabType.UiEmpty, name: menuItemName, parent: _canvas)!;
             }
             else if (item.Flags.HasFlag(MenuItemFlag.Selectable))
             {
