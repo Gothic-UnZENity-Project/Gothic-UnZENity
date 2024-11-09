@@ -20,10 +20,19 @@ namespace GUZ.Core.UI
         [SerializeField] private GameObject _listMenuTemplate;
         [SerializeField] private GameObject _background;
 
+        private const int _visibleListItemAmount = 22;
         private const string _instanceNameActiveMissions = "MENU_ITEM_LIST_MISSIONS_ACT";
         private const string _instanceNameFailedMissions = "MENU_ITEM_LIST_MISSIONS_FAILED";
         private const string _instanceNameSuccessMissions = "MENU_ITEM_LIST_MISSIONS_OLD";
         private const string _instanceNameLog = "MENU_ITEM_LIST_LOG";
+        // Easier to loop through or check .Contains() later.
+        private string[] _listItemInstanceNames =
+        {
+            _instanceNameActiveMissions,
+            _instanceNameFailedMissions,
+            _instanceNameSuccessMissions,
+            _instanceNameLog
+        };
 
         // Sub-elements which need to be disabled initially.
         private static readonly string[] _initiallyDisabledMenuItems =
@@ -33,14 +42,39 @@ namespace GUZ.Core.UI
         };
 
         private Dictionary<string, (MenuItemInstance item, GameObject go)> _menuCache = new();
+        private Dictionary<SaveTopicStatus, List<SaveLogTopic>> _logTopicsCache = new();
 
 
+        /// <summary>
+        /// When opening the Log for the first time:
+        /// 1. Load Daedalus information for menus (UI dimensions, labels, ...)
+        /// 3. Use this data to create GameObjects dynamically based on Template elements (button, text, ...)
+        /// 3. For lists (e.g. active missions), create the list items and arrows (do not them fill yet)
+        /// </summary>
         private void Start()
         {
-            LoadFromVM();
+            Setup();
         }
 
-        private void LoadFromVM()
+        /// <summary>
+        /// Each time we open the log:
+        /// 1. Reset visibility for sub-menus (e.g. if FailedMissions was open last time, we disable it now)
+        /// 2. Set current date time (left menu element)
+        /// 3. Fill all the mission/note list elements with texts (e.g. all SuccessMissions will get their topic titles)
+        /// </summary>
+        public void ToggleVisibility()
+        {
+            // Toggle visibility
+            gameObject.SetActive(!gameObject.activeSelf);
+
+            if (gameObject.activeSelf)
+            {
+                ResetView();
+                FillLists();
+            }
+        }
+
+        private void Setup()
         {
             var menuInstance = GameData.MenuVm.InitInstance<MenuInstance>("MENU_LOG");
 
@@ -71,13 +105,13 @@ namespace GUZ.Core.UI
                     break;
                 }
 
-                LoadMenuItem(menuInstance, pixelRatioX, pixelRatioY, menuItemName);
+                CreateMenuItem(menuInstance, pixelRatioX, pixelRatioY, menuItemName);
             }
 
-            FillLists();
+            CreateLists();
         }
 
-        private void LoadMenuItem(MenuInstance main, float pixelRatioX, float pixelRatioY, string menuItemName)
+        private void CreateMenuItem(MenuInstance main, float pixelRatioX, float pixelRatioY, string menuItemName)
         {
             var item = GameData.MenuVm.InitInstance<MenuItemInstance>(menuItemName);
 
@@ -138,35 +172,47 @@ namespace GUZ.Core.UI
             }
         }
 
+        private void CreateLists()
+        {
+            // Create 22 buttons as list elements for all lists
+            // TODO - Gothic handled it via FontSize. For now, we can go with a fixed amount.
+            {
+                foreach (var entryName in _listItemInstanceNames)
+                {
+                    var listEntry = _menuCache[entryName];
+                    for (var i = 0; i < _visibleListItemAmount; i++)
+                    {
+                        var itemGo = Instantiate(_buttonTemplate, listEntry.go.transform, false);
+                        itemGo.name = $"{i}";
+                    }
+                }
+            }
+        }
+
+        private void ResetView()
+        {
+            // Reset visibility for List menus
+            foreach (var entryName in _listItemInstanceNames)
+            {
+                var listEntry = _menuCache[entryName];
+                listEntry.go.SetActive(false);
+            }
+        }
+
         private void FillLists()
         {
-            var activeMissions = GameGlobals.Story.GetLogTopics(SaveTopicSection.Missions, SaveTopicStatus.Running);
-            var successmissions = GameGlobals.Story.GetLogTopics(SaveTopicSection.Missions, SaveTopicStatus.Success);
-            var failedMissions = GameGlobals.Story.GetLogTopics(SaveTopicSection.Missions, SaveTopicStatus.Failure);
-            var notes = GameGlobals.Story.GetLogTopics(SaveTopicSection.Notes, SaveTopicStatus.Free);
+            _logTopicsCache.Add(SaveTopicStatus.Running, GameGlobals.Story.GetLogTopics(SaveTopicSection.Missions, SaveTopicStatus.Running));
+            _logTopicsCache.Add(SaveTopicStatus.Success, GameGlobals.Story.GetLogTopics(SaveTopicSection.Missions, SaveTopicStatus.Success));
+            _logTopicsCache.Add(SaveTopicStatus.Failure, GameGlobals.Story.GetLogTopics(SaveTopicSection.Missions, SaveTopicStatus.Failure));
+            _logTopicsCache.Add(SaveTopicStatus.Free, GameGlobals.Story.GetLogTopics(SaveTopicSection.Notes, SaveTopicStatus.Free));
 
-            var activeMissionsGo = _menuCache[_instanceNameActiveMissions].go;
-            var successMissionsGo = _menuCache[_instanceNameSuccessMissions].go;
-            var failedMissionsGo = _menuCache[_instanceNameFailedMissions].go;
-            var notesGo = _menuCache[_instanceNameLog].go;
-
-            for (var i = 0; i < activeMissions.Count; i++)
+            foreach (var entryName in _listItemInstanceNames)
             {
-                var listItem = Instantiate(_textTemplate, activeMissionsGo.transform, false);
-                listItem.GetComponent<TMP_Text>().text = activeMissions[i].Description;
+                var listEntry = _menuCache[entryName];
+
             }
         }
 
-        public void ToggleVisibility()
-        {
-            // Toggle visibility
-            gameObject.SetActive(!gameObject.activeSelf);
-
-            if (gameObject.activeSelf)
-            {
-                // TBD
-            }
-        }
 
         public void OnMenuItemClicked(MenuItemSelectAction action, string commandName)
         {
