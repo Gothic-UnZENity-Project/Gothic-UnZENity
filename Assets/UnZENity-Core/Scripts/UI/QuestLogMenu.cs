@@ -26,8 +26,8 @@ namespace GUZ.Core.UI
     /// </summary>
     public class QuestLogMenu : MonoBehaviour
     {
-        [SerializeField] private GameObject _canvas;
         // Menu entries (e.g. text:Current missions) are created dynamically. We therefore use this GO as reference (kind of Prefab).
+        [SerializeField] private GameObject _canvas;
         [SerializeField] private GameObject _background;
 
         // Create 22 buttons as list elements for all lists
@@ -104,7 +104,7 @@ namespace GUZ.Core.UI
             var menuInstance = GameData.MenuVm.InitInstance<MenuInstance>("MENU_LOG");
 
             var backPic = GameGlobals.Textures.GetMaterial(menuInstance.BackPic);
-            _background.GetComponent<MeshRenderer>().material = backPic;
+            _background.GetComponentInChildren<MeshRenderer>().material = backPic;
 
             // Set canvas size based on texture size of background
             var canvasRect = _canvas.GetComponent<RectTransform>();
@@ -218,38 +218,42 @@ namespace GUZ.Core.UI
                 {
                     // UP
                     {
-                        var arrowUpGo = ResourceLoader.TryGetPrefabObject(PrefabType.UiButton, name: "ARROW_UP", parent: listEntry.go)!;
+                        var arrowUpGo = ResourceLoader.TryGetPrefabObject(PrefabType.UiTexture, name: "ARROW_UP", parent: listEntry.go)!;
                         container.ArrowUpGo = arrowUpGo;
 
                         arrowUpGo.name = "ARROW_UP";
-                        arrowUpGo.GetComponent<MeshRenderer>().material = GameGlobals.Textures.ArrowUpMaterial;
+                        arrowUpGo.GetComponentInChildren<MeshRenderer>().material = GameGlobals.Textures.ArrowUpMaterial;
 
                         // FIXME - Set Position!
                         var arrowUpRect = arrowUpGo.GetComponentInChildren<RectTransform>();
 
                         var arrowUpButton = arrowUpGo.GetComponentInChildren<Button>();
-                        arrowUpButton.onClick.AddListener(() =>
-                        {
-                            OnArrowUpClick();
-                        });
+
+                        // FIXME - Set texture on a button!
+                        // arrowUpButton.onClick.AddListener(() =>
+                        // {
+                        //     OnArrowUpClick();
+                        // });
                     }
 
                     // DOWN
                     {
-                        var arrowDownGo = ResourceLoader.TryGetPrefabObject(PrefabType.UiButton, name: "ARROW_DOWN", parent: listEntry.go)!;
+                        var arrowDownGo = ResourceLoader.TryGetPrefabObject(PrefabType.UiTexture, name: "ARROW_DOWN", parent: listEntry.go)!;
                         container.ArrowDownGo = arrowDownGo;
 
                         arrowDownGo.name = "ARROW_DOWN";
-                        arrowDownGo.GetComponent<MeshRenderer>().material = GameGlobals.Textures.ArrowDownMaterial;
+                        arrowDownGo.GetComponentInChildren<MeshRenderer>().material = GameGlobals.Textures.ArrowDownMaterial;
 
                         // FIXME - Set Position!
                         var arrowUpRect = arrowDownGo.GetComponentInChildren<RectTransform>();
 
                         var arrowDownButton = arrowDownGo.GetComponentInChildren<Button>();
-                        arrowDownButton.onClick.AddListener(() =>
-                        {
-                            OnArrowDownClick();
-                        });
+
+                        // FIXME - Set texture on a button!
+                        // arrowDownButton.onClick.AddListener(() =>
+                        // {
+                        //     OnArrowDownClick();
+                        // });
                     }
                 }
 
