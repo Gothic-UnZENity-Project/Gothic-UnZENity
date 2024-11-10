@@ -217,7 +217,15 @@ namespace GUZ.Lab
                     _story.ExtLogAddEntry(topic, "In a climactic moment, I'm faced with a choice that could change everything for me and those around me.");
                 }
 
-                topic = "7 - Trial by Fire";
+                for (int i = 7; i < 40; i++)
+                {
+                    topic = $"{i} - Mission";
+                    _story.ExtLogCreateTopic(topic, SaveTopicSection.Missions);
+                    _story.ExtLogSetTopicStatus(topic, SaveTopicStatus.Running);
+                    _story.ExtLogAddEntry(topic, $"This is a placeholder for mission {i}.");
+                }
+
+                topic = "1 - Trial by Fire";
                 _story.ExtLogCreateTopic(topic, SaveTopicSection.Missions);
                 {
                     _story.ExtLogSetTopicStatus(topic, SaveTopicStatus.Failure);
@@ -229,7 +237,7 @@ namespace GUZ.Lab
                     _story.ExtLogAddEntry(topic, "Ultimately, my performance could lead to unexpected alliances or bitter enmities.");
                 }
 
-                topic = "8 - The Forgotten Heirloom";
+                topic = "2 - The Forgotten Heirloom";
                 _story.ExtLogCreateTopic(topic, SaveTopicSection.Missions);
                 {
                     _story.ExtLogSetTopicStatus(topic, SaveTopicStatus.Failure);
@@ -241,21 +249,13 @@ namespace GUZ.Lab
                     _story.ExtLogAddEntry(topic, "In recovering it, we not only restore her legacy but also heal old wounds.");
                 }
 
-                topic = "9 - The Call of Adventure";
+                topic = "1 - The Call of Adventure";
                 _story.ExtLogCreateTopic(topic, SaveTopicSection.Missions);
                 {
                     _story.ExtLogSetTopicStatus(topic, SaveTopicStatus.Obsolete);
                     _story.ExtLogAddEntry(topic, "I embark on a quest to find a legendary hero who vanished years ago.");
                     _story.ExtLogAddEntry(topic, "Following clues across various camps leads me into uncharted territories filled with danger.");
                     _story.ExtLogAddEntry(topic, "Along my journey, stories about this hero inspire hope among those who have lost faith.");
-                }
-
-                for (int i = 10; i < 40; i++)
-                {
-                    topic = $"{i} - Mission";
-                    _story.ExtLogCreateTopic(topic, SaveTopicSection.Missions);
-                    _story.ExtLogSetTopicStatus(topic, SaveTopicStatus.Running);
-                    _story.ExtLogAddEntry(topic, $"This is a placeholder for mission {i}.");
                 }
 
                 _story.ExtLogCreateTopic("Note number 1", SaveTopicSection.Notes);

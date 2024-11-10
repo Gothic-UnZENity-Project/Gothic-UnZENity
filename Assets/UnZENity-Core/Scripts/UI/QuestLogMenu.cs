@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
@@ -212,6 +213,18 @@ namespace GUZ.Core.UI
                 {
                     var itemGo = ResourceLoader.TryGetPrefabObject(PrefabType.UiButton, name: $"{i}", parent: listEntry.go)!;
                     container.ItemGOs[i] = itemGo;
+
+                    var rect = itemGo.GetComponentInChildren<RectTransform>();
+                    rect.SetHeight(15);
+                    rect.SetPositionY(-15 * i);
+
+                    var button = itemGo.GetComponentInChildren<Button>();
+
+                    var clickIndex = i; // Fixing "Closing over the loop variable" feature. ;-)
+                    button.onClick.AddListener(() =>
+                    {
+                        OnListItemClicked(clickIndex);
+                    });
                 }
 
                 // Create arrow buttons
@@ -221,12 +234,10 @@ namespace GUZ.Core.UI
                         var arrowUpGo = ResourceLoader.TryGetPrefabObject(PrefabType.UiTexture, name: "ARROW_UP", parent: listEntry.go)!;
                         container.ArrowUpGo = arrowUpGo;
 
-                        arrowUpGo.name = "ARROW_UP";
                         arrowUpGo.GetComponentInChildren<MeshRenderer>().material = GameGlobals.Textures.ArrowUpMaterial;
 
                         // FIXME - Set Position!
                         var arrowUpRect = arrowUpGo.GetComponentInChildren<RectTransform>();
-
                         var arrowUpButton = arrowUpGo.GetComponentInChildren<Button>();
 
                         // FIXME - Set texture on a button!
@@ -241,12 +252,10 @@ namespace GUZ.Core.UI
                         var arrowDownGo = ResourceLoader.TryGetPrefabObject(PrefabType.UiTexture, name: "ARROW_DOWN", parent: listEntry.go)!;
                         container.ArrowDownGo = arrowDownGo;
 
-                        arrowDownGo.name = "ARROW_DOWN";
                         arrowDownGo.GetComponentInChildren<MeshRenderer>().material = GameGlobals.Textures.ArrowDownMaterial;
 
                         // FIXME - Set Position!
                         var arrowUpRect = arrowDownGo.GetComponentInChildren<RectTransform>();
-
                         var arrowDownButton = arrowDownGo.GetComponentInChildren<Button>();
 
                         // FIXME - Set texture on a button!
@@ -263,7 +272,11 @@ namespace GUZ.Core.UI
 
         private void ResetView()
         {
-            _listMenuCache.ForEach(i => i.Value.CurrentListScrollValue = 0);
+            foreach (var list in _listMenuCache.Values)
+            {
+                list.CurrentListScrollValue = 0;
+                list.ItemGOs.ForEach(i => i.SetActive(false));
+            }
 
             // Reset visibility for List menus
             foreach (var list in _listMenuCache.Values)
@@ -289,9 +302,10 @@ namespace GUZ.Core.UI
 
         private void FillList(ListItemContainer list)
         {
-            for (var i = 0; i < _visibleListItemAmount; i++)
+            for (var i = 0; i < Math.Min(_visibleListItemAmount, list.LogTopics.Count); i++)
             {
                 var logItemOffset = i + list.CurrentListScrollValue;
+                list.ItemGOs[i].SetActive(true);
                 list.ItemGOs[i].GetComponentInChildren<TMP_Text>().text = list.LogTopics[logItemOffset].Description;
 
                 // FIXME - Set OnClick(index)
@@ -301,7 +315,7 @@ namespace GUZ.Core.UI
             list.ArrowDownGo.SetActive(list.LogTopics.Count > list.CurrentListScrollValue - _visibleListItemAmount);
         }
 
-        public void OnMenuItemClicked(MenuItemSelectAction action, string commandName)
+        private void OnMenuItemClicked(MenuItemSelectAction action, string commandName)
         {
             switch (action)
             {
@@ -314,6 +328,11 @@ namespace GUZ.Core.UI
             }
         }
 
+        private void OnListItemClicked(int index)
+        {
+            Debug.Log($"OnListItemClicked({index})");
+        }
+
         private void OnArrowUpClick()
         {
             --_activeListMenu.CurrentListScrollValue;
@@ -321,8 +340,9 @@ namespace GUZ.Core.UI
             FillList(_activeListMenu);
         }
 
-        private void OnArrowDownClick()
+        public void OnArrowDownClick()
         {
+            Debug.Log($"OnArrowDownClick()");
             ++_activeListMenu.CurrentListScrollValue;
 
             FillList(_activeListMenu);
