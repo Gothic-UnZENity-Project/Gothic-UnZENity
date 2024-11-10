@@ -34,6 +34,7 @@ namespace GUZ.Core.UI
         // Create 22 buttons as list elements for all lists
         // TODO - Gothic handled it via FontSize. But for now, we can go with a fixed amount.
         private const int _visibleListItemAmount = 22;
+        private const int _margin = 12; // Checked manually to fit with G1 view.
         private const string _instanceNameActiveMissions = "MENU_ITEM_LIST_MISSIONS_ACT";
         private const string _instanceNameFailedMissions = "MENU_ITEM_LIST_MISSIONS_FAILED";
         private const string _instanceNameSuccessMissions = "MENU_ITEM_LIST_MISSIONS_OLD";
@@ -105,7 +106,7 @@ namespace GUZ.Core.UI
             var menuInstance = GameData.MenuVm.InitInstance<MenuInstance>("MENU_LOG");
 
             var backPic = GameGlobals.Textures.GetMaterial(menuInstance.BackPic);
-            _background.GetComponentInChildren<MeshRenderer>().material = backPic;
+            _background.GetComponentInChildren<MeshRenderer>().sharedMaterial = backPic;
 
             // Set canvas size based on texture size of background
             var canvasRect = _canvas.GetComponent<RectTransform>();
@@ -165,17 +166,23 @@ namespace GUZ.Core.UI
             _menuCache[menuItemName] = (item, itemGo);
 
             var rect = itemGo.GetComponent<RectTransform>();
-            rect.SetLeft(item.PosX / pixelRatioX);
-            rect.SetTop(item.PosY / pixelRatioY);
+            var halfMainWidth = main.DimX / 2;
+            var halfMainHeight = main.DimY / 2;
+            var halfItemWidth = item.DimX / 2;
+            var halfItemHeight = item.DimY / 2;
+            // As we have anchor positions at the center (0.5), we need to move into a certain direction from the center
+            // Hint: We need to stick with center as setting anchor positions at runtime (e.g. left-aligned) causes Unity to crash at a certain amount of changes.
+            rect.SetPositionX((item.PosX - halfMainWidth + halfItemWidth) / pixelRatioX);
+            rect.SetPositionY((halfMainHeight - item.PosY - halfItemHeight) / pixelRatioY);
 
             if (item.DimX > 0)
             {
-                rect.SetRight((main.DimX - item.PosX - item.DimX) / pixelRatioX);
+                rect.SetWidth(item.DimX / pixelRatioX);
             }
 
             if (item.DimY > 0)
             {
-                rect.SetBottom((main.DimY - item.PosY - item.DimY) / pixelRatioY);
+                rect.SetHeight(item.DimY / pixelRatioY);
             }
 
             var textComp = itemGo.GetComponentInChildren<TMP_Text>();
@@ -231,38 +238,39 @@ namespace GUZ.Core.UI
                 {
                     // UP
                     {
-                        var arrowUpGo = ResourceLoader.TryGetPrefabObject(PrefabType.UiTexture, name: "ARROW_UP", parent: listEntry.go)!;
-                        container.ArrowUpGo = arrowUpGo;
+                        var go = ResourceLoader.TryGetPrefabObject(PrefabType.UiTexture, name: "ARROW_UP", parent: listEntry.go)!;
+                        var rect = go.GetComponentInChildren<RectTransform>();
+                        var rend = go.GetComponentInChildren<MeshRenderer>();
+                        var button = go.GetComponentInChildren<Button>();
 
-                        arrowUpGo.GetComponentInChildren<MeshRenderer>().material = GameGlobals.Textures.ArrowUpMaterial;
+                        go.transform.localScale = new Vector3(2, 2, 1);
+                        container.ArrowUpGo = go;
+                        rend.sharedMaterial = GameGlobals.Textures.ArrowUpMaterial;
+                        // button.onClick.AddListener(OnArrowUpClick);
 
-                        // FIXME - Set Position!
-                        var arrowUpRect = arrowUpGo.GetComponentInChildren<RectTransform>();
-                        var arrowUpButton = arrowUpGo.GetComponentInChildren<Button>();
-
-                        // FIXME - Set texture on a button!
-                        // arrowUpButton.onClick.AddListener(() =>
-                        // {
-                        //     OnArrowUpClick();
-                        // });
+                        rect.SetAnchor(RectTransformExtension.AnchorPosition.TopRight);
+                        rect.SetHeight(rend.sharedMaterial.mainTexture.height);
+                        rect.SetWidth(rend.sharedMaterial.mainTexture.width);
+                        rect.SetPositionX(-_margin);
+                        rect.SetPositionY(-_margin);
                     }
 
                     // DOWN
                     {
-                        var arrowDownGo = ResourceLoader.TryGetPrefabObject(PrefabType.UiTexture, name: "ARROW_DOWN", parent: listEntry.go)!;
-                        container.ArrowDownGo = arrowDownGo;
+                        var go = ResourceLoader.TryGetPrefabObject(PrefabType.UiTexture, name: "ARROW_DOWN", parent: listEntry.go)!;
+                        var rect = go.GetComponentInChildren<RectTransform>();
+                        var rend = go.GetComponentInChildren<MeshRenderer>();
+                        var button = go.GetComponentInChildren<Button>();
 
-                        arrowDownGo.GetComponentInChildren<MeshRenderer>().material = GameGlobals.Textures.ArrowDownMaterial;
+                        container.ArrowDownGo = go;
+                        rend.sharedMaterial = GameGlobals.Textures.ArrowDownMaterial;
+                        // button.onClick.AddListener(OnArrowDownClick);
 
-                        // FIXME - Set Position!
-                        var arrowUpRect = arrowDownGo.GetComponentInChildren<RectTransform>();
-                        var arrowDownButton = arrowDownGo.GetComponentInChildren<Button>();
-
-                        // FIXME - Set texture on a button!
-                        // arrowDownButton.onClick.AddListener(() =>
-                        // {
-                        //     OnArrowDownClick();
-                        // });
+                        rect.SetAnchor(RectTransformExtension.AnchorPosition.BottomRight);
+                        rect.SetHeight(rend.sharedMaterial.mainTexture.height);
+                        rect.SetWidth(rend.sharedMaterial.mainTexture.width);
+                        rect.SetPositionX(-_margin);
+                        rect.SetPositionY(_margin);
                     }
                 }
 
