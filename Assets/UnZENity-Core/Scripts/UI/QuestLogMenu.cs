@@ -185,20 +185,26 @@ namespace GUZ.Core.UI
                 rect.SetHeight(item.DimY / pixelRatioY);
             }
 
-            var textComp = itemGo.GetComponentInChildren<TMP_Text>();
-
-            if (item.MenuItemType == MenuItemType.Text && item.Flags.HasFlag(MenuItemFlag.Centered))
-            {
-                textComp.alignment = TextAlignmentOptions.TopGeoAligned;
-            }
-
             if (_initiallyDisabledMenuItems.Contains(menuItemName))
             {
                 itemGo.SetActive(false);
             }
             else if (item.MenuItemType == MenuItemType.Text)
             {
+                var textComp = itemGo.GetComponentInChildren<TMP_Text>();
+
+                if (item.Flags.HasFlag(MenuItemFlag.Centered))
+                {
+                    textComp.alignment = TextAlignmentOptions.TopGeoAligned;
+                }
+
                 textComp.text = item.GetText(0);
+                textComp.alignment = TextAlignmentOptions.TopLeft;
+
+                // Text component needs to align in dimensions with parent rect.
+                var textRect = textComp.GetComponent<RectTransform>();
+                textRect.SetWidth(item.DimX / pixelRatioX);
+                textRect.SetHeight(item.DimY / pixelRatioY);
             }
         }
 
