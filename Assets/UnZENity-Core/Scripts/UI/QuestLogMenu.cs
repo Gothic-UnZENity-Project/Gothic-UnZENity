@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using MyBox;
 using TMPro;
@@ -24,6 +23,11 @@ namespace GUZ.Core.UI
     /// |                 | ...      |            |  ------------------------  |
     /// |                 |          |            |  entries below each other  |
     /// |-----------------|----------|            |----------------------------|
+    ///
+    ///
+    /// Hint: We need to stick with center for UI elements as setting anchor positions (min=v2(0.5,0.5), max=v2(0.5,0.5))
+    ///       Because setting the anchors at runtime (e.g. left-aligned) causes Unity to crash at a certain amount of changes.
+    ///       Unfortunately this causes a lot of calculations within this class. But now you know at least. :-)
     /// </summary>
     public class QuestLogMenu : MonoBehaviour
     {
@@ -34,6 +38,7 @@ namespace GUZ.Core.UI
         // Create 22 buttons as list elements for all lists
         // TODO - Gothic handled it via FontSize. But for now, we can go with a fixed amount.
         private const int _visibleListItemAmount = 22;
+        private const int _listItemHeight = 16;
         private const int _margin = 12; // Checked manually to fit with G1 view.
         private const string _instanceNameActiveMissions = "MENU_ITEM_LIST_MISSIONS_ACT";
         private const string _instanceNameFailedMissions = "MENU_ITEM_LIST_MISSIONS_FAILED";
@@ -135,7 +140,7 @@ namespace GUZ.Core.UI
                 CreateMenuItem(menuInstance, pixelRatioX, pixelRatioY, menuItemName);
             }
 
-            CreateLists();
+            CreateLists(pixelRatioX, pixelRatioY);
         }
 
         private void CreateMenuItem(MenuInstance main, float pixelRatioX, float pixelRatioY, string menuItemName)
@@ -166,12 +171,12 @@ namespace GUZ.Core.UI
             _menuCache[menuItemName] = (item, itemGo);
 
             var rect = itemGo.GetComponent<RectTransform>();
-            var halfMainWidth = main.DimX / 2;
-            var halfMainHeight = main.DimY / 2;
-            var halfItemWidth = item.DimX / 2;
-            var halfItemHeight = item.DimY / 2;
+            var halfMainWidth = (float)main.DimX / 2;
+            var halfMainHeight = (float)main.DimY / 2;
+            var halfItemWidth = (float)item.DimX / 2;
+            var halfItemHeight = (float)item.DimY / 2;
             // As we have anchor positions at the center (0.5), we need to move into a certain direction from the center
-            // Hint: We need to stick with center as setting anchor positions at runtime (e.g. left-aligned) causes Unity to crash at a certain amount of changes.
+            // Hint: We need to stick with center, as setting anchor positions at runtime (e.g. left-aligned) causes Unity to crash at a certain amount of changes.
             rect.SetPositionX((item.PosX - halfMainWidth + halfItemWidth) / pixelRatioX);
             rect.SetPositionY((halfMainHeight - item.PosY - halfItemHeight) / pixelRatioY);
 
@@ -208,7 +213,7 @@ namespace GUZ.Core.UI
             }
         }
 
-        private void CreateLists()
+        private void CreateLists(float pixelRatioX, float pixelRatioY)
         {
             foreach (var entryName in _listItemInstanceNames)
             {
@@ -228,8 +233,15 @@ namespace GUZ.Core.UI
                     container.ItemGOs[i] = itemGo;
 
                     var rect = itemGo.GetComponentInChildren<RectTransform>();
-                    rect.SetHeight(15);
-                    rect.SetPositionY(-15 * i);
+                    var halfMainHeight = (float)listEntry.item.DimY / pixelRatioY / 2;
+                    var halfItemHeight = (float)_listItemHeight / 2;
+                    rect.SetPositionY((halfMainHeight - (i * _listItemHeight) - halfItemHeight));
+                    rect.SetHeight(_listItemHeight);
+                    rect.SetWidth(listEntry.item.DimX / pixelRatioX);
+
+                    var textRect = itemGo.GetComponentInChildren<TMP_Text>().GetComponent<RectTransform>();
+                    textRect.SetWidth(listEntry.item.DimX / pixelRatioX);
+                    textRect.SetHeight(_listItemHeight);
 
                     var button = itemGo.GetComponentInChildren<Button>();
 
@@ -254,7 +266,6 @@ namespace GUZ.Core.UI
                         rend.sharedMaterial = GameGlobals.Textures.ArrowUpMaterial;
                         // button.onClick.AddListener(OnArrowUpClick);
 
-                        rect.SetAnchor(RectTransformExtension.AnchorPosition.TopRight);
                         rect.SetHeight(rend.sharedMaterial.mainTexture.height);
                         rect.SetWidth(rend.sharedMaterial.mainTexture.width);
                         rect.SetPositionX(-_margin);
@@ -272,7 +283,6 @@ namespace GUZ.Core.UI
                         rend.sharedMaterial = GameGlobals.Textures.ArrowDownMaterial;
                         // button.onClick.AddListener(OnArrowDownClick);
 
-                        rect.SetAnchor(RectTransformExtension.AnchorPosition.BottomRight);
                         rect.SetHeight(rend.sharedMaterial.mainTexture.height);
                         rect.SetWidth(rend.sharedMaterial.mainTexture.width);
                         rect.SetPositionX(-_margin);
