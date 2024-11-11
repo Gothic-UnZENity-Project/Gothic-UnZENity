@@ -38,8 +38,9 @@ namespace GUZ.Core.UI
         // Create 22 buttons as list elements for all lists
         // TODO - Gothic handled it via FontSize. But for now, we can go with a fixed amount.
         private const int _visibleListItemAmount = 22;
-        private const int _listItemHeight = 16;
-        private const int _margin = 12; // Checked manually to fit with G1 view.
+        private const int _listItemHeight = 17;
+        private const int _margin = 12;
+
         private const string _instanceNameActiveMissions = "MENU_ITEM_LIST_MISSIONS_ACT";
         private const string _instanceNameFailedMissions = "MENU_ITEM_LIST_MISSIONS_FAILED";
         private const string _instanceNameSuccessMissions = "MENU_ITEM_LIST_MISSIONS_OLD";
@@ -204,7 +205,6 @@ namespace GUZ.Core.UI
                 }
 
                 textComp.text = item.GetText(0);
-                textComp.alignment = TextAlignmentOptions.TopLeft;
 
                 // Text component needs to align in dimensions with parent rect.
                 var textRect = textComp.GetComponent<RectTransform>();
@@ -226,6 +226,9 @@ namespace GUZ.Core.UI
                     ItemGOs = new GameObject[_visibleListItemAmount]
                 };
 
+                var halfMainWidth = (float)listEntry.item.DimX / pixelRatioX / 2;
+                var halfMainHeight = (float)listEntry.item.DimY / pixelRatioY / 2;
+
                 // Create Item GameObjects (22x)
                 for (var i = 0; i < _visibleListItemAmount; i++)
                 {
@@ -233,14 +236,13 @@ namespace GUZ.Core.UI
                     container.ItemGOs[i] = itemGo;
 
                     var rect = itemGo.GetComponentInChildren<RectTransform>();
-                    var halfMainHeight = (float)listEntry.item.DimY / pixelRatioY / 2;
                     var halfItemHeight = (float)_listItemHeight / 2;
                     rect.SetPositionY((halfMainHeight - (i * _listItemHeight) - halfItemHeight));
                     rect.SetHeight(_listItemHeight);
                     rect.SetWidth(listEntry.item.DimX / pixelRatioX);
 
                     var textRect = itemGo.GetComponentInChildren<TMP_Text>().GetComponent<RectTransform>();
-                    textRect.SetWidth(listEntry.item.DimX / pixelRatioX);
+                    textRect.SetWidth((listEntry.item.DimX / pixelRatioX) - _margin);
                     textRect.SetHeight(_listItemHeight);
 
                     var button = itemGo.GetComponentInChildren<Button>();
@@ -256,7 +258,7 @@ namespace GUZ.Core.UI
                 {
                     // UP
                     {
-                        var go = ResourceLoader.TryGetPrefabObject(PrefabType.UiTexture, name: "ARROW_UP", parent: listEntry.go)!;
+                        var go = ResourceLoader.TryGetPrefabObject(PrefabType.UiButtonTextured, name: "ARROW_UP", parent: listEntry.go)!;
                         var rect = go.GetComponentInChildren<RectTransform>();
                         var rend = go.GetComponentInChildren<MeshRenderer>();
                         var button = go.GetComponentInChildren<Button>();
@@ -264,29 +266,30 @@ namespace GUZ.Core.UI
                         go.transform.localScale = new Vector3(2, 2, 1);
                         container.ArrowUpGo = go;
                         rend.sharedMaterial = GameGlobals.Textures.ArrowUpMaterial;
-                        // button.onClick.AddListener(OnArrowUpClick);
+                        button.onClick.AddListener(OnArrowUpClick);
 
                         rect.SetHeight(rend.sharedMaterial.mainTexture.height);
                         rect.SetWidth(rend.sharedMaterial.mainTexture.width);
-                        rect.SetPositionX(-_margin);
-                        rect.SetPositionY(-_margin);
+                        rect.SetPositionX(halfMainWidth - _margin);
+                        rect.SetPositionY(halfMainHeight - _margin);
                     }
 
                     // DOWN
                     {
-                        var go = ResourceLoader.TryGetPrefabObject(PrefabType.UiTexture, name: "ARROW_DOWN", parent: listEntry.go)!;
+                        var go = ResourceLoader.TryGetPrefabObject(PrefabType.UiButtonTextured, name: "ARROW_DOWN", parent: listEntry.go)!;
                         var rect = go.GetComponentInChildren<RectTransform>();
                         var rend = go.GetComponentInChildren<MeshRenderer>();
                         var button = go.GetComponentInChildren<Button>();
 
+                        go.transform.localScale = new Vector3(2, 2, 1);
                         container.ArrowDownGo = go;
                         rend.sharedMaterial = GameGlobals.Textures.ArrowDownMaterial;
-                        // button.onClick.AddListener(OnArrowDownClick);
+                        button.onClick.AddListener(OnArrowDownClick);
 
                         rect.SetHeight(rend.sharedMaterial.mainTexture.height);
                         rect.SetWidth(rend.sharedMaterial.mainTexture.width);
-                        rect.SetPositionX(-_margin);
-                        rect.SetPositionY(_margin);
+                        rect.SetPositionX(halfMainWidth - _margin);
+                        rect.SetPositionY(-halfMainHeight + _margin);
                     }
                 }
 
