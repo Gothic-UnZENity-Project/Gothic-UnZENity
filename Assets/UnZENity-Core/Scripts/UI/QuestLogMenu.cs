@@ -180,36 +180,28 @@ namespace GUZ.Core.UI
             {
                 // As we have anchor positions at the center (0.5), we need to move into a certain direction from the center
                 // Hint: We need to stick with center, as setting anchor positions at runtime (e.g. left-aligned) causes Unity to crash at a certain amount of changes.
-                var halfItemWidth = (float)item.DimX / 2;
-                itemWidth = item.DimX / pixelRatioX;
-                rect.SetPositionX((item.PosX - halfMainWidth + halfItemWidth) / pixelRatioX);
-                rect.SetWidth(itemWidth);
+                itemWidth = item.DimX;
             }
             else
             {
-                var halfItemOffset = (float)item.PosX / 2;
-                itemWidth = ((float)main.DimX - item.PosX) / pixelRatioX;
                 // We assume the element can be drawn until end of whole UI.
-                rect.SetPositionX((itemWidth / 2 + halfItemOffset) / pixelRatioX);
-                rect.SetWidth(itemWidth);
+                itemWidth = ((float)main.DimX - item.PosX);
             }
+            rect.SetPositionX((item.PosX - halfMainWidth + itemWidth / 2) / pixelRatioX);
+            rect.SetWidth(itemWidth / pixelRatioX);
 
             float itemHeight;
             if (item.DimY > 0)
             {
-                var halfItemHeight = (float)item.DimY / 2;
-                itemHeight = item.DimY / pixelRatioY;
-                rect.SetPositionY((halfMainHeight - item.PosY - halfItemHeight) / pixelRatioY);
-                rect.SetHeight(itemHeight);
+                itemHeight = item.DimY;
             }
             else
             {
-                var halfItemOffset = (float)item.PosY / 2;
-                itemHeight = ((float)main.DimY - item.PosY) / pixelRatioX;
                 // We assume the element can be drawn until end of whole UI.
-                rect.SetPositionY((itemHeight / 2  - halfItemOffset) / pixelRatioX);
-                rect.SetHeight(itemHeight);
+                itemHeight = (float)main.DimY - item.PosY;
             }
+            rect.SetPositionY((halfMainHeight - item.PosY - itemHeight / 2) / pixelRatioY);
+            rect.SetHeight(itemHeight / pixelRatioY);
 
             if (_initiallyDisabledMenuItems.Contains(menuItemName))
             {
@@ -228,8 +220,8 @@ namespace GUZ.Core.UI
 
                 // Text component needs to align in dimensions with parent rect.
                 var textRect = textComp.GetComponent<RectTransform>();
-                textRect.SetWidth(itemWidth);
-                textRect.SetHeight(itemHeight);
+                textRect.SetWidth(itemWidth / pixelRatioX);
+                textRect.SetHeight(itemHeight / pixelRatioY);
             }
         }
 
@@ -357,7 +349,7 @@ namespace GUZ.Core.UI
             }
 
             list.ArrowUpGo.SetActive(list.CurrentListScrollValue > 0);
-            list.ArrowDownGo.SetActive(list.LogTopics.Count > list.CurrentListScrollValue - _visibleListItemAmount);
+            list.ArrowDownGo.SetActive(list.LogTopics.Count - _visibleListItemAmount - list.CurrentListScrollValue > 0);
         }
 
         private void OnMenuItemClicked(MenuItemSelectAction action, string commandName)
