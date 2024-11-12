@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using MyBox;
 using TMPro;
@@ -45,7 +46,9 @@ namespace GUZ.Core.UI
         private const string _instanceNameFailedMissions = "MENU_ITEM_LIST_MISSIONS_FAILED";
         private const string _instanceNameSuccessMissions = "MENU_ITEM_LIST_MISSIONS_OLD";
         private const string _instanceNameLog = "MENU_ITEM_LIST_LOG";
-        // Easier to loop through or check .Contains() later.
+        private const string _instanceContentViewer = "MENU_ITEM_CONTENT_VIEWER";
+
+        // It's easier to loop through or check .Contains() later.
         private string[] _listItemInstanceNames =
         {
             _instanceNameActiveMissions,
@@ -58,7 +61,7 @@ namespace GUZ.Core.UI
         private static readonly string[] _initiallyDisabledMenuItems =
         {
             _instanceNameActiveMissions, _instanceNameFailedMissions, _instanceNameSuccessMissions,
-            _instanceNameLog, "MENU_ITEM_CONTENT_VIEWER"
+            _instanceNameLog, _instanceContentViewer
         };
 
         private Dictionary<string, (MenuItemInstance item, GameObject go)> _menuCache = new();
@@ -163,6 +166,23 @@ namespace GUZ.Core.UI
                 {
                     OnMenuItemClicked(item.GetOnSelAction(0), item.GetOnSelActionS(0));
                 });
+            }
+            // MENU_ITEM_CONTENT_VIEWER
+            else if (menuItemName.EqualsIgnoreCase(_instanceContentViewer))
+            {
+                itemGo = ResourceLoader.TryGetPrefabObject(PrefabType.UiEmpty, name: menuItemName, parent: _canvas)!;
+
+                var backPicGo = ResourceLoader.TryGetPrefabObject(PrefabType.UiTexture, name: item.BackPic, parent: itemGo)!;
+                var backPic = GameGlobals.Textures.GetMaterial(item.BackPic);
+                var backPictRenderer = backPicGo.GetComponentInChildren<MeshRenderer>();
+                backPictRenderer.sharedMaterial = backPic;
+                backPictRenderer.transform.localScale = _background.GetComponentInChildren<MeshRenderer>().transform.localScale;
+                backPictRenderer.transform.localPosition = _background.GetComponentInChildren<MeshRenderer>().transform.localPosition;
+
+                var textGo = ResourceLoader.TryGetPrefabObject(PrefabType.UiText, name: "Content", parent: itemGo)!;
+                var textGoRect = textGo.GetComponentInChildren<RectTransform>();
+                textGoRect.SetWidth(item.DimX / pixelRatioX);
+                textGoRect.SetHeight(item.DimY / pixelRatioY);
             }
             else
             {
@@ -369,6 +389,34 @@ namespace GUZ.Core.UI
         private void OnListItemClicked(int index)
         {
             Debug.Log($"OnListItemClicked({index})");
+
+            var realIndex = index + _activeListMenu.CurrentListScrollValue;
+            var text = _activeListMenu.LogTopics[realIndex].Entries.Aggregate((i, j) => i + "\n---\n" + j);
+
+            // Disable everything
+            _menuCache.ForEach(i => i.Value.go.SetActive(false));
+            // including background
+            _background.SetActive(false);
+
+            var contentViewer = _menuCache[_instanceContentViewer].go;
+            contentViewer.GetComponentInChildren<TMP_Text>().text = text;
+            contentViewer.SetActive(true);
+
+
+            // FIXME
+            // Initially:
+            // [x]Handle content viewer separately
+            // [x]Set backPic
+            // [ ]Create scroll arrows
+            // Now:
+            // [ ]Set Scrollposition of contentViewer=0 + disable arrowUp
+            // [x]Disable all elements
+            // [x]Enable ContentViewer
+            // [ ]Check if arrowDown needs to be active
+            // Then:
+            // [ ]Add Arrow-back (e.g. arrow down rotated)
+            // [ ]Once clicked, setActive() previously active list and all left menu items
+            //
         }
 
         private void OnArrowUpClick()
