@@ -387,6 +387,9 @@ namespace GUZ.Core.UI
 
         private void ExecuteCommand(string commandName)
         {
+            ResetView();
+            FillLists();
+
             var split = commandName.Split(' ');
 
             // Some commands are named like "EFFECTS MENU_ITEM_XYZ". We remove the unnecessary prefix (e.g. EFFECT).
