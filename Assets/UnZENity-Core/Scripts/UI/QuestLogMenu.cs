@@ -217,6 +217,7 @@ namespace GUZ.Core.UI
                 }
 
                 textComp.text = item.GetText(0);
+                textComp.spriteAsset = GameGlobals.Font.TryGetFont(item.FontName);
 
                 // Text component needs to align in dimensions with parent rect.
                 var textRect = textComp.GetComponent<RectTransform>();

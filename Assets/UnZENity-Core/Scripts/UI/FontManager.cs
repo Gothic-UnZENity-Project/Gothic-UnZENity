@@ -18,16 +18,14 @@ namespace GUZ.Core.Manager
 
         public void Create()
         {
-            DefaultSpriteAsset = LoadFont("font_old_20_white.FNT");
-            HighlightSpriteAsset = LoadFont("font_old_20_white_hi.FNT");
+            DefaultSpriteAsset = TryGetFont("font_old_20_white.FNT");
+            HighlightSpriteAsset = TryGetFont("font_old_20_white_hi.FNT");
 
             TMP_Settings.defaultSpriteAsset = DefaultSpriteAsset;
             TMP_Settings.defaultFontAsset = DefaultFont;
-
-
         }
 
-        private TMP_SpriteAsset LoadFont(string fontName)
+        public TMP_SpriteAsset TryGetFont(string fontName)
         {
             if (MultiTypeCache.FontCache.TryGetValue(fontName.ToUpper(), out var data))
             {
