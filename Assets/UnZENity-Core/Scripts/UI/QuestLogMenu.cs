@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using MyBox;
 using TMPro;
@@ -167,29 +166,24 @@ namespace GUZ.Core.UI
                     OnMenuItemClicked(item.GetOnSelAction(0), item.GetOnSelActionS(0));
                 });
             }
-            // MENU_ITEM_CONTENT_VIEWER
-            else if (menuItemName.EqualsIgnoreCase(_instanceContentViewer))
-            {
-                itemGo = ResourceLoader.TryGetPrefabObject(PrefabType.UiEmpty, name: menuItemName, parent: _canvas)!;
-
-                var backPicGo = ResourceLoader.TryGetPrefabObject(PrefabType.UiTexture, name: item.BackPic, parent: itemGo)!;
-                var backPic = GameGlobals.Textures.GetMaterial(item.BackPic);
-                var backPictRenderer = backPicGo.GetComponentInChildren<MeshRenderer>();
-                backPictRenderer.sharedMaterial = backPic;
-                backPictRenderer.transform.localScale = _background.GetComponentInChildren<MeshRenderer>().transform.localScale;
-                backPictRenderer.transform.localPosition = _background.GetComponentInChildren<MeshRenderer>().transform.localPosition;
-
-                var textGo = ResourceLoader.TryGetPrefabObject(PrefabType.UiText, name: "Content", parent: itemGo)!;
-                var textGoRect = textGo.GetComponentInChildren<RectTransform>();
-                textGoRect.SetWidth(item.DimX / pixelRatioX);
-                textGoRect.SetHeight(item.DimY / pixelRatioY);
-            }
             else
             {
                 itemGo = ResourceLoader.TryGetPrefabObject(PrefabType.UiText, name: menuItemName, parent: _canvas)!;
             }
 
             _menuCache[menuItemName] = (item, itemGo);
+
+            if (item.BackPic.NotNullOrEmpty())
+            {
+                var backPicGo = ResourceLoader.TryGetPrefabObject(PrefabType.UiTexture, name: item.BackPic, parent: itemGo)!;
+                var backPic = GameGlobals.Textures.GetMaterial(item.BackPic);
+                var backPictRenderer = backPicGo.GetComponentInChildren<MeshRenderer>();
+                backPictRenderer.sharedMaterial = backPic;
+
+                // Apply scale an position (move slightly backwards) from normal background to this one.
+                backPictRenderer.transform.localScale = _background.GetComponentInChildren<MeshRenderer>().transform.localScale;
+                backPictRenderer.transform.localPosition = _background.GetComponentInChildren<MeshRenderer>().transform.localPosition;
+            }
 
             var rect = itemGo.GetComponent<RectTransform>();
             var halfMainWidth = (float)main.DimX / 2;
@@ -223,27 +217,38 @@ namespace GUZ.Core.UI
             rect.SetPositionY((halfMainHeight - item.PosY - itemHeight / 2) / pixelRatioY);
             rect.SetHeight(itemHeight / pixelRatioY);
 
+            var textComp = itemGo.GetComponentInChildren<TMP_Text>();
+            if (textComp != null)
+            {
+                SetTextDimensions(textComp, item, itemWidth, itemHeight, pixelRatioX, pixelRatioY);
+            }
+
             if (_initiallyDisabledMenuItems.Contains(menuItemName))
             {
                 itemGo.SetActive(false);
             }
-            else if (item.MenuItemType == MenuItemType.Text)
+        }
+
+        private void SetTextDimensions(TMP_Text textComp, MenuItemInstance item,
+            float itemWidth, float itemHeight, float pixelRatioX, float pixelRatioY)
+        {
+            // frameSizeX/Y are text paddings from left-right and/or top/bottom.
+            var textWidth = itemWidth - 2 * item.FrameSizeX;
+            var textHeight = itemHeight - 2 * item.FrameSizeY;
+
+            if (item.Flags.HasFlag(MenuItemFlag.Centered))
             {
-                var textComp = itemGo.GetComponentInChildren<TMP_Text>();
-
-                if (item.Flags.HasFlag(MenuItemFlag.Centered))
-                {
-                    textComp.alignment = TextAlignmentOptions.TopGeoAligned;
-                }
-
-                textComp.text = item.GetText(0);
-                textComp.spriteAsset = GameGlobals.Font.TryGetFont(item.FontName);
-
-                // Text component needs to align in dimensions with parent rect.
-                var textRect = textComp.GetComponent<RectTransform>();
-                textRect.SetWidth(itemWidth / pixelRatioX);
-                textRect.SetHeight(itemHeight / pixelRatioY);
+                textComp.alignment = TextAlignmentOptions.TopGeoAligned;
             }
+
+            textComp.text = item.GetText(0);
+            textComp.spriteAsset = GameGlobals.Font.TryGetFont(item.FontName);
+
+            // Text component needs to align in dimensions with parent rect.
+            var textRect = textComp.GetComponent<RectTransform>();
+
+            textRect.SetWidth(textWidth / pixelRatioX);
+            textRect.SetHeight(textHeight / pixelRatioY);
         }
 
         private void CreateLists(float pixelRatioX, float pixelRatioY)
