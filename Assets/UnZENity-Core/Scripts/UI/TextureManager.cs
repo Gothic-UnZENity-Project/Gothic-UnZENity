@@ -21,6 +21,7 @@ public class TextureManager : MonoBehaviour
     public Material FillerMaterial;
     [NonSerialized] public Material ArrowUpMaterial;
     [NonSerialized] public Material ArrowDownMaterial;
+    [NonSerialized] public Material ArrowLeftMaterial;
 
     // Loading
     public Material LoadingBarBackgroundMaterial;
@@ -46,6 +47,7 @@ public class TextureManager : MonoBehaviour
         // Menu
         ArrowUpMaterial = GetEmptyMaterial(MaterialExtension.BlendMode.Opaque);
         ArrowDownMaterial = GetEmptyMaterial(MaterialExtension.BlendMode.Opaque);
+        ArrowLeftMaterial = GetEmptyMaterial(MaterialExtension.BlendMode.Opaque);
     }
 
     public void Init()
@@ -69,6 +71,7 @@ public class TextureManager : MonoBehaviour
         // Menu
         ArrowUpMaterial.mainTexture = TextureCache.TryGetTexture("O.TGA");
         ArrowDownMaterial.mainTexture = TextureCache.TryGetTexture("U.TGA");
+        ArrowLeftMaterial.mainTexture = TextureCache.TryGetTexture("L.TGA");
     }
 
     public void SetTexture(string texture, Material material)
