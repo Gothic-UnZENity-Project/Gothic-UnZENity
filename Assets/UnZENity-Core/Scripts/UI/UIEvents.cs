@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using GUZ.Core.Creator.Sounds;
 using GUZ.Core.Extensions;
+using MyBox;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -72,14 +73,7 @@ namespace GUZ.Core.UI
                     continue;
                 }
                 
-                var textComponent = hoveredObj.GetComponentInChildren<TMP_Text>();
-
-                if (textComponent == null)
-                {
-                    continue;
-                }
-                
-                textComponent.spriteAsset = GameGlobals.Font.HighlightSpriteAsset;
+                SetHighlightFont(hoveredObj.GetComponentInChildren<TMP_Text>());
                 elementFound = true;
             }
             
@@ -107,16 +101,58 @@ namespace GUZ.Core.UI
                 {
                     continue;
                 }
-                
-                var textComponent = hoveredObj.GetComponentInChildren<TMP_Text>();
 
-                if (textComponent == null)
-                {
-                    continue;
-                }
-
-                textComponent.spriteAsset = GameGlobals.Font.DefaultSpriteAsset;
+                SetDefaultFont(hoveredObj.GetComponentInChildren<TMP_Text>());
             }
+        }
+
+        private void SetHighlightFont(TMP_Text textComp)
+        {
+            if (textComp == null)
+            {
+                return;
+            }
+
+            // Font has default value assigned and somehow Unity marks spriteAsset as null in this case.
+            if (textComp.spriteAsset == null)
+            {
+                textComp.spriteAsset = GameGlobals.Font.HighlightSpriteAsset;
+            }
+            else
+            {
+                SetFont(textComp, $"{textComp.spriteAsset.name}_hi");
+            }
+        }
+
+        private void SetDefaultFont(TMP_Text textComp)
+        {
+            if (textComp == null)
+            {
+                return;
+            }
+
+            // Font has default value assigned and somehow Unity marks spriteAsset as null in this case.
+            if (textComp.spriteAsset == null)
+            {
+                textComp.spriteAsset = GameGlobals.Font.DefaultSpriteAsset;
+            }
+            else
+            {
+                SetFont(textComp, textComp.spriteAsset.name.RemoveEnd("_hi"));
+            }
+        }
+
+        private void SetFont(TMP_Text textComp, string fontName)
+        {
+            var newFont = GameGlobals.Font.TryGetFont(fontName);
+
+            if (newFont == null)
+            {
+                Debug.LogWarning($"Font {newFont} not found.");
+                return;
+            }
+
+            textComp.spriteAsset = newFont;
         }
 
         public void OnButtonClicked()

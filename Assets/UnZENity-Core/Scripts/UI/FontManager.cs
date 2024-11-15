@@ -27,13 +27,14 @@ namespace GUZ.Core.Manager
 
         public TMP_SpriteAsset TryGetFont(string fontName)
         {
-            if (MultiTypeCache.FontCache.TryGetValue(fontName.ToUpper(), out var data))
+            var preparedKey = ResourceLoader.GetPreparedKey(fontName);
+            if (MultiTypeCache.FontCache.TryGetValue($"{preparedKey}.fnt", out var data))
             {
                 return data;
             }
 
-            var font = ResourceLoader.TryGetFont(fontName.ToUpper());
-            var fontTexture = TextureCache.TryGetTexture(fontName);
+            var font = ResourceLoader.TryGetFont(preparedKey);
+            var fontTexture = TextureCache.TryGetTexture(preparedKey);
 
             var spriteAsset = ScriptableObject.CreateInstance<TMP_SpriteAsset>();
 
@@ -79,7 +80,7 @@ namespace GUZ.Core.Manager
                 spriteAsset.spriteCharacterTable.Add(spriteCharacter);
             }
 
-            spriteAsset.name = name;
+            spriteAsset.name = preparedKey;
             spriteAsset.material = GetDefaultSpriteMaterial(fontTexture);
             spriteAsset.spriteSheet = fontTexture;
 
@@ -93,7 +94,7 @@ namespace GUZ.Core.Manager
 
             spriteAsset.UpdateLookupTables();
 
-            MultiTypeCache.FontCache[fontName.ToUpper()] = spriteAsset;
+            MultiTypeCache.FontCache[preparedKey] = spriteAsset;
 
             return spriteAsset;
         }

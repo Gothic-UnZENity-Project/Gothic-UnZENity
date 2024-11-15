@@ -230,7 +230,7 @@ namespace GUZ.Core
         }
 
         [NotNull]
-        private static string GetPreparedKey([NotNull] string key)
+        public static string GetPreparedKey([NotNull] string key)
         {
             return Path.GetFileNameWithoutExtension(key).ToLower();
         }
