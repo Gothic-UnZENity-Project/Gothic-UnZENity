@@ -345,6 +345,7 @@ namespace GUZ.Core.UI
             var halfTextHeight = textRect.sizeDelta.y / 2;
 
             textComp.overflowMode = TextOverflowModes.Page;
+            textComp.pageToDisplay = 0;
 
             // UP
             {
@@ -398,9 +399,26 @@ namespace GUZ.Core.UI
             }
         }
 
+        /// <summary>
+        /// Alter visibility: Deactivate ContentViewer and reactivate normal menu + currently active sub-menu (list)
+        /// </summary>
         private void OnContentViewerBackClick()
         {
-            // TBD
+            var contentViewer = _menuCache[_instanceContentViewer];
+            contentViewer.go.SetActive(false);
+
+            _activeListMenu.RootGo.SetActive(true);
+            _background.SetActive(true);
+
+            foreach (var menuItem in _menuCache)
+            {
+                if (_initiallyDisabledMenuItems.Contains(menuItem.Key))
+                {
+                    continue;
+                }
+
+                menuItem.Value.go.SetActive(true);
+            }
         }
 
         private void OnContentViewerArrowUpClick()
