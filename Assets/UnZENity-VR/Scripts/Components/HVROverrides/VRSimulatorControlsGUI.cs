@@ -18,7 +18,8 @@ namespace GUZ.VR.Components.HVROverrides
 Rotate Camera -> Hold Mouse right click
 Jump (Hexabody) -> Space
 Crouch (Hexabody) -> Z/X
-Menu -> Escape";
+Menu -> Escape
+Quest log -> L";
 
 
         private void Awake()

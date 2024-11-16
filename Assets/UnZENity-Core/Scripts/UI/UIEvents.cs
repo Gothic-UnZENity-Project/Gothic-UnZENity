@@ -120,11 +120,23 @@ namespace GUZ.Core.UI
             }
             else
             {
-                SetFont(textComp, $"{textComp.spriteAsset.name}_hi");
+                SetFont(textComp, textComp.spriteAsset.name.RemoveEnd(".fnt") + "_hi");
             }
         }
 
-        private void SetDefaultFont(TMP_Text textComp)
+        /// <summary>
+        /// On certain conditions (like SetEnabled(false), the appropriate OnPointerExit() won't be recognized.
+        /// Let's do it manually.
+        /// </summary>
+        public static void SetDefaultFontsForChildren(GameObject root)
+        {
+            foreach (var textComp in root.GetComponentsInChildren<TMP_Text>())
+            {
+                SetDefaultFont(textComp);
+            }
+        }
+
+        private static void SetDefaultFont(TMP_Text textComp)
         {
             if (textComp == null)
             {
@@ -138,11 +150,11 @@ namespace GUZ.Core.UI
             }
             else
             {
-                SetFont(textComp, textComp.spriteAsset.name.RemoveEnd("_hi"));
+                SetFont(textComp, textComp.spriteAsset.name.RemoveEnd("_hi.fnt"));
             }
         }
 
-        private void SetFont(TMP_Text textComp, string fontName)
+        private static void SetFont(TMP_Text textComp, string fontName)
         {
             var newFont = GameGlobals.Font.TryGetFont(fontName);
 

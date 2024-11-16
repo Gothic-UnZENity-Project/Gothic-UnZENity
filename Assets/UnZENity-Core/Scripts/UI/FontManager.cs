@@ -2,6 +2,7 @@ using System.Reflection;
 using GUZ.Core.Caches;
 using GUZ.Core.Globals;
 using GUZ.Core.Util;
+using JetBrains.Annotations;
 using TMPro;
 using UnityEngine;
 using UnityEngine.TextCore;
@@ -25,10 +26,11 @@ namespace GUZ.Core.Manager
             TMP_Settings.defaultFontAsset = DefaultFont;
         }
 
+        [CanBeNull]
         public TMP_SpriteAsset TryGetFont(string fontName)
         {
-            var preparedKey = ResourceLoader.GetPreparedKey(fontName);
-            if (MultiTypeCache.FontCache.TryGetValue($"{preparedKey}.fnt", out var data))
+            var preparedKey = $"{ResourceLoader.GetPreparedKey(fontName)}.fnt";
+            if (MultiTypeCache.FontCache.TryGetValue(preparedKey, out var data))
             {
                 return data;
             }
@@ -36,6 +38,11 @@ namespace GUZ.Core.Manager
             var font = ResourceLoader.TryGetFont(preparedKey);
             var fontTexture = TextureCache.TryGetTexture(preparedKey);
 
+            if (font == null || fontTexture == null)
+            {
+                Debug.LogError($"[{nameof(FontManager)}]: Could not find font {fontName}");
+                return null;
+            }
             var spriteAsset = ScriptableObject.CreateInstance<TMP_SpriteAsset>();
 
             for (var i = 0; i < font.Glyphs.Count; i++)

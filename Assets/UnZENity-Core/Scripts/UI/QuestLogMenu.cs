@@ -496,9 +496,13 @@ namespace GUZ.Core.UI
             var realIndex = index + _activeListMenu.CurrentListScrollValue;
             var text = _activeListMenu.LogTopics[realIndex].Entries.Aggregate((i, j) => i + "\n---\n" + j);
 
-            // Disable everything
-            _menuCache.ForEach(i => i.Value.go.SetActive(false));
-            // including background
+            // Disable everything...
+            foreach (var menuItem in _menuCache.Values)
+            {
+                UIEvents.SetDefaultFontsForChildren(menuItem.go);
+                menuItem.go.SetActive(false);
+            }
+            // ...including background
             _background.SetActive(false);
 
             var contentViewer = _menuCache[_instanceContentViewer].go;
