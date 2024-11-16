@@ -88,7 +88,7 @@ namespace GUZ.Core.UI
         /// </summary>
         private void Awake()
         {
-            Setup();
+            GlobalEventDispatcher.ZenKitBootstrapped.AddListener(Setup);
         }
 
         /// <summary>
@@ -508,22 +508,6 @@ namespace GUZ.Core.UI
             var contentViewer = _menuCache[_instanceContentViewer].go;
             contentViewer.GetComponentInChildren<TMP_Text>().text = text;
             contentViewer.SetActive(true);
-
-
-            // FIXME
-            // Initially:
-            // [x]Handle content viewer separately
-            // [x]Set backPic
-            // [x]Create scroll arrows
-            // Now:
-            // [ ]Set Scrollposition of contentViewer=0 + disable arrowUp
-            // [x]Disable all elements
-            // [x]Enable ContentViewer
-            // [x]Check if arrowDown needs to be active - Always active as it's easier for now!
-            // Then:
-            // [ ]Add Arrow-back (e.g. arrow down rotated)
-            // [ ]Once clicked, setActive() previously active list and all left menu items
-            //
         }
 
         private void OnArrowUpClick()
