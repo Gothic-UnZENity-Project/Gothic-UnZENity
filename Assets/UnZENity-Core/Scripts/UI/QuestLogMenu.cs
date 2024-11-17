@@ -31,7 +31,6 @@ namespace GUZ.Core.UI
     /// </summary>
     public class QuestLogMenu : MonoBehaviour, IMenu
     {
-        // Menu entries (e.g. text:Current missions) are created dynamically. We therefore use this GO as reference (kind of Prefab).
         [SerializeField] private GameObject _canvas;
         [SerializeField] private GameObject _background;
 

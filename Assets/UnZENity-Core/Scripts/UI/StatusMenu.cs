@@ -1,13 +1,27 @@
-﻿using System;
+﻿using GUZ.Core.UnZENity_Core.Scripts.UI;
 using UnityEngine;
 
 namespace GUZ.Core.UI
 {
-    public class StatusMenu : MonoBehaviour, IMenu
+    public class StatusMenu : AbstractMenu
     {
-        public void ToggleVisibility()
+        [SerializeField] private GameObject _canvas;
+        [SerializeField] private GameObject _background;
+
+
+        private void Awake()
         {
-            throw new NotImplementedException();
+            GlobalEventDispatcher.ZenKitBootstrapped.AddListener(Setup);
+        }
+
+        private void Setup()
+        {
+
+        }
+
+        public override void ToggleVisibility()
+        {
+            // FIXME - If opened, then fetch latest hero stats.
         }
     }
 }
