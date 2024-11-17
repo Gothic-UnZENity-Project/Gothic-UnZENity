@@ -5,7 +5,6 @@ using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
 using UnityEngine;
-using ZenKit;
 using ZenKit.Daedalus;
 using Random = UnityEngine.Random;
 
@@ -33,11 +32,9 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
                 // If NPC talked before, we stop it immediately (As some audio samples are shorter than the actual animation)
                 AnimationCreator.StopAnimation(NpcGo);
 
-
                 NpcHelper.GetHeroGameObject().GetComponent<AudioSource>().PlayOneShot(audioClip);
-                // FIXME - Show subtitles somewhere next to Hero (== ourself/main camera) PrintDialog()
-                PrintDialog();
 
+                PrintDialog();
             }
             // NPC
             else
@@ -56,15 +53,19 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
 
         private void PrintDialog()
         {
-            // FIXME - Show subtitles somewhere next to Hero (== ourself/main camera)
             var currentMessage = GameData.Dialogs.CutsceneLibrary.Blocks.Find(x => x.Name == OutputName).Message;
-            NpcInstance globalHero = (NpcInstance)GameData.GothicVm.GlobalHero;
-            if(_isHeroSpeaking){
+            var globalHero = (NpcInstance)GameData.GothicVm.GlobalHero!;
+
+            if (_isHeroSpeaking)
+            {
+                // TODO - We could also show subtitles somewhere next to Hero (== ourself/main camera)
                 GameContext.SubtitlesAdapter.FillSubtitles(globalHero.GetName(NpcNameSlot.Slot0), currentMessage.Text);
             }
-            else{
-                GameContext.SubtitlesAdapter.FillSubtitles(Props.NpcInstance.GetName(ZenKit.Daedalus.NpcNameSlot.Slot0), currentMessage.Text);
+            else
+            {
+                GameContext.SubtitlesAdapter.FillSubtitles(Props.NpcInstance.GetName(NpcNameSlot.Slot0), currentMessage.Text);
             }
+
             GameContext.SubtitlesAdapter.ShowSubtitles(Props.Go);
         }
 

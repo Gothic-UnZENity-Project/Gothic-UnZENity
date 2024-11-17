@@ -71,15 +71,6 @@ namespace GUZ.VR.Adapter
             else
             {
                 _playerController.SetNormalControls();
-
-                // Add MainMenu entry to the game
-                var mainMenuPrefab = ResourceLoader.TryGetPrefabObject(PrefabType.MainMenu);
-                _playerController.MainMenu = mainMenuPrefab!.GetComponent<MainMenu>();
-
-                mainMenuPrefab.SetParent(_playerController.gameObject, true, true);
-                mainMenuPrefab.SetActive(false);
-                // TODO: Same as on MainMenu.unity scene. Will be replaced by a proper FollowPlayer component later.
-                mainMenuPrefab.transform.localPosition = new(0, 1.5f, 4);
             }
 
             return _playerController.gameObject;

@@ -66,6 +66,9 @@ namespace GUZ.Core.Vm
             vm.RegisterExternal<int, string, int>("Info_AddChoice", Info_AddChoice);
 
             // Log
+            vm.RegisterExternal<string, string>("Log_AddEntry", Log_AddEntry);
+            vm.RegisterExternal<string, int>("Log_CreateTopic", Log_CreateTopic);
+            vm.RegisterExternal<string, int>("Log_SetTopicStatus", Log_SetTopicStatus);
 
             // Model
             vm.RegisterExternal<NpcInstance, string>("Mdl_SetVisual", Mdl_SetVisual);
@@ -395,7 +398,20 @@ namespace GUZ.Core.Vm
 
         #region Log
 
-        //
+        public static void Log_AddEntry(string topic, string entry)
+        {
+            GameGlobals.Story.ExtLogAddEntry(topic, entry);
+        }
+
+        public static void Log_CreateTopic(string name, int section)
+        {
+            GameGlobals.Story.ExtLogCreateTopic(name, (SaveTopicSection)section);
+        }
+
+        public static void Log_SetTopicStatus(string name, int status)
+        {
+            GameGlobals.Story.ExtLogSetTopicStatus(name, (SaveTopicStatus)status);
+        }
 
         #endregion
 

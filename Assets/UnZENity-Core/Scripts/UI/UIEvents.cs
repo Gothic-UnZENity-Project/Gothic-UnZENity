@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using GUZ.Core.Creator.Sounds;
 using GUZ.Core.Extensions;
+using MyBox;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -62,19 +63,17 @@ namespace GUZ.Core.UI
             
             foreach (var hoveredObj in pointerEventData.hovered)
             {
+                if (hoveredObj != gameObject && !hoveredObj.transform.IsChildOf(this.transform))
+                {
+                    continue;
+                }
+
                 if (!_elementsToFilter.IsEmpty() && !_elementsToFilter.Contains(hoveredObj))
                 {
                     continue;
                 }
                 
-                var textComponent = hoveredObj.GetComponentInChildren<TMP_Text>();
-
-                if (textComponent == null)
-                {
-                    continue;
-                }
-                
-                textComponent.spriteAsset = GameGlobals.Font.HighlightSpriteAsset;
+                SetHighlightFont(hoveredObj.GetComponentInChildren<TMP_Text>());
                 elementFound = true;
             }
             
@@ -93,20 +92,79 @@ namespace GUZ.Core.UI
             
             foreach (var hoveredObj in pointerEventData.hovered)
             {
+                if (hoveredObj != gameObject && !hoveredObj.transform.IsChildOf(this.transform))
+                {
+                    continue;
+                }
+
                 if (!_elementsToFilter.IsEmpty() && !_elementsToFilter.Contains(hoveredObj))
                 {
                     continue;
                 }
-                
-                var textComponent = hoveredObj.GetComponentInChildren<TMP_Text>();
 
-                if (textComponent == null)
-                {
-                    continue;
-                }
-
-                textComponent.spriteAsset = GameGlobals.Font.DefaultSpriteAsset;
+                SetDefaultFont(hoveredObj.GetComponentInChildren<TMP_Text>());
             }
+        }
+
+        private void SetHighlightFont(TMP_Text textComp)
+        {
+            if (textComp == null)
+            {
+                return;
+            }
+
+            // Font has default value assigned and somehow Unity marks spriteAsset as null in this case.
+            if (textComp.spriteAsset == null)
+            {
+                textComp.spriteAsset = GameGlobals.Font.HighlightSpriteAsset;
+            }
+            else
+            {
+                SetFont(textComp, textComp.spriteAsset.name.RemoveEnd(".fnt") + "_hi");
+            }
+        }
+
+        /// <summary>
+        /// On certain conditions (like SetEnabled(false), the appropriate OnPointerExit() won't be recognized.
+        /// Let's do it manually.
+        /// </summary>
+        public static void SetDefaultFontsForChildren(GameObject root)
+        {
+            foreach (var textComp in root.GetComponentsInChildren<TMP_Text>())
+            {
+                SetDefaultFont(textComp);
+            }
+        }
+
+        private static void SetDefaultFont(TMP_Text textComp)
+        {
+            if (textComp == null)
+            {
+                return;
+            }
+
+            // Font has default value assigned and somehow Unity marks spriteAsset as null in this case.
+            if (textComp.spriteAsset == null)
+            {
+                textComp.spriteAsset = GameGlobals.Font.DefaultSpriteAsset;
+            }
+            else
+            {
+                SetFont(textComp, textComp.spriteAsset.name.RemoveEnd("_hi.fnt"));
+            }
+        }
+
+        private static void SetFont(TMP_Text textComp, string fontName)
+        {
+            var newFont = GameGlobals.Font.TryGetFont(fontName);
+
+            if (newFont == null)
+            {
+                Debug.LogWarning($"Font {newFont} not found.");
+                return;
+            }
+
+            textComp.spriteAsset = newFont;
         }
 
         public void OnButtonClicked()

@@ -5,6 +5,7 @@ using System.Linq;
 using DirectMusic;
 using GUZ.Core.Creator.Sounds;
 using GUZ.Core.Data;
+using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using JetBrains.Annotations;
 using UnityEngine;
@@ -214,13 +215,22 @@ namespace GUZ.Core
         }
 
         [CanBeNull]
-        public static GameObject TryGetPrefabObject(PrefabType key, Vector3 position = default, Quaternion rotation = default)
+        public static GameObject TryGetPrefabObject(PrefabType key, Vector3 position = default, Quaternion rotation = default, string name = null, GameObject parent = null)
         {
-            return Object.Instantiate(TryGetPrefab(key), position, rotation);
+            var go = Object.Instantiate(TryGetPrefab(key), position, rotation);
+
+            if (name != null)
+            {
+                go.name = name;
+            }
+
+            go.SetParent(parent);
+
+            return go;
         }
 
         [NotNull]
-        private static string GetPreparedKey([NotNull] string key)
+        public static string GetPreparedKey([NotNull] string key)
         {
             return Path.GetFileNameWithoutExtension(key).ToLower();
         }
