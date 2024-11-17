@@ -1,5 +1,7 @@
 using System;
 using UnityEngine;
+using ZenKit;
+using Material = UnityEngine.Material;
 
 namespace GUZ.Core.Globals
 {
@@ -18,6 +20,10 @@ namespace GUZ.Core.Globals
             public static string PickLockSuccessSoundName => GameData.GothicVm.GetSymbolByName("_STR_SOUND_PICKLOCK_SUCCESS").GetString(0);
             public static string PickLockUnlockSoundName => GameData.GothicVm.GetSymbolByName("_STR_SOUND_PICKLOCK_UNLOCK").GetString(0);
             public static string DoorUnlockSoundName => "DOOR_UNLOCK.WAV"; // _STR_*_UNLOCK value above couldn't be found/isn't used in G1, therefore we use this as fallback.
+
+
+            public static DaedalusSymbol TalentTitles => GameData.GothicVm.GetSymbolByName("TXT_TALENTS");
+            public static DaedalusSymbol TalentSkills => GameData.GothicVm.GetSymbolByName("TXT_TALENTS_SKILLS");
         }
         
 

@@ -7,7 +7,7 @@ using UnityEngine.SceneManagement;
 
 namespace GUZ.Core.Menu
 {
-    public class MainMenu : MonoBehaviour, IMenu
+    public class MainMenu : MonoBehaviour
     {
         public GameObject RootMenu;
         public GameObject LoadMenu;
