@@ -41,22 +41,22 @@ namespace GUZ.Core.UI
         {
             base.SetVisible();
 
-            MenuItemsCache[_itemNameGuild].go.GetComponentInChildren<TMP_Text>().text = "TestGuild";
-            MenuItemsCache[_itemNameLevel].go.GetComponentInChildren<TMP_Text>().text = "100";
-            MenuItemsCache[_itemNameExp].go.GetComponentInChildren<TMP_Text>().text = "1337";
-            MenuItemsCache[_itemNameLevelNext].go.GetComponentInChildren<TMP_Text>().text = "13";
-            MenuItemsCache[_itemNameLearn].go.GetComponentInChildren<TMP_Text>().text = "42";
+            MenuItemCache[_itemNameGuild].go.GetComponentInChildren<TMP_Text>().text = "TestGuild";
+            MenuItemCache[_itemNameLevel].go.GetComponentInChildren<TMP_Text>().text = "100";
+            MenuItemCache[_itemNameExp].go.GetComponentInChildren<TMP_Text>().text = "1337";
+            MenuItemCache[_itemNameLevelNext].go.GetComponentInChildren<TMP_Text>().text = "13";
+            MenuItemCache[_itemNameLearn].go.GetComponentInChildren<TMP_Text>().text = "42";
 
             Enumerable.Range(1, 4).ForEach(i =>
             {
                 var key = string.Format(_itemNameAttributePattern, i);
-                MenuItemsCache[key].go.GetComponentInChildren<TMP_Text>().text = $"{i}/100";
+                MenuItemCache[key].go.GetComponentInChildren<TMP_Text>().text = $"{i}/100";
             });
 
             Enumerable.Range(1, 4).ForEach(i =>
             {
                 var key = string.Format(_itemNameArmorPattern, i);
-                MenuItemsCache[key].go.GetComponentInChildren<TMP_Text>().text = $"{i}";
+                MenuItemCache[key].go.GetComponentInChildren<TMP_Text>().text = $"{i}";
             });
 
             var talentTitles = Constants.Daedalus.TalentTitles;
@@ -81,10 +81,10 @@ namespace GUZ.Core.UI
                     skillDescriptionFormatted = skillDescriptionText.Split("|")[randValue];
                 }
 
-                MenuItemsCache[keyTitle].go.GetComponentInChildren<TMP_Text>().text = talentTitles[i];
-                MenuItemsCache[keySkill].go.GetComponentInChildren<TMP_Text>().text = skillDescriptionFormatted;
+                MenuItemCache[keyTitle].go.GetComponentInChildren<TMP_Text>().text = talentTitles[i];
+                MenuItemCache[keySkill].go.GetComponentInChildren<TMP_Text>().text = skillDescriptionFormatted;
 
-                if (MenuItemsCache.TryGetValue(keyDescription, out var item))
+                if (MenuItemCache.TryGetValue(keyDescription, out var item))
                 {
                     item.go.GetComponentInChildren<TMP_Text>().text = $"{randValue}%";
                 }

@@ -13,8 +13,11 @@ namespace GUZ.Core.UnZENity_Core.Scripts.UI
         [SerializeField] protected GameObject Canvas;
         [SerializeField] protected GameObject Background;
 
-        protected Dictionary<string, (MenuItemInstance item, GameObject go)> MenuItemsCache = new();
+        protected Dictionary<string, (MenuItemInstance item, GameObject go)> MenuItemCache = new();
 
+        // Pixel ratio of whole menu (Canvas) is based on background picture pixel and virtual pixels named inside Daedalus.
+        protected float PixelRatioX;
+        protected float PixelRatioY;
 
         protected abstract void ExecuteCommand(string commandName); // e.g.
         protected abstract bool IsMenuItemInitiallyActive(string menuItemName);
@@ -59,8 +62,8 @@ namespace GUZ.Core.UnZENity_Core.Scripts.UI
             var realPixelX = backPic.mainTexture.width;
             var realPixelY = backPic.mainTexture.height;
 
-            var pixelRatioX = (float)virtualPixelX / realPixelX; // for normal G1, should be 16 (=8192 / 512)
-            var pixelRatioY = (float)virtualPixelY / realPixelY;
+            PixelRatioX = (float)virtualPixelX / realPixelX; // for normal G1, should be 16 (=8192 / 512)
+            PixelRatioY = (float)virtualPixelY / realPixelY;
 
             for (var i = 0; ; i++)
             {
@@ -72,11 +75,11 @@ namespace GUZ.Core.UnZENity_Core.Scripts.UI
                     break;
                 }
 
-                CreateMenuItem(menuInstance, pixelRatioX, pixelRatioY, menuItemName);
+                CreateMenuItem(menuInstance, menuItemName);
             }
         }
         
-        private void CreateMenuItem(MenuInstance main, float pixelRatioX, float pixelRatioY, string menuItemName)
+        private void CreateMenuItem(MenuInstance main, string menuItemName)
         {
             var item = GameData.MenuVm.InitInstance<MenuItemInstance>(menuItemName);
 
@@ -101,7 +104,7 @@ namespace GUZ.Core.UnZENity_Core.Scripts.UI
                 itemGo = ResourceLoader.TryGetPrefabObject(PrefabType.UiText, name: menuItemName, parent: Canvas)!;
             }
 
-            MenuItemsCache[menuItemName] = (item, itemGo);
+            MenuItemCache[menuItemName] = (item, itemGo);
 
             if (item.BackPic.NotNullOrEmpty())
             {
@@ -131,8 +134,8 @@ namespace GUZ.Core.UnZENity_Core.Scripts.UI
                 // We assume the element can be drawn until end of whole UI.
                 itemWidth = ((float)main.DimX - item.PosX);
             }
-            rect.SetPositionX((item.PosX - halfMainWidth + itemWidth / 2) / pixelRatioX);
-            rect.SetWidth(itemWidth / pixelRatioX);
+            rect.SetPositionX((item.PosX - halfMainWidth + itemWidth / 2) / PixelRatioX);
+            rect.SetWidth(itemWidth / PixelRatioX);
 
             float itemHeight;
             if (item.DimY > 0)
@@ -144,20 +147,20 @@ namespace GUZ.Core.UnZENity_Core.Scripts.UI
                 // We assume the element can be drawn until end of whole UI.
                 itemHeight = (float)main.DimY - item.PosY;
             }
-            rect.SetPositionY((halfMainHeight - item.PosY - itemHeight / 2) / pixelRatioY);
-            rect.SetHeight(itemHeight / pixelRatioY);
+            rect.SetPositionY((halfMainHeight - item.PosY - itemHeight / 2) / PixelRatioY);
+            rect.SetHeight(itemHeight / PixelRatioY);
 
             var textComp = itemGo.GetComponentInChildren<TMP_Text>();
             if (textComp != null)
             {
-                SetTextDimensions(textComp, item, itemWidth, itemHeight, pixelRatioX, pixelRatioY);
+                SetTextDimensions(textComp, item, itemWidth, itemHeight);
             }
 
             itemGo.SetActive(IsMenuItemInitiallyActive(menuItemName));
         }
 
         private void SetTextDimensions(TMP_Text textComp, MenuItemInstance item,
-            float itemWidth, float itemHeight, float pixelRatioX, float pixelRatioY)
+            float itemWidth, float itemHeight)
         {
             // frameSizeX/Y are text paddings from left-right and/or top/bottom.
             var textWidth = itemWidth - 2 * item.FrameSizeX;
@@ -174,8 +177,8 @@ namespace GUZ.Core.UnZENity_Core.Scripts.UI
             // Text component needs to align in dimensions with parent rect.
             var textRect = textComp.GetComponent<RectTransform>();
 
-            textRect.SetWidth(textWidth / pixelRatioX);
-            textRect.SetHeight(textHeight / pixelRatioY);
+            textRect.SetWidth(textWidth / PixelRatioX);
+            textRect.SetHeight(textHeight / PixelRatioY);
         }
 
         private void OnMenuItemClicked(MenuItemSelectAction action, string commandName)
