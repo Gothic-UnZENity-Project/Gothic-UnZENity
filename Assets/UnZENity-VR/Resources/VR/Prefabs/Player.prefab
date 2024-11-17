@@ -1129,10 +1129,11 @@ MonoBehaviour:
   Socketed:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: SetActive
-        m_Mode: 6
+      - m_Target: {fileID: 1346537745039802800}
+        m_TargetAssemblyTypeName: GUZ.Core.UnZENity_Core.Scripts.UI.AbstractMenu,
+          UnZENity.Core
+        m_MethodName: SetInvisible
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -1144,8 +1145,8 @@ MonoBehaviour:
   UnSocketed:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: GUZ.Core.UI.QuestLogMenu, UnZENity.Core
+      - m_Target: {fileID: 1346537745039802800}
+        m_TargetAssemblyTypeName: GUZ.Core.UI.StatusMenu, UnZENity.Core
         m_MethodName: SetVisible
         m_Mode: 1
         m_Arguments:
@@ -1219,7 +1220,6 @@ GameObject:
   m_Component:
   - component: {fileID: 2814229083861490522}
   - component: {fileID: 8653922263057949976}
-  - component: {fileID: 6861258798072676336}
   - component: {fileID: 7783685013293343195}
   - component: {fileID: 6364537753863659288}
   m_Layer: 0
@@ -1308,22 +1308,6 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   DebugScale: 0
---- !u!114 &6861258798072676336
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3385770110142091308}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d4f9954f3bc24c2faf5b2e22c0fd3a52, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Target: {fileID: 0}
-  Scale: {x: 1.7, y: 1.7, z: 1.7}
-  ScaleTime: 0.25
-  ScaleIfInvalid: 0
 --- !u!114 &7783685013293343195
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1616,7 +1600,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1971522072599256673}
   - component: {fileID: 2289746830672541467}
-  - component: {fileID: 1867222836193955276}
   - component: {fileID: 1434065900836693905}
   - component: {fileID: 2522415972860961756}
   m_Layer: 0
@@ -1705,22 +1688,6 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   DebugScale: 0
---- !u!114 &1867222836193955276
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5016030055340920199}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d4f9954f3bc24c2faf5b2e22c0fd3a52, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Target: {fileID: 0}
-  Scale: {x: 1.7, y: 1.7, z: 1.7}
-  ScaleTime: 0.25
-  ScaleIfInvalid: 0
 --- !u!114 &1434065900836693905
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1852,7 +1819,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Tags:
     Tags: {fileID: 11400000, guid: 7491fb0fa49dd9947a2be2aa189ab0a6, type: 2}
-    _data: 0
+    _data: 1
   Any: 1
 --- !u!1 &5544189433757102005
 GameObject:
@@ -5176,8 +5143,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ace89b3df366440ca920876e9464148e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Background: {fileID: 6146287210371338473}
   Canvas: {fileID: 868419307092991398}
+  Background: {fileID: 6146287210371338473}
 --- !u!1 &6146287210371338473 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7348004100775829510, guid: fb10a987da14e4d44b4d853b5ed03e26, type: 3}

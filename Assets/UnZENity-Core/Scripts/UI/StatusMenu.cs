@@ -37,8 +37,10 @@ namespace GUZ.Core.UI
         /// <summary>
         /// Fill data. Currently demo data.
         /// </summary>
-        public void SetActive()
+        public override void SetVisible()
         {
+            base.SetVisible();
+
             MenuItemsCache[_itemNameGuild].go.GetComponentInChildren<TMP_Text>().text = "TestGuild";
             MenuItemsCache[_itemNameLevel].go.GetComponentInChildren<TMP_Text>().text = "100";
             MenuItemsCache[_itemNameExp].go.GetComponentInChildren<TMP_Text>().text = "1337";
@@ -87,22 +89,6 @@ namespace GUZ.Core.UI
                     item.go.GetComponentInChildren<TMP_Text>().text = $"{randValue}%";
                 }
             });
-        }
-
-        public override void ToggleVisibility()
-        {
-            // Toggle visibility
-            gameObject.SetActive(!gameObject.activeSelf);
-
-            if (gameObject.activeSelf)
-            {
-                SetActive();
-            }
-        }
-
-        public override void Enable()
-        {
-
         }
 
         protected override void ExecuteCommand(string commandName)

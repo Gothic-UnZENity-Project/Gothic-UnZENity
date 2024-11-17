@@ -16,10 +16,30 @@ namespace GUZ.Core.UnZENity_Core.Scripts.UI
         protected Dictionary<string, (MenuItemInstance item, GameObject go)> MenuItemsCache = new();
 
 
-        public abstract void ToggleVisibility();
-        public abstract void Enable();
         protected abstract void ExecuteCommand(string commandName); // e.g.
         protected abstract bool IsMenuItemInitiallyActive(string menuItemName);
+
+        public void ToggleVisibility()
+        {
+            if (gameObject.activeSelf)
+            {
+                SetInvisible();
+            }
+            else
+            {
+                SetVisible();
+            }
+        }
+
+        public virtual void SetVisible()
+        {
+            gameObject.SetActive(true);
+        }
+
+        public virtual void SetInvisible()
+        {
+            gameObject.SetActive(false);
+        }
 
         protected void CreateRootElements(string menuDefName)
         {
