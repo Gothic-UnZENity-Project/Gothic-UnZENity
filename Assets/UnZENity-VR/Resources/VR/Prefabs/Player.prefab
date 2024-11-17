@@ -1221,7 +1221,7 @@ GameObject:
   - component: {fileID: 2814229083861490522}
   - component: {fileID: 8653922263057949976}
   - component: {fileID: 7783685013293343195}
-  - component: {fileID: 6364537753863659288}
+  - component: {fileID: 1591088866613981057}
   m_Layer: 0
   m_Name: Left
   m_TagString: Untagged
@@ -1425,22 +1425,27 @@ MonoBehaviour:
   HandGrabbers: []
   Stabbers: []
   Stabbable: {fileID: 0}
---- !u!114 &6364537753863659288
-MonoBehaviour:
+--- !u!135 &1591088866613981057
+SphereCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3385770110142091308}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
   m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: af97aaea961eea14d9a15026f363c312, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Tags:
-    Tags: {fileID: 11400000, guid: b6c309c3874651f43bdf692f8a1d0e62, type: 2}
-    _data: 5
-  Any: 1
+  serializedVersion: 3
+  m_Radius: 0.5
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &3615112505321512136
 GameObject:
   m_ObjectHideFlags: 0
@@ -1601,7 +1606,7 @@ GameObject:
   - component: {fileID: 1971522072599256673}
   - component: {fileID: 2289746830672541467}
   - component: {fileID: 1434065900836693905}
-  - component: {fileID: 2522415972860961756}
+  - component: {fileID: 6113448302330101078}
   m_Layer: 0
   m_Name: Right
   m_TagString: Untagged
@@ -1805,22 +1810,27 @@ MonoBehaviour:
   HandGrabbers: []
   Stabbers: []
   Stabbable: {fileID: 0}
---- !u!114 &2522415972860961756
-MonoBehaviour:
+--- !u!135 &6113448302330101078
+SphereCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5016030055340920199}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
   m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: af97aaea961eea14d9a15026f363c312, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Tags:
-    Tags: {fileID: 11400000, guid: 7491fb0fa49dd9947a2be2aa189ab0a6, type: 2}
-    _data: 1
-  Any: 1
+  serializedVersion: 3
+  m_Radius: 0.5
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &5544189433757102005
 GameObject:
   m_ObjectHideFlags: 0
