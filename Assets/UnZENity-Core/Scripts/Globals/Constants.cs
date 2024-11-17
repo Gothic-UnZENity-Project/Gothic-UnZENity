@@ -1,6 +1,7 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
-using ZenKit;
 using Material = UnityEngine.Material;
 
 namespace GUZ.Core.Globals
@@ -22,8 +23,25 @@ namespace GUZ.Core.Globals
             public static string DoorUnlockSoundName => "DOOR_UNLOCK.WAV"; // _STR_*_UNLOCK value above couldn't be found/isn't used in G1, therefore we use this as fallback.
 
 
-            public static DaedalusSymbol TalentTitles => GameData.GothicVm.GetSymbolByName("TXT_TALENTS");
-            public static DaedalusSymbol TalentSkills => GameData.GothicVm.GetSymbolByName("TXT_TALENTS_SKILLS");
+            public static List<string> TalentTitles
+            {
+                get
+                {
+                    var talents = GameData.GothicVm.GetSymbolByName("TXT_TALENTS");;
+                    var talentCount = GameData.GothicVm.GetSymbolByName("NPC_TALENT_MAX").GetInt(0);
+                    return Enumerable.Range(0, talentCount).Select(i => talents.GetString((ushort)i)).ToList();
+                }
+            }
+
+            public static List<string> TalentSkills
+            {
+                get
+                {
+                    var talentSkills = GameData.GothicVm.GetSymbolByName("TXT_TALENTS_SKILLS");;
+                    var talentCount = GameData.GothicVm.GetSymbolByName("NPC_TALENT_MAX").GetInt(0);
+                    return Enumerable.Range(0, talentCount).Select(i => talentSkills.GetString((ushort)i)).ToList();
+                }
+            }
         }
         
 

@@ -60,25 +60,26 @@ namespace GUZ.Core.UI
             var talentTitles = Constants.Daedalus.TalentTitles;
             var talentSkills = Constants.Daedalus.TalentSkills;
 
-            Enumerable.Range(1, 13).ForEach(i =>
+            Enumerable.Range(0, 12).ForEach(i =>
             {
-                var keyTitle = string.Format(_itemTalentTitlePattern, i);
-                var keySkill = string.Format(_itemTalentSkillPattern, i);
-                var keyDescription = string.Format(_itemTalentDescriptionPattern, i);
+                var keyTitle = string.Format(_itemTalentTitlePattern, i+1);
+                var keySkill = string.Format(_itemTalentSkillPattern, i+1);
+                var keyDescription = string.Format(_itemTalentDescriptionPattern, i+1);
 
-                var randValue = new Random().Next(0, 3);
-                var skillDescriptionText = talentSkills.GetString((ushort)i);
+                var randValue = new Random().Next(0, 2);
+                var skillDescriptionText = talentSkills[i];
+
                 string skillDescriptionFormatted;
-                if (skillDescriptionText == "|")
+                if (skillDescriptionText.IsNullOrEmpty() || skillDescriptionText== "|")
                 {
                     skillDescriptionFormatted = "";
                 }
                 else
                 {
-                    skillDescriptionFormatted = talentSkills.GetString((ushort)i).Split("|")[randValue];
+                    skillDescriptionFormatted = skillDescriptionText.Split("|")[randValue];
                 }
 
-                MenuItemsCache[keyTitle].go.GetComponentInChildren<TMP_Text>().text = talentTitles.GetString((ushort)i);
+                MenuItemsCache[keyTitle].go.GetComponentInChildren<TMP_Text>().text = talentTitles[i];
                 MenuItemsCache[keySkill].go.GetComponentInChildren<TMP_Text>().text = skillDescriptionFormatted;
 
                 if (MenuItemsCache.TryGetValue(keyDescription, out var item))
