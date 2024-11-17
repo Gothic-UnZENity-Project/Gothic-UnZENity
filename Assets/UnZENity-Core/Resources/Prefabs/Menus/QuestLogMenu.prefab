@@ -112,7 +112,6 @@ GameObject:
   m_Component:
   - component: {fileID: 2282871596405899006}
   - component: {fileID: 4108233323533120742}
-  - component: {fileID: 4428335579734347645}
   m_Layer: 0
   m_Name: QuestLogMenu
   m_TagString: Untagged
@@ -150,20 +149,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _canvas: {fileID: 4377388513586376009}
   _background: {fileID: 7348004100775829510}
---- !u!114 &4428335579734347645
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8412591900964177680}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 259b3da9f06f4b7791b2297e57967369, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _elementsToFilter: []
-  _audioSource: {fileID: 0}
 --- !u!1001 &4136749761303385679
 PrefabInstance:
   m_ObjectHideFlags: 0
