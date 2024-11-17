@@ -8,7 +8,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using ZenKit;
 
-namespace GUZ.Core.Player.Menu
+namespace GUZ.Core.UI.Main
 {
     public class SaveGameMenu : SingletonBehaviour<SaveGameMenu>
     {

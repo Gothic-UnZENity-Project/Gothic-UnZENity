@@ -29,7 +29,7 @@ namespace GUZ.Core.UI
     ///       Because setting the anchors at runtime (e.g. left-aligned) causes Unity to crash at a certain amount of changes.
     ///       Unfortunately this causes a lot of calculations within this class. But now you know at least. :-)
     /// </summary>
-    public class QuestLogMenu : MonoBehaviour
+    public class QuestLogMenu : MonoBehaviour, IMenu
     {
         // Menu entries (e.g. text:Current missions) are created dynamically. We therefore use this GO as reference (kind of Prefab).
         [SerializeField] private GameObject _canvas;

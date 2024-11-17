@@ -5,9 +5,9 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace GUZ.Core.Player.Menu
+namespace GUZ.Core.Menu
 {
-    public class MainMenu : MonoBehaviour
+    public class MainMenu : MonoBehaviour, IMenu
     {
         public GameObject RootMenu;
         public GameObject LoadMenu;
