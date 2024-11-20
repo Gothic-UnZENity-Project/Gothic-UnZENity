@@ -1,13 +1,10 @@
 ﻿#if GUZ_HVR_INSTALLED
-using System.Collections.Generic;
 using System.Linq;
 using GUZ.Core.Adapter;
-using GUZ.Core.Data;
 using GUZ.Core.Globals;
 using GUZ.VR.Components.UI;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using ZenKit.Daedalus;
 
 namespace GUZ.VR.Adapter
 {
@@ -30,13 +27,22 @@ namespace GUZ.VR.Adapter
                 
                 // We need to look through all RootGOs and fetch the first matching VRSubtitles Component.
                 _subtitlesComponent = scene.GetRootGameObjects()
-                    .Select(i => i.GetComponentInChildren<VRSubtitles>())
+                    .Select(i => i.GetComponentInChildren<VRSubtitles>(true))
                     .First(i => i != null);
             }
 
             return _subtitlesComponent;
         }
-        
+
+        public void StartDialogInitially()
+        {
+            GetSubtitles().StartDialogInitially();
+        }
+
+        public void EndDialog()
+        {
+            GetSubtitles().EndDialog();
+        }
 
         public void ShowSubtitles(GameObject npcGo)
         {

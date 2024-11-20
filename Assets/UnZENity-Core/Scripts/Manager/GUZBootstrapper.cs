@@ -1,5 +1,4 @@
 using System;
-using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Text;
@@ -26,13 +25,11 @@ namespace GUZ.Core.Manager
 
         public static void BootGothicUnZeNity(GameConfiguration config, string gothicDir)
         {
-            LoadGothicVm(gothicDir);
+            LoadVMs();
             SetLanguage();
             LoadDialogs();
             LoadSubtitles();
             LoadVideos();
-            LoadSfxVm(gothicDir);
-            LoadPfxVm(gothicDir);
             LoadFonts();
             LoadGuildData();
 
@@ -91,13 +88,15 @@ namespace GUZ.Core.Manager
             return valuesToCheck.Contains(l10nString);
         }
 
-        private static void LoadGothicVm(string g1Dir)
+        private static void LoadVMs()
         {
             GameData.GothicVm = ResourceLoader.TryGetDaedalusVm("GOTHIC");
-
             VmGothicExternals.RegisterExternals();
-
             NpcHelper.Init();
+
+            GameData.MenuVm = ResourceLoader.TryGetDaedalusVm("MENU");
+            GameData.SfxVm = ResourceLoader.TryGetDaedalusVm("SFX");
+            GameData.PfxVm = ResourceLoader.TryGetDaedalusVm("PARTICLEFX");
         }
 
         /// <summary>
@@ -120,16 +119,6 @@ namespace GUZ.Core.Manager
         private static void LoadVideos()
         {
             GameGlobals.Video.Init();
-        }
-
-        private static void LoadSfxVm(string g1Dir)
-        {
-            GameData.SfxVm = ResourceLoader.TryGetDaedalusVm("SFX");
-        }
-
-        private static void LoadPfxVm(string g1Dir)
-        {
-            GameData.PfxVm = ResourceLoader.TryGetDaedalusVm("PARTICLEFX");
         }
 
         private static void LoadFonts()

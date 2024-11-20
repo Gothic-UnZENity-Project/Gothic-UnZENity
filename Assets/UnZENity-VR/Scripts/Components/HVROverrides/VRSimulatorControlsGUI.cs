@@ -1,4 +1,5 @@
-﻿using HurricaneVRExtensions.Simulator;
+﻿#if GUZ_HVR_INSTALLED
+using HurricaneVRExtensions.Simulator;
 using UnityEngine;
 
 namespace GUZ.VR.Components.HVROverrides
@@ -17,7 +18,8 @@ namespace GUZ.VR.Components.HVROverrides
 Rotate Camera -> Hold Mouse right click
 Jump (Hexabody) -> Space
 Crouch (Hexabody) -> Z/X
-Menu -> Escape";
+Menu -> Escape
+Quest log -> L";
 
 
         private void Awake()
@@ -126,3 +128,4 @@ Joystick button -> {5}";
         }
     }
 }
+#endif

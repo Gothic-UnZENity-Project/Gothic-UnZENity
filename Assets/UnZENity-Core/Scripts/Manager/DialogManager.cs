@@ -37,6 +37,12 @@ namespace GUZ.Core.Manager
         /// </summary>
         public static void StartDialog(GameObject npcGo, NpcProperties properties, bool initialDialogStarting)
         {
+            if (initialDialogStarting)
+            {
+                GameContext.DialogAdapter.StartDialogInitially();
+                GameContext.SubtitlesAdapter.StartDialogInitially();
+            }
+
             GameData.Dialogs.IsInDialog = true;
 
             // WIP: locking movement 
@@ -233,8 +239,8 @@ namespace GUZ.Core.Manager
             // WIP: unlocking movement
             GameContext.InteractionAdapter.UnlockPlayer();
 
-            GameContext.DialogAdapter.HideDialog();
-            GameContext.SubtitlesAdapter.HideSubtitles();
+            GameContext.DialogAdapter.EndDialog();
+            GameContext.SubtitlesAdapter.EndDialog();
         }
 
         /// <summary>

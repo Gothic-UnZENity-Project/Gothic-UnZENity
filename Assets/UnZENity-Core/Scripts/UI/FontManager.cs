@@ -2,6 +2,7 @@ using System.Reflection;
 using GUZ.Core.Caches;
 using GUZ.Core.Globals;
 using GUZ.Core.Util;
+using JetBrains.Annotations;
 using TMPro;
 using UnityEngine;
 using UnityEngine.TextCore;
@@ -18,25 +19,30 @@ namespace GUZ.Core.Manager
 
         public void Create()
         {
-            DefaultSpriteAsset = LoadFont("font_old_20_white.FNT");
-            HighlightSpriteAsset = LoadFont("font_old_20_white_hi.FNT");
+            DefaultSpriteAsset = TryGetFont("font_old_20_white.FNT");
+            HighlightSpriteAsset = TryGetFont("font_old_20_white_hi.FNT");
 
             TMP_Settings.defaultSpriteAsset = DefaultSpriteAsset;
             TMP_Settings.defaultFontAsset = DefaultFont;
-
-
         }
 
-        private TMP_SpriteAsset LoadFont(string fontName)
+        [CanBeNull]
+        public TMP_SpriteAsset TryGetFont(string fontName)
         {
-            if (MultiTypeCache.FontCache.TryGetValue(fontName.ToUpper(), out var data))
+            var preparedKey = $"{ResourceLoader.GetPreparedKey(fontName)}.fnt";
+            if (MultiTypeCache.FontCache.TryGetValue(preparedKey, out var data))
             {
                 return data;
             }
 
-            var font = ResourceLoader.TryGetFont(fontName.ToUpper());
-            var fontTexture = TextureCache.TryGetTexture(fontName);
+            var font = ResourceLoader.TryGetFont(preparedKey);
+            var fontTexture = TextureCache.TryGetTexture(preparedKey);
 
+            if (font == null || fontTexture == null)
+            {
+                Debug.LogError($"[{nameof(FontManager)}]: Could not find font {fontName}");
+                return null;
+            }
             var spriteAsset = ScriptableObject.CreateInstance<TMP_SpriteAsset>();
 
             for (var i = 0; i < font.Glyphs.Count; i++)
@@ -81,7 +87,7 @@ namespace GUZ.Core.Manager
                 spriteAsset.spriteCharacterTable.Add(spriteCharacter);
             }
 
-            spriteAsset.name = name;
+            spriteAsset.name = preparedKey;
             spriteAsset.material = GetDefaultSpriteMaterial(fontTexture);
             spriteAsset.spriteSheet = fontTexture;
 
@@ -95,7 +101,7 @@ namespace GUZ.Core.Manager
 
             spriteAsset.UpdateLookupTables();
 
-            MultiTypeCache.FontCache[fontName.ToUpper()] = spriteAsset;
+            MultiTypeCache.FontCache[preparedKey] = spriteAsset;
 
             return spriteAsset;
         }
