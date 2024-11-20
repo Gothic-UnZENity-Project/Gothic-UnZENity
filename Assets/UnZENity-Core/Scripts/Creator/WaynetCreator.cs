@@ -1,18 +1,20 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using GUZ.Core.Data.Container;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.World;
 using UnityEngine;
 using ZenKit;
 using Material = UnityEngine.Material;
+using Mesh = UnityEngine.Mesh;
 using WayPoint = GUZ.Core.Vob.WayNet.WayPoint;
 
 namespace GUZ.Core.Creator
 {
     public static class WayNetCreator
     {
-        public static void Create(GameConfiguration config, WorldData world)
+        public static void Create(GameConfiguration config, WorldContainer world)
         {
             var waynetObj = new GameObject("WayNet");
 
@@ -98,20 +100,21 @@ namespace GUZ.Core.Creator
             }
         }
 
-        private static void CreateWaypoints(GameObject parent, WorldData world, bool debugDraw)
+        private static void CreateWaypoints(GameObject parent, WorldContainer world, bool debugDraw)
         {
             var waypointsObj = new GameObject("WayPoints");
             waypointsObj.SetParent(parent);
 
             foreach (var waypoint in world.WayNet.Points)
             {
-                var wpObject = ResourceLoader.TryGetPrefabObject(PrefabType.WayPoint);
+                var wpObject = ResourceLoader.TryGetPrefabObject(PrefabType.WayPoint)!;
 
-                // We remove the Renderer only if not wanted.
-                // TODO - Can be outsourced to a different Prefab-variant without Renderer for a fractal of additional performance. ;-)
-                if (!debugDraw)
+                if (debugDraw)
                 {
-                    Object.Destroy(wpObject.GetComponent<MeshRenderer>());
+                    var rend = wpObject.AddComponent<MeshRenderer>();
+                    var filter = wpObject.AddComponent<MeshFilter>();
+                    filter.sharedMesh = Resources.GetBuiltinResource<Mesh>("Cube.fbx");
+                    rend.sharedMaterial = Constants.DebugMaterial;
                 }
 
                 wpObject.name = waypoint.Name;
@@ -121,7 +124,7 @@ namespace GUZ.Core.Creator
             }
         }
 
-        private static void CreateWaypointEdges(GameObject parent, WorldData world, bool debugDraw)
+        private static void CreateWaypointEdges(GameObject parent, WorldContainer world, bool debugDraw)
         {
             var waypointEdgesObj = new GameObject("WayPointEdges");
             waypointEdgesObj.SetParent(parent);

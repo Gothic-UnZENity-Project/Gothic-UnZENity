@@ -1,9 +1,7 @@
 using System.Collections.Generic;
-using GUZ.Core.Data;
-using GUZ.Core.Properties;
+using GUZ.Core.Data.Container;
 using TMPro;
 using UnityEngine;
-using ZenKit.Daedalus;
 
 namespace GUZ.Core.Caches
 {
@@ -20,7 +18,7 @@ namespace GUZ.Core.Caches
         ///     * We need to ensure that any time an NpcInstance.UserData contains an NpcData object, that it is stored here.
         ///       Otherwise, UserData's WeakReference pointer gets cleared.
         /// </summary>
-        public static readonly List<NpcData> NpcCache = new();
+        public static readonly List<NpcContainer> NpcCache = new();
 
         /// <summary>
         /// Already created AnimationData (Clips + RootMotions) can be reused.

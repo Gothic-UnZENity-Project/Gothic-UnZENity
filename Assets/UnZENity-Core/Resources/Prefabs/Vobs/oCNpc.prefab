@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 9042877295681826828}
   m_Layer: 0
   m_Name: oCNpc
-  m_TagString: Untagged
+  m_TagString: GUZVob
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -75,7 +75,6 @@ MonoBehaviour:
   CurrentItem: 0
   UsedItemSlot: 
   ItemAnimationState: -1
-  IsClonedFromAnother: 0
 --- !u!114 &3046509075852218844
 MonoBehaviour:
   m_ObjectHideFlags: 0

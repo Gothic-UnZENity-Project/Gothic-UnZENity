@@ -20,7 +20,6 @@ namespace GUZ.Core.Globals
             public static string DoorUnlockSoundName => "DOOR_UNLOCK.WAV"; // _STR_*_UNLOCK value above couldn't be found/isn't used in G1, therefore we use this as fallback.
         }
         
-        public static readonly Material LoadingMaterial; // Used for Vobs and World before applying TextureArray.
 
         // Unity shaders
         public static readonly Shader ShaderUnlit = Shader.Find("Universal Render Pipeline/Unlit");
@@ -28,6 +27,9 @@ namespace GUZ.Core.Globals
         public static readonly Shader ShaderTMPSprite = Shader.Find("TextMeshPro/Sprite");
         public static readonly Shader ShaderDecal = Shader.Find("Shader Graphs/Decal");
         public static readonly Shader ShaderStandard = Shader.Find("Standard");
+
+        public static readonly Material LoadingMaterial; // Used for Vobs and World before applying TextureArray.
+        public static readonly Material DebugMaterial = new(ShaderUnlit); // Used for Marvin mode elements like visible WayPoints.
 
         // Custom shaders
         // For textures like NPCs, _not_ the grouped texture array.
@@ -94,10 +96,13 @@ namespace GUZ.Core.Globals
         /*
          * ### Tags
          */
-        public const string ClimbableTag = "Climbable";
-        public const string SpotTag = "PxVob_zCVobSpot";
+
+        // Default Tags
         public const string PlayerTag = "Player";
         public const string MainCameraTag = "MainCamera";
+
+        // Custom Tags
+        public const string VobTag = "GUZVob";
 
         
         //Collection of PlayerPref entries for VR settings

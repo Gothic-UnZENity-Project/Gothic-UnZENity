@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using GUZ.Core.Caches;
 using GUZ.Core.Creator.Meshes.V2;
+using GUZ.Core.Data.Container;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
@@ -36,19 +37,19 @@ namespace GUZ.Core.Creator
                                       config.SpawnVOBTypes.Value.Contains(VirtualObjectType.zCVobLight)
                                   );
 
-            SaveGameManager.CurrentWorldData.SubMeshes = await BuildBspTree(
-                SaveGameManager.CurrentZkWorld.Mesh,
-                SaveGameManager.CurrentZkWorld.BspTree.Cache(),
+            GameGlobals.SaveGame.CurrentWorldData.SubMeshes = await BuildBspTree(
+                GameGlobals.SaveGame.CurrentWorldData.Mesh,
+                GameGlobals.SaveGame.CurrentWorldData.BspTree,
                 lightingEnabled);
 
-            await MeshFactory.CreateWorld(SaveGameManager.CurrentWorldData, loading, _worldGo);
+            await MeshFactory.CreateWorld(GameGlobals.SaveGame.CurrentWorldData, loading, _worldGo);
             await MeshFactory.CreateTextureArray();
         }
 
-        public static async Task<List<WorldData.SubMeshData>> BuildBspTree(IMesh zkMesh, IBspTree zkBspTree, bool lightingEnabled)
+        public static async Task<List<WorldContainer.SubMeshData>> BuildBspTree(IMesh zkMesh, IBspTree zkBspTree, bool lightingEnabled)
         {
             _claimedPolygons = new HashSet<IPolygon>();
-            Dictionary<int, List<WorldData.SubMeshData>> subMeshesPerParentNode = new();
+            Dictionary<int, List<WorldContainer.SubMeshData>> subMeshesPerParentNode = new();
 
             Stopwatch stopwatch = new();
             stopwatch.Start();
@@ -141,8 +142,8 @@ namespace GUZ.Core.Creator
         /// </summary>
         /// <returns></returns>
         private static async Task ExpandBspTreeIntoMeshes(IMesh zkMesh, IBspTree bspTree, int nodeIndex,
-            Dictionary<int, List<WorldData.SubMeshData>> allSubmeshesPerParentNodeIndex,
-            Dictionary<Shader, WorldData.SubMeshData> nodeSubmeshes, int submeshParentIndex = 0)
+            Dictionary<int, List<WorldContainer.SubMeshData>> allSubmeshesPerParentNodeIndex,
+            Dictionary<Shader, WorldContainer.SubMeshData> nodeSubmeshes, int submeshParentIndex = 0)
         {
             await Task.Run(async () =>
             {
@@ -155,7 +156,7 @@ namespace GUZ.Core.Creator
                     // the leaves of the tree to create chunks with the same shader as the root node.
                     if (nodeSubmeshes == null && node.ParentIndex != -1)
                     {
-                        nodeSubmeshes = new Dictionary<Shader, WorldData.SubMeshData>();
+                        nodeSubmeshes = new Dictionary<Shader, WorldContainer.SubMeshData>();
                         submeshParentIndex = node.ParentIndex;
                     }
 
@@ -197,16 +198,16 @@ namespace GUZ.Core.Creator
 
                                 if (!nodeSubmeshes.ContainsKey(shader))
                                 {
-                                    nodeSubmeshes.Add(shader, new WorldData.SubMeshData { Material = zkMaterial, TextureArrayType = textureArrayType });
+                                    nodeSubmeshes.Add(shader, new WorldContainer.SubMeshData { Material = zkMaterial, TextureArrayType = textureArrayType });
                                     if (!allSubmeshesPerParentNodeIndex.ContainsKey(submeshParentIndex))
                                     {
-                                        allSubmeshesPerParentNodeIndex.Add(submeshParentIndex, new List<WorldData.SubMeshData>());
+                                        allSubmeshesPerParentNodeIndex.Add(submeshParentIndex, new List<WorldContainer.SubMeshData>());
                                     }
 
                                     allSubmeshesPerParentNodeIndex[submeshParentIndex].Add(nodeSubmeshes[shader]);
                                 }
 
-                                WorldData.SubMeshData nodeSubmesh = nodeSubmeshes[shader];
+                                WorldContainer.SubMeshData nodeSubmesh = nodeSubmeshes[shader];
                                 // Triangle Fan - We need to add element 0 (A) before every triangle 2 elements.
                                 AddEntry(zkMesh, polygon, zkMaterial, nodeSubmesh, 0, textureArrayIndex, textureScale, maxMipLevel, animFrameCount);
                                 AddEntry(zkMesh, polygon, zkMaterial, nodeSubmesh, p, textureArrayIndex, textureScale, maxMipLevel, animFrameCount);
@@ -229,7 +230,7 @@ namespace GUZ.Core.Creator
             });
         }
 
-        private static void AddEntry(IMesh zkMesh, IPolygon polygon, IMaterial material, WorldData.SubMeshData currentSubMesh, int index,
+        private static void AddEntry(IMesh zkMesh, IPolygon polygon, IMaterial material, WorldContainer.SubMeshData currentSubMesh, int index,
             int textureArrayIndex, Vector2 scaleInTextureArray, int maxMipLevel = 16, int animFrameCount = 0)
         {
             // For every vertexIndex we store a new vertex. (i.e. no reuse of Vector3-vertices for later texture/uv attachment)
@@ -257,12 +258,12 @@ namespace GUZ.Core.Creator
             }
         }
 
-        private static Dictionary<int, List<WorldData.SubMeshData>> MergeShaderTypeWorldChunksToTreeHeight(
+        private static Dictionary<int, List<WorldContainer.SubMeshData>> MergeShaderTypeWorldChunksToTreeHeight(
             TextureCache.TextureArrayTypes textureArrayType, int treeHeightLimit, IBspTree bspTree,
-            Dictionary<int, List<WorldData.SubMeshData>> submeshesPerParentNode)
+            Dictionary<int, List<WorldContainer.SubMeshData>> submeshesPerParentNode)
         {
             // Group the submeshes by parent nodes until max height.
-            var groupedMeshes = new Dictionary<int, List<WorldData.SubMeshData>>();
+            var groupedMeshes = new Dictionary<int, List<WorldContainer.SubMeshData>>();
 
             foreach (var parentNodeIndex in submeshesPerParentNode.Keys)
             {
@@ -275,14 +276,14 @@ namespace GUZ.Core.Creator
 
                 if (!groupedMeshes.ContainsKey(topParentIndex))
                 {
-                    groupedMeshes.Add(topParentIndex, new List<WorldData.SubMeshData>());
+                    groupedMeshes.Add(topParentIndex, new List<WorldContainer.SubMeshData>());
                 }
 
                 groupedMeshes[topParentIndex].AddRange(submeshesPerParentNode[parentNodeIndex]
                     .Where(s => s.TextureArrayType == textureArrayType));
             }
 
-            var mergedMeshes = new Dictionary<int, List<WorldData.SubMeshData>>();
+            var mergedMeshes = new Dictionary<int, List<WorldContainer.SubMeshData>>();
 
             // Merge the grouped meshes.
             foreach (var topParentIndex in groupedMeshes.Keys)
@@ -306,7 +307,7 @@ namespace GUZ.Core.Creator
                         .AddRange(groupedMeshes[topParentIndex][i].TextureAnimations);
                 }
 
-                mergedMeshes.Add(topParentIndex, new List<WorldData.SubMeshData> { groupedMeshes[topParentIndex][0] });
+                mergedMeshes.Add(topParentIndex, new List<WorldContainer.SubMeshData> { groupedMeshes[topParentIndex][0] });
             }
 
             // Add the meshes from the other shader types.
@@ -328,8 +329,8 @@ namespace GUZ.Core.Creator
             return mergedMeshes;
         }
 
-        private static Dictionary<int, List<WorldData.SubMeshData>> MergeWorldChunksByLightCount(IBspTree bspTree,
-            Dictionary<int, List<WorldData.SubMeshData>> submeshesPerParentNode, bool lightingEnabled)
+        private static Dictionary<int, List<WorldContainer.SubMeshData>> MergeWorldChunksByLightCount(IBspTree bspTree,
+            Dictionary<int, List<WorldContainer.SubMeshData>> submeshesPerParentNode, bool lightingEnabled)
         {
             var maxLightsPerChunk = 16;
 
@@ -340,7 +341,7 @@ namespace GUZ.Core.Creator
                 maxLightsPerChunk = 0;
             }
 
-            Dictionary<int, List<WorldData.SubMeshData>> mergedChunks = new();
+            Dictionary<int, List<WorldContainer.SubMeshData>> mergedChunks = new();
 
             Parallel.ForEach(submeshesPerParentNode.Keys, parentNodeIndex =>
             {
@@ -368,7 +369,7 @@ namespace GUZ.Core.Creator
                             {
                                 if (!mergedChunks.ContainsKey(parentNodeIndex))
                                 {
-                                    mergedChunks.Add(parentNodeIndex, new List<WorldData.SubMeshData>());
+                                    mergedChunks.Add(parentNodeIndex, new List<WorldContainer.SubMeshData>());
                                 }
 
                                 mergedChunks[parentNodeIndex].Add(meshes.First());
@@ -389,7 +390,7 @@ namespace GUZ.Core.Creator
                             {
                                 if (!mergedChunks.ContainsKey(grandParentNodeIndex))
                                 {
-                                    mergedChunks.Add(grandParentNodeIndex, new List<WorldData.SubMeshData>());
+                                    mergedChunks.Add(grandParentNodeIndex, new List<WorldContainer.SubMeshData>());
                                 }
 
                                 mergedChunks[grandParentNodeIndex].Add(meshes.First());

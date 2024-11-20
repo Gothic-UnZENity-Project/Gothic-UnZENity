@@ -18,6 +18,7 @@ namespace GUZ.Core.Globals
         /// </summary>
         public static Encoding Encoding;
         public static DaedalusVm GothicVm;
+        public static DaedalusVm MenuVm;
         public static DaedalusVm SfxVm; // Sound FX
         public static DaedalusVm PfxVm; // Particle FX
 

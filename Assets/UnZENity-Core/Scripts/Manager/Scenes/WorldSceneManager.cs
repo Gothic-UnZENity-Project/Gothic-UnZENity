@@ -46,11 +46,11 @@ namespace GUZ.Core.Manager.Scenes
                 // We need to start creating Vobs as we need to calculate world slicing based on amount of lights at a certain space afterwards.
                 if (config.EnableVOBs)
                 {
-                    await VobCreator.CreateAsync(config, GameGlobals.Loading, SaveGameManager.CurrentWorldData.Vobs, vobRoot);
+                    await VobCreator.CreateAsync(config, GameGlobals.Loading, GameGlobals.SaveGame.CurrentWorldData.Vobs, vobRoot);
                 }
 
                 // 2.
-                WayNetCreator.Create(config, SaveGameManager.CurrentWorldData);
+                WayNetCreator.Create(config, GameGlobals.SaveGame.CurrentWorldData);
 
                 // 3.
                 // If the world is visited for the first time, then we need to load Npcs via Wld_InsertNpc()
@@ -77,9 +77,8 @@ namespace GUZ.Core.Manager.Scenes
                 worldRoot.SetActive(true);
                 vobRoot.SetActive(true);
 
-                GameGlobals.Sky.InitSky(); // we need to initialise lighting after activating roots
                 StationaryLight.InitStationaryLights();
-                
+
                 TeleportPlayerToStart();
 
                 // There are many handlers which listen to this event. If any of these fails, we won't get notified without a try-catch.
@@ -103,12 +102,12 @@ namespace GUZ.Core.Manager.Scenes
                 watch.Log("Full world loaded in");
             }
         }
-        
+
         /// <summary>
         /// There are three options, where the player can spawn:
         /// 1. We set it inside GameConfiguration.SpawnAtWaypoint (only during first load of the game)
         /// 2. We got the spawn information from a loaded SaveGame from the Hero's VOB
-        /// 3. We load the START_* waypoint 
+        /// 3. We load the START_* waypoint
         /// </summary>
         private void TeleportPlayerToStart()
         {
@@ -116,10 +115,10 @@ namespace GUZ.Core.Manager.Scenes
             var debugSpawnAtWayPoint = GameGlobals.Config.SpawnAtWaypoint;
 
             // If we currently load world from a save game, we will use the stored hero position which was set during VOB loading.
-            if (SaveGameManager.IsFirstWorldLoadingFromSaveGame)
+            if (GameGlobals.SaveGame.IsFirstWorldLoadingFromSaveGame)
             {
                 // We only use the Vob location once per save game loading.
-                SaveGameManager.IsFirstWorldLoadingFromSaveGame = false;
+                GameGlobals.SaveGame.IsFirstWorldLoadingFromSaveGame = false;
 
                 if (debugSpawnAtWayPoint.NotNullOrEmpty())
                 {
@@ -133,27 +132,27 @@ namespace GUZ.Core.Manager.Scenes
                     }
                 }
             }
-            
+
             // 2.
             if (GameGlobals.Player.HeroSpawnPosition != default)
             {
                 TeleportPlayerToStart(GameGlobals.Player.HeroSpawnPosition, GameGlobals.Player.HeroSpawnRotation);
                 return;
             }
-            
+
             // 3.
-            var spots = GameObject.FindGameObjectsWithTag(Constants.SpotTag);
+            var spots = GameData.FreePoints;
             var startPoint = spots.FirstOrDefault(
-                go => go.name.EqualsIgnoreCase("START") || go.name.EqualsIgnoreCase("START_GOTHIC2")
+                go => go.Key.EqualsIgnoreCase("START") || go.Key.EqualsIgnoreCase("START_GOTHIC2")
             );
 
-            if (startPoint == null)
+            if (startPoint.Key.IsNullOrEmpty())
             {
                 Debug.LogError("No suitable START_* waypoint found!");
                 return;
             }
 
-            TeleportPlayerToStart(startPoint.transform.position, startPoint.transform.rotation);
+            TeleportPlayerToStart(startPoint.Value.Position, startPoint.Value.Rotation);
         }
 
         private void TeleportPlayerToStart(Vector3 position, Quaternion rotation)

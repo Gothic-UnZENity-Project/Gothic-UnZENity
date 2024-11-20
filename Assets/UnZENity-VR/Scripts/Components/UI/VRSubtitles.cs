@@ -1,4 +1,5 @@
 ﻿#if GUZ_HVR_INSTALLED
+using System.Collections;
 using GUZ.Core;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
@@ -21,6 +22,7 @@ namespace GUZ.VR.Components.UI
         private Coroutine _hideDialogCoroutine;
         private float _hideDialogDelay = 0.1f;
 
+
         private void Awake()
         {
             // When prefab is loaded for the first time, we store the size of a dialog item.
@@ -30,16 +32,31 @@ namespace GUZ.VR.Components.UI
                 var rectTransform = _dialogItem.GetComponent<RectTransform>();
                 _dialogItemHeight = rectTransform.rect.height;
             }
+
+            // The whole subtitle topic will be enabled later during gameplay.
+            gameObject.SetActive(false);
+        }
+
+        public void StartDialogInitially()
+        {
+            gameObject.SetActive(true); // If we enable it earlier, Billboard Comp on this GO is calculating all the time.
+        }
+
+        public void EndDialog()
+        {
+            HideSubtitlesImmediate();
+            gameObject.SetActive(false); // Disable whole Subtitle menu (UI, Billboard)
         }
 
         public void ShowSubtitles(GameObject npcGo)
         {
             // If there's a pending hide operation, stop it
-        if (_hideDialogCoroutine != null)
-        {
-            StopCoroutine(_hideDialogCoroutine);
-            _hideDialogCoroutine = null;
-        }
+            if (_hideDialogCoroutine != null)
+            {
+                StopCoroutine(_hideDialogCoroutine);
+                _hideDialogCoroutine = null;
+            }
+
             var npcDialog = npcGo.FindChildRecursively("DialogMenuRootPos");
             _dialogRoot.SetParent(npcDialog, true, true, true);
 
@@ -49,23 +66,19 @@ namespace GUZ.VR.Components.UI
             StartCoroutine(ShowSubtitlesWithDelay());
         }
 
-        private System.Collections.IEnumerator ShowSubtitlesWithDelay()
+        private IEnumerator ShowSubtitlesWithDelay()
         {
             yield return new WaitForEndOfFrame();
             _dialogRoot.SetActive(true);
         }
 
-        private System.Collections.IEnumerator HideSubtitlesWithDelay()
+        private IEnumerator HideSubtitlesWithDelay()
         {
             yield return new WaitForSeconds(_hideDialogDelay);
             _dialogRoot.SetActive(false);
             _dialogRoot.SetParent(SceneManager.GetSceneByName(Constants.ScenePlayer).GetRootGameObjects()[0], worldPositionStays: true);
         }
 
-        /// <summary>
-        /// Once we close the dialog, we need to move the dialog box back to the General scene
-        /// (or something without any object which might be destroyed (like an NPC after dying)).
-        /// </summary>
         public void HideSubtitles()
         {
             _hideDialogCoroutine = StartCoroutine(HideSubtitlesWithDelay());

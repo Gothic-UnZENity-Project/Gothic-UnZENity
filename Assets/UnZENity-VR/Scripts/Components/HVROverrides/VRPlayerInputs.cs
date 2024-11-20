@@ -4,7 +4,7 @@ using HurricaneVR.Framework.Shared;
 using MyBox;
 using UnityEngine.InputSystem;
 
-namespace GUZ.VR.Components
+namespace GUZ.VR.Components.HVROverrides
 {
     public class VRPlayerInputs : HVRPlayerInputs
     {
@@ -12,6 +12,8 @@ namespace GUZ.VR.Components
         public bool IsMenuActivated;
         public HVRButtonState MenuState;
 
+        public bool IsQuestLogActivated;
+        public HVRButtonState QuestLogState;
 
         protected override void UpdateInput()
         {
@@ -23,9 +25,12 @@ namespace GUZ.VR.Components
             }
 
             IsMenuActivated = GetMenuActivated();
+            IsQuestLogActivated = GetQuestLogActivated();
 
             ResetState(ref MenuState);
             SetState(ref MenuState, IsMenuActivated);
+            ResetState(ref QuestLogState);
+            SetState(ref QuestLogState, IsQuestLogActivated);
         }
 
         private bool GetMenuActivated()
@@ -46,6 +51,18 @@ namespace GUZ.VR.Components
                 return HVRController.GetButtonState(HVRHandSide.Left, HVRButtons.Menu).JustActivated ||
                        HVRController.GetButtonState(HVRHandSide.Right, HVRButtons.Menu).JustActivated;
             }
+        }
+
+        private bool GetQuestLogActivated()
+        {
+            // If HVRSimulator is Active
+            if (UseWASD)
+            {
+                return Keyboard.current[Key.L].wasPressedThisFrame;
+            }
+
+            // FIXME - Add button from VR Controller
+            return false;
         }
 
         protected override bool GetIsJumpActivated()

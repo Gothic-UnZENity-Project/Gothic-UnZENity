@@ -4,6 +4,12 @@ namespace GUZ.Core
 {
     public enum PrefabType
     {
+        UiEmpty, // Contains a RectTransform only
+        UiText,
+        UiButton,
+        UiButtonTextured,
+        UiTexture,
+
         WayPoint,
         Vob,
         Npc,
@@ -38,6 +44,12 @@ namespace GUZ.Core
         {
             return type switch
             {
+                PrefabType.UiEmpty => "Prefabs/UI/Empty",
+                PrefabType.UiText => "Prefabs/UI/Text",
+                PrefabType.UiButton => "Prefabs/UI/Button",
+                PrefabType.UiButtonTextured => "Prefabs/UI/ButtonTextured",
+                PrefabType.UiTexture => "Prefabs/UI/Texture",
+
                 PrefabType.WayPoint => "Prefabs/WayPoint",
                 PrefabType.Vob => "Prefabs/Vobs/Vob",
                 PrefabType.Npc => "Prefabs/Vobs/oCNpc",

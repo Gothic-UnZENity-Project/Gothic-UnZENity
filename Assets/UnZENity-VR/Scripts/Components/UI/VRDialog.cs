@@ -1,4 +1,5 @@
 ﻿#if GUZ_HVR_INSTALLED
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using GUZ.Core.Data;
@@ -34,8 +35,22 @@ namespace GUZ.VR.Components.UI
                 var rectTransform = _dialogItems.First().GetComponent<RectTransform>();
                 _dialogItemHeight = rectTransform.rect.height;
             }
+
+            // The whole dialog topic will be enabled later during gameplay.
+            gameObject.SetActive(false);
         }
-        
+
+        public void StartDialogInitially()
+        {
+            gameObject.SetActive(true); // If we enable it earlier, Billboard Comp on this GO is calculating all the time.
+        }
+
+        public void EndDialog()
+        {
+            gameObject.SetActive(false); // Disable whole Dialog menu (Audio, UI, Billboard)
+            _dialogRoot.SetParent(SceneManager.GetSceneByName(Constants.ScenePlayer).GetRootGameObjects()[0], worldPositionStays: true);
+        }
+
         public void ShowDialog()
         {
             var playerControllerGo = PlayerSceneManager.PlayerController;
@@ -54,7 +69,7 @@ namespace GUZ.VR.Components.UI
             StartCoroutine(ShowDialogWithDelay());
         }
 
-        private System.Collections.IEnumerator ShowDialogWithDelay()
+        private IEnumerator ShowDialogWithDelay()
         {
             // Skipping first frame of when dialog activates to let it fully rotate towards Player Camera
             yield return new WaitForEndOfFrame();
@@ -68,7 +83,6 @@ namespace GUZ.VR.Components.UI
         public void HideDialog()
         {
             _dialogRoot.SetActive(false);
-            _dialogRoot.SetParent(SceneManager.GetSceneByName(Constants.ScenePlayer).GetRootGameObjects()[0], worldPositionStays: true);
         }
         
         public void FillDialog(NpcInstance instance, List<DialogOption> dialogOptions)

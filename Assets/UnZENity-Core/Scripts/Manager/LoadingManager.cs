@@ -45,9 +45,9 @@ namespace GUZ.Core.Manager
         private void SetMaterialForLoading(GameObject loadingArea)
         {
             // On G1+world.zen it's either Gomez in his throne room (NewGame) or Gorn holding his Axe (LoadGame)
-            var textureNameForLoadingScreen = SaveGameManager.IsNewGame
+            var textureNameForLoadingScreen = GameGlobals.SaveGame.IsNewGame
                 ? "LOADING.TGA"
-                : $"LOADING_{SaveGameManager.CurrentWorldName.ToUpper().RemoveEnd(".ZEN")}.TGA";
+                : $"LOADING_{GameGlobals.SaveGame.CurrentWorldName.ToUpper().RemoveEnd(".ZEN")}.TGA";
             GameGlobals.Textures.SetTexture(textureNameForLoadingScreen, GameGlobals.Textures.GothicLoadingMenuMaterial);
             
             var tm = GameGlobals.Textures;

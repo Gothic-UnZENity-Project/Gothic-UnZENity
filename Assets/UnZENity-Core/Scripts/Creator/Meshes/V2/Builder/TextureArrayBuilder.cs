@@ -2,8 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using GUZ.Core.Caches;
+using GUZ.Core.Data.Container;
 using GUZ.Core.Globals;
-using GUZ.Core.World;
 using UnityEngine;
 using UnityEngine.Rendering;
 using ZenKit;
@@ -47,7 +47,7 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
             }
         }
 
-        private void PrepareWorldMeshRenderer(Renderer rend, WorldData.SubMeshData subMesh)
+        private void PrepareWorldMeshRenderer(Renderer rend, WorldContainer.SubMeshData subMesh)
         {
             Texture texture = TextureCache.TextureArrays[subMesh.TextureArrayType];
             Material material;

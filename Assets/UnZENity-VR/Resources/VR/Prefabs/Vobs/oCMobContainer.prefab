@@ -2420,6 +2420,12 @@ MonoBehaviour:
   UnSocketed:
     m_PersistentCalls:
       m_Calls: []
+  DistanceGrabbed:
+    m_PersistentCalls:
+      m_Calls: []
+  DistanceReleased:
+    m_PersistentCalls:
+      m_Calls: []
   GrabPointsMeta: []
   Grabbers: []
   HandGrabbers: []
@@ -2599,7 +2605,7 @@ GameObject:
   - component: {fileID: 3928131288078199320}
   m_Layer: 0
   m_Name: oCMobContainer
-  m_TagString: Untagged
+  m_TagString: GUZVob
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

@@ -17,6 +17,7 @@ namespace GUZ.VR.Components.UI
             }
         }
 
+        // FIXME - VRDialog and VRSubtitles calls this even, when deactivated. We need to fix it as this calculation isn't needed every frame when invisiblew!
         private void Update()
         {
             // Calculate the direction to look at
@@ -24,7 +25,6 @@ namespace GUZ.VR.Components.UI
 
             // Create a rotation quaternion that ignores y-axis.
             var rotation = Quaternion.LookRotation(new Vector3(directionToLookAt.x, 0f, directionToLookAt.z));
-
             transform.rotation = rotation * yAxisInversion;
         }
     }

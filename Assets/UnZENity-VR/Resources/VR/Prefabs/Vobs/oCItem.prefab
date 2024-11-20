@@ -120,7 +120,7 @@ GameObject:
   - component: {fileID: 8461469363836242350}
   m_Layer: 0
   m_Name: oCItem
-  m_TagString: Untagged
+  m_TagString: GUZVob
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -370,6 +370,12 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   UnSocketed:
+    m_PersistentCalls:
+      m_Calls: []
+  DistanceGrabbed:
+    m_PersistentCalls:
+      m_Calls: []
+  DistanceReleased:
     m_PersistentCalls:
       m_Calls: []
   GrabPointsMeta: []
