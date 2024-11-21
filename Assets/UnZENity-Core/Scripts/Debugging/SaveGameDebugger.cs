@@ -69,7 +69,15 @@ namespace GUZ.Core.Debugging
                 {
                     Debug.Log("---------");
                     Debug.Log($"### Checking VOB type >{countA.Key}<");
-                    ComparePropertiesByType(vobsByTypeA[countA.Key], vobsByTypeB[countA.Key]);
+
+                    if (!vobsByTypeB.Keys.Contains(countA.Key))
+                    {
+                        Debug.LogError($"VOB type {countA.Key} is missing in slotB.");
+                    }
+                    else
+                    {
+                        ComparePropertiesByType(vobsByTypeA[countA.Key], vobsByTypeB[countA.Key]);
+                    }
                 }
 
                 // Check if there are any VobTypes which aren't in SaveGame1, but SaveGame2
