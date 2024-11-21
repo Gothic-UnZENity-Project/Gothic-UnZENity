@@ -19,7 +19,8 @@ Rotate Camera -> Hold Mouse right click
 Jump (Hexabody) -> Space
 Crouch (Hexabody) -> Z/X
 Menu -> Escape
-Quest log -> L";
+Quest log -> L
+Status -> B";
 
 
         private void Awake()

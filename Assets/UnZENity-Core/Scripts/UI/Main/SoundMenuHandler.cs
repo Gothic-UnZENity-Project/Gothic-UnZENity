@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace GUZ.Core.UI.MainMenu
+namespace GUZ.Core.UI.Main
 {
     public class SoundMenuHandler : MonoBehaviour
     {

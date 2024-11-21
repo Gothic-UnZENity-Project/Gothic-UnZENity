@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using GUZ.Core.Globals;
+using GUZ.Core.UnZENity_Core.Scripts.UI;
 using MyBox;
 using TMPro;
 using UnityEngine;
@@ -29,12 +30,8 @@ namespace GUZ.Core.UI
     ///       Because setting the anchors at runtime (e.g. left-aligned) causes Unity to crash at a certain amount of changes.
     ///       Unfortunately this causes a lot of calculations within this class. But now you know at least. :-)
     /// </summary>
-    public class QuestLogMenu : MonoBehaviour
+    public class QuestLogMenu : AbstractMenu
     {
-        // Menu entries (e.g. text:Current missions) are created dynamically. We therefore use this GO as reference (kind of Prefab).
-        [SerializeField] private GameObject _canvas;
-        [SerializeField] private GameObject _background;
-
         // Create 22 buttons as list elements for all lists
         // TODO - Gothic handled it via FontSize. But for now, we can go with a fixed amount.
         private const int _visibleListItemAmount = 22;
@@ -63,7 +60,6 @@ namespace GUZ.Core.UI
             _instanceNameLog, _instanceContentViewer
         };
 
-        private Dictionary<string, (MenuItemInstance item, GameObject go)> _menuCache = new();
         private Dictionary<string, ListItemContainer> _listMenuCache = new();
         private ListItemContainer _activeListMenu;
 
@@ -91,172 +87,38 @@ namespace GUZ.Core.UI
             GlobalEventDispatcher.ZenKitBootstrapped.AddListener(Setup);
         }
 
+        protected override bool IsMenuItemInitiallyActive(string menuItemName)
+        {
+            return !_initiallyDisabledMenuItems.Contains(menuItemName);
+        }
+
         /// <summary>
         /// Each time we open the log:
         /// 1. Reset visibility for sub-menus (e.g. if FailedMissions was open last time, we disable it now)
         /// 2. Set current date time (left menu element)
         /// 3. Fill all the mission/note list elements with texts (e.g. all SuccessMissions will get their topic titles)
         /// </summary>
-        public void ToggleVisibility()
+        public override void SetVisible()
         {
-            // Toggle visibility
-            gameObject.SetActive(!gameObject.activeSelf);
-
-            if (gameObject.activeSelf)
-            {
-                ResetView();
-                FillLists();
-            }
+            base.SetVisible();
+            
+            ResetView();
+            FillLists();
         }
 
         private void Setup()
         {
-            var menuInstance = GameData.MenuVm.InitInstance<MenuInstance>("MENU_LOG");
+            CreateRootElements("MENU_LOG");
 
-            var backPic = GameGlobals.Textures.GetMaterial(menuInstance.BackPic);
-            _background.GetComponentInChildren<MeshRenderer>().sharedMaterial = backPic;
-
-            // Set canvas size based on texture size of background
-            var canvasRect = _canvas.GetComponent<RectTransform>();
-            canvasRect.SetWidth(backPic.mainTexture.width);
-            canvasRect.SetHeight(backPic.mainTexture.height);
-
-            // Calculate pixelRatio for virtual positions of child elements.
-            var virtualPixelX = menuInstance.DimX + 1;
-            var virtualPixelY = menuInstance.DimY + 1;
-            var realPixelX = backPic.mainTexture.width;
-            var realPixelY = backPic.mainTexture.height;
-
-            var pixelRatioX = (float)virtualPixelX / realPixelX; // for normal G1, should be 16 (=8192 / 512)
-            var pixelRatioY = (float)virtualPixelY / realPixelY;
-
-            for (var i = 0; ; i++)
-            {
-                var menuItemName = menuInstance.GetItem(i);
-
-                // We passed the last item.
-                if (menuItemName.IsNullOrEmpty())
-                {
-                    break;
-                }
-
-                CreateMenuItem(menuInstance, pixelRatioX, pixelRatioY, menuItemName);
-            }
-
-            CreateLists(pixelRatioX, pixelRatioY);
+            CreateLists();
             CreateContentViewer();
         }
 
-        private void CreateMenuItem(MenuInstance main, float pixelRatioX, float pixelRatioY, string menuItemName)
-        {
-            var item = GameData.MenuVm.InitInstance<MenuItemInstance>(menuItemName);
-
-            GameObject itemGo;
-
-            if (item.MenuItemType == MenuItemType.ListBox)
-            {
-                itemGo = ResourceLoader.TryGetPrefabObject(PrefabType.UiEmpty, name: menuItemName, parent: _canvas)!;
-            }
-            else if (item.Flags.HasFlag(MenuItemFlag.Selectable))
-            {
-                itemGo = ResourceLoader.TryGetPrefabObject(PrefabType.UiButton, name: menuItemName, parent: _canvas)!;
-                var button = itemGo.GetComponentInChildren<Button>();
-
-                button.onClick.AddListener(() =>
-                {
-                    OnMenuItemClicked(item.GetOnSelAction(0), item.GetOnSelActionS(0));
-                });
-            }
-            else
-            {
-                itemGo = ResourceLoader.TryGetPrefabObject(PrefabType.UiText, name: menuItemName, parent: _canvas)!;
-            }
-
-            _menuCache[menuItemName] = (item, itemGo);
-
-            if (item.BackPic.NotNullOrEmpty())
-            {
-                var backPicGo = ResourceLoader.TryGetPrefabObject(PrefabType.UiTexture, name: item.BackPic, parent: itemGo)!;
-                var backPic = GameGlobals.Textures.GetMaterial(item.BackPic);
-                var backPictRenderer = backPicGo.GetComponentInChildren<MeshRenderer>();
-                backPictRenderer.sharedMaterial = backPic;
-
-                // Apply scale an position (move slightly backwards) from normal background to this one.
-                backPictRenderer.transform.localScale = _background.GetComponentInChildren<MeshRenderer>().transform.localScale;
-                backPictRenderer.transform.localPosition = _background.GetComponentInChildren<MeshRenderer>().transform.localPosition;
-            }
-
-            var rect = itemGo.GetComponent<RectTransform>();
-            var halfMainWidth = (float)main.DimX / 2;
-            var halfMainHeight = (float)main.DimY / 2;
-
-            float itemWidth;
-            if (item.DimX > 0)
-            {
-                // As we have anchor positions at the center (0.5), we need to move into a certain direction from the center
-                // Hint: We need to stick with center, as setting anchor positions at runtime (e.g. left-aligned) causes Unity to crash at a certain amount of changes.
-                itemWidth = item.DimX;
-            }
-            else
-            {
-                // We assume the element can be drawn until end of whole UI.
-                itemWidth = ((float)main.DimX - item.PosX);
-            }
-            rect.SetPositionX((item.PosX - halfMainWidth + itemWidth / 2) / pixelRatioX);
-            rect.SetWidth(itemWidth / pixelRatioX);
-
-            float itemHeight;
-            if (item.DimY > 0)
-            {
-                itemHeight = item.DimY;
-            }
-            else
-            {
-                // We assume the element can be drawn until end of whole UI.
-                itemHeight = (float)main.DimY - item.PosY;
-            }
-            rect.SetPositionY((halfMainHeight - item.PosY - itemHeight / 2) / pixelRatioY);
-            rect.SetHeight(itemHeight / pixelRatioY);
-
-            var textComp = itemGo.GetComponentInChildren<TMP_Text>();
-            if (textComp != null)
-            {
-                SetTextDimensions(textComp, item, itemWidth, itemHeight, pixelRatioX, pixelRatioY);
-            }
-
-            if (_initiallyDisabledMenuItems.Contains(menuItemName))
-            {
-                itemGo.SetActive(false);
-            }
-        }
-
-        private void SetTextDimensions(TMP_Text textComp, MenuItemInstance item,
-            float itemWidth, float itemHeight, float pixelRatioX, float pixelRatioY)
-        {
-            // frameSizeX/Y are text paddings from left-right and/or top/bottom.
-            var textWidth = itemWidth - 2 * item.FrameSizeX;
-            var textHeight = itemHeight - 2 * item.FrameSizeY;
-
-            if (item.Flags.HasFlag(MenuItemFlag.Centered))
-            {
-                textComp.alignment = TextAlignmentOptions.TopGeoAligned;
-            }
-
-            textComp.text = item.GetText(0);
-            textComp.spriteAsset = GameGlobals.Font.TryGetFont(item.FontName);
-
-            // Text component needs to align in dimensions with parent rect.
-            var textRect = textComp.GetComponent<RectTransform>();
-
-            textRect.SetWidth(textWidth / pixelRatioX);
-            textRect.SetHeight(textHeight / pixelRatioY);
-        }
-
-        private void CreateLists(float pixelRatioX, float pixelRatioY)
+        private void CreateLists()
         {
             foreach (var entryName in _listItemInstanceNames)
             {
-                var listEntry = _menuCache[entryName];
+                var listEntry = MenuItemCache[entryName];
                 var container = new ListItemContainer()
                 {
                     InstanceName = entryName,
@@ -265,8 +127,8 @@ namespace GUZ.Core.UI
                     ItemGOs = new GameObject[_visibleListItemAmount]
                 };
 
-                var halfMainWidth = (float)listEntry.item.DimX / pixelRatioX / 2;
-                var halfMainHeight = (float)listEntry.item.DimY / pixelRatioY / 2;
+                var halfMainWidth = (float)listEntry.item.DimX / PixelRatioX / 2;
+                var halfMainHeight = (float)listEntry.item.DimY / PixelRatioY / 2;
 
                 // Create Item GameObjects (22x)
                 for (var i = 0; i < _visibleListItemAmount; i++)
@@ -278,10 +140,10 @@ namespace GUZ.Core.UI
                     var halfItemHeight = (float)_listItemHeight / 2;
                     rect.SetPositionY((halfMainHeight - (i * _listItemHeight) - halfItemHeight));
                     rect.SetHeight(_listItemHeight);
-                    rect.SetWidth(listEntry.item.DimX / pixelRatioX);
+                    rect.SetWidth(listEntry.item.DimX / PixelRatioX);
 
                     var textRect = itemGo.GetComponentInChildren<TMP_Text>().GetComponent<RectTransform>();
-                    textRect.SetWidth((listEntry.item.DimX / pixelRatioX) - _arrowMargin);
+                    textRect.SetWidth((listEntry.item.DimX / PixelRatioX) - _arrowMargin);
                     textRect.SetHeight(_listItemHeight);
 
                     var button = itemGo.GetComponentInChildren<Button>();
@@ -338,7 +200,7 @@ namespace GUZ.Core.UI
 
         private void CreateContentViewer()
         {
-            var contentViewer = _menuCache[_instanceContentViewer];
+            var contentViewer = MenuItemCache[_instanceContentViewer];
             var textComp = contentViewer.go.GetComponentInChildren<TMP_Text>();
             var textRect = textComp.GetComponent<RectTransform>();
             var halfTextWidth = textRect.sizeDelta.x / 2;
@@ -404,13 +266,13 @@ namespace GUZ.Core.UI
         /// </summary>
         private void OnContentViewerBackClick()
         {
-            var contentViewer = _menuCache[_instanceContentViewer];
+            var contentViewer = MenuItemCache[_instanceContentViewer];
             contentViewer.go.SetActive(false);
 
             _activeListMenu.RootGo.SetActive(true);
-            _background.SetActive(true);
+            Background.SetActive(true);
 
-            foreach (var menuItem in _menuCache)
+            foreach (var menuItem in MenuItemCache)
             {
                 if (_initiallyDisabledMenuItems.Contains(menuItem.Key))
                 {
@@ -423,14 +285,14 @@ namespace GUZ.Core.UI
 
         private void OnContentViewerArrowUpClick()
         {
-            var contentViewer = _menuCache[_instanceContentViewer];
+            var contentViewer = MenuItemCache[_instanceContentViewer];
 
             contentViewer.go.GetComponentInChildren<TMP_Text>().pageToDisplay -= 1;
         }
 
         private void OnContentViewerArrowDownClick()
         {
-            var contentViewer = _menuCache[_instanceContentViewer];
+            var contentViewer = MenuItemCache[_instanceContentViewer];
 
             contentViewer.go.GetComponentInChildren<TMP_Text>().pageToDisplay += 1;
         }
@@ -497,15 +359,15 @@ namespace GUZ.Core.UI
             var text = _activeListMenu.LogTopics[realIndex].Entries.Aggregate((i, j) => i + "\n---\n" + j);
 
             // Disable everything...
-            foreach (var menuItem in _menuCache.Values)
+            foreach (var menuItem in MenuItemCache.Values)
             {
                 UIEvents.SetDefaultFontsForChildren(menuItem.go);
                 menuItem.go.SetActive(false);
             }
             // ...including background
-            _background.SetActive(false);
+            Background.SetActive(false);
 
-            var contentViewer = _menuCache[_instanceContentViewer].go;
+            var contentViewer = MenuItemCache[_instanceContentViewer].go;
             contentViewer.GetComponentInChildren<TMP_Text>().text = text;
             contentViewer.SetActive(true);
         }
@@ -525,7 +387,7 @@ namespace GUZ.Core.UI
             FillList(_activeListMenu);
         }
 
-        private void ExecuteCommand(string commandName)
+        protected override void ExecuteCommand(string commandName)
         {
             ResetView();
             FillLists();
@@ -535,7 +397,7 @@ namespace GUZ.Core.UI
             // Some commands are named like "EFFECTS MENU_ITEM_XYZ". We remove the unnecessary prefix (e.g. EFFECT).
             var menuItemName = split.Last();
 
-            var itemCache = _menuCache[menuItemName];
+            var itemCache = MenuItemCache[menuItemName];
             itemCache.go.SetActive(true);
 
             // If the Command==ListMenu, then we set it as currently active.

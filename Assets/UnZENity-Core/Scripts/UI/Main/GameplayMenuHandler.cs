@@ -3,7 +3,7 @@ using GUZ.Core.Manager;
 using TMPro;
 using UnityEngine;
 
-namespace GUZ.Core.UI.MainMenu
+namespace GUZ.Core.UI.Main
 {
     public class GameplayMenuHandler : MonoBehaviour
     {

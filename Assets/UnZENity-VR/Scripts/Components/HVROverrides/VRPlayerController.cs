@@ -1,7 +1,7 @@
 #if GUZ_HVR_INSTALLED
 using GUZ.Core;
 using GUZ.Core.Manager;
-using GUZ.Core.Player.Menu;
+using GUZ.Core.Menu;
 using GUZ.Core.UI;
 using HurricaneVR.Framework.Core.Player;
 using MyBox;
@@ -17,6 +17,7 @@ namespace GUZ.VR.Components.HVROverrides
         [Separator("GUZ - Settings")]
         public MainMenu MainMenu;
         public QuestLogMenu QuestLogMenu;
+        public StatusMenu StatusMenu;
 
 
         protected override void Start()
@@ -27,6 +28,7 @@ namespace GUZ.VR.Components.HVROverrides
             // Enabled later via button press or other events
             MainMenu.gameObject.SetActive(false);
             QuestLogMenu.gameObject.SetActive(false);
+            StatusMenu.gameObject.SetActive(false);
         }
 
         protected override void Update()
@@ -35,14 +37,17 @@ namespace GUZ.VR.Components.HVROverrides
 
             if (_guzInputs.IsMenuActivated && IsGameScene())
             {
-                // Toggle visibility
                 MainMenu.ToggleVisibility();
             }
 
             if (_guzInputs.IsQuestLogActivated && IsGameScene())
             {
-                // Toggle visibility
                 QuestLogMenu.ToggleVisibility();
+            }
+
+            if (_guzInputs.IsStatusActivated && IsGameScene())
+            {
+                StatusMenu.ToggleVisibility();
             }
         }
 

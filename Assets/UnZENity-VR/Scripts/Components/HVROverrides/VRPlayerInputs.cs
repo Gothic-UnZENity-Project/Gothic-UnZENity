@@ -15,6 +15,9 @@ namespace GUZ.VR.Components.HVROverrides
         public bool IsQuestLogActivated;
         public HVRButtonState QuestLogState;
 
+        public bool IsStatusActivated;
+        public HVRButtonState StatusState;
+
         protected override void UpdateInput()
         {
             base.UpdateInput();
@@ -26,11 +29,14 @@ namespace GUZ.VR.Components.HVROverrides
 
             IsMenuActivated = GetMenuActivated();
             IsQuestLogActivated = GetQuestLogActivated();
+            IsStatusActivated = GetStatusActivated();
 
             ResetState(ref MenuState);
             SetState(ref MenuState, IsMenuActivated);
             ResetState(ref QuestLogState);
             SetState(ref QuestLogState, IsQuestLogActivated);
+            ResetState(ref StatusState);
+            SetState(ref StatusState, IsStatusActivated);
         }
 
         private bool GetMenuActivated()
@@ -61,7 +67,19 @@ namespace GUZ.VR.Components.HVROverrides
                 return Keyboard.current[Key.L].wasPressedThisFrame;
             }
 
-            // FIXME - Add button from VR Controller
+            // During normal gameplay, we grab the menu from our chest socket.
+            return false;
+        }
+
+        private bool GetStatusActivated()
+        {
+            // If HVRSimulator is Active
+            if (UseWASD)
+            {
+                return Keyboard.current[Key.B].wasPressedThisFrame;
+            }
+
+            // During normal gameplay, we grab the menu from our chest socket.
             return false;
         }
 
