@@ -217,11 +217,11 @@ namespace GUZ.Core.Debugging
         {
             if (slotA.Count == slotB.Count)
             {
-                Debug.Log($"VOBs of type >{slotA.FirstOrDefault()?.Type}< matches slotA={slotA.Count}, slotB={slotB.Count}.");
+                Debug.Log($"VOB count matches: type={slotA.FirstOrDefault()?.Type} slotA={slotA.Count}, slotB={slotB.Count}.");
             }
             else
             {
-                Debug.LogError($"VOBs of type >{slotA.FirstOrDefault()?.Type}< does not match slotA={slotA.Count}, slotB={slotB.Count}.");
+                Debug.LogError($"VOB count does not match: type={slotA.FirstOrDefault()?.Type} slotA={slotA.Count}, slotB={slotB.Count}.");
                 return;
             }
 
