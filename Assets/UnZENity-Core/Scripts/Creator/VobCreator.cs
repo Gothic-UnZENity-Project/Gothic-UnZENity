@@ -770,7 +770,11 @@ namespace GUZ.Core.Creator
         {
             var go = GetPrefab(vob);
             go.name = $"{vob.SoundName}";
-            
+
+            // This value is always true when a new game/world is loaded. (Compared with G1 save game.)
+            vob.ShowVisual = false;
+            vob.IsAllowedToRun = true;
+
             // We don't want to have sound when we boot the game async for 30 seconds in non-spatial blend mode.
             go.SetActive(false);
             go.SetParent(parent ?? _parentGosNonTeleport[vob.Type], true, true);
