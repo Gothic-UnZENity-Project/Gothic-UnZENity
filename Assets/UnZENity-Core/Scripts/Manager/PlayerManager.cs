@@ -9,7 +9,12 @@ namespace GUZ.Core.Manager
 
         public PlayerManager(GameConfiguration config)
         {
-            // Nothing to do for now. Might be needed later.
+            GlobalEventDispatcher.WorldSceneLoaded.AddListener(SetQuality);
+        }
+
+        private void SetQuality()
+        {
+            Camera.main!.farClipPlane = GameGlobals.Config.RenderDistance;
         }
 
         public void Init()

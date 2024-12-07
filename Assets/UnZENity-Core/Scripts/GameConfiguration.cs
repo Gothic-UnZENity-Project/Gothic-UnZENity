@@ -277,6 +277,10 @@ namespace GUZ.Core
         public bool EnableWorldMesh = true;
         public bool EnableBarrierVisual = true;
 
+        [Separator("Quality", true)]
+        [Range(100, 1000)]
+        public int RenderDistance = 300;
+
         [Separator("WIP - Not production ready", true)]
         public bool EnableDecalVisuals;
         public bool EnableParticleEffects;
