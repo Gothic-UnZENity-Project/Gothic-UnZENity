@@ -41,7 +41,7 @@ namespace GUZ.VR.Adapter
         public float GetFrameRate()
         {
             // If we have no VR device attached to our computer, we will get an NPE for activeLoader.
-            if (GameGlobals.Config.EnableVRDeviceSimulator)
+            if (GameGlobals.Config.EnableVRDeviceSimulator || XRGeneralSettings.Instance.Manager.activeLoader == null)
             {
                 return 0;
             }
