@@ -14,6 +14,7 @@ namespace GUZ.Core.Manager
     public static class VobHelper
     {
         private const float _lookupDistance = 10f; // meter
+        private const string _noSoundName = "nosound.wav";
 
         [CanBeNull]
         public static VobProperties GetFreeInteractableWithin10M(Vector3 position, string visualScheme)
@@ -62,14 +63,14 @@ namespace GUZ.Core.Manager
         {
             AudioClip clip;
 
-            if (soundName.EqualsIgnoreCase("nosound.wav"))
+            if (soundName.EqualsIgnoreCase(_noSoundName))
             {
                 //instead of decoding nosound.wav which might be decoded incorrectly, just return null
                 return null;
             }
 
             // Bugfix - Normally the data is to get C_SFX_DEF entries from VM. But sometimes there might be the real .wav file stored.
-            if (soundName.EndsWith(".wav", System.StringComparison.InvariantCultureIgnoreCase))
+            if (soundName.EndsWithIgnoreCase(".wav"))
             {
                 clip = SoundCreator.ToAudioClip(soundName);
             }
@@ -79,6 +80,12 @@ namespace GUZ.Core.Manager
 
                 if (sfxData == null)
                 {
+                    return null;
+                }
+
+                if (sfxData.File.EqualsIgnoreCase(_noSoundName))
+                {
+                    //instead of decoding nosound.wav which might be decoded incorrectly, just return null
                     return null;
                 }
 

@@ -5,7 +5,6 @@ using System.Linq;
 using GUZ.Core.Data.Container;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
-using GUZ.Core.Properties;
 using JetBrains.Annotations;
 using UnityEngine;
 using ZenKit;
@@ -181,7 +180,7 @@ namespace GUZ.Core.Manager
         ///
         /// Hint: Needs to be called after EndOfFrame to ensure we can do a screenshot as thumbnail.
         /// </summary>
-        public void SaveGame(int saveGameId, string title)
+        public void SaveCurrentGame(int saveGameId, string title)
         {
             var saveGame = new SaveGame(GameContext.GameVersionAdapter.Version);
             saveGame.Metadata.Title = title;
@@ -193,7 +192,7 @@ namespace GUZ.Core.Manager
             {
                 var world = worldData.Value.OriginalWorld;
                 // FIXME - We need to create a new combined world first.
-                PrepareWorldDataForSaving(worldData.Value);
+                PrepareWorldDataForSaving2(world, worldData.Value.Vobs);
                 saveGame.Save(GetSaveGamePath(saveGameId), world, worldData.Key.TrimEndIgnoreCase(".ZEN").ToUpper());
             }
         }
@@ -238,6 +237,36 @@ namespace GUZ.Core.Manager
         }
 
         /// <summary>
+        /// For VOBs (no NPC magic)
+        /// 1. Fetch all VOBs from current world. (either new one or from save game.)
+        /// 2. Drop LevelCompo and move all VOBs one level up
+        /// 3. The SaveTree is nearly flat (except some sub-elements from special VOBs.)
+        /// 4. Save it
+        /// </summary>
+        private void PrepareWorldDataForSaving2(ZenKit.World world, List<IVirtualObject> vobs)
+        {
+            List<IVirtualObject> allVobs = new();
+
+            // If the root elements are LevelCompos, then we save a new game.
+            // Let's use its children as the levelCompo isn't saved in G1.
+            allVobs = vobs.First().Type == VirtualObjectType.zCVobLevelCompo
+                ? vobs.SelectMany(vob => vob.Children).ToList()
+                : vobs;
+
+            // all Spots and Items are in reverse order in G1 save game.
+            allVobs.Reverse();
+            world.RootObjects = allVobs;
+
+            // G1 stores all elements below LevelCompo. But we need to be careful as its children might have additional children.
+            // If we simply add all children into the WorldVobs and into SaveGame, we store them duplicated.
+            // Therefore, we only add children of LevelCompo once!
+            // if (isChildBelowLevelCompo)
+            // {
+            //     GameData.WorldVobs.Add(vob);
+            // }
+        }
+
+        /// <summary>
         /// We write data from Unity data back into ZenKit data.
         /// Hint: Not all elements need to be replaced and therefore have no setter (e.g. .Mesh, .WayNet).
         /// We therefore only set what's needed.
@@ -247,83 +276,85 @@ namespace GUZ.Core.Manager
         /// 2. Collect all VOBs in a plain structure (except Npcs far away)
         /// 3. Add all far-away NPCs+Monsters to the .Npcs list
         /// </summary>
-        private void PrepareWorldDataForSaving(WorldContainer data)
-        {
-            data.OriginalWorld.NpcSpawnEnabled = true;
-
-            VobProperties[] allVobs = GameObject.FindObjectsOfType<VobProperties>(includeInactive: true);
-            List<VobProperties> allVobsExcludingNpcs = new List<VobProperties>();
-            List<VobProperties> allVisibleNpcs = new List<VobProperties>();
-            List<VobProperties> allFarAwayNpcs = new List<VobProperties>();
-            VobProperties hero = null;
-
-            // 1. Fill all the different VOB types which we need to store separately.
-            foreach (var vobComp in allVobs)
-            {
-                var vobData = vobComp.Properties;
-                if (vobData == null)
-                {
-                    Debug.LogError("A VOB has no ZenKit.Vobs.* property attached and therefore can't be stored inside SaveGame.", vobComp);
-                    continue;
-                }
-
-                if (vobData.Type == VirtualObjectType.oCNpc)
-                {
-                    if (vobData.Name == GameGlobals.Settings.IniPlayerInstanceName)
-                    {
-                        hero = vobComp; // For special temp reasons.
-                        allVisibleNpcs.Add(vobComp);
-                    }
-                    else if (vobComp.gameObject.activeInHierarchy)
-                    {
-                        allVisibleNpcs.Add(vobComp);
-                    }
-                    else
-                    {
-                        allFarAwayNpcs.Add(vobComp);
-                    }
-                }
-                else
-                {
-                    allVobsExcludingNpcs.Add(vobComp);
-                }
-            }
-
-            // 1.1 Store current position of all NPCs into their VOBs
-            foreach (var npc in allVisibleNpcs)
-            {
-                var npcData = ((NpcProperties)npc).NpcData;
-                PrepareNpcForSaving(npcData);
-            }
-
-            // 1.2 Do the same for all the other NPCs
-            foreach (var npc in allFarAwayNpcs)
-            {
-                var npcData = ((NpcProperties)npc).NpcData;
-                PrepareNpcForSaving(npcData);
-            }
-
-            // 1.3 We assume, that all VOBs (Doors, etc.) have their settings already inside the VOBs. Therefore, no additional handling needed.
-            // ...
-
-            // 2. Collect all VOBs in a plain structure (except Npcs far away)
-            // Every VOB is created via Prefab, it's root GameObject has the VobTag and a VobProperties component with the actual ZenKit.VirtualObject property.
-            // If the saving crashes here based on NPEs, then a Prefab isn't set correctly.
-            {
-                var rootObjects = new List<IVirtualObject>();
-
-                // Add elements in order of appearance in an original save game file.
-                rootObjects.AddRange(allVisibleNpcs.Select(i => i.Properties));
-                rootObjects.AddRange(allVobsExcludingNpcs.Select(i => i.Properties));
-
-                data.OriginalWorld.RootObjects = rootObjects;
-            }
-
-            // 3. Add all far-away NPCs+Monsters to the .Npcs list
-            {
-                data.OriginalWorld.Npcs = allFarAwayNpcs.Select(i => (ZenKit.Vobs.Npc)i.Properties).ToList();
-            }
-        }
+        // private void PrepareWorldDataForSaving(ZenKit.World world)
+        // {
+        //     world.NpcSpawnEnabled = true;
+        //
+        //     VobProperties[] allVobs = GameObject.FindObjectsOfType<VobProperties>(includeInactive: true);
+        //     List<IVirtualObject> allVobsExcludingNpcs = new ();
+        //     List<IVirtualObject> allVisibleNpcs = new ();
+        //     List<IVirtualObject> allFarAwayNpcs = new ();
+        //     VobProperties hero = null;
+        //
+        //     // 1. Fill all the different VOB types which we need to store separately.
+        //     foreach (var vobData in GameData.WorldVobs)
+        //     {
+        //         if (vobData.Type == VirtualObjectType.oCNpc)
+        //         {
+        //             if (vobData.Name == GameGlobals.Settings.IniPlayerInstanceName)
+        //             {
+        //                 allVisibleNpcs.Add(vobData);
+        //             }
+        //             // FIXME -
+        //             else if (true)//vobComp.gameObject.activeInHierarchy)
+        //             {
+        //                 // allVisibleNpcs.Add(vobComp);
+        //             }
+        //             else
+        //             {
+        //                 // allFarAwayNpcs.Add(vobComp);
+        //             }
+        //         }
+        //         else
+        //         {
+        //             // The two named types aren't present in a G1 save. We therefore ignore them as well.
+        //             if (vobData.Type != VirtualObjectType.zCVobLevelCompo &&
+        //                 vobData.Type != VirtualObjectType.zCVobLensFlare)
+        //             {
+        //                 allVobsExcludingNpcs.Add(vobData);
+        //             }
+        //         }
+        //     }
+        //
+        //     // 1.1 Store current position of all NPCs into their VOBs
+        //     foreach (var npc in allVisibleNpcs)
+        //     {
+        //         var npcData = ((NpcProperties)npc).NpcData;
+        //         PrepareNpcForSaving(npcData);
+        //     }
+        //
+        //     // 1.2 Do the same for all the other NPCs
+        //     foreach (var npc in allFarAwayNpcs)
+        //     {
+        //         var npcData = ((NpcProperties)npc).NpcData;
+        //         PrepareNpcForSaving(npcData);
+        //     }
+        //
+        //     // 1.3 We assume, that all VOBs (Doors, etc.) have their settings already inside the VOBs. Therefore, no additional handling needed.
+        //     // ...
+        //
+        //     // 2. Collect all VOBs in a plain structure (except Npcs far away)
+        //     // Every VOB is created via Prefab, it's root GameObject has the VobTag and a VobProperties component with the actual ZenKit.VirtualObject property.
+        //     // If the saving crashes here based on NPEs, then a Prefab isn't set correctly.
+        //     {
+        //         var rootObjects = new List<IVirtualObject>();
+        //
+        //         // TODO - Save new savegame 15 and see if the order is now correct (as we don't collect the GOs, but the IVirtualObjects itself.
+        //
+        //         // Add elements in order of appearance in an original save game file.
+        //         // FIXME - re-add
+        //         // rootObjects.AddRange(allVisibleNpcs.Select(i => i.Properties));
+        //         rootObjects.AddRange(allVobsExcludingNpcs);
+        //
+        //         world.RootObjects = rootObjects;
+        //     }
+        //
+        //     // 3. Add all far-away NPCs+Monsters to the .Npcs list
+        //     {
+        //         // FIXME - re-add
+        //         // world.Npcs = allFarAwayNpcs.Select(i => (ZenKit.Vobs.Npc)i.Properties).ToList();
+        //     }
+        // }
 
         /// <summary>
         /// When a NpcInstance is initialized or saved, we afterward need to copy some data to VOB for handling and saving.

@@ -274,6 +274,13 @@ namespace GUZ.Core.Creator
                     break;
                 }
                 case VirtualObjectType.oCMobDoor:
+                {
+                    FixVobChildren(vob);
+
+                    go = CreateDefaultMesh(vob, parent);
+                    _cullingVobObjects.Add(go);
+                    break;
+                }
                 case VirtualObjectType.oCMobSwitch:
                 case VirtualObjectType.oCMOB:
                 case VirtualObjectType.zCVobStair:
@@ -319,14 +326,39 @@ namespace GUZ.Core.Creator
 
                     break;
                 }
+                case VirtualObjectType.zCPFXController:
+                {
+                    // A Particle controller makes no sense without a visual to show.
+                    // Therefore, removing it now (as it's also not included in official G1 saves, and not visible within Spacer)
+                    if (!vob.ShowVisual)
+                    {
+                        break;
+                    }
+
+                    FixVobChildren(vob);
+
+                    // For SaveGame comparison, we load our fallback Prefab and set VobProperties.
+                    // Remove it from here once we properly implement and handle it.
+                    go = CreateDefaultVob(vob);
+                    break;
+                }
+                case VirtualObjectType.zCTriggerList:
+                {
+                    // This value is always true when a new game/world is loaded. (Compared with G1 save game.)
+                    ((TriggerList)vob).SendOnTrigger = true;
+
+                    // For SaveGame comparison, we load our fallback Prefab and set VobProperties.
+                    // Remove it from here once we properly implement and handle it.
+                    go = CreateDefaultVob(vob);
+
+                    break;
+                }
                 case VirtualObjectType.zCVobScreenFX:
                 case VirtualObjectType.zCTriggerWorldStart:
-                case VirtualObjectType.zCTriggerList:
                 case VirtualObjectType.oCCSTrigger:
                 case VirtualObjectType.oCTriggerScript:
                 case VirtualObjectType.zCVobLensFlare:
                 case VirtualObjectType.zCMoverController:
-                case VirtualObjectType.zCPFXController:
                 case VirtualObjectType.zCVobLevelCompo:
                 case VirtualObjectType.zCZoneZFog:
                 case VirtualObjectType.zCZoneZFogDefault:
@@ -357,6 +389,63 @@ namespace GUZ.Core.Creator
             }
 
             return go;
+        }
+
+        /// <summary>
+        /// 1. Children VOBs are ordered in reverse order withing G1 save games. Correct our ones to match.
+        /// 2. Some Child Items have 0 amount, which is incorrect. Grant them at least 1 element like G1 is doing as well.
+        /// 3. Also load missing data from Daedalus as some properties aren't set within Spacer.
+        /// </summary>
+        private static void FixVobChildren(IVirtualObject vob)
+        {
+            if (!GameGlobals.SaveGame.IsWorldLoadedForTheFirstTime)
+            {
+                return;
+            }
+
+            // 1.
+            // e.g. G1.PFX_MILTEN01 has two children. In Spacer and here, they're ordered correctly. But a G1 save reverses their order.
+            // We need to reverse them as well to better align.
+            {
+                // A simple List.Reverse() didn't work unfortunately
+                var children = vob.Children;
+
+                while (vob.Children.Any())
+                {
+                    vob.RemoveChild(0);
+                }
+
+                // Re-add children in reversed order
+                while (children.Any())
+                {
+                    vob.AddChild(children.Last());
+                    children.RemoveAt(children.Count - 1);
+                }
+            }
+
+            // 2./3. Now fix some properties
+            {
+                var items = vob.Children;
+
+                foreach (var obj in items)
+                {
+                    if (obj is Item item)
+                    {
+                        item.Amount = item.Amount == 0 ? 1 : item.Amount;
+                        item.SleepMode = (int)VmGothicEnums.VobSleepMode.Awake; // G1 Saves have this value as default.
+
+                        // Load Item Instance from Daedalus
+                        // Apply remaining information (Flags)
+                        var vmItem = VmInstanceManager.TryGetItemData(item.Name);
+
+                        // Flags aren't stored inside objects from Spacer, we therefore set them now if not yet done.
+                        if (item.Flags == 0 && vmItem != null)
+                        {
+                            item.Flags = vmItem.Flags | vmItem.MainFlag;
+                        }
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -681,7 +770,11 @@ namespace GUZ.Core.Creator
         {
             var go = GetPrefab(vob);
             go.name = $"{vob.SoundName}";
-            
+
+            // This value is always true when a new game/world is loaded. (Compared with G1 save game.)
+            vob.ShowVisual = false;
+            vob.IsAllowedToRun = true;
+
             // We don't want to have sound when we boot the game async for 30 seconds in non-spatial blend mode.
             go.SetActive(false);
             go.SetParent(parent ?? _parentGosNonTeleport[vob.Type], true, true);
