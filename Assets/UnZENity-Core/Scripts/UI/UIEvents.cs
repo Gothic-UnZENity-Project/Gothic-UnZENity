@@ -21,7 +21,7 @@ namespace GUZ.Core.UI
         private static AudioClip _uiClick;
         private static AudioClip _uiReturnClick;
 
-        private void Start()
+        private void Awake()
         {
             GlobalEventDispatcher.ZenKitBootstrapped.AddListener(OnZenKitInitialized);
         }
