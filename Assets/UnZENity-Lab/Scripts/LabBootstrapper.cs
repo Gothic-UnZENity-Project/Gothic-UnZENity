@@ -102,13 +102,12 @@ namespace GUZ.Lab
 
         private void InitLab()
         {
-
-            GuzBootstrapper.BootGothicUnZeNity(Config, _settings.Gothic1Path);
-
             GameContext.InteractionAdapter.CreatePlayerController(SceneManager.GetActiveScene());
             GameContext.InteractionAdapter.CreateVRDeviceSimulator();
             // TODO - Broken. Fix before use.
             // NpcHelper.CacheHero();
+
+            GuzBootstrapper.BootGothicUnZeNity(Config, _settings.Gothic1Path);
 
             LabNpcAnimationHandler.Bootstrap();
             LabMusicHandler.Bootstrap();
