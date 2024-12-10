@@ -189,5 +189,15 @@ namespace GUZ.Core.Vm
             Closed,
             Closing
         }
+
+        /// <summary>
+        /// Seems like it's used inside Gothic to define if an object is "active" (Awake) or rendered only (DoAiOnly)
+        /// </summary>
+        public enum VobSleepMode
+        {
+            Sleeping = 0,
+            Awake = 1,
+            AwakeDoAiOnly = 2
+        }
     }
 }

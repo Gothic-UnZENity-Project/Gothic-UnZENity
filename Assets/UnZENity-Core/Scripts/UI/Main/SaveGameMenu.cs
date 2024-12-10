@@ -120,7 +120,7 @@ namespace GUZ.Core.UI.Main
             }
             else
             {
-                GameGlobals.SaveGame.SaveGame(id, $"UnZENity - {DateTime.Now}");
+                GameGlobals.SaveGame.SaveCurrentGame(id, $"UnZENity - {DateTime.Now}");
                 FillSaveGameEntries();
             }
         }

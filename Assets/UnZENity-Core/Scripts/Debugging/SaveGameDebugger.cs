@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using MyBox;
 using UnityEngine;
+using ZenKit;
 using ZenKit.Util;
 using ZenKit.Vobs;
 using Vector3 = System.Numerics.Vector3;
@@ -44,7 +45,7 @@ namespace GUZ.Core.Debugging
         {
             yield return new WaitForEndOfFrame();
 
-            GameGlobals.SaveGame.SaveGame(SaveSlot, $"UnZENity-Test - {DateTime.Now}");
+            GameGlobals.SaveGame.SaveCurrentGame(SaveSlot, $"UnZENity-DEBUG - {DateTime.Now}");
 
             Debug.Log("DONE");
         }
@@ -64,21 +65,24 @@ namespace GUZ.Core.Debugging
 
             Debug.Log("Comparing VOB counts");
             {
-                var vobsCountA = vobsByTypeA.ToDictionary(i => i.Key, i => i.Value.Count);
-                var vobsCountB = vobsByTypeB.ToDictionary(i => i.Key, i => i.Value.Count);
-
-                foreach (var countA in vobsCountA)
+                foreach (var countA in vobsByTypeA)
                 {
-                    var countB = vobsCountB.ContainsKey(countA.Key) ? vobsCountB[countA.Key] : 0;
-
                     Debug.Log("---------");
                     Debug.Log($"### Checking VOB type >{countA.Key}<");
-                    ComparePropertiesByType(vobsByTypeA[countA.Key], vobsByTypeB[countA.Key]);
+
+                    if (!vobsByTypeB.Keys.Contains(countA.Key))
+                    {
+                        Debug.LogError($"VOB type {countA.Key} is missing in slotB.");
+                    }
+                    else
+                    {
+                        ComparePropertiesByType(vobsByTypeA[countA.Key], vobsByTypeB[countA.Key]);
+                    }
                 }
 
                 // Check if there are any VobTypes which aren't in SaveGame1, but SaveGame2
-                vobsCountB
-                    .Where(i => !vobsCountA.Keys.Contains(i.Key))
+                vobsByTypeB
+                    .Where(i => !vobsByTypeA.Keys.Contains(i.Key))
                     .ToList()
                     .ForEach(i => Debug.LogError($"VOBs of type >{i.Key}< are missing in slotB."));
             }
@@ -184,7 +188,7 @@ namespace GUZ.Core.Debugging
                     nameof(VirtualObject.Id), // Includes the Index of current VM. Different for G1 and UnZENity
                     // TODO - It defines recurring events like heat damage over time (every x-milliseconds).
                     // TODO - Currently not handled within UnZENity, but could be useful in the future.
-                    nameof(VirtualObject.NextOnTimer),
+                    nameof(VirtualObject.NextOnTimer)
                 }
             },
             {
@@ -195,6 +199,17 @@ namespace GUZ.Core.Debugging
                     nameof(ZoneMusic.DayEntranceDone),
                     nameof(ZoneMusic.NightEntranceDone)
                 }
+            },
+            {
+                typeof(Mover).FullName!, new()
+                {
+                    // Seems like a physics topic for G1. We handle the speed of animations and their colliders differently in UnZENity.
+                    nameof(Mover.MoveSpeedUnit),
+
+                    // Only FREEMINEGATE has wrong values, ignoring for now
+                    nameof(Mover.LerpType),
+                    nameof(Mover.SpeedType)
+                }
             }
         };
 
@@ -202,11 +217,11 @@ namespace GUZ.Core.Debugging
         {
             if (slotA.Count == slotB.Count)
             {
-                Debug.Log($"VOBs of type >{slotA.FirstOrDefault()?.Type}< matches slotA={slotA.Count}, slotB={slotB.Count}.");
+                Debug.Log($"VOB count matches: type={slotA.FirstOrDefault()?.Type} slotA={slotA.Count}, slotB={slotB.Count}.");
             }
             else
             {
-                Debug.LogError($"VOBs of type >{slotA.FirstOrDefault()?.Type}< does not match slotA={slotA.Count}, slotB={slotB.Count}.");
+                Debug.LogError($"VOB count does not match: type={slotA.FirstOrDefault()?.Type} slotA={slotA.Count}, slotB={slotB.Count}.");
                 return;
             }
 
@@ -253,6 +268,34 @@ namespace GUZ.Core.Debugging
                             }
                             // Else - all good
                             break;
+                        // TriggerListTarget isn't extending IVirtualObject, we therefore check their values manually.
+                        case "System.Collections.Generic.List`1[ZenKit.Vobs.ITriggerListTarget]":
+                            var triggerListA = (List<ITriggerListTarget>)valueA;
+                            var triggerListB = (List<ITriggerListTarget>)valueB;
+
+                            Debug.Assert(triggerListA.Count == triggerListB.Count,
+                                $"VOB property >{property.Name}< of type >{nameof(ITriggerListTarget)}< does not match: slotA={triggerListA.Count}, slotB={triggerListB.Count}");
+                            for (var j = 0; j < triggerListA.Count; j++)
+                            {  
+                                Debug.Assert(triggerListA[j].Name == triggerListB[j].Name,
+                                    $"VOB property >{property.Name}< of type >{nameof(ITriggerListTarget)}< does not match: slotA={triggerListA[j].Name}, slotB={triggerListB[j].Name}");
+                                Debug.Assert(triggerListA[j].Delay == triggerListB[j].Delay,
+                                    $"VOB property >{property.Name}< of type >{nameof(ITriggerListTarget)}< does not match: slotA={triggerListA[j].Delay}, slotB={triggerListB[j].Delay}");
+                            }
+                            break;
+                        case "System.Collections.Generic.List`1[ZenKit.AnimationSample]":
+                                var animationSamplesA = (List<AnimationSample>)valueA;
+                                var animationSamplesB = (List<AnimationSample>)valueB;
+                                Debug.Assert(animationSamplesA.Count == animationSamplesB.Count,
+                                    $"VOB property >{property.Name}< of type >{nameof(AnimationSample)}< does not match: slotA={animationSamplesA.Count}, slotB={animationSamplesB.Count}");
+                                for (var j = 0; j < animationSamplesA.Count; j++)
+                                {
+                                    Debug.Assert(animationSamplesA[j].Position == animationSamplesB[j].Position,
+                                        $"VOB property >Position< of type >{nameof(AnimationSample)}< does not match: slotA={animationSamplesA[j].Position}, slotB={animationSamplesB[j].Position}");
+                                    Debug.Assert(animationSamplesA[j].Rotation == animationSamplesB[j].Rotation,
+                                        $"VOB property >Rotation< of type >{nameof(AnimationSample)}< does not match: slotA={animationSamplesA[j].Rotation}, slotB={animationSamplesB[j].Rotation}");
+                                }
+                                break;
                         case "ZenKit.Vobs.IVisual":
                             var visualA = (IVisual)valueA;
                             var visualB = (IVisual)valueB;
