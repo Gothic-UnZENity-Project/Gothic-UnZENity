@@ -70,6 +70,8 @@ namespace GUZ.Core.Manager
             _sunPerformanceSetting = config.SunUpdateInterval;
             _gameSettings = settings;
             _gameSounds = config.EnableGameSounds;
+
+            GlobalEventDispatcher.WorldSceneLoaded.AddListener(InitWorld);
         }
 
         public void OnValidate()
@@ -82,9 +84,18 @@ namespace GUZ.Core.Manager
             GlobalEventDispatcher.GameTimeSecondChangeCallback.AddListener(Interpolate);
             GlobalEventDispatcher.GameTimeHourChangeCallback.AddListener(UpdateRainTime);
 
-            RenderSettings.skybox = Object.Instantiate(GameGlobals.Textures.SkyMaterial);
             InitRainGo();
             InitSky();
+        }
+
+        private void InitWorld()
+        {
+            RenderSettings.skybox = Object.Instantiate(GameGlobals.Textures.SkyMaterial);
+            RenderSettings.fog = true;
+
+            // Start fog 50m before the actual render stop starts.
+            RenderSettings.fogStartDistance = GameGlobals.Config.RenderDistance - 50;
+            RenderSettings.fogEndDistance = GameGlobals.Config.RenderDistance;
         }
 
         /// <summary>
