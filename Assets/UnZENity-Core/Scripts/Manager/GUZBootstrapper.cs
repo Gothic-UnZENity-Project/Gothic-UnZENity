@@ -113,7 +113,7 @@ namespace GUZ.Core.Manager
         
         private static void LoadSubtitles()
         {
-            GameData.Dialogs.CutsceneLibrary = new($"{GameContext.GameVersionAdapter.RootPath}\\_work\\DATA\\scripts\\Content\\CUTSCENE\\Ou.csl");
+            GameData.Dialogs.CutsceneLibrary = new($"{GameContext.GameVersionAdapter.RootPath}/_work/DATA/scripts/content/CUTSCENE/OU.CSL");
         }
 
         private static void LoadVideos()
