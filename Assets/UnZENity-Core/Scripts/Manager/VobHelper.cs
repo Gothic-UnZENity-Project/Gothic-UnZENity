@@ -19,6 +19,8 @@ namespace GUZ.Core.Manager
         [CanBeNull]
         public static VobProperties GetFreeInteractableWithin10M(Vector3 position, string visualScheme)
         {
+            // FIXME - Needs to be altered to use ZenKit objects instead of Unity ones.
+            //         This ensures we can always use the data, even when objects are lazy loaded and not yet existing.
             return GameData.VobsInteractable
                 .Where(i => Vector3.Distance(i.transform.position, position) < _lookupDistance)
                 .Where(i => i.VisualScheme.EqualsIgnoreCase(visualScheme))

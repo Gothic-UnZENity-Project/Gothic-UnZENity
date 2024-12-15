@@ -151,9 +151,11 @@ namespace GUZ.Core.Config
         public VOBTypesCollection SpawnVOBTypes = new();
 
         [Separator("Culling")]
-        [Tooltip("Create mesh and object hierarchy lazy. Aka when culling activates a VOB for the first time.")]
-        public bool LazyLoadVobs = true;
         public bool EnableVOBMeshCulling = true;
+
+        [Tooltip("Create mesh and object hierarchy lazy. Aka when culling activates a VOB for the first time.")]
+        [ConditionalField(fieldToCheck: nameof(EnableVOBMeshCulling), compareValues: true)]
+        public bool LazyLoadVobs = true;
 
         [ConditionalField(fieldToCheck: nameof(EnableVOBMeshCulling), compareValues: true)]
         public MeshCullingGroup SmallVOBMeshCullingGroup = new() { MaximumObjectSize = 0.2f, CullingDistance = 50 };
