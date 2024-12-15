@@ -28,6 +28,7 @@ MonoBehaviour:
   EnableVOBs: 1
   SpawnVOBTypes:
     Value: 
+  LazyLoadVobs: 1
   EnableVOBMeshCulling: 1
   SmallVOBMeshCullingGroup:
     MaximumObjectSize: 0.2
