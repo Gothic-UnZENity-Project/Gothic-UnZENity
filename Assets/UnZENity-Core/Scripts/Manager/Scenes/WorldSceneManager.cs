@@ -39,6 +39,7 @@ namespace GUZ.Core.Manager.Scenes
             worldRoot.SetActive(false);
             vobRoot.SetActive(false);
 
+            var fullWatch = Stopwatch.StartNew();
             try
             {
                 // 1.
@@ -48,6 +49,7 @@ namespace GUZ.Core.Manager.Scenes
                 {
                     await VobCreator.CreateAsync(config, GameGlobals.Loading, GameGlobals.SaveGame.CurrentWorldData.Vobs, vobRoot)
                         .AwaitAndLog();
+                    watch.LogAndRestart($"VOBs created");
                 }
 
                 // 2.
@@ -58,6 +60,7 @@ namespace GUZ.Core.Manager.Scenes
                 if (config.EnableNpcs)
                 {
                     await NpcCreator.CreateAsync(config, GameGlobals.Loading).AwaitAndLog();
+                    watch.LogAndRestart($"NPCs created");
                 }
 
                 // 4.
@@ -66,9 +69,11 @@ namespace GUZ.Core.Manager.Scenes
                     // initialize Lights before world creation
                     vobRoot.SetActive(true); // temporary enable vobRoot
                     await StationaryLightsManager.InitializeThreadSafeLightData().AwaitAndLog();
+                    watch.LogAndRestart($"ThreadSafeLightData initialized");
                     vobRoot.SetActive(false); // disable to save some seconds in loading time ;p
 
                     await WorldCreator.CreateAsync(config, GameGlobals.Loading, worldRoot).AwaitAndLog();
+                    watch.LogAndRestart("World loaded");
                     GameGlobals.Lights.ClearThreadSafeLights();
                 }
 
@@ -100,7 +105,7 @@ namespace GUZ.Core.Manager.Scenes
             }
             finally
             {
-                watch.Log("Full world loaded in");
+                fullWatch.Log("Full world loaded");
             }
         }
 

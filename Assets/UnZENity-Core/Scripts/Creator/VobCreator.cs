@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
@@ -71,16 +70,9 @@ namespace GUZ.Core.Creator
 
         public static async Task CreateAsync(GameConfiguration config, LoadingManager loading, List<IVirtualObject> vobs, GameObject root)
         {
-            Stopwatch stopwatch = new();
-
-            _rootVobsGo = root;
-
-            stopwatch.Start();
             PreCreateVobs(vobs);
             await CreateVobs(config, loading, vobs);
             PostCreateVobs();
-            stopwatch.Stop();
-            Debug.Log($"Created vobs in {stopwatch.Elapsed.TotalSeconds} s");
         }
 
         public static GameObject GetRootGameObjectOfType(VirtualObjectType type)

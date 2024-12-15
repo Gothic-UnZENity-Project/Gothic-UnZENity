@@ -9,11 +9,9 @@ using GUZ.Core.Data.Container;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
-using GUZ.Core.World;
 using UnityEngine;
 using ZenKit;
 using ZenKit.Vobs;
-using Debug = UnityEngine.Debug;
 
 namespace GUZ.Core.Creator
 {
@@ -51,16 +49,13 @@ namespace GUZ.Core.Creator
             _claimedPolygons = new HashSet<IPolygon>();
             Dictionary<int, List<WorldContainer.SubMeshData>> subMeshesPerParentNode = new();
 
-            Stopwatch stopwatch = new();
-            stopwatch.Start();
+            var stopwatch = Stopwatch.StartNew();
             await ExpandBspTreeIntoMeshes(zkMesh, zkBspTree, 0, subMeshesPerParentNode, null);
-            stopwatch.Stop();
-            Debug.Log($"Expanding tree: {stopwatch.ElapsedMilliseconds / 1000f} s");
+            stopwatch.LogAndRestart("BSPTree expanded");
 
             // Free memory
             _claimedPolygons = null;
 
-            stopwatch.Restart();
             // Merge the world meshes until they touch the max amount of lights per mesh.
             var mergedSubMeshesPerParentNode = subMeshesPerParentNode;
             while (true)
@@ -74,15 +69,11 @@ namespace GUZ.Core.Creator
                 subMeshesPerParentNode = mergedSubMeshesPerParentNode;
                 await Task.Yield();
             }
+            stopwatch.LogAndRestart("Lights merged");
 
-            stopwatch.Stop();
-            Debug.Log($"Merging by lights: {stopwatch.ElapsedMilliseconds / 1000f} s");
-
-            stopwatch.Restart();
             // Merge the water until a given level in the BSP tree to it a few large chunks.
             subMeshesPerParentNode = MergeShaderTypeWorldChunksToTreeHeight(TextureCache.TextureArrayTypes.Water, 3, zkBspTree, subMeshesPerParentNode);
-            stopwatch.Stop();
-            Debug.Log($"Merging water: {stopwatch.ElapsedMilliseconds / 1000f} s");
+            stopwatch.LogAndRestart("Water merged");
 
             // To have easier to read code above, we reverse the arrays now at the end.
             foreach (var subMeshes in subMeshesPerParentNode.Values)
