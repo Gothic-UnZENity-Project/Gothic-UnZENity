@@ -1,11 +1,11 @@
 using System.Diagnostics;
 using GUZ.Core.Caches;
+using GUZ.Core.Config;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
 using GUZ.Core.Manager.Culling;
 using GUZ.Core.Manager.Scenes;
-using GUZ.Core.Manager.Settings;
 using GUZ.Core.Util;
 using GUZ.Core.World;
 using MyBox;
@@ -20,14 +20,15 @@ namespace GUZ.Core
     [RequireComponent(typeof(TextureManager), typeof(FontManager), typeof(FrameSkipper))]
     public class GameManager : SingletonBehaviour<GameManager>, ICoroutineManager, IGlobalDataProvider
     {
-        [field: SerializeField] public GameConfiguration Config { get; set; }
+        public DeveloperConfig DeveloperConfig;
 
         private FileLoggingHandler _fileLoggingHandler;
         private FrameSkipper _frameSkipper;
         private BarrierManager _barrierManager;
         private MusicManager _gameMusicManager;
 
-        public GameSettings Settings { get; private set; }
+        public ConfigManager Config { get; private set; }
+
         public SaveGameManager SaveGame { get; private set; }
 
         public LoadingManager Loading { get; private set; }
@@ -60,34 +61,36 @@ namespace GUZ.Core
         {
             base.Awake();
 
+            Config = new ConfigManager();
+            Config.LoadRootJson();
+            Config.SetDeveloperConfig(DeveloperConfig);
+
             _fileLoggingHandler = new FileLoggingHandler();
             _frameSkipper = GetComponent<FrameSkipper>();
 
             GameGlobals.Instance = this;
             
             // Set Context as early as possible to ensure everything else boots based on the activated modules.
-            GameContext.SetControlContext(Config.GameControls);
+            GameContext.SetControlContext(Config.Dev.GameControls);
 
-            Settings = GameSettings.Load(Config.GameVersion);
-            
             MultiTypeCache.Init();
 
             SaveGame = new SaveGameManager();
             Textures = GetComponent<TextureManager>();
             Font = GetComponent<FontManager>();
             Loading = new LoadingManager();
-            VobMeshCulling = new VobMeshCullingManager(Config, this);
-            NpcMeshCulling = new NpcMeshCullingManager(Config);
-            SoundCulling = new VobSoundCullingManager(Config);
-            _barrierManager = new BarrierManager(Config);
+            VobMeshCulling = new VobMeshCullingManager(DeveloperConfig, this);
+            NpcMeshCulling = new NpcMeshCullingManager(DeveloperConfig);
+            SoundCulling = new VobSoundCullingManager(DeveloperConfig);
+            _barrierManager = new BarrierManager(DeveloperConfig);
             Lights = new StationaryLightsManager();
-            Player = new PlayerManager(Config);
-            Time = new GameTime(Config, this);
-            Video = new VideoManager(Config);
-            Sky = new SkyManager(Config, Time, Settings);
-            _gameMusicManager = new MusicManager(Config);
-            Story = new StoryManager(Config);
-            Routines = new RoutineManager(Config);
+            Player = new PlayerManager(DeveloperConfig);
+            Time = new GameTime(DeveloperConfig, this);
+            Video = new VideoManager(DeveloperConfig);
+            Sky = new SkyManager(DeveloperConfig, Time);
+            _gameMusicManager = new MusicManager(DeveloperConfig);
+            Story = new StoryManager(DeveloperConfig);
+            Routines = new RoutineManager(DeveloperConfig);
         }
 
         private void Start()
@@ -106,10 +109,10 @@ namespace GUZ.Core
             SceneManager.sceneLoaded += OnSceneLoaded;
             SceneManager.sceneUnloaded += OnSceneUnloaded;
 
-            Logger.Set(Config.ZenKitLogLevel, Logging.OnZenKitLogMessage);
-            DirectMusic.Logger.Set(Config.DirectMusicLogLevel, Logging.OnDirectMusicLogMessage);
+            Logger.Set(Config.Dev.ZenKitLogLevel, Logging.OnZenKitLogMessage);
+            DirectMusic.Logger.Set(Config.Dev.DirectMusicLogLevel, Logging.OnDirectMusicLogMessage);
 
-            _fileLoggingHandler.Init(Settings);
+            _fileLoggingHandler.Init(Config.Root);
             _frameSkipper.Init();
             Loading.Init();
             VobMeshCulling.Init();
@@ -127,6 +130,7 @@ namespace GUZ.Core
         {
             var watch = Stopwatch.StartNew();
 
+            Config.LoadGothicInis(version);
             GameContext.SetGameVersionContext(version);
 
             var gothicRootPath = GameContext.GameVersionAdapter.RootPath;
@@ -140,7 +144,7 @@ namespace GUZ.Core
             Textures.Init();
             Video.Init();
 
-            GuzBootstrapper.BootGothicUnZeNity(Config, gothicRootPath);
+            GuzBootstrapper.BootGothicUnZeNity();
 
             watch.Log("Phase2 (mostly ZenKit) initialized in");
         }
@@ -231,7 +235,6 @@ namespace GUZ.Core
             SoundCulling.Destroy();
             _fileLoggingHandler.Destroy();
 
-            Settings = null;
             Loading = null;
             VobMeshCulling = null;
             NpcMeshCulling = null;

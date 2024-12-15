@@ -1,14 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 using UnityEngine.Networking;
 using ZenKit;
 
-namespace GUZ.Core.Manager.Settings
+namespace GUZ.Core.Config
 {
-    [Serializable]
-    public class GameSettings
+    public static class JsonRootLoader
     {
         private const string _settingsFileName = "GameSettings.json";
         private const string _settingsFileNameDev = "GameSettings.dev.json";
@@ -16,31 +14,20 @@ namespace GUZ.Core.Manager.Settings
         private const string _defaultSteamGothic2Folder = @"C:\Program Files (x86)\Steam\steamapps\common\Gothic II\";
 
 
-
-        public string Gothic1Path;
-        public string Gothic2Path;
-        public string LogLevel;
-
-        public Dictionary<string, string> GothicIniSettings = new();
-
-        public string IniSkyDayColor(int index) => GothicIniSettings.TryGetValue($"zDayColor{index}", out var value) ? value : "0 0 0";
-        public bool IniPlayLogoVideos => GothicIniSettings.TryGetValue("playLogoVideos", out var value) ? Convert.ToBoolean(Convert.ToInt16(value)) : true;
-        public string IniPlayerInstanceName => GothicIniSettings.GetValueOrDefault("playerInstanceName", "PC_HERO");
-
-        public static GameSettings Load(GameVersion version)
+        public static JsonRootConfig Load()
         {
             PrepareAndroidFolders();
-            
+
             var rootPath = GetGameSettingsRootPath();
             var settingsFilePath = $"{rootPath}/{_settingsFileName}";
-            
+
             if (!File.Exists(settingsFilePath))
             {
                 throw new ArgumentException($"No >GameSettings.json< file exists at >{settingsFilePath}<.");
             }
 
             var settingsJson = File.ReadAllText(settingsFilePath);
-            var loadedSettings = JsonUtility.FromJson<GameSettings>(settingsJson);
+            var loadedSettings = JsonUtility.FromJson<JsonRootConfig>(settingsJson);
 
             // Overwrite data with GameSettings.dev.json if it exists.
             var settingsDevFilePath = $"{rootPath}/{_settingsFileNameDev}";
@@ -54,9 +41,6 @@ namespace GUZ.Core.Manager.Settings
             loadedSettings.Gothic1Path = AlterGothicInstallationPath(loadedSettings.Gothic1Path, GameVersion.Gothic1);
             loadedSettings.Gothic2Path = AlterGothicInstallationPath(loadedSettings.Gothic2Path, GameVersion.Gothic2);
 
-            // FIXME - Need to be moved to a later stage. Right now we don't know which game version to load!
-            LoadIniFile(loadedSettings, version);
-            
             return loadedSettings;
         }
 
@@ -75,27 +59,27 @@ namespace GUZ.Core.Manager.Settings
             {
                 return;
             }
-            
+
             // If directory exists and GameSettings.json is placed, we assume everything is created already.
             if (File.Exists($"{Application.persistentDataPath}/{_settingsFileName}"))
             {
                 return;
             }
-            
+
             // Create folder(s)
             Directory.CreateDirectory($"{Application.persistentDataPath}/Gothic1");
             Directory.CreateDirectory($"{Application.persistentDataPath}/Gothic2");
-            
+
             // Copy GameSettings.json into app's shared folder
             var gameSettingsPath = Path.Combine($"{Application.streamingAssetsPath}/{_settingsFileName}");
-            
+
             var www = UnityWebRequest.Get(gameSettingsPath);
             www.SendWebRequest();
-            
+
             // Wait until async download is done
             while (!www.isDone)
             { }
-            
+
             var result = www.downloadHandler.text;
             File.WriteAllText($"{Application.persistentDataPath}/{_settingsFileName}", result);
 
@@ -139,7 +123,7 @@ namespace GUZ.Core.Manager.Settings
             {
                 return gothicInstallationPath;
             }
-            
+
             // Try platform specific fallbacks.
             if (Application.platform == RuntimePlatform.Android)
             {
@@ -164,55 +148,6 @@ namespace GUZ.Core.Manager.Settings
                     return _defaultSteamGothic2Folder;
                 }
             }
-        }
-
-        public bool CheckIfGothicInstallationExists(GameVersion version)
-        {
-            var gothicRootPath = version == GameVersion.Gothic1 ? Gothic1Path : Gothic2Path;
-
-            var gothicDataPath = $"{gothicRootPath}/Data";
-            var gothicWorkPath = $"{gothicRootPath}/_work";
-
-            return Directory.Exists(gothicWorkPath) && Directory.Exists(gothicDataPath);
-        }
-
-        private static void LoadIniFile(GameSettings loadedSettings, GameVersion version)
-        {
-            var gothicRoot = version == GameVersion.Gothic1 ? loadedSettings.Gothic1Path : loadedSettings.Gothic2Path;
-            
-            var iniFilePath = $"{gothicRoot}/system/Gothic.ini";
-            if (!File.Exists(iniFilePath))
-            {
-                Debug.LogError("The gothic.ini file does not exist at the specified path :" + iniFilePath);
-                return;
-            }
-
-            var data = new Dictionary<string, string>();
-
-            foreach (var line in File.ReadLines(iniFilePath))
-            {
-                var trimmedLine = line.Trim();
-                if (string.IsNullOrWhiteSpace(trimmedLine) || trimmedLine.StartsWith(";"))
-                {
-                    continue;
-                }
-
-                // We don't need to store [section] information. Every property name is unique.
-                if (trimmedLine.StartsWith("[") && trimmedLine.EndsWith("]"))
-                {
-                    continue;
-                }
-                else
-                {
-                    var keyValue = trimmedLine.Split(new[] { '=' }, 2);
-                    if (keyValue.Length == 2)
-                    {
-                        data[keyValue[0].Trim()] = keyValue[1].Trim();
-                    }
-                }
-            }
-
-            loadedSettings.GothicIniSettings = data;
         }
     }
 }

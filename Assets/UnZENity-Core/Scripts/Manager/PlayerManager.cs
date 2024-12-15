@@ -1,3 +1,4 @@
+using GUZ.Core.Config;
 using UnityEngine;
 
 namespace GUZ.Core.Manager
@@ -7,7 +8,7 @@ namespace GUZ.Core.Manager
         public Vector3 HeroSpawnPosition;
         public Quaternion HeroSpawnRotation;
 
-        public PlayerManager(GameConfiguration config)
+        public PlayerManager(DeveloperConfig config)
         {
             // Nothing to do for now. Might be needed later.
         }

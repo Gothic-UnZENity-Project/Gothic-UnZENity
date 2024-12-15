@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using GUZ.Core.Config;
 using GUZ.Core.Extensions;
 using UnityEngine;
 
@@ -12,7 +13,7 @@ namespace GUZ.Core.Manager
         public List<string> VideoFilePathsMp4 = new();
 
 
-        public VideoManager(GameConfiguration config)
+        public VideoManager(DeveloperConfig config)
         {
             // NOP
         }

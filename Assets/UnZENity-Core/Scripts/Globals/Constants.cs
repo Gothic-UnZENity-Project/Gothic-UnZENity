@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -8,11 +7,6 @@ namespace GUZ.Core.Globals
 {
     public static class Constants
     {
-        public static class GothicIni
-        {
-            public static bool PlayLogoVideos => GameGlobals.Settings.GothicIniSettings.TryGetValue("playLogoVideos", out var value) ? Convert.ToBoolean(Convert.ToInt16(value)) : true;
-        }
-
         public static class Daedalus
         {
             public static string DoorLockSoundName => "DOOR_LOCK.WAV";

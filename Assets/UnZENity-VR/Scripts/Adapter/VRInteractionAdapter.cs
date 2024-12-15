@@ -4,7 +4,6 @@ using GUZ.Core;
 using GUZ.Core.Adapter;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
-using GUZ.Core.Player.Menu;
 using GUZ.VR.Components;
 using GUZ.VR.Components.HVROverrides;
 using HurricaneVR.Framework.Core.UI;
@@ -41,7 +40,7 @@ namespace GUZ.VR.Adapter
         public float GetFrameRate()
         {
             // If we have no VR device attached to our computer, we will get an NPE for activeLoader.
-            if (GameGlobals.Config.EnableVRDeviceSimulator || XRGeneralSettings.Instance.Manager.activeLoader == null)
+            if (GameGlobals.Config.Dev.EnableVRDeviceSimulator || XRGeneralSettings.Instance.Manager.activeLoader == null)
             {
                 return 0;
             }
@@ -78,7 +77,7 @@ namespace GUZ.VR.Adapter
 
         public void CreateVRDeviceSimulator()
         {
-            if (!GameGlobals.Config.EnableVRDeviceSimulator)
+            if (!GameGlobals.Config.Dev.EnableVRDeviceSimulator)
             {
                 return;
             }

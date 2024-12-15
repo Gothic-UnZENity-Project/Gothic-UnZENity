@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using GUZ.Core.Config;
 using GUZ.Core.Npc.Routines;
 
 namespace GUZ.Core.Manager
@@ -14,7 +15,7 @@ namespace GUZ.Core.Manager
         private readonly int _featureStartHour;
         private readonly int _featureStartMinute;
 
-        public RoutineManager(GameConfiguration config)
+        public RoutineManager(DeveloperConfig config)
         {
             _featureStartHour = config.StartTimeHour;
             _featureStartMinute = config.StartTimeMinute;

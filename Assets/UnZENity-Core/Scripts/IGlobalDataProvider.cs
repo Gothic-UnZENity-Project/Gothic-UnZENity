@@ -1,14 +1,13 @@
+using GUZ.Core.Config;
 using GUZ.Core.Manager;
 using GUZ.Core.Manager.Culling;
-using GUZ.Core.Manager.Settings;
 using GUZ.Core.World;
 
 namespace GUZ.Core
 {
     public interface IGlobalDataProvider
     {
-        public GameConfiguration Config { get; }
-        public GameSettings Settings { get; }
+        public ConfigManager Config { get; }
         public SaveGameManager SaveGame { get; }
         public LoadingManager Loading { get; }
         public PlayerManager Player { get; }

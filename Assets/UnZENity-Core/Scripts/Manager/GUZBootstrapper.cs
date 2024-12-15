@@ -23,7 +23,7 @@ namespace GUZ.Core.Manager
             MorphMeshCache.Dispose();
         }
 
-        public static void BootGothicUnZeNity(GameConfiguration config, string gothicDir)
+        public static void BootGothicUnZeNity()
         {
             LoadVMs();
             SetLanguage();

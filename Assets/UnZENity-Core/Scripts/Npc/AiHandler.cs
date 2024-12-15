@@ -339,7 +339,7 @@ namespace GUZ.Core.Npc
             // Reset "currently" used item
 
             // FIXME - We need to properly set this value for Gothic2 as well.
-            if (GameGlobals.Config.GameVersion == GameVersion.Gothic1)
+            if (GameGlobals.Config.Dev.GameVersion == GameVersion.Gothic1)
             {
                 Properties.NpcInstance.SetAiVar(Constants.DaedalusConst.AIVItemStatusKey, Constants.DaedalusConst.TAITNone);
             }

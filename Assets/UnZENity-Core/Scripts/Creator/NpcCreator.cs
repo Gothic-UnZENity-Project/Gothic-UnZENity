@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using GUZ.Core.Caches;
+using GUZ.Core.Config;
 using GUZ.Core.Creator.Meshes.V2;
 using GUZ.Core.Data.Container;
 using GUZ.Core.Extensions;
@@ -40,7 +41,7 @@ namespace GUZ.Core.Creator
         /// <summary>
         /// If the current world is visited for the first time, we call Wld_InsertNpc() to "spawn" them for the first time.
         /// </summary>
-        public static async Task CreateAsync(GameConfiguration config, LoadingManager loading)
+        public static async Task CreateAsync(DeveloperConfig config, LoadingManager loading)
         {
             // Final debug check if we really want to load NPCs.
             if (!config.EnableNpcs)
@@ -244,8 +245,8 @@ namespace GUZ.Core.Creator
                 .ToList();
 
             // Hint: If we filter out NPCs to spawn, we will never get any Monster as they have no Ids set. Except default: 0.
-            if (GameGlobals.Config.SpawnNpcInstances.Value.Any() &&
-                !GameGlobals.Config.SpawnNpcInstances.Value.Contains(npcInstance.Id))
+            if (GameGlobals.Config.Dev.SpawnNpcInstances.Value.Any() &&
+                !GameGlobals.Config.Dev.SpawnNpcInstances.Value.Contains(npcInstance.Id))
             {
                 Object.Destroy(newNpc);                                                                         // 1
                 MultiTypeCache.NpcCache.Remove(MultiTypeCache.NpcCache.First(i => i.Instance == npcInstance));  // 2

@@ -28,23 +28,23 @@ namespace GUZ.Core.Manager.Scenes
             // Whatever comes next, we don't want the player to move around right now.
             GameContext.InteractionAdapter.LockPlayerInPlace();
 
-            var isG1Installed = GameGlobals.Settings.CheckIfGothicInstallationExists(GameVersion.Gothic1);
-            var isG2Installed = GameGlobals.Settings.CheckIfGothicInstallationExists(GameVersion.Gothic2);
+            var isG1Installed = GameGlobals.Config.CheckIfGothicInstallationExists(GameVersion.Gothic1);
+            var isG2Installed = GameGlobals.Config.CheckIfGothicInstallationExists(GameVersion.Gothic2);
 
-            if (GameGlobals.Config.PreselectGameVersion)
+            if (GameGlobals.Config.Dev.PreselectGameVersion)
             {
-                var isInstalled = GameGlobals.Config.GameVersion == GameVersion.Gothic1 ? isG1Installed : isG2Installed;
+                var isInstalled = GameGlobals.Config.Dev.GameVersion == GameVersion.Gothic1 ? isG1Installed : isG2Installed;
 
                 if (isInstalled)
                 {
-                    GameManager.I.InitPhase2(GameGlobals.Config.GameVersion);
+                    GameManager.I.InitPhase2(GameGlobals.Config.Dev.GameVersion);
                     GameManager.I.LoadScene(Constants.SceneLogo, Constants.SceneGameVersion);
                 }
                 else
                 {
                     // If the Gothic installation directory is not set, show an error message and exit.
                     _invalidInstallationDir.SetActive(true);
-                    throw new ArgumentException($"{GameGlobals.Config.GameVersion} installation couldn't be found inside >GameSettings.json< file.");
+                    throw new ArgumentException($"{GameGlobals.Config.Dev.GameVersion} installation couldn't be found inside >GameSettings.json< file.");
                 }
 
                 return;
