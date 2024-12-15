@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using GUZ.Core.Config;
 using UnityEngine;
 
 namespace GUZ.Core.Manager.Culling
@@ -50,7 +51,7 @@ namespace GUZ.Core.Manager.Culling
         private readonly MeshCullingGroup _featureMediumCullingGroup;
         private readonly MeshCullingGroup _featureLargeCullingGroup;
 
-        public VobMeshCullingManager(GameConfiguration config, ICoroutineManager coroutineManager)
+        public VobMeshCullingManager(DeveloperConfig config, ICoroutineManager coroutineManager)
         {
             _coroutineManager = coroutineManager;
             _featureEnableCulling = config.EnableVOBMeshCulling;

@@ -6,7 +6,7 @@ using UnityEngine;
 using ZenKit;
 using ZenKit.Vobs;
 
-namespace GUZ.Core
+namespace GUZ.Core.Config
 {
     [Serializable]
     public class MeshCullingGroup
@@ -35,8 +35,8 @@ namespace GUZ.Core
     }
 
 
-    [CreateAssetMenu(fileName = "NewGameConfiguration", menuName = "UnZENity/ScriptableObjects/GameConfiguration", order = 1)]
-    public class GameConfiguration : ScriptableObject
+    [CreateAssetMenu(fileName = "NewDeveloperConfiguration", menuName = "UnZENity/ScriptableObjects/DeveloperConfiguration", order = 1)]
+    public class DeveloperConfig : ScriptableObject
     {
 
         [NonSerialized]

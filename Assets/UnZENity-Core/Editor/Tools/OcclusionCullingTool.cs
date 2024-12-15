@@ -1,10 +1,9 @@
 using System;
+using GUZ.Core.Config;
 using GUZ.Core.Creator;
 using GUZ.Core.Globals;
-using GUZ.Core.Manager.Settings;
 using UnityEditor;
 using UnityEngine;
-using ZenKit;
 
 namespace GUZ.Core.Editor.Tools
 {
@@ -35,10 +34,11 @@ namespace GUZ.Core.Editor.Tools
             }
 
             // TODO - We need to add a popup to decide which Game Version to load.
-            var settings = GameSettings.Load(GameVersion.Gothic1);
-            
+            var config = new ConfigManager();
+            config.LoadRootJson();
+
             // TODO - Add parameter to switch between G1 and G2
-            ResourceLoader.Init(settings.Gothic1Path);
+            ResourceLoader.Init(config.Root.Gothic1Path);
 
             WorldCreator.LoadEditorWorld();
         }

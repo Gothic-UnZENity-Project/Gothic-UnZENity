@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using GUZ.Core.Config;
 using GUZ.Core.Data.Container;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
@@ -14,7 +15,7 @@ namespace GUZ.Core.Creator
 {
     public static class WayNetCreator
     {
-        public static void Create(GameConfiguration config, WorldContainer world)
+        public static void Create(DeveloperConfig config, WorldContainer world)
         {
             var waynetObj = new GameObject("WayNet");
 

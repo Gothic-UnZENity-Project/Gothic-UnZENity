@@ -28,7 +28,7 @@ namespace GUZ.Core.Npc
         {
             base.Start();
 
-            if (!GameGlobals.Config.EnableNpcEyeBlinking)
+            if (!GameGlobals.Config.Dev.EnableNpcEyeBlinking)
             {
                 return;
             }

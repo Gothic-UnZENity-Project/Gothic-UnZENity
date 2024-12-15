@@ -1,6 +1,6 @@
+using GUZ.Core.Config;
 using GUZ.Core.Manager;
 using GUZ.Core.Manager.Culling;
-using GUZ.Core.Manager.Settings;
 using GUZ.Core.World;
 
 namespace GUZ.Core
@@ -9,8 +9,7 @@ namespace GUZ.Core
     {
         public static IGlobalDataProvider Instance;
 
-        public static GameConfiguration Config => Instance.Config;
-        public static GameSettings Settings => Instance.Settings;
+        public static ConfigManager Config => Instance.Config;
         public static SaveGameManager SaveGame => Instance.SaveGame;
         public static LoadingManager Loading => Instance.Loading;
         public static PlayerManager Player => Instance.Player;

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using GUZ.Core.Config;
 using ZenKit;
 
 namespace GUZ.Core.Manager
@@ -12,7 +13,7 @@ namespace GUZ.Core.Manager
         private SaveState _saveState => GameGlobals.SaveGame.Save.State;
 
 
-        public StoryManager(GameConfiguration config)
+        public StoryManager(DeveloperConfig config)
         {
             // For later. ;-)
         }

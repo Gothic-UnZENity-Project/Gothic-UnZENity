@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using GUZ.Core.Config;
 using GUZ.Core.Creator;
 using GUZ.Core.Extensions;
 using GUZ.Core.Npc;
@@ -16,7 +17,7 @@ namespace GUZ.Core.Manager.Culling
         private BoundingSphere[] _spheres;
         private readonly Dictionary<int, Transform> _visibleNpcs = new();
 
-        public NpcMeshCullingManager(GameConfiguration config)
+        public NpcMeshCullingManager(DeveloperConfig config)
         {
             _featureEnableCulling = config.EnableNpcMeshCulling;
             _featureCullingDistance = config.NpcCullingDistance;

@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using GUZ.Core.Caches;
+using GUZ.Core.Config;
 using GUZ.Core.Creator.Meshes.V2;
 using GUZ.Core.Data.Container;
 using GUZ.Core.Extensions;
@@ -25,7 +26,7 @@ namespace GUZ.Core.Creator
             GlobalEventDispatcher.WorldSceneLoaded.AddListener(WorldLoaded);
         }
 
-        public static async Task CreateAsync(GameConfiguration config, LoadingManager loading, GameObject root)
+        public static async Task CreateAsync(DeveloperConfig config, LoadingManager loading, GameObject root)
         {
             _worldGo = root;
 

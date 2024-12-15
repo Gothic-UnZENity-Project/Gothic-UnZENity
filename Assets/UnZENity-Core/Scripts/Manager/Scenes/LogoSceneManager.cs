@@ -15,8 +15,8 @@ namespace GUZ.Core.Manager.Scenes
 
         public void Init()
         {
-            Debug.Log($"INI: playLogoVideos = {GameGlobals.Settings.IniPlayLogoVideos}");
-            if (GameGlobals.Settings.IniPlayLogoVideos)
+            Debug.Log($"INI: playLogoVideos = {GameGlobals.Config.Gothic.IniPlayLogoVideos}");
+            if (GameGlobals.Config.Gothic.IniPlayLogoVideos)
             {
                 GameManager.I.LoadScene(Constants.SceneMainMenu, Constants.SceneLogo);
                 return;

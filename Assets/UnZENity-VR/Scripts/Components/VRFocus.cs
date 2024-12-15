@@ -46,8 +46,8 @@ namespace GUZ.VR.Components
                 _mainCamera = Camera.main;
 
                 // Features also need to be fetched once only.
-                _featureBrightenUp = GameGlobals.Config.BrightenUpHoveredVOBs;
-                _featureShowName = GameGlobals.Config.ShowNamesOnHoveredVOBs;
+                _featureBrightenUp = GameGlobals.Config.Dev.BrightenUpHoveredVOBs;
+                _featureShowName = GameGlobals.Config.Dev.ShowNamesOnHoveredVOBs;
             }
 
             if (_featureBrightenUp)
