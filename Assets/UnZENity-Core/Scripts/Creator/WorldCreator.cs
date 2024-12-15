@@ -21,11 +21,6 @@ namespace GUZ.Core.Creator
         private static GameObject _worldGo;
         private static HashSet<IPolygon> _claimedPolygons;
 
-        static WorldCreator()
-        {
-            GlobalEventDispatcher.WorldSceneLoaded.AddListener(WorldLoaded);
-        }
-
         public static async Task CreateAsync(DeveloperConfig config, LoadingManager loading, GameObject root)
         {
             _worldGo = root;
@@ -408,11 +403,6 @@ namespace GUZ.Core.Creator
             });
 
             return mergedChunks;
-        }
-
-        private static void WorldLoaded()
-        {
-            GameContext.InteractionAdapter.SetTeleportationArea(_worldGo);
         }
 
 

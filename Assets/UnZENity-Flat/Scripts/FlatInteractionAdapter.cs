@@ -63,11 +63,6 @@ namespace GUZ.Flat
             // NOP
         }
 
-        public void SetTeleportationArea(GameObject teleportationGo)
-        {
-            // NOP
-        }
-
         public void IntroduceChapter(string chapter, string text, string texture, string wav, int time)
         {
             throw new NotImplementedException();
