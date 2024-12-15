@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using GUZ.Core.Config;
 using UnityEngine;
 
 namespace GUZ.Core.World
@@ -33,7 +34,7 @@ namespace GUZ.Core.World
         private readonly int _featureStartMinute;
         private readonly float _featureTimeMultiplier;
 
-        public GameTime(GameConfiguration config, ICoroutineManager coroutineManager)
+        public GameTime(DeveloperConfig config, ICoroutineManager coroutineManager)
         {
             _coroutineManager = coroutineManager;
             _featureStartHour = config.StartTimeHour;

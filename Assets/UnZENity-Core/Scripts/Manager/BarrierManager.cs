@@ -1,3 +1,4 @@
+using GUZ.Core.Config;
 using GUZ.Core.Creator.Meshes.V2;
 using GUZ.Core.Extensions;
 using UnityEngine;
@@ -43,7 +44,7 @@ namespace GUZ.Core.Manager
         private readonly bool _featureEnableSounds;
         private readonly bool _featureShowBarrierLogs;
 
-        public BarrierManager(GameConfiguration config)
+        public BarrierManager(DeveloperConfig config)
         {
             _featureShowBarrierVisual = config.EnableBarrierVisual;
             _featureEnableSounds = config.EnableGameSounds;

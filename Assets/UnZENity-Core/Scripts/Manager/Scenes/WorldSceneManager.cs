@@ -44,30 +44,30 @@ namespace GUZ.Core.Manager.Scenes
                 // 1.
                 // Build the world and vob meshes, populating the texture arrays.
                 // We need to start creating Vobs as we need to calculate world slicing based on amount of lights at a certain space afterwards.
-                if (config.EnableVOBs)
+                if (config.Dev.EnableVOBs)
                 {
-                    await VobCreator.CreateAsync(config, GameGlobals.Loading, GameGlobals.SaveGame.CurrentWorldData.Vobs, vobRoot);
+                    await VobCreator.CreateAsync(config.Dev, GameGlobals.Loading, GameGlobals.SaveGame.CurrentWorldData.Vobs, vobRoot);
                 }
 
                 // 2.
-                WayNetCreator.Create(config, GameGlobals.SaveGame.CurrentWorldData);
+                WayNetCreator.Create(config.Dev, GameGlobals.SaveGame.CurrentWorldData);
 
                 // 3.
                 // If the world is visited for the first time, then we need to load Npcs via Wld_InsertNpc()
-                if (config.EnableNpcs)
+                if (config.Dev.EnableNpcs)
                 {
-                    await NpcCreator.CreateAsync(config, GameGlobals.Loading);
+                    await NpcCreator.CreateAsync(config.Dev, GameGlobals.Loading);
                 }
 
                 // 4.
-                if (config.EnableWorldMesh)
+                if (config.Dev.EnableWorldMesh)
                 {
                     // initialize Lights before world creation
                     vobRoot.SetActive(true); // temporary enable vobRoot
                     await StationaryLightsManager.InitializeThreadSafeLightData();
                     vobRoot.SetActive(false); // disable to save some seconds in loading time ;p
 
-                    await WorldCreator.CreateAsync(config, GameGlobals.Loading, worldRoot);
+                    await WorldCreator.CreateAsync(config.Dev, GameGlobals.Loading, worldRoot);
                     GameGlobals.Lights.ClearThreadSafeLights();
                 }
 
@@ -112,7 +112,7 @@ namespace GUZ.Core.Manager.Scenes
         private void TeleportPlayerToStart()
         {
             // 1.
-            var debugSpawnAtWayPoint = GameGlobals.Config.SpawnAtWaypoint;
+            var debugSpawnAtWayPoint = GameGlobals.Config.Dev.SpawnAtWaypoint;
 
             // If we currently load world from a save game, we will use the stored hero position which was set during VOB loading.
             if (GameGlobals.SaveGame.IsFirstWorldLoadingFromSaveGame)

@@ -1,3 +1,4 @@
+using GUZ.Core.Config;
 using GUZ.Core.Globals;
 using UnityEngine;
 
@@ -15,16 +16,16 @@ namespace GUZ.Core.Manager.Scenes
         {
             GameContext.InteractionAdapter.InitUIInteraction();
 
-            if (!GameGlobals.Config.EnableMainMenu)
+            if (!GameGlobals.Config.Dev.EnableMainMenu)
             {
                 // We need to invoke this event, even when we skip MainMenu (for event listeners, main menu is 'loaded')
                 GlobalEventDispatcher.MainMenuSceneLoaded.Invoke();
 
-                if (GameGlobals.Config.LoadFromSaveSlot)
+                if (GameGlobals.Config.Dev.LoadFromSaveSlot)
                 {
-                    var saveId = GameGlobals.Config.SaveSlotToLoad;
+                    var saveId = GameGlobals.Config.Dev.SaveSlotToLoad;
                     var save = GameGlobals.SaveGame.GetSaveGame(saveId);
-                    GameManager.I.LoadWorld(save.Metadata.World, GameGlobals.Config.SaveSlotToLoad, Constants.SceneMainMenu);
+                    GameManager.I.LoadWorld(save.Metadata.World, GameGlobals.Config.Dev.SaveSlotToLoad, Constants.SceneMainMenu);
                 }
                 else
                 {
@@ -44,7 +45,7 @@ namespace GUZ.Core.Manager.Scenes
 
         private string GetWorldNameToSpawn()
         {
-            var world = GameGlobals.Config.PreselectWorldToSpawn;
+            var world = GameGlobals.Config.Dev.PreselectWorldToSpawn;
 
             if (world == WorldToSpawn.None)
             {
@@ -53,7 +54,7 @@ namespace GUZ.Core.Manager.Scenes
             }
             else
             {
-                return GameConfiguration.WorldMappings[world];
+                return DeveloperConfig.WorldMappings[world];
             }
         }
     }

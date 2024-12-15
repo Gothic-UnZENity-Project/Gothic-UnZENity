@@ -1,3 +1,4 @@
+using GUZ.Core.Config;
 using GUZ.Core.Extensions;
 using UnityEngine;
 
@@ -5,7 +6,7 @@ namespace GUZ.Core.Manager.Culling
 {
     public class VobSoundCullingManager : AbstractCullingManager
     {
-        public VobSoundCullingManager(GameConfiguration config)
+        public VobSoundCullingManager(DeveloperConfig config)
         {
             // NOP
         }

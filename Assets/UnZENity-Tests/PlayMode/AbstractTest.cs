@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections;
-using GUZ.Core;
+using GUZ.Core.Config;
 using GUZ.Core.Globals;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -22,9 +22,9 @@ namespace GUZ.Tests.PlayMode
         /// Unity seems to cache loading of Scriptable Objects. We therefore load it before entering Bootstrap scene and updating it.
         /// Bootstrap.GameManager.Config will then leverage the same _altered_ GameConfiguration we load in here.
         /// </summary>
-        protected GameConfiguration GetConfiguration()
+        protected DeveloperConfig GetConfiguration()
         {
-            return Resources.Load<GameConfiguration>("GameConfigurations/Production");
+            return Resources.Load<DeveloperConfig>("GameConfigurations/Production");
         }
 
         protected IEnumerator PrepareTest()

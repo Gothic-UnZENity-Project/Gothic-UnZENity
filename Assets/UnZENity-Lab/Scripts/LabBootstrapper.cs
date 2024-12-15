@@ -1,10 +1,10 @@
 using System.Collections;
 using GUZ.Core;
 using GUZ.Core.Caches;
+using GUZ.Core.Config;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
 using GUZ.Core.Manager.Culling;
-using GUZ.Core.Manager.Settings;
 using GUZ.Core.Util;
 using GUZ.Core.Vm;
 using GUZ.Core.World;
@@ -19,8 +19,7 @@ namespace GUZ.Lab
     [RequireComponent(typeof(TextureManager), typeof(FontManager))]
     public class LabBootstrapper : MonoBehaviour, IGlobalDataProvider, ICoroutineManager
     {
-        [field: SerializeField]
-        public GameConfiguration Config { get; private set; }
+        public DeveloperConfig DeveloperConfig;
 
         public LabMusicHandler LabMusicHandler;
         public LabSoundHandler LabSoundHandler;
@@ -31,16 +30,17 @@ namespace GUZ.Lab
         public LabVobItemHandler VobItemHandler;
         public LabNpcAnimationHandler LabNpcAnimationHandler;
         public LabLockHandler LabLockHandler;
+
+        private ConfigManager _configManager;
         private MusicManager _gameMusicManager;
         private VideoManager _videoManager;
         private RoutineManager _npcRoutineManager;
-        private GameSettings _settings;
         private SaveGameManager _save;
         private TextureManager _textureManager;
         private FontManager _fontManager;
         private StoryManager _story;
 
-        public GameSettings Settings => _settings;
+        public ConfigManager Config => _configManager;
         public SaveGameManager SaveGame => _save;
         public LoadingManager Loading => null;
         public PlayerManager Player => null;
@@ -77,21 +77,25 @@ namespace GUZ.Lab
         {
             GameGlobals.Instance = this;
 
-            Logger.Set(Config.ZenKitLogLevel, Logging.OnZenKitLogMessage);
-            DirectMusic.Logger.Set(Config.DirectMusicLogLevel, Logging.OnDirectMusicLogMessage);
-            _settings = GameSettings.Load(Config.GameVersion);
+            _configManager = new ConfigManager();
+            _configManager.LoadRootJson();
+            _configManager.SetDeveloperConfig(DeveloperConfig);
+            _configManager.LoadGothicInis(GameVersion.Gothic1);
+
+            Logger.Set(Config.Dev.ZenKitLogLevel, Logging.OnZenKitLogMessage);
+            DirectMusic.Logger.Set(Config.Dev.DirectMusicLogLevel, Logging.OnDirectMusicLogMessage);
             _save = new SaveGameManager();
-            _story = new StoryManager(Config);
+            _story = new StoryManager(Config.Dev);
             _textureManager = GetComponent<TextureManager>();
             _fontManager = GetComponent<FontManager>();
-            _npcRoutineManager = new RoutineManager(Config);
-            _gameMusicManager = new MusicManager(Config);
-            _videoManager = new VideoManager(Config);
+            _npcRoutineManager = new RoutineManager(Config.Dev);
+            _gameMusicManager = new MusicManager(Config.Dev);
+            _videoManager = new VideoManager(Config.Dev);
 
-            ResourceLoader.Init(_settings.Gothic1Path);
+            ResourceLoader.Init(Config.Root.Gothic1Path);
 
-            GameContext.SetControlContext(Config.GameControls);
-            GameContext.SetGameVersionContext(Config.GameVersion);
+            GameContext.SetControlContext(Config.Dev.GameControls);
+            GameContext.SetGameVersionContext(Config.Dev.GameVersion);
 
             _gameMusicManager.Init();
             _npcRoutineManager.Init();
@@ -107,7 +111,7 @@ namespace GUZ.Lab
             // TODO - Broken. Fix before use.
             // NpcHelper.CacheHero();
 
-            GuzBootstrapper.BootGothicUnZeNity(Config, _settings.Gothic1Path);
+            GuzBootstrapper.BootGothicUnZeNity();
 
             LabNpcAnimationHandler.Bootstrap();
             LabMusicHandler.Bootstrap();

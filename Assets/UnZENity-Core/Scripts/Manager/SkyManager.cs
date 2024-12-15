@@ -2,10 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using GUZ.Core.Caches;
+using GUZ.Core.Config;
 using GUZ.Core.Creator.Sounds;
 using GUZ.Core.Data;
 using GUZ.Core.Extensions;
-using GUZ.Core.Manager.Settings;
 using GUZ.Core.World;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -22,7 +22,6 @@ namespace GUZ.Core.Manager
         private readonly float _pointLightIntensity = 1f;
         private bool _isRaining;
         private readonly GameTimeInterval _sunPerformanceSetting;
-        private readonly GameSettings _gameSettings;
         private readonly bool _gameSounds;
 
         private float _masterTime;
@@ -60,7 +59,7 @@ namespace GUZ.Core.Manager
         private static readonly int _domeColor1ShaderId = Shader.PropertyToID("_DomeColor1");
         private static readonly int _domeColor2ShaderId = Shader.PropertyToID("_DomeColor2");
 
-        public SkyManager(GameConfiguration config, GameTime time, GameSettings settings)
+        public SkyManager(DeveloperConfig config, GameTime time)
         {
             _gameTime = time;
 
@@ -68,7 +67,6 @@ namespace GUZ.Core.Manager
             _ambientColor = config.AmbientLightColor;
             _pointLightIntensity = config.SunLightIntensity;
             _sunPerformanceSetting = config.SunUpdateInterval;
-            _gameSettings = settings;
             _gameSounds = config.EnableGameSounds;
         }
 
@@ -139,7 +137,7 @@ namespace GUZ.Core.Manager
             {
                 // hacky way to use the proper color for the current day until animTex is implemented
                 // % 2 is used as there are only 2 textures for the sky, consistent between G1 and G2
-                colorValues = _gameSettings.IniSkyDayColor(day % 2).Split(' ').Select(float.Parse).ToArray();
+                colorValues = GameGlobals.Config.Gothic.IniSkyDayColor(day % 2).Split(' ').Select(float.Parse).ToArray();
             }
             catch (Exception e)
             {

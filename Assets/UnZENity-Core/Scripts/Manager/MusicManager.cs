@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using DirectMusic;
+using GUZ.Core.Config;
 using GUZ.Core.Globals;
 using GUZ.Core.Vob;
 using UnityEngine;
@@ -50,7 +51,7 @@ namespace GUZ.Core.Manager
 
         private readonly bool _featureEnabled;
 
-        public MusicManager(GameConfiguration config)
+        public MusicManager(DeveloperConfig config)
         {
             I = this;
             _featureEnabled = config.EnableGameMusic;

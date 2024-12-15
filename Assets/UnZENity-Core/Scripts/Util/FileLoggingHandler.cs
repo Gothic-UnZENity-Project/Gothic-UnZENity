@@ -1,6 +1,6 @@
 using System;
 using System.IO;
-using GUZ.Core.Manager.Settings;
+using GUZ.Core.Config;
 using UnityEngine;
 
 namespace GUZ.Core.Util
@@ -52,11 +52,11 @@ namespace GUZ.Core.Util
             _fileWriter.Flush();
         }
 
-        public void Init(GameSettings settings)
+        public void Init(JsonRootConfig rootRootConfig)
         {
-            if (Enum.TryParse(settings.LogLevel, true, out LogLevel value))
+            if (Enum.TryParse(rootRootConfig.LogLevel, true, out LogLevel value))
             {
-                _fileWriter.WriteLine("LogLevel Setting found: " + settings.LogLevel);
+                _fileWriter.WriteLine("LogLevel Setting found: " + rootRootConfig.LogLevel);
                 _logLevel = value;
             }
             else

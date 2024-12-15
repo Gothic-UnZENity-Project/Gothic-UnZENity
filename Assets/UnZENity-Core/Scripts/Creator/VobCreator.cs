@@ -5,6 +5,7 @@ using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using GUZ.Core.Caches;
+using GUZ.Core.Config;
 using GUZ.Core.Creator.Meshes.V2;
 using GUZ.Core.Data.Container;
 using GUZ.Core.Extensions;
@@ -69,7 +70,7 @@ namespace GUZ.Core.Creator
             GameContext.InteractionAdapter.SetTeleportationArea(_teleportGo);
         }
 
-        public static async Task CreateAsync(GameConfiguration config, LoadingManager loading, List<IVirtualObject> vobs, GameObject root)
+        public static async Task CreateAsync(DeveloperConfig config, LoadingManager loading, List<IVirtualObject> vobs, GameObject root)
         {
             Stopwatch stopwatch = new();
 
@@ -125,7 +126,7 @@ namespace GUZ.Core.Creator
             return vobs.Count + vobs.Sum(vob => GetTotalVobCount(vob.Children));
         }
 
-        private static async Task CreateVobs(GameConfiguration config, LoadingManager loading,
+        private static async Task CreateVobs(DeveloperConfig config, LoadingManager loading,
             List<IVirtualObject> vobs, GameObject parent = null, bool reparent = false)
         {
             foreach (var vob in vobs)
@@ -150,7 +151,7 @@ namespace GUZ.Core.Creator
         }
 
         [CanBeNull]
-        private static GameObject LoadVob(GameConfiguration config, IVirtualObject vob, GameObject parent = null)
+        private static GameObject LoadVob(DeveloperConfig config, IVirtualObject vob, GameObject parent = null)
         {
             GameObject go = null;
             switch (vob.Type)
@@ -451,7 +452,7 @@ namespace GUZ.Core.Creator
         /// <summary>
         /// Some fire slots have the light too low to cast light onto the mesh and the surroundings.
         /// </summary>
-        private static GameObject CreateFire(GameConfiguration config, Fire vob, GameObject parent = null)
+        private static GameObject CreateFire(DeveloperConfig config, Fire vob, GameObject parent = null)
         {
             var go = CreateDefaultMesh(vob, parent, true);
 
