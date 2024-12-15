@@ -40,6 +40,8 @@ namespace GUZ.Core.Creator
         private static readonly VirtualObjectType[] _vobTypesEagerLoading =
         {
             VirtualObjectType.zCVobLight,
+            VirtualObjectType.zCVobSound,
+            VirtualObjectType.zCVobSoundDaytime,
             VirtualObjectType.oCZoneMusic,
             VirtualObjectType.oCZoneMusicDefault,
             VirtualObjectType.zCVobSpot,
@@ -143,7 +145,13 @@ namespace GUZ.Core.Creator
             var loader = go.AddComponent<VobLoader>();
             loader.Vob = vob;
 
+            SetPosAndRot(go, vob.Position, vob.Rotation);
             go.SetParent(GetRootGameObjectOfType(vob.Type));
+
+            _cullingVobObjects.Add(go);
+
+            // DEBUG - For Items
+            GameGlobals.Vobs.InitVob(go);
 
             return go;
         }

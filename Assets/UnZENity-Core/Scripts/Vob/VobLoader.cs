@@ -6,5 +6,6 @@ namespace GUZ.Core.Vob
     public class VobLoader : MonoBehaviour
     {
         public IVirtualObject Vob;
+        public bool IsLoaded;
     }
 }

@@ -172,10 +172,13 @@ namespace GUZ.Core.Manager.Culling
                 return;
             }
 
+            var go = vobObjects[evt.index];
+
             switch (evt.currentDistance)
             {
                 case 0: // grace period band - ignore FC and OC, plainly enable the vob!
                     vobObjects[evt.index].SetActive(true);
+                    GameGlobals.Vobs.InitVob(go);
                     break;
                 default:
                     vobObjects[evt.index].SetActive(evt.hasBecomeVisible || (evt.isVisible && !evt.hasBecomeInvisible));
@@ -192,6 +195,8 @@ namespace GUZ.Core.Manager.Culling
             {
                 return;
             }
+
+            // FIXME - As the VOBs aren't loaded yet, we need to fetch the LocalBounds from a cache which needs to be created before the game starts.
 
             var smallDim = _featureSmallCullingGroup.MaximumObjectSize;
             var mediumDim = _featureMediumCullingGroup.MaximumObjectSize;

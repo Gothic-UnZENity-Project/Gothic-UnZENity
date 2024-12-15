@@ -5,7 +5,6 @@ using GUZ.Core.Data.Container;
 using GUZ.Core.Extensions;
 using GUZ.Core.Manager;
 using GUZ.Core.Vm;
-using GUZ.Core.World;
 using UnityEngine;
 using ZenKit;
 using ZenKit.Daedalus;
@@ -71,9 +70,9 @@ namespace GUZ.Core.Creator.Meshes.V2
             return npcWeaponBuilder.Build();
         }
 
-        public static GameObject CreateVob(string objectName, IMultiResolutionMesh mrm, Vector3 position,
-            Quaternion rotation, bool withCollider, GameObject parent = null, GameObject rootGo = null,
-            bool useTextureArray = true)
+        public static GameObject CreateVob(string objectName, IMultiResolutionMesh mrm,
+            Vector3 position = default, Quaternion rotation = default, bool withCollider = true,
+            GameObject parent = null, GameObject rootGo = null, bool useTextureArray = true)
         {
             if (!HasTextures(mrm))
             {
@@ -115,7 +114,8 @@ namespace GUZ.Core.Creator.Meshes.V2
             return vobBuilder.Build();
         }
 
-        public static GameObject CreateVob(string objectName, IMorphMesh mmb, Vector3 position, Quaternion rotation,
+        public static GameObject CreateVob(string objectName, IMorphMesh mmb,
+            Vector3 position = default, Quaternion rotation = default,
             GameObject parent = null, GameObject rootGo = null)
         {
             var vobBuilder = new VobMeshBuilder();

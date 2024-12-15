@@ -1,6 +1,7 @@
 using GUZ.Core.Config;
 using GUZ.Core.Manager;
 using GUZ.Core.Manager.Culling;
+using GUZ.Core.Vob;
 using GUZ.Core.World;
 
 namespace GUZ.Core
@@ -21,6 +22,7 @@ namespace GUZ.Core
         public static StoryManager Story => Instance.Story;
         public static FontManager Font => Instance.Font;
         public static StationaryLightsManager Lights => Instance.Lights;
+        public static VobManager Vobs => Instance.Vobs;
         public static VobMeshCullingManager VobMeshCulling => Instance.VobMeshCulling;
         public static NpcMeshCullingManager NpcMeshCulling => Instance.NpcMeshCulling;
         public static VobSoundCullingManager SoundCulling => Instance.SoundCulling;

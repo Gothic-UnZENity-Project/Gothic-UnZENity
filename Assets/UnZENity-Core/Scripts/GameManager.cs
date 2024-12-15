@@ -7,6 +7,7 @@ using GUZ.Core.Manager;
 using GUZ.Core.Manager.Culling;
 using GUZ.Core.Manager.Scenes;
 using GUZ.Core.Util;
+using GUZ.Core.Vob;
 using GUZ.Core.World;
 using MyBox;
 using UnityEngine;
@@ -50,10 +51,9 @@ namespace GUZ.Core
 
         public StationaryLightsManager Lights { get; private set; }
 
+        public VobManager Vobs { get; private set; }
         public VobMeshCullingManager VobMeshCulling { get; private set; }
-
         public NpcMeshCullingManager NpcMeshCulling { get; private set; }
-
         public VobSoundCullingManager SoundCulling { get; private set; }
         
 
@@ -79,6 +79,7 @@ namespace GUZ.Core
             Textures = GetComponent<TextureManager>();
             Font = GetComponent<FontManager>();
             Loading = new LoadingManager();
+            Vobs = new VobManager();
             VobMeshCulling = new VobMeshCullingManager(DeveloperConfig, this);
             NpcMeshCulling = new NpcMeshCullingManager(DeveloperConfig);
             SoundCulling = new VobSoundCullingManager(DeveloperConfig);
