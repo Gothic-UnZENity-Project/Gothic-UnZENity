@@ -83,6 +83,7 @@ namespace GUZ.Core.Globals
         public const string SceneBootstrap = "Bootstrap";
         public const string ScenePlayer = "Player";
         public const string SceneGameVersion = "GameVersion";
+        public const string ScenePreCaching = "PreCaching";
         public const string SceneLogo = "Logo";
         public const string SceneMainMenu = "MainMenu";
         public const string SceneLoading = "Loading";
@@ -145,6 +146,8 @@ namespace GUZ.Core.Globals
 
         public const string DaedalusHeroInstanceName = "PC_HERO"; // TODO - can be read from .ini file.
 
+        // Alter this value to enforce game to recreate cache during next start.
+        public const string StaticCacheVersion = "1";
 
         public static class DaedalusConst
         {

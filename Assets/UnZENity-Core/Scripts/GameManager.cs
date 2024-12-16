@@ -33,6 +33,7 @@ namespace GUZ.Core
         public SaveGameManager SaveGame { get; private set; }
 
         public LoadingManager Loading { get; private set; }
+        public StaticCacheManager StaticCache { get; private set; }
 
         public PlayerManager Player { get; private set; }
         public SkyManager Sky { get; private set; }
@@ -79,6 +80,7 @@ namespace GUZ.Core
             Textures = GetComponent<TextureManager>();
             Font = GetComponent<FontManager>();
             Loading = new LoadingManager();
+            StaticCache = new StaticCacheManager();
             Vobs = new VobManager();
             VobMeshCulling = new VobMeshCullingManager(DeveloperConfig, this);
             NpcMeshCulling = new NpcMeshCullingManager(DeveloperConfig);

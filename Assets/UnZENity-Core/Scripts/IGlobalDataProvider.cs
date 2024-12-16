@@ -11,6 +11,8 @@ namespace GUZ.Core
         public ConfigManager Config { get; }
         public SaveGameManager SaveGame { get; }
         public LoadingManager Loading { get; }
+        public StaticCacheManager StaticCache { get; }
+
         public PlayerManager Player { get; }
         public SkyManager Sky { get; }
         public GameTime Time { get; }

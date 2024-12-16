@@ -44,6 +44,7 @@ namespace GUZ.Lab
         public ConfigManager Config => _configManager;
         public SaveGameManager SaveGame => _save;
         public LoadingManager Loading => null;
+        public StaticCacheManager StaticCache => null;
         public PlayerManager Player => null;
         public SkyManager Sky => null;
         public GameTime Time => null;
