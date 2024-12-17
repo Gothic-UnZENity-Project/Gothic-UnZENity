@@ -519,8 +519,10 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
 
             CreateMorphMeshEnd(preparedVertices);
 
-            // TODO - Why adding a null-renderer if !UseTextureArray? Couldn't we just disable this Add() call fully?
-            TextureCache.VobMeshesForTextureArray.Add(mesh, new TextureCache.VobMeshData(mrmData, subMeshPerTextureFormat.Keys.ToList(), UseTextureArray ? meshRenderer : null));
+            if (UseTextureArray)
+            {
+                TextureCache.VobMeshesForTextureArray.Add(mesh, new TextureCache.VobMeshData(mrmData, subMeshPerTextureFormat.Keys.ToList(), meshRenderer));
+            }
 
             MultiTypeCache.Meshes.Add($"{MeshName}_{meshIndex}", mesh);
         }

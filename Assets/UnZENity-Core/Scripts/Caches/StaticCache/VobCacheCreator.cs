@@ -107,14 +107,14 @@ namespace GUZ.Core.Caches.StaticCache
             var mmb = ResourceLoader.TryGetMorphMesh(meshName);
             if (mmb != null)
             {
-                return MeshFactory.CreateVob(meshName, mmb);
+                return MeshFactory.CreateVob(meshName, mmb, useTextureArray: false);
             }
 
             // MRM
             var mrm = ResourceLoader.TryGetMultiResolutionMesh(meshName);
             if (mrm != null)
             {
-                return MeshFactory.CreateVob(meshName, mrm, withCollider: false);
+                return MeshFactory.CreateVob(meshName, mrm, withCollider: false, useTextureArray: false);
             }
 
             Debug.LogError($"No mesh found for >{meshName}<");
