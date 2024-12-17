@@ -16,7 +16,7 @@ using TextureFormat = UnityEngine.TextureFormat;
 using Mesh = UnityEngine.Mesh;
 using Texture = UnityEngine.Texture;
 
-namespace GUZ.Core.Creator.Meshes.V2.Builder
+namespace GUZ.Core.Creator.Meshes.Builder
 {
     public abstract class AbstractMeshBuilder
     {

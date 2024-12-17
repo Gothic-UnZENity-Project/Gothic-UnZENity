@@ -5,7 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using GUZ.Core.Caches;
 using GUZ.Core.Config;
-using GUZ.Core.Creator.Meshes.V2;
+using GUZ.Core.Creator.Meshes;
 using GUZ.Core.Data.Container;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;

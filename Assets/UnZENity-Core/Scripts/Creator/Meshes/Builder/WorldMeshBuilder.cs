@@ -6,13 +6,12 @@ using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
 using GUZ.Core.Util;
-using GUZ.Core.World;
 using UnityEditor;
 using UnityEngine;
 using ZenKit;
 using Mesh = UnityEngine.Mesh;
 
-namespace GUZ.Core.Creator.Meshes.V2.Builder
+namespace GUZ.Core.Creator.Meshes.Builder
 {
     public class WorldMeshBuilder : AbstractMeshBuilder
     {

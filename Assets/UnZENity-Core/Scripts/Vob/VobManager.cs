@@ -1,5 +1,5 @@
 ﻿using System;
-using GUZ.Core.Creator.Meshes.V2;
+using GUZ.Core.Creator.Meshes;
 using GUZ.Core.Properties;
 using GUZ.Core.Vm;
 using UnityEngine;

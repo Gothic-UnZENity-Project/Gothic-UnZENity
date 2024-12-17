@@ -11,7 +11,7 @@ using Material = UnityEngine.Material;
 using Texture = UnityEngine.Texture;
 using TextureFormat = UnityEngine.TextureFormat;
 
-namespace GUZ.Core.Creator.Meshes.V2.Builder
+namespace GUZ.Core.Creator.Meshes.Builder
 {
     /// <summary>
     /// Create texture array for all meshes. Basically no MeshBuilder,

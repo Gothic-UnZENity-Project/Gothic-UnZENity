@@ -4,7 +4,7 @@ using GUZ.Core.Npc;
 using GUZ.Core.Properties;
 using UnityEngine;
 
-namespace GUZ.Core.Creator.Meshes.V2.Builder
+namespace GUZ.Core.Creator.Meshes.Builder
 {
     public class NpcHeadMeshBuilder : NpcMeshBuilder
     {
