@@ -1,6 +1,8 @@
 ﻿using System.Threading.Tasks;
+using GUZ.Core.Caches.StaticCache;
 using GUZ.Core.Globals;
 using UnityEngine;
+using ZenKit;
 
 namespace GUZ.Core.Manager.Scenes
 {
@@ -48,10 +50,48 @@ namespace GUZ.Core.Manager.Scenes
         /// </summary>
         private async Task CreateCaches()
         {
-            var x = ResourceLoader.GetNode("/_WORK/DATA/MESHES/_COMPILED");
+            var worldsToLoad = GameContext.GameVersionAdapter.Version == GameVersion.Gothic1 ? _gothic1Worlds : _gothic2Worlds;
+
+            var vobCache = new VobCacheCreator();
+
+            foreach (var worldName in worldsToLoad)
+            {
+                // DEBUG - Remove this IF to enforce recreation of cache.
+                if (GameGlobals.StaticCache.DoCacheFilesExist(worldName))
+                {
+                    if (GameGlobals.StaticCache.ReadMetadata(worldName).Version == Constants.StaticCacheVersion)
+                    {
+                        Debug.Log($"{worldName} already cached and metadata version matches. Skipping...");
+                        continue;
+                    }
+                }
+
+                Debug.Log($"### PreCaching meshes for world: {worldName}");
+                var worldData = ResourceLoader.TryGetWorld(worldName, GameContext.GameVersionAdapter.Version);
+                // Create each VOB object once to get its bounding box.
 
 
-            return;
+                vobCache.CalculateVobBounds(worldData.RootObjects);
+
+
+                Debug.Log($"### Saving cache for {worldName} done.");
+
+
+                // DEBUG restore
+                // {
+                //     var loadRoot = new GameObject("DebugRestore");
+                //     loadRoot.transform.position = new(1000, 0, 0);
+                //
+                //     await GameGlobals.StaticCache.LoadCache(loadRoot, worldName);
+                //
+                //     Debug.Log("DEBUG Loading done!");
+                //     return;
+                // }
+            }
+
+            vobCache.CalculateVobtemBounds();
+
+            await GameGlobals.StaticCache.SaveGlobalCache(vobCache.Bounds);
 
             // Every world of the game is cached successfully. Now let's move on!
             GameManager.I.LoadScene(Constants.SceneLogo, Constants.ScenePreCaching);

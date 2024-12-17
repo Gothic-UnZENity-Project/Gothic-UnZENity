@@ -42,6 +42,10 @@ namespace GUZ.Core.Manager.Scenes
             var fullWatch = Stopwatch.StartNew();
             try
             {
+                // 0.
+                // Load Static cache
+                await GameGlobals.StaticCache.LoadGlobalCache();
+
                 // 1.
                 // Build the world and vob meshes, populating the texture arrays.
                 // We need to start creating Vobs as we need to calculate world slicing based on amount of lights at a certain space afterwards.

@@ -3,7 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using GUZ.Core.Config;
+using GUZ.Core.Vm;
+using GUZ.Core.Vob;
 using UnityEngine;
+using ZenKit.Vobs;
+using Light = UnityEngine.Light;
 
 namespace GUZ.Core.Manager.Culling
 {
@@ -276,6 +280,44 @@ namespace GUZ.Core.Manager.Culling
         /// </summary>
         private Bounds? GetLocalBounds(GameObject go)
         {
+            go.TryGetComponent(out VobLoader loaderComp);
+
+            if (loaderComp == null)
+            {
+                Debug.LogError($"Couldn't find VobLoader for >{go}< to be used for CullingGroup. Skipping...");
+                return null;
+            }
+
+            var vob = loaderComp.Vob;
+
+            string meshName;
+            switch (vob.Type)
+            {
+                case VirtualObjectType.oCItem:
+                    var item = VmInstanceManager.TryGetItemData(vob.Name);
+                    meshName = item?.Visual;
+
+                    // e.g. ITMICELLO has no mesh
+                    if (meshName == null)
+                    {
+                        return null;
+                    }
+                    break;
+                default:
+                    meshName = vob.ShowVisual ? vob.Visual!.Name : vob.Name;
+                    break;
+            }
+
+            if (GameGlobals.StaticCache.LoadedVobsBounds.TryGetValue(meshName, out var bounds))
+            {
+                return bounds;
+            }
+            else
+            {
+                Debug.LogError($"Couldn't find bounds information from StaticCache for >{meshName}<.");
+                return null;
+            }
+
             try
             {
                 if (go.TryGetComponent<ParticleSystemRenderer>(out var particleRenderer))

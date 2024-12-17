@@ -49,7 +49,8 @@ namespace GUZ.Core.Creator
             VirtualObjectType.oCTriggerChangeLevel,
             VirtualObjectType.zCMover,
             VirtualObjectType.zCPFXController,
-            VirtualObjectType.zCTriggerList
+            VirtualObjectType.zCTriggerList,
+            VirtualObjectType.zCVobLevelCompo
         };
 
 

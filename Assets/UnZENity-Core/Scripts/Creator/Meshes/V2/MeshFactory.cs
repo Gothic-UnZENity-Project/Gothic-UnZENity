@@ -95,7 +95,8 @@ namespace GUZ.Core.Creator.Meshes.V2
             return vobBuilder.Build();
         }
 
-        public static GameObject CreateVob(string objectName, IModel mdl, Vector3 position, Quaternion rotation,
+        public static GameObject CreateVob(string objectName, IModel mdl,
+            Vector3 position = default, Quaternion rotation = default,
             GameObject parent = null, GameObject rootGo = null, bool useTextureArray = true)
         {
             if (!HasMeshes(mdl.Mesh))
@@ -130,8 +131,8 @@ namespace GUZ.Core.Creator.Meshes.V2
         }
 
         public static GameObject CreateVob(string objectName, IModelMesh mdm, IModelHierarchy mdh,
-            Vector3 position, Quaternion rotation, GameObject parent = null, GameObject rootGo = null,
-            bool useTextureArray = true)
+            Vector3 position = default, Quaternion rotation = default,
+            GameObject parent = null, GameObject rootGo = null, bool useTextureArray = true)
         {
             if (!HasMeshes(mdm))
             {

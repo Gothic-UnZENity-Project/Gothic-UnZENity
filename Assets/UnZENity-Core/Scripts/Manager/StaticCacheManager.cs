@@ -20,6 +20,7 @@ namespace GUZ.Core.Manager
     {
         private string _cacheRootFolderPath;
         private const string _fileNameMetadata = "metadata.json";
+        private const string _fileNameVobBounds = "vob-bounds.json.gz";
         private const string _fileNameMeshes = "meshes.json.gz";
         private const string _fileNameVobs = "vobs.json.gz";
 
@@ -27,12 +28,34 @@ namespace GUZ.Core.Manager
         // Will be used for storing and retrieving world+static vobs.
         // It helps us to store a mesh for a VOB only once as objects will reference its index when a VOB is created multiple times.
         private List<(Mesh Mesh, MeshCacheEntry CacheEntry)> _tempMeshCacheEntries = new();
+        private bool _isGlobalCacheLoaded;
+
+        public Dictionary<string, Bounds> LoadedVobsBounds { get; private set; }
 
         [Serializable]
         public class MetadataContainer
         {
             public string Version;
             public string CreationTime;
+        }
+
+        [Serializable]
+        public class VobBoundsContainer
+        {
+            public List<VobBoundsEntry> BoundsEntries;
+        }
+
+        [Serializable]
+        public class VobBoundsEntry
+        {
+            public VobBoundsEntry(string meshName, Bounds bounds)
+            {
+                MeshMeshName = meshName;
+                Bounds = bounds;
+            }
+
+            public string MeshMeshName;
+            public Bounds Bounds;
         }
 
         [Serializable]
@@ -74,7 +97,6 @@ namespace GUZ.Core.Manager
             public List<CacheEntry> Children = new();
         }
 
-
         public void Init()
         {
             _cacheRootFolderPath = $"{Application.persistentDataPath}/Cache/{GameContext.GameVersionAdapter.Version}/";
@@ -85,25 +107,22 @@ namespace GUZ.Core.Manager
         /// </summary>
         public bool DoCacheFilesExist(string worldName)
         {
-            return File.Exists(BuildFilePathName(worldName, _fileNameMetadata)) &&
-                   File.Exists(BuildFilePathName(worldName, _fileNameMeshes)) &&
-                   File.Exists(BuildFilePathName(worldName, _fileNameVobs));
+            return File.Exists(BuildWorldFilePathName(worldName, _fileNameMetadata)) &&
+                   File.Exists(BuildWorldFilePathName(worldName, _fileNameMeshes)) &&
+                   File.Exists(BuildWorldFilePathName(worldName, _fileNameVobs));
         }
 
         public MetadataContainer ReadMetadata(string worldName)
         {
-            var metadataString = File.ReadAllText(BuildFilePathName(worldName, _fileNameMetadata));
+            var metadataString = File.ReadAllText(BuildWorldFilePathName(worldName, _fileNameMetadata));
             return JsonUtility.FromJson<MetadataContainer>(metadataString);
         }
 
-        public async Task SaveCache(GameObject worldRootGo, GameObject vobsRootGo, string worldName)
+        public async Task SaveWorldCache(GameObject vobsRootGo, string worldName)
         {
             try
             {
-                // Create cache folder if it doesn't exist
-                Directory.CreateDirectory(BuildFilePathName(worldName, ""));
-                // Cleanup existing files (if we renamed some with a new version, these stalled files will be deleted as well)
-                Directory.EnumerateFiles(BuildFilePathName(worldName, "")).ForEach(File.Delete);
+                PrepareWorldFolder(worldName);
 
                 var metadata = new MetadataContainer()
                 {
@@ -116,11 +135,47 @@ namespace GUZ.Core.Manager
                     Meshes = _tempMeshCacheEntries.Select(i => i.CacheEntry).ToList()
                 };
 
-                await SaveCacheFile(metadata, meshData, vobsData, worldName);
+                await SaveWorldCacheFile(metadata, meshData, vobsData, worldName);
             }
             catch (Exception e)
             {
                 Debug.LogError($"There was some error while storing Mesh Cache: {e}");
+                throw;
+            }
+        }
+
+        private void PrepareWorldFolder(string worldName)
+        {
+            // Create cache folder if it doesn't exist
+            Directory.CreateDirectory(BuildWorldFilePathName(worldName, ""));
+            // Cleanup existing files (if we renamed some with a new version, these stalled files will be deleted as well)
+            Directory.EnumerateFiles(BuildWorldFilePathName(worldName, "")).ForEach(File.Delete);
+        }
+
+        private void PrepareGlobalFolder()
+        {
+            // Create cache folder if it doesn't exist
+            Directory.CreateDirectory(BuildGlobalFilePathName(""));
+            // Cleanup existing files (if we renamed some with a new version, these stalled files will be deleted as well)
+            Directory.EnumerateFiles(BuildGlobalFilePathName("")).ForEach(File.Delete);
+        }
+
+        public async Task SaveGlobalCache(Dictionary<string, Bounds> vobBounds)
+        {
+            try
+            {
+                PrepareGlobalFolder();
+
+                var vobBoundsContainer = new VobBoundsContainer
+                {
+                    BoundsEntries = vobBounds.Select(i => new VobBoundsEntry(i.Key, i.Value)).ToList()
+                };
+
+                await SaveGlobalCacheFile(vobBoundsContainer);
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"There was some error while storing Global Cache: {e}");
                 throw;
             }
         }
@@ -130,8 +185,8 @@ namespace GUZ.Core.Manager
             var stopwatch = Stopwatch.StartNew();
             try
             {
-                var meshString = await ReadCompressedData(BuildFilePathName(worldName, _fileNameMeshes));
-                var vobsString = await ReadCompressedData(BuildFilePathName(worldName, _fileNameVobs));
+                var meshString = await ReadCompressedData(BuildWorldFilePathName(worldName, _fileNameMeshes));
+                var vobsString = await ReadCompressedData(BuildWorldFilePathName(worldName, _fileNameVobs));
 
                 var meshJson = await ParseJson<MeshContainer>(meshString);
                 var vobsJson = await ParseJson<CacheContainer>(vobsString);
@@ -147,6 +202,33 @@ namespace GUZ.Core.Manager
             }
         }
 
+        public async Task LoadGlobalCache()
+        {
+            if (_isGlobalCacheLoaded)
+            {
+                return;
+            }
+            _isGlobalCacheLoaded = true;
+            
+            var stopwatch = Stopwatch.StartNew();
+            try
+            {
+                var vobBoundsString = await ReadCompressedData(BuildGlobalFilePathName(_fileNameVobBounds));
+
+                var vobBoundsContainer = await ParseJson<VobBoundsContainer>(vobBoundsString);
+
+                LoadedVobsBounds = vobBoundsContainer.BoundsEntries.ToDictionary(i => i.MeshMeshName, i => i.Bounds);
+            }
+            catch (Exception e)
+            {
+                Debug.LogError(e);
+                throw;
+            }
+            finally
+            {
+                stopwatch.Log("Loading global cache done.");
+            }
+        }
 
         private CacheContainer CollectWorldData(Transform worldRoot)
         {
@@ -247,7 +329,7 @@ namespace GUZ.Core.Manager
             return true;
         }
 
-        private async Task SaveCacheFile(MetadataContainer metadata, MeshContainer meshData, CacheContainer vobsData, string fileName)
+        private async Task SaveWorldCacheFile(MetadataContainer metadata, MeshContainer meshData, CacheContainer vobsData, string fileName)
         {
             string metadataJson = null;
             string meshJson = null;
@@ -261,9 +343,22 @@ namespace GUZ.Core.Manager
                 vobsJson = JsonUtility.ToJson(vobsData);
             });
 
-            await WriteData(metadataJson, BuildFilePathName(fileName, _fileNameMetadata));
-            await WriteCompressedData(meshJson, BuildFilePathName(fileName, _fileNameMeshes));
-            await WriteCompressedData(vobsJson, BuildFilePathName(fileName, _fileNameVobs));
+            await WriteData(metadataJson, BuildWorldFilePathName(fileName, _fileNameMetadata));
+            await WriteCompressedData(meshJson, BuildWorldFilePathName(fileName, _fileNameMeshes));
+            await WriteCompressedData(vobsJson, BuildWorldFilePathName(fileName, _fileNameVobs));
+        }
+
+        private async Task SaveGlobalCacheFile(VobBoundsContainer vobBoundsContainer)
+        {
+            string vobBoundsJson = null;
+
+            // We need to call loading the data in a separate thread to unblock main thread (VR movement etc.) during this IO heavy operation.
+            await Task.Run(() =>
+            {
+                vobBoundsJson = JsonUtility.ToJson(vobBoundsContainer);
+            });
+
+            await WriteCompressedData(vobBoundsJson, BuildGlobalFilePathName(_fileNameVobBounds));
         }
 
         private async Task WriteData(string data, string filePath)
@@ -319,10 +414,14 @@ namespace GUZ.Core.Manager
             return data;
         }
 
-
-        private string BuildFilePathName(string worldName, string fileName)
+        private string BuildWorldFilePathName(string worldName, string fileName)
         {
             return $"{_cacheRootFolderPath}/{worldName}/{fileName}";
+        }
+
+        private string BuildGlobalFilePathName(string fileName)
+        {
+            return $"{_cacheRootFolderPath}/Global/{fileName}";
         }
     }
 }
