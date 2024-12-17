@@ -220,8 +220,8 @@ namespace GUZ.Core.Manager.Culling
                 var bounds = GetLocalBounds(obj);
                 if (!bounds.HasValue)
                 {
-                    Debug.LogError($"Couldn't find mesh for >{obj}< to be used for CullingGroup. Skipping...");
-
+                    // e.g. ITMICELLO which has no mesh and therefore no cached Bounds.
+                    // Debug.LogError($"Couldn't find mesh for >{obj}< to be used for CullingGroup. Skipping...");
                     continue;
                 }
 

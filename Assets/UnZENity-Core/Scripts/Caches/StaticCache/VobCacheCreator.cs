@@ -32,6 +32,12 @@ namespace GUZ.Core.Caches.StaticCache
                     }
 
                     var go = CreateVobMesh(meshName);
+
+                    if (go == null)
+                    {
+                        continue;
+                    }
+
                     var boundingBox = CalculateBoundingBox(go);
                     Object.Destroy(go);
 
@@ -60,6 +66,12 @@ namespace GUZ.Core.Caches.StaticCache
                 }
 
                 var go = CreateVobMesh(item.Visual);
+
+                if (go == null)
+                {
+                    continue;
+                }
+
                 var boundingBox = CalculateBoundingBox(go);
                 Object.Destroy(go);
 
@@ -117,7 +129,8 @@ namespace GUZ.Core.Caches.StaticCache
                 return MeshFactory.CreateVob(meshName, mrm, withCollider: false, useTextureArray: false);
             }
 
-            Debug.LogError($"No mesh found for >{meshName}<");
+            // e.g. ITLSTORCHBURNING.ZEN
+            // Debug.LogError($"No mesh found for >{meshName}<");
             return null;
         }
 
