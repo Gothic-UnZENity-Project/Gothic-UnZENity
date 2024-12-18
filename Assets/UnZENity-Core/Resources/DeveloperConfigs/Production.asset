@@ -63,5 +63,6 @@ MonoBehaviour:
   TimeSpeedMultiplier: 1
   EnableWorldMesh: 1
   EnableBarrierVisual: 1
+  CompressStaticCacheFiles: 1
   EnableDecalVisuals: 0
   EnableParticleEffects: 0

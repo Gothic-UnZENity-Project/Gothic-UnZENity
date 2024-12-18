@@ -281,6 +281,9 @@ namespace GUZ.Core.Config
         public bool EnableWorldMesh = true;
         public bool EnableBarrierVisual = true;
 
+        [Separator("StaticCache")]
+        public bool CompressStaticCacheFiles = true;
+
         [Separator("WIP - Not production ready", true)]
         public bool EnableDecalVisuals;
         public bool EnableParticleEffects;
