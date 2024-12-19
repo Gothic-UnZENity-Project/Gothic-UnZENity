@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using ZenKit.Vobs;
 using Material = UnityEngine.Material;
 
 namespace GUZ.Core.Globals
@@ -89,6 +90,12 @@ namespace GUZ.Core.Globals
         public const string SceneLoading = "Loading";
         public const string SceneLab = "Lab";
 
+
+        public static readonly VirtualObjectType[] StaticCacheVobTypes =
+        {
+            VirtualObjectType.zCVob,
+            VirtualObjectType.oCItem
+        };
 
         /*
          * ### Layers

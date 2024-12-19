@@ -170,7 +170,18 @@ namespace GUZ.Core.Creator.Meshes
             return !(noMeshTextures && noAttachmentTextures);
         }
 
-        public static GameObject CreateVobDecal(IVirtualObject vob, VisualDecal decal, GameObject parent)
+        public static GameObject CreateVobPfx(IVirtualObject vob, GameObject parent = null)
+        {
+            var vobPfxBuilder = new VobPfxMeshBuilder();
+            vobPfxBuilder.SetGameObject(null, vob.Visual!.Name);
+            vobPfxBuilder.SetParent(parent);
+            vobPfxBuilder.SetRootPosAndRot(vob.Position.ToUnityVector(), vob.Rotation.ToUnityQuaternion());
+            vobPfxBuilder.SetPfxData(vob);
+
+            return vobPfxBuilder.Build();
+        }
+
+        public static GameObject CreateVobDecal(IVirtualObject vob, VisualDecal decal, GameObject parent = null)
         {
             var vobDecalBuilder = new VobDecalMeshBuilder();
             vobDecalBuilder.SetGameObject(null, vob.Name);

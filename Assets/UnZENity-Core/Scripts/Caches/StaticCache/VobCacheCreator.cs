@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using GUZ.Core.Creator.Meshes;
 using GUZ.Core.Globals;
 using GUZ.Core.Vm;
@@ -22,16 +23,29 @@ namespace GUZ.Core.Caches.StaticCache
         {
             foreach (var vob in vobs)
             {
-                if (IsVobWithMesh(vob.Type))
+                // We ignore oCItem for now as we will load them all in once afterwards.
+                if (vob.Type != VirtualObjectType.oCItem && Constants.StaticCacheVobTypes.Contains(vob.Type))
                 {
-                    var meshName = GetVobMeshName(vob);
+                    var visualName = GetVobMeshName(vob);
 
-                    if (Bounds.ContainsKey(meshName))
+                    if (Bounds.ContainsKey(visualName))
                     {
                         continue;
                     }
 
-                    var go = CreateVobMesh(meshName);
+                    GameObject go;
+                    switch (vob.Visual!.Type)
+                    {
+                        case VisualType.Decal:
+                            go = MeshFactory.CreateVobDecal(vob, (VisualDecal)vob.Visual);
+                            break;
+                        case VisualType.ParticleEffect:
+                            go = MeshFactory.CreateVobPfx(vob);
+                            break;
+                        default:
+                            go = CreateVobMesh(visualName);
+                            break;
+                    }
 
                     if (go == null)
                     {
@@ -41,7 +55,7 @@ namespace GUZ.Core.Caches.StaticCache
                     var boundingBox = CalculateBoundingBox(go);
                     Object.Destroy(go);
 
-                    Bounds[meshName] = boundingBox;
+                    Bounds[visualName] = boundingBox;
                 }
 
                 CalculateVobBounds(vob.Children);
@@ -84,49 +98,35 @@ namespace GUZ.Core.Caches.StaticCache
             return vob.ShowVisual ? vob.Visual!.Name : vob.Name;
         }
 
-        /// <summary>
-        /// Important: We skip oCItem, as they're all loaded with CalculateVobtemBounds to fetch them all.
-        /// </summary>
-        private bool IsVobWithMesh(VirtualObjectType type)
-        {
-            switch (type)
-            {
-                case VirtualObjectType.Unknown:
-                    return true;
-                default:
-                    return false;
-            }
-        }
-
-        private GameObject CreateVobMesh(string meshName)
+        private GameObject CreateVobMesh(string visualName)
         {
             // MDL
-            var mdl = ResourceLoader.TryGetModel(meshName);
+            var mdl = ResourceLoader.TryGetModel(visualName);
             if (mdl != null)
             {
-                return MeshFactory.CreateVob(meshName, mdl, useTextureArray: false);
+                return MeshFactory.CreateVob(visualName, mdl, useTextureArray: false);
             }
 
             // MDH+MDM (without MDL as wrapper)
-            var mdh = ResourceLoader.TryGetModelHierarchy(meshName);
-            var mdm = ResourceLoader.TryGetModelMesh(meshName);
+            var mdh = ResourceLoader.TryGetModelHierarchy(visualName);
+            var mdm = ResourceLoader.TryGetModelMesh(visualName);
             if (mdh != null && mdm != null)
             {
-                return MeshFactory.CreateVob(meshName, mdm, mdh, useTextureArray: false);
+                return MeshFactory.CreateVob(visualName, mdm, mdh, useTextureArray: false);
             }
 
             // MMB
-            var mmb = ResourceLoader.TryGetMorphMesh(meshName);
+            var mmb = ResourceLoader.TryGetMorphMesh(visualName);
             if (mmb != null)
             {
-                return MeshFactory.CreateVob(meshName, mmb, useTextureArray: false);
+                return MeshFactory.CreateVob(visualName, mmb, useTextureArray: false);
             }
 
             // MRM
-            var mrm = ResourceLoader.TryGetMultiResolutionMesh(meshName);
+            var mrm = ResourceLoader.TryGetMultiResolutionMesh(visualName);
             if (mrm != null)
             {
-                return MeshFactory.CreateVob(meshName, mrm, withCollider: false, useTextureArray: false);
+                return MeshFactory.CreateVob(visualName, mrm, withCollider: false, useTextureArray: false);
             }
 
             // e.g. ITLSTORCHBURNING.ZEN
@@ -138,7 +138,21 @@ namespace GUZ.Core.Caches.StaticCache
         {
             try
             {
-                return go.GetComponentInChildren<MeshFilter>().sharedMesh.bounds;
+                if (go.TryGetComponent<ParticleSystemRenderer>(out var particleRenderer))
+                {
+                    return particleRenderer.bounds;
+                }
+                else
+                {
+                    var meshFilters = go.GetComponentsInChildren<MeshFilter>();
+
+                    if (meshFilters.Length > 1)
+                    {
+                        throw new ArgumentException($"More than one MeshFilter found in {go.name}");
+                    }
+
+                    return meshFilters.First().sharedMesh.bounds;
+                }
             }
             catch (Exception e)
             {

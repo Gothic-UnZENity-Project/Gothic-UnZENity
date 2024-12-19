@@ -143,7 +143,7 @@ namespace GUZ.Core
             ResourceLoader.Init(gothicRootPath);
 
             _gameMusicManager.Init();
-            StaticCache.Init();
+            StaticCache.Init(DeveloperConfig);
             Sky.Init();
             Textures.Init();
             Video.Init();

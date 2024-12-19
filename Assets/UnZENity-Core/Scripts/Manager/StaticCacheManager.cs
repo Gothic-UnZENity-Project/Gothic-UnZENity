@@ -5,6 +5,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Threading.Tasks;
+using GUZ.Core.Config;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using MyBox;
@@ -18,11 +19,15 @@ namespace GUZ.Core.Manager
 {
     public class StaticCacheManager
     {
-        private string _cacheRootFolderPath;
+        private const string _gzipExt = ".gz";
         private const string _fileNameMetadata = "metadata.json";
-        private const string _fileNameVobBounds = "vob-bounds.json.gz";
-        private const string _fileNameMeshes = "meshes.json.gz";
-        private const string _fileNameVobs = "vobs.json.gz";
+        private const string _fileNameVobBounds = "vob-bounds.json";
+        private const string _fileNameMeshes = "meshes.json";
+        private const string _fileNameVobs = "vobs.json";
+
+        private string _cacheRootFolderPath;
+
+        private bool _configIsCompressed;
 
 
         // Will be used for storing and retrieving world+static vobs.
@@ -97,8 +102,9 @@ namespace GUZ.Core.Manager
             public List<CacheEntry> Children = new();
         }
 
-        public void Init()
+        public void Init(DeveloperConfig config)
         {
+            _configIsCompressed = config.CompressStaticCacheFiles;
             _cacheRootFolderPath = $"{Application.persistentDataPath}/Cache/{GameContext.GameVersionAdapter.Version}/";
         }
 
@@ -185,8 +191,8 @@ namespace GUZ.Core.Manager
             var stopwatch = Stopwatch.StartNew();
             try
             {
-                var meshString = await ReadCompressedData(BuildWorldFilePathName(worldName, _fileNameMeshes));
-                var vobsString = await ReadCompressedData(BuildWorldFilePathName(worldName, _fileNameVobs));
+                var meshString = await ReadData(BuildWorldFilePathName(worldName, _fileNameMeshes));
+                var vobsString = await ReadData(BuildWorldFilePathName(worldName, _fileNameVobs));
 
                 var meshJson = await ParseJson<MeshContainer>(meshString);
                 var vobsJson = await ParseJson<CacheContainer>(vobsString);
@@ -213,7 +219,7 @@ namespace GUZ.Core.Manager
             var stopwatch = Stopwatch.StartNew();
             try
             {
-                var vobBoundsString = await ReadCompressedData(BuildGlobalFilePathName(_fileNameVobBounds));
+                var vobBoundsString = await ReadData(BuildGlobalFilePathName(_fileNameVobBounds));
 
                 var vobBoundsContainer = await ParseJson<VobBoundsContainer>(vobBoundsString);
 
@@ -344,58 +350,78 @@ namespace GUZ.Core.Manager
             });
 
             await WriteData(metadataJson, BuildWorldFilePathName(fileName, _fileNameMetadata));
-            await WriteCompressedData(meshJson, BuildWorldFilePathName(fileName, _fileNameMeshes));
-            await WriteCompressedData(vobsJson, BuildWorldFilePathName(fileName, _fileNameVobs));
+            await WriteData(meshJson, BuildWorldFilePathName(fileName, _fileNameMeshes));
+            await WriteData(vobsJson, BuildWorldFilePathName(fileName, _fileNameVobs));
         }
 
         private async Task SaveGlobalCacheFile(VobBoundsContainer vobBoundsContainer)
         {
             string vobBoundsJson = null;
+            var prettyPrint = !_configIsCompressed;
 
             // We need to call loading the data in a separate thread to unblock main thread (VR movement etc.) during this IO heavy operation.
             await Task.Run(() =>
             {
-                vobBoundsJson = JsonUtility.ToJson(vobBoundsContainer);
+                vobBoundsJson = JsonUtility.ToJson(vobBoundsContainer, prettyPrint);
             });
 
-            await WriteCompressedData(vobBoundsJson, BuildGlobalFilePathName(_fileNameVobBounds));
+            await WriteData(vobBoundsJson, BuildGlobalFilePathName(_fileNameVobBounds));
+            await WriteData(vobBoundsJson, BuildGlobalFilePathName(_fileNameVobBounds));
         }
 
         private async Task WriteData(string data, string filePath)
         {
-            using (var fileStream = new FileStream(filePath, FileMode.Create))
-            using (var writer = new StreamWriter(fileStream))
+            if (_configIsCompressed)
             {
-                await writer.WriteAsync(data);
+                filePath += _gzipExt;
+                using (var fileStream = new FileStream(filePath, FileMode.Create))
+                using (var gzipStream = new GZipStream(fileStream, CompressionLevel.Optimal))
+                using (var writer = new StreamWriter(gzipStream))
+                {
+                    await writer.WriteAsync(data);
+                }
+            }
+            else
+            {
+                using (var fileStream = new FileStream(filePath, FileMode.Create))
+                using (var writer = new StreamWriter(fileStream))
+                {
+                    await writer.WriteAsync(data);
+                }
             }
         }
 
-        private async Task WriteCompressedData(string data, string filePath)
-        {
-            using (var fileStream = new FileStream(filePath, FileMode.Create))
-            using (var gzipStream = new GZipStream(fileStream, CompressionLevel.Optimal))
-            using (var writer = new StreamWriter(gzipStream))
-            {
-                await writer.WriteAsync(data);
-            }
-        }
-
-        private async Task<string> ReadCompressedData(string filePath)
+        private async Task<string> ReadData(string filePath)
         {
             string data = null;
 
-            using (var fileStream = new FileStream(filePath, FileMode.Open))
-            using (var gzipStream = new GZipStream(fileStream, CompressionMode.Decompress))
-            using (var reader = new StreamReader(gzipStream))
+            if (_configIsCompressed)
             {
-                // We need to call loading the data in a separate thread to unblock main thread (VR movement etc.) during this IO heavy operation.
-                await Task.Run(() =>
+                using (var fileStream = new FileStream(filePath, FileMode.Open))
+                using (var gzipStream = new GZipStream(fileStream, CompressionMode.Decompress))
+                using (var reader = new StreamReader(gzipStream))
                 {
-                    data = reader.ReadToEnd();
-                });
-
-                return data;
+                    // We need to call loading the data in a separate thread to unblock main thread (VR movement etc.) during this IO heavy operation.
+                    await Task.Run(() =>
+                    {
+                        data = reader.ReadToEnd();
+                    });
+                }
             }
+            else
+            {
+                using (var fileStream = new FileStream(filePath, FileMode.Open))
+                using (var reader = new StreamReader(fileStream))
+                {
+                    // We need to call loading the data in a separate thread to unblock main thread (VR movement etc.) during this IO heavy operation.
+                    await Task.Run(() =>
+                    {
+                        data = reader.ReadToEnd();
+                    });
+                }
+            }
+
+            return data;
         }
 
         /// <summary>
@@ -416,12 +442,14 @@ namespace GUZ.Core.Manager
 
         private string BuildWorldFilePathName(string worldName, string fileName)
         {
-            return $"{_cacheRootFolderPath}/{worldName}/{fileName}";
+            var suffix = _configIsCompressed ? _gzipExt : "";
+            return $"{_cacheRootFolderPath}/{worldName}/{fileName}{suffix}";
         }
 
         private string BuildGlobalFilePathName(string fileName)
         {
-            return $"{_cacheRootFolderPath}/Global/{fileName}";
+            var suffix = _configIsCompressed ? _gzipExt : "";
+            return $"{_cacheRootFolderPath}/Global/{fileName}{suffix}";
         }
     }
 }

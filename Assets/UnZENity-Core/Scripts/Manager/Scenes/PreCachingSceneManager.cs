@@ -1,8 +1,11 @@
-﻿using System.Threading.Tasks;
+﻿using System.Diagnostics;
+using System.Threading.Tasks;
 using GUZ.Core.Caches.StaticCache;
+using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using UnityEngine;
 using ZenKit;
+using Debug = UnityEngine.Debug;
 
 namespace GUZ.Core.Manager.Scenes
 {
@@ -50,8 +53,10 @@ namespace GUZ.Core.Manager.Scenes
         /// </summary>
         private async Task CreateCaches()
         {
-            var worldsToLoad = GameContext.GameVersionAdapter.Version == GameVersion.Gothic1 ? _gothic1Worlds : _gothic2Worlds;
+            var watch = Stopwatch.StartNew();
+            var overallWatch = Stopwatch.StartNew();
 
+            var worldsToLoad = GameContext.GameVersionAdapter.Version == GameVersion.Gothic1 ? _gothic1Worlds : _gothic2Worlds;
             var vobCache = new VobCacheCreator();
 
             foreach (var worldName in worldsToLoad)
@@ -72,9 +77,10 @@ namespace GUZ.Core.Manager.Scenes
 
 
                 vobCache.CalculateVobBounds(worldData.RootObjects);
+                watch.LogAndRestart($"Calculated VobBounds for {worldName}");
 
 
-                Debug.Log($"### Saving cache for {worldName} done.");
+                // Debug.Log($"### Saving cache for {worldName} done.");
 
 
                 // DEBUG restore
@@ -90,8 +96,11 @@ namespace GUZ.Core.Manager.Scenes
             }
 
             vobCache.CalculateVobtemBounds();
+            watch.LogAndRestart("Calculated VobBounds for oCItems");
 
             await GameGlobals.StaticCache.SaveGlobalCache(vobCache.Bounds);
+            watch.LogAndRestart("Saved GlobalCache files");
+            overallWatch.Log("Overall PreCaching done");
 
             // Every world of the game is cached successfully. Now let's move on!
             GameManager.I.LoadScene(Constants.SceneLogo, Constants.ScenePreCaching);
