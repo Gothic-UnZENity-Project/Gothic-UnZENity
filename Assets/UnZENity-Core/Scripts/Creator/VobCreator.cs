@@ -137,9 +137,7 @@ namespace GUZ.Core.Creator
                 return LoadVob(config, vob);
             }
 
-            var name = vob.Visual?.Name ?? vob.Name;
-
-            var go = new GameObject(name);
+            var go = new GameObject(vob.GetVisualName());
             var loader = go.AddComponent<VobLoader>();
             loader.Vob = vob;
 

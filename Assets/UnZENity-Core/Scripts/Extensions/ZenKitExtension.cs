@@ -1,18 +1,40 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using GUZ.Core.Data;
 using GUZ.Core.Data.Container;
+using MyBox;
 using UnityEngine;
 using ZenKit;
 using ZenKit.Daedalus;
 using ZenKit.Util;
+using ZenKit.Vobs;
 using TextureFormat = UnityEngine.TextureFormat;
 
 namespace GUZ.Core.Extensions
 {
     public static class ZenKitExtension
     {
+        /// <summary>
+        /// A visual name is either extracted from Visual.Name or Name of VOB itself.
+        /// </summary>
+        public static string GetVisualName(this IVirtualObject vob)
+        {
+            if (vob == null)
+            {
+                return "";
+            }
+
+            if (vob.Visual != null && vob.Visual.Name.NotNullOrEmpty())
+            {
+                return vob.Visual.Name;
+            }
+            else
+            {
+                // Fallback
+                return vob.Name;
+            }
+        }
+
         /// <summary>
         /// Convenient shortcut to retrieve and cast NpcData object from NpcInstance property.
         /// </summary>

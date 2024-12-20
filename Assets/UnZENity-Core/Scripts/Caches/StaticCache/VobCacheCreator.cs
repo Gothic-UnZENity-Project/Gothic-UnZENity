@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using GUZ.Core.Creator.Meshes;
+using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Vm;
 using UnityEngine;
@@ -27,7 +28,7 @@ namespace GUZ.Core.Caches.StaticCache
                 // We ignore oCItem for now as we will load them all in once afterward.
                 if (vob.Type != VirtualObjectType.oCItem && Constants.StaticCacheVobTypes.Contains(vob.Type))
                 {
-                    var visualName = GetVobMeshName(vob);
+                    var visualName = vob.GetVisualName();
 
                     if (Bounds.ContainsKey(visualName))
                     {
@@ -92,11 +93,6 @@ namespace GUZ.Core.Caches.StaticCache
 
                 Bounds[item.Visual] = boundingBox;
             }
-        }
-
-        private string GetVobMeshName(IVirtualObject vob)
-        {
-            return vob.Visual?.Name ?? vob.Name;
         }
 
         private GameObject CreateVobMesh(string visualName)
