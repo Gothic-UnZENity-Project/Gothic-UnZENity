@@ -1,6 +1,6 @@
 using GUZ.Core.Caches;
-using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
+using MyBox;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
 using ZenKit.Vobs;
@@ -24,14 +24,15 @@ namespace GUZ.Core.Creator.Meshes.Builder
 
         public override GameObject Build()
         {
-            // G1: One Decal has no value to recognize what it is. Most likely a setup bug to ignore at this point.
-            if (!_vob.Name.IsEmpty())
+            var decalName = _vob.Visual?.Name ?? _vob.Name;
+
+            if (decalName.IsNullOrEmpty())
             {
                 return null;
             }
 
             var decalProj = RootGo.AddComponent<DecalProjector>();
-            var texture = TextureCache.TryGetTexture(_vob.Name);
+            var texture = TextureCache.TryGetTexture(decalName);
 
             // x/y needs to be made twice the size and transformed from cm in m.
             // z - value is close to what we see in Gothic spacer.

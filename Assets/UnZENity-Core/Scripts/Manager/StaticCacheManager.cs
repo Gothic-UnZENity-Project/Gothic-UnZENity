@@ -55,11 +55,11 @@ namespace GUZ.Core.Manager
         {
             public VobBoundsEntry(string meshName, Bounds bounds)
             {
-                MeshMeshName = meshName;
+                MeshName = meshName;
                 Bounds = bounds;
             }
 
-            public string MeshMeshName;
+            public string MeshName;
             public Bounds Bounds;
         }
 
@@ -223,7 +223,7 @@ namespace GUZ.Core.Manager
 
                 var vobBoundsContainer = await ParseJson<VobBoundsContainer>(vobBoundsString);
 
-                LoadedVobsBounds = vobBoundsContainer.BoundsEntries.ToDictionary(i => i.MeshMeshName, i => i.Bounds);
+                LoadedVobsBounds = vobBoundsContainer.BoundsEntries.ToDictionary(i => i.MeshName, i => i.Bounds);
             }
             catch (Exception e)
             {

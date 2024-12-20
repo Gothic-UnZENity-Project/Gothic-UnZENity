@@ -5,6 +5,7 @@ using System.Linq;
 using GUZ.Core.Config;
 using GUZ.Core.Vm;
 using GUZ.Core.Vob;
+using MyBox;
 using UnityEngine;
 using ZenKit.Vobs;
 using Light = UnityEngine.Light;
@@ -304,8 +305,13 @@ namespace GUZ.Core.Manager.Culling
                     }
                     break;
                 default:
-                    meshName = vob.ShowVisual ? vob.Visual!.Name : vob.Name;
+                    meshName = vob.Visual?.Name ?? vob.Name;
                     break;
+            }
+
+            if (meshName.IsNullOrEmpty())
+            {
+                return null;
             }
 
             if (GameGlobals.StaticCache.LoadedVobsBounds.TryGetValue(meshName, out var bounds))
@@ -314,6 +320,8 @@ namespace GUZ.Core.Manager.Culling
             }
             else
             {
+                // We can carefully disable this log as some elements aren't cached.
+                // e.g. when there is no texture like for OC_DECORATE_V4.3DS
                 Debug.LogError($"Couldn't find bounds information from StaticCache for >{meshName}<.");
                 return null;
             }

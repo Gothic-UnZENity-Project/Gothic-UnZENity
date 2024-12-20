@@ -5,6 +5,7 @@ using GUZ.Core.Creator.Meshes;
 using GUZ.Core.Globals;
 using GUZ.Core.Vm;
 using UnityEngine;
+using UnityEngine.Rendering.Universal;
 using ZenKit.Vobs;
 using Object = UnityEngine.Object;
 
@@ -23,7 +24,7 @@ namespace GUZ.Core.Caches.StaticCache
         {
             foreach (var vob in vobs)
             {
-                // We ignore oCItem for now as we will load them all in once afterwards.
+                // We ignore oCItem for now as we will load them all in once afterward.
                 if (vob.Type != VirtualObjectType.oCItem && Constants.StaticCacheVobTypes.Contains(vob.Type))
                 {
                     var visualName = GetVobMeshName(vob);
@@ -95,7 +96,7 @@ namespace GUZ.Core.Caches.StaticCache
 
         private string GetVobMeshName(IVirtualObject vob)
         {
-            return vob.ShowVisual ? vob.Visual!.Name : vob.Name;
+            return vob.Visual?.Name ?? vob.Name;
         }
 
         private GameObject CreateVobMesh(string visualName)
@@ -141,6 +142,10 @@ namespace GUZ.Core.Caches.StaticCache
                 if (go.TryGetComponent<ParticleSystemRenderer>(out var particleRenderer))
                 {
                     return particleRenderer.bounds;
+                }
+                else if (go.TryGetComponent<DecalProjector>(out var decalProjector))
+                {
+                    return new Bounds(Vector3.zero, decalProjector.size);
                 }
                 else
                 {
