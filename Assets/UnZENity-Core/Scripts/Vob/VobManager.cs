@@ -52,8 +52,36 @@ namespace GUZ.Core.Vob
                 case VirtualObjectType.oCItem:
                     CreateItem((Item)vob, go);
                     break;
+                case VirtualObjectType.oCMOB:
+                case VirtualObjectType.oCMobSwitch:
+                case VirtualObjectType.zCVobStair:
+                case VirtualObjectType.oCMobBed:
+                case VirtualObjectType.oCMobWheel:
+                case VirtualObjectType.oCMobContainer:
+                case VirtualObjectType.oCMobDoor:
+                case VirtualObjectType.oCMobLadder:
+                    CreateDefaultMesh(vob, go);
+                    break;
+                case VirtualObjectType.oCMobInter:
+                    // FIXME - Re-enable seating. @see #120 - Re-enable Bench/Barrel/Seat/Throne interaction
+                    // if (vob.Name.ContainsIgnoreCase("bench") ||
+                    //     vob.Name.ContainsIgnoreCase("chair") ||
+                    //     vob.Name.ContainsIgnoreCase("throne") ||
+                    //     vob.Name.ContainsIgnoreCase("barrelo"))
+                    // {
+                    //     go = CreateSeat(vob, parent);
+                    //     break;
+                    // }
+
+                    CreateDefaultMesh(vob, go);
+                    break;
+                case VirtualObjectType.zCVobAnimate:
+                    // TODO - We can outsource the special Animate.Start() logic into Prefab.
+                    CreateAnimatedVob((Animate)vob, go);
+                    break;
+                case VirtualObjectType.oCMobFire:
                 default:
-                    Debug.LogError($"InitVob for type {vob.Type}");
+                    Debug.LogError($"InitVob for type {vob.Type} not yet implemented.");
                     break;
             }
         }
@@ -102,6 +130,14 @@ namespace GUZ.Core.Vob
             }
 
             vobObj.GetComponent<VobItemProperties>().SetData(vob, item);
+        }
+
+        private GameObject CreateAnimatedVob(Animate vob, GameObject parent = null)
+        {
+            var go = CreateDefaultMesh(vob, parent);
+            var morph = go.AddComponent<VobAnimateMorph>();
+            morph.StartAnimation(vob.Visual!.Name);
+            return go;
         }
 
         private GameObject GetPrefab(IVirtualObject vob)

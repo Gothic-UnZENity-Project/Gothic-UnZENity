@@ -93,8 +93,20 @@ namespace GUZ.Core.Globals
 
         public static readonly VirtualObjectType[] StaticCacheVobTypes =
         {
+            VirtualObjectType.oCItem,
+            VirtualObjectType.oCMOB,
+            VirtualObjectType.oCMobBed,
+            VirtualObjectType.oCMobContainer,
+            VirtualObjectType.oCMobDoor,
+            // FIXME - Need to understand and implement loading inside VobManager.cs properly
+            // VirtualObjectType.oCMobFire,
+            VirtualObjectType.oCMobInter,
+            VirtualObjectType.oCMobLadder,
+            VirtualObjectType.oCMobSwitch,
+            VirtualObjectType.oCMobWheel,
             VirtualObjectType.zCVob,
-            VirtualObjectType.oCItem
+            VirtualObjectType.zCVobAnimate,
+            VirtualObjectType.zCVobStair
         };
 
         /*
