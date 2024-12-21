@@ -186,7 +186,14 @@ namespace GUZ.Core.Manager.Culling
                     GameGlobals.Vobs.InitVob(go);
                     break;
                 default:
-                    vobObjects[evt.index].SetActive(evt.hasBecomeVisible || (evt.isVisible && !evt.hasBecomeInvisible));
+                    var setActive = evt.hasBecomeVisible || (evt.isVisible && !evt.hasBecomeInvisible);
+                    vobObjects[evt.index].SetActive(setActive);
+
+                    if (setActive)
+                    {
+                        GameGlobals.Vobs.InitVob(go);
+                    }
+
                     break;
             }
         }
@@ -276,6 +283,8 @@ namespace GUZ.Core.Manager.Culling
         }
 
         /// <summary>
+        /// Fetch Mesh Bounds which are in local space. We will later "move" the bbox to the current world space.
+        ///
         /// TODO If performance allows it, we could also look dynamically for all the existing meshes inside GO
         /// TODO and look for maximum value for largest mesh. But it should be fine for now.
         /// </summary>

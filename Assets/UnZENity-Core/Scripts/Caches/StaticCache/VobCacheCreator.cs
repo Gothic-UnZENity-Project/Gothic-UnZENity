@@ -135,6 +135,7 @@ namespace GUZ.Core.Caches.StaticCache
         {
             try
             {
+                // As we store renderer.bounds, we will get world space, but the object is at 0,0,0 and identity, we have local space again. ;-)
                 if (go.TryGetComponent<ParticleSystemRenderer>(out var particleRenderer))
                 {
                     return particleRenderer.bounds;
