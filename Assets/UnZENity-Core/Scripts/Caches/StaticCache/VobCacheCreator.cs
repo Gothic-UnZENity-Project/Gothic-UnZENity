@@ -5,6 +5,7 @@ using GUZ.Core.Creator.Meshes;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Vm;
+using MyBox;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
 using ZenKit.Vobs;
@@ -30,6 +31,7 @@ namespace GUZ.Core.Caches.StaticCache
                 {
                     var visualName = vob.GetVisualName();
 
+                    // Already cached
                     if (Bounds.ContainsKey(visualName))
                     {
                         continue;
@@ -148,18 +150,23 @@ namespace GUZ.Core.Caches.StaticCache
                 {
                     var meshFilters = go.GetComponentsInChildren<MeshFilter>();
 
-                    if (meshFilters.Length > 1)
+                    switch (meshFilters.Length)
                     {
-                        throw new ArgumentException($"More than one MeshFilter found in {go.name}");
+                        case 0:
+                            return default;
+                        case 1:
+                            return meshFilters.First().sharedMesh.bounds;
+                        default:
+                            var finalBounds = new Bounds();
+                            meshFilters.ForEach(i => finalBounds.Encapsulate(i.sharedMesh.bounds));
+                            return finalBounds;
                     }
-
-                    return meshFilters.First().sharedMesh.bounds;
                 }
             }
             catch (Exception e)
             {
                 Debug.LogError(e);
-                return new Bounds();
+                return default;
             }
         }
     }
