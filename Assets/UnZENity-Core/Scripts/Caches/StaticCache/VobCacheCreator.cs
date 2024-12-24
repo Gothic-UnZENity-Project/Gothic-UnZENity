@@ -26,41 +26,46 @@ namespace GUZ.Core.Caches.StaticCache
         {
             foreach (var vob in vobs)
             {
-                // We ignore oCItem for now as we will load them all in once afterward.
-                if (vob.Type != VirtualObjectType.oCItem && Constants.StaticCacheVobTypes.Contains(vob.Type))
+                // We ignore oCItem for now as we will load them all in one afterward.
+                // We also calculate bounds only for objects which are marked to be cached inside Constants.
+                if (vob.Type == VirtualObjectType.oCItem || !Constants.StaticCacheVobTypes.Contains(vob.Type))
                 {
-                    var visualName = vob.GetVisualName();
-
-                    // Already cached
-                    if (Bounds.ContainsKey(visualName))
-                    {
-                        continue;
-                    }
-
-                    GameObject go;
-                    switch (vob.Visual!.Type)
-                    {
-                        case VisualType.Decal:
-                            go = MeshFactory.CreateVobDecal(vob, (VisualDecal)vob.Visual);
-                            break;
-                        case VisualType.ParticleEffect:
-                            go = MeshFactory.CreateVobPfx(vob);
-                            break;
-                        default:
-                            go = CreateVobMesh(visualName);
-                            break;
-                    }
-
-                    if (go == null)
-                    {
-                        continue;
-                    }
-
-                    var boundingBox = CalculateBoundingBox(go);
-                    Object.Destroy(go);
-
-                    Bounds[visualName] = boundingBox;
+                    // Check children
+                    CalculateVobBounds(vob.Children);
+                    continue;
                 }
+
+                var visualName = vob.GetVisualName();
+
+                // Already cached
+                if (Bounds.ContainsKey(visualName))
+                {
+                    continue;
+                }
+
+                GameObject go;
+                switch (vob.Visual!.Type)
+                {
+                    case VisualType.Decal:
+                        go = MeshFactory.CreateVobDecal(vob, (VisualDecal)vob.Visual);
+                        break;
+                    case VisualType.ParticleEffect:
+                        go = MeshFactory.CreateVobPfx(vob);
+                        break;
+                    default:
+                        go = CreateVobMesh(visualName);
+                        break;
+                }
+
+                if (go == null)
+                {
+                    continue;
+                }
+
+                var boundingBox = CalculateBoundingBox(go);
+                Object.Destroy(go);
+
+                Bounds[visualName] = boundingBox;
 
                 CalculateVobBounds(vob.Children);
             }

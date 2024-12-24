@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using GUZ.Core.Creator;
 using GUZ.Core.Creator.Sounds;
@@ -11,6 +12,7 @@ using ZenKit.Vobs;
 
 namespace GUZ.Core.Manager
 {
+    [Obsolete("Use VobManager instead.")]
     public static class VobHelper
     {
         private const float _lookupDistance = 10f; // meter
