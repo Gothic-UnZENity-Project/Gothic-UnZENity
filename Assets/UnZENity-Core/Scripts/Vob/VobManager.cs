@@ -11,6 +11,8 @@ using ZenKit;
 using ZenKit.Daedalus;
 using ZenKit.Util;
 using ZenKit.Vobs;
+using Light = ZenKit.Vobs.Light;
+using LightType = ZenKit.Vobs.LightType;
 using Object = UnityEngine.Object;
 using Vector3 = System.Numerics.Vector3;
 
@@ -22,6 +24,16 @@ namespace GUZ.Core.Vob
 
         private static Dictionary<string, IWorld> _fireVobTreeCache = new();
 
+
+        /// <summary>
+        /// Some VOBs are initialized eagerly (e.g. when there is no performance benefit in doing so later or its needed directly).
+        /// </summary>
+        public void InitVobImmediately(IVirtualObject vob, GameObject parent)
+        {
+            // FIXME - Set position and rotation!
+
+            Create(vob, parent);
+        }
 
         /// <summary>
         /// First time a VOB is made visible: Create it.
@@ -49,41 +61,41 @@ namespace GUZ.Core.Vob
             throw new NotImplementedException();
         }
         
-                public static AudioClip GetSoundClip(string soundName)
+        public AudioClip GetSoundClip(string soundName)
+        {
+            AudioClip clip;
+
+            if (soundName.EqualsIgnoreCase(_noSoundName))
+            {
+                //instead of decoding nosound.wav which might be decoded incorrectly, just return null
+                return null;
+            }
+
+            // Bugfix - Normally the data is to get C_SFX_DEF entries from VM. But sometimes there might be the real .wav file stored.
+            if (soundName.EndsWithIgnoreCase(".wav"))
+            {
+                clip = SoundCreator.ToAudioClip(soundName);
+            }
+            else
+            {
+                var sfxData = VmInstanceManager.TryGetSfxData(soundName);
+
+                if (sfxData == null)
                 {
-                    AudioClip clip;
-        
-                    if (soundName.EqualsIgnoreCase(_noSoundName))
-                    {
-                        //instead of decoding nosound.wav which might be decoded incorrectly, just return null
-                        return null;
-                    }
-        
-                    // Bugfix - Normally the data is to get C_SFX_DEF entries from VM. But sometimes there might be the real .wav file stored.
-                    if (soundName.EndsWithIgnoreCase(".wav"))
-                    {
-                        clip = SoundCreator.ToAudioClip(soundName);
-                    }
-                    else
-                    {
-                        var sfxData = VmInstanceManager.TryGetSfxData(soundName);
-        
-                        if (sfxData == null)
-                        {
-                            return null;
-                        }
-        
-                        if (sfxData.File.EqualsIgnoreCase(_noSoundName))
-                        {
-                            //instead of decoding nosound.wav which might be decoded incorrectly, just return null
-                            return null;
-                        }
-        
-                        clip = SoundCreator.ToAudioClip(sfxData.File);
-                    }
-        
-                    return clip;
+                    return null;
                 }
+
+                if (sfxData.File.EqualsIgnoreCase(_noSoundName))
+                {
+                    //instead of decoding nosound.wav which might be decoded incorrectly, just return null
+                    return null;
+                }
+
+                clip = SoundCreator.ToAudioClip(sfxData.File);
+            }
+
+            return clip;
+        }
 
         /// <summary>
         /// Generic root method to create a VOB of any type.
@@ -105,7 +117,7 @@ namespace GUZ.Core.Vob
                         case VisualType.ParticleEffect:
                             if (GameGlobals.Config.Dev.EnableParticleEffects)
                             {
-                                return MeshFactory.CreateVobPfx(vob, parent: parent);
+                                return MeshFactory.CreateVobPfx(vob, parent);
                             }
                             return null;
                         default:
@@ -139,6 +151,8 @@ namespace GUZ.Core.Vob
                     return CreateAnimatedVob((Animate)vob, parent);
                 case VirtualObjectType.oCMobFire:
                     return CreateFire((Fire)vob, parent);
+                case VirtualObjectType.zCVobLight:
+                    return CreateLight((Light)vob, parent);
                 case VirtualObjectType.zCVobSound:
                     if (GameGlobals.Config.Dev.EnableGameSounds)
                     {
@@ -156,7 +170,8 @@ namespace GUZ.Core.Vob
                     }
                     return null;
                 default:
-                    return CreateDefaultMesh(vob, parent);
+                    Debug.LogError($"Unknown VOB type: {vob.Type} - {vob.Name}");
+                    return null;
             }
         }
 
@@ -434,6 +449,30 @@ namespace GUZ.Core.Vob
                     vob.Rotation.M31 - rotation.M31, vob.Rotation.M32 - rotation.M32,
                     vob.Rotation.M33 - rotation.M33);
             }
+        }
+
+        private GameObject CreateLight(Light vob, GameObject parent)
+        {
+            if (vob.LightStatic)
+            {
+                Debug.LogWarning($"Non-static lights aren't handled so far. go={vob.Name}");
+                return null;
+            }
+
+            var vobObj = GetPrefab(vob);
+            vobObj.name = $"{vob.LightType} Light {vob.Name}";
+            vobObj.SetParent(parent);
+
+            var lightComp = vobObj.AddComponent<StationaryLight>();
+            lightComp.Color = new Color(vob.Color.R / 255f, vob.Color.G / 255f, vob.Color.B / 255f, vob.Color.A / 255f);
+            lightComp.Type = vob.LightType == LightType.Point
+                ? UnityEngine.LightType.Point
+                : UnityEngine.LightType.Spot;
+            lightComp.Range = vob.Range * .01f;
+            lightComp.SpotAngle = vob.ConeAngle;
+            lightComp.Intensity = 1;
+
+            return vobObj;
         }
 
         [CanBeNull]

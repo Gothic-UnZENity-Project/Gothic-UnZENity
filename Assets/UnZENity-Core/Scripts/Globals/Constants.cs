@@ -98,8 +98,7 @@ namespace GUZ.Core.Globals
             VirtualObjectType.oCMobBed,
             VirtualObjectType.oCMobContainer,
             VirtualObjectType.oCMobDoor,
-            // FIXME - Need to understand and implement loading inside VobManager.cs properly
-            // VirtualObjectType.oCMobFire,
+            VirtualObjectType.oCMobFire,
             VirtualObjectType.oCMobInter,
             VirtualObjectType.oCMobLadder,
             VirtualObjectType.oCMobSwitch,

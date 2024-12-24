@@ -50,7 +50,7 @@ namespace GUZ.Core.Caches.StaticCache
                         go = MeshFactory.CreateVobDecal(vob, (VisualDecal)vob.Visual);
                         break;
                     case VisualType.ParticleEffect:
-                        go = MeshFactory.CreateVobPfx(vob);
+                        go = MeshFactory.CreateVobPfx(vob, parent: null);
                         break;
                     default:
                         go = CreateVobMesh(visualName);

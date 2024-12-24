@@ -27,6 +27,7 @@ namespace GUZ.Core.Creator.Meshes.Builder
         {
             var pfxGo = ResourceLoader.TryGetPrefabObject(PrefabType.VobPfx);
             pfxGo.name = _vob.Visual!.Name;
+            pfxGo.SetParent(ParentGo);
 
             var pfx = VmInstanceManager.TryGetPfxData(_vob.Visual!.Name);
             var particleSystem = pfxGo.GetComponent<ParticleSystem>();

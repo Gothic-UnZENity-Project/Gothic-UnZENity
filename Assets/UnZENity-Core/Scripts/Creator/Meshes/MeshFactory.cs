@@ -170,7 +170,7 @@ namespace GUZ.Core.Creator.Meshes
             return !(noMeshTextures && noAttachmentTextures);
         }
 
-        public static GameObject CreateVobPfx(IVirtualObject vob, GameObject parent = null)
+        public static GameObject CreateVobPfx(IVirtualObject vob, GameObject parent)
         {
             var vobPfxBuilder = new VobPfxMeshBuilder();
             vobPfxBuilder.SetGameObject(null, vob.Visual!.Name);
