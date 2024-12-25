@@ -26,9 +26,11 @@ namespace GUZ.Core.Creator.Meshes.Builder
 
         public async Task BuildAsync()
         {
-            await TextureCache.BuildTextureArrays();
-            AssignTextureArrays();
-            TextureCache.RemoveCachedTextureArrayData();
+            await TextureCache.BuildTextureArrayForVobs();
+
+            // await TextureCache.BuildTextureArrays();
+            // AssignTextureArrays();
+            // TextureCache.RemoveCachedTextureArrayData();
         }
 
         private void AssignTextureArrays()

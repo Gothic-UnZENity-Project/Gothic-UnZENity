@@ -37,7 +37,7 @@ namespace GUZ.Core.Creator
                 lightingEnabled);
 
             await MeshFactory.CreateWorld(GameGlobals.SaveGame.CurrentWorldData, loading, _worldGo);
-            await MeshFactory.CreateTextureArray();
+            // await MeshFactory.CreateTextureArray(); // OLD LOGIC
         }
 
         public static async Task<List<WorldContainer.SubMeshData>> BuildBspTree(IMesh zkMesh, IBspTree zkBspTree, bool lightingEnabled)

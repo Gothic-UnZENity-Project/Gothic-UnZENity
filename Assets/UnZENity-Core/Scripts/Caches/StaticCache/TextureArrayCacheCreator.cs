@@ -5,6 +5,7 @@ using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Vm;
 using MyBox;
+using UnityEngine;
 using ZenKit.Daedalus;
 using ZenKit.Vobs;
 using Constants = GUZ.Core.Globals.Constants;
@@ -13,7 +14,7 @@ namespace GUZ.Core.Caches.StaticCache
 {
     public class TextureArrayCacheCreator
     {
-        public Dictionary<string, int> TextureArrayInformation { get; } = new();
+        public Dictionary<string, (int maxDim, TextureFormat textureFormat)> TextureArrayInformation { get; } = new();
 
         public void CalculateTextureArrayInformation(List<IVirtualObject> vobs)
         {
@@ -136,7 +137,15 @@ namespace GUZ.Core.Caches.StaticCache
                 return;
             }
 
-            TextureArrayInformation.TryAdd(textureName, Math.Max(texture.Width, texture.Height));
+            var unityTextureFormat = texture.Format.AsUnityTextureFormat();
+
+            if (unityTextureFormat != TextureFormat.DXT1 && unityTextureFormat != TextureFormat.RGBA32)
+            {
+                Debug.LogError("Only DXT1 and RGBA32 textures are supported for texture arrays as of now!");
+            }
+
+            TextureArrayInformation.TryAdd(textureName,
+                (maxDim: Math.Max(texture.Width, texture.Height), textureFormat: unityTextureFormat));
         }
 
         private void AddTexInfoForItem(ItemInstance item)

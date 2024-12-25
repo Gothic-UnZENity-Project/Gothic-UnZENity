@@ -14,6 +14,7 @@ using ZenKit;
 using CompressionLevel = System.IO.Compression.CompressionLevel;
 using Debug = UnityEngine.Debug;
 using Mesh = UnityEngine.Mesh;
+using TextureFormat = UnityEngine.TextureFormat;
 
 namespace GUZ.Core.Manager
 {
@@ -37,7 +38,9 @@ namespace GUZ.Core.Manager
         private bool _isGlobalCacheLoaded;
 
         public Dictionary<string, Bounds> LoadedVobsBounds { get; private set; }
-        public Dictionary<string, int> LoadedVobTextureInfo { get; private set; }
+
+        public Dictionary<string, int> LoadedVobTextureInfoDxt1 { get; private set; }
+        public Dictionary<string, int> LoadedVobTextureInfoRgba32 { get; private set; }
 
         [Serializable]
         public class MetadataContainer
@@ -68,7 +71,10 @@ namespace GUZ.Core.Manager
         [Serializable]
         public class VobTextureArrayContainer
         {
-            public List<TextureArrayEntry> VobTextures;
+            public List<TextureArrayEntry> VobTexturesDxt1;
+            public List<TextureArrayEntry> VobTexturesDxt5;
+            public List<TextureArrayEntry> VobTexturesRgb565;
+            public List<TextureArrayEntry> VobTexturesRgba32;
         }
 
         [Serializable]
@@ -188,7 +194,8 @@ namespace GUZ.Core.Manager
             Directory.EnumerateFiles(BuildGlobalFilePathName("")).ForEach(File.Delete);
         }
 
-        public async Task SaveGlobalCache(Dictionary<string, Bounds> vobBounds, Dictionary<string, int> textureArrayInformation)
+        public async Task SaveGlobalCache(Dictionary<string, Bounds> vobBounds,
+            Dictionary<string, (int maxDimension, TextureFormat textureFormat)> textureArrayInformation)
         {
             try
             {
@@ -201,7 +208,10 @@ namespace GUZ.Core.Manager
 
                 var vobTextureArrayContainer = new VobTextureArrayContainer
                 {
-                    VobTextures = textureArrayInformation.Select(i => new TextureArrayEntry(i.Key, i.Value)).ToList()
+                    VobTexturesDxt1 = textureArrayInformation.Where(i => i.Value.textureFormat == TextureFormat.DXT1).Select(i => new TextureArrayEntry(i.Key, i.Value.maxDimension)).ToList(),
+                    VobTexturesDxt5 = textureArrayInformation.Where(i => i.Value.textureFormat == TextureFormat.DXT5).Select(i => new TextureArrayEntry(i.Key, i.Value.maxDimension)).ToList(),
+                    VobTexturesRgb565 = textureArrayInformation.Where(i => i.Value.textureFormat == TextureFormat.RGB565).Select(i => new TextureArrayEntry(i.Key, i.Value.maxDimension)).ToList(),
+                    VobTexturesRgba32 = textureArrayInformation.Where(i => i.Value.textureFormat == TextureFormat.RGBA32).Select(i => new TextureArrayEntry(i.Key, i.Value.maxDimension)).ToList()
                 };
 
                 await SaveGlobalCacheFile(vobBoundsContainer, vobTextureArrayContainer);
@@ -253,7 +263,8 @@ namespace GUZ.Core.Manager
                 var vobTextureArrayContainer = await ParseJson<VobTextureArrayContainer>(vobTextureInfo);
 
                 LoadedVobsBounds = vobBoundsContainer.BoundsEntries.ToDictionary(i => i.MeshName, i => i.Bounds);
-                LoadedVobTextureInfo = vobTextureArrayContainer.VobTextures.ToDictionary(i => i.TextureName, i => i.MaxDimension);
+                LoadedVobTextureInfoDxt1 = vobTextureArrayContainer.VobTexturesDxt1.ToDictionary(i => i.TextureName, i => i.MaxDimension);
+                LoadedVobTextureInfoRgba32 = vobTextureArrayContainer.VobTexturesRgba32.ToDictionary(i => i.TextureName, i => i.MaxDimension);
             }
             catch (Exception e)
             {

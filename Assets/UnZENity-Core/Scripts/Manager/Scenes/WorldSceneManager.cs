@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using GUZ.Core.Creator;
+using GUZ.Core.Creator.Meshes;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using MyBox;
@@ -43,8 +44,10 @@ namespace GUZ.Core.Manager.Scenes
             try
             {
                 // 0.
-                // Load Static cache
+                // Load Static cache and arrange it in memory
                 await GameGlobals.StaticCache.LoadGlobalCache();
+                await MeshFactory.CreateTextureArray();
+
 
                 // 1.
                 // Build the world and vob meshes, populating the texture arrays.

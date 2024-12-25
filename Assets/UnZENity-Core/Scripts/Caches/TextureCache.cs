@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 using GUZ.Core.Data.Container;
 using GUZ.Core.Extensions;
 using GUZ.Core.Util;
-using GUZ.Core.World;
 using JetBrains.Annotations;
+using MyBox;
 using UnityEngine;
 using UnityEngine.Rendering;
 using ZenKit;
@@ -34,7 +34,17 @@ namespace GUZ.Core.Caches
     public static class TextureCache
     {
         public const int ReferenceTextureSize = 256;
+
+        /// <summary>
+        /// In original G1, there is one element with 1024 in size. As we create a TextureArray,
+        /// we would have huge empty space as the single element will create lots of empty space.
+        /// Therefore we skip it and downsample this one.
+        ///
+        /// TODO - If we want to support 4k textures, we would need to raise MaxTextureSize and monitor Memory consumption.
+        /// </summary>
         public const int MaxTextureSize = 512;
+        // If we have 512 texture size, we have as highest mip of 8 (512<<6=8)
+        public const int MaxMipCount = 6;
 
         public static Dictionary<TextureArrayTypes, Texture> TextureArrays { get; } = new();
         public static List<(MeshRenderer Renderer, WorldContainer.SubMeshData SubmeshData)> WorldMeshRenderersForTextureArray = new();
@@ -173,6 +183,36 @@ namespace GUZ.Core.Caches
 
         public static void GetTextureArrayIndex(IMaterial materialData, out TextureArrayTypes textureArrayType, out int arrayIndex, out Vector2 textureScale, out int maxMipLevel, out int animFrameCount)
         {
+            // New StaticCache logic
+            {
+                var textureName = materialData.Texture;
+                var texture = ResourceLoader.TryGetTexture(textureName);
+
+                if (GameGlobals.StaticCache.LoadedVobTextureInfoDxt1.ContainsKey(materialData.Texture))
+                {
+                    arrayIndex = GameGlobals.StaticCache.LoadedVobTextureInfoDxt1.FirstIndex(i => i.Key == materialData.Texture);
+                    textureArrayType = TextureArrayTypes.Opaque;
+
+                    maxMipLevel = texture!.MipmapCount - 1;
+                    textureScale = new Vector2((float)texture.Width / ReferenceTextureSize, (float)texture.Height / ReferenceTextureSize);;
+                    animFrameCount = -1; // FIXME - Set correctly
+
+                    return;
+                }
+                else if (GameGlobals.StaticCache.LoadedVobTextureInfoRgba32.ContainsKey(materialData.Texture))
+                {
+                    arrayIndex = GameGlobals.StaticCache.LoadedVobTextureInfoDxt1.FirstIndex(i => i.Key == materialData.Texture);
+                    textureArrayType = TextureArrayTypes.Transparent;
+
+                    maxMipLevel = texture!.MipmapCount - 1;
+                    textureScale = new Vector2((float)texture.Width / ReferenceTextureSize, (float)texture.Height / ReferenceTextureSize);;
+                    animFrameCount = -1; // FIXME - Set correctly
+
+                    return;
+                }
+            }
+
+
             string key = materialData.Texture;
             animFrameCount = 0;
 
@@ -366,6 +406,92 @@ namespace GUZ.Core.Caches
 
             stopwatch.Stop();
             Debug.Log($"Built tex array in {stopwatch.ElapsedMilliseconds / 1000f} s");
+        }
+
+        public static async Task BuildTextureArrayForVobs()
+        {
+            await BuildTextureArrayForVobs(UnityEngine.TextureFormat.DXT1,
+                GameGlobals.StaticCache.LoadedVobTextureInfoDxt1, TextureArrayTypes.Transparent);
+            await BuildTextureArrayForVobs(UnityEngine.TextureFormat.RGBA32,
+                GameGlobals.StaticCache.LoadedVobTextureInfoRgba32, TextureArrayTypes.Opaque);
+        }
+
+        private static async Task BuildTextureArrayForVobs(UnityEngine.TextureFormat textureFormat, Dictionary<string, int> vobTextureInfos, TextureArrayTypes texArrType)
+        {
+            var highestTextureSizeInCache = vobTextureInfos.Max(i => i.Value);
+
+            var texArray = new Texture2DArray(MaxTextureSize, MaxTextureSize, vobTextureInfos.Count, textureFormat, MaxMipCount, false, true)
+            {
+                name = $"{textureFormat} - {texArrType}",
+                filterMode = FilterMode.Trilinear,
+                wrapMode = TextureWrapMode.Repeat
+            };
+
+            // Copy all the textures and their mips into the array. Textures which are smaller are tiled so bilinear sampling isn't broke.
+            // This is why it's not possible to pack different textures together in the same slice.
+            var i = -1;
+            foreach (var texInfo in vobTextureInfos)
+            {
+                ++i;
+                var sourceTex = TryGetTexture(texInfo.Key, false);
+
+                if (sourceTex == null)
+                {
+                    continue;
+                }
+
+                var skipCountOfOversizeMips = 0;
+                var sourceMaxDim = Mathf.Max(sourceTex.width, sourceTex.height);
+                var sourceWidth = sourceTex.width;
+                var sourceHeight = sourceTex.height;
+
+                // If a texture's size is higher than MaxTextureSize, then divide by 2 until we shrink it enough.
+                while (sourceMaxDim > MaxTextureSize)
+                {
+                    skipCountOfOversizeMips++;
+                    sourceMaxDim /= 2;
+                    sourceWidth /= 2;
+                    sourceHeight /= 2;
+                }
+
+                for (var mip = skipCountOfOversizeMips; mip < sourceTex.mipmapCount; mip++)
+                {
+                    // e.g. if we skip 1 oversizeMip, then the targetMip is always one lower than the actual one.
+                    // In this example, we would _skip_ the highest mip and go with one below.
+                    var targetMip = mip - skipCountOfOversizeMips;
+
+                    // If a texture has more mips than we want to use. Skip the highest ones (== the ones with ultra-low resolution)
+                    if (targetMip >= MaxMipCount)
+                    {
+                        break;
+                    }
+
+                    for (var x = 0; x < texArray.width / sourceWidth; x++)
+                    {
+                        for (var y = 0; y < texArray.height / sourceHeight; y++)
+                        {
+                            Debug.Log($"{texInfo.Key} - Creation");
+
+                            if (texInfo.Key == "SKE_BODY_V0.TGA")
+                            {
+                                var c = 2;
+                            }
+
+                            Graphics.CopyTexture(sourceTex, 0, mip, 0, 0,
+                                sourceWidth >> mip, sourceHeight >> mip, texArray, i, targetMip,
+                                (sourceWidth >> mip) * x, (sourceHeight >> mip) * y);
+                        }
+                    }
+                }
+
+                // We can save the memory in Unity as we don't need the separate Textures any longer.
+                Object.Destroy(sourceTex);
+
+                await FrameSkipper.TrySkipToNextFrame();
+            }
+
+            // Store TextureArray in the appropriate TextureArray Cache object to assign it to objects later.
+            TextureArrays.Add(texArrType, texArray);
         }
 
         private static bool GetAlreadyIncludedTexture(TextureArrayTypes textureArrayType, string key, out int arrayIndex, out int maxMipLevel, out Vector2 textureScale, out int animFrameCount)
