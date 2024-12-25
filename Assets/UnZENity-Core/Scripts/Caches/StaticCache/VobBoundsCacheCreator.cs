@@ -13,15 +13,11 @@ using Object = UnityEngine.Object;
 
 namespace GUZ.Core.Caches.StaticCache
 {
-    public class VobCacheCreator
+    public class VobBoundsCacheCreator
     {
-        public Dictionary<string, Bounds> Bounds { get; }
+        public Dictionary<string, Bounds> Bounds { get; } = new();
 
-        public VobCacheCreator()
-        {
-            Bounds = new();
-        }
-
+        
         public void CalculateVobBounds(List<IVirtualObject> vobs)
         {
             foreach (var vob in vobs)

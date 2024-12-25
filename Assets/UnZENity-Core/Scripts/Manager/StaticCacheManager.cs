@@ -22,6 +22,7 @@ namespace GUZ.Core.Manager
         private const string _gzipExt = ".gz";
         private const string _fileNameMetadata = "metadata.json";
         private const string _fileNameVobBounds = "vob-bounds.json";
+        private const string _fileNameVobTextureData = "vob-textures.json";
         private const string _fileNameMeshes = "meshes.json";
         private const string _fileNameVobs = "vobs.json";
 
@@ -61,6 +62,26 @@ namespace GUZ.Core.Manager
 
             public string MeshName;
             public Bounds Bounds;
+        }
+
+        [Serializable]
+        public class VobTextureArrayContainer
+        {
+            public List<TextureArrayEntry> VobTextures;
+        }
+
+        [Serializable]
+        public class TextureArrayEntry
+        {
+            public TextureArrayEntry(string textureName, int maxDimension)
+            {
+                TextureName = textureName;
+                MaxDimension = maxDimension;
+            }
+
+            public string TextureName;
+            public int MaxDimension;
+
         }
 
         [Serializable]
@@ -166,7 +187,7 @@ namespace GUZ.Core.Manager
             Directory.EnumerateFiles(BuildGlobalFilePathName("")).ForEach(File.Delete);
         }
 
-        public async Task SaveGlobalCache(Dictionary<string, Bounds> vobBounds)
+        public async Task SaveGlobalCache(Dictionary<string, Bounds> vobBounds, Dictionary<string, int> textureArrayInformation)
         {
             try
             {
@@ -177,7 +198,12 @@ namespace GUZ.Core.Manager
                     BoundsEntries = vobBounds.Select(i => new VobBoundsEntry(i.Key, i.Value)).ToList()
                 };
 
-                await SaveGlobalCacheFile(vobBoundsContainer);
+                var vobTextureArrayContainer = new VobTextureArrayContainer
+                {
+                    VobTextures = textureArrayInformation.Select(i => new TextureArrayEntry(i.Key, i.Value)).ToList()
+                };
+
+                await SaveGlobalCacheFile(vobBoundsContainer, vobTextureArrayContainer);
             }
             catch (Exception e)
             {
@@ -354,19 +380,21 @@ namespace GUZ.Core.Manager
             await WriteData(vobsJson, BuildWorldFilePathName(fileName, _fileNameVobs));
         }
 
-        private async Task SaveGlobalCacheFile(VobBoundsContainer vobBoundsContainer)
+        private async Task SaveGlobalCacheFile(VobBoundsContainer vobBoundsContainer, VobTextureArrayContainer vobTextureArrayContainer)
         {
             string vobBoundsJson = null;
+            string vobTextureArrayJson = null;
             var prettyPrint = !_configIsCompressed;
 
             // We need to call loading the data in a separate thread to unblock main thread (VR movement etc.) during this IO heavy operation.
             await Task.Run(() =>
             {
                 vobBoundsJson = JsonUtility.ToJson(vobBoundsContainer, prettyPrint);
+                vobTextureArrayJson = JsonUtility.ToJson(vobTextureArrayContainer, prettyPrint);
             });
 
             await WriteData(vobBoundsJson, BuildGlobalFilePathName(_fileNameVobBounds));
-            await WriteData(vobBoundsJson, BuildGlobalFilePathName(_fileNameVobBounds));
+            await WriteData(vobTextureArrayJson, BuildGlobalFilePathName(_fileNameVobTextureData));
         }
 
         private async Task WriteData(string data, string filePath)

@@ -57,7 +57,8 @@ namespace GUZ.Core.Manager.Scenes
             var overallWatch = Stopwatch.StartNew();
 
             var worldsToLoad = GameContext.GameVersionAdapter.Version == GameVersion.Gothic1 ? _gothic1Worlds : _gothic2Worlds;
-            var vobCache = new VobCacheCreator();
+            var vobBoundsCache = new VobBoundsCacheCreator();
+            var textureArrayCache = new TextureArrayCacheCreator();
 
             foreach (var worldName in worldsToLoad)
             {
@@ -76,7 +77,9 @@ namespace GUZ.Core.Manager.Scenes
                 // Create each VOB object once to get its bounding box.
 
 
-                vobCache.CalculateVobBounds(worldData.RootObjects);
+
+                textureArrayCache.CalculateTextureArrayInformation(worldData!.RootObjects);
+                vobBoundsCache.CalculateVobBounds(worldData!.RootObjects);
                 watch.LogAndRestart($"Calculated VobBounds for {worldName}");
 
 
@@ -95,10 +98,11 @@ namespace GUZ.Core.Manager.Scenes
                 // }
             }
 
-            vobCache.CalculateVobtemBounds();
+            textureArrayCache.CalculateItemTextureArrayInformation();
+            vobBoundsCache.CalculateVobtemBounds();
             watch.LogAndRestart("Calculated VobBounds for oCItems");
 
-            await GameGlobals.StaticCache.SaveGlobalCache(vobCache.Bounds);
+            await GameGlobals.StaticCache.SaveGlobalCache(vobBoundsCache.Bounds, textureArrayCache.TextureArrayInformation);
             watch.LogAndRestart("Saved GlobalCache files");
             overallWatch.Log("Overall PreCaching done");
 
