@@ -37,6 +37,7 @@ namespace GUZ.Core.Manager
         private bool _isGlobalCacheLoaded;
 
         public Dictionary<string, Bounds> LoadedVobsBounds { get; private set; }
+        public Dictionary<string, int> LoadedVobTextureInfo { get; private set; }
 
         [Serializable]
         public class MetadataContainer
@@ -246,10 +247,13 @@ namespace GUZ.Core.Manager
             try
             {
                 var vobBoundsString = await ReadData(BuildGlobalFilePathName(_fileNameVobBounds));
+                var vobTextureInfo = await ReadData(BuildGlobalFilePathName(_fileNameVobTextureData));
 
                 var vobBoundsContainer = await ParseJson<VobBoundsContainer>(vobBoundsString);
+                var vobTextureArrayContainer = await ParseJson<VobTextureArrayContainer>(vobTextureInfo);
 
                 LoadedVobsBounds = vobBoundsContainer.BoundsEntries.ToDictionary(i => i.MeshName, i => i.Bounds);
+                LoadedVobTextureInfo = vobTextureArrayContainer.VobTextures.ToDictionary(i => i.TextureName, i => i.MaxDimension);
             }
             catch (Exception e)
             {
