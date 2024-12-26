@@ -115,7 +115,7 @@ namespace GUZ.Core.Creator
                 // Debug - Skip loading if not wanted.
                 if (config.SpawnVOBTypes.Value.IsEmpty() || config.SpawnVOBTypes.Value.Contains(vob.Type))
                 {
-                    go = reparent ? LoadVob2(config, vob) : LoadVob2(config, vob);
+                    go = LoadVob2(config, vob);
                     // go = reparent ? LoadVob(config, vob, parent) : LoadVob(config, vob);
                 }
 
@@ -130,11 +130,31 @@ namespace GUZ.Core.Creator
             }
         }
 
+        // FIXME - Cauldron and some other Vobs have children. We would need to show them together. As of now they would be placed in separate parent-GOs (e.g. MobInter/ and Pfx/)
+        // FIXME - We should consider rendering them one-after-another without creating new parents. Then localPosition for each vob and child-vob would be correct automatically.
         private static GameObject LoadVob2(DeveloperConfig config, IVirtualObject vob)
         {
             if (IsEagerLoading(vob.Type))
             {
                 return LoadVob(config, vob);
+            }
+
+            switch (vob.Visual.Type)
+            {
+                case VisualType.Decal:
+                    // Skip object
+                    if (!config.EnableDecalVisuals)
+                    {
+                        return null;
+                    }
+                    break;
+                case VisualType.ParticleEffect:
+                    // Skip object
+                    if (!config.EnableParticleEffects)
+                    {
+                        return null;
+                    }
+                    break;
             }
 
             var go = new GameObject(vob.GetVisualName());

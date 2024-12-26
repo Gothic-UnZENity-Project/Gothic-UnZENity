@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using GUZ.Core.Data.Container;
+using JetBrains.Annotations;
 using MyBox;
 using UnityEngine;
 using ZenKit;
@@ -17,7 +18,7 @@ namespace GUZ.Core.Extensions
         /// <summary>
         /// A visual name is either extracted from Visual.Name or Name of VOB itself.
         /// </summary>
-        public static string GetVisualName(this IVirtualObject vob)
+        public static string GetVisualName([CanBeNull] this IVirtualObject vob)
         {
             if (vob == null)
             {

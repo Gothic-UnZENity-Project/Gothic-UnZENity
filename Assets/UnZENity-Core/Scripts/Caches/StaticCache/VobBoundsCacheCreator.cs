@@ -49,6 +49,8 @@ namespace GUZ.Core.Caches.StaticCache
                         go = MeshFactory.CreateVobPfx(vob, parent: null);
                         break;
                     default:
+                        // FIXME - e.g. OC_MOB_CAULDRON has vob-children like MAGICPOTIONSMOKE.pfx and TORCH.pfx inside.
+                        //         The correct bounds would need to include these elements to be checked.
                         go = CreateVobMesh(visualName);
                         break;
                 }
