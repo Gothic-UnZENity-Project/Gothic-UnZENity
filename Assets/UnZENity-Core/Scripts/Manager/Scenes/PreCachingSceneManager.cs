@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Threading.Tasks;
+using GUZ.Core.Caches;
 using GUZ.Core.Caches.StaticCache;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
@@ -105,6 +106,9 @@ namespace GUZ.Core.Manager.Scenes
             await GameGlobals.StaticCache.SaveGlobalCache(vobBoundsCache.Bounds, textureArrayCache.TextureArrayInformation);
             watch.LogAndRestart("Saved GlobalCache files");
             overallWatch.Log("Overall PreCaching done");
+
+            // Cleanup
+            MultiTypeCache.Dispose();
 
             // Every world of the game is cached successfully. Now let's move on!
             GameManager.I.LoadScene(Constants.SceneLogo, Constants.ScenePreCaching);

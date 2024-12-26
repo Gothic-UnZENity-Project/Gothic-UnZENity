@@ -202,7 +202,7 @@ namespace GUZ.Core.Caches
                 }
                 else if (GameGlobals.StaticCache.LoadedVobTextureInfoRgba32.ContainsKey(materialData.Texture))
                 {
-                    arrayIndex = GameGlobals.StaticCache.LoadedVobTextureInfoDxt1.FirstIndex(i => i.Key == materialData.Texture);
+                    arrayIndex = GameGlobals.StaticCache.LoadedVobTextureInfoRgba32.FirstIndex(i => i.Key == materialData.Texture);
                     textureArrayType = TextureArrayTypes.Transparent;
 
                     maxMipLevel = texture!.MipmapCount - 1;
