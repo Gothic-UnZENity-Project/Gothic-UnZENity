@@ -96,7 +96,7 @@ namespace GUZ.Core.Creator.Meshes.Builder
             renderer.SetMaterials(finalMaterials);
         }
 
-        protected override Material GetDefaultMaterial(bool isAlphaTest)
+        private Material GetDefaultMaterial(bool isAlphaTest)
         {
             Shader shader = isAlphaTest ? Constants.ShaderLitAlphaToCoverage : Constants.ShaderWorldLit;
             Material material = new Material(shader);

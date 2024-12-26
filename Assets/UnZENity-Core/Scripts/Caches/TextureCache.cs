@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -16,7 +17,7 @@ using Debug = UnityEngine.Debug;
 using Mesh = UnityEngine.Mesh;
 using Object = UnityEngine.Object;
 using Texture = UnityEngine.Texture;
-using TextureFormat = ZenKit.TextureFormat;
+using TextureFormat = UnityEngine.TextureFormat;
 
 namespace GUZ.Core.Caches
 {
@@ -140,13 +141,13 @@ namespace GUZ.Core.Caches
             string preparedKey = GetPreparedKey(key);
 
             // Workaround for Unity and DXT1 Mipmaps.
-            if (zkTexture.Format == TextureFormat.Dxt1 && zkTexture.MipmapCount == 1)
+            if (zkTexture.Format == ZenKit.TextureFormat.Dxt1 && zkTexture.MipmapCount == 1)
             {
                 texture = GenerateDxt1Mipmaps(zkTexture);
             }
             else
             {
-                UnityEngine.TextureFormat format = zkTexture.Format.AsUnityTextureFormat();
+                TextureFormat format = zkTexture.Format.AsUnityTextureFormat();
 
                 // Let Unity generate Mipmaps if they aren't provided by Gothic texture itself.
                 bool updateMipmaps = zkTexture.MipmapCount == 1;
@@ -155,7 +156,7 @@ namespace GUZ.Core.Caches
                 texture = new Texture2D(zkTexture.Width, zkTexture.Height, format, zkTexture.MipmapCount, false);
                 for (var i = 0; i < zkTexture.MipmapCount; i++)
                 {
-                    if (format == UnityEngine.TextureFormat.RGBA32)
+                    if (format == TextureFormat.RGBA32)
                     {
                         // RGBA is uncompressed format.
                         texture.SetPixelData(zkTexture.AllMipmapsRgba[i], i);
@@ -249,11 +250,11 @@ namespace GUZ.Core.Caches
                 return;
             }
 
-            UnityEngine.TextureFormat textureFormat = zenTextureData.Format.AsUnityTextureFormat();
+            TextureFormat textureFormat = zenTextureData.Format.AsUnityTextureFormat();
 
             if (materialData.Group != MaterialGroup.Water)
             {
-                textureArrayType = textureFormat == UnityEngine.TextureFormat.DXT1
+                textureArrayType = textureFormat == TextureFormat.DXT1
                     ? TextureArrayTypes.Opaque
                     : TextureArrayTypes.Transparent;
             }
@@ -316,10 +317,10 @@ namespace GUZ.Core.Caches
                     maxMipDepth = textureWithMaxAllowedSize.MipmapCount;
                 }
 
-                UnityEngine.TextureFormat textureFormat = UnityEngine.TextureFormat.RGBA32;
+                TextureFormat textureFormat = TextureFormat.RGBA32;
                 if (textureArrayType == TextureArrayTypes.Opaque)
                 {
-                    textureFormat = UnityEngine.TextureFormat.DXT1;
+                    textureFormat = TextureFormat.DXT1;
                 }
 
                 Texture texArray;
@@ -410,16 +411,14 @@ namespace GUZ.Core.Caches
 
         public static async Task BuildTextureArrayForVobs()
         {
-            await BuildTextureArrayForVobs(UnityEngine.TextureFormat.DXT1,
+            await BuildTextureArrayForVobs(TextureFormat.DXT1,
                 GameGlobals.StaticCache.LoadedVobTextureInfoDxt1, TextureArrayTypes.Transparent);
-            await BuildTextureArrayForVobs(UnityEngine.TextureFormat.RGBA32,
+            await BuildTextureArrayForVobs(TextureFormat.RGBA32,
                 GameGlobals.StaticCache.LoadedVobTextureInfoRgba32, TextureArrayTypes.Opaque);
         }
 
-        private static async Task BuildTextureArrayForVobs(UnityEngine.TextureFormat textureFormat, Dictionary<string, int> vobTextureInfos, TextureArrayTypes texArrType)
+        private static async Task BuildTextureArrayForVobs(TextureFormat textureFormat, Dictionary<string, int> vobTextureInfos, TextureArrayTypes texArrType)
         {
-            var highestTextureSizeInCache = vobTextureInfos.Max(i => i.Value);
-
             var texArray = new Texture2DArray(MaxTextureSize, MaxTextureSize, vobTextureInfos.Count, textureFormat, MaxMipCount, false, true)
             {
                 name = $"{textureFormat} - {texArrType}",
@@ -470,13 +469,6 @@ namespace GUZ.Core.Caches
                     {
                         for (var y = 0; y < texArray.height / sourceHeight; y++)
                         {
-                            Debug.Log($"{texInfo.Key} - Creation");
-
-                            if (texInfo.Key == "SKE_BODY_V0.TGA")
-                            {
-                                var c = 2;
-                            }
-
                             Graphics.CopyTexture(sourceTex, 0, mip, 0, 0,
                                 sourceWidth >> mip, sourceHeight >> mip, texArray, i, targetMip,
                                 (sourceWidth >> mip) * x, (sourceHeight >> mip) * y);
@@ -492,6 +484,24 @@ namespace GUZ.Core.Caches
 
             // Store TextureArray in the appropriate TextureArray Cache object to assign it to objects later.
             TextureArrays.Add(texArrType, texArray);
+        }
+
+        public static Texture GetTextureArrayEntry(string textureName)
+        {
+            return GetTextureArrayEntry(ResourceLoader.TryGetTexture(textureName));
+        }
+
+        public static Texture GetTextureArrayEntry(ITexture texture)
+        {
+            switch (texture.Format.AsUnityTextureFormat())
+            {
+                case TextureFormat.DXT1:
+                    return TextureArrays[TextureArrayTypes.Transparent];
+                case TextureFormat.RGBA32:
+                    return TextureArrays[TextureArrayTypes.Opaque];
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
         }
 
         private static bool GetAlreadyIncludedTexture(TextureArrayTypes textureArrayType, string key, out int arrayIndex, out int maxMipLevel, out Vector2 textureScale, out int animFrameCount)
@@ -545,11 +555,11 @@ namespace GUZ.Core.Caches
         /// </summary>
         private static Texture2D GenerateDxt1Mipmaps(ITexture zkTexture)
         {
-            var dxtTexture = new Texture2D(zkTexture.Width, zkTexture.Height, UnityEngine.TextureFormat.DXT1, false);
+            var dxtTexture = new Texture2D(zkTexture.Width, zkTexture.Height, TextureFormat.DXT1, false);
             dxtTexture.SetPixelData(zkTexture.AllMipmapsRaw[0], 0);
             dxtTexture.Apply(false);
 
-            var texture = new Texture2D(zkTexture.Width, zkTexture.Height, UnityEngine.TextureFormat.RGB24, true);
+            var texture = new Texture2D(zkTexture.Width, zkTexture.Height, TextureFormat.RGB24, true);
             texture.SetPixels(dxtTexture.GetPixels());
             texture.Apply(true, true);
             Object.Destroy(dxtTexture);
