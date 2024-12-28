@@ -987,12 +987,14 @@ namespace GUZ.Core.Creator
 
         private static GameObject CreateDecal(IVirtualObject vob, GameObject parent = null)
         {
-            return MeshFactory.CreateVobDecal(vob, (VisualDecal)vob.Visual, parent ?? GetRootGameObjectOfType(vob.Type));
+            return MeshFactory.CreateVobDecal(vob, (VisualDecal)vob.Visual,
+                vob.Position.ToUnityVector(), vob.Rotation.ToUnityQuaternion(),
+                parent ?? GetRootGameObjectOfType(vob.Type));
         }
 
         private static GameObject CreatePfx(IVirtualObject vob, GameObject parent = null)
         {
-            return MeshFactory.CreateVobPfx(vob, parent);
+            return MeshFactory.CreateVobPfx(vob, vob.Position.ToUnityVector(), vob.Rotation.ToUnityQuaternion(), parent);
         }
 
         private static GameObject CreateAnimatedVob(Animate vob, GameObject parent = null)

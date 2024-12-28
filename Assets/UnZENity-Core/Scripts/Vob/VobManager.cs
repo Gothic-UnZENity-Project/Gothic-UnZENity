@@ -117,7 +117,7 @@ namespace GUZ.Core.Vob
                         case VisualType.ParticleEffect:
                             if (GameGlobals.Config.Dev.EnableParticleEffects)
                             {
-                                return MeshFactory.CreateVobPfx(vob, parent);
+                                return MeshFactory.CreateVobPfx(vob, parent: parent);
                             }
                             return null;
                         default:

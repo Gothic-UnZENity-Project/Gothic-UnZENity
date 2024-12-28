@@ -170,23 +170,23 @@ namespace GUZ.Core.Creator.Meshes
             return !(noMeshTextures && noAttachmentTextures);
         }
 
-        public static GameObject CreateVobPfx(IVirtualObject vob, GameObject parent)
+        public static GameObject CreateVobPfx(IVirtualObject vob, Vector3 position = default, Quaternion rotation = default, GameObject parent = null)
         {
             var vobPfxBuilder = new VobPfxMeshBuilder();
             vobPfxBuilder.SetGameObject(null, vob.Visual!.Name);
             vobPfxBuilder.SetParent(parent);
-            vobPfxBuilder.SetRootPosAndRot(vob.Position.ToUnityVector(), vob.Rotation.ToUnityQuaternion());
+            vobPfxBuilder.SetRootPosAndRot(position, rotation);
             vobPfxBuilder.SetPfxData(vob);
 
             return vobPfxBuilder.Build();
         }
 
-        public static GameObject CreateVobDecal(IVirtualObject vob, VisualDecal decal, GameObject parent = null)
+        public static GameObject CreateVobDecal(IVirtualObject vob, VisualDecal decal, Vector3 position = default, Quaternion rotation = default, GameObject parent = null)
         {
             var vobDecalBuilder = new VobDecalMeshBuilder();
             vobDecalBuilder.SetGameObject(null, vob.Name);
             vobDecalBuilder.SetParent(parent);
-            vobDecalBuilder.SetRootPosAndRot(vob.Position.ToUnityVector(), vob.Rotation.ToUnityQuaternion());
+            vobDecalBuilder.SetRootPosAndRot(position, rotation);
             vobDecalBuilder.SetDecalData(vob, decal);
 
             return vobDecalBuilder.Build();
