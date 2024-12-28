@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using GUZ.Core.Caches;
 using GUZ.Core.Caches.StaticCache;
@@ -42,8 +43,10 @@ namespace GUZ.Core.Manager.Scenes
 #pragma warning restore CS4014
         }
 
+
+
         /// <summary>
-        /// 1. Fetch all existing worlds (done)
+        /// 1. Fetch all existing worlds
         ///
         /// 1.1 Load static VOBs (many elements except like Spot+Startpoint+Iems+[Elements with have no mesh])
         ///   Cache them
@@ -54,64 +57,72 @@ namespace GUZ.Core.Manager.Scenes
         /// </summary>
         private async Task CreateCaches()
         {
-            var watch = Stopwatch.StartNew();
-            var overallWatch = Stopwatch.StartNew();
-
-            var worldsToLoad = GameContext.GameVersionAdapter.Version == GameVersion.Gothic1 ? _gothic1Worlds : _gothic2Worlds;
-            var vobBoundsCache = new VobBoundsCacheCreator();
-            var textureArrayCache = new TextureArrayCacheCreator();
-
-            foreach (var worldName in worldsToLoad)
+            try
             {
-                // DEBUG - Remove this IF to enforce recreation of cache.
-                if (GameGlobals.StaticCache.DoCacheFilesExist(worldName))
+                var watch = Stopwatch.StartNew();
+                var overallWatch = Stopwatch.StartNew();
+
+                var worldsToLoad = GameContext.GameVersionAdapter.Version == GameVersion.Gothic1 ? _gothic1Worlds : _gothic2Worlds;
+                var vobBoundsCache = new VobBoundsCacheCreator();
+                var textureArrayCache = new TextureArrayCacheCreator();
+
+                foreach (var worldName in worldsToLoad)
                 {
-                    if (GameGlobals.StaticCache.ReadMetadata(worldName).Version == Constants.StaticCacheVersion)
+                    // DEBUG - Remove this IF to enforce recreation of cache.
+                    if (GameGlobals.StaticCache.DoCacheFilesExist(worldName))
                     {
-                        Debug.Log($"{worldName} already cached and metadata version matches. Skipping...");
-                        continue;
+                        if (GameGlobals.StaticCache.ReadMetadata(worldName).Version == Constants.StaticCacheVersion)
+                        {
+                            Debug.Log($"{worldName} already cached and metadata version matches. Skipping...");
+                            continue;
+                        }
                     }
+
+                    Debug.Log($"### PreCaching meshes for world: {worldName}");
+                    var worldChunkCache = new WorldChunkCacheCreator();
+                    var worldData = ResourceLoader.TryGetWorld(worldName, GameContext.GameVersionAdapter.Version)!;
+                    // Create each VOB object once to get its bounding box.
+
+                    // worldChunkCache.CalculateWorldChunks(worldData.RootObjects);
+                    // return;
+
+                    textureArrayCache.CalculateTextureArrayInformation(worldData.RootObjects);
+                    vobBoundsCache.CalculateVobBounds(worldData!.RootObjects);
+                    watch.LogAndRestart($"Calculated VobBounds for {worldName}");
+
+
+                    // DEBUG restore
+                    // {
+                    //     var loadRoot = new GameObject("DebugRestore");
+                    //     loadRoot.transform.position = new(1000, 0, 0);
+                    //
+                    //     await GameGlobals.StaticCache.LoadCache(loadRoot, worldName);
+                    //
+                    //     Debug.Log("DEBUG Loading done!");
+                    //     return;
+                    // }
                 }
 
-                Debug.Log($"### PreCaching meshes for world: {worldName}");
-                var worldData = ResourceLoader.TryGetWorld(worldName, GameContext.GameVersionAdapter.Version);
-                // Create each VOB object once to get its bounding box.
+                textureArrayCache.CalculateItemTextureArrayInformation();
+                vobBoundsCache.CalculateVobtemBounds();
+                watch.LogAndRestart("Calculated VobBounds for oCItems");
 
+                await GameGlobals.StaticCache.SaveGlobalCache(vobBoundsCache.Bounds, textureArrayCache.TextureArrayInformation);
+                watch.LogAndRestart("Saved GlobalCache files");
+                overallWatch.Log("Overall PreCaching done");
 
+                // Cleanup
+                MultiTypeCache.Dispose();
 
-                textureArrayCache.CalculateTextureArrayInformation(worldData!.RootObjects);
-                vobBoundsCache.CalculateVobBounds(worldData!.RootObjects);
-                watch.LogAndRestart($"Calculated VobBounds for {worldName}");
+                // Every world of the game is cached successfully. Now let's move on!
+                GameManager.I.LoadScene(Constants.SceneLogo, Constants.ScenePreCaching);
 
-
-                // Debug.Log($"### Saving cache for {worldName} done.");
-
-
-                // DEBUG restore
-                // {
-                //     var loadRoot = new GameObject("DebugRestore");
-                //     loadRoot.transform.position = new(1000, 0, 0);
-                //
-                //     await GameGlobals.StaticCache.LoadCache(loadRoot, worldName);
-                //
-                //     Debug.Log("DEBUG Loading done!");
-                //     return;
-                // }
             }
-
-            textureArrayCache.CalculateItemTextureArrayInformation();
-            vobBoundsCache.CalculateVobtemBounds();
-            watch.LogAndRestart("Calculated VobBounds for oCItems");
-
-            await GameGlobals.StaticCache.SaveGlobalCache(vobBoundsCache.Bounds, textureArrayCache.TextureArrayInformation);
-            watch.LogAndRestart("Saved GlobalCache files");
-            overallWatch.Log("Overall PreCaching done");
-
-            // Cleanup
-            MultiTypeCache.Dispose();
-
-            // Every world of the game is cached successfully. Now let's move on!
-            GameManager.I.LoadScene(Constants.SceneLogo, Constants.ScenePreCaching);
+            catch (Exception e)
+            {
+                Debug.LogError(e);
+                throw;
+            }
         }
     }
 }

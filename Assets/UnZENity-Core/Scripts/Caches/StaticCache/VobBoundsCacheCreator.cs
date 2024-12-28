@@ -63,7 +63,7 @@ namespace GUZ.Core.Caches.StaticCache
                         //         The correct bounds would need to include these elements to be checked.
                         // We load BoundingBox directly now.
                         // go = CreateVobMesh(visualName);
-                        boundingBox = CalculateBoundingBox(vob);
+                        boundingBox = CalculateBoundingBox(vob.Visual.Type, vob.Visual.Name);
                         break;
                 }
 
@@ -111,71 +111,49 @@ namespace GUZ.Core.Caches.StaticCache
                     continue;
                 }
 
-                var go = CreateVobMesh(item.Visual);
+                Bounds boundingBox;
 
-                if (go == null)
+                boundingBox = CalculateBoundingBox(VisualType.MultiResolutionMesh, item.Visual);
+
+                // 99% of items are of mesh type MRM. For all the others, let's try other options.
+                if (boundingBox == default)
                 {
-                    continue;
+                    boundingBox = CalculateBoundingBox(VisualType.MorphMesh, item.Visual);
+
+                    // In G1 it is only ITLSTORCHBURNING.ZEN --> RootObjects[0].Visual=ITLS_TORCHBURNED_01.3DS
+                    if (item.Visual.EndsWith(".ZEN"))
+                    {
+                        var world = ResourceLoader.TryGetWorld(item.Visual, GameContext.GameVersionAdapter.Version);
+                        if (world!.RootObjects.Count != 1)
+                        {
+                            Debug.LogError($"Bounds for {item.Visual} couldn't be calculated correctly as focussing on 1 G1 object as of now.");
+                        }
+
+                        // FIXME - This Vob has 2 children. One is a Pfx! We would need to calculate these bounds as well.
+                        var firstWorldVisual = world.RootObjects.First().Visual;
+                        boundingBox = CalculateBoundingBox(firstWorldVisual!.Type, firstWorldVisual.Name);
+                    }
                 }
 
-                var boundingBox = CalculateBoundingBox(go);
-                Object.Destroy(go);
+                if (boundingBox == default)
+                {
+                    // Re-enable if you want to check which meshes couldn't be found.
+                    // Debug.LogError($"ItemVisual {item.Visual} is neither .mrm, .zen, nor .mmb.");
+                    continue;
+                }
 
                 Bounds[item.Visual] = boundingBox;
             }
         }
 
-        [Obsolete("(2024-12) We now load BoundingBox from ZenKit object directly. We can keep it for reference for some time.")]
-        private GameObject CreateVobMesh(string visualName)
-        {
-            // MDL
-            var mdl = ResourceLoader.TryGetModel(visualName);
-            if (mdl != null)
-            {
-                return MeshFactory.CreateVob(visualName, mdl, useTextureArray: false);
-            }
-
-            // MDH+MDM (without MDL as wrapper)
-            var mdh = ResourceLoader.TryGetModelHierarchy(visualName);
-            var mdm = ResourceLoader.TryGetModelMesh(visualName);
-            if (mdh != null && mdm != null)
-            {
-                return MeshFactory.CreateVob(visualName, mdm, mdh, useTextureArray: false);
-            }
-
-            // MMB
-            var mmb = ResourceLoader.TryGetMorphMesh(visualName);
-            if (mmb != null)
-            {
-                return MeshFactory.CreateVob(visualName, mmb, useTextureArray: false);
-            }
-
-            // MRM
-            var mrm = ResourceLoader.TryGetMultiResolutionMesh(visualName);
-            if (mrm != null)
-            {
-                return MeshFactory.CreateVob(visualName, mrm, withCollider: false, useTextureArray: false);
-            }
-
-            // e.g. ITLSTORCHBURNING.ZEN
-            // Debug.LogError($"No mesh found for >{meshName}<");
-            return null;
-        }
-
-        private Bounds CalculateBoundingBox(IVirtualObject vob)
+        private Bounds CalculateBoundingBox(VisualType visualType, string visualName)
         {
             Bounds bounds = default;
 
-            if (vob.Visual == null)
-            {
-                Debug.LogError("Visual is null");
-                return default;
-            }
-
-            switch (vob.Visual.Type)
+            switch (visualType)
             {
                 case VisualType.Mesh:
-                    var msh = ResourceLoader.TryGetMesh(vob.Visual.Name);
+                    var msh = ResourceLoader.TryGetMesh(visualName);
 
                     if (msh == null)
                     {
@@ -185,7 +163,7 @@ namespace GUZ.Core.Caches.StaticCache
                     bounds = GetBoundsByOrientedBbox(msh.OrientedBoundingBox);
                     break;
                 case VisualType.MultiResolutionMesh:
-                    var mrm = ResourceLoader.TryGetMultiResolutionMesh(vob.Visual.Name);
+                    var mrm = ResourceLoader.TryGetMultiResolutionMesh(visualName);
 
                     if (mrm == null)
                     {
@@ -195,7 +173,7 @@ namespace GUZ.Core.Caches.StaticCache
                     bounds = GetBoundsByOrientedBbox(mrm.OrientedBoundingBox);
                     break;
                case VisualType.Model:
-                    var mdl = ResourceLoader.TryGetModel(vob.Visual.Name);
+                    var mdl = ResourceLoader.TryGetModel(visualName);
 
                     if (mdl == null)
                     {
@@ -214,7 +192,7 @@ namespace GUZ.Core.Caches.StaticCache
 
                     break;
                 case VisualType.MorphMesh:
-                    var mmb = ResourceLoader.TryGetMorphMesh(vob.Visual.Name);
+                    var mmb = ResourceLoader.TryGetMorphMesh(visualName);
 
                     if (mmb == null)
                     {
@@ -228,7 +206,7 @@ namespace GUZ.Core.Caches.StaticCache
                 case VisualType.Unknown:
                 case VisualType.Decal:
                 default:
-                    throw new ArgumentOutOfRangeException(vob.Visual.Type.ToString());
+                    throw new ArgumentOutOfRangeException(visualType.ToString());
             }
 
             return bounds;
