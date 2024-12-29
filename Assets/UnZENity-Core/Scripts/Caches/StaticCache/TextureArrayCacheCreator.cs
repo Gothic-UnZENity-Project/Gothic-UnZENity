@@ -18,11 +18,22 @@ namespace GUZ.Core.Caches.StaticCache
     {
         public Dictionary<string, (int maxDim, TextureCache.TextureArrayTypes textureType)> TextureArrayInformation { get; } = new();
 
+        /// <summary>
+        /// Load all materials from world mesh and assign textures to texture array accordingly.
+        ///
+        /// We cache all texture information. In G1.world.zen, there are about 25 which aren't used in normal mesh (maybe in portals only?)
+        /// But for sake of simplicity, we use them all.
+        /// </summary>
         public void CalculateTextureArrayInformation(IMesh worldMesh)
         {
             foreach (var material in worldMesh.Materials)
             {
+                if (TextureArrayInformation.ContainsKey(material.Texture))
+                {
+                    continue;
+                }
 
+                AddTextureToCache(material.Group, material.Texture);
             }
         }
 
@@ -36,14 +47,6 @@ namespace GUZ.Core.Caches.StaticCache
                 {
                     // Check children
                     CalculateTextureArrayInformation(vob.Children);
-                    continue;
-                }
-
-                var visualName = vob.GetVisualName();
-
-                // Already cached
-                if (TextureArrayInformation.ContainsKey(visualName))
-                {
                     continue;
                 }
 
@@ -140,6 +143,12 @@ namespace GUZ.Core.Caches.StaticCache
 
         private void AddTextureToCache(MaterialGroup group, string textureName)
         {
+            // Already cached.
+            if (TextureArrayInformation.ContainsKey(textureName))
+            {
+                return;
+            }
+
             var texture = ResourceLoader.TryGetTexture(textureName);
 
             if (texture == null)

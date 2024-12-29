@@ -83,12 +83,16 @@ namespace GUZ.Core.Manager.Scenes
                     var worldData = ResourceLoader.TryGetWorld(worldName, GameContext.GameVersionAdapter.Version)!;
                     // Create each VOB object once to get its bounding box.
 
-                    // worldChunkCache.CalculateWorldChunks(worldData.RootObjects);
-                    // return;
+                    worldData.Mesh.Materials.ForEach(material => Debug.Log($"Material: {material.Texture}"));
+
+                    textureArrayCache.CalculateTextureArrayInformation(worldData.Mesh);
+                    watch.LogAndRestart($"{worldName}: WorldMesh TextureArray calculated.");
 
                     textureArrayCache.CalculateTextureArrayInformation(worldData.RootObjects);
+                    watch.LogAndRestart($"{worldName}: Vob TextureArray calculated.");
+
                     vobBoundsCache.CalculateVobBounds(worldData!.RootObjects);
-                    watch.LogAndRestart($"Calculated VobBounds for {worldName}");
+                    watch.LogAndRestart($"{worldName}: VobBounds calculated.");
 
 
                     // DEBUG restore
@@ -105,11 +109,11 @@ namespace GUZ.Core.Manager.Scenes
 
                 textureArrayCache.CalculateItemTextureArrayInformation();
                 vobBoundsCache.CalculateVobtemBounds();
-                watch.LogAndRestart("Calculated VobBounds for oCItems");
+                watch.LogAndRestart("VobBounds for oCItems calculated.");
 
                 await GameGlobals.StaticCache.SaveGlobalCache(vobBoundsCache.Bounds, textureArrayCache.TextureArrayInformation);
-                watch.LogAndRestart("Saved GlobalCache files");
-                overallWatch.Log("Overall PreCaching done");
+                watch.LogAndRestart("Saved GlobalCache files.");
+                overallWatch.Log("Overall PreCaching done.");
 
                 // Cleanup
                 MultiTypeCache.Dispose();
