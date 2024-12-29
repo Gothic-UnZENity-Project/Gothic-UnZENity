@@ -6,15 +6,25 @@ using GUZ.Core.Globals;
 using GUZ.Core.Vm;
 using MyBox;
 using UnityEngine;
+using ZenKit;
 using ZenKit.Daedalus;
 using ZenKit.Vobs;
 using Constants = GUZ.Core.Globals.Constants;
+using TextureFormat = UnityEngine.TextureFormat;
 
 namespace GUZ.Core.Caches.StaticCache
 {
     public class TextureArrayCacheCreator
     {
-        public Dictionary<string, (int maxDim, TextureFormat textureFormat)> TextureArrayInformation { get; } = new();
+        public Dictionary<string, (int maxDim, TextureCache.TextureArrayTypes textureType)> TextureArrayInformation { get; } = new();
+
+        public void CalculateTextureArrayInformation(IMesh worldMesh)
+        {
+            foreach (var material in worldMesh.Materials)
+            {
+
+            }
+        }
 
         public void CalculateTextureArrayInformation(List<IVirtualObject> vobs)
         {
@@ -91,8 +101,8 @@ namespace GUZ.Core.Caches.StaticCache
                         return;
                     }
 
-                    mdm.Meshes.ForEach(mesh => mesh.Mesh.Materials.ForEach(material => AddTextureToCache(material.Texture)));
-                    mdm.Attachments.ForEach(mesh => mesh.Value.Materials.ForEach(material => AddTextureToCache(material.Texture)));
+                    mdm.Meshes.ForEach(mesh => mesh.Mesh.Materials.ForEach(material => AddTextureToCache(material.Group, material.Texture)));
+                    mdm.Attachments.ForEach(mesh => mesh.Value.Materials.ForEach(material => AddTextureToCache(material.Group, material.Texture)));
                     break;
                 case VisualType.MultiResolutionMesh:
                     var mrm = ResourceLoader.TryGetMultiResolutionMesh(vob.GetVisualName());
@@ -102,7 +112,7 @@ namespace GUZ.Core.Caches.StaticCache
                         return;
                     }
 
-                    mrm.Materials.ForEach(material => AddTextureToCache(material.Texture));
+                    mrm.Materials.ForEach(material => AddTextureToCache(material.Group, material.Texture));
                     break;
                 case VisualType.Model:
                     var mdl = ResourceLoader.TryGetModel(vob.GetVisualName());
@@ -112,8 +122,8 @@ namespace GUZ.Core.Caches.StaticCache
                         return;
                     }
 
-                    mdl.Mesh.Meshes.ForEach(mesh => mesh.Mesh.Materials.ForEach(material => AddTextureToCache(material.Texture)));
-                    mdl.Mesh.Attachments.ForEach(mesh => mesh.Value.Materials.ForEach(material => AddTextureToCache(material.Texture)));
+                    mdl.Mesh.Meshes.ForEach(mesh => mesh.Mesh.Materials.ForEach(material => AddTextureToCache(material.Group, material.Texture)));
+                    mdl.Mesh.Attachments.ForEach(mesh => mesh.Value.Materials.ForEach(material => AddTextureToCache(material.Group, material.Texture)));
                     break;
                 case VisualType.MorphMesh:
                     var mmb = ResourceLoader.TryGetMorphMesh(vob.GetVisualName());
@@ -123,12 +133,12 @@ namespace GUZ.Core.Caches.StaticCache
                         return;
                     }
 
-                    mmb.Mesh.Materials.ForEach(material => AddTextureToCache(material.Texture));
+                    mmb.Mesh.Materials.ForEach(material => AddTextureToCache(material.Group, material.Texture));
                     break;
             }
         }
 
-        private void AddTextureToCache(string textureName)
+        private void AddTextureToCache(MaterialGroup group, string textureName)
         {
             var texture = ResourceLoader.TryGetTexture(textureName);
 
@@ -144,8 +154,31 @@ namespace GUZ.Core.Caches.StaticCache
                 Debug.LogError("Only DXT1 and RGBA32 textures are supported for texture arrays as of now!");
             }
 
+            var textureArrayType = TextureCache.TextureArrayTypes.Unknown;
+
+            // Water is separate as we use a different shader.
+            // TODO - Do we need to check for different TextureFormats as well?
+            if (group == MaterialGroup.Water)
+            {
+                textureArrayType = TextureCache.TextureArrayTypes.Water;
+            }
+            // DXT1 can be opaque
+            else if (unityTextureFormat == TextureFormat.DXT1)
+            {
+                textureArrayType = TextureCache.TextureArrayTypes.Opaque;
+            }
+            // RGBA32 is transparent
+            else if (unityTextureFormat == TextureFormat.RGBA32)
+            {
+                textureArrayType = TextureCache.TextureArrayTypes.Transparent;
+            }
+            else
+            {
+                Debug.LogError($"TextureFormat={unityTextureFormat} + MaterialGroup={group} isn't handled for TextureArray so far.");
+            }
+
             TextureArrayInformation.TryAdd(textureName,
-                (maxDim: Math.Max(texture.Width, texture.Height), textureFormat: unityTextureFormat));
+                (maxDim: Math.Max(texture.Width, texture.Height), textureType: textureArrayType));
         }
 
         private void AddTexInfoForItem(ItemInstance item)
@@ -154,8 +187,8 @@ namespace GUZ.Core.Caches.StaticCache
             var mdl = ResourceLoader.TryGetModel(item.Visual);
             if (mdl != null)
             {
-                mdl.Mesh.Meshes.ForEach(mesh => mesh.Mesh.Materials.ForEach(material => AddTextureToCache(material.Texture)));
-                mdl.Mesh.Attachments.ForEach(mesh => mesh.Value.Materials.ForEach(material => AddTextureToCache(material.Texture)));
+                mdl.Mesh.Meshes.ForEach(mesh => mesh.Mesh.Materials.ForEach(material => AddTextureToCache(material.Group, material.Texture)));
+                mdl.Mesh.Attachments.ForEach(mesh => mesh.Value.Materials.ForEach(material => AddTextureToCache(material.Group, material.Texture)));
                 return;
             }
 
@@ -164,8 +197,8 @@ namespace GUZ.Core.Caches.StaticCache
             var mdm = ResourceLoader.TryGetModelMesh(item.Visual);
             if (mdh != null && mdm != null)
             {
-                mdm.Meshes.ForEach(mesh => mesh.Mesh.Materials.ForEach(material => AddTextureToCache(material.Texture)));
-                mdm.Attachments.ForEach(mesh => mesh.Value.Materials.ForEach(material => AddTextureToCache(material.Texture)));
+                mdm.Meshes.ForEach(mesh => mesh.Mesh.Materials.ForEach(material => AddTextureToCache(material.Group, material.Texture)));
+                mdm.Attachments.ForEach(mesh => mesh.Value.Materials.ForEach(material => AddTextureToCache(material.Group, material.Texture)));
                 return;
             }
 
@@ -173,7 +206,7 @@ namespace GUZ.Core.Caches.StaticCache
             var mmb = ResourceLoader.TryGetMorphMesh(item.Visual);
             if (mmb != null)
             {
-                mmb.Mesh.Materials.ForEach(material => AddTextureToCache(material.Texture));
+                mmb.Mesh.Materials.ForEach(material => AddTextureToCache(material.Group, material.Texture));
                 return;
             }
 
@@ -181,7 +214,7 @@ namespace GUZ.Core.Caches.StaticCache
             var mrm = ResourceLoader.TryGetMultiResolutionMesh(item.Visual);
             if (mrm != null)
             {
-                mrm.Materials.ForEach(material => AddTextureToCache(material.Texture));
+                mrm.Materials.ForEach(material => AddTextureToCache(material.Group, material.Texture));
                 return;
             }
         }

@@ -56,6 +56,7 @@ namespace GUZ.Core.Caches
 
         public enum TextureArrayTypes
         {
+            Unknown,
             Opaque,
             Transparent,
             Water
@@ -189,9 +190,9 @@ namespace GUZ.Core.Caches
                 var textureName = materialData.Texture;
                 var texture = ResourceLoader.TryGetTexture(textureName);
 
-                if (GameGlobals.StaticCache.LoadedVobTextureInfoDxt1.ContainsKey(materialData.Texture))
+                if (GameGlobals.StaticCache.LoadedTextureInfoOpaque.ContainsKey(materialData.Texture))
                 {
-                    arrayIndex = GameGlobals.StaticCache.LoadedVobTextureInfoDxt1.FirstIndex(i => i.Key == materialData.Texture);
+                    arrayIndex = GameGlobals.StaticCache.LoadedTextureInfoOpaque.FirstIndex(i => i.Key == materialData.Texture);
                     textureArrayType = TextureArrayTypes.Opaque;
 
                     maxMipLevel = texture!.MipmapCount - 1;
@@ -200,9 +201,9 @@ namespace GUZ.Core.Caches
 
                     return;
                 }
-                else if (GameGlobals.StaticCache.LoadedVobTextureInfoRgba32.ContainsKey(materialData.Texture))
+                else if (GameGlobals.StaticCache.LoadedTextureInfoTransparent.ContainsKey(materialData.Texture))
                 {
-                    arrayIndex = GameGlobals.StaticCache.LoadedVobTextureInfoRgba32.FirstIndex(i => i.Key == materialData.Texture);
+                    arrayIndex = GameGlobals.StaticCache.LoadedTextureInfoTransparent.FirstIndex(i => i.Key == materialData.Texture);
                     textureArrayType = TextureArrayTypes.Transparent;
 
                     maxMipLevel = texture!.MipmapCount - 1;
@@ -412,9 +413,9 @@ namespace GUZ.Core.Caches
         public static async Task BuildTextureArrayForVobs()
         {
             await BuildTextureArrayForVobs(TextureFormat.DXT1,
-                GameGlobals.StaticCache.LoadedVobTextureInfoDxt1, TextureArrayTypes.Transparent);
+                GameGlobals.StaticCache.LoadedTextureInfoOpaque, TextureArrayTypes.Transparent);
             await BuildTextureArrayForVobs(TextureFormat.RGBA32,
-                GameGlobals.StaticCache.LoadedVobTextureInfoRgba32, TextureArrayTypes.Opaque);
+                GameGlobals.StaticCache.LoadedTextureInfoTransparent, TextureArrayTypes.Opaque);
         }
 
         private static async Task BuildTextureArrayForVobs(TextureFormat textureFormat, Dictionary<string, int> vobTextureInfos, TextureArrayTypes texArrType)
