@@ -11,7 +11,6 @@ using UnityEngine.Rendering.Universal;
 using ZenKit;
 using ZenKit.Vobs;
 using Object = UnityEngine.Object;
-using Vector3 = System.Numerics.Vector3;
 
 namespace GUZ.Core.Caches.StaticCache
 {
@@ -212,58 +211,50 @@ namespace GUZ.Core.Caches.StaticCache
             return bounds;
         }
 
-        private const int _axes123 = 0b100010001;
-        private const int _axes132 = 0b100001010;
-        private const int _axes213 = 0b010100001;
-        private const int _axes231 = 0b010001100;
-        private const int _axes312 = 0b001100010;
-        private const int _axes321 = 0b001010100;
-
+        private enum AxesType
+        {
+            TypeUnknown,
+            Type123 = 0b100010001,
+            Type231 = 0b010001100,
+            Type312 = 0b001100010
+        }
 
         private Bounds GetBoundsByOrientedBbox(IOrientedBoundingBox bbox)
         {
-            var center = new UnityEngine.Vector3(bbox.Center.X / 100, bbox.Center.Y / 100, bbox.Center.Z / 100);
-            var axesBitMask = GetTupleBitMask(bbox.Axes);
-            UnityEngine.Vector3 size = default;
+            var center = new Vector3(bbox.Center.X / 100, bbox.Center.Y / 100, bbox.Center.Z / 100);
+            AxesType axesType = AxesType.TypeUnknown;
 
-            switch (axesBitMask)
+            if (bbox.Axes.Item1.X == 1f && bbox.Axes.Item2.Y == 1f && bbox.Axes.Item3.Z == 1f)
             {
-                case _axes123:
-                    size = new UnityEngine.Vector3(bbox.HalfWidth.X / 100, bbox.HalfWidth.Y / 100, bbox.HalfWidth.Z / 100) * 2;
+                axesType = AxesType.Type123;
+            }
+            else if (bbox.Axes.Item1.Y == 1f && bbox.Axes.Item2.Z == 1f && bbox.Axes.Item3.X == 1f)
+            {
+                axesType = AxesType.Type231;
+            }
+            else if (bbox.Axes.Item1.Z == 1f && bbox.Axes.Item2.X == 1f && bbox.Axes.Item3.Y == 1f)
+            {
+                axesType = AxesType.Type312;
+            }
+
+            Vector3 size;
+            switch (axesType)
+            {
+                case AxesType.Type123:
+                    size = new Vector3(bbox.HalfWidth.X / 100, bbox.HalfWidth.Y / 100, bbox.HalfWidth.Z / 100) * 2;
                     break;
-                case _axes231:
-                    size = new UnityEngine.Vector3(bbox.HalfWidth.Z / 100, bbox.HalfWidth.X / 100, bbox.HalfWidth.Y / 100) * 2;
+                case AxesType.Type231:
+                    size = new Vector3(bbox.HalfWidth.Z / 100, bbox.HalfWidth.X / 100, bbox.HalfWidth.Y / 100) * 2;
                     break;
-                case _axes312:
-                    size = new UnityEngine.Vector3(bbox.HalfWidth.Y / 100, bbox.HalfWidth.Z / 100, bbox.HalfWidth.X / 100) * 2;
+                case AxesType.Type312:
+                    size = new Vector3(bbox.HalfWidth.Y / 100, bbox.HalfWidth.Z / 100, bbox.HalfWidth.X / 100) * 2;
                     break;
                 default:
-                    throw new ArgumentException($"axesBitMask >{Convert.ToString(axesBitMask, 2).PadLeft(9, '0')}< not yet implemented.");
+                    Debug.LogError($"AxesType {bbox.Axes.Item1}/{bbox.Axes.Item2}/{bbox.Axes.Item3} not yet handled.");
+                    return default;
             }
 
             return new Bounds(center, size);
-        }
-
-        /// <summary>
-        /// Simply one way to get a T{v3,v3,v3} into something which can be compared by a switch-int statement.
-        /// </summary>
-        private static int GetTupleBitMask(Tuple<Vector3, Vector3, Vector3> axes)
-        {
-            // e.g. v3(1,0,0), v3(0,1,0), v3(0,0,1) --> 0b100_010_001
-            return GetVectorBitMask(axes.Item1) << 6 |
-                   GetVectorBitMask(axes.Item2) << 3 |
-                   GetVectorBitMask(axes.Item3);
-        }
-
-        /// <summary>
-        /// Simply one way to get a v3 into something which can be compared by a switch-int statement.
-        /// </summary>
-        private static int GetVectorBitMask(Vector3 v)
-        {
-            // e.g. v3(1,0,0) --> 0b100 (We use x as most significant bit like we are reading it as Vector3(x,y,z)
-            return (v.X == 1 ? 1 : 0) << 2 |  // Bit 3 (100)
-                   (v.Y == 1 ? 1 : 0) << 1 |  // Bit 2 (010)
-                   (v.Z == 1 ? 1 : 0);        // Bit 1 (001)
         }
 
 
@@ -279,7 +270,7 @@ namespace GUZ.Core.Caches.StaticCache
                 }
                 else if (go.TryGetComponent<DecalProjector>(out var decalProjector))
                 {
-                    return new Bounds(UnityEngine.Vector3.zero, decalProjector.size);
+                    return new Bounds(Vector3.zero, decalProjector.size);
                 }
                 else
                 {
