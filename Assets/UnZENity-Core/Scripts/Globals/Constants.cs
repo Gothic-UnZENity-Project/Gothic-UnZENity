@@ -166,6 +166,7 @@ namespace GUZ.Core.Globals
 
         // Alter this value to enforce game to recreate cache during next start.
         public const string StaticCacheVersion = "1";
+        public const int MaxLightsPerWorldChunk = 16; // Used during pre-caching to calculate world chunks to merge.
 
         public static class DaedalusConst
         {

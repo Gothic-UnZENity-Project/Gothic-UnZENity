@@ -127,7 +127,6 @@ namespace GUZ.Core.Creator
         /// This method recursively walks all the nodes in the bsp tree. It builds a single mesh for each node containing geometry. The bsp tree contains multiple levels of detail and the final geometry under the leaf nodes. 
         /// The meshes are the leaf geometry combined from the level that contains the first LOD, creating the largest coherent chunks possible. The larger chunks get culled less, but are more performant to render. 
         /// </summary>
-        /// <returns></returns>
         private static async Task ExpandBspTreeIntoMeshes(IMesh zkMesh, IBspTree bspTree, int nodeIndex,
             Dictionary<int, List<WorldContainer.SubMeshData>> allSubmeshesPerParentNodeIndex,
             Dictionary<Shader, WorldContainer.SubMeshData> nodeSubmeshes, int submeshParentIndex = 0)

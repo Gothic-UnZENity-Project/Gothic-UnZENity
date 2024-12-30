@@ -66,24 +66,24 @@ namespace GUZ.Core.Manager.Scenes
                 var vobBoundsCache = new VobBoundsCacheCreator();
                 var textureArrayCache = new TextureArrayCacheCreator();
 
+                GameGlobals.StaticCache.InitCacheFolder();
+
                 foreach (var worldName in worldsToLoad)
                 {
                     // DEBUG - Remove this IF to enforce recreation of cache.
-                    if (GameGlobals.StaticCache.DoCacheFilesExist(worldName))
-                    {
-                        if (GameGlobals.StaticCache.ReadMetadata(worldName).Version == Constants.StaticCacheVersion)
-                        {
-                            Debug.Log($"{worldName} already cached and metadata version matches. Skipping...");
-                            continue;
-                        }
-                    }
+                    // if (GameGlobals.StaticCache.DoCacheFilesExist(worldName))
+                    // {
+                    //     if (GameGlobals.StaticCache.ReadMetadata(worldName).Version == Constants.StaticCacheVersion)
+                    //     {
+                    //         Debug.Log($"{worldName} already cached and metadata version matches. Skipping...");
+                    //         continue;
+                    //     }
+                    // }
 
                     Debug.Log($"### PreCaching meshes for world: {worldName}");
                     var worldChunkCache = new WorldChunkCacheCreator();
                     var worldData = ResourceLoader.TryGetWorld(worldName, GameContext.GameVersionAdapter.Version)!;
                     // Create each VOB object once to get its bounding box.
-
-                    worldData.Mesh.Materials.ForEach(material => Debug.Log($"Material: {material.Texture}"));
 
                     textureArrayCache.CalculateTextureArrayInformation(worldData.Mesh);
                     watch.LogAndRestart($"{worldName}: WorldMesh TextureArray calculated.");
@@ -91,7 +91,14 @@ namespace GUZ.Core.Manager.Scenes
                     textureArrayCache.CalculateTextureArrayInformation(worldData.RootObjects);
                     watch.LogAndRestart($"{worldName}: Vob TextureArray calculated.");
 
-                    vobBoundsCache.CalculateVobBounds(worldData!.RootObjects);
+                    worldChunkCache.CalculateWorldChunks(worldData);
+
+                    // NEXT - TEST!
+                    await GameGlobals.StaticCache.SaveWorldCache(worldName, worldChunkCache.MergedChunksByLights);
+
+                    return;
+
+                    vobBoundsCache.CalculateVobBounds(worldData.RootObjects);
                     watch.LogAndRestart($"{worldName}: VobBounds calculated.");
 
 
