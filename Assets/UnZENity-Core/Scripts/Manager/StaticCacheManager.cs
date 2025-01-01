@@ -9,6 +9,7 @@ using GUZ.Core.Caches;
 using GUZ.Core.Caches.StaticCache;
 using GUZ.Core.Config;
 using GUZ.Core.Extensions;
+using GUZ.Core.Globals;
 using MyBox;
 using UnityEngine;
 using CompressionLevel = System.IO.Compression.CompressionLevel;
@@ -103,16 +104,30 @@ namespace GUZ.Core.Manager
         /// <summary>
         /// We check for all required cache files once. If any of these are missing, the whole cache is marked as invalid.
         /// </summary>
-        public bool DoCacheFilesExist(string worldName)
+        public bool DoCacheFilesExist(string[] worldNames)
         {
+            // Check all world specific files.
+            foreach (var worldName in worldNames)
+            {
+                if (!File.Exists(BuildFilePathName(_fileNameWorldChunks, worldName)))
+                {
+                    return false;
+                }
+            }
+
+            // Global files
             return File.Exists(BuildFilePathName(_fileNameGlobalMetadata)) &&
-                   File.Exists(BuildFilePathName(_fileNameWorldChunks, worldName));
+                   File.Exists(BuildFilePathName(_fileNameGlobalTextureArrayData)) &&
+                   File.Exists(BuildFilePathName(_fileNameGlobalVobBounds));
         }
 
-        public MetadataContainer ReadMetadata(string worldName)
+        /// <summary>
+        /// Inside PreCachingScene, we want to fetch this file separately. Its value will tell us if we can skip caching this time.
+        /// </summary>
+        public async Task<MetadataContainer> ReadMetadata()
         {
-            var metadataString = File.ReadAllText(BuildFilePathName(_fileNameGlobalMetadata, worldName));
-            return JsonUtility.FromJson<MetadataContainer>(metadataString);
+            var metadataString = await ReadData(BuildFilePathName(_fileNameGlobalMetadata));
+            return await ParseJson<MetadataContainer>(metadataString);
         }
 
         /// <summary>
@@ -120,10 +135,14 @@ namespace GUZ.Core.Manager
         /// </summary>
         public void InitCacheFolder()
         {
+            var folderToCleanUp = BuildFilePathName("");
+
             // Create cache folder if it doesn't exist
-            Directory.CreateDirectory(BuildFilePathName(""));
-            // Cleanup existing files (if we renamed some with a new version, these stalled files will be deleted as well)
-            Directory.EnumerateFiles(BuildFilePathName("")).ForEach(File.Delete);
+            Directory.CreateDirectory(folderToCleanUp);
+
+            // Cleanup existing files and directories (if we renamed some with a new version, these stalled files will be deleted as well)
+            Directory.EnumerateFiles(folderToCleanUp).ForEach(File.Delete);
+            Directory.EnumerateDirectories(folderToCleanUp).ForEach(dir => Directory.Delete(dir, true));
         }
 
         public async Task SaveGlobalCache(Dictionary<string, Bounds> vobBounds,
@@ -131,6 +150,13 @@ namespace GUZ.Core.Manager
         {
             try
             {
+                var metadataContainer = new MetadataContainer
+                {
+                    Version = Constants.StaticCacheVersion,
+                    CreationTime = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.K")
+                };
+                await SaveCacheFile(metadataContainer, BuildFilePathName(_fileNameGlobalMetadata));
+
                 var vobBoundsContainer = new VobBoundsContainer
                 {
                     BoundsEntries = vobBounds.Select(i => new VobBoundsEntry(i.Key, i.Value)).ToList()
@@ -158,12 +184,6 @@ namespace GUZ.Core.Manager
         {
             try
             {
-                // var metadata = new MetadataContainer
-                // {
-                //     Version = Constants.StaticCacheVersion,
-                //     CreationTime = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.K")
-                // };
-
                 var worldChunkData = new WorldChunkContainer()
                 {
                     OpaqueChunks = mergedChunksByLights[TextureCache.TextureArrayTypes.Opaque],

@@ -59,10 +59,23 @@ namespace GUZ.Core.Manager.Scenes
         {
             try
             {
+                var worldsToLoad = GameContext.GameVersionAdapter.Version == GameVersion.Gothic1 ? _gothic1Worlds : _gothic2Worlds;
+
+                // DEBUG - Remove this IF to enforce recreation of cache.
+                if (GameGlobals.StaticCache.DoCacheFilesExist(worldsToLoad))
+                {
+                    var metadata = await GameGlobals.StaticCache.ReadMetadata();
+                    if (metadata.Version == Constants.StaticCacheVersion)
+                    {
+                        Debug.Log("World + Global data is already cached and metadata version matches. Skipping...");
+                        GameManager.I.LoadScene(Constants.SceneLogo, Constants.ScenePreCaching);
+                        return;
+                    }
+                }
+
                 var watch = Stopwatch.StartNew();
                 var overallWatch = Stopwatch.StartNew();
 
-                var worldsToLoad = GameContext.GameVersionAdapter.Version == GameVersion.Gothic1 ? _gothic1Worlds : _gothic2Worlds;
                 var vobBoundsCache = new VobBoundsCacheCreator();
                 var textureArrayCache = new TextureArrayCacheCreator();
 
@@ -70,36 +83,23 @@ namespace GUZ.Core.Manager.Scenes
 
                 foreach (var worldName in worldsToLoad)
                 {
-                    // DEBUG - Remove this IF to enforce recreation of cache.
-                    // if (GameGlobals.StaticCache.DoCacheFilesExist(worldName))
-                    // {
-                    //     if (GameGlobals.StaticCache.ReadMetadata(worldName).Version == Constants.StaticCacheVersion)
-                    //     {
-                    //         Debug.Log($"{worldName} already cached and metadata version matches. Skipping...");
-                    //         continue;
-                    //     }
-                    // }
-
                     Debug.Log($"### PreCaching meshes for world: {worldName}");
+                    var world = ResourceLoader.TryGetWorld(worldName, GameContext.GameVersionAdapter.Version)!;
                     var worldChunkCache = new WorldChunkCacheCreator();
-                    var worldData = ResourceLoader.TryGetWorld(worldName, GameContext.GameVersionAdapter.Version)!;
-                    // Create each VOB object once to get its bounding box.
 
-                    textureArrayCache.CalculateTextureArrayInformation(worldData.Mesh);
+                    vobBoundsCache.CalculateVobBounds(world.RootObjects);
+                    watch.LogAndRestart($"{worldName}: VobBounds calculated.");
+
+                    textureArrayCache.CalculateTextureArrayInformation(world.Mesh);
                     watch.LogAndRestart($"{worldName}: WorldMesh TextureArray calculated.");
 
-                    textureArrayCache.CalculateTextureArrayInformation(worldData.RootObjects);
-                    watch.LogAndRestart($"{worldName}: Vob TextureArray calculated.");
+                    textureArrayCache.CalculateTextureArrayInformation(world.RootObjects);
+                    watch.LogAndRestart($"{worldName}: World Vobs TextureArray calculated.");
 
-                    worldChunkCache.CalculateWorldChunks(worldData);
+                    worldChunkCache.CalculateWorldChunks(world);
+                    watch.LogAndRestart($"{worldName}: World chunks calculated.");
 
-                    // NEXT - TEST!
                     await GameGlobals.StaticCache.SaveWorldCache(worldName, worldChunkCache.MergedChunksByLights);
-
-                    return;
-
-                    vobBoundsCache.CalculateVobBounds(worldData.RootObjects);
-                    watch.LogAndRestart($"{worldName}: VobBounds calculated.");
 
 
                     // DEBUG restore
@@ -115,6 +115,8 @@ namespace GUZ.Core.Manager.Scenes
                 }
 
                 textureArrayCache.CalculateItemTextureArrayInformation();
+                watch.LogAndRestart("Global: Texture array for oCItems calculated.");
+
                 vobBoundsCache.CalculateVobtemBounds();
                 watch.LogAndRestart("VobBounds for oCItems calculated.");
 
@@ -127,7 +129,6 @@ namespace GUZ.Core.Manager.Scenes
 
                 // Every world of the game is cached successfully. Now let's move on!
                 GameManager.I.LoadScene(Constants.SceneLogo, Constants.ScenePreCaching);
-
             }
             catch (Exception e)
             {
