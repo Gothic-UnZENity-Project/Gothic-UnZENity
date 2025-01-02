@@ -283,6 +283,7 @@ namespace GUZ.Core.Config
 
         [Separator("StaticCache")]
         public bool CompressStaticCacheFiles = true;
+        public bool AlwaysRecreateCache = false;
 
         [Separator("WIP - Not production ready", true)]
         public bool EnableDecalVisuals;

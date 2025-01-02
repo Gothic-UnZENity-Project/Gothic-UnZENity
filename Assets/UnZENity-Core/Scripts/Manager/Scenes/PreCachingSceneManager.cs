@@ -62,7 +62,7 @@ namespace GUZ.Core.Manager.Scenes
                 var worldsToLoad = GameContext.GameVersionAdapter.Version == GameVersion.Gothic1 ? _gothic1Worlds : _gothic2Worlds;
 
                 // DEBUG - Remove this IF to enforce recreation of cache.
-                if (GameGlobals.StaticCache.DoCacheFilesExist(worldsToLoad))
+                if (!GameGlobals.Config.Dev.AlwaysRecreateCache && GameGlobals.StaticCache.DoCacheFilesExist(worldsToLoad))
                 {
                     var metadata = await GameGlobals.StaticCache.ReadMetadata();
                     if (metadata.Version == Constants.StaticCacheVersion)

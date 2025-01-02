@@ -186,6 +186,7 @@ namespace GUZ.Core.Caches.StaticCache
                 Debug.LogError($"TextureFormat={unityTextureFormat} + MaterialGroup={group} isn't handled for TextureArray so far.");
             }
 
+            // TryAdd: Ignore duplicates.
             TextureArrayInformation.TryAdd(textureName,
                 (maxDim: Math.Max(texture.Width, texture.Height), textureType: textureArrayType));
         }
