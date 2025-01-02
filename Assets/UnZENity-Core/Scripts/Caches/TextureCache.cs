@@ -410,17 +410,17 @@ namespace GUZ.Core.Caches
             Debug.Log($"Built tex array in {stopwatch.ElapsedMilliseconds / 1000f} s");
         }
 
-        public static async Task BuildTextureArrayForVobs()
+        public static async Task BuildTextureArray()
         {
-            await BuildTextureArrayForVobs(TextureFormat.DXT1,
+            await BuildTextureArray(TextureFormat.DXT1,
                 GameGlobals.StaticCache.LoadedTextureInfoOpaque, TextureArrayTypes.Transparent);
-            await BuildTextureArrayForVobs(TextureFormat.RGBA32,
+            await BuildTextureArray(TextureFormat.RGBA32,
                 GameGlobals.StaticCache.LoadedTextureInfoTransparent, TextureArrayTypes.Opaque);
         }
 
-        private static async Task BuildTextureArrayForVobs(TextureFormat textureFormat, Dictionary<string, int> vobTextureInfos, TextureArrayTypes texArrType)
+        private static async Task BuildTextureArray(TextureFormat textureFormat, Dictionary<string, int> textureInfos, TextureArrayTypes texArrType)
         {
-            var texArray = new Texture2DArray(MaxTextureSize, MaxTextureSize, vobTextureInfos.Count, textureFormat, MaxMipCount, false, true)
+            var texArray = new Texture2DArray(MaxTextureSize, MaxTextureSize, textureInfos.Count, textureFormat, MaxMipCount, false, true)
             {
                 name = $"{textureFormat} - {texArrType}",
                 filterMode = FilterMode.Trilinear,
@@ -430,7 +430,7 @@ namespace GUZ.Core.Caches
             // Copy all the textures and their mips into the array. Textures which are smaller are tiled so bilinear sampling isn't broke.
             // This is why it's not possible to pack different textures together in the same slice.
             var i = -1;
-            foreach (var texInfo in vobTextureInfos)
+            foreach (var texInfo in textureInfos)
             {
                 ++i;
                 var sourceTex = TryGetTexture(texInfo.Key, false);
@@ -477,7 +477,7 @@ namespace GUZ.Core.Caches
                     }
                 }
 
-                // We can save the memory in Unity as we don't need the separate Textures any longer.
+                // We can save memory in Unity, as we don't need the separate Textures any longer.
                 Object.Destroy(sourceTex);
 
                 await FrameSkipper.TrySkipToNextFrame();

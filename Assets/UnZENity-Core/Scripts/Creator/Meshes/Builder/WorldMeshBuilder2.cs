@@ -47,7 +47,7 @@ namespace GUZ.Core.Creator.Meshes.Builder
         {
             RootGo.isStatic = true;
 
-            var chunksCount = GetNumberOfChunks();
+            var chunksCount = _worldChunks.OpaqueChunks.Count + _worldChunks.TransparentChunks.Count + _worldChunks.WaterChunks.Count;
             var progressPerChunk = 1f / chunksCount;
             
             loading.SetProgressStep(LoadingManager.LoadingProgressType.WorldMesh, progressPerChunk);
@@ -120,17 +120,11 @@ namespace GUZ.Core.Creator.Meshes.Builder
             }
         }
 
-        private int GetNumberOfChunks()
-        {
-            // Track the progress of each sub-mesh creation separately
-            return _worldChunks.OpaqueChunks.Count + _worldChunks.TransparentChunks.Count + _worldChunks.WaterChunks.Count;
-        }
-
         private void AddPolygonChunkEntry(IPolygon polygon, ChunkData chunkData, IMaterial material, int index,
             int textureArrayIndex, Vector2 scaleInTextureArray, int maxMipLevel = 16, int animFrameCount = 0)
         {
             // For every vertexIndex we store a new vertex. (i.e. no reuse of Vector3-vertices for later texture/uv attachment)
-            int positionIndex = polygon.PositionIndices[index];
+            var positionIndex = polygon.PositionIndices[index];
             chunkData.Vertices.Add(_mesh.GetPosition(positionIndex).ToUnityVector());
 
             // This triangle (index where Vector 3 lies inside vertices, points to the newly added vertex (Vector3) as we don't reuse vertices.
@@ -155,19 +149,19 @@ namespace GUZ.Core.Creator.Meshes.Builder
             }
         }
 
-        private void PrepareMeshFilter(MeshFilter meshFilter, ChunkData subMesh, TextureCache.TextureArrayTypes textureArrayType)
+        private void PrepareMeshFilter(MeshFilter meshFilter, ChunkData chunk, TextureCache.TextureArrayTypes textureArrayType)
         {
             var mesh = new Mesh();
             meshFilter.sharedMesh = mesh;
-            mesh.SetVertices(subMesh.Vertices);
-            mesh.SetTriangles(subMesh.Triangles, 0);
-            mesh.SetUVs(0, subMesh.Uvs);
-            mesh.SetNormals(subMesh.Normals);
-            mesh.SetColors(subMesh.BakedLightColors);
+            mesh.SetVertices(chunk.Vertices);
+            mesh.SetTriangles(chunk.Triangles, 0);
+            mesh.SetUVs(0, chunk.Uvs);
+            mesh.SetNormals(chunk.Normals);
+            mesh.SetColors(chunk.BakedLightColors);
 
             if (textureArrayType == TextureCache.TextureArrayTypes.Water)
             {
-                mesh.SetUVs(1, subMesh.TextureAnimations);
+                mesh.SetUVs(1, chunk.TextureAnimations);
             }
         }
 
