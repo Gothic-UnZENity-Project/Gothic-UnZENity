@@ -23,6 +23,16 @@ namespace GUZ.Core.Creator.Meshes
             await worldBuilder.BuildAsync(loading);
         }
 
+        public static async Task CreateWorld(StaticCacheManager.WorldChunkContainer worldChunks, IMesh mesh,
+            CachedBspTree bspTree, LoadingManager loading, GameObject rootGo)
+        {
+            var worldBuilder = new WorldMeshBuilder2();
+            worldBuilder.SetGameObject(rootGo);
+            worldBuilder.SetWorldData(worldChunks, mesh, bspTree);
+
+            await worldBuilder.BuildAsync(loading);
+        }
+
         public static GameObject CreateNpc(string npcName, string mdmName, string mdhName,
             VmGothicExternals.ExtSetVisualBodyData bodyData, GameObject root, GameObject parent = null)
         {

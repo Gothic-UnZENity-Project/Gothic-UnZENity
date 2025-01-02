@@ -39,6 +39,9 @@ namespace GUZ.Core.Manager
         public Dictionary<string, int> LoadedTextureInfoTransparent { get; private set; }
         public Dictionary<string, int> LoadedTextureInfoWater { get; private set; }
 
+        public WorldChunkContainer LoadedWorldChunks;
+
+
         [Serializable]
         public class MetadataContainer
         {
@@ -232,6 +235,16 @@ namespace GUZ.Core.Manager
             {
                 stopwatch.Log("Loading global cache done.");
             }
+        }
+
+        public async Task LoadWorldCache(string worldName)
+        {
+            var stopwatch = Stopwatch.StartNew();
+
+            var worldChunkString = await ReadData(BuildFilePathName(_fileNameWorldChunks, worldName));
+            LoadedWorldChunks = await ParseJson<WorldChunkContainer>(worldChunkString);
+
+            stopwatch.Log("Loading global cache done.");
         }
 
         private async Task SaveCacheFile(object data, string filePathName)

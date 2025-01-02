@@ -24,10 +24,10 @@ namespace GUZ.Core.Manager.Scenes
         
         /// <summary>
         /// Order of loading:
-        /// 1. VOBs - First entry, as we slice world chunks based on light VOBs
-        /// 2. WayPoints - Needed for spawning NPCs when world is loaded the first time
-        /// 3. NPCs - If we load the world for the first time, we leverage their current routine's values
-        /// 4. World - Mesh of the world
+        /// 1. World - Mesh of the world
+        /// 2. VOBs - First entry, as we slice world chunks based on light VOBs
+        /// 3. WayPoints - Needed for spawning NPCs when world is loaded the first time
+        /// 4. NPCs - If we load the world for the first time, we leverage their current routine's values
         /// </summary>
         private async Task LoadWorldContentAsync()
         {
@@ -46,12 +46,22 @@ namespace GUZ.Core.Manager.Scenes
                 // 0.
                 // Load Static cache and arrange it in memory
                 await GameGlobals.StaticCache.LoadGlobalCache();
+                await GameGlobals.StaticCache.LoadWorldCache(GameGlobals.SaveGame.CurrentWorldName).AwaitAndLog();
+
+                // TODO - Can be cached and doesn't need to be recreated each world scene loading.
                 await MeshFactory.CreateTextureArray();
 
 
-                // 1.
+                // 1. Load world based on cached Chunks
+                if (config.Dev.EnableWorldMesh)
+                {
+                    await WorldCreator.CreateAsync2(GameGlobals.Loading, worldRoot).AwaitAndLog();
+                    watch.LogAndRestart("World loaded");
+                }
+
+                // 2.
                 // Build the world and vob meshes, populating the texture arrays.
-                // We need to start creating Vobs as we need to calculate world slicing based on amount of lights at a certain space afterwards.
+                // We need to start creating Vobs as we need to calculate world slicing based on amount of lights at a certain space afterward.
                 if (config.Dev.EnableVOBs)
                 {
                     await VobCreator.CreateAsync(config.Dev, GameGlobals.Loading, GameGlobals.SaveGame.CurrentWorldData.Vobs, vobRoot)
@@ -59,29 +69,15 @@ namespace GUZ.Core.Manager.Scenes
                     watch.LogAndRestart($"VOBs created");
                 }
 
-                // 2.
+                // 3.
                 WayNetCreator.Create(config.Dev, GameGlobals.SaveGame.CurrentWorldData);
 
-                // 3.
+                // 4.
                 // If the world is visited for the first time, then we need to load Npcs via Wld_InsertNpc()
                 if (config.Dev.EnableNpcs)
                 {
                     await NpcCreator.CreateAsync(config.Dev, GameGlobals.Loading).AwaitAndLog();
                     watch.LogAndRestart($"NPCs created");
-                }
-
-                // 4.
-                if (config.Dev.EnableWorldMesh)
-                {
-                    // initialize Lights before world creation
-                    vobRoot.SetActive(true); // temporary enable vobRoot
-                    await StationaryLightsManager.InitializeThreadSafeLightData().AwaitAndLog();
-                    watch.LogAndRestart($"ThreadSafeLightData initialized");
-                    vobRoot.SetActive(false); // disable to save some seconds in loading time ;p
-
-                    await WorldCreator.CreateAsync(config.Dev, GameGlobals.Loading, worldRoot).AwaitAndLog();
-                    watch.LogAndRestart("World loaded");
-                    GameGlobals.Lights.ClearThreadSafeLights();
                 }
 
                 // World fully loaded

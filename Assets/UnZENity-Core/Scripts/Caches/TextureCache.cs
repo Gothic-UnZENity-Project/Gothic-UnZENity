@@ -497,12 +497,17 @@ namespace GUZ.Core.Caches
             switch (texture.Format.AsUnityTextureFormat())
             {
                 case TextureFormat.DXT1:
-                    return TextureArrays[TextureArrayTypes.Transparent];
+                    return GetTextureArrayEntry(TextureArrayTypes.Transparent);
                 case TextureFormat.RGBA32:
-                    return TextureArrays[TextureArrayTypes.Opaque];
+                    return GetTextureArrayEntry(TextureArrayTypes.Opaque);
                 default:
                     throw new ArgumentOutOfRangeException();
             }
+        }
+
+        public static Texture GetTextureArrayEntry(TextureArrayTypes textureArrayType)
+        {
+            return TextureArrays[textureArrayType];
         }
 
         private static bool GetAlreadyIncludedTexture(TextureArrayTypes textureArrayType, string key, out int arrayIndex, out int maxMipLevel, out Vector2 textureScale, out int animFrameCount)

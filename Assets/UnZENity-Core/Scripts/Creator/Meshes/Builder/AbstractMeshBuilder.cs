@@ -574,6 +574,7 @@ namespace GUZ.Core.Creator.Meshes.Builder
         /// <summary>
         /// Check if Collider needs to be added.
         /// </summary>
+        [Obsolete("Used for previous WorldMeshBuilder from 2024. Can be removed.")]
         protected Collider PrepareMeshCollider(GameObject obj, Mesh mesh, IMaterial materialData)
         {
             if (materialData.DisableCollision ||
