@@ -151,6 +151,14 @@ namespace GUZ.Core.Creator.Meshes.Builder
 
         private void PrepareMeshFilter(MeshFilter meshFilter, ChunkData chunk, TextureCache.TextureArrayTypes textureArrayType)
         {
+            // We need to reverse all data. Otherwise, meshes are visible upside down. It's a difference from rendering ZenGine data in Unity.
+            // Hint: No, Triangles mustn't be reversed. Only applied data on it.
+            chunk.BakedLightColors.Reverse();
+            chunk.Normals.Reverse();
+            chunk.TextureAnimations.Reverse();
+            chunk.Uvs.Reverse();
+            chunk.Vertices.Reverse();
+
             var mesh = new Mesh();
             meshFilter.sharedMesh = mesh;
             mesh.SetVertices(chunk.Vertices);
