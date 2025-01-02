@@ -244,7 +244,7 @@ namespace GUZ.Core.Manager
             var worldChunkString = await ReadData(BuildFilePathName(_fileNameWorldChunks, worldName));
             LoadedWorldChunks = await ParseJson<WorldChunkContainer>(worldChunkString);
 
-            stopwatch.Log("Loading global cache done.");
+            stopwatch.Log("Loading world cache done.");
         }
 
         private async Task SaveCacheFile(object data, string filePathName)

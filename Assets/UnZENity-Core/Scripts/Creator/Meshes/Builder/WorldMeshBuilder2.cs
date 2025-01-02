@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using GUZ.Core.Caches;
+using GUZ.Core.Caches.StaticCache;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
@@ -46,29 +47,39 @@ namespace GUZ.Core.Creator.Meshes.Builder
         {
             RootGo.isStatic = true;
 
-            var opaqueRoot = new GameObject
-            {
-                name = "Opaque",
-                isStatic = true
-            };
-            opaqueRoot.SetParent(RootGo);
-
             var chunksCount = GetNumberOfChunks();
             var progressPerChunk = 1f / chunksCount;
+            
+            loading.SetProgressStep(LoadingManager.LoadingProgressType.WorldMesh, progressPerChunk);
 
-            foreach (var chunk in _worldChunks.OpaqueChunks)
+            await BuildChunkType(_worldChunks.OpaqueChunks, TextureCache.TextureArrayTypes.Opaque, loading);
+            await BuildChunkType(_worldChunks.TransparentChunks, TextureCache.TextureArrayTypes.Transparent, loading);
+            await BuildChunkType(_worldChunks.WaterChunks, TextureCache.TextureArrayTypes.Water, loading);
+
+        }
+
+        private async Task BuildChunkType(List<WorldChunkCacheCreator.WorldChunk> chunks, TextureCache.TextureArrayTypes type, LoadingManager loading)
+        {
+            var chunkTypeRoot = new GameObject
             {
-                var chunkGo = new GameObject()
+                name = type.ToString(),
+                isStatic = true
+            };
+            chunkTypeRoot.SetParent(RootGo);
+
+            foreach (var chunk in chunks)
+            {
+                var chunkGo = new GameObject
                 {
-                    name = "Opaque-Entry",
+                    name = $"{type}-Entry",
                     isStatic = true
                 };
-                chunkGo.SetParent(opaqueRoot);
+                chunkGo.SetParent(chunkTypeRoot);
 
                 var chunkData = new ChunkData();
                 foreach (var polygonId in chunk.PolygonIds)
                 {
-                    var polygon = _mesh.Polygons[polygonId];
+                    var polygon = _mesh.GetPolygon(polygonId);
                     var material = _mesh.GetMaterial(polygon.MaterialIndex);
 
                     TextureCache.GetTextureArrayIndex(material, out _, out var textureArrayIndex,
@@ -102,8 +113,8 @@ namespace GUZ.Core.Creator.Meshes.Builder
                 }
 #endif
 
-                
-                loading?.AddProgress(LoadingManager.LoadingProgressType.WorldMesh, progressPerChunk);
+
+                loading?.AddProgress();
 
                 await FrameSkipper.TrySkipToNextFrame();
             }
@@ -190,7 +201,7 @@ namespace GUZ.Core.Creator.Meshes.Builder
             return material;
         }
 
-        private static bool IsTransparentShader(TextureCache.TextureArrayTypes textureArrayType)
+        private bool IsTransparentShader(TextureCache.TextureArrayTypes textureArrayType)
         {
             return textureArrayType != TextureCache.TextureArrayTypes.Opaque;
         }
