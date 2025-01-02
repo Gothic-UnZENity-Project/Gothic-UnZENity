@@ -176,7 +176,7 @@ namespace GUZ.Core.Creator.Meshes.Builder
         private void PrepareMeshRenderer(Renderer rend, TextureCache.TextureArrayTypes textureArrayType)
         {
             var texture = TextureCache.GetTextureArrayEntry(textureArrayType);
-            var material = GetDefaultMaterial();
+            var material = GetDefaultMaterial(textureArrayType);
             material.mainTexture = texture;
             rend.material = material;
         }
@@ -195,9 +195,15 @@ namespace GUZ.Core.Creator.Meshes.Builder
             PrepareMeshCollider(obj, mesh);
         }
 
-        protected override Material GetDefaultMaterial()
+        private Material GetDefaultMaterial(TextureCache.TextureArrayTypes textureArrayType)
         {
-            var shader = Constants.ShaderWorldLit;
+            var shader = textureArrayType switch
+            {
+                TextureCache.TextureArrayTypes.Opaque => Constants.ShaderWorldLit,
+                TextureCache.TextureArrayTypes.Transparent => Constants.ShaderLitAlphaToCoverage,
+                TextureCache.TextureArrayTypes.Water => Constants.ShaderWater,
+                _ => throw new ArgumentOutOfRangeException(nameof(textureArrayType), textureArrayType, null)
+            };
             var material = new Material(shader);
 
             return material;

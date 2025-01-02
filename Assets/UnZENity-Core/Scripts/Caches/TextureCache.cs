@@ -416,16 +416,37 @@ namespace GUZ.Core.Caches
                 GameGlobals.StaticCache.LoadedTextureInfoOpaque, TextureArrayTypes.Opaque);
             await BuildTextureArray(TextureFormat.RGBA32,
                 GameGlobals.StaticCache.LoadedTextureInfoTransparent, TextureArrayTypes.Transparent);
+            await BuildTextureArray(TextureFormat.RGBA32,
+                GameGlobals.StaticCache.LoadedTextureInfoWater, TextureArrayTypes.Water);
         }
 
         private static async Task BuildTextureArray(TextureFormat textureFormat, Dictionary<string, int> textureInfos, TextureArrayTypes texArrType)
         {
-            var texArray = new Texture2DArray(MaxTextureSize, MaxTextureSize, textureInfos.Count, textureFormat, MaxMipCount, false, true)
+            // It's either a Texture2DArray (solid meshes) or RenderTexture (water)
+            Texture texArray;
+
+            if (texArrType == TextureArrayTypes.Water)
             {
-                name = $"{textureFormat} - {texArrType}",
-                filterMode = FilterMode.Trilinear,
-                wrapMode = TextureWrapMode.Repeat
-            };
+                texArray = new RenderTexture(MaxTextureSize, MaxTextureSize, 0, RenderTextureFormat.ARGB32, MaxMipCount)
+                {
+                    name = $"{textureFormat} - {texArrType}",
+                    dimension = TextureDimension.Tex2DArray,
+                    autoGenerateMips = false,
+                    filterMode = FilterMode.Trilinear,
+                    useMipMap = true,
+                    volumeDepth = textureInfos.Count,
+                    wrapMode = TextureWrapMode.Repeat
+                };
+            }
+            else
+            {
+                texArray = new Texture2DArray(MaxTextureSize, MaxTextureSize, textureInfos.Count, textureFormat, MaxMipCount, false, true)
+                {
+                    name = $"{textureFormat} - {texArrType}",
+                    filterMode = FilterMode.Trilinear,
+                    wrapMode = TextureWrapMode.Repeat
+                };
+            }
 
             // Copy all the textures and their mips into the array. Textures which are smaller are tiled so bilinear sampling isn't broke.
             // This is why it's not possible to pack different textures together in the same slice.
@@ -470,9 +491,25 @@ namespace GUZ.Core.Caches
                     {
                         for (var y = 0; y < texArray.height / sourceHeight; y++)
                         {
-                            Graphics.CopyTexture(sourceTex, 0, mip, 0, 0,
-                                sourceWidth >> mip, sourceHeight >> mip, texArray, i, targetMip,
-                                (sourceWidth >> mip) * x, (sourceHeight >> mip) * y);
+
+                            if (texArray is Texture2DArray)
+                            {
+                                Graphics.CopyTexture(sourceTex, 0, mip, 0, 0,
+                                    sourceWidth >> mip, sourceHeight >> mip, texArray, i, targetMip,
+                                    (sourceWidth >> mip) * x, (sourceHeight >> mip) * y);
+                            }
+                            // aka Water
+                            else
+                            {
+                                var cmd = CommandBufferPool.Get();
+                                var rt = (RenderTexture)texArray;
+                                cmd.SetRenderTarget(new RenderTargetBinding(new RenderTargetSetup(rt.colorBuffer, rt.depthBuffer, targetMip, CubemapFace.Unknown, i)));
+                                var scale = new Vector2((float)sourceTex.width / texArray.width, (float)sourceTex.height / texArray.height);
+                                Blitter.BlitQuad(cmd, sourceTex, new Vector4(1, 1, 0, 0), new Vector4(scale.x, scale.y, scale.x * x, scale.y * y), mip, false);
+                                Graphics.ExecuteCommandBuffer(cmd);
+                                cmd.Clear();
+                                CommandBufferPool.Release(cmd);
+                            }
                         }
                     }
                 }
