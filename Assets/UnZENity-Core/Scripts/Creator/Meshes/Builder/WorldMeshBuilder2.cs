@@ -98,15 +98,15 @@ namespace GUZ.Core.Creator.Meshes.Builder
                 var meshFilter = chunkGo.AddComponent<MeshFilter>();
                 var meshRenderer = chunkGo.AddComponent<MeshRenderer>();
 
-                PrepareMeshFilter(meshFilter, chunkData, TextureCache.TextureArrayTypes.Opaque);
-                PrepareMeshRenderer(meshRenderer, TextureCache.TextureArrayTypes.Opaque);
-                PrepareMeshCollider(chunkGo, meshFilter.sharedMesh, TextureCache.TextureArrayTypes.Opaque);
+                PrepareMeshFilter(meshFilter, chunkData, type);
+                PrepareMeshRenderer(meshRenderer, type);
+                PrepareMeshCollider(chunkGo, meshFilter.sharedMesh, type);
 
 
 #if UNITY_EDITOR
                 // Only needed for Occlusion Culling baking
                 // Don't set transparent meshes as occluders.
-                if (IsTransparentShader(TextureCache.TextureArrayTypes.Opaque))
+                if (IsTransparentShader(type))
                 {
                     GameObjectUtility.SetStaticEditorFlags(chunkGo,
                         (StaticEditorFlags)(int.MaxValue & ~(int)StaticEditorFlags.OccluderStatic));

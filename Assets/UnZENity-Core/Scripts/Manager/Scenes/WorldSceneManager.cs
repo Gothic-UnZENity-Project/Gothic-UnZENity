@@ -81,12 +81,13 @@ namespace GUZ.Core.Manager.Scenes
                 }
 
                 // World fully loaded
+                // TODO - Does this call add benefits for memory?
                 ResourceLoader.ReleaseLoadedData();
 
                 worldRoot.SetActive(true);
                 vobRoot.SetActive(true);
 
-                StationaryLight.InitStationaryLights();
+                // StationaryLight.InitStationaryLights();
 
                 TeleportPlayerToStart();
 

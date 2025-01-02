@@ -413,9 +413,9 @@ namespace GUZ.Core.Caches
         public static async Task BuildTextureArray()
         {
             await BuildTextureArray(TextureFormat.DXT1,
-                GameGlobals.StaticCache.LoadedTextureInfoOpaque, TextureArrayTypes.Transparent);
+                GameGlobals.StaticCache.LoadedTextureInfoOpaque, TextureArrayTypes.Opaque);
             await BuildTextureArray(TextureFormat.RGBA32,
-                GameGlobals.StaticCache.LoadedTextureInfoTransparent, TextureArrayTypes.Opaque);
+                GameGlobals.StaticCache.LoadedTextureInfoTransparent, TextureArrayTypes.Transparent);
         }
 
         private static async Task BuildTextureArray(TextureFormat textureFormat, Dictionary<string, int> textureInfos, TextureArrayTypes texArrType)
@@ -497,9 +497,9 @@ namespace GUZ.Core.Caches
             switch (texture.Format.AsUnityTextureFormat())
             {
                 case TextureFormat.DXT1:
-                    return GetTextureArrayEntry(TextureArrayTypes.Transparent);
-                case TextureFormat.RGBA32:
                     return GetTextureArrayEntry(TextureArrayTypes.Opaque);
+                case TextureFormat.RGBA32:
+                    return GetTextureArrayEntry(TextureArrayTypes.Transparent);
                 default:
                     throw new ArgumentOutOfRangeException();
             }
