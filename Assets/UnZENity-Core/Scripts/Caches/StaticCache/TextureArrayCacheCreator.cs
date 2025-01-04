@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
+using GUZ.Core.Manager;
 using GUZ.Core.Vm;
 using MyBox;
 using UnityEngine;
@@ -17,7 +18,7 @@ namespace GUZ.Core.Caches.StaticCache
 {
     public class TextureArrayCacheCreator
     {
-        public Dictionary<string, (TextureCache.TextureArrayTypes textureType, int maxDim, int animationFrameCount)> TextureArrayInformation { get; } = new();
+        public Dictionary<string, StaticCacheManager.TextureInfo> TextureArrayInformation { get; } = new();
 
         /// <summary>
         /// Load all materials from world mesh and assign textures to texture array accordingly.
@@ -191,13 +192,13 @@ namespace GUZ.Core.Caches.StaticCache
 
             // TryAdd is used to ignore duplicates.
             TextureArrayInformation.TryAdd(textureName,
-                (textureType: textureArrayType, maxDim: Math.Max(texture.Width, texture.Height), animationFrameCount: animationTextures.Count));
+                new StaticCacheManager.TextureInfo(textureArrayType, Math.Max(texture.Width, texture.Height), animationTextures.Count));
 
             // If the texture is an "animated one", we also need to add the animation textures. During runtime, water will iterate the z-index of TextureArray to loop through these elements.
             foreach (var animationTexture in animationTextures)
             {
                 TextureArrayInformation.Add(animationTexture.Key,
-                    (textureType: textureArrayType, maxDim: Math.Max(animationTexture.Value.Width, animationTexture.Value.Height), animationFrameCount: 0));
+                    new StaticCacheManager.TextureInfo(textureArrayType, Math.Max(animationTexture.Value.Width, animationTexture.Value.Height), 0));
             }
         }
 

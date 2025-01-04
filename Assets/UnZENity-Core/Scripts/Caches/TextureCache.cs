@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using GUZ.Core.Data.Container;
 using GUZ.Core.Extensions;
+using GUZ.Core.Manager;
 using GUZ.Core.Util;
 using JetBrains.Annotations;
 using MyBox;
@@ -197,7 +198,7 @@ namespace GUZ.Core.Caches
 
                     maxMipLevel = texture!.MipmapCount - 1;
                     textureScale = new Vector2((float)texture.Width / ReferenceTextureSize, (float)texture.Height / ReferenceTextureSize);;
-                    animFrameCount = GameGlobals.StaticCache.LoadedTextureInfoOpaque[materialData.Texture].animFrameCount;
+                    animFrameCount = GameGlobals.StaticCache.LoadedTextureInfoOpaque[materialData.Texture].AnimFrameCount;
 
                     return;
                 }
@@ -208,7 +209,7 @@ namespace GUZ.Core.Caches
 
                     maxMipLevel = texture!.MipmapCount - 1;
                     textureScale = new Vector2((float)texture.Width / ReferenceTextureSize, (float)texture.Height / ReferenceTextureSize);;
-                    animFrameCount = GameGlobals.StaticCache.LoadedTextureInfoTransparent[materialData.Texture].animFrameCount;
+                    animFrameCount = GameGlobals.StaticCache.LoadedTextureInfoTransparent[materialData.Texture].AnimFrameCount;
 
                     return;
                 }
@@ -219,7 +220,7 @@ namespace GUZ.Core.Caches
 
                     maxMipLevel = texture!.MipmapCount - 1;
                     textureScale = new Vector2((float)texture.Width / ReferenceTextureSize, (float)texture.Height / ReferenceTextureSize);;
-                    animFrameCount = GameGlobals.StaticCache.LoadedTextureInfoWater[materialData.Texture].animFrameCount;
+                    animFrameCount = GameGlobals.StaticCache.LoadedTextureInfoWater[materialData.Texture].AnimFrameCount;
 
                     return;
                 }
@@ -431,7 +432,7 @@ namespace GUZ.Core.Caches
                 GameGlobals.StaticCache.LoadedTextureInfoWater, TextureArrayTypes.Water);
         }
 
-        private static async Task BuildTextureArray(TextureFormat textureFormat, Dictionary<string, (int maxDimension, int animFrameCount)> textureInfos, TextureArrayTypes texArrType)
+        private static async Task BuildTextureArray(TextureFormat textureFormat, Dictionary<string, StaticCacheManager.TextureInfo> textureInfos, TextureArrayTypes texArrType)
         {
             // It's either a Texture2DArray (solid meshes) or RenderTexture (water)
             Texture texArray;
