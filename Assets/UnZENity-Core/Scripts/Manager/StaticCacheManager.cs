@@ -35,9 +35,9 @@ namespace GUZ.Core.Manager
 
         public Dictionary<string, Bounds> LoadedVobsBounds { get; private set; }
 
-        public Dictionary<string, int> LoadedTextureInfoOpaque { get; private set; }
-        public Dictionary<string, int> LoadedTextureInfoTransparent { get; private set; }
-        public Dictionary<string, int> LoadedTextureInfoWater { get; private set; }
+        public Dictionary<string, (int maxXYDimension, int animFrameCount)> LoadedTextureInfoOpaque { get; private set; }
+        public Dictionary<string, (int maxXYDimension, int animFrameCount)> LoadedTextureInfoTransparent { get; private set; }
+        public Dictionary<string, (int maxXYDimension, int animFrameCount)> LoadedTextureInfoWater { get; private set; }
 
         public WorldChunkContainer LoadedWorldChunks;
 
@@ -79,14 +79,16 @@ namespace GUZ.Core.Manager
         [Serializable]
         public class TextureArrayEntry
         {
-            public TextureArrayEntry(string textureName, int maxDimension)
+            public TextureArrayEntry(string textureName, int maxDimension, int animationFrameCount)
             {
                 TextureName = textureName;
                 MaxDimension = maxDimension;
+                AnimationFrameCount = animationFrameCount;
             }
 
             public string TextureName;
             public int MaxDimension;
+            public int AnimationFrameCount;
         }
 
         [Serializable]
@@ -149,7 +151,7 @@ namespace GUZ.Core.Manager
         }
 
         public async Task SaveGlobalCache(Dictionary<string, Bounds> vobBounds,
-            Dictionary<string, (int maxDimension, TextureCache.TextureArrayTypes textureType)> textureArrayInformation)
+            Dictionary<string, (TextureCache.TextureArrayTypes textureType, int maxDimension, int animationFrameCount)> textureArrayInformation)
         {
             try
             {
@@ -168,9 +170,9 @@ namespace GUZ.Core.Manager
 
                 var textureArrayContainer = new TextureArrayContainer
                 {
-                    TexturesOpaque = textureArrayInformation.Where(i => i.Value.textureType == TextureCache.TextureArrayTypes.Opaque).Select(i => new TextureArrayEntry(i.Key, i.Value.maxDimension)).ToList(),
-                    TexturesTransparent = textureArrayInformation.Where(i => i.Value.textureType == TextureCache.TextureArrayTypes.Transparent).Select(i => new TextureArrayEntry(i.Key, i.Value.maxDimension)).ToList(),
-                    TexturesWater = textureArrayInformation.Where(i => i.Value.textureType == TextureCache.TextureArrayTypes.Water).Select(i => new TextureArrayEntry(i.Key, i.Value.maxDimension)).ToList(),
+                    TexturesOpaque = textureArrayInformation.Where(i => i.Value.textureType == TextureCache.TextureArrayTypes.Opaque).Select(i => new TextureArrayEntry(i.Key, i.Value.maxDimension, i.Value.animationFrameCount)).ToList(),
+                    TexturesTransparent = textureArrayInformation.Where(i => i.Value.textureType == TextureCache.TextureArrayTypes.Transparent).Select(i => new TextureArrayEntry(i.Key, i.Value.maxDimension, i.Value.animationFrameCount)).ToList(),
+                    TexturesWater = textureArrayInformation.Where(i => i.Value.textureType == TextureCache.TextureArrayTypes.Water).Select(i => new TextureArrayEntry(i.Key, i.Value.maxDimension, i.Value.animationFrameCount)).ToList(),
                 };
                 await SaveCacheFile(textureArrayContainer, BuildFilePathName(_fileNameGlobalTextureArrayData));
             }
@@ -222,9 +224,9 @@ namespace GUZ.Core.Manager
 
                 LoadedVobsBounds = vobBoundsContainer.BoundsEntries.ToDictionary(i => i.MeshName, i => i.Bounds);
 
-                LoadedTextureInfoOpaque = textureArrayContainer.TexturesOpaque.ToDictionary(i => i.TextureName, i => i.MaxDimension);
-                LoadedTextureInfoTransparent = textureArrayContainer.TexturesTransparent.ToDictionary(i => i.TextureName, i => i.MaxDimension);
-                LoadedTextureInfoWater = textureArrayContainer.TexturesWater.ToDictionary(i => i.TextureName, i => i.MaxDimension);
+                LoadedTextureInfoOpaque = textureArrayContainer.TexturesOpaque.ToDictionary(i => i.TextureName, i => (i.MaxDimension, i.AnimationFrameCount));
+                LoadedTextureInfoTransparent = textureArrayContainer.TexturesTransparent.ToDictionary(i => i.TextureName, i => (i.MaxDimension, i.AnimationFrameCount));
+                LoadedTextureInfoWater = textureArrayContainer.TexturesWater.ToDictionary(i => i.TextureName, i => (i.MaxDimension, i.AnimationFrameCount));
             }
             catch (Exception e)
             {

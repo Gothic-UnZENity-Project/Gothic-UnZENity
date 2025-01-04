@@ -197,7 +197,7 @@ namespace GUZ.Core.Caches
 
                     maxMipLevel = texture!.MipmapCount - 1;
                     textureScale = new Vector2((float)texture.Width / ReferenceTextureSize, (float)texture.Height / ReferenceTextureSize);;
-                    animFrameCount = -1; // FIXME - Set correctly
+                    animFrameCount = GameGlobals.StaticCache.LoadedTextureInfoOpaque[materialData.Texture].animFrameCount;
 
                     return;
                 }
@@ -208,7 +208,18 @@ namespace GUZ.Core.Caches
 
                     maxMipLevel = texture!.MipmapCount - 1;
                     textureScale = new Vector2((float)texture.Width / ReferenceTextureSize, (float)texture.Height / ReferenceTextureSize);;
-                    animFrameCount = -1; // FIXME - Set correctly
+                    animFrameCount = GameGlobals.StaticCache.LoadedTextureInfoTransparent[materialData.Texture].animFrameCount;
+
+                    return;
+                }
+                else if (GameGlobals.StaticCache.LoadedTextureInfoWater.ContainsKey(materialData.Texture))
+                {
+                    arrayIndex = GameGlobals.StaticCache.LoadedTextureInfoWater.FirstIndex(i => i.Key == materialData.Texture);
+                    textureArrayType = TextureArrayTypes.Water;
+
+                    maxMipLevel = texture!.MipmapCount - 1;
+                    textureScale = new Vector2((float)texture.Width / ReferenceTextureSize, (float)texture.Height / ReferenceTextureSize);;
+                    animFrameCount = GameGlobals.StaticCache.LoadedTextureInfoWater[materialData.Texture].animFrameCount;
 
                     return;
                 }
@@ -420,7 +431,7 @@ namespace GUZ.Core.Caches
                 GameGlobals.StaticCache.LoadedTextureInfoWater, TextureArrayTypes.Water);
         }
 
-        private static async Task BuildTextureArray(TextureFormat textureFormat, Dictionary<string, int> textureInfos, TextureArrayTypes texArrType)
+        private static async Task BuildTextureArray(TextureFormat textureFormat, Dictionary<string, (int maxDimension, int animFrameCount)> textureInfos, TextureArrayTypes texArrType)
         {
             // It's either a Texture2DArray (solid meshes) or RenderTexture (water)
             Texture texArray;

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Vm;
@@ -16,7 +17,7 @@ namespace GUZ.Core.Caches.StaticCache
 {
     public class TextureArrayCacheCreator
     {
-        public Dictionary<string, (int maxDim, TextureCache.TextureArrayTypes textureType)> TextureArrayInformation { get; } = new();
+        public Dictionary<string, (TextureCache.TextureArrayTypes textureType, int maxDim, int animationFrameCount)> TextureArrayInformation { get; } = new();
 
         /// <summary>
         /// Load all materials from world mesh and assign textures to texture array accordingly.
@@ -186,9 +187,47 @@ namespace GUZ.Core.Caches.StaticCache
                 Debug.LogError($"TextureFormat={unityTextureFormat} + MaterialGroup={group} isn't handled for TextureArray so far.");
             }
 
-            // TryAdd: Ignore duplicates.
+            var animationTextures = CalculateAnimationTextures(textureName);
+
+            // TryAdd is used to ignore duplicates.
             TextureArrayInformation.TryAdd(textureName,
-                (maxDim: Math.Max(texture.Width, texture.Height), textureType: textureArrayType));
+                (textureType: textureArrayType, maxDim: Math.Max(texture.Width, texture.Height), animationFrameCount: animationTextures.Count));
+
+            // If the texture is an "animated one", we also need to add the animation textures. During runtime, water will iterate the z-index of TextureArray to loop through these elements.
+            foreach (var animationTexture in animationTextures)
+            {
+                TextureArrayInformation.Add(animationTexture.Key,
+                    (textureType: textureArrayType, maxDim: Math.Max(animationTexture.Value.Width, animationTexture.Value.Height), animationFrameCount: 0));
+            }
+        }
+
+        /// <summary>
+        /// If texture name contains _A0, then it is the start of an animated texture.
+        /// We can fetch the corresponding animations and return them to be included as next elements inside Texture array.
+        /// </summary>
+        private Dictionary<string, ITexture> CalculateAnimationTextures(string textureName)
+        {
+            var textures = new Dictionary<string, ITexture>();
+            if (!textureName.ContainsIgnoreCase("_A0"))
+            {
+                return textures;
+            }
+
+            for (var id = 1; ; id++)
+            {
+                // Replace the frame number in the key with the current id
+                var frameKey = Regex.Replace(textureName, "_[Aa]0", $"_A{id}");
+                var zkTex = ResourceLoader.TryGetTexture(frameKey);
+
+                if (zkTex == null)
+                {
+                    break;
+                }
+
+                textures.Add(frameKey.ToUpper(), zkTex);
+            }
+
+            return textures;
         }
 
         private void AddTexInfoForItem(ItemInstance item)

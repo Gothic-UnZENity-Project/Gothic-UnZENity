@@ -137,15 +137,17 @@ namespace GUZ.Core.Creator.Meshes.Builder
             chunkData.Normals.Add(feature.Normal.ToUnityVector());
             chunkData.BakedLightColors.Add(new Color32((byte)(feature.Light >> 16), (byte)(feature.Light >> 8), (byte)feature.Light, (byte)(feature.Light >> 24)));
 
-            // FIXME - Re-add animations
+            // HINT: We set animFrameCount + 1 as internally, Water.shader is leveraging a % animFrameCountValue.
+            // No animation -> % 1 is always 0, which means there is always texture 0 used.
+            // 1 Animation -> % 2 (animFrameCount(1) + 1 = 2) - is switching between both values.
             if (material.TextureAnimationMapping == AnimationMapping.Linear)
             {
                 var uvAnimation = material.TextureAnimationMappingDirection.ToUnityVector();
-                chunkData.TextureAnimations.Add(new Vector4(uvAnimation.x, uvAnimation.y, animFrameCount, material.TextureAnimationFps));
+                chunkData.TextureAnimations.Add(new Vector4(uvAnimation.x, uvAnimation.y, animFrameCount + 1, material.TextureAnimationFps));
             }
             else
             {
-                chunkData.TextureAnimations.Add(new Vector4(0, 0, animFrameCount, material.TextureAnimationFps));
+                chunkData.TextureAnimations.Add(new Vector4(0, 0, animFrameCount + 1, material.TextureAnimationFps));
             }
         }
 
