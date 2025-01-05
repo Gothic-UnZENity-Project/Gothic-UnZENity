@@ -166,7 +166,13 @@ namespace GUZ.Core.Globals
 
         // Alter this value to enforce game to recreate cache during next start.
         public const string StaticCacheVersion = "1";
-        public const int MaxLightsPerWorldChunk = 16; // Used during pre-caching to calculate world chunks to merge.
+
+        /// <summary>
+        /// Used during pre-caching to calculate world chunks to merge.
+        /// We implemented a logic to overcome 9 lights on a mesh - limitation by URP forward rendering.
+        /// If you change this value, you also need to alter it inside Shader: StationaryLighting.hlsl --> MAX_AFFECTING_STATIONARY_LIGHTS
+        /// </summary>
+        public const int MaxLightsPerWorldChunk = 16;
 
         public static class DaedalusConst
         {
