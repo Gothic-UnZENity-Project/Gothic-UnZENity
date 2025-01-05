@@ -9,6 +9,7 @@ using GUZ.Core.Manager;
 using GUZ.Core.Util;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Rendering;
 using ZenKit;
 using Mesh = UnityEngine.Mesh;
 using Material = UnityEngine.Material;
@@ -207,6 +208,13 @@ namespace GUZ.Core.Creator.Meshes.Builder
                 _ => throw new ArgumentOutOfRangeException(nameof(textureArrayType), textureArrayType, null)
             };
             var material = new Material(shader);
+
+            if (textureArrayType == TextureCache.TextureArrayTypes.Water)
+            {
+                // Manually correct the render queue for alpha test, as Unity doesn't want to do it from the shader's render queue tag.
+                // If we don't set it, the water will sometimes "flicker" above ground or becomes invisible.
+                material.renderQueue = (int)RenderQueue.Transparent;
+            }
 
             return material;
         }
