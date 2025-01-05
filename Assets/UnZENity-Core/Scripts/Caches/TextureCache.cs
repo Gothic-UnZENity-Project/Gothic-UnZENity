@@ -197,7 +197,7 @@ namespace GUZ.Core.Caches
                     textureArrayType = TextureArrayTypes.Opaque;
 
                     maxMipLevel = texture!.MipmapCount - 1;
-                    textureScale = new Vector2((float)texture.Width / ReferenceTextureSize, (float)texture.Height / ReferenceTextureSize);;
+                    textureScale = new Vector2((float)texture.Width / ReferenceTextureSize, (float)texture.Height / ReferenceTextureSize);
                     animFrameCount = GameGlobals.StaticCache.LoadedTextureInfoOpaque[materialData.Texture].AnimFrameCount;
 
                     return;
@@ -208,7 +208,7 @@ namespace GUZ.Core.Caches
                     textureArrayType = TextureArrayTypes.Transparent;
 
                     maxMipLevel = texture!.MipmapCount - 1;
-                    textureScale = new Vector2((float)texture.Width / ReferenceTextureSize, (float)texture.Height / ReferenceTextureSize);;
+                    textureScale = new Vector2((float)texture.Width / ReferenceTextureSize, (float)texture.Height / ReferenceTextureSize);
                     animFrameCount = GameGlobals.StaticCache.LoadedTextureInfoTransparent[materialData.Texture].AnimFrameCount;
 
                     return;
@@ -219,13 +219,14 @@ namespace GUZ.Core.Caches
                     textureArrayType = TextureArrayTypes.Water;
 
                     maxMipLevel = texture!.MipmapCount - 1;
-                    textureScale = new Vector2((float)texture.Width / ReferenceTextureSize, (float)texture.Height / ReferenceTextureSize);;
+                    textureScale = new Vector2((float)texture.Width / ReferenceTextureSize, (float)texture.Height / ReferenceTextureSize);
                     animFrameCount = GameGlobals.StaticCache.LoadedTextureInfoWater[materialData.Texture].AnimFrameCount;
 
                     return;
                 }
             }
 
+            Debug.LogError("GtTextureArrayIndex - Shouldn't be reachable any longer.");
 
             string key = materialData.Texture;
             animFrameCount = 0;
