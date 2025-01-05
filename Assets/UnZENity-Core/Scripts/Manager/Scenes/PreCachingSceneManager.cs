@@ -86,6 +86,7 @@ namespace GUZ.Core.Manager.Scenes
                     Debug.Log($"### PreCaching meshes for world: {worldName}");
                     var world = ResourceLoader.TryGetWorld(worldName, GameContext.GameVersionAdapter.Version)!;
                     var worldChunkCache = new WorldChunkCacheCreator();
+                    var stationaryLightCache = new StationaryLightCacheCreator();
 
                     vobBoundsCache.CalculateVobBounds(world.RootObjects);
                     watch.LogAndRestart($"{worldName}: VobBounds calculated.");
@@ -94,12 +95,15 @@ namespace GUZ.Core.Manager.Scenes
                     watch.LogAndRestart($"{worldName}: WorldMesh TextureArray calculated.");
 
                     textureArrayCache.CalculateTextureArrayInformation(world.RootObjects);
-                    watch.LogAndRestart($"{worldName}: World Vobs TextureArray calculated.");
+                    watch.LogAndRestart($"{worldName}: World VOBs TextureArray calculated.");
 
                     worldChunkCache.CalculateWorldChunks(world);
                     watch.LogAndRestart($"{worldName}: World chunks calculated.");
 
-                    await GameGlobals.StaticCache.SaveWorldCache(worldName, worldChunkCache.MergedChunksByLights);
+                    stationaryLightCache.CalculateStationaryLights(world.RootObjects);
+                    watch.LogAndRestart($"{worldName}: Stationary lights calculated.");
+
+                    await GameGlobals.StaticCache.SaveWorldCache(worldName, worldChunkCache.MergedChunksByLights, stationaryLightCache.StationaryLightInfos);
 
 
                     // DEBUG restore

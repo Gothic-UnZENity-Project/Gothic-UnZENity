@@ -26,6 +26,7 @@ namespace GUZ.Core.Manager
         private const string _fileNameGlobalTextureArrayData = "texture-arrays.json";
 
         private const string _fileNameWorldChunks = "world-chunks.json";
+        private const string _fileNameStationaryLights = "world-stationary-lights.json";
 
         private string _cacheRootFolderPath;
         private bool _configIsCompressed;
@@ -56,6 +57,19 @@ namespace GUZ.Core.Manager
             public int AnimFrameCount;
         }
 
+        public struct StationaryLightInfo
+        {
+            public StationaryLightInfo(Vector3 position, float range, Color linearColor)
+            {
+                Position = position;
+                Range = range;
+                LinearColor = linearColor;
+            }
+
+            public Vector3 Position;
+            public float Range;
+            public Color LinearColor;
+        }
 
         [Serializable]
         public class MetadataContainer
@@ -114,6 +128,27 @@ namespace GUZ.Core.Manager
             public List<WorldChunkCacheCreator.WorldChunk> WaterChunks;
         }
 
+        [Serializable]
+        public class StationaryLightContainer
+        {
+            public List<StationaryLightEntry> StationaryLights;
+        }
+
+        [Serializable]
+        public class StationaryLightEntry
+        {
+            public StationaryLightEntry(Vector3 position, float range, Color linearColor)
+            {
+                Position = position;
+                Range = range;
+                LinearColor = linearColor;
+            }
+
+            public Vector3 Position;
+            public float Range;
+            public Color LinearColor;
+        }
+
 
         public void Init(DeveloperConfig config)
         {
@@ -129,7 +164,8 @@ namespace GUZ.Core.Manager
             // Check all world specific files.
             foreach (var worldName in worldNames)
             {
-                if (!File.Exists(BuildFilePathName(_fileNameWorldChunks, worldName)))
+                if (!File.Exists(BuildFilePathName(_fileNameWorldChunks, worldName)) ||
+                    !File.Exists(BuildFilePathName(_fileNameStationaryLights, worldName)))
                 {
                     return false;
                 }
@@ -206,7 +242,8 @@ namespace GUZ.Core.Manager
 
         public async Task SaveWorldCache(
             string worldName,
-            Dictionary<TextureCache.TextureArrayTypes, List<WorldChunkCacheCreator.WorldChunk>> mergedChunksByLights)
+            Dictionary<TextureCache.TextureArrayTypes, List<WorldChunkCacheCreator.WorldChunk>> mergedChunksByLights,
+            List<StationaryLightInfo> stationaryLightInfos)
         {
             try
             {
@@ -217,7 +254,13 @@ namespace GUZ.Core.Manager
                     WaterChunks = mergedChunksByLights[TextureCache.TextureArrayTypes.Water],
                 };
 
+                var stationaryLightData = new StationaryLightContainer()
+                {
+                    StationaryLights = stationaryLightInfos.Select(i => new StationaryLightEntry(i.Position, i.Range, i.LinearColor)).ToList()
+                };
+
                 await SaveCacheFile(worldChunkData, BuildFilePathName(_fileNameWorldChunks, worldName));
+                await SaveCacheFile(stationaryLightData, BuildFilePathName(_fileNameStationaryLights, worldName));
             }
             catch (Exception e)
             {
