@@ -184,6 +184,7 @@ namespace GUZ.Core
             Profiler.EndSample();
         }
 
+        [Obsolete("Use StationaryLightsManager.InitStationaryLights () instead.")]
         public static void InitStationaryLights()
         {
             Debug.Log($"[{nameof(StationaryLight)}] Total stationary light count: {Lights.Count}");

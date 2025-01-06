@@ -140,7 +140,7 @@ namespace GUZ.Core.Manager
         /// <summary>
         /// Set global Shader data when world is being loaded.
         /// </summary>
-        public void InitGlobalStationaryLights()
+        public void InitStationaryLights()
         {
             var lights = GameGlobals.StaticCache.LoadedStationaryLights.StationaryLights;
 

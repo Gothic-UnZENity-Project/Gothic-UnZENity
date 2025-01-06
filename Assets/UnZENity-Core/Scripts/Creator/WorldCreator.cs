@@ -16,6 +16,7 @@ using ZenKit.Vobs;
 
 namespace GUZ.Core.Creator
 {
+    [Obsolete("World chunks are created inside WorldChunkCacheCreator and Mesh is later generated at MeshFactory.CreateWorld().")]
     public static class WorldCreator
     {
         private static GameObject _worldGo;
@@ -38,15 +39,6 @@ namespace GUZ.Core.Creator
 
             await MeshFactory.CreateWorld(GameGlobals.SaveGame.CurrentWorldData, loading, _worldGo);
             // await MeshFactory.CreateTextureArray(); // OLD LOGIC
-        }
-
-        public static async Task CreateAsync2(LoadingManager loading, GameObject root)
-        {
-            await MeshFactory.CreateWorld(GameGlobals.StaticCache.LoadedWorldChunks,
-                GameGlobals.SaveGame.CurrentWorldData.Mesh,
-                GameGlobals.SaveGame.CurrentWorldData.BspTree,
-                loading,
-                root);
         }
 
         public static async Task<List<WorldContainer.SubMeshData>> BuildBspTree(IMesh zkMesh, IBspTree zkBspTree, bool lightingEnabled)

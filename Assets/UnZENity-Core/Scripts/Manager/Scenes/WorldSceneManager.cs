@@ -57,10 +57,16 @@ namespace GUZ.Core.Manager.Scenes
                 // 1. Load world based on cached Chunks
                 if (config.Dev.EnableWorldMesh)
                 {
-                    await WorldCreator.CreateAsync2(GameGlobals.Loading, worldRoot).AwaitAndLog();
+                    await MeshFactory.CreateWorld(
+                        GameGlobals.StaticCache.LoadedWorldChunks,
+                        GameGlobals.SaveGame.CurrentWorldData.Mesh,
+                        GameGlobals.SaveGame.CurrentWorldData.BspTree,
+                        GameGlobals.Loading,
+                        worldRoot
+                    ).AwaitAndLog();
                     watch.LogAndRestart("World loaded");
 
-                    GameGlobals.Lights.InitGlobalStationaryLights();
+                    GameGlobals.Lights.InitStationaryLights();
                     watch.LogAndRestart("Stationary lights initialized");
                 }
 
