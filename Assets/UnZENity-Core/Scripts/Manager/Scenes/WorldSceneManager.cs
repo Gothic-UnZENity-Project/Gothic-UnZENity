@@ -46,17 +46,22 @@ namespace GUZ.Core.Manager.Scenes
                 // 0.
                 // Load Static cache and arrange it in memory
                 await GameGlobals.StaticCache.LoadGlobalCache();
+                watch.LogAndRestart("StaticCache - Global loaded");
                 await GameGlobals.StaticCache.LoadWorldCache(GameGlobals.SaveGame.CurrentWorldName).AwaitAndLog();
+                watch.LogAndRestart("StaticCache - World loaded");
 
                 // TODO - Can be cached and doesn't need to be recreated each world scene loading.
                 await MeshFactory.CreateTextureArray();
-
+                watch.LogAndRestart("Texture array created");
 
                 // 1. Load world based on cached Chunks
                 if (config.Dev.EnableWorldMesh)
                 {
                     await WorldCreator.CreateAsync2(GameGlobals.Loading, worldRoot).AwaitAndLog();
                     watch.LogAndRestart("World loaded");
+
+                    GameGlobals.Lights.InitGlobalStationaryLights();
+                    watch.LogAndRestart("Stationary lights initialized");
                 }
 
                 // 2.
@@ -66,7 +71,7 @@ namespace GUZ.Core.Manager.Scenes
                 {
                     await VobCreator.CreateAsync(config.Dev, GameGlobals.Loading, GameGlobals.SaveGame.CurrentWorldData.Vobs, vobRoot)
                         .AwaitAndLog();
-                    watch.LogAndRestart($"VOBs created");
+                    watch.LogAndRestart("VOBs created");
                 }
 
                 // 3.
@@ -77,7 +82,7 @@ namespace GUZ.Core.Manager.Scenes
                 if (config.Dev.EnableNpcs)
                 {
                     await NpcCreator.CreateAsync(config.Dev, GameGlobals.Loading).AwaitAndLog();
-                    watch.LogAndRestart($"NPCs created");
+                    watch.LogAndRestart("NPCs created");
                 }
 
                 // World fully loaded

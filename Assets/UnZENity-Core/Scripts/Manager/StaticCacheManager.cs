@@ -41,6 +41,7 @@ namespace GUZ.Core.Manager
         public Dictionary<string, TextureInfo> LoadedTextureInfoWater { get; private set; }
 
         public WorldChunkContainer LoadedWorldChunks;
+        public StationaryLightContainer LoadedStationaryLights;
 
 
         public struct TextureInfo
@@ -277,30 +278,17 @@ namespace GUZ.Core.Manager
             }
             _isGlobalCacheLoaded = true;
             
-            var stopwatch = Stopwatch.StartNew();
-            try
-            {
-                var vobBoundsString = await ReadData(BuildFilePathName(_fileNameGlobalVobBounds));
-                var textureArrayString = await ReadData(BuildFilePathName(_fileNameGlobalTextureArrayData));
+            var vobBoundsString = await ReadData(BuildFilePathName(_fileNameGlobalVobBounds));
+            var textureArrayString = await ReadData(BuildFilePathName(_fileNameGlobalTextureArrayData));
 
-                var vobBoundsContainer = await ParseJson<VobBoundsContainer>(vobBoundsString);
-                var textureArrayContainer = await ParseJson<TextureArrayContainer>(textureArrayString);
+            var vobBoundsContainer = await ParseJson<VobBoundsContainer>(vobBoundsString);
+            var textureArrayContainer = await ParseJson<TextureArrayContainer>(textureArrayString);
 
-                LoadedVobsBounds = vobBoundsContainer.BoundsEntries.ToDictionary(i => i.MeshName, i => i.Bounds);
+            LoadedVobsBounds = vobBoundsContainer.BoundsEntries.ToDictionary(i => i.MeshName, i => i.Bounds);
 
-                LoadedTextureInfoOpaque = textureArrayContainer.TexturesOpaque.ToDictionary(i => i.TextureName, i => new TextureInfo(TextureCache.TextureArrayTypes.Opaque, i.MaxDimension, i.AnimationFrameCount));
-                LoadedTextureInfoTransparent = textureArrayContainer.TexturesTransparent.ToDictionary(i => i.TextureName, i => new TextureInfo(TextureCache.TextureArrayTypes.Transparent, i.MaxDimension, i.AnimationFrameCount));
-                LoadedTextureInfoWater = textureArrayContainer.TexturesWater.ToDictionary(i => i.TextureName, i => new TextureInfo(TextureCache.TextureArrayTypes.Water, i.MaxDimension, i.AnimationFrameCount));
-            }
-            catch (Exception e)
-            {
-                Debug.LogError(e);
-                throw;
-            }
-            finally
-            {
-                stopwatch.Log("Loading global cache done.");
-            }
+            LoadedTextureInfoOpaque = textureArrayContainer.TexturesOpaque.ToDictionary(i => i.TextureName, i => new TextureInfo(TextureCache.TextureArrayTypes.Opaque, i.MaxDimension, i.AnimationFrameCount));
+            LoadedTextureInfoTransparent = textureArrayContainer.TexturesTransparent.ToDictionary(i => i.TextureName, i => new TextureInfo(TextureCache.TextureArrayTypes.Transparent, i.MaxDimension, i.AnimationFrameCount));
+            LoadedTextureInfoWater = textureArrayContainer.TexturesWater.ToDictionary(i => i.TextureName, i => new TextureInfo(TextureCache.TextureArrayTypes.Water, i.MaxDimension, i.AnimationFrameCount));
         }
 
         public async Task LoadWorldCache(string worldName)
@@ -309,6 +297,9 @@ namespace GUZ.Core.Manager
 
             var worldChunkString = await ReadData(BuildFilePathName(_fileNameWorldChunks, worldName));
             LoadedWorldChunks = await ParseJson<WorldChunkContainer>(worldChunkString);
+
+            var stationaryLightString = await ReadData(BuildFilePathName(_fileNameStationaryLights, worldName));
+            LoadedStationaryLights = await ParseJson<StationaryLightContainer>(stationaryLightString);
 
             stopwatch.Log("Loading world cache done.");
         }

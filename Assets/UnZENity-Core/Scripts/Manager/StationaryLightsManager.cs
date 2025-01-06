@@ -8,9 +8,15 @@ namespace GUZ.Core.Manager
 {
     public class StationaryLightsManager
     {
+        private static readonly int _globalStationaryLightPositionsAndAttenuationShaderId =
+            Shader.PropertyToID("_GlobalStationaryLightPositionsAndAttenuation");
+
+        private static readonly int _globalStationaryLightColorsShaderId =
+            Shader.PropertyToID("_GlobalStationaryLightColors");
+
+
         private readonly HashSet<MeshRenderer> _dirtiedMeshes = new();
         private readonly Dictionary<MeshRenderer, List<StationaryLight>> _lightsPerRenderer = new();
-        private readonly List<Material> _nonAllocMaterials = new();
 
         public readonly static List<(Vector3 Position, float Range)> ThreadSafeLightData = new();
 
@@ -81,19 +87,20 @@ namespace GUZ.Core.Manager
                 return;
             }
 
+            var nonAllocMaterials = new List<Material>();
             var indicesMatrix = Matrix4x4.identity;
-            renderer.GetSharedMaterials(_nonAllocMaterials);
+            renderer.GetSharedMaterials(nonAllocMaterials);
             for (var i = 0; i < Mathf.Min(16, _lightsPerRenderer[renderer].Count); i++)
             {
                 indicesMatrix[i / 4, i % 4] = _lightsPerRenderer[renderer][i].Index;
             }
 
-            for (var i = 0; i < _nonAllocMaterials.Count; i++)
+            for (var i = 0; i < nonAllocMaterials.Count; i++)
             {
-                if (_nonAllocMaterials[i])
+                if (nonAllocMaterials[i])
                 {
-                    _nonAllocMaterials[i].SetMatrix(StationaryLight.StationaryLightIndicesShaderId, indicesMatrix);
-                    _nonAllocMaterials[i].SetInt(StationaryLight.StationaryLightCountShaderId,
+                    nonAllocMaterials[i].SetMatrix(StationaryLight.StationaryLightIndicesShaderId, indicesMatrix);
+                    nonAllocMaterials[i].SetInt(StationaryLight.StationaryLightCountShaderId,
                         _lightsPerRenderer[renderer].Count);
                 }
             }
@@ -105,11 +112,11 @@ namespace GUZ.Core.Manager
                     indicesMatrix[i / 4, i % 4] = _lightsPerRenderer[renderer][i + 16].Index;
                 }
 
-                for (var i = 0; i < _nonAllocMaterials.Count; i++)
+                for (var i = 0; i < nonAllocMaterials.Count; i++)
                 {
-                    if (_nonAllocMaterials[i])
+                    if (nonAllocMaterials[i])
                     {
-                        _nonAllocMaterials[i].SetMatrix(StationaryLight.StationaryLightIndices2ShaderId, indicesMatrix);
+                        nonAllocMaterials[i].SetMatrix(StationaryLight.StationaryLightIndices2ShaderId, indicesMatrix);
                     }
                 }
             }
@@ -128,6 +135,29 @@ namespace GUZ.Core.Manager
                 await FrameSkipper.TrySkipToNextFrame();
                 GameGlobals.Loading?.AddProgress(LoadingManager.LoadingProgressType.WorldMesh, 1f / allLights.Length);
             }
+        }
+
+        /// <summary>
+        /// Set global Shader data when world is being loaded.
+        /// </summary>
+        public void InitGlobalStationaryLights()
+        {
+            var lights = GameGlobals.StaticCache.LoadedStationaryLights.StationaryLights;
+
+            var lightPositionsAndAttenuation = new Vector4[lights.Count];
+            var lightColors = new Vector4[lights.Count];
+
+            for (var i = 0; i < lights.Count; i++)
+            {
+                lightPositionsAndAttenuation[i] = new Vector4(
+                    lights[i].Position.x, lights[i].Position.y, lights[i].Position.z,
+                    1f / (lights[i].Range * lights[i].Range));
+                lightColors[i] = lights[i].LinearColor;
+            }
+
+            Shader.SetGlobalVectorArray(_globalStationaryLightPositionsAndAttenuationShaderId,
+                lightPositionsAndAttenuation);
+            Shader.SetGlobalVectorArray(_globalStationaryLightColorsShaderId, lightColors);
         }
     }
 }
