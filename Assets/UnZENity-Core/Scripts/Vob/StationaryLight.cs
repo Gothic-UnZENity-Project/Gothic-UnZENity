@@ -167,36 +167,30 @@ namespace GUZ.Core
 
         private void OnEnable()
         {
-            if (_affectedRenderersCalculated)
-            {
-                return;
-            }
-
             if (!GameGlobals.Lights.IsWorldInitialized)
             {
                 return;
             }
 
-            GatherRenderers();
-
-            Profiler.BeginSample("Stationary light enabled");
-            for (var i = 0; i < _affectedRenderers.Count; i++)
+            // We need to calculate the renderers "after" we loaded all of world mesh and VOBs. Otherwise the Physics.Range() check will return too few elements.
+            if (!_affectedRenderersCalculated)
             {
-                GameGlobals.Lights.AddLightOnRenderer(this, _affectedRenderers[i]);
+                GatherRenderers();
+                _affectedRenderersCalculated = true;
             }
 
-            Profiler.EndSample();
+            foreach (var rend in _affectedRenderers)
+            {
+                GameGlobals.Lights.AddLightOnRenderer(this, rend);
+            }
         }
 
         private void OnDisable()
         {
-            Profiler.BeginSample("Stationary light disable");
-            for (var i = 0; i < _affectedRenderers.Count; i++)
+            foreach (var rend in _affectedRenderers)
             {
-                GameGlobals.Lights.RemoveLightOnRenderer(this, _affectedRenderers[i]);
+                GameGlobals.Lights.RemoveLightOnRenderer(this, rend);
             }
-
-            Profiler.EndSample();
         }
 
         [Obsolete("Use StationaryLightsManager.InitStationaryLights () instead.")]

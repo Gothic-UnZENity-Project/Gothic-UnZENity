@@ -46,17 +46,19 @@ namespace GUZ.Core.Manager
         public void LateUpdate()
         {
             // Update the renderer once for all updated lights.
-            if (_dirtiedMeshes.Count > 0)
+            if (_dirtiedMeshes.Count <= 0)
             {
-                Profiler.BeginSample("Update stationary light renderers");
-                foreach (var renderer in _dirtiedMeshes)
-                {
-                    UpdateRenderer(renderer);
-                }
-
-                _dirtiedMeshes.Clear();
-                Profiler.EndSample();
+                return;
             }
+
+            Profiler.BeginSample("Update stationary light renderers");
+            foreach (var renderer in _dirtiedMeshes)
+            {
+                UpdateRenderer(renderer);
+            }
+
+            _dirtiedMeshes.Clear();
+            Profiler.EndSample();
         }
 
         public void AddLightOnRenderer(StationaryLight light, MeshRenderer renderer)
