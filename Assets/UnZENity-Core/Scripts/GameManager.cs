@@ -118,6 +118,7 @@ namespace GUZ.Core
             _fileLoggingHandler.Init(Config.Root);
             _frameSkipper.Init();
             Loading.Init();
+            Lights.Init();
             VobMeshCulling.Init();
             NpcMeshCulling.Init();
             SoundCulling.Init();

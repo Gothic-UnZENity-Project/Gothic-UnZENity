@@ -65,9 +65,6 @@ namespace GUZ.Core.Manager.Scenes
                         worldRoot
                     ).AwaitAndLog();
                     watch.LogAndRestart("World loaded");
-
-                    GameGlobals.Lights.InitStationaryLights();
-                    watch.LogAndRestart("Stationary lights initialized");
                 }
 
                 // 2.
@@ -79,6 +76,12 @@ namespace GUZ.Core.Manager.Scenes
                         .AwaitAndLog();
                     watch.LogAndRestart("VOBs created");
                 }
+
+                // 3. Stationary lights
+                // They are affecting (1) World Mesh and (2) VOB meshes.
+                // We therefore need to initialize them after both is created.
+                GameGlobals.Lights.InitStationaryLights();
+                watch.LogAndRestart("Stationary lights initialized");
 
                 // 3.
                 WayNetCreator.Create(config.Dev, GameGlobals.SaveGame.CurrentWorldData);

@@ -162,8 +162,23 @@ namespace GUZ.Core
             }
         }
 
+
+        private bool _affectedRenderersCalculated;
+
         private void OnEnable()
         {
+            if (_affectedRenderersCalculated)
+            {
+                return;
+            }
+
+            if (!GameGlobals.Lights.IsWorldInitialized)
+            {
+                return;
+            }
+
+            GatherRenderers();
+
             Profiler.BeginSample("Stationary light enabled");
             for (var i = 0; i < _affectedRenderers.Count; i++)
             {

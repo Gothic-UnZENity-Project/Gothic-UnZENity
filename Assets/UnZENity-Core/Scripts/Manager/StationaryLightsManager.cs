@@ -8,6 +8,9 @@ namespace GUZ.Core.Manager
 {
     public class StationaryLightsManager
     {
+        public bool IsWorldInitialized { get; private set; }
+
+
         private static readonly int _globalStationaryLightPositionsAndAttenuationShaderId =
             Shader.PropertyToID("_GlobalStationaryLightPositionsAndAttenuation");
 
@@ -24,6 +27,11 @@ namespace GUZ.Core.Manager
             return ThreadSafeLightData;
         }
 
+        public void Init()
+        {
+            // If we load a new world, all Static Lights which will be loaded need to wait to emit light until we're done loading again.
+            GlobalEventDispatcher.LoadingSceneLoaded.AddListener(() => IsWorldInitialized = false);
+        }
 
         public void AddThreadSafeLight(Vector3 position, float range)
         {
@@ -158,6 +166,8 @@ namespace GUZ.Core.Manager
             Shader.SetGlobalVectorArray(_globalStationaryLightPositionsAndAttenuationShaderId,
                 lightPositionsAndAttenuation);
             Shader.SetGlobalVectorArray(_globalStationaryLightColorsShaderId, lightColors);
+
+            IsWorldInitialized = true;
         }
     }
 }
