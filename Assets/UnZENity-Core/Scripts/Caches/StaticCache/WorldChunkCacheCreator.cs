@@ -27,32 +27,72 @@ namespace GUZ.Core.Caches.StaticCache
 
         public void CalculateWorldChunks(IWorld world)
         {
-            CalculateLightBounds(world.RootObjects);
+            CalculateLightBounds(world.RootObjects, default, default);
 
             // Hint: We need to cache BspTree, otherwise looping through it will take ages.
             BuildBspTree(world.Mesh, (CachedBspTree)world.BspTree.Cache());
         }
 
-        private void CalculateLightBounds(List<IVirtualObject> vobs)
+        private Dictionary<string, IWorld> _fireWorldCache = new();
+
+        private void CalculateLightBounds(List<IVirtualObject> vobs, Vector3 parentWorldPosition, Quaternion parentRotation)
         {
             foreach (var vob in vobs)
             {
-                CalculateLightBounds(vob.Children);
+                var vobWorldPosition = CalculateWorldPosition(parentWorldPosition, parentRotation, vob.Position.ToUnityVector());
+                CalculateLightBounds(vob.Children, vobWorldPosition, vob.Rotation.ToUnityQuaternion());
 
-                if (vob.Type != VirtualObjectType.zCVobLight)
+                if (vob.Type == VirtualObjectType.zCVobLight)
                 {
-                    continue;
+                    var light = (Light)vob;
+
+                    // For the chunking we need to use the non-static lights (e.g. from a fire) only. StaticLights will be handled later.
+                    if (light.LightStatic)
+                    {
+                        continue;
+                    }
+
+                    // Calculation: Vector3.One (vectorify) * Range / 100 (centimeter to meter in Unity) * 2 (from range (half-width) to width)
+                    var size = Vector3.one * light.Range / 100 * 2;
+
+                    var bounds = new Bounds(vobWorldPosition, size);
+
+                    _stationaryLightBounds.Add(bounds);
                 }
+                else if (vob.Type == VirtualObjectType.oCMobFire)
+                {
+                    var fire = (Fire)vob;
 
-                var light = (Light)vob;
+                    if (fire.VobTree.IsNullOrEmpty())
+                    {
+                        continue;
+                    }
 
-                // Calculation: Vector3.One (vectorify) * Range / 100 (centimeter to meter in Unity) * 2 (from range (half-width) to width)
-                var size = Vector3.one * light.Range / 100 * 2;
-                var bounds = new Bounds(light.Position.ToUnityVector(), size);
+                    if (!_fireWorldCache.TryGetValue(fire.VobTree.ToLower(), out var fireWorld))
+                    {
+                        fireWorld = ResourceLoader.TryGetWorld(fire.VobTree, GameContext.GameVersionAdapter.Version);
+                        _fireWorldCache.Add(fire.VobTree.ToLower(), fireWorld);
+                    }
 
-                _stationaryLightBounds.Add(bounds);
+                    CalculateLightBounds(fireWorld!.RootObjects, vobWorldPosition, vob.Rotation.ToUnityQuaternion());
+                }
             }
         }
+
+        /// <summary>
+        /// Elements like Fire have children which position is relative to parent.
+        /// But at least Fire are .zen files where the children have zeroed world positions which we need to handle properly.
+        /// </summary>
+        private Vector3 CalculateWorldPosition(Vector3 parentPosition, Quaternion parentRotation, Vector3 localPosition)
+        {
+            var worldPosition = localPosition;
+            // Apply parent's rotation by multiplying the Quaternion with the Vector3
+            worldPosition = parentRotation * worldPosition;
+            worldPosition += parentPosition;
+
+            return worldPosition;
+        }
+
 
         private void BuildBspTree(IMesh worldMesh, CachedBspTree bspTree)
         {
