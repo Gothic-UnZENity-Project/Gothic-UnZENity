@@ -28,8 +28,7 @@ namespace GUZ.Core.Manager
         private const string _fileNameWorldChunks = "world-chunks.json";
         private const string _fileNameStationaryLights = "world-stationary-lights.json";
 
-        private const string _debugFileName =
-            "debug.json";
+        private const string _debugFileName = "debug.json";
 
         private string _cacheRootFolderPath;
         private bool _configIsCompressed;
