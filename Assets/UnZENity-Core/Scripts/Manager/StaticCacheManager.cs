@@ -28,6 +28,9 @@ namespace GUZ.Core.Manager
         private const string _fileNameWorldChunks = "world-chunks.json";
         private const string _fileNameStationaryLights = "world-stationary-lights.json";
 
+        private const string _debugFileName =
+            "debug.json";
+
         private string _cacheRootFolderPath;
         private bool _configIsCompressed;
 
@@ -42,6 +45,7 @@ namespace GUZ.Core.Manager
 
         public WorldChunkContainer LoadedWorldChunks;
         public StationaryLightContainer LoadedStationaryLights;
+        public DebugDataContainer LoadedDebugData;
 
 
         public struct TextureInfo
@@ -148,6 +152,12 @@ namespace GUZ.Core.Manager
             public Vector3 Position;
             public float Range;
             public Color LinearColor;
+        }
+
+        [Serializable]
+        public class DebugDataContainer
+        {
+            public List<Vector3> LightPositions;
         }
 
 
@@ -270,6 +280,26 @@ namespace GUZ.Core.Manager
             }
         }
 
+        public async Task SaveDebugCache(
+            string worldName,
+            List<Bounds> lightBoundsUsedForWorldChunkCreation)
+        {
+            try
+            {
+                var lightPosForWorldChunks = new DebugDataContainer
+                {
+                    LightPositions = lightBoundsUsedForWorldChunkCreation.Select(i => i.center).ToList()
+                };
+
+                await SaveCacheFile(lightPosForWorldChunks, BuildFilePathName(_debugFileName, worldName));
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"There was some error while storing Mesh Cache: {e}");
+                throw;
+            }
+        }
+
         public async Task LoadGlobalCache()
         {
             if (_isGlobalCacheLoaded)
@@ -302,6 +332,12 @@ namespace GUZ.Core.Manager
             LoadedStationaryLights = await ParseJson<StationaryLightContainer>(stationaryLightString);
 
             stopwatch.Log("Loading world cache done.");
+        }
+
+        public async Task LoadDebugCache(string worldName)
+        {
+            var debugDataString = await ReadData(BuildFilePathName(_debugFileName, worldName));
+            LoadedDebugData = await ParseJson<DebugDataContainer>(debugDataString);
         }
 
         private async Task SaveCacheFile(object data, string filePathName)

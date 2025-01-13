@@ -105,6 +105,8 @@ namespace GUZ.Core.Manager.Scenes
 
                     await GameGlobals.StaticCache.SaveWorldCache(worldName, worldChunkCache.MergedChunksByLights, stationaryLightCache.StationaryLightInfos);
 
+                    // DEBUG - Re-enable only when needed.
+                    // await GameGlobals.StaticCache.SaveDebugCache(worldName, worldChunkCache.StationaryLightBounds);
 
                     // DEBUG restore
                     // {

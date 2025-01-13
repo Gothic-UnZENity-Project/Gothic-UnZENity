@@ -22,7 +22,8 @@ namespace GUZ.Core.Caches.StaticCache
         public Dictionary<TextureCache.TextureArrayTypes, List<WorldChunk>> MergedChunksByLights;
 
 
-        private List<Bounds> _stationaryLightBounds = new();
+        // Made public to save it for debug purposes (load in world scene and check if positions match).
+        public List<Bounds> StationaryLightBounds = new();
 
 
         public void CalculateWorldChunks(IWorld world)
@@ -33,6 +34,7 @@ namespace GUZ.Core.Caches.StaticCache
             BuildBspTree(world.Mesh, (CachedBspTree)world.BspTree.Cache());
         }
 
+        // We do not need to load the .zen files multiple times.
         private Dictionary<string, IWorld> _fireWorldCache = new();
 
         private void CalculateLightBounds(List<IVirtualObject> vobs, Vector3 parentWorldPosition, Quaternion parentRotation)
@@ -57,7 +59,7 @@ namespace GUZ.Core.Caches.StaticCache
 
                     var bounds = new Bounds(vobWorldPosition, size);
 
-                    _stationaryLightBounds.Add(bounds);
+                    StationaryLightBounds.Add(bounds);
                 }
                 else if (vob.Type == VirtualObjectType.oCMobFire)
                 {
@@ -304,7 +306,7 @@ namespace GUZ.Core.Caches.StaticCache
             // FIXME - ToUnityBounds() isn't altering centimeter in meter (/100). Correct? We need to create Gizmos to check it!
             var unityBbox = aabb.ToUnityBounds();
 
-            foreach (var lightBound in _stationaryLightBounds)
+            foreach (var lightBound in StationaryLightBounds)
             {
                 if (lightBound.Intersects(unityBbox))
                 {
