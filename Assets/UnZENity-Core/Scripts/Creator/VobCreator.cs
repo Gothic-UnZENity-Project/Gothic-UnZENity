@@ -106,7 +106,7 @@ namespace GUZ.Core.Creator
         }
 
         private static async Task CreateVobs(DeveloperConfig config, LoadingManager loading,
-            List<IVirtualObject> vobs, GameObject parent = null, bool reparent = false)
+            List<IVirtualObject> vobs, GameObject parent = null)
         {
             foreach (var vob in vobs)
             {
@@ -115,7 +115,7 @@ namespace GUZ.Core.Creator
                 // Debug - Skip loading if not wanted.
                 if (config.SpawnVOBTypes.Value.IsEmpty() || config.SpawnVOBTypes.Value.Contains(vob.Type))
                 {
-                    go = LoadVob2(config, vob);
+                    go = LoadVob2(config, vob, parent);
                     // go = reparent ? LoadVob(config, vob, parent) : LoadVob(config, vob);
                 }
 
@@ -126,17 +126,17 @@ namespace GUZ.Core.Creator
                 loading?.AddProgress(LoadingManager.LoadingProgressType.VOb, 1f / _totalVObs);
 
                 // Recursive creating sub-vobs
-                await CreateVobs(config, loading, vob.Children, go, reparent);
+                await CreateVobs(config, loading, vob.Children, go);
             }
         }
 
         // FIXME - Cauldron and some other Vobs have children. We would need to show them together. As of now they would be placed in separate parent-GOs (e.g. MobInter/ and Pfx/)
         // FIXME - We should consider rendering them one-after-another without creating new parents. Then localPosition for each vob and child-vob would be correct automatically.
-        private static GameObject LoadVob2(DeveloperConfig config, IVirtualObject vob)
+        private static GameObject LoadVob2(DeveloperConfig config, IVirtualObject vob, GameObject parent = null)
         {
             if (IsEagerLoading(vob.Type))
             {
-                return LoadVob(config, vob);
+                return LoadVob(config, vob, parent);
             }
 
             switch (vob.Visual.Type)
@@ -507,7 +507,7 @@ namespace GUZ.Core.Creator
                 vobRoot.Position = Vector3.Zero;
             }
 
-            CreateVobs(config, null, vobTree.RootObjects, go.FindChildRecursively(vob.Slot) ?? go, true);
+            CreateVobs(config, null, vobTree.RootObjects, go.FindChildRecursively(vob.Slot) ?? go);
 
             return go;
         }
