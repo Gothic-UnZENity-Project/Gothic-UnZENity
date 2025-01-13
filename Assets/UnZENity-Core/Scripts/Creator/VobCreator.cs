@@ -394,7 +394,6 @@ namespace GUZ.Core.Creator
                 case VirtualObjectType.oCTriggerScript:
                 case VirtualObjectType.zCVobLensFlare:
                 case VirtualObjectType.zCMoverController:
-                case VirtualObjectType.zCVobLevelCompo:
                 case VirtualObjectType.zCZoneZFog:
                 case VirtualObjectType.zCZoneZFogDefault:
                 case VirtualObjectType.zCZoneVobFarPlane:
@@ -414,6 +413,11 @@ namespace GUZ.Core.Creator
                     // Remove it from here once we properly implement and handle it.
                     go = CreateDefaultVob(vob);
 
+                    break;
+                }
+                case VirtualObjectType.zCVobLevelCompo:
+                {
+                    // Nothing to do.
                     break;
                 }
                 default:
