@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using GUZ.Core.Extensions;
 using GUZ.Core.Manager;
+using MyBox;
 using UnityEngine;
 using ZenKit.Vobs;
 using Light = ZenKit.Vobs.Light;
@@ -11,27 +12,76 @@ namespace GUZ.Core.Caches.StaticCache
     {
         public List<StaticCacheManager.StationaryLightInfo> StationaryLightInfos = new();
 
-        public void CalculateStationaryLights(List<IVirtualObject> vobs)
+        // Used for world chunk creation.
+        public List<Bounds> StationaryLightBounds = new();
+
+
+        // We do not need to load the .zen files and its vobs multiple times.
+        private Dictionary<string, List<IVirtualObject>> _fireWorldVobCache = new();
+
+
+        public void CalculateStationaryLights(List<IVirtualObject> vobs, Vector3 parentWorldPosition = default)
         {
             foreach (var vob in vobs)
             {
-                if (vob.Type != VirtualObjectType.zCVobLight)
+                var vobWorldPosition = CalculateWorldPosition(parentWorldPosition, vob.Position.ToUnityVector());
+
+                // Recursion
+                CalculateStationaryLights(vob.Children, vobWorldPosition);
+
+                if (vob.Type == VirtualObjectType.zCVobLight)
                 {
-                    // FIXME - If we have a fire, we need to load the .zen file and loop through its children! Test if it works below Orry in start area.
-                    CalculateStationaryLights(vob.Children);
-                    continue;
+                    // TODO - Check if we need to look for "isStatic == true"?
+
+                    var light = (Light)vob;
+
+                    // For chunking and shader usage, we need to use the non-static lights (e.g. from a fire) only.
+                    // StaticLights will be handled later.
+                    if (light.LightStatic)
+                    {
+                        continue;
+                    }
+
+                    var linearColor = new Color(light.Color.R / 255f, light.Color.G / 255f, light.Color.B / 255f, light.Color.A / 255f).linear;
+                    StationaryLightInfos.Add(new StaticCacheManager.StationaryLightInfo(vobWorldPosition, light.Range, linearColor));
+
+                    // Calculation: Vector3.One (vectorify) * Range / 100 (centimeter to meter in Unity) * 2 (from range (half-width) to width)
+                    var boundsSize = Vector3.one * light.Range / 100 * 2;
+                    StationaryLightBounds.Add(new Bounds(vobWorldPosition, boundsSize));
                 }
+                else if (vob.Type == VirtualObjectType.oCMobFire)
+                {
+                    var fire = (Fire)vob;
 
-                // TODO - Check if we need to look for "isStatic == true"?
+                    if (fire.VobTree.IsNullOrEmpty())
+                    {
+                        continue;
+                    }
 
-                var light = (Light)vob;
-                var unityPosition = light.Position.ToUnityVector();
-                var linearColor = new Color(light.Color.R / 255f, light.Color.G / 255f, light.Color.B / 255f, light.Color.A / 255f).linear;
+                    if (!_fireWorldVobCache.TryGetValue(fire.VobTree.ToLower(), out var fireWorldVobs))
+                    {
+                        fireWorldVobs = ResourceLoader.TryGetWorld(fire.VobTree, GameContext.GameVersionAdapter.Version)!.RootObjects;
+                        _fireWorldVobCache.Add(fire.VobTree.ToLower(), fireWorldVobs);
 
-                StationaryLightInfos.Add(new StaticCacheManager.StationaryLightInfo(unityPosition, light.Range, linearColor));
+                        // FIRE worlds aren't positioned at 0,0,0. We need to do it now, to have the correct parent-child positioning.
+                        fireWorldVobs.ForEach(i => i.Position = default);
+                    }
 
-                CalculateStationaryLights(vob.Children);
+                    // As we loaded the child-VOBs for fire*.zen at this time, we iterate now.
+                    CalculateStationaryLights(fireWorldVobs, vobWorldPosition);
+                }
             }
+        }
+
+        /// <summary>
+        /// Elements like Fire have children which position is relative to parent.
+        /// But at least Fire are .zen files where the children have zeroed world positions which we need to handle properly.
+        ///
+        /// TODO - Rotation isn't handled for positioning right now. I'm not sure if we need it. If so, please add.
+        /// </summary>
+        private Vector3 CalculateWorldPosition(Vector3 parentPosition, Vector3 localPosition)
+        {
+            return parentPosition + localPosition;
         }
     }
 }

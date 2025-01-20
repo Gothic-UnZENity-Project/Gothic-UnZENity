@@ -97,16 +97,16 @@ namespace GUZ.Core.Manager.Scenes
                     textureArrayCache.CalculateTextureArrayInformation(world.RootObjects);
                     watch.LogAndRestart($"{worldName}: World VOBs TextureArray calculated.");
 
-                    worldChunkCache.CalculateWorldChunks(world);
-                    watch.LogAndRestart($"{worldName}: World chunks calculated.");
-
                     stationaryLightCache.CalculateStationaryLights(world.RootObjects);
                     watch.LogAndRestart($"{worldName}: Stationary lights calculated.");
+
+                    worldChunkCache.CalculateWorldChunks(world, stationaryLightCache.StationaryLightBounds);
+                    watch.LogAndRestart($"{worldName}: World chunks calculated.");
 
                     await GameGlobals.StaticCache.SaveWorldCache(worldName, worldChunkCache.MergedChunksByLights, stationaryLightCache.StationaryLightInfos);
 
                     // DEBUG - Re-enable only when needed.
-                    // await GameGlobals.StaticCache.SaveDebugCache(worldName, worldChunkCache.StationaryLightBounds);
+                    // await GameGlobals.StaticCache.SaveDebugCache(worldName, stationaryLightCache.StationaryLightBounds);
 
                     // DEBUG restore
                     // {

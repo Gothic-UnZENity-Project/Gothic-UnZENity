@@ -6,7 +6,6 @@ using MyBox;
 using UnityEngine;
 using ZenKit;
 using ZenKit.Vobs;
-using Light = ZenKit.Vobs.Light;
 using TextureFormat = ZenKit.TextureFormat;
 
 namespace GUZ.Core.Caches.StaticCache
@@ -21,81 +20,17 @@ namespace GUZ.Core.Caches.StaticCache
 
         public Dictionary<TextureCache.TextureArrayTypes, List<WorldChunk>> MergedChunksByLights;
 
-        // Made public to save it for debug purposes (load in world scene and check if positions match).
-        public List<Bounds> StationaryLightBounds = new();
-
-
         // We do not need to load the .zen files and its vobs multiple times.
         private Dictionary<string, List<IVirtualObject>> _fireWorldVobCache = new();
+        private List<Bounds> _stationaryLightBounds;
 
-
-        public void CalculateWorldChunks(IWorld world)
+        public void CalculateWorldChunks(IWorld world, List<Bounds> stationaryLightBounds)
         {
-            CalculateLightBounds(world.RootObjects, default);
+            _stationaryLightBounds = stationaryLightBounds;
 
             // Hint: We need to cache BspTree, otherwise looping through it will take ages.
             BuildBspTree(world.Mesh, (CachedBspTree)world.BspTree.Cache());
         }
-
-        private void CalculateLightBounds(List<IVirtualObject> vobs, Vector3 parentWorldPosition)
-        {
-            foreach (var vob in vobs)
-            {
-                var vobWorldPosition = CalculateWorldPosition(parentWorldPosition, vob.Position.ToUnityVector());
-
-                CalculateLightBounds(vob.Children, vobWorldPosition);
-
-                if (vob.Type == VirtualObjectType.zCVobLight)
-                {
-                    var light = (Light)vob;
-
-                    // For the chunking we need to use the non-static lights (e.g. from a fire) only. StaticLights will be handled later.
-                    if (light.LightStatic)
-                    {
-                        continue;
-                    }
-
-                    // Calculation: Vector3.One (vectorify) * Range / 100 (centimeter to meter in Unity) * 2 (from range (half-width) to width)
-                    var size = Vector3.one * light.Range / 100 * 2;
-
-                    var bounds = new Bounds(vobWorldPosition, size);
-
-                    StationaryLightBounds.Add(bounds);
-                }
-                else if (vob.Type == VirtualObjectType.oCMobFire)
-                {
-                    var fire = (Fire)vob;
-
-                    if (fire.VobTree.IsNullOrEmpty())
-                    {
-                        continue;
-                    }
-
-                    if (!_fireWorldVobCache.TryGetValue(fire.VobTree.ToLower(), out var fireWorldVobs))
-                    {
-                        fireWorldVobs = ResourceLoader.TryGetWorld(fire.VobTree, GameContext.GameVersionAdapter.Version)!.RootObjects;
-                        _fireWorldVobCache.Add(fire.VobTree.ToLower(), fireWorldVobs);
-
-                        // FIRE worlds aren't positioned at 0,0,0. We need to do it now, to have the correct parent-child positioning.
-                        fireWorldVobs.ForEach(i => i.Position = default);
-                    }
-
-                    CalculateLightBounds(fireWorldVobs, vobWorldPosition);
-                }
-            }
-        }
-
-        /// <summary>
-        /// Elements like Fire have children which position is relative to parent.
-        /// But at least Fire are .zen files where the children have zeroed world positions which we need to handle properly.
-        ///
-        /// TODO - Rotation isn't handled for positioning right now. I'm not sure if we need it. If so, please add.
-        /// </summary>
-        private Vector3 CalculateWorldPosition(Vector3 parentPosition, Vector3 localPosition)
-        {
-            return parentPosition + localPosition;
-        }
-
 
         private void BuildBspTree(IMesh worldMesh, CachedBspTree bspTree)
         {
@@ -307,7 +242,7 @@ namespace GUZ.Core.Caches.StaticCache
             // FIXME - ToUnityBounds() isn't altering centimeter in meter (/100). Correct? We need to create Gizmos to check it!
             var unityBbox = aabb.ToUnityBounds();
 
-            foreach (var lightBound in StationaryLightBounds)
+            foreach (var lightBound in _stationaryLightBounds)
             {
                 if (lightBound.Intersects(unityBbox))
                 {
