@@ -21,28 +21,29 @@ namespace GUZ.Core.Caches.StaticCache
 
         public Dictionary<TextureCache.TextureArrayTypes, List<WorldChunk>> MergedChunksByLights;
 
-
         // Made public to save it for debug purposes (load in world scene and check if positions match).
         public List<Bounds> StationaryLightBounds = new();
 
 
+        // We do not need to load the .zen files and its vobs multiple times.
+        private Dictionary<string, List<IVirtualObject>> _fireWorldVobCache = new();
+
+
         public void CalculateWorldChunks(IWorld world)
         {
-            CalculateLightBounds(world.RootObjects, default, default);
+            CalculateLightBounds(world.RootObjects, default);
 
             // Hint: We need to cache BspTree, otherwise looping through it will take ages.
             BuildBspTree(world.Mesh, (CachedBspTree)world.BspTree.Cache());
         }
 
-        // We do not need to load the .zen files multiple times.
-        private Dictionary<string, IWorld> _fireWorldCache = new();
-
-        private void CalculateLightBounds(List<IVirtualObject> vobs, Vector3 parentWorldPosition, Quaternion parentRotation)
+        private void CalculateLightBounds(List<IVirtualObject> vobs, Vector3 parentWorldPosition)
         {
             foreach (var vob in vobs)
             {
-                var vobWorldPosition = CalculateWorldPosition(parentWorldPosition, parentRotation, vob.Position.ToUnityVector());
-                CalculateLightBounds(vob.Children, vobWorldPosition, vob.Rotation.ToUnityQuaternion());
+                var vobWorldPosition = CalculateWorldPosition(parentWorldPosition, vob.Position.ToUnityVector());
+
+                CalculateLightBounds(vob.Children, vobWorldPosition);
 
                 if (vob.Type == VirtualObjectType.zCVobLight)
                 {
@@ -70,13 +71,16 @@ namespace GUZ.Core.Caches.StaticCache
                         continue;
                     }
 
-                    if (!_fireWorldCache.TryGetValue(fire.VobTree.ToLower(), out var fireWorld))
+                    if (!_fireWorldVobCache.TryGetValue(fire.VobTree.ToLower(), out var fireWorldVobs))
                     {
-                        fireWorld = ResourceLoader.TryGetWorld(fire.VobTree, GameContext.GameVersionAdapter.Version);
-                        _fireWorldCache.Add(fire.VobTree.ToLower(), fireWorld);
+                        fireWorldVobs = ResourceLoader.TryGetWorld(fire.VobTree, GameContext.GameVersionAdapter.Version)!.RootObjects;
+                        _fireWorldVobCache.Add(fire.VobTree.ToLower(), fireWorldVobs);
+
+                        // FIRE worlds aren't positioned at 0,0,0. We need to do it now, to have the correct parent-child positioning.
+                        fireWorldVobs.ForEach(i => i.Position = default);
                     }
 
-                    CalculateLightBounds(fireWorld!.RootObjects, vobWorldPosition, vob.Rotation.ToUnityQuaternion());
+                    CalculateLightBounds(fireWorldVobs, vobWorldPosition);
                 }
             }
         }
@@ -84,15 +88,12 @@ namespace GUZ.Core.Caches.StaticCache
         /// <summary>
         /// Elements like Fire have children which position is relative to parent.
         /// But at least Fire are .zen files where the children have zeroed world positions which we need to handle properly.
+        ///
+        /// TODO - Rotation isn't handled for positioning right now. I'm not sure if we need it. If so, please add.
         /// </summary>
-        private Vector3 CalculateWorldPosition(Vector3 parentPosition, Quaternion parentRotation, Vector3 localPosition)
+        private Vector3 CalculateWorldPosition(Vector3 parentPosition, Vector3 localPosition)
         {
-            var worldPosition = localPosition;
-            // Apply parent's rotation by multiplying the Quaternion with the Vector3
-            worldPosition = parentRotation * worldPosition;
-            worldPosition += parentPosition;
-
-            return worldPosition;
+            return parentPosition + localPosition;
         }
 
 
