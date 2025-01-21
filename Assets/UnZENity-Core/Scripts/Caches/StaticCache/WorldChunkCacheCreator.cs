@@ -42,7 +42,7 @@ namespace GUZ.Core.Caches.StaticCache
             MergeWorldChunksByLightCount(worldMesh, bspTree, leafsWithPolygons);
         }
 
-        private void CalculateLeafNodes(List<int> leafNodes, IBspTree tree, int currentNodeId)
+        private void CalculateLeafNodes(List<int> leafNodes, CachedBspTree tree, int currentNodeId)
         {
             if (currentNodeId == -1)
             {
@@ -85,14 +85,19 @@ namespace GUZ.Core.Caches.StaticCache
                 for (var polygonId = node.PolygonIndex; polygonId < node.PolygonIndex + node.PolygonCount; polygonId++)
                 {
                     var polygonIndexToUse = bspTree.PolygonIndices[polygonId];
+
                     // Can't be added twice and therefore returns false the second time.
                     if (usedPolygonIndices.Contains(polygonIndexToUse))
                     {
                         continue;
                     }
+
+                    // Different leaf nodes reference the same polygons.
+                    // Manually check if polygons have been used to avoid creating overlapping geometry.
                     usedPolygonIndices.Add(polygonIndexToUse);
 
                     var polygon = mesh.GetPolygon(polygonIndexToUse);
+
                     // We ignore portals for now.
                     if (polygon.IsPortal)
                     {
@@ -239,7 +244,6 @@ namespace GUZ.Core.Caches.StaticCache
         private int GetLightsInBound(AxisAlignedBoundingBox aabb)
         {
             var returnCount = 0;
-            // FIXME - ToUnityBounds() isn't altering centimeter in meter (/100). Correct? We need to create Gizmos to check it!
             var unityBbox = aabb.ToUnityBounds();
 
             foreach (var lightBound in _stationaryLightBounds)
