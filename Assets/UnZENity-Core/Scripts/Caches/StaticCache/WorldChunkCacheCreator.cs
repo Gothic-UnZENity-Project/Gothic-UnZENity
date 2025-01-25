@@ -5,7 +5,6 @@ using GUZ.Core.Globals;
 using MyBox;
 using UnityEngine;
 using ZenKit;
-using ZenKit.Vobs;
 using TextureFormat = ZenKit.TextureFormat;
 
 namespace GUZ.Core.Caches.StaticCache
@@ -20,8 +19,6 @@ namespace GUZ.Core.Caches.StaticCache
 
         public Dictionary<TextureCache.TextureArrayTypes, List<WorldChunk>> MergedChunksByLights;
 
-        // We do not need to load the .zen files and its vobs multiple times.
-        private Dictionary<string, List<IVirtualObject>> _fireWorldVobCache = new();
         private List<Bounds> _stationaryLightBounds;
 
         public void CalculateWorldChunks(IWorld world, List<Bounds> stationaryLightBounds)
@@ -197,19 +194,28 @@ namespace GUZ.Core.Caches.StaticCache
                 {
                     if (currentWaterChunkLightsCount > Constants.MaxLightsPerWorldChunk)
                     {
-                        finalPolygonsWater.Add(currentWaterChunkPolygons);
+                        if (currentWaterChunkPolygons.PolygonIds.NotNullOrEmpty())
+                        {
+                            finalPolygonsWater.Add(currentWaterChunkPolygons);
+                        }
                         currentWaterChunkPolygons = new WorldChunk();
                         currentWaterChunkLightsCount = 0;
                     }
                     if (currentOpaqueChunkLightsCount > Constants.MaxLightsPerWorldChunk)
                     {
-                        finalPolygonsOpaque.Add(currentOpaqueChunkPolygons);
+                        if (currentOpaqueChunkPolygons.PolygonIds.NotNullOrEmpty())
+                        {
+                            finalPolygonsOpaque.Add(currentOpaqueChunkPolygons);
+                        }
                         currentOpaqueChunkPolygons = new WorldChunk();
                         currentOpaqueChunkLightsCount = 0;
                     }
                     if (currentTransparentChunkLightsCount > Constants.MaxLightsPerWorldChunk)
                     {
-                        finalPolygonsTransparent.Add(currentTransparentChunkPolygons);
+                        if (currentTransparentChunkPolygons.PolygonIds.NotNullOrEmpty())
+                        {
+                            finalPolygonsTransparent.Add(currentTransparentChunkPolygons);
+                        }
                         currentTransparentChunkPolygons = new WorldChunk();
                         currentTransparentChunkLightsCount = 0;
                     }
