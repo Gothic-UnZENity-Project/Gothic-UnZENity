@@ -31,37 +31,9 @@ namespace GUZ.Core.Caches.StaticCache
 
         private void BuildBspTree(IMesh worldMesh, CachedBspTree bspTree)
         {
-            var leafNodes = new List<int>();
-            CalculateLeafNodes(leafNodes, bspTree, 0);
-
-            var leafsWithPolygons = CalculatePolygonsToLeafNodes(worldMesh, bspTree, leafNodes);
+            var leafsWithPolygons = CalculatePolygonsToLeafNodes(worldMesh, bspTree, bspTree.LeafNodeIndices);
 
             MergeWorldChunksByLightCount(worldMesh, bspTree, leafsWithPolygons);
-        }
-
-        private void CalculateLeafNodes(List<int> leafNodes, CachedBspTree tree, int currentNodeId)
-        {
-            if (currentNodeId == -1)
-            {
-                return;
-            }
-
-            var node = tree.GetNode(currentNodeId);
-            if (IsLeaf(node))
-            {
-                leafNodes.Add(currentNodeId);
-            }
-            // The current element is no leaf. We therefore check its children.
-            else
-            {
-                CalculateLeafNodes(leafNodes, tree, node.FrontIndex);
-                CalculateLeafNodes(leafNodes, tree, node.BackIndex);
-            }
-        }
-
-        private bool IsLeaf(BspNode node)
-        {
-            return node.FrontIndex == -1 && node.BackIndex == -1;
         }
 
         /// <summary>
