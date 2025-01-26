@@ -760,6 +760,7 @@ namespace GUZ.Core.Creator
         [CanBeNull]
         private static GameObject CreateLight(Light vob, GameObject parent = null)
         {
+            // We only handle dynamic lights. In our UnZENity language, they are StationaryLights (==!LightStatic). e.g. Fire.
             if (vob.LightStatic)
             {
                 return null;
