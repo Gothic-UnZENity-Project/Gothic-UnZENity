@@ -68,11 +68,12 @@ namespace GUZ.Core.Creator.Meshes.Builder
             };
             chunkTypeRoot.SetParent(RootGo);
 
+            var loopIndex = 0;
             foreach (var chunk in chunks)
             {
                 var chunkGo = new GameObject
                 {
-                    name = $"{type}-Entry",
+                    name = $"{type}-Entry-{loopIndex++}",
                     isStatic = true
                 };
                 chunkGo.SetParent(chunkTypeRoot);
