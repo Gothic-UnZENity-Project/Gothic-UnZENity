@@ -43,7 +43,8 @@ namespace GUZ.Core.Caches.StaticCache
                     }
 
                     var linearColor = new Color(light.Color.R / 255f, light.Color.G / 255f, light.Color.B / 255f, light.Color.A / 255f).linear;
-                    StationaryLightInfos.Add(new StaticCacheManager.StationaryLightInfo(vobWorldPosition, light.Range, linearColor));
+                    // Range/100 --> m (ZenKit) in centimeter (Unity)
+                    StationaryLightInfos.Add(new StaticCacheManager.StationaryLightInfo(vobWorldPosition, light.Range / 100, linearColor));
 
                     // Calculation: Vector3.One (vectorify) * Range / 100 (centimeter to meter in Unity) * 2 (from range (half-width) to width)
                     var boundsSize = Vector3.one * light.Range / 100 * 2;
