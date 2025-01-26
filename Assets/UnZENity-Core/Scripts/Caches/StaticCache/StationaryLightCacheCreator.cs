@@ -26,9 +26,6 @@ namespace GUZ.Core.Caches.StaticCache
             {
                 var vobWorldPosition = CalculateWorldPosition(parentWorldPosition, vob.Position.ToUnityVector());
 
-                // Recursion
-                CalculateStationaryLights(vob.Children, vobWorldPosition);
-
                 if (vob.Type == VirtualObjectType.zCVobLight)
                 {
                     // TODO - Check if we need to look for "isStatic == true"?
@@ -71,6 +68,9 @@ namespace GUZ.Core.Caches.StaticCache
                     // As we loaded the child-VOBs for fire*.zen at this time, we iterate now.
                     CalculateStationaryLights(fireWorldVobs, vobWorldPosition);
                 }
+
+                // Recursion
+                CalculateStationaryLights(vob.Children, vobWorldPosition);
             }
         }
 
