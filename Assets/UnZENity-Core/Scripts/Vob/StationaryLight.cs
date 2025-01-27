@@ -119,7 +119,7 @@ namespace GUZ.Core
             }
         }
 
-        public int Index { get; private set; }
+        public int Index { get; set; }
 
         public static readonly List<StationaryLight> Lights = new();
 

@@ -757,6 +757,13 @@ namespace GUZ.Core.Creator
             return vobObj;
         }
 
+        /// <summary>
+        /// Cached lights data will be stored inside global Shader value (StationaryLighting.hlsl --> _GlobalStationaryLightPositionsAndAttenuation)
+        /// We expect, that the cached Lights information are in exact same order and size as the created Lights in the scene now.
+        /// Therefore, we set the index to the value of cached light data in the StationaryLighting.hlsl array
+        /// </summary>
+        private static int _currentStationaryLightIndex = 0;
+
         [CanBeNull]
         private static GameObject CreateLight(Light vob, GameObject parent = null)
         {
@@ -779,6 +786,9 @@ namespace GUZ.Core.Creator
             lightComp.Range = vob.Range * .01f;
             lightComp.SpotAngle = vob.ConeAngle;
             lightComp.Intensity = 1;
+
+            lightComp.Index = _currentStationaryLightIndex;
+            _currentStationaryLightIndex++;
 
             return vobObj;
         }
