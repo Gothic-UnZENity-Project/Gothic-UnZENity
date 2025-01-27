@@ -38,9 +38,10 @@ namespace GUZ.Core.Manager
 
         public Dictionary<string, Bounds> LoadedVobsBounds { get; private set; }
 
-        public Dictionary<string, TextureInfo> LoadedTextureInfoOpaque { get; private set; }
-        public Dictionary<string, TextureInfo> LoadedTextureInfoTransparent { get; private set; }
-        public Dictionary<string, TextureInfo> LoadedTextureInfoWater { get; private set; }
+        // During Mesh creation, we need to get the index of a TextureArray entry. For efficient lookup, we store the index here.
+        public Dictionary<string, (int Index, TextureInfo Data)> LoadedTextureInfoOpaque { get; private set; }
+        public Dictionary<string, (int Index, TextureInfo Data)> LoadedTextureInfoTransparent { get; private set; }
+        public Dictionary<string, (int Index, TextureInfo Data)> LoadedTextureInfoWater { get; private set; }
 
         public WorldChunkContainer LoadedWorldChunks;
         public StationaryLightContainer LoadedStationaryLights;
@@ -315,9 +316,17 @@ namespace GUZ.Core.Manager
 
             LoadedVobsBounds = vobBoundsContainer.BoundsEntries.ToDictionary(i => i.MeshName, i => i.Bounds);
 
-            LoadedTextureInfoOpaque = textureArrayContainer.TexturesOpaque.ToDictionary(i => i.TextureName, i => new TextureInfo(TextureCache.TextureArrayTypes.Opaque, i.MaxDimension, i.AnimationFrameCount));
-            LoadedTextureInfoTransparent = textureArrayContainer.TexturesTransparent.ToDictionary(i => i.TextureName, i => new TextureInfo(TextureCache.TextureArrayTypes.Transparent, i.MaxDimension, i.AnimationFrameCount));
-            LoadedTextureInfoWater = textureArrayContainer.TexturesWater.ToDictionary(i => i.TextureName, i => new TextureInfo(TextureCache.TextureArrayTypes.Water, i.MaxDimension, i.AnimationFrameCount));
+            var loopIndex = 0;
+            LoadedTextureInfoOpaque = textureArrayContainer.TexturesOpaque
+                .ToDictionary(i => i.TextureName, i => (index: loopIndex++, data: new TextureInfo(TextureCache.TextureArrayTypes.Opaque, i.MaxDimension, i.AnimationFrameCount)));
+
+            loopIndex = 0;
+            LoadedTextureInfoTransparent = textureArrayContainer.TexturesTransparent
+                .ToDictionary(i => i.TextureName, i => (index: loopIndex++, data: new TextureInfo(TextureCache.TextureArrayTypes.Transparent, i.MaxDimension, i.AnimationFrameCount)));
+
+            loopIndex = 0;
+            LoadedTextureInfoWater = textureArrayContainer.TexturesWater
+                .ToDictionary(i => i.TextureName, i => (index: loopIndex++, data: new TextureInfo(TextureCache.TextureArrayTypes.Water, i.MaxDimension, i.AnimationFrameCount)));
         }
 
         public async Task LoadWorldCache(string worldName)

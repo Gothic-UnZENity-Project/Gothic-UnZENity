@@ -10,7 +10,6 @@ using GUZ.Core.Extensions;
 using GUZ.Core.Manager;
 using GUZ.Core.Util;
 using JetBrains.Annotations;
-using MyBox;
 using UnityEngine;
 using UnityEngine.Rendering;
 using ZenKit;
@@ -186,110 +185,44 @@ namespace GUZ.Core.Caches
 
         public static void GetTextureArrayIndex(IMaterial materialData, out TextureArrayTypes textureArrayType, out int arrayIndex, out Vector2 textureScale, out int maxMipLevel, out int animFrameCount)
         {
-            // New StaticCache logic
+            var textureName = materialData.Texture;
+            var texture = ResourceLoader.TryGetTexture(textureName);
+
+            if (GameGlobals.StaticCache.LoadedTextureInfoOpaque.ContainsKey(materialData.Texture))
             {
-                var textureName = materialData.Texture;
-                var texture = ResourceLoader.TryGetTexture(textureName);
+                arrayIndex = GameGlobals.StaticCache.LoadedTextureInfoOpaque[materialData.Texture].Index;
+                textureArrayType = TextureArrayTypes.Opaque;
 
-                if (GameGlobals.StaticCache.LoadedTextureInfoOpaque.ContainsKey(materialData.Texture))
-                {
-                    arrayIndex = GameGlobals.StaticCache.LoadedTextureInfoOpaque.FirstIndex(i => i.Key == materialData.Texture);
-                    textureArrayType = TextureArrayTypes.Opaque;
-
-                    maxMipLevel = texture!.MipmapCount - 1;
-                    textureScale = new Vector2((float)texture.Width / ReferenceTextureSize, (float)texture.Height / ReferenceTextureSize);
-                    animFrameCount = GameGlobals.StaticCache.LoadedTextureInfoOpaque[materialData.Texture].AnimFrameCount;
-
-                    return;
-                }
-                else if (GameGlobals.StaticCache.LoadedTextureInfoTransparent.ContainsKey(materialData.Texture))
-                {
-                    arrayIndex = GameGlobals.StaticCache.LoadedTextureInfoTransparent.FirstIndex(i => i.Key == materialData.Texture);
-                    textureArrayType = TextureArrayTypes.Transparent;
-
-                    maxMipLevel = texture!.MipmapCount - 1;
-                    textureScale = new Vector2((float)texture.Width / ReferenceTextureSize, (float)texture.Height / ReferenceTextureSize);
-                    animFrameCount = GameGlobals.StaticCache.LoadedTextureInfoTransparent[materialData.Texture].AnimFrameCount;
-
-                    return;
-                }
-                else if (GameGlobals.StaticCache.LoadedTextureInfoWater.ContainsKey(materialData.Texture))
-                {
-                    arrayIndex = GameGlobals.StaticCache.LoadedTextureInfoWater.FirstIndex(i => i.Key == materialData.Texture);
-                    textureArrayType = TextureArrayTypes.Water;
-
-                    maxMipLevel = texture!.MipmapCount - 1;
-                    textureScale = new Vector2((float)texture.Width / ReferenceTextureSize, (float)texture.Height / ReferenceTextureSize);
-                    animFrameCount = GameGlobals.StaticCache.LoadedTextureInfoWater[materialData.Texture].AnimFrameCount;
-
-                    return;
-                }
+                maxMipLevel = texture!.MipmapCount - 1;
+                textureScale = new Vector2((float)texture.Width / ReferenceTextureSize, (float)texture.Height / ReferenceTextureSize);
+                animFrameCount = GameGlobals.StaticCache.LoadedTextureInfoOpaque[materialData.Texture].Data.AnimFrameCount;
             }
-
-            Debug.LogError("GtTextureArrayIndex - Shouldn't be reachable any longer.");
-
-            string key = materialData.Texture;
-            animFrameCount = 0;
-
-            if (materialData.Group == MaterialGroup.Water)
+            else if (GameGlobals.StaticCache.LoadedTextureInfoTransparent.ContainsKey(materialData.Texture))
             {
+                arrayIndex = GameGlobals.StaticCache.LoadedTextureInfoTransparent[materialData.Texture].Index;
+                textureArrayType = TextureArrayTypes.Transparent;
+
+                maxMipLevel = texture!.MipmapCount - 1;
+                textureScale = new Vector2((float)texture.Width / ReferenceTextureSize, (float)texture.Height / ReferenceTextureSize);
+                animFrameCount = GameGlobals.StaticCache.LoadedTextureInfoTransparent[materialData.Texture].Data.AnimFrameCount;
+            }
+            else if (GameGlobals.StaticCache.LoadedTextureInfoWater.ContainsKey(materialData.Texture))
+            {
+                arrayIndex = GameGlobals.StaticCache.LoadedTextureInfoWater[materialData.Texture].Index;
                 textureArrayType = TextureArrayTypes.Water;
-                if (GetAlreadyIncludedTexture(textureArrayType, key, out arrayIndex, out maxMipLevel, out textureScale, out animFrameCount))
-                {
-                    return;
-                }
+
+                maxMipLevel = texture!.MipmapCount - 1;
+                textureScale = new Vector2((float)texture.Width / ReferenceTextureSize, (float)texture.Height / ReferenceTextureSize);
+                animFrameCount = GameGlobals.StaticCache.LoadedTextureInfoWater[materialData.Texture].Data.AnimFrameCount;
             }
             else
             {
-                textureArrayType = TextureArrayTypes.Opaque;
-                if (GetAlreadyIncludedTexture(textureArrayType, key, out arrayIndex, out maxMipLevel, out textureScale, out animFrameCount))
-                {
-                    return;
-                }
-
-                textureArrayType = TextureArrayTypes.Transparent;
-                if (GetAlreadyIncludedTexture(textureArrayType, key, out arrayIndex, out maxMipLevel, out textureScale, out animFrameCount))
-                {
-                    return;
-                }
-            }
-
-            ITexture zenTextureData = ResourceLoader.TryGetTexture(key);
-            if (zenTextureData == null)
-            {
-                textureArrayType = default;
+                Debug.LogError($"Texture for Material {materialData.Name} couldn't be found in cache.");
                 arrayIndex = -1;
-                textureScale = Vector2.zero;
+                textureArrayType = TextureArrayTypes.Unknown;
                 maxMipLevel = 0;
-                return;
-            }
-
-            TextureFormat textureFormat = zenTextureData.Format.AsUnityTextureFormat();
-
-            if (materialData.Group != MaterialGroup.Water)
-            {
-                textureArrayType = textureFormat == TextureFormat.DXT1
-                    ? TextureArrayTypes.Opaque
-                    : TextureArrayTypes.Transparent;
-            }
-
-            maxMipLevel = zenTextureData.MipmapCount - 1;
-
-            textureScale = new Vector2((float)zenTextureData.Width / ReferenceTextureSize, (float)zenTextureData.Height / ReferenceTextureSize);
-            if (!_texturesToIncludeInArray.ContainsKey(textureArrayType))
-            {
-                _texturesToIncludeInArray.Add(textureArrayType, new List<(string, ZkTextureData)>());
-            }
-
-            _texturesToIncludeInArray[textureArrayType].Add((key, new ZkTextureData(key, zenTextureData)));
-            arrayIndex = _texturesToIncludeInArray[textureArrayType].Count - 1;
-
-            if (materialData.TextureAnimationFps > 0)
-            {
-                List<(string, ZkTextureData)> animTextures = TryGetAnimTextures(key);
-                animFrameCount = animTextures.Count + 1;
-                _texturesToIncludeInArray[textureArrayType][arrayIndex].TextureData.AnimFrameCount = animFrameCount;
-                _texturesToIncludeInArray[textureArrayType].AddRange(animTextures);
+                textureScale = Vector2.one;
+                animFrameCount = 0;
             }
         }
 
@@ -433,7 +366,7 @@ namespace GUZ.Core.Caches
                 GameGlobals.StaticCache.LoadedTextureInfoWater, TextureArrayTypes.Water);
         }
 
-        private static async Task BuildTextureArray(TextureFormat textureFormat, Dictionary<string, StaticCacheManager.TextureInfo> textureInfos, TextureArrayTypes texArrType)
+        private static async Task BuildTextureArray(TextureFormat textureFormat, Dictionary<string, (int Index, StaticCacheManager.TextureInfo Data)> textureInfos, TextureArrayTypes texArrType)
         {
             // It's either a Texture2DArray (solid meshes) or RenderTexture (water)
             Texture texArray;

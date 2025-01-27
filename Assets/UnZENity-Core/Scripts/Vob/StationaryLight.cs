@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using GUZ.Core.Extensions;
 using UnityEngine;
-using UnityEngine.Profiling;
 
 namespace GUZ.Core
 {
