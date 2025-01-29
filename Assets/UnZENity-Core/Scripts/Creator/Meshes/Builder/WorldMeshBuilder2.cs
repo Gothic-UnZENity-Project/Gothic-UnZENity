@@ -56,7 +56,6 @@ namespace GUZ.Core.Creator.Meshes.Builder
             await BuildChunkType(_worldChunks.OpaqueChunks, TextureCache.TextureArrayTypes.Opaque, loading);
             await BuildChunkType(_worldChunks.TransparentChunks, TextureCache.TextureArrayTypes.Transparent, loading);
             await BuildChunkType(_worldChunks.WaterChunks, TextureCache.TextureArrayTypes.Water, loading);
-
         }
 
         private async Task BuildChunkType(List<WorldChunkCacheCreator.WorldChunk> chunks, TextureCache.TextureArrayTypes type, LoadingManager loading)
@@ -95,6 +94,9 @@ namespace GUZ.Core.Creator.Meshes.Builder
                         AddPolygonChunkEntry(polygon, chunkData, material, p, textureArrayIndex, textureScale, maxMipLevel, animFrameCount);
                         AddPolygonChunkEntry(polygon, chunkData, material, p+1, textureArrayIndex, textureScale, maxMipLevel, animFrameCount);
                     }
+
+                    // If we have the skips here, we have a smoother loading screen for 20 seconds on loading world. Putting it at the end of each chunk, we have stutter, but save about 40%.
+                    await FrameSkipper.TrySkipToNextFrame();
                 }
 
                 var meshFilter = chunkGo.AddComponent<MeshFilter>();
@@ -117,8 +119,6 @@ namespace GUZ.Core.Creator.Meshes.Builder
 
 
                 loading?.AddProgress();
-
-                await FrameSkipper.TrySkipToNextFrame();
             }
         }
 
