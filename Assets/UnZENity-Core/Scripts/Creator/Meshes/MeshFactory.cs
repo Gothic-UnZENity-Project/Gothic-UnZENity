@@ -24,11 +24,11 @@ namespace GUZ.Core.Creator.Meshes
         }
 
         public static async Task CreateWorld(StaticCacheManager.WorldChunkContainer worldChunks, IMesh mesh,
-            CachedBspTree bspTree, LoadingManager loading, GameObject rootGo)
+            LoadingManager loading, GameObject rootGo)
         {
             var worldBuilder = new WorldMeshBuilder2();
             worldBuilder.SetGameObject(rootGo);
-            worldBuilder.SetWorldData(worldChunks, mesh, bspTree);
+            worldBuilder.SetWorldData(worldChunks, mesh);
 
             await worldBuilder.BuildAsync(loading);
         }

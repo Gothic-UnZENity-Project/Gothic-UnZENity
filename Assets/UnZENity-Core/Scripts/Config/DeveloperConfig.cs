@@ -170,7 +170,8 @@ namespace GUZ.Core.Config
         public bool ShowNamesOnHoveredVOBs = true;
 
         [Separator("Debug")]
-        [Tooltip("For debugging purposes only.")]
+        [Tooltip("Ignore frame skipping during loading.")]
+        public bool SpeedUpLoading;
         public bool ShowVOBMeshCullingGizmos;
         public bool ShowCapsuleOverlapGizmos;
 

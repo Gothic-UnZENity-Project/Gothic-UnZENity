@@ -20,8 +20,8 @@ namespace GUZ.Core.Creator.Meshes.Builder
     {
         private StaticCacheManager.WorldChunkContainer _worldChunks;
         private IMesh _mesh;
-        private CachedBspTree _bspTree;
-        
+        private bool _debugSpeedUpLoading;
+
         public class ChunkData
         {
             public readonly List<Vector3> Vertices = new();
@@ -32,11 +32,10 @@ namespace GUZ.Core.Creator.Meshes.Builder
             public readonly List<Vector4> TextureAnimations = new();
         }
 
-        public void SetWorldData(StaticCacheManager.WorldChunkContainer worldChunks, IMesh mesh, CachedBspTree bspTree)
+        public void SetWorldData(StaticCacheManager.WorldChunkContainer worldChunks, IMesh mesh)
         {
             _worldChunks = worldChunks;
             _mesh = mesh;
-            _bspTree = bspTree;
         }
 
         public override GameObject Build()
@@ -46,6 +45,8 @@ namespace GUZ.Core.Creator.Meshes.Builder
 
         public async Task BuildAsync(LoadingManager loading)
         {
+            _debugSpeedUpLoading = GameGlobals.Config.Dev.SpeedUpLoading;
+
             RootGo.isStatic = true;
 
             var chunksCount = _worldChunks.OpaqueChunks.Count + _worldChunks.TransparentChunks.Count + _worldChunks.WaterChunks.Count;
@@ -95,8 +96,11 @@ namespace GUZ.Core.Creator.Meshes.Builder
                         AddPolygonChunkEntry(polygon, chunkData, material, p+1, textureArrayIndex, textureScale, maxMipLevel, animFrameCount);
                     }
 
-                    // If we have the skips here, we have a smoother loading screen for 20 seconds on loading world. Putting it at the end of each chunk, we have stutter, but save about 40%.
-                    await FrameSkipper.TrySkipToNextFrame();
+                    if (!_debugSpeedUpLoading)
+                    {
+                        // If we have the skips here, we have a smoother loading screen for 20 seconds on loading world. Putting it at the end of each chunk, we have stutter, but save about 40%.
+                        await FrameSkipper.TrySkipToNextFrame();
+                    }
                 }
 
                 var meshFilter = chunkGo.AddComponent<MeshFilter>();

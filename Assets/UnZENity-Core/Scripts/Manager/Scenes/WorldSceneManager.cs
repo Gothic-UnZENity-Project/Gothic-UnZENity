@@ -60,7 +60,6 @@ namespace GUZ.Core.Manager.Scenes
                     await MeshFactory.CreateWorld(
                         GameGlobals.StaticCache.LoadedWorldChunks,
                         GameGlobals.SaveGame.CurrentWorldData.Mesh,
-                        GameGlobals.SaveGame.CurrentWorldData.BspTree,
                         GameGlobals.Loading,
                         worldRoot
                     ).AwaitAndLog();
