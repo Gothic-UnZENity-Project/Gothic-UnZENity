@@ -15,6 +15,7 @@ using GUZ.Core.Vm;
 using GUZ.Core.Vob;
 using GUZ.Core.Vob.WayNet;
 using JetBrains.Annotations;
+using MyBox;
 using UnityEngine;
 using ZenKit;
 using ZenKit.Daedalus;
@@ -34,7 +35,7 @@ namespace GUZ.Core.Creator
         private static GameObject _rootVobsGo;
         private static Dictionary<VirtualObjectType, GameObject> _vobTypeParentGOs = new();
 
-        private static readonly VirtualObjectType[] _vobTypesEagerLoading =
+        private static readonly VirtualObjectType[] _vobTypesNonLazyLoading =
         {
             VirtualObjectType.zCVobLight,
             VirtualObjectType.zCVobSound,
@@ -138,7 +139,7 @@ namespace GUZ.Core.Creator
         // FIXME - We should consider rendering them one-after-another without creating new parents. Then localPosition for each vob and child-vob would be correct automatically.
         private static GameObject LoadVob2(DeveloperConfig config, IVirtualObject vob, GameObject parent = null)
         {
-            if (_vobTypesEagerLoading.Contains(vob.Type))
+            if (_vobTypesNonLazyLoading.Contains(vob.Type))
             {
                 return LoadVob(config, vob, parent);
             }
@@ -757,13 +758,6 @@ namespace GUZ.Core.Creator
             return vobObj;
         }
 
-        /// <summary>
-        /// Cached lights data will be stored inside global Shader value (StationaryLighting.hlsl --> _GlobalStationaryLightPositionsAndAttenuation)
-        /// We expect, that the cached Lights information are in exact same order and size as the created Lights in the scene now.
-        /// Therefore, we set the index to the value of cached light data in the StationaryLighting.hlsl array
-        /// </summary>
-        private static int _currentStationaryLightIndex = 0;
-
         [CanBeNull]
         private static GameObject CreateLight(Light vob, GameObject parent = null)
         {
@@ -787,10 +781,19 @@ namespace GUZ.Core.Creator
             lightComp.SpotAngle = vob.ConeAngle;
             lightComp.Intensity = 1;
 
-            lightComp.Index = _currentStationaryLightIndex;
-            _currentStationaryLightIndex++;
+            // SaveGames might contain different order of Light objects (or Vobs where lights are children).
+            // We therefore need to fetch which Vob has the same position as the one from cache.
+            // Hint: The StationaryLights array should be ~512 elements max. If loading is slow,
+            // we could also simply remove elements which are set to LightGOs already.
+            lightComp.Index = GameGlobals.StaticCache.LoadedStationaryLights.StationaryLights.FirstIndex(i =>
+                i.Position == go.transform.position);
 
-            return vobObj;
+            if (lightComp.Index == -1)
+            {
+                Debug.LogWarning($"Light {vob.Name} not found in StaticCache. Therefore no LightIndex set and ignored by shader. Will be solved later. ;-)");
+            }
+
+            return go;
         }
 
         [CanBeNull]
