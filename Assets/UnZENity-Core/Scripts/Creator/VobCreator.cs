@@ -618,6 +618,9 @@ namespace GUZ.Core.Creator
                 case VirtualObjectType.zCVobAnimate:
                     go = ResourceLoader.TryGetPrefabObject(PrefabType.VobAnimate);
                     break;
+                case VirtualObjectType.zCVobLight:
+                    go = ResourceLoader.TryGetPrefabObject(PrefabType.VobLight);
+                    break;
                 default:
                     go = ResourceLoader.TryGetPrefabObject(PrefabType.Vob);
                     break;
@@ -770,12 +773,12 @@ namespace GUZ.Core.Creator
                 return null;
             }
 
-            var vobObj = GetPrefab(vob);
-            vobObj.name = $"{vob.LightType} Light {vob.Name}";
-            vobObj.SetParent(parent ?? GetRootGameObjectOfType(vob.Type), true, true);
-            SetPosAndRot(vobObj, vob.Position, vob.Rotation);
+            var go = GetPrefab(vob);
+            go.name = $"{vob.LightType} Light {vob.Name}";
+            go.SetParent(parent ?? GetRootGameObjectOfType(vob.Type), true, true);
+            SetPosAndRot(go, vob.Position, vob.Rotation);
 
-            var lightComp = vobObj.AddComponent<StationaryLight>();
+            var lightComp = go.GetComponent<StationaryLight>();
             lightComp.Color = new Color(vob.Color.R / 255f, vob.Color.G / 255f, vob.Color.B / 255f, vob.Color.A / 255f);
             lightComp.Type = vob.LightType == LightType.Point
                 ? UnityEngine.LightType.Point

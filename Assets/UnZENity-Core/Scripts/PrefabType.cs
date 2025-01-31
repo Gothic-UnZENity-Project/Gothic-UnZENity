@@ -28,6 +28,7 @@ namespace GUZ.Core
         VobSound,
         VobSoundDaytime,
         VobLadder,
+        VobLight,
 
         VobItem,
         VobItemLockPick,
@@ -68,6 +69,7 @@ namespace GUZ.Core
                 PrefabType.VobSound => "Prefabs/Vobs/zCVobSound",
                 PrefabType.VobSoundDaytime => "Prefabs/Vobs/zCVobSoundDaytime",
                 PrefabType.VobLadder => "Prefabs/Vobs/oCMobLadder",
+                PrefabType.VobLight => "Prefabs/Vobs/zCVobLight",
 
                 PrefabType.VobItem => "Prefabs/Vobs/oCItem",
                 PrefabType.VobItemLockPick => "Prefabs/Vobs/oCItem/LockPick",
