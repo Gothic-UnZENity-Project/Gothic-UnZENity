@@ -7,8 +7,8 @@ using GUZ.Core.Vm;
 using GUZ.Core.Vob;
 using MyBox;
 using UnityEngine;
+using ZenKit;
 using ZenKit.Vobs;
-using Light = UnityEngine.Light;
 
 namespace GUZ.Core.Manager.Culling
 {
@@ -275,7 +275,7 @@ namespace GUZ.Core.Manager.Culling
             var bboxSize = bounds.size;
             var worldCenter = go.transform.TransformPoint(bounds.center);
 
-            // Get biggest dim for calculation of object size group.
+            // Get the biggest dimension for calculation of object size group.
             var maxDimension = Mathf.Max(bboxSize.x, bboxSize.y, bboxSize.z);
             var sphere = new BoundingSphere(worldCenter, maxDimension / 2); // Radius is half the size.
 
@@ -300,6 +300,30 @@ namespace GUZ.Core.Manager.Culling
 
             var vob = loaderComp.Vob;
 
+            switch (vob.Type)
+            {
+                case VirtualObjectType.zCVobLight:
+                    return GetLocalLightBounds((ILight)vob);
+                default:
+                    return GetLocalMeshBounds(vob);
+            }
+        }
+
+        private Bounds? GetLocalLightBounds(ILight light)
+        {
+            // FIXME - #1 - Lights shine for the whole mesh they belong to again. :-/
+            // FIXME - #2 - When inside a light range, turning to our back will disable the light.
+            return new Bounds(Vector3.zero, Vector3.one * light.Range / 100 * 2);
+        }
+
+        // TODO - Not yet implemented.
+        private Bounds? GetLocalParticleBounds(EventParticleEffect particle)
+        {
+            return null;
+        }
+
+        private Bounds? GetLocalMeshBounds(IVirtualObject vob)
+        {
             string meshName;
             switch (vob.Type)
             {
@@ -312,6 +336,7 @@ namespace GUZ.Core.Manager.Culling
                     {
                         return null;
                     }
+
                     break;
                 default:
                     meshName = vob.Visual?.Name ?? vob.Name;
@@ -323,6 +348,8 @@ namespace GUZ.Core.Manager.Culling
                 return null;
             }
 
+            // FIXME - More magic needed. For objects with Mesh, we can store it. But for e.g. Lights, we need to fetch it from the actual
+            // FIXME - VOB.data.radius etc. --> aka more IF-options on how to calculate local bounds
             if (GameGlobals.StaticCache.LoadedVobsBounds.TryGetValue(meshName, out var bounds))
             {
                 return bounds;
@@ -331,32 +358,7 @@ namespace GUZ.Core.Manager.Culling
             {
                 // We can carefully disable this log as some elements aren't cached.
                 // e.g. when there is no texture like for OC_DECORATE_V4.3DS
-                Debug.LogError($"Couldn't find bounds information from StaticCache for >{meshName}<.");
-                return null;
-            }
-
-            try
-            {
-                if (go.TryGetComponent<ParticleSystemRenderer>(out var particleRenderer))
-                {
-                    return particleRenderer.bounds;
-                }
-
-                if (go.TryGetComponent(out Light light))
-                {
-                    return new Bounds(Vector3.zero, Vector3.one * light.range * 2);
-                }
-
-                if (go.TryGetComponent(out StationaryLight stationaryLight))
-                {
-                    return new Bounds(Vector3.zero, Vector3.one * stationaryLight.Range * 2);
-                }
-
-                return go.GetComponentInChildren<MeshFilter>().sharedMesh.bounds;
-            }
-            catch (Exception e)
-            {
-                Debug.LogError(e);
+                Debug.LogError($"Couldn't find mesh bounds information from StaticCache for >{meshName}<.");
                 return null;
             }
         }

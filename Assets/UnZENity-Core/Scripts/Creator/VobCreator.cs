@@ -37,7 +37,6 @@ namespace GUZ.Core.Creator
 
         private static readonly VirtualObjectType[] _vobTypesNonLazyLoading =
         {
-            VirtualObjectType.zCVobLight,
             VirtualObjectType.zCVobSound,
             VirtualObjectType.zCVobSoundDaytime,
             VirtualObjectType.oCZoneMusic,
@@ -190,6 +189,7 @@ namespace GUZ.Core.Creator
                 case VirtualObjectType.zCVobLight:
                 {
                     go = CreateLight((Light)vob, parent);
+                    _cullingVobObjects.Add(go);
                     break;
                 }
                 case VirtualObjectType.oCMobContainer:
