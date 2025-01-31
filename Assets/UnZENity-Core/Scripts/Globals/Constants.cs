@@ -91,6 +91,7 @@ namespace GUZ.Core.Globals
         public const string SceneLab = "Lab";
 
 
+        // Hint: We will never be able to cache lights as their radius is always dynamic.
         public static readonly VirtualObjectType[] StaticCacheVobTypes =
         {
             VirtualObjectType.oCItem,

@@ -72,6 +72,10 @@ namespace GUZ.Core.Creator
 
             PreCreateVobs(vobs);
             await CreateVobs(config, loading, vobs);
+
+            // Ensure all Vob skeletons are created.
+            await Task.Yield();
+
             PostCreateVobs();
         }
 
@@ -134,11 +138,12 @@ namespace GUZ.Core.Creator
         // FIXME - We should consider rendering them one-after-another without creating new parents. Then localPosition for each vob and child-vob would be correct automatically.
         private static GameObject LoadVob2(DeveloperConfig config, IVirtualObject vob, GameObject parent = null)
         {
-            if (IsEagerLoading(vob.Type))
+            if (_vobTypesEagerLoading.Contains(vob.Type))
             {
                 return LoadVob(config, vob, parent);
             }
 
+            // Skip disabled features.
             switch (vob.Visual.Type)
             {
                 case VisualType.Decal:
@@ -167,21 +172,6 @@ namespace GUZ.Core.Creator
             _cullingVobObjects.Add(go);
 
             return go;
-        }
-
-        /// <summary>
-        /// If VobType is named as "load immediately", we return false;
-        /// Basically we do LazyLoading of all VOBs except some fast to create/small ones (like MusicZones).
-        /// </summary>
-        private static bool IsEagerLoading(VirtualObjectType type)
-        {
-            // Lazy loading disabled
-            if (!GameGlobals.Config.Dev.EnableVOBMeshCulling || !GameGlobals.Config.Dev.LazyLoadVobs)
-            {
-                return true;
-            }
-
-            return _vobTypesEagerLoading.Contains(type);
         }
 
         [CanBeNull]
@@ -548,6 +538,13 @@ namespace GUZ.Core.Creator
             GameGlobals.VobMeshCulling.PrepareVobCulling(_cullingVobObjects);
 
             _vobTreeCache.ClearAndReleaseMemory();
+
+            // DEBUG - If we want to load all at once, we need to initialize all LazyLoad objects now.
+            if (!GameGlobals.Config.Dev.EnableVOBMeshCulling)
+            {
+                var lazyLoadVobs = Object.FindObjectsOfType<VobLoader>(true);
+                lazyLoadVobs.ForEach(i => GameGlobals.Vobs.InitVob(i.gameObject));
+            }
 
             // TODO - warnings about "not implemented" - print them once only.
             foreach (var var in new[]
