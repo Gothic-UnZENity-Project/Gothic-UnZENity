@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using GUZ.Core.Extensions;
 using UnityEngine;
 
 namespace GUZ.Core
@@ -190,53 +189,6 @@ namespace GUZ.Core
             {
                 GameGlobals.Lights.RemoveLightOnRenderer(this, rend);
             }
-        }
-
-        [Obsolete("Use StationaryLightsManager.InitStationaryLights () instead.")]
-        public static void InitStationaryLights()
-        {
-            Debug.Log($"[{nameof(StationaryLight)}] Total stationary light count: {Lights.Count}");
-
-            // e.g. if we disabled Vob loading within FeatureFlags.
-            if (Lights.IsEmpty())
-            {
-                return;
-            }
-
-            var lightPositionsAndAttenuation = new Vector4[Lights.Count];
-            var lightColors = new Vector4[Lights.Count];
-            for (var i = 0; i < Lights.Count; i++)
-            {
-                Lights[i].Index = i;
-                Lights[i].GatherRenderers();
-                lightPositionsAndAttenuation[i] = new Vector4(Lights[i].transform.position.x,
-                    Lights[i].transform.position.y, Lights[i].transform.position.z,
-                    1f / (Lights[i].Range * Lights[i].Range));
-                lightColors[i] = Lights[i].Color.linear;
-                Lights[i].gameObject.SetActive(false);
-                Lights[i].gameObject.SetActive(true);
-            }
-
-            Shader.SetGlobalVectorArray(GlobalStationaryLightPositionsAndAttenuationShaderId,
-                lightPositionsAndAttenuation);
-            Shader.SetGlobalVectorArray(GlobalStationaryLightColorsShaderId, lightColors);
-        }
-
-        public static int CountLightsInBounds(Bounds bounds)
-        {
-            var count = 0;
-            var threadSafeLightData = GameGlobals.Lights.GetThreadSafeLiftData();
-            for (var i = 0; i < Lights.Count; i++)
-            {
-                var lightBounds = new Bounds(threadSafeLightData[i].Position,
-                    Vector3.one * threadSafeLightData[i].Range * 2);
-                if (bounds.Intersects(lightBounds))
-                {
-                    count++;
-                }
-            }
-
-            return count;
         }
 
         private void GatherRenderers()
