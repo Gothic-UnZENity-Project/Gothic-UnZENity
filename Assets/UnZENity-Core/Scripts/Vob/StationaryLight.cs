@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -117,15 +116,7 @@ namespace GUZ.Core
             }
         }
 
-        public int Index { get; set; }
-
-        public static readonly List<StationaryLight> Lights = new();
-
-        public static readonly int GlobalStationaryLightPositionsAndAttenuationShaderId =
-            Shader.PropertyToID("_GlobalStationaryLightPositionsAndAttenuation");
-
-        public static readonly int GlobalStationaryLightColorsShaderId =
-            Shader.PropertyToID("_GlobalStationaryLightColors");
+        public int Index { get; set; } = -1;
 
         public static readonly int StationaryLightIndicesShaderId = Shader.PropertyToID("_StationaryLightIndices");
         public static readonly int StationaryLightIndices2ShaderId = Shader.PropertyToID("_StationaryLightIndices2");
@@ -139,12 +130,6 @@ namespace GUZ.Core
         private void OnDrawGizmosSelected()
         {
             Gizmos.DrawWireSphere(transform.position, Range);
-        }
-
-        private void Awake()
-        {
-            Lights.Add(this);
-            GameGlobals.Lights.AddThreadSafeLight(transform.position, Range);
         }
 
         /// <summary>
@@ -176,19 +161,6 @@ namespace GUZ.Core
             foreach (var rend in _affectedRenderers)
             {
                 GameGlobals.Lights.RemoveLightOnRenderer(this, rend);
-            }
-        }
-
-        private void OnDestroy()
-        {
-            try
-            {
-                Lights.Remove(this);
-            }
-            catch (Exception)
-            {
-                Debug.LogError(
-                    $"[{nameof(StationaryLight)}] Light collection unexpectedly does not contain light {name} on destroy.");
             }
         }
 
