@@ -90,12 +90,14 @@ namespace GUZ.Core.Manager
                 return;
             }
 
+            var rendererLights = _lightsPerRenderer[renderer];
+
             var nonAllocMaterials = new List<Material>();
             var indicesMatrix = Matrix4x4.identity;
             renderer.GetSharedMaterials(nonAllocMaterials);
-            for (var i = 0; i < Mathf.Min(16, _lightsPerRenderer[renderer].Count); i++)
+            for (var i = 0; i < Mathf.Min(16, rendererLights.Count); i++)
             {
-                indicesMatrix[i / 4, i % 4] = _lightsPerRenderer[renderer][i].Index;
+                indicesMatrix[i / 4, i % 4] = rendererLights[i].Index;
             }
 
             for (var i = 0; i < nonAllocMaterials.Count; i++)
@@ -104,16 +106,16 @@ namespace GUZ.Core.Manager
                 {
                     nonAllocMaterials[i].SetMatrix(StationaryLight.StationaryLightIndicesShaderId, indicesMatrix);
                     nonAllocMaterials[i].SetInt(StationaryLight.StationaryLightCountShaderId,
-                        _lightsPerRenderer[renderer].Count);
+                        rendererLights.Count);
                 }
             }
 
             // TODO - The current pre-caching logic is stopping at exactly 16 lights. Therefore this logic would normally never been called.
-            if (_lightsPerRenderer[renderer].Count >= 16)
+            if (rendererLights.Count >= 16)
             {
-                for (var i = 0; i < Mathf.Min(16, _lightsPerRenderer[renderer].Count - 16); i++)
+                for (var i = 0; i < Mathf.Min(16, rendererLights.Count - 16); i++)
                 {
-                    indicesMatrix[i / 4, i % 4] = _lightsPerRenderer[renderer][i + 16].Index;
+                    indicesMatrix[i / 4, i % 4] = rendererLights[i + 16].Index;
                 }
 
                 for (var i = 0; i < nonAllocMaterials.Count; i++)
