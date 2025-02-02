@@ -78,7 +78,7 @@ namespace GUZ.Core.Manager.Scenes
 
                 // 3. Stationary lights
                 // They are affecting (1) World Mesh and (2) VOB meshes.
-                // We therefore need to initialize them after both is created.
+                // We therefore need to initialize them after both are created.
                 GameGlobals.Lights.InitStationaryLights();
                 watch.LogAndRestart("Stationary lights initialized");
 

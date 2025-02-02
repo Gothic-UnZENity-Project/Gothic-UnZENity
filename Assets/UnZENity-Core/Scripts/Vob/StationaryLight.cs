@@ -147,36 +147,24 @@ namespace GUZ.Core
             GameGlobals.Lights.AddThreadSafeLight(transform.position, Range);
         }
 
-        private void OnDestroy()
+        /// <summary>
+        /// Set light's surrounding Meshes to add light information onto it later.
+        /// As OnEnable is called when this Prefab is spawned, we need to call Init() separately now.
+        ///
+        /// HINT: The affected meshes won't be recalculated when another object gets visible (e.g. lazy loaded).
+        ///       If we want to optimize it in the future, we would need to create a class which holds light bounds and
+        ///       whenever something gets visible, the affected lights update their renderers.
+        /// </summary>
+        public void Init()
         {
-            try
-            {
-                Lights.Remove(this);
-            }
-            catch (Exception)
-            {
-                Debug.LogError(
-                    $"[{nameof(StationaryLight)}] Light collection unexpectedly does not contain light {name} on destroy.");
-            }
+            GatherRenderers();
+
+            // Call Light on Renderer activation again.
+            OnEnable();
         }
-
-
-        private bool _affectedRenderersCalculated;
 
         private void OnEnable()
         {
-            if (!GameGlobals.Lights.IsWorldInitialized)
-            {
-                return;
-            }
-
-            // We need to calculate the renderers "after" we loaded all of world mesh and VOBs. Otherwise the Physics.Range() check will return too few elements.
-            if (!_affectedRenderersCalculated)
-            {
-                GatherRenderers();
-                _affectedRenderersCalculated = true;
-            }
-
             foreach (var rend in _affectedRenderers)
             {
                 GameGlobals.Lights.AddLightOnRenderer(this, rend);
@@ -188,6 +176,19 @@ namespace GUZ.Core
             foreach (var rend in _affectedRenderers)
             {
                 GameGlobals.Lights.RemoveLightOnRenderer(this, rend);
+            }
+        }
+
+        private void OnDestroy()
+        {
+            try
+            {
+                Lights.Remove(this);
+            }
+            catch (Exception)
+            {
+                Debug.LogError(
+                    $"[{nameof(StationaryLight)}] Light collection unexpectedly does not contain light {name} on destroy.");
             }
         }
 
@@ -203,6 +204,5 @@ namespace GUZ.Core
                 }
             }
         }
-
     }
 }

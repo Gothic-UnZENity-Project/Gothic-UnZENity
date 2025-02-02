@@ -6,6 +6,7 @@ using GUZ.Core.Extensions;
 using GUZ.Core.Properties;
 using GUZ.Core.Vm;
 using JetBrains.Annotations;
+using MyBox;
 using UnityEngine;
 using ZenKit;
 using ZenKit.Daedalus;
@@ -14,7 +15,6 @@ using ZenKit.Vobs;
 using Light = ZenKit.Vobs.Light;
 using LightType = ZenKit.Vobs.LightType;
 using Object = UnityEngine.Object;
-using Vector3 = System.Numerics.Vector3;
 
 namespace GUZ.Core.Vob
 {
@@ -32,7 +32,7 @@ namespace GUZ.Core.Vob
         {
             // FIXME - Set position and rotation!
 
-            Create(vob, parent);
+            Create(vob, parent, default);
         }
 
         /// <summary>
@@ -50,7 +50,9 @@ namespace GUZ.Core.Vob
             loaderComp.IsLoaded = true;
             var vob = loaderComp.Vob;
 
-            Create(vob, go);
+            // We assume, that each loaded VOB is centered at parent=0,0,0.
+            // Should work smoothly until we start lazy loading sub-vobs ;-)
+            Create(vob, go, default);
         }
 
         /// <summary>
@@ -100,9 +102,16 @@ namespace GUZ.Core.Vob
         /// <summary>
         /// Generic root method to create a VOB of any type.
         /// Type specific creation will be handled inside further Create*() methods.
+        ///
+        /// parentWorldPosition - When we load Lights, we need to assign the shader's Index. As lazy loading will randomly load them,
+        ///                       and Lights could be sub-VOBs inside fire, we need to find the index from WorldPosition calculated at
+        ///                       caching times. Same calculation! (ZenKit.IVirtualVob.Position + ZK.parentPos
         /// </summary>
-        private GameObject Create(IVirtualObject vob, GameObject parent)
+        private void Create(IVirtualObject vob, GameObject parent, Vector3 parentWorldPosition)
         {
+            var worldPosition = parentWorldPosition + vob.Position.ToUnityVector();
+            GameObject go = null;
+
             switch (vob.Type)
             {
                 case VirtualObjectType.zCVob:
@@ -111,20 +120,23 @@ namespace GUZ.Core.Vob
                         case VisualType.Decal:
                             if (GameGlobals.Config.Dev.EnableDecalVisuals)
                             {
-                                return MeshFactory.CreateVobDecal(vob, (VisualDecal)vob.Visual, parent: parent);
+                                go = MeshFactory.CreateVobDecal(vob, (VisualDecal)vob.Visual, parent: parent);
                             }
-                            return null;
+                            break;
                         case VisualType.ParticleEffect:
                             if (GameGlobals.Config.Dev.EnableParticleEffects)
                             {
-                                return MeshFactory.CreateVobPfx(vob, parent: parent);
+                                go = MeshFactory.CreateVobPfx(vob, parent: parent);
                             }
-                            return null;
+                            break;
                         default:
-                            return CreateDefaultMesh(vob, parent);
+                            go = CreateDefaultMesh(vob, parent);
+                            break;
                     }
+                    break;
                 case VirtualObjectType.oCItem:
-                    return CreateItem((Item)vob, parent);
+                    go = CreateItem((Item)vob, parent);
+                    break;
                 case VirtualObjectType.oCMOB:
                 case VirtualObjectType.oCMobSwitch:
                 case VirtualObjectType.zCVobStair:
@@ -133,7 +145,8 @@ namespace GUZ.Core.Vob
                 case VirtualObjectType.oCMobContainer:
                 case VirtualObjectType.oCMobDoor:
                 case VirtualObjectType.oCMobLadder:
-                    return CreateDefaultMesh(vob, parent);
+                    go = CreateDefaultMesh(vob, parent);
+                    break;
                 case VirtualObjectType.oCMobInter:
                     // FIXME - Re-enable seating. @see #120 - Re-enable Bench/Barrel/Seat/Throne interaction
                     // if (vob.Name.ContainsIgnoreCase("bench") ||
@@ -145,33 +158,45 @@ namespace GUZ.Core.Vob
                     //     break;
                     // }
 
-                    return CreateDefaultMesh(vob, parent);
+                    go = CreateDefaultMesh(vob, parent);
+                    break;
                 case VirtualObjectType.zCVobAnimate:
                     // TODO - We can outsource the special Animate.Start() logic into Prefab.
-                    return CreateAnimatedVob((Animate)vob, parent);
+                    go = CreateAnimatedVob((Animate)vob, parent);
+                    break;
                 case VirtualObjectType.oCMobFire:
-                    return CreateFire((Fire)vob, parent);
+                    go = CreateFire((Fire)vob, parent, worldPosition);
+                    break;
                 case VirtualObjectType.zCVobLight:
-                    return CreateLight((Light)vob, parent);
+                    go = CreateLight((Light)vob, parent, worldPosition);
+                    break;
                 case VirtualObjectType.zCVobSound:
                     if (GameGlobals.Config.Dev.EnableGameSounds)
                     {
-                        var go = CreateSound((Sound)vob, parent);
+                        go = CreateSound((Sound)vob, parent);
                         GameGlobals.SoundCulling.AddCullingEntry(go);
-                        return go;
                     }
-                    return null;
+                    break;
                 case VirtualObjectType.zCVobSoundDaytime:
                     if (GameGlobals.Config.Dev.EnableGameSounds)
                     {
-                        var go = CreateSoundDaytime((SoundDaytime)vob, parent);
+                        go = CreateSoundDaytime((SoundDaytime)vob, parent);
                         GameGlobals.SoundCulling.AddCullingEntry(go);
-                        return go;
                     }
-                    return null;
+                    break;
                 default:
                     Debug.LogError($"Unknown VOB type: {vob.Type} - {vob.Name}");
-                    return null;
+                    break;
+            }
+
+            if (!go)
+            {
+                return;
+            }
+
+            foreach (var childVob in vob.Children)
+            {
+                Create(childVob, go, worldPosition);
             }
         }
 
@@ -228,6 +253,9 @@ namespace GUZ.Core.Vob
                     break;
                 case VirtualObjectType.zCVobAnimate:
                     go = ResourceLoader.TryGetPrefabObject(PrefabType.VobAnimate, name: name);
+                    break;
+                case VirtualObjectType.zCVobLight:
+                    go = ResourceLoader.TryGetPrefabObject(PrefabType.VobLight, name: name);
                     break;
                 default:
                     go = ResourceLoader.TryGetPrefabObject(PrefabType.Vob, name: name);
@@ -383,7 +411,7 @@ namespace GUZ.Core.Vob
         /// Some fire slots have the light too low to cast light onto the mesh and the surroundings.
         /// </summary>
         [CanBeNull]
-        private GameObject CreateFire(Fire vob, GameObject parent = null)
+        private GameObject CreateFire(Fire vob, GameObject parent, Vector3 worldPosition)
         {
             var go = CreateDefaultMesh(vob, parent);
 
@@ -401,10 +429,10 @@ namespace GUZ.Core.Vob
             foreach (var vobRoot in vobTree!.RootObjects)
             {
                 ResetVobTreePositions(vobRoot.Children, vobRoot.Position, vobRoot.Rotation);
-                vobRoot.Position = Vector3.Zero;
+                vobRoot.Position = System.Numerics.Vector3.Zero;
             }
 
-            CreateFireVobs(vobTree.RootObjects, go.FindChildRecursively(vob.Slot) ?? go);
+            CreateFireVobs(vobTree.RootObjects, go.FindChildRecursively(vob.Slot) ?? go, worldPosition);
 
             return go;
         }
@@ -412,15 +440,15 @@ namespace GUZ.Core.Vob
         /// <summary>
         /// A fire itself is a .zen file which contains children.
         /// </summary>
-        private void CreateFireVobs(List<IVirtualObject> vobs, GameObject parent)
+        private void CreateFireVobs(List<IVirtualObject> vobs, GameObject parent, Vector3 worldPosition)
         {
             foreach (var vob in vobs)
             {
-                // Call normal mesh and Prefab loading logic
-                var go = Create(vob, parent);
+                // FIRE worlds aren't positioned at 0,0,0. We need to do it now, to have the correct parent-child positioning.
+                vob.Position = default;
 
-                // Iterate over all children
-                CreateFireVobs(vob.Children, go);
+                // Call normal mesh and Prefab loading logic
+                Create(vob, parent, worldPosition);
             }
         }
 
@@ -430,7 +458,7 @@ namespace GUZ.Core.Vob
         /// and as we might load multiple copies of the same vob tree but for different parents we need to reset the position
         /// </summary>
         private static void ResetVobTreePositions(List<IVirtualObject> vobList,
-            Vector3 position, Matrix3x3 rotation)
+            System.Numerics.Vector3 position, Matrix3x3 rotation)
         {
             if (vobList == null)
             {
@@ -451,7 +479,7 @@ namespace GUZ.Core.Vob
             }
         }
 
-        private GameObject CreateLight(Light vob, GameObject parent)
+        private GameObject CreateLight(Light vob, GameObject parent, Vector3 worldPosition)
         {
             if (vob.LightStatic)
             {
@@ -459,11 +487,14 @@ namespace GUZ.Core.Vob
                 return null;
             }
 
-            var vobObj = GetPrefab(vob);
-            vobObj.name = $"{vob.LightType} Light {vob.Name}";
-            vobObj.SetParent(parent);
+            var go = GetPrefab(vob);
+            go.name = $"{vob.LightType} Light {vob.Name}";
 
-            var lightComp = vobObj.AddComponent<StationaryLight>();
+            // TODO - We need to be careful. It might be, that a light is in a sub-GO structure, where we need the parent pos+rot. If it's the case, we will get a warning as Index==-1 below.
+            go.SetParent(parent, true, true);
+            SetPosAndRot(go, vob);
+
+            var lightComp = go.GetComponent<StationaryLight>();
             lightComp.Color = new Color(vob.Color.R / 255f, vob.Color.G / 255f, vob.Color.B / 255f, vob.Color.A / 255f);
             lightComp.Type = vob.LightType == LightType.Point
                 ? UnityEngine.LightType.Point
@@ -472,7 +503,21 @@ namespace GUZ.Core.Vob
             lightComp.SpotAngle = vob.ConeAngle;
             lightComp.Intensity = 1;
 
-            return vobObj;
+            // SaveGames might contain different order of Light objects (or Vobs where lights are children).
+            // We therefore need to fetch which Vob has the same position as the one from cache.
+            // Hint: The StationaryLights array should be ~512 elements max. If loading is slow,
+            // we could also simply remove elements which are set to LightGOs already.
+            lightComp.Index = GameGlobals.StaticCache.LoadedStationaryLights.StationaryLights.FirstIndex(i =>
+                i.Position == worldPosition);
+
+            if (lightComp.Index == -1)
+            {
+                Debug.LogWarning($"Light {vob.Name} not found in StaticCache. Therefore no LightIndex set and ignored by shader. Will be solved later. ;-)");
+            }
+
+            lightComp.Init();
+
+            return go;
         }
 
         [CanBeNull]
@@ -540,6 +585,16 @@ namespace GUZ.Core.Vob
             source.playOnAwake = soundData.InitiallyPlaying && soundData.Mode != SoundMode.Random;
             source.loop = soundData.Mode == SoundMode.Loop;
             source.spatialBlend = soundData.Ambient3d ? 1f : 0f;
+        }
+
+        private void SetPosAndRot(GameObject go, IVirtualObject vob)
+        {
+            SetPosAndRot(go, vob.Position.ToUnityVector(), vob.Rotation.ToUnityQuaternion());
+        }
+
+        private static void SetPosAndRot(GameObject obj, Vector3 position, Quaternion rotation)
+        {
+            obj.transform.SetLocalPositionAndRotation(position, rotation);
         }
     }
 }

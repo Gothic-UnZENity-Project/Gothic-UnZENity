@@ -2,15 +2,11 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using GUZ.Core.Util;
 using UnityEngine;
-using UnityEngine.Profiling;
 
 namespace GUZ.Core.Manager
 {
     public class StationaryLightsManager
     {
-        public bool IsWorldInitialized { get; private set; }
-
-
         private static readonly int _globalStationaryLightPositionsAndAttenuationShaderId =
             Shader.PropertyToID("_GlobalStationaryLightPositionsAndAttenuation");
 
@@ -29,8 +25,7 @@ namespace GUZ.Core.Manager
 
         public void Init()
         {
-            // If we load a new world, all Static Lights which will be loaded need to wait to emit light until we're done loading again.
-            GlobalEventDispatcher.LoadingSceneLoaded.AddListener(() => IsWorldInitialized = false);
+            // NOP
         }
 
         public void AddThreadSafeLight(Vector3 position, float range)
@@ -51,14 +46,12 @@ namespace GUZ.Core.Manager
                 return;
             }
 
-            Profiler.BeginSample("Update stationary light renderers");
             foreach (var renderer in _dirtiedMeshes)
             {
                 UpdateRenderer(renderer);
             }
 
             _dirtiedMeshes.Clear();
-            Profiler.EndSample();
         }
 
         public void AddLightOnRenderer(StationaryLight light, MeshRenderer renderer)
@@ -115,6 +108,7 @@ namespace GUZ.Core.Manager
                 }
             }
 
+            // TODO - The current pre-caching logic is stopping at exactly 16 lights. Therefore this logic would normally never been called.
             if (_lightsPerRenderer[renderer].Count >= 16)
             {
                 for (var i = 0; i < Mathf.Min(16, _lightsPerRenderer[renderer].Count - 16); i++)
@@ -168,8 +162,6 @@ namespace GUZ.Core.Manager
             Shader.SetGlobalVectorArray(_globalStationaryLightPositionsAndAttenuationShaderId,
                 lightPositionsAndAttenuation);
             Shader.SetGlobalVectorArray(_globalStationaryLightColorsShaderId, lightColors);
-
-            IsWorldInitialized = true;
         }
     }
 }
