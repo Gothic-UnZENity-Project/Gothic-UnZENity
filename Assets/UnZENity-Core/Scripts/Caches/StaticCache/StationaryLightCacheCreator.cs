@@ -16,10 +16,6 @@ namespace GUZ.Core.Caches.StaticCache
         public List<Bounds> StationaryLightBounds = new();
 
 
-        // We do not need to load the .zen files and its vobs multiple times.
-        private Dictionary<string, List<IVirtualObject>> _fireWorldVobCache = new();
-
-
         public void CalculateStationaryLights(List<IVirtualObject> vobs, Vector3 parentWorldPosition = default)
         {
             foreach (var vob in vobs)
@@ -56,14 +52,7 @@ namespace GUZ.Core.Caches.StaticCache
                         continue;
                     }
 
-                    if (!_fireWorldVobCache.TryGetValue(fire.VobTree.ToLower(), out var fireWorldVobs))
-                    {
-                        fireWorldVobs = ResourceLoader.TryGetWorld(fire.VobTree, GameContext.GameVersionAdapter.Version)!.RootObjects;
-                        _fireWorldVobCache.Add(fire.VobTree.ToLower(), fireWorldVobs);
-
-                        // FIRE worlds aren't positioned at 0,0,0. We need to do it now, to have the correct parent-child positioning.
-                        fireWorldVobs.ForEach(i => i.Position = default);
-                    }
+                    var fireWorldVobs = ResourceLoader.TryGetWorld(fire.VobTree, GameContext.GameVersionAdapter.Version, true)!.RootObjects;
 
                     // As we loaded the child-VOBs for fire*.zen at this time, we iterate now.
                     CalculateStationaryLights(fireWorldVobs, vobWorldPosition);

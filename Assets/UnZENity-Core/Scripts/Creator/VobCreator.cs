@@ -17,7 +17,6 @@ using GUZ.Core.Vob.WayNet;
 using JetBrains.Annotations;
 using MyBox;
 using UnityEngine;
-using ZenKit;
 using ZenKit.Daedalus;
 using ZenKit.Util;
 using ZenKit.Vobs;
@@ -52,7 +51,6 @@ namespace GUZ.Core.Creator
         private static int _totalVObs;
         private static int _createdCount;
         private static List<GameObject> _cullingVobObjects = new();
-        private static Dictionary<string, IWorld> _vobTreeCache = new();
 
         static VobCreator()
         {
@@ -269,12 +267,6 @@ namespace GUZ.Core.Creator
                     _cullingVobObjects.Add(go);
                     break;
                 }
-                case VirtualObjectType.oCMobFire:
-                {
-                    go = CreateFire(config, (Fire)vob, parent);
-                    _cullingVobObjects.Add(go);
-                    break;
-                }
                 case VirtualObjectType.oCMobInter:
                 {
                     if (vob.Name.ContainsIgnoreCase("bench") ||
@@ -470,67 +462,9 @@ namespace GUZ.Core.Creator
             }
         }
 
-        /// <summary>
-        /// Some fire slots have the light too low to cast light onto the mesh and the surroundings.
-        /// </summary>
-        private static GameObject CreateFire(DeveloperConfig config, Fire vob, GameObject parent = null)
-        {
-            var go = CreateDefaultMesh(vob, parent, true);
-
-            if (vob.VobTree == "")
-            {
-                return go;
-            }
-
-            if (!_vobTreeCache.TryGetValue(vob.VobTree.ToLower(), out var vobTree))
-            {
-                vobTree = ResourceLoader.TryGetWorld(vob.VobTree, config.GameVersion);
-                _vobTreeCache.Add(vob.VobTree.ToLower(), vobTree);
-            }
-
-            foreach (var vobRoot in vobTree.RootObjects)
-            {
-                ResetVobTreePositions(vobRoot.Children, vobRoot.Position, vobRoot.Rotation);
-                vobRoot.Position = Vector3.Zero;
-            }
-
-            CreateVobs(config, null, vobTree.RootObjects, go.FindChildRecursively(vob.Slot) ?? go);
-
-            return go;
-        }
-
-        /// <summary>
-        /// Reset the positions of the objects in the list to subtract position of the parent
-        /// In the zen files all the vobs have the position represented for the world not per parent
-        /// and as we might load multiple copies of the same vob tree but for different parents we need to reset the position
-        /// </summary>
-        private static void ResetVobTreePositions(List<IVirtualObject> vobList, Vector3 position = default,
-            Matrix3x3 rotation = default)
-        {
-            if (vobList == null)
-            {
-                return;
-            }
-
-            foreach (var vob in vobList)
-            {
-                ResetVobTreePositions(vob.Children, position, rotation);
-
-                vob.Position -= position;
-
-                vob.Rotation = new Matrix3x3(vob.Rotation.M11 - rotation.M11, vob.Rotation.M12 - rotation.M12,
-                    vob.Rotation.M13 - rotation.M13, vob.Rotation.M21 - rotation.M21,
-                    vob.Rotation.M22 - rotation.M22, vob.Rotation.M23 - rotation.M23,
-                    vob.Rotation.M31 - rotation.M31, vob.Rotation.M32 - rotation.M32,
-                    vob.Rotation.M33 - rotation.M33);
-            }
-        }
-
         private static void PostCreateVobs()
         {
             GameGlobals.VobMeshCulling.PrepareVobCulling(_cullingVobObjects);
-
-            _vobTreeCache.ClearAndReleaseMemory();
 
             // DEBUG - If we want to load all at once, we need to initialize all LazyLoad objects now.
             if (!GameGlobals.Config.Dev.EnableVOBMeshCulling)

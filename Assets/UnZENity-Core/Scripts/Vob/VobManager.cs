@@ -8,9 +8,7 @@ using GUZ.Core.Vm;
 using JetBrains.Annotations;
 using MyBox;
 using UnityEngine;
-using ZenKit;
 using ZenKit.Daedalus;
-using ZenKit.Util;
 using ZenKit.Vobs;
 using Light = ZenKit.Vobs.Light;
 using LightType = ZenKit.Vobs.LightType;
@@ -21,8 +19,6 @@ namespace GUZ.Core.Vob
     public class VobManager
     {
         private const string _noSoundName = "nosound.wav";
-
-        private static Dictionary<string, IWorld> _fireVobTreeCache = new();
 
 
         /// <summary>
@@ -420,19 +416,9 @@ namespace GUZ.Core.Vob
                 return null;
             }
 
-            if (!_fireVobTreeCache.TryGetValue(vob.VobTree.ToLower(), out var vobTree))
-            {
-                vobTree = ResourceLoader.TryGetWorld(vob.VobTree, GameContext.GameVersionAdapter.Version);
-                _fireVobTreeCache.Add(vob.VobTree.ToLower(), vobTree);
-            }
+            var vobTree = ResourceLoader.TryGetWorld(vob.VobTree, GameContext.GameVersionAdapter.Version, true)!.RootObjects;
 
-            foreach (var vobRoot in vobTree!.RootObjects)
-            {
-                ResetVobTreePositions(vobRoot.Children, vobRoot.Position, vobRoot.Rotation);
-                vobRoot.Position = System.Numerics.Vector3.Zero;
-            }
-
-            CreateFireVobs(vobTree.RootObjects, go.FindChildRecursively(vob.Slot) ?? go, worldPosition);
+            CreateFireVobs(vobTree, go.FindChildRecursively(vob.Slot) ?? go, worldPosition);
 
             return go;
         }
@@ -449,33 +435,6 @@ namespace GUZ.Core.Vob
 
                 // Call normal mesh and Prefab loading logic
                 Create(vob, parent, worldPosition);
-            }
-        }
-
-        /// <summary>
-        /// Reset the positions of the objects in the list to subtract position of the parent
-        /// In the zen files all the vobs have the position represented for the world not per parent
-        /// and as we might load multiple copies of the same vob tree but for different parents we need to reset the position
-        /// </summary>
-        private static void ResetVobTreePositions(List<IVirtualObject> vobList,
-            System.Numerics.Vector3 position, Matrix3x3 rotation)
-        {
-            if (vobList == null)
-            {
-                return;
-            }
-
-            foreach (var vob in vobList)
-            {
-                ResetVobTreePositions(vob.Children, position, rotation);
-
-                vob.Position -= position;
-
-                vob.Rotation = new Matrix3x3(vob.Rotation.M11 - rotation!.M11, vob.Rotation.M12 - rotation.M12,
-                    vob.Rotation.M13 - rotation.M13, vob.Rotation.M21 - rotation.M21,
-                    vob.Rotation.M22 - rotation.M22, vob.Rotation.M23 - rotation.M23,
-                    vob.Rotation.M31 - rotation.M31, vob.Rotation.M32 - rotation.M32,
-                    vob.Rotation.M33 - rotation.M33);
             }
         }
 
