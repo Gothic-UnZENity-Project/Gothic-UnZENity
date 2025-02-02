@@ -300,16 +300,56 @@ namespace GUZ.Core.Manager.Culling
 
             var vob = loaderComp.Vob;
 
+            var totalBounds = new Bounds();
+            AddLocalBounds(vob, ref totalBounds);
+
+            return totalBounds == default ? null : totalBounds;
+        }
+
+        /// <summary>
+        /// VOBs can contain child-VOBs which might be Particles, Lights, etc.
+        /// We therefore need to sum up the overall Bounds to ensure Culling kicks in correctly.
+        /// </summary>
+        private void AddLocalBounds(IVirtualObject vob, ref Bounds totalBounds)
+        {
+            Bounds additionalBounds;
+
             switch (vob.Type)
             {
                 case VirtualObjectType.zCVobLight:
-                    return GetLocalLightBounds((ILight)vob);
+                    additionalBounds = GetLocalLightBounds((ILight)vob);
+                    break;
                 default:
-                    return GetLocalMeshBounds(vob);
+                    additionalBounds = GetLocalMeshBounds(vob);
+                    break;
+            }
+
+            totalBounds.Encapsulate(additionalBounds);
+
+            foreach (var childVob in vob.Children)
+            {
+                AddLocalBounds(childVob, ref totalBounds);
+            }
+
+            // Fire VOBs children are inside a .zen file
+            if (vob.Type == VirtualObjectType.oCMobFire)
+            {
+                var fireWorld = ResourceLoader.TryGetWorld(((IFire)vob).VobTree, GameContext.GameVersionAdapter.Version, true);
+
+                // e.g. "NC_FIREPLACE_STONE" has no VobTree. But could we potentially render it as mesh?
+                if (fireWorld == null)
+                {
+                    return;
+                }
+
+                foreach (var childFireVob in fireWorld!.RootObjects)
+                {
+                    AddLocalBounds(childFireVob, ref totalBounds);
+                }
             }
         }
 
-        private Bounds? GetLocalLightBounds(ILight light)
+        private Bounds GetLocalLightBounds(ILight light)
         {
             // FIXME - #1 - Lights shine for the whole mesh they belong to again. :-/
             // FIXME - #2 - When inside a light range, turning to our back will disable the light.
@@ -322,7 +362,7 @@ namespace GUZ.Core.Manager.Culling
             return null;
         }
 
-        private Bounds? GetLocalMeshBounds(IVirtualObject vob)
+        private Bounds GetLocalMeshBounds(IVirtualObject vob)
         {
             string meshName;
             switch (vob.Type)
@@ -334,7 +374,7 @@ namespace GUZ.Core.Manager.Culling
                     // e.g. ITMICELLO has no mesh
                     if (meshName == null)
                     {
-                        return null;
+                        return default;
                     }
 
                     break;
@@ -345,7 +385,7 @@ namespace GUZ.Core.Manager.Culling
 
             if (meshName.IsNullOrEmpty())
             {
-                return null;
+                return default;
             }
 
             // FIXME - More magic needed. For objects with Mesh, we can store it. But for e.g. Lights, we need to fetch it from the actual
@@ -359,7 +399,7 @@ namespace GUZ.Core.Manager.Culling
                 // We can carefully disable this log as some elements aren't cached.
                 // e.g. when there is no texture like for OC_DECORATE_V4.3DS
                 Debug.LogError($"Couldn't find mesh bounds information from StaticCache for >{meshName}<.");
-                return null;
+                return default;
             }
         }
 
