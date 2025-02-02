@@ -22,8 +22,6 @@ using ZenKit.Daedalus;
 using ZenKit.Util;
 using ZenKit.Vobs;
 using Debug = UnityEngine.Debug;
-using Light = ZenKit.Vobs.Light;
-using LightType = ZenKit.Vobs.LightType;
 using Mesh = UnityEngine.Mesh;
 using Object = UnityEngine.Object;
 using Vector3 = System.Numerics.Vector3;
@@ -140,7 +138,7 @@ namespace GUZ.Core.Creator
         {
             if (_vobTypesNonLazyLoading.Contains(vob.Type))
             {
-                return LoadVob(config, vob, parent);
+                return LoadVobImmediately(config, vob, parent);
             }
 
             // Skip disabled features.
@@ -175,7 +173,7 @@ namespace GUZ.Core.Creator
         }
 
         [CanBeNull]
-        private static GameObject LoadVob(DeveloperConfig config, IVirtualObject vob, GameObject parent = null)
+        private static GameObject LoadVobImmediately(DeveloperConfig config, IVirtualObject vob, GameObject parent = null)
         {
             GameObject go = null;
             switch (vob.Type)
@@ -183,12 +181,6 @@ namespace GUZ.Core.Creator
                 case VirtualObjectType.oCItem:
                 {
                     go = CreateItem((Item)vob, parent);
-                    _cullingVobObjects.Add(go);
-                    break;
-                }
-                case VirtualObjectType.zCVobLight:
-                {
-                    go = CreateLight((Light)vob, parent);
                     _cullingVobObjects.Add(go);
                     break;
                 }
@@ -619,9 +611,6 @@ namespace GUZ.Core.Creator
                 case VirtualObjectType.zCVobAnimate:
                     go = ResourceLoader.TryGetPrefabObject(PrefabType.VobAnimate);
                     break;
-                case VirtualObjectType.zCVobLight:
-                    go = ResourceLoader.TryGetPrefabObject(PrefabType.VobLight);
-                    break;
                 default:
                     go = ResourceLoader.TryGetPrefabObject(PrefabType.Vob);
                     break;
@@ -756,44 +745,6 @@ namespace GUZ.Core.Creator
             vobObj.GetComponent<VobItemProperties>().SetData(vob, item);
 
             return vobObj;
-        }
-
-        [CanBeNull]
-        private static GameObject CreateLight(Light vob, GameObject parent = null)
-        {
-            // We only handle dynamic lights. In our UnZENity language, they are StationaryLights (==!LightStatic). e.g. Fire.
-            if (vob.LightStatic)
-            {
-                return null;
-            }
-
-            var go = GetPrefab(vob);
-            go.name = $"{vob.LightType} Light {vob.Name}";
-            go.SetParent(parent ?? GetRootGameObjectOfType(vob.Type), true, true);
-            SetPosAndRot(go, vob.Position, vob.Rotation);
-
-            var lightComp = go.GetComponent<StationaryLight>();
-            lightComp.Color = new Color(vob.Color.R / 255f, vob.Color.G / 255f, vob.Color.B / 255f, vob.Color.A / 255f);
-            lightComp.Type = vob.LightType == LightType.Point
-                ? UnityEngine.LightType.Point
-                : UnityEngine.LightType.Spot;
-            lightComp.Range = vob.Range * .01f;
-            lightComp.SpotAngle = vob.ConeAngle;
-            lightComp.Intensity = 1;
-
-            // SaveGames might contain different order of Light objects (or Vobs where lights are children).
-            // We therefore need to fetch which Vob has the same position as the one from cache.
-            // Hint: The StationaryLights array should be ~512 elements max. If loading is slow,
-            // we could also simply remove elements which are set to LightGOs already.
-            lightComp.Index = GameGlobals.StaticCache.LoadedStationaryLights.StationaryLights.FirstIndex(i =>
-                i.Position == go.transform.position);
-
-            if (lightComp.Index == -1)
-            {
-                Debug.LogWarning($"Light {vob.Name} not found in StaticCache. Therefore no LightIndex set and ignored by shader. Will be solved later. ;-)");
-            }
-
-            return go;
         }
 
         [CanBeNull]
