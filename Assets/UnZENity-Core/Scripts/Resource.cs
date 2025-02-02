@@ -21,6 +21,7 @@ namespace GUZ.Core
     {
         private readonly Dictionary<string, T> _cache = new();
         private readonly Func<string, T> _loader;
+        private readonly Func<string, GameVersion, T> _gameVersionLoader;
 
         /// <summary>
         /// Constructs a new resource given a loader.
@@ -32,6 +33,11 @@ namespace GUZ.Core
         public Resource(Func<string, T> loader)
         {
             _loader = loader;
+        }
+
+        public Resource(Func<string, GameVersion, T> gameVersionLoader)
+        {
+            _gameVersionLoader = gameVersionLoader;
         }
 
         /// <summary>
@@ -52,6 +58,28 @@ namespace GUZ.Core
             try
             {
                 value = _loader(key);
+                _cache[key] = value;
+                return true;
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+
+            _cache[key] = default;
+            return false;
+        }
+
+        public bool TryLoad([NotNull] string key, GameVersion version, out T value)
+        {
+            if (_cache.TryGetValue(key, out value))
+            {
+                return true;
+            }
+
+            try
+            {
+                value = _gameVersionLoader(key, version);
                 _cache[key] = value;
                 return true;
             }
