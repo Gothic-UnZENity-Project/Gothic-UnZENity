@@ -123,7 +123,7 @@ namespace GUZ.Core.Creator
 
                 await FrameSkipper.TrySkipToNextFrame();
 
-                loading?.AddProgress(LoadingManager.LoadingProgressType.VOb, 1f / _totalVObs);
+                loading?.AddProgress(LoadingManager.LoadingProgressType.VOB, 1f / _totalVObs);
 
                 // Recursive creating sub-vobs
                 await CreateVobs(config, loading, vob.Children, go);

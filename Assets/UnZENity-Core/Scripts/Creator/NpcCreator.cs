@@ -174,7 +174,7 @@ namespace GUZ.Core.Creator
             foreach (var npc in _tmpWldInsertNpcData)
             {
                 // Update progress bar and check if we need to wait for next frame now (As some conditions skip -continue- end of loop and would skip check)
-                loading.AddProgress(LoadingManager.LoadingProgressType.VOb, 1f / totalNpcs);
+                loading.AddProgress(LoadingManager.LoadingProgressType.VOB, 1f / totalNpcs);
                 await FrameSkipper.TrySkipToNextFrame();
 
                 if (WayNetHelper.GetWayNetPoint(npc.spawnPoint) is null)
@@ -198,7 +198,7 @@ namespace GUZ.Core.Creator
             }
 
             // Full loading of NPCs is done.
-            loading.AddProgress(LoadingManager.LoadingProgressType.VOb, 1f);
+            loading.AddProgress(LoadingManager.LoadingProgressType.VOB, 1f);
         }
 
         /// <summary>

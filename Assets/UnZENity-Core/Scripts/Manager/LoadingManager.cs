@@ -13,7 +13,7 @@ namespace GUZ.Core.Manager
         public enum LoadingProgressType
         {
             WorldMesh,
-            VOb,
+            VOB,
             Npc
         }
 

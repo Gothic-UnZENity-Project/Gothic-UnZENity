@@ -1,8 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using GUZ.Core.Config;
 using GUZ.Core.Creator.Meshes;
 using GUZ.Core.Creator.Sounds;
 using GUZ.Core.Extensions;
+using GUZ.Core.Manager;
 using GUZ.Core.Properties;
 using GUZ.Core.Vm;
 using JetBrains.Annotations;
@@ -20,6 +24,24 @@ namespace GUZ.Core.Vob
     {
         private const string _noSoundName = "nosound.wav";
 
+        private static Dictionary<VirtualObjectType, GameObject> _vobTypeParentGOs = new();
+        private static List<GameObject> _cullingVobObjects = new();
+
+
+        /// <summary>
+        /// Load VOBs during world creation. The VOBs itself are then lazy loaded (i.e. when Culling kicks in, a Loading component
+        /// will take care of initializing later) or some of them are loaded immediately (e.g. Spots).
+        /// </summary>
+        public async Task CreateWorldVobsAsync(DeveloperConfig config, LoadingManager loading, List<IVirtualObject> vobs, GameObject root)
+        {
+            PreCreateWorldVobs(vobs, root, loading);
+            await CreateVobs(config, loading, vobs);
+
+            // Ensure all Vob skeletons are created.
+            await Task.Yield();
+
+            PostCreateWorldVobs();
+        }
 
         /// <summary>
         /// Some VOBs are initialized eagerly (e.g. when there is no performance benefit in doing so later or its needed directly).
@@ -93,6 +115,47 @@ namespace GUZ.Core.Vob
             }
 
             return clip;
+        }
+        
+        private void PreCreateWorldVobs(List<IVirtualObject> vobs, GameObject rootGo, LoadingManager loading)
+        {
+            loading.SetProgressStep(LoadingManager.LoadingProgressType.VOB, GetTotalVobCount(vobs));
+
+            _cullingVobObjects.Clear();
+
+            // We reset the GO dictionary.
+            _vobTypeParentGOs = new();
+
+            // Create root VOB GOs.
+            var allTypes = (VirtualObjectType[])Enum.GetValues(typeof(VirtualObjectType));
+            foreach (var type in allTypes)
+            {
+                var newGo = new GameObject(type.ToString());
+                newGo.SetParent(rootGo);
+
+                _vobTypeParentGOs[type] = newGo;
+            }
+        }
+
+        private void PostCreateWorldVobs()
+        {
+            GameGlobals.VobMeshCulling.PrepareVobCulling(_cullingVobObjects);
+
+            // DEBUG - If we want to load all VOBs at once, we need to initialize all LazyLoad objects now.
+            if (!GameGlobals.Config.Dev.EnableVOBMeshCulling)
+            {
+                var lazyLoadVobs = Object.FindObjectsOfType<VobLoader>(true);
+                lazyLoadVobs.ForEach(i => GameGlobals.Vobs.InitVob(i.gameObject));
+            }
+        }
+
+        /// <summary>
+        /// Hint: The calculation is somewhat off: When we set a VOB to be lazy loaded, we will not calculate its children as "created".
+        ///       Therefore, the loading bar will "hop" at the end, as we didn't calculate correctly. But it causes no harm.
+        /// </summary>
+        private int GetTotalVobCount(List<IVirtualObject> vobs)
+        {
+            return vobs.Count + vobs.Sum(vob => GetTotalVobCount(vob.Children));
         }
 
         /// <summary>
