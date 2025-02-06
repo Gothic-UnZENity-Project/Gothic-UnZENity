@@ -132,7 +132,9 @@ namespace GUZ.Core.Config
         [ConditionalField(useMethod: true, method: nameof(SaveSlotFieldCondition), inverse: true)]
         public string SpawnAtWaypoint = string.Empty;
 
-
+        [Separator("Debug")]
+        [Tooltip("Ignore frame skipping during loading.")]
+        public bool SpeedUpLoading;
 
         /**
          * ##########
@@ -170,8 +172,6 @@ namespace GUZ.Core.Config
         public bool ShowNamesOnHoveredVOBs = true;
 
         [Separator("Debug")]
-        [Tooltip("Ignore frame skipping during loading.")]
-        public bool SpeedUpLoading;
         public bool ShowVOBMeshCullingGizmos;
         public bool ShowCapsuleOverlapGizmos;
 
