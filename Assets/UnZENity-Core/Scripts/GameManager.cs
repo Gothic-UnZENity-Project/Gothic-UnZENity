@@ -6,6 +6,7 @@ using GUZ.Core.Globals;
 using GUZ.Core.Manager;
 using GUZ.Core.Manager.Culling;
 using GUZ.Core.Manager.Scenes;
+using GUZ.Core.Manager.Vobs;
 using GUZ.Core.Util;
 using GUZ.Core.Vob;
 using GUZ.Core.World;

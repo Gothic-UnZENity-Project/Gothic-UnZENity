@@ -1,6 +1,5 @@
 using System;
 using System.Linq;
-using GUZ.Core.Creator;
 using GUZ.Core.Creator.Sounds;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
@@ -41,7 +40,7 @@ namespace GUZ.Core.Manager
             var activeTypes = config.Dev.SpawnVOBTypes.Value;
             if (config.Dev.EnableVOBs && (activeTypes.IsEmpty() || activeTypes.Contains(VirtualObjectType.oCItem)))
             {
-                VobCreator.CreateItemMesh(itemInstance, spawnpoint, null);
+                GameGlobals.Vobs.CreateItemMesh(itemInstance, spawnpoint);
             }
         }
 

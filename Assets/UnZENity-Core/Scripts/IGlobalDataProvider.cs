@@ -1,7 +1,7 @@
 using GUZ.Core.Config;
 using GUZ.Core.Manager;
 using GUZ.Core.Manager.Culling;
-using GUZ.Core.Vob;
+using GUZ.Core.Manager.Vobs;
 using GUZ.Core.World;
 
 namespace GUZ.Core

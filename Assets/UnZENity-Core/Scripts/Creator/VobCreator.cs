@@ -27,6 +27,7 @@ using Vector3 = System.Numerics.Vector3;
 
 namespace GUZ.Core.Creator
 {
+    [Obsolete("Use GameGlobals.Vob instead.")]
     public static class VobCreator
     {
         private static GameObject _rootVobsGo;
