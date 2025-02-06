@@ -102,8 +102,9 @@ namespace GUZ.Lab
 
             _gameMusicManager.Init();
             _npcRoutineManager.Init();
-            _videoManager.Init();
             _textureManager.Init();
+
+            _videoManager.InitVideos();
             _save.LoadNewGame();
         }
 

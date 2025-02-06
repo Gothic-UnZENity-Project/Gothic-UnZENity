@@ -148,7 +148,6 @@ namespace GUZ.Core
             StaticCache.Init(DeveloperConfig);
             Sky.Init();
             Textures.Init();
-            Video.Init();
 
             GuzBootstrapper.BootGothicUnZeNity();
 

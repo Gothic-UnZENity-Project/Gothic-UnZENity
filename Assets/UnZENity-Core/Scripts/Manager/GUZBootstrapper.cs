@@ -118,7 +118,7 @@ namespace GUZ.Core.Manager
 
         private static void LoadVideos()
         {
-            GameGlobals.Video.Init();
+            GameGlobals.Video.InitVideos();
         }
 
         private static void LoadFonts()
