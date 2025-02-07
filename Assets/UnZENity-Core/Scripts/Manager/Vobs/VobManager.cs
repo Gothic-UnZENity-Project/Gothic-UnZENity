@@ -196,12 +196,12 @@ namespace GUZ.Core.Manager.Vobs
                 if (vob.Type == VirtualObjectType.zCVobLevelCompo)
                 {
                     await CreateWorldVobs(config, loading, vob.Children);
-                    return;
+                    continue;
                 }
                 // If our VOB type is ignored by Dev config, skip it and its children.
                 else if (!config.SpawnVOBTypes.Value.IsEmpty() && !config.SpawnVOBTypes.Value.Contains(vob.Type))
                 {
-                    return;
+                    continue;
                 }
 
                 if (_vobTypesNonLazyLoading.Contains(vob.Type))
