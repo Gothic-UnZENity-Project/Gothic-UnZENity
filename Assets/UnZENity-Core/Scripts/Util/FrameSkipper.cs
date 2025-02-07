@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections;
+using System.Threading.Tasks;
 using UnityEngine;
 
 namespace GUZ.Core.Util
@@ -60,6 +61,20 @@ namespace GUZ.Core.Util
             {
                 // _debugSkippedCount++;
             }
+        }
+
+        public static IEnumerator TrySkipToNextFrameCoroutine()
+        {
+            if (Time.realtimeSinceStartup > _maxFrameUsage)
+            {
+                // Debug.Log($"FrameSkipper: Not skipped {_debugSkippedCount}x.");
+                yield return null;
+            }
+            else
+            {
+                // _debugSkippedCount++;
+            }
+
         }
     }
 }

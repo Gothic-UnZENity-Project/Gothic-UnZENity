@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -23,6 +24,7 @@ namespace GUZ.Core.Manager.Vobs
 
         private Dictionary<VirtualObjectType, GameObject> _vobTypeParentGOs = new();
         private List<GameObject> _cullingVobObjects = new();
+        private Queue<VobLoader> _objectsToInitQueue = new();
 
         // Important: All of them are not culled!
         private static readonly VirtualObjectType[] _vobTypesNonLazyLoading =
@@ -41,6 +43,10 @@ namespace GUZ.Core.Manager.Vobs
             VirtualObjectType.zCVobLevelCompo
         };
 
+        public void Init(ICoroutineManager coroutineManager)
+        {
+            coroutineManager.StartCoroutine(InitVobCoroutine());
+        }
 
         /// <summary>
         /// Load VOBs during world creation. The VOBs itself are then lazy loaded (i.e. when Culling kicks in, a Loading component
@@ -90,12 +96,31 @@ namespace GUZ.Core.Manager.Vobs
                 return;
             }
 
+            // Do not put element into queue a second time.
             loaderComp.IsLoaded = true;
-            var vob = loaderComp.Vob;
 
-            // We assume, that each loaded VOB is centered at parent=0,0,0.
-            // Should work smoothly until we start lazy loading sub-vobs ;-)
-            _initializer.InitVob(vob, go, default);
+            _objectsToInitQueue.Enqueue(go.GetComponent<VobLoader>());
+        }
+
+        private IEnumerator InitVobCoroutine()
+        {
+            while (true)
+            {
+                if (_objectsToInitQueue.IsEmpty())
+                {
+                    yield return null;
+                }
+                else
+                {
+                    var item = _objectsToInitQueue.Dequeue();
+
+                    // We assume, that each loaded VOB is centered at parent=0,0,0.
+                    // Should work smoothly until we start lazy loading sub-vobs ;-)
+                    _initializer.InitVob(item.Vob, item.gameObject, default);
+
+                    yield return FrameSkipper.TrySkipToNextFrameCoroutine();
+                }
+            }
         }
 
         public void CreateItemMesh(int itemId, string spawnPoint)

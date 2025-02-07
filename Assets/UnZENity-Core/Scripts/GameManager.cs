@@ -8,7 +8,6 @@ using GUZ.Core.Manager.Culling;
 using GUZ.Core.Manager.Scenes;
 using GUZ.Core.Manager.Vobs;
 using GUZ.Core.Util;
-using GUZ.Core.Vob;
 using GUZ.Core.World;
 using MyBox;
 using UnityEngine;
@@ -148,6 +147,7 @@ namespace GUZ.Core
             StaticCache.Init(DeveloperConfig);
             Sky.Init();
             Textures.Init();
+            Vobs.Init(this);
 
             GuzBootstrapper.BootGothicUnZeNity();
 
