@@ -402,7 +402,8 @@ namespace GUZ.Core.Manager.Vobs
         {
             if (vob.LightStatic)
             {
-                Debug.LogWarning($"Non-static lights aren't handled so far. go={vob.Name}");
+                // Logging these will cause stuttering when a lot of them are needed.
+                // Debug.LogWarning($"Non-static lights aren't handled so far. go={vob.Name}");
                 return null;
             }
 

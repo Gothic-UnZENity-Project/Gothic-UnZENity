@@ -251,6 +251,12 @@ namespace GUZ.Core.Manager.Vobs
                     break;
             }
 
+            // Non-static lights aren't handled so far.
+            if (vob.Type == VirtualObjectType.zCVobLight && !((ILight)vob).LightStatic)
+            {
+                return null;
+            }
+
             var go = new GameObject(vob.GetVisualName());
             var loader = go.AddComponent<VobLoader>();
             loader.Vob = vob;
