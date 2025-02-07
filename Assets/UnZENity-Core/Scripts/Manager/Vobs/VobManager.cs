@@ -102,16 +102,31 @@ namespace GUZ.Core.Manager.Vobs
             _objectsToInitQueue.Enqueue(go.GetComponent<VobLoader>());
         }
 
+        // DEBUG - Check how many frames it took to initialize all the objects
+        // private int firstFrameQueueFilledUp;
+
         private IEnumerator InitVobCoroutine()
         {
             while (true)
             {
                 if (_objectsToInitQueue.IsEmpty())
                 {
+                    // DEBUG
+                    // if (firstFrameQueueFilledUp != 0)
+                    // {
+                    //     Debug.LogWarning($"It took {Time.frameCount - firstFrameQueueFilledUp} frames to clear the queue.");
+                    //     firstFrameQueueFilledUp = 0;
+                    // }
                     yield return null;
                 }
                 else
                 {
+                    // DEBUG
+                    // if (firstFrameQueueFilledUp == 0)
+                    // {
+                    //     firstFrameQueueFilledUp = Time.frameCount;
+                    // }
+
                     var item = _objectsToInitQueue.Dequeue();
 
                     // We assume, that each loaded VOB is centered at parent=0,0,0.
