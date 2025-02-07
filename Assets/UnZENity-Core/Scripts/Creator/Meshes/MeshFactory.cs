@@ -1,7 +1,6 @@
 using System.Linq;
 using System.Threading.Tasks;
 using GUZ.Core.Creator.Meshes.Builder;
-using GUZ.Core.Data.Container;
 using GUZ.Core.Extensions;
 using GUZ.Core.Manager;
 using GUZ.Core.Vm;
@@ -14,19 +13,10 @@ namespace GUZ.Core.Creator.Meshes
 {
     public static class MeshFactory
     {
-        public static async Task CreateWorld(WorldContainer world, LoadingManager loading, GameObject rootGo)
-        {
-            var worldBuilder = new WorldMeshBuilder();
-            worldBuilder.SetGameObject(rootGo);
-            worldBuilder.SetWorldData(world);
-
-            await worldBuilder.BuildAsync(loading);
-        }
-
         public static async Task CreateWorld(StaticCacheManager.WorldChunkContainer worldChunks, IMesh mesh,
             LoadingManager loading, GameObject rootGo)
         {
-            var worldBuilder = new WorldMeshBuilder2();
+            var worldBuilder = new WorldMeshBuilder();
             worldBuilder.SetGameObject(rootGo);
             worldBuilder.SetWorldData(worldChunks, mesh);
 

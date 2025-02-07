@@ -492,11 +492,6 @@ namespace GUZ.Core.Creator.Meshes.Builder
 
             CreateMorphMeshEnd(preparedVertices);
 
-            if (UseTextureArray)
-            {
-                TextureCache.VobMeshesForTextureArray.Add(mesh, new TextureCache.VobMeshData(mrmData, subMeshPerTextureFormat.Keys.ToList(), meshRenderer));
-            }
-
             MultiTypeCache.Meshes.Add($"{MeshName}_{meshIndex}", mesh);
         }
 

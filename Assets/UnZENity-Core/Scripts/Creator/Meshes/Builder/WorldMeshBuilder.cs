@@ -1,25 +1,41 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using GUZ.Core.Caches;
-using GUZ.Core.Data.Container;
+using GUZ.Core.Caches.StaticCache;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
 using GUZ.Core.Util;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Rendering;
 using ZenKit;
 using Mesh = UnityEngine.Mesh;
+using Material = UnityEngine.Material;
 
 namespace GUZ.Core.Creator.Meshes.Builder
 {
     public class WorldMeshBuilder : AbstractMeshBuilder
     {
-        private WorldContainer _world;
+        private StaticCacheManager.WorldChunkContainer _worldChunks;
+        private IMesh _mesh;
+        private bool _debugSpeedUpLoading;
 
-        public void SetWorldData(WorldContainer world)
+        public class ChunkData
         {
-            _world = world;
+            public readonly List<Vector3> Vertices = new();
+            public readonly List<int> Triangles = new();
+            public readonly List<Vector4> Uvs = new();
+            public readonly List<Vector3> Normals = new();
+            public readonly List<Color32> BakedLightColors = new();
+            public readonly List<Vector4> TextureAnimations = new();
+        }
+
+        public void SetWorldData(StaticCacheManager.WorldChunkContainer worldChunks, IMesh mesh)
+        {
+            _worldChunks = worldChunks;
+            _mesh = mesh;
         }
 
         public override GameObject Build()
@@ -29,76 +45,188 @@ namespace GUZ.Core.Creator.Meshes.Builder
 
         public async Task BuildAsync(LoadingManager loading)
         {
+            _debugSpeedUpLoading = GameGlobals.Config.Dev.SpeedUpLoading;
+
             RootGo.isStatic = true;
 
-            // Track the progress of each sub-mesh creation separately
-            var numSubMeshes = _world.SubMeshes.Count;
-            var meshesCreated = 0;
+            var chunksCount = _worldChunks.OpaqueChunks.Count + _worldChunks.TransparentChunks.Count + _worldChunks.WaterChunks.Count;
+            var progressPerChunk = 1f / chunksCount;
+            
+            loading.SetProgressStep(LoadingManager.LoadingProgressType.WorldMesh, progressPerChunk);
 
-            foreach (var subMesh in _world.SubMeshes)
+            await BuildChunkType(_worldChunks.OpaqueChunks, TextureCache.TextureArrayTypes.Opaque, loading);
+            await BuildChunkType(_worldChunks.TransparentChunks, TextureCache.TextureArrayTypes.Transparent, loading);
+            await BuildChunkType(_worldChunks.WaterChunks, TextureCache.TextureArrayTypes.Water, loading);
+        }
+
+        private async Task BuildChunkType(List<WorldChunkCacheCreator.WorldChunk> chunks, TextureCache.TextureArrayTypes type, LoadingManager loading)
+        {
+            var chunkTypeRoot = new GameObject
             {
-                // No texture to add.
-                // For G1 this is: material.name == [KEINE, KEINETEXTUREN, DEFAULT, BRETT2, BRETT1, SUMPFWAASER, S:PSIT01_ABODEN]
-                // Removing these removes tiny slices of walls on the ground. If anyone finds them, I owe them a beer. ;-)
-                if (subMesh.Material.Texture.IsEmpty() || subMesh.Triangles.IsEmpty())
-                {
-                    continue;
-                }
+                name = type.ToString(),
+                isStatic = true
+            };
+            chunkTypeRoot.SetParent(RootGo);
 
-                var subMeshObj = new GameObject
+            var loopIndex = 0;
+            foreach (var chunk in chunks)
+            {
+                var chunkGo = new GameObject
                 {
-                    name = $"{subMesh.TextureArrayType} world chunk",
+                    name = $"{type}-Entry-{loopIndex++}",
                     isStatic = true
                 };
+                chunkGo.SetParent(chunkTypeRoot);
 
-                subMeshObj.SetParent(RootGo);
-
-                var meshFilter = subMeshObj.AddComponent<MeshFilter>();
-                var meshRenderer = subMeshObj.AddComponent<MeshRenderer>();
-
-                meshRenderer.material = Constants.LoadingMaterial;
-                TextureCache.WorldMeshRenderersForTextureArray.Add((meshRenderer, subMesh));
-                PrepareMeshFilter(meshFilter, subMesh);
-                PrepareMeshCollider(subMeshObj, meshFilter.sharedMesh, subMesh.Material);
-
-#if UNITY_EDITOR // Only needed for Occlusion Culling baking
-                // Don't set transparent meshes as occluders.
-                if (IsTransparentShader(subMesh))
+                var chunkData = new ChunkData();
+                foreach (var polygonId in chunk.PolygonIds)
                 {
-                    GameObjectUtility.SetStaticEditorFlags(subMeshObj,
+                    var polygon = _mesh.GetPolygon(polygonId);
+                    var material = _mesh.GetMaterial(polygon.MaterialIndex);
+
+                    TextureCache.GetTextureArrayIndex(material, out _, out var textureArrayIndex,
+                        out var textureScale, out var maxMipLevel, out var animFrameCount);
+
+                    // As we always use element 0 and i+1, we skip it in the loop.
+                    // Positions are a triangle fan. i.e. every position after 0 leads back to position 0.
+                    for (var p = 1; p < polygon.PositionIndices.Count - 1; p++)
+                    {
+                        AddPolygonChunkEntry(polygon, chunkData, material, 0, textureArrayIndex, textureScale, maxMipLevel, animFrameCount);
+                        AddPolygonChunkEntry(polygon, chunkData, material, p, textureArrayIndex, textureScale, maxMipLevel, animFrameCount);
+                        AddPolygonChunkEntry(polygon, chunkData, material, p+1, textureArrayIndex, textureScale, maxMipLevel, animFrameCount);
+                    }
+
+                    if (!_debugSpeedUpLoading)
+                    {
+                        // If we have the skips here, we have a smoother loading screen for 20 seconds on loading world. Putting it at the end of each chunk, we have stutter, but save about 40%.
+                        await FrameSkipper.TrySkipToNextFrame();
+                    }
+                }
+
+                var meshFilter = chunkGo.AddComponent<MeshFilter>();
+                var meshRenderer = chunkGo.AddComponent<MeshRenderer>();
+
+                PrepareMeshFilter(meshFilter, chunkData, type);
+                PrepareMeshRenderer(meshRenderer, type);
+                PrepareMeshCollider(chunkGo, meshFilter.sharedMesh, type);
+
+
+#if UNITY_EDITOR
+                // Only needed for Occlusion Culling baking
+                // Don't set transparent meshes as occluders.
+                if (IsTransparentShader(type))
+                {
+                    GameObjectUtility.SetStaticEditorFlags(chunkGo,
                         (StaticEditorFlags)(int.MaxValue & ~(int)StaticEditorFlags.OccluderStatic));
                 }
 #endif
 
-                loading?.AddProgress(LoadingManager.LoadingProgressType.WorldMesh, 1f / numSubMeshes);
 
-                await FrameSkipper.TrySkipToNextFrame();
+                loading?.AddProgress();
             }
         }
 
-        private void PrepareMeshFilter(MeshFilter meshFilter, WorldContainer.SubMeshData subMesh)
+        private void AddPolygonChunkEntry(IPolygon polygon, ChunkData chunkData, IMaterial material, int index,
+            int textureArrayIndex, Vector2 scaleInTextureArray, int maxMipLevel = 16, int animFrameCount = 0)
         {
+            // For every vertexIndex we store a new vertex. (i.e. no reuse of Vector3-vertices for later texture/uv attachment)
+            var positionIndex = polygon.PositionIndices[index];
+            chunkData.Vertices.Add(_mesh.GetPosition(positionIndex).ToUnityVector());
+
+            // This triangle (index where Vector 3 lies inside vertices, points to the newly added vertex (Vector3) as we don't reuse vertices.
+            chunkData.Triangles.Add(chunkData.Vertices.Count - 1);
+
+            var featureIndex = polygon.FeatureIndices[index];
+            var feature = _mesh.GetFeature(featureIndex);
+            var uv = Vector2.Scale(scaleInTextureArray, feature.Texture.ToUnityVector());
+            chunkData.Uvs.Add(new Vector4(uv.x, uv.y, textureArrayIndex, maxMipLevel));
+            chunkData.Normals.Add(feature.Normal.ToUnityVector());
+            chunkData.BakedLightColors.Add(new Color32((byte)(feature.Light >> 16), (byte)(feature.Light >> 8), (byte)feature.Light, (byte)(feature.Light >> 24)));
+
+            // HINT: We set animFrameCount + 1 as internally, Water.shader is leveraging a % animFrameCountValue.
+            // No animation -> % 1 is always 0, which means there is always texture 0 used.
+            // 1 Animation -> % 2 (animFrameCount(1) + 1 = 2) - is switching between both values.
+            if (material.TextureAnimationMapping == AnimationMapping.Linear)
+            {
+                var uvAnimation = material.TextureAnimationMappingDirection.ToUnityVector();
+                chunkData.TextureAnimations.Add(new Vector4(uvAnimation.x, uvAnimation.y, animFrameCount + 1, material.TextureAnimationFps));
+            }
+            else
+            {
+                chunkData.TextureAnimations.Add(new Vector4(0, 0, animFrameCount + 1, material.TextureAnimationFps));
+            }
+        }
+
+        private void PrepareMeshFilter(MeshFilter meshFilter, ChunkData chunk, TextureCache.TextureArrayTypes textureArrayType)
+        {
+            // We need to reverse all data. Otherwise, meshes are visible upside down. It's a difference from rendering ZenGine data in Unity.
+            // Hint: No, Triangles mustn't be reversed. Only applied data on it.
+            chunk.BakedLightColors.Reverse();
+            chunk.Normals.Reverse();
+            chunk.TextureAnimations.Reverse();
+            chunk.Uvs.Reverse();
+            chunk.Vertices.Reverse();
+
             var mesh = new Mesh();
             meshFilter.sharedMesh = mesh;
-            mesh.SetVertices(subMesh.Vertices);
-            mesh.SetTriangles(subMesh.Triangles, 0);
-            mesh.SetUVs(0, subMesh.Uvs);
-            mesh.SetNormals(subMesh.Normals);
-            mesh.SetColors(subMesh.BakedLightColors);
-            if (subMesh.Material.Group == MaterialGroup.Water)
+            mesh.SetVertices(chunk.Vertices);
+            mesh.SetTriangles(chunk.Triangles, 0);
+            mesh.SetUVs(0, chunk.Uvs);
+            mesh.SetNormals(chunk.Normals);
+            mesh.SetColors(chunk.BakedLightColors);
+
+            if (textureArrayType == TextureCache.TextureArrayTypes.Water)
             {
-                mesh.SetUVs(1, subMesh.TextureAnimations);
+                mesh.SetUVs(1, chunk.TextureAnimations);
             }
         }
 
-        private static bool IsTransparentShader(WorldContainer.SubMeshData subMeshData)
+        private void PrepareMeshRenderer(Renderer rend, TextureCache.TextureArrayTypes textureArrayType)
         {
-            if (subMeshData == null)
+            var texture = TextureCache.GetTextureArrayEntry(textureArrayType);
+            var material = GetDefaultMaterial(textureArrayType);
+            material.mainTexture = texture;
+            rend.material = material;
+        }
+
+        /// <summary>
+        /// Check if Collider needs to be added.
+        /// </summary>
+        private void PrepareMeshCollider(GameObject obj, Mesh mesh, TextureCache.TextureArrayTypes textureArrayType)
+        {
+            if (textureArrayType == TextureCache.TextureArrayTypes.Water)
             {
-                return false;
+                // Do not add colliders
+                return;
             }
 
-            return subMeshData.TextureArrayType != TextureCache.TextureArrayTypes.Opaque;
+            PrepareMeshCollider(obj, mesh);
+        }
+
+        private Material GetDefaultMaterial(TextureCache.TextureArrayTypes textureArrayType)
+        {
+            var shader = textureArrayType switch
+            {
+                TextureCache.TextureArrayTypes.Opaque => Constants.ShaderWorldLit,
+                TextureCache.TextureArrayTypes.Transparent => Constants.ShaderLitAlphaToCoverage,
+                TextureCache.TextureArrayTypes.Water => Constants.ShaderWater,
+                _ => throw new ArgumentOutOfRangeException(nameof(textureArrayType), textureArrayType, null)
+            };
+            var material = new Material(shader);
+
+            if (textureArrayType == TextureCache.TextureArrayTypes.Water)
+            {
+                // Manually correct the render queue for alpha test, as Unity doesn't want to do it from the shader's render queue tag.
+                // If we don't set it, the water will sometimes "flicker" above ground or becomes invisible.
+                material.renderQueue = (int)RenderQueue.Transparent;
+            }
+
+            return material;
+        }
+
+        private bool IsTransparentShader(TextureCache.TextureArrayTypes textureArrayType)
+        {
+            return textureArrayType != TextureCache.TextureArrayTypes.Opaque;
         }
     }
 }
