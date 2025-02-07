@@ -202,14 +202,15 @@ namespace GUZ.Core.Manager
         /// </summary>
         public void InitCacheFolder()
         {
-            var folderToCleanUp = BuildFilePathName("");
+            // Extract root directory from "fake" file path.
+            var directory = Directory.GetParent(BuildFilePathName(""))!;
 
             // Create cache folder if it doesn't exist
-            Directory.CreateDirectory(folderToCleanUp);
+            Directory.CreateDirectory(directory.FullName);
 
             // Cleanup existing files and directories (if we renamed some with a new version, these stalled files will be deleted as well)
-            Directory.EnumerateFiles(folderToCleanUp).ForEach(File.Delete);
-            Directory.EnumerateDirectories(folderToCleanUp).ForEach(dir => Directory.Delete(dir, true));
+            Directory.EnumerateFiles(directory.FullName).ForEach(File.Delete);
+            Directory.EnumerateDirectories(directory.FullName).ForEach(dir => Directory.Delete(dir, true));
         }
 
         public async Task SaveGlobalCache(Dictionary<string, Bounds> vobBounds,
@@ -366,7 +367,6 @@ namespace GUZ.Core.Manager
         {
             if (_configIsCompressed)
             {
-                filePath += _gzipExt;
                 using (var fileStream = new FileStream(filePath, FileMode.Create))
                 using (var gzipStream = new GZipStream(fileStream, CompressionLevel.Optimal))
                 using (var writer = new StreamWriter(gzipStream))
