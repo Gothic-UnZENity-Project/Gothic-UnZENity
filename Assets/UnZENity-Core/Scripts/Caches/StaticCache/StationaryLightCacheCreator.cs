@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using GUZ.Core.Extensions;
 using GUZ.Core.Manager;
+using GUZ.Core.Util;
 using MyBox;
 using UnityEngine;
 using ZenKit.Vobs;
@@ -16,10 +18,12 @@ namespace GUZ.Core.Caches.StaticCache
         public List<Bounds> StationaryLightBounds = new();
 
 
-        public void CalculateStationaryLights(List<IVirtualObject> vobs, Vector3 parentWorldPosition = default)
+        public async Task CalculateStationaryLights(List<IVirtualObject> vobs, Vector3 parentWorldPosition = default)
         {
             foreach (var vob in vobs)
             {
+                await FrameSkipper.TrySkipToNextFrame();
+
                 var vobWorldPosition = CalculateWorldPosition(parentWorldPosition, vob.Position.ToUnityVector());
 
                 if (vob.Type == VirtualObjectType.zCVobLight)

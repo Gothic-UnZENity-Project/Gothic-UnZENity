@@ -88,19 +88,19 @@ namespace GUZ.Core.Manager.Scenes
                     var worldChunkCache = new WorldChunkCacheCreator();
                     var stationaryLightCache = new StationaryLightCacheCreator();
 
-                    vobBoundsCache.CalculateVobBounds(world.RootObjects);
+                    await vobBoundsCache.CalculateVobBounds(world.RootObjects);
                     watch.LogAndRestart($"{worldName}: VobBounds calculated.");
 
-                    textureArrayCache.CalculateTextureArrayInformation(world.Mesh);
+                    await textureArrayCache.CalculateTextureArrayInformation(world.Mesh);
                     watch.LogAndRestart($"{worldName}: WorldMesh TextureArray calculated.");
 
-                    textureArrayCache.CalculateTextureArrayInformation(world.RootObjects);
+                    await textureArrayCache.CalculateTextureArrayInformation(world.RootObjects);
                     watch.LogAndRestart($"{worldName}: World VOBs TextureArray calculated.");
 
-                    stationaryLightCache.CalculateStationaryLights(world.RootObjects);
+                    await stationaryLightCache.CalculateStationaryLights(world.RootObjects);
                     watch.LogAndRestart($"{worldName}: Stationary lights calculated.");
 
-                    worldChunkCache.CalculateWorldChunks(world, stationaryLightCache.StationaryLightBounds);
+                    await worldChunkCache.CalculateWorldChunks(world, stationaryLightCache.StationaryLightBounds);
                     watch.LogAndRestart($"{worldName}: World chunks calculated.");
 
                     await GameGlobals.StaticCache.SaveWorldCache(worldName, worldChunkCache.MergedChunksByLights, stationaryLightCache.StationaryLightInfos);
@@ -120,10 +120,10 @@ namespace GUZ.Core.Manager.Scenes
                     // }
                 }
 
-                textureArrayCache.CalculateItemTextureArrayInformation();
+                await textureArrayCache.CalculateItemTextureArrayInformation();
                 watch.LogAndRestart("Global: Texture array for oCItems calculated.");
 
-                vobBoundsCache.CalculateVobtemBounds();
+                await vobBoundsCache.CalculateVobItemBounds();
                 watch.LogAndRestart("VobBounds for oCItems calculated.");
 
                 await GameGlobals.StaticCache.SaveGlobalCache(vobBoundsCache.Bounds, textureArrayCache.TextureArrayInformation);

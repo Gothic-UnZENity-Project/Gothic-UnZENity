@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
+using GUZ.Core.Util;
 using MyBox;
 using UnityEngine;
 using ZenKit;
@@ -21,25 +23,25 @@ namespace GUZ.Core.Caches.StaticCache
 
         private List<Bounds> _stationaryLightBounds;
 
-        public void CalculateWorldChunks(IWorld world, List<Bounds> stationaryLightBounds)
+        public async Task CalculateWorldChunks(IWorld world, List<Bounds> stationaryLightBounds)
         {
             _stationaryLightBounds = stationaryLightBounds;
 
             // Hint: We need to cache BspTree, otherwise looping through it will take ages.
-            BuildBspTree(world.Mesh, (CachedBspTree)world.BspTree.Cache());
+            await BuildBspTree(world.Mesh, (CachedBspTree)world.BspTree.Cache());
         }
 
-        private void BuildBspTree(IMesh worldMesh, CachedBspTree bspTree)
+        private async Task BuildBspTree(IMesh worldMesh, CachedBspTree bspTree)
         {
-            var leafsWithPolygons = CalculatePolygonsToLeafNodes(worldMesh, bspTree, bspTree.LeafNodeIndices);
+            var leafsWithPolygons = await CalculatePolygonsToLeafNodes(worldMesh, bspTree, bspTree.LeafNodeIndices);
 
-            MergeWorldChunksByLightCount(worldMesh, bspTree, leafsWithPolygons);
+            await MergeWorldChunksByLightCount(worldMesh, bspTree, leafsWithPolygons);
         }
 
         /// <summary>
         /// Returns NODE_ID => List{POLYGON_ID}
         /// </summary>
-        private Dictionary<int, List<int>> CalculatePolygonsToLeafNodes(IMesh mesh, CachedBspTree bspTree, List<int> leafNodes)
+        private async Task<Dictionary<int, List<int>>> CalculatePolygonsToLeafNodes(IMesh mesh, CachedBspTree bspTree, List<int> leafNodes)
         {
             var returnData = new Dictionary<int, List<int>>();
 
@@ -48,6 +50,9 @@ namespace GUZ.Core.Caches.StaticCache
 
             foreach (var nodeId in leafNodes)
             {
+                // Hint: If calculation still stutters in framerate, then set this check at polygon-loop level.
+                await FrameSkipper.TrySkipToNextFrame();
+
                 var currentNodePolygonIds = new List<int>();
 
                 var node = bspTree.GetNode(nodeId);
@@ -88,7 +93,7 @@ namespace GUZ.Core.Caches.StaticCache
         ///
         /// Alternatively we would need to create an adjacent method to calculate if Nodes are next to each other.
         /// </summary>
-        private void MergeWorldChunksByLightCount(IMesh mesh, CachedBspTree bspTree, Dictionary<int, List<int>> leafNodesWithPolygons)
+        private async Task MergeWorldChunksByLightCount(IMesh mesh, CachedBspTree bspTree, Dictionary<int, List<int>> leafNodesWithPolygons)
         {
             var finalPolygonsOpaque = new List<WorldChunk>();
             var finalPolygonsTransparent = new List<WorldChunk>();
@@ -111,6 +116,9 @@ namespace GUZ.Core.Caches.StaticCache
 
             foreach (var nodeData in leafNodesWithPolygons)
             {
+                // Hint: If calculation still stutters in framerate, then set this check at polygon-loop level.
+                await FrameSkipper.TrySkipToNextFrame();
+
                 var node = bspTree.GetNode(nodeData.Key);
                 var polygonIds = nodeData.Value;
 

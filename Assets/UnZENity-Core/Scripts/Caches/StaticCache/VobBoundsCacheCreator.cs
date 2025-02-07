@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using GUZ.Core.Creator.Meshes;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
+using GUZ.Core.Util;
 using GUZ.Core.Vm;
 using MyBox;
 using UnityEngine;
@@ -19,10 +21,12 @@ namespace GUZ.Core.Caches.StaticCache
         public Dictionary<string, Bounds> Bounds { get; } = new();
 
 
-        public void CalculateVobBounds(List<IVirtualObject> vobs)
+        public async Task CalculateVobBounds(List<IVirtualObject> vobs)
         {
             foreach (var vob in vobs)
             {
+                await FrameSkipper.TrySkipToNextFrame();
+
                 // We ignore oCItem for now as we will load them all in one afterward.
                 // We also calculate bounds only for objects which are marked to be cached inside Constants.
                 if (vob.Type == VirtualObjectType.oCItem || !Constants.StaticCacheVobTypes.Contains(vob.Type))
@@ -66,27 +70,6 @@ namespace GUZ.Core.Caches.StaticCache
                         break;
                 }
 
-
-                // FIXME - We can easily calculate if the BBOX from ZenKit is applied correctly if we compare it with a GameObject's bbox.
-                // FIXME - Move from Go.MeshFilters.bboxes towards ZenKit.Bboxes 2024-12. Can be safely removed at a later time.
-                // if (boundingBoxNew != default)
-                // {
-                //     // calculate if two Bounds are similar with the first 4 digits after zero.
-                //     if (Math.Abs(boundingBox.center.x - boundingBoxNew.center.x) > 0.1 ||
-                //         Math.Abs(boundingBox.center.y - boundingBoxNew.center.y) > 0.1 ||
-                //         Math.Abs(boundingBox.center.z - boundingBoxNew.center.z) > 0.1 ||
-                //         Math.Abs(boundingBox.size.x - boundingBoxNew.size.x) > 0.1 ||
-                //         Math.Abs(boundingBox.size.y - boundingBoxNew.size.y) > 0.1 ||
-                //         Math.Abs(boundingBox.size.z - boundingBoxNew.size.z) > 0.1)
-                //     {
-                //         Debug.LogError("Bounds aren't matching.");
-                //
-                //         // Call to recalculate via debugger.
-                //         CalculateBoundingBoxNew(vob);
-                //     }
-                // }
-
-
                 Bounds[visualName] = boundingBox;
 
                 CalculateVobBounds(vob.Children);
@@ -97,12 +80,14 @@ namespace GUZ.Core.Caches.StaticCache
         /// As there might be VOBs which aren't in a new game, but when gamers load a save game,
         /// we need to calculate bounds for all! items.
         /// </summary>
-        public void CalculateVobtemBounds()
+        public async Task CalculateVobItemBounds()
         {
             var allItems = GameData.GothicVm.GetInstanceSymbols("C_Item");
 
             foreach (var obj in allItems)
             {
+                await FrameSkipper.TrySkipToNextFrame();
+
                 var item = VmInstanceManager.TryGetItemData(obj.Name);
 
                 if (item == null)
