@@ -145,13 +145,20 @@ namespace GUZ.Core
 
             _gameMusicManager.Init();
             StaticCache.Init(DeveloperConfig);
-            Sky.Init();
             Textures.Init();
             Vobs.Init(this);
 
             GuzBootstrapper.BootGothicUnZeNity();
 
             watch.Log("Phase2 (mostly ZenKit) initialized in");
+        }
+
+        /// <summary>
+        /// We need to load the sky after the world scene is loadde
+        /// </summary>
+        public void InitPhase3()
+        {
+            Sky.Init();
         }
 
         public void LoadScene(string sceneName, string unloadScene = null)

@@ -17,6 +17,7 @@ namespace GUZ.Core.Manager.Scenes
     {
         public void Init()
         {
+            GameManager.I.Sky.Init();
 #pragma warning disable CS4014 // Do not wait. We want to update player movement (VR) and camera view (progress bar) 
             LoadWorldContentAsync();
 #pragma warning restore CS4014
