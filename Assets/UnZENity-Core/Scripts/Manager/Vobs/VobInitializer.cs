@@ -359,6 +359,7 @@ namespace GUZ.Core.Manager.Vobs
             var go = GetPrefab(vob);
 
             go.SetParent(parent);
+            SetPosAndRot(go, vob);
 
             return go;
         }
@@ -714,6 +715,12 @@ namespace GUZ.Core.Manager.Vobs
         {
             var go = GetPrefab(vob);
             var meshName = vob.GetVisualName();
+
+            if (meshName.IsNullOrEmpty())
+            {
+                Debug.LogWarning("VisualName is empty.");
+                return null;
+            }
 
             // MDL
             var mdl = ResourceLoader.TryGetModel(meshName);
