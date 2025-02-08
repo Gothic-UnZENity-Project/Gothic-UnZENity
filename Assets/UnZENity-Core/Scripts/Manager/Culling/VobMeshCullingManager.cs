@@ -312,7 +312,7 @@ namespace GUZ.Core.Manager.Culling
         /// </summary>
         private void AddLocalBounds(IVirtualObject vob, ref Bounds totalBounds)
         {
-            Bounds additionalBounds;
+            Bounds additionalBounds = default;
 
             switch (vob.Type)
             {
@@ -320,7 +320,16 @@ namespace GUZ.Core.Manager.Culling
                     additionalBounds = GetLocalLightBounds((ILight)vob);
                     break;
                 default:
-                    additionalBounds = GetLocalMeshBounds(vob);
+                    switch (vob.Visual.Type)
+                    {
+                        // We don't support Decal and Pfx so far.
+                        case VisualType.Decal:
+                        case VisualType.ParticleEffect:
+                            break;
+                        default:
+                            additionalBounds = GetLocalMeshBounds(vob);
+                            break;
+                    }
                     break;
             }
 
