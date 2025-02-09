@@ -54,6 +54,9 @@ namespace GUZ.VR.Components.VobItem
                 Debug.LogWarning("No SFX for eating/drinking item found. Removing item anyways after 1 second.");
             }
 
+            // Can be set now already. It's sufficient to use this children instead of root.
+            _objectsInDestroyGracePeriod.Add(go);
+
             GameObject rootGo = go;
             var vobLoaderComp = go.GetComponentInParent<VobLoader>();
 
@@ -63,8 +66,7 @@ namespace GUZ.VR.Components.VobItem
                 rootGo = vobLoaderComp.gameObject;
             }
 
-            _objectsInDestroyGracePeriod.Add(go);
-            StartCoroutine(ConsumeObject(go, clip, destroyTime));
+            StartCoroutine(ConsumeObject(rootGo, clip, destroyTime));
         }
 
         private bool TryGetItemToEat(GameObject go, out ItemInstance item)
