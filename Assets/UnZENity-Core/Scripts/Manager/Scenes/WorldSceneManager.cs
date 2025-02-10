@@ -17,8 +17,7 @@ namespace GUZ.Core.Manager.Scenes
     {
         public void Init()
         {
-            GameManager.I.Sky.Init();
-#pragma warning disable CS4014 // Do not wait. We want to update player movement (VR) and camera view (progress bar) 
+#pragma warning disable CS4014 // Do not wait. We want to update player movement (VR) and camera view (progress bar)
             LoadWorldContentAsync();
 #pragma warning restore CS4014
         }
@@ -98,10 +97,11 @@ namespace GUZ.Core.Manager.Scenes
                 // TODO - Does this call add benefits for memory?
                 ResourceLoader.ReleaseLoadedData();
 
+                // TODO - Still needed?
                 worldRoot.SetActive(true);
                 vobRoot.SetActive(true);
 
-                // StationaryLight.InitStationaryLights();
+                GameManager.I.Sky.InitWorld();
 
                 TeleportPlayerToStart();
 
