@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using GUZ.Core.Config;
+using GUZ.Core.Debugging;
 using GUZ.Core.Vm;
 using GUZ.Core.Vob;
 using MyBox;
@@ -94,30 +95,40 @@ namespace GUZ.Core.Manager.Culling
                 return;
             }
 
-            Gizmos.color = new Color(.5f, 0, 0);
+            Gizmos.color = new Color(.9f, 0, 0);
             if (_vobSpheresSmall != null)
             {
-                foreach (var sphere in _vobSpheresSmall)
+                for (var i = 0; i < _vobSpheresSmall.Length; i++)
                 {
-                    Gizmos.DrawWireSphere(sphere.position, sphere.radius);
+                    if (_vobObjectsSmall[i].TryGetComponent(out VobCullingGizmo gizmoComp) && gizmoComp.ActivateGizmo)
+                    {
+                        Gizmos.DrawWireSphere(_vobSpheresSmall[i].position, _vobSpheresSmall[i].radius);
+                    }
                 }
             }
 
-            Gizmos.color = new Color(.4f, 0, 0);
+            Gizmos.color = new Color(.5f, 0, 0);
             if (_vobSpheresMedium != null)
             {
-                foreach (var sphere in _vobSpheresMedium)
+                for (var i = 0; i < _vobSpheresMedium.Length; i++)
                 {
-                    Gizmos.DrawWireSphere(sphere.position, sphere.radius);
+                    if (_vobObjectsMedium[i].TryGetComponent(out VobCullingGizmo gizmoComp) && gizmoComp.ActivateGizmo)
+                    {
+                        Gizmos.DrawWireSphere(_vobSpheresMedium[i].position, _vobSpheresMedium[i].radius);
+                    }
                 }
+
             }
 
-            Gizmos.color = new Color(.3f, 0, 0);
+            Gizmos.color = new Color(.2f, 0, 0);
             if (_vobSpheresLarge != null)
             {
-                foreach (var sphere in _vobSpheresLarge)
+                for (var i = 0; i < _vobSpheresLarge.Length; i++)
                 {
-                    Gizmos.DrawWireSphere(sphere.position, sphere.radius);
+                    if (_vobObjectsLarge[i].TryGetComponent(out VobCullingGizmo gizmoComp) && gizmoComp.ActivateGizmo)
+                    {
+                        Gizmos.DrawWireSphere(_vobSpheresLarge[i].position, _vobSpheresLarge[i].radius);
+                    }
                 }
             }
         }

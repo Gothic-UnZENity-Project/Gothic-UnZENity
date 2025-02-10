@@ -172,6 +172,7 @@ namespace GUZ.Core.Config
         public bool ShowNamesOnHoveredVOBs = true;
 
         [Separator("Debug")]
+        [Tooltip("When activated, add >GUZ.Core.Debugging.VobCullingGizmo< to the GameObject containing >VobLoader<.")]
         public bool ShowVOBMeshCullingGizmos;
         public bool ShowCapsuleOverlapGizmos;
 
