@@ -141,7 +141,7 @@ namespace GUZ.Core.Manager
                 OriginalWorld = originalWorld,
                 SaveGameWorld = saveGameWorld,
 
-                // Only existing in normal world
+                // Only existing in normal world (not in save game)
                 Mesh = (Mesh)originalWorld.Mesh, // Do not cache or memory consumption will be way too high
                 BspTree = (CachedBspTree)originalWorld.BspTree.Cache(),
 

@@ -3,7 +3,7 @@ using GUZ.Core.Vm;
 using UnityEngine;
 using ZenKit.Daedalus;
 
-namespace GUZ.Core.Creator.Meshes.V2.Builder
+namespace GUZ.Core.Creator.Meshes.Builder
 {
     public class NpcWeaponMeshBuilder : AbstractMeshBuilder
     {

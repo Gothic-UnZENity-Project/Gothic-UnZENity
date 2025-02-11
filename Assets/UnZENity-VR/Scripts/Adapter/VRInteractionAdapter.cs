@@ -140,20 +140,6 @@ namespace GUZ.VR.Adapter
             HVRInputModule.Instance.UICanvases = allCanvases.ToList();
         }
 
-        // FIXME - Still needed? Test with VR teleportation in game
-        public void SetTeleportationArea(GameObject teleportationGo)
-        {
-            /*
-             * We need to set the Teleportation area after adding mesh to VOBs. Therefore we call it via event after world was loaded.
-             */
-            // var interactionManager = GameGlobals.Scene.InteractionManager.GetComponent<XRInteractionManager>();
-            // var teleportationArea = teleportationGo.AddComponent<TeleportationArea>();
-            // if (interactionManager != null)
-            // {
-            //     teleportationArea.interactionManager = interactionManager;
-            // }
-        }
-
         public void IntroduceChapter(string chapter, string text, string texture, string wav, int time)
         {
             var generalScene = SceneManager.GetSceneByName(Constants.ScenePlayer);

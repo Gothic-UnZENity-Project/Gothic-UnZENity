@@ -75,8 +75,13 @@ namespace GUZ.Core.Manager
             SetShaderProperties();
         }
 
-        public void Init()
+        public void InitWorld()
         {
+            // Remove old world events if necessary.
+            GlobalEventDispatcher.GameTimeSecondChangeCallback.RemoveListener(Interpolate);
+            GlobalEventDispatcher.GameTimeHourChangeCallback.RemoveListener(UpdateRainTime);
+
+            // And now re-add the events.
             GlobalEventDispatcher.GameTimeSecondChangeCallback.AddListener(Interpolate);
             GlobalEventDispatcher.GameTimeHourChangeCallback.AddListener(UpdateRainTime);
 

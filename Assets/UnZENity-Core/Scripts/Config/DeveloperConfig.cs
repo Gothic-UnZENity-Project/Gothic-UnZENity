@@ -132,7 +132,9 @@ namespace GUZ.Core.Config
         [ConditionalField(useMethod: true, method: nameof(SaveSlotFieldCondition), inverse: true)]
         public string SpawnAtWaypoint = string.Empty;
 
-
+        [Separator("Debug")]
+        [Tooltip("Ignore frame skipping during loading.")]
+        public bool SpeedUpLoading;
 
         /**
          * ##########
@@ -170,7 +172,7 @@ namespace GUZ.Core.Config
         public bool ShowNamesOnHoveredVOBs = true;
 
         [Separator("Debug")]
-        [Tooltip("For debugging purposes only.")]
+        [Tooltip("When activated, add >GUZ.Core.Debugging.VobCullingGizmo< to the GameObject containing >VobLoader<.")]
         public bool ShowVOBMeshCullingGizmos;
         public bool ShowCapsuleOverlapGizmos;
 
@@ -276,6 +278,10 @@ namespace GUZ.Core.Config
         [Separator("Meshes/Visuals")]
         public bool EnableWorldMesh = true;
         public bool EnableBarrierVisual = true;
+
+        [Separator("StaticCache")]
+        public bool CompressStaticCacheFiles = true;
+        public bool AlwaysRecreateCache = false;
 
         [Separator("WIP - Not production ready", true)]
         public bool EnableDecalVisuals;

@@ -13,14 +13,15 @@ namespace GUZ.Core.Manager
         public enum LoadingProgressType
         {
             WorldMesh,
-            VOb,
+            VOB,
             Npc
         }
 
         private GameObject _progressBar;
-
         private readonly Dictionary<LoadingProgressType, float> _progressByType = new();
 
+        private LoadingProgressType _currentType;
+        private float _currentAmountPerUpdate;
         
         public void Init()
         {
@@ -84,6 +85,23 @@ namespace GUZ.Core.Manager
 
             // Update the loading bar with the overall progress
             _progressBar.GetComponent<Image>().fillAmount = overallProgress;
+        }
+
+        /// <summary>
+        /// We only load one type of game data at once. We can therefore set it initially and call an AddProgress() without parameters later.
+        /// </summary>
+        public void SetProgressStep(LoadingProgressType type, float amountPerUpdate)
+        {
+            _currentType = type;
+            _currentAmountPerUpdate = amountPerUpdate;
+        }
+
+        /// <summary>
+        /// Add a single progress entry based on SetProgressStep() data.
+        /// </summary>
+        public void AddProgress()
+        {
+            AddProgress(_currentType, _currentAmountPerUpdate);
         }
 
         public void AddProgress(LoadingProgressType progressType, float progress)

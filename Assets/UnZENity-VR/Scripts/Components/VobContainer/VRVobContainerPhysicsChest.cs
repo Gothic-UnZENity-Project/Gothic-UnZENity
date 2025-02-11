@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using GUZ.Core;
 using GUZ.Core.Creator;
-using GUZ.Core.Creator.Meshes.V2;
+using GUZ.Core.Creator.Meshes;
 using GUZ.Core.Extensions;
 using GUZ.Core.Properties;
 using GUZ.Core.Vm;

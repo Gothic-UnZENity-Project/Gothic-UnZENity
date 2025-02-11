@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using ZenKit.Vobs;
 using Material = UnityEngine.Material;
 
 namespace GUZ.Core.Globals
@@ -83,11 +84,30 @@ namespace GUZ.Core.Globals
         public const string SceneBootstrap = "Bootstrap";
         public const string ScenePlayer = "Player";
         public const string SceneGameVersion = "GameVersion";
+        public const string ScenePreCaching = "PreCaching";
         public const string SceneLogo = "Logo";
         public const string SceneMainMenu = "MainMenu";
         public const string SceneLoading = "Loading";
         public const string SceneLab = "Lab";
 
+
+        // Hint: We will never be able to cache lights as their radius is always dynamic.
+        public static readonly VirtualObjectType[] StaticCacheVobTypes =
+        {
+            VirtualObjectType.oCItem,
+            VirtualObjectType.oCMOB,
+            VirtualObjectType.oCMobBed,
+            VirtualObjectType.oCMobContainer,
+            VirtualObjectType.oCMobDoor,
+            VirtualObjectType.oCMobFire,
+            VirtualObjectType.oCMobInter,
+            VirtualObjectType.oCMobLadder,
+            VirtualObjectType.oCMobSwitch,
+            VirtualObjectType.oCMobWheel,
+            VirtualObjectType.zCVob,
+            VirtualObjectType.zCVobAnimate,
+            VirtualObjectType.zCVobStair
+        };
 
         /*
          * ### Layers
@@ -145,6 +165,15 @@ namespace GUZ.Core.Globals
 
         public const string DaedalusHeroInstanceName = "PC_HERO"; // TODO - can be read from .ini file.
 
+        // Alter this value to enforce game to recreate cache during next start.
+        public const string StaticCacheVersion = "1";
+
+        /// <summary>
+        /// Used during pre-caching to calculate world chunks to merge.
+        /// We implemented a logic to overcome 9 lights on a mesh - limitation by URP forward rendering.
+        /// If you change this value, you also need to alter it inside Shader: StationaryLighting.hlsl --> MAX_AFFECTING_STATIONARY_LIGHTS
+        /// </summary>
+        public const int MaxLightsPerWorldChunk = 16;
 
         public static class DaedalusConst
         {

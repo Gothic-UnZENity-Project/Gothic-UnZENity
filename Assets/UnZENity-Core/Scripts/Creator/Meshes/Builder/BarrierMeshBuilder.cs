@@ -3,14 +3,13 @@ using System.Collections.Generic;
 using GUZ.Core.Data.Container;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
-using GUZ.Core.World;
 using UnityEngine;
 using ZenKit;
 using Material = UnityEngine.Material;
 using Mesh = UnityEngine.Mesh;
 using Vector3 = System.Numerics.Vector3;
 
-namespace GUZ.Core.Creator.Meshes.V2.Builder
+namespace GUZ.Core.Creator.Meshes.Builder
 {
     public class BarrierMeshBuilder : AbstractMeshBuilder
     {

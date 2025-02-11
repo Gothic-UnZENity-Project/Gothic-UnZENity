@@ -5,6 +5,7 @@ using GUZ.Core.Config;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
 using GUZ.Core.Manager.Culling;
+using GUZ.Core.Manager.Vobs;
 using GUZ.Core.Util;
 using GUZ.Core.Vm;
 using GUZ.Core.World;
@@ -43,6 +44,7 @@ namespace GUZ.Lab
         public ConfigManager Config => _configManager;
         public SaveGameManager SaveGame => _save;
         public LoadingManager Loading => null;
+        public StaticCacheManager StaticCache => null;
         public PlayerManager Player => null;
         public SkyManager Sky => null;
         public GameTime Time => null;
@@ -50,6 +52,7 @@ namespace GUZ.Lab
         public TextureManager Textures => _textureManager;
         public FontManager Font => _fontManager;
         public StationaryLightsManager Lights => null;
+        public VobManager Vobs => null;
         public VobMeshCullingManager VobMeshCulling => null;
         public NpcMeshCullingManager NpcMeshCulling => null;
         public VobSoundCullingManager SoundCulling => null;
@@ -99,8 +102,9 @@ namespace GUZ.Lab
 
             _gameMusicManager.Init();
             _npcRoutineManager.Init();
-            _videoManager.Init();
             _textureManager.Init();
+
+            _videoManager.InitVideos();
             _save.LoadNewGame();
         }
 

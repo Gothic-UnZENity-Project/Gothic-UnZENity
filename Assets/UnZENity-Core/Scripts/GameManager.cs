@@ -6,6 +6,7 @@ using GUZ.Core.Globals;
 using GUZ.Core.Manager;
 using GUZ.Core.Manager.Culling;
 using GUZ.Core.Manager.Scenes;
+using GUZ.Core.Manager.Vobs;
 using GUZ.Core.Util;
 using GUZ.Core.World;
 using MyBox;
@@ -32,6 +33,7 @@ namespace GUZ.Core
         public SaveGameManager SaveGame { get; private set; }
 
         public LoadingManager Loading { get; private set; }
+        public StaticCacheManager StaticCache { get; private set; }
 
         public PlayerManager Player { get; private set; }
         public SkyManager Sky { get; private set; }
@@ -50,10 +52,9 @@ namespace GUZ.Core
 
         public StationaryLightsManager Lights { get; private set; }
 
+        public VobManager Vobs { get; private set; }
         public VobMeshCullingManager VobMeshCulling { get; private set; }
-
         public NpcMeshCullingManager NpcMeshCulling { get; private set; }
-
         public VobSoundCullingManager SoundCulling { get; private set; }
         
 
@@ -79,6 +80,8 @@ namespace GUZ.Core
             Textures = GetComponent<TextureManager>();
             Font = GetComponent<FontManager>();
             Loading = new LoadingManager();
+            StaticCache = new StaticCacheManager();
+            Vobs = new VobManager();
             VobMeshCulling = new VobMeshCullingManager(DeveloperConfig, this);
             NpcMeshCulling = new NpcMeshCullingManager(DeveloperConfig);
             SoundCulling = new VobSoundCullingManager(DeveloperConfig);
@@ -115,6 +118,7 @@ namespace GUZ.Core
             _fileLoggingHandler.Init(Config.Root);
             _frameSkipper.Init();
             Loading.Init();
+            Lights.Init();
             VobMeshCulling.Init();
             NpcMeshCulling.Init();
             SoundCulling.Init();
@@ -140,9 +144,9 @@ namespace GUZ.Core
             ResourceLoader.Init(gothicRootPath);
 
             _gameMusicManager.Init();
-            Sky.Init();
+            StaticCache.Init(DeveloperConfig);
             Textures.Init();
-            Video.Init();
+            Vobs.Init(this);
 
             GuzBootstrapper.BootGothicUnZeNity();
 

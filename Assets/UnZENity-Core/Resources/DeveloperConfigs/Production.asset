@@ -29,6 +29,7 @@ MonoBehaviour:
   SpawnVOBTypes:
     Value: 
   EnableVOBMeshCulling: 1
+  LazyLoadVobs: 1
   SmallVOBMeshCullingGroup:
     MaximumObjectSize: 0.2
     CullingDistance: 50
@@ -62,5 +63,6 @@ MonoBehaviour:
   TimeSpeedMultiplier: 1
   EnableWorldMesh: 1
   EnableBarrierVisual: 1
+  CompressStaticCacheFiles: 1
   EnableDecalVisuals: 0
   EnableParticleEffects: 0

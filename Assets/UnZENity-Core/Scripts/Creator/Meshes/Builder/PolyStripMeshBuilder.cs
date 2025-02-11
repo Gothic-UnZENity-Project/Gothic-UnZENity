@@ -3,7 +3,7 @@ using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using UnityEngine;
 
-namespace GUZ.Core.Creator.Meshes.V2.Builder
+namespace GUZ.Core.Creator.Meshes.Builder
 {
     public class PolyStripMeshBuilder : AbstractMeshBuilder
     {

@@ -1,5 +1,5 @@
 using GUZ.Core.Config;
-using GUZ.Core.Creator.Meshes.V2;
+using GUZ.Core.Creator.Meshes;
 using GUZ.Core.Extensions;
 using UnityEngine;
 using Random = UnityEngine.Random;

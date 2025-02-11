@@ -3,7 +3,13 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using GUZ.Core.Config;
+using GUZ.Core.Debugging;
+using GUZ.Core.Vm;
+using GUZ.Core.Vob;
+using MyBox;
 using UnityEngine;
+using ZenKit;
+using ZenKit.Vobs;
 
 namespace GUZ.Core.Manager.Culling
 {
@@ -89,30 +95,40 @@ namespace GUZ.Core.Manager.Culling
                 return;
             }
 
-            Gizmos.color = new Color(.5f, 0, 0);
+            Gizmos.color = new Color(.9f, 0, 0);
             if (_vobSpheresSmall != null)
             {
-                foreach (var sphere in _vobSpheresSmall)
+                for (var i = 0; i < _vobSpheresSmall.Length; i++)
                 {
-                    Gizmos.DrawWireSphere(sphere.position, sphere.radius);
+                    if (_vobObjectsSmall[i].TryGetComponent(out VobCullingGizmo gizmoComp) && gizmoComp.ActivateGizmo)
+                    {
+                        Gizmos.DrawWireSphere(_vobSpheresSmall[i].position, _vobSpheresSmall[i].radius);
+                    }
                 }
             }
 
-            Gizmos.color = new Color(.4f, 0, 0);
+            Gizmos.color = new Color(.5f, 0, 0);
             if (_vobSpheresMedium != null)
             {
-                foreach (var sphere in _vobSpheresMedium)
+                for (var i = 0; i < _vobSpheresMedium.Length; i++)
                 {
-                    Gizmos.DrawWireSphere(sphere.position, sphere.radius);
+                    if (_vobObjectsMedium[i].TryGetComponent(out VobCullingGizmo gizmoComp) && gizmoComp.ActivateGizmo)
+                    {
+                        Gizmos.DrawWireSphere(_vobSpheresMedium[i].position, _vobSpheresMedium[i].radius);
+                    }
                 }
+
             }
 
-            Gizmos.color = new Color(.3f, 0, 0);
+            Gizmos.color = new Color(.2f, 0, 0);
             if (_vobSpheresLarge != null)
             {
-                foreach (var sphere in _vobSpheresLarge)
+                for (var i = 0; i < _vobSpheresLarge.Length; i++)
                 {
-                    Gizmos.DrawWireSphere(sphere.position, sphere.radius);
+                    if (_vobObjectsLarge[i].TryGetComponent(out VobCullingGizmo gizmoComp) && gizmoComp.ActivateGizmo)
+                    {
+                        Gizmos.DrawWireSphere(_vobSpheresLarge[i].position, _vobSpheresLarge[i].radius);
+                    }
                 }
             }
         }
@@ -172,13 +188,23 @@ namespace GUZ.Core.Manager.Culling
                 return;
             }
 
+            var go = vobObjects[evt.index];
+
             switch (evt.currentDistance)
             {
                 case 0: // grace period band - ignore FC and OC, plainly enable the vob!
                     vobObjects[evt.index].SetActive(true);
+                    GameGlobals.Vobs.InitVob(go);
                     break;
                 default:
-                    vobObjects[evt.index].SetActive(evt.hasBecomeVisible || (evt.isVisible && !evt.hasBecomeInvisible));
+                    var setActive = evt.hasBecomeVisible || (evt.isVisible && !evt.hasBecomeInvisible);
+                    vobObjects[evt.index].SetActive(setActive);
+
+                    if (setActive)
+                    {
+                        GameGlobals.Vobs.InitVob(go);
+                    }
+
                     break;
             }
         }
@@ -192,6 +218,8 @@ namespace GUZ.Core.Manager.Culling
             {
                 return;
             }
+
+            // FIXME - As the VOBs aren't loaded yet, we need to fetch the LocalBounds from a cache which needs to be created before the game starts.
 
             var smallDim = _featureSmallCullingGroup.MaximumObjectSize;
             var mediumDim = _featureMediumCullingGroup.MaximumObjectSize;
@@ -211,8 +239,8 @@ namespace GUZ.Core.Manager.Culling
                 var bounds = GetLocalBounds(obj);
                 if (!bounds.HasValue)
                 {
-                    Debug.LogError($"Couldn't find mesh for >{obj}< to be used for CullingGroup. Skipping...");
-
+                    // e.g. ITMICELLO which has no mesh and therefore no cached Bounds.
+                    // Debug.LogError($"Couldn't find mesh for >{obj}< to be used for CullingGroup. Skipping...");
                     continue;
                 }
 
@@ -258,7 +286,7 @@ namespace GUZ.Core.Manager.Culling
             var bboxSize = bounds.size;
             var worldCenter = go.transform.TransformPoint(bounds.center);
 
-            // Get biggest dim for calculation of object size group.
+            // Get the biggest dimension for calculation of object size group.
             var maxDimension = Mathf.Max(bboxSize.x, bboxSize.y, bboxSize.z);
             var sphere = new BoundingSphere(worldCenter, maxDimension / 2); // Radius is half the size.
 
@@ -266,34 +294,132 @@ namespace GUZ.Core.Manager.Culling
         }
 
         /// <summary>
+        /// Fetch Mesh Bounds which are in local space. We will later "move" the bbox to the current world space.
+        ///
         /// TODO If performance allows it, we could also look dynamically for all the existing meshes inside GO
         /// TODO and look for maximum value for largest mesh. But it should be fine for now.
         /// </summary>
         private Bounds? GetLocalBounds(GameObject go)
         {
-            try
+            go.TryGetComponent(out VobLoader loaderComp);
+
+            if (loaderComp == null)
             {
-                if (go.TryGetComponent<ParticleSystemRenderer>(out var particleRenderer))
-                {
-                    return particleRenderer.bounds;
-                }
-
-                if (go.TryGetComponent(out Light light))
-                {
-                    return new Bounds(Vector3.zero, Vector3.one * light.range * 2);
-                }
-
-                if (go.TryGetComponent(out StationaryLight stationaryLight))
-                {
-                    return new Bounds(Vector3.zero, Vector3.one * stationaryLight.Range * 2);
-                }
-
-                return go.GetComponentInChildren<MeshFilter>().sharedMesh.bounds;
-            }
-            catch (Exception e)
-            {
-                Debug.LogError(e);
+                Debug.LogError($"Couldn't find VobLoader for >{go}< to be used for CullingGroup. Skipping...");
                 return null;
+            }
+
+            var vob = loaderComp.Vob;
+
+            var totalBounds = new Bounds();
+            AddLocalBounds(vob, ref totalBounds);
+
+            return totalBounds == default ? null : totalBounds;
+        }
+
+        /// <summary>
+        /// VOBs can contain child-VOBs which might be Particles, Lights, etc.
+        /// We therefore need to sum up the overall Bounds to ensure Culling kicks in correctly.
+        /// </summary>
+        private void AddLocalBounds(IVirtualObject vob, ref Bounds totalBounds)
+        {
+            Bounds additionalBounds = default;
+
+            switch (vob.Type)
+            {
+                case VirtualObjectType.zCVobLight:
+                    additionalBounds = GetLocalLightBounds((ILight)vob);
+                    break;
+                default:
+                    switch (vob.Visual.Type)
+                    {
+                        // We don't support Decal and Pfx so far.
+                        case VisualType.Decal:
+                        case VisualType.ParticleEffect:
+                            break;
+                        default:
+                            additionalBounds = GetLocalMeshBounds(vob);
+                            break;
+                    }
+                    break;
+            }
+
+            totalBounds.Encapsulate(additionalBounds);
+
+            foreach (var childVob in vob.Children)
+            {
+                AddLocalBounds(childVob, ref totalBounds);
+            }
+
+            // Fire VOBs children are inside a .zen file
+            if (vob.Type == VirtualObjectType.oCMobFire)
+            {
+                var fireWorld = ResourceLoader.TryGetWorld(((IFire)vob).VobTree, GameContext.GameVersionAdapter.Version, true);
+
+                // e.g. "NC_FIREPLACE_STONE" has no VobTree. But could we potentially render it as mesh?
+                if (fireWorld == null)
+                {
+                    return;
+                }
+
+                foreach (var childFireVob in fireWorld!.RootObjects)
+                {
+                    AddLocalBounds(childFireVob, ref totalBounds);
+                }
+            }
+        }
+
+        private Bounds GetLocalLightBounds(ILight light)
+        {
+            // FIXME - #1 - Lights shine for the whole mesh they belong to again. :-/
+            // FIXME - #2 - When inside a light range, turning to our back will disable the light.
+            return new Bounds(Vector3.zero, Vector3.one * light.Range / 100 * 2);
+        }
+
+        // TODO - Not yet implemented.
+        private Bounds? GetLocalParticleBounds(EventParticleEffect particle)
+        {
+            return null;
+        }
+
+        private Bounds GetLocalMeshBounds(IVirtualObject vob)
+        {
+            string meshName;
+            switch (vob.Type)
+            {
+                case VirtualObjectType.oCItem:
+                    var item = VmInstanceManager.TryGetItemData(vob.Name);
+                    meshName = item?.Visual;
+
+                    // e.g. ITMICELLO has no mesh
+                    if (meshName == null)
+                    {
+                        return default;
+                    }
+
+                    break;
+                default:
+                    meshName = vob.Visual?.Name ?? vob.Name;
+                    break;
+            }
+
+            if (meshName.IsNullOrEmpty())
+            {
+                return default;
+            }
+
+            // FIXME - More magic needed. For objects with Mesh, we can store it. But for e.g. Lights, we need to fetch it from the actual
+            // FIXME - VOB.data.radius etc. --> aka more IF-options on how to calculate local bounds
+            if (GameGlobals.StaticCache.LoadedVobsBounds.TryGetValue(meshName, out var bounds))
+            {
+                return bounds;
+            }
+            else
+            {
+                // We can carefully disable this log as some elements aren't cached.
+                // e.g. when there is no texture like for OC_DECORATE_V4.3DS
+                Debug.LogError($"Couldn't find mesh bounds information from StaticCache for >{meshName}<.");
+                return default;
             }
         }
 

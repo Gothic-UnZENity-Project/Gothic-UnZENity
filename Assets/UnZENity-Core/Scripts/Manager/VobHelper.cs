@@ -1,5 +1,5 @@
+using System;
 using System.Linq;
-using GUZ.Core.Creator;
 using GUZ.Core.Creator.Sounds;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
@@ -11,6 +11,7 @@ using ZenKit.Vobs;
 
 namespace GUZ.Core.Manager
 {
+    [Obsolete("Use VobManager instead.")]
     public static class VobHelper
     {
         private const float _lookupDistance = 10f; // meter
@@ -19,6 +20,8 @@ namespace GUZ.Core.Manager
         [CanBeNull]
         public static VobProperties GetFreeInteractableWithin10M(Vector3 position, string visualScheme)
         {
+            // FIXME - Needs to be altered to use ZenKit objects instead of Unity ones.
+            //         This ensures we can always use the data, even when objects are lazy loaded and not yet existing.
             return GameData.VobsInteractable
                 .Where(i => Vector3.Distance(i.transform.position, position) < _lookupDistance)
                 .Where(i => i.VisualScheme.EqualsIgnoreCase(visualScheme))
@@ -37,7 +40,7 @@ namespace GUZ.Core.Manager
             var activeTypes = config.Dev.SpawnVOBTypes.Value;
             if (config.Dev.EnableVOBs && (activeTypes.IsEmpty() || activeTypes.Contains(VirtualObjectType.oCItem)))
             {
-                VobCreator.CreateItemMesh(itemInstance, spawnpoint, null);
+                GameGlobals.Vobs.CreateItemMesh(itemInstance, spawnpoint);
             }
         }
 

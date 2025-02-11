@@ -1,25 +1,24 @@
 using System.Linq;
 using System.Threading.Tasks;
-using GUZ.Core.Creator.Meshes.V2.Builder;
-using GUZ.Core.Data.Container;
+using GUZ.Core.Creator.Meshes.Builder;
 using GUZ.Core.Extensions;
 using GUZ.Core.Manager;
 using GUZ.Core.Vm;
-using GUZ.Core.World;
 using UnityEngine;
 using ZenKit;
 using ZenKit.Daedalus;
 using ZenKit.Vobs;
 
-namespace GUZ.Core.Creator.Meshes.V2
+namespace GUZ.Core.Creator.Meshes
 {
     public static class MeshFactory
     {
-        public static async Task CreateWorld(WorldContainer world, LoadingManager loading, GameObject rootGo)
+        public static async Task CreateWorld(StaticCacheManager.WorldChunkContainer worldChunks, IMesh mesh,
+            LoadingManager loading, GameObject rootGo)
         {
             var worldBuilder = new WorldMeshBuilder();
             worldBuilder.SetGameObject(rootGo);
-            worldBuilder.SetWorldData(world);
+            worldBuilder.SetWorldData(worldChunks, mesh);
 
             await worldBuilder.BuildAsync(loading);
         }
@@ -71,9 +70,9 @@ namespace GUZ.Core.Creator.Meshes.V2
             return npcWeaponBuilder.Build();
         }
 
-        public static GameObject CreateVob(string objectName, IMultiResolutionMesh mrm, Vector3 position,
-            Quaternion rotation, bool withCollider, GameObject parent = null, GameObject rootGo = null,
-            bool useTextureArray = true)
+        public static GameObject CreateVob(string objectName, IMultiResolutionMesh mrm,
+            Vector3 position = default, Quaternion rotation = default, bool withCollider = true,
+            GameObject parent = null, GameObject rootGo = null, bool useTextureArray = true)
         {
             if (!HasTextures(mrm))
             {
@@ -96,7 +95,8 @@ namespace GUZ.Core.Creator.Meshes.V2
             return vobBuilder.Build();
         }
 
-        public static GameObject CreateVob(string objectName, IModel mdl, Vector3 position, Quaternion rotation,
+        public static GameObject CreateVob(string objectName, IModel mdl,
+            Vector3 position = default, Quaternion rotation = default,
             GameObject parent = null, GameObject rootGo = null, bool useTextureArray = true)
         {
             if (!HasMeshes(mdl.Mesh))
@@ -115,8 +115,9 @@ namespace GUZ.Core.Creator.Meshes.V2
             return vobBuilder.Build();
         }
 
-        public static GameObject CreateVob(string objectName, IMorphMesh mmb, Vector3 position, Quaternion rotation,
-            GameObject parent = null, GameObject rootGo = null)
+        public static GameObject CreateVob(string objectName, IMorphMesh mmb,
+            Vector3 position = default, Quaternion rotation = default,
+            GameObject parent = null, GameObject rootGo = null, bool useTextureArray = false)
         {
             var vobBuilder = new VobMeshBuilder();
             vobBuilder.SetRootPosAndRot(position, rotation);
@@ -124,14 +125,14 @@ namespace GUZ.Core.Creator.Meshes.V2
             vobBuilder.SetParent(parent);
             vobBuilder.SetMeshName(objectName);
             vobBuilder.SetMmb(mmb);
-            vobBuilder.SetUseTextureArray(true);
+            vobBuilder.SetUseTextureArray(useTextureArray);
 
             return vobBuilder.Build();
         }
 
         public static GameObject CreateVob(string objectName, IModelMesh mdm, IModelHierarchy mdh,
-            Vector3 position, Quaternion rotation, GameObject parent = null, GameObject rootGo = null,
-            bool useTextureArray = true)
+            Vector3 position = default, Quaternion rotation = default,
+            GameObject parent = null, GameObject rootGo = null, bool useTextureArray = true)
         {
             if (!HasMeshes(mdm))
             {
@@ -169,12 +170,23 @@ namespace GUZ.Core.Creator.Meshes.V2
             return !(noMeshTextures && noAttachmentTextures);
         }
 
-        public static GameObject CreateVobDecal(IVirtualObject vob, VisualDecal decal, GameObject parent)
+        public static GameObject CreateVobPfx(IVirtualObject vob, Vector3 position = default, Quaternion rotation = default, GameObject parent = null)
+        {
+            var vobPfxBuilder = new VobPfxMeshBuilder();
+            vobPfxBuilder.SetGameObject(null, vob.Visual!.Name);
+            vobPfxBuilder.SetParent(parent);
+            vobPfxBuilder.SetRootPosAndRot(position, rotation);
+            vobPfxBuilder.SetPfxData(vob);
+
+            return vobPfxBuilder.Build();
+        }
+
+        public static GameObject CreateVobDecal(IVirtualObject vob, VisualDecal decal, Vector3 position = default, Quaternion rotation = default, GameObject parent = null)
         {
             var vobDecalBuilder = new VobDecalMeshBuilder();
             vobDecalBuilder.SetGameObject(null, vob.Name);
             vobDecalBuilder.SetParent(parent);
-            vobDecalBuilder.SetRootPosAndRot(vob.Position.ToUnityVector(), vob.Rotation.ToUnityQuaternion());
+            vobDecalBuilder.SetRootPosAndRot(position, rotation);
             vobDecalBuilder.SetDecalData(vob, decal);
 
             return vobDecalBuilder.Build();

@@ -12,11 +12,9 @@ using UnityEngine.Rendering;
 using ZenKit;
 using Material = UnityEngine.Material;
 using Matrix4x4 = System.Numerics.Matrix4x4;
-using TextureFormat = UnityEngine.TextureFormat;
 using Mesh = UnityEngine.Mesh;
-using Texture = UnityEngine.Texture;
 
-namespace GUZ.Core.Creator.Meshes.V2.Builder
+namespace GUZ.Core.Creator.Meshes.Builder
 {
     public abstract class AbstractMeshBuilder
     {
@@ -179,12 +177,7 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
             meshRenderer.material = Constants.LoadingMaterial;
             PrepareMeshFilter(meshFilter, Mrm, meshRenderer, 0);
 
-            // If we use TextureArray, we apply textures later.
-            // But if we want to create the mrm based texture now, we do it now. ;-)
-            if (!UseTextureArray)
-            {
-                PrepareMeshRenderer(meshRenderer, Mrm);
-            }
+            PrepareMeshRenderer(meshRenderer, Mrm);
 
             if (HasMeshCollider)
             {
@@ -264,16 +257,12 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
                 var meshFilter = meshObj.AddComponent<MeshFilter>();
                 var meshRenderer = meshObj.AddComponent<SkinnedMeshRenderer>();
 
-                // FIXME - hard coded as it's the right value for BSFire. Need to be more dynamic by using element which has parent=-1.
+                // TODO - hard coded as it's the right value for BSFire. Need to be more dynamic by using element which has parent=-1.
                 meshRenderer.rootBone = nodeObjects[0].transform;
                 meshRenderer.material = Constants.LoadingMaterial;
 
                 PrepareMeshFilter(meshFilter, softSkinMesh, meshRenderer, meshCounter);
-                
-                if (!UseTextureArray)
-                {
-                    PrepareMeshRenderer(meshRenderer, mesh);
-                }
+                PrepareMeshRenderer(meshRenderer, mesh);
 
                 meshRenderer.sharedMesh = meshFilter.sharedMesh;
 
@@ -293,12 +282,7 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
                 meshRenderer.material = Constants.LoadingMaterial;
 
                 PrepareMeshFilter(meshFilter, subMesh.Value, meshRenderer, meshCounter);
-
-                if (!UseTextureArray)
-                {
-                    PrepareMeshRenderer(meshRenderer, subMesh.Value);
-                }
-
+                PrepareMeshRenderer(meshRenderer, subMesh.Value);
                 PrepareMeshCollider(meshObj, meshFilter.sharedMesh, subMesh.Value.Materials);
 
                 // As Attachments are also just meshes, we need to increase the mesh counter for Filter's meshCache index.
@@ -342,7 +326,7 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
                                             "Please provide a mesh name via SetMeshName() which is used for caching of mesh data at runtime.");
             }
         }
-        
+
         protected void PrepareMeshRenderer(Renderer rend, IMultiResolutionMesh mrmData)
         {
             if (null == mrmData)
@@ -371,7 +355,7 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
                     return;
                 }
 
-                Texture texture = GetTexture(materialData.Texture);
+                var texture = UseTextureArray ? TextureCache.GetTextureArrayEntry(materialData.Texture) : GetTexture(materialData.Texture);
 
                 // TODO - G1: Skeleton warrior's second texture doesn't exist. No alternatives needed/given.
                 // TODO - Therefore consider removing this warning in the future.
@@ -381,7 +365,7 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
                     continue;
                 }
 
-                var material = GetDefaultMaterial(texture && ((Texture2D)texture).format == TextureFormat.RGBA32);
+                var material = GetDefaultMaterial();
 
                 material.mainTexture = texture;
                 rend.material = material;
@@ -420,21 +404,10 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
             if (MultiTypeCache.Meshes.TryGetValue($"{MeshName}_{meshIndex}", out Mesh mesh))
             {
                 meshFilter.sharedMesh = mesh;
-                if (UseTextureArray)
-                {
-                    if (TextureCache.VobMeshesForTextureArray.ContainsKey(mesh))
-                    {
-                        TextureCache.VobMeshesForTextureArray[mesh].Renderers.Add(meshRenderer);
-                    }
-                    else
-                    {
-                        Debug.LogWarning($"[{GetType()}] Mesh {mesh.name} is unexpectedly not int the {nameof(TextureCache.VobMeshesForTextureArray)} array.");
-                    }
-                }
                 return;
             }
 
-            mesh = new Mesh() { name = MeshName };
+            mesh = new Mesh { name = MeshName };
             meshFilter.sharedMesh = mesh;
 
             if (null == mrmData)
@@ -519,9 +492,6 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
 
             CreateMorphMeshEnd(preparedVertices);
 
-            // TODO - Why adding a null-renderer if !UseTextureArray? Couldn't we just disable this Add() call fully?
-            TextureCache.VobMeshesForTextureArray.Add(mesh, new TextureCache.VobMeshData(mrmData, subMeshPerTextureFormat.Keys.ToList(), UseTextureArray ? meshRenderer : null));
-
             MultiTypeCache.Meshes.Add($"{MeshName}_{meshIndex}", mesh);
         }
 
@@ -599,6 +569,7 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
         /// <summary>
         /// Check if Collider needs to be added.
         /// </summary>
+        [Obsolete("Used for previous WorldMeshBuilder from 2024. Can be removed.")]
         protected Collider PrepareMeshCollider(GameObject obj, Mesh mesh, IMaterial materialData)
         {
             if (materialData.DisableCollision ||
@@ -679,9 +650,19 @@ namespace GUZ.Core.Creator.Meshes.V2.Builder
             return TextureCache.TryGetTexture(name);
         }
 
-        protected virtual Material GetDefaultMaterial(bool isAlphaTest)
+        protected virtual Material GetDefaultMaterial()
         {
-            return new Material(Constants.ShaderSingleMeshLit);
+            if (UseTextureArray)
+            {
+                var shader = Constants.ShaderLitAlphaToCoverage; // FIXME - Re-add Constants.ShaderWorldLit;
+                var material = new Material(shader);
+
+                return material;
+            }
+            else
+            {
+                return new Material(Constants.ShaderSingleMeshLit);
+            }
         }
 
         protected Material GetWaterMaterial()

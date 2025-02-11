@@ -1,6 +1,7 @@
 using GUZ.Core.Config;
 using GUZ.Core.Manager;
 using GUZ.Core.Manager.Culling;
+using GUZ.Core.Manager.Vobs;
 using GUZ.Core.World;
 
 namespace GUZ.Core
@@ -10,6 +11,8 @@ namespace GUZ.Core
         public ConfigManager Config { get; }
         public SaveGameManager SaveGame { get; }
         public LoadingManager Loading { get; }
+        public StaticCacheManager StaticCache { get; }
+
         public PlayerManager Player { get; }
         public SkyManager Sky { get; }
         public GameTime Time { get; }
@@ -19,6 +22,7 @@ namespace GUZ.Core
         public FontManager Font { get; }
         public StationaryLightsManager Lights { get; }
         public StoryManager Story { get; }
+        public VobManager Vobs { get; }
         public VobMeshCullingManager VobMeshCulling { get; }
         public NpcMeshCullingManager NpcMeshCulling { get; }
         public VobSoundCullingManager SoundCulling { get; }

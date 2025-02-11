@@ -1,6 +1,5 @@
 using System;
 using GUZ.Core.Config;
-using GUZ.Core.Creator;
 using GUZ.Core.Globals;
 using UnityEditor;
 using UnityEngine;
@@ -40,7 +39,8 @@ namespace GUZ.Core.Editor.Tools
             // TODO - Add parameter to switch between G1 and G2
             ResourceLoader.Init(config.Root.Gothic1Path);
 
-            WorldCreator.LoadEditorWorld();
+            // Needs to be recreated.
+            // WorldCreator.LoadEditorWorld();
         }
 
         private void OnGUI()

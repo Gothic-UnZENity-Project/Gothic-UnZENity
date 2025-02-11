@@ -15,6 +15,9 @@ EditorBuildSettings:
     path: Assets/UnZENity-Core/Scenes/GameVersion.unity
     guid: 1535f2639ebe98e4fb89e286ff0e5da1
   - enabled: 1
+    path: Assets/UnZENity-Core/Scenes/PreCaching.unity
+    guid: a25f39d55de54055894a1fa428140488
+  - enabled: 1
     path: Assets/UnZENity-Core/Scenes/Logo.unity
     guid: 1115c2e9a64d55d4590acb2de3e58a61
   - enabled: 1

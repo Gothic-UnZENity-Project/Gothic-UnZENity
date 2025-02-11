@@ -1,11 +1,5 @@
-using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
-using GUZ.Core.Extensions;
-using GUZ.Core.Manager;
-using GUZ.Core.Util;
 using UnityEngine;
-using UnityEngine.Profiling;
 
 namespace GUZ.Core
 {
@@ -122,15 +116,7 @@ namespace GUZ.Core
             }
         }
 
-        public int Index { get; private set; }
-
-        public static readonly List<StationaryLight> Lights = new();
-
-        public static readonly int GlobalStationaryLightPositionsAndAttenuationShaderId =
-            Shader.PropertyToID("_GlobalStationaryLightPositionsAndAttenuation");
-
-        public static readonly int GlobalStationaryLightColorsShaderId =
-            Shader.PropertyToID("_GlobalStationaryLightColors");
+        public int Index { get; set; } = -1;
 
         public static readonly int StationaryLightIndicesShaderId = Shader.PropertyToID("_StationaryLightIndices");
         public static readonly int StationaryLightIndices2ShaderId = Shader.PropertyToID("_StationaryLightIndices2");
@@ -146,91 +132,36 @@ namespace GUZ.Core
             Gizmos.DrawWireSphere(transform.position, Range);
         }
 
-        private void Awake()
+        /// <summary>
+        /// Set light's surrounding Meshes to add light information onto it later.
+        /// As OnEnable is called when this Prefab is spawned, we need to call Init() separately now.
+        ///
+        /// HINT: The affected meshes won't be recalculated when another object gets visible (e.g. lazy loaded).
+        ///       If we want to optimize it in the future, we would need to create a class which holds light bounds and
+        ///       whenever something gets visible, the affected lights update their renderers.
+        /// </summary>
+        public void Init()
         {
-            Lights.Add(this);
-            GameGlobals.Lights.AddThreadSafeLight(transform.position, Range);
-        }
+            GatherRenderers();
 
-        private void OnDestroy()
-        {
-            try
-            {
-                Lights.Remove(this);
-            }
-            catch (Exception)
-            {
-                Debug.LogError(
-                    $"[{nameof(StationaryLight)}] Light collection unexpectedly does not contain light {name} on destroy.");
-            }
+            // Call Light on Renderer activation again.
+            OnEnable();
         }
 
         private void OnEnable()
         {
-            Profiler.BeginSample("Stationary light enabled");
-            for (var i = 0; i < _affectedRenderers.Count; i++)
+            foreach (var rend in _affectedRenderers)
             {
-                GameGlobals.Lights.AddLightOnRenderer(this, _affectedRenderers[i]);
+                GameGlobals.Lights.AddLightOnRenderer(this, rend);
             }
-
-            Profiler.EndSample();
         }
 
         private void OnDisable()
         {
-            Profiler.BeginSample("Stationary light disable");
-            for (var i = 0; i < _affectedRenderers.Count; i++)
+            foreach (var rend in _affectedRenderers)
             {
-                GameGlobals.Lights.RemoveLightOnRenderer(this, _affectedRenderers[i]);
+                GameGlobals.Lights.RemoveLightOnRenderer(this, rend);
             }
-
-            Profiler.EndSample();
-        }
-
-        public static void InitStationaryLights()
-        {
-            Debug.Log($"[{nameof(StationaryLight)}] Total stationary light count: {Lights.Count}");
-
-            // e.g. if we disabled Vob loading within FeatureFlags.
-            if (Lights.IsEmpty())
-            {
-                return;
-            }
-
-            var lightPositionsAndAttenuation = new Vector4[Lights.Count];
-            var lightColors = new Vector4[Lights.Count];
-            for (var i = 0; i < Lights.Count; i++)
-            {
-                Lights[i].Index = i;
-                Lights[i].GatherRenderers();
-                lightPositionsAndAttenuation[i] = new Vector4(Lights[i].transform.position.x,
-                    Lights[i].transform.position.y, Lights[i].transform.position.z,
-                    1f / (Lights[i].Range * Lights[i].Range));
-                lightColors[i] = Lights[i].Color.linear;
-                Lights[i].gameObject.SetActive(false);
-                Lights[i].gameObject.SetActive(true);
-            }
-
-            Shader.SetGlobalVectorArray(GlobalStationaryLightPositionsAndAttenuationShaderId,
-                lightPositionsAndAttenuation);
-            Shader.SetGlobalVectorArray(GlobalStationaryLightColorsShaderId, lightColors);
-        }
-
-        public static int CountLightsInBounds(Bounds bounds)
-        {
-            var count = 0;
-            var threadSafeLightData = GameGlobals.Lights.GetThreadSafeLiftData();
-            for (var i = 0; i < Lights.Count; i++)
-            {
-                var lightBounds = new Bounds(threadSafeLightData[i].Position,
-                    Vector3.one * threadSafeLightData[i].Range * 2);
-                if (bounds.Intersects(lightBounds))
-                {
-                    count++;
-                }
-            }
-
-            return count;
         }
 
         private void GatherRenderers()
@@ -245,6 +176,5 @@ namespace GUZ.Core
                 }
             }
         }
-
     }
 }

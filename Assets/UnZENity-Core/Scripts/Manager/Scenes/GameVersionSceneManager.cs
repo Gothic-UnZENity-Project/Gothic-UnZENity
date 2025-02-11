@@ -38,7 +38,7 @@ namespace GUZ.Core.Manager.Scenes
                 if (isInstalled)
                 {
                     GameManager.I.InitPhase2(GameGlobals.Config.Dev.GameVersion);
-                    GameManager.I.LoadScene(Constants.SceneLogo, Constants.SceneGameVersion);
+                    GameManager.I.LoadScene(Constants.ScenePreCaching, Constants.SceneGameVersion);
                 }
                 else
                 {

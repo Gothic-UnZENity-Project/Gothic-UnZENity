@@ -1,7 +1,7 @@
 using System.Linq;
 using GUZ.Core;
 using GUZ.Core.Caches;
-using GUZ.Core.Creator.Meshes.V2;
+using GUZ.Core.Creator.Meshes;
 using GUZ.Core.Data;
 using GUZ.Core.Data.Container;
 using GUZ.Core.Extensions;

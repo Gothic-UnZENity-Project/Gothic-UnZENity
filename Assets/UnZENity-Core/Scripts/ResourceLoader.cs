@@ -22,6 +22,19 @@ namespace GUZ.Core
         private static readonly Vfs _vfs = new();
         private static readonly Loader _dmLoader = Loader.Create(LoaderOptions.Default | LoaderOptions.Download);
 
+        private static readonly Resource<ZenKit.World> _world = new(
+            (s, version) =>
+            {
+                // We do not cache the world itself, but only the loading pointer. As Mesh could exhaust our memory consumption.
+                var fireWorld = new ZenKit.World(_vfs, s, version);
+
+                // FIRE worlds aren't positioned at 0,0,0. We need to do it now, to have the correct parent-child positioning.
+                fireWorld.RootObjects.ForEach(i => i.Position = default);
+
+                return fireWorld;
+            }
+        );
+
         private static readonly Resource<IModelScript> _modelScript = new(
             s => new ModelScript(_vfs, s).Cache()
         );
@@ -74,7 +87,7 @@ namespace GUZ.Core
             var diskPaths = FindDiskPaths(root);
 
             diskPaths.ForEach(v => _vfs.MountDisk(v, VfsOverwriteBehavior.Older));
-            _vfs.Mount(Path.GetFullPath(workPath), "/_work", VfsOverwriteBehavior.All);
+            _vfs.Mount(Path.GetFullPath(workPath), "/_work", VfsOverwriteBehavior.Older);
 
             _dmLoader.AddResolver(name =>
             {
@@ -202,10 +215,25 @@ namespace GUZ.Core
             return new ZenKit.World(_vfs, $"{GetPreparedKey(key)}.zen");
         }
 
+        /// <summary>
+        /// We need to be careful to cache only Fire.zen files as they're small and used multiple times on a world.
+        /// Therefore by default, we load uncached.
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="version"></param>
+        /// <param name="cacheFire"></param>
+        /// <returns></returns>
         [CanBeNull]
-        public static ZenKit.World TryGetWorld([NotNull] string key, GameVersion version)
+        public static ZenKit.World TryGetWorld([NotNull] string key, GameVersion version, bool cacheFire = false)
         {
-            return new ZenKit.World(_vfs, $"{GetPreparedKey(key)}.zen", version);
+            if (cacheFire)
+            {
+                return _world.TryLoad($"{GetPreparedKey(key)}.zen", version, out var item) ? item : null;
+            }
+            else
+            {
+                return new ZenKit.World(_vfs, $"{GetPreparedKey(key)}.zen", version);
+            }
         }
 
         [CanBeNull]

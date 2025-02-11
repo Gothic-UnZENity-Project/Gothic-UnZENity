@@ -18,8 +18,7 @@ namespace GUZ.Core.Manager
             // NOP
         }
         
-        // TODO - We can trigger conversion from here later.
-        public void Init()
+        public void InitVideos()
         {
             var videoFileFolder = $"{GameContext.GameVersionAdapter.RootPath}/_work/DATA/video/";
 
