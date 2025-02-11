@@ -87,7 +87,7 @@ namespace GUZ.Core
             var diskPaths = FindDiskPaths(root);
 
             diskPaths.ForEach(v => _vfs.MountDisk(v, VfsOverwriteBehavior.Older));
-            _vfs.Mount(Path.GetFullPath(workPath), "/_work", VfsOverwriteBehavior.All);
+            _vfs.Mount(Path.GetFullPath(workPath), "/_work", VfsOverwriteBehavior.Older);
 
             _dmLoader.AddResolver(name =>
             {
