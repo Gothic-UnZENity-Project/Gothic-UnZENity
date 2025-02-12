@@ -55,7 +55,7 @@ namespace GUZ.Core.Creator
             }
             else
             {
-                await InitializeNpcsFromSaveGame();
+                await InitializeNpcsFromSaveGame(loading);
             }
         }
 
@@ -78,10 +78,13 @@ namespace GUZ.Core.Creator
         /// If we loaded the data from a save game or previous visit in this game session,
         /// we have our NPCs nearby already loaded via Vobs and load remaining (far) NPCs now.
         /// </summary>
-        private static async Task InitializeNpcsFromSaveGame()
+        private static async Task InitializeNpcsFromSaveGame(LoadingManager loading)
         {
+            loading.SetProgressStep(LoadingManager.LoadingProgressType.Npc,  GameGlobals.SaveGame.CurrentWorldData.Npcs.Count);
+
             foreach (var npcVob in GameGlobals.SaveGame.CurrentWorldData.Npcs)
             {
+                loading.AddProgress();
                 await FrameSkipper.TrySkipToNextFrame();
 
                 var instance = Vm.AllocInstance<NpcInstance>(npcVob.Name);
@@ -168,13 +171,12 @@ namespace GUZ.Core.Creator
 
         private static async Task InitializeNpcs(LoadingManager loading)
         {
-            var createdCount = 0;
-            var totalNpcs = _tmpWldInsertNpcData.Count;
+            loading.SetProgressStep(LoadingManager.LoadingProgressType.Npc, _tmpWldInsertNpcData.Count);
 
             foreach (var npc in _tmpWldInsertNpcData)
             {
                 // Update progress bar and check if we need to wait for next frame now (As some conditions skip -continue- end of loop and would skip check)
-                loading.AddProgress(LoadingManager.LoadingProgressType.VOB, 1f / totalNpcs);
+                loading.AddProgress();
                 await FrameSkipper.TrySkipToNextFrame();
 
                 if (WayNetHelper.GetWayNetPoint(npc.spawnPoint) is null)
