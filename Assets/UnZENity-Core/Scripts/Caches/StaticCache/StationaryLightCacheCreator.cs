@@ -59,11 +59,11 @@ namespace GUZ.Core.Caches.StaticCache
                     var fireWorldVobs = ResourceLoader.TryGetWorld(fire.VobTree, GameContext.GameVersionAdapter.Version, true)!.RootObjects;
 
                     // As we loaded the child-VOBs for fire*.zen at this time, we iterate now.
-                    CalculateStationaryLights(fireWorldVobs, vobWorldPosition);
+                    await CalculateStationaryLights(fireWorldVobs, vobWorldPosition);
                 }
 
                 // Recursion
-                CalculateStationaryLights(vob.Children, vobWorldPosition);
+                await CalculateStationaryLights(vob.Children, vobWorldPosition);
             }
         }
 
