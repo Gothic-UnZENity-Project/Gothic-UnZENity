@@ -6,7 +6,7 @@ namespace GUZ.Core.Util
 {
     public static class Logging
     {
-        private static string[] _ignoredLogWarningNames = new[] { "CutsceneLibrary" };
+        private static string[] _ignoredLogWarningMessages = new[] { "Object not fully loaded: zCCSAtomicBlock" };
 
 
         public static void OnZenKitLogMessage(LogLevel level, string name, string message)
@@ -20,7 +20,7 @@ namespace GUZ.Core.Util
                     Debug.LogError(messageString);
                     break;
                 case LogLevel.Warning:
-                    if (_ignoredLogWarningNames.Contains(name))
+                    if (_ignoredLogWarningMessages.Contains(message))
                     {
                         break;
                     }

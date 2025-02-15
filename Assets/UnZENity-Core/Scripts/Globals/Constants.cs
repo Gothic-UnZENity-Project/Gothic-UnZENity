@@ -63,6 +63,9 @@ namespace GUZ.Core.Globals
         public static readonly Shader ShaderBarrier = Shader.Find("Unlit/Barrier");
         public static readonly Shader ShaderThunder = Shader.Find("Unlit/ThunderShader");
 
+        public static readonly Texture2D TextureUnZENityLogo = Resources.Load<Texture2D>("Gothic-UnZENity-logo");
+        public static readonly Texture2D TextureUnZENityLogoInverse = Resources.Load<Texture2D>("Gothic-UnZENity-logo-inverse");
+
 
         /*
          * Shader properties

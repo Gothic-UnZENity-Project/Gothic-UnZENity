@@ -14,11 +14,12 @@ namespace GUZ.Core.Creator.Meshes
     public static class MeshFactory
     {
         public static async Task CreateWorld(StaticCacheManager.WorldChunkContainer worldChunks, IMesh mesh,
-            LoadingManager loading, GameObject rootGo)
+            LoadingManager loading, GameObject rootGo, bool useTextureArray = true)
         {
             var worldBuilder = new WorldMeshBuilder();
             worldBuilder.SetGameObject(rootGo);
             worldBuilder.SetWorldData(worldChunks, mesh);
+            worldBuilder.SetUseTextureArray(useTextureArray);
 
             await worldBuilder.BuildAsync(loading);
         }

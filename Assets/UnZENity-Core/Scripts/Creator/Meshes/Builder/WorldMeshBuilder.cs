@@ -7,6 +7,7 @@ using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
 using GUZ.Core.Util;
+using JetBrains.Annotations;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -43,7 +44,7 @@ namespace GUZ.Core.Creator.Meshes.Builder
             throw new NotImplementedException("Use BuildAsync instead.");
         }
 
-        public async Task BuildAsync(LoadingManager loading)
+        public async Task BuildAsync([CanBeNull] LoadingManager loading)
         {
             _debugSpeedUpLoading = GameGlobals.Config.Dev.SpeedUpLoading;
 
@@ -52,14 +53,14 @@ namespace GUZ.Core.Creator.Meshes.Builder
             var chunksCount = _worldChunks.OpaqueChunks.Count + _worldChunks.TransparentChunks.Count + _worldChunks.WaterChunks.Count;
             var progressPerChunk = 1f / chunksCount;
             
-            loading.SetProgressStep(LoadingManager.LoadingProgressType.WorldMesh, progressPerChunk);
+            loading?.SetProgressStep(LoadingManager.LoadingProgressType.WorldMesh, progressPerChunk);
 
             await BuildChunkType(_worldChunks.OpaqueChunks, TextureCache.TextureArrayTypes.Opaque, loading);
             await BuildChunkType(_worldChunks.TransparentChunks, TextureCache.TextureArrayTypes.Transparent, loading);
             await BuildChunkType(_worldChunks.WaterChunks, TextureCache.TextureArrayTypes.Water, loading);
         }
 
-        private async Task BuildChunkType(List<WorldChunkCacheCreator.WorldChunk> chunks, TextureCache.TextureArrayTypes type, LoadingManager loading)
+        private async Task BuildChunkType(List<WorldChunkCacheCreator.WorldChunk> chunks, TextureCache.TextureArrayTypes type, [CanBeNull] LoadingManager loading)
         {
             var chunkTypeRoot = new GameObject
             {
@@ -84,8 +85,17 @@ namespace GUZ.Core.Creator.Meshes.Builder
                     var polygon = _mesh.GetPolygon(polygonId);
                     var material = _mesh.GetMaterial(polygon.MaterialIndex);
 
-                    TextureCache.GetTextureArrayIndex(material, out _, out var textureArrayIndex,
-                        out var textureScale, out var maxMipLevel, out var animFrameCount);
+                    // Defaults which will be used, if we don't use TextureArray (e.g. for OC baking and with debug textures only)
+                    int textureArrayIndex = -1;
+                    Vector2 textureScale = Vector2.one;
+                    int maxMipLevel = 0;
+                    int animFrameCount = -1;
+
+                    if (UseTextureArray)
+                    {
+                        TextureCache.GetTextureArrayIndex(material, out _, out textureArrayIndex,
+                            out textureScale, out maxMipLevel, out animFrameCount);
+                    }
 
                     // As we always use element 0 and i+1, we skip it in the loop.
                     // Positions are a triangle fan. i.e. every position after 0 leads back to position 0.
@@ -183,10 +193,22 @@ namespace GUZ.Core.Creator.Meshes.Builder
 
         private void PrepareMeshRenderer(Renderer rend, TextureCache.TextureArrayTypes textureArrayType)
         {
-            var texture = TextureCache.GetTextureArrayEntry(textureArrayType);
-            var material = GetDefaultMaterial(textureArrayType);
-            material.mainTexture = texture;
-            rend.material = material;
+
+
+            if (UseTextureArray)
+            {
+                var material = GetDefaultMaterial(textureArrayType);
+                rend.material = material;
+                var texture = TextureCache.GetTextureArrayEntry(textureArrayType);
+                material.mainTexture = texture;
+            }
+            else
+            {
+                var material = new Material(Shader.Find("Universal Render Pipeline/Unlit"));
+                rend.material = material;
+                // No TextureArray is only needed for Occlusion Culling in Editor mode and other dev tools. A dev texture is sufficient.
+                material.mainTexture = Constants.TextureUnZENityLogoInverse;
+            }
         }
 
         /// <summary>

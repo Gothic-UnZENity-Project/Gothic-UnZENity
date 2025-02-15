@@ -85,8 +85,8 @@ namespace GUZ.Core.Manager.Scenes
                 {
                     Debug.Log($"### PreCaching meshes for world: {worldName}");
                     var world = ResourceLoader.TryGetWorld(worldName, GameContext.GameVersionAdapter.Version)!;
-                    var worldChunkCache = new WorldChunkCacheCreator();
                     var stationaryLightCache = new StationaryLightCacheCreator();
+                    var worldChunkCache = new WorldChunkCacheCreator();
 
                     await vobBoundsCache.CalculateVobBounds(world.RootObjects);
                     watch.LogAndRestart($"{worldName}: VobBounds calculated.");

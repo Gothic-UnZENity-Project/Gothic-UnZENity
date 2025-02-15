@@ -17,12 +17,22 @@ namespace GUZ.Core.Caches.StaticCache
         // Used for world chunk creation.
         public List<Bounds> StationaryLightBounds = new();
 
+        private bool _debugSpeedUpLoading;
+
+
+        public StationaryLightCacheCreator()
+        {
+            _debugSpeedUpLoading = GameGlobals.Config.Dev.SpeedUpLoading;
+        }
 
         public async Task CalculateStationaryLights(List<IVirtualObject> vobs, Vector3 parentWorldPosition = default)
         {
             foreach (var vob in vobs)
             {
-                await FrameSkipper.TrySkipToNextFrame();
+                if (!_debugSpeedUpLoading)
+                {
+                    await FrameSkipper.TrySkipToNextFrame();
+                }
 
                 var vobWorldPosition = CalculateWorldPosition(parentWorldPosition, vob.Position.ToUnityVector());
 
@@ -59,11 +69,11 @@ namespace GUZ.Core.Caches.StaticCache
                     var fireWorldVobs = ResourceLoader.TryGetWorld(fire.VobTree, GameContext.GameVersionAdapter.Version, true)!.RootObjects;
 
                     // As we loaded the child-VOBs for fire*.zen at this time, we iterate now.
-                    CalculateStationaryLights(fireWorldVobs, vobWorldPosition);
+                    await CalculateStationaryLights(fireWorldVobs, vobWorldPosition);
                 }
 
                 // Recursion
-                CalculateStationaryLights(vob.Children, vobWorldPosition);
+                await CalculateStationaryLights(vob.Children, vobWorldPosition);
             }
         }
 
