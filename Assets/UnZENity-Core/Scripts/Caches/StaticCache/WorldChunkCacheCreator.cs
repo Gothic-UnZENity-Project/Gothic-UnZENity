@@ -22,6 +22,13 @@ namespace GUZ.Core.Caches.StaticCache
         public Dictionary<TextureCache.TextureArrayTypes, List<WorldChunk>> MergedChunksByLights;
 
         private List<Bounds> _stationaryLightBounds;
+        private bool _debugSpeedUpLoading;
+
+
+        public WorldChunkCacheCreator()
+        {
+            _debugSpeedUpLoading = GameGlobals.Config.Dev.SpeedUpLoading;
+        }
 
         public async Task CalculateWorldChunks(IWorld world, List<Bounds> stationaryLightBounds)
         {
@@ -51,7 +58,10 @@ namespace GUZ.Core.Caches.StaticCache
             foreach (var nodeId in leafNodes)
             {
                 // Hint: If calculation still stutters in framerate, then set this check at polygon-loop level.
-                await FrameSkipper.TrySkipToNextFrame();
+                if (!_debugSpeedUpLoading)
+                {
+                    await FrameSkipper.TrySkipToNextFrame();
+                }
 
                 var currentNodePolygonIds = new List<int>();
 
@@ -117,7 +127,10 @@ namespace GUZ.Core.Caches.StaticCache
             foreach (var nodeData in leafNodesWithPolygons)
             {
                 // Hint: If calculation still stutters in framerate, then set this check at polygon-loop level.
-                await FrameSkipper.TrySkipToNextFrame();
+                if (!_debugSpeedUpLoading)
+                {
+                    await FrameSkipper.TrySkipToNextFrame();
+                }
 
                 var node = bspTree.GetNode(nodeData.Key);
                 var polygonIds = nodeData.Value;

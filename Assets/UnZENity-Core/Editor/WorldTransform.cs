@@ -6,7 +6,7 @@ using UnityEditor;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-namespace GUZ.Core.Editor.UnZENity_Core.Editor
+namespace GUZ.Core.Editor.Editor
 {
     /// <summary>
     ///
