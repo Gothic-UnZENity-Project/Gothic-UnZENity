@@ -51,7 +51,7 @@ namespace GUZ.Core.Editor.Tools
         [MenuItem("UnZENity/Occlusion Culling/Load world mesh for G2")]
         public static async Task LoadWorldMeshG2()
         {
-            await LoadWorldMesh(GameVersion.Gothic1);
+            await LoadWorldMesh(GameVersion.Gothic2);
         }
 
         private static async Task LoadWorldMesh(GameVersion version)
