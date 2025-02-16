@@ -333,22 +333,29 @@ namespace GUZ.Core.Caches
             TextureArrays.Add(texArrType, texArray);
         }
 
-        public static Texture GetTextureArrayEntry(string textureName)
+        public static void GetTextureArrayEntry(string textureName, out Texture texture, out TextureArrayTypes textureType)
         {
-            return GetTextureArrayEntry(ResourceLoader.TryGetTexture(textureName));
+            GetTextureArrayEntry(ResourceLoader.TryGetTexture(textureName), out texture, out textureType);
         }
 
-        public static Texture GetTextureArrayEntry(ITexture texture)
+        /// <summary>
+        /// Returns Texture2DArry (Opaque/Transparent) or RenderTexture (Water)
+        /// </summary>
+        public static void GetTextureArrayEntry(ITexture zkTexture, out Texture texture, out TextureArrayTypes textureType)
         {
-            switch (texture.Format.AsUnityTextureFormat())
+            switch (zkTexture.Format.AsUnityTextureFormat())
             {
                 case TextureFormat.DXT1:
-                    return GetTextureArrayEntry(TextureArrayTypes.Opaque);
+                    textureType = TextureArrayTypes.Opaque;
+                    break;
                 case TextureFormat.RGBA32:
-                    return GetTextureArrayEntry(TextureArrayTypes.Transparent);
+                    textureType = TextureArrayTypes.Transparent;
+                    break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
+
+            texture = GetTextureArrayEntry(textureType);
         }
 
         public static Texture GetTextureArrayEntry(TextureArrayTypes textureArrayType)
