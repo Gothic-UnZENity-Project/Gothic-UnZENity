@@ -10,6 +10,7 @@ using GUZ.Core.Caches.StaticCache;
 using GUZ.Core.Config;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
+using GUZ.Core.Util;
 using MyBox;
 using UnityEngine;
 using CompressionLevel = System.IO.Compression.CompressionLevel;
@@ -388,9 +389,11 @@ namespace GUZ.Core.Manager
         {
             string data = null;
 
+            string filePathCaseInsensitive = FileSearchHandler.FindFileCaseInsensitive(filePath);
+
             if (_configIsCompressed)
             {
-                using (var fileStream = new FileStream(filePath, FileMode.Open))
+                using (var fileStream = new FileStream(filePathCaseInsensitive, FileMode.Open))
                 using (var gzipStream = new GZipStream(fileStream, CompressionMode.Decompress))
                 using (var reader = new StreamReader(gzipStream))
                 {
@@ -403,7 +406,7 @@ namespace GUZ.Core.Manager
             }
             else
             {
-                using (var fileStream = new FileStream(filePath, FileMode.Open))
+                using (var fileStream = new FileStream(filePathCaseInsensitive, FileMode.Open))
                 using (var reader = new StreamReader(fileStream))
                 {
                     // We need to call loading the data in a separate thread to unblock main thread (VR movement etc.) during this IO heavy operation.
