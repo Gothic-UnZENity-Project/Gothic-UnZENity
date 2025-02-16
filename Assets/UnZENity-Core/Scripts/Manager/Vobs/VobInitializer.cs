@@ -166,6 +166,9 @@ namespace GUZ.Core.Manager.Vobs
 
                     go = CreateNpc((ZenKit.Vobs.Npc)vob);
                     break;
+                case VirtualObjectType.oCMobLadder:
+                    go = CreateDefaultMesh(vob, parent);
+                    break;
                 case VirtualObjectType.zCMover:
                     // Each mover starts "Closed", when game boots. (At least for a new game.)
                     // TODO - We need to check if it's the case for a loaded game
@@ -173,8 +176,8 @@ namespace GUZ.Core.Manager.Vobs
 
                     // For SaveGame comparison, we load our fallback Prefab and set VobProperties.
                     // Remove it from here once we properly implement and handle it.
-                    go = CreateEmptyDefaultVob(vob, parent);
-                    break;
+                    CreateEmptyDefaultVob(vob, parent);
+                    return;
                 case VirtualObjectType.zCPFXController:
                     // A Particle controller makes no sense without a visual to show.
                     // Therefore, removing it now (as it's also not included in official G1 saves, and not visible within Spacer)
@@ -195,11 +198,8 @@ namespace GUZ.Core.Manager.Vobs
 
                     // For SaveGame comparison, we load our fallback Prefab and set VobProperties.
                     // Remove it from here once we properly implement and handle it.
-                    go = CreateEmptyDefaultVob(vob, parent);
-                    break;
-                case VirtualObjectType.oCMobLadder:
-                    go = CreateDefaultMesh(vob, parent);
-                    break;
+                    CreateEmptyDefaultVob(vob, parent);
+                    return;
                 case VirtualObjectType.zCVobScreenFX:
                 case VirtualObjectType.zCTriggerWorldStart:
                 case VirtualObjectType.oCCSTrigger:
@@ -222,14 +222,14 @@ namespace GUZ.Core.Manager.Vobs
                 case VirtualObjectType.Unknown:
                     // For SaveGame comparison, we load our fallback Prefab and set VobProperties.
                     // Remove it from here once we properly implement and handle it.
-                    go = CreateEmptyDefaultVob(vob, parent);
-                    break;
+                    CreateEmptyDefaultVob(vob, parent);
+                    return;
                 case VirtualObjectType.zCVobLevelCompo:
                     // Nothing to do.
-                    break;
+                    return;
                 default:
                     Debug.LogError($"VobType={vob.Type} not yet handled. And we didn't know we need to do so. ;-)");
-                    break;
+                    return;
             }
 
             // Do not check children if the current VOB can't be created.
