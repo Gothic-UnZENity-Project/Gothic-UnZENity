@@ -198,6 +198,8 @@ namespace GUZ.Core.Manager.Vobs
                     go = CreateEmptyDefaultVob(vob, parent);
                     break;
                 case VirtualObjectType.oCMobLadder:
+                    go = CreateDefaultMesh(vob, parent);
+                    break;
                 case VirtualObjectType.zCVobScreenFX:
                 case VirtualObjectType.zCTriggerWorldStart:
                 case VirtualObjectType.oCCSTrigger:
