@@ -654,7 +654,7 @@ namespace GUZ.Core.Creator.Meshes.Builder
         {
             if (UseTextureArray)
             {
-                var shader = Constants.ShaderLitAlphaToCoverage; // FIXME - Re-add Constants.ShaderWorldLit;
+                var shader = Constants.ShaderWorldLit;
                 var material = new Material(shader);
 
                 return material;
