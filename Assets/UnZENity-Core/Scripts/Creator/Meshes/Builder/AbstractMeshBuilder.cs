@@ -13,6 +13,7 @@ using ZenKit;
 using Material = UnityEngine.Material;
 using Matrix4x4 = System.Numerics.Matrix4x4;
 using Mesh = UnityEngine.Mesh;
+using Texture = UnityEngine.Texture;
 
 namespace GUZ.Core.Creator.Meshes.Builder
 {
@@ -355,7 +356,18 @@ namespace GUZ.Core.Creator.Meshes.Builder
                     return;
                 }
 
-                var texture = UseTextureArray ? TextureCache.GetTextureArrayEntry(materialData.Texture) : GetTexture(materialData.Texture);
+                Texture texture;
+                TextureCache.TextureArrayTypes textureType;
+
+                if (UseTextureArray)
+                {
+                    TextureCache.GetTextureArrayEntry(materialData.Texture, out texture, out textureType);
+                }
+                else
+                {
+                    texture = GetTexture(materialData.Texture);
+                    textureType = TextureCache.TextureArrayTypes.Unknown;
+                }
 
                 // TODO - G1: Skeleton warrior's second texture doesn't exist. No alternatives needed/given.
                 // TODO - Therefore consider removing this warning in the future.
@@ -365,7 +377,7 @@ namespace GUZ.Core.Creator.Meshes.Builder
                     continue;
                 }
 
-                var material = GetDefaultMaterial();
+                var material = GetDefaultMaterial(textureType);
 
                 material.mainTexture = texture;
                 rend.material = material;
@@ -650,13 +662,25 @@ namespace GUZ.Core.Creator.Meshes.Builder
             return TextureCache.TryGetTexture(name);
         }
 
-        protected virtual Material GetDefaultMaterial()
+        private Material GetDefaultMaterial(TextureCache.TextureArrayTypes textureType)
         {
             if (UseTextureArray)
             {
-                var shader = Constants.ShaderWorldLit;
-                var material = new Material(shader);
+                Shader shader;
+                switch (textureType)
+                {
+                    case TextureCache.TextureArrayTypes.Opaque:
+                        shader = Constants.ShaderWorldLit;
+                        break;
+                    case TextureCache.TextureArrayTypes.Transparent:
+                        // Cutout for e.g. bushes.
+                        shader = Constants.ShaderLitAlphaToCoverage;
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException(nameof(textureType), textureType, null);
+                }
 
+                var material = new Material(shader);
                 return material;
             }
             else
