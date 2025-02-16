@@ -32,7 +32,7 @@ namespace GUZ.Core.Caches.StaticCache
                 if (vob.Type == VirtualObjectType.oCItem || !Constants.StaticCacheVobTypes.Contains(vob.Type))
                 {
                     // Check children
-                    CalculateVobBounds(vob.Children);
+                    await CalculateVobBounds(vob.Children);
                     continue;
                 }
 
@@ -72,7 +72,7 @@ namespace GUZ.Core.Caches.StaticCache
 
                 Bounds[visualName] = boundingBox;
 
-                CalculateVobBounds(vob.Children);
+                await CalculateVobBounds(vob.Children);
             }
         }
 
@@ -158,18 +158,23 @@ namespace GUZ.Core.Caches.StaticCache
                     break;
                case VisualType.Model:
                     var mdl = ResourceLoader.TryGetModel(visualName);
-
-                    if (mdl == null)
+                    IModelMesh mdm;
+                    if (mdl != null)
                     {
-                        return default;
+                        mdm = mdl.Mesh;
+                    }
+                    else
+                    {
+                        // Some models miss their wrapping .mdl file. We therefore load the .mdm file (with same name) directly.
+                        mdm = ResourceLoader.TryGetModelMesh(visualName);
                     }
 
-                    foreach (var mesh in mdl.Mesh.Meshes)
+                    foreach (var mesh in mdm!.Meshes)
                     {
                         bounds.Encapsulate(GetBoundsByOrientedBbox(mesh.Mesh.OrientedBoundingBox));
                     }
 
-                    foreach (var attachment in mdl.Mesh.Attachments)
+                    foreach (var attachment in mdm.Attachments)
                     {
                         bounds.Encapsulate(GetBoundsByOrientedBbox(attachment.Value.OrientedBoundingBox));
                     }
