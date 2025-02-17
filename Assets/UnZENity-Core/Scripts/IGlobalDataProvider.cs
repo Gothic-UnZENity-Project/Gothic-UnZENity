@@ -1,3 +1,4 @@
+using GUZ.Core._NPC2;
 using GUZ.Core.Config;
 using GUZ.Core.Manager;
 using GUZ.Core.Manager.Culling;
@@ -23,6 +24,7 @@ namespace GUZ.Core
         public StationaryLightsManager Lights { get; }
         public StoryManager Story { get; }
         public VobManager Vobs { get; }
+        public NpcManager2 Npcs { get; }
         public VobMeshCullingManager VobMeshCulling { get; }
         public NpcMeshCullingManager NpcMeshCulling { get; }
         public VobSoundCullingManager SoundCulling { get; }

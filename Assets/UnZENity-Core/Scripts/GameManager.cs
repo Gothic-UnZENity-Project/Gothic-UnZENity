@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using GUZ.Core._NPC2;
 using GUZ.Core.Caches;
 using GUZ.Core.Config;
 using GUZ.Core.Extensions;
@@ -53,6 +54,7 @@ namespace GUZ.Core
         public StationaryLightsManager Lights { get; private set; }
 
         public VobManager Vobs { get; private set; }
+        public NpcManager2 Npcs { get; private set; }
         public VobMeshCullingManager VobMeshCulling { get; private set; }
         public NpcMeshCullingManager NpcMeshCulling { get; private set; }
         public VobSoundCullingManager SoundCulling { get; private set; }

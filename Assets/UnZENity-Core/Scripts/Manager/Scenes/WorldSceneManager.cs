@@ -84,12 +84,14 @@ namespace GUZ.Core.Manager.Scenes
 
                 // 3.
                 WayNetCreator.Create(config.Dev, GameGlobals.SaveGame.CurrentWorldData);
+                watch.LogAndRestart("WayNet initialized");
 
                 // 4.
                 // If the world is visited for the first time, then we need to load Npcs via Wld_InsertNpc()
                 if (config.Dev.EnableNpcs)
                 {
-                    await NpcCreator.CreateAsync(config.Dev, GameGlobals.Loading).AwaitAndLog();
+                    // await NpcCreator.CreateAsync(config.Dev, GameGlobals.Loading).AwaitAndLog();
+                    await GameGlobals.Npcs.CreateWorldNpcs();
                     watch.LogAndRestart("NPCs created");
                 }
 

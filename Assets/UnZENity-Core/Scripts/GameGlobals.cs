@@ -1,3 +1,4 @@
+using GUZ.Core._NPC2;
 using GUZ.Core.Config;
 using GUZ.Core.Manager;
 using GUZ.Core.Manager.Culling;
@@ -24,6 +25,7 @@ namespace GUZ.Core
         public static FontManager Font => Instance.Font;
         public static StationaryLightsManager Lights => Instance.Lights;
         public static VobManager Vobs => Instance.Vobs;
+        public static NpcManager2 Npcs => Instance.Npcs;
         public static VobMeshCullingManager VobMeshCulling => Instance.VobMeshCulling;
         public static NpcMeshCullingManager NpcMeshCulling => Instance.NpcMeshCulling;
         public static VobSoundCullingManager SoundCulling => Instance.SoundCulling;

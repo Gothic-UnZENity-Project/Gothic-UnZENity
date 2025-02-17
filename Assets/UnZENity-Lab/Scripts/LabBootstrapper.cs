@@ -1,5 +1,6 @@
 using System.Collections;
 using GUZ.Core;
+using GUZ.Core._NPC2;
 using GUZ.Core.Caches;
 using GUZ.Core.Config;
 using GUZ.Core.Globals;
@@ -53,6 +54,7 @@ namespace GUZ.Lab
         public FontManager Font => _fontManager;
         public StationaryLightsManager Lights => null;
         public VobManager Vobs => null;
+        public NpcManager2 Npcs => null;
         public VobMeshCullingManager VobMeshCulling => null;
         public NpcMeshCullingManager NpcMeshCulling => null;
         public VobSoundCullingManager SoundCulling => null;
