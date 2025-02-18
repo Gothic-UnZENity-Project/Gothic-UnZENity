@@ -80,7 +80,7 @@ namespace GUZ.Core.Creator
         /// </summary>
         private static async Task InitializeNpcsFromSaveGame(LoadingManager loading)
         {
-            loading.SetProgressStep(LoadingManager.LoadingProgressType.Npc,  GameGlobals.SaveGame.CurrentWorldData.Npcs.Count);
+            loading.SetPhase(LoadingManager.LoadingProgressType.Npc,  GameGlobals.SaveGame.CurrentWorldData.Npcs.Count);
 
             foreach (var npcVob in GameGlobals.SaveGame.CurrentWorldData.Npcs)
             {
@@ -171,7 +171,7 @@ namespace GUZ.Core.Creator
 
         private static async Task InitializeNpcs(LoadingManager loading)
         {
-            loading.SetProgressStep(LoadingManager.LoadingProgressType.Npc, _tmpWldInsertNpcData.Count);
+            loading.SetPhase(LoadingManager.LoadingProgressType.Npc, _tmpWldInsertNpcData.Count);
 
             foreach (var npc in _tmpWldInsertNpcData)
             {

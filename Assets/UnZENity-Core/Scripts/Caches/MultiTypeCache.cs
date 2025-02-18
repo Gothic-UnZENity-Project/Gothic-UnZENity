@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using GUZ.Core._Npc2;
 using GUZ.Core.Data.Container;
 using TMPro;
 using UnityEngine;
@@ -19,6 +20,8 @@ namespace GUZ.Core.Caches
         ///       Otherwise, UserData's WeakReference pointer gets cleared.
         /// </summary>
         public static readonly List<NpcContainer> NpcCache = new();
+        public static readonly List<NpcContainer2> NpcCache2 = new();
+
 
         /// <summary>
         /// Already created AnimationData (Clips + RootMotions) can be reused.
@@ -44,6 +47,7 @@ namespace GUZ.Core.Caches
             GlobalEventDispatcher.LoadingSceneLoaded.AddListener(delegate
             {
                 NpcCache.Clear();
+                NpcCache2.Clear();
             });
         }
 

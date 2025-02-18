@@ -91,7 +91,7 @@ namespace GUZ.Core.Manager.Scenes
                 if (config.Dev.EnableNpcs)
                 {
                     // await NpcCreator.CreateAsync(config.Dev, GameGlobals.Loading).AwaitAndLog();
-                    await GameGlobals.Npcs.CreateWorldNpcs();
+                    await GameGlobals.Npcs.CreateWorldNpcs(GameGlobals.Loading);
                     watch.LogAndRestart("NPCs created");
                 }
 

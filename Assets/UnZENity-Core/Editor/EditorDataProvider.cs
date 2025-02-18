@@ -1,4 +1,4 @@
-﻿using GUZ.Core._NPC2;
+﻿using GUZ.Core._Npc2;
 using GUZ.Core.Config;
 using GUZ.Core.Manager;
 using GUZ.Core.Manager.Culling;

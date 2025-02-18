@@ -1,6 +1,6 @@
 using System.Collections;
 using GUZ.Core;
-using GUZ.Core._NPC2;
+using GUZ.Core._Npc2;
 using GUZ.Core.Caches;
 using GUZ.Core.Config;
 using GUZ.Core.Globals;
