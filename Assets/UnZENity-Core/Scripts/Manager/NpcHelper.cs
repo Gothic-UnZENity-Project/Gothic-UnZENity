@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using GUZ.Core.Caches;
-using GUZ.Core.Data.Container;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Npc;
@@ -31,11 +30,6 @@ namespace GUZ.Core.Manager
         private const float _fpLookupDistance = 7f; // meter
 
 
-        static NpcHelper()
-        {
-            GlobalEventDispatcher.WorldSceneLoaded.AddListener(CacheHero);
-        }
-
         public static void Init()
         {
             // Perceptions
@@ -48,60 +42,6 @@ namespace GUZ.Core.Manager
             {
                 GameData.GothicVm.Call(percInitSymbol.Index);
             }
-        }
-
-        /// <summary>
-        /// We need to first Alloc() hero data space and put the instance to the cache.
-        /// Then we initialize it. (During Init, PC_HERO:Npc_Default->Prototype:Npc_Default will call SetTalentValue where we need the lookup to fetch the NpcInstance).
-        ///
-        /// This method will get called every time we spawn into another world. We therefore need to check if initialize the first time or we only need to set the lookup cache.
-        /// </summary>
-        public static void CacheHero()
-        {
-            if (GameData.GothicVm.GlobalHero != null)
-            {
-                // We assume, that this call is only made when the cache got cleared before as we loaded another world.
-                // Therefore, we re-add it now.
-                MultiTypeCache.NpcCache.Add(((NpcInstance)GameData.GothicVm.GlobalHero).GetUserData());
-
-                return;
-            }
-
-
-            // Initial setup
-            var playerGo = GameObject.FindWithTag(Constants.PlayerTag);
-
-            // Flat player
-            if (playerGo == null)
-            {
-                playerGo = GameObject.FindWithTag(Constants.MainCameraTag);
-            }
-
-
-            var heroInstance = GameData.GothicVm.AllocInstance<NpcInstance>(GameGlobals.Config.Gothic.PlayerInstanceName);
-            var playerProperties = playerGo.GetComponent<NpcProperties>();
-
-            var vobNpc = new ZenKit.Vobs.Npc();
-            vobNpc.Name = GameGlobals.Config.Gothic.PlayerInstanceName;
-            vobNpc.Player = true;
-
-            var npcData = new NpcContainer
-            {
-                Instance = heroInstance,
-                Vob = vobNpc,
-                Properties = playerProperties
-            };
-
-            playerProperties.SetData(vobNpc);
-            playerProperties.NpcData = npcData;
-            playerProperties.Head = Camera.main!.transform;
-
-            heroInstance.UserData = npcData;
-
-            MultiTypeCache.NpcCache.Add(npcData);
-            GameData.GothicVm.InitInstance(heroInstance);
-
-            GameData.GothicVm.GlobalHero = heroInstance;
         }
 
         /// <summary>

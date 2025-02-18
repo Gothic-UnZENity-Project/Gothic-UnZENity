@@ -74,6 +74,7 @@ namespace GUZ.Core._Npc2
 
             // FIXME - We need to set self=... --> Otherwise we get an NPE C_NPC.id/.name is not in NULL object
             // FIXME - at B_InitGuildAttitudes() --> PrintDebugNpc
+            Vm.GlobalSelf = Vm.GlobalHero;
             GameData.GothicVm.Call($"STARTUP_{GameGlobals.SaveGame.CurrentWorldName.ToUpper().RemoveEnd(".ZEN")}");
         }
 

@@ -557,13 +557,13 @@ namespace GUZ.Core.Vm
 
         public static void CreateInvItem(NpcInstance npc, int itemId)
         {
-            NpcCreator.ExtCreateInvItems(npc, (uint)itemId, 1);
+            GameGlobals.Npcs.ExtCreateInvItems(npc, (uint)itemId, 1);
         }
 
 
         public static void CreateInvItems(NpcInstance npc, int itemId, int amount)
         {
-            NpcCreator.ExtCreateInvItems(npc, (uint)itemId, amount);
+            GameGlobals.Npcs.ExtCreateInvItems(npc, (uint)itemId, amount);
         }
 
 

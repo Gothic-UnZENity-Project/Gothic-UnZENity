@@ -2,9 +2,11 @@
 using System.Threading.Tasks;
 using GUZ.Core.Caches;
 using GUZ.Core.Extensions;
+using GUZ.Core.Globals;
 using GUZ.Core.Manager;
 using GUZ.Core.Vm;
 using UnityEngine;
+using ZenKit;
 using ZenKit.Daedalus;
 
 namespace GUZ.Core._Npc2
@@ -16,6 +18,7 @@ namespace GUZ.Core._Npc2
     {
         // Supporter class where the whole Init() logic is outsourced for better readability.
         private NpcInitializer2 _initializer = new ();
+        private static DaedalusVm _vm => GameData.GothicVm;
 
         public async Task CreateWorldNpcs(LoadingManager loading)
         {
@@ -77,6 +80,75 @@ namespace GUZ.Core._Npc2
             var vob = npc.GetUserData2().Vob;
 
             vob.Attributes[attributeId] = value;
+        }
+
+        public void ExtCreateInvItems(NpcInstance npc, uint itemId, int amount)
+        {
+            // We also initialize NPCs inside Daedalus when we load a save game. It's needed as some data isn't stored on save games.
+            // But e.g. inventory items will be skipped as they are stored inside save game VOBs.
+            if (!GameGlobals.SaveGame.IsWorldLoadedForTheFirstTime)
+            {
+                return;
+            }
+
+            var props = npc.GetUserData2().Properties;
+            if (props == null)
+            {
+                Debug.LogError($"NPC not found with index {npc.Index}");
+                return;
+            }
+            props.Items.TryAdd(itemId, amount);
+            props.Items[itemId] += amount;
+        }
+
+        /// <summary>
+        /// We need to first Alloc() hero data space and put the instance to the cache.
+        /// Then we initialize it. (During Init, PC_HERO:Npc_Default->Prototype:Npc_Default will call SetTalentValue where we need the lookup to fetch the NpcInstance).
+        ///
+        /// This method will get called every time we spawn into another world. We therefore need to check if initialize the first time or we only need to set the lookup cache.
+        /// </summary>
+        public void CacheHero()
+        {
+            if (GameData.GothicVm.GlobalHero != null)
+            {
+                // We assume, that this call is only made when the cache got cleared before as we loaded another world.
+                // Therefore, we re-add it now.
+                MultiTypeCache.NpcCache.Add(((NpcInstance)GameData.GothicVm.GlobalHero).GetUserData());
+
+                return;
+            }
+
+
+            // Initial setup
+            var playerGo = GameObject.FindWithTag(Constants.PlayerTag);
+
+            // Flat player
+            if (playerGo == null)
+            {
+                playerGo = GameObject.FindWithTag(Constants.MainCameraTag);
+            }
+
+            var heroInstance = GameData.GothicVm.AllocInstance<NpcInstance>(GameGlobals.Config.Gothic.PlayerInstanceName);
+
+            var vobNpc = new ZenKit.Vobs.Npc();
+            vobNpc.Name = GameGlobals.Config.Gothic.PlayerInstanceName;
+            vobNpc.Player = true;
+
+            var npcData = new NpcContainer2
+            {
+                Instance = heroInstance,
+                Vob = vobNpc,
+                Properties = new()
+            };
+
+            npcData.Properties.Head = Camera.main!.transform;
+
+            heroInstance.UserData = npcData;
+
+            MultiTypeCache.NpcCache2.Add(npcData);
+            _vm.InitInstance(heroInstance);
+
+            _vm.GlobalHero = heroInstance;
         }
     }
 }

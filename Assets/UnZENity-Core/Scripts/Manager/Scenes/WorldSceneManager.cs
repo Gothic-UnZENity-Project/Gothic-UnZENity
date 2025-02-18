@@ -88,6 +88,7 @@ namespace GUZ.Core.Manager.Scenes
 
                 // 4.
                 // If the world is visited for the first time, then we need to load Npcs via Wld_InsertNpc()
+                GameGlobals.Npcs.CacheHero();
                 if (config.Dev.EnableNpcs)
                 {
                     // await NpcCreator.CreateAsync(config.Dev, GameGlobals.Loading).AwaitAndLog();
