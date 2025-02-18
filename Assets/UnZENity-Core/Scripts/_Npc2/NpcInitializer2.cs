@@ -23,12 +23,9 @@ namespace GUZ.Core._Npc2
 
         private static DaedalusVm Vm => GameData.GothicVm;
 
-        public async Task InitNPCsNewGame(LoadingManager loading)
+        public async Task InitNpcsNewGame(LoadingManager loading)
         {
             NewRunDaedalus();
-
-            loading.SetPhase(LoadingManager.LoadingProgressType.Npc, _tmpWldInsertNpcData.Count);
-
             await NewAddLazyLoading(loading);
         }
 
@@ -51,7 +48,9 @@ namespace GUZ.Core._Npc2
 
             var userDataObject = new NpcContainer2
             {
-                Instance = npcInstance
+                Instance = npcInstance,
+                Properties = new(),
+                Vob = new()
             };
 
             // We reference our object as user data to retrieve it whenever a Daedalus External provides an NpcInstance as input.
@@ -72,6 +71,9 @@ namespace GUZ.Core._Npc2
         {
             // Inside Startup.d, it's always STARTUP_{MAPNAME} and INIT_{MAPNAME}
             // FIXME - Inside Startup.d some Startup_*() functions also call Init_*() some not. How to handle properly? (Force calling it here? Even if done twice?)
+
+            // FIXME - We need to set self=... --> Otherwise we get an NPE C_NPC.id/.name is not in NULL object
+            // FIXME - at B_InitGuildAttitudes() --> PrintDebugNpc
             GameData.GothicVm.Call($"STARTUP_{GameGlobals.SaveGame.CurrentWorldName.ToUpper().RemoveEnd(".ZEN")}");
         }
 

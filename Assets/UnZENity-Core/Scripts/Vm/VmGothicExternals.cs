@@ -83,6 +83,7 @@ namespace GUZ.Core.Vm
 
             // NPC
             vm.RegisterExternal<NpcInstance, int, int>("Npc_SetTalentValue", Npc_SetTalentValue);
+            vm.RegisterExternal<NpcInstance, int, int>("Npc_ChangeAttribute", Npc_ChangeAttribute);
             vm.RegisterExternal<NpcInstance, int>("CreateInvItem", CreateInvItem);
             vm.RegisterExternal<NpcInstance, int, int>("CreateInvItems", CreateInvItems);
             vm.RegisterExternal<NpcInstance, int, int>("Npc_PercEnable", Npc_PercEnable);
@@ -362,7 +363,7 @@ namespace GUZ.Core.Vm
 
         public static NpcInstance Hlp_GetNpc(int instanceId)
         {
-            return NpcCreator.ExtHlpGetNpc(instanceId);
+            return GameGlobals.Npcs.ExtHlpGetNpc(instanceId);
         }
 
         public static int Hlp_GetInstanceID(DaedalusInstance instance)
@@ -419,7 +420,7 @@ namespace GUZ.Core.Vm
 
         public static void Mdl_SetVisual(NpcInstance npc, string visual)
         {
-            NpcCreator.ExtMdlSetVisual(npc, visual);
+            GameGlobals.Npcs.ExtMdlSetVisual(npc, visual);
         }
 
 
@@ -443,7 +444,7 @@ namespace GUZ.Core.Vm
         public static void Mdl_SetVisualBody(NpcInstance npc, string body, int bodyTexNr, int bodyTexColor, string head,
             int headTexNr, int teethTexNr, int armor)
         {
-            NpcCreator.ExtSetVisualBody(new ExtSetVisualBodyData
+            GameGlobals.Npcs.ExtSetVisualBody(new ExtSetVisualBodyData
                 {
                     Npc = npc,
                     Body = body,
@@ -460,7 +461,7 @@ namespace GUZ.Core.Vm
 
         public static void Mdl_SetModelScale(NpcInstance npc, float x, float y, float z)
         {
-            NpcCreator.ExtMdlSetModelScale(npc, new Vector3(x, y, z));
+            GameGlobals.Npcs.ExtMdlSetModelScale(npc, new Vector3(x, y, z));
         }
 
 
@@ -546,9 +547,13 @@ namespace GUZ.Core.Vm
 
         public static void Npc_SetTalentValue(NpcInstance npc, int talent, int level)
         {
-            NpcCreator.ExtNpcSetTalentValue(npc, (VmGothicEnums.Talent)talent, level);
+            GameGlobals.Npcs.ExtNpcSetTalentValue(npc, (VmGothicEnums.Talent)talent, level);
         }
 
+        public static void Npc_ChangeAttribute(NpcInstance npc, int attributeId, int value)
+        {
+            GameGlobals.Npcs.ExtNpcChangeAttribute(npc, attributeId, value);
+        }
 
         public static void CreateInvItem(NpcInstance npc, int itemId)
         {
@@ -803,7 +808,7 @@ namespace GUZ.Core.Vm
 
         public static void Wld_InsertNpc(int npcInstance, string spawnPoint)
         {
-            NpcCreator.ExtWldInsertNpc(npcInstance, spawnPoint);
+            GameGlobals.Npcs.ExtWldInsertNpc(npcInstance, spawnPoint);
         }
 
 

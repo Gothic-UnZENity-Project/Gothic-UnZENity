@@ -84,6 +84,7 @@ namespace GUZ.Core
             Loading = new LoadingManager();
             StaticCache = new StaticCacheManager();
             Vobs = new VobManager();
+            Npcs = new NpcManager2();
             VobMeshCulling = new VobMeshCullingManager(DeveloperConfig, this);
             NpcMeshCulling = new NpcMeshCullingManager(DeveloperConfig);
             SoundCulling = new VobSoundCullingManager(DeveloperConfig);
