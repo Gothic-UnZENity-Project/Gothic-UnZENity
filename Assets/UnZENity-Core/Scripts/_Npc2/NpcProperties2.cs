@@ -13,8 +13,10 @@ namespace GUZ.Core._Npc2
 
         // NPC items/talents/...
         public Dictionary<VmGothicEnums.Talent, int> Talents = new();
+        public string UsedItemSlot;
         public List<ItemInstance> EquippedItems = new();
         public Dictionary<uint, int> Items = new(); // itemId => amount
+        public VmGothicEnums.WeaponState WeaponState;
 
 
         // Visual

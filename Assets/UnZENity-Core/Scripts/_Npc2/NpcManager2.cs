@@ -5,9 +5,11 @@ using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
 using GUZ.Core.Vm;
+using MyBox;
 using UnityEngine;
 using ZenKit;
 using ZenKit.Daedalus;
+using Vector3 = System.Numerics.Vector3;
 
 namespace GUZ.Core._Npc2
 {
@@ -58,14 +60,6 @@ namespace GUZ.Core._Npc2
             {
                 props.MdmName = data.Body;
             }
-        }
-
-        public void ExtMdlSetModelScale(NpcInstance npc, Vector3 scale)
-        {
-            var npcGo = npc.GetUserData2().Go;
-
-            // FIXME - If fatness is applied before, we reset it here. We need to do proper Vector multiplication here.
-            npcGo.transform.localScale = scale;
         }
 
         public NpcInstance ExtHlpGetNpc(int instanceId)
@@ -149,6 +143,50 @@ namespace GUZ.Core._Npc2
             _vm.InitInstance(heroInstance);
 
             _vm.GlobalHero = heroInstance;
+        }
+
+        public void ExtMdlSetModelScale(NpcInstance npc, Vector3 scale)
+        {
+            // FIXME - Set this value on actual GameObject later.
+            npc.GetUserData2().Vob.ModelScale = scale;
+        }
+
+        public void ExtSetModelFatness(NpcInstance npc, float fatness)
+        {
+            // FIXME - Set this value on actual GameObject later.
+            npc.GetUserData2().Vob.ModelFatness = fatness;
+        }
+
+        public void ExtEquipItem(NpcInstance npc, int itemId)
+        {
+            var props = npc.GetUserData2().Properties;
+            var itemData = VmInstanceManager.TryGetItemData(itemId);
+
+            props.EquippedItems.Add(itemData);
+        }
+
+        public void ExtApplyOverlayMds(NpcInstance npc, string overlayName)
+        {
+            npc.GetUserData2().Properties.MdsOverlayName = overlayName;
+        }
+
+        public void ExtNpcSetToFistMode(NpcInstance npc)
+        {
+            var npcProperties = npc.GetUserData2().Properties;
+
+            npcProperties.WeaponState = VmGothicEnums.WeaponState.Fist;
+
+            // if npc has item in hand remove it and set weapon to fist
+            // Some animations need to force remove items, some not.
+            if (npcProperties.UsedItemSlot.IsNullOrEmpty())
+            {
+                return;
+            }
+
+            var slotGo = npc.GetUserData2().Go.FindChildRecursively(npcProperties.UsedItemSlot);
+            var item = slotGo!.transform.GetChild(0);
+
+            Object.Destroy(item.gameObject);
         }
     }
 }

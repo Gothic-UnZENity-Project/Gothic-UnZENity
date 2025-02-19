@@ -9,6 +9,7 @@ using UnityEngine;
 using ZenKit;
 using ZenKit.Daedalus;
 using Random = UnityEngine.Random;
+using Vector3 = System.Numerics.Vector3;
 
 namespace GUZ.Core.Vm
 {
@@ -426,7 +427,7 @@ namespace GUZ.Core.Vm
 
         public static void Mdl_ApplyOverlayMds(NpcInstance npc, string overlayName)
         {
-            NpcCreator.ExtApplyOverlayMds(npc, overlayName);
+            GameGlobals.Npcs.ExtApplyOverlayMds(npc, overlayName);
         }
 
         public struct ExtSetVisualBodyData
@@ -467,7 +468,7 @@ namespace GUZ.Core.Vm
 
         public static void Mdl_SetModelFatness(NpcInstance npc, float fatness)
         {
-            NpcCreator.ExtSetModelFatness(npc, fatness);
+            GameGlobals.Npcs.ExtSetModelFatness(npc, fatness);
         }
 
         #endregion
@@ -671,7 +672,7 @@ namespace GUZ.Core.Vm
 
         public static void EquipItem(NpcInstance npc, int itemId)
         {
-            NpcCreator.ExtEquipItem(npc, itemId);
+            GameGlobals.Npcs.ExtEquipItem(npc, itemId);
         }
 
 
@@ -773,7 +774,7 @@ namespace GUZ.Core.Vm
 
         public static void Npc_SetToFistMode(NpcInstance npc)
         {
-            NpcHelper.ExtNpcSetToFistMode(npc);
+            GameGlobals.Npcs.ExtNpcSetToFistMode(npc);
         }
 
         public static int Npc_IsPlayer(NpcInstance npc)
