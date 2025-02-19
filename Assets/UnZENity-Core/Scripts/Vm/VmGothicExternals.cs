@@ -789,7 +789,7 @@ namespace GUZ.Core.Vm
         public static void TA_MIN(NpcInstance npc, int startH, int startM, int stopH, int stopM, int action,
             string waypoint)
         {
-            NpcCreator.ExtTaMin(npc, startH, startM, stopH, stopM, action, waypoint);
+            GameGlobals.Npcs.ExtTaMin(npc, startH, startM, stopH, stopM, action, waypoint);
         }
 
         public static void Ta(NpcInstance npc, int startH, int stopH, int action,
@@ -800,7 +800,7 @@ namespace GUZ.Core.Vm
 
         public static void Npc_ExchangeRoutine(NpcInstance self, string routineName)
         {
-            NpcHelper.ExtNpcExchangeRoutine(self, routineName);
+            GameGlobals.Npcs.ExtNpcExchangeRoutine(self, routineName);
         }
 
         #endregion

@@ -36,6 +36,7 @@ namespace GUZ.Core.Manager.Scenes
 
             var worldRoot = new GameObject("World");
             var vobRoot = new GameObject("VOBs");
+            var npcRoot = new GameObject("NPCs");
             // We need to disable all vob meshes during loading. Otherwise loading time will increase from 10 seconds to 10 minutes. ;-)
             worldRoot.SetActive(false);
             vobRoot.SetActive(false);
@@ -92,7 +93,7 @@ namespace GUZ.Core.Manager.Scenes
                 if (config.Dev.EnableNpcs)
                 {
                     // await NpcCreator.CreateAsync(config.Dev, GameGlobals.Loading).AwaitAndLog();
-                    await GameGlobals.Npcs.CreateWorldNpcs(GameGlobals.Loading);
+                    await GameGlobals.Npcs.CreateWorldNpcs(GameGlobals.Loading, npcRoot).AwaitAndLog();
                     watch.LogAndRestart("NPCs created");
                 }
 

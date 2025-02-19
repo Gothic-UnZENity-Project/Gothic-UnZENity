@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using GUZ.Core.Caches;
+using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
 using GUZ.Core.Util;
@@ -19,12 +20,15 @@ namespace GUZ.Core._Npc2
     /// </summary>
     public class NpcInitializer2
     {
+        private GameObject _rootGo;
         private readonly List<(NpcContainer2 npc, string spawnPoint)> _tmpWldInsertNpcData = new();
 
         private static DaedalusVm Vm => GameData.GothicVm;
 
-        public async Task InitNpcsNewGame(LoadingManager loading)
+        public async Task InitNpcsNewGame(LoadingManager loading, GameObject rootGo)
         {
+            _rootGo = rootGo;
+
             NewRunDaedalus();
             await NewAddLazyLoading(loading);
         }
@@ -69,12 +73,11 @@ namespace GUZ.Core._Npc2
         /// </summary>
         private void NewRunDaedalus()
         {
+            // We need to set self=... --> Otherwise we get an NPE C_NPC.id/.name is not in NULL object
+            Vm.GlobalSelf = Vm.GlobalHero;
+
             // Inside Startup.d, it's always STARTUP_{MAPNAME} and INIT_{MAPNAME}
             // FIXME - Inside Startup.d some Startup_*() functions also call Init_*() some not. How to handle properly? (Force calling it here? Even if done twice?)
-
-            // FIXME - We need to set self=... --> Otherwise we get an NPE C_NPC.id/.name is not in NULL object
-            // FIXME - at B_InitGuildAttitudes() --> PrintDebugNpc
-            Vm.GlobalSelf = Vm.GlobalHero;
             GameData.GothicVm.Call($"STARTUP_{GameGlobals.SaveGame.CurrentWorldName.ToUpper().RemoveEnd(".ZEN")}");
         }
 
@@ -94,6 +97,8 @@ namespace GUZ.Core._Npc2
                 InitZkInstance(element.npc);
                 var go = new GameObject(element.npc.Instance.GetName(NpcNameSlot.Slot0));
                 var spawnPoint = GetSpawnPoint(element.npc, element.spawnPoint);
+
+                go.SetParent(_rootGo);
 
                 if (spawnPoint == null)
                 {
@@ -116,6 +121,9 @@ namespace GUZ.Core._Npc2
             // As we have our back reference between NpcInstance and NpcData, we can now initialize the object on ZenKit side.
             // Lookups like Npc_SetTalentValue() will work now as NpcInstance.UserData() points to our object which stores the information.
             Vm.InitInstance(npc.Instance);
+
+            // We need to load routines to set the SpawnPoint correctly later.
+            GameGlobals.Npcs.ExchangeRoutine(npc.Instance, npc.Instance.DailyRoutine);
         }
 
         [CanBeNull]

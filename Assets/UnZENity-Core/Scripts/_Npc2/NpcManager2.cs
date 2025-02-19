@@ -4,6 +4,7 @@ using GUZ.Core.Caches;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
+using GUZ.Core.Npc.Routines;
 using GUZ.Core.Vm;
 using MyBox;
 using UnityEngine;
@@ -22,9 +23,9 @@ namespace GUZ.Core._Npc2
         private NpcInitializer2 _initializer = new ();
         private static DaedalusVm _vm => GameData.GothicVm;
 
-        public async Task CreateWorldNpcs(LoadingManager loading)
+        public async Task CreateWorldNpcs(LoadingManager loading, GameObject rootGo)
         {
-            await _initializer.InitNpcsNewGame(loading);
+            await _initializer.InitNpcsNewGame(loading, rootGo);
         }
 
         public void ExtWldInsertNpc(int npcInstanceIndex, string spawnPoint)
@@ -187,6 +188,103 @@ namespace GUZ.Core._Npc2
             var item = slotGo!.transform.GetChild(0);
 
             Object.Destroy(item.gameObject);
+        }
+
+        public void ExtNpcExchangeRoutine(NpcInstance npcInstance, string routineName)
+        {
+            var formattedRoutineName = $"Rtn_{routineName}_{npcInstance.Id}";
+            var newRoutine = _vm.GetSymbolByName(formattedRoutineName);
+
+            if (newRoutine == null)
+            {
+                Debug.LogError($"Routine {formattedRoutineName} couldn't be found.");
+                return;
+            }
+
+            ExchangeRoutine(npcInstance, newRoutine.Index);
+        }
+
+        public void ExtTaMin(NpcInstance npc, int startH, int startM, int stopH, int stopM, int action, string waypoint)
+        {
+            var props = npc.GetUserData2().Properties;
+
+            RoutineData routine = new()
+            {
+                StartH = startH,
+                StartM = startM,
+                NormalizedStart = startH % 24 * 60 + startM,
+                StopH = stopH,
+                StopM = stopM,
+                NormalizedEnd = stopH % 24 * 60 + stopM,
+                Action = action,
+                Waypoint = waypoint
+            };
+
+            props.Routines.Add(routine);
+        }
+
+        public void ExchangeRoutine(NpcInstance npc, int routineIndex)
+        {
+            // Monsters
+            // e.g. Monsters have no routine, and we just need to send StartAiState function.
+            if (routineIndex == 0)
+            {
+                // FIXME - Call StartRoutine somehow again.
+                // We always need to set "self" before executing any Daedalus function.
+                // GameData.GothicVm.GlobalSelf = npcInstance;
+                // go.GetComponent<AiHandler>().StartRoutine(npcInstance.StartAiState);
+                return;
+            }
+
+            npc.GetUserData2().Properties.Routines.Clear();
+
+            // We always need to set "self" before executing any Daedalus function.
+            GameData.GothicVm.GlobalSelf = npc;
+            GameData.GothicVm.Call(routineIndex);
+
+            CalculateCurrentRoutine(npc);
+        }
+
+        /// <summary>
+        /// Based on time of the day, we need to calculate routine.
+        /// </summary>
+        private bool CalculateCurrentRoutine(NpcInstance npc)
+        {
+            var npcProps = npc.GetUserData2().Properties;
+            var currentTime = GameGlobals.Time.GetCurrentDateTime();
+            var normalizedNow = currentTime.Hour % 24 * 60 + currentTime.Minute;
+            RoutineData newRoutine = null;
+
+            // There are routines where stop is lower than start. (e.g. now:8:00, routine:22:00-9:00), therefore the second check.
+            foreach (var routine in npcProps.Routines)
+            {
+                if (routine.NormalizedStart <= normalizedNow && normalizedNow < routine.NormalizedEnd)
+                {
+                    newRoutine = routine;
+                    break;
+                }
+                // Handling the case where the time range spans across midnight
+
+                if (routine.NormalizedStart > routine.NormalizedEnd)
+                {
+                    if (routine.NormalizedStart <= normalizedNow || normalizedNow < routine.NormalizedEnd)
+                    {
+                        newRoutine = routine;
+                        break;
+                    }
+                }
+            }
+
+            // e.g. Mud has a bug as there is no routine covering 8am. We therefore pick the last one as seen in original G1. (sit)
+            if (newRoutine == null)
+            {
+                newRoutine = npcProps.Routines.Last();
+            }
+
+            var changed = npcProps.RoutineCurrent != newRoutine;
+            npcProps.RoutineCurrent = newRoutine;
+
+            return changed;
         }
     }
 }
