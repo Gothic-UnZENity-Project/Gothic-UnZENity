@@ -1,10 +1,13 @@
-﻿using System.Linq;
+﻿using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using GUZ.Core.Caches;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
 using GUZ.Core.Npc.Routines;
+using GUZ.Core.Util;
 using GUZ.Core.Vm;
 using MyBox;
 using UnityEngine;
@@ -21,7 +24,42 @@ namespace GUZ.Core._Npc2
     {
         // Supporter class where the whole Init() logic is outsourced for better readability.
         private NpcInitializer2 _initializer = new ();
+        private Queue<NpcLoader2> _objectsToInitQueue = new();
+
         private static DaedalusVm _vm => GameData.GothicVm;
+
+        
+        public void Init(ICoroutineManager coroutineManager)
+        {
+            coroutineManager.StartCoroutine(InitNpcCoroutine());
+        }
+
+        private IEnumerator InitNpcCoroutine()
+        {
+            while (true)
+            {
+                if (_objectsToInitQueue.IsEmpty())
+                {
+                    yield return null;
+                }
+                else
+                {
+                    var npcElement = _objectsToInitQueue.Dequeue();
+
+                    // Do not load NPCs we don't want to have via Debug flags.
+                    // Hint: If we filter out NPCs to spawn, we will never get any Monster as they have no Ids set. Except default: 0.
+                    if (GameGlobals.Config.Dev.SpawnNpcInstances.Value.Any() &&
+                        !GameGlobals.Config.Dev.SpawnNpcInstances.Value.Contains(npcElement.Npc.Id))
+                    {
+                        continue;
+                    }
+
+                    _initializer.InitNpc(npcElement.Npc, npcElement.gameObject);
+
+                    yield return FrameSkipper.TrySkipToNextFrameCoroutine();
+                }
+            }
+        }
 
         public async Task CreateWorldNpcs(LoadingManager loading, GameObject rootGo)
         {
@@ -42,7 +80,7 @@ namespace GUZ.Core._Npc2
         public void ExtMdlSetVisual(NpcInstance npc, string visual)
         {
             var props = npc.GetUserData2().Properties;
-            props.MdsNameBase = visual;
+            props.MdsNameMdhBase = visual;
         }
 
         public void ExtSetVisualBody(VmGothicExternals.ExtSetVisualBodyData data)
@@ -168,7 +206,7 @@ namespace GUZ.Core._Npc2
 
         public void ExtApplyOverlayMds(NpcInstance npc, string overlayName)
         {
-            npc.GetUserData2().Properties.MdsOverlayName = overlayName;
+            npc.GetUserData2().Properties.MdsMdhOverlayName = overlayName;
         }
 
         public void ExtNpcSetToFistMode(NpcInstance npc)
@@ -285,6 +323,21 @@ namespace GUZ.Core._Npc2
             npcProps.RoutineCurrent = newRoutine;
 
             return changed;
+        }
+
+        public void InitNpc(GameObject go)
+        {
+            go.TryGetComponent(out NpcLoader2 loaderComp);
+
+            if (loaderComp == null || loaderComp.IsLoaded)
+            {
+                return;
+            }
+
+            // Do not put element into queue a second time.
+            loaderComp.IsLoaded = true;
+
+            _objectsToInitQueue.Enqueue(go.GetComponent<NpcLoader2>());
         }
     }
 }

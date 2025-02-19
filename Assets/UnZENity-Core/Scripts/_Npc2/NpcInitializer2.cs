@@ -2,10 +2,12 @@
 using System.Linq;
 using System.Threading.Tasks;
 using GUZ.Core.Caches;
+using GUZ.Core.Creator.Meshes;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
 using GUZ.Core.Util;
+using GUZ.Core.Vm;
 using GUZ.Core.Vob.WayNet;
 using JetBrains.Annotations;
 using MyBox;
@@ -95,7 +97,10 @@ namespace GUZ.Core._Npc2
                 await FrameSkipper.TrySkipToNextFrame();
 
                 InitZkInstance(element.npc);
-                var go = new GameObject(element.npc.Instance.GetName(NpcNameSlot.Slot0));
+                var go = new GameObject($"{element.npc.Instance.GetName(NpcNameSlot.Slot0)} ({element.npc.Instance.Id})");
+                var loader = go.AddComponent<NpcLoader2>();
+                loader.Npc = element.npc.Instance;
+
                 var spawnPoint = GetSpawnPoint(element.npc, element.spawnPoint);
 
                 go.SetParent(_rootGo);
@@ -124,6 +129,32 @@ namespace GUZ.Core._Npc2
 
             // We need to load routines to set the SpawnPoint correctly later.
             GameGlobals.Npcs.ExchangeRoutine(npc.Instance, npc.Instance.DailyRoutine);
+        }
+
+        public void InitNpc(NpcInstance npcInstance, GameObject parentGo)
+        {
+            var npcData = npcInstance.GetUserData2();
+            var newNpc = ResourceLoader.TryGetPrefabObject(PrefabType.Npc)!;
+            var props = npcData.Properties;
+
+            npcData.Properties.Dialogs = GameData.Dialogs.Instances
+                .Where(dialog => dialog.Npc == npcInstance.Index)
+                .OrderByDescending(dialog => dialog.Important)
+                .ToList();
+
+            newNpc.name = "Root";
+
+            var mdhName = string.IsNullOrEmpty(props.MdhOverlayName)
+                ? props.MdhBaseName
+                : props.MdhOverlayName;
+            MeshFactory.CreateNpc(newNpc.name, props.MdmName, mdhName, props.BodyData,
+                newNpc, parentGo);
+
+            foreach (var equippedItem in props.EquippedItems)
+            {
+                MeshFactory.CreateNpcWeapon(newNpc, equippedItem, (VmGothicEnums.ItemFlags)equippedItem.MainFlag,
+                    (VmGothicEnums.ItemFlags)equippedItem.Flags);
+            }
         }
 
         [CanBeNull]

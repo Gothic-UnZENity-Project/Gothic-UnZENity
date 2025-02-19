@@ -150,6 +150,7 @@ namespace GUZ.Core
             StaticCache.Init(DeveloperConfig);
             Textures.Init();
             Vobs.Init(this);
+            Npcs.Init(this);
 
             GuzBootstrapper.BootGothicUnZeNity();
 

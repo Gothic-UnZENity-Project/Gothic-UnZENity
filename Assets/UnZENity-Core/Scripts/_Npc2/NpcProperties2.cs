@@ -10,6 +10,7 @@ namespace GUZ.Core._Npc2
     {
         public List<RoutineData> Routines = new();
         public RoutineData RoutineCurrent;
+        public List<InfoInstance> Dialogs = new();
 
         // NPC items/talents/...
         public Dictionary<VmGothicEnums.Talent, int> Talents = new();
@@ -21,8 +22,13 @@ namespace GUZ.Core._Npc2
 
         // Visual
         public string MdmName;
-        public string MdsNameBase;
-        public string MdsOverlayName;
+        public string MdsNameMdhBase;
+        public string MdsMdhOverlayName;
+
+        // An MDS file has always an MDH file named identically
+        public string MdhBaseName => MdsNameMdhBase;
+        public string MdhOverlayName => MdsMdhOverlayName;
+
         public VmGothicExternals.ExtSetVisualBodyData BodyData;
         public Transform Head;
     }
