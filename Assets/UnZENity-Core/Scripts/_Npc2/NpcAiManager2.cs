@@ -316,5 +316,20 @@ namespace GUZ.Core._Npc2
         {
             return ExtGetEquippedArmor(npc) != null;
         }
+
+        public bool ExtNpcIsInFightMode(NpcInstance npc, VmGothicEnums.FightMode fightMode)
+        {
+            return npc.GetUserData2().Vob.FightMode == (int)fightMode;
+        }
+
+        public bool ExtNpcOwnedByNpc(ItemInstance item, NpcInstance npc)
+        {
+            if (item == null)
+            {
+                return false;
+            }
+
+            return item.Owner == npc.Index;
+        }
     }
 }
