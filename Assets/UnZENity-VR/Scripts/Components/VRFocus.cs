@@ -15,7 +15,7 @@ namespace GUZ.VR.Components
     /// We leverage HVRGrabbable's events to show canvas of object name and alter brightness on all objects' mesh renderers.
     ///
     /// Order of use is always:
-    /// 1. HoverEnver -> We hover from far or near (e.g. grab distance without pulling towards us)
+    /// 1. HoverEnter -> We hover from far or near (e.g. grab distance without pulling towards us)
     /// 2. Grabbed -> Object is being Grabbed for movement/rotation
     /// 3. HoverExit -> We might still grab the object, but the Hover from our hand stops
     /// </summary>

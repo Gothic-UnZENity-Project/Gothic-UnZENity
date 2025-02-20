@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using GUZ.Core._Npc2;
 using GUZ.Core.Caches;
 using GUZ.Core.Data.ZkEvents;
 using GUZ.Core.Extensions;
@@ -37,6 +38,11 @@ namespace GUZ.Core.Creator
 
         private static bool TryPlayAnimation(string mdsName, string animationName, GameObject go, bool repeat)
         {
+            if (mdsName.IsNullOrEmpty())
+            {
+                return false;
+            }
+
             // For animations: mdhName == mdsName (with different file ending of course ;-))
             var mdhName = mdsName;
 
@@ -47,7 +53,7 @@ namespace GUZ.Core.Creator
             }
 
             var mdsAnimationKeyName = GetCombinedAnimationKey(mdsName, animationName);
-            var animationComp = go.GetComponent<Animation>();
+            var animationComp = go.GetComponentInChildren<Animation>();
 
             var mds = ResourceLoader.TryGetModelScript(mdsName);
             var mdh = ResourceLoader.TryGetModelHierarchy(mdhName);
@@ -91,13 +97,13 @@ namespace GUZ.Core.Creator
         {
             var animationComp = go.GetComponent<Animation>();
 
-            // Rewind workaround to actually set NPC to first frame of the animation.
-            // @see: https://forum.unity.com/threads/animation-rewind-not-working.4756/
-            if (!animationComp.isPlaying)
+            if (!animationComp || !animationComp.isPlaying)
             {
                 return;
             }
 
+            // Rewind workaround to actually set NPC to first frame of the animation.
+            // @see: https://forum.unity.com/threads/animation-rewind-not-working.4756/
             animationComp.Rewind();
             animationComp.Play();
             animationComp.Sample();
@@ -182,14 +188,14 @@ namespace GUZ.Core.Creator
             return true;
         }
 
-        public static void PlayHeadMorphAnimation(NpcProperties props, HeadMorph.HeadMorphType type)
+        public static void PlayHeadMorphAnimation(NpcProperties2 props, HeadMorph.HeadMorphType type)
         {
-            props.HeadMorph.StartAnimation(props.BodyData.Head, type);
+            props.NpcPrefabProperties.HeadMorph.StartAnimation(props.BodyData.Head, type);
         }
 
-        public static void StopHeadMorphAnimation(NpcProperties props, HeadMorph.HeadMorphType type)
+        public static void StopHeadMorphAnimation(NpcContainer2 npcContainer, HeadMorph.HeadMorphType type)
         {
-            props.HeadMorph.StopAnimation(type);
+            npcContainer.Properties.NpcPrefabProperties.HeadMorph.StopAnimation(type);
         }
 
         private static AnimationClip LoadAnimationClip(IModelAnimation pxAnimation, IModelHierarchy mdh,

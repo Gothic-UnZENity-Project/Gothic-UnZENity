@@ -1,7 +1,7 @@
+using GUZ.Core._Npc2;
 using GUZ.Core.Creator;
 using GUZ.Core.Data.ZkEvents;
 using GUZ.Core.Vm;
-using UnityEngine;
 
 namespace GUZ.Core.Npc.Actions.AnimationActions
 {
@@ -14,7 +14,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
         private int DesiredState => Action.Int1;
 
 
-        public UseItemToState(AnimationAction action, GameObject npcGo) : base(action, npcGo)
+        public UseItemToState(AnimationAction action, NpcContainer2 npcContainer) : base(action, npcContainer)
         {
         }
 

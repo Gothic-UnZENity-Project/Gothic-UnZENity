@@ -1,4 +1,5 @@
 using System.Linq;
+using GUZ.Core._Npc2;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
 using UnityEngine;
@@ -13,7 +14,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
     {
         private int _dialogId => Action.Int0;
 
-        public StartProcessInfos(AnimationAction action, GameObject npcGo) : base(action, npcGo)
+        public StartProcessInfos(AnimationAction action, NpcContainer2 npcData) : base(action, npcData)
         {
         }
 
@@ -35,7 +36,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
                 }
             }
 
-            DialogManager.StartDialog(NpcGo, Props, false);
+            DialogManager.StartDialog(NpcContainer, false);
         }
     }
 }

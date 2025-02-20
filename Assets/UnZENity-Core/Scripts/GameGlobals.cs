@@ -26,6 +26,7 @@ namespace GUZ.Core
         public static StationaryLightsManager Lights => Instance.Lights;
         public static VobManager Vobs => Instance.Vobs;
         public static NpcManager2 Npcs => Instance.Npcs;
+        public static NpcAiManager2 NpcAi => Instance.NpcAi;
         public static VobMeshCullingManager VobMeshCulling => Instance.VobMeshCulling;
         public static NpcMeshCullingManager NpcMeshCulling => Instance.NpcMeshCulling;
         public static VobSoundCullingManager SoundCulling => Instance.SoundCulling;

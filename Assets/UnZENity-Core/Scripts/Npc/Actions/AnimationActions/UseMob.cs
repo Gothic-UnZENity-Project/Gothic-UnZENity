@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using GUZ.Core._Npc2;
 using GUZ.Core.Creator;
 using GUZ.Core.Data.ZkEvents;
 using GUZ.Core.Extensions;
@@ -22,7 +23,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
 
         private bool IsStopUsingMob => Action.Int0 <= -1;
 
-        public UseMob(AnimationAction action, GameObject npcGo) : base(action, npcGo)
+        public UseMob(AnimationAction action, NpcContainer2 npcContainer) : base(action, npcContainer)
         {
         }
 
@@ -33,8 +34,8 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             // NPC is already interacting with a Mob, we therefore assume it's a change of state (e.g. -1 to stop Mob usage)
             if (Props.BodyState == VmGothicEnums.BodyState.BsMobinteract)
             {
-                _mobGo = Props.CurrentInteractable;
-                _slotGo = Props.CurrentInteractableSlot;
+                _mobGo = PrefabProps.CurrentInteractable;
+                _slotGo = PrefabProps.CurrentInteractableSlot;
 
                 StartMobUseAnimation();
                 return;
@@ -54,8 +55,8 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             _slotGo = slot;
             _destination = _slotGo.transform.position;
 
-            Props.CurrentInteractable = _mobGo;
-            Props.CurrentInteractableSlot = _slotGo;
+            PrefabProps.CurrentInteractable = _mobGo;
+            PrefabProps.CurrentInteractableSlot = _slotGo;
             Props.BodyState = VmGothicEnums.BodyState.BsMobinteract;
         }
 
@@ -141,8 +142,8 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             // Mobsi isn't in use any longer
             if (Props.CurrentInteractableStateId == -1)
             {
-                Props.CurrentInteractable = null;
-                Props.CurrentInteractableSlot = null;
+                PrefabProps.CurrentInteractable = null;
+                PrefabProps.CurrentInteractableSlot = null;
                 Props.BodyState = VmGothicEnums.BodyState.BsStand;
 
                 PhysicsHelper.EnablePhysicsForNpc(Props);

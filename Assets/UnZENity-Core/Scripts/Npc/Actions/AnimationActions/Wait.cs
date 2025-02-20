@@ -1,3 +1,4 @@
+using GUZ.Core._Npc2;
 using UnityEngine;
 
 namespace GUZ.Core.Npc.Actions.AnimationActions
@@ -6,7 +7,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
     {
         private float _waitSeconds;
 
-        public Wait(AnimationAction action, GameObject npcGo) : base(action, npcGo)
+        public Wait(AnimationAction action, NpcContainer2 npcContainer) : base(action, npcContainer)
         {
         }
 

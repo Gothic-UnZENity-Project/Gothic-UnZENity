@@ -55,6 +55,7 @@ namespace GUZ.Core
 
         public VobManager Vobs { get; private set; }
         public NpcManager2 Npcs { get; private set; }
+        public NpcAiManager2 NpcAi { get; private set; }
         public VobMeshCullingManager VobMeshCulling { get; private set; }
         public NpcMeshCullingManager NpcMeshCulling { get; private set; }
         public VobSoundCullingManager SoundCulling { get; private set; }
@@ -85,6 +86,7 @@ namespace GUZ.Core
             StaticCache = new StaticCacheManager();
             Vobs = new VobManager();
             Npcs = new NpcManager2();
+            NpcAi = new NpcAiManager2();
             VobMeshCulling = new VobMeshCullingManager(DeveloperConfig, this);
             NpcMeshCulling = new NpcMeshCullingManager(DeveloperConfig);
             SoundCulling = new VobSoundCullingManager(DeveloperConfig);

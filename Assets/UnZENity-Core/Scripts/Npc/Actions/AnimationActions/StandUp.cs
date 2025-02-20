@@ -1,11 +1,11 @@
+using GUZ.Core._Npc2;
 using GUZ.Core.Data.ZkEvents;
-using UnityEngine;
 
 namespace GUZ.Core.Npc.Actions.AnimationActions
 {
     public class StandUp : AbstractAnimationAction
     {
-        public StandUp(AnimationAction action, GameObject npcGo) : base(action, npcGo)
+        public StandUp(AnimationAction action, NpcContainer2 npcContainer) : base(action, npcContainer)
         {
         }
 

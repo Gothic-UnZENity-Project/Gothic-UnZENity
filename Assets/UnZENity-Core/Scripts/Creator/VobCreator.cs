@@ -914,21 +914,24 @@ namespace GUZ.Core.Creator
         /// </summary>
         private static GameObject CreateNpc(ZenKit.Vobs.Npc npcVob)
         {
-            var instance = GameData.GothicVm.AllocInstance<NpcInstance>(npcVob.Name);
-            var npcData = new NpcContainer()
-            {
-                Instance = instance,
-                Vob = npcVob
-            };
-            instance.UserData = npcData;
-            MultiTypeCache.NpcCache.Add(npcData);
+            Debug.LogError("Create NPC from saveGame not yet implemented.");
+            return null;
 
-            var newNpc = NpcCreator.InitializeNpc(instance, true, npcVob);
-
-            SetPosAndRot(newNpc, npcVob.Position, npcVob.Rotation);
-            GameGlobals.NpcMeshCulling.AddCullingEntry(newNpc);
-
-            return newNpc;
+            // var instance = GameData.GothicVm.AllocInstance<NpcInstance>(npcVob.Name);
+            // var npcData = new NpcContainer()
+            // {
+            //     Instance = instance,
+            //     Vob = npcVob
+            // };
+            // instance.UserData = npcData;
+            // MultiTypeCache.NpcCache.Add(npcData);
+            //
+            // var newNpc = NpcCreator.InitializeNpc(instance, true, npcVob);
+            //
+            // SetPosAndRot(newNpc, npcVob.Position, npcVob.Rotation);
+            // GameGlobals.NpcMeshCulling.AddCullingEntry(newNpc);
+            //
+            // return newNpc;
         }
 
         private static GameObject CreateDefaultMesh(IVirtualObject vob, GameObject parent = null, bool nonTeleport = false)

@@ -1,11 +1,11 @@
+using GUZ.Core._Npc2;
 using GUZ.Core.Creator;
-using UnityEngine;
 
 namespace GUZ.Core.Npc.Actions.AnimationActions
 {
     public class PlayAni : AbstractAnimationAction
     {
-        public PlayAni(AnimationAction action, GameObject npcGo) : base(action, npcGo)
+        public PlayAni(AnimationAction action, NpcContainer2 npcContainer) : base(action, npcContainer)
         {
         }
 

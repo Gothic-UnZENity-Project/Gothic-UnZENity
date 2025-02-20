@@ -55,6 +55,7 @@ namespace GUZ.Lab
         public StationaryLightsManager Lights => null;
         public VobManager Vobs => null;
         public NpcManager2 Npcs => null;
+        public NpcAiManager2 NpcAi => null;
         public VobMeshCullingManager VobMeshCulling => null;
         public NpcMeshCullingManager NpcMeshCulling => null;
         public VobSoundCullingManager SoundCulling => null;

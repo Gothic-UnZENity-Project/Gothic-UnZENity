@@ -1,5 +1,5 @@
-using System;
 using System.Collections.Generic;
+using GUZ.Core._Npc2;
 using GUZ.Core.Creator;
 using GUZ.Core.Data.ZkEvents;
 using GUZ.Core.Globals;
@@ -14,9 +14,9 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
         private Quaternion _finalRotation;
         private bool _isRotateLeft;
 
-        private Transform NpcHeadTransform => Props.Head;
+        private Transform NpcHeadTransform => Props.NpcPrefabProperties.Head;
 
-        protected AbstractRotateAnimationAction(AnimationAction action, GameObject npcGo) : base(action, npcGo)
+        protected AbstractRotateAnimationAction(AnimationAction action, NpcContainer2 npcContainer) : base(action, npcContainer)
         {
         }
 

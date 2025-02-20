@@ -92,8 +92,18 @@ namespace GUZ.Core.Manager.Culling
             // Alter position tracking of NPC
             if (isInVisibleRange)
             {
-                GameGlobals.Npcs.InitNpc(go);
-                _visibleNpcs.Add(evt.index, go.transform);
+                var initializedNow = GameGlobals.Npcs.InitNpc(go);
+                _visibleNpcs.TryAdd(evt.index, go.transform);
+
+
+                // If the NPC !wasOutOfDistance (==wasInDistanceAlready), then we spawned our VRPlayer next to the NPC
+                // (e.g. from a save game) and we need to go on with the current routine instead of "resetting" the routine.
+                // (Which would respawn NPC at a waypoint, which is wrong.)
+                if (wasOutOfDistance && !initializedNow)
+                {
+                    // If we walked to an NPC in our game, the NPC will be re-enabled and Routines get reset.
+                    go.GetComponentInChildren<AiHandler>().ReEnableNpc();
+                }
             }
             // When an NPC gets invisible, we need to check for their next respawn from their initially spawned position.
             else
@@ -111,15 +121,6 @@ namespace GUZ.Core.Manager.Culling
                     }
                 }
                 _visibleNpcs.Remove(evt.index);
-            }
-
-            // If the NPC !wasOutOfDistance (==wasInDistanceAlready), then we spawned our VRPlayer next to the NPC
-            // (e.g. from a save game) and we need to go on with the current routine instead of "resetting" the routine.
-            // (Which would respawn NPC at a waypoint, which is wrong.)
-            if (isInVisibleRange && wasOutOfDistance)
-            {
-                // If we walked to an NPC in our game, the NPC will be re-enabled and Routines get reset.
-                go.GetComponent<AiHandler>().ReEnableNpc();
             }
         }
 

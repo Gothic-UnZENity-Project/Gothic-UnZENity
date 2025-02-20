@@ -1,4 +1,5 @@
 using System.Text.RegularExpressions;
+using GUZ.Core._Npc2;
 using GUZ.Core.Extensions;
 using GUZ.Core.Npc;
 using GUZ.Core.Properties;
@@ -24,12 +25,12 @@ namespace GUZ.Core.Creator.Meshes.Builder
                 return null;
             }
 
-            var props = RootGo.GetComponent<NpcProperties>();
+            var props = RootGo.GetComponentInParent<NpcLoader2>().Npc.GetUserData2().Properties;
 
             // Cache it for faster use during runtime
-            props.Head = headGo.transform;
-            props.HeadMorph = headGo.AddComponent<HeadMorph>();
-            props.HeadMorph.HeadName = props.BodyData.Head;
+            props.NpcPrefabProperties.Head = headGo.transform;
+            props.NpcPrefabProperties.HeadMorph = headGo.AddComponent<HeadMorph>();
+            props.NpcPrefabProperties.HeadMorph.HeadName = props.BodyData.Head;
 
             var headMeshFilter = headGo.AddComponent<MeshFilter>();
             var headMeshRenderer = headGo.AddComponent<MeshRenderer>();

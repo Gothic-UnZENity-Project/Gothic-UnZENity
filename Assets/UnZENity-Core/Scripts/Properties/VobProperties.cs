@@ -11,7 +11,6 @@ namespace GUZ.Core.Properties
         /// It's some hidden magic. Created based on IVirtualObject.Visual by extracting the first part.
         /// Because within Daedalus there are functions requesting it. e.g. Wld_IsMobAvailable (self,"BED")
         /// </summary>
-        [field: SerializeField]
         public string VisualScheme { get; private set; }
 
         public IVirtualObject Properties;

@@ -4722,10 +4722,10 @@ PrefabInstance:
       addedObject: {fileID: 6717938044841316945}
     - targetCorrespondingSourceObject: {fileID: 7486009837194656689, guid: a0de35f4e16efb54ba0281586c17416f, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 7174930359443231006}
+      addedObject: {fileID: 2100257876914915749}
     - targetCorrespondingSourceObject: {fileID: 7486009837194656689, guid: a0de35f4e16efb54ba0281586c17416f, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 2100257876914915749}
+      addedObject: {fileID: 5917644691237604107}
     - targetCorrespondingSourceObject: {fileID: 7486009837306776691, guid: a0de35f4e16efb54ba0281586c17416f, type: 3}
       insertIndex: -1
       addedObject: {fileID: 3492203693687528955}
@@ -5159,46 +5159,6 @@ MonoBehaviour:
     JustActivated: 0
     JustDeactivated: 0
     Value: 0
---- !u!114 &7174930359443231006
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8391885030387849269}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: da21e4a06ee346319b0a6dc74e0dcc61, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  <VisualScheme>k__BackingField: 
-  NpcSound: {fileID: 2100257876914915749}
-  Bip01: {fileID: 0}
-  ColliderRootMotion: {fileID: 0}
-  Head: {fileID: 0}
-  HeadMorph: {fileID: 0}
-  MdmName: 
-  BaseMdsName: 
-  OverlayMdsName: 
-  PerceptionTime: 0
-  CurrentPerceptionTime: 0
-  WalkMode: 0
-  WeaponState: 0
-  BodyState: 0
-  CurrentInteractable: {fileID: 0}
-  CurrentInteractableSlot: {fileID: 0}
-  CurrentInteractableStateId: -1
-  PrevStateStart: 0
-  StateStart: 0
-  StateLoop: 0
-  StateEnd: 0
-  IsStateTimeActive: 0
-  StateTime: 0
-  CurrentLoopState: 0
-  HasItemEquipped: 0
-  CurrentItem: 0
-  UsedItemSlot: 
-  ItemAnimationState: -1
 --- !u!82 &2100257876914915749
 AudioSource:
   m_ObjectHideFlags: 0
@@ -5295,6 +5255,23 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &5917644691237604107
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8391885030387849269}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e8f218a92500441fbbf8345ea50c5594, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _isHero: 1
+  NpcSound: {fileID: 0}
+  Bip01: {fileID: 0}
+  ColliderRootMotion: {fileID: 0}
+  AiHandler: {fileID: 0}
 --- !u!4 &8391885031051259193 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7486009837755879101, guid: a0de35f4e16efb54ba0281586c17416f, type: 3}

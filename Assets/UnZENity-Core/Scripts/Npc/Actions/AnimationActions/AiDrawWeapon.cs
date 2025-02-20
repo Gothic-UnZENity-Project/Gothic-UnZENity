@@ -1,14 +1,14 @@
+using GUZ.Core._Npc2;
 using GUZ.Core.Creator;
 using GUZ.Core.Data.ZkEvents;
 using GUZ.Core.Extensions;
-using UnityEngine;
 using EventType = ZenKit.EventType;
 
 namespace GUZ.Core.Npc.Actions.AnimationActions
 {
     public class DrawWeapon : AbstractAnimationAction
     {
-        public DrawWeapon(AnimationAction action, GameObject npcGo) : base(action, npcGo)
+        public DrawWeapon(AnimationAction action, NpcContainer2 npcContainer) : base(action, npcContainer)
         {
         }
 

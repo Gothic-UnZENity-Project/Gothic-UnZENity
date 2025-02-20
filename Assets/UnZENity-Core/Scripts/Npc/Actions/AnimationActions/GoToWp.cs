@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using GUZ.Core._Npc2;
 using GUZ.Core.Data.ZkEvents;
 using GUZ.Core.Manager;
 using GUZ.Core.Vob.WayNet;
@@ -13,13 +14,13 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
 
         private Stack<DijkstraWaypoint> _route;
 
-        public GoToWp(AnimationAction action, GameObject npcGo) : base(action, npcGo)
+        public GoToWp(AnimationAction action, NpcContainer2 npcContainer) : base(action, npcContainer)
         {
         }
 
         public override void Start()
         {
-            var currentWaypoint = Props.CurrentWayPoint ?? WayNetHelper.FindNearestWayPoint(Props.transform.position);
+            var currentWaypoint = Props.CurrentWayPoint ?? WayNetHelper.FindNearestWayPoint(PrefabProps.Bip01.position);
             var destinationWaypoint = (WayPoint)WayNetHelper.GetWayNetPoint(Destination);
 
             

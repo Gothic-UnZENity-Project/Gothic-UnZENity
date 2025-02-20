@@ -4,6 +4,14 @@ namespace GUZ.Core.Npc
 {
     public class RootCollisionHandler : BasePlayerBehaviour
     {
+        protected override void Awake()
+        {
+            base.Awake();
+
+            // Cached object which will be used later.
+            NpcData.Properties.NpcPrefabProperties.ColliderRootMotion = gameObject.transform;
+        }
+
         private void Update()
         {
             // As we use legacy animations, we can't use RootMotion. We therefore need to rebuild it.
@@ -20,7 +28,7 @@ namespace GUZ.Core.Npc
             var collisionTransform = transform;
 
             // Apply physics based position change to root.
-            NpcRoot.transform.localPosition += collisionTransform.localPosition;
+            RootGo.transform.localPosition += collisionTransform.localPosition;
 
             // Empty physics based diff. Next frame physics will be recalculated.
             collisionTransform.localPosition = Vector3.zero;

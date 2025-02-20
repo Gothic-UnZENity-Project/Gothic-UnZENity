@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using GUZ.Core._Npc2;
 using GUZ.Core.Creator;
 using GUZ.Core.Data.ZkEvents;
 using GUZ.Core.Extensions;
@@ -7,6 +8,7 @@ using GUZ.Core.Manager;
 using GUZ.Core.Properties;
 using GUZ.Core.Vm;
 using UnityEngine;
+using ZenKit.Daedalus;
 using EventType = ZenKit.EventType;
 using Object = UnityEngine.Object;
 
@@ -15,16 +17,22 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
     public abstract class AbstractAnimationAction
     {
         protected readonly AnimationAction Action;
+        protected readonly NpcContainer2 NpcContainer;
+        protected readonly NpcInstance NpcInstance;
         protected readonly GameObject NpcGo;
-        protected readonly NpcProperties Props;
+        protected readonly NpcProperties2 Props;
+        protected readonly NpcComponentProperties2 PrefabProps;
 
         protected bool IsFinishedFlag;
 
-        public AbstractAnimationAction(AnimationAction action, GameObject npcGo)
+        public AbstractAnimationAction(AnimationAction action, NpcContainer2 npcData)
         {
             Action = action;
-            NpcGo = npcGo;
-            Props = npcGo.GetComponent<NpcProperties>();
+            NpcContainer = npcData;
+            NpcInstance = npcData.Instance;
+            NpcGo = npcData.Go;
+            Props = npcData.Properties;
+            PrefabProps = Props.NpcPrefabProperties;
         }
 
         public virtual void Start()
@@ -70,9 +78,9 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
         public virtual void AnimationSfxEventCallback(SerializableEventSoundEffect sfxData)
         {
             var clip = VobHelper.GetSoundClip(sfxData.Name);
-            Props.NpcSound.clip = clip;
-            Props.NpcSound.maxDistance = sfxData.Range.ToMeter();
-            Props.NpcSound.Play();
+            Props.NpcPrefabProperties.NpcSound.clip = clip;
+            Props.NpcPrefabProperties.NpcSound.maxDistance = sfxData.Range.ToMeter();
+            Props.NpcPrefabProperties.NpcSound.Play();
 
             if (sfxData.EmptySlot)
             {
@@ -103,9 +111,9 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
 
         public virtual void AnimationMorphEventCallback(SerializableEventMorphAnimation data)
         {
-            var type = Props.HeadMorph.GetAnimationTypeByName(data.Animation);
+            var type = Props.NpcPrefabProperties.HeadMorph.GetAnimationTypeByName(data.Animation);
 
-            Props.HeadMorph.StartAnimation(Props.BodyData.Head, type);
+            Props.NpcPrefabProperties.HeadMorph.StartAnimation(Props.BodyData.Head, type);
         }
 
         protected virtual void InsertItem(string slot1, string slot2)
@@ -146,7 +154,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             if (eventData.NextAnimation.Any())
             {
                 PhysicsHelper.DisablePhysicsForNpc(Props);
-                AnimationCreator.PlayAnimation(Props.MdsNames, eventData.NextAnimation, Props.Go);
+                AnimationCreator.PlayAnimation(Props.MdsNames, eventData.NextAnimation, NpcGo);
             }
             // Play Idle animation
             // But only if NPC isn't using an item right now. Otherwise, breathing will spawn hand to hips which looks wrong when (e.g.) drinking beer.
@@ -161,7 +169,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
                     VmGothicEnums.WalkMode.Dive => $"S_{weaponState}DIVE",
                     _ => $"S_{weaponState}RUN"
                 };
-                var idleAnimPlaying = AnimationCreator.PlayAnimation(Props.MdsNames, animName, Props.Go, true);
+                var idleAnimPlaying = AnimationCreator.PlayAnimation(Props.MdsNames, animName, NpcGo, true);
                 if (!idleAnimPlaying)
                 {
                     Debug.LogError($"Animation {animName} not found for {NpcGo.name} on {this}.");

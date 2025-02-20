@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using GUZ.Core._Npc2;
 using GUZ.Core.Caches;
 using GUZ.Core.Config;
 using GUZ.Core.Creator.Meshes;
@@ -51,7 +52,7 @@ namespace GUZ.Core.Creator
 
             if (!GameGlobals.SaveGame.IsLoadedGame)
             {
-                await InitializeNpcsFirstTime(loading);
+                // Handled within NpcManager now.
             }
             else
             {
@@ -60,57 +61,42 @@ namespace GUZ.Core.Creator
         }
 
         /// <summary>
-        /// We load NPCs via Daedalus Init_*() only! if we enter the world for the first time
-        /// when reaching a world for the first time.
-        /// </summary>
-        private static async Task InitializeNpcsFirstTime(LoadingManager loading)
-        {
-            // Inside Startup.d, it's always STARTUP_{MAPNAME} and INIT_{MAPNAME}
-            // FIXME - Inside Startup.d some Startup_*() functions also call Init_*() some not. How to handle properly? (Force calling it here? Even if done twice?)
-            GameData.GothicVm.Call($"STARTUP_{GameGlobals.SaveGame.CurrentWorldName.ToUpper().RemoveEnd(".ZEN")}");
-
-            // Daedalus will walk through the whole Wld_InsertNpc() calls once.
-            // Afterwards we will crate the NPCs step-by-step to ensure smooth loading screen fps.
-            await InitializeNpcs(loading);
-        }
-
-        /// <summary>
         /// If we loaded the data from a save game or previous visit in this game session,
         /// we have our NPCs nearby already loaded via Vobs and load remaining (far) NPCs now.
         /// </summary>
         private static async Task InitializeNpcsFromSaveGame(LoadingManager loading)
         {
-            loading.SetPhase(LoadingManager.LoadingProgressType.Npc,  GameGlobals.SaveGame.CurrentWorldData.Npcs.Count);
-
-            foreach (var npcVob in GameGlobals.SaveGame.CurrentWorldData.Npcs)
-            {
-                loading.AddProgress();
-                await FrameSkipper.TrySkipToNextFrame();
-
-                var instance = Vm.AllocInstance<NpcInstance>(npcVob.Name);
-                var npcData = new NpcContainer()
-                {
-                    Instance = instance,
-                    Vob = npcVob
-                };
-                instance.UserData = npcData;
-
-                MultiTypeCache.NpcCache.Add(npcData);
-
-                var newNpc = InitializeNpc(instance, true, npcVob);
-
-                if (newNpc == null)
-                {
-                    continue;
-                }
-
-                var isSpawned = SetSpawnPoint(npcData, npcVob.ScriptWaypoint);
-
-                if (isSpawned)
-                {
-                    GameGlobals.NpcMeshCulling.AddCullingEntry(newNpc);
-                }
-            }
+            // loading.SetPhase(LoadingManager.LoadingProgressType.Npc,  GameGlobals.SaveGame.CurrentWorldData.Npcs.Count);
+            //
+            // foreach (var npcVob in GameGlobals.SaveGame.CurrentWorldData.Npcs)
+            // {
+            //     loading.AddProgress();
+            //     await FrameSkipper.TrySkipToNextFrame();
+            //
+            //     var instance = Vm.AllocInstance<NpcInstance>(npcVob.Name);
+            //     var npcData = new NpcContainer()
+            //     {
+            //         Instance = instance,
+            //         Vob = npcVob
+            //     };
+            //     instance.UserData = npcData;
+            //
+            //     MultiTypeCache.NpcCache.Add(npcData);
+            //
+            //     var newNpc = InitializeNpc(instance, true, npcVob);
+            //
+            //     if (newNpc == null)
+            //     {
+            //         continue;
+            //     }
+            //
+            //     var isSpawned = SetSpawnPoint(npcData, npcVob.ScriptWaypoint);
+            //
+            //     if (isSpawned)
+            //     {
+            //         GameGlobals.NpcMeshCulling.AddCullingEntry(newNpc);
+            //     }
+            // }
         }
 
         private static GameObject GetRootGo()
@@ -126,14 +112,14 @@ namespace GUZ.Core.Creator
             return _npcRootGo;
         }
 
-        private static NpcProperties GetProperties(NpcInstance npc)
+        private static NpcProperties2 GetProperties(NpcInstance npc)
         {
-            return npc.GetUserData().Properties;
+            return npc.GetUserData2().Properties;
         }
 
         private static GameObject GetNpcGo(NpcInstance npcInstance)
         {
-            return GetProperties(npcInstance).Go;
+            return npcInstance.GetUserData2().Go;
         }
 
         /// <summary>
@@ -167,121 +153,6 @@ namespace GUZ.Core.Creator
 
             // For mesh creation later, we need to store, that there is a new NPC or a duplicate Monster to be spawned.
             _tmpWldInsertNpcData.Add((userDataObject, spawnPoint));
-        }
-
-        private static async Task InitializeNpcs(LoadingManager loading)
-        {
-            loading.SetPhase(LoadingManager.LoadingProgressType.Npc, _tmpWldInsertNpcData.Count);
-
-            foreach (var npc in _tmpWldInsertNpcData)
-            {
-                // Update progress bar and check if we need to wait for next frame now (As some conditions skip -continue- end of loop and would skip check)
-                loading.AddProgress();
-                await FrameSkipper.TrySkipToNextFrame();
-
-                if (WayNetHelper.GetWayNetPoint(npc.spawnPoint) is null)
-                {
-                    Debug.LogWarning($"Cannot spawn NPC as waypoint ${npc.spawnPoint} does not exist.");
-                    continue;
-                }
-
-                var newNpc = InitializeNpc(npc.npcData.Instance, false, new ZenKit.Vobs.Npc());
-                if (newNpc == null)
-                {
-                    continue;
-                }
-
-                var isSpawned = SetSpawnPoint(npc.npcData, npc.spawnPoint);
-
-                if (isSpawned)
-                {
-                    GameGlobals.NpcMeshCulling.AddCullingEntry(newNpc);
-                }
-            }
-
-            // Full loading of NPCs is done.
-            loading.AddProgress(LoadingManager.LoadingProgressType.VOB, 1f);
-        }
-
-        /// <summary>
-        /// Initialize NPCs and spawn them on the scene.
-        /// We also need to ensure, that the NpcInstance from ZenKit has called AllocInstance<> and InitInstance<> once per instanceIndex!
-        ///
-        /// There are three possibilities to call this method:
-        /// 1. No NpcCache entry is set
-        ///     - Then we need to AllocInstance<> and InitInstance<>
-        ///     - Called whenever NPCs are fetched from a save game
-        /// 2. NPCCache entry is set, but no Properties component
-        ///     - Then we need to InitInstance<> only
-        ///     - Called whenever NPCs are pre-allocated via Wld_InsertNpc()
-        /// 3. Both NPCCache entry and Properties component are set
-        ///     - Then Alloc+Init was called already. We now need to copy the Ext*() data into this object
-        ///       (e.g. mdmName from Mdl_SetVisualBody() call from the first monster's InitInstance<> call)
-        ///     - Called whenever monsters are spawned multiple times (won't affect NPCs, they're always singletons inside Daedalus usage)
-        ///
-        /// Once one of these options is executed, we will go on with creating the meshes itself.
-        /// </summary>
-        /// <param name="isFromSaveGame">We will alter certain aspects of initializing if NPC is created from a saved VOB.</param>
-        [CanBeNull]
-        public static GameObject InitializeNpc(NpcInstance npcInstance, bool isFromSaveGame, ZenKit.Vobs.Npc npcVob)
-        {
-            var npcData = npcInstance.GetUserData();
-            var newNpc = ResourceLoader.TryGetPrefabObject(PrefabType.Npc);
-            var propertiesComp = newNpc.GetComponent<NpcProperties>();
-
-            npcData.Vob = npcVob;
-            npcData.Properties = propertiesComp;
-            npcData.Properties.NpcData = npcData;
-
-            propertiesComp.SetData(npcVob);
-
-            // As we have our back reference between NpcInstance and NpcData, we can now initialize the object on ZenKit side.
-            // Lookups like Npc_SetTalentValue() will work now as NpcInstance.UserData() points to our object which stores the information.
-            Vm.InitInstance(npcInstance);
-
-            OverwriteInitDataWithSaveGameData(isFromSaveGame, npcData);
-
-            npcData.Properties.Dialogs = GameData.Dialogs.Instances
-                .Where(dialog => dialog.Npc == npcInstance.Index)
-                .OrderByDescending(dialog => dialog.Important)
-                .ToList();
-
-            // Hint: If we filter out NPCs to spawn, we will never get any Monster as they have no Ids set. Except default: 0.
-            if (GameGlobals.Config.Dev.SpawnNpcInstances.Value.Any() &&
-                !GameGlobals.Config.Dev.SpawnNpcInstances.Value.Contains(npcInstance.Id))
-            {
-                Object.Destroy(newNpc);                                                                         // 1
-                MultiTypeCache.NpcCache.Remove(MultiTypeCache.NpcCache.First(i => i.Instance == npcInstance));  // 2
-                // Hint: We don't destroy NpcInstance object. As this is a debug IF statement only, it's fine.  // 3
-
-                return null;
-            }
-
-            newNpc.name = $"{npcInstance.GetName(NpcNameSlot.Slot0)} ({npcInstance.Id})";
-
-            var mdhName = string.IsNullOrEmpty(propertiesComp.OverlayMdhName)
-                ? propertiesComp.BaseMdhName
-                : propertiesComp.OverlayMdhName;
-            MeshFactory.CreateNpc(newNpc.name, propertiesComp.MdmName, mdhName, propertiesComp.BodyData,
-                newNpc, GetRootGo());
-
-            foreach (var equippedItem in propertiesComp.EquippedItems)
-            {
-                MeshFactory.CreateNpcWeapon(newNpc, equippedItem, (VmGothicEnums.ItemFlags)equippedItem.MainFlag,
-                    (VmGothicEnums.ItemFlags)equippedItem.Flags);
-            }
-
-            var npcRoutine = npcInstance.DailyRoutine;
-            NpcHelper.ExchangeRoutine(npcInstance, npcRoutine);
-
-            newNpc.TryGetComponent<Routine>(out var routine);
-
-            // As they're loaded asynchronously, we need to disable every NPC/Monster during loading.
-            // We will enable them via Culling once everything is loaded.
-            // Otherwise, they'll fall through the world as the world mesh is loaded last. ;-)
-            newNpc.SetActive(false);
-
-            return newNpc;
         }
 
         /// <summary>
@@ -478,122 +349,10 @@ namespace GUZ.Core.Creator
             GameData.NpcRoutines[npcInstance.Index].Add(routine);
         }
 
-        public static void ExtMdlSetVisual(NpcInstance npc, string visual)
-        {
-            var props = GetProperties(npc);
-            props.BaseMdsName = visual;
-        }
-
-        public static void ExtApplyOverlayMds(NpcInstance npc, string overlayName)
-        {
-            var props = GetProperties(npc);
-            props.OverlayMdsName = overlayName;
-        }
-
         public static void ExtNpcSetTalentSkill(NpcInstance npc, VmGothicEnums.Talent talent, int level)
         {
             // FIXME - TBD.
             // FIXME - In OpenGothic it adds MDS overlays based on skill level.
-        }
-
-        public static void ExtSetVisualBody(VmGothicExternals.ExtSetVisualBodyData data)
-        {
-            var props = GetProperties(data.Npc);
-
-            props.BodyData = data;
-
-            if (data.Armor >= 0)
-            {
-                var armorData = VmInstanceManager.TryGetItemData(data.Armor);
-                props.EquippedItems.Add(VmInstanceManager.TryGetItemData(data.Armor));
-                props.MdmName = armorData.VisualChange;
-            }
-            else
-            {
-                props.MdmName = data.Body;
-            }
-        }
-
-        public static void ExtMdlSetModelScale(NpcInstance npc, Vector3 scale)
-        {
-            var npcGo = GetNpcGo(npc);
-
-            // FIXME - If fatness is applied before, we reset it here. We need to do proper Vector multiplication here.
-            npcGo.transform.localScale = scale;
-        }
-
-        public static void ExtSetModelFatness(NpcInstance npc, float fatness)
-        {
-            npc.GetUserData().Vob.ModelFatness = fatness;
-
-            var npcGo = GetNpcGo(npc);
-            var oldScale = npcGo.transform.localScale;
-            var bonusFat = fatness * _fatnessScale;
-
-            npcGo.transform.localScale = new Vector3(oldScale.x + bonusFat, oldScale.y, oldScale.z + bonusFat);
-        }
-
-        /// <summary>
-        /// Hint: This lookup is exclusively used for Npcs as elements for Monsters will be stored multiple times with the same index.
-        /// (An NpcInstance.index always correlates to a specific Daedalus C_Class instance)
-        /// </summary>
-        public static NpcInstance ExtHlpGetNpc(int instanceId)
-        {
-            return MultiTypeCache.NpcCache
-                .FirstOrDefault(i => i.Instance.Index == instanceId)?
-                .Instance;
-        }
-
-        public static void ExtNpcPerceptionEnable(NpcInstance npc, VmGothicEnums.PerceptionType perception,
-            int function)
-        {
-            var props = GetProperties(npc);
-            props.Perceptions[perception] = function;
-        }
-
-        public static void ExtNpcPerceptionDisable(NpcInstance npc, VmGothicEnums.PerceptionType perception)
-        {
-            var props = GetProperties(npc);
-            props.Perceptions[perception] = -1;
-        }
-
-        public static void ExtNpcSetPerceptionTime(NpcInstance npc, float time)
-        {
-            var props = GetProperties(npc);
-            props.PerceptionTime = time;
-        }
-
-        public static void ExtNpcSetTalentValue(NpcInstance npc, VmGothicEnums.Talent talent, int level)
-        {
-            var props = GetProperties(npc);
-            props.Talents[talent] = level;
-        }
-
-        public static void ExtCreateInvItems(NpcInstance npc, uint itemId, int amount)
-        {
-            // We also initialize NPCs inside Daedalus when we load a save game. It's needed as some data isn't stored on save games.
-            // But e.g. inventory items will be skipped as they are stored inside save game VOBs.
-            if (!GameGlobals.SaveGame.IsWorldLoadedForTheFirstTime)
-            {
-                return;
-            }
-
-            var props = GetProperties(npc);
-            if (props == null)
-            {
-                Debug.LogError($"NPC not found with index {npc.Index}");
-                return;
-            }
-            props.Items.TryAdd(itemId, amount);
-            props.Items[itemId] += amount;
-        }
-
-        public static void ExtEquipItem(NpcInstance npc, int itemId)
-        {
-            var props = GetProperties(npc);
-            var itemData = VmInstanceManager.TryGetItemData(itemId);
-
-            props.EquippedItems.Add(itemData);
         }
     }
 }

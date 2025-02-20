@@ -27,6 +27,7 @@ namespace GUZ.Core.Editor.Editor
         public StoryManager Story { get; }
         public VobManager Vobs { get; }
         public NpcManager2 Npcs { get; }
+        public NpcAiManager2 NpcAi { get; }
         public VobMeshCullingManager VobMeshCulling { get; }
         public NpcMeshCullingManager NpcMeshCulling { get; }
         public VobSoundCullingManager SoundCulling { get; }

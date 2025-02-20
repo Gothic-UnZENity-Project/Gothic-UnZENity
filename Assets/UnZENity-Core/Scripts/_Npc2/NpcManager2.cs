@@ -28,6 +28,8 @@ namespace GUZ.Core._Npc2
 
         private static DaedalusVm _vm => GameData.GothicVm;
 
+        private const float _fpLookupDistance = 7f; // meter
+
         
         public void Init(ICoroutineManager coroutineManager)
         {
@@ -80,7 +82,7 @@ namespace GUZ.Core._Npc2
         public void ExtMdlSetVisual(NpcInstance npc, string visual)
         {
             var props = npc.GetUserData2().Properties;
-            props.MdsNameMdhBase = visual;
+            props.MdsNameBase = visual;
         }
 
         public void ExtSetVisualBody(VmGothicExternals.ExtSetVisualBodyData data)
@@ -134,6 +136,11 @@ namespace GUZ.Core._Npc2
             props.Items[itemId] += amount;
         }
 
+        public GameObject GetHeroGameObject()
+        {
+            return ((NpcInstance)GameData.GothicVm.GlobalHero).GetUserData2().Go;
+        }
+
         /// <summary>
         /// We need to first Alloc() hero data space and put the instance to the cache.
         /// Then we initialize it. (During Init, PC_HERO:Npc_Default->Prototype:Npc_Default will call SetTalentValue where we need the lookup to fetch the NpcInstance).
@@ -146,7 +153,7 @@ namespace GUZ.Core._Npc2
             {
                 // We assume, that this call is only made when the cache got cleared before as we loaded another world.
                 // Therefore, we re-add it now.
-                MultiTypeCache.NpcCache.Add(((NpcInstance)GameData.GothicVm.GlobalHero).GetUserData());
+                MultiTypeCache.NpcCache2.Add(((NpcInstance)GameData.GothicVm.GlobalHero).GetUserData2());
 
                 return;
             }
@@ -171,10 +178,15 @@ namespace GUZ.Core._Npc2
             {
                 Instance = heroInstance,
                 Vob = vobNpc,
+                Go = playerGo,
                 Properties = new()
+                {
+                    // We need to set it now, as the normal "init" logic of the Awake function in this Comp won't work.
+                    NpcPrefabProperties = playerGo.GetComponentInChildren<NpcComponentProperties2>()
+                }
             };
 
-            npcData.Properties.Head = Camera.main!.transform;
+            npcData.Properties.NpcPrefabProperties.Head = Camera.main!.transform;
 
             heroInstance.UserData = npcData;
 
@@ -206,7 +218,7 @@ namespace GUZ.Core._Npc2
 
         public void ExtApplyOverlayMds(NpcInstance npc, string overlayName)
         {
-            npc.GetUserData2().Properties.MdsMdhOverlayName = overlayName;
+            npc.GetUserData2().Properties.MdsNameOverlay = overlayName;
         }
 
         public void ExtNpcSetToFistMode(NpcInstance npc)
@@ -325,19 +337,84 @@ namespace GUZ.Core._Npc2
             return changed;
         }
 
-        public void InitNpc(GameObject go)
+        public bool InitNpc(GameObject go)
         {
             go.TryGetComponent(out NpcLoader2 loaderComp);
 
             if (loaderComp == null || loaderComp.IsLoaded)
             {
-                return;
+                return false;
             }
 
             // Do not put element into queue a second time.
             loaderComp.IsLoaded = true;
 
             _objectsToInitQueue.Enqueue(go.GetComponent<NpcLoader2>());
+            return true;
+        }
+
+        public string ExtNpcGetNextWp(NpcInstance npc)
+        {
+            var pos = npc.GetUserData2().Go.transform.position;
+
+            return WayNetHelper.FindNearestWayPoint(pos, true).Name;
+        }
+
+        public bool ExtWldIsFpAvailable(NpcInstance npc, string fpNamePart)
+        {
+            var props = npc.GetUserData2().Properties;
+            var npcGo = npc.GetUserData2().Go;
+            var freePoints =
+                WayNetHelper.FindFreePointsWithName(npcGo.transform.position, fpNamePart, _fpLookupDistance);
+
+            foreach (var fp in freePoints)
+            {
+                // Kind of: If we're already standing on a FreePoint, then there is one available.
+                if (props.CurrentFreePoint == fp)
+                {
+                    return true;
+                }
+
+                // Alternatively, we found a free one within range.
+                if (!fp.IsLocked)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public string ExtGetNearestWayPoint(NpcInstance npc)
+        {
+            var pos = npc.GetUserData2().Go.transform.position;
+
+            return WayNetHelper.FindNearestWayPoint(pos).Name;
+        }
+
+        public bool ExtIsNextFpAvailable(NpcInstance npc, string fpNamePart)
+        {
+            var props = npc.GetUserData2().Properties;
+            var pos = npc.GetUserData2().Go.transform.position;
+            var fp = WayNetHelper.FindNearestFreePoint(pos, fpNamePart);
+
+            if (fp == null)
+            {
+                return false;
+            }
+            // Ignore if we're already on this FP.
+
+            if (fp == props.CurrentFreePoint)
+            {
+                return false;
+            }
+
+            if (fp.IsLocked)
+            {
+                return false;
+            }
+
+            return true;
         }
     }
 }

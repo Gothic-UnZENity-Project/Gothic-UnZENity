@@ -1,4 +1,5 @@
 using System.Linq;
+using GUZ.Core._Npc2;
 using GUZ.Core.Creator;
 using GUZ.Core.Creator.Sounds;
 using GUZ.Core.Extensions;
@@ -18,7 +19,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
         private float _audioPlaySeconds;
 
 
-        public Output(AnimationAction action, GameObject npcGo) : base(action, npcGo)
+        public Output(AnimationAction action, NpcContainer2 npcContainer) : base(action, npcContainer)
         { }
 
         public override void Start()
@@ -32,7 +33,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
                 // If NPC talked before, we stop it immediately (As some audio samples are shorter than the actual animation)
                 AnimationCreator.StopAnimation(NpcGo);
 
-                NpcHelper.GetHeroGameObject().GetComponent<AudioSource>().PlayOneShot(audioClip);
+                GameGlobals.Npcs.GetHeroGameObject().GetComponent<AudioSource>().PlayOneShot(audioClip);
 
                 PrintDialog();
             }
@@ -45,7 +46,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
                 AnimationCreator.PlayAnimation(Props.MdsNames, $"T_DIALOGGESTURE_{randomId:00}", NpcGo);
                 AnimationCreator.PlayHeadMorphAnimation(Props, HeadMorph.HeadMorphType.Viseme);
 
-                Props.NpcSound.PlayOneShot(audioClip);
+                Props.NpcPrefabProperties.NpcSound.PlayOneShot(audioClip);
 
                 PrintDialog();
             }
@@ -63,10 +64,10 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             }
             else
             {
-                GameContext.SubtitlesAdapter.FillSubtitles(Props.NpcInstance.GetName(NpcNameSlot.Slot0), currentMessage.Text);
+                GameContext.SubtitlesAdapter.FillSubtitles(NpcInstance.GetName(NpcNameSlot.Slot0), currentMessage.Text);
             }
 
-            GameContext.SubtitlesAdapter.ShowSubtitles(Props.Go);
+            GameContext.SubtitlesAdapter.ShowSubtitles(NpcGo);
         }
 
         /// <summary>
@@ -78,7 +79,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             {
                 // FIXME - We might need to check overlayMds and baseMds
                 // FIXME - We might need to save amount of gestures based on mds names (if they differ for e.g. humans and orcs)
-                var mds = ResourceLoader.TryGetModelScript(Props.BaseMdsName);
+                var mds = ResourceLoader.TryGetModelScript(Props.MdsNameBase);
 
                 GameData.Dialogs.GestureCount = mds.Animations
                     .Count(anim => anim.Name.StartsWithIgnoreCase("T_DIALOGGESTURE_"));
@@ -93,12 +94,12 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
 
             if (_isHeroSpeaking)
             {
-                NpcHelper.GetHeroGameObject().GetComponent<AudioSource>().Stop();
+                GameGlobals.Npcs.GetHeroGameObject().GetComponent<AudioSource>().Stop();
             }
             // NPC
             else
             {
-                Props.NpcSound.Stop();
+                PrefabProps.NpcSound.Stop();
                 AnimationCreator.StopAnimation(NpcGo);
             }
         }
@@ -112,7 +113,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
                 // NPC
                 if (!_isHeroSpeaking)
                 {
-                    AnimationCreator.StopHeadMorphAnimation(Props, HeadMorph.HeadMorphType.Viseme);
+                    AnimationCreator.StopHeadMorphAnimation(NpcContainer, HeadMorph.HeadMorphType.Viseme);
                 }
 
                 GameContext.SubtitlesAdapter.HideSubtitles();

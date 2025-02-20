@@ -14,6 +14,7 @@ using MyBox;
 using UnityEngine;
 using ZenKit;
 using ZenKit.Daedalus;
+using WayPoint = GUZ.Core.Vob.WayNet.WayPoint;
 
 namespace GUZ.Core._Npc2
 {
@@ -98,19 +99,29 @@ namespace GUZ.Core._Npc2
 
                 InitZkInstance(element.npc);
                 var go = new GameObject($"{element.npc.Instance.GetName(NpcNameSlot.Slot0)} ({element.npc.Instance.Id})");
+                go.SetParent(_rootGo);
+
+                element.npc.Go = go;
+
                 var loader = go.AddComponent<NpcLoader2>();
                 loader.Npc = element.npc.Instance;
 
                 var spawnPoint = GetSpawnPoint(element.npc, element.spawnPoint);
-
-                go.SetParent(_rootGo);
-
                 if (spawnPoint == null)
                 {
                     Debug.LogWarning($"Cannot spawn NPC as waypoint ${element.spawnPoint} does not exist.");
 
                     // FIXME - Destroy GO and NPCInstance (Do not save the instance inside SaveGame as G1 is also removing it?)
                     continue;
+                }
+
+                if (spawnPoint.IsFreePoint())
+                {
+                    element.npc.Properties.CurrentFreePoint = (FreePoint)spawnPoint;
+                }
+                else
+                {
+                    element.npc.Properties.CurrentWayPoint = (WayPoint)spawnPoint;
                 }
 
                 go.transform.SetPositionAndRotation(spawnPoint.Position, spawnPoint.Rotation);
@@ -134,7 +145,7 @@ namespace GUZ.Core._Npc2
         public void InitNpc(NpcInstance npcInstance, GameObject parentGo)
         {
             var npcData = npcInstance.GetUserData2();
-            var newNpc = ResourceLoader.TryGetPrefabObject(PrefabType.Npc)!;
+            var newNpc = ResourceLoader.TryGetPrefabObject(PrefabType.Npc, parent: parentGo)!;
             var props = npcData.Properties;
 
             npcData.Properties.Dialogs = GameData.Dialogs.Instances
@@ -144,9 +155,9 @@ namespace GUZ.Core._Npc2
 
             newNpc.name = "Root";
 
-            var mdhName = string.IsNullOrEmpty(props.MdhOverlayName)
-                ? props.MdhBaseName
-                : props.MdhOverlayName;
+            var mdhName = string.IsNullOrEmpty(props.MdhNameOverlay)
+                ? props.MdhNameBase
+                : props.MdhNameOverlay;
             MeshFactory.CreateNpc(newNpc.name, props.MdmName, mdhName, props.BodyData,
                 newNpc, parentGo);
 

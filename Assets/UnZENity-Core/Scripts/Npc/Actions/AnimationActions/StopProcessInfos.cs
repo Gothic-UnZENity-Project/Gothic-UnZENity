@@ -1,5 +1,5 @@
+using GUZ.Core._Npc2;
 using GUZ.Core.Manager;
-using UnityEngine;
 
 namespace GUZ.Core.Npc.Actions.AnimationActions
 {
@@ -9,7 +9,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
     /// </summary>
     public class StopProcessInfos : AbstractAnimationAction
     {
-        public StopProcessInfos(AnimationAction action, GameObject npcGo) : base(action, npcGo)
+        public StopProcessInfos(AnimationAction action, NpcContainer2 npcContainer) : base(action, npcContainer)
         {
         }
 

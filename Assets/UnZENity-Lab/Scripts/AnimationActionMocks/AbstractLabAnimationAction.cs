@@ -1,6 +1,6 @@
+using GUZ.Core._Npc2;
 using GUZ.Core.Npc.Actions;
 using GUZ.Core.Npc.Actions.AnimationActions;
-using UnityEngine;
 
 namespace GUZ.Lab.AnimationActionMocks
 {
@@ -14,7 +14,7 @@ namespace GUZ.Lab.AnimationActionMocks
     /// </summary>
     public abstract class AbstractLabAnimationAction : AbstractAnimationAction
     {
-        protected AbstractLabAnimationAction(AnimationAction action, GameObject npcGo) : base(action, npcGo)
+        protected AbstractLabAnimationAction(AnimationAction action, NpcContainer2 npcContainer) : base(action, npcContainer)
         {
         }
 
