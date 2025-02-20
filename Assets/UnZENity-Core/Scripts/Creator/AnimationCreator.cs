@@ -188,14 +188,14 @@ namespace GUZ.Core.Creator
             return true;
         }
 
-        public static void PlayHeadMorphAnimation(NpcProperties2 props, HeadMorph.HeadMorphType type)
+        public static void PlayHeadMorphAnimation(NpcContainer2 npcContainer, HeadMorph.HeadMorphType type)
         {
-            props.NpcPrefabProperties.HeadMorph.StartAnimation(props.BodyData.Head, type);
+            npcContainer.PrefabProps.HeadMorph.StartAnimation(npcContainer.Props.BodyData.Head, type);
         }
 
         public static void StopHeadMorphAnimation(NpcContainer2 npcContainer, HeadMorph.HeadMorphType type)
         {
-            npcContainer.Properties.NpcPrefabProperties.HeadMorph.StopAnimation(type);
+            npcContainer.PrefabProps.HeadMorph.StopAnimation(type);
         }
 
         private static AnimationClip LoadAnimationClip(IModelAnimation pxAnimation, IModelHierarchy mdh,

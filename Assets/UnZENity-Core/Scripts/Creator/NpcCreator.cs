@@ -114,7 +114,7 @@ namespace GUZ.Core.Creator
 
         private static NpcProperties2 GetProperties(NpcInstance npc)
         {
-            return npc.GetUserData2().Properties;
+            return npc.GetUserData2().Props;
         }
 
         private static GameObject GetNpcGo(NpcInstance npcInstance)

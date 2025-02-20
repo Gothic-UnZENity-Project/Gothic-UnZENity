@@ -17,6 +17,10 @@ namespace GUZ.Core._Npc2
         /// <summary>
         /// Unity Properties which are loaded from Daedalus and won't be stored on ZenKit data.
         /// </summary>
-        public NpcProperties2 Properties;
+        public NpcProperties2 Props;
+
+        // Cache objects from Prefab
+        public NpcPrefabProperties2 PrefabProps;
+
     }
 }

@@ -9,7 +9,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
 {
     public class LookAtNpc : AbstractAnimationAction
     {
-        private Transform _npcHeadTransform => Props.NpcPrefabProperties.Head;
+        private Transform _npcHeadTransform => PrefabProps.Head;
         private Quaternion _finalRotation;
 
 

@@ -9,7 +9,7 @@ namespace GUZ.Core.Npc
             base.Awake();
 
             // Cached object which will be used later.
-            NpcData.Properties.NpcPrefabProperties.ColliderRootMotion = gameObject.transform;
+            NpcData.PrefabProps.ColliderRootMotion = gameObject.transform;
         }
 
         private void Update()

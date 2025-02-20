@@ -14,7 +14,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
         private Quaternion _finalRotation;
         private bool _isRotateLeft;
 
-        private Transform NpcHeadTransform => Props.NpcPrefabProperties.Head;
+        private Transform NpcHeadTransform => PrefabProps.Head;
 
         protected AbstractRotateAnimationAction(AnimationAction action, NpcContainer2 npcContainer) : base(action, npcContainer)
         {

@@ -62,7 +62,7 @@ namespace GUZ.Core.Manager
         {
             var npcGo = GetNpc(npcInstance);
 
-            var prefabProps = npcInstance.GetUserData2().Properties.NpcPrefabProperties;
+            var prefabProps = npcInstance.GetUserData2().PrefabProps;
 
             VobProperties vob;
 
@@ -223,7 +223,7 @@ namespace GUZ.Core.Manager
 
         private static NpcProperties2 GetProperties([CanBeNull] NpcInstance npc)
         {
-            return npc?.GetUserData2().Properties;
+            return npc?.GetUserData2().Props;
         }
     }
 }

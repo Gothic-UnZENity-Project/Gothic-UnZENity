@@ -75,19 +75,19 @@ namespace GUZ.Core._Npc2
 
         public void ExtNpcSetTalentValue(NpcInstance npc, VmGothicEnums.Talent talent, int level)
         {
-            var props = npc.GetUserData2().Properties;
+            var props = npc.GetUserData2().Props;
             props.Talents[talent] = level;
         }
 
         public void ExtMdlSetVisual(NpcInstance npc, string visual)
         {
-            var props = npc.GetUserData2().Properties;
+            var props = npc.GetUserData2().Props;
             props.MdsNameBase = visual;
         }
 
         public void ExtSetVisualBody(VmGothicExternals.ExtSetVisualBodyData data)
         {
-            var props = data.Npc.GetUserData2().Properties;
+            var props = data.Npc.GetUserData2().Props;
 
             props.BodyData = data;
 
@@ -126,7 +126,7 @@ namespace GUZ.Core._Npc2
                 return;
             }
 
-            var props = npc.GetUserData2().Properties;
+            var props = npc.GetUserData2().Props;
             if (props == null)
             {
                 Debug.LogError($"NPC not found with index {npc.Index}");
@@ -179,14 +179,12 @@ namespace GUZ.Core._Npc2
                 Instance = heroInstance,
                 Vob = vobNpc,
                 Go = playerGo,
-                Properties = new()
-                {
-                    // We need to set it now, as the normal "init" logic of the Awake function in this Comp won't work.
-                    NpcPrefabProperties = playerGo.GetComponentInChildren<NpcComponentProperties2>()
-                }
+                Props = new(),
+                // We need to set it now, as the normal "init" logic of the Awake function in this Comp won't work.
+                PrefabProps = playerGo.GetComponentInChildren<NpcPrefabProperties2>()
             };
 
-            npcData.Properties.NpcPrefabProperties.Head = Camera.main!.transform;
+            npcData.PrefabProps.Head = Camera.main!.transform;
 
             heroInstance.UserData = npcData;
 
@@ -210,7 +208,7 @@ namespace GUZ.Core._Npc2
 
         public void ExtEquipItem(NpcInstance npc, int itemId)
         {
-            var props = npc.GetUserData2().Properties;
+            var props = npc.GetUserData2().Props;
             var itemData = VmInstanceManager.TryGetItemData(itemId);
 
             props.EquippedItems.Add(itemData);
@@ -218,12 +216,12 @@ namespace GUZ.Core._Npc2
 
         public void ExtApplyOverlayMds(NpcInstance npc, string overlayName)
         {
-            npc.GetUserData2().Properties.MdsNameOverlay = overlayName;
+            npc.GetUserData2().Props.MdsNameOverlay = overlayName;
         }
 
         public void ExtNpcSetToFistMode(NpcInstance npc)
         {
-            var npcProperties = npc.GetUserData2().Properties;
+            var npcProperties = npc.GetUserData2().Props;
 
             npcProperties.WeaponState = VmGothicEnums.WeaponState.Fist;
 
@@ -256,7 +254,7 @@ namespace GUZ.Core._Npc2
 
         public void ExtTaMin(NpcInstance npc, int startH, int startM, int stopH, int stopM, int action, string waypoint)
         {
-            var props = npc.GetUserData2().Properties;
+            var props = npc.GetUserData2().Props;
 
             RoutineData routine = new()
             {
@@ -286,7 +284,7 @@ namespace GUZ.Core._Npc2
                 return;
             }
 
-            npc.GetUserData2().Properties.Routines.Clear();
+            npc.GetUserData2().Props.Routines.Clear();
 
             // We always need to set "self" before executing any Daedalus function.
             GameData.GothicVm.GlobalSelf = npc;
@@ -300,7 +298,7 @@ namespace GUZ.Core._Npc2
         /// </summary>
         private bool CalculateCurrentRoutine(NpcInstance npc)
         {
-            var npcProps = npc.GetUserData2().Properties;
+            var npcProps = npc.GetUserData2().Props;
             var currentTime = GameGlobals.Time.GetCurrentDateTime();
             var normalizedNow = currentTime.Hour % 24 * 60 + currentTime.Minute;
             RoutineData newRoutine = null;
@@ -362,7 +360,7 @@ namespace GUZ.Core._Npc2
 
         public bool ExtWldIsFpAvailable(NpcInstance npc, string fpNamePart)
         {
-            var props = npc.GetUserData2().Properties;
+            var props = npc.GetUserData2().Props;
             var npcGo = npc.GetUserData2().Go;
             var freePoints =
                 WayNetHelper.FindFreePointsWithName(npcGo.transform.position, fpNamePart, _fpLookupDistance);
@@ -394,7 +392,7 @@ namespace GUZ.Core._Npc2
 
         public bool ExtIsNextFpAvailable(NpcInstance npc, string fpNamePart)
         {
-            var props = npc.GetUserData2().Properties;
+            var props = npc.GetUserData2().Props;
             var pos = npc.GetUserData2().Go.transform.position;
             var fp = WayNetHelper.FindNearestFreePoint(pos, fpNamePart);
 

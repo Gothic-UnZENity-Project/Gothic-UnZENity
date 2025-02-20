@@ -89,7 +89,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
         private void StartMobUseAnimation()
         {
             State = WalkState.Done;
-            PhysicsHelper.DisablePhysicsForNpc(Props);
+            PhysicsHelper.DisablePhysicsForNpc(PrefabProps);
 
             // AnimationCreator.StopAnimation(NpcGo);
             NpcGo.transform.SetPositionAndRotation(_slotGo.transform.position, _slotGo.transform.rotation);
@@ -146,7 +146,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
                 PrefabProps.CurrentInteractableSlot = null;
                 Props.BodyState = VmGothicEnums.BodyState.BsStand;
 
-                PhysicsHelper.EnablePhysicsForNpc(Props);
+                PhysicsHelper.EnablePhysicsForNpc(PrefabProps);
             }
             // Loop Mobsi animation until the same UseMob with -1 is called.
             else

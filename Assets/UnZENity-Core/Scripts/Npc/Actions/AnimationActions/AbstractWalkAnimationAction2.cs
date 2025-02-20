@@ -71,7 +71,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
 
         protected virtual void StartWalk()
         {
-            PhysicsHelper.EnablePhysicsForNpc(Props);
+            PhysicsHelper.EnablePhysicsForNpc(PrefabProps);
 
             var animName = GetWalkModeAnimationString();
             AnimationCreator.PlayAnimation(Props.MdsNames, animName, NpcGo, true);
@@ -107,7 +107,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             base.AnimationEndEventCallback(eventData);
 
             // We need to ensure, that physics are always active when an NPC walks!
-            PhysicsHelper.EnablePhysicsForNpc(Props);
+            PhysicsHelper.EnablePhysicsForNpc(PrefabProps);
 
             NpcTransform.localPosition = PrefabProps.Bip01.position;
             PrefabProps.Bip01.localPosition = Vector3.zero;

@@ -39,7 +39,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
         {
             base.Start();
 
-            PhysicsHelper.EnablePhysicsForNpc(Props);
+            PhysicsHelper.EnablePhysicsForNpc(PrefabProps);
         }
 
         public override void Tick()
@@ -146,7 +146,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             // We need to ensure, that physics still apply when an animation is looped.
             if (State != WalkState.Done)
             {
-                PhysicsHelper.EnablePhysicsForNpc(Props);
+                PhysicsHelper.EnablePhysicsForNpc(PrefabProps);
             }
 
             NpcGo.transform.localPosition = PrefabProps.Bip01.position;

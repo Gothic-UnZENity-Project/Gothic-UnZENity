@@ -25,12 +25,12 @@ namespace GUZ.Core.Creator.Meshes.Builder
                 return null;
             }
 
-            var props = RootGo.GetComponentInParent<NpcLoader2>().Npc.GetUserData2().Properties;
+            var npcContainer = RootGo.GetComponentInParent<NpcLoader2>().Npc.GetUserData2();
 
-            // Cache it for faster use during runtime
-            props.NpcPrefabProperties.Head = headGo.transform;
-            props.NpcPrefabProperties.HeadMorph = headGo.AddComponent<HeadMorph>();
-            props.NpcPrefabProperties.HeadMorph.HeadName = props.BodyData.Head;
+            // Cache it f1or faster use during runtime
+            npcContainer.PrefabProps.Head = headGo.transform;
+            npcContainer.PrefabProps.HeadMorph = headGo.AddComponent<HeadMorph>();
+            npcContainer.PrefabProps.HeadMorph.HeadName = npcContainer.Props.BodyData.Head;
 
             var headMeshFilter = headGo.AddComponent<MeshFilter>();
             var headMeshRenderer = headGo.AddComponent<MeshRenderer>();

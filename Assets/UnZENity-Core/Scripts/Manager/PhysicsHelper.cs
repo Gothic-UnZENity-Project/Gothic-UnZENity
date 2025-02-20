@@ -6,14 +6,14 @@ namespace GUZ.Core.Manager
 {
     public static class PhysicsHelper
     {
-        public static void DisablePhysicsForNpc(NpcProperties2 props)
+        public static void DisablePhysicsForNpc(NpcPrefabProperties2 prefabProps)
         {
-            props.NpcPrefabProperties.ColliderRootMotion.GetComponent<Rigidbody>().isKinematic = true;
+            prefabProps.ColliderRootMotion.GetComponent<Rigidbody>().isKinematic = true;
         }
 
-        public static void EnablePhysicsForNpc(NpcProperties2 props)
+        public static void EnablePhysicsForNpc(NpcPrefabProperties2 prefabProps)
         {
-            props.NpcPrefabProperties.ColliderRootMotion.GetComponent<Rigidbody>().isKinematic = false;
+            prefabProps.ColliderRootMotion.GetComponent<Rigidbody>().isKinematic = false;
         }
     }
 }

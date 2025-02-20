@@ -13,7 +13,7 @@ namespace GUZ.Core.Npc
         [NonSerialized]
         public NpcContainer2 NpcData;
 
-        public NpcProperties2 Properties => NpcData.Properties;
+        public NpcProperties2 Properties => NpcData.Props;
         public NpcInstance NpcInstance => NpcData.Instance;
         public GameObject Go => NpcData.Go;
 

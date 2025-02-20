@@ -56,7 +56,7 @@ namespace GUZ.Core._Npc2
             var userDataObject = new NpcContainer2
             {
                 Instance = npcInstance,
-                Properties = new(),
+                Props = new(),
                 Vob = new()
             };
 
@@ -117,11 +117,11 @@ namespace GUZ.Core._Npc2
 
                 if (spawnPoint.IsFreePoint())
                 {
-                    element.npc.Properties.CurrentFreePoint = (FreePoint)spawnPoint;
+                    element.npc.Props.CurrentFreePoint = (FreePoint)spawnPoint;
                 }
                 else
                 {
-                    element.npc.Properties.CurrentWayPoint = (WayPoint)spawnPoint;
+                    element.npc.Props.CurrentWayPoint = (WayPoint)spawnPoint;
                 }
 
                 go.transform.SetPositionAndRotation(spawnPoint.Position, spawnPoint.Rotation);
@@ -146,9 +146,9 @@ namespace GUZ.Core._Npc2
         {
             var npcData = npcInstance.GetUserData2();
             var newNpc = ResourceLoader.TryGetPrefabObject(PrefabType.Npc, parent: parentGo)!;
-            var props = npcData.Properties;
+            var props = npcData.Props;
 
-            npcData.Properties.Dialogs = GameData.Dialogs.Instances
+            npcData.Props.Dialogs = GameData.Dialogs.Instances
                 .Where(dialog => dialog.Npc == npcInstance.Index)
                 .OrderByDescending(dialog => dialog.Important)
                 .ToList();
@@ -172,9 +172,9 @@ namespace GUZ.Core._Npc2
         private WayNetPoint GetSpawnPoint(NpcContainer2 npc, string spawnPoint)
         {
             // Find the right spawn point based on currently active routine.
-            if (npc.Properties.Routines.Any())
+            if (npc.Props.Routines.Any())
             {
-                var routineSpawnPointName = npc.Properties.RoutineCurrent.Waypoint;
+                var routineSpawnPointName = npc.Props.RoutineCurrent.Waypoint;
                 return WayNetHelper.GetWayNetPoint(routineSpawnPointName);
             }
             // Fallback: If no routine exists, spawn at the spot which is named inside Wld_insertNpc()

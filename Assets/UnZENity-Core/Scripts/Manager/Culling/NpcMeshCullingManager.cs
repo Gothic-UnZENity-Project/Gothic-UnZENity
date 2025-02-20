@@ -108,7 +108,7 @@ namespace GUZ.Core.Manager.Culling
             // When an NPC gets invisible, we need to check for their next respawn from their initially spawned position.
             else
             {
-                var props = npcData.Properties;
+                var props = npcData.Props;
 
                 if (props.RoutineCurrent != null)
                 {

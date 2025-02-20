@@ -27,11 +27,11 @@ namespace GUZ.VR.Components
         {
             if (GameData.Dialogs.IsInDialog)
             {
-                DialogManager.SkipCurrentDialogLine(_npcData.Properties);
+                DialogManager.SkipCurrentDialogLine(_npcData.Props);
             }
             else
             {
-                GameGlobals.NpcAi.ExecutePerception(VmGothicEnums.PerceptionType.AssessTalk, _npcData.Properties, _npcData.Instance, (NpcInstance)GameData.GothicVm.GlobalHero);
+                GameGlobals.NpcAi.ExecutePerception(VmGothicEnums.PerceptionType.AssessTalk, _npcData.Props, _npcData.Instance, (NpcInstance)GameData.GothicVm.GlobalHero);
             }
         }
     }

@@ -49,9 +49,6 @@ namespace GUZ.Core._Npc2
 
         public VmGothicExternals.ExtSetVisualBodyData BodyData;
 
-        // GO cache objects from Prefab
-        public NpcComponentProperties2 NpcPrefabProperties;
-
         // Perceptions
         public Dictionary<VmGothicEnums.PerceptionType, int> Perceptions = new();
         public float PerceptionTime = 5f; // Default in seconds

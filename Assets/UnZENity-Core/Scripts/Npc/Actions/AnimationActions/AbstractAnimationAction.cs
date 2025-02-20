@@ -21,7 +21,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
         protected readonly NpcInstance NpcInstance;
         protected readonly GameObject NpcGo;
         protected readonly NpcProperties2 Props;
-        protected readonly NpcComponentProperties2 PrefabProps;
+        protected readonly NpcPrefabProperties2 PrefabProps;
 
         protected bool IsFinishedFlag;
 
@@ -31,14 +31,14 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             NpcContainer = npcData;
             NpcInstance = npcData.Instance;
             NpcGo = npcData.Go;
-            Props = npcData.Properties;
-            PrefabProps = Props.NpcPrefabProperties;
+            Props = npcData.Props;
+            PrefabProps = npcData.PrefabProps;
         }
 
         public virtual void Start()
         {
             // By default every Daedalus aninmation starts without using physics. But they can always overwrite it (e.g.) for walking.
-            PhysicsHelper.DisablePhysicsForNpc(Props);
+            PhysicsHelper.DisablePhysicsForNpc(PrefabProps);
         }
 
         public string GetWalkModeAnimationString()
@@ -78,9 +78,9 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
         public virtual void AnimationSfxEventCallback(SerializableEventSoundEffect sfxData)
         {
             var clip = VobHelper.GetSoundClip(sfxData.Name);
-            Props.NpcPrefabProperties.NpcSound.clip = clip;
-            Props.NpcPrefabProperties.NpcSound.maxDistance = sfxData.Range.ToMeter();
-            Props.NpcPrefabProperties.NpcSound.Play();
+            PrefabProps.NpcSound.clip = clip;
+            PrefabProps.NpcSound.maxDistance = sfxData.Range.ToMeter();
+            PrefabProps.NpcSound.Play();
 
             if (sfxData.EmptySlot)
             {
@@ -111,9 +111,9 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
 
         public virtual void AnimationMorphEventCallback(SerializableEventMorphAnimation data)
         {
-            var type = Props.NpcPrefabProperties.HeadMorph.GetAnimationTypeByName(data.Animation);
+            var type = PrefabProps.HeadMorph.GetAnimationTypeByName(data.Animation);
 
-            Props.NpcPrefabProperties.HeadMorph.StartAnimation(Props.BodyData.Head, type);
+            PrefabProps.HeadMorph.StartAnimation(Props.BodyData.Head, type);
         }
 
         protected virtual void InsertItem(string slot1, string slot2)
@@ -153,7 +153,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
         {
             if (eventData.NextAnimation.Any())
             {
-                PhysicsHelper.DisablePhysicsForNpc(Props);
+                PhysicsHelper.DisablePhysicsForNpc(PrefabProps);
                 AnimationCreator.PlayAnimation(Props.MdsNames, eventData.NextAnimation, NpcGo);
             }
             // Play Idle animation
