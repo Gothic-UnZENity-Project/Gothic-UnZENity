@@ -102,6 +102,9 @@ namespace GUZ.Core.Config
         [Tooltip("Enable Daedalus logs inside .d scripts.")]
         [OverrideLabel("Enable ZSpy Logs")]
         public bool EnableZSpyLogs;
+        [ConditionalField(fieldToCheck: nameof(EnableZSpyLogs))]
+        [Tooltip("0-9 where 9 will log every message.")]
+        public int ZSpyChannel = 9;
 
         [OverrideLabel("DirectMusic Log Level")]
         public DirectMusic.LogLevel DirectMusicLogLevel = DirectMusic.LogLevel.Warning;
@@ -123,6 +126,7 @@ namespace GUZ.Core.Config
         [ConditionalField(useMethod: true, method: nameof(SaveSlotFieldCondition))]
         [Range(1, 15)]
         public int SaveSlotToLoad;
+
         private bool SaveSlotFieldCondition() => !EnableMainMenu && LoadFromSaveSlot;
 
         [ConditionalField(useMethod: true, method: nameof(SaveSlotFieldCondition), inverse: true)]

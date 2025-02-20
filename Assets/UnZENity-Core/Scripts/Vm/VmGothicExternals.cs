@@ -18,8 +18,14 @@ namespace GUZ.Core.Vm
     /// </summary>
     public static class VmGothicExternals
     {
+        private static bool _enableZSpyLogs;
+        private static int _zSpyChannel;
+
         public static void RegisterExternals()
         {
+            _enableZSpyLogs = GameGlobals.Config.Dev.EnableZSpyLogs;
+            _zSpyChannel = GameGlobals.Config.Dev.ZSpyChannel;
+
             var vm = GameData.GothicVm;
             vm.RegisterExternalDefault(DefaultExternal);
 
@@ -510,7 +516,7 @@ namespace GUZ.Core.Vm
 
         public static void PrintDebugInstCh(int channel, string message)
         {
-            if (!GameGlobals.Config.Dev.EnableZSpyLogs)
+            if (!_enableZSpyLogs || channel > _zSpyChannel)
             {
                 return;
             }
