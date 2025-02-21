@@ -8,7 +8,6 @@ using GUZ.Core.Data.ZkEvents;
 using GUZ.Core.Extensions;
 using GUZ.Core.Npc;
 using GUZ.Core.Npc.Actions;
-using GUZ.Core.Properties;
 using MyBox;
 using UnityEngine;
 using ZenKit;
@@ -36,6 +35,12 @@ namespace GUZ.Core.Creator
             return false;
         }
 
+        public static void StartBlendOutAnimation(string currentAnimName, float blendOutTime, GameObject go)
+        {
+            var anim = go.GetComponentInChildren<Animation>();
+            anim.Blend(currentAnimName, 0, blendOutTime);
+        }
+
         private static bool TryPlayAnimation(string mdsName, string animationName, GameObject go, bool repeat)
         {
             if (mdsName.IsNullOrEmpty())
@@ -55,9 +60,25 @@ namespace GUZ.Core.Creator
             var mdsAnimationKeyName = GetCombinedAnimationKey(mdsName, animationName);
             var animationComp = go.GetComponentInChildren<Animation>();
 
-            var mds = ResourceLoader.TryGetModelScript(mdsName);
+            var mds = ResourceLoader.TryGetModelScript(mdsName)!;
             var mdh = ResourceLoader.TryGetModelHierarchy(mdhName);
             var anim = mds.Animations.First(i => i.Name.EqualsIgnoreCase(animationName));
+
+            // Hint: We assume, that there is only one! transition/blending named. As we never know what's the next animation, we should be fine with it.
+            var animBlending = mds.AnimationBlends.Where(i => i.Name == animationName).ToArray();
+            var blendInTime = 0f;
+            var blendOutTime = 0f;
+
+            if (animBlending.Any())
+            {
+                blendInTime = animBlending.First().BlendIn;
+                blendOutTime = animBlending.First().BlendOut;
+
+                if (animBlending.Length > 1)
+                {
+                    Debug.LogWarning($">{animBlending.Length}< amount of AnimationBlendinds found for >{animationName}<. Using first one.");
+                }
+            }
 
             // If we create empty animations with only one frame, Unity will complain. We therefore skip it for now.
             if (anim.FirstFrame == anim.LastFrame)
@@ -78,7 +99,7 @@ namespace GUZ.Core.Creator
                 MultiTypeCache.AnimationClipCache[mdsAnimationKeyName] = clip;
 
                 AddClipEvents(clip, modelAnimation, anim);
-                AddClipEndEvent(anim, clip);
+                AddClipEndEvent(anim, clip, blendOutTime);
             }
 
             if (animationComp[mdsAnimationKeyName] == null)
@@ -88,7 +109,7 @@ namespace GUZ.Core.Creator
             }
 
             animationComp.Stop();
-            animationComp.Play(mdsAnimationKeyName);
+            animationComp.Blend(mdsAnimationKeyName, 1f, blendInTime);
 
             return true;
         }
@@ -179,7 +200,7 @@ namespace GUZ.Core.Creator
                 MultiTypeCache.AnimationClipCache[mdsAnimationKeyName] = clip;
 
                 AddClipEvents(clip, modelAnimation, anim);
-                AddClipEndEvent(anim, clip);
+                AddClipEndEvent(anim, clip, 0f);
             }
 
             if (animationComp[mdsAnimationKeyName] == null)
@@ -432,8 +453,20 @@ namespace GUZ.Core.Creator
         /// @see: https://docs.unity3d.com/ScriptReference/AnimationEvent.html
         /// @see: https://docs.unity3d.com/ScriptReference/GameObject.SendMessage.html
         /// </summary>
-        private static void AddClipEndEvent(IAnimation anim, AnimationClip clip)
+        private static void AddClipEndEvent(IAnimation anim, AnimationClip clip, float blendOutTime)
         {
+            if (blendOutTime > 0f)
+            {
+                AnimationEvent blendOutEvent = new()
+                {
+                    time = clip.length,
+                    functionName = nameof(IAnimationCallbacks.AnimationEndCallback),
+                    stringParameter = JsonUtility.ToJson(new SerializableEventBlendOutSignal(clip.name, blendOutTime))
+                };
+
+                clip.AddEvent(blendOutEvent);
+            }
+
             AnimationEvent finalEvent = new()
             {
                 time = clip.length,

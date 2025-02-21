@@ -276,6 +276,13 @@ namespace GUZ.Core.Npc
             Properties.CurrentAction.AnimationMorphEventCallback(eventData);
         }
 
+        public void AnimationBlendOutCallback(string eventBlendOutParam)
+        {
+            var eventData = JsonUtility.FromJson<SerializableEventBlendOutSignal>(eventBlendOutParam);
+
+            Properties.CurrentAction.AnimationBlendOutEventCallback(eventData);
+        }
+
         /// <summary>
         /// As all Components on a GameObject get called, we need to feed this information into current AnimationAction instance.
         /// </summary>

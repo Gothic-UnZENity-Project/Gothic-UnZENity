@@ -144,6 +144,11 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             Object.Destroy(item.gameObject);
         }
 
+        public void AnimationBlendOutEventCallback(SerializableEventBlendOutSignal eventData)
+        {
+            AnimationCreator.StartBlendOutAnimation(eventData.CurrentAnimName, eventData.BlendOutTime, NpcGo);
+        }
+
         /// <summary>
         /// Most of our animations are fine if we just set this flag and return it via IsFinished()
         /// If an animation has also a next animation set, we will call it automatically. Alternatively we play an idle animation.
