@@ -71,7 +71,7 @@ namespace GUZ.Lab.Handler
                 TeethTexNr = 1
             };
 
-            MeshFactory.CreateNpc(newNpc.name, mdmName, mdhName, body, newNpc);
+            MeshFactory.CreateNpc(newNpc.name, mdmName, mdhName, body, root: newNpc);
         }
     }
 }

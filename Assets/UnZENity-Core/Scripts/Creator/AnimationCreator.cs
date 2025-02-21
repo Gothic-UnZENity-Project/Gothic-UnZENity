@@ -137,6 +137,11 @@ namespace GUZ.Core.Creator
 
         public static bool TryBlendAnimation(string mdsName, string animationName, GameObject go, bool repeat, List<string> excludeBones = null)
         {
+            if (mdsName == null)
+            {
+                return false;
+            }
+
             // For animations: mdhName == mdsName (with different file ending of course ;-))
             var mdhName = mdsName;
 

@@ -28,7 +28,7 @@ namespace GUZ.Core.Npc
             var collisionTransform = transform;
 
             // Apply physics based position change to root.
-            RootGo.transform.localPosition += collisionTransform.localPosition;
+            Go.transform.localPosition += collisionTransform.localPosition;
 
             // Empty physics based diff. Next frame physics will be recalculated.
             collisionTransform.localPosition = Vector3.zero;

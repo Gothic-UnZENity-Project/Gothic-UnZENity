@@ -101,8 +101,6 @@ namespace GUZ.Core._Npc2
                 var go = new GameObject($"{element.npc.Instance.GetName(NpcNameSlot.Slot0)} ({element.npc.Instance.Id})");
                 go.SetParent(_rootGo);
 
-                element.npc.Go = go;
-
                 var loader = go.AddComponent<NpcLoader2>();
                 loader.Npc = element.npc.Instance;
 
@@ -142,10 +140,10 @@ namespace GUZ.Core._Npc2
             GameGlobals.Npcs.ExchangeRoutine(npc.Instance, npc.Instance.DailyRoutine);
         }
 
-        public void InitNpc(NpcInstance npcInstance, GameObject parentGo)
+        public void InitNpc(NpcInstance npcInstance, GameObject lazyLoadGo)
         {
             var npcData = npcInstance.GetUserData2();
-            var newNpc = ResourceLoader.TryGetPrefabObject(PrefabType.Npc, parent: parentGo)!;
+            var newNpc = ResourceLoader.TryGetPrefabObject(PrefabType.Npc, parent: lazyLoadGo)!;
             var props = npcData.Props;
 
             npcData.Props.Dialogs = GameData.Dialogs.Instances
@@ -153,13 +151,19 @@ namespace GUZ.Core._Npc2
                 .OrderByDescending(dialog => dialog.Important)
                 .ToList();
 
+            // We set the root of Prefab as the new Root object. LazyLoading Root-GO isn't needed for anything, but it's name anymore.
             newNpc.name = "Root";
+            npcData.Go = newNpc;
 
+            lazyLoadGo.transform.GetPositionAndRotation(out var lazyPos, out var lazyRot);
             var mdhName = string.IsNullOrEmpty(props.MdhNameOverlay)
                 ? props.MdhNameBase
                 : props.MdhNameOverlay;
             MeshFactory.CreateNpc(newNpc.name, props.MdmName, mdhName, props.BodyData,
-                newNpc, parentGo);
+                lazyPos, lazyRot, lazyLoadGo, newNpc);
+
+            // We don't need specific locations of initial LazyLoading GO anymore.
+            lazyLoadGo.transform.SetPositionAndRotation(default, default);
 
             foreach (var equippedItem in props.EquippedItems)
             {

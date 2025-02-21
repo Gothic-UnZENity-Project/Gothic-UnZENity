@@ -9,8 +9,6 @@ namespace GUZ.Core.Npc
     public abstract class BasePlayerBehaviour : MonoBehaviour
     {
         [NonSerialized]
-        public GameObject RootGo;
-        [NonSerialized]
         public NpcContainer2 NpcData;
 
         public NpcProperties2 Properties => NpcData.Props;
@@ -22,7 +20,6 @@ namespace GUZ.Core.Npc
             var lazyComp = GetComponentInParent<NpcLoader2>();
 
             // As we lazy load NPCs, the NpcInstance is always set inside NpcLoader before we initialize this prefab!
-            RootGo = lazyComp.gameObject;
             NpcData = lazyComp.Npc.GetUserData2();
         }
     }
