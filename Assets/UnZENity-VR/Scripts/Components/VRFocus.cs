@@ -1,5 +1,7 @@
 #if GUZ_HVR_INSTALLED
 using GUZ.Core;
+using GUZ.Core._Npc2;
+using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
 using GUZ.Core.Properties;
@@ -26,7 +28,6 @@ namespace GUZ.VR.Components
         private static bool _featureBrightenUp;
         private static bool _featureShowName;
 
-        [SerializeField] private AbstractProperties _properties;
         [SerializeField] private GameObject _nameCanvas;
 
         private bool _isHovered;
@@ -35,6 +36,9 @@ namespace GUZ.VR.Components
         private void Start()
         {
             _nameCanvas.SetActive(false);
+
+            _nameCanvas.GetComponentInChildren<TMP_Text>().text =
+                GetComponentInParent<NpcLoader2>().Npc.GetUserData2().PrefabProps.GetFocusName();
         }
 
         public void OnHoverEnter(HVRGrabberBase grabber, HVRGrabbable grabbable)
@@ -57,7 +61,6 @@ namespace GUZ.VR.Components
 
             if (_featureShowName)
             {
-                _nameCanvas.GetComponentInChildren<TMP_Text>().text = _properties.GetFocusName();
                 _nameCanvas.SetActive(true);
             }
 
