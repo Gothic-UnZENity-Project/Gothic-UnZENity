@@ -37,14 +37,13 @@ namespace GUZ.Lab.Handler
 
             while (true)
             {
-                AnimationCreator.PlayAnimation(mdsNames, "T_DIALOGGESTURE_01", npcRoot);
-                yield return new WaitForSeconds(3f);
+                AnimationCreator.PlayAnimation(mdsNames, "S_WALK", npcRoot);
+                Debug.Log("idle");
+                yield return new WaitForSeconds(2f);
 
-                AnimationCreator.PlayAnimation(mdsNames, "T_DIALOGGESTURE_02", npcRoot);
-                yield return new WaitForSeconds(3f);
-
-                AnimationCreator.PlayAnimation(mdsNames, "T_DIALOGGESTURE_03", npcRoot);
-                yield return new WaitForSeconds(3f);
+                AnimationCreator.PlayAnimation(mdsNames, "T_DIALOGGESTURE_08", npcRoot);
+                Debug.Log("8");
+                yield return new WaitForSeconds(8f);
             }
         }
 
