@@ -1,12 +1,9 @@
-using System.Linq;
 using GUZ.Core;
+using GUZ.Core._Npc2;
 using GUZ.Core.Caches;
 using GUZ.Core.Creator.Meshes;
-using GUZ.Core.Data;
-using GUZ.Core.Data.Container;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
-using GUZ.Core.Properties;
 using GUZ.Core.Vm;
 using UnityEngine;
 using ZenKit.Daedalus;
@@ -28,28 +25,27 @@ namespace GUZ.Lab.Handler
 
         private void BootstrapBloodwyn()
         {
-            var newNpc = ResourceLoader.TryGetPrefabObject(PrefabType.Npc);
+            var newNpc = new GameObject("NPC");
+            var loaderComp = newNpc.AddComponent<NpcLoader2>();
             newNpc.SetParent(NpcSlotGo);
 
-            var npcSymbol = GameData.GothicVm.GetSymbolByName(_bloodwynInstanceId);
-            _bloodwynInstance = GameData.GothicVm.InitInstance<NpcInstance>(npcSymbol!);
-            var properties = newNpc.GetComponent<NpcProperties>();
-            properties.NpcData.Instance = _bloodwynInstance;
+            var npcSymbol = GameData.GothicVm.GetSymbolByName(_bloodwynInstanceId)!;
+            _bloodwynInstance = GameData.GothicVm.AllocInstance<NpcInstance>(npcSymbol);
 
-            var npcData = new NpcContainer
+            var npcData = new NpcContainer2
             {
                 Instance = _bloodwynInstance,
-                Properties = properties
+                Props = new(),
+                Vob = new()
             };
-            MultiTypeCache.NpcCache.Add(npcData);
-
-            properties.Dialogs = GameData.Dialogs.Instances
-                .Where(dialog => dialog.Npc == _bloodwynInstance.Index)
-                .OrderByDescending(dialog => dialog.Important)
-                .ToList();
+            _bloodwynInstance.UserData = npcData;
+            loaderComp.Npc = _bloodwynInstance;
+            MultiTypeCache.NpcCache2.Add(npcData);
 
             newNpc.name = _bloodwynInstance.GetName(NpcNameSlot.Slot0);
             GameData.GothicVm.GlobalSelf = _bloodwynInstance;
+
+            GameData.GothicVm.InitInstance(_bloodwynInstance);
 
             // Hero
             {
@@ -58,20 +54,10 @@ namespace GUZ.Lab.Handler
                 GameData.GothicVm.GlobalHero = heroInstance;
             }
 
-            var mdmName = "Hum_GRDM_ARMOR.asc";
-            var mdhName = "Humans_Militia.mds";
-            var body = new VmGothicExternals.ExtSetVisualBodyData
-            {
-                Armor = -1,
-                Body = "hum_body_Naked0",
-                BodyTexColor = 1,
-                BodyTexNr = 0,
-                Head = "Hum_Head_Bald",
-                HeadTexNr = 18,
-                TeethTexNr = 1
-            };
-
-            MeshFactory.CreateNpc(newNpc.name, mdmName, mdhName, body, root: newNpc);
+            // We need to initialize the NPC at this frame to set the positions of child GOs now.
+            GameGlobals.Npcs.InitNpc(newNpc, true);
+            newNpc.transform.SetLocalPositionAndRotation(default, default);
+            newNpc.transform.GetChild(0).SetLocalPositionAndRotation(default, default);
         }
     }
 }

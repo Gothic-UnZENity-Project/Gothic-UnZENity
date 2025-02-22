@@ -41,6 +41,7 @@ namespace GUZ.Lab
         private TextureManager _textureManager;
         private FontManager _fontManager;
         private StoryManager _story;
+        private NpcManager2 _npcManager;
 
         public ConfigManager Config => _configManager;
         public SaveGameManager SaveGame => _save;
@@ -54,7 +55,7 @@ namespace GUZ.Lab
         public FontManager Font => _fontManager;
         public StationaryLightsManager Lights => null;
         public VobManager Vobs => null;
-        public NpcManager2 Npcs => null;
+        public NpcManager2 Npcs => _npcManager;
         public NpcAiManager2 NpcAi => null;
         public VobMeshCullingManager VobMeshCulling => null;
         public NpcMeshCullingManager NpcMeshCulling => null;
@@ -98,6 +99,7 @@ namespace GUZ.Lab
             _npcRoutineManager = new RoutineManager(Config.Dev);
             _gameMusicManager = new MusicManager(Config.Dev);
             _videoManager = new VideoManager(Config.Dev);
+            _npcManager = new NpcManager2();
 
             ResourceLoader.Init(Config.Root.Gothic1Path);
 
@@ -107,6 +109,7 @@ namespace GUZ.Lab
             _gameMusicManager.Init();
             _npcRoutineManager.Init();
             _textureManager.Init();
+            _npcManager.Init(this);
 
             _videoManager.InitVideos();
             _save.LoadNewGame();
@@ -125,8 +128,7 @@ namespace GUZ.Lab
             LabMusicHandler.Bootstrap();
             LabSoundHandler.Bootstrap();
             LabVideoHandler.Bootstrap();
-            // TODO - Broken. Fix before use.
-            // NpcDialogHandler.Bootstrap();
+            NpcDialogHandler.Bootstrap();
             InteractableHandler.Bootstrap();
             LadderLabHandler.Bootstrap();
             VobItemHandler.Bootstrap();

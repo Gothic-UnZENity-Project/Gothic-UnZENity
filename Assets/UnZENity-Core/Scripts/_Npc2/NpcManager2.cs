@@ -335,7 +335,7 @@ namespace GUZ.Core._Npc2
             return changed;
         }
 
-        public bool InitNpc(GameObject go)
+        public bool InitNpc(GameObject go, bool initImmediately = false)
         {
             go.TryGetComponent(out NpcLoader2 loaderComp);
 
@@ -347,7 +347,15 @@ namespace GUZ.Core._Npc2
             // Do not put element into queue a second time.
             loaderComp.IsLoaded = true;
 
-            _objectsToInitQueue.Enqueue(go.GetComponent<NpcLoader2>());
+            if (initImmediately)
+            {
+                _initializer.InitNpc(loaderComp.Npc, loaderComp.gameObject);
+            }
+            else
+            {
+                _objectsToInitQueue.Enqueue(loaderComp);
+            }
+
             return true;
         }
 
