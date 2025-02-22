@@ -1,10 +1,11 @@
+using System.Collections;
 using GUZ.Core;
 using GUZ.Core._Npc2;
 using GUZ.Core.Caches;
-using GUZ.Core.Creator.Meshes;
+using GUZ.Core.Creator;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
-using GUZ.Core.Vm;
+using GUZ.Core.Npc;
 using UnityEngine;
 using ZenKit.Daedalus;
 
@@ -21,6 +22,30 @@ namespace GUZ.Lab.Handler
         public override void Bootstrap()
         {
             BootstrapBloodwyn();
+
+            StartCoroutine(IdleAnimations());
+        }
+
+        /// <summary>
+        /// Some random animations to test blending etc.
+        /// </summary>
+        private IEnumerator IdleAnimations()
+        {
+            var mdsNames = new [] { "humans" };
+            var npcRoot = NpcSlotGo.transform.GetChild(0).GetChild(0).gameObject;
+            yield return new WaitForSeconds(1f);
+
+            while (true)
+            {
+                AnimationCreator.PlayAnimation(mdsNames, "T_DIALOGGESTURE_01", npcRoot);
+                yield return new WaitForSeconds(3f);
+
+                AnimationCreator.PlayAnimation(mdsNames, "T_DIALOGGESTURE_02", npcRoot);
+                yield return new WaitForSeconds(3f);
+
+                AnimationCreator.PlayAnimation(mdsNames, "T_DIALOGGESTURE_03", npcRoot);
+                yield return new WaitForSeconds(3f);
+            }
         }
 
         private void BootstrapBloodwyn()
@@ -58,6 +83,9 @@ namespace GUZ.Lab.Handler
             GameGlobals.Npcs.InitNpc(newNpc, true);
             newNpc.transform.SetLocalPositionAndRotation(default, default);
             newNpc.transform.GetChild(0).SetLocalPositionAndRotation(default, default);
+
+            // Otherwise NPC will start its daily routine.
+            Destroy(newNpc.GetComponentInChildren<AiHandler>());
         }
     }
 }

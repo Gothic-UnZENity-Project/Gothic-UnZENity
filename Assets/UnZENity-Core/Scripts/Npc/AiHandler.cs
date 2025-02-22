@@ -22,11 +22,6 @@ namespace GUZ.Core.Npc
 
         private void Start()
         {
-            if (GameContext.IsLab)
-            {
-                Destroy(this);
-                return;
-            }
             Properties.CurrentAction = new None(new AnimationAction(), NpcData);
         }
 
