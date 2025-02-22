@@ -65,6 +65,7 @@ namespace GUZ.Lab
 
         private void Awake()
         {
+            GameContext.IsLab = true;
             StartCoroutine(BootLab());
         }
 

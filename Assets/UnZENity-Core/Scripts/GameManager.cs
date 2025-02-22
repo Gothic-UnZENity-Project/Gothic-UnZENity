@@ -65,6 +65,8 @@ namespace GUZ.Core
         {
             base.Awake();
 
+            GameContext.IsLab = false;
+
             Config = new ConfigManager();
             Config.LoadRootJson();
             Config.SetDeveloperConfig(DeveloperConfig);

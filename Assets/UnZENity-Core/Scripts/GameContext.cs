@@ -16,6 +16,8 @@ namespace GUZ.Core
         public static ISubtitlesAdapter SubtitlesAdapter;
         public static IGameVersionAdapter GameVersionAdapter;
 
+        public static bool IsLab;
+
         public enum Controls
         {
             VR,

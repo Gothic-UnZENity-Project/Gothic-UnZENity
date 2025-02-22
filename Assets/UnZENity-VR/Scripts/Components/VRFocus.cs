@@ -37,8 +37,14 @@ namespace GUZ.VR.Components
         {
             _nameCanvas.SetActive(false);
 
-            _nameCanvas.GetComponentInChildren<TMP_Text>().text =
-                GetComponentInParent<NpcLoader2>().Npc.GetUserData2().PrefabProps.GetFocusName();
+            // TODO - Is null inside Lab
+            // FIXME - Not yet handled for Items and VOBs in general
+
+            if (!GameContext.IsLab)
+            {
+                _nameCanvas.GetComponentInChildren<TMP_Text>().text =
+                    GetComponentInParent<NpcLoader2>().Npc.GetUserData2().PrefabProps.GetFocusName();
+            }
         }
 
         public void OnHoverEnter(HVRGrabberBase grabber, HVRGrabbable grabbable)
