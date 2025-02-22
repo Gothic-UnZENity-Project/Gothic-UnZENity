@@ -42,14 +42,16 @@ namespace GUZ.Lab
         private FontManager _fontManager;
         private StoryManager _story;
         private NpcManager2 _npcManager;
+        private SkyManager _skyManager;
+        private GameTime _gameTime;
 
         public ConfigManager Config => _configManager;
         public SaveGameManager SaveGame => _save;
         public LoadingManager Loading => null;
         public StaticCacheManager StaticCache => null;
         public PlayerManager Player => null;
-        public SkyManager Sky => null;
-        public GameTime Time => null;
+        public SkyManager Sky => _skyManager;
+        public GameTime Time => _gameTime;
         public RoutineManager Routines => _npcRoutineManager;
         public TextureManager Textures => _textureManager;
         public FontManager Font => _fontManager;
@@ -100,6 +102,8 @@ namespace GUZ.Lab
             _gameMusicManager = new MusicManager(Config.Dev);
             _videoManager = new VideoManager(Config.Dev);
             _npcManager = new NpcManager2();
+            _gameTime = new GameTime(Config.Dev, this);
+            _skyManager = new SkyManager(Config.Dev, _gameTime);
 
             ResourceLoader.Init(Config.Root.Gothic1Path);
 
@@ -110,6 +114,7 @@ namespace GUZ.Lab
             _npcRoutineManager.Init();
             _textureManager.Init();
             _npcManager.Init(this);
+            _skyManager.InitWorld();
 
             _videoManager.InitVideos();
             _save.LoadNewGame();

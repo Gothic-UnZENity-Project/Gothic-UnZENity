@@ -105,7 +105,7 @@ namespace GUZ.Core.Manager.Scenes
                 worldRoot.SetActive(true);
                 vobRoot.SetActive(true);
 
-                GameManager.I.Sky.InitWorld();
+                GameGlobals.Sky.InitWorld();
 
                 TeleportPlayerToStart();
 
