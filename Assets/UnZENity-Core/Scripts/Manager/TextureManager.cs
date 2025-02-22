@@ -7,13 +7,18 @@ using UnityEngine;
 public class TextureManager : MonoBehaviour
 {
     // (Main) Menu
+    [NonSerialized]
     public Material MainMenuImageBackgroundMaterial;
+    [NonSerialized]
     public Material MainMenuBackgroundMaterial;
+    [NonSerialized]
     public Material MainMenuSaveLoadBackgroundMaterial;
+    [NonSerialized]
     public Material MainMenuTextImageMaterial;
     public Material MenuChoiceBackMaterial;
-        
+
     // Menu
+    [NonSerialized]
     public Material GothicLoadingMenuMaterial;
     public Material ButtonMaterial;
     public Material SliderMaterial;
@@ -24,7 +29,9 @@ public class TextureManager : MonoBehaviour
     [NonSerialized] public Material ArrowLeftMaterial;
 
     // Loading
+    [NonSerialized]
     public Material LoadingBarBackgroundMaterial;
+    [NonSerialized]
     public Material LoadingBarMaterial;
 
     // Misc
@@ -32,7 +39,7 @@ public class TextureManager : MonoBehaviour
     public Material MapMaterial;
     public Material BackgroundMaterial;
 
-    
+
     private void Start()
     {
         MainMenuImageBackgroundMaterial = GetEmptyMaterial(MaterialExtension.BlendMode.Opaque);
