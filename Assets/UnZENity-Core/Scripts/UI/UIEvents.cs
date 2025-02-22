@@ -63,11 +63,6 @@ namespace GUZ.Core.UI
             
             foreach (var hoveredObj in pointerEventData.hovered)
             {
-                if (hoveredObj != gameObject && !hoveredObj.transform.IsChildOf(this.transform))
-                {
-                    continue;
-                }
-
                 if (!_elementsToFilter.IsEmpty() && !_elementsToFilter.Contains(hoveredObj))
                 {
                     continue;
@@ -92,11 +87,6 @@ namespace GUZ.Core.UI
             
             foreach (var hoveredObj in pointerEventData.hovered)
             {
-                if (hoveredObj != gameObject && !hoveredObj.transform.IsChildOf(this.transform))
-                {
-                    continue;
-                }
-
                 if (!_elementsToFilter.IsEmpty() && !_elementsToFilter.Contains(hoveredObj))
                 {
                     continue;
