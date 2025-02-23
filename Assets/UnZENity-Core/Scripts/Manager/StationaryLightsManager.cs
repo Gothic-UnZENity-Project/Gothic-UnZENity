@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using GUZ.Core.Extensions;
 using UnityEngine;
 
 namespace GUZ.Core.Manager
@@ -126,6 +127,12 @@ namespace GUZ.Core.Manager
                     lights[i].Position.x, lights[i].Position.y, lights[i].Position.z,
                     1f / (lights[i].Range * lights[i].Range));
                 lightColors[i] = lights[i].LinearColor;
+            }
+
+            // Unity exception: Zero sized arrays aren't allowed for Shader values.
+            if (lightPositionsAndAttenuation.IsEmpty())
+            {
+                return;
             }
 
             Shader.SetGlobalVectorArray(_globalStationaryLightPositionsAndAttenuationShaderId,
