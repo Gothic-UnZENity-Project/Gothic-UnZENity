@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using GUZ.Core.Caches;
 using GUZ.Core.Creator;
 using GUZ.Core.Creator.Meshes;
 using GUZ.Core.Extensions;
@@ -51,6 +52,9 @@ namespace GUZ.Core.Manager.Scenes
                 watch.LogAndRestart("StaticCache - Global loaded");
                 await GameGlobals.StaticCache.LoadWorldCache(GameGlobals.SaveGame.CurrentWorldName).AwaitAndLog();
                 watch.LogAndRestart("StaticCache - World loaded");
+
+                // TODO - Check if we really need to dispose of the texturecache when loading a second world
+                TextureCache.Dispose();
 
                 // TODO - Can be cached and doesn't need to be recreated each world scene loading.
                 await MeshFactory.CreateTextureArray();
