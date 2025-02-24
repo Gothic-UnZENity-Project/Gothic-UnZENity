@@ -1,4 +1,7 @@
 ﻿using System.Collections;
+using GUZ.Core.Vm;
+using JetBrains.Annotations;
+using MyBox;
 using UnityEngine;
 
 namespace GUZ.Core.Npc
@@ -23,14 +26,28 @@ namespace GUZ.Core.Npc
             StartCoroutine(BlendOutCoroutine());
         }
 
-        public void PlayAnimation(string animName, string nextAnimName)
+        public void PlayAnimationRepeatedly(string animName)
+        {
+            // TODO
+        }
+
+        public void PlayAnimation(string animName, [CanBeNull] string nextAnimName)
         {
             if (!GameGlobals.Animations.PlayAnimation(PrefabProps.NpcAnimation, Properties.MdsNames, animName))
             {
                 return;
             }
 
-            _blendOutTime = GameGlobals.Animations.GetBlendOutTime(PrefabProps.NpcAnimation, Properties.MdsNames, animName, nextAnimName);
+            if (nextAnimName.IsNullOrEmpty())
+            {
+                _nextAnimation = GetIdleAnimationName();
+            }
+            else
+            {
+                _nextAnimation = nextAnimName;
+            }
+
+            _blendOutTime = GameGlobals.Animations.GetBlendOutTime(PrefabProps.NpcAnimation, Properties.MdsNames, animName, _nextAnimation);
             _isAnimationPlaying = true;
         }
 
@@ -58,7 +75,37 @@ namespace GUZ.Core.Npc
                     PlayAnimation(_nextAnimation, nextNextAnimName);
                 }
             }
+        }
 
+        private string GetIdleAnimationName()
+        {
+            string walkmode;
+            switch (Properties.WalkMode)
+            {
+                case VmGothicEnums.WalkMode.Walk:
+                    walkmode = "WALK";
+                    break;
+                case VmGothicEnums.WalkMode.Run:
+                    walkmode = "RUN";
+                    break;
+                case VmGothicEnums.WalkMode.Sneak:
+                    walkmode = "SNEAK";
+                    break;
+                case VmGothicEnums.WalkMode.Water:
+                    walkmode = "WATER";
+                    break;
+                case VmGothicEnums.WalkMode.Swim:
+                    walkmode = "SWIM";
+                    break;
+                case VmGothicEnums.WalkMode.Dive:
+                    walkmode = "DIVE";
+                    break;
+                default:
+                    Debug.LogWarning($"Animation of type {Properties.WalkMode} not yet implemented.");
+                    return "";
+            }
+
+            return $"S_{walkmode}";
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SqlTypes;
 using System.IO;
 using System.Linq;
 using GUZ.Core.Caches;
@@ -39,14 +40,15 @@ namespace GUZ.Core.Manager
         public float GetBlendOutTime(Animation animComp, string[] mdsNames, string animName, string nextAnimName)
         {
             var anim1 = GetCachedAnimationData(mdsNames, animName, animComp, out var combinedAnimationName1);
-            var anim2 = GetCachedAnimationData(mdsNames, nextAnimName, animComp, out var combinedAnimationName2);
+            var anim2 = GetCachedAnimationData(mdsNames, nextAnimName, animComp, out var _);
+
 
             if (anim1 == null)
             {
                 return 0f;
             }
 
-            var anim1Length = (anim1.LastFrame - anim1.FirstFrame) / anim1.Fps;
+            var anim1Length = MultiTypeCache.AnimationClipCache[combinedAnimationName1].length;
             if (anim2 == null)
             {
                 return anim1Length - anim1.BlendOut;
@@ -68,6 +70,11 @@ namespace GUZ.Core.Manager
         private IAnimation GetCachedAnimationData(string[] mdsNames, string animName, Animation animComp, out string combinedAnimationName)
         {
             combinedAnimationName = null;
+
+            if (animName.IsNullOrEmpty())
+            {
+                return null;
+            }
 
             foreach (var mdsName in mdsNames.Reverse())
             {
