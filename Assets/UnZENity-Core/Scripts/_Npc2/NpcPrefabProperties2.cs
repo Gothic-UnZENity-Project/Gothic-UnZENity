@@ -13,11 +13,13 @@ namespace GUZ.Core._Npc2
         [SerializeField]
         private bool _isHero;
 
-        // FIXME - Set these via Prefab UI
+        // Values set via Inspector
         public AudioSource NpcSound;
         public Transform Bip01;
         public Transform ColliderRootMotion;
         public AiHandler AiHandler;
+        public Animation NpcAnimation;
+        public NpcAnimationHandler AnimationHandler;
 
         [NonSerialized]
         public Transform Head;

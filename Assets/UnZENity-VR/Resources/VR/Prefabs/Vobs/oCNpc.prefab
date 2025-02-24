@@ -9,11 +9,12 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1199752534748503035}
+  - component: {fileID: 7753665780640179415}
   - component: {fileID: 3046509075852218844}
   - component: {fileID: 9042877295681826828}
+  - component: {fileID: 6577002183739041847}
   - component: {fileID: 383060561904739675}
   - component: {fileID: 4148423720954529152}
-  - component: {fileID: 7753665780640179415}
   m_Layer: 0
   m_Name: oCNpc
   m_TagString: GUZVob
@@ -37,6 +38,25 @@ Transform:
   - {fileID: 8679908380237941234}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7753665780640179415
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2202926895728732233}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e8f218a92500441fbbf8345ea50c5594, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _isHero: 0
+  NpcSound: {fileID: 3405042143443336336}
+  Bip01: {fileID: 8679908380237941234}
+  ColliderRootMotion: {fileID: 6115383017936816660}
+  AiHandler: {fileID: 3046509075852218844}
+  NpcAnimation: {fileID: 9042877295681826828}
+  AnimationHandler: {fileID: 6577002183739041847}
 --- !u!114 &3046509075852218844
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -64,6 +84,18 @@ Animation:
   m_PlayAutomatically: 1
   m_AnimatePhysics: 0
   m_CullingType: 0
+--- !u!114 &6577002183739041847
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2202926895728732233}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8d50b485e377423a80d6bf8be62581a4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &383060561904739675
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -76,7 +108,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b3d4d12525e40a7ac803add610db925, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _properties: {fileID: 0}
   _nameCanvas: {fileID: 6587480391989834217}
 --- !u!114 &4148423720954529152
 MonoBehaviour:
@@ -90,23 +121,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9df2797e60b740a184fb2cfd36d0a490, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &7753665780640179415
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2202926895728732233}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e8f218a92500441fbbf8345ea50c5594, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  <VisualScheme>k__BackingField: 
-  NpcSound: {fileID: 3405042143443336336}
-  Bip01: {fileID: 8679908380237941234}
-  ColliderRootMotion: {fileID: 6115383017936816660}
-  AiHandler: {fileID: 3046509075852218844}
 --- !u!1 &2815092147823170342
 GameObject:
   m_ObjectHideFlags: 0

@@ -64,22 +64,6 @@ namespace GUZ.Core.Creator
             var mdh = ResourceLoader.TryGetModelHierarchy(mdhName);
             var anim = mds.Animations.First(i => i.Name.EqualsIgnoreCase(animationName));
 
-            // Hint: We assume, that there is only one! transition/blending named. As we never know what's the next animation, we should be fine with it.
-            var animBlending = mds.AnimationBlends.Where(i => i.Name == animationName).ToArray();
-            var blendInTime = 0f;
-            var blendOutTime = 0f;
-
-            if (animBlending.Any())
-            {
-                blendInTime = animBlending.First().BlendIn;
-                blendOutTime = animBlending.First().BlendOut;
-
-                if (animBlending.Length > 1)
-                {
-                    Debug.LogWarning($">{animBlending.Length}< amount of AnimationBlendinds found for >{animationName}<. Using first one.");
-                }
-            }
-
             // If we create empty animations with only one frame, Unity will complain. We therefore skip it for now.
             if (anim.FirstFrame == anim.LastFrame)
             {
@@ -99,17 +83,17 @@ namespace GUZ.Core.Creator
                 MultiTypeCache.AnimationClipCache[mdsAnimationKeyName] = clip;
 
                 AddClipEvents(clip, modelAnimation, anim);
-                AddClipEndEvent(anim, clip, blendOutTime);
+                AddClipEndEvent(anim, clip, anim.BlendOut);
             }
 
             if (animationComp[mdsAnimationKeyName] == null)
             {
                 animationComp.AddClip(clip, mdsAnimationKeyName);
-                animationComp[mdsAnimationKeyName]!.layer = modelAnimation.Layer;
+                // HINT: Layers aren't used in legacy animations. Only newer Mecanim system: https://discussions.unity.com/t/mechanim-vs-legacy-animations/518834/15
+                // animationComp[mdsAnimationKeyName]!.layer = modelAnimation.Layer;
             }
 
-            animationComp.Stop();
-            animationComp.Blend(mdsAnimationKeyName, 1f, blendInTime);
+            animationComp.CrossFade(mdsAnimationKeyName, anim.BlendIn);
 
             return true;
         }

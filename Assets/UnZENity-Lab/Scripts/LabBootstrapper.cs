@@ -42,6 +42,7 @@ namespace GUZ.Lab
         private FontManager _fontManager;
         private StoryManager _story;
         private NpcManager2 _npcManager;
+        private AnimationManager _animationManager;
         private SkyManager _skyManager;
         private GameTime _gameTime;
 
@@ -59,6 +60,7 @@ namespace GUZ.Lab
         public VobManager Vobs => null;
         public NpcManager2 Npcs => _npcManager;
         public NpcAiManager2 NpcAi => null;
+        public AnimationManager Animations => _animationManager;
         public VobMeshCullingManager VobMeshCulling => null;
         public NpcMeshCullingManager NpcMeshCulling => null;
         public VobSoundCullingManager SoundCulling => null;
@@ -102,6 +104,7 @@ namespace GUZ.Lab
             _gameMusicManager = new MusicManager(Config.Dev);
             _videoManager = new VideoManager(Config.Dev);
             _npcManager = new NpcManager2();
+            _animationManager = new AnimationManager();
             _gameTime = new GameTime(Config.Dev, this);
             _skyManager = new SkyManager(Config.Dev, _gameTime);
 

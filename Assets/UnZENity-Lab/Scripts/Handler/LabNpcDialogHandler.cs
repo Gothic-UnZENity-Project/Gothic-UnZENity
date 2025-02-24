@@ -33,15 +33,16 @@ namespace GUZ.Lab.Handler
         {
             var mdsNames = new [] { "humans" };
             var npcRoot = NpcSlotGo.transform.GetChild(0).GetChild(0).gameObject;
+            var animHandler = npcRoot.GetComponent<NpcAnimationHandler>();
             yield return new WaitForSeconds(1f);
 
             while (true)
             {
-                AnimationCreator.PlayAnimation(mdsNames, "S_WALK", npcRoot);
+                animHandler.PlayAnimation("S_WALK", "");
                 Debug.Log("idle");
                 yield return new WaitForSeconds(2f);
 
-                AnimationCreator.PlayAnimation(mdsNames, "T_DIALOGGESTURE_08", npcRoot);
+                animHandler.PlayAnimation("T_DIALOGGESTURE_08", null);
                 Debug.Log("8");
                 yield return new WaitForSeconds(8f);
             }
