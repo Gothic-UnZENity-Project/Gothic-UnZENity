@@ -149,6 +149,12 @@ namespace GUZ.Core
             Vobs.Init(this);
 
             GuzBootstrapper.BootGothicUnZeNity();
+            
+            GlobalEventDispatcher.LevelChangeTriggered.AddListener((world, spawn) =>
+            {
+                Player.LastLevelChangeTriggerVobName = spawn;
+                LoadWorld(world,-1, SceneManager.GetActiveScene().name);
+            });
 
             watch.Log("Phase2 (mostly ZenKit) initialized in");
         }
