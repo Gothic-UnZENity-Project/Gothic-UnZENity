@@ -159,6 +159,12 @@ namespace GUZ.Core
             Npcs.Init(this);
 
             GuzBootstrapper.BootGothicUnZeNity();
+            
+            GlobalEventDispatcher.LevelChangeTriggered.AddListener((world, spawn) =>
+            {
+                Player.LastLevelChangeTriggerVobName = spawn;
+                LoadWorld(world, -1, SceneManager.GetActiveScene().name);
+            });
 
             watch.Log("Phase2 (mostly ZenKit) initialized in");
         }
@@ -174,22 +180,28 @@ namespace GUZ.Core
         }
 
         /// <summary>
-        /// saveGameId - 0==newGame (Gothic saves start with number 1)
+        /// Gothic saves start with number 1
+        /// saveGameId = 0 -> New Game
+        /// saveGameId = -1 -> Change World
         /// </summary>
-        /// <param name="saveGameId">1-15</param>
+        /// <param name="saveGameId">-1-15</param>
         public void LoadWorld(string worldName, int saveGameId, string sceneToUnload = null)
         {
             // We need to add .zen as early as possible as all related data needs the file ending.
             worldName += worldName.EndsWithIgnoreCase(".zen") ? "" : ".zen";
 
             // Pre-load ZenKit save game data now. Can be reused by LoadingSceneManager later.
-            if (saveGameId < 1)
+            if (saveGameId == 0)
             {
                 SaveGame.LoadNewGame();
             }
-            else
+            else if (saveGameId > 0)
             {
                 SaveGame.LoadSavedGame(saveGameId);
+            }
+            else
+            {
+                // If we have saveGameId -1 that means to just change the world and keep the same data.
             }
             SaveGame.ChangeWorld(worldName);
 

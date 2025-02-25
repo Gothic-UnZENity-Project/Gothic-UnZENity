@@ -1,11 +1,14 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using GUZ.Core.Caches;
 using GUZ.Core.Creator;
 using GUZ.Core.Creator.Meshes;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
+using GUZ.Core.Vob.WayNet;
 using MyBox;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -44,16 +47,22 @@ namespace GUZ.Core.Manager.Scenes
             var fullWatch = Stopwatch.StartNew();
             try
             {
-                // 0.
-                // Load Static cache and arrange it in memory
-                await GameGlobals.StaticCache.LoadGlobalCache();
-                watch.LogAndRestart("StaticCache - Global loaded");
+                // Global cache and global calculations (TextureArray) only need to be done once.
+                if (!GameGlobals.StaticCache.IsGlobalCacheLoaded)
+                {
+                    // 0.1
+                    // Load global Static cache and arrange it in memory
+                    await GameGlobals.StaticCache.LoadGlobalCache();
+                    watch.LogAndRestart("StaticCache - Global loaded");
+
+                    await MeshFactory.CreateTextureArray();
+                    watch.LogAndRestart("Texture array created");
+                }
+
+                // 0.2
+                // Load world cache
                 await GameGlobals.StaticCache.LoadWorldCache(GameGlobals.SaveGame.CurrentWorldName).AwaitAndLog();
                 watch.LogAndRestart("StaticCache - World loaded");
-
-                // TODO - Can be cached and doesn't need to be recreated each world scene loading.
-                await MeshFactory.CreateTextureArray();
-                watch.LogAndRestart("Texture array created");
 
                 // 1. Load world based on cached Chunks
                 if (config.Dev.EnableWorldMesh)
@@ -135,7 +144,8 @@ namespace GUZ.Core.Manager.Scenes
         /// There are three options, where the player can spawn:
         /// 1. We set it inside GameConfiguration.SpawnAtWaypoint (only during first load of the game)
         /// 2. We got the spawn information from a loaded SaveGame from the Hero's VOB
-        /// 3. We load the START_* waypoint
+        /// 3. We get the waypoint to spawn at from a ChangeLevel trigger
+        /// 4. We load the START_* waypoint
         /// </summary>
         private void TeleportPlayerToStart()
         {
@@ -167,10 +177,22 @@ namespace GUZ.Core.Manager.Scenes
                 TeleportPlayerToStart(GameGlobals.Player.HeroSpawnPosition, GameGlobals.Player.HeroSpawnRotation);
                 return;
             }
-
-            // 3.
+            
             var spots = GameData.FreePoints;
-            var startPoint = spots.FirstOrDefault(
+            KeyValuePair<string, FreePoint> startPoint;
+            
+            // 3.
+            if(GameGlobals.Player.LastLevelChangeTriggerVobName != null)
+            {
+                startPoint = spots.FirstOrDefault(
+                    go => go.Key.EqualsIgnoreCase(GameGlobals.Player.LastLevelChangeTriggerVobName));
+                TeleportPlayerToStart(startPoint.Value.Position, startPoint.Value.Rotation);
+                GameGlobals.Player.LastLevelChangeTriggerVobName = null;
+                return;
+            }
+
+            // 4.
+            startPoint = spots.FirstOrDefault(
                 go => go.Key.EqualsIgnoreCase("START") || go.Key.EqualsIgnoreCase("START_GOTHIC2")
             );
 

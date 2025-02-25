@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using GUZ.Core.Util;
 using UnityEngine;
 
 namespace GUZ.Core.Config
@@ -8,7 +9,8 @@ namespace GUZ.Core.Config
     {
         public static Dictionary<string, string> LoadFile(string filePath)
         {
-            if (!File.Exists(filePath))
+            var filePathCaseInsensitive = FileSearchHandler.FindFileCaseInsensitive(filePath);
+            if (filePathCaseInsensitive == null)
             {
                 Debug.LogError("The Gothic.ini/GothicGame.ini file does not exist at the specified path :" + filePath);
                 return null;
@@ -16,7 +18,7 @@ namespace GUZ.Core.Config
 
             var data = new Dictionary<string, string>();
 
-            foreach (var line in File.ReadLines(filePath))
+            foreach (var line in File.ReadLines(filePathCaseInsensitive))
             {
                 var trimmedLine = line.Trim();
                 if (string.IsNullOrWhiteSpace(trimmedLine) || trimmedLine.StartsWith(";"))

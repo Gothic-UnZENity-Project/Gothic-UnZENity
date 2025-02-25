@@ -8,6 +8,8 @@ namespace GUZ.Core.Manager
         public Vector3 HeroSpawnPosition;
         public Quaternion HeroSpawnRotation;
 
+        public string LastLevelChangeTriggerVobName;
+
         public PlayerManager(DeveloperConfig config)
         {
             // Nothing to do for now. Might be needed later.
