@@ -46,19 +46,22 @@ namespace GUZ.Core.Manager.Scenes
             var fullWatch = Stopwatch.StartNew();
             try
             {
-                // 0.
-                // Load Static cache and arrange it in memory
-                await GameGlobals.StaticCache.LoadGlobalCache();
-                watch.LogAndRestart("StaticCache - Global loaded");
+                // Global cache and global calculations (TextureArray) only need to be done once.
+                if (!GameGlobals.StaticCache.IsGlobalCacheLoaded)
+                {
+                    // 0.1
+                    // Load global Static cache and arrange it in memory
+                    await GameGlobals.StaticCache.LoadGlobalCache();
+                    watch.LogAndRestart("StaticCache - Global loaded");
+
+                    await MeshFactory.CreateTextureArray();
+                    watch.LogAndRestart("Texture array created");
+                }
+
+                // 0.2
+                // Load world cache
                 await GameGlobals.StaticCache.LoadWorldCache(GameGlobals.SaveGame.CurrentWorldName).AwaitAndLog();
                 watch.LogAndRestart("StaticCache - World loaded");
-
-                // TODO - Check if we really need to dispose of the texturecache when loading a second world
-                TextureCache.Dispose();
-
-                // TODO - Can be cached and doesn't need to be recreated each world scene loading.
-                await MeshFactory.CreateTextureArray();
-                watch.LogAndRestart("Texture array created");
 
                 // 1. Load world based on cached Chunks
                 if (config.Dev.EnableWorldMesh)

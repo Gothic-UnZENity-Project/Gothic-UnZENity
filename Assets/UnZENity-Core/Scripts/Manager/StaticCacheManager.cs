@@ -35,7 +35,7 @@ namespace GUZ.Core.Manager
         private bool _configIsCompressed;
 
 
-        private bool _isGlobalCacheLoaded;
+        public bool IsGlobalCacheLoaded { get; private set; }
 
         public Dictionary<string, Bounds> LoadedVobsBounds { get; private set; }
 
@@ -304,11 +304,11 @@ namespace GUZ.Core.Manager
 
         public async Task LoadGlobalCache()
         {
-            if (_isGlobalCacheLoaded)
+            if (IsGlobalCacheLoaded)
             {
                 return;
             }
-            _isGlobalCacheLoaded = true;
+            IsGlobalCacheLoaded = true;
             
             var vobBoundsString = await ReadData(BuildFilePathName(_fileNameGlobalVobBounds));
             var textureArrayString = await ReadData(BuildFilePathName(_fileNameGlobalTextureArrayData));
