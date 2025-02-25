@@ -30,7 +30,7 @@ namespace GUZ.Core.Manager.Scenes
                 else
                 {
                     // Load New game at certain world
-                    GameManager.I.LoadWorld(GetWorldNameToSpawn(), -1, Constants.SceneMainMenu);
+                    GameManager.I.LoadWorld(GetWorldNameToSpawn(), 0, Constants.SceneMainMenu);
                 }
                 return;
             }
