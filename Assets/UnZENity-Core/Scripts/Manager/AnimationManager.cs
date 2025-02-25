@@ -33,6 +33,8 @@ namespace GUZ.Core.Manager
                 return false;
             }
 
+            // TODO - When calculating BlendOut of previous animation, we say anim1.BlendOut - anim2.BlendIn. Here we only say anim2.BlendIn.
+            // TODO - This makes the Fade (e.g.) twice as fast. Okay for now, but could be improved. @see: NpcAnimationHandler.BlendOutCoroutine()
             animComp.CrossFade(combinedAnimationName, anim.BlendIn);
             return true;
         }
@@ -55,7 +57,7 @@ namespace GUZ.Core.Manager
             }
 
             // TODO - I'm not quite sure if this is correct. Let's look how Open Gothic is handling it.
-            return anim1Length - anim2.BlendIn;
+            return anim1Length - anim1.BlendOut - anim2.BlendIn;
         }
 
         [CanBeNull]

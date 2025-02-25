@@ -35,6 +35,7 @@ namespace GUZ.Core.Npc
         {
             if (!GameGlobals.Animations.PlayAnimation(PrefabProps.NpcAnimation, Properties.MdsNames, animName))
             {
+                _isAnimationPlaying = false;
                 return;
             }
 
@@ -58,22 +59,27 @@ namespace GUZ.Core.Npc
                 if (!_isAnimationPlaying)
                 {
                     yield return null;
+                    continue;
                 }
-                else
+
+                _blendOutTime -= Time.deltaTime;
+                if (_blendOutTime > 0.0f)
                 {
-                    yield return new WaitForSeconds(_blendOutTime);
-                    _isAnimationPlaying = false;
-
-                    var nextNextAnimName = GameGlobals.Animations.GetNextAnimationName(PrefabProps.NpcAnimation, Properties.MdsNames, _nextAnimation);
-
-                    // We have a loop like S_WALK and therefore the animation is played as loop. Simply stop processing now.
-                    if (nextNextAnimName == _nextAnimation)
-                    {
-                        yield return null;
-                    }
-
-                    PlayAnimation(_nextAnimation, nextNextAnimName);
+                    // The animation is still playing and needs no "change"
+                    yield return null;
+                    continue;
                 }
+
+                var nextNextAnimName = GameGlobals.Animations.GetNextAnimationName(PrefabProps.NpcAnimation, Properties.MdsNames, _nextAnimation);
+
+                // We have a loop like S_WALK and therefore the animation is played as loop. Simply stop processing now.
+                if (nextNextAnimName == _nextAnimation)
+                {
+                    yield return null;
+                    continue;
+                }
+
+                PlayAnimation(_nextAnimation, nextNextAnimName);
             }
         }
 
