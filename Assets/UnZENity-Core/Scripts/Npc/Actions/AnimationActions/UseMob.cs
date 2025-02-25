@@ -153,7 +153,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             {
                 var mobVisualName = _mobGo.GetComponent<VobProperties>().VisualScheme;
                 var animName = string.Format(_mobLoopAnimationString, mobVisualName, Action.Int0);
-                AnimationCreator.PlayAnimation(Props.MdsNames, animName, NpcGo, true);
+                PrefabProps.AnimationHandler.PlayAnimation(animName);
             }
 
             IsFinishedFlag = true;
@@ -200,7 +200,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             var slotPositionName = GetSlotPositionTag(_slotGo.name);
             var animName = string.Format(_mobTransitionAnimationString, mobVisualName, slotPositionName, from, to);
 
-            AnimationCreator.PlayAnimation(Props.MdsNames, animName, NpcGo);
+            PrefabProps.AnimationHandler.PlayAnimation(animName);
         }
 
         protected override void InsertItem(string slot1, string slot2)

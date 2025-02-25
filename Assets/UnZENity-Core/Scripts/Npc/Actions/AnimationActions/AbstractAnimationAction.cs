@@ -159,27 +159,28 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             if (eventData.NextAnimation.Any())
             {
                 PhysicsHelper.DisablePhysicsForNpc(PrefabProps);
-                AnimationCreator.PlayAnimation(Props.MdsNames, eventData.NextAnimation, NpcGo);
+                PrefabProps.AnimationHandler.PlayAnimation(eventData.NextAnimation);
             }
-            // Play Idle animation
-            // But only if NPC isn't using an item right now. Otherwise, breathing will spawn hand to hips which looks wrong when (e.g.) drinking beer.
-            else if (Props.CurrentItem < 0)
-            {
-                var weaponState = Props.WeaponState == VmGothicEnums.WeaponState.NoWeapon ? "" : Props.WeaponState.ToString();
-                var animName = Props.WalkMode switch
-                {
-                    VmGothicEnums.WalkMode.Walk => $"S_{weaponState}WALK",
-                    VmGothicEnums.WalkMode.Sneak => $"S_{weaponState}SNEAK",
-                    VmGothicEnums.WalkMode.Swim => $"S_{weaponState}SWIM",
-                    VmGothicEnums.WalkMode.Dive => $"S_{weaponState}DIVE",
-                    _ => $"S_{weaponState}RUN"
-                };
-                var idleAnimPlaying = AnimationCreator.PlayAnimation(Props.MdsNames, animName, NpcGo, true);
-                if (!idleAnimPlaying)
-                {
-                    Debug.LogError($"Animation {animName} not found for {NpcGo.name} on {this}.");
-                }
-            }
+            // HINT: Should be handled automatically now!
+            // // Play Idle animation
+            // // But only if NPC isn't using an item right now. Otherwise, breathing will spawn hand to hips which looks wrong when (e.g.) drinking beer.
+            // else if (Props.CurrentItem < 0)
+            // {
+            //     var weaponState = Props.WeaponState == VmGothicEnums.WeaponState.NoWeapon ? "" : Props.WeaponState.ToString();
+            //     var animName = Props.WalkMode switch
+            //     {
+            //         VmGothicEnums.WalkMode.Walk => $"S_{weaponState}WALK",
+            //         VmGothicEnums.WalkMode.Sneak => $"S_{weaponState}SNEAK",
+            //         VmGothicEnums.WalkMode.Swim => $"S_{weaponState}SWIM",
+            //         VmGothicEnums.WalkMode.Dive => $"S_{weaponState}DIVE",
+            //         _ => $"S_{weaponState}RUN"
+            //     };
+            //     var idleAnimPlaying = AnimationCreator.PlayAnimation(Props.MdsNames, animName, NpcGo, true);
+            //     if (!idleAnimPlaying)
+            //     {
+            //         Debug.LogError($"Animation {animName} not found for {NpcGo.name} on {this}.");
+            //     }
+            // }
 
             IsFinishedFlag = true;
         }

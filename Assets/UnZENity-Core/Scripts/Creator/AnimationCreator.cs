@@ -15,6 +15,7 @@ using Animation = UnityEngine.Animation;
 
 namespace GUZ.Core.Creator
 {
+    [Obsolete("Use GameGlobals.Animations.* instead.")]
     public static class AnimationCreator
     {
         /// <summary>

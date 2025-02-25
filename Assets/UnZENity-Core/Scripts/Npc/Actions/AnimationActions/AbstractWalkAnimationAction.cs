@@ -94,7 +94,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
         private void StartWalk()
         {
             var animName = GetWalkModeAnimationString();
-            AnimationCreator.PlayAnimation(Props.MdsNames, animName, NpcGo, true);
+            PrefabProps.AnimationHandler.PlayAnimation(animName);
 
             State = WalkState.Walk;
         }

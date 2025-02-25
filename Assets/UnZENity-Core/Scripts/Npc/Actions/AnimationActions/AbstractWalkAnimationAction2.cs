@@ -74,7 +74,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             PhysicsHelper.EnablePhysicsForNpc(PrefabProps);
 
             var animName = GetWalkModeAnimationString();
-            AnimationCreator.PlayAnimation(Props.MdsNames, animName, NpcGo, true);
+            PrefabProps.AnimationHandler.PlayAnimation(animName);
         }
 
         private bool IsDestinationReached()

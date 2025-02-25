@@ -43,7 +43,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
                 var gestureCount = GetDialogGestureCount();
                 var randomId = Random.Range(1, gestureCount + 1);
 
-                AnimationCreator.PlayAnimation(Props.MdsNames, $"T_DIALOGGESTURE_{randomId:00}", NpcGo);
+                PrefabProps.AnimationHandler.PlayAnimation($"T_DIALOGGESTURE_{randomId:00}");
                 AnimationCreator.PlayHeadMorphAnimation(NpcContainer, HeadMorph.HeadMorphType.Viseme);
 
                 PrefabProps.NpcSound.PlayOneShot(audioClip);

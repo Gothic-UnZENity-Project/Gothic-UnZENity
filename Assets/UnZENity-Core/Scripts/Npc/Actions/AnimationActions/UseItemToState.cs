@@ -49,7 +49,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             // e.g. T_POTION_STAND_2_S0
             var animationName = string.Format(_animationScheme, item.SchemeName, oldState, newState);
 
-            var animationFound = AnimationCreator.PlayAnimation(Props.MdsNames, animationName, NpcGo);
+            var animationFound = PrefabProps.AnimationHandler.PlayAnimation(animationName);
 
             // e.g. BABE-T_BRUSH_S1_2_S0.man doesn't exist, but we can skip and use next one (S0_2_Stand)
             if (!animationFound)

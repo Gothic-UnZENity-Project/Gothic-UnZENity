@@ -18,7 +18,7 @@ namespace GUZ.Core._Npc2
         public Transform Bip01;
         public Transform ColliderRootMotion;
         public AiHandler AiHandler;
-        public Animation NpcAnimation;
+        public Animation Animation;
         public NpcAnimationHandler AnimationHandler;
 
         [NonSerialized]

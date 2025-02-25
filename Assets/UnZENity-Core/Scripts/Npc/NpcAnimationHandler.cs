@@ -18,7 +18,7 @@ namespace GUZ.Core.Npc
 
             // Cached object which will be used later.
             NpcData.PrefabProps.AnimationHandler = this;
-            NpcData.PrefabProps.NpcAnimation = GetComponent<Animation>();
+            NpcData.PrefabProps.Animation = GetComponent<Animation>();
         }
 
         private void Start()
@@ -31,12 +31,12 @@ namespace GUZ.Core.Npc
             // TODO
         }
 
-        public void PlayAnimation(string animName, [CanBeNull] string nextAnimName)
+        public bool PlayAnimation(string animName, string nextAnimName = null)
         {
-            if (!GameGlobals.Animations.PlayAnimation(PrefabProps.NpcAnimation, Properties.MdsNames, animName))
+            if (!GameGlobals.Animations.PlayAnimation(PrefabProps.Animation, Properties.MdsNames, animName))
             {
                 _isAnimationPlaying = false;
-                return;
+                return false;
             }
 
             if (nextAnimName.IsNullOrEmpty())
@@ -48,8 +48,10 @@ namespace GUZ.Core.Npc
                 _nextAnimation = nextAnimName;
             }
 
-            _blendOutTime = GameGlobals.Animations.GetBlendOutTime(PrefabProps.NpcAnimation, Properties.MdsNames, animName, _nextAnimation);
+            _blendOutTime = GameGlobals.Animations.GetBlendOutTime(PrefabProps.Animation, Properties.MdsNames, animName, _nextAnimation);
             _isAnimationPlaying = true;
+
+            return true;
         }
 
         private IEnumerator BlendOutCoroutine()
@@ -70,7 +72,7 @@ namespace GUZ.Core.Npc
                     continue;
                 }
 
-                var nextNextAnimName = GameGlobals.Animations.GetNextAnimationName(PrefabProps.NpcAnimation, Properties.MdsNames, _nextAnimation);
+                var nextNextAnimName = GameGlobals.Animations.GetNextAnimationName(PrefabProps.Animation, Properties.MdsNames, _nextAnimation);
 
                 // We have a loop like S_WALK and therefore the animation is played as loop. Simply stop processing now.
                 if (nextNextAnimName == _nextAnimation)
