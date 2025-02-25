@@ -6,6 +6,8 @@ using GUZ.Core.Creator;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Npc;
+using GUZ.Core.Vm;
+using GUZ.Lab.Mocks;
 using UnityEngine;
 using ZenKit.Daedalus;
 
@@ -60,9 +62,13 @@ namespace GUZ.Lab.Handler
             var npcData = new NpcContainer2
             {
                 Instance = _bloodwynInstance,
-                Props = new(),
+                Props = new()
+                {
+                    WalkMode = VmGothicEnums.WalkMode.Walk
+                },
                 Vob = new()
             };
+
             _bloodwynInstance.UserData = npcData;
             loaderComp.Npc = _bloodwynInstance;
             MultiTypeCache.NpcCache2.Add(npcData);
@@ -86,6 +92,7 @@ namespace GUZ.Lab.Handler
 
             // Otherwise NPC will start its daily routine.
             Destroy(newNpc.GetComponentInChildren<AiHandler>());
+            newNpc.transform.GetChild(0).gameObject.AddComponent<LabAiHandler>();
         }
     }
 }
