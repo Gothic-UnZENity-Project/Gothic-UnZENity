@@ -5,6 +5,7 @@ using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
 using GUZ.Core.Properties;
+using GUZ.Core.Vob;
 using HurricaneVR.Framework.Core;
 using HurricaneVR.Framework.Core.Grabbers;
 using TMPro;
@@ -37,13 +38,25 @@ namespace GUZ.VR.Components
         {
             _nameCanvas.SetActive(false);
 
-            // TODO - Is null inside Lab
-            // FIXME - Not yet handled for Items and VOBs in general
-
-            if (!GameContext.IsLab)
+            // Is not set inside Lab
+            if (GameContext.IsLab)
             {
-                _nameCanvas.GetComponentInChildren<TMP_Text>().text =
-                    GetComponentInParent<NpcLoader2>().Npc.GetUserData2().PrefabProps.GetFocusName();
+                return;
+            }
+
+            var vobProperties = GetComponentInParent<VobProperties>();
+
+            if (vobProperties != null)
+            {
+                _nameCanvas.GetComponentInChildren<TMP_Text>().text = vobProperties.GetFocusName();
+                return;
+            }
+
+            var npcLoader = GetComponentInParent<NpcLoader2>();
+            if (npcLoader != null)
+            {
+                _nameCanvas.GetComponentInChildren<TMP_Text>().text = npcLoader.Npc.GetUserData2().PrefabProps.GetFocusName();
+                return;
             }
         }
 
