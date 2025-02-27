@@ -57,8 +57,9 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
 
             if (Quaternion.Angle(NpcGo.transform.rotation, _finalRotation) > 1f)
             {
-                AnimationCreator.StopAnimation(NpcGo);
-                AnimationCreator.BlendAnimation(Props.MdsNames, GetRotateModeAnimationString(), NpcGo, true, new List<string> { "BIP01 HEAD" });
+                PrefabProps.AnimationHandler.PlayAnimation(GetRotateModeAnimationString());
+                // FIXME - New logic works? Then remove this line.
+                // AnimationCreator.BlendAnimation(Props.MdsNames, GetRotateModeAnimationString(), NpcGo, true, new List<string> { "BIP01 HEAD" });
             }
         }
 
@@ -113,8 +114,10 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             // Check if rotation is done.
             if (Quaternion.Angle(npcTransform.rotation, _finalRotation) < 1f && IsFinishedFlag != true)
             {
-                AnimationCreator.StopAnimation(NpcGo);
-                AnimationCreator.BlendAnimation(Props.MdsNames, GetWalkModeAnimationString(), NpcGo, true, new List<string> { "BIP01 HEAD" });
+                PrefabProps.AnimationHandler.PlayAnimation(GetWalkModeAnimationString());
+
+                // FIXME - New logic works? Then remove this line.
+                // AnimationCreator.BlendAnimation(Props.MdsNames, GetWalkModeAnimationString(), NpcGo, true, new List<string> { "BIP01 HEAD" });
                 IsFinishedFlag = true;
             }
             else

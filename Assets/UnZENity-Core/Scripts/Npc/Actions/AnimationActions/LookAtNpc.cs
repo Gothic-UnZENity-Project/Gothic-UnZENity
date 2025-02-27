@@ -27,7 +27,8 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
                 _npcHeadTransform.rotation = _finalRotation;
             }
 
-            AnimationCreator.BlendAnimation(Props.MdsNames, GetWalkModeAnimationString(), NpcGo, true, new List<string> { "BIP01 HEAD" });
+            // FIXME - Needed?
+            // AnimationCreator.BlendAnimation(Props.MdsNames, GetWalkModeAnimationString(), NpcGo, true, new List<string> { "BIP01 HEAD" });
         }
 
         private Quaternion GetDesiredHeadRotation()
