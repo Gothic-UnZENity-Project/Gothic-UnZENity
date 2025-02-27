@@ -37,7 +37,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
 
         public virtual void Start()
         {
-            // By default every Daedalus aninmation starts without using physics. But they can always overwrite it (e.g.) for walking.
+            // By default, every Daedalus animation starts without using physics. But they can always overwrite it (e.g.) for walking.
             PhysicsHelper.DisablePhysicsForNpc(PrefabProps);
         }
 

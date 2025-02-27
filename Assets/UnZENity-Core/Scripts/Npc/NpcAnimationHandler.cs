@@ -31,21 +31,28 @@ namespace GUZ.Core.Npc
             // TODO
         }
 
-        public bool PlayAnimation(string animName, string nextAnimName = null)
+        public bool PlayAnimation(string animName, string forcedNextAnimName = null)
         {
-            if (!GameGlobals.Animations.PlayAnimation(PrefabProps.Animation, Properties.MdsNames, animName))
+            if (!GameGlobals.Animations.PlayAnimation(PrefabProps.Animation, Properties.MdsNames, animName, out var nextAnimName))
             {
                 _isAnimationPlaying = false;
                 return false;
             }
 
-            if (nextAnimName.IsNullOrEmpty())
+            if (forcedNextAnimName.IsNullOrEmpty())
             {
-                _nextAnimation = GetIdleAnimationName();
+                if (nextAnimName.IsNullOrEmpty())
+                {
+                    _nextAnimation = GetIdleAnimationName();
+                }
+                else
+                {
+                    _nextAnimation = nextAnimName;
+                }
             }
             else
             {
-                _nextAnimation = nextAnimName;
+                _nextAnimation = forcedNextAnimName;
             }
 
             _blendOutTime = GameGlobals.Animations.GetBlendOutTime(PrefabProps.Animation, Properties.MdsNames, animName, _nextAnimation);
