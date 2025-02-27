@@ -284,16 +284,6 @@ namespace GUZ.Core.Npc
         }
 
         /// <summary>
-        /// As all Components on a GameObject get called, we need to feed this information into current AnimationAction instance.
-        /// </summary>
-        public void AnimationEndCallback(string eventEndSignalParam)
-        {
-            var eventData = JsonUtility.FromJson<SerializableEventEndSignal>(eventEndSignalParam);
-
-            Properties.CurrentAction.AnimationEndEventCallback(eventData);
-        }
-
-        /// <summary>
         /// Fully reset NPC state.
         /// Called after an NPC is re-enabled in the scene.
         /// </summary>

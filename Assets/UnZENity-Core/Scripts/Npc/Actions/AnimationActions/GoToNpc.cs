@@ -26,16 +26,16 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
         }
 
 
-        public override void AnimationEndEventCallback(SerializableEventEndSignal eventData)
+        protected override void AnimationEnd()
         {
-            base.AnimationEndEventCallback(eventData);
+            base.AnimationEnd();
 
             IsFinishedFlag = false;
         }
 
         protected override void OnDestinationReached()
         {
-            AnimationEndEventCallback(new SerializableEventEndSignal(""));
+            AnimationEnd();
 
             State = WalkState.Done;
             IsFinishedFlag = true;

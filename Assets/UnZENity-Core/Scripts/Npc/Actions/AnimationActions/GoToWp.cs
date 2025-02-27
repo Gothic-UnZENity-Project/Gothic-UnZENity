@@ -58,9 +58,9 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             return _route.Peek().Position;
         }
 
-        public override void AnimationEndEventCallback(SerializableEventEndSignal eventData)
+        protected override void AnimationEnd()
         {
-            base.AnimationEndEventCallback(eventData);
+            base.AnimationEnd();
 
             IsFinishedFlag = false;
         }
@@ -74,7 +74,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
                 return;
             }
 
-            AnimationEndEventCallback(new SerializableEventEndSignal(""));
+            AnimationEnd();
 
             IsFinishedFlag = true;
         }

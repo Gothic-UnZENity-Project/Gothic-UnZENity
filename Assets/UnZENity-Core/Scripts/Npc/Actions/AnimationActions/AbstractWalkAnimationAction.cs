@@ -139,9 +139,9 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
         /// <summary>
         /// We need to alter rootNode's position once walk animation is done.
         /// </summary>
-        public override void AnimationEndEventCallback(SerializableEventEndSignal eventData)
+        protected override void AnimationEnd()
         {
-            base.AnimationEndEventCallback(eventData);
+            base.AnimationEnd();
 
             // We need to ensure, that physics still apply when an animation is looped.
             if (State != WalkState.Done)

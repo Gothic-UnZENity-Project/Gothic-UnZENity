@@ -23,6 +23,9 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
         protected readonly NpcProperties2 Props;
         protected readonly NpcPrefabProperties2 PrefabProps;
 
+        protected float ActionTime;
+        protected float AnimationEndEventTime;
+
         protected bool IsFinishedFlag;
 
         public AbstractAnimationAction(AnimationAction action, NpcContainer2 npcData)
@@ -150,10 +153,35 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
         }
 
         /// <summary>
+        /// Called every update cycle.
+        /// Can be used to handle frequent things internally.
+        /// </summary>
+        public virtual void Tick()
+        {
+            ActionTime += Time.deltaTime;
+
+            if (AnimationEndEventTime != 0.0f && ActionTime >= AnimationEndEventTime)
+            {
+                AnimationEnd();
+            }
+
+        }
+
+        /// <summary>
+        /// Most of our animations are fine if we just set this flag and return it via IsFinished()
+        /// If an animation has also a next animation set, it will be called within NpcAnimationHandler automatically (e.g. idle animation).
+        /// </summary>
+        protected virtual void AnimationEnd()
+        {
+            IsFinishedFlag = true;
+        }
+
+        /// <summary>
         /// Most of our animations are fine if we just set this flag and return it via IsFinished()
         /// If an animation has also a next animation set, we will call it automatically. Alternatively we play an idle animation.
         /// If the overall behaviour isn't intended, the overwriting class can always reset/alter the animation being played at the same frame.
         /// </summary>
+        [Obsolete("As we BlendIn/BlendOut, this method is never reached. Use AnimationEnd() instead.")]
         public virtual void AnimationEndEventCallback(SerializableEventEndSignal eventData)
         {
             if (eventData.NextAnimation.Any())
@@ -161,36 +189,8 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
                 PhysicsHelper.DisablePhysicsForNpc(PrefabProps);
                 PrefabProps.AnimationHandler.PlayAnimation(eventData.NextAnimation);
             }
-            // HINT: Should be handled automatically now!
-            // // Play Idle animation
-            // // But only if NPC isn't using an item right now. Otherwise, breathing will spawn hand to hips which looks wrong when (e.g.) drinking beer.
-            // else if (Props.CurrentItem < 0)
-            // {
-            //     var weaponState = Props.WeaponState == VmGothicEnums.WeaponState.NoWeapon ? "" : Props.WeaponState.ToString();
-            //     var animName = Props.WalkMode switch
-            //     {
-            //         VmGothicEnums.WalkMode.Walk => $"S_{weaponState}WALK",
-            //         VmGothicEnums.WalkMode.Sneak => $"S_{weaponState}SNEAK",
-            //         VmGothicEnums.WalkMode.Swim => $"S_{weaponState}SWIM",
-            //         VmGothicEnums.WalkMode.Dive => $"S_{weaponState}DIVE",
-            //         _ => $"S_{weaponState}RUN"
-            //     };
-            //     var idleAnimPlaying = AnimationCreator.PlayAnimation(Props.MdsNames, animName, NpcGo, true);
-            //     if (!idleAnimPlaying)
-            //     {
-            //         Debug.LogError($"Animation {animName} not found for {NpcGo.name} on {this}.");
-            //     }
-            // }
 
             IsFinishedFlag = true;
-        }
-
-        /// <summary>
-        /// Called every update cycle.
-        /// Can be used to handle frequent things internally.
-        /// </summary>
-        public virtual void Tick()
-        {
         }
 
         /// <summary>

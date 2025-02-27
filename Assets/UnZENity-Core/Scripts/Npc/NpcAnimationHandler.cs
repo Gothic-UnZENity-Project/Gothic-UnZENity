@@ -61,6 +61,11 @@ namespace GUZ.Core.Npc
             return true;
         }
 
+        public float GetAnimationLength(string animName)
+        {
+            return GameGlobals.Animations.GetAnimationLength(PrefabProps.Animation, Properties.MdsNames, animName);
+        }
+
         private IEnumerator BlendOutCoroutine()
         {
             while (true)

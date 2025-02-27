@@ -27,9 +27,9 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             _fp = WayNetHelper.FindNearestFreePoint(npcPos, Destination);
         }
 
-        public override void AnimationEndEventCallback(SerializableEventEndSignal eventData)
+        protected override void AnimationEnd()
         {
-            base.AnimationEndEventCallback(eventData);
+            base.AnimationEnd();
 
             IsFinishedFlag = false;
         }
@@ -44,7 +44,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             Props.CurrentFreePoint = _fp;
             _fp.IsLocked = true;
 
-            AnimationEndEventCallback(new SerializableEventEndSignal(""));
+            AnimationEnd();
 
             State = WalkState.Done;
             IsFinishedFlag = true;

@@ -120,9 +120,9 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
         /// <summary>
         /// Only after the Mob is reached and final transition animation is done, we will finalize this Action.
         /// </summary>
-        public override void AnimationEndEventCallback(SerializableEventEndSignal eventData)
+        protected override void AnimationEnd()
         {
-            base.AnimationEndEventCallback(eventData);
+            base.AnimationEnd();
             IsFinishedFlag = false;
 
             if (State != WalkState.Done)

@@ -63,6 +63,30 @@ namespace GUZ.Core.Manager
             return anim1Length - anim1.BlendOut - anim2.BlendIn;
         }
 
+        /// <summary>
+        /// Load animation time from Clip information itself.
+        /// </summary>
+        public float GetAnimationLength(Animation animComp, string[] mdsNames, string animName)
+        {
+            foreach (var mdsName in mdsNames.Reverse())
+            {
+                if (mdsName.IsNullOrEmpty())
+                {
+                    continue;
+                }
+
+                var combinedAnimationName = GetCombinedAnimationKey(mdsName, animName);
+                var anim = animComp[combinedAnimationName];
+
+                if (anim != null)
+                {
+                    return anim.length;
+                }
+            }
+
+            return 0.0f;
+        }
+
         [CanBeNull]
         public string GetNextAnimationName(Animation animComp, string[] mdsNames, string animName)
         {
@@ -196,16 +220,17 @@ namespace GUZ.Core.Manager
         /// @see: https://docs.unity3d.com/ScriptReference/AnimationEvent.html
         /// @see: https://docs.unity3d.com/ScriptReference/GameObject.SendMessage.html
         /// </summary>
+        [Obsolete("As we use BlendIn/BlendOut, this method is never called. We use a timer inside AnimationActions instead.")]
         private void AddClipEndEvent(IAnimation anim, AnimationClip clip)
         {
-            AnimationEvent finalEvent = new()
-            {
-                time = clip.length,
-                functionName = nameof(IAnimationCallbacks.AnimationEndCallback),
-                stringParameter = JsonUtility.ToJson(new SerializableEventEndSignal(anim.Next))
-            };
-
-            clip.AddEvent(finalEvent);
+            // AnimationEvent finalEvent = new()
+            // {
+            //     time = clip.length,
+            //     functionName = nameof(IAnimationCallbacks.AnimationEndCallback),
+            //     stringParameter = JsonUtility.ToJson(new SerializableEventEndSignal(anim.Next))
+            // };
+            //
+            // clip.AddEvent(finalEvent);
         }
 
         /// <summary>
