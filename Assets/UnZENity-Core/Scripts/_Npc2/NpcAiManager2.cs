@@ -168,6 +168,13 @@ namespace GUZ.Core._Npc2
                 npc.GetUserData2()));
         }
 
+        public void ExtAiStopLookAt(NpcInstance npc)
+        {
+            npc.GetUserData2().Props.AnimationQueue.Enqueue(new StopLookAtNpc(
+                new AnimationAction(),
+                npc.GetUserData2()));
+        }
+
         public void ExtAiContinueRoutine(NpcInstance npc)
         {
             npc.GetUserData2().Props.AnimationQueue.Enqueue(new ContinueRoutine(new AnimationAction(), npc.GetUserData2()));

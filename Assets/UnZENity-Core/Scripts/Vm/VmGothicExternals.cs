@@ -50,6 +50,7 @@ namespace GUZ.Core.Vm
             vm.RegisterExternal<NpcInstance>("AI_StopProcessInfos", AI_StopProcessInfos);
             vm.RegisterExternal<NpcInstance, string>("AI_LookAt", AI_LookAt);
             vm.RegisterExternal<NpcInstance, NpcInstance>("AI_LookAtNPC", AI_LookAtNPC);
+            vm.RegisterExternal<NpcInstance>("AI_StopLookAt", AI_StopLookAt);
             vm.RegisterExternal<NpcInstance>("AI_ContinueRoutine", AI_ContinueRoutine);
             vm.RegisterExternal<NpcInstance, NpcInstance>("AI_TurnToNPC", AI_TurnToNPC);
             vm.RegisterExternal<NpcInstance, string, int>("AI_PlayAniBS", AI_PlayAniBS);
@@ -301,6 +302,11 @@ namespace GUZ.Core.Vm
         public static void AI_LookAtNPC(NpcInstance npc, NpcInstance target)
         {
             GameGlobals.NpcAi.ExtAiLookAtNpc(npc, target);
+        }
+
+        public static void AI_StopLookAt(NpcInstance npc)
+        {
+            GameGlobals.NpcAi.ExtAiStopLookAt(npc);
         }
 
         public static void AI_ContinueRoutine(NpcInstance npc)

@@ -142,7 +142,7 @@ namespace GUZ.Core.Npc
             // Go on
             else
             {
-                Debug.Log($"Start playing >{Properties.AnimationQueue.Peek().GetType()}< on >{Go.name}<");
+                Debug.Log($"Start playing >{Properties.AnimationQueue.Peek().GetType()}< on >{Go.transform.parent.name}<");
                 PlayNextAnimation(Properties.AnimationQueue.Dequeue());
             }
         }
@@ -225,7 +225,7 @@ namespace GUZ.Core.Npc
             // When we reached end of ZS_*_END, we also call this method. Check if we really altered the routine action or just restarted it.
             if (didRoutineChange)
             {
-                Debug.Log($"Start new routine >{routineSymbol.Name}< on >{Go.name}<");
+                Debug.Log($"Start new routine >{routineSymbol.Name}< on >{Go.transform.parent.name}<");
                 Properties.StateTime = 0;
             }
         }

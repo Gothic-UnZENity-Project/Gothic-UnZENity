@@ -34,6 +34,9 @@ namespace GUZ.Core.Npc
             _prevHeadRotation = PrefabProps.Head.rotation;
         }
 
+        /// <summary>
+        /// Head will immediately being managed by animation again.
+        /// </summary>
         public void StopLookAt()
         {
             _doLookAtNpc = false;
