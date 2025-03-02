@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 3046509075852218844}
   - component: {fileID: 9042877295681826828}
   - component: {fileID: 6577002183739041847}
+  - component: {fileID: 7155194303334538853}
   - component: {fileID: 383060561904739675}
   - component: {fileID: 4148423720954529152}
   m_Layer: 0
@@ -55,8 +56,9 @@ MonoBehaviour:
   Bip01: {fileID: 8679908380237941234}
   ColliderRootMotion: {fileID: 6115383017936816660}
   AiHandler: {fileID: 3046509075852218844}
-  NpcAnimation: {fileID: 9042877295681826828}
+  Animation: {fileID: 0}
   AnimationHandler: {fileID: 6577002183739041847}
+  AnimationHeadHandler: {fileID: 0}
 --- !u!114 &3046509075852218844
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -94,6 +96,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8d50b485e377423a80d6bf8be62581a4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &7155194303334538853
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2202926895728732233}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b278d92f55d4b95ad1e254a23ffdd33, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &383060561904739675

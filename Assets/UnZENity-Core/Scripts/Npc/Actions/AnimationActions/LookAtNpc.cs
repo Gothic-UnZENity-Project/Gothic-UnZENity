@@ -18,7 +18,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
 
         public override void Start()
         {
-            PrefabProps.AnimationHandler.StartLookAt(_otherHead);
+            PrefabProps.AnimationHeadHandler.StartLookAt(_otherHead);
 
             IsFinishedFlag = true;
         }
