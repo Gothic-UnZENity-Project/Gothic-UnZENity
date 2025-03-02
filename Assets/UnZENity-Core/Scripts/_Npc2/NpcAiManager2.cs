@@ -338,5 +338,11 @@ namespace GUZ.Core._Npc2
 
             return item.Owner == npc.Index;
         }
+
+        public VmGothicEnums.Attitude ExtGetAttitude(NpcInstance self, NpcInstance other)
+        {
+            // FIXME - Implement correct one based on Guild of NPCs and Player special treatment.
+            return VmGothicEnums.Attitude.Neutral;
+        }
     }
 }

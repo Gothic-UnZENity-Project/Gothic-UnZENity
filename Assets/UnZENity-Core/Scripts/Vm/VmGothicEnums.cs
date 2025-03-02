@@ -49,6 +49,14 @@ namespace GUZ.Core.Vm
             AssessUseMob = 32
         }
 
+        public enum Attitude
+        {
+            Hostile  = 0,
+            Angry    = 1,
+            Neutral  = 2,
+            Friendly = 3
+        }
+
         public enum WalkMode
         {
             Run = 0,
