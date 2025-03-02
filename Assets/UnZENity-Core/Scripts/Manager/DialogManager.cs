@@ -200,7 +200,9 @@ namespace GUZ.Core.Manager
 
         public static void ExtAiProcessInfos(NpcInstance npc)
         {
-            StartDialog(npc.GetUserData2(), true);
+            var props = GetProperties(npc);
+
+            props.AnimationQueue.Enqueue(new StartProcessInfos(new AnimationAction(bool0: true), npc.GetUserData2()));
         }
 
         public static void ExtAiStopProcessInfos(NpcInstance npc)
