@@ -59,17 +59,10 @@ namespace GUZ.Core.Manager
             else if (initialDialogStarting && TryGetImportant(npcContainer.Props.Dialogs, out var infoInstance))
             {
                 GameData.Dialogs.CurrentDialog.Instance = infoInstance;
-                npcContainer.PrefabProps.AiHandler.ClearState(true);
-
                 CallMainInformation(npcContainer, infoInstance);
             }
             else
             {
-                if (initialDialogStarting)
-                {
-                    Debug.Log("StartDialog: initialDialogStarting");
-                    npcContainer.Go.GetComponent<AiHandler>().ClearState(false);
-                }
                 var selectableDialogs = new List<InfoInstance>();
 
                 foreach (var dialog in npcContainer.Props.Dialogs)
