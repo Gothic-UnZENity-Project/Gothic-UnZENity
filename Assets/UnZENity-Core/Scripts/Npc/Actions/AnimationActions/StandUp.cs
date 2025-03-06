@@ -16,7 +16,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
 
         public override void AnimationEndEventCallback(SerializableEventEndSignal eventData)
         {
-            // FIXME - TODO
+            // FIXME - Use via Timer of the animation instead. Timer value is set within Abstract parent class.
         }
 
         public override bool IsFinished()

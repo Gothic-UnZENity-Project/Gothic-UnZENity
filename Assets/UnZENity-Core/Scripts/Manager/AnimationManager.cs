@@ -4,6 +4,7 @@ using System.Data.SqlTypes;
 using System.IO;
 using System.Linq;
 using GUZ.Core.Caches;
+using GUZ.Core.Data.Container;
 using GUZ.Core.Data.ZkEvents;
 using GUZ.Core.Extensions;
 using GUZ.Core.Npc.Actions;
@@ -28,7 +29,7 @@ namespace GUZ.Core.Manager
         {
             nextAnimName = null;
 
-            var anim = GetCachedAnimationData(mdsNames, animName, animComp, out var combinedAnimationName);
+            var anim = GetCachedAnimationData(mdsNames, animName, animComp);
             if (anim == null)
             {
                 return false;
@@ -36,7 +37,7 @@ namespace GUZ.Core.Manager
 
             // TODO - When calculating BlendOut of previous animation, we say anim1.BlendOut - anim2.BlendIn. Here we only say anim2.BlendIn.
             // TODO - This makes the Fade (e.g.) twice as fast. Okay for now, but could be improved. @see: NpcAnimationHandler.BlendOutCoroutine()
-            animComp.CrossFade(combinedAnimationName, anim.BlendIn);
+            animComp.CrossFade(anim.FullName, anim.BlendIn);
 
             nextAnimName = anim.Next;
             return true;
@@ -44,8 +45,8 @@ namespace GUZ.Core.Manager
 
         public float GetBlendOutTime(Animation animComp, string[] mdsNames, string animName, string nextAnimName)
         {
-            var anim1 = GetCachedAnimationData(mdsNames, animName, animComp, out var combinedAnimationName1);
-            var anim2 = GetCachedAnimationData(mdsNames, nextAnimName, animComp, out var _);
+            var anim1 = GetCachedAnimationData(mdsNames, animName, animComp);
+            var anim2 = GetCachedAnimationData(mdsNames, nextAnimName, animComp);
 
 
             if (anim1 == null)
@@ -53,7 +54,7 @@ namespace GUZ.Core.Manager
                 return 0f;
             }
 
-            var anim1Length = MultiTypeCache.AnimationClipCache[combinedAnimationName1].length;
+            var anim1Length = MultiTypeCache.AnimationDataCache[anim1.FullName].Length;
             if (anim2 == null)
             {
                 return anim1Length - anim1.BlendOut;
@@ -90,16 +91,14 @@ namespace GUZ.Core.Manager
         [CanBeNull]
         public string GetNextAnimationName(Animation animComp, string[] mdsNames, string animName)
         {
-            var anim1 = GetCachedAnimationData(mdsNames, animName, animComp, out var _);
+            var anim1 = GetCachedAnimationData(mdsNames, animName, animComp);
 
             return anim1?.Next;
         }
 
         [CanBeNull]
-        private IAnimation GetCachedAnimationData(string[] mdsNames, string animName, Animation animComp, out string combinedAnimationName)
+        private AnimationContainer GetCachedAnimationData(string[] mdsNames, string animName, Animation animComp)
         {
-            combinedAnimationName = null;
-
             if (animName.IsNullOrEmpty())
             {
                 return null;
@@ -112,52 +111,67 @@ namespace GUZ.Core.Manager
                     continue;
                 }
 
+                // Try get already cached object.
+                var combinedAnimationName = GetCombinedAnimationKey(mdsName, animName);
+                if (MultiTypeCache.AnimationDataCache.TryGetValue(combinedAnimationName, out var animData))
+                {
+                    TryAddAnimationToComponent(animComp, animData);
+
+                    return animData;
+                }
+                animData = new AnimationContainer()
+                {
+                    FullName = combinedAnimationName
+                };
+
                 var modelAnimation = ResourceLoader.TryGetModelAnimation(mdsName, animName);
                 if (modelAnimation == null)
                 {
                     continue;
                 }
 
-                combinedAnimationName = GetCombinedAnimationKey(mdsName, animName);
-
                 // For animations: mdhName == mdsName (with different file ending of course ;-))
                 var mdhName = mdsName;
                 var mds = ResourceLoader.TryGetModelScript(mdsName)!;
                 var mdh = ResourceLoader.TryGetModelHierarchy(mdhName);
-                var anim = mds.Animations.First(i => i.Name.EqualsIgnoreCase(animName));
-                var repeat = anim.Name == anim.Next;
+                animData.Animation = mds.Animations.First(i => i.Name.EqualsIgnoreCase(animName));
                 var go = animComp.gameObject;
 
                 // If we create empty animations with only one frame, Unity will complain. We therefore skip it for now.
-                if (anim.FirstFrame == anim.LastFrame)
+                if (animData.Animation.FirstFrame == animData.Animation.LastFrame)
                 {
                     return null;
                 }
 
-                if (anim.Direction == AnimationDirection.Backward)
+                if (animData.Animation.Direction == AnimationDirection.Backward)
                 {
                     Debug.LogWarning(
                         $"Backwards animations not yet handled. Called for >{animName}< from >{mdsName}<. Currently playing Forward.");
                 }
 
-                if (!MultiTypeCache.AnimationClipCache.TryGetValue(combinedAnimationName, out var clip))
-                {
-                    clip = CreateAnimationClip(modelAnimation, mdh, go, repeat, combinedAnimationName);
-                    MultiTypeCache.AnimationClipCache[combinedAnimationName] = clip;
+                animData.Clip = CreateAnimationClip(modelAnimation, mdh, go, animData);
+                AddClipEvents(animData.Clip, modelAnimation, animData.Animation);
+                SetClipWalkingSpeed(animData);
 
-                    AddClipEvents(clip, modelAnimation, anim);
-                    AddClipEndEvent(anim, clip);
-                }
+                MultiTypeCache.AnimationDataCache[combinedAnimationName] = animData;
 
-                if (animComp[combinedAnimationName] == null)
-                {
-                    animComp.AddClip(clip, combinedAnimationName);
-                }
+                TryAddAnimationToComponent(animComp, animData);
 
-                return anim;
+                return animData;
             }
 
             return null;
+        }
+
+        /// <summary>
+        /// The created clip needs to be added to the Animation Component before Play() / CrossFade() / BlendIn() will work.
+        /// </summary>
+        private void TryAddAnimationToComponent(Animation animComp, AnimationContainer animData)
+        {
+            if (animComp[animData.FullName] == null)
+            {
+                animComp.AddClip(animData.Clip, animData.FullName);
+            }
         }
 
         private void AddClipEvents(AnimationClip clip, IModelAnimation modelAnimation, IAnimation anim)
@@ -212,25 +226,6 @@ namespace GUZ.Core.Manager
             {
                 Debug.LogWarning($"SFX events not yet implemented. Tried to use for {anim.Name}");
             }
-        }
-
-        /// <summary>
-        /// Adds event at the end of animation.
-        /// The event is called on every MonoBehaviour on GameObject where Clip is played.
-        /// @see: https://docs.unity3d.com/ScriptReference/AnimationEvent.html
-        /// @see: https://docs.unity3d.com/ScriptReference/GameObject.SendMessage.html
-        /// </summary>
-        [Obsolete("As we use BlendIn/BlendOut, this method is never called. We use a timer inside AnimationActions instead.")]
-        private void AddClipEndEvent(IAnimation anim, AnimationClip clip)
-        {
-            // AnimationEvent finalEvent = new()
-            // {
-            //     time = clip.length,
-            //     functionName = nameof(IAnimationCallbacks.AnimationEndCallback),
-            //     stringParameter = JsonUtility.ToJson(new SerializableEventEndSignal(anim.Next))
-            // };
-            //
-            // clip.AddEvent(finalEvent);
         }
 
         /// <summary>
@@ -296,13 +291,13 @@ namespace GUZ.Core.Manager
         }
 
         private AnimationClip CreateAnimationClip(IModelAnimation pxAnimation, IModelHierarchy mdh,
-            GameObject rootBone, bool repeat, string clipName, List<string> excludeBones = null)
+            GameObject rootBone, AnimationContainer animData)
         {
             var clip = new AnimationClip
             {
                 legacy = true,
-                name = clipName,
-                wrapMode = repeat ? WrapMode.Loop : WrapMode.Once
+                name = animData.FullName,
+                wrapMode = animData.IsLooping ? WrapMode.Loop : WrapMode.Once
             };
 
             var curves = new Dictionary<string, List<AnimationCurve>>(pxAnimation.NodeCount);
@@ -312,10 +307,11 @@ namespace GUZ.Core.Manager
             foreach (var boneName in boneNames)
             {
                 // Skip adding curves for excluded bones
-                if (excludeBones != null && excludeBones.Contains(boneName))
-                {
-                    continue;
-                }
+                // FIXME - We will always exclude BIP01!
+                // if (excludeBones != null && excludeBones.Contains(boneName))
+                // {
+                //     continue;
+                // }
 
                 curves.Add(boneName, new List<AnimationCurve>(7));
 
@@ -336,10 +332,11 @@ namespace GUZ.Core.Manager
                 var boneId = i % pxAnimation.NodeCount;
                 var boneName = boneNames[boneId];
 
-                if (excludeBones != null && excludeBones.Contains(boneName))
-                {
-                    continue;
-                }
+                // FIXME - We will always exclude BIP01!
+                // if (excludeBones != null && excludeBones.Contains(boneName))
+                // {
+                //     continue;
+                // }
 
                 var boneList = curves[boneName];
                 var isRootBone = boneName.EqualsIgnoreCase("BIP01");
@@ -392,6 +389,14 @@ namespace GUZ.Core.Manager
             clip.frameRate = pxAnimation.Fps;
 
             return clip;
+        }
+
+        private void SetClipWalkingSpeed(AnimationContainer animData)
+        {
+            // Calculate From Samples: 0 and Samples.max - BoneCount --> Vector is used as Movement of the whole animation
+            // (?) Subtract by count of frames and we get the Vector3 of movement speed per Frame
+            // Set this value inside animData.IsWalking + animData.WalkingSpeed --> Check for a Threshhold if we walk (e..g 0.4f from OpenGothic: void Animation::AnimData::setupMoveTr()
+            // AND Exclude BIP01 Bone from AnimationClip
         }
 
         // TODO - If we have a performance bottleneck while loading animations, then we could cache these results.

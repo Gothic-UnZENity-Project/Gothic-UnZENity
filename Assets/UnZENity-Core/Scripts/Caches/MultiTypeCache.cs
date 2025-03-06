@@ -26,7 +26,7 @@ namespace GUZ.Core.Caches
         /// <summary>
         /// Already created AnimationData (Clips + RootMotions) can be reused.
         /// </summary>
-        public static readonly Dictionary<string, AnimationClip> AnimationClipCache = new();
+        public static readonly Dictionary<string, AnimationContainer> AnimationDataCache = new();
 
         /// <summary>
         /// This dictionary caches the sprite assets for fonts.
@@ -54,7 +54,7 @@ namespace GUZ.Core.Caches
         public static void Dispose()
         {
             NpcCache.Clear();
-            AnimationClipCache.Clear();
+            AnimationDataCache.Clear();
             FontCache.Clear();
             Meshes.Clear();
             AudioClips.Clear();
