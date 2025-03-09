@@ -311,12 +311,6 @@ namespace GUZ.Core.Manager
             // Initialize array
             foreach (var boneName in boneNames)
             {
-                // Skip adding curves for Root animation
-                if (boneName == _rootBoneName)
-                {
-                    continue;
-                }
-
                 curves.Add(boneName, new List<AnimationCurve>(7));
 
                 // Initialize 7 dimensions. (3x position, 4x rotation)
@@ -333,15 +327,14 @@ namespace GUZ.Core.Manager
                 var sample = pxAnimation.Samples[i];
                 var boneId = i % pxAnimation.NodeCount;
                 var boneName = boneNames[boneId];
+                var boneList = curves[boneName];
+                var uPosition = sample.Position.ToUnityVector();
 
+                // Root bone position will be applied later.
                 if (boneName == _rootBoneName)
                 {
-                    continue;
+                    uPosition = default;
                 }
-
-                var boneList = curves[boneName];
-
-                var uPosition = sample.Position.ToUnityVector();
 
                 // We add 7 properties for location and rotation.
                 boneList[0].AddKey(time, uPosition.x);
