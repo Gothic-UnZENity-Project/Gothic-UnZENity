@@ -392,7 +392,9 @@ namespace GUZ.Core.Manager
             }
 
             animData.IsMoving = true;
-            animData.MovementSpeed = movement;
+
+            // TODO - We can also check if we do a "movement" calculation based on each frame. Then animations might "woggle" during walk instead of walking on a rubber band.
+            animData.MovementSpeed = movement * (modelAnim.FrameCount / modelAnim.Fps);
         }
 
         // TODO - If we have a performance bottleneck while loading animations, then we could cache these results.

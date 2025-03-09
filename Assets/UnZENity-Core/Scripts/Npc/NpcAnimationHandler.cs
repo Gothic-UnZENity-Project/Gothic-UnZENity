@@ -39,8 +39,6 @@ namespace GUZ.Core.Npc
             }
 
             var moveDirection = Go.transform.TransformDirection(CurrentAnimation.MovementSpeed);
-
-            // FIXME - Current MovementSpeed is not yet set via fps + frames = duration --> Currently NPCs "slide".
             Go.transform.localPosition += Time.deltaTime * moveDirection;
         }
 
