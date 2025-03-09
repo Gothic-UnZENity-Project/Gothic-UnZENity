@@ -1,10 +1,12 @@
 using System;
+using GUZ.Core._Npc2;
 using GUZ.Core.Creator;
 using GUZ.Core.Data.ZkEvents;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
 using GUZ.Core.Vm;
 using UnityEngine;
+using ZenKit.Daedalus;
 
 namespace GUZ.Core.Npc.Actions.AnimationActions
 {
@@ -22,7 +24,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
 
         protected WalkState State = WalkState.Initial;
 
-        protected AbstractWalkAnimationAction(AnimationAction action, GameObject npcGo) : base(action, npcGo)
+        protected AbstractWalkAnimationAction(AnimationAction action, NpcContainer2 npcContainer) : base(action, npcContainer)
         {
         }
 
@@ -37,7 +39,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
         {
             base.Start();
 
-            PhysicsHelper.EnablePhysicsForNpc(Props);
+            PhysicsHelper.EnablePhysicsForNpc(PrefabProps);
         }
 
         public override void Tick()
@@ -59,7 +61,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
                     HandleRotation(NpcGo.transform, GetWalkDestination(), false);
                     return;
                 case WalkState.Walk:
-                    HandleWalk(Props.ColliderRootMotion.transform);
+                    HandleWalk(PrefabProps.ColliderRootMotion.transform);
                     return;
                 case WalkState.WalkAndRotate:
                     HandleRotation(NpcGo.transform, GetWalkDestination(), true);
@@ -92,7 +94,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
         private void StartWalk()
         {
             var animName = GetWalkModeAnimationString();
-            AnimationCreator.PlayAnimation(Props.MdsNames, animName, NpcGo, true);
+            PrefabProps.AnimationHandler.PlayAnimation(animName);
 
             State = WalkState.Walk;
         }
@@ -137,19 +139,19 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
         /// <summary>
         /// We need to alter rootNode's position once walk animation is done.
         /// </summary>
-        public override void AnimationEndEventCallback(SerializableEventEndSignal eventData)
+        protected override void AnimationEnd()
         {
-            base.AnimationEndEventCallback(eventData);
+            base.AnimationEnd();
 
             // We need to ensure, that physics still apply when an animation is looped.
             if (State != WalkState.Done)
             {
-                PhysicsHelper.EnablePhysicsForNpc(Props);
+                PhysicsHelper.EnablePhysicsForNpc(PrefabProps);
             }
 
-            NpcGo.transform.localPosition = Props.Bip01.position;
-            Props.Bip01.localPosition = Vector3.zero;
-            Props.ColliderRootMotion.localPosition = Vector3.zero;
+            NpcGo.transform.localPosition = PrefabProps.Bip01.position;
+            PrefabProps.Bip01.localPosition = Vector3.zero;
+            PrefabProps.ColliderRootMotion.localPosition = Vector3.zero;
 
             // TODO - Needed?
             // root.SetLocalPositionAndRotation(

@@ -1,13 +1,13 @@
+using GUZ.Core._Npc2;
 using GUZ.Core.Globals;
 using GUZ.Core.Npc.Actions;
 using GUZ.Core.Npc.Actions.AnimationActions;
-using UnityEngine;
 
 namespace GUZ.Lab.AnimationActionMocks
 {
     public class LabUseItemToState : UseItemToState
     {
-        public LabUseItemToState(AnimationAction action, GameObject npcGo) : base(CalculateItemIndex(action), npcGo)
+        public LabUseItemToState(AnimationAction action, NpcContainer2 npcContainer) : base(CalculateItemIndex(action), npcContainer)
         {
         }
 

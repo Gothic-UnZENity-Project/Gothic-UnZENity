@@ -1,4 +1,5 @@
 using System.Linq;
+using GUZ.Core._Npc2;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
 using UnityEngine;
@@ -11,15 +12,27 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
     /// </summary>
     public class StartProcessInfos : AbstractAnimationAction
     {
+        private bool _isDialogStarting => Action.Bool0;
         private int _dialogId => Action.Int0;
 
-        public StartProcessInfos(AnimationAction action, GameObject npcGo) : base(action, npcGo)
+
+        public StartProcessInfos(AnimationAction action, NpcContainer2 npcData) : base(action, npcData)
         {
         }
 
         public override void Start()
         {
+            // Whatever comes next, this is no animation Action and we go on. ;-)
             IsFinishedFlag = true;
+
+
+            if (_isDialogStarting)
+            {
+                DialogManager.StartDialog(NpcContainer, true);
+
+                return;
+            }
+
 
             var isInSubDialog = GameData.Dialogs.CurrentDialog.Options.Any();
 
@@ -35,7 +48,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
                 }
             }
 
-            DialogManager.StartDialog(NpcGo, Props, false);
+            DialogManager.StartDialog(NpcContainer, false);
         }
     }
 }

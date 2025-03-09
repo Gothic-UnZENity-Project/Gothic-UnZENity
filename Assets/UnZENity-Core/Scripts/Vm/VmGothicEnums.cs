@@ -4,6 +4,15 @@ namespace GUZ.Core.Vm
 {
     public static class VmGothicEnums
     {
+        public enum FightMode
+        {
+            None  = 0,
+            Fists = 1,
+            Melee = 2,
+            Far   = 5,
+            Magic = 7,
+        }
+
         public enum PerceptionType
         {
             AssessPlayer = 1,
@@ -38,6 +47,14 @@ namespace GUZ.Core.Vm
             AssessSurprise = 30,
             AssessEnterRoom = 31,
             AssessUseMob = 32
+        }
+
+        public enum Attitude
+        {
+            Hostile  = 0,
+            Angry    = 1,
+            Neutral  = 2,
+            Friendly = 3
         }
 
         public enum WalkMode

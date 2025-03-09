@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using GUZ.Core._Npc2;
 using GUZ.Core.Creator;
 using GUZ.Core.Data.ZkEvents;
 using GUZ.Core.Extensions;
@@ -7,6 +8,7 @@ using GUZ.Core.Manager;
 using GUZ.Core.Properties;
 using GUZ.Core.Vm;
 using UnityEngine;
+using ZenKit.Daedalus;
 using EventType = ZenKit.EventType;
 using Object = UnityEngine.Object;
 
@@ -15,22 +17,31 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
     public abstract class AbstractAnimationAction
     {
         protected readonly AnimationAction Action;
+        protected readonly NpcContainer2 NpcContainer;
+        protected readonly NpcInstance NpcInstance;
         protected readonly GameObject NpcGo;
-        protected readonly NpcProperties Props;
+        protected readonly NpcProperties2 Props;
+        protected readonly NpcPrefabProperties2 PrefabProps;
+
+        protected float ActionTime;
+        protected float AnimationEndEventTime;
 
         protected bool IsFinishedFlag;
 
-        public AbstractAnimationAction(AnimationAction action, GameObject npcGo)
+        public AbstractAnimationAction(AnimationAction action, NpcContainer2 npcData)
         {
             Action = action;
-            NpcGo = npcGo;
-            Props = npcGo.GetComponent<NpcProperties>();
+            NpcContainer = npcData;
+            NpcInstance = npcData.Instance;
+            NpcGo = npcData.Go;
+            Props = npcData.Props;
+            PrefabProps = npcData.PrefabProps;
         }
 
         public virtual void Start()
         {
-            // By default every Daedalus aninmation starts without using physics. But they can always overwrite it (e.g.) for walking.
-            PhysicsHelper.DisablePhysicsForNpc(Props);
+            // By default, every Daedalus animation starts without using physics. But they can always overwrite it (e.g.) for walking.
+            PhysicsHelper.DisablePhysicsForNpc(PrefabProps);
         }
 
         public string GetWalkModeAnimationString()
@@ -70,9 +81,9 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
         public virtual void AnimationSfxEventCallback(SerializableEventSoundEffect sfxData)
         {
             var clip = VobHelper.GetSoundClip(sfxData.Name);
-            Props.NpcSound.clip = clip;
-            Props.NpcSound.maxDistance = sfxData.Range.ToMeter();
-            Props.NpcSound.Play();
+            PrefabProps.NpcSound.clip = clip;
+            PrefabProps.NpcSound.maxDistance = sfxData.Range.ToMeter();
+            PrefabProps.NpcSound.Play();
 
             if (sfxData.EmptySlot)
             {
@@ -103,9 +114,9 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
 
         public virtual void AnimationMorphEventCallback(SerializableEventMorphAnimation data)
         {
-            var type = Props.HeadMorph.GetAnimationTypeByName(data.Animation);
+            var type = PrefabProps.HeadMorph.GetAnimationTypeByName(data.Animation);
 
-            Props.HeadMorph.StartAnimation(Props.BodyData.Head, type);
+            PrefabProps.HeadMorph.StartAnimation(Props.BodyData.Head, type);
         }
 
         protected virtual void InsertItem(string slot1, string slot2)
@@ -136,39 +147,9 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             Object.Destroy(item.gameObject);
         }
 
-        /// <summary>
-        /// Most of our animations are fine if we just set this flag and return it via IsFinished()
-        /// If an animation has also a next animation set, we will call it automatically. Alternatively we play an idle animation.
-        /// If the overall behaviour isn't intended, the overwriting class can always reset/alter the animation being played at the same frame.
-        /// </summary>
-        public virtual void AnimationEndEventCallback(SerializableEventEndSignal eventData)
+        public void AnimationBlendOutEventCallback(SerializableEventBlendOutSignal eventData)
         {
-            if (eventData.NextAnimation.Any())
-            {
-                PhysicsHelper.DisablePhysicsForNpc(Props);
-                AnimationCreator.PlayAnimation(Props.MdsNames, eventData.NextAnimation, Props.Go);
-            }
-            // Play Idle animation
-            // But only if NPC isn't using an item right now. Otherwise, breathing will spawn hand to hips which looks wrong when (e.g.) drinking beer.
-            else if (Props.CurrentItem < 0)
-            {
-                var weaponState = Props.WeaponState == VmGothicEnums.WeaponState.NoWeapon ? "" : Props.WeaponState.ToString();
-                var animName = Props.WalkMode switch
-                {
-                    VmGothicEnums.WalkMode.Walk => $"S_{weaponState}WALK",
-                    VmGothicEnums.WalkMode.Sneak => $"S_{weaponState}SNEAK",
-                    VmGothicEnums.WalkMode.Swim => $"S_{weaponState}SWIM",
-                    VmGothicEnums.WalkMode.Dive => $"S_{weaponState}DIVE",
-                    _ => $"S_{weaponState}RUN"
-                };
-                var idleAnimPlaying = AnimationCreator.PlayAnimation(Props.MdsNames, animName, Props.Go, true);
-                if (!idleAnimPlaying)
-                {
-                    Debug.LogError($"Animation {animName} not found for {NpcGo.name} on {this}.");
-                }
-            }
-
-            IsFinishedFlag = true;
+            AnimationCreator.StartBlendOutAnimation(eventData.CurrentAnimName, eventData.BlendOutTime, NpcGo);
         }
 
         /// <summary>
@@ -177,6 +158,39 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
         /// </summary>
         public virtual void Tick()
         {
+            ActionTime += Time.deltaTime;
+
+            if (AnimationEndEventTime != 0.0f && ActionTime >= AnimationEndEventTime)
+            {
+                AnimationEnd();
+            }
+
+        }
+
+        /// <summary>
+        /// Most of our animations are fine if we just set this flag and return it via IsFinished()
+        /// If an animation has also a next animation set, it will be called within NpcAnimationHandler automatically (e.g. idle animation).
+        /// </summary>
+        protected virtual void AnimationEnd()
+        {
+            IsFinishedFlag = true;
+        }
+
+        /// <summary>
+        /// Most of our animations are fine if we just set this flag and return it via IsFinished()
+        /// If an animation has also a next animation set, we will call it automatically. Alternatively we play an idle animation.
+        /// If the overall behaviour isn't intended, the overwriting class can always reset/alter the animation being played at the same frame.
+        /// </summary>
+        [Obsolete("As we BlendIn/BlendOut, this method is never reached. Use AnimationEnd() instead.")]
+        public virtual void AnimationEndEventCallback(SerializableEventEndSignal eventData)
+        {
+            if (eventData.NextAnimation.Any())
+            {
+                PhysicsHelper.DisablePhysicsForNpc(PrefabProps);
+                PrefabProps.AnimationHandler.PlayAnimation(eventData.NextAnimation);
+            }
+
+            IsFinishedFlag = true;
         }
 
         /// <summary>

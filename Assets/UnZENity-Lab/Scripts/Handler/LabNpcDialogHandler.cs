@@ -1,13 +1,13 @@
-using System.Linq;
+using System.Collections;
 using GUZ.Core;
+using GUZ.Core._Npc2;
 using GUZ.Core.Caches;
-using GUZ.Core.Creator.Meshes;
-using GUZ.Core.Data;
-using GUZ.Core.Data.Container;
+using GUZ.Core.Creator;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
-using GUZ.Core.Properties;
+using GUZ.Core.Npc;
 using GUZ.Core.Vm;
+using GUZ.Lab.Mocks;
 using UnityEngine;
 using ZenKit.Daedalus;
 
@@ -24,32 +24,63 @@ namespace GUZ.Lab.Handler
         public override void Bootstrap()
         {
             BootstrapBloodwyn();
+
+            StartCoroutine(IdleAnimations());
+        }
+
+        /// <summary>
+        /// Some random animations to test blending etc.
+        /// </summary>
+        private IEnumerator IdleAnimations()
+        {
+            var mdsNames = new [] { "humans" };
+            var npcRoot = NpcSlotGo.transform.GetChild(0).GetChild(0).gameObject;
+            var animHandler = npcRoot.GetComponent<NpcAnimationHandler>();
+            var animHeadHandler = npcRoot.GetComponent<NpcHeadAnimationHandler>();
+            yield return new WaitForSeconds(1f);
+
+            while (true)
+            {
+                animHandler.PlayAnimation("S_WALK", "");
+                Debug.Log("idle");
+                yield return new WaitForSeconds(1f);
+
+                animHeadHandler.StartLookAt(Camera.main!.transform);
+                break;
+
+                animHandler.PlayAnimation("T_DIALOGGESTURE_08", null);
+                Debug.Log("8");
+                yield return new WaitForSeconds(8f);
+            }
         }
 
         private void BootstrapBloodwyn()
         {
-            var newNpc = ResourceLoader.TryGetPrefabObject(PrefabType.Npc);
+            var newNpc = new GameObject("NPC");
+            var loaderComp = newNpc.AddComponent<NpcLoader2>();
             newNpc.SetParent(NpcSlotGo);
 
-            var npcSymbol = GameData.GothicVm.GetSymbolByName(_bloodwynInstanceId);
-            _bloodwynInstance = GameData.GothicVm.InitInstance<NpcInstance>(npcSymbol!);
-            var properties = newNpc.GetComponent<NpcProperties>();
-            properties.NpcData.Instance = _bloodwynInstance;
+            var npcSymbol = GameData.GothicVm.GetSymbolByName(_bloodwynInstanceId)!;
+            _bloodwynInstance = GameData.GothicVm.AllocInstance<NpcInstance>(npcSymbol);
 
-            var npcData = new NpcContainer
+            var npcData = new NpcContainer2
             {
                 Instance = _bloodwynInstance,
-                Properties = properties
+                Props = new()
+                {
+                    WalkMode = VmGothicEnums.WalkMode.Walk
+                },
+                Vob = new()
             };
-            MultiTypeCache.NpcCache.Add(npcData);
 
-            properties.Dialogs = GameData.Dialogs.Instances
-                .Where(dialog => dialog.Npc == _bloodwynInstance.Index)
-                .OrderByDescending(dialog => dialog.Important)
-                .ToList();
+            _bloodwynInstance.UserData = npcData;
+            loaderComp.Npc = _bloodwynInstance;
+            MultiTypeCache.NpcCache2.Add(npcData);
 
             newNpc.name = _bloodwynInstance.GetName(NpcNameSlot.Slot0);
             GameData.GothicVm.GlobalSelf = _bloodwynInstance;
+
+            GameData.GothicVm.InitInstance(_bloodwynInstance);
 
             // Hero
             {
@@ -58,20 +89,14 @@ namespace GUZ.Lab.Handler
                 GameData.GothicVm.GlobalHero = heroInstance;
             }
 
-            var mdmName = "Hum_GRDM_ARMOR.asc";
-            var mdhName = "Humans_Militia.mds";
-            var body = new VmGothicExternals.ExtSetVisualBodyData
-            {
-                Armor = -1,
-                Body = "hum_body_Naked0",
-                BodyTexColor = 1,
-                BodyTexNr = 0,
-                Head = "Hum_Head_Bald",
-                HeadTexNr = 18,
-                TeethTexNr = 1
-            };
+            // We need to initialize the NPC at this frame to set the positions of child GOs now.
+            GameGlobals.Npcs.InitNpc(newNpc, true);
+            newNpc.transform.SetLocalPositionAndRotation(default, default);
+            newNpc.transform.GetChild(0).SetLocalPositionAndRotation(default, default);
 
-            MeshFactory.CreateNpc(newNpc.name, mdmName, mdhName, body, newNpc);
+            // Otherwise NPC will start its daily routine.
+            Destroy(newNpc.GetComponentInChildren<AiHandler>());
+            newNpc.transform.GetChild(0).gameObject.AddComponent<LabAiHandler>();
         }
     }
 }

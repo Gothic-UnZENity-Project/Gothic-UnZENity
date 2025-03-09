@@ -1,7 +1,7 @@
+using GUZ.Core._Npc2;
 using GUZ.Core.Creator;
 using GUZ.Core.Data.ZkEvents;
 using GUZ.Core.Vm;
-using UnityEngine;
 
 namespace GUZ.Core.Npc.Actions.AnimationActions
 {
@@ -14,7 +14,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
         private int DesiredState => Action.Int1;
 
 
-        public UseItemToState(AnimationAction action, GameObject npcGo) : base(action, npcGo)
+        public UseItemToState(AnimationAction action, NpcContainer2 npcContainer) : base(action, npcContainer)
         {
         }
 
@@ -49,7 +49,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             // e.g. T_POTION_STAND_2_S0
             var animationName = string.Format(_animationScheme, item.SchemeName, oldState, newState);
 
-            var animationFound = AnimationCreator.PlayAnimation(Props.MdsNames, animationName, NpcGo);
+            var animationFound = PrefabProps.AnimationHandler.PlayAnimation(animationName);
 
             // e.g. BABE-T_BRUSH_S1_2_S0.man doesn't exist, but we can skip and use next one (S0_2_Stand)
             if (!animationFound)
@@ -57,11 +57,13 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
                 // Go on with next animation.
                 PlayTransitionAnimation();
             }
+
+            AnimationEndEventTime = PrefabProps.AnimationHandler.CurrentAnimation.Length;
         }
 
-        public override void AnimationEndEventCallback(SerializableEventEndSignal eventData)
+        protected override void AnimationEnd()
         {
-            base.AnimationEndEventCallback(eventData);
+            base.AnimationEnd();
 
             if (Props.ItemAnimationState == DesiredState)
             {

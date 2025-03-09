@@ -39,6 +39,7 @@ namespace GUZ.Core.Manager.Scenes
 
             var worldRoot = new GameObject("World");
             var vobRoot = new GameObject("VOBs");
+            var npcRoot = new GameObject("NPCs");
             // We need to disable all vob meshes during loading. Otherwise loading time will increase from 10 seconds to 10 minutes. ;-)
             worldRoot.SetActive(false);
             vobRoot.SetActive(false);
@@ -93,12 +94,15 @@ namespace GUZ.Core.Manager.Scenes
 
                 // 3.
                 WayNetCreator.Create(config.Dev, GameGlobals.SaveGame.CurrentWorldData);
+                watch.LogAndRestart("WayNet initialized");
 
                 // 4.
                 // If the world is visited for the first time, then we need to load Npcs via Wld_InsertNpc()
+                GameGlobals.Npcs.CacheHero();
                 if (config.Dev.EnableNpcs)
                 {
-                    await NpcCreator.CreateAsync(config.Dev, GameGlobals.Loading).AwaitAndLog();
+                    // await NpcCreator.CreateAsync(config.Dev, GameGlobals.Loading).AwaitAndLog();
+                    await GameGlobals.Npcs.CreateWorldNpcs(GameGlobals.Loading, npcRoot).AwaitAndLog();
                     watch.LogAndRestart("NPCs created");
                 }
 
@@ -110,7 +114,7 @@ namespace GUZ.Core.Manager.Scenes
                 worldRoot.SetActive(true);
                 vobRoot.SetActive(true);
 
-                GameManager.I.Sky.InitWorld();
+                GameGlobals.Sky.InitWorld();
 
                 TeleportPlayerToStart();
 

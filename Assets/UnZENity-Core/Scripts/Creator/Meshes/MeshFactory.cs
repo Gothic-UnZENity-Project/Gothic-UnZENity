@@ -24,10 +24,12 @@ namespace GUZ.Core.Creator.Meshes
             await worldBuilder.BuildAsync(loading);
         }
 
-        public static GameObject CreateNpc(string npcName, string mdmName, string mdhName,
-            VmGothicExternals.ExtSetVisualBodyData bodyData, GameObject root, GameObject parent = null)
+        public static GameObject CreateNpc(string npcName, string mdmName, string mdhName, VmGothicExternals.ExtSetVisualBodyData bodyData,
+            Vector3 position = default, Quaternion rotation = default,
+            GameObject parent = null, GameObject root = null)
         {
             var npcBuilder = new NpcMeshBuilder();
+            npcBuilder.SetRootPosAndRot(position, rotation);
             npcBuilder.SetGameObject(root, npcName);
             npcBuilder.SetParent(parent);
             npcBuilder.SetMeshName(mdmName);

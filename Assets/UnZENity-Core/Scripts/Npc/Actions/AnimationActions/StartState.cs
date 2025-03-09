@@ -1,16 +1,16 @@
-using UnityEngine;
+using GUZ.Core._Npc2;
 
 namespace GUZ.Core.Npc.Actions.AnimationActions
 {
     public class StartState : AbstractAnimationAction
     {
-        public StartState(AnimationAction action, GameObject npcGo) : base(action, npcGo)
+        public StartState(AnimationAction action, NpcContainer2 npcContainer) : base(action, npcContainer)
         {
         }
 
         public override void Start()
         {
-            var ai = Props.GetComponent<AiHandler>();
+            var ai = PrefabProps.AiHandler;
 
             ai.ClearState(Action.Bool0);
 

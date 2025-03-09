@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using GUZ.Core._Npc2;
 using GUZ.Core.Data.Container;
 using TMPro;
 using UnityEngine;
@@ -19,11 +20,13 @@ namespace GUZ.Core.Caches
         ///       Otherwise, UserData's WeakReference pointer gets cleared.
         /// </summary>
         public static readonly List<NpcContainer> NpcCache = new();
+        public static readonly List<NpcContainer2> NpcCache2 = new();
+
 
         /// <summary>
         /// Already created AnimationData (Clips + RootMotions) can be reused.
         /// </summary>
-        public static readonly Dictionary<string, AnimationClip> AnimationClipCache = new();
+        public static readonly Dictionary<string, AnimationContainer> AnimationDataCache = new();
 
         /// <summary>
         /// This dictionary caches the sprite assets for fonts.
@@ -44,13 +47,14 @@ namespace GUZ.Core.Caches
             GlobalEventDispatcher.LoadingSceneLoaded.AddListener(delegate
             {
                 NpcCache.Clear();
+                NpcCache2.Clear();
             });
         }
 
         public static void Dispose()
         {
             NpcCache.Clear();
-            AnimationClipCache.Clear();
+            AnimationDataCache.Clear();
             FontCache.Clear();
             Meshes.Clear();
             AudioClips.Clear();

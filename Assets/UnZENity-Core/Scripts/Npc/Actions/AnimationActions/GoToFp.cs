@@ -1,7 +1,9 @@
+using GUZ.Core._Npc2;
 using GUZ.Core.Data.ZkEvents;
 using GUZ.Core.Manager;
 using GUZ.Core.Vob.WayNet;
 using UnityEngine;
+using ZenKit.Daedalus;
 
 namespace GUZ.Core.Npc.Actions.AnimationActions
 {
@@ -13,7 +15,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
 
         private FreePoint _freePoint;
 
-        public GoToFp(AnimationAction action, GameObject npcGo) : base(action, npcGo)
+        public GoToFp(AnimationAction action, NpcContainer2 npcContainer) : base(action, npcContainer)
         {
         }
 
@@ -25,9 +27,9 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             _fp = WayNetHelper.FindNearestFreePoint(npcPos, Destination);
         }
 
-        public override void AnimationEndEventCallback(SerializableEventEndSignal eventData)
+        protected override void AnimationEnd()
         {
-            base.AnimationEndEventCallback(eventData);
+            base.AnimationEnd();
 
             IsFinishedFlag = false;
         }
@@ -42,7 +44,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             Props.CurrentFreePoint = _fp;
             _fp.IsLocked = true;
 
-            AnimationEndEventCallback(new SerializableEventEndSignal(""));
+            AnimationEnd();
 
             State = WalkState.Done;
             IsFinishedFlag = true;

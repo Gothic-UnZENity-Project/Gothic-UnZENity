@@ -1,9 +1,9 @@
 using System.Collections.Generic;
+using GUZ.Core._Npc2;
 using GUZ.Core.Config;
 using GUZ.Core.Creator;
 using GUZ.Core.Extensions;
 using GUZ.Core.Npc;
-using GUZ.Core.Npc.Routines;
 using UnityEngine;
 
 namespace GUZ.Core.Manager.Culling
@@ -78,7 +78,11 @@ namespace GUZ.Core.Manager.Culling
             var isInVisibleRange = evt.currentDistance == 0;
             var wasOutOfDistance = evt.previousDistance != 0;
 
-            if (!isInVisibleRange)
+            var loaderComp = go.GetComponent<NpcLoader2>();
+            var npcData = loaderComp.Npc.GetUserData2();
+            var isInitialized = loaderComp.IsLoaded;
+
+            if (!isInVisibleRange && isInitialized)
             {
                 AnimationCreator.StopAnimation(go);
             }
@@ -88,16 +92,27 @@ namespace GUZ.Core.Manager.Culling
             // Alter position tracking of NPC
             if (isInVisibleRange)
             {
-                _visibleNpcs.Add(evt.index, go.transform);
+                var initializedNow = GameGlobals.Npcs.InitNpc(go);
+                _visibleNpcs.TryAdd(evt.index, go.transform);
+
+
+                // If the NPC !wasOutOfDistance (==wasInDistanceAlready), then we spawned our VRPlayer next to the NPC
+                // (e.g. from a save game) and we need to go on with the current routine instead of "resetting" the routine.
+                // (Which would respawn NPC at a waypoint, which is wrong.)
+                if (wasOutOfDistance && !initializedNow)
+                {
+                    // If we walked to an NPC in our game, the NPC will be re-enabled and Routines get reset.
+                    go.GetComponentInChildren<AiHandler>().ReEnableNpc();
+                }
             }
             // When an NPC gets invisible, we need to check for their next respawn from their initially spawned position.
             else
             {
-                go.TryGetComponent<Routine>(out var routine);
+                var props = npcData.Props;
 
-                if (routine.CurrentRoutine != null)
+                if (props.RoutineCurrent != null)
                 {
-                    var spawnedWayPointName = routine.CurrentRoutine.Waypoint;
+                    var spawnedWayPointName = props.RoutineCurrent.Waypoint;
                     var wayNetPoint = WayNetHelper.GetWayNetPoint(spawnedWayPointName);
 
                     if (wayNetPoint is not null)
@@ -106,15 +121,6 @@ namespace GUZ.Core.Manager.Culling
                     }
                 }
                 _visibleNpcs.Remove(evt.index);
-            }
-
-            // If the NPC !wasOutOfDistance (==wasInDistanceAlready), then we spawned our VRPlayer next to the NPC
-            // (e.g. from a save game) and we need to go on with the current routine instead of "resetting" the routine.
-            // (Which would respawn NPC at a waypoint, which is wrong.)
-            if (isInVisibleRange && wasOutOfDistance)
-            {
-                // If we walked to an NPC in our game, the NPC will be re-enabled and Routines get reset.
-                go.GetComponent<AiHandler>().ReEnableNpc();
             }
         }
 
@@ -125,9 +131,17 @@ namespace GUZ.Core.Manager.Culling
         {
             foreach (var npc in _visibleNpcs)
             {
-                // NPCRoot is only updated after a walking animation's loop is done.
+                // NpcLoader.NPCRoot is only updated after a walking animation's loop is done.
                 // child[0] == NPCRoot/BIP01 -> We need to fetch this one as it's the walking animation root which updates every frame.
-                UpdatePosition(npc.Key, npc.Value.GetChild(0).position);
+                if (npc.Value.childCount > 0)
+                {
+                    var child = npc.Value.GetChild(0);
+                    // It might be, that the NPC is not yet initialized. Therefore wait until the GO structure is fully loaded.
+                    if (child.childCount > 0)
+                    {
+                        UpdatePosition(npc.Key, child.GetChild(0).position);
+                    }
+                }
             }
         }
 

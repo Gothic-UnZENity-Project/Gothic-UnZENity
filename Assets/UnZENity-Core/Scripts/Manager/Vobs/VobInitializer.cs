@@ -333,21 +333,23 @@ namespace GUZ.Core.Manager.Vobs
         /// </summary>
         private GameObject CreateNpc(ZenKit.Vobs.Npc npcVob)
         {
-            var instance = GameData.GothicVm.AllocInstance<NpcInstance>(npcVob.Name);
-            var npcData = new NpcContainer
-            {
-                Instance = instance,
-                Vob = npcVob
-            };
-            instance.UserData = npcData;
-            MultiTypeCache.NpcCache.Add(npcData);
-
-            var newNpc = NpcCreator.InitializeNpc(instance, true, npcVob);
-
-            SetPosAndRot(newNpc, npcVob.Position, npcVob.Rotation);
-            GameGlobals.NpcMeshCulling.AddCullingEntry(newNpc);
-
-            return newNpc;
+            Debug.LogError("NPCs from SaveGame not yet handled.");
+            return null;
+            // var instance = GameData.GothicVm.AllocInstance<NpcInstance>(npcVob.Name);
+            // var npcData = new NpcContainer
+            // {
+            //     Instance = instance,
+            //     Vob = npcVob
+            // };
+            // instance.UserData = npcData;
+            // MultiTypeCache.NpcCache.Add(npcData);
+            //
+            // var newNpc = NpcCreator.InitializeNpc(instance, true, npcVob);
+            //
+            // SetPosAndRot(newNpc, npcVob.Position, npcVob.Rotation);
+            // GameGlobals.NpcMeshCulling.AddCullingEntry(newNpc);
+            //
+            // return newNpc;
         }
 
         /// <summary>

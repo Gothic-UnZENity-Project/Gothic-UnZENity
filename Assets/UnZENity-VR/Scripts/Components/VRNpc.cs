@@ -1,4 +1,8 @@
 ﻿#if GUZ_HVR_INSTALLED
+using System;
+using GUZ.Core;
+using GUZ.Core._Npc2;
+using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
 using GUZ.Core.Properties;
@@ -12,17 +16,22 @@ namespace GUZ.VR.Components
 {
     public class VRNpc : MonoBehaviour
     {
+        private NpcContainer2 _npcData;
+
+        private void Awake()
+        {
+            _npcData = GetComponentInParent<NpcLoader2>().Npc.GetUserData2();
+        }
+
         public void OnGrabbed(HVRGrabberBase grabber, HVRGrabbable grabbable)
         {
-            var properties = GetComponent<NpcProperties>();
-
             if (GameData.Dialogs.IsInDialog)
             {
-                DialogManager.SkipCurrentDialogLine(properties);
+                DialogManager.SkipCurrentDialogLine(_npcData.Props);
             }
             else
             {
-                NpcHelper.ExecutePerception(VmGothicEnums.PerceptionType.AssessTalk, properties, properties.NpcInstance, (NpcInstance)GameData.GothicVm.GlobalHero);
+                GameGlobals.NpcAi.ExecutePerception(VmGothicEnums.PerceptionType.AssessTalk, _npcData.Props, _npcData.Instance, (NpcInstance)GameData.GothicVm.GlobalHero);
             }
         }
     }

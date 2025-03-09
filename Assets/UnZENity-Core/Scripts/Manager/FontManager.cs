@@ -1,3 +1,4 @@
+using System;
 using System.Reflection;
 using GUZ.Core.Caches;
 using GUZ.Core.Globals;
@@ -12,9 +13,12 @@ namespace GUZ.Core.Manager
 {
     public class FontManager : SingletonBehaviour<FontManager>
     {
+        [NonSerialized]
         public TMP_FontAsset DefaultFont;
 
+        [NonSerialized]
         public TMP_SpriteAsset DefaultSpriteAsset;
+        [NonSerialized]
         public TMP_SpriteAsset HighlightSpriteAsset;
 
         public void Create()

@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using GUZ.Core._Npc2;
 using GUZ.Core.Caches;
 using GUZ.Core.Config;
 using GUZ.Core.Extensions;
@@ -53,6 +54,9 @@ namespace GUZ.Core
         public StationaryLightsManager Lights { get; private set; }
 
         public VobManager Vobs { get; private set; }
+        public NpcManager2 Npcs { get; private set; }
+        public NpcAiManager2 NpcAi { get; private set; }
+        public AnimationManager Animations { get; private set; }
         public VobMeshCullingManager VobMeshCulling { get; private set; }
         public NpcMeshCullingManager NpcMeshCulling { get; private set; }
         public VobSoundCullingManager SoundCulling { get; private set; }
@@ -61,6 +65,8 @@ namespace GUZ.Core
         protected override void Awake()
         {
             base.Awake();
+
+            GameContext.IsLab = false;
 
             Config = new ConfigManager();
             Config.LoadRootJson();
@@ -82,6 +88,9 @@ namespace GUZ.Core
             Loading = new LoadingManager();
             StaticCache = new StaticCacheManager();
             Vobs = new VobManager();
+            Npcs = new NpcManager2();
+            NpcAi = new NpcAiManager2();
+            Animations = new AnimationManager();
             VobMeshCulling = new VobMeshCullingManager(DeveloperConfig, this);
             NpcMeshCulling = new NpcMeshCullingManager(DeveloperConfig);
             SoundCulling = new VobSoundCullingManager(DeveloperConfig);
@@ -147,6 +156,7 @@ namespace GUZ.Core
             StaticCache.Init(DeveloperConfig);
             Textures.Init();
             Vobs.Init(this);
+            Npcs.Init(this);
 
             GuzBootstrapper.BootGothicUnZeNity();
             

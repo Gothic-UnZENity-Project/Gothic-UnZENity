@@ -1,5 +1,6 @@
 using System.Collections;
 using GUZ.Core;
+using GUZ.Core._Npc2;
 using GUZ.Core.Caches;
 using GUZ.Core.Config;
 using GUZ.Core.Globals;
@@ -40,19 +41,26 @@ namespace GUZ.Lab
         private TextureManager _textureManager;
         private FontManager _fontManager;
         private StoryManager _story;
+        private NpcManager2 _npcManager;
+        private AnimationManager _animationManager;
+        private SkyManager _skyManager;
+        private GameTime _gameTime;
 
         public ConfigManager Config => _configManager;
         public SaveGameManager SaveGame => _save;
         public LoadingManager Loading => null;
         public StaticCacheManager StaticCache => null;
         public PlayerManager Player => null;
-        public SkyManager Sky => null;
-        public GameTime Time => null;
+        public SkyManager Sky => _skyManager;
+        public GameTime Time => _gameTime;
         public RoutineManager Routines => _npcRoutineManager;
         public TextureManager Textures => _textureManager;
         public FontManager Font => _fontManager;
         public StationaryLightsManager Lights => null;
         public VobManager Vobs => null;
+        public NpcManager2 Npcs => _npcManager;
+        public NpcAiManager2 NpcAi => null;
+        public AnimationManager Animations => _animationManager;
         public VobMeshCullingManager VobMeshCulling => null;
         public NpcMeshCullingManager NpcMeshCulling => null;
         public VobSoundCullingManager SoundCulling => null;
@@ -62,6 +70,7 @@ namespace GUZ.Lab
 
         private void Awake()
         {
+            GameContext.IsLab = true;
             StartCoroutine(BootLab());
         }
 
@@ -94,6 +103,10 @@ namespace GUZ.Lab
             _npcRoutineManager = new RoutineManager(Config.Dev);
             _gameMusicManager = new MusicManager(Config.Dev);
             _videoManager = new VideoManager(Config.Dev);
+            _npcManager = new NpcManager2();
+            _animationManager = new AnimationManager();
+            _gameTime = new GameTime(Config.Dev, this);
+            _skyManager = new SkyManager(Config.Dev, _gameTime);
 
             ResourceLoader.Init(Config.Root.Gothic1Path);
 
@@ -103,6 +116,8 @@ namespace GUZ.Lab
             _gameMusicManager.Init();
             _npcRoutineManager.Init();
             _textureManager.Init();
+            _npcManager.Init(this);
+            _skyManager.InitWorld();
 
             _videoManager.InitVideos();
             _save.LoadNewGame();
@@ -121,8 +136,7 @@ namespace GUZ.Lab
             LabMusicHandler.Bootstrap();
             LabSoundHandler.Bootstrap();
             LabVideoHandler.Bootstrap();
-            // TODO - Broken. Fix before use.
-            // NpcDialogHandler.Bootstrap();
+            NpcDialogHandler.Bootstrap();
             InteractableHandler.Bootstrap();
             LadderLabHandler.Bootstrap();
             VobItemHandler.Bootstrap();

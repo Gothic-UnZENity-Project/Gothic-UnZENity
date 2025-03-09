@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using GUZ.Core._Npc2;
 using GUZ.Core.Data;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
@@ -28,14 +29,14 @@ namespace GUZ.Core.Manager
                 // Don't worry. I assume this even makes no sense at all, as also the "END" dialog would always trigger a return true.
                 Debug.LogError("Npc_CheckInfo isn't implemented for important=0.");
             }
-            return TryGetImportant(npc.GetUserData().Properties.Dialogs, out _);
+            return TryGetImportant(npc.GetUserData2().Props.Dialogs, out _);
         }
 
         /// <summary>
         /// initialDialogStarting - We only stop current AI routine if this is the first time the dialog box opens/NPC
         ///     talks important things. Otherwise, the ZS_*_End will get called every time we re-open a dialog in between.
         /// </summary>
-        public static void StartDialog(GameObject npcGo, NpcProperties properties, bool initialDialogStarting)
+        public static void StartDialog(NpcContainer2 npcContainer, bool initialDialogStarting)
         {
             if (initialDialogStarting)
             {
@@ -51,27 +52,20 @@ namespace GUZ.Core.Manager
             // We are already inside a sub-dialog
             if (GameData.Dialogs.CurrentDialog.Options.Any())
             {
-                GameContext.DialogAdapter.FillDialog(properties.NpcInstance, GameData.Dialogs.CurrentDialog.Options);
-                GameContext.DialogAdapter.ShowDialog(npcGo);
+                GameContext.DialogAdapter.FillDialog(npcContainer.Instance, GameData.Dialogs.CurrentDialog.Options);
+                GameContext.DialogAdapter.ShowDialog(npcContainer.Go);
             }
             // There is at least one important entry, the NPC wants to talk to the hero about.
-            else if (initialDialogStarting && TryGetImportant(properties.Dialogs, out var infoInstance))
+            else if (initialDialogStarting && TryGetImportant(npcContainer.Props.Dialogs, out var infoInstance))
             {
                 GameData.Dialogs.CurrentDialog.Instance = infoInstance;
-                properties.Go.GetComponent<AiHandler>().ClearState(true);
-
-                CallMainInformation(properties.NpcInstance, infoInstance);
+                CallMainInformation(npcContainer, infoInstance);
             }
             else
             {
-                if (initialDialogStarting)
-                {
-                    Debug.Log("StartDialog: initialDialogStarting");
-                    properties.Go.GetComponent<AiHandler>().ClearState(false);
-                }
                 var selectableDialogs = new List<InfoInstance>();
 
-                foreach (var dialog in properties.Dialogs)
+                foreach (var dialog in npcContainer.Props.Dialogs)
                 {
                     // Dialog is non-permanent and already been told
                     if (dialog.Permanent == 0 && GameData.KnownDialogInfos.Contains(dialog.Index))
@@ -90,8 +84,8 @@ namespace GUZ.Core.Manager
                 }
 
                 selectableDialogs = selectableDialogs.OrderBy(d => d.Nr).ToList();
-                GameContext.DialogAdapter.FillDialog(properties.NpcInstance, selectableDialogs);
-                GameContext.DialogAdapter.ShowDialog(npcGo);
+                GameContext.DialogAdapter.FillDialog(npcContainer.Instance, selectableDialogs);
+                GameContext.DialogAdapter.ShowDialog(npcContainer.Go);
             }
         }
 
@@ -133,12 +127,13 @@ namespace GUZ.Core.Manager
         {
             var isHero = self.Id == 0;
             // Always the NPC we're talking to!
-            var npcProps = GetProperties(isHero ? target : self);
             var speakerId = self.Id;
 
-            npcProps.AnimationQueue.Enqueue(new Output(
+            var npcTalkingTo = isHero ? target : self;
+
+            npcTalkingTo.GetUserData2().Props.AnimationQueue.Enqueue(new Output(
                 new AnimationAction(int0: speakerId, string0: outputName),
-                npcProps.Go));
+                npcTalkingTo.GetUserData2()));
         }
 
         /// <summary>
@@ -146,16 +141,16 @@ namespace GUZ.Core.Manager
         /// </summary>
         public static void ExtAiOutputSvm(NpcInstance npc, NpcInstance target, string svmName)
         {
-            var props = GetProperties(npc);
+            var npcContainer = GetNpcContainer(npc);
 
             if (target != null)
             {
-                Debug.LogError("Ai_OutputSvm() - Handling with target not yet implemented!");
+                Debug.LogWarning("Ai_OutputSvm() - Handling with target not yet implemented!");
             }
 
-            props.AnimationQueue.Enqueue(new OutputSvm(
-                new AnimationAction(int0: props.NpcInstance.Id, string0: svmName),
-                props.Go));
+            npcContainer.Props.AnimationQueue.Enqueue(new OutputSvm(
+                new AnimationAction(int0: npcContainer.Instance.Id, string0: svmName),
+                npcContainer));
         }
 
         public static bool ExtInfoManagerHasFinished()
@@ -198,30 +193,32 @@ namespace GUZ.Core.Manager
 
         public static void ExtAiProcessInfos(NpcInstance npc)
         {
-            StartDialog(GetNpc(npc), GetProperties(npc), true);
+            var props = GetProperties(npc);
+
+            props.AnimationQueue.Enqueue(new StartProcessInfos(new AnimationAction(bool0: true), npc.GetUserData2()));
         }
 
         public static void ExtAiStopProcessInfos(NpcInstance npc)
         {
             var props = GetProperties(npc);
 
-            props.AnimationQueue.Enqueue(new StopProcessInfos(new AnimationAction(), props.Go));
+            props.AnimationQueue.Enqueue(new StopProcessInfos(new AnimationAction(), npc.GetUserData2()));
         }
 
-        public static void MainSelectionClicked(NpcInstance instance, InfoInstance infoInstance)
+        public static void MainSelectionClicked(NpcContainer2 npcContainer, InfoInstance infoInstance)
         {
-            CallMainInformation(instance, infoInstance);
+            CallMainInformation(npcContainer, infoInstance);
         }
 
-        public static void SubSelectionClicked(NpcInstance instance, int dialogId)
+        public static void SubSelectionClicked(NpcContainer2 npcContainer, int dialogId)
         {
-            CallInformation(instance, dialogId);
+            CallInformation(npcContainer, dialogId);
         }
 
         /// <summary>
         /// Skip/Stop current Dialog's .wav entry now.
         /// </summary>
-        public static void SkipCurrentDialogLine(NpcProperties props)
+        public static void SkipCurrentDialogLine(NpcProperties2 props)
         {
 
             if (props.CurrentAction.GetType() == typeof(Output))
@@ -246,12 +243,10 @@ namespace GUZ.Core.Manager
         /// <summary>
         /// A C_Info is clicked (main dialog entry)
         /// </summary>
-        private static void CallMainInformation(NpcInstance npcInstance, InfoInstance infoInstance)
+        private static void CallMainInformation(NpcContainer2 npcContainer, InfoInstance infoInstance)
         {
-            var properties = npcInstance.GetUserData().Properties;
-
             // Set a new CurrentInstance for potential sub-dialog choices to fetch later.
-            GameData.Dialogs.CurrentDialog.Instance = properties.Dialogs
+            GameData.Dialogs.CurrentDialog.Instance = npcContainer.Props.Dialogs
                 .First(d => d.Information == infoInstance.Information);
 
             // Add entry to list of "told" information if it is main element only. (Sub-dialogs will never be reached again as main one (entry point) is already told)
@@ -259,23 +254,21 @@ namespace GUZ.Core.Manager
 
 
             // Delegate remaining tasks to general implementation of CallInformation
-            CallInformation(npcInstance, infoInstance.Information);
+            CallInformation(npcContainer, infoInstance.Information);
         }
 
-        private static void CallInformation(NpcInstance npcInstance, int information)
+        private static void CallInformation(NpcContainer2 npcContainer, int information)
         {
-            var properties = npcInstance.GetUserData().Properties;
-
             GameContext.DialogAdapter.HideDialog();
 
             // We always need to set "self" before executing any Daedalus function.
-            GameData.GothicVm.GlobalSelf = npcInstance;
+            GameData.GothicVm.GlobalSelf = npcContainer.Instance;
             GameData.GothicVm.GlobalOther = GameData.GothicVm.GlobalHero;
 
             GameData.GothicVm.Call(information);
 
 
-            var animationQueue = properties.AnimationQueue;
+            var animationQueue = npcContainer.Props.AnimationQueue;
 
             // If Daedalus tells us, that the dialog is stopped after this chat (AI_StopProcessInfos), then we're done.
             if (animationQueue.Any(i => i.GetType() == typeof(StopProcessInfos)))
@@ -286,7 +279,7 @@ namespace GUZ.Core.Manager
             else
             {
                 animationQueue.Enqueue(new StartProcessInfos(
-                    new AnimationAction(int0: information), properties.Go));
+                    new AnimationAction(int0: information), npcContainer));
             }
         }
 
@@ -300,14 +293,19 @@ namespace GUZ.Core.Manager
             GameData.KnownDialogInfos.Add(informationIndex);
         }
 
-        private static GameObject GetNpc(NpcInstance npc)
+        private static GameObject GetGo(NpcInstance npc)
         {
-            return GetProperties(npc).Go;
+            return npc.GetUserData2().Go;
         }
 
-        private static NpcProperties GetProperties(NpcInstance npc)
+        private static NpcContainer2 GetNpcContainer(NpcInstance npc)
         {
-            return npc.GetUserData().Properties;
+            return npc.GetUserData2();
+        }
+
+        private static NpcProperties2 GetProperties(NpcInstance npc)
+        {
+            return npc.GetUserData2().Props;
         }
     }
 }

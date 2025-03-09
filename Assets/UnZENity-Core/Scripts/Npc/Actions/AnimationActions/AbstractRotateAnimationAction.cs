@@ -1,5 +1,5 @@
-using System;
 using System.Collections.Generic;
+using GUZ.Core._Npc2;
 using GUZ.Core.Creator;
 using GUZ.Core.Data.ZkEvents;
 using GUZ.Core.Globals;
@@ -14,9 +14,9 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
         private Quaternion _finalRotation;
         private bool _isRotateLeft;
 
-        private Transform NpcHeadTransform => Props.Head;
+        private Transform NpcHeadTransform => PrefabProps.Head;
 
-        protected AbstractRotateAnimationAction(AnimationAction action, GameObject npcGo) : base(action, npcGo)
+        protected AbstractRotateAnimationAction(AnimationAction action, NpcContainer2 npcContainer) : base(action, npcContainer)
         {
         }
 
@@ -57,8 +57,9 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
 
             if (Quaternion.Angle(NpcGo.transform.rotation, _finalRotation) > 1f)
             {
-                AnimationCreator.StopAnimation(NpcGo);
-                AnimationCreator.BlendAnimation(Props.MdsNames, GetRotateModeAnimationString(), NpcGo, true, new List<string> { "BIP01 HEAD" });
+                PrefabProps.AnimationHandler.PlayAnimation(GetRotateModeAnimationString());
+                // FIXME - New logic works? Then remove this line.
+                // AnimationCreator.BlendAnimation(Props.MdsNames, GetRotateModeAnimationString(), NpcGo, true, new List<string> { "BIP01 HEAD" });
             }
         }
 
@@ -113,8 +114,10 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             // Check if rotation is done.
             if (Quaternion.Angle(npcTransform.rotation, _finalRotation) < 1f && IsFinishedFlag != true)
             {
-                AnimationCreator.StopAnimation(NpcGo);
-                AnimationCreator.BlendAnimation(Props.MdsNames, GetWalkModeAnimationString(), NpcGo, true, new List<string> { "BIP01 HEAD" });
+                PrefabProps.AnimationHandler.PlayAnimation(GetWalkModeAnimationString());
+
+                // FIXME - New logic works? Then remove this line.
+                // AnimationCreator.BlendAnimation(Props.MdsNames, GetWalkModeAnimationString(), NpcGo, true, new List<string> { "BIP01 HEAD" });
                 IsFinishedFlag = true;
             }
             else
@@ -124,9 +127,9 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             }
         }
 
-        public override void AnimationEndEventCallback(SerializableEventEndSignal eventData)
+        protected override void AnimationEnd()
         {
-            base.AnimationEndEventCallback(eventData);
+            base.AnimationEnd();
             IsFinishedFlag = false;
         }
     }

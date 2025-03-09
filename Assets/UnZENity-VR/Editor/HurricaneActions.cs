@@ -33,6 +33,8 @@ namespace GUZ.VR.Editor
                 upgrader.Upgrade(materialToConvert, MaterialUpgrader.UpgradeFlags.LogMessageWhenNoUpgraderFound);
                 Debug.Log($"Material >{materialToConvert.name}< converted to URP");
             }
+
+            Debug.Log("### All HVR materials are converted successfully. ###");
         }
     }
 }

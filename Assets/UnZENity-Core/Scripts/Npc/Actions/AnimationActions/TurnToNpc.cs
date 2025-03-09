@@ -1,4 +1,4 @@
-using GUZ.Core.Caches;
+using GUZ.Core._Npc2;
 using GUZ.Core.Data.ZkEvents;
 using GUZ.Core.Extensions;
 using UnityEngine;
@@ -10,13 +10,13 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
         private int OtherId => Action.Int0;
         private int OtherIndex => Action.Int1;
 
-        public TurnToNpc(AnimationAction action, GameObject npcGo) : base(action, npcGo)
+        public TurnToNpc(AnimationAction action, NpcContainer2 npcContainer) : base(action, npcContainer)
         {
         }
 
         protected override Quaternion GetRotationDirection()
         {
-            var destinationTransform = Action.Instance0.GetUserData().Properties.transform;
+            var destinationTransform = Action.Instance0.GetUserData2().Go.transform;
             // var temp = destinationTransform.position - NpcGo.transform.position;
             // return Quaternion.LookRotation(temp, Vector3.up);
             // }
@@ -38,9 +38,9 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             }
         }
 
-        public override void AnimationEndEventCallback(SerializableEventEndSignal eventData)
+        protected override void AnimationEnd()
         {
-            base.AnimationEndEventCallback(eventData);
+            base.AnimationEnd();
 
             IsFinishedFlag = false;
         }

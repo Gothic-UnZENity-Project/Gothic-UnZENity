@@ -53,7 +53,7 @@ namespace GUZ.Core.Creator.Meshes.Builder
             var chunksCount = _worldChunks.OpaqueChunks.Count + _worldChunks.TransparentChunks.Count + _worldChunks.WaterChunks.Count;
             var progressPerChunk = 1f / chunksCount;
             
-            loading?.SetProgressStep(LoadingManager.LoadingProgressType.WorldMesh, progressPerChunk);
+            loading?.SetPhase(LoadingManager.LoadingProgressType.WorldMesh, progressPerChunk);
 
             await BuildChunkType(_worldChunks.OpaqueChunks, TextureCache.TextureArrayTypes.Opaque, loading);
             await BuildChunkType(_worldChunks.TransparentChunks, TextureCache.TextureArrayTypes.Transparent, loading);

@@ -1,10 +1,10 @@
-using UnityEngine;
+using GUZ.Core._Npc2;
 
 namespace GUZ.Core.Npc.Actions.AnimationActions
 {
     public class None : AbstractAnimationAction
     {
-        public None(AnimationAction action, GameObject npcGo) : base(action, npcGo)
+        public None(AnimationAction action, NpcContainer2 npcContainer) : base(action, npcContainer)
         {
         }
 

@@ -1,9 +1,11 @@
+using GUZ.Core._Npc2;
 using GUZ.Core.Creator;
 using GUZ.Core.Data.ZkEvents;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
 using GUZ.Core.Vm;
 using UnityEngine;
+using ZenKit.Daedalus;
 
 namespace GUZ.Core.Npc.Actions.AnimationActions
 {
@@ -11,7 +13,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
     {
         protected Transform NpcTransform => NpcGo.transform;
 
-        protected AbstractWalkAnimationAction2(AnimationAction action, GameObject npcGo) : base(action, npcGo)
+        protected AbstractWalkAnimationAction2(AnimationAction action, NpcContainer2 npcContainer) : base(action, npcContainer)
         {
         }
 
@@ -69,10 +71,10 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
 
         protected virtual void StartWalk()
         {
-            PhysicsHelper.EnablePhysicsForNpc(Props);
+            PhysicsHelper.EnablePhysicsForNpc(PrefabProps);
 
             var animName = GetWalkModeAnimationString();
-            AnimationCreator.PlayAnimation(Props.MdsNames, animName, NpcGo, true);
+            PrefabProps.AnimationHandler.PlayAnimation(animName);
         }
 
         private bool IsDestinationReached()
@@ -100,16 +102,16 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
         /// <summary>
         /// We need to alter rootNode's position once walk animation is done.
         /// </summary>
-        public override void AnimationEndEventCallback(SerializableEventEndSignal eventData)
+        protected override void AnimationEnd()
         {
-            base.AnimationEndEventCallback(eventData);
+            base.AnimationEnd();
 
             // We need to ensure, that physics are always active when an NPC walks!
-            PhysicsHelper.EnablePhysicsForNpc(Props);
+            PhysicsHelper.EnablePhysicsForNpc(PrefabProps);
 
-            NpcTransform.localPosition = Props.Bip01.position;
-            Props.Bip01.localPosition = Vector3.zero;
-            Props.ColliderRootMotion.localPosition = Vector3.zero;
+            NpcTransform.localPosition = PrefabProps.Bip01.position;
+            PrefabProps.Bip01.localPosition = Vector3.zero;
+            PrefabProps.ColliderRootMotion.localPosition = Vector3.zero;
 
             // TODO - Needed?
             // root.SetLocalPositionAndRotation(

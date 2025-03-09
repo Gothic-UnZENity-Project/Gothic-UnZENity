@@ -184,7 +184,7 @@ namespace GUZ.Core.Manager.Vobs
         
         private void PreCreateWorldVobs(List<IVirtualObject> vobs, GameObject rootGo, LoadingManager loading)
         {
-            loading.SetProgressStep(LoadingManager.LoadingProgressType.VOB, GetTotalVobCount(vobs));
+            loading.SetPhase(LoadingManager.LoadingProgressType.VOB, GetTotalVobCount(vobs));
 
             _cullingVobObjects.Clear();
 

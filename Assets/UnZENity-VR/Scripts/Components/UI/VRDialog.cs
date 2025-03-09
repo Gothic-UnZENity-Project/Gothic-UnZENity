@@ -159,12 +159,12 @@ namespace GUZ.VR.Components.UI
 
         private void OnDialogClicked(NpcInstance instance, InfoInstance infoInstance)
         {
-            DialogManager.MainSelectionClicked(instance, infoInstance);
+            DialogManager.MainSelectionClicked(instance.GetUserData2(), infoInstance);
         }
 
         private void OnDialogClicked(NpcInstance instance, int informationId)
         {
-            DialogManager.SubSelectionClicked(instance, informationId);
+            DialogManager.SubSelectionClicked(instance.GetUserData2(), informationId);
         }
     }
 }

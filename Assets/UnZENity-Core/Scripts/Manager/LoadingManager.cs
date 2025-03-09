@@ -90,7 +90,7 @@ namespace GUZ.Core.Manager
         /// <summary>
         /// We only load one type of game data at once. We can therefore set it initially and call an AddProgress() without parameters later.
         /// </summary>
-        public void SetProgressStep(LoadingProgressType type, float amountPerUpdate)
+        public void SetPhase(LoadingProgressType type, float amountPerUpdate)
         {
             _currentType = type;
             _currentAmountPerUpdate = amountPerUpdate;

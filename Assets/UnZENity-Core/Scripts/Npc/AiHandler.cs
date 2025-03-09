@@ -1,4 +1,5 @@
-﻿using GUZ.Core.Creator;
+﻿using GUZ.Core._Npc2;
+using GUZ.Core.Creator;
 using GUZ.Core.Data.ZkEvents;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
@@ -21,7 +22,7 @@ namespace GUZ.Core.Npc
 
         private void Start()
         {
-            Properties.CurrentAction = new None(new AnimationAction(), gameObject);
+            Properties.CurrentAction = new None(new AnimationAction(), NpcData);
         }
 
         /// <summary>
@@ -38,7 +39,7 @@ namespace GUZ.Core.Npc
             Properties.CurrentAction.Tick();
 
             // Add new milliseconds when stateTime shall be measured.
-            if (Properties.IsStateTimeActive && Properties.CurrentLoopState == NpcProperties.LoopState.Loop)
+            if (Properties.IsStateTimeActive && Properties.CurrentLoopState == NpcProperties2.LoopState.Loop)
             {
                 Properties.StateTime += Time.deltaTime;
             }
@@ -53,25 +54,25 @@ namespace GUZ.Core.Npc
             if (Properties.AnimationQueue.Count == 0)
             {
                 // We always need to set "self" before executing any Daedalus function.
-                if (Properties.NpcInstance != null)
+                if (NpcInstance != null)
                 {
-                    Vm.GlobalSelf = Properties.NpcInstance;
+                    Vm.GlobalSelf = NpcInstance;
                 }
 
                 DaedalusSymbol symbol;
                 switch (Properties.CurrentLoopState)
                 {
                     // None means, the NPC is newly created and didn't execute any Routine as of now.
-                    case NpcProperties.LoopState.None:
+                    case NpcProperties2.LoopState.None:
                         RestartCurrentRoutine();
                         break;
-                    case NpcProperties.LoopState.Start:
+                    case NpcProperties2.LoopState.Start:
                         if (Properties.StateStart == 0)
                         {
                             return;
                         }
 
-                        symbol = Vm.GetSymbolByIndex(Properties.StateStart);
+                        symbol = Vm.GetSymbolByIndex(Properties.StateStart)!;
                         switch (symbol.ReturnType)
                         {
                             case DaedalusDataType.Int:
@@ -83,16 +84,16 @@ namespace GUZ.Core.Npc
                         }
 
 
-                        Properties.CurrentLoopState = NpcProperties.LoopState.Loop;
+                        Properties.CurrentLoopState = NpcProperties2.LoopState.Loop;
                         break;
-                    case NpcProperties.LoopState.Loop:
+                    case NpcProperties2.LoopState.Loop:
                         if (Properties.StateLoop == 0 && Properties.StateStart != 0)
                         {
-                            Properties.CurrentLoopState = NpcProperties.LoopState.Start;
+                            Properties.CurrentLoopState = NpcProperties2.LoopState.Start;
                             return;
                         }
 
-                        symbol = Vm.GetSymbolByIndex(Properties.StateLoop);
+                        symbol = Vm.GetSymbolByIndex(Properties.StateLoop)!;
                         switch (symbol.ReturnType)
                         {
                             case DaedalusDataType.Int:
@@ -100,7 +101,7 @@ namespace GUZ.Core.Npc
                                 // Some ZS_*_Loop return !=0 when they want to quit.
                                 if (loopResponse != _daedalusLoopContinue)
                                 {
-                                    Properties.CurrentLoopState = NpcProperties.LoopState.End;
+                                    Properties.CurrentLoopState = NpcProperties2.LoopState.End;
                                 }
                                 break;
                             default:
@@ -110,10 +111,10 @@ namespace GUZ.Core.Npc
 
                         break;
 
-                    case NpcProperties.LoopState.End:
+                    case NpcProperties2.LoopState.End:
                         if (Properties.StateEnd != 0)
                         {
-                            symbol = Vm.GetSymbolByIndex(Properties.StateEnd);
+                            symbol = Vm.GetSymbolByIndex(Properties.StateEnd)!;
                             switch (symbol.ReturnType)
                             {
                                 case DaedalusDataType.Int:
@@ -126,11 +127,11 @@ namespace GUZ.Core.Npc
                         }
 
                         // We filled the AnimationQueue with the ZS_*_End() animations once. END isn't looping.
-                        Properties.CurrentLoopState = NpcProperties.LoopState.AfterEnd;
+                        Properties.CurrentLoopState = NpcProperties2.LoopState.AfterEnd;
                         break;
-                    case NpcProperties.LoopState.AfterEnd:
+                    case NpcProperties2.LoopState.AfterEnd:
                         // We're done. Restart normal routine.
-                        Properties.CurrentLoopState = NpcProperties.LoopState.Start;
+                        Properties.CurrentLoopState = NpcProperties2.LoopState.Start;
 
                         // If we're inside another ZS_*_ loop via Ai_StartState(), we will exit it now. If not, we will simply restart current ZS_* routine.
                         RestartCurrentRoutine();
@@ -141,7 +142,7 @@ namespace GUZ.Core.Npc
             // Go on
             else
             {
-                Debug.Log($"Start playing >{Properties.AnimationQueue.Peek().GetType()}< on >{Properties.Go.name}<");
+                Debug.Log($"Start playing >{Properties.AnimationQueue.Peek().GetType()}< on >{Go.transform.parent.name}<");
                 PlayNextAnimation(Properties.AnimationQueue.Dequeue());
             }
         }
@@ -157,7 +158,7 @@ namespace GUZ.Core.Npc
                 return;
             }
 
-            NpcHelper.ExecutePerception(VmGothicEnums.PerceptionType.AssessPlayer, Properties, Properties.NpcInstance, (NpcInstance)GameData.GothicVm.GlobalHero);
+            GameGlobals.NpcAi.ExecutePerception(VmGothicEnums.PerceptionType.AssessPlayer, Properties, NpcInstance, (NpcInstance)GameData.GothicVm.GlobalHero);
             // FIXME - We need to add other active perceptions here:
             //         PERC_ASSESSBODY, PERC_ASSESSITEM, PERC_ASSESSENEMY, PERC_ASSESSFIGHTER
             //         But at best when we test it immediately
@@ -173,7 +174,7 @@ namespace GUZ.Core.Npc
         /// </summary>
         public void RestartCurrentRoutine()
         {
-            var currentRoutine = gameObject.GetComponent<Routine>().CurrentRoutine;
+            var currentRoutine = Properties.RoutineCurrent;
             if (currentRoutine != null)
             {
                 StartRoutine(currentRoutine.Action, currentRoutine.Waypoint);
@@ -183,7 +184,7 @@ namespace GUZ.Core.Npc
         public void StartRoutine(int action, string wayPointName)
         {
             // We need to set WayPoint within Daedalus instance as it calls _self.wp_ during routine loops.
-            Properties.NpcInstance.Wp = wayPointName;
+            NpcInstance.Wp = wayPointName;
             StartRoutine(action);
         }
 
@@ -201,7 +202,7 @@ namespace GUZ.Core.Npc
 
             Properties.StateStart = action;
 
-            var routineSymbol = Vm.GetSymbolByIndex(action);
+            var routineSymbol = Vm.GetSymbolByIndex(action)!;
 
             var symbolLoop = Vm.GetSymbolByName($"{routineSymbol.Name}_Loop");
             if (symbolLoop != null)
@@ -215,7 +216,7 @@ namespace GUZ.Core.Npc
                 Properties.StateEnd = symbolEnd.Index;
             }
 
-            Properties.CurrentLoopState = NpcProperties.LoopState.Start;
+            Properties.CurrentLoopState = NpcProperties2.LoopState.Start;
 
             // We need to properly start state time as e.g. ZS_Cook won't call AI_StartState() or Npc_SetStateTime()
             // But it's required as it checks immediately how long the Cauldron is already been whirled.
@@ -224,7 +225,7 @@ namespace GUZ.Core.Npc
             // When we reached end of ZS_*_END, we also call this method. Check if we really altered the routine action or just restarted it.
             if (didRoutineChange)
             {
-                Debug.Log($"Start new routine >{routineSymbol.Name}< on >{Properties.Go.name}<");
+                Debug.Log($"Start new routine >{routineSymbol.Name}< on >{Go.transform.parent.name}<");
                 Properties.StateTime = 0;
             }
         }
@@ -236,18 +237,18 @@ namespace GUZ.Core.Npc
         {
             // Whenever we change routine, we reset some data to "start" from scratch as if the NPC got spawned.
             Properties.AnimationQueue.Clear();
-            Properties.CurrentAction = new None(new AnimationAction(), gameObject);
+            Properties.CurrentAction = new None(new AnimationAction(), NpcData);
             Properties.StateTime = 0.0f;
             Properties.ItemAnimationState = -1;
 
             if (stopCurrentStateImmediately)
             {
-                Properties.CurrentLoopState = NpcProperties.LoopState.None;
-                AnimationCreator.StopAnimation(Properties.Go);
+                Properties.CurrentLoopState = NpcProperties2.LoopState.None;
+                AnimationCreator.StopAnimation(Go);
             }
             else
             {
-                Properties.CurrentLoopState = NpcProperties.LoopState.End; // Next frame, the End logic will be executed.
+                Properties.CurrentLoopState = NpcProperties2.LoopState.End; // Next frame, the End logic will be executed.
             }
         }
 
@@ -275,14 +276,11 @@ namespace GUZ.Core.Npc
             Properties.CurrentAction.AnimationMorphEventCallback(eventData);
         }
 
-        /// <summary>
-        /// As all Components on a GameObject get called, we need to feed this information into current AnimationAction instance.
-        /// </summary>
-        public void AnimationEndCallback(string eventEndSignalParam)
+        public void AnimationBlendOutCallback(string eventBlendOutParam)
         {
-            var eventData = JsonUtility.FromJson<SerializableEventEndSignal>(eventEndSignalParam);
+            var eventData = JsonUtility.FromJson<SerializableEventBlendOutSignal>(eventBlendOutParam);
 
-            Properties.CurrentAction.AnimationEndEventCallback(eventData);
+            Properties.CurrentAction.AnimationBlendOutEventCallback(eventData);
         }
 
         /// <summary>
@@ -298,7 +296,7 @@ namespace GUZ.Core.Npc
 
             // Animation state handling
             Properties.AnimationQueue.Clear();
-            Properties.CurrentAction = new None(new AnimationAction(), gameObject);
+            Properties.CurrentAction = new None(new AnimationAction(), NpcData);
             Properties.StateTime = 0.0f;
 
             // WayNet handling
@@ -341,7 +339,7 @@ namespace GUZ.Core.Npc
             // FIXME - We need to properly set this value for Gothic2 as well.
             if (GameGlobals.Config.Dev.GameVersion == GameVersion.Gothic1)
             {
-                Properties.NpcInstance.SetAiVar(Constants.DaedalusConst.AIVItemStatusKey, Constants.DaedalusConst.TAITNone);
+                NpcInstance.SetAiVar(Constants.DaedalusConst.AIVItemStatusKey, Constants.DaedalusConst.TAITNone);
             }
 
             // Start over

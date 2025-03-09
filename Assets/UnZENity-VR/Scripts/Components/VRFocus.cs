@@ -1,8 +1,11 @@
 #if GUZ_HVR_INSTALLED
 using GUZ.Core;
+using GUZ.Core._Npc2;
+using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
 using GUZ.Core.Properties;
+using GUZ.Core.Vob;
 using HurricaneVR.Framework.Core;
 using HurricaneVR.Framework.Core.Grabbers;
 using TMPro;
@@ -15,7 +18,7 @@ namespace GUZ.VR.Components
     /// We leverage HVRGrabbable's events to show canvas of object name and alter brightness on all objects' mesh renderers.
     ///
     /// Order of use is always:
-    /// 1. HoverEnver -> We hover from far or near (e.g. grab distance without pulling towards us)
+    /// 1. HoverEnter -> We hover from far or near (e.g. grab distance without pulling towards us)
     /// 2. Grabbed -> Object is being Grabbed for movement/rotation
     /// 3. HoverExit -> We might still grab the object, but the Hover from our hand stops
     /// </summary>
@@ -26,7 +29,6 @@ namespace GUZ.VR.Components
         private static bool _featureBrightenUp;
         private static bool _featureShowName;
 
-        [SerializeField] private AbstractProperties _properties;
         [SerializeField] private GameObject _nameCanvas;
 
         private bool _isHovered;
@@ -35,6 +37,27 @@ namespace GUZ.VR.Components
         private void Start()
         {
             _nameCanvas.SetActive(false);
+
+            // Is not set inside Lab
+            if (GameContext.IsLab)
+            {
+                return;
+            }
+
+            var vobProperties = GetComponentInParent<VobProperties>();
+
+            if (vobProperties != null)
+            {
+                _nameCanvas.GetComponentInChildren<TMP_Text>().text = vobProperties.GetFocusName();
+                return;
+            }
+
+            var npcLoader = GetComponentInParent<NpcLoader2>();
+            if (npcLoader != null)
+            {
+                _nameCanvas.GetComponentInChildren<TMP_Text>().text = npcLoader.Npc.GetUserData2().PrefabProps.GetFocusName();
+                return;
+            }
         }
 
         public void OnHoverEnter(HVRGrabberBase grabber, HVRGrabbable grabbable)
@@ -57,7 +80,6 @@ namespace GUZ.VR.Components
 
             if (_featureShowName)
             {
-                _nameCanvas.GetComponentInChildren<TMP_Text>().text = _properties.GetFocusName();
                 _nameCanvas.SetActive(true);
             }
 

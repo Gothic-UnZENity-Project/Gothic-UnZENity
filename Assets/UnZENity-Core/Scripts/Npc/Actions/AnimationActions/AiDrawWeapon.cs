@@ -1,14 +1,14 @@
+using GUZ.Core._Npc2;
 using GUZ.Core.Creator;
 using GUZ.Core.Data.ZkEvents;
 using GUZ.Core.Extensions;
-using UnityEngine;
 using EventType = ZenKit.EventType;
 
 namespace GUZ.Core.Npc.Actions.AnimationActions
 {
     public class DrawWeapon : AbstractAnimationAction
     {
-        public DrawWeapon(AnimationAction action, GameObject npcGo) : base(action, npcGo)
+        public DrawWeapon(AnimationAction action, NpcContainer2 npcContainer) : base(action, npcContainer)
         {
         }
 
@@ -18,7 +18,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             // "t_1hRun_2_1h" --> undraw animation!
             // "t_Move_2_1hMove" --> drawing
             // "t_1h_2_1hRun"
-            AnimationCreator.PlayAnimation(Props.MdsNames, "t_Move_2_1hMove", NpcGo, true);
+            PrefabProps.AnimationHandler.PlayAnimation("t_Move_2_1hMove");
         }
 
         // FIXME - 1Hand hardcoded so far. We need to get the information from inventory system itself.

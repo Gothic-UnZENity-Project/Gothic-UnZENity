@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using GUZ.Core._Npc2;
 using GUZ.Core.Creator;
 using GUZ.Core.Data.ZkEvents;
 using GUZ.Core.Extensions;
@@ -22,7 +23,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
 
         private bool IsStopUsingMob => Action.Int0 <= -1;
 
-        public UseMob(AnimationAction action, GameObject npcGo) : base(action, npcGo)
+        public UseMob(AnimationAction action, NpcContainer2 npcContainer) : base(action, npcContainer)
         {
         }
 
@@ -33,8 +34,8 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             // NPC is already interacting with a Mob, we therefore assume it's a change of state (e.g. -1 to stop Mob usage)
             if (Props.BodyState == VmGothicEnums.BodyState.BsMobinteract)
             {
-                _mobGo = Props.CurrentInteractable;
-                _slotGo = Props.CurrentInteractableSlot;
+                _mobGo = PrefabProps.CurrentInteractable;
+                _slotGo = PrefabProps.CurrentInteractableSlot;
 
                 StartMobUseAnimation();
                 return;
@@ -54,8 +55,8 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             _slotGo = slot;
             _destination = _slotGo.transform.position;
 
-            Props.CurrentInteractable = _mobGo;
-            Props.CurrentInteractableSlot = _slotGo;
+            PrefabProps.CurrentInteractable = _mobGo;
+            PrefabProps.CurrentInteractableSlot = _slotGo;
             Props.BodyState = VmGothicEnums.BodyState.BsMobinteract;
         }
 
@@ -88,7 +89,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
         private void StartMobUseAnimation()
         {
             State = WalkState.Done;
-            PhysicsHelper.DisablePhysicsForNpc(Props);
+            PhysicsHelper.DisablePhysicsForNpc(PrefabProps);
 
             // AnimationCreator.StopAnimation(NpcGo);
             NpcGo.transform.SetPositionAndRotation(_slotGo.transform.position, _slotGo.transform.rotation);
@@ -119,9 +120,9 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
         /// <summary>
         /// Only after the Mob is reached and final transition animation is done, we will finalize this Action.
         /// </summary>
-        public override void AnimationEndEventCallback(SerializableEventEndSignal eventData)
+        protected override void AnimationEnd()
         {
-            base.AnimationEndEventCallback(eventData);
+            base.AnimationEnd();
             IsFinishedFlag = false;
 
             if (State != WalkState.Done)
@@ -141,18 +142,18 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             // Mobsi isn't in use any longer
             if (Props.CurrentInteractableStateId == -1)
             {
-                Props.CurrentInteractable = null;
-                Props.CurrentInteractableSlot = null;
+                PrefabProps.CurrentInteractable = null;
+                PrefabProps.CurrentInteractableSlot = null;
                 Props.BodyState = VmGothicEnums.BodyState.BsStand;
 
-                PhysicsHelper.EnablePhysicsForNpc(Props);
+                PhysicsHelper.EnablePhysicsForNpc(PrefabProps);
             }
             // Loop Mobsi animation until the same UseMob with -1 is called.
             else
             {
                 var mobVisualName = _mobGo.GetComponent<VobProperties>().VisualScheme;
                 var animName = string.Format(_mobLoopAnimationString, mobVisualName, Action.Int0);
-                AnimationCreator.PlayAnimation(Props.MdsNames, animName, NpcGo, true);
+                PrefabProps.AnimationHandler.PlayAnimation(animName);
             }
 
             IsFinishedFlag = true;
@@ -199,7 +200,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             var slotPositionName = GetSlotPositionTag(_slotGo.name);
             var animName = string.Format(_mobTransitionAnimationString, mobVisualName, slotPositionName, from, to);
 
-            AnimationCreator.PlayAnimation(Props.MdsNames, animName, NpcGo);
+            PrefabProps.AnimationHandler.PlayAnimation(animName);
         }
 
         protected override void InsertItem(string slot1, string slot2)

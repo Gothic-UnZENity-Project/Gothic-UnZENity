@@ -153,7 +153,7 @@ namespace GUZ.Lab.Handler
                 Armor = -1 // We set the armor via Mdm file manually
             };
 
-            MeshFactory.CreateNpc(newNpc.name, npcData.Mdm, npcData.MdhMds, body, newNpc);
+            MeshFactory.CreateNpc(newNpc.name, npcData.Mdm, npcData.MdhMds, body, root: newNpc);
 
             if (npcData.sword != null)
             {
