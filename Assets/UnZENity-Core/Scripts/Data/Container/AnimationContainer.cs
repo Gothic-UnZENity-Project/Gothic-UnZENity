@@ -1,6 +1,5 @@
 using UnityEngine;
 using ZenKit;
-using Vector3 = System.Numerics.Vector3;
 
 namespace GUZ.Core.Data.Container
 {
@@ -14,8 +13,8 @@ namespace GUZ.Core.Data.Container
         // e.g. S_WALKL idle animation is looping.
         public bool IsLooping => Animation.Name == Animation.Next;
 
-        public bool IsWalking;
-        public Vector3 WalkingSpeed;
+        public bool IsMoving;
+        public Vector3 MovementSpeed;
 
 
         public float Length => Clip.length;

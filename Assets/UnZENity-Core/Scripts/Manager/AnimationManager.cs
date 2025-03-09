@@ -18,6 +18,9 @@ namespace GUZ.Core.Manager
 {
     public class AnimationManager
     {
+        private const string _rootBoneName = "BIP01";
+
+
         /// <summary>
         /// Handling animations for baseMds and overlayMds.
         ///
@@ -119,6 +122,8 @@ namespace GUZ.Core.Manager
 
                     return animData;
                 }
+
+
                 animData = new AnimationContainer()
                 {
                     FullName = combinedAnimationName
@@ -151,7 +156,7 @@ namespace GUZ.Core.Manager
 
                 animData.Clip = CreateAnimationClip(modelAnimation, mdh, go, animData);
                 AddClipEvents(animData.Clip, modelAnimation, animData.Animation);
-                SetClipWalkingSpeed(animData);
+                SetClipMovementSpeed(animData, modelAnimation, mdh);
 
                 MultiTypeCache.AnimationDataCache[combinedAnimationName] = animData;
 
@@ -306,12 +311,11 @@ namespace GUZ.Core.Manager
             // Initialize array
             foreach (var boneName in boneNames)
             {
-                // Skip adding curves for excluded bones
-                // FIXME - We will always exclude BIP01!
-                // if (excludeBones != null && excludeBones.Contains(boneName))
-                // {
-                //     continue;
-                // }
+                // Skip adding curves for Root animation
+                if (boneName == _rootBoneName)
+                {
+                    continue;
+                }
 
                 curves.Add(boneName, new List<AnimationCurve>(7));
 
@@ -319,45 +323,25 @@ namespace GUZ.Core.Manager
                 curves[boneName].AddRange(Enumerable.Range(0, 7).Select(_ => new AnimationCurve()).ToArray());
             }
 
-            var rootBoneStartCorrection = Vector3.zero;
-
             // Add KeyFrames from PxSamples
             for (var i = 0; i < pxAnimation.Samples.Count; i++)
             {
                 // We want to know what time it is for the animation.
-                // Therefore we need to know fps multiplied with current sample. As there are nodeCount samples before a new time starts,
+                // Therefore, we need to know fps multiplied with current sample. As there are nodeCount samples before a new time starts,
                 // we need to add this to the calculation.
                 var time = 1 / pxAnimation.Fps * ((float)i / pxAnimation.NodeCount);
                 var sample = pxAnimation.Samples[i];
                 var boneId = i % pxAnimation.NodeCount;
                 var boneName = boneNames[boneId];
 
-                // FIXME - We will always exclude BIP01!
-                // if (excludeBones != null && excludeBones.Contains(boneName))
-                // {
-                //     continue;
-                // }
+                if (boneName == _rootBoneName)
+                {
+                    continue;
+                }
 
                 var boneList = curves[boneName];
-                var isRootBone = boneName.EqualsIgnoreCase("BIP01");
 
-                // Some animations don't start with BIP01=(0,0,0).
-                // Therefore we need to calculate the offset.
-                // Otherwise e.g. walking will hick up as NPC will _spawn_ slightly in front of last animation loop.
-                if (time == 0.0f && isRootBone)
-                {
-                    rootBoneStartCorrection = sample.Position.ToUnityVector();
-                }
-
-                Vector3 uPosition;
-                if (isRootBone)
-                {
-                    uPosition = sample.Position.ToUnityVector() - rootBoneStartCorrection;
-                }
-                else
-                {
-                    uPosition = sample.Position.ToUnityVector();
-                }
+                var uPosition = sample.Position.ToUnityVector();
 
                 // We add 7 properties for location and rotation.
                 boneList[0].AddKey(time, uPosition.x);
@@ -391,12 +375,34 @@ namespace GUZ.Core.Manager
             return clip;
         }
 
-        private void SetClipWalkingSpeed(AnimationContainer animData)
+        /// <summary>
+        /// Based on first node (BIP01), we calculate its start position and end position of the animation.
+        /// If it's above a threshold, we have a movement animation.
+        /// </summary>
+        private void SetClipMovementSpeed(AnimationContainer animData, IModelAnimation modelAnim, IModelHierarchy mdh)
         {
-            // Calculate From Samples: 0 and Samples.max - BoneCount --> Vector is used as Movement of the whole animation
-            // (?) Subtract by count of frames and we get the Vector3 of movement speed per Frame
-            // Set this value inside animData.IsWalking + animData.WalkingSpeed --> Check for a Threshhold if we walk (e..g 0.4f from OpenGothic: void Animation::AnimData::setupMoveTr()
-            // AND Exclude BIP01 Bone from AnimationClip
+            var firstBoneIndex = modelAnim.NodeIndices.First();
+            var isRootBoneExisting = mdh.Nodes[firstBoneIndex].Name == _rootBoneName;
+
+            if (!isRootBoneExisting)
+            {
+                return;
+            }
+
+            var boneCount = modelAnim.NodeCount;
+            var firstSample = modelAnim.Samples[0];
+            var lastSample = modelAnim.Samples[modelAnim.SampleCount - boneCount];
+
+            var movement = (lastSample.Position - firstSample.Position).ToUnityVector();
+
+            // TODO - Create a constant for this 0.4 threshold
+            if (movement.sqrMagnitude < 0.4f)
+            {
+                return;
+            }
+
+            animData.IsMoving = true;
+            animData.MovementSpeed = movement;
         }
 
         // TODO - If we have a performance bottleneck while loading animations, then we could cache these results.
