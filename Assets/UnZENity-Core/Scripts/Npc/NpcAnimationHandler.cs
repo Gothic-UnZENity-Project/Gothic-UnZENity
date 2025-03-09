@@ -42,6 +42,11 @@ namespace GUZ.Core.Npc
             Go.transform.localPosition += Time.deltaTime * moveDirection;
         }
 
+        public bool PlayIdleAnimation()
+        {
+            return PlayAnimation(GetIdleAnimationName());
+        }
+
         public bool PlayAnimation(string animName, string forcedNextAnimName = null)
         {
             if (!GameGlobals.Animations.PlayAnimation(PrefabProps.Animation, Properties.MdsNames, animName, out CurrentAnimation))

@@ -11,17 +11,11 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
 
         public override void Start()
         {
-            // FIXME - TODO
-        }
-
-        public override void AnimationEndEventCallback(SerializableEventEndSignal eventData)
-        {
-            // FIXME - Use via Timer of the animation instead. Timer value is set within Abstract parent class.
+            PrefabProps.AnimationHandler.PlayIdleAnimation();
         }
 
         public override bool IsFinished()
         {
-            // FIXME - DEBUG
             return true;
         }
     }
