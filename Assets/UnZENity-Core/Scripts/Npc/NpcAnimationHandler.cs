@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using GUZ.Core._Npc2;
+using GUZ.Core.Data.Container;
 using GUZ.Core.Vm;
 using JetBrains.Annotations;
 using MyBox;
@@ -13,6 +14,8 @@ namespace GUZ.Core.Npc
         private bool _isAnimationPlaying;
         private float _blendOutTime;
         private string _nextAnimation;
+
+        public AnimationContainer CurrentAnimation;
 
         protected override void Awake()
         {
@@ -28,9 +31,22 @@ namespace GUZ.Core.Npc
             StartCoroutine(BlendOutCoroutine());
         }
 
+        private void Update()
+        {
+            if (CurrentAnimation == null || !CurrentAnimation.IsMoving)
+            {
+                return;
+            }
+
+            var moveDirection = Go.transform.TransformDirection(CurrentAnimation.MovementSpeed);
+
+            // FIXME - Current MovementSpeed is not yet set via fps + frames = duration --> Currently NPCs "slide".
+            Go.transform.localPosition += Time.deltaTime * moveDirection;
+        }
+
         public bool PlayAnimation(string animName, string forcedNextAnimName = null)
         {
-            if (!GameGlobals.Animations.PlayAnimation(PrefabProps.Animation, Properties.MdsNames, animName, out var nextAnimName))
+            if (!GameGlobals.Animations.PlayAnimation(PrefabProps.Animation, Properties.MdsNames, animName, out CurrentAnimation))
             {
                 _isAnimationPlaying = false;
                 return false;
@@ -38,13 +54,13 @@ namespace GUZ.Core.Npc
 
             if (forcedNextAnimName.IsNullOrEmpty())
             {
-                if (nextAnimName.IsNullOrEmpty())
+                if (CurrentAnimation.Next.IsNullOrEmpty())
                 {
                     _nextAnimation = GetIdleAnimationName();
                 }
                 else
                 {
-                    _nextAnimation = nextAnimName;
+                    _nextAnimation = CurrentAnimation.Next;
                 }
             }
             else

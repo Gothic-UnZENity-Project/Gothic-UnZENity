@@ -28,21 +28,18 @@ namespace GUZ.Core.Manager
         /// If not, it will be started with weight=1 immediately (Unity behavior).
         /// BlendOut will be applied by the callee via Coroutine as it's dynamic based on upcoming animation.
         /// </summary>
-        public bool PlayAnimation(Animation animComp, string[] mdsNames, string animName, out string nextAnimName)
+        public bool PlayAnimation(Animation animComp, string[] mdsNames, string animName, [CanBeNull] out AnimationContainer animData)
         {
-            nextAnimName = null;
-
-            var anim = GetCachedAnimationData(mdsNames, animName, animComp);
-            if (anim == null)
+            animData = GetCachedAnimationData(mdsNames, animName, animComp);
+            if (animData == null)
             {
                 return false;
             }
 
             // TODO - When calculating BlendOut of previous animation, we say anim1.BlendOut - anim2.BlendIn. Here we only say anim2.BlendIn.
             // TODO - This makes the Fade (e.g.) twice as fast. Okay for now, but could be improved. @see: NpcAnimationHandler.BlendOutCoroutine()
-            animComp.CrossFade(anim.FullName, anim.BlendIn);
+            animComp.CrossFade(animData.FullName, animData.BlendIn);
 
-            nextAnimName = anim.Next;
             return true;
         }
 
