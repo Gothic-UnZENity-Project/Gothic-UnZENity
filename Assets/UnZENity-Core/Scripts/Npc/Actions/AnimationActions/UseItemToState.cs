@@ -57,6 +57,8 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
                 // Go on with next animation.
                 PlayTransitionAnimation();
             }
+
+            AnimationEndEventTime = PrefabProps.AnimationHandler.CurrentAnimation.Length;
         }
 
         protected override void AnimationEnd()

@@ -52,7 +52,7 @@ namespace GUZ.Core.Npc
 
             if (forcedNextAnimName.IsNullOrEmpty())
             {
-                if (CurrentAnimation.Next.IsNullOrEmpty())
+                if (CurrentAnimation!.Next.IsNullOrEmpty())
                 {
                     _nextAnimation = GetIdleAnimationName();
                 }
