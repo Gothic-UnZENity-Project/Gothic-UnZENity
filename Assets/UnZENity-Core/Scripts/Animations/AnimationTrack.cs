@@ -11,6 +11,7 @@ namespace GUZ.Core.Animations
         public AnimationKeyFrame[] KeyFrames;
         public IAnimation Animation;
         public IModelAnimation ModelAnimation;
+        public int Layer;
         public float Duration;
         public float FrameTime;
 

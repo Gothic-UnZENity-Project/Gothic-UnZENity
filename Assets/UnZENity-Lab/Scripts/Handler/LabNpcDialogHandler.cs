@@ -44,10 +44,14 @@ namespace GUZ.Lab.Handler
             {
                 animSystem.PlayAnimation("S_WALK");
                 Debug.Log("idle");
-                yield return new WaitForSeconds(10f);
+                yield return new WaitForSeconds(2f);
 
-                animHeadHandler.StartLookAt(Camera.main!.transform);
-                break;
+                animSystem.PlayAnimation("S_RUN");
+                // T_DIALOGGESTURE_01
+                yield return new WaitForSeconds(2f);
+
+                // animHeadHandler.StartLookAt(Camera.main!.transform);
+                continue;
 
                 animSystem.PlayAnimation("T_DIALOGGESTURE_08");
                 Debug.Log("8");

@@ -48,7 +48,8 @@ namespace GUZ.Core.Animations
             var track = new AnimationTrack
             {
                 Animation = anim,
-                ModelAnimation = modelAnimation
+                ModelAnimation = modelAnimation,
+                Layer = anim.Layer
             };
 
             // Get bone names from model hierarchy using node indices

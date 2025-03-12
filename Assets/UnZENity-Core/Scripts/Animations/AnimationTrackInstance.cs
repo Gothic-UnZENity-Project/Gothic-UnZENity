@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using PlasticGui.WorkspaceWindow.Locks;
 using UnityEngine;
@@ -17,6 +18,8 @@ namespace GUZ.Core.Animations
         public float CurrentTime;
         public int CurrentKeyFrameIndex;
         public float NextKeyframeTime;
+        public float BlendOutTime;
+        public AnimationState State;
 
         public AnimationTrackInstance(AnimationTrack track)
         {
@@ -25,6 +28,8 @@ namespace GUZ.Core.Animations
             CurrentTime = 0f;
             CurrentKeyFrameIndex = 0;
             NextKeyframeTime = track.FrameTime;
+            BlendOutTime = 0f; // Not used until AnimationState.BlendOut is started.
+            State = AnimationState.BlendIn;
         }
 
         public void Update(float deltaTime)
@@ -50,11 +55,30 @@ namespace GUZ.Core.Animations
                 }
             }
 
-            // Handle blend in
-            if (CurrentBlendWeight < 1f)
+            switch (State)
             {
-                CurrentBlendWeight += deltaTime / Track.Animation.BlendIn;
-                CurrentBlendWeight = Mathf.Min(CurrentBlendWeight, 1f);
+                case AnimationState.BlendIn:
+                    CurrentBlendWeight += deltaTime / Track.Animation.BlendIn;
+                    CurrentBlendWeight = Mathf.Min(CurrentBlendWeight, 1f);
+
+                    if (CurrentBlendWeight >= 1f)
+                    {
+                        State = AnimationState.Playing;
+                    }
+                    break;
+                case AnimationState.Playing:
+                    break;
+                case AnimationState.BlendOut:
+                    CurrentBlendWeight -= deltaTime / BlendOutTime;
+                    CurrentBlendWeight = Mathf.Max(CurrentBlendWeight, 0f);
+
+                    if (CurrentBlendWeight <= 0f)
+                    {
+                        State = AnimationState.Stopped;
+                    }
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
         }
 
@@ -71,6 +95,13 @@ namespace GUZ.Core.Animations
             position *= CurrentBlendWeight;
             rotation = Quaternion.Slerp(Quaternion.identity, rotation, CurrentBlendWeight);
             return true;
+        }
+
+        // FIXME - I'm not sure, if we need to use own animation's BlendOut time or the BlendIn time for the other (new) animation.
+        public void BlendOutTrack(float blendOutTime)
+        {
+            BlendOutTime = blendOutTime;
+            State = AnimationState.BlendOut;
         }
     }
 }
