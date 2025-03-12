@@ -39,7 +39,7 @@ namespace GUZ.Core.Animations
 
             if (CurrentTime >= NextKeyframeTime)
             {
-                CurrentKeyFrameIndex++;
+                CurrentKeyFrameIndex = (int)(CurrentTime / Track.FrameTime); // Round down
                 if (Track.KeyFrames.Length > CurrentKeyFrameIndex + 1)
                 {
                     NextKeyframeTime = (CurrentKeyFrameIndex + 1) * Track.FrameTime;

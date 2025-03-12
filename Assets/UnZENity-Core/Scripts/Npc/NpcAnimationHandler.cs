@@ -9,6 +9,7 @@ using UnityEngine;
 
 namespace GUZ.Core.Npc
 {
+    [Obsolete("Use AnimationSystem.cs instead.")]
     public class NpcAnimationHandler : BasePlayerBehaviour
     {
         private bool _isAnimationPlaying;

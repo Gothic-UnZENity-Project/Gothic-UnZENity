@@ -7,15 +7,17 @@ namespace GUZ.Core.Animations
 {
     public class AnimationSystem : BasePlayerBehaviour
     {
+        public Transform RootBone;
+
         // Caching bone Transforms makes it faster to apply them to animations later.
         private string[] _boneNames;
         private Transform[] _bones;
         private List<AnimationTrackInstance> _trackInstances = new();
 
-        public void Initialize(Transform rootBone)
+        private void Start()
         {
             Dictionary<string, Transform> bones = new();
-            CollectBones(rootBone, bones);
+            CollectBones(RootBone, bones);
 
             _boneNames = bones.Keys.ToArray();
             _bones = bones.Values.ToArray();
@@ -23,7 +25,10 @@ namespace GUZ.Core.Animations
 
         private void CollectBones(Transform bone, Dictionary<string, Transform> bones)
         {
-            bones.Add(bone.name, bone);
+            if (bone.name.StartsWith("BIP01"))
+            {
+                bones.Add(bone.name, bone);
+            }
 
             foreach (Transform child in bone)
             {

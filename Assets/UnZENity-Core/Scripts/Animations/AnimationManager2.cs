@@ -91,7 +91,7 @@ namespace GUZ.Core.Animations
 
         private static float CalculateDuration(AnimationTrack track)
         {
-            return track.Animation.LastFrame - track.Animation.FirstFrame / track.Animation.Fps;
+            return (track.Animation.LastFrame - track.Animation.FirstFrame) / track.Animation.Fps;
         }
 
         /// <summary>
