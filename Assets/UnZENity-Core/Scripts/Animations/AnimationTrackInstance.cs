@@ -58,18 +58,19 @@ namespace GUZ.Core.Animations
             }
         }
 
-        public void GetBonePose(string boneName, out Vector3 position, out Quaternion rotation)
+        public bool TryGetBonePose(string boneName, out Vector3 position, out Quaternion rotation)
         {
             if (!Track.TryGetBonePose(boneName, CurrentKeyFrameIndex, out position, out rotation))
             {
                 position = Vector3.zero;
                 rotation = Quaternion.identity;
-                return;
+                return false;
             }
 
             // Apply blending weight
             position *= CurrentBlendWeight;
             rotation = Quaternion.Slerp(Quaternion.identity, rotation, CurrentBlendWeight);
+            return true;
         }
     }
 }

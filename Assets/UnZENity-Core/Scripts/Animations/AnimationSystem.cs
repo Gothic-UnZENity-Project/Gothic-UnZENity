@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using GUZ.Core.Extensions;
 using GUZ.Core.Npc;
 using UnityEngine;
 
@@ -45,6 +46,11 @@ namespace GUZ.Core.Animations
 
         private void Update()
         {
+            if (_trackInstances.Count == 0)
+            {
+                return;
+            }
+
             // Update all tracks
             foreach (var track in _trackInstances)
             {
@@ -57,8 +63,6 @@ namespace GUZ.Core.Animations
 
         private void ApplyFinalPose()
         {
-            Dictionary<string, (Vector3 position, Quaternion rotation)> finalPose = new();
-
             // Accumulate poses from all tracks
             for (var boneIndex = 0; boneIndex < _boneNames.Length; boneIndex++)
             {
@@ -67,16 +71,25 @@ namespace GUZ.Core.Animations
 
                 var finalPosition = Vector3.zero;
                 var finalRotation = Quaternion.identity;
+                var hasBoneAnimation = false;
 
                 foreach (var track in _trackInstances)
                 {
-                    track.GetBonePose(boneName, out var position, out var rotation);
-                    finalPosition += position;
-                    finalRotation *= rotation;
+                    if (track.TryGetBonePose(boneName, out var position, out var rotation))
+                    {
+                        finalPosition += position;
+                        finalRotation *= rotation;
+                        hasBoneAnimation = true;
+                    }
                 }
 
-                bone.localPosition = finalPosition;
-                bone.localRotation = finalRotation;
+                // We apply position change only! if we have some update.
+                // Otherwise, e.g. T_DIALOGGESTURE_ will pos+rot the lower body into 0,0,0 (aka stomach).
+                if (hasBoneAnimation)
+                {
+                    bone.localPosition = finalPosition;
+                    bone.localRotation = finalRotation;
+                }
             }
         }
     }
