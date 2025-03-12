@@ -10,7 +10,7 @@ namespace GUZ.Core.Data.Container
         public IAnimation Animation;
         public AnimationClip Clip;
 
-        // e.g. S_WALKL idle animation is looping.
+        // e.g. S_WALK idle animation is looping.
         public bool IsLooping => Animation.Name == Animation.Next;
 
         public bool IsMoving;

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using GUZ.Core._Npc2;
+using GUZ.Core.Animations;
 using GUZ.Core.Data.Container;
 using TMPro;
 using UnityEngine;
@@ -27,6 +28,7 @@ namespace GUZ.Core.Caches
         /// Already created AnimationData (Clips + RootMotions) can be reused.
         /// </summary>
         public static readonly Dictionary<string, AnimationContainer> AnimationDataCache = new();
+        public static readonly Dictionary<string, AnimationTrack> AnimationTrackCache = new();
 
         /// <summary>
         /// This dictionary caches the sprite assets for fonts.
@@ -55,6 +57,7 @@ namespace GUZ.Core.Caches
         {
             NpcCache.Clear();
             AnimationDataCache.Clear();
+            AnimationTrackCache.Clear();
             FontCache.Clear();
             Meshes.Clear();
             AudioClips.Clear();

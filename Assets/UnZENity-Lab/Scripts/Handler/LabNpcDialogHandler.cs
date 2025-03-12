@@ -1,6 +1,7 @@
 using System.Collections;
 using GUZ.Core;
 using GUZ.Core._Npc2;
+using GUZ.Core.Animations;
 using GUZ.Core.Caches;
 using GUZ.Core.Creator;
 using GUZ.Core.Extensions;
@@ -35,20 +36,20 @@ namespace GUZ.Lab.Handler
         {
             var mdsNames = new [] { "humans" };
             var npcRoot = NpcSlotGo.transform.GetChild(0).GetChild(0).gameObject;
-            var animHandler = npcRoot.GetComponent<NpcAnimationHandler>();
+            var animSystem = npcRoot.GetComponent<AnimationSystem>();
             var animHeadHandler = npcRoot.GetComponent<NpcHeadAnimationHandler>();
             yield return new WaitForSeconds(1f);
 
             while (true)
             {
-                animHandler.PlayAnimation("S_WALK", "");
+                animSystem.PlayAnimation("S_WALK");
                 Debug.Log("idle");
-                yield return new WaitForSeconds(1f);
+                yield return new WaitForSeconds(10f);
 
                 animHeadHandler.StartLookAt(Camera.main!.transform);
                 break;
 
-                animHandler.PlayAnimation("T_DIALOGGESTURE_08", null);
+                animSystem.PlayAnimation("T_DIALOGGESTURE_08");
                 Debug.Log("8");
                 yield return new WaitForSeconds(8f);
             }
