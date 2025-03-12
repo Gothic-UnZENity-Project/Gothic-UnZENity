@@ -35,7 +35,7 @@ namespace GUZ.Core.Animations
             var anim = mds.Animations.First(i => i.Name.EqualsIgnoreCase(animName));
 
             track = CreateTrack(modelAnimation, mdh, anim);
-            track.Duration = CalculateDuration(track);
+            track.Duration = CalculateDuration(modelAnimation);
 
             Tracks.Add(name, track);
 
@@ -45,9 +45,10 @@ namespace GUZ.Core.Animations
         public static AnimationTrack CreateTrack(IModelAnimation modelAnimation,
             IModelHierarchy modelHierarchy, IAnimation anim)
         {
-            var track = new AnimationTrack()
+            var track = new AnimationTrack
             {
-                Animation = anim
+                Animation = anim,
+                ModelAnimation = modelAnimation
             };
 
             // Get bone names from model hierarchy using node indices
@@ -89,9 +90,9 @@ namespace GUZ.Core.Animations
             return track;
         }
 
-        private static float CalculateDuration(AnimationTrack track)
+        private static float CalculateDuration(IModelAnimation modelAnimation)
         {
-            return (track.Animation.LastFrame - track.Animation.FirstFrame) / track.Animation.Fps;
+            return modelAnimation.FrameCount / modelAnimation.Fps;
         }
 
         /// <summary>

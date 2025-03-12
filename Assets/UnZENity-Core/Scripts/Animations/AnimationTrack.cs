@@ -10,6 +10,7 @@ namespace GUZ.Core.Animations
         public int BoneCount;
         public AnimationKeyFrame[] KeyFrames;
         public IAnimation Animation;
+        public IModelAnimation ModelAnimation;
         public float Duration;
         public float FrameTime;
 
