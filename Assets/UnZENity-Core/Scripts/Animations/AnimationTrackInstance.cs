@@ -193,14 +193,18 @@ namespace GUZ.Core.Animations
                 return;
             }
 
-            for (var i = 0; i < boneNames.Length; i++)
+            foreach (var boneName in boneNames)
             {
-                if (Track.BoneNames[i] == boneNames[i])
+                var boneIndex = Track.BoneNames.IndexOfItem(boneName);
+
+                if (boneIndex == -1)
                 {
-                    BoneStates[i] = AnimationState.BlendIn;
-                    BoneBlendWeights[i] = 0f;
-                    BoneBlendTimes[i] = blendInTime;
+                    continue;
                 }
+
+                BoneStates[boneIndex] = AnimationState.BlendIn;
+                BoneBlendWeights[boneIndex] = 0f;
+                BoneBlendTimes[boneIndex] = blendInTime;
             }
         }
     }

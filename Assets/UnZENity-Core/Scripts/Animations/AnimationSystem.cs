@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using GUZ.Core.Extensions;
 using GUZ.Core.Npc;
 using UnityEngine;
 using ZenKit;
@@ -52,6 +53,41 @@ namespace GUZ.Core.Animations
 
             StopTrackBones(trackInstance);
             _trackInstances.Add(trackInstance);
+        }
+
+        public void StopAnimation(string stoppingAnimationName)
+        {
+            AnimationTrackInstance instanceToStop = null;
+
+            // Fetch and blend out Animation.
+            foreach (var instance in _trackInstances)
+            {
+                // If animation is found, then mark it as "BlendOut"
+                if (instance.Track.Animation.Name.EqualsIgnoreCase(stoppingAnimationName))
+                {
+                    instanceToStop = instance;
+                    instance.BlendOutTrack(instance.Track.Animation.BlendOut);
+                    // Do not break. We could potentially need to stop multiple instances of the same animation.
+                }
+            }
+
+            if (instanceToStop == null)
+            {
+                return;
+            }
+
+            // Ramp up bones on animation with lower level as the higher level bones will blend out.
+            foreach (var instance in _trackInstances)
+            {
+                if (instance.Track.Animation.Name.EqualsIgnoreCase(stoppingAnimationName))
+                {
+                    continue;
+                }
+                if (instance.Track.Layer < instanceToStop.Track.Layer)
+                {
+                    instance.BlendInBones(instanceToStop.Track.BoneNames, instanceToStop.Track.Animation.BlendOut);
+                }
+            }
         }
 
         /// <summary>

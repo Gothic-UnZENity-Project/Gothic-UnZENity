@@ -48,6 +48,9 @@ namespace GUZ.Lab.Handler
                 animSystem.PlayAnimation("T_DIALOGGESTURE_08");
                 yield return new WaitForSeconds(3f);
 
+                animSystem.StopAnimation("T_DIALOGGESTURE_08");
+                yield return new WaitForSeconds(1f);
+
                 animSystem.PlayAnimation("S_RUN");
                 yield return new WaitForSeconds(2f);
                 // animHeadHandler.StartLookAt(Camera.main!.transform);
