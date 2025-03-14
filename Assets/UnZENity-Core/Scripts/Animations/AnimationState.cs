@@ -3,8 +3,8 @@ namespace GUZ.Core.Animations
     public enum AnimationState
     {
         BlendIn,
-        Playing,
+        Play,
         BlendOut,
-        Stopped
+        Stop
     }
 }

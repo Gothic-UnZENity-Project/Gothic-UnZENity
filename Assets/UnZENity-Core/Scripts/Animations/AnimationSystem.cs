@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Linq;
-using GUZ.Core.Extensions;
 using GUZ.Core.Npc;
 using UnityEngine;
 using ZenKit;
@@ -51,6 +50,7 @@ namespace GUZ.Core.Animations
             BlendOutOtherTrackBones(trackInstance);
             BlendOutOtherTracks(trackInstance);
 
+            StopTrackBones(trackInstance);
             _trackInstances.Add(trackInstance);
         }
 
@@ -64,7 +64,7 @@ namespace GUZ.Core.Animations
             {
                 if (trackInstance.Track.Layer < newInstance.Track.Layer)
                 {
-
+                    trackInstance.BlendOutBones(newInstance.Track.BoneNames, newInstance.Track.Animation.BlendIn);
                 }
             }
         }
@@ -82,9 +82,10 @@ namespace GUZ.Core.Animations
             if (isStartAtLastFrame)
             {
                 // FIXME - Implement
+                Debug.LogError("AnimationFlas.Queue not implemented yet.");
             }
-            else
-            {
+            // else
+            // {
                 foreach (var instance in _trackInstances)
                 {
                     if (instance.Track.Layer != newInstance.Track.Layer)
@@ -94,8 +95,26 @@ namespace GUZ.Core.Animations
 
                     instance.BlendOutTrack(newInstance.Track.Animation.BlendIn);
                 }
+            // }
+        }
+
+        /// <summary>
+        /// If we start a new instance, we need to apply, which bones should not be started, as e.g. T_DIALOGGESTURE_ from
+        /// a higher level forced the animation to stop bones.
+        /// </summary>
+        private void StopTrackBones(AnimationTrackInstance newInstance)
+        {
+            foreach (var instance in _trackInstances)
+            {
+                if (newInstance.Track.Layer >= instance.Track.Layer)
+                {
+                    continue;
+                }
+
+                newInstance.BlendOutBones(instance.Track.BoneNames, 0f);
             }
         }
+
 
         private void Update()
         {
@@ -107,7 +126,7 @@ namespace GUZ.Core.Animations
             // Update all tracks
             foreach (var instance in _trackInstances.ToArray())
             {
-                if (instance.State == AnimationState.Stopped)
+                if (instance.State == AnimationState.Stop)
                 {
                     _trackInstances.Remove(instance);
                     continue;

@@ -3,7 +3,6 @@ using GUZ.Core;
 using GUZ.Core._Npc2;
 using GUZ.Core.Animations;
 using GUZ.Core.Caches;
-using GUZ.Core.Creator;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Npc;
@@ -46,10 +45,11 @@ namespace GUZ.Lab.Handler
                 Debug.Log("idle");
                 yield return new WaitForSeconds(2f);
 
-                animSystem.PlayAnimation("S_RUN");
-                // T_DIALOGGESTURE_01
-                yield return new WaitForSeconds(2f);
+                animSystem.PlayAnimation("T_DIALOGGESTURE_08");
+                yield return new WaitForSeconds(3f);
 
+                animSystem.PlayAnimation("S_RUN");
+                yield return new WaitForSeconds(2f);
                 // animHeadHandler.StartLookAt(Camera.main!.transform);
                 continue;
 

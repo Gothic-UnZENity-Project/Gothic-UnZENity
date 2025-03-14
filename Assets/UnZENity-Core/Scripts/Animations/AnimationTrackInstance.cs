@@ -1,8 +1,6 @@
 using System;
-using System.Collections.Generic;
-using PlasticGui.WorkspaceWindow.Locks;
+using MyBox;
 using UnityEngine;
-using Transform = log4net.Util.Transform;
 
 namespace GUZ.Core.Animations
 {
@@ -14,22 +12,33 @@ namespace GUZ.Core.Animations
         public AnimationTrack Track;
 
         // Value for this specific point in time
-        public float CurrentBlendWeight;
         public float CurrentTime;
         public int CurrentKeyFrameIndex;
         public float NextKeyframeTime;
-        public float BlendOutTime;
         public AnimationState State;
+        public AnimationState[] BoneStates;
+        public float[] BoneBlendWeights;
+        public float[] BoneBlendTimes;
+        public int BoneAmountStatePlay;
+        public int BoneAmountStateStop;
 
         public AnimationTrackInstance(AnimationTrack track)
         {
             Track = track;
-            CurrentBlendWeight = 0f;
             CurrentTime = 0f;
             CurrentKeyFrameIndex = 0;
             NextKeyframeTime = track.FrameTime;
-            BlendOutTime = 0f; // Not used until AnimationState.BlendOut is started.
-            State = AnimationState.BlendIn;
+            BoneStates = new AnimationState[Track.BoneCount];
+            BoneBlendWeights = new float[Track.BoneCount];
+            BoneBlendTimes = new float[Track.BoneCount];
+            for (var i = 0; i < Track.BoneCount; i++)
+            {
+                BoneStates[i] = AnimationState.BlendIn;
+                BoneBlendWeights[i] = 0f;
+                BoneBlendTimes[i] = Track.Animation.BlendIn;
+            }
+            BoneAmountStatePlay = 0;
+            BoneAmountStateStop = 0;
         }
 
         public void Update(float deltaTime)
@@ -55,26 +64,55 @@ namespace GUZ.Core.Animations
                 }
             }
 
+
+            // Apply BlendWeight changes to each bone
+            for (var i = 0; i < Track.BoneCount; i++)
+            {
+                switch (BoneStates[i])
+                {
+                    case AnimationState.BlendIn:
+                        BoneBlendWeights[i] += deltaTime / BoneBlendTimes[i];
+
+                        if (BoneBlendWeights[i] >= 1f)
+                        {
+                            BoneBlendWeights[i] = 1f;
+                            BoneStates[i] = AnimationState.Play;
+                            BoneAmountStatePlay++;
+                        }
+                        break;
+                    case AnimationState.BlendOut:
+                        if (BoneStates[i] == AnimationState.BlendOut)
+                        {
+                            BoneBlendWeights[i] -= deltaTime / BoneBlendTimes[i];
+
+                            if (BoneBlendWeights[i] <= 0f)
+                            {
+                                BoneBlendWeights[i] = 0f;
+                                BoneStates[i] = AnimationState.Stop;
+                                BoneAmountStateStop++;
+                            }
+                        }
+                        break;
+                }
+            }
+
+            // Update State if blending is done for all bones.
             switch (State)
             {
                 case AnimationState.BlendIn:
-                    CurrentBlendWeight += deltaTime / Track.Animation.BlendIn;
-                    CurrentBlendWeight = Mathf.Min(CurrentBlendWeight, 1f);
-
-                    if (CurrentBlendWeight >= 1f)
+                    if (BoneAmountStatePlay >= Track.BoneCount)
                     {
-                        State = AnimationState.Playing;
+                        BoneAmountStatePlay = Track.BoneCount;
+                        State = AnimationState.Play;
                     }
                     break;
-                case AnimationState.Playing:
+                case AnimationState.Play:
                     break;
                 case AnimationState.BlendOut:
-                    CurrentBlendWeight -= deltaTime / BlendOutTime;
-                    CurrentBlendWeight = Mathf.Max(CurrentBlendWeight, 0f);
-
-                    if (CurrentBlendWeight <= 0f)
+                    if (BoneAmountStateStop >= Track.BoneCount)
                     {
-                        State = AnimationState.Stopped;
+                        BoneAmountStateStop = Track.BoneCount;
+                        State = AnimationState.Stop;
                     }
                     break;
                 default:
@@ -84,7 +122,7 @@ namespace GUZ.Core.Animations
 
         public bool TryGetBonePose(string boneName, out Vector3 position, out Quaternion rotation)
         {
-            if (!Track.TryGetBonePose(boneName, CurrentKeyFrameIndex, out position, out rotation))
+            if (!Track.TryGetBonePose(boneName, CurrentKeyFrameIndex, out position, out rotation, out var boneindex))
             {
                 position = Vector3.zero;
                 rotation = Quaternion.identity;
@@ -92,16 +130,78 @@ namespace GUZ.Core.Animations
             }
 
             // Apply blending weight
-            position *= CurrentBlendWeight;
-            rotation = Quaternion.Slerp(Quaternion.identity, rotation, CurrentBlendWeight);
+            position *= BoneBlendWeights[boneindex];
+            rotation = Quaternion.Slerp(Quaternion.identity, rotation, BoneBlendWeights[boneindex]);
             return true;
         }
 
-        // FIXME - I'm not sure, if we need to use own animation's BlendOut time or the BlendIn time for the other (new) animation.
+        /// <summary>
+        /// About BlendOut times:
+        /// a.) the new animation has higher or same Layer, then its BlendIn time is used as our BlendOut time.
+        /// b.) there is no new animation, then we use our BlendOut time.
+        /// </summary>
         public void BlendOutTrack(float blendOutTime)
         {
-            BlendOutTime = blendOutTime;
             State = AnimationState.BlendOut;
+
+            for (var i = 0; i < Track.BoneCount; i++)
+            {
+                switch (BoneStates[i])
+                {
+                    case AnimationState.BlendIn:
+                    case AnimationState.Play:
+                        BoneBlendTimes[i] = blendOutTime;
+                        BoneStates[i] = AnimationState.BlendOut;
+                        break;
+                    case AnimationState.BlendOut:
+                    case AnimationState.Stop:
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+            }
+        }
+
+        public void BlendOutBones(string[] boneNames, float blendOutTime)
+        {
+            // Skip partial BlendOut if we're already blending out.
+            if (State == AnimationState.BlendOut)
+            {
+                return;
+            }
+
+            foreach (var boneName in boneNames)
+            {
+                var boneIndex = Track.BoneNames.IndexOfItem(boneName);
+
+                if (boneIndex == -1)
+                {
+                    continue;
+                }
+
+                BoneStates[boneIndex] = AnimationState.BlendOut;
+                BoneBlendWeights[boneIndex] = 1f;
+                BoneBlendTimes[boneIndex] = blendOutTime;
+            }
+        }
+
+        public void BlendInBones(string[] boneNames, float blendInTime)
+        {
+            // Skip partial BlendIn if we're already blending in.
+            if (State == AnimationState.BlendIn)
+            {
+                return;
+            }
+
+            for (var i = 0; i < boneNames.Length; i++)
+            {
+                if (Track.BoneNames[i] == boneNames[i])
+                {
+                    BoneStates[i] = AnimationState.BlendIn;
+                    BoneBlendWeights[i] = 0f;
+                    BoneBlendTimes[i] = blendInTime;
+                }
+            }
         }
     }
 }
