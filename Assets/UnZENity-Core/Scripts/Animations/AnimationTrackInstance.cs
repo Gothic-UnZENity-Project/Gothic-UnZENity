@@ -196,8 +196,9 @@ namespace GUZ.Core.Animations
                 return;
             }
 
-            foreach (var boneName in boneNames)
+            for (var i = 0; i < boneNames.Length; i++)
             {
+                var boneName = boneNames[i];
                 var boneIndex = Track.BoneNames.IndexOfItem(boneName);
 
                 if (boneIndex == -1)
@@ -205,6 +206,10 @@ namespace GUZ.Core.Animations
                     continue;
                 }
 
+                if (BoneStates[boneIndex] == AnimationState.Play)
+                {
+                    BoneAmountStatePlay--;
+                }
                 BoneStates[boneIndex] = AnimationState.BlendOut;
                 BoneBlendWeights[boneIndex] = 1f;
                 BoneBlendTimes[boneIndex] = blendOutTime;
@@ -219,13 +224,19 @@ namespace GUZ.Core.Animations
                 return;
             }
 
-            foreach (var boneName in boneNames)
+            for (var i = 0; i < boneNames.Length; i++)
             {
+                var boneName = boneNames[i];
                 var boneIndex = Track.BoneNames.IndexOfItem(boneName);
 
                 if (boneIndex == -1)
                 {
                     continue;
+                }
+
+                if (BoneStates[boneIndex] == AnimationState.Stop)
+                {
+                    BoneAmountStateStop--;
                 }
 
                 BoneStates[boneIndex] = AnimationState.BlendIn;
