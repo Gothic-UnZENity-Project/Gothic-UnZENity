@@ -18,7 +18,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             // "t_1hRun_2_1h" --> undraw animation!
             // "t_Move_2_1hMove" --> drawing
             // "t_1h_2_1hRun"
-            PrefabProps.AnimationHandler.PlayAnimation("t_Move_2_1hMove");
+            PrefabProps.AnimationSystem.PlayAnimation("t_Move_2_1hMove");
         }
 
         // FIXME - 1Hand hardcoded so far. We need to get the information from inventory system itself.

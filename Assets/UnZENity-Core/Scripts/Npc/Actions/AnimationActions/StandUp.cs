@@ -11,7 +11,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
 
         public override void Start()
         {
-            PrefabProps.AnimationHandler.PlayIdleAnimation();
+            PrefabProps.AnimationSystem.PlayIdleAnimation();
         }
 
         public override bool IsFinished()

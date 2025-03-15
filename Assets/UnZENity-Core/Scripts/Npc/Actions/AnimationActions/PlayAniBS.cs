@@ -13,7 +13,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
         public override void Start()
         {
             Props.BodyState = (VmGothicEnums.BodyState)Action.Int0;
-            PrefabProps.AnimationHandler.PlayAnimation(Action.String0);
+            PrefabProps.AnimationSystem.PlayAnimation(Action.String0);
         }
     }
 }

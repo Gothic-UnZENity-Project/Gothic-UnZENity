@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using GUZ.Core.Extensions;
 using GUZ.Core.Npc;
+using GUZ.Core.Vm;
 using UnityEngine;
 using ZenKit;
 
@@ -21,6 +22,13 @@ namespace GUZ.Core.Animations
         private Transform[] _bones;
         private List<AnimationTrackInstance> _trackInstances = new();
 
+        protected override void Awake()
+        {
+            base.Awake();
+
+            // Cached object which will be used later.
+            NpcData.PrefabProps.AnimationSystem = this;
+        }
 
         private void Start()
         {
@@ -44,9 +52,15 @@ namespace GUZ.Core.Animations
             }
         }
 
-        public void PlayAnimation(string animationName)
+        public bool PlayAnimation(string animationName)
         {
             var newTrack = AnimationManager2.GetTrack(animationName, Properties.MdsNameBase, Properties.MdsNameOverlay);
+
+            if (newTrack == null)
+            {
+                return false;
+            }
+
             var newTrackInstance = new AnimationTrackInstance(newTrack);
 
             BlendOutOtherTrackBones(newTrackInstance);
@@ -54,6 +68,27 @@ namespace GUZ.Core.Animations
 
             StopTrackBones(newTrackInstance);
             _trackInstances.Add(newTrackInstance);
+
+            return true;
+        }
+
+        public bool PlayIdleAnimation()
+        {
+            return PlayAnimation(GetIdleAnimationName());
+        }
+
+        public float GetAnimationDuration(string animationName)
+        {
+            for (var i = 0; i < _trackInstances.Count; i++)
+            {
+                var instance = _trackInstances[i];
+                if (instance.Track.Animation.Name.EqualsIgnoreCase(animationName))
+                {
+                    return instance.Track.Duration;
+                }
+            }
+
+            return 0f;
         }
 
         public void StopAnimation(string stoppingAnimationName)
@@ -231,6 +266,37 @@ namespace GUZ.Core.Animations
                     bone.localRotation = finalRotation;
                 }
             }
+        }
+
+        private string GetIdleAnimationName()
+        {
+            string walkMode;
+            switch (Properties.WalkMode)
+            {
+                case VmGothicEnums.WalkMode.Walk:
+                    walkMode = "WALK";
+                    break;
+                case VmGothicEnums.WalkMode.Run:
+                    walkMode = "RUN";
+                    break;
+                case VmGothicEnums.WalkMode.Sneak:
+                    walkMode = "SNEAK";
+                    break;
+                case VmGothicEnums.WalkMode.Water:
+                    walkMode = "WATER";
+                    break;
+                case VmGothicEnums.WalkMode.Swim:
+                    walkMode = "SWIM";
+                    break;
+                case VmGothicEnums.WalkMode.Dive:
+                    walkMode = "DIVE";
+                    break;
+                default:
+                    Debug.LogWarning($"Animation of type {Properties.WalkMode} not yet implemented.");
+                    return "";
+            }
+
+            return $"S_{walkMode}";
         }
     }
 }

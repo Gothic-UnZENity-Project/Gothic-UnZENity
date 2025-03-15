@@ -187,7 +187,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             if (eventData.NextAnimation.Any())
             {
                 PhysicsHelper.DisablePhysicsForNpc(PrefabProps);
-                PrefabProps.AnimationHandler.PlayAnimation(eventData.NextAnimation);
+                PrefabProps.AnimationSystem.PlayAnimation(eventData.NextAnimation);
             }
 
             IsFinishedFlag = true;
