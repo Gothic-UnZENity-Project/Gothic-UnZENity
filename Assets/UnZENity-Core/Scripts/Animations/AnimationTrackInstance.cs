@@ -22,12 +22,23 @@ namespace GUZ.Core.Animations
         public int BoneAmountStatePlay;
         public int BoneAmountStateStop;
 
+        public float BlendOutStart;
+        public bool IsLooping;
+
         public AnimationTrackInstance(AnimationTrack track)
         {
             Track = track;
+            State = AnimationState.BlendIn;
             CurrentTime = 0f;
             CurrentKeyFrameIndex = 0;
             NextKeyframeTime = track.FrameTime;
+
+            IsLooping = track.Animation.Name == track.Animation.Next;
+            if (!IsLooping)
+            {
+                BlendOutStart = track.Duration - track.Animation.BlendOut;
+            }
+
             BoneStates = new AnimationState[Track.BoneCount];
             BoneBlendWeights = new float[Track.BoneCount];
             BoneBlendTimes = new float[Track.BoneCount];
@@ -41,9 +52,20 @@ namespace GUZ.Core.Animations
             BoneAmountStateStop = 0;
         }
 
-        public void Update(float deltaTime)
+        /// <summary>
+        /// Update animation information at each frame.
+        /// Return status change of whole animation if happening now. (e.g. BlendOut).
+        /// </summary>
+        public AnimationState Update(float deltaTime)
         {
             CurrentTime += deltaTime;
+
+            if (!IsLooping && State == AnimationState.Play && CurrentTime >= BlendOutStart)
+            {
+                BlendOutTrack(Track.Animation.BlendOut);
+                return AnimationState.BlendOut;
+            }
+
             if (CurrentTime >= Track.Duration)
             {
                 CurrentTime %= Track.Duration;
@@ -104,6 +126,7 @@ namespace GUZ.Core.Animations
                     {
                         BoneAmountStatePlay = Track.BoneCount;
                         State = AnimationState.Play;
+                        return AnimationState.Play;
                     }
                     break;
                 case AnimationState.Play:
@@ -113,11 +136,14 @@ namespace GUZ.Core.Animations
                     {
                         BoneAmountStateStop = Track.BoneCount;
                         State = AnimationState.Stop;
+                        return AnimationState.Stop;
                     }
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
+
+            return AnimationState.None;
         }
 
         public bool TryGetBonePose(string boneName, out Vector3 position, out Quaternion rotation)

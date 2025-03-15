@@ -45,12 +45,17 @@ namespace GUZ.Lab.Handler
                 Debug.Log("idle");
                 yield return new WaitForSeconds(2f);
 
-                animSystem.PlayAnimation("T_DIALOGGESTURE_08");
+                // Test Layer2-blendout automation
+                animSystem.PlayAnimation("T_DIALOGGESTURE_01");
                 yield return new WaitForSeconds(3f);
 
+                // Test start-stop
+                animSystem.PlayAnimation("T_DIALOGGESTURE_08");
+                yield return new WaitForSeconds(3f);
                 animSystem.StopAnimation("T_DIALOGGESTURE_08");
                 yield return new WaitForSeconds(1f);
 
+                // Change idle state (layer 1)
                 animSystem.PlayAnimation("S_RUN");
                 yield return new WaitForSeconds(2f);
                 // animHeadHandler.StartLookAt(Camera.main!.transform);

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using GUZ.Core.Extensions;
@@ -45,14 +46,14 @@ namespace GUZ.Core.Animations
 
         public void PlayAnimation(string animationName)
         {
-            var track = AnimationManager2.GetTrack(animationName, Properties.MdsNameBase, Properties.MdsNameOverlay);
-            var trackInstance = new AnimationTrackInstance(track);
+            var newTrack = AnimationManager2.GetTrack(animationName, Properties.MdsNameBase, Properties.MdsNameOverlay);
+            var newTrackInstance = new AnimationTrackInstance(newTrack);
 
-            BlendOutOtherTrackBones(trackInstance);
-            BlendOutOtherTracks(trackInstance);
+            BlendOutOtherTrackBones(newTrackInstance);
+            BlendOutOtherTracks(newTrackInstance);
 
-            StopTrackBones(trackInstance);
-            _trackInstances.Add(trackInstance);
+            StopTrackBones(newTrackInstance);
+            _trackInstances.Add(newTrackInstance);
         }
 
         public void StopAnimation(string stoppingAnimationName)
@@ -122,16 +123,31 @@ namespace GUZ.Core.Animations
             }
             // else
             // {
-                foreach (var instance in _trackInstances)
+            for (var i = 0; i < _trackInstances.Count; i++)
+            {
+                var instance = _trackInstances[i];
+                if (instance.Track.Layer != newInstance.Track.Layer)
                 {
-                    if (instance.Track.Layer != newInstance.Track.Layer)
-                    {
-                        continue;
-                    }
-
-                    instance.BlendOutTrack(newInstance.Track.Animation.BlendIn);
+                    continue;
                 }
+
+                instance.BlendOutTrack(newInstance.Track.Animation.BlendIn);
+            }
             // }
+        }
+
+        /// <summary>
+        /// The current instance starts blending out, which means, that lower layer bones can blend in again.
+        /// </summary>
+        private void BlendInOtherTrackBones(AnimationTrackInstance instanceBlendingOut)
+        {
+            foreach (var trackInstance in _trackInstances)
+            {
+                if (trackInstance.Track.Layer < instanceBlendingOut.Track.Layer)
+                {
+                    trackInstance.BlendInBones(instanceBlendingOut.Track.BoneNames, instanceBlendingOut.Track.Animation.BlendOut);
+                }
+            }
         }
 
         /// <summary>
@@ -162,12 +178,23 @@ namespace GUZ.Core.Animations
             // Update all tracks
             foreach (var instance in _trackInstances.ToArray())
             {
-                if (instance.State == AnimationState.Stop)
+                switch (instance.Update(Time.deltaTime))
                 {
-                    _trackInstances.Remove(instance);
-                    continue;
+                    case AnimationState.None:
+                        break;
+                    case AnimationState.BlendIn:
+                        break;
+                    case AnimationState.Play:
+                        break;
+                    case AnimationState.BlendOut:
+                        BlendInOtherTrackBones(instance);
+                        break;
+                    case AnimationState.Stop:
+                        _trackInstances.Remove(instance);
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
                 }
-                instance.Update(Time.deltaTime);
             }
 
             // Apply final pose
