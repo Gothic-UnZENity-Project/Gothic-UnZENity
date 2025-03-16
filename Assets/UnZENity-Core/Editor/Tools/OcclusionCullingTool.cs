@@ -42,13 +42,13 @@ namespace GUZ.Core.Editor.Tools
             return !EditorApplication.isPlaying;
         }
 
-        [MenuItem("UnZENity/Occlusion Culling/Load world mesh for G1")]
+        [MenuItem("UnZENity/Occlusion Culling/Load world mesh for G1", priority = 1000)]
         public static async Task LoadWorldMeshG1()
         {
             await LoadWorldMesh(GameVersion.Gothic1);
         }
 
-        [MenuItem("UnZENity/Occlusion Culling/Load world mesh for G2")]
+        [MenuItem("UnZENity/Occlusion Culling/Load world mesh for G2", priority = 1001)]
         public static async Task LoadWorldMeshG2()
         {
             await LoadWorldMesh(GameVersion.Gothic2);

@@ -16,15 +16,7 @@ namespace GUZ.VR.Editor
         private const string _targetDir = "Builds";
 
 
-        [MenuItem("UnZENity/Build/Pico")]
-        private static void PerformPicoBuild()
-        {
-            var targetPath = _targetDir + "/Pico/" + _appName + ".apk";
-            SetPicoSettings();
-            GenericBuild(_scenes, targetPath, BuildTargetGroup.Android, BuildTarget.Android, BuildOptions.None);
-        }
-
-        [MenuItem("UnZENity/Build/PCVR")]
+        [MenuItem("UnZENity/Build/PCVR", priority = 20)]
         private static void PerformWindows64Build()
         {
             var targetPath = _targetDir + "/Windows64/" + _appName + ".exe";
@@ -32,10 +24,19 @@ namespace GUZ.VR.Editor
             SetWindows64Settings();
             
             GenericBuild(_scenes, targetPath, BuildTargetGroup.Standalone, BuildTarget.StandaloneWindows64,
+
                 BuildOptions.None);
         }
-        
-        [MenuItem("UnZENity/Build/Quest")]
+
+        [MenuItem("UnZENity/Build/Pico", priority = 21)]
+        private static void PerformPicoBuild()
+        {
+            var targetPath = _targetDir + "/Pico/" + _appName + ".apk";
+            SetPicoSettings();
+            GenericBuild(_scenes, targetPath, BuildTargetGroup.Android, BuildTarget.Android, BuildOptions.None);
+        }
+
+        [MenuItem("UnZENity/Build/Quest", priority = 22)]
         private static void PerformQuestBuild()
         {
             var targetPath = _targetDir + "/Quest/" + _appName + ".apk";
