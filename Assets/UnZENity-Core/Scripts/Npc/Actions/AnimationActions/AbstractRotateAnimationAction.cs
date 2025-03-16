@@ -11,6 +11,9 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
 {
     public abstract class AbstractRotateAnimationAction : AbstractAnimationAction
     {
+        // Can be used to rotate without animation.
+        protected bool PlayAnimation = true;
+
         private Quaternion _finalRotation;
         private bool _isRotateLeft;
 
@@ -55,7 +58,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             var cross = Vector3.Cross(NpcGo.transform.forward, _finalRotation.eulerAngles);
             _isRotateLeft = cross.y >= 0;
 
-            if (Quaternion.Angle(NpcGo.transform.rotation, _finalRotation) > 1f)
+            if (Quaternion.Angle(NpcGo.transform.rotation, _finalRotation) > 1f && PlayAnimation)
             {
                 PrefabProps.AnimationSystem.PlayAnimation(GetRotateModeAnimationString());
                 // FIXME - New logic works? Then remove this line.

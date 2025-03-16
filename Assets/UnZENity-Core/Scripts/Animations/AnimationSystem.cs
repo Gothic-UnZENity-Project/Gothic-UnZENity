@@ -61,6 +61,11 @@ namespace GUZ.Core.Animations
                 return false;
             }
 
+            if (IsAlreadyPlaying(newTrack))
+            {
+                return true;
+            }
+
             var newTrackInstance = new AnimationTrackInstance(newTrack);
 
             BlendOutOtherTrackBones(newTrackInstance);
@@ -70,6 +75,19 @@ namespace GUZ.Core.Animations
             _trackInstances.Add(newTrackInstance);
 
             return true;
+        }
+
+        private bool IsAlreadyPlaying(AnimationTrack newTrack)
+        {
+            for (var i = 0; i < _trackInstances.Count; i++)
+            {
+                if (newTrack.Animation.Name == _trackInstances[i].Track.Animation.Name)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         public bool PlayIdleAnimation()

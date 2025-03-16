@@ -7,7 +7,7 @@ namespace GUZ.Core.Editor.Tools
     {
         private static readonly CameraPosition[] cameraPositions = new[]
         {
-            new CameraPosition("World - Diego Start", new Vector3(55.07f, 54.54f, 364.42f), new Vector3(0.14f, 184.06f, 0.00f))
+            new CameraPosition("World - Diego Start", new Vector3(54.88f, 54.62f, 364.34f), new Vector3(5.78f, 191.21f, 0.00f))
         };
 
         private int _selectedPositionIndex;
