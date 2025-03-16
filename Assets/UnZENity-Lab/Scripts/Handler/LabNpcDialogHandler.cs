@@ -33,7 +33,6 @@ namespace GUZ.Lab.Handler
         /// </summary>
         private IEnumerator IdleAnimations()
         {
-            var mdsNames = new [] { "humans" };
             var npcRoot = NpcSlotGo.transform.GetChild(0).GetChild(0).gameObject;
             var animSystem = npcRoot.GetComponent<AnimationSystem>();
             var animHeadHandler = npcRoot.GetComponent<NpcHeadAnimationHandler>();
@@ -69,8 +68,9 @@ namespace GUZ.Lab.Handler
 
         private void BootstrapBloodwyn()
         {
-            var newNpc = new GameObject("NPC");
+            var newNpc = new GameObject();
             var loaderComp = newNpc.AddComponent<NpcLoader2>();
+
             newNpc.SetParent(NpcSlotGo);
 
             var npcSymbol = GameData.GothicVm.GetSymbolByName(_bloodwynInstanceId)!;
@@ -110,6 +110,8 @@ namespace GUZ.Lab.Handler
             // Otherwise NPC will start its daily routine.
             Destroy(newNpc.GetComponentInChildren<AiHandler>());
             newNpc.transform.GetChild(0).gameObject.AddComponent<LabAiHandler>();
+
+            newNpc.name = "Dialog NPC";
         }
     }
 }

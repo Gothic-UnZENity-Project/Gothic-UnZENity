@@ -3,12 +3,15 @@ using UnityEngine;
 
 namespace GUZ.Core.Editor.Tools
 {
-    public class SceneViewCameraQuickMove : EditorWindow
+    public class SceneViewCameraQuickMoveTool : EditorWindow
     {
         private static readonly CameraPosition[] cameraPositions = new[]
         {
-            new CameraPosition("World - Diego Start", new Vector3(54.88f, 54.62f, 364.34f), new Vector3(5.78f, 191.21f, 0.00f))
+            new CameraPosition("World - Diego Start", new Vector3(54.88f, 54.62f, 364.34f), new Vector3(5.78f, 191.21f, 0.00f)),
+
+            new CameraPosition("Lab - NpcDialogHandler", new Vector3(-6.16f, 1.43f, 2.75f), new Vector3(6.61f, 355.26f, 0.00f)),
         };
+
 
         private int _selectedPositionIndex;
 
@@ -26,7 +29,7 @@ namespace GUZ.Core.Editor.Tools
         [MenuItem("UnZENity/SceneView/Move to Position", priority = 100)]
         private static void SetSceneCameraPosition()
         {
-            var window = ScriptableObject.CreateInstance<SceneViewCameraQuickMove>();
+            var window = ScriptableObject.CreateInstance<SceneViewCameraQuickMoveTool>();
             window.position = new Rect(0, 0, 250, 100);
             window.ShowPopup();
         }

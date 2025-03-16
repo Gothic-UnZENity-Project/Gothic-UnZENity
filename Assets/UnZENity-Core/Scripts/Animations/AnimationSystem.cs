@@ -15,6 +15,11 @@ namespace GUZ.Core.Animations
     /// </summary>
     public class AnimationSystem : BasePlayerBehaviour
     {
+#if UNITY_EDITOR
+        public List<AnimationTrackInstance> DebugTrackInstances => _trackInstances;
+        public string[] DebugBoneNames => _boneNames;
+#endif
+
         public Transform RootBone;
 
         // Caching bone Transforms makes it faster to apply them to animations later.
@@ -60,6 +65,10 @@ namespace GUZ.Core.Animations
             {
                 return false;
             }
+
+            // FIXME - Now we need to handle animation flags: M - Move and R - Rotate.
+            //         Then S_ROTATEL will work properly and stop once rotated enough.
+            Debug.Log("Playing animation: " + animationName + "");
 
             if (IsAlreadyPlaying(newTrack))
             {
