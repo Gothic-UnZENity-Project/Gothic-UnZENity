@@ -80,6 +80,13 @@ namespace GUZ.Core.Animations
             BlendOutOtherTrackBones(newTrackInstance);
             BlendOutOtherTracks(newTrackInstance);
 
+
+            // If this is the first animation on NPC, we need no BlendIn, simply start all bones at frame 0.
+            if (_trackInstances.IsEmpty())
+            {
+                newTrackInstance.SetPlayState();
+            }
+
             StopTrackBones(newTrackInstance);
             _trackInstances.Add(newTrackInstance);
 
