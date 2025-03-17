@@ -119,6 +119,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
                     AnimationCreator.StopHeadMorphAnimation(NpcContainer, HeadMorph.HeadMorphType.Viseme);
                 }
 
+                PrefabProps.AnimationSystem.StopAnimation(_randomDialogAnimationName);
                 GameContext.SubtitlesAdapter.HideSubtitles();
                 return true;
             }
