@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using GUZ.Core._Npc2;
 using GUZ.Core.Animations;
+using GUZ.Core.Globals;
 using UnityEditor;
 using UnityEngine;
+using AnimationState = GUZ.Core.Animations.AnimationState;
 
 namespace GUZ.Core.Editor.Tools
 {
@@ -15,16 +17,31 @@ namespace GUZ.Core.Editor.Tools
 
         private int _selectedAnimationSystemIndex;
         private AnimationSystem _targetAnimationSystem;
+        private float _timeScale = 1f;
+        private bool _isTimeScaleFoldedOut;
 
-        // Add menu item to create the window
-        [MenuItem("UnZENity/Animation Debug Window")]
+        [MenuItem("UnZENity/Animation System Debugger", priority = 200)]
         public static void ShowWindow()
         {
-            GetWindow<AnimationSystemWindowTool>("Animation System Debug");
+            var titleContent = new GUIContent("Animation System", Constants.TextureUnZENityLogoTransparent);
+
+            var window = GetWindow<AnimationSystemWindowTool>();
+            window.titleContent = titleContent;
         }
+
+        public Texture2D GetWindowIcon()
+        {
+            // Load your custom icon
+            return EditorGUIUtility.FindTexture("d_Animation.Play"); // Animation icon
+
+            // OR use a built-in Unity icon
+            // return EditorGUIUtility.FindTexture("d_Animation.Play");
+        }
+
 
         private void OnGUI()
         {
+            DrawTimeScale();
             DrawNpcSelection();
 
             if (_targetAnimationSystem == null)
@@ -37,8 +54,6 @@ namespace GUZ.Core.Editor.Tools
 
             DrawAnimationInfo();
             DrawBoneStates();
-            DrawTimelineView();
-            DrawPlaybackControls();
 
             EditorGUILayout.EndScrollView();
 
@@ -48,24 +63,11 @@ namespace GUZ.Core.Editor.Tools
 
         private void DrawNpcSelection()
         {
-            EditorGUILayout.LabelField("1. Select NPC", EditorStyles.boldLabel);
-            EditorGUILayout.Space();
-
-            // Re-Collect AnimationSystems
-            if (GUILayout.Button("(Re)collect AnimationSystems"))
-            {
-                var emptyElement = new[] { new { name = "Empty", animComp = (AnimationSystem)null } };
-
-                // Add additional empty element to the Dictionary
-                _animationSystems = emptyElement
-                    .Concat(FindObjectsOfType<AnimationSystem>()
-                        .Select(animComp => new { animComp.GetComponentInParent<NpcLoader2>().name, animComp }))
-                    .ToDictionary(i => i.name, i => i.animComp);
-
-            }
+            EditorGUILayout.LabelField("Select NPC", EditorStyles.boldLabel);
 
             // NPC dropdown
-            _selectedAnimationSystemIndex = EditorGUILayout.Popup("NPC", _selectedAnimationSystemIndex, _animationSystems.Keys.ToArray());
+            _selectedAnimationSystemIndex =
+                EditorGUILayout.Popup("NPC", _selectedAnimationSystemIndex, _animationSystems.Keys.ToArray(), GUILayout.Width(400));
 
             if (_selectedAnimationSystemIndex >= _animationSystems.Count)
             {
@@ -75,25 +77,119 @@ namespace GUZ.Core.Editor.Tools
             {
                 _targetAnimationSystem = _animationSystems.Values.ElementAt(_selectedAnimationSystemIndex);
             }
+
+            var origBack = GUI.backgroundColor;
+            // Green == already collected once at least
+            GUI.backgroundColor = _animationSystems.Any() ? Color.green : Color.grey;
+
+            // Re-Collect AnimationSystems
+            if (GUILayout.Button("(Re)collect AnimationSystems", GUILayout.Width(400)))
+            {
+                var emptyElement = new[] { new { name = "<<Choose NPC>>", animComp = (AnimationSystem)null } };
+
+                // Add additional empty element to the Dictionary
+                _animationSystems = emptyElement
+                    .Concat(FindObjectsOfType<AnimationSystem>()
+                        .Select(animComp => new { animComp.GetComponentInParent<NpcLoader2>().name, animComp }))
+                    .ToDictionary(i => i.name, i => i.animComp);
+            }
+            GUI.backgroundColor = origBack;
+        }
+
+        private void DrawTimeScale()
+        {
+            var buttonWidth = GUILayout.Width(50);
+
+            // TimeScale controls in a foldout
+            _isTimeScaleFoldedOut = EditorGUILayout.Foldout(_isTimeScaleFoldedOut, "Time Scale Controls", true);
+            if (_isTimeScaleFoldedOut)
+            {
+                // Center the buttons by using flexible space before and after
+                EditorGUILayout.BeginHorizontal();
+                GUILayout.FlexibleSpace(); // This pushes content to the center
+
+                if (GUILayout.Button("|<", buttonWidth))
+                {
+                    _timeScale = 0f;
+                }
+                if (GUILayout.Button("<<", buttonWidth))
+                {
+                    _timeScale -= 0.5f;
+                }
+                if (GUILayout.Button("<", buttonWidth))
+                {
+                    _timeScale -= 0.1f;
+                }
+
+                var origBack = GUI.backgroundColor;
+
+                // Green == We have the normal 1f timeScale active (Helps finding issues if it's not reset to 1 after use)
+                GUI.backgroundColor = !Mathf.Approximately(Time.timeScale, 1f) ? Color.grey : Color.green;
+                if (GUILayout.Button("1", buttonWidth))
+                {
+                    _timeScale = 1f;
+                }
+                GUI.backgroundColor = origBack;
+
+                if (GUILayout.Button(">", buttonWidth))
+                {
+                    _timeScale += 0.1f;
+                }
+                if (GUILayout.Button(">>", buttonWidth))
+                {
+                    _timeScale += 0.5f;
+                }
+                if (GUILayout.Button(">|", buttonWidth))
+                {
+                    _timeScale = 2f;
+                }
+
+                GUILayout.FlexibleSpace(); // This pushes content to the center
+                EditorGUILayout.EndHorizontal();
+
+                // Show slider inside the foldout, also centered
+                EditorGUILayout.BeginHorizontal();
+                GUILayout.FlexibleSpace();
+                EditorGUILayout.LabelField("Time Scale:", GUILayout.Width(70));
+                _timeScale = EditorGUILayout.Slider(_timeScale, 0, 2, GUILayout.Width(200));
+                GUILayout.FlexibleSpace();
+                EditorGUILayout.EndHorizontal();
+
+                // Show current timescale value with a label
+                EditorGUILayout.BeginHorizontal();
+                GUILayout.FlexibleSpace();
+                EditorGUILayout.LabelField($"Current Value: {_timeScale:F2}", EditorStyles.boldLabel);
+                GUILayout.FlexibleSpace();
+                EditorGUILayout.EndHorizontal();
+
+                DrawDivider();
+            }
+
+            // Apply the timescale value (outside the foldout so it's always applied)
+            Time.timeScale = _timeScale;
         }
 
         private void DrawAnimationInfo()
         {
-            EditorGUILayout.LabelField("Currently Playing Animations", EditorStyles.boldLabel);
-            EditorGUILayout.Space();
+            DrawDivider();
 
             // Access the currently playing animations from selected AnimationSystem
             foreach (var trackInstance in _targetAnimationSystem.DebugTrackInstances)
             {
                 EditorGUILayout.BeginHorizontal();
                 EditorGUILayout.LabelField($"Animation: {trackInstance.Track.Animation.Name}");
-                EditorGUILayout.LabelField($"Time: {trackInstance.CurrentTime:F2} / {trackInstance.Track.Duration:F2} - {trackInstance.State}");
+                EditorGUILayout.LabelField(
+                    $"Time: {trackInstance.CurrentTime:F2} / {trackInstance.Track.Duration:F2} - {trackInstance.State}");
                 EditorGUILayout.EndHorizontal();
             }
         }
 
         private void DrawBoneStates()
         {
+            DrawDivider();
+
+            var originalBackgroundColor = GUI.backgroundColor;
+
             EditorGUILayout.Space(10);
             EditorGUILayout.LabelField("Bone States", EditorStyles.boldLabel);
             EditorGUILayout.Space();
@@ -104,7 +200,6 @@ namespace GUZ.Core.Editor.Tools
             foreach (var trackInstance in _targetAnimationSystem.DebugTrackInstances)
             {
                 EditorGUILayout.LabelField(trackInstance.Track.Animation.Name);
-                EditorGUILayout.LabelField("-");
             }
             EditorGUILayout.EndHorizontal();
 
@@ -116,57 +211,44 @@ namespace GUZ.Core.Editor.Tools
                 foreach (var trackInstance in _targetAnimationSystem.DebugTrackInstances)
                 {
                     var boneIndex = Array.IndexOf(trackInstance.Track.BoneNames, boneName);
-                    EditorGUILayout.LabelField($"{trackInstance.BoneStates[boneIndex]}({trackInstance.BoneBlendWeights[boneIndex]:F2})");
-                    EditorGUILayout.LabelField("-");
+
+                    if (boneIndex == -1)
+                    {
+                        EditorGUILayout.LabelField("-");
+                        continue;
+                    }
+
+                    switch (trackInstance.BoneStates[boneIndex])
+                    {
+                        case AnimationState.None:
+                        case AnimationState.BlendIn:
+                        case AnimationState.Play:
+                            GUI.backgroundColor = Color.Lerp(Color.red, Color.green, trackInstance.BoneBlendWeights[boneIndex]);
+                            break;
+                        case AnimationState.BlendOut:
+                        case AnimationState.Stop:
+                            GUI.backgroundColor = Color.Lerp(Color.grey, Color.green, trackInstance.BoneBlendWeights[boneIndex]);
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException();
+                    }
+
+                    // Reserve a rectangle for the progress bar
+                    var progressRect = EditorGUILayout.GetControlRect(GUILayout.Height(20));
+                    EditorGUI.ProgressBar(progressRect, trackInstance.BoneBlendWeights[boneIndex],
+                        $"{trackInstance.BoneStates[boneIndex]}({trackInstance.BoneBlendWeights[boneIndex]:F2})");
                 }
                 EditorGUILayout.EndHorizontal();
+                GUI.backgroundColor = originalBackgroundColor;
             }
         }
 
-        private void DrawTimelineView()
+        private void DrawDivider()
         {
-            // Calculate the visible time range
-            float timelineWidth = position.width - 100; // Leave space for labels
-            float timelineHeight = 20f;
-            Rect timelineRect = GUILayoutUtility.GetRect(timelineWidth, timelineHeight);
-
-            // Draw timeline background
-            EditorGUI.DrawRect(timelineRect, new Color(0.2f, 0.2f, 0.2f));
-
-            // Draw time markers
-            float totalDuration = 5f; // Get this from your animation system
-            for (float time = 0; time <= totalDuration; time += 0.5f)
-            {
-                float x = timelineRect.x + (time / totalDuration) * timelineRect.width;
-                Rect markerRect = new Rect(x, timelineRect.y, 1, timelineRect.height);
-                EditorGUI.DrawRect(markerRect, Color.gray);
-
-                // Draw time labels
-                Rect labelRect = new Rect(x - 15, timelineRect.y - 15, 30, 15);
-                GUI.Label(labelRect, time.ToString("F1"));
-            }
-        }
-
-        private void DrawPlaybackControls()
-        {
-            EditorGUILayout.BeginHorizontal();
-
-            if (GUILayout.Button("Play", GUILayout.Width(50)))
-            {
-                // Implement play functionality
-            }
-
-            if (GUILayout.Button("Pause", GUILayout.Width(50)))
-            {
-                // Implement pause functionality
-            }
-
-            if (GUILayout.Button("Stop", GUILayout.Width(50)))
-            {
-                // Implement stop functionality
-            }
-
-            EditorGUILayout.EndHorizontal();
+            EditorGUILayout.Space(5);
+            var rect = EditorGUILayout.GetControlRect(false, 1);
+            EditorGUI.DrawRect(rect, Color.grey);
+            EditorGUILayout.Space(5);
         }
     }
 }
