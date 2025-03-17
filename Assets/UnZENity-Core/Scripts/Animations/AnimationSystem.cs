@@ -130,8 +130,9 @@ namespace GUZ.Core.Animations
             AnimationTrackInstance instanceToStop = null;
 
             // Fetch and blend out Animation.
-            foreach (var instance in _trackInstances)
+            for (var i = 0; i < _trackInstances.Count; i++)
             {
+                var instance = _trackInstances[i];
                 // If animation is found, then mark it as "BlendOut"
                 if (instance.Track.Animation.Name.EqualsIgnoreCase(stoppingAnimationName))
                 {
@@ -147,12 +148,14 @@ namespace GUZ.Core.Animations
             }
 
             // Ramp up bones on animation with lower level as the higher level bones will blend out.
-            foreach (var instance in _trackInstances)
+            for (var i = 0; i < _trackInstances.Count; i++)
             {
+                var instance = _trackInstances[i];
                 if (instance.Track.Animation.Name.EqualsIgnoreCase(stoppingAnimationName))
                 {
                     continue;
                 }
+
                 if (instance.Track.Layer < instanceToStop.Track.Layer)
                 {
                     instance.BlendInBones(instanceToStop.Track.BoneNames, instanceToStop.Track.Animation.BlendOut);
