@@ -146,18 +146,20 @@ namespace GUZ.Core.Animations
             return AnimationState.None;
         }
 
-        public bool TryGetBonePose(string boneName, out Vector3 position, out Quaternion rotation)
+        public bool TryGetBonePose(string boneName, out Vector3 position, out Quaternion rotation, out float weight)
         {
             if (!Track.TryGetBonePose(boneName, CurrentKeyFrameIndex, out position, out rotation, out var boneindex))
             {
                 position = Vector3.zero;
                 rotation = Quaternion.identity;
+                weight = 0f;
                 return false;
             }
 
             // Apply blending weight
-            position *= BoneBlendWeights[boneindex];
-            rotation = Quaternion.Slerp(Quaternion.identity, rotation, BoneBlendWeights[boneindex]);
+            weight = BoneBlendWeights[boneindex];
+            position *= weight;
+            rotation = Quaternion.Slerp(Quaternion.identity, rotation, weight);
             return true;
         }
 

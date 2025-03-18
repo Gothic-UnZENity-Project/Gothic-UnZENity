@@ -76,12 +76,30 @@ namespace GUZ.Core.Animations
             }
 
             var newTrackInstance = new AnimationTrackInstance(newTrack);
+            var newTrackLayer = newTrackInstance.Track.Layer;
 
-            BlendOutOtherTrackBones(newTrackInstance);
-            BlendOutOtherTracks(newTrackInstance);
+            // Handle existing Track Blending based on layer of new Track.
+            for (var i = 0; i < _trackInstances.Count; i++)
+            {
+                var trackInstance = _trackInstances[i];
+                var trackLayer = trackInstance.Track.Layer;
 
+                if (trackLayer < newTrackLayer)
+                {
+                    BlendOutTrackBones(trackInstance, newTrackInstance);
+                }
+                else if (trackLayer == newTrackLayer)
+                {
+                    BlendOutTrack(trackInstance, newTrackInstance);
+                }
+                else if (trackLayer > newTrackLayer)
+                {
+
+                }
+            }
 
             // If this is the first animation on NPC, we need no BlendIn, simply start all bones at frame 0.
+            // TODO - Could be handled differently as a Layer0 animation aka Bone pose of ModelMesh itself.
             if (_trackInstances.IsEmpty())
             {
                 newTrackInstance.SetPlayState();
@@ -167,26 +185,20 @@ namespace GUZ.Core.Animations
         /// Higher level Animations might have only a few bones which might be handled by a lower layer animation.
         /// We therefore need to blend out the other animation(s) Bones, not the whole animation.
         /// </summary>
-        private void BlendOutOtherTrackBones(AnimationTrackInstance newInstance)
+        private void BlendOutTrackBones(AnimationTrackInstance lowerLayerTrack, AnimationTrackInstance higherLayerTrack)
         {
-            foreach (var trackInstance in _trackInstances)
-            {
-                if (trackInstance.Track.Layer < newInstance.Track.Layer)
-                {
-                    trackInstance.BlendOutBones(newInstance.Track.BoneNames, newInstance.Track.Animation.BlendIn);
-                }
-            }
+            lowerLayerTrack.BlendOutBones(higherLayerTrack.Track.BoneNames, higherLayerTrack.Track.Animation.BlendIn);
         }
 
         /// <summary>
         /// Tracks on the same layer will either need to stop immediately or blend out at the current frame.
         /// </summary>
-        private void BlendOutOtherTracks(AnimationTrackInstance newInstance)
+        private void BlendOutTrack(AnimationTrackInstance oldTrack, AnimationTrackInstance newTrack)
         {
             // From Documentation:
             // E: Diese Flag sorgt dafür, dass die Ani erst gestartet wird, wenn eine zur Zeit aktive Ani im selben Layer ihren letzten Frame
             // erreicht hat und somit beendet wird. Sinnvoll z.B. in folgenden Fall: ani "s_walk", ani "t_walk_2_stand", ani "s_stand", wobei alle Anis als ASC-Anis vorliegen.
-            var isStartAtLastFrame = newInstance.Track.Animation.Flags.HasFlag(AnimationFlags.Queue);
+            var isStartAtLastFrame = newTrack.Track.Animation.Flags.HasFlag(AnimationFlags.Queue);
 
             if (isStartAtLastFrame)
             {
@@ -195,16 +207,7 @@ namespace GUZ.Core.Animations
             }
             // else
             // {
-            for (var i = 0; i < _trackInstances.Count; i++)
-            {
-                var instance = _trackInstances[i];
-                if (instance.Track.Layer != newInstance.Track.Layer)
-                {
-                    continue;
-                }
-
-                instance.BlendOutTrack(newInstance.Track.Animation.BlendIn);
-            }
+                oldTrack.BlendOutTrack(newTrack.Track.Animation.BlendIn);
             // }
         }
 
@@ -285,14 +288,21 @@ namespace GUZ.Core.Animations
                 var finalRotation = Quaternion.identity;
                 var hasBoneAnimation = false;
 
+                var boneWeightSum = 0f;
                 foreach (var track in _trackInstances)
                 {
-                    if (track.TryGetBonePose(boneName, out var position, out var rotation))
+                    if (track.TryGetBonePose(boneName, out var position, out var rotation, out var weight))
                     {
                         finalPosition += position;
                         finalRotation *= rotation;
                         hasBoneAnimation = true;
+                        boneWeightSum += weight;
                     }
+                }
+
+                if (!Mathf.Approximately(boneWeightSum, 1f))
+                {
+                    Debug.Break();
                 }
 
                 // We apply position change only! if we have some update.
