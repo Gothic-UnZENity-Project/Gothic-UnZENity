@@ -29,16 +29,6 @@ namespace GUZ.Core.Editor.Tools
             window.titleContent = titleContent;
         }
 
-        public Texture2D GetWindowIcon()
-        {
-            // Load your custom icon
-            return EditorGUIUtility.FindTexture("d_Animation.Play"); // Animation icon
-
-            // OR use a built-in Unity icon
-            // return EditorGUIUtility.FindTexture("d_Animation.Play");
-        }
-
-
         private void OnGUI()
         {
             DrawTimeScale();
@@ -173,13 +163,18 @@ namespace GUZ.Core.Editor.Tools
         {
             DrawDivider();
 
+            EditorGUILayout.BeginHorizontal();
+            EditorGUILayout.LabelField("Layer - Animation", EditorStyles.boldLabel);
+            EditorGUILayout.LabelField("Time x/y - State", EditorStyles.boldLabel);
+            EditorGUILayout.EndHorizontal();
+
             // Access the currently playing animations from selected AnimationSystem
             foreach (var trackInstance in _targetAnimationSystem.DebugTrackInstances)
             {
                 EditorGUILayout.BeginHorizontal();
-                EditorGUILayout.LabelField($"Animation: {trackInstance.Track.Animation.Name}");
+                EditorGUILayout.LabelField($"{trackInstance.Track.Layer:D2} - {trackInstance.Track.Animation.Name}");
                 EditorGUILayout.LabelField(
-                    $"Time: {trackInstance.CurrentTime:F2} / {trackInstance.Track.Duration:F2} - {trackInstance.State}");
+                    $"{trackInstance.CurrentTime:F2} / {trackInstance.Track.Duration:F2} - {trackInstance.State}");
                 EditorGUILayout.EndHorizontal();
             }
         }
