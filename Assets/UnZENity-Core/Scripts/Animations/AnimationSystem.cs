@@ -16,7 +16,7 @@ namespace GUZ.Core.Animations
     public class AnimationSystem : BasePlayerBehaviour
     {
 #if UNITY_EDITOR
-        public List<AnimationTrackInstance> DebugTrackInstances => _trackInstances;
+        public IOrderedEnumerable<AnimationTrackInstance> DebugTrackInstances => _trackInstances.OrderBy(i => i.Track.Layer);
         public string[] DebugBoneNames => _boneNames;
 #endif
 

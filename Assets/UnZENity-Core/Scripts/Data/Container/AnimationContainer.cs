@@ -1,8 +1,10 @@
+using System;
 using UnityEngine;
 using ZenKit;
 
 namespace GUZ.Core.Data.Container
 {
+    [Obsolete("Use AnimationTrack.cs instead.")]
     public class AnimationContainer
     {
         // Combination of "MDS-AnimName"

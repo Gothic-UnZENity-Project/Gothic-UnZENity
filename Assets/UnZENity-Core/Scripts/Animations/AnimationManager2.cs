@@ -10,8 +10,9 @@ namespace GUZ.Core.Animations
     public class AnimationManager2
     {
         private const string _rootBoneName = "BIP01";
+        private const float _movementThreshold = 0.4f; // If magnitude of first and last frame positions is higher than this, we have a movement animation.
 
-        public static Dictionary<string, AnimationTrack> Tracks = new();
+        private static Dictionary<string, AnimationTrack> Tracks = new();
 
         public static AnimationTrack GetTrack(string animName, string mdsBase, string mdsOverlay)
         {
@@ -35,14 +36,15 @@ namespace GUZ.Core.Animations
             var anim = mds.Animations.First(i => i.Name.EqualsIgnoreCase(animName));
 
             track = CreateTrack(modelAnimation, mdh, anim);
-            track.Duration = CalculateDuration(modelAnimation);
+            AddTrackDuration(track, modelAnimation);
+            SetClipMovementSpeed(track, modelAnimation, mdh);
 
             Tracks.Add(name, track);
 
             return track;
         }
 
-        public static AnimationTrack CreateTrack(IModelAnimation modelAnimation,
+        private static AnimationTrack CreateTrack(IModelAnimation modelAnimation,
             IModelHierarchy modelHierarchy, IAnimation anim)
         {
             var track = new AnimationTrack
@@ -91,9 +93,41 @@ namespace GUZ.Core.Animations
             return track;
         }
 
-        private static float CalculateDuration(IModelAnimation modelAnimation)
+        private static void AddTrackDuration(AnimationTrack track, IModelAnimation modelAnimation)
         {
-            return modelAnimation.FrameCount / modelAnimation.Fps;
+            track.Duration = modelAnimation.FrameCount / modelAnimation.Fps;
+        }
+
+        /// <summary>
+        /// Based on first node (BIP01), we calculate its start position and end position of the animation.
+        /// If it's above a threshold, we have a movement animation.
+        /// </summary>
+        private static void SetClipMovementSpeed(AnimationTrack track, IModelAnimation modelAnim, IModelHierarchy mdh)
+        {
+            var firstBoneIndex = modelAnim.NodeIndices.First();
+            var isRootBoneExisting = mdh.Nodes[firstBoneIndex].Name == _rootBoneName;
+
+            // I don't think it will ever happen, but better safe than sorry.
+            if (!isRootBoneExisting)
+            {
+                return;
+            }
+
+            var boneCount = modelAnim.NodeCount;
+            var firstSample = modelAnim.Samples[0];
+            var lastSample = modelAnim.Samples[modelAnim.SampleCount - boneCount];
+
+            var movement = (lastSample.Position - firstSample.Position).ToUnityVector();
+
+            if (movement.sqrMagnitude < _movementThreshold)
+            {
+                return;
+            }
+
+            track.IsMoving = true;
+
+            // TODO - We can also check if we do a "movement" calculation based on each frame. Then animations might "woggle" during walk instead of walking on a rubber band.
+            track.MovementSpeed = movement * (modelAnim.FrameCount / modelAnim.Fps);
         }
 
         /// <summary>

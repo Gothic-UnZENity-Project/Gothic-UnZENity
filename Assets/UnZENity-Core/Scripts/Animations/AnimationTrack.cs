@@ -15,6 +15,10 @@ namespace GUZ.Core.Animations
         public float Duration;
         public float FrameTime;
 
+        public bool IsMoving;
+        public Vector3 MovementSpeed;
+
+
         public bool TryGetBonePose(string boneName, int frameIndex, out Vector3 position, out Quaternion rotation, out int boneIndex)
         {
             for (boneIndex = 0; boneIndex < BoneNames.Length; boneIndex++)
