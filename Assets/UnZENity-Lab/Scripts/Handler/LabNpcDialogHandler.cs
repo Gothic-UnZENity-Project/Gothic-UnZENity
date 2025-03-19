@@ -44,6 +44,18 @@ namespace GUZ.Lab.Handler
                 Debug.Log("idle");
                 yield return new WaitForSeconds(2f);
 
+                animSystem.PlayAnimation("T_DIALOGGESTURE_01");
+                yield return new WaitForSeconds(2f);
+                animSystem.StopAnimation("T_DIALOGGESTURE_01");
+                animSystem.PlayAnimation("T_DIALOGGESTURE_02");
+                yield return new WaitForSeconds(2f);
+
+                continue;
+
+                animSystem.PlayAnimation("S_WALK");
+                Debug.Log("idle");
+                yield return new WaitForSeconds(2f);
+
                 // Test Layer2-blendout automation
                 animSystem.PlayAnimation("T_DIALOGGESTURE_01");
                 yield return new WaitForSeconds(3f);

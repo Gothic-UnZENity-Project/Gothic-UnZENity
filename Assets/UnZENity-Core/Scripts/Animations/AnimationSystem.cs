@@ -46,6 +46,7 @@ namespace GUZ.Core.Animations
 
         private void CollectBones(Transform bone, Dictionary<string, Transform> bones)
         {
+            // Bones always start with BIP01. Other elements are ZS_* (Slots) or Prefab specific.
             if (bone.name.StartsWith("BIP01"))
             {
                 bones.Add(bone.name, bone);
@@ -68,7 +69,7 @@ namespace GUZ.Core.Animations
 
             // FIXME - Now we need to handle animation flags: M - Move and R - Rotate.
             //         Then S_ROTATEL will work properly and stop once rotated enough.
-            Debug.Log("Playing animation: " + animationName + "");
+            Debug.Log($"Playing animation: {animationName}");
 
             if (IsAlreadyPlaying(newTrack))
             {
@@ -107,6 +108,10 @@ namespace GUZ.Core.Animations
 
             StopTrackBones(newTrackInstance);
             _trackInstances.Add(newTrackInstance);
+
+            // Sort descending order (e.g. Layer20, L2, L2, L1)
+            // It's needed, as in the end, we will apply some blend weight fixes on the lowest level animation.
+            _trackInstances.Sort((a, b) => b.Track.Layer.CompareTo(a.Track.Layer));
 
             return true;
         }
@@ -272,7 +277,6 @@ namespace GUZ.Core.Animations
                 }
             }
 
-            // Apply final pose
             ApplyFinalPose();
         }
 
@@ -289,20 +293,37 @@ namespace GUZ.Core.Animations
                 var hasBoneAnimation = false;
 
                 var boneWeightSum = 0f;
-                foreach (var track in _trackInstances)
+                for (var i = 0; i < _trackInstances.Count; i++)
                 {
-                    if (track.TryGetBonePose(boneName, out var position, out var rotation, out var weight))
-                    {
-                        finalPosition += position;
-                        finalRotation *= rotation;
-                        hasBoneAnimation = true;
-                        boneWeightSum += weight;
-                    }
-                }
+                    var trackInstance = _trackInstances[i];
+                    var trackInstanceBoneIndex = trackInstance.GetBoneIndex(boneName);
 
-                if (!Mathf.Approximately(boneWeightSum, 1f))
-                {
-                    Debug.Break();
+                    if (trackInstanceBoneIndex == -1)
+                    {
+                        continue;
+                    }
+
+                    hasBoneAnimation = true;
+
+                    var trackInstanceBoneWeight = trackInstance.GetBoneWeight(trackInstanceBoneIndex);
+                    boneWeightSum += trackInstanceBoneWeight;
+
+                    // If we have some fast-changing situations like T_DIALOGGESTURE_ is blending out and another one is blending in - in between,
+                    // We need to dynamically handle overweighting. We do so by reducing weights on lower layers
+                    // (e.g. in the DIALOG case, T_WALK would be blended out more, as we sort the trackInstance list from high to low layer).
+                    if (boneWeightSum > 1f)
+                    {
+                        // Fetch amount of weight higher than 1f on boneWeightSum
+                        var amountOfOverWeight = boneWeightSum - 1f;
+                        boneWeightSum = 1f;
+
+                        trackInstance.BoneBlendWeights[trackInstanceBoneIndex] =
+                            trackInstanceBoneWeight - amountOfOverWeight;
+                    }
+
+                    trackInstance.GetBonePose(trackInstanceBoneIndex, out var position, out var rotation);
+                    finalPosition += position;
+                    finalRotation *= rotation;
                 }
 
                 // We apply position change only! if we have some update.

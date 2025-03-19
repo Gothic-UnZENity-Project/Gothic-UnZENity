@@ -146,21 +146,14 @@ namespace GUZ.Core.Animations
             return AnimationState.None;
         }
 
-        public bool TryGetBonePose(string boneName, out Vector3 position, out Quaternion rotation, out float weight)
+        public void GetBonePose(int boneIndex, out Vector3 position, out Quaternion rotation)
         {
-            if (!Track.TryGetBonePose(boneName, CurrentKeyFrameIndex, out position, out rotation, out var boneindex))
-            {
-                position = Vector3.zero;
-                rotation = Quaternion.identity;
-                weight = 0f;
-                return false;
-            }
+            Track.GetBonePose(boneIndex, CurrentKeyFrameIndex, out position, out rotation);
 
             // Apply blending weight
-            weight = BoneBlendWeights[boneindex];
+            var weight = BoneBlendWeights[boneIndex];
             position *= weight;
             rotation = Quaternion.Slerp(Quaternion.identity, rotation, weight);
-            return true;
         }
 
         /// <summary>
@@ -260,6 +253,16 @@ namespace GUZ.Core.Animations
                 BoneStates[i] = AnimationState.Play;
                 BoneBlendWeights[i] = 1f;
             }
+        }
+
+        public int GetBoneIndex(string boneName)
+        {
+            return Track.BoneNames.IndexOfItem(boneName);
+        }
+
+        public float GetBoneWeight(int trackInstanceBoneIndex)
+        {
+            return BoneBlendWeights[trackInstanceBoneIndex];
         }
     }
 }

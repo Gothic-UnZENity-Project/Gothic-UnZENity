@@ -19,25 +19,12 @@ namespace GUZ.Core.Animations
         public Vector3 MovementSpeed;
 
 
-        public bool TryGetBonePose(string boneName, int frameIndex, out Vector3 position, out Quaternion rotation, out int boneIndex)
+        public void GetBonePose(int boneIndex, int frameIndex, out Vector3 position, out Quaternion rotation)
         {
-            for (boneIndex = 0; boneIndex < BoneNames.Length; boneIndex++)
-            {
-                if (BoneNames[boneIndex] != boneName)
-                {
-                    continue;
-                }
+            var keyFrame = KeyFrames[frameIndex * BoneCount + boneIndex];
 
-                var keyFrame = KeyFrames[frameIndex * BoneCount + boneIndex];
-
-                position = keyFrame.Position;
-                rotation = keyFrame.Rotation;
-                return true;
-            }
-
-            position = Vector3.zero;
-            rotation = Quaternion.identity;
-            return false;
+            position = keyFrame.Position;
+            rotation = keyFrame.Rotation;
         }
     }
 }
