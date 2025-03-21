@@ -6,6 +6,7 @@ using GUZ.Core.Caches;
 using GUZ.Core.Data.Container;
 using GUZ.Core.Data.ZkEvents;
 using GUZ.Core.Extensions;
+using GUZ.Core.Globals;
 using GUZ.Core.Npc.Actions;
 using JetBrains.Annotations;
 using MyBox;
@@ -17,9 +18,6 @@ namespace GUZ.Core.Manager
 {
     public class AnimationManager
     {
-        private const string _rootBoneName = "BIP01";
-
-
         /// <summary>
         /// Handling animations for baseMds and overlayMds.
         ///
@@ -327,7 +325,7 @@ namespace GUZ.Core.Manager
                 var uPosition = sample.Position.ToUnityVector();
 
                 // Root bone position will be applied later.
-                if (boneName == _rootBoneName)
+                if (boneName == Constants.Animations.RootBoneName)
                 {
                     uPosition = default;
                 }
@@ -371,7 +369,7 @@ namespace GUZ.Core.Manager
         private void SetClipMovementSpeed(AnimationContainer animData, IModelAnimation modelAnim, IModelHierarchy mdh)
         {
             var firstBoneIndex = modelAnim.NodeIndices.First();
-            var isRootBoneExisting = mdh.Nodes[firstBoneIndex].Name == _rootBoneName;
+            var isRootBoneExisting = mdh.Nodes[firstBoneIndex].Name == Constants.Animations.RootBoneName;
 
             if (!isRootBoneExisting)
             {

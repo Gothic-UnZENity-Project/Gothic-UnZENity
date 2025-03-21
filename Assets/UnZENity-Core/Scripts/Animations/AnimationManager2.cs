@@ -104,6 +104,12 @@ namespace GUZ.Core.Animations
         /// </summary>
         private static void SetClipMovementSpeed(AnimationTrack track, IModelAnimation modelAnim, IModelHierarchy mdh)
         {
+            // We assume, that only lowest level animations are movement animations. (e.g. S_WALKL)
+            if (track.Layer != 1)
+            {
+                return;
+            }
+
             var firstBoneIndex = modelAnim.NodeIndices.First();
             var isRootBoneExisting = mdh.Nodes[firstBoneIndex].Name == _rootBoneName;
 

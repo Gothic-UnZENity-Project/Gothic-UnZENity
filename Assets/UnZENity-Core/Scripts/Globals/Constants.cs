@@ -38,6 +38,11 @@ namespace GUZ.Core.Globals
                 }
             }
         }
+
+        public static class Animations
+        {
+            public const string RootBoneName = "BIP01";
+        }
         
 
         // Unity shaders

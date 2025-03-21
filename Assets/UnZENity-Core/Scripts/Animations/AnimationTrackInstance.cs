@@ -22,6 +22,8 @@ namespace GUZ.Core.Animations
         public int BoneAmountStatePlay;
         public int BoneAmountStateStop;
 
+        // FIXME - Wrong - according to Docs, once the last frame is reached, the animation blends out at this pos+rot.
+        // FIXME - Docs: Anzumerken ist hierbei, dass das Herunterregeln des Einflusses erst beginnt, sobald der letzte Frame der Ani abgespielt worden ist
         public float BlendOutStart;
         public bool IsLooping;
 

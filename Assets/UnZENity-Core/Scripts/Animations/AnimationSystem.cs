@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using GUZ.Core.Extensions;
+using GUZ.Core.Globals;
 using GUZ.Core.Npc;
 using GUZ.Core.Vm;
 using UnityEngine;
@@ -15,8 +16,9 @@ namespace GUZ.Core.Animations
     /// </summary>
     public class AnimationSystem : BasePlayerBehaviour
     {
+        // These properties are normally private. For the Debug Window in Editor Mode, we allow to read them.
 #if UNITY_EDITOR
-        public IOrderedEnumerable<AnimationTrackInstance> DebugTrackInstances => _trackInstances.OrderBy(i => i.Track.Layer);
+        public List<AnimationTrackInstance> DebugTrackInstances => _trackInstances;
         public string[] DebugBoneNames => _boneNames;
 #endif
 
@@ -282,6 +284,7 @@ namespace GUZ.Core.Animations
             }
 
             ApplyFinalPose();
+            ApplyFinalMovement();
         }
 
         private void ApplyFinalPose()
@@ -294,7 +297,6 @@ namespace GUZ.Core.Animations
 
                 var finalPosition = Vector3.zero;
                 var finalRotation = Quaternion.identity;
-                var hasBoneAnimation = false;
 
                 var boneWeightSum = 0f;
                 for (var i = 0; i < _trackInstances.Count; i++)
@@ -340,6 +342,31 @@ namespace GUZ.Core.Animations
                 bone.localPosition = finalPosition;
                 bone.localRotation = finalRotation;
             }
+        }
+
+        private void ApplyFinalMovement()
+        {
+            var finalMovement = Vector3.zero;
+            for (var i = 0; i < _trackInstances.Count; i++)
+            {
+                var trackInstance = _trackInstances[i];
+
+                if (!trackInstance.Track.IsMoving)
+                {
+                    continue;
+                }
+
+                var boneIndex = trackInstance.GetBoneIndex(Constants.Animations.RootBoneName);
+                if (boneIndex == -1)
+                {
+                    continue;
+                }
+
+                finalMovement += trackInstance.Track.MovementSpeed * trackInstance.BoneBlendWeights[boneIndex] * Time.deltaTime;
+            }
+
+            // Pos change is applied with rotated value.
+            PrefabProps.Go.transform.localPosition += PrefabProps.Go.transform.rotation * finalMovement;
         }
 
         private string GetIdleAnimationName()
