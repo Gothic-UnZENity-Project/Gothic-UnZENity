@@ -90,6 +90,11 @@ namespace GUZ.Core.Animations
                 }
             }
 
+            if (track.Animation.Flags.HasFlag(AnimationFlags.Rotate))
+            {
+                Debug.LogWarning($"{track.Animation.Name}: Rotation animations are not supported yet.");
+            }
+
             return track;
         }
 
