@@ -1,7 +1,4 @@
-using System.Collections.Generic;
 using GUZ.Core._Npc2;
-using GUZ.Core.Creator;
-using GUZ.Core.Data.ZkEvents;
 using GUZ.Core.Globals;
 using GUZ.Core.Vm;
 using UnityEngine;
@@ -61,8 +58,6 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             if (Quaternion.Angle(NpcGo.transform.rotation, _finalRotation) > 1f && PlayAnimation)
             {
                 PrefabProps.AnimationSystem.PlayAnimation(GetRotateModeAnimationString());
-                // FIXME - New logic works? Then remove this line.
-                // AnimationCreator.BlendAnimation(Props.MdsNames, GetRotateModeAnimationString(), NpcGo, true, new List<string> { "BIP01 HEAD" });
             }
         }
 
