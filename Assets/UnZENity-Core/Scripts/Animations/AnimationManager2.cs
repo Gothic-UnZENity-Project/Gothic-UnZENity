@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using GUZ.Core.Extensions;
+using GUZ.Core.Globals;
 using UnityEngine;
 using ZenKit;
 
@@ -9,7 +10,6 @@ namespace GUZ.Core.Animations
 {
     public class AnimationManager2
     {
-        private const string _rootBoneName = "BIP01";
         private const float _movementThreshold = 0.4f; // If magnitude of first and last frame positions is higher than this, we have a movement animation.
 
         private static Dictionary<string, AnimationTrack> Tracks = new();
@@ -83,7 +83,7 @@ namespace GUZ.Core.Animations
                     };
 
                     // Special handling for root bone (BIP01)
-                    if (boneName == _rootBoneName)
+                    if (boneName == Constants.Animations.RootBoneName)
                     {
                         track.KeyFrames[sampleIndex].Position = Vector3.zero;
                     }
@@ -106,6 +106,9 @@ namespace GUZ.Core.Animations
         /// <summary>
         /// Based on first node (BIP01), we calculate its start position and end position of the animation.
         /// If it's above a threshold, we have a movement animation.
+        ///
+        /// We don't use Flags.Move as also idle animations would move the characters (based on animation data).
+        /// Using our own calculation is a workaround found on OpenGothic.
         /// </summary>
         private static void SetClipMovementSpeed(AnimationTrack track, IModelAnimation modelAnim, IModelHierarchy mdh)
         {
@@ -116,7 +119,7 @@ namespace GUZ.Core.Animations
             }
 
             var firstBoneIndex = modelAnim.NodeIndices.First();
-            var isRootBoneExisting = mdh.Nodes[firstBoneIndex].Name == _rootBoneName;
+            var isRootBoneExisting = mdh.Nodes[firstBoneIndex].Name == Constants.Animations.RootBoneName;
 
             // I don't think it will ever happen, but better safe than sorry.
             if (!isRootBoneExisting)
