@@ -1,6 +1,9 @@
 using System;
+using System.Collections.Generic;
+using JetBrains.Annotations;
 using MyBox;
 using UnityEngine;
+using ZenKit;
 
 namespace GUZ.Core.Animations
 {
@@ -27,6 +30,11 @@ namespace GUZ.Core.Animations
         public float BlendOutStart;
         public bool IsLooping;
 
+        private bool _didFrameChangeThisUpdate;
+        private int _lastExecutedAnimationEvent;
+        private int _eventsToExecuteThisUpdate;
+
+
         public AnimationTrackInstance(AnimationTrack track)
         {
             Track = track;
@@ -52,6 +60,8 @@ namespace GUZ.Core.Animations
             }
             BoneAmountStatePlay = 0;
             BoneAmountStateStop = 0;
+
+            _lastExecutedAnimationEvent = -1;
         }
 
         /// <summary>
@@ -68,8 +78,21 @@ namespace GUZ.Core.Animations
                 return AnimationState.BlendOut;
             }
 
+            UpdateTrackFrame();
+            UpdateEvents();
+            UpdateBoneWeights(deltaTime);
+            return UpdateState();
+        }
+
+        private void UpdateTrackFrame()
+        {
+            _didFrameChangeThisUpdate = false;
+
             if (CurrentTime >= Track.Duration)
             {
+                _didFrameChangeThisUpdate = true;
+                _lastExecutedAnimationEvent = -1; // Restart from the beginning
+
                 CurrentTime %= Track.Duration;
                 CurrentKeyFrameIndex = 0;
                 NextKeyframeTime = CurrentKeyFrameIndex * Track.FrameTime;
@@ -77,6 +100,8 @@ namespace GUZ.Core.Animations
 
             if (CurrentTime >= NextKeyframeTime)
             {
+                _didFrameChangeThisUpdate = true;
+
                 CurrentKeyFrameIndex = (int)(CurrentTime / Track.FrameTime); // Round down
                 if (Track.KeyFrames.Length > CurrentKeyFrameIndex + 1)
                 {
@@ -87,9 +112,86 @@ namespace GUZ.Core.Animations
                     NextKeyframeTime = float.MaxValue;
                 }
             }
+        }
 
+        /// <summary>
+        /// Whenever an animation frame changed, we need to check, if an animation is now in time range and add it to the "Execute" list.
+        /// </summary>
+        private void UpdateEvents()
+        {
+            _lastExecutedAnimationEvent += _eventsToExecuteThisUpdate; // If we had some executions last frame, we update the last executed event now.
+            _eventsToExecuteThisUpdate = 0;
 
-            // Apply BlendWeight changes to each bone
+            // We need to check for new events, if we moved to another frame only.
+            if (!_didFrameChangeThisUpdate)
+            {
+                return;
+            }
+
+            for (var i = _lastExecutedAnimationEvent + 1; i < Track.Animation.EventTagCount; i++)
+            {
+                var animationEvent = Track.Animation.EventTags[i];
+
+                // Event values are handled based on frame normalization (e.g. animation frames are 39...49 --> 10 frames)
+                //   an event at 49 is then at frameIndex=9
+                // event Frame=0 has special handling: use as frame 0 without additional normalization
+                var animationEventFrame = animationEvent.Frame == 0 ? 0 : ClampFrame(animationEvent.Frame);
+
+                if (animationEventFrame <= CurrentKeyFrameIndex)
+                {
+                    _eventsToExecuteThisUpdate++;
+                }
+                // We passed the events which need to be played this frame.
+                else
+                {
+                    break;
+                }
+            }
+
+            // FIXME - Same with PFX
+            // FIXME - Same with SFX
+        }
+
+        /// <summary>
+        /// This method solves multiple circumstances:
+        /// (1). Gothic animations won't always start from frame 0. e.g. t_Potion_Random_1 expects to work from frame 45+.
+        ///      --> This might be, as the animations are "behind" another and could be one single animation in Gothic.
+        ///      --> But in GUZ, we create every transition animation separately and therefore normalize to start from frame 0.
+        /// (2). G1 animation key frames are optimized and not always aligned with 25fps (e.g. t_Potion_* leverages 10 frames only).
+        ///      But the animation event frame numbers are matching 25fps.
+        ///      --> In Unity we only store the key frames and fps value provided (e.g. 10fps), as Unity will interpolate on it's own.
+        ///      --> But then we need to calculate the ratio between the fpsSource (G1=25fps) and the actual fps (e.g. 10fps).
+        /// (3). Some animation events seem to be executed before or after the actual animation.
+        ///      --> We take care by checking its boundaries.
+        /// </summary>
+        private float ClampFrame(int expectedFrame)
+        {
+            // (2). calculate ration between FpsSource and the animations Fps.
+            var animationRatio = Track.ModelAnimation.Fps / Track.ModelAnimation.FpsSource;
+
+            // (1). Norm to start frame of 1
+            // (2). Norm to fpsSource (==25 in G1)
+            expectedFrame = (int)Math.Round((expectedFrame - Track.Animation.FirstFrame) * animationRatio);
+
+            // (3). check for misaligned animation frame boundaries (if any).
+            if (expectedFrame < 0)
+            {
+                return 0;
+            }
+
+            if (expectedFrame >= Track.ModelAnimation.FrameCount)
+            {
+                return Track.ModelAnimation.FrameCount - 1;
+            }
+
+            return expectedFrame;
+        }
+
+        /// <summary>
+        /// Apply BlendWeight changes to each bone
+        /// </summary>
+        private void UpdateBoneWeights(float deltaTime)
+        {
             for (var i = 0; i < Track.BoneCount; i++)
             {
                 switch (BoneStates[i])
@@ -119,7 +221,13 @@ namespace GUZ.Core.Animations
                         break;
                 }
             }
+        }
 
+        /// <summary>
+        /// Update main state of Animation. If nothing changed, we return AnimationState.None.
+        /// </summary>
+        private AnimationState UpdateState()
+        {
             // Update State if blending is done for all bones.
             switch (State)
             {
@@ -258,6 +366,17 @@ namespace GUZ.Core.Animations
         public int GetBoneIndex(string boneName)
         {
             return Track.BoneNames.IndexOfItem(boneName);
+        }
+
+        [CanBeNull]
+        public List<IEventTag> GetPendingEventTags()
+        {
+            if (_eventsToExecuteThisUpdate == 0)
+            {
+                return null;
+            }
+
+            return Track.Animation.EventTags.GetRange(_lastExecutedAnimationEvent + 1, _eventsToExecuteThisUpdate);
         }
     }
 }

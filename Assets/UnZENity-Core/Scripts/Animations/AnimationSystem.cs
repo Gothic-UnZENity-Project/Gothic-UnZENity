@@ -7,6 +7,8 @@ using GUZ.Core.Npc;
 using GUZ.Core.Vm;
 using UnityEngine;
 using ZenKit;
+using EventType = ZenKit.EventType;
+using Object = UnityEngine.Object;
 
 namespace GUZ.Core.Animations
 {
@@ -285,6 +287,7 @@ namespace GUZ.Core.Animations
 
             ApplyFinalPose();
             ApplyFinalMovement();
+            ApplyEvents();
         }
 
         private void ApplyFinalPose()
@@ -369,6 +372,45 @@ namespace GUZ.Core.Animations
             PrefabProps.Go.transform.localPosition += PrefabProps.Go.transform.rotation * finalMovement;
         }
 
+        private void ApplyEvents()
+        {
+            for (var i = 0; i < _trackInstances.Count; i++)
+            {
+                var trackInstance = _trackInstances[i];
+
+                ApplyEventTags(trackInstance);
+            }
+        }
+
+        private void ApplyEventTags(AnimationTrackInstance trackInstance)
+        {
+            var eventTags = trackInstance.GetPendingEventTags();
+            if (eventTags == null)
+            {
+                return;
+            }
+
+            foreach (var eventTag in eventTags)
+            {
+                switch (eventTag.Type)
+                {
+                    case EventType.ItemInsert:
+                        InsertItem(eventTag.Slots.Item1, eventTag.Slots.Item2);
+                        break;
+                    case EventType.ItemDestroy:
+                    case EventType.ItemRemove:
+                        RemoveItem();
+                        break;
+                    case EventType.TorchInventory:
+                        // TODO - I assume this means: if torch is in inventory, then put it out. But not really sure. Need a NPC with real usage of it to predict right.
+                        break;
+                    default:
+                        Debug.LogWarning($"EventType.type {eventTag.Type} not yet supported.");
+                        break;
+                }
+            }
+        }
+
         private string GetIdleAnimationName()
         {
             string walkMode;
@@ -398,6 +440,34 @@ namespace GUZ.Core.Animations
             }
 
             return $"S_{walkMode}";
+        }
+
+        private void InsertItem(string slot1, string slot2)
+        {
+            if (slot2.Any())
+            {
+                throw new Exception("Slot 2 is set but not yet handled by InsertItem as AnimationEvent.");
+            }
+
+            var slotGo = PrefabProps.Bip01.gameObject.FindChildRecursively(slot1);
+
+            GameGlobals.Vobs.CreateItemMesh(Properties.CurrentItem, slotGo);
+
+            Properties.UsedItemSlot = slot1;
+        }
+
+        private void RemoveItem()
+        {
+            // Some animations need to force remove items, some not.
+            if (Properties.UsedItemSlot == "")
+            {
+                return;
+            }
+
+            var slotGo = PrefabProps.Bip01.FindChildRecursively(Properties.UsedItemSlot);
+            var item = slotGo!.GetChild(0);
+
+            Object.Destroy(item.gameObject);
         }
     }
 }

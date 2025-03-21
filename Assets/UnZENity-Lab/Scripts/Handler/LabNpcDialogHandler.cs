@@ -6,6 +6,7 @@ using GUZ.Core.Caches;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Npc;
+using GUZ.Core.Properties;
 using GUZ.Core.Vm;
 using GUZ.Lab.Mocks;
 using UnityEngine;
@@ -36,13 +37,27 @@ namespace GUZ.Lab.Handler
             var npcRoot = NpcSlotGo.transform.GetChild(0).GetChild(0).gameObject;
             var animSystem = npcRoot.GetComponent<AnimationSystem>();
             var animHeadHandler = npcRoot.GetComponent<NpcHeadAnimationHandler>();
+
+            // For UseItemToState animations
+            var props = npcRoot.GetComponentInParent<NpcLoader2>().Npc.GetUserData2().Props;
+            var beerSymbol = GameData.GothicVm.GetSymbolByName("ItFoBeer");
+            props.CurrentItem = beerSymbol!.Index;
+
             yield return new WaitForSeconds(1f);
 
             while (true)
             {
-                animSystem.PlayAnimation("S_WALK");
-                Debug.Log("idle");
+                // animSystem.PlayAnimation("S_WALK");
                 yield return new WaitForSeconds(2f);
+
+                animSystem.PlayAnimation("t_Potion_Stand_2_S0");
+                yield return new WaitForSeconds(3f);
+                animSystem.PlayAnimation("t_Potion_Random_3");
+                yield return new WaitForSeconds(3f);
+                animSystem.PlayAnimation("t_Potion_S0_2_Stand");
+                yield return new WaitForSeconds(3f);
+                continue;
+
 
                 animSystem.PlayAnimation("T_DIALOGGESTURE_01");
                 yield return new WaitForSeconds(2f);
