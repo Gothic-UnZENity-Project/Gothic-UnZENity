@@ -259,10 +259,5 @@ namespace GUZ.Core.Animations
         {
             return Track.BoneNames.IndexOfItem(boneName);
         }
-
-        public float GetBoneWeight(int trackInstanceBoneIndex)
-        {
-            return BoneBlendWeights[trackInstanceBoneIndex];
-        }
     }
 }

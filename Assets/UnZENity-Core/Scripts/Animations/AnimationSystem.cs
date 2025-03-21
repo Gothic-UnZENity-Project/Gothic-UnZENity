@@ -305,7 +305,7 @@ namespace GUZ.Core.Animations
 
                     hasBoneAnimation = true;
 
-                    var trackInstanceBoneWeight = trackInstance.GetBoneWeight(trackInstanceBoneIndex);
+                    var trackInstanceBoneWeight = trackInstance.BoneBlendWeights[trackInstanceBoneIndex];
                     boneWeightSum += trackInstanceBoneWeight;
 
                     // If we have some fast-changing situations like T_DIALOGGESTURE_ is blending out and another one is blending in - in between,
