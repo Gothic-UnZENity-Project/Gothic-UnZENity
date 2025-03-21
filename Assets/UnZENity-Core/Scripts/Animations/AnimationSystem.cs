@@ -25,6 +25,8 @@ namespace GUZ.Core.Animations
         // Caching bone Transforms makes it faster to apply them to animations later.
         private string[] _boneNames;
         private Transform[] _bones;
+        private Vector3[] _meshBonePos;
+        private Quaternion[] _meshBoneRot;
         private List<AnimationTrackInstance> _trackInstances = new();
 
         protected override void Awake()
@@ -42,6 +44,8 @@ namespace GUZ.Core.Animations
 
             _boneNames = bones.Keys.ToArray();
             _bones = bones.Values.ToArray();
+            _meshBonePos = _bones.Select(i => i.transform.localPosition).ToArray();
+            _meshBoneRot = _bones.Select(i => i.transform.localRotation).ToArray();
         }
 
         private void CollectBones(Transform bone, Dictionary<string, Transform> bones)
@@ -303,8 +307,6 @@ namespace GUZ.Core.Animations
                         continue;
                     }
 
-                    hasBoneAnimation = true;
-
                     var trackInstanceBoneWeight = trackInstance.BoneBlendWeights[trackInstanceBoneIndex];
                     boneWeightSum += trackInstanceBoneWeight;
 
@@ -326,19 +328,17 @@ namespace GUZ.Core.Animations
                     finalRotation *= rotation;
                 }
 
-                // If we under blended the current object, we need to apply positions from the mesh itself. Otherwise 
+                // If we under blended the current object, we need to apply positions from the mesh itself.
+                // Otherwise, we might have some 0.1f weight of animations alone and the NPC will implode like a black hole at 0,0,0.
+                // This should be a rare case where we won't have a sum of 1.0. Just a safety treatment.
                 if (boneWeightSum < 1f)
                 {
-
+                    finalPosition += _meshBonePos[boneIndex] * (1 - boneWeightSum);
+                    finalRotation *= Quaternion.Slerp(Quaternion.identity, _meshBoneRot[boneIndex], 1 - boneWeightSum);
                 }
 
-                // We apply position change only! if we have some update.
-                // Otherwise, e.g. T_DIALOGGESTURE_ will pos+rot the lower body into 0,0,0 (aka stomach).
-                if (hasBoneAnimation)
-                {
-                    bone.localPosition = finalPosition;
-                    bone.localRotation = finalRotation;
-                }
+                bone.localPosition = finalPosition;
+                bone.localRotation = finalRotation;
             }
         }
 
