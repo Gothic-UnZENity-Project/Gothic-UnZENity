@@ -206,7 +206,6 @@ namespace GUZ.Core.Animations
                     BoneAmountStatePlay--;
                 }
                 BoneStates[boneIndex] = AnimationState.BlendOut;
-                BoneBlendWeights[boneIndex] = 1f;
                 BoneBlendTimes[boneIndex] = blendOutTime;
             }
         }
@@ -235,7 +234,6 @@ namespace GUZ.Core.Animations
                 }
 
                 BoneStates[boneIndex] = AnimationState.BlendIn;
-                BoneBlendWeights[boneIndex] = 0f;
                 BoneBlendTimes[boneIndex] = blendInTime;
             }
         }

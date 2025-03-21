@@ -326,6 +326,12 @@ namespace GUZ.Core.Animations
                     finalRotation *= rotation;
                 }
 
+                // If we under blended the current object, we need to apply positions from the mesh itself. Otherwise 
+                if (boneWeightSum < 1f)
+                {
+
+                }
+
                 // We apply position change only! if we have some update.
                 // Otherwise, e.g. T_DIALOGGESTURE_ will pos+rot the lower body into 0,0,0 (aka stomach).
                 if (hasBoneAnimation)
