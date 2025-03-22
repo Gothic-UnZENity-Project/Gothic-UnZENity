@@ -158,6 +158,12 @@ namespace GUZ.Core
 
         private void OnDisable()
         {
+            if (GameGlobals.Lights == null)
+            {
+                // Game is quit.
+                return;
+            }
+
             foreach (var rend in _affectedRenderers)
             {
                 GameGlobals.Lights.RemoveLightOnRenderer(this, rend);
