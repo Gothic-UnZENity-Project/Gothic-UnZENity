@@ -47,8 +47,14 @@ namespace GUZ.Lab.Handler
 
             while (true)
             {
-                // animSystem.PlayAnimation("S_WALK");
-                yield return new WaitForSeconds(2f);
+                animSystem.PlayAnimation("T_RUNTURNL");
+                yield return new WaitForSeconds(0.1f);
+                animSystem.StopAnimation("T_RUNTURNL");
+                animSystem.PlayAnimation("S_WALK");
+                yield return new WaitForSeconds(0.1f);
+                animSystem.PlayAnimation("T_POTION_STAND_2_S0");
+
+                break;
 
                 animSystem.PlayAnimation("t_Potion_Stand_2_S0");
                 yield return new WaitForSeconds(3f);

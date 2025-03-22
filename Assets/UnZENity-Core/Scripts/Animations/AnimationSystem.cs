@@ -103,7 +103,7 @@ namespace GUZ.Core.Animations
                 }
                 else if (trackLayer > newTrackLayer)
                 {
-
+                    StopTrackBones(trackInstance, newTrackInstance);
                 }
             }
 
@@ -114,7 +114,6 @@ namespace GUZ.Core.Animations
                 newTrackInstance.SetPlayState();
             }
 
-            StopTrackBones(newTrackInstance);
             _trackInstances.Add(newTrackInstance);
 
             // Sort descending order (e.g. Layer20, L2, L2, L1)
@@ -242,17 +241,22 @@ namespace GUZ.Core.Animations
         /// If we start a new instance, we need to apply, which bones should not be started, as e.g. T_DIALOGGESTURE_ from
         /// a higher level forced the animation to stop bones.
         /// </summary>
-        private void StopTrackBones(AnimationTrackInstance newInstance)
+        private void StopTrackBones(AnimationTrackInstance lowerLayerTrack, AnimationTrackInstance higherLayerTrack)
         {
-            foreach (var instance in _trackInstances)
+            var bonesToSkip = new List<string>();
+            for (var i = 0; i < higherLayerTrack.Track.BoneCount; i++)
             {
-                if (newInstance.Track.Layer >= instance.Track.Layer)
+                // TODO - If a higher layer bone is blending out, we should align lower level bone blend in times so that we have 1f weight at all time.
+                // If the animation has bones in a BlendOut state, we do not skip them for our lower level animation.
+                if (higherLayerTrack.BoneStates[i] == AnimationState.BlendOut)
                 {
                     continue;
                 }
 
-                newInstance.BlendOutBones(instance.Track.BoneNames, 0f);
+                bonesToSkip.Add(higherLayerTrack.Track.BoneNames[i]);
             }
+
+            lowerLayerTrack.BlendOutBones(bonesToSkip.ToArray(), 0f);
         }
 
 
@@ -379,6 +383,9 @@ namespace GUZ.Core.Animations
                 var trackInstance = _trackInstances[i];
 
                 ApplyEventTags(trackInstance);
+                ApplySfxEvents(trackInstance);
+                ApplyPfxEvents(trackInstance);
+                ApplyMorphEvents(trackInstance);
             }
         }
 
@@ -408,6 +415,53 @@ namespace GUZ.Core.Animations
                         Debug.LogWarning($"EventType.type {eventTag.Type} not yet supported.");
                         break;
                 }
+            }
+        }
+
+        private void ApplySfxEvents(AnimationTrackInstance trackInstance)
+        {
+            var sfxEvents = trackInstance.GetPendingSoundEffects();
+            if (sfxEvents == null)
+            {
+                return;
+            }
+
+            foreach (var sfx in sfxEvents)
+            {
+                var clip = GameGlobals.Vobs.GetSoundClip(sfx.Name);
+                PrefabProps.NpcSound.clip = clip;
+                PrefabProps.NpcSound.maxDistance = sfx.Range.ToMeter();
+                PrefabProps.NpcSound.Play();
+            }
+        }
+
+        private void ApplyPfxEvents(AnimationTrackInstance trackInstance)
+        {
+            var pfxEvents = trackInstance.GetPendingParticleEffects();
+            if (pfxEvents == null)
+            {
+                return;
+            }
+
+            foreach (var pfx in pfxEvents)
+            {
+                Debug.LogWarning($"Particle Effects are not yet supported. {pfx.Name}");
+            }
+        }
+
+        private void ApplyMorphEvents(AnimationTrackInstance trackInstance)
+        {
+            var morphEvents = trackInstance.GetPendingMorphAnimations();
+            if (morphEvents == null)
+            {
+                return;
+            }
+
+            foreach (var morph in morphEvents)
+            {
+                var type = PrefabProps.HeadMorph.GetAnimationTypeByName(morph.Animation);
+
+                PrefabProps.HeadMorph.StartAnimation(Properties.BodyData.Head, type);
             }
         }
 
