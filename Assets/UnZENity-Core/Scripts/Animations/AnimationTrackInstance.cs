@@ -55,13 +55,30 @@ namespace GUZ.Core.Animations
             BoneStates = new AnimationState[Track.BoneCount];
             BoneBlendWeights = new float[Track.BoneCount];
             BoneBlendTimes = new float[Track.BoneCount];
+
+            AnimationState initialBoneState;
+            float initialBoneWeight;
+            // If w have no BlendIn time, we need to set our animation to play fully right from the start.
+            if (Track.Animation.BlendIn == 0)
+            {
+                initialBoneState = AnimationState.Play;
+                initialBoneWeight = 1f;
+                BoneAmountStatePlay = Track.BoneCount;
+                State = AnimationState.Play;
+            }
+            else
+            {
+                initialBoneState = AnimationState.BlendIn;
+                initialBoneWeight = 0f;
+            }
+
             for (var i = 0; i < Track.BoneCount; i++)
             {
-                BoneStates[i] = AnimationState.BlendIn;
-                BoneBlendWeights[i] = 0f;
+                BoneStates[i] = initialBoneState;
+                BoneBlendWeights[i] = initialBoneWeight;
                 BoneBlendTimes[i] = Track.Animation.BlendIn;
             }
-            BoneAmountStatePlay = 0;
+
             BoneAmountStateStop = 0;
 
             _lastExecutedAnimationEvent = -1;
@@ -330,12 +347,11 @@ namespace GUZ.Core.Animations
             return AnimationState.None;
         }
 
-        public void GetBonePose(int boneIndex, out Vector3 position, out Quaternion rotation)
+        public void GetBonePose(int boneIndex, out Vector3 position, out Quaternion rotation, float weight)
         {
             Track.GetBonePose(boneIndex, CurrentKeyFrameIndex, out position, out rotation);
 
             // Apply blending weight
-            var weight = BoneBlendWeights[boneIndex];
             position *= weight;
             rotation = Quaternion.Slerp(Quaternion.identity, rotation, weight);
         }

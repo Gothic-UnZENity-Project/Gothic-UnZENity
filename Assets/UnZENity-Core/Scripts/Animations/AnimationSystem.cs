@@ -268,6 +268,7 @@ namespace GUZ.Core.Animations
             }
 
             // Update all tracks
+            // ToArray() -> We need to copy the array, as we are modifying it.
             foreach (var instance in _trackInstances.ToArray())
             {
                 switch (instance.Update(Time.deltaTime))
@@ -279,6 +280,7 @@ namespace GUZ.Core.Animations
                     case AnimationState.Play:
                         break;
                     case AnimationState.BlendOut:
+                        PlayAnimation(instance.Track.Animation.Next);
                         BlendInOtherTrackBones(instance);
                         break;
                     case AnimationState.Stop:
@@ -328,11 +330,10 @@ namespace GUZ.Core.Animations
                         var amountOfOverWeight = boneWeightSum - 1f;
                         boneWeightSum = 1f;
 
-                        trackInstance.BoneBlendWeights[trackInstanceBoneIndex] =
-                            trackInstanceBoneWeight - amountOfOverWeight;
+                        trackInstanceBoneWeight -= amountOfOverWeight;
                     }
 
-                    trackInstance.GetBonePose(trackInstanceBoneIndex, out var position, out var rotation);
+                    trackInstance.GetBonePose(trackInstanceBoneIndex, out var position, out var rotation, trackInstanceBoneWeight);
                     finalPosition += position;
                     finalRotation *= rotation;
                 }
