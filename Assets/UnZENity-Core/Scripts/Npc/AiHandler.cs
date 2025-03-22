@@ -290,9 +290,11 @@ namespace GUZ.Core.Npc
         public void ReEnableNpc()
         {
             // Spawn to initial spawn location
-            var currentRoutine = gameObject.GetComponent<Routine>().CurrentRoutine;
+            var currentRoutine = Properties.RoutineCurrent;
             if (currentRoutine != null)
+            {
                 gameObject.transform.position = WayNetHelper.GetWayNetPoint(currentRoutine.Waypoint).Position;
+            }
 
             // Animation state handling
             Properties.AnimationQueue.Clear();
