@@ -57,11 +57,11 @@ namespace GUZ.Lab.Handler
                 break;
 
                 animSystem.PlayAnimation("t_Potion_Stand_2_S0");
-                yield return new WaitForSeconds(3f);
+                yield return new WaitForSeconds(5f);
                 animSystem.PlayAnimation("t_Potion_Random_3");
-                yield return new WaitForSeconds(3f);
+                yield return new WaitForSeconds(5f);
                 animSystem.PlayAnimation("t_Potion_S0_2_Stand");
-                yield return new WaitForSeconds(3f);
+                yield return new WaitForSeconds(5f);
                 continue;
 
 
