@@ -104,11 +104,11 @@ namespace GUZ.Core.Editor.Tools
                 }
                 if (GUILayout.Button("<<", buttonWidth))
                 {
-                    _timeScale -= 0.5f;
+                    _timeScale -= 0.1f;
                 }
                 if (GUILayout.Button("<", buttonWidth))
                 {
-                    _timeScale -= 0.1f;
+                    _timeScale -= 0.01f;
                 }
 
                 var origBack = GUI.backgroundColor;
@@ -123,11 +123,11 @@ namespace GUZ.Core.Editor.Tools
 
                 if (GUILayout.Button(">", buttonWidth))
                 {
-                    _timeScale += 0.1f;
+                    _timeScale += 0.01f;
                 }
                 if (GUILayout.Button(">>", buttonWidth))
                 {
-                    _timeScale += 0.5f;
+                    _timeScale += 0.1f;
                 }
                 if (GUILayout.Button(">|", buttonWidth))
                 {
