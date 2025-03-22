@@ -54,8 +54,8 @@ namespace GUZ.Core.Animations
 
         private void CollectBones(Transform bone, Dictionary<string, Transform> bones)
         {
-            // Bones always start with BIP01. Other elements are ZS_* (Slots) or Prefab specific.
-            if (bone.name.StartsWith("BIP01"))
+            // Bones always start with BIP01. Other elements are Prefab specific.
+            if (bone.name.StartsWith("BIP01") || bone.name.StartsWith("ZS_"))
             {
                 bones.Add(bone.name, bone);
             }
@@ -215,7 +215,7 @@ namespace GUZ.Core.Animations
             if (isStartAtLastFrame)
             {
                 // FIXME - Implement
-                Debug.LogError("AnimationFlas.Queue not implemented yet.");
+                Debug.LogError("AnimationFlags.Queue not implemented yet.");
             }
             // else
             // {
