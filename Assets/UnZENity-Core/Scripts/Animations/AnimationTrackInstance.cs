@@ -27,7 +27,6 @@ namespace GUZ.Core.Animations
 
         // FIXME - Wrong - according to Docs, once the last frame is reached, the animation blends out at this pos+rot.
         // FIXME - Docs: Anzumerken ist hierbei, dass das Herunterregeln des Einflusses erst beginnt, sobald der letzte Frame der Ani abgespielt worden ist
-        public float BlendOutStart;
         public bool IsLooping;
 
         private bool _didFrameChangeThisUpdate;
@@ -52,10 +51,6 @@ namespace GUZ.Core.Animations
             NextKeyframeTime = track.FrameTime;
 
             IsLooping = track.Animation.Name == track.Animation.Next;
-            if (!IsLooping)
-            {
-                BlendOutStart = track.Duration - track.Animation.BlendOut;
-            }
 
             BoneStates = new AnimationState[Track.BoneCount];
             BoneBlendWeights = new float[Track.BoneCount];
@@ -83,7 +78,7 @@ namespace GUZ.Core.Animations
         {
             CurrentTime += deltaTime;
 
-            if (!IsLooping && State == AnimationState.Play && CurrentTime >= BlendOutStart)
+            if (!IsLooping && State == AnimationState.Play && CurrentTime >= Track.Duration)
             {
                 BlendOutTrack(Track.Animation.BlendOut);
                 return AnimationState.BlendOut;
@@ -98,6 +93,12 @@ namespace GUZ.Core.Animations
         private void UpdateTrackFrame()
         {
             _didFrameChangeThisUpdate = false;
+
+            // If the whole track blends ut, we do not proceed further. (Either we're at the last frame already, or another track stopped us).
+            if (State == AnimationState.BlendOut)
+            {
+                return;
+            }
 
             if (CurrentTime >= Track.Duration)
             {
