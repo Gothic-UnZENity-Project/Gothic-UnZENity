@@ -74,7 +74,7 @@ namespace GUZ.Core.Animations
 #if UNITY_EDITOR
             if (DebugPauseAtPlayAnimation)
             {
-                Debug.Log($"PlayAnimation: {animationName}");
+                Debug.Log($"[Break] PlayAnimation: >{animationName}< on >{PrefabProps.Bip01.parent.parent.name}<");
                 Debug.Break();
             }
 #endif
@@ -164,7 +164,7 @@ namespace GUZ.Core.Animations
 #if UNITY_EDITOR
             if (DebugPauseAtStopAnimation)
             {
-                Debug.Log($"StopAnimation: {stoppingAnimationName}");
+                Debug.Log($"[Break] StopAnimation: >{stoppingAnimationName}< on >{PrefabProps.Bip01.parent.parent.name}<");
                 Debug.Break();
             }
 #endif
