@@ -18,10 +18,13 @@ namespace GUZ.Core.Animations
     /// </summary>
     public class AnimationSystem : BasePlayerBehaviour
     {
-        // These properties are normally private. For the Debug Window in Editor Mode, we allow to read them.
 #if UNITY_EDITOR
+        // These properties are normally private. For the Debug Window in Editor Mode, we allow to read them.
         public List<AnimationTrackInstance> DebugTrackInstances => _trackInstances;
         public string[] DebugBoneNames => _boneNames;
+
+        public bool DebugPauseAtPlayAnimation;
+        public bool DebugPauseAtStopAnimation;
 #endif
 
         public Transform RootBone;
@@ -68,6 +71,14 @@ namespace GUZ.Core.Animations
 
         public bool PlayAnimation(string animationName)
         {
+#if UNITY_EDITOR
+            if (DebugPauseAtPlayAnimation)
+            {
+                Debug.Log($"PlayAnimation: {animationName}");
+                Debug.Break();
+            }
+#endif
+
             var newTrack = AnimationManager2.GetTrack(animationName, Properties.MdsNameBase, Properties.MdsNameOverlay);
 
             if (newTrack == null)
@@ -150,6 +161,14 @@ namespace GUZ.Core.Animations
 
         public void StopAnimation(string stoppingAnimationName)
         {
+#if UNITY_EDITOR
+            if (DebugPauseAtStopAnimation)
+            {
+                Debug.Log($"StopAnimation: {stoppingAnimationName}");
+                Debug.Break();
+            }
+#endif
+
             AnimationTrackInstance instanceToStop = null;
 
             // Fetch and blend out Animation.

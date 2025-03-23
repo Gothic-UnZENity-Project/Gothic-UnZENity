@@ -20,6 +20,11 @@ namespace GUZ.Core.Editor.Tools
         private float _timeScale = 1f;
         private bool _isTimeScaleFoldedOut;
 
+        private GUILayoutOption _buttonSmall = GUILayout.Width(50);
+        private GUILayoutOption _buttonWide = GUILayout.Width(100);
+
+
+
         [MenuItem("UnZENity/Animation System Debugger", priority = 200)]
         public static void ShowWindow()
         {
@@ -42,6 +47,7 @@ namespace GUZ.Core.Editor.Tools
 
             _scrollPosition = EditorGUILayout.BeginScrollView(_scrollPosition);
 
+            DrawBreakpointInfo();
             DrawAnimationInfo();
             DrawBoneStates();
 
@@ -65,7 +71,15 @@ namespace GUZ.Core.Editor.Tools
             }
             else
             {
+                var oldSelectedAnimationSystem = _targetAnimationSystem;
                 _targetAnimationSystem = _animationSystems.Values.ElementAt(_selectedAnimationSystemIndex);
+
+                if (oldSelectedAnimationSystem != _targetAnimationSystem && oldSelectedAnimationSystem != null)
+                {
+                    // Reset! Otherwise, we will never find again from which NPC the game is pausing.
+                    oldSelectedAnimationSystem.DebugPauseAtPlayAnimation = false;
+                    oldSelectedAnimationSystem.DebugPauseAtStopAnimation = false;
+                }
             }
 
             var origBack = GUI.backgroundColor;
@@ -73,7 +87,7 @@ namespace GUZ.Core.Editor.Tools
             GUI.backgroundColor = _animationSystems.Any() ? Color.green : Color.grey;
 
             // Re-Collect AnimationSystems
-            if (GUILayout.Button("(Re)collect AnimationSystems", GUILayout.Width(400)))
+            if (GUILayout.Button("(Re)collect Animation Systems", GUILayout.Width(400)))
             {
                 var emptyElement = new[] { new { name = "<<Choose NPC>>", animComp = (AnimationSystem)null } };
 
@@ -88,8 +102,6 @@ namespace GUZ.Core.Editor.Tools
 
         private void DrawTimeScale()
         {
-            var buttonWidth = GUILayout.Width(50);
-
             // TimeScale controls in a foldout
             _isTimeScaleFoldedOut = EditorGUILayout.Foldout(_isTimeScaleFoldedOut, "Time Scale Controls", true);
             if (_isTimeScaleFoldedOut)
@@ -98,15 +110,15 @@ namespace GUZ.Core.Editor.Tools
                 EditorGUILayout.BeginHorizontal();
                 GUILayout.FlexibleSpace(); // This pushes content to the center
 
-                if (GUILayout.Button("|<", buttonWidth))
+                if (GUILayout.Button("|<", _buttonSmall))
                 {
                     _timeScale = 0f;
                 }
-                if (GUILayout.Button("<<", buttonWidth))
+                if (GUILayout.Button("<<", _buttonSmall))
                 {
                     _timeScale -= 0.1f;
                 }
-                if (GUILayout.Button("<", buttonWidth))
+                if (GUILayout.Button("<", _buttonSmall))
                 {
                     _timeScale -= 0.01f;
                 }
@@ -115,21 +127,21 @@ namespace GUZ.Core.Editor.Tools
 
                 // Green == We have the normal 1f timeScale active (Helps finding issues if it's not reset to 1 after use)
                 GUI.backgroundColor = !Mathf.Approximately(Time.timeScale, 1f) ? Color.grey : Color.green;
-                if (GUILayout.Button("1", buttonWidth))
+                if (GUILayout.Button("1", _buttonSmall))
                 {
                     _timeScale = 1f;
                 }
                 GUI.backgroundColor = origBack;
 
-                if (GUILayout.Button(">", buttonWidth))
+                if (GUILayout.Button(">", _buttonSmall))
                 {
                     _timeScale += 0.01f;
                 }
-                if (GUILayout.Button(">>", buttonWidth))
+                if (GUILayout.Button(">>", _buttonSmall))
                 {
                     _timeScale += 0.1f;
                 }
-                if (GUILayout.Button(">|", buttonWidth))
+                if (GUILayout.Button(">|", _buttonSmall))
                 {
                     _timeScale = 2f;
                 }
@@ -157,6 +169,30 @@ namespace GUZ.Core.Editor.Tools
 
             // Apply the timescale value (outside the foldout so it's always applied)
             Time.timeScale = _timeScale;
+        }
+
+        private void DrawBreakpointInfo()
+        {
+            var origBackgroundColor = GUI.backgroundColor;
+
+            DrawDivider();
+            EditorGUILayout.LabelField("Breakpoints", EditorStyles.boldLabel);
+
+            GUILayout.BeginHorizontal();
+            GUI.backgroundColor = _targetAnimationSystem.DebugPauseAtPlayAnimation ? Color.green : origBackgroundColor;
+            if (GUILayout.Button("PlayAnimation", _buttonWide))
+            {
+                _targetAnimationSystem.DebugPauseAtPlayAnimation = !_targetAnimationSystem.DebugPauseAtPlayAnimation;
+            }
+
+            GUI.backgroundColor = _targetAnimationSystem.DebugPauseAtStopAnimation ? Color.green : origBackgroundColor;
+            if (GUILayout.Button("StopAnimation", _buttonWide))
+            {
+                _targetAnimationSystem.DebugPauseAtStopAnimation = !_targetAnimationSystem.DebugPauseAtStopAnimation;
+            }
+            GUILayout.EndHorizontal();
+
+            GUI.backgroundColor = origBackgroundColor;
         }
 
         private void DrawAnimationInfo()
