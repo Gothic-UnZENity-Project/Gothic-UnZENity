@@ -156,11 +156,14 @@ namespace GUZ.Core._Npc2
             npcData.Go = newNpc;
 
             lazyLoadGo.transform.GetPositionAndRotation(out var lazyPos, out var lazyRot);
+
+            var finalSpawnPos = GetFreeAreaAtSpawnPoint(lazyPos);
+
             var mdhName = string.IsNullOrEmpty(props.MdhNameOverlay)
                 ? props.MdhNameBase
                 : props.MdhNameOverlay;
             MeshFactory.CreateNpc(newNpc.name, props.MdmName, mdhName, props.BodyData,
-                lazyPos, lazyRot, lazyLoadGo, newNpc);
+                finalSpawnPos, lazyRot, lazyLoadGo, newNpc);
 
             // We don't need specific locations of initial LazyLoading GO anymore.
             lazyLoadGo.transform.SetPositionAndRotation(default, default);
@@ -191,69 +194,43 @@ namespace GUZ.Core._Npc2
         /// <summary>
         /// Check if NPC/Monster will spawn inside another and do a circulated free V3 check around the area.
         /// </summary>
-        public bool GetFreeAreaAtSpawnPoint(GameObject go, Vector3 spawnPointPos)
+        private Vector3 GetFreeAreaAtSpawnPoint(Vector3 positionToScan)
         {
             var isPositionFound = false;
             var testRadius = 1f; // ~2x size of normal bounding box of an NPC.
             // Some FP/WP are on a hill. The spawn check will therefore lift the location for a little to not interfere with world mesh collision check.
             var groundControlDifference = new Vector3(0, 1f, 0);
-            var initialSpawnPointGroundControl = spawnPointPos + groundControlDifference;
+            var initialSpawnPointGroundControl = positionToScan + groundControlDifference;
 
             // Check if the spawn point is free.
             if (!Physics.CheckSphere(initialSpawnPointGroundControl, testRadius / 2))
             {
-                go.transform.position = spawnPointPos;
-                // There are three options to sync the Physics information for collision check. This is the most performant one as it only alters the single V3.
-                go.GetComponentInChildren<Rigidbody>().position = spawnPointPos;
-                isPositionFound = true;
+                return positionToScan;
             }
-            // Alternatively let's circle around the spawn point if multiple NPCs spawn onto the same one.
-            else
-            {
-                // Circle around at least x-times.
-                // G1: Orc-dogs are in a big crowd. We therefore need to draw a location circle multiple times to spawn them all.
-                for (var currentRadius = testRadius; currentRadius <= testRadius * 2; currentRadius += testRadius)
-                {
-                    for (var angle = 0f; angle < 360f; angle += 36f)
-                    {
-                        var angleInRadians = angle * Mathf.Deg2Rad;
-                        var offsetPoint = new Vector3(Mathf.Cos(angleInRadians) * currentRadius, 0,
-                            Mathf.Sin(angleInRadians) * currentRadius);
-                        var checkPointGroundControl = initialSpawnPointGroundControl + offsetPoint;
 
-                        // Check if the point is clear (no obstacles)
-                        if (!Physics.CheckSphere(checkPointGroundControl, testRadius / 2))
-                        {
-                            go.transform.position = spawnPointPos + offsetPoint;
-                            // There are three options to sync the Physics information for collision check. This is the most performant one as it only alters the single V3.
-                            go.GetComponentInChildren<Rigidbody>().position =
-                                spawnPointPos + offsetPoint;
-                            isPositionFound = true;
-                            break;
-                        }
+            // Alternatively let's circle around the spawn point if multiple NPCs spawn onto the same one.
+            // Circle around at least x-times.
+            // G1: Orc-dogs are in a big crowd. We therefore need to draw a location circle multiple times to spawn them all.
+            for (var currentRadius = testRadius; currentRadius <= testRadius * 2; currentRadius += testRadius)
+            {
+                for (var angle = 0f; angle < 360f; angle += 36f)
+                {
+                    var angleInRadians = angle * Mathf.Deg2Rad;
+                    var offsetPoint = new Vector3(Mathf.Cos(angleInRadians) * currentRadius, 0,
+                        Mathf.Sin(angleInRadians) * currentRadius);
+                    var checkPointGroundControl = initialSpawnPointGroundControl + offsetPoint;
+
+                    // Check if the point is clear (no obstacles)
+                    if (!Physics.CheckSphere(checkPointGroundControl, testRadius / 2))
+                    {
+                        return positionToScan + offsetPoint;
                     }
                 }
             }
 
-            if (!isPositionFound)
-            {
-                Debug.LogError(
-                    $"No suitable spawn point found for NPC >{go.name}<. Circle search didn't find anything!");
-                return default;
-            }
-
-            // FIXME - Needed?
-            // Some data to be used for later.
-            // if (initialSpawnPoint.IsFreePoint())
-            // {
-            //     npc.Go.GetComponent<NpcProperties>().CurrentFreePoint = (FreePoint)initialSpawnPoint;
-            // }
-            // else
-            // {
-            //     npc.Go.GetComponent<NpcProperties>().CurrentWayPoint = (WayNet_WayPoint)initialSpawnPoint;
-            // }
-
-            return true;
+            Debug.LogError(
+                $"No suitable spawn point found for NPC at >{positionToScan}<. Circle search didn't find anything!");
+            return default;
         }
     }
 }
