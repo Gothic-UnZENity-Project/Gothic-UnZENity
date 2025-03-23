@@ -438,21 +438,6 @@ namespace GUZ.Core.Animations
             }
         }
 
-        /// <summary>
-        /// Immediately start animation with full bone weight.
-        /// </summary>
-        public void SetPlayState()
-        {
-            State = AnimationState.Play;
-            BoneAmountStatePlay = Track.BoneCount;
-            BoneAmountStateStop = 0;
-            for (var i = 0; i < Track.BoneCount; i++)
-            {
-                BoneStates[i] = AnimationState.Play;
-                BoneBlendWeights[i] = 1f;
-            }
-        }
-
         public int GetBoneIndex(string boneName)
         {
             return Track.BoneNames.IndexOfItem(boneName);

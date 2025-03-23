@@ -107,13 +107,6 @@ namespace GUZ.Core.Animations
                 }
             }
 
-            // If this is the first animation on NPC, we need no BlendIn, simply start all bones at frame 0.
-            // TODO - Could be handled differently as a Layer0 animation aka Bone pose of ModelMesh itself.
-            if (_trackInstances.IsEmpty())
-            {
-                newTrackInstance.SetPlayState();
-            }
-
             _trackInstances.Add(newTrackInstance);
 
             // Sort descending order (e.g. Layer20, L2, L2, L1)
