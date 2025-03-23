@@ -120,9 +120,14 @@ namespace GUZ.Core.Animations
 
             _trackInstances.Add(newTrackInstance);
 
-            // Sort descending order (e.g. Layer20, L2, L2, L1)
-            // It's needed, as in the end, we will apply some blend weight fixes on the lowest level animation.
-            _trackInstances.Sort((a, b) => b.Track.Layer.CompareTo(a.Track.Layer));
+            // As Blending isn't always 1f at each time, we ensure some smoothness by sorting the TrackInstances like:
+            // ORDER BY Track.Layer DESC AND Instance.CreationTime DESC
+            // Newer (higher) CreationTime has higher precedence and will "forcefully" turn down the older animation on same layer.
+            _trackInstances.Sort((instanceA, instanceB) =>
+            {
+                var layerComparison = instanceB.Track.Layer.CompareTo(instanceA.Track.Layer); // DESC
+                return layerComparison != 0 ? layerComparison : instanceB.CreationTime.CompareTo(instanceA.CreationTime); // DESC
+            });
 
             return true;
         }

@@ -12,6 +12,8 @@ namespace GUZ.Core.Animations
     /// </summary>
     public class AnimationTrackInstance
     {
+        public int CreationTime;
+
         public AnimationTrack Track;
 
         // Value for this specific point in time
@@ -44,6 +46,7 @@ namespace GUZ.Core.Animations
 
         public AnimationTrackInstance(AnimationTrack track)
         {
+            CreationTime = Time.frameCount;
             Track = track;
             State = AnimationState.BlendIn;
             CurrentTime = 0f;
