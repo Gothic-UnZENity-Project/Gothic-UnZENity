@@ -67,7 +67,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             switch (Props.WalkMode)
             {
                 case VmGothicEnums.WalkMode.Walk:
-                    walkmode = "RUN"; // TODO: aniAlias not read properly from mds
+                    walkmode = "RUN"; // FIXME: We need to implement aniAlias feature, then change it back to t_WalkTurnL
                     break;
                 case VmGothicEnums.WalkMode.Run:
                     walkmode = "Run";
