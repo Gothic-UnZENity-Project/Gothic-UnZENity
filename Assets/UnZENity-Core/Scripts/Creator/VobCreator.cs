@@ -270,16 +270,6 @@ namespace GUZ.Core.Creator
                 }
                 case VirtualObjectType.oCMobInter:
                 {
-                    if (vob.Name.ContainsIgnoreCase("bench") ||
-                        vob.Name.ContainsIgnoreCase("chair") ||
-                        vob.Name.ContainsIgnoreCase("throne") ||
-                        vob.Name.ContainsIgnoreCase("barrelo"))
-                    {
-                        go = CreateSeat(vob, parent);
-                        _cullingVobObjects.Add(go);
-                        break;
-                    }
-
                     go = CreateDefaultMesh(vob);
                     _cullingVobObjects.Add(go);
                     break;
@@ -523,7 +513,17 @@ namespace GUZ.Core.Creator
                     go = ResourceLoader.TryGetPrefabObject(PrefabType.VobFire);
                     break;
                 case VirtualObjectType.oCMobInter:
-                    go = ResourceLoader.TryGetPrefabObject(PrefabType.VobInteractable);
+                    if (vob.Name.ContainsIgnoreCase("bench") ||
+                        vob.Name.ContainsIgnoreCase("chair") ||
+                        vob.Name.ContainsIgnoreCase("throne") ||
+                        vob.Name.ContainsIgnoreCase("barrelo"))
+                    {
+                        go = ResourceLoader.TryGetPrefabObject(PrefabType.VobInteractableSeat);
+                    }
+                    else
+                    {
+                        go = ResourceLoader.TryGetPrefabObject(PrefabType.VobInteractable);
+                    }
                     break;
                 case VirtualObjectType.oCMobBed:
                     go = ResourceLoader.TryGetPrefabObject(PrefabType.VobBed);
@@ -844,14 +844,6 @@ namespace GUZ.Core.Creator
         private static GameObject CreateLadder(IVirtualObject vob, GameObject parent = null)
         {
             var vobObj = CreateDefaultMesh(vob, parent, true);
-
-            return vobObj;
-        }
-
-        // FIXME - We need to load a different prefab!
-        private static GameObject CreateSeat(IVirtualObject vob, GameObject parent = null)
-        {
-            var vobObj = CreateDefaultMesh(vob);
 
             return vobObj;
         }

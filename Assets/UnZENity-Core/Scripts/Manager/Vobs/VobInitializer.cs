@@ -290,7 +290,17 @@ namespace GUZ.Core.Manager.Vobs
                     go = ResourceLoader.TryGetPrefabObject(PrefabType.VobFire, name: name);
                     break;
                 case VirtualObjectType.oCMobInter:
-                    go = ResourceLoader.TryGetPrefabObject(PrefabType.VobInteractable, name: name);
+                    if (vob.Name.ContainsIgnoreCase("bench") ||
+                        vob.Name.ContainsIgnoreCase("chair") ||
+                        vob.Name.ContainsIgnoreCase("throne") ||
+                        vob.Name.ContainsIgnoreCase("barrelo"))
+                    {
+                        go = ResourceLoader.TryGetPrefabObject(PrefabType.VobInteractableSeat);
+                    }
+                    else
+                    {
+                        go = ResourceLoader.TryGetPrefabObject(PrefabType.VobInteractable);
+                    }
                     break;
                 case VirtualObjectType.oCMobBed:
                     go = ResourceLoader.TryGetPrefabObject(PrefabType.VobBed, name: name);
