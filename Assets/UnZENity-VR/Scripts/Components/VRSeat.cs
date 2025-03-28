@@ -7,6 +7,7 @@ using GUZ.Core.Extensions;
 using GUZ.Core.Player.Camera;
 using HurricaneVR.Framework.Core;
 using HurricaneVR.Framework.Core.Grabbers;
+using HurricaneVR.Framework.Core.Player;
 using HurricaneVR.Framework.Core.Utils;
 using UnityEngine;
 
@@ -19,6 +20,12 @@ namespace GUZ.VR.Components
         private Vector3 _eulerOffset = new(0, 180, 0);
         private const float _cameraFadeDuration = 0.15f;
         private const float _sittingCooldown = 0.5f;
+        
+        // Fade components
+        [Header("Vignette Settings")]
+        [SerializeField] private HVRCanvasFade _canvasFade;
+        [SerializeField] private float _fadeSpeed = 6f;
+
 
         private bool _isPlayerSeated;
 
@@ -52,6 +59,7 @@ namespace GUZ.VR.Components
             {
                 GetSnapPoints();
             }
+
             if (_isNpcSeated || !_canPlayerSit)
             {
                 return; // stop player from sitting if an NPC is already sitting there or if its cooling down
@@ -61,6 +69,8 @@ namespace GUZ.VR.Components
             _canPlayerSit = false; // disable this function to cooldown
 
             GameObject player = GameContext.InteractionAdapter.GetCurrentPlayerController();
+            
+            _canvasFade = player.FindChildRecursively("GlobalCameraFade").GetComponent<HVRCanvasFade>();
 
             //handle sitting/standing
             _isPlayerSeated = !_isPlayerSeated;
@@ -83,38 +93,35 @@ namespace GUZ.VR.Components
 
         private IEnumerator SitDown(GameObject player)
         {
-            //lock input
             GameContext.InteractionAdapter.LockPlayerInPlace();
-
-            //get snap point
             _currentSnapPoint = GetNearestSnapPoint(player.transform.position);
 
-            //fade camera out
-            _cachedCameraFade = player.GetComponentInChildren<CameraFade>();
-            _cachedCameraFade.Fade(_cameraFadeDuration, 1);
-            yield return new WaitForSeconds(_cameraFadeDuration);
+            // Fade in
+            _canvasFade.Fade(1f, _fadeSpeed);
+            yield return new WaitUntil(() => _canvasFade.CurrentFade >= 1f);
 
-            //set position and rotation
+            // Move player
             player.transform.position = _currentSnapPoint.position + _currentSnapPoint.TransformDirection(_posOffset);
             player.transform.eulerAngles = _currentSnapPoint.eulerAngles + _eulerOffset;
 
-            //fade camera in
-            _cachedCameraFade.Fade(_cameraFadeDuration, 0);
+            // Fade out
+            _canvasFade.Fade(0f, _fadeSpeed);
+            yield return new WaitUntil(() => _canvasFade.CurrentFade <= 0f);
         }
 
         private IEnumerator StandUp(GameObject player)
         {
-            //fade camera out
-            _cachedCameraFade.Fade(_cameraFadeDuration, 1);
-            yield return new WaitForSeconds(_cameraFadeDuration);
-            //move player forward
+            // Fade in
+            _canvasFade.Fade(1f, _fadeSpeed);
+            yield return new WaitUntil(() => _canvasFade.CurrentFade >= 1f);
+
+            // Move player
             player.transform.position += player.transform.TransformDirection(new Vector3(0, 0.5f, 1f));
-            // player.transform.eulerAngles = cachedEulers;
-            //unlock move an turn input
             GameContext.InteractionAdapter.UnlockPlayer();
-            //fade camera in
-            _cachedCameraFade.Fade(_cameraFadeDuration, 0);
-            _cachedCameraFade = null;
+
+            // Fade out
+            _canvasFade.Fade(0f, _fadeSpeed);
+            yield return new WaitUntil(() => _canvasFade.CurrentFade <= 0f);
         }
 
         private Transform GetNearestSnapPoint(Vector3 pos)
