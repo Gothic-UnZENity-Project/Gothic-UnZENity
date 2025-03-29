@@ -61,6 +61,7 @@ namespace GUZ.Core.Animations
 
             // Process animation samples
             track.BoneCount = modelAnimation.NodeCount;
+            track.FrameCount = modelAnimation.FrameCount;
             track.KeyFrames = new AnimationKeyFrame[modelAnimation.Samples.Count];
             track.FrameTime = 1 / modelAnimation.Fps;
 

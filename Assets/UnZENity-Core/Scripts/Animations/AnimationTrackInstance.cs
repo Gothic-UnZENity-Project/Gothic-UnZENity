@@ -19,6 +19,7 @@ namespace GUZ.Core.Animations
         // Value for this specific point in time
         public float CurrentTime;
         public int CurrentKeyFrameIndex;
+        public float CurrentKeyFrameTime;
         public float NextKeyframeTime;
         public AnimationState State;
         public AnimationState[] BoneStates;
@@ -51,6 +52,7 @@ namespace GUZ.Core.Animations
             State = AnimationState.BlendIn;
             CurrentTime = 0f;
             CurrentKeyFrameIndex = 0;
+            CurrentKeyFrameTime = 0f;
             NextKeyframeTime = track.FrameTime;
 
             IsLooping = track.Animation.Name == track.Animation.Next;
@@ -131,6 +133,7 @@ namespace GUZ.Core.Animations
 
                 CurrentTime %= Track.Duration;
                 CurrentKeyFrameIndex = 0;
+                CurrentKeyFrameTime = 0f;
                 NextKeyframeTime = CurrentKeyFrameIndex * Track.FrameTime;
             }
 
@@ -141,10 +144,12 @@ namespace GUZ.Core.Animations
                 CurrentKeyFrameIndex = (int)(CurrentTime / Track.FrameTime); // Round down
                 if (Track.KeyFrames.Length > CurrentKeyFrameIndex + 1)
                 {
+                    CurrentKeyFrameTime = CurrentKeyFrameIndex * Track.FrameTime;
                     NextKeyframeTime = (CurrentKeyFrameIndex + 1) * Track.FrameTime;
                 }
                 else
                 {
+                    CurrentKeyFrameTime = Track.Duration;
                     NextKeyframeTime = float.MaxValue;
                 }
             }
@@ -353,6 +358,31 @@ namespace GUZ.Core.Animations
         public void GetBonePose(int boneIndex, out Vector3 position, out Quaternion rotation)
         {
             Track.GetBonePose(boneIndex, CurrentKeyFrameIndex, out position, out rotation);
+            // HINT: If we want to have the real animations only, remove the rest of this method. Then animations play with 10/30/60fps depending on their data.
+
+            // No Lerping, if we're already Blending Out (aka we return the same frame until weight==0)
+            if (State == AnimationState.BlendOut)
+            {
+                return;
+            }
+
+            var nextFrameIndex = CurrentKeyFrameIndex + 1;
+            if (nextFrameIndex >= Track.FrameCount) // We're already at the last frame.
+            {
+                nextFrameIndex = 0;
+
+                // We only lerp with first element, if the track is looping.
+                if (!IsLooping)
+                {
+                    return;
+                }
+            }
+
+            Track.GetBonePose(boneIndex, nextFrameIndex, out var nextPosition, out var nextRotation);
+
+            var interpolation = Mathf.InverseLerp(CurrentKeyFrameTime, NextKeyframeTime, CurrentTime);
+            position = Vector3.Lerp(position, nextPosition, interpolation);
+            rotation = Quaternion.Slerp(rotation, nextRotation, interpolation);
         }
 
         /// <summary>

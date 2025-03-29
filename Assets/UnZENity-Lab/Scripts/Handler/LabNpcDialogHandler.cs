@@ -47,7 +47,14 @@ namespace GUZ.Lab.Handler
 
             while (true)
             {
-                // Right leg shake when turning, then idle
+                // Leg shake with FPS:10
+                {
+                    animSystem.PlayAnimation("t_BoringKick");
+                    yield return new WaitForSeconds(1f);
+                }
+                continue;
+
+                // Rotate, then idle
                 {
                     animSystem.PlayAnimation("T_RUNTURNL");
                     yield return new WaitForSeconds(2f);

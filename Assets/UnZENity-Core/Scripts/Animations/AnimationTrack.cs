@@ -8,6 +8,7 @@ namespace GUZ.Core.Animations
     {
         public string[] BoneNames;
         public int BoneCount;
+        public int FrameCount;
         public AnimationKeyFrame[] KeyFrames;
         public IAnimation Animation;
         public IModelAnimation ModelAnimation;
