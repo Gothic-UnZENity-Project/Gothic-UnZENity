@@ -330,6 +330,7 @@ namespace GUZ.Core.Animations
                     var trackInstance = _trackInstances[i];
                     var trackInstanceBoneIndex = trackInstance.GetBoneIndex(boneName);
 
+                    // This track doesn't include the requested bone.
                     if (trackInstanceBoneIndex == -1)
                     {
                         continue;
@@ -350,9 +351,20 @@ namespace GUZ.Core.Animations
                         trackInstanceBoneWeight -= amountOfOverWeight;
                     }
 
-                    trackInstance.GetBonePose(trackInstanceBoneIndex, out var position, out var rotation, trackInstanceBoneWeight);
-                    finalPosition += position;
-                    finalRotation *= rotation;
+                    trackInstance.GetBonePose(trackInstanceBoneIndex, out var position, out var rotation);
+
+
+                    finalPosition += position * trackInstanceBoneWeight;
+
+                    // The first animation for a bone will define the start point of the rotation. Starting with Q.Identity is wrong and causes hickups.
+                    if (i == 0)
+                    {
+                        finalRotation = rotation;
+                    }
+                    else
+                    {
+                        finalRotation = Quaternion.Slerp(finalRotation, rotation, trackInstanceBoneWeight);
+                    }
                 }
 
                 // If we under blended the current object, we need to apply positions from the mesh itself.
@@ -361,7 +373,7 @@ namespace GUZ.Core.Animations
                 if (boneWeightSum < 1f)
                 {
                     finalPosition += _meshBonePos[boneIndex] * (1 - boneWeightSum);
-                    finalRotation *= Quaternion.Slerp(Quaternion.identity, _meshBoneRot[boneIndex], 1 - boneWeightSum);
+                    finalRotation = Quaternion.Slerp(finalRotation, _meshBoneRot[boneIndex], 1 - boneWeightSum);
                 }
 
                 bone.localPosition = finalPosition;

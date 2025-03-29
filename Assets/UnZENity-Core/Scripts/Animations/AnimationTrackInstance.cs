@@ -350,13 +350,9 @@ namespace GUZ.Core.Animations
             return AnimationState.None;
         }
 
-        public void GetBonePose(int boneIndex, out Vector3 position, out Quaternion rotation, float weight)
+        public void GetBonePose(int boneIndex, out Vector3 position, out Quaternion rotation)
         {
             Track.GetBonePose(boneIndex, CurrentKeyFrameIndex, out position, out rotation);
-
-            // Apply blending weight
-            position *= weight;
-            rotation = Quaternion.Slerp(Quaternion.identity, rotation, weight);
         }
 
         /// <summary>
