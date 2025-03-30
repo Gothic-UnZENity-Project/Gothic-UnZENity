@@ -179,6 +179,11 @@ namespace GUZ.Core.Npc
             {
                 StartRoutine(currentRoutine.Action, currentRoutine.Waypoint);
             }
+            else
+            {
+                // If we don't have a routine, we're about a monster.
+                StartRoutine(NpcInstance.StartAiState);
+            }
         }
 
         public void StartRoutine(int action, string wayPointName)
@@ -339,7 +344,9 @@ namespace GUZ.Core.Npc
 
             // Start over
             if (currentRoutine != null)
+            {
                 StartRoutine(currentRoutine.Action, currentRoutine.Waypoint);
+            }
             else
             {
                 //if we don't have a routine means it's about a monster
