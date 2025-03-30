@@ -276,13 +276,6 @@ namespace GUZ.Core.Npc
             Properties.CurrentAction.AnimationMorphEventCallback(eventData);
         }
 
-        public void AnimationBlendOutCallback(string eventBlendOutParam)
-        {
-            var eventData = JsonUtility.FromJson<SerializableEventBlendOutSignal>(eventBlendOutParam);
-
-            Properties.CurrentAction.AnimationBlendOutEventCallback(eventData);
-        }
-
         /// <summary>
         /// Fully reset NPC state.
         /// Called after an NPC is re-enabled in the scene.
