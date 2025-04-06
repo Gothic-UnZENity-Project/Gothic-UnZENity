@@ -12,10 +12,12 @@ namespace GUZ.Core.Npc
             NpcData.PrefabProps.ColliderRootMotion = gameObject.transform;
         }
 
+        /// <summary>
+        /// We need to apply physics on the NPC itself.
+        /// General movement and animations are handled within AnimationSystem.cs. This Collider object is to add physics on top.
+        /// </summary>
         private void Update()
         {
-            // As we use legacy animations, we can't use RootMotion. We therefore need to rebuild it.
-
             /*
              * NPC GO hierarchy:
              *
@@ -25,13 +27,11 @@ namespace GUZ.Core.Npc
              *    /... <- animation bones
              */
 
-            var collisionTransform = transform;
-
             // Apply physics based position change to root.
-            Go.transform.localPosition += collisionTransform.localPosition;
+            Go.transform.localPosition += transform.localPosition;
 
             // Empty physics based diff. Next frame physics will be recalculated.
-            collisionTransform.localPosition = Vector3.zero;
+            transform.localPosition = Vector3.zero;
         }
     }
 }

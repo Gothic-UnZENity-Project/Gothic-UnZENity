@@ -1,7 +1,4 @@
-using System.Collections.Generic;
 using GUZ.Core._Npc2;
-using GUZ.Core.Creator;
-using GUZ.Core.Data.ZkEvents;
 using GUZ.Core.Globals;
 using GUZ.Core.Vm;
 using UnityEngine;
@@ -11,6 +8,9 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
 {
     public abstract class AbstractRotateAnimationAction : AbstractAnimationAction
     {
+        // Can be used to rotate without animation.
+        protected bool PlayAnimation = true;
+
         private Quaternion _finalRotation;
         private bool _isRotateLeft;
 
@@ -55,11 +55,9 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             var cross = Vector3.Cross(NpcGo.transform.forward, _finalRotation.eulerAngles);
             _isRotateLeft = cross.y >= 0;
 
-            if (Quaternion.Angle(NpcGo.transform.rotation, _finalRotation) > 1f)
+            if (Quaternion.Angle(NpcGo.transform.rotation, _finalRotation) > 1f && PlayAnimation)
             {
-                PrefabProps.AnimationHandler.PlayAnimation(GetRotateModeAnimationString());
-                // FIXME - New logic works? Then remove this line.
-                // AnimationCreator.BlendAnimation(Props.MdsNames, GetRotateModeAnimationString(), NpcGo, true, new List<string> { "BIP01 HEAD" });
+                PrefabProps.AnimationSystem.PlayAnimation(GetRotateModeAnimationString());
             }
         }
 
@@ -69,7 +67,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             switch (Props.WalkMode)
             {
                 case VmGothicEnums.WalkMode.Walk:
-                    walkmode = "RUN"; // TODO: aniAlias not read properly from mds
+                    walkmode = "RUN"; // FIXME: We need to implement aniAlias feature, then change it back to t_WalkTurnL
                     break;
                 case VmGothicEnums.WalkMode.Run:
                     walkmode = "Run";
@@ -114,10 +112,9 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             // Check if rotation is done.
             if (Quaternion.Angle(npcTransform.rotation, _finalRotation) < 1f && IsFinishedFlag != true)
             {
-                PrefabProps.AnimationHandler.PlayAnimation(GetWalkModeAnimationString());
+                PrefabProps.AnimationSystem.StopAnimation(GetRotateModeAnimationString());
+                PrefabProps.AnimationSystem.PlayAnimation(GetWalkModeAnimationString());
 
-                // FIXME - New logic works? Then remove this line.
-                // AnimationCreator.BlendAnimation(Props.MdsNames, GetWalkModeAnimationString(), NpcGo, true, new List<string> { "BIP01 HEAD" });
                 IsFinishedFlag = true;
             }
             else

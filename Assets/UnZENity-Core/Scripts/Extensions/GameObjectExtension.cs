@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using JetBrains.Annotations;
 using UnityEngine;
 
 namespace GUZ.Core.Extensions
@@ -25,6 +26,12 @@ namespace GUZ.Core.Extensions
             {
                 obj.transform.localRotation = Quaternion.identity;
             }
+        }
+
+        [CanBeNull]
+        public static Transform FindChildRecursively(this Transform transform, string name)
+        {
+            return transform.gameObject.FindChildRecursively(name)?.transform;
         }
 
         public static GameObject FindChildRecursively(this GameObject go, string name)

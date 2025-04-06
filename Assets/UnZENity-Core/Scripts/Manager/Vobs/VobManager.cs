@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using GUZ.Core.Config;
+using GUZ.Core.Creator.Sounds;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Properties;
@@ -19,6 +20,8 @@ namespace GUZ.Core.Manager.Vobs
 {
     public class VobManager
     {
+        private const string _noSoundName = "nosound.wav";
+
         // Supporter class where the whole Init() logic is outsourced for better readability.
         private VobInitializer _initializer = new ();
 
@@ -100,6 +103,42 @@ namespace GUZ.Core.Manager.Vobs
             loaderComp.IsLoaded = true;
 
             _objectsToInitQueue.Enqueue(go.GetComponent<VobLoader>());
+        }
+
+        public AudioClip GetSoundClip(string soundName)
+        {
+            AudioClip clip;
+
+            if (soundName.EqualsIgnoreCase(_noSoundName))
+            {
+                //instead of decoding nosound.wav which might be decoded incorrectly, just return null
+                return null;
+            }
+
+            // Bugfix - Normally the data is to get C_SFX_DEF entries from VM. But sometimes there might be the real .wav file stored.
+            if (soundName.EndsWithIgnoreCase(".wav"))
+            {
+                clip = SoundCreator.ToAudioClip(soundName);
+            }
+            else
+            {
+                var sfxData = VmInstanceManager.TryGetSfxData(soundName);
+
+                if (sfxData == null)
+                {
+                    return null;
+                }
+
+                if (sfxData.File.EqualsIgnoreCase(_noSoundName))
+                {
+                    //instead of decoding nosound.wav which might be decoded incorrectly, just return null
+                    return null;
+                }
+
+                clip = SoundCreator.ToAudioClip(sfxData.File);
+            }
+
+            return clip;
         }
 
         // DEBUG - Check how many frames it took to initialize all the objects

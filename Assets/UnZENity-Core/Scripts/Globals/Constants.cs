@@ -38,6 +38,11 @@ namespace GUZ.Core.Globals
                 }
             }
         }
+
+        public static class Animations
+        {
+            public const string RootBoneName = "BIP01";
+        }
         
 
         // Unity shaders
@@ -64,7 +69,9 @@ namespace GUZ.Core.Globals
         public static readonly Shader ShaderThunder = Shader.Find("Unlit/ThunderShader");
 
         public static readonly Texture2D TextureUnZENityLogo = Resources.Load<Texture2D>("Gothic-UnZENity-logo");
+        public static readonly Texture2D TextureUnZENityLogoTransparent = Resources.Load<Texture2D>("Gothic-UnZENity-logo-transparent");
         public static readonly Texture2D TextureUnZENityLogoInverse = Resources.Load<Texture2D>("Gothic-UnZENity-logo-inverse");
+        public static readonly Texture2D TextureUnZENityLogoInverseTransparent = Resources.Load<Texture2D>("Gothic-UnZENity-logo-inverse-transparent");
 
 
         /*

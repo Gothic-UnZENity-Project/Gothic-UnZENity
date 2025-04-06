@@ -18,6 +18,8 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
         private bool _isHeroSpeaking => Action.Int0 == 0;
         private float _audioPlaySeconds;
 
+        private string _randomDialogAnimationName;
+
 
         public Output(AnimationAction action, NpcContainer2 npcContainer) : base(action, npcContainer)
         { }
@@ -43,7 +45,8 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
                 var gestureCount = GetDialogGestureCount();
                 var randomId = Random.Range(1, gestureCount + 1);
 
-                PrefabProps.AnimationHandler.PlayAnimation($"T_DIALOGGESTURE_{randomId:00}");
+                _randomDialogAnimationName = $"T_DIALOGGESTURE_{randomId:00}";
+                PrefabProps.AnimationSystem.PlayAnimation(_randomDialogAnimationName);
                 AnimationCreator.PlayHeadMorphAnimation(NpcContainer, HeadMorph.HeadMorphType.Viseme);
 
                 PrefabProps.NpcSound.PlayOneShot(audioClip);
@@ -100,7 +103,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             else
             {
                 PrefabProps.NpcSound.Stop();
-                AnimationCreator.StopAnimation(NpcGo);
+                PrefabProps.AnimationSystem.StopAnimation(_randomDialogAnimationName);
             }
         }
 
@@ -113,6 +116,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
                 // NPC
                 if (!_isHeroSpeaking)
                 {
+                    PrefabProps.AnimationSystem.StopAnimation(_randomDialogAnimationName);
                     AnimationCreator.StopHeadMorphAnimation(NpcContainer, HeadMorph.HeadMorphType.Viseme);
                 }
 

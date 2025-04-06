@@ -1,4 +1,5 @@
 using System;
+using GUZ.Core.Animations;
 using GUZ.Core.Extensions;
 using GUZ.Core.Npc;
 using GUZ.Core.Properties;
@@ -20,6 +21,7 @@ namespace GUZ.Core._Npc2
         public AiHandler AiHandler;
         public Animation Animation;
         public NpcAnimationHandler AnimationHandler;
+        public AnimationSystem AnimationSystem;
         public NpcHeadAnimationHandler AnimationHeadHandler;
 
         [NonSerialized]

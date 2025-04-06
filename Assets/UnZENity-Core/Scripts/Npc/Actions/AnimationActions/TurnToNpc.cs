@@ -12,6 +12,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
 
         public TurnToNpc(AnimationAction action, NpcContainer2 npcContainer) : base(action, npcContainer)
         {
+            PlayAnimation = false;
         }
 
         protected override Quaternion GetRotationDirection()

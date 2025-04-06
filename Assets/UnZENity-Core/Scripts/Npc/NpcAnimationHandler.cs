@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Collections;
-using GUZ.Core._Npc2;
 using GUZ.Core.Data.Container;
 using GUZ.Core.Vm;
-using JetBrains.Annotations;
 using MyBox;
 using UnityEngine;
 
 namespace GUZ.Core.Npc
 {
+    [Obsolete("Use AnimationSystem.cs instead.")]
     public class NpcAnimationHandler : BasePlayerBehaviour
     {
         private bool _isAnimationPlaying;

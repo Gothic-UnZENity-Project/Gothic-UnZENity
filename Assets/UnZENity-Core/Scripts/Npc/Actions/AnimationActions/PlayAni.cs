@@ -13,8 +13,8 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
 
         public override void Start()
         {
-            PrefabProps.AnimationHandler.PlayAnimation(Action.String0);
-            AnimationEndEventTime = PrefabProps.AnimationHandler.GetAnimationLength(_animName);
+            PrefabProps.AnimationSystem.PlayAnimation(_animName);
+            AnimationEndEventTime = PrefabProps.AnimationSystem.GetAnimationDuration(_animName);
         }
     }
 }

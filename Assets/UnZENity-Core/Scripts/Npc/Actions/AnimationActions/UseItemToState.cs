@@ -49,16 +49,17 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             // e.g. T_POTION_STAND_2_S0
             var animationName = string.Format(_animationScheme, item.SchemeName, oldState, newState);
 
-            var animationFound = PrefabProps.AnimationHandler.PlayAnimation(animationName);
+            var animationFound = PrefabProps.AnimationSystem.PlayAnimation(animationName);
 
             // e.g. BABE-T_BRUSH_S1_2_S0.man doesn't exist, but we can skip and use next one (S0_2_Stand)
             if (!animationFound)
             {
                 // Go on with next animation.
                 PlayTransitionAnimation();
+                return;
             }
 
-            AnimationEndEventTime = PrefabProps.AnimationHandler.CurrentAnimation.Length;
+            AnimationEndEventTime = PrefabProps.AnimationSystem.GetAnimationDuration(animationName);
         }
 
         protected override void AnimationEnd()

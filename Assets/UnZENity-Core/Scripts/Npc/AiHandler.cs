@@ -179,6 +179,11 @@ namespace GUZ.Core.Npc
             {
                 StartRoutine(currentRoutine.Action, currentRoutine.Waypoint);
             }
+            else
+            {
+                // If we don't have a routine, we're about a monster.
+                StartRoutine(NpcInstance.StartAiState);
+            }
         }
 
         public void StartRoutine(int action, string wayPointName)
@@ -276,13 +281,6 @@ namespace GUZ.Core.Npc
             Properties.CurrentAction.AnimationMorphEventCallback(eventData);
         }
 
-        public void AnimationBlendOutCallback(string eventBlendOutParam)
-        {
-            var eventData = JsonUtility.FromJson<SerializableEventBlendOutSignal>(eventBlendOutParam);
-
-            Properties.CurrentAction.AnimationBlendOutEventCallback(eventData);
-        }
-
         /// <summary>
         /// Fully reset NPC state.
         /// Called after an NPC is re-enabled in the scene.
@@ -290,9 +288,11 @@ namespace GUZ.Core.Npc
         public void ReEnableNpc()
         {
             // Spawn to initial spawn location
-            var currentRoutine = gameObject.GetComponent<Routine>().CurrentRoutine;
+            var currentRoutine = Properties.RoutineCurrent;
             if (currentRoutine != null)
+            {
                 gameObject.transform.position = WayNetHelper.GetWayNetPoint(currentRoutine.Waypoint).Position;
+            }
 
             // Animation state handling
             Properties.AnimationQueue.Clear();
@@ -344,7 +344,9 @@ namespace GUZ.Core.Npc
 
             // Start over
             if (currentRoutine != null)
+            {
                 StartRoutine(currentRoutine.Action, currentRoutine.Waypoint);
+            }
             else
             {
                 //if we don't have a routine means it's about a monster
