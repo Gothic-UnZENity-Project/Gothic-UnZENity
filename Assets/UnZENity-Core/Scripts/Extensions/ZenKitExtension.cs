@@ -40,9 +40,10 @@ namespace GUZ.Core.Extensions
         /// <summary>
         /// Convenient shortcut to retrieve and cast NpcData object from NpcInstance property.
         /// </summary>
+        [CanBeNull]
         public static NpcContainer2 GetUserData2(this NpcInstance instance)
         {
-            return instance.UserData as NpcContainer2;
+            return instance?.UserData as NpcContainer2;
         }
 
         public static TextureFormat AsUnityTextureFormat(this ZenKit.TextureFormat format)
