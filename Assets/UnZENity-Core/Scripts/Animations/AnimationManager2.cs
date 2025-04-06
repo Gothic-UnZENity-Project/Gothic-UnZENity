@@ -3,6 +3,8 @@ using System.IO;
 using System.Linq;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
+using JetBrains.Annotations;
+using UnityEditor.Search;
 using UnityEngine;
 using ZenKit;
 
@@ -12,47 +14,91 @@ namespace GUZ.Core.Animations
     {
         private const float _movementThreshold = 0.4f; // If magnitude of first and last frame positions is higher than this, we have a movement animation.
 
-        private static Dictionary<string, AnimationTrack> Tracks = new();
+        [ItemCanBeNull]
+        private static Dictionary<string, AnimationTrack> _tracks = new();
 
+
+        /// <summary>
+        /// Try to load animation based on both MDS values: overlay + base.
+        /// </summary>
         public static AnimationTrack GetTrack(string animName, string mdsBase, string mdsOverlay)
         {
-            var name = GetCombinedAnimationKey(mdsBase, animName);
-
-            if (Tracks.TryGetValue(name, out var track))
+            var track = GetTrack(animName, mdsOverlay);
+            if (track == null)
             {
-                return track;
+                track = GetTrack(animName, mdsBase);
             }
+            return track;
+        }
 
-            var modelAnimation = ResourceLoader.TryGetModelAnimation(mdsBase, animName);
-            if (modelAnimation == null)
+        private static AnimationTrack GetTrack(string animName, string mdsName)
+        {
+            if (mdsName == null)
             {
                 return null;
             }
 
-            // For animations: mdhName == mdsName (with different file ending of course ;-))
-            var mdhName = mdsBase;
-            var mdh = ResourceLoader.TryGetModelHierarchy(mdhName);
-            var mds = ResourceLoader.TryGetModelScript(mdsBase)!;
-            var anim = mds.Animations.First(i => i.Name.EqualsIgnoreCase(animName));
+            var name = GetCombinedAnimationKey(mdsName, animName);
 
-            track = CreateTrack(modelAnimation, mdh, anim);
+            if (_tracks.TryGetValue(name, out var track))
+            {
+                return track;
+            }
+
+            var mds = ResourceLoader.TryGetModelScript(mdsName)!;
+
+            var anim = mds.Animations.FirstOrDefault(i => i.Name.EqualsIgnoreCase(animName));
+            IAnimationAlias animAlias = null;
+
+            // AniAlias lookup
+            // Looking up multiple animation types (Animation/AniAlias) for the actual animation name.
+            // HINT: This also means, that we potentially create a Track based on duplicate animation data for AniAlias.
+            //       As we have no memory issue, this is neglectable for now.
+            if (anim == null)
+            {
+                // FIXME - Alias values aren't overwritten as of today, they need to be handled:
+                //         aniAlias (ANI_NAME LAYER NEXT_ANI BLEND_IN BLEND_OUT FLAGS ALIAS_NAME ANI_DIR)
+                animAlias = mds.AnimationAliases.FirstOrDefault(i => i.Name.EqualsIgnoreCase(animName));
+                if (animAlias != null)
+                {
+                    anim = mds.Animations.FirstOrDefault(i => i.Name.EqualsIgnoreCase(animAlias.Alias));
+                }
+            }
+
+            // Nothing found
+            if (anim == null)
+            {
+                // Caching an empty track means, we don't need to try creating this track again.
+                _tracks.Add(name, null);
+                return null;
+            }
+            animName = anim.Name; // We need to use the actual name, as we might have an alias.
+
+            var modelAnimation = ResourceLoader.TryGetModelAnimation(mdsName, animName);
+            if (modelAnimation == null)
+            {
+                // Caching an empty track means, we don't need to try creating this track again.
+                _tracks.Add(name, null);
+                return null;
+            }
+
+            // For animations: mdhName == mdsName (with different file ending of course ;-))
+            var mdhName = mdsName;
+            var mdh = ResourceLoader.TryGetModelHierarchy(mdhName);
+
+            track = CreateTrack(modelAnimation, mdh, anim, animAlias);
             AddTrackDuration(track, modelAnimation);
             SetClipMovementSpeed(track, modelAnimation, mdh);
 
-            Tracks.Add(name, track);
+            _tracks.Add(name, track);
 
             return track;
         }
 
         private static AnimationTrack CreateTrack(IModelAnimation modelAnimation,
-            IModelHierarchy modelHierarchy, IAnimation anim)
+            IModelHierarchy modelHierarchy, IAnimation anim, IAnimationAlias animAlias)
         {
-            var track = new AnimationTrack
-            {
-                Animation = anim,
-                ModelAnimation = modelAnimation,
-                Layer = anim.Layer
-            };
+            var track = new AnimationTrack(anim, animAlias, modelAnimation);
 
             // Get bone names from model hierarchy using node indices
             track.BoneNames = modelAnimation.NodeIndices
@@ -91,9 +137,9 @@ namespace GUZ.Core.Animations
                 }
             }
 
-            if (track.Animation.Flags.HasFlag(AnimationFlags.Rotate))
+            if (track.Flags.HasFlag(AnimationFlags.Rotate))
             {
-                Debug.LogWarning($"{track.Animation.Name}: Rotation animations are not supported yet.");
+                Debug.LogWarning($"{track.Name}: Rotation animations are not supported yet.");
             }
 
             return track;

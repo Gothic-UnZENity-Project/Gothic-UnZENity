@@ -28,6 +28,10 @@ namespace GUZ.Core.Animations
         public int BoneAmountStatePlay;
         public int BoneAmountStateStop;
 
+        // Data which might be overwritten by an Alias. We therefore set them now.
+        public string AnimationName;
+
+
         // FIXME - Wrong - according to Docs, once the last frame is reached, the animation blends out at this pos+rot.
         // FIXME - Docs: Anzumerken ist hierbei, dass das Herunterregeln des Einflusses erst beginnt, sobald der letzte Frame der Ani abgespielt worden ist
         public bool IsLooping;
@@ -55,7 +59,7 @@ namespace GUZ.Core.Animations
             CurrentKeyFrameTime = 0f;
             NextKeyframeTime = track.FrameTime;
 
-            IsLooping = track.Animation.Name == track.Animation.Next;
+            IsLooping = track.Name == track.NextAni;
 
             BoneStates = new AnimationState[Track.BoneCount];
             BoneBlendWeights = new float[Track.BoneCount];
@@ -64,7 +68,7 @@ namespace GUZ.Core.Animations
             AnimationState initialBoneState;
             float initialBoneWeight;
             // If w have no BlendIn time, we need to set our animation to play fully right from the start.
-            if (Track.Animation.BlendIn == 0)
+            if (Track.BlendIn == 0)
             {
                 initialBoneState = AnimationState.Play;
                 initialBoneWeight = 1f;
@@ -81,7 +85,7 @@ namespace GUZ.Core.Animations
             {
                 BoneStates[i] = initialBoneState;
                 BoneBlendWeights[i] = initialBoneWeight;
-                BoneBlendTimes[i] = Track.Animation.BlendIn;
+                BoneBlendTimes[i] = Track.BlendIn;
             }
 
             BoneAmountStateStop = 0;
@@ -102,7 +106,7 @@ namespace GUZ.Core.Animations
 
             if (!IsLooping && State == AnimationState.Play && CurrentTime >= Track.Duration)
             {
-                BlendOutTrack(Track.Animation.BlendOut);
+                BlendOutTrack(Track.BlendOut);
                 return AnimationState.BlendOut;
             }
 
@@ -177,9 +181,9 @@ namespace GUZ.Core.Animations
             }
 
             // AnimationEvents
-            for (var i = _lastExecutedAnimationEvent + 1; i < Track.Animation.EventTagCount; i++)
+            for (var i = _lastExecutedAnimationEvent + 1; i < Track.EventTagCount; i++)
             {
-                var animationEvent = Track.Animation.EventTags[i];
+                var animationEvent = Track.EventTags[i];
 
                 // Event values are handled based on frame normalization (e.g. animation frames are 39...49 --> 10 frames)
                 //   an event at 49 is then at frameIndex=9
@@ -199,9 +203,9 @@ namespace GUZ.Core.Animations
             }
 
             // PFX
-            for (var i = _lastExecutedPfxEvent + 1; i < Track.Animation.ParticleEffectCount; i++)
+            for (var i = _lastExecutedPfxEvent + 1; i < Track.ParticleEffectCount; i++)
             {
-                var pfxEvent = Track.Animation.ParticleEffects[i];
+                var pfxEvent = Track.ParticleEffects[i];
                 var pfxEventFrame = ClampFrame(pfxEvent.Frame);
 
                 if (pfxEventFrame <= CurrentKeyFrameIndex)
@@ -217,9 +221,9 @@ namespace GUZ.Core.Animations
             }
 
             // SFX
-            for (var i = _lastExecutedSfxEvent + 1; i < Track.Animation.SoundEffectCount; i++)
+            for (var i = _lastExecutedSfxEvent + 1; i < Track.SoundEffectCount; i++)
             {
-                var sfxEvent = Track.Animation.SoundEffects[i];
+                var sfxEvent = Track.SoundEffects[i];
                 var sfxEventFrame = ClampFrame(sfxEvent.Frame);
 
                 if (sfxEventFrame <= CurrentKeyFrameIndex)
@@ -234,9 +238,9 @@ namespace GUZ.Core.Animations
             }
 
             // MorphEvents
-            for (var i = _lastExecutedMorphEvent + 1; i < Track.Animation.MorphAnimationCount; i++)
+            for (var i = _lastExecutedMorphEvent + 1; i < Track.MorphAnimationCount; i++)
             {
-                var morphEvent = Track.Animation.MorphAnimations[i];
+                var morphEvent = Track.MorphAnimations[i];
                 var morphEventFrame = ClampFrame(morphEvent.Frame);
 
                 if (morphEventFrame <= CurrentKeyFrameIndex)
@@ -270,7 +274,7 @@ namespace GUZ.Core.Animations
 
             // (1). Norm to start frame of 1
             // (2). Norm to fpsSource (==25 in G1)
-            expectedFrame = (int)Math.Round((expectedFrame - Track.Animation.FirstFrame) * animationRatio);
+            expectedFrame = (int)Math.Round((expectedFrame - Track.FirstFrame) * animationRatio);
 
             // (3). check for misaligned animation frame boundaries (if any).
             if (expectedFrame < 0)
@@ -480,7 +484,7 @@ namespace GUZ.Core.Animations
                 return null;
             }
 
-            return Track.Animation.EventTags.GetRange(_lastExecutedAnimationEvent + 1, _animationEventsToExecuteThisUpdate);
+            return Track.EventTags.GetRange(_lastExecutedAnimationEvent + 1, _animationEventsToExecuteThisUpdate);
         }
 
         public List<IEventParticleEffect> GetPendingParticleEffects()
@@ -490,7 +494,7 @@ namespace GUZ.Core.Animations
                 return null;
             }
 
-            return Track.Animation.ParticleEffects.GetRange(_lastExecutedPfxEvent + 1, _pfxEventsToExecuteThisUpdate);
+            return Track.ParticleEffects.GetRange(_lastExecutedPfxEvent + 1, _pfxEventsToExecuteThisUpdate);
         }
 
         public List<IEventMorphAnimation> GetPendingMorphAnimations()
@@ -500,7 +504,7 @@ namespace GUZ.Core.Animations
                 return null;
             }
 
-            return Track.Animation.MorphAnimations.GetRange(_lastExecutedMorphEvent + 1, _morphEventsToExecuteThisUpdate);
+            return Track.MorphAnimations.GetRange(_lastExecutedMorphEvent + 1, _morphEventsToExecuteThisUpdate);
         }
 
         public List<IEventSoundEffect> GetPendingSoundEffects()
@@ -510,7 +514,7 @@ namespace GUZ.Core.Animations
                 return null;
             }
 
-            return Track.Animation.SoundEffects.GetRange(_lastExecutedSfxEvent + 1, _sfxEventsToExecuteThisUpdate);
+            return Track.SoundEffects.GetRange(_lastExecutedSfxEvent + 1, _sfxEventsToExecuteThisUpdate);
         }
     }
 }

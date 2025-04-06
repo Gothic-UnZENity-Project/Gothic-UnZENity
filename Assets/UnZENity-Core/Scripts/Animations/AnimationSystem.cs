@@ -83,6 +83,7 @@ namespace GUZ.Core.Animations
 
             if (newTrack == null)
             {
+                Debug.LogWarning($"Animation {animationName} not found and therefore can't be played.");
                 return false;
             }
 
@@ -136,7 +137,7 @@ namespace GUZ.Core.Animations
         {
             for (var i = 0; i < _trackInstances.Count; i++)
             {
-                if (newTrack.Animation.Name == _trackInstances[i].Track.Animation.Name)
+                if (newTrack.Name == _trackInstances[i].Track.Name)
                 {
                     return true;
                 }
@@ -155,7 +156,7 @@ namespace GUZ.Core.Animations
             for (var i = 0; i < _trackInstances.Count; i++)
             {
                 var instance = _trackInstances[i];
-                if (instance.Track.Animation.Name.EqualsIgnoreCase(animationName))
+                if (instance.Track.Name.EqualsIgnoreCase(animationName) || instance.Track.AliasName.EqualsIgnoreCase(animationName))
                 {
                     return instance.Track.Duration;
                 }
@@ -181,10 +182,10 @@ namespace GUZ.Core.Animations
             {
                 var instance = _trackInstances[i];
                 // If animation is found, then mark it as "BlendOut"
-                if (instance.Track.Animation.Name.EqualsIgnoreCase(stoppingAnimationName))
+                if (instance.Track.Name.EqualsIgnoreCase(stoppingAnimationName))
                 {
                     instanceToStop = instance;
-                    instance.BlendOutTrack(instance.Track.Animation.BlendOut);
+                    instance.BlendOutTrack(instance.Track.BlendOut);
                     // Do not break. We could potentially need to stop multiple instances of the same animation.
                 }
             }
@@ -198,14 +199,14 @@ namespace GUZ.Core.Animations
             for (var i = 0; i < _trackInstances.Count; i++)
             {
                 var instance = _trackInstances[i];
-                if (instance.Track.Animation.Name.EqualsIgnoreCase(stoppingAnimationName))
+                if (instance.Track.Name.EqualsIgnoreCase(stoppingAnimationName))
                 {
                     continue;
                 }
 
                 if (instance.Track.Layer < instanceToStop.Track.Layer)
                 {
-                    instance.BlendInBones(instanceToStop.Track.BoneNames, instanceToStop.Track.Animation.BlendOut);
+                    instance.BlendInBones(instanceToStop.Track.BoneNames, instanceToStop.Track.BlendOut);
                 }
             }
         }
@@ -216,7 +217,7 @@ namespace GUZ.Core.Animations
         /// </summary>
         private void BlendOutTrackBones(AnimationTrackInstance lowerLayerTrack, AnimationTrackInstance higherLayerTrack)
         {
-            lowerLayerTrack.BlendOutBones(higherLayerTrack.Track.BoneNames, higherLayerTrack.Track.Animation.BlendIn);
+            lowerLayerTrack.BlendOutBones(higherLayerTrack.Track.BoneNames, higherLayerTrack.Track.BlendIn);
         }
 
         /// <summary>
@@ -227,7 +228,7 @@ namespace GUZ.Core.Animations
             // From Documentation:
             // E: Diese Flag sorgt dafür, dass die Ani erst gestartet wird, wenn eine zur Zeit aktive Ani im selben Layer ihren letzten Frame
             // erreicht hat und somit beendet wird. Sinnvoll z.B. in folgenden Fall: ani "s_walk", ani "t_walk_2_stand", ani "s_stand", wobei alle Anis als ASC-Anis vorliegen.
-            var isStartAtLastFrame = newTrack.Track.Animation.Flags.HasFlag(AnimationFlags.Queue);
+            var isStartAtLastFrame = newTrack.Track.Flags.HasFlag(AnimationFlags.Queue);
 
             if (isStartAtLastFrame)
             {
@@ -236,7 +237,7 @@ namespace GUZ.Core.Animations
             }
             // else
             // {
-                oldTrack.BlendOutTrack(newTrack.Track.Animation.BlendIn);
+                oldTrack.BlendOutTrack(newTrack.Track.BlendIn);
             // }
         }
 
@@ -249,7 +250,7 @@ namespace GUZ.Core.Animations
             {
                 if (trackInstance.Track.Layer < instanceBlendingOut.Track.Layer)
                 {
-                    trackInstance.BlendInBones(instanceBlendingOut.Track.BoneNames, instanceBlendingOut.Track.Animation.BlendOut);
+                    trackInstance.BlendInBones(instanceBlendingOut.Track.BoneNames, instanceBlendingOut.Track.BlendOut);
                 }
             }
         }
@@ -297,7 +298,7 @@ namespace GUZ.Core.Animations
                     case AnimationState.Play:
                         break;
                     case AnimationState.BlendOut:
-                        PlayAnimation(instance.Track.Animation.Next);
+                        PlayAnimation(instance.Track.NextAni);
                         BlendInOtherTrackBones(instance);
                         break;
                     case AnimationState.Stop:
