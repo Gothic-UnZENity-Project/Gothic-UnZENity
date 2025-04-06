@@ -5,6 +5,7 @@ using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Npc;
 using GUZ.Core.Vm;
+using MyBox;
 using UnityEngine;
 using ZenKit;
 using EventType = ZenKit.EventType;
@@ -298,8 +299,11 @@ namespace GUZ.Core.Animations
                     case AnimationState.Play:
                         break;
                     case AnimationState.BlendOut:
-                        PlayAnimation(instance.Track.NextAni);
-                        BlendInOtherTrackBones(instance);
+                        if (instance.Track.NextAni.NotNullOrEmpty())
+                        {
+                            PlayAnimation(instance.Track.NextAni);
+                            BlendInOtherTrackBones(instance);
+                        }
                         break;
                     case AnimationState.Stop:
                         _trackInstances.Remove(instance);
