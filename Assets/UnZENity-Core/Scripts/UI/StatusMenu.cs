@@ -91,6 +91,41 @@ namespace GUZ.Core.UI
             });
         }
 
+        protected override void Undefined(string commandName)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override void Back(string commandName)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override void StartMenu(string commandName)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override void StartItem(string commandName)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override void Close(string commandName)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override void ConsoleCommand(string commandName)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override void PlaySound(string commandName)
+        {
+            throw new NotImplementedException();
+        }
+
         protected override void ExecuteCommand(string commandName)
         {
             throw new NotImplementedException();

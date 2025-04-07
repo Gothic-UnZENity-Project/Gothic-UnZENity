@@ -27,8 +27,8 @@ namespace GUZ.VR.Components.HVROverrides
 
             // Enabled later via button press or other events
             MainMenu.gameObject.SetActive(false);
-            QuestLogMenu.gameObject.SetActive(false);
-            StatusMenu.gameObject.SetActive(false);
+            // QuestLogMenu.gameObject.SetActive(false);
+            // StatusMenu.gameObject.SetActive(false);
         }
 
         protected override void Update()

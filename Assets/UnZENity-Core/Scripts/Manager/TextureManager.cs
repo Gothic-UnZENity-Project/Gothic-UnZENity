@@ -110,9 +110,9 @@ public class TextureManager : MonoBehaviour
     /// <summary>
     /// Create a new material and assign texture to it.
     /// </summary>
-    public Material GetMaterial(string textureName)
+    public Material GetMaterial(string textureName, MaterialExtension.BlendMode blendMode = MaterialExtension.BlendMode.Opaque)
     {
-        var material = GetEmptyMaterial(MaterialExtension.BlendMode.Opaque);
+        var material = GetEmptyMaterial(blendMode);
         material.mainTexture = TextureCache.TryGetTexture(textureName);
 
         return material;
