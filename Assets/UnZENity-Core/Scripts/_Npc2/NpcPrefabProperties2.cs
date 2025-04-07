@@ -23,6 +23,7 @@ namespace GUZ.Core._Npc2
         public NpcAnimationHandler AnimationHandler;
         public AnimationSystem AnimationSystem;
         public NpcHeadAnimationHandler AnimationHeadHandler;
+        public INpcSubtitles NpcSubtitles;
 
         [NonSerialized]
         public Transform Head;

@@ -1,10 +1,8 @@
 ﻿using System.Collections.Generic;
-using GUZ.Core.Npc;
 using GUZ.Core.Npc.Actions.AnimationActions;
 using GUZ.Core.Npc.Routines;
 using GUZ.Core.Vm;
 using GUZ.Core.Vob.WayNet;
-using UnityEngine;
 using ZenKit.Daedalus;
 
 namespace GUZ.Core._Npc2

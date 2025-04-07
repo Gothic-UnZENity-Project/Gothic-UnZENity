@@ -57,20 +57,17 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
 
         private void PrintDialog()
         {
+            // FIXME - CutsceneLibrary.Blocks is uncached and will re-read all elements each time we call it! Cache and reuse!
             var currentMessage = GameData.Dialogs.CutsceneLibrary.Blocks.Find(x => x.Name == OutputName).Message;
-            var globalHero = (NpcInstance)GameData.GothicVm.GlobalHero!;
 
             if (_isHeroSpeaking)
             {
-                // TODO - We could also show subtitles somewhere next to Hero (== ourself/main camera)
-                GameContext.SubtitlesAdapter.FillSubtitles(globalHero.GetName(NpcNameSlot.Slot0), currentMessage.Text);
+                GameGlobals.Npcs.GetHeroContainer().PrefabProps.NpcSubtitles.ShowSubtitles(currentMessage.Text);
             }
             else
             {
-                GameContext.SubtitlesAdapter.FillSubtitles(NpcInstance.GetName(NpcNameSlot.Slot0), currentMessage.Text);
+                PrefabProps.NpcSubtitles.ShowSubtitles(currentMessage.Text);
             }
-
-            GameContext.SubtitlesAdapter.ShowSubtitles(NpcGo);
         }
 
         /// <summary>
@@ -113,14 +110,20 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
 
             if (_audioPlaySeconds <= 0f)
             {
+                // Hero
+                if (_isHeroSpeaking)
+                {
+                    GameGlobals.Npcs.GetHeroContainer().PrefabProps.NpcSubtitles.HideSubtitles();
+                }
                 // NPC
-                if (!_isHeroSpeaking)
+                else
                 {
                     PrefabProps.AnimationSystem.StopAnimation(_randomDialogAnimationName);
                     AnimationCreator.StopHeadMorphAnimation(NpcContainer, HeadMorph.HeadMorphType.Viseme);
+                    PrefabProps.NpcSubtitles.HideSubtitles();
                 }
 
-                GameContext.SubtitlesAdapter.HideSubtitles();
+
                 return true;
             }
 
