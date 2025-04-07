@@ -1,8 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using MyBox;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using ZenKit.Daedalus;
 
@@ -10,6 +13,7 @@ namespace GUZ.Core.UnZENity_Core.Scripts.UI
 {
     public abstract class AbstractMenu : MonoBehaviour
     {
+        protected MenuManager _menuManager;
         [SerializeField] protected GameObject Canvas;
         [SerializeField] protected GameObject Background;
 
@@ -19,7 +23,20 @@ namespace GUZ.Core.UnZENity_Core.Scripts.UI
         protected float PixelRatioX;
         protected float PixelRatioY;
 
+        protected abstract void Undefined(string commandName); // e.g.
+        protected abstract void Back(string commandName); // e.g.
+
+        protected abstract void StartMenu(string commandName);
+
+        // e.g.
+        protected abstract void StartItem(string commandName); // e.g.
+
+        protected abstract void Close(string commandName);
+
+        protected abstract void ConsoleCommand(string commandName); // e.g.
+        protected abstract void PlaySound(string commandName); // e.g.
         protected abstract void ExecuteCommand(string commandName); // e.g.
+
         protected abstract bool IsMenuItemInitiallyActive(string menuItemName);
 
         public void ToggleVisibility()
@@ -46,6 +63,8 @@ namespace GUZ.Core.UnZENity_Core.Scripts.UI
 
         protected void CreateRootElements(string menuDefName)
         {
+            _menuManager = transform.parent.GetComponent<MenuManager>();
+
             var menuInstance = GameData.MenuVm.InitInstance<MenuInstance>(menuDefName);
 
             var backPic = GameGlobals.Textures.GetMaterial(menuInstance.BackPic);
@@ -65,7 +84,7 @@ namespace GUZ.Core.UnZENity_Core.Scripts.UI
             PixelRatioX = (float)virtualPixelX / realPixelX; // for normal G1, should be 16 (=8192 / 512)
             PixelRatioY = (float)virtualPixelY / realPixelY;
 
-            for (var i = 0; ; i++)
+            for (var i = 0;; i++)
             {
                 var menuItemName = menuInstance.GetItem(i);
 
@@ -78,7 +97,7 @@ namespace GUZ.Core.UnZENity_Core.Scripts.UI
                 CreateMenuItem(menuInstance, menuItemName);
             }
         }
-        
+
         private void CreateMenuItem(MenuInstance main, string menuItemName)
         {
             var item = GameData.MenuVm.InitInstance<MenuItemInstance>(menuItemName);
@@ -87,7 +106,8 @@ namespace GUZ.Core.UnZENity_Core.Scripts.UI
 
             if (item.MenuItemType == MenuItemType.ListBox)
             {
-                itemGo = ResourceLoader.TryGetPrefabObject(PrefabType.UiEmpty, name: menuItemName, parent: Canvas)!;
+                itemGo = ResourceLoader.TryGetPrefabObject(PrefabType.UiEmpty, name: menuItemName,
+                    position: Vector3.zero, parent: Canvas)!;
             }
             else if (item.Flags.HasFlag(MenuItemFlag.Selectable))
             {
@@ -96,27 +116,32 @@ namespace GUZ.Core.UnZENity_Core.Scripts.UI
 
                 button.onClick.AddListener(() =>
                 {
-                    OnMenuItemClicked(item.GetOnSelAction(0), item.GetOnSelActionS(0));
+                    for (int i = 0;; i++)
+                    {
+                        var actionName = item.GetOnSelActionS(0);
+                        var action = item.GetOnSelAction(0);
+                        
+                        if (actionName.IsNullOrEmpty())
+                        {
+                            break;
+                        }
+                        
+                        OnMenuItemClicked(action, actionName);
+                    }
                 });
             }
-            else
+            else if (item.MenuItemType == MenuItemType.Text)
             {
                 itemGo = ResourceLoader.TryGetPrefabObject(PrefabType.UiText, name: menuItemName, parent: Canvas)!;
             }
+            else
+            {
+                itemGo = ResourceLoader.TryGetPrefabObject(PrefabType.UiEmpty, name: menuItemName, parent: Canvas)!;
+            }
+
+            itemGo.transform.localPosition = Vector3.zero;
 
             MenuItemCache[menuItemName] = (item, itemGo);
-
-            if (item.BackPic.NotNullOrEmpty())
-            {
-                var backPicGo = ResourceLoader.TryGetPrefabObject(PrefabType.UiTexture, name: item.BackPic, parent: itemGo)!;
-                var backPic = GameGlobals.Textures.GetMaterial(item.BackPic);
-                var backPictRenderer = backPicGo.GetComponentInChildren<MeshRenderer>();
-                backPictRenderer.sharedMaterial = backPic;
-
-                // Apply scale an position (move slightly backwards) from normal background to this one.
-                backPictRenderer.transform.localScale = Background.GetComponentInChildren<MeshRenderer>().transform.localScale;
-                backPictRenderer.transform.localPosition = Background.GetComponentInChildren<MeshRenderer>().transform.localPosition;
-            }
 
             var rect = itemGo.GetComponent<RectTransform>();
             var halfMainWidth = (float)main.DimX / 2;
@@ -134,6 +159,7 @@ namespace GUZ.Core.UnZENity_Core.Scripts.UI
                 // We assume the element can be drawn until end of whole UI.
                 itemWidth = ((float)main.DimX - item.PosX);
             }
+
             rect.SetPositionX((item.PosX - halfMainWidth + itemWidth / 2) / PixelRatioX);
             rect.SetWidth(itemWidth / PixelRatioX);
 
@@ -147,8 +173,34 @@ namespace GUZ.Core.UnZENity_Core.Scripts.UI
                 // We assume the element can be drawn until end of whole UI.
                 itemHeight = (float)main.DimY - item.PosY;
             }
+
             rect.SetPositionY((halfMainHeight - item.PosY - itemHeight / 2) / PixelRatioY);
             rect.SetHeight(itemHeight / PixelRatioY);
+
+            if (item.BackPic.NotNullOrEmpty())
+            {
+                var backPicGo =
+                    ResourceLoader.TryGetPrefabObject(PrefabType.UiTexture, name: item.BackPic, parent: itemGo)!;
+                var backPic = GameGlobals.Textures.GetMaterial(item.BackPic);
+
+                if (!item.AlphaMode.IsNullOrEmpty())
+                {
+                    backPic.ToFadeMode();
+                    var color = backPic.GetColor("_BaseColor");
+                    float alpha = item.Alpha / 255f;
+                    backPic.SetColor("_BaseColor", new Color(color.r, color.g, color.b, alpha));
+                }
+
+                backPicGo.transform.localPosition = Vector3.zero;
+
+
+                var backPictRenderer = backPicGo.GetComponentInChildren<MeshRenderer>();
+                backPictRenderer.sharedMaterial = backPic;
+
+                // Apply scale and position (move slightly backwards) from normal background to this one.
+                backPictRenderer.transform.localScale =
+                    new Vector3(itemWidth / PixelRatioX / 10, 1, itemHeight / PixelRatioY / 10);
+            }
 
             var textComp = itemGo.GetComponentInChildren<TMP_Text>();
             if (textComp != null)
@@ -168,7 +220,7 @@ namespace GUZ.Core.UnZENity_Core.Scripts.UI
 
             if (item.Flags.HasFlag(MenuItemFlag.Centered))
             {
-                textComp.alignment = TextAlignmentOptions.TopGeoAligned;
+                textComp.alignment = TextAlignmentOptions.Center;
             }
 
             textComp.text = item.GetText(0);
@@ -185,6 +237,27 @@ namespace GUZ.Core.UnZENity_Core.Scripts.UI
         {
             switch (action)
             {
+                case MenuItemSelectAction.Undefined:
+                    Undefined(commandName);
+                    break;
+                case MenuItemSelectAction.Back:
+                    Back(commandName);
+                    break;
+                case MenuItemSelectAction.StartMenu:
+                    StartMenu(commandName);
+                    break;
+                case MenuItemSelectAction.StartItem:
+                    StartItem(commandName);
+                    break;
+                case MenuItemSelectAction.Close:
+                    Close(commandName);
+                    break;
+                case MenuItemSelectAction.ConsoleCommand:
+                    ConsoleCommand(commandName);
+                    break;
+                case MenuItemSelectAction.PlaySound:
+                    PlaySound(commandName);
+                    break;
                 case MenuItemSelectAction.ExecuteCommand:
                     ExecuteCommand(commandName);
                     break;
