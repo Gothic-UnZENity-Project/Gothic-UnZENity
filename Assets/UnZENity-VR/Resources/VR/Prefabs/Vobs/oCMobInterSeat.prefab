@@ -114,6 +114,7 @@ GameObject:
   - component: {fileID: 2274484227514135965}
   - component: {fileID: 2854363553026066547}
   - component: {fileID: 6907302684280751333}
+  - component: {fileID: 2147987541438097171}
   m_Layer: 0
   m_Name: BIP01.*|ZM.*
   m_TagString: Untagged
@@ -156,7 +157,7 @@ MeshCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 5
-  m_Convex: 0
+  m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 0}
 --- !u!114 &2854363553026066547
@@ -171,7 +172,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b3d4d12525e40a7ac803add610db925, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _properties: {fileID: 6227199721153582632}
   _nameCanvas: {fileID: 2393729959941540289}
 --- !u!114 &6907302684280751333
 MonoBehaviour:
@@ -214,7 +214,7 @@ MonoBehaviour:
   PullingSettingsOverride: {fileID: 0}
   HandGrabbedClip: {fileID: 0}
   SocketGrabPoints: []
-  Rigidbody: {fileID: 0}
+  Rigidbody: {fileID: 2147987541438097171}
   AutoApplyLayer: 1
   RequireOverlapClearance: 0
   OverlapTimeout: 0.1
@@ -320,6 +320,33 @@ MonoBehaviour:
   HandGrabbers: []
   Stabbers: []
   Stabbable: {fileID: 0}
+--- !u!54 &2147987541438097171
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5926234300762413270}
+  serializedVersion: 4
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &6503575194566409312
 GameObject:
   m_ObjectHideFlags: 0
@@ -366,7 +393,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fcee438f16834e5f8768391122403ab5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <VisualScheme>k__BackingField: 
 --- !u!114 &408930496762790985
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -379,6 +405,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 89204bc4f3825b04bbeaa10da0266f6e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _canvasFade: {fileID: 0}
+  _fadeSpeed: 6
 --- !u!1 &9166467133469941564
 GameObject:
   m_ObjectHideFlags: 0
