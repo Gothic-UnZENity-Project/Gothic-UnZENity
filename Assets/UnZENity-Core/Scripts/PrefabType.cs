@@ -9,6 +9,7 @@ namespace GUZ.Core
         UiButton,
         UiButtonTextured,
         UiTexture,
+        UiThumbnail,
 
         WayPoint,
         Vob,
@@ -50,6 +51,7 @@ namespace GUZ.Core
                 PrefabType.UiButton => "Prefabs/UI/Button",
                 PrefabType.UiButtonTextured => "Prefabs/UI/ButtonTextured",
                 PrefabType.UiTexture => "Prefabs/UI/Texture",
+                PrefabType.UiThumbnail => "Prefabs/UI/Thumbnail",
 
                 PrefabType.WayPoint => "Prefabs/WayPoint",
                 PrefabType.Vob => "Prefabs/Vobs/Vob",
