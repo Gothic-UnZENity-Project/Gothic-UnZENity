@@ -110,6 +110,11 @@ namespace GUZ.Core.UI
             }
             else
             {
+                if (textComp.spriteAsset.name.EndsWith("_hi.fnt"))
+                {
+                    return;
+                }
+
                 SetFont(textComp, textComp.spriteAsset.name.RemoveEnd(".fnt") + "_hi");
             }
         }
