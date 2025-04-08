@@ -6,25 +6,28 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
-using UnityEngine.UI;
 using ZenKit;
+using ZenKit.Daedalus;
 
 namespace GUZ.Core.UnZENity_Core.Scripts.UI
 {
     public class SaveMenu : AbstractMenu
     {
-        public GameObject[] SaveSlots;
+        private GameObject[] SaveSlots = new GameObject[16];
 
         private GameObject Thumbnail;
         private TMP_Text World;
         private TMP_Text SavedAt;
         private TMP_Text GameTime;
+        private TMP_Text PlayTime;
         private TMP_Text Version;
 
-        private readonly SaveGame[] _saves = new SaveGame[15];
+        private readonly SaveGame[] _saves = new SaveGame[16];
 
-        private bool _isSaving;
+        [SerializeField] private bool _isSaving;
         private bool _isLoading => !_isSaving;
+
+        private string _saveLoadStatus;
 
         private void Awake()
         {
@@ -33,43 +36,38 @@ namespace GUZ.Core.UnZENity_Core.Scripts.UI
 
         private void Setup()
         {
-            CreateRootElements("MENU_SAVEGAME_SAVE");
+            _saveLoadStatus = _isSaving ? "SAVE" : "LOAD";
 
-            // World = transform.FindChildRecursively("MENUITEM_LOADSAVE_LEVELNAME_VALUE")?.GetComponent<TMP_Text>();
-            // SavedAt = transform.FindChildRecursively("MENUITEM_LOADSAVE_DATETIME_VALUE")?.GetComponent<TMP_Text>();
-            // GameTime = transform.FindChildRecursively("MENUITEM_LOADSAVE_GAMETIME_VALUE")
-            //     ?.GetComponent<TMP_Text>();
+            CreateRootElements($"MENU_SAVEGAME_{_saveLoadStatus}");
+
+            var thumbnailGo = MenuItemCache["MENUITEM_LOADSAVE_THUMBPIC"].go;
+            Thumbnail = ResourceLoader.TryGetPrefabObject(PrefabType.UiThumbnail, name: "Thumbnail",
+                parent: thumbnailGo)!;
+
+            Thumbnail.transform.localPosition = Vector3.zero;
+            Thumbnail.transform.localRotation = Quaternion.Euler(270, 0, 0);
+
+            World = MenuItemCache["MENUITEM_LOADSAVE_LEVELNAME_VALUE"].go.GetComponent<TMP_Text>();
+            SavedAt = MenuItemCache["MENUITEM_LOADSAVE_DATETIME_VALUE"].go.GetComponent<TMP_Text>();
+            GameTime = MenuItemCache["MENUITEM_LOADSAVE_GAMETIME_VALUE"].go.GetComponent<TMP_Text>();
+            PlayTime = MenuItemCache["MENUITEM_LOADSAVE_PLAYTIME_VALUE"].go.GetComponent<TMP_Text>();
             // Version = this.transform.FindChildRecursively("MENUITEM_LOADSAVE_LEVELNAME_VALUE")?.GetComponent<TMP_Text>();
 
-            // for (int i = 1; i <= 15; i++)
-            // {
-            //     SaveSlots[i] = transform.FindChildRecursively($"MENUITEM_SAVE_SLOT_{i}")?.gameObject;
-            //
-            //     var button = SaveSlots[i].GetComponentInChildren<Button>();
-            //     button.onClick.AddListener(() => OnLoadGameSlotClick(i));
-            //
-            //     var eventTrigger = SaveSlots[i].GetComponentInChildren<EventTrigger>();
-            //     var pointerEnterEntry = new EventTrigger.Entry
-            //     {
-            //         eventID = EventTriggerType.PointerEnter,
-            //     };
-            //     pointerEnterEntry.callback.AddListener(_ => OnLoadGameSlotPointerEnter(i));
-            //     eventTrigger.triggers.Add(pointerEnterEntry);
-            //
-            //     var pointerExitEntry = new EventTrigger.Entry
-            //     {
-            //         eventID = EventTriggerType.PointerExit,
-            //     };
-            //     pointerExitEntry.callback.AddListener(_ => OnLoadGameSlotPointerExit());
-            //     eventTrigger.triggers.Add(pointerExitEntry);
-            // }
-            //
-            // FillSaveGameEntries();
+            for (int i = 1; i <= 15; i++)
+            {
+                var saveSlot = MenuItemCache[$"MENUITEM_{_saveLoadStatus}_SLOT{i}"].go;
+
+                var text = saveSlot.GetComponentInChildren<TMP_Text>();
+                text.text = "---"; // daedalus menu item has text "unknown", but in game it shows as ---
+                SaveSlots[i] = saveSlot;
+            }
+
+            FillSaveGameEntries();
         }
 
         protected override void Undefined(string commandName)
         {
-            Debug.Log($"Main Menu Undefined: {commandName}");
+            throw new System.NotImplementedException();
         }
 
         protected override void Back(string commandName)
@@ -84,7 +82,8 @@ namespace GUZ.Core.UnZENity_Core.Scripts.UI
 
         protected override void StartItem(string commandName)
         {
-            throw new System.NotImplementedException();
+            int id = ExtractIdFromName(commandName);
+            SaveLoadGame(id);
         }
 
         protected override void Close(string commandName)
@@ -109,7 +108,7 @@ namespace GUZ.Core.UnZENity_Core.Scripts.UI
 
         protected override bool IsMenuItemInitiallyActive(string menuItemName)
         {
-            return true;
+            return (MenuItemCache[menuItemName].item.Flags & MenuItemFlag.Disabled) == 0;
         }
 
         /// <summary>
@@ -140,46 +139,57 @@ namespace GUZ.Core.UnZENity_Core.Scripts.UI
 
                 // Load metadata
                 var save = GameGlobals.SaveGame.GetSaveGame(folderSaveId);
-                _saves[folderSaveId - 1] = save;
+                _saves[folderSaveId] = save;
 
                 // Set metadata to slot
-                var saveSlotGo = SaveSlots[folderSaveId - 1];
+                var saveSlotGo = SaveSlots[folderSaveId];
+
+                var eventTrigger = saveSlotGo.GetComponent<EventTrigger>();
+
+                var pointerEnterEntry = eventTrigger.triggers.Find(x => x.eventID == EventTriggerType.PointerEnter);
+                pointerEnterEntry.callback.AddListener(_ => OnLoadGameSlotPointerEnter(folderSaveId));
+
+                var pointerExitEntry = eventTrigger.triggers.Find(x => x.eventID == EventTriggerType.PointerExit);
+                pointerExitEntry.callback.AddListener(_ => OnLoadGameSlotPointerExit());
+
                 saveSlotGo.GetComponentInChildren<TMP_Text>().text = save.Metadata.Title;
             }
         }
 
         public void OnLoadGameSlotPointerEnter(int id)
         {
-            var save = _saves[id - 1];
+            var save = _saves[id];
 
             if (save == null)
             {
                 return;
             }
 
-            // Thumbnail.GetComponent<MeshRenderer>().material.mainTexture
-                // = TextureCache.TryGetTexture(save.Thumbnail, "savegame_" + save.Metadata.Title);
-            // Thumbnail.SetActive(true);
+            Thumbnail.GetComponent<MeshRenderer>().material.mainTexture
+                = TextureCache.TryGetTexture(save.Thumbnail, "savegame_" + save.Metadata.Title);
+            Thumbnail.SetActive(true);
             World.text = save.Metadata.World;
             SavedAt.text = save.Metadata.SaveDate;
             GameTime.text = $"{save.Metadata.TimeDay} - {save.Metadata.TimeHour}:{save.Metadata.TimeMinute}";
+            PlayTime.text = save.Metadata.PlayTime.ToString();
             // Version.text = save.Metadata.VersionAppName;
         }
 
         public void OnLoadGameSlotPointerExit()
         {
-            // Thumbnail.SetActive(false);
+            Thumbnail.SetActive(false);
             World.text = "";
             SavedAt.text = "";
             GameTime.text = "";
+            PlayTime.text = "";
             // Version.text = "";
         }
 
-        public void OnLoadGameSlotClick(int id)
+        public void SaveLoadGame(int id)
         {
             if (_isLoading)
             {
-                var save = _saves[id - 1];
+                var save = _saves[id];
 
                 if (save == null)
                 {
@@ -194,6 +204,18 @@ namespace GUZ.Core.UnZENity_Core.Scripts.UI
                 GameGlobals.SaveGame.SaveCurrentGame(id, $"UnZENity - {DateTime.Now}");
                 FillSaveGameEntries();
             }
+        }
+
+        private int ExtractIdFromName(string inputName)
+        {
+            string numberPart = inputName.Substring($"MENUITEM_{_saveLoadStatus}_SLOT".Length);
+
+            if (int.TryParse(numberPart, out int id))
+            {
+                return id;
+            }
+
+            return -1;
         }
     }
 }
