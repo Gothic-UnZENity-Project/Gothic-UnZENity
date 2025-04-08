@@ -78,12 +78,14 @@ namespace GUZ.VR.Components.HVROverrides
 
             MovementEnabled = false;
             RotationEnabled = false;
+            Teleporter.enabled = false;
         }
 
         public void SetUnlockedControls()
         {
             MovementEnabled = true;
             RotationEnabled = true;
+            Teleporter.enabled = true;
         }
 
         private void OnPlayerPrefsUpdated(string preferenceKey, object value)

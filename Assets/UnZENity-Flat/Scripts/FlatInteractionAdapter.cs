@@ -38,6 +38,11 @@ namespace GUZ.Flat
             return _playerController;
         }
 
+        public GameObject GetCurrentPlayerController()
+        {
+            return _playerController.gameObject;
+        }
+
         public void CreateVRDeviceSimulator()
         {
             // NOP
