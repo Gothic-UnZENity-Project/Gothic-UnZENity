@@ -121,7 +121,7 @@ namespace GUZ.Core.UnZENity_Core.Scripts.UI
                         var actionName = item.GetOnSelActionS(i);
                         var action = item.GetOnSelAction(i);
                         
-                        if (actionName.IsNullOrEmpty())
+                        if (action == null)
                         {
                             break;
                         }
