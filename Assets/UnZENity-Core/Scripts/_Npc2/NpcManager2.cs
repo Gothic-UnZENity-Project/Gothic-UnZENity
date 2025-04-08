@@ -136,6 +136,11 @@ namespace GUZ.Core._Npc2
             props.Items[itemId] += amount;
         }
 
+        public NpcContainer2 GetHeroContainer()
+        {
+            return ((NpcInstance)GameData.GothicVm.GlobalHero).GetUserData2();
+        }
+
         public GameObject GetHeroGameObject()
         {
             return ((NpcInstance)GameData.GothicVm.GlobalHero).GetUserData2().Go;
@@ -185,6 +190,7 @@ namespace GUZ.Core._Npc2
             };
 
             npcData.PrefabProps.Head = Camera.main!.transform;
+            npcData.PrefabProps.NpcSubtitles = playerGo.GetComponentInChildren<INpcSubtitles>(true);
 
             heroInstance.UserData = npcData;
 

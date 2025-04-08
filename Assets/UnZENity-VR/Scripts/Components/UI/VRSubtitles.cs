@@ -1,109 +1,56 @@
 ﻿#if GUZ_HVR_INSTALLED
-using System.Collections;
 using GUZ.Core;
-using GUZ.Core.Extensions;
-using GUZ.Core.Globals;
-using MyBox;
+using GUZ.Core._Npc2;
+using GUZ.Core.Npc;
 using TMPro;
 using UnityEngine;
-using UnityEngine.SceneManagement;
+using ZenKit.Daedalus;
 
 namespace GUZ.VR.Components.UI
 {
-    public class VRSubtitles : MonoBehaviour
+    /// <summary>
+    /// Multiple subtitles can be shown at once.
+    /// e.g. NPCs do ambient talks and Hero is talking to another NPC in parallel.
+    /// We therefore attach this component to each NPC prefab separately.
+    /// </summary>
+    public class VRSubtitles : BasePlayerBehaviour, INpcSubtitles
     {
-        [SerializeField] private GameObject _dialogRoot;
-        [SerializeField] private GameObject _dialogNpcNameItem;
-        [SerializeField] private GameObject _dialogItem;
+        // Hero has different behaviour for NpcInstance handling within Awake() function.
+        [SerializeField]
+        private bool _isHero;
 
-        private float _dialogItemHeight;
-        private float _dialogNpcNameItemHeight;
-
-        private Coroutine _hideDialogCoroutine;
-        private float _hideDialogDelay = 0.1f;
+        [SerializeField] private TMP_Text _dialogNpcNameText;
+        [SerializeField] private TMP_Text _dialogText;
 
 
-        private void Awake()
+        protected override void Awake()
         {
-            // When prefab is loaded for the first time, we store the size of a dialog item.
-            // It's needed to add more elements on top in the right position.
-            if (_dialogItemHeight == 0f)
+            gameObject.SetActive(false); // The whole subtitle topic will be enabled later during gameplay.
+            _dialogNpcNameText.spriteAsset = GameGlobals.Font.HighlightSpriteAsset;
+
+            if (_isHero)
             {
-                var rectTransform = _dialogItem.GetComponent<RectTransform>();
-                _dialogItemHeight = rectTransform.rect.height;
+                // If it's our hero, then we have no LazyLoading component and also no NpcInstance when game boots.
+                // We will set these values later when calling CacheHero().
             }
-
-            // The whole subtitle topic will be enabled later during gameplay.
-            gameObject.SetActive(false);
-        }
-
-        public void StartDialogInitially()
-        {
-            gameObject.SetActive(true); // If we enable it earlier, Billboard Comp on this GO is calculating all the time.
-        }
-
-        public void EndDialog()
-        {
-            HideSubtitlesImmediate();
-            gameObject.SetActive(false); // Disable whole Subtitle menu (UI, Billboard)
-        }
-
-        public void ShowSubtitles(GameObject npcGo)
-        {
-            // If there's a pending hide operation, stop it
-            if (_hideDialogCoroutine != null)
+            // NPC
+            else
             {
-                StopCoroutine(_hideDialogCoroutine);
-                _hideDialogCoroutine = null;
+                base.Awake(); // Load NpcInstance from NpcLoader2.
+                _dialogNpcNameText.text = NpcInstance.GetName(NpcNameSlot.Slot0);
+                NpcData.PrefabProps.NpcSubtitles = this;
             }
-
-            var npcDialog = npcGo.FindChildRecursively("DialogMenuRootPos");
-            _dialogRoot.SetParent(npcDialog, true, true, true);
-
-            var rootRectHeight = _dialogItemHeight + _dialogNpcNameItemHeight;
-            _dialogRoot.GetComponent<RectTransform>().SetHeight(rootRectHeight);
-
-            StartCoroutine(ShowSubtitlesWithDelay());
         }
 
-        private IEnumerator ShowSubtitlesWithDelay()
+        public void ShowSubtitles(string text)
         {
-            yield return new WaitForEndOfFrame();
-            _dialogRoot.SetActive(true);
-        }
-
-        private IEnumerator HideSubtitlesWithDelay()
-        {
-            yield return new WaitForSeconds(_hideDialogDelay);
-            _dialogRoot.SetActive(false);
-            _dialogRoot.SetParent(SceneManager.GetSceneByName(Constants.ScenePlayer).GetRootGameObjects()[0], worldPositionStays: true);
+            gameObject.SetActive(true);
+            _dialogText.text = text;
         }
 
         public void HideSubtitles()
         {
-            _hideDialogCoroutine = StartCoroutine(HideSubtitlesWithDelay());
-        }
-
-        public void HideSubtitlesImmediate()
-        {
-            _dialogRoot.SetActive(false);
-            _dialogRoot.SetParent(SceneManager.GetSceneByName(Constants.ScenePlayer).GetRootGameObjects()[0], worldPositionStays: true);
-        }
-
-        public void FillSubtitles(string npcName, string text)
-        {
-            ClearSubtitlesOptions();
-
-            _dialogNpcNameItem.FindChildRecursively("Label").GetComponent<TMP_Text>().text = npcName;
-            _dialogNpcNameItem.FindChildRecursively("Label").GetComponent<TMP_Text>().spriteAsset = GameGlobals.Font.HighlightSpriteAsset;
-
-            _dialogItem.FindChildRecursively("Label").GetComponent<TMP_Text>().text = text;
-        }
-
-        private void ClearSubtitlesOptions()
-        {
-            _dialogItem.FindChildRecursively("Label").GetComponent<TMP_Text>().text = "";
-            _dialogNpcNameItem.FindChildRecursively("Label").GetComponent<TMP_Text>().text = "";
+            gameObject.SetActive(false);
         }
     }
 }

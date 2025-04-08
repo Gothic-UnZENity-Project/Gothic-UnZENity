@@ -15,7 +15,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
 
         public override void Start()
         {
-            DialogManager.StopDialog();
+            DialogManager.StopDialog(NpcContainer);
             GameGlobals.Story.SwitchChapterIfPending();
             IsFinishedFlag = true;
         }

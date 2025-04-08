@@ -23,7 +23,6 @@ namespace GUZ.VR
 #if GUZ_HVR_INSTALLED
             GameContext.InteractionAdapter = new VRInteractionAdapter();
             GameContext.DialogAdapter = new VRDialogAdapter();
-            GameContext.SubtitlesAdapter = new VRSubtitlesAdapter();
 #else
             throw new System.ArgumentException(
                 "VR context is set, but compiler directive >GUZ_HVR_INSTALLED< isn't set. Did you set up Hurricane VR properly?");

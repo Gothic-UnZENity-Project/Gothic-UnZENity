@@ -18,7 +18,6 @@ namespace GUZ.Flat
 
             GameContext.InteractionAdapter = new FlatInteractionAdapter();
             GameContext.DialogAdapter = null; // TBD
-            GameContext.SubtitlesAdapter = null; // TBD
         }
 
         protected override void RegisterGameVersionModule(GameVersion version)

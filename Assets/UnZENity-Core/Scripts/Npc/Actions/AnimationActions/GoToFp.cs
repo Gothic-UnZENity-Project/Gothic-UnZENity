@@ -25,6 +25,11 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
 
             var npcPos = NpcGo.transform.position;
             _fp = WayNetHelper.FindNearestFreePoint(npcPos, Destination);
+
+            if (_fp != null)
+            {
+                _fp.IsLocked = true;
+            }
         }
 
         protected override void AnimationEnd()
@@ -42,7 +47,6 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
         protected override void OnDestinationReached()
         {
             Props.CurrentFreePoint = _fp;
-            _fp.IsLocked = true;
 
             AnimationEnd();
 

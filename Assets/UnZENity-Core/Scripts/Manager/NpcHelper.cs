@@ -127,8 +127,10 @@ namespace GUZ.Core.Manager
         }
 
         /// <summary>
-        /// As WldDetectNpc and WldDetectNpc seem to be the same logic except one parameter,
-        /// we implement both in this function.
+        /// Returns true and sets VM.other, if NPC was found.
+        ///
+        /// Hint:
+        /// As WldDetectNpc and WldDetectNpc seem to be the same logic except one parameter, we implement both in this function.
         /// </summary>
         public static bool ExtWldDetectNpcEx(NpcInstance npcInstance, int specificNpcIndex, int aiState, int guild,
             bool detectPlayer)
@@ -138,17 +140,17 @@ namespace GUZ.Core.Manager
 
             // FIXME - Add Guild check
             // FIXME - add range check based on perceiveAll's range (npc.sense_range)
-            var foundNpc = MultiTypeCache.NpcCache
-                .Where(i => i.Properties != null) // ignore empty (safe check)
-                .Where(i => i.Properties.Go != null) // ignore empty (safe check)
+            var foundNpc = MultiTypeCache.NpcCache2
+                .Where(i => i.Props != null) // ignore empty (safe check)
+                .Where(i => i.Go != null) // ignore empty (safe check)
                 .Where(i => i.Instance.Index != npcInstance.Index) // ignore self
                 .Where(i => detectPlayer ||
                             i.Instance.Index !=
                             GameData.GothicVm.GlobalHero!.Index) // if we don't detect player, then skip it
                 .Where(i => specificNpcIndex < 0 ||
                             specificNpcIndex == i.Instance.Index) // Specific NPC is found right now?
-                .Where(i => aiState < 0 || npc.State == i.Properties.State)
-                .OrderBy(i => Vector3.Distance(i.Properties.transform.position, npcPos)) // get nearest
+                .Where(i => aiState < 0 || npc.State == i.Props.State)
+                .OrderBy(i => Vector3.Distance(i.Go.transform.position, npcPos)) // get nearest
                 .FirstOrDefault();
 
             // without this Dialog box stops and breaks the entire NPC logic

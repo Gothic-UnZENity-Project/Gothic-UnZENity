@@ -24,7 +24,7 @@ namespace GUZ.Core.Animations
         public float BlendIn => TrackType == Type.Animation ? _animation.BlendIn : _animationAlias.BlendIn;
         public float BlendOut => TrackType == Type.Animation ? _animation.BlendOut : _animationAlias.BlendOut;
         public AnimationFlags Flags => TrackType == Type.Animation ? _animation.Flags : _animationAlias.Flags;
-        public string AliasName => TrackType == Type.Animation ? null : _animationAlias.Name;
+        public string AliasName => TrackType == Type.Animation ? string.Empty : _animationAlias.Name;
         public AnimationDirection AniDir => TrackType == Type.Animation ? _animation.Direction : _animationAlias.Direction;
 
         // To ensure, Animation/Alias specific values are always used, we make actual IAnimation private. Therefore we need to expose

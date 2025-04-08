@@ -41,7 +41,6 @@ namespace GUZ.Core.Manager
             if (initialDialogStarting)
             {
                 GameContext.DialogAdapter.StartDialogInitially();
-                GameContext.SubtitlesAdapter.StartDialogInitially();
             }
 
             GameData.Dialogs.IsInDialog = true;
@@ -227,7 +226,7 @@ namespace GUZ.Core.Manager
             }
         }
 
-        public static void StopDialog()
+        public static void StopDialog(NpcContainer2 npc)
         {
             GameData.Dialogs.CurrentDialog.Instance = null;
             GameData.Dialogs.CurrentDialog.Options.Clear();
@@ -237,7 +236,10 @@ namespace GUZ.Core.Manager
             GameContext.InteractionAdapter.UnlockPlayer();
 
             GameContext.DialogAdapter.EndDialog();
-            GameContext.SubtitlesAdapter.EndDialog();
+
+            // Hide subtitles from both dialog partners.
+            GameGlobals.Npcs.GetHeroContainer().PrefabProps.NpcSubtitles.HideSubtitles();
+            npc.PrefabProps.NpcSubtitles.HideSubtitles();
         }
 
         /// <summary>
