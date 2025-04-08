@@ -118,8 +118,8 @@ namespace GUZ.Core.UnZENity_Core.Scripts.UI
                 {
                     for (int i = 0;; i++)
                     {
-                        var actionName = item.GetOnSelActionS(0);
-                        var action = item.GetOnSelAction(0);
+                        var actionName = item.GetOnSelActionS(i);
+                        var action = item.GetOnSelAction(i);
                         
                         if (actionName.IsNullOrEmpty())
                         {
