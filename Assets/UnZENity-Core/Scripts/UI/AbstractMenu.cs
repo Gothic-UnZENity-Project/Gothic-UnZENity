@@ -5,7 +5,7 @@ using GUZ.Core.Globals;
 using MyBox;
 using TMPro;
 using UnityEngine;
-using UnityEngine.SceneManagement;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using ZenKit.Daedalus;
 
@@ -207,8 +207,15 @@ namespace GUZ.Core.UnZENity_Core.Scripts.UI
             {
                 SetTextDimensions(textComp, item, itemWidth, itemHeight);
             }
-
-            itemGo.SetActive(IsMenuItemInitiallyActive(menuItemName));
+            //item disabled (grayed out and not interactable)
+            if (!IsMenuItemInitiallyActive(menuItemName))
+            {
+                textComp.color = Constants.TextDisabledColor;
+                var button = itemGo.GetComponent<Button>();
+                button.enabled = false;
+                var eventTrigger = itemGo.GetComponent<EventTrigger>();
+                eventTrigger.enabled = false;
+            }
         }
 
         private void SetTextDimensions(TMP_Text textComp, MenuItemInstance item,
