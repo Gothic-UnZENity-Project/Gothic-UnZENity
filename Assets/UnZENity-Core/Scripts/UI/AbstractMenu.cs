@@ -225,6 +225,7 @@ namespace GUZ.Core.UnZENity_Core.Scripts.UI
 
             textComp.text = item.GetText(0);
             textComp.spriteAsset = GameGlobals.Font.TryGetFont(item.FontName);
+            textComp.fontSize = item.FontName.ToLowerInvariant() == "font_old_10_white.tga" ? 18 : 36;
 
             // Text component needs to align in dimensions with parent rect.
             var textRect = textComp.GetComponent<RectTransform>();
