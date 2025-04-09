@@ -47,6 +47,15 @@ namespace GUZ.Lab.Handler
 
             while (true)
             {
+                // Sit down - Moves forward and hovers over ground like a magician on his carpet.
+                {
+                    animSystem.PlayAnimation("T_STAND_2_SIT");
+                    yield return new WaitForSeconds(3f);
+                    animSystem.PlayAnimation("T_SIT_2_STAND");
+                    yield return new WaitForSeconds(3f);
+                }
+                continue;
+
                 // Leg shake with FPS:10
                 {
                     animSystem.PlayAnimation("t_BoringKick");
