@@ -300,13 +300,10 @@ namespace GUZ.Core.Npc
             Properties.StateTime = 0.0f;
 
             // WayNet handling
-            if (Properties.CurrentFreePoint != null)
-            {
-                // FIXME - If we despawn an NPC, the FP needs to be cleared as well.
-                Properties.CurrentFreePoint.IsLocked = false;
-            }
-            Properties.CurrentFreePoint = null;
-            Properties.CurrentWayPoint = null;
+            // Nothing to do -> Even a despawned NPC (based on culling) needs to stick with its WPs/FPs.
+            // Whenever re-enabled they are still attached / sit / stand at their points. Otherwise, another NPC
+            // Will steal it if un-culled earlier.
+
 
             // CurrentItem handling
             Properties.ItemAnimationState = -1;
