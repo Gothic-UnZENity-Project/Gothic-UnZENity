@@ -208,7 +208,7 @@ namespace GUZ.Core.Editor.Tools
             foreach (var trackInstance in _targetAnimationSystem.DebugTrackInstances)
             {
                 EditorGUILayout.BeginHorizontal();
-                EditorGUILayout.LabelField($"{trackInstance.Track.Layer:D2} - {trackInstance.Track.Name}");
+                EditorGUILayout.LabelField($"{trackInstance.Track.Layer:D2} - {trackInstance.Track.AliasName ?? trackInstance.Track.Name}");
                 EditorGUILayout.LabelField(
                     $"{trackInstance.CurrentTime:F2} / {trackInstance.Track.Duration:F2} - {trackInstance.State}");
                 EditorGUILayout.EndHorizontal();
