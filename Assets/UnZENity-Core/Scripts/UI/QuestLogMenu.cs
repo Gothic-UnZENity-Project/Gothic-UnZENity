@@ -42,6 +42,8 @@ namespace GUZ.Core.UI
         private const string _instanceNameSuccessMissions = "MENU_ITEM_LIST_MISSIONS_OLD";
         private const string _instanceNameLog = "MENU_ITEM_LIST_LOG";
         private const string _instanceContentViewer = "MENU_ITEM_CONTENT_VIEWER";
+        private const string _instanceDay = "MENU_ITEM_DAY";
+        private const string _instanceTime = "MENU_ITEM_TIME";
 
         // It's easier to loop through or check .Contains() later.
         private string[] _listItemInstanceNames =
@@ -83,7 +85,15 @@ namespace GUZ.Core.UI
         /// </summary>
         private void Awake()
         {
-            GlobalEventDispatcher.ZenKitBootstrapped.AddListener(Setup);
+            Setup();
+            UpdateDayAndTime(GameManager.I.Time.GetCurrentDateTime());
+            GlobalEventDispatcher.GameTimeMinuteChangeCallback.AddListener(UpdateDayAndTime);
+        }
+
+        private void UpdateDayAndTime(DateTime time)
+        {
+            MenuItemCache[_instanceDay].go.GetComponent<TMP_Text>().SetText(time.Day.ToString());
+            MenuItemCache[_instanceTime].go.GetComponent<TMP_Text>().SetText(time.TimeOfDay.ToString(@"hh\:mm"));
         }
 
         protected override bool IsMenuItemInitiallyActive(string menuItemName)
