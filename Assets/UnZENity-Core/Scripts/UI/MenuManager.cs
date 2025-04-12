@@ -16,7 +16,14 @@ namespace GUZ.Core.UnZENity_Core.Scripts.UI
         [SerializeField] private GameObject settingsMenuPrefab;
         [SerializeField] private GameObject leaveMenuPrefab;
 
-        private void Awake()
+        private void OnEnable()
+        {
+            InitializeMenus();
+            
+            OpenMenu("MENU_MAIN");
+        }
+
+        private void InitializeMenus()
         {
             if (menuList.Count != 0)
             {
@@ -33,12 +40,10 @@ namespace GUZ.Core.UnZENity_Core.Scripts.UI
             // TODO: Refactor the current settings page to be used by the new approach
             menu = Instantiate(leaveMenuPrefab, transform);
             menuList.Add("MENU_LEAVE_GAME", menu);
+            
+            GameContext.InteractionAdapter.InitUIInteraction();
+            
             CloseAllMenus();
-        }
-
-        private void Start()
-        {
-            OpenMenu("MENU_MAIN");
         }
 
         public void ToggleVisibility()
@@ -49,11 +54,6 @@ namespace GUZ.Core.UnZENity_Core.Scripts.UI
                 CloseAllMenus();
                 menuQueue.Clear();
                 currentMenu = null;
-            }
-            else
-            {
-                // This branch should be accessed only when activating again the menu (via vrplayercontroller)
-                OpenMenu("MENU_MAIN");
             }
 
             gameObject.SetActive(!gameObject.activeSelf);
