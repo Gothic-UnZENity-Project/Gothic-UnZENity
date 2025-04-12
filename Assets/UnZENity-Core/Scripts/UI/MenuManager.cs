@@ -18,7 +18,45 @@ namespace GUZ.Core.UnZENity_Core.Scripts.UI
 
         private void Awake()
         {
+            if (menuList.Count != 0)
+            {
+                return;
+            }
+
+            GameObject menu = null;
+            menu = Instantiate(mainMenuPrefab, transform);
+            menuList.Add("MENU_MAIN", menu);
+            menu = Instantiate(loadMenuPrefab, transform);
+            menuList.Add("MENU_SAVEGAME_LOAD", menu);
+            menu = Instantiate(saveMenuPrefab, transform);
+            menuList.Add("MENU_SAVEGAME_SAVE", menu);
+            // TODO: Refactor the current settings page to be used by the new approach
+            menu = Instantiate(leaveMenuPrefab, transform);
+            menuList.Add("MENU_LEAVE_GAME", menu);
+            CloseAllMenus();
+        }
+
+        private void Start()
+        {
             OpenMenu("MENU_MAIN");
+        }
+
+        public void ToggleVisibility()
+        {
+            // reset the queue
+            if (gameObject.activeSelf)
+            {
+                CloseAllMenus();
+                menuQueue.Clear();
+                currentMenu = null;
+            }
+            else
+            {
+                // This branch should be accessed only when activating again the menu (via vrplayercontroller)
+                OpenMenu("MENU_MAIN");
+            }
+
+            gameObject.SetActive(!gameObject.activeSelf);
         }
 
         public void OpenMenu(string menuName)
@@ -31,37 +69,15 @@ namespace GUZ.Core.UnZENity_Core.Scripts.UI
             currentMenu = menuName;
 
             CloseAllMenus();
-            if (menuList.ContainsKey(menuName))
+            if (!menuList.ContainsKey(menuName))
             {
-                menuList[menuName].SetActive(true);
-
                 return;
             }
 
-            GameObject menu = null;
-            switch (menuName)
-            {
-                case "MENU_MAIN":
-                    menu = Instantiate(mainMenuPrefab, this.transform);
-                    break;
-                case "MENU_SAVEGAME_LOAD":
-                    menu = Instantiate(loadMenuPrefab, this.transform);
-                    break;
-                case "MENU_SAVEGAME_SAVE":
-                    menu = Instantiate(saveMenuPrefab, this.transform);
-                    break;
-                case "MENU_OPTIONS":
-                    // TODO: Refactor the current settings page to be used by the new approach
-                    break;
-                case "MENU_LEAVE_GAME":
-                    menu = Instantiate(leaveMenuPrefab, this.transform);
-                    break;
-            }
-
-            menuList.Add(menuName, menu);
+            menuList[menuName].SetActive(true);
         }
 
-        public void CloseAllMenus()
+        private void CloseAllMenus()
         {
             foreach (var menu in menuList.Values)
             {
@@ -71,7 +87,15 @@ namespace GUZ.Core.UnZENity_Core.Scripts.UI
 
         public void BackMenu()
         {
-            OpenMenu(menuQueue.Pop());
+            var nextMenu = menuQueue.TryPop(out string result);
+            if (nextMenu)
+            {
+                OpenMenu(result);
+            }
+            else
+            {
+                ToggleVisibility();
+            }
         }
     }
 }

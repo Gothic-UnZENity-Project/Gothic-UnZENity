@@ -54,8 +54,7 @@ namespace GUZ.VR.Components.HVROverrides
             }
             else
             {
-                return HVRController.GetButtonState(HVRHandSide.Left, HVRButtons.Menu).JustActivated ||
-                       HVRController.GetButtonState(HVRHandSide.Right, HVRButtons.Menu).JustActivated;
+                return HVRController.GetButtonState(HVRHandSide.Left, HVRButtons.Secondary).JustActivated;
             }
         }
 
