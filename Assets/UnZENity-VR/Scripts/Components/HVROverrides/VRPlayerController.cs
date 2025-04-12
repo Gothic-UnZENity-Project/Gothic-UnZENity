@@ -40,8 +40,6 @@ namespace GUZ.VR.Components.HVROverrides
             {
                 GameData.InGameAndAlive = true;
                 MainMenu.ToggleVisibility();
-                MainMenu.enabled = false;
-                MainMenu.enabled = true;
             }
 
             if (_guzInputs.IsQuestLogActivated && IsGameScene())
