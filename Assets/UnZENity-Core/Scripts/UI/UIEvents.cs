@@ -171,6 +171,8 @@ namespace GUZ.Core.UI
             }
 
             _audioSource.PlayOneShot(_uiClick);
+            SetDefaultFont(GetComponentInChildren<TMP_Text>());
+
         }
 
         public void OnButtonBackClicked()
