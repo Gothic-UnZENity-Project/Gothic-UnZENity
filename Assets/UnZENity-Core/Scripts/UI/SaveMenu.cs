@@ -124,6 +124,11 @@ namespace GUZ.Core.UnZENity_Core.Scripts.UI
                 GameGlobals.Textures.GetEmptyMaterial(MaterialExtension.BlendMode.Opaque);
         }
 
+        private void OnEnable()
+        {
+            FillSaveGameEntries();
+        }
+
         private void FillSaveGameEntries()
         {
             var gothicDir = GameContext.GameVersionAdapter.RootPath;
