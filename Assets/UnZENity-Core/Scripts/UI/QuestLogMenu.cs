@@ -118,6 +118,8 @@ namespace GUZ.Core.UI
         private void Setup()
         {
             CreateRootElements("MENU_LOG");
+            //open gothic also hides it in screen init
+            MenuItemCache[_instanceContentViewer].go.SetActive(false);
 
             CreateLists();
             CreateContentViewer();
