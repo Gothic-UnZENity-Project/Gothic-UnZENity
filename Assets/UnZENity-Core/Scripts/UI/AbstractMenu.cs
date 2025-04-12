@@ -229,11 +229,25 @@ namespace GUZ.Core.UnZENity_Core.Scripts.UI
             //item disabled (grayed out and not interactable)
             if (!IsMenuItemInitiallyActive(menuItemName))
             {
-                textComp.color = Constants.TextDisabledColor;
-                var button = itemGo.GetComponent<Button>();
-                button.enabled = false;
-                var eventTrigger = itemGo.GetComponent<EventTrigger>();
-                eventTrigger.enabled = false;
+                if (textComp != null)
+                {
+                    textComp.color = Constants.TextDisabledColor;
+                    var button = itemGo.GetComponent<Button>();
+                    var eventTrigger = itemGo.GetComponent<EventTrigger>();
+                    if (button != null)
+                    {
+                        button.enabled = false;
+                    }
+
+                    if (eventTrigger != null)
+                    {
+                        eventTrigger.enabled = false;
+                    }
+                }
+                else
+                {
+                    itemGo.SetActive(false);
+                }
             }
         }
 
