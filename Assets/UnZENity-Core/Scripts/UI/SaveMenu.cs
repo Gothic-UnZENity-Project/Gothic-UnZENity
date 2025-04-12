@@ -82,13 +82,17 @@ namespace GUZ.Core.UnZENity_Core.Scripts.UI
 
         protected override void StartItem(string itemName, string commandName)
         {
-            int id = ExtractIdFromName(commandName);
-            SaveLoadGame(id);
+            SaveLoadGame(commandName);
         }
 
         protected override void Close(string itemName, string commandName)
         {
-            _menuManager.CloseAllMenus();
+            if (commandName == "SAVEGAME_LOAD")
+            {
+                SaveLoadGame(itemName);
+            }
+
+            _menuManager.ToggleVisibility();
         }
 
         protected override void ConsoleCommand(string itemName, string commandName)
@@ -185,8 +189,14 @@ namespace GUZ.Core.UnZENity_Core.Scripts.UI
             // Version.text = "";
         }
 
-        public void SaveLoadGame(int id)
+        public void SaveLoadGame(string inputName)
         {
+            string numberPart = inputName.Substring($"MENUITEM_{_saveLoadStatus}_SLOT".Length);
+
+            if (!int.TryParse(numberPart, out int id))
+            {
+                id = -2;
+            }
             if (_isLoading)
             {
                 var save = _saves[id];
@@ -204,18 +214,6 @@ namespace GUZ.Core.UnZENity_Core.Scripts.UI
                 GameGlobals.SaveGame.SaveCurrentGame(id, $"UnZENity - {DateTime.Now}");
                 FillSaveGameEntries();
             }
-        }
-
-        private int ExtractIdFromName(string inputName)
-        {
-            string numberPart = inputName.Substring($"MENUITEM_{_saveLoadStatus}_SLOT".Length);
-
-            if (int.TryParse(numberPart, out int id))
-            {
-                return id;
-            }
-
-            return -1;
         }
     }
 }
