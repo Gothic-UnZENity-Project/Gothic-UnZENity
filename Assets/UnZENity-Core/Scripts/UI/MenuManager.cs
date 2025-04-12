@@ -37,7 +37,8 @@ namespace GUZ.Core.UnZENity_Core.Scripts.UI
             menuList.Add("MENU_SAVEGAME_LOAD", menu);
             menu = Instantiate(saveMenuPrefab, transform);
             menuList.Add("MENU_SAVEGAME_SAVE", menu);
-            // TODO: Refactor the current settings page to be used by the new approach
+            menu = Instantiate(settingsMenuPrefab, transform);
+            menuList.Add("MENU_OPTIONS", menu);
             menu = Instantiate(leaveMenuPrefab, transform);
             menuList.Add("MENU_LEAVE_GAME", menu);
             

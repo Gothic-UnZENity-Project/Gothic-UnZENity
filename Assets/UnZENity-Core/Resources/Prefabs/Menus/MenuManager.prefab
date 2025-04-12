@@ -26,7 +26,7 @@ Transform:
   m_GameObject: {fileID: 6438015706988437683}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.6, z: 0.7}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -47,5 +47,5 @@ MonoBehaviour:
   mainMenuPrefab: {fileID: 8412591900964177680, guid: dfbc1d6c1e7353c4a8a11fb425e430d5, type: 3}
   saveMenuPrefab: {fileID: 8412591900964177680, guid: ab21d2f607788e5438cfa58fefe8476a, type: 3}
   loadMenuPrefab: {fileID: 8412591900964177680, guid: 00556207a092eeb49988635d2993857e, type: 3}
-  settingsMenuPrefab: {fileID: 8412591900964177680, guid: 3ad91991a596816459397e8054031ecb, type: 3}
+  settingsMenuPrefab: {fileID: 5827635276208223651, guid: b2f7ec490b212544e97a98adc4cb9d50, type: 3}
   leaveMenuPrefab: {fileID: 8412591900964177680, guid: db565c278137ef540b29949d896ef3b3, type: 3}
