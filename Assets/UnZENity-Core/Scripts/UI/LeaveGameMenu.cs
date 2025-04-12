@@ -14,42 +14,42 @@ namespace GUZ.Core.UnZENity_Core.Scripts.UI
             CreateRootElements("MENU_LEAVE_GAME");
         }
 
-        protected override void Undefined(string commandName)
+        protected override void Undefined(string itemName, string commandName)
         {
-            throw new System.NotImplementedException();
+            return;
         }
 
-        protected override void Back(string commandName)
+        protected override void Back(string itemName, string commandName)
         {
             _menuManager.BackMenu();
         }
 
-        protected override void StartMenu(string commandName)
+        protected override void StartMenu(string itemName, string commandName)
         {
             throw new System.NotImplementedException();
         }
 
-        protected override void StartItem(string commandName)
+        protected override void StartItem(string itemName, string commandName)
         {
             throw new System.NotImplementedException();
         }
 
-        protected override void Close(string commandName)
+        protected override void Close(string itemName, string commandName)
         {
             Application.Quit();
         }
 
-        protected override void ConsoleCommand(string commandName)
+        protected override void ConsoleCommand(string itemName, string commandName)
         {
             throw new System.NotImplementedException();
         }
 
-        protected override void PlaySound(string commandName)
+        protected override void PlaySound(string itemName, string commandName)
         {
             throw new System.NotImplementedException();
         }
 
-        protected override void ExecuteCommand(string commandName)
+        protected override void ExecuteCommand(string itemName, string commandName)
         {
             throw new System.NotImplementedException();
         }

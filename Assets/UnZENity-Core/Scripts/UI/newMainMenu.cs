@@ -17,55 +17,56 @@ namespace GUZ.Core.UnZENity_Core.Scripts.UI
             CreateRootElements("MENU_MAIN");
         }
 
-        protected override void Undefined(string commandName)
+        protected override void Undefined(string itemName, string commandName)
         {
-            throw new System.NotImplementedException();
+            return;
         }
 
-        protected override void Back(string commandName)
+        protected override void Back(string itemName, string commandName)
         {
             _menuManager.BackMenu();
         }
 
-        protected override void StartMenu(string commandName)
+        protected override void StartMenu(string itemName, string commandName)
         {
             _menuManager.OpenMenu(commandName);
         }
 
-        protected override void StartItem(string commandName)
+        protected override void StartItem(string itemName, string commandName)
         {
             throw new System.NotImplementedException();
         }
 
-        protected override void Close(string commandName)
+        protected override void Close(string itemName, string commandName)
         {
-            Debug.Log($"Main Menu Close: {commandName}");
-            _menuManager.CloseAllMenus();
+            _menuManager.ToggleVisibility();
             if (commandName == "NEW_GAME")
             {
                 GameManager.I.LoadWorld(Constants.SelectedWorld, -1, SceneManager.GetActiveScene().name);
             }
         }
 
-        protected override void ConsoleCommand(string commandName)
+        protected override void ConsoleCommand(string itemName, string commandName)
         {
             throw new System.NotImplementedException();
         }
 
-        protected override void PlaySound(string commandName)
+        protected override void PlaySound(string itemName, string commandName)
         {
             throw new System.NotImplementedException();
         }
 
-        protected override void ExecuteCommand(string commandName)
+        protected override void ExecuteCommand(string itemName, string commandName)
         {
             throw new System.NotImplementedException();
         }
 
         protected override bool IsMenuItemInitiallyActive(string menuItemName)
         {
-            return ((MenuItemCache[menuItemName].item.Flags & MenuItemFlag.OnlyInGame) == 0 && !GameData.InGameAndAlive) ||
-                   ((MenuItemCache[menuItemName].item.Flags & MenuItemFlag.OnlyOutGame) == 0 && GameData.InGameAndAlive);
+            return ((MenuItemCache[menuItemName].item.Flags & MenuItemFlag.OnlyInGame) == 0 &&
+                    !GameData.InGameAndAlive) ||
+                   ((MenuItemCache[menuItemName].item.Flags & MenuItemFlag.OnlyOutGame) == 0 &&
+                    GameData.InGameAndAlive);
         }
     }
 }

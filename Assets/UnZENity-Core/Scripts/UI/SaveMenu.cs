@@ -65,43 +65,43 @@ namespace GUZ.Core.UnZENity_Core.Scripts.UI
             FillSaveGameEntries();
         }
 
-        protected override void Undefined(string commandName)
+        protected override void Undefined(string itemName, string commandName)
         {
-            throw new System.NotImplementedException();
+            return;
         }
 
-        protected override void Back(string commandName)
+        protected override void Back(string itemName, string commandName)
         {
             _menuManager.BackMenu();
         }
 
-        protected override void StartMenu(string commandName)
+        protected override void StartMenu(string itemName, string commandName)
         {
             _menuManager.OpenMenu(commandName);
         }
 
-        protected override void StartItem(string commandName)
+        protected override void StartItem(string itemName, string commandName)
         {
             int id = ExtractIdFromName(commandName);
             SaveLoadGame(id);
         }
 
-        protected override void Close(string commandName)
+        protected override void Close(string itemName, string commandName)
         {
             _menuManager.CloseAllMenus();
         }
 
-        protected override void ConsoleCommand(string commandName)
+        protected override void ConsoleCommand(string itemName, string commandName)
         {
             throw new System.NotImplementedException();
         }
 
-        protected override void PlaySound(string commandName)
+        protected override void PlaySound(string itemName, string commandName)
         {
             throw new System.NotImplementedException();
         }
 
-        protected override void ExecuteCommand(string commandName)
+        protected override void ExecuteCommand(string itemName, string commandName)
         {
             throw new System.NotImplementedException();
         }

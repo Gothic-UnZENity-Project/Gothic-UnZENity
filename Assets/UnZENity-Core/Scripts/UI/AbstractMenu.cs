@@ -23,19 +23,19 @@ namespace GUZ.Core.UnZENity_Core.Scripts.UI
         protected float PixelRatioX;
         protected float PixelRatioY;
 
-        protected abstract void Undefined(string commandName); // e.g.
-        protected abstract void Back(string commandName); // e.g.
+        protected abstract void Undefined(string itemName, string commandName); // e.g.
+        protected abstract void Back(string itemName, string commandName); // e.g.
 
-        protected abstract void StartMenu(string commandName);
+        protected abstract void StartMenu(string itemName, string commandName);
 
         // e.g.
-        protected abstract void StartItem(string commandName); // e.g.
+        protected abstract void StartItem(string itemName, string commandName); // e.g.
 
-        protected abstract void Close(string commandName);
+        protected abstract void Close(string itemName, string commandName);
 
-        protected abstract void ConsoleCommand(string commandName); // e.g.
-        protected abstract void PlaySound(string commandName); // e.g.
-        protected abstract void ExecuteCommand(string commandName); // e.g.
+        protected abstract void ConsoleCommand(string itemName, string commandName); // e.g.
+        protected abstract void PlaySound(string itemName, string commandName); // e.g.
+        protected abstract void ExecuteCommand(string itemName, string commandName); // e.g.
 
         protected abstract bool IsMenuItemInitiallyActive(string menuItemName);
 
@@ -225,6 +225,7 @@ namespace GUZ.Core.UnZENity_Core.Scripts.UI
             {
                 SetTextDimensions(textComp, item, itemWidth, itemHeight);
             }
+
             //item disabled (grayed out and not interactable)
             if (!IsMenuItemInitiallyActive(menuItemName))
             {
@@ -259,33 +260,33 @@ namespace GUZ.Core.UnZENity_Core.Scripts.UI
             textRect.SetHeight(textHeight / PixelRatioY);
         }
 
-        private void OnMenuItemClicked(MenuItemSelectAction action, string commandName)
+        private void OnMenuItemClicked(MenuItemSelectAction action, string itemName, string commandName)
         {
             switch (action)
             {
                 case MenuItemSelectAction.Undefined:
-                    Undefined(commandName);
+                    Undefined(itemName, commandName);
                     break;
                 case MenuItemSelectAction.Back:
-                    Back(commandName);
+                    Back(itemName, commandName);
                     break;
                 case MenuItemSelectAction.StartMenu:
-                    StartMenu(commandName);
+                    StartMenu(itemName, commandName);
                     break;
                 case MenuItemSelectAction.StartItem:
-                    StartItem(commandName);
+                    StartItem(itemName, commandName);
                     break;
                 case MenuItemSelectAction.Close:
-                    Close(commandName);
+                    Close(itemName, commandName);
                     break;
                 case MenuItemSelectAction.ConsoleCommand:
-                    ConsoleCommand(commandName);
+                    ConsoleCommand(itemName, commandName);
                     break;
                 case MenuItemSelectAction.PlaySound:
-                    PlaySound(commandName);
+                    PlaySound(itemName, commandName);
                     break;
                 case MenuItemSelectAction.ExecuteCommand:
-                    ExecuteCommand(commandName);
+                    ExecuteCommand(itemName, commandName);
                     break;
                 default:
                     Debug.LogError($"Unknown command {commandName}({action})");

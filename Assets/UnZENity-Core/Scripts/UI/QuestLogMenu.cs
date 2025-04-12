@@ -339,12 +339,12 @@ namespace GUZ.Core.UI
             list.ArrowDownGo.SetActive(list.LogTopics.Count - _visibleListItemAmount - list.CurrentListScrollValue > 0);
         }
 
-        private void OnMenuItemClicked(MenuItemSelectAction action, string commandName)
+        private void OnMenuItemClicked(MenuItemSelectAction action, string itemName, string commandName)
         {
             switch (action)
             {
                 case MenuItemSelectAction.ExecuteCommand:
-                    ExecuteCommand(commandName);
+                    ExecuteCommand(itemName, commandName);
                     break;
                 default:
                     Debug.LogError($"Unknown command {commandName}({action})");
@@ -363,6 +363,7 @@ namespace GUZ.Core.UI
                 UIEvents.SetDefaultFontsForChildren(menuItem.go);
                 menuItem.go.SetActive(false);
             }
+
             // ...including background
             Background.SetActive(false);
 
@@ -386,42 +387,42 @@ namespace GUZ.Core.UI
             FillList(_activeListMenu);
         }
 
-        protected override void Undefined(string commandName)
+        protected override void Undefined(string itemName, string commandName)
         {
             throw new NotImplementedException();
         }
 
-        protected override void Back(string commandName)
+        protected override void Back(string itemName, string commandName)
         {
             throw new NotImplementedException();
         }
 
-        protected override void StartMenu(string commandName)
+        protected override void StartMenu(string itemName, string commandName)
         {
             throw new NotImplementedException();
         }
 
-        protected override void StartItem(string commandName)
+        protected override void StartItem(string itemName, string commandName)
         {
             throw new NotImplementedException();
         }
 
-        protected override void Close(string commandName)
+        protected override void Close(string itemName, string commandName)
         {
             throw new NotImplementedException();
         }
 
-        protected override void ConsoleCommand(string commandName)
+        protected override void ConsoleCommand(string itemName, string commandName)
         {
             throw new NotImplementedException();
         }
 
-        protected override void PlaySound(string commandName)
+        protected override void PlaySound(string itemName, string commandName)
         {
             throw new NotImplementedException();
         }
 
-        protected override void ExecuteCommand(string commandName)
+        protected override void ExecuteCommand(string itemName, string commandName)
         {
             ResetView();
             FillLists();
