@@ -118,15 +118,33 @@ namespace GUZ.Core.UnZENity_Core.Scripts.UI
                 {
                     for (int i = 0;; i++)
                     {
-                        var actionName = item.GetOnSelActionS(i);
-                        var action = item.GetOnSelAction(i);
-                        
-                        if (action == null)
+                        MenuItemSelectAction action;
+                        try
+                        {
+                            action = item.GetOnSelAction(i);
+                        }
+                        catch (Exception e)
                         {
                             break;
                         }
-                        
-                        OnMenuItemClicked(action, actionName);
+
+                        if (action == null || action == MenuItemSelectAction.Undefined)
+                        {
+                            break;
+                        }
+
+                        string actionName = "";
+                        try
+                        {
+                            actionName = item.GetOnSelActionS(i);
+                        }
+                        catch (Exception e)
+                        {
+                            OnMenuItemClicked(action, menuItemName, actionName);
+                            break;
+                        }
+
+                        OnMenuItemClicked(action, menuItemName, actionName);
                     }
                 });
             }
