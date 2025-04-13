@@ -26,21 +26,20 @@ namespace GUZ.Core.UI
 
         private void Awake()
         {
-            GlobalEventDispatcher.ZenKitBootstrapped.AddListener(Setup);
+            Setup();
         }
 
         private void Setup()
         {
             CreateRootElements("MENU_STATUS");
+            UpdateData();
         }
 
         /// <summary>
         /// Fill data. Currently demo data.
         /// </summary>
-        public override void SetVisible()
+        private void UpdateData()
         {
-            base.SetVisible();
-
             MenuItemCache[_itemNameGuild].go.GetComponentInChildren<TMP_Text>().text = "TestGuild";
             MenuItemCache[_itemNameLevel].go.GetComponentInChildren<TMP_Text>().text = "100";
             MenuItemCache[_itemNameExp].go.GetComponentInChildren<TMP_Text>().text = "1337";
@@ -91,7 +90,42 @@ namespace GUZ.Core.UI
             });
         }
 
-        protected override void ExecuteCommand(string commandName)
+        protected override void Undefined(string itemName, string commandName)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override void Back(string itemName, string commandName)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override void StartMenu(string itemName, string commandName)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override void StartItem(string itemName, string commandName)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override void Close(string itemName, string commandName)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override void ConsoleCommand(string itemName, string commandName)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override void PlaySound(string itemName, string commandName)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override void ExecuteCommand(string itemName, string commandName)
         {
             throw new NotImplementedException();
         }

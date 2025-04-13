@@ -110,6 +110,11 @@ namespace GUZ.Core.UI
             }
             else
             {
+                if (textComp.spriteAsset.name.EndsWith("_hi.fnt"))
+                {
+                    return;
+                }
+
                 SetFont(textComp, textComp.spriteAsset.name.RemoveEnd(".fnt") + "_hi");
             }
         }
@@ -166,6 +171,8 @@ namespace GUZ.Core.UI
             }
 
             _audioSource.PlayOneShot(_uiClick);
+            SetDefaultFont(GetComponentInChildren<TMP_Text>());
+
         }
 
         public void OnButtonBackClicked()

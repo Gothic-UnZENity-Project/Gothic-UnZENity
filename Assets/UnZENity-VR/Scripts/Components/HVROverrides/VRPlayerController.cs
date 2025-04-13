@@ -1,11 +1,12 @@
 #if GUZ_HVR_INSTALLED
 using GUZ.Core;
+using GUZ.Core.Globals;
 using GUZ.Core.Manager;
-using GUZ.Core.Menu;
-using GUZ.Core.UI;
+using GUZ.Core.UnZENity_Core.Scripts.UI;
 using HurricaneVR.Framework.Core.Player;
 using MyBox;
 using UnityEngine.SceneManagement;
+using UnityEngine.Serialization;
 using Constants = GUZ.Core.Globals.Constants;
 
 namespace GUZ.VR.Components.HVROverrides
@@ -14,10 +15,8 @@ namespace GUZ.VR.Components.HVROverrides
     {
         private VRPlayerInputs _guzInputs => (VRPlayerInputs)Inputs;
 
-        [Separator("GUZ - Settings")]
-        public MainMenu MainMenu;
-        public QuestLogMenu QuestLogMenu;
-        public StatusMenu StatusMenu;
+        [FormerlySerializedAs("MainMenu")] [Separator("GUZ - Settings")]
+        public MenuHandler menuHandler;
 
 
         protected override void Start()
@@ -26,9 +25,7 @@ namespace GUZ.VR.Components.HVROverrides
             GlobalEventDispatcher.PlayerPrefUpdated.AddListener(OnPlayerPrefsUpdated);
 
             // Enabled later via button press or other events
-            MainMenu.gameObject.SetActive(false);
-            QuestLogMenu.gameObject.SetActive(false);
-            StatusMenu.gameObject.SetActive(false);
+            menuHandler.gameObject.SetActive(false);
         }
 
         protected override void Update()
@@ -37,17 +34,8 @@ namespace GUZ.VR.Components.HVROverrides
 
             if (_guzInputs.IsMenuActivated && IsGameScene())
             {
-                MainMenu.ToggleVisibility();
-            }
-
-            if (_guzInputs.IsQuestLogActivated && IsGameScene())
-            {
-                QuestLogMenu.ToggleVisibility();
-            }
-
-            if (_guzInputs.IsStatusActivated && IsGameScene())
-            {
-                StatusMenu.ToggleVisibility();
+                GameData.InGameAndAlive = true;
+                menuHandler.ToggleVisibility();
             }
         }
 
