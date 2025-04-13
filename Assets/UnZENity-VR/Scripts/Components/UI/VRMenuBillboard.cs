@@ -1,3 +1,4 @@
+#if GUZ_HVR_INSTALLED
 using GUZ.Core;
 using GUZ.VR.Components.HVROverrides;
 using UnityEngine;
@@ -69,3 +70,4 @@ namespace GUZ.VR.Components.UI
         }
     }
 }
+#endif
