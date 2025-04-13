@@ -183,7 +183,7 @@ Transform:
   - {fileID: 8391885031977683603}
   - {fileID: 3306796450901865921}
   - {fileID: 8472463623857079757}
-  - {fileID: 8772168208605797252}
+  - {fileID: 8343824195425659841}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &6563668056573488434
@@ -2343,6 +2343,38 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 8391885030387849268}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &5704873441961784099
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8343824195425659841}
+  m_Layer: 7
+  m_Name: MenuContainer
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8343824195425659841
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5704873441961784099}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 8772168208605797252}
+  m_Father: {fileID: 3866233120056885002}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &6311541220095459959
 GameObject:
@@ -5155,9 +5187,7 @@ MonoBehaviour:
   MouseSensitivityX: 1
   IsGrounded: 0
   _actualVelocity: 0
-  MainMenu: {fileID: 4465833774847289275}
-  QuestLogMenu: {fileID: 0}
-  StatusMenu: {fileID: 0}
+  menuHandler: {fileID: 4465833774847289275}
 --- !u!114 &6717938044841316945
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5480,11 +5510,11 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 3866233120056885002}
+    m_TransformParent: {fileID: 8343824195425659841}
     m_Modifications:
     - target: {fileID: 6438015706988437683, guid: 962bda2b335a56f48a6f7159a9e824d8, type: 3}
       propertyPath: m_Name
-      value: MenuManager
+      value: MenuHandler
       objectReference: {fileID: 0}
     - target: {fileID: 6438015706988437683, guid: 962bda2b335a56f48a6f7159a9e824d8, type: 3}
       propertyPath: m_IsActive
@@ -5516,7 +5546,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7389606469834037353, guid: 962bda2b335a56f48a6f7159a9e824d8, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 7389606469834037353, guid: 962bda2b335a56f48a6f7159a9e824d8, type: 3}
       propertyPath: m_LocalRotation.y
@@ -5524,7 +5554,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7389606469834037353, guid: 962bda2b335a56f48a6f7159a9e824d8, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 7389606469834037353, guid: 962bda2b335a56f48a6f7159a9e824d8, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
