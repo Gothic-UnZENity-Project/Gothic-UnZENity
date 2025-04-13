@@ -40,6 +40,7 @@ namespace GUZ.Core.Extensions
         public static void ToFadeMode(this Material material)
         {
             material.SetOverrideTag("RenderType", "Transparent");
+            material.SetFloat("_Surface", 1f);
             material.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
             material.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
             material.SetInt("_ZWrite", 0);
@@ -52,6 +53,7 @@ namespace GUZ.Core.Extensions
         public static void ToTransparentMode(this Material material)
         {
             material.SetOverrideTag("RenderType", "Transparent");
+            material.SetFloat("_Surface", 1f);
             material.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.One);
             material.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
             material.SetInt("_ZWrite", 0);
@@ -65,6 +67,7 @@ namespace GUZ.Core.Extensions
         public static void ToAdditiveMode(this Material material)
         {
             material.SetOverrideTag("RenderType", "Transparent");
+            material.SetFloat("_Surface", 1f);
             material.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
             material.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.One);
             material.SetInt("_ZWrite", 0);

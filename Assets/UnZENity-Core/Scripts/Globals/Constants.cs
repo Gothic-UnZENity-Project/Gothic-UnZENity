@@ -194,6 +194,15 @@ namespace GUZ.Core.Globals
         }
         
         
+        /*
+         * Colors
+         */
+        
+        public static Color TextNormalColor = new Color(1, 1, 1, 1);
+        public static Color TextDisabledColor = new Color(1, 1, 1, 0.4f);
+        public static Color TextRedColor = new Color(1, 0, 0, 1f);
+        public static Color TextYellowColor = new Color(1, 1, 0, 1);
+        
         public static string YesLabel = "Yes";
         public static string NoLabel = "No";
         

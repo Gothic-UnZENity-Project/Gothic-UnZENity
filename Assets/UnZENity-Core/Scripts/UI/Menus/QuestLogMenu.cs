@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using GUZ.Core.Globals;
 using GUZ.Core.UnZENity_Core.Scripts.UI;
 using MyBox;
 using TMPro;
@@ -43,6 +42,8 @@ namespace GUZ.Core.UI
         private const string _instanceNameSuccessMissions = "MENU_ITEM_LIST_MISSIONS_OLD";
         private const string _instanceNameLog = "MENU_ITEM_LIST_LOG";
         private const string _instanceContentViewer = "MENU_ITEM_CONTENT_VIEWER";
+        private const string _instanceDay = "MENU_ITEM_DAY";
+        private const string _instanceTime = "MENU_ITEM_TIME";
 
         // It's easier to loop through or check .Contains() later.
         private string[] _listItemInstanceNames =
@@ -84,7 +85,15 @@ namespace GUZ.Core.UI
         /// </summary>
         private void Awake()
         {
-            GlobalEventDispatcher.ZenKitBootstrapped.AddListener(Setup);
+            Setup();
+            UpdateDayAndTime(GameManager.I.Time.GetCurrentDateTime());
+            GlobalEventDispatcher.GameTimeMinuteChangeCallback.AddListener(UpdateDayAndTime);
+        }
+
+        private void UpdateDayAndTime(DateTime time)
+        {
+            MenuItemCache[_instanceDay].go.GetComponent<TMP_Text>().SetText(time.Day.ToString());
+            MenuItemCache[_instanceTime].go.GetComponent<TMP_Text>().SetText(time.TimeOfDay.ToString(@"hh\:mm"));
         }
 
         protected override bool IsMenuItemInitiallyActive(string menuItemName)
@@ -109,6 +118,8 @@ namespace GUZ.Core.UI
         private void Setup()
         {
             CreateRootElements("MENU_LOG");
+            //open gothic also hides it in screen init
+            MenuItemCache[_instanceContentViewer].go.SetActive(false);
 
             CreateLists();
             CreateContentViewer();
@@ -340,12 +351,12 @@ namespace GUZ.Core.UI
             list.ArrowDownGo.SetActive(list.LogTopics.Count - _visibleListItemAmount - list.CurrentListScrollValue > 0);
         }
 
-        private void OnMenuItemClicked(MenuItemSelectAction action, string commandName)
+        private void OnMenuItemClicked(MenuItemSelectAction action, string itemName, string commandName)
         {
             switch (action)
             {
                 case MenuItemSelectAction.ExecuteCommand:
-                    ExecuteCommand(commandName);
+                    ExecuteCommand(itemName, commandName);
                     break;
                 default:
                     Debug.LogError($"Unknown command {commandName}({action})");
@@ -364,6 +375,7 @@ namespace GUZ.Core.UI
                 UIEvents.SetDefaultFontsForChildren(menuItem.go);
                 menuItem.go.SetActive(false);
             }
+
             // ...including background
             Background.SetActive(false);
 
@@ -387,7 +399,42 @@ namespace GUZ.Core.UI
             FillList(_activeListMenu);
         }
 
-        protected override void ExecuteCommand(string commandName)
+        protected override void Undefined(string itemName, string commandName)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override void Back(string itemName, string commandName)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override void StartMenu(string itemName, string commandName)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override void StartItem(string itemName, string commandName)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override void Close(string itemName, string commandName)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override void ConsoleCommand(string itemName, string commandName)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override void PlaySound(string itemName, string commandName)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override void ExecuteCommand(string itemName, string commandName)
         {
             ResetView();
             FillLists();

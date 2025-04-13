@@ -68,6 +68,8 @@ namespace GUZ.Core.Globals
         // FIXME Find a better place for the NPC routines. E.g. on the NPCs itself? But we e.g. need to have a static NPCObject List to do so.
         public static Dictionary<int, List<RoutineData>> NpcRoutines = new();
 
+        public static bool InGameAndAlive = false;
+
         public static void Reset()
         {
             WayPoints.Clear();
