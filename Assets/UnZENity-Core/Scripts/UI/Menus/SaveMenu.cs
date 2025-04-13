@@ -72,12 +72,12 @@ namespace GUZ.Core.UnZENity_Core.Scripts.UI
 
         protected override void Back(string itemName, string commandName)
         {
-            _menuManager.BackMenu();
+            MenuHandler.BackMenu();
         }
 
         protected override void StartMenu(string itemName, string commandName)
         {
-            _menuManager.OpenMenu(commandName);
+            MenuHandler.OpenMenu(commandName);
         }
 
         protected override void StartItem(string itemName, string commandName)
@@ -92,7 +92,7 @@ namespace GUZ.Core.UnZENity_Core.Scripts.UI
                 SaveLoadGame(itemName);
             }
 
-            _menuManager.ToggleVisibility();
+            MenuHandler.ToggleVisibility();
         }
 
         protected override void ConsoleCommand(string itemName, string commandName)

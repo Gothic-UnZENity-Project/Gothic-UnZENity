@@ -34,7 +34,7 @@ namespace GUZ.VR.Adapter
         private void OnLoadingSceneLoaded()
         {
             // Needed for: World -> Open MainMenu -> Hit "Load"/"New Game"
-            _playerController.MainMenu.gameObject.SetActive(false);
+            _playerController.menuHandler.gameObject.SetActive(false);
         }
 
         public float GetFrameRate()

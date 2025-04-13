@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace GUZ.Core.UnZENity_Core.Scripts.UI
 {
-    public class MenuManager : MonoBehaviour
+    public class MenuHandler : MonoBehaviour
     {
         private Dictionary<string, GameObject> menuList = new();
         private string currentMenu;

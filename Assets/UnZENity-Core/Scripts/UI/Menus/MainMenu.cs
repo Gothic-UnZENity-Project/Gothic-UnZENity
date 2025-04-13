@@ -5,7 +5,7 @@ using ZenKit.Daedalus;
 
 namespace GUZ.Core.UnZENity_Core.Scripts.UI
 {
-    public class newMainMenu : AbstractMenu
+    public class MainMenu : AbstractMenu
     {
         private void Awake()
         {
@@ -24,12 +24,12 @@ namespace GUZ.Core.UnZENity_Core.Scripts.UI
 
         protected override void Back(string itemName, string commandName)
         {
-            _menuManager.BackMenu();
+            MenuHandler.BackMenu();
         }
 
         protected override void StartMenu(string itemName, string commandName)
         {
-            _menuManager.OpenMenu(commandName);
+            MenuHandler.OpenMenu(commandName);
         }
 
         protected override void StartItem(string itemName, string commandName)
@@ -39,7 +39,7 @@ namespace GUZ.Core.UnZENity_Core.Scripts.UI
 
         protected override void Close(string itemName, string commandName)
         {
-            _menuManager.ToggleVisibility();
+            MenuHandler.ToggleVisibility();
             if (commandName == "NEW_GAME")
             {
                 GameManager.I.LoadWorld(Constants.SelectedWorld, -1, SceneManager.GetActiveScene().name);

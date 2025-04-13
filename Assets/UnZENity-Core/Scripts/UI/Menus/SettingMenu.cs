@@ -26,7 +26,7 @@ namespace GUZ.Core.Menu
         {
             SetSettingsValues();
             SetMaterials();
-            _menuManager = transform.parent.GetComponent<MenuManager>();
+            MenuHandler = transform.parent.GetComponent<MenuHandler>();
         }
 
         public void ExitSettingsMenu()
@@ -70,7 +70,7 @@ namespace GUZ.Core.Menu
 
         protected override void Back(string itemName, string commandName)
         {
-            _menuManager.BackMenu();
+            MenuHandler.BackMenu();
         }
 
         protected override void StartMenu(string itemName, string commandName)

@@ -21,7 +21,7 @@ namespace GUZ.Core.UnZENity_Core.Scripts.UI
 
         protected override void Back(string itemName, string commandName)
         {
-            _menuManager.BackMenu();
+            MenuHandler.BackMenu();
         }
 
         protected override void StartMenu(string itemName, string commandName)

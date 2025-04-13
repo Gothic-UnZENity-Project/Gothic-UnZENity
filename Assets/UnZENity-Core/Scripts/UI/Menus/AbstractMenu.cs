@@ -13,7 +13,7 @@ namespace GUZ.Core.UnZENity_Core.Scripts.UI
 {
     public abstract class AbstractMenu : MonoBehaviour
     {
-        protected MenuManager _menuManager;
+        protected MenuHandler MenuHandler;
         [SerializeField] protected GameObject Canvas;
         [SerializeField] protected GameObject Background;
 
@@ -63,7 +63,7 @@ namespace GUZ.Core.UnZENity_Core.Scripts.UI
 
         protected void CreateRootElements(string menuDefName)
         {
-            _menuManager = transform.parent.GetComponent<MenuManager>();
+            MenuHandler = transform.parent.GetComponent<MenuHandler>();
 
             var menuInstance = GameData.MenuVm.InitInstance<MenuInstance>(menuDefName);
 
@@ -274,6 +274,13 @@ namespace GUZ.Core.UnZENity_Core.Scripts.UI
             textRect.SetHeight(textHeight / PixelRatioY);
         }
 
+        /// <summary>
+        /// This function is used as a callback for menu items when they are clicked.
+        /// The itemName argument is mostly needed for the Loading menu as it calls Close when loading a save.
+        /// </summary>
+        /// <param name="action">Represents which function to call</param>
+        /// <param name="itemName">Represents the name of the menu item</param>
+        /// <param name="commandName">Represents additional behaviour for the action</param>
         private void OnMenuItemClicked(MenuItemSelectAction action, string itemName, string commandName)
         {
             switch (action)
