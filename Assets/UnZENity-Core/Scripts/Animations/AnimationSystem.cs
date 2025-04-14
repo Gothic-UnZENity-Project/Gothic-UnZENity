@@ -398,6 +398,7 @@ namespace GUZ.Core.Animations
                     continue;
                 }
 
+                // Stop, if we have no Root bone
                 var boneIndex = trackInstance.GetBoneIndex(Constants.Animations.RootBoneName);
                 if (boneIndex == -1)
                 {

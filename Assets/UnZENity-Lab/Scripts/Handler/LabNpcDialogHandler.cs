@@ -49,10 +49,12 @@ namespace GUZ.Lab.Handler
             {
                 // Sit down - Moves forward and hovers over ground like a magician on his carpet.
                 {
+                    // Humans Militia have no CollisionVolumeScale change (CVS).
+                    props.MdsNameOverlay = null;
                     animSystem.PlayAnimation("T_STAND_2_SIT");
-                    yield return new WaitForSeconds(3f);
+                    yield return new WaitForSeconds(5f);
                     animSystem.PlayAnimation("T_SIT_2_STAND");
-                    yield return new WaitForSeconds(3f);
+                    yield return new WaitForSeconds(5f);
                 }
                 continue;
 
