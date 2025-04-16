@@ -110,10 +110,13 @@ namespace GUZ.Core.Manager
 
             infoInstances.ForEach(i => GameData.Dialogs.Instances.Add(i));
         }
-        
+
         private static void LoadSubtitles()
         {
-            GameData.Dialogs.CutsceneLibrary = new($"{GameContext.GameVersionAdapter.RootPath}/_work/DATA/scripts/content/CUTSCENE/OU.CSL");
+            string cutsceneSuffix = GameContext.GameVersionAdapter.Version == GameVersion.Gothic1 ? "CSL" : "LSC";
+            string cutscenePath =
+                $"{GameContext.GameVersionAdapter.RootPath}/_work/DATA/scripts/content/CUTSCENE/OU.{cutsceneSuffix}";
+            GameData.Dialogs.CutsceneLibrary = new(cutscenePath);
         }
 
         private static void LoadVideos()
