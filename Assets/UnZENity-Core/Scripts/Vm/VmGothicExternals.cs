@@ -367,6 +367,12 @@ namespace GUZ.Core.Vm
 
         public static int Hlp_IsItem(ItemInstance item, int itemIndexToCheck)
         {
+            if (item == null)
+            {
+                Debug.LogError("Hlp_IsItem called with a null item");
+                return 0;
+            }
+
             return Convert.ToInt32(item.Index == itemIndexToCheck);
         }
 
