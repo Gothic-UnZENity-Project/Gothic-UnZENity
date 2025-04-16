@@ -87,7 +87,10 @@ namespace GUZ.Core._Npc2
         public LoopState CurrentLoopState = LoopState.None;
         public AbstractAnimationAction CurrentAction;
         
-        public VmGothicEnums.Attitude Attitude;
-        public VmGothicEnums.Attitude TempAttitude;
+        // Attitudes
+        // HINT: These values are only used when checking the attitude towards the player
+        // HINT: for attitudes between NPC we directly use the guild attitude
+        public VmGothicEnums.Attitude Attitude = VmGothicEnums.Attitude.Neutral;
+        public VmGothicEnums.Attitude TempAttitude = VmGothicEnums.Attitude.Neutral;
     }
 }
