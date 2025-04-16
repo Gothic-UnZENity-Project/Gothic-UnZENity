@@ -97,6 +97,7 @@ namespace GUZ.Core.Vm
             vm.RegisterExternal<NpcInstance, int, int>("Npc_PercEnable", Npc_PercEnable);
             vm.RegisterExternal<NpcInstance, float>("Npc_SetPercTime", Npc_SetPercTime);
             vm.RegisterExternal<int, NpcInstance, NpcInstance>("Npc_GetAttitude", Npc_GetAttitude);
+            vm.RegisterExternal<NpcInstance,int>("Npc_SetAttitude", Npc_SetAttitude);
             vm.RegisterExternal<int, NpcInstance>("Npc_GetBodyState", Npc_GetBodyState);
             vm.RegisterExternal<NpcInstance>("Npc_PerceiveAll", Npc_PerceiveAll);
             vm.RegisterExternal<int, NpcInstance, int>("Npc_HasItems", Npc_HasItems);
@@ -597,6 +598,11 @@ namespace GUZ.Core.Vm
         public static int Npc_GetAttitude(NpcInstance self, NpcInstance other)
         {
             return (int)GameGlobals.NpcAi.ExtGetAttitude(self, other);
+        }
+        
+        public static void Npc_SetAttitude(NpcInstance self, int attitude)
+        {
+            GameGlobals.NpcAi.ExtSetAttitude(self, (VmGothicEnums.Attitude)attitude);
         }
 
         public static int Npc_GetBodyState(NpcInstance npc)

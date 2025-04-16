@@ -1,6 +1,8 @@
 using System.Linq;
+using GUZ.Core.Caches;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
+using GUZ.Core.Manager;
 using GUZ.Core.Npc.Actions;
 using GUZ.Core.Npc.Actions.AnimationActions;
 using GUZ.Core.Vm;
@@ -341,8 +343,19 @@ namespace GUZ.Core._Npc2
 
         public VmGothicEnums.Attitude ExtGetAttitude(NpcInstance self, NpcInstance other)
         {
-            // FIXME - Implement correct one based on Guild of NPCs and Player special treatment.
-            return VmGothicEnums.Attitude.Neutral;
+            var npc1 = self.GetUserData2();
+            var npc2 = other.GetUserData2();
+            if (npc1 == null || npc2 == null)
+            {
+                return VmGothicEnums.Attitude.Neutral;
+            }
+
+            return NpcHelper.GetPersonAttitude(npc1, npc2);
+        }
+
+        public void ExtSetAttitude(NpcInstance npc, VmGothicEnums.Attitude value)
+        {
+            npc.GetUserData2().Props.Attitude = value;
         }
     }
 }

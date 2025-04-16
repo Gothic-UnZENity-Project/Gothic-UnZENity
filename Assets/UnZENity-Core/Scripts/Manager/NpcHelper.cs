@@ -212,6 +212,27 @@ namespace GUZ.Core.Manager
             return GetProperties(npc).Talents[(VmGothicEnums.Talent)skillId];
         }
 
+        public static VmGothicEnums.Attitude GetPersonAttitude(NpcContainer2 self, NpcContainer2 other)
+        {
+            if (self.PrefabProps.IsHero() || other.PrefabProps.IsHero())
+            {
+                return GetGuildAttitude(self, other);
+            }
+
+            NpcContainer2 npc = self.PrefabProps.IsHero() ? other : self;
+
+            return npc.Props.Attitude;
+        }
+
+        public static VmGothicEnums.Attitude GetGuildAttitude(NpcContainer2 self, NpcContainer2 other)
+        {
+            int selfGuild = self.Instance.Guild;
+            int otherGuild = other.Instance.Guild;
+            int attitude = GameData.GuildAttitudes[selfGuild * GameData.GuildCount + otherGuild];
+            
+            return (VmGothicEnums.Attitude)attitude;
+        }
+
         [CanBeNull]
         private static GameObject GetNpc([CanBeNull] NpcInstance npc)
         {
