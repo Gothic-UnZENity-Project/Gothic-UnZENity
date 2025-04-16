@@ -86,12 +86,13 @@ namespace GUZ.Core._Npc2
             {
                 return false;
             }
+            // TODO: Implement a proper fix for head props being null
+            // this is the case for monsters that do not have a separate head mesh 
+            var selfHeadBone = selfContainer.PrefabProps.Head != null ? selfContainer.PrefabProps.Head : selfContainer.Go.transform;
+            var otherHeadBone = otherContainer.PrefabProps.Head != null ? otherContainer.PrefabProps.Head : otherContainer.Go.transform;
 
-            var selfHeadBone = selfContainer.PrefabProps.Head;
-            var otherHeadBone = otherContainer.PrefabProps.Head;
-
-            var distanceToNpc = Vector3.Distance(self.GetUserData2().Go.transform.position, otherHeadBone.position);
-            var inSightRange =  distanceToNpc <= self.SensesRange;
+            var distanceToNpc = Vector3.Distance(selfContainer.Go.transform.position, otherHeadBone.position);
+            var inSightRange = distanceToNpc <= self.SensesRange;
 
             var layersToIgnore = Constants.HandLayer | Constants.GrabbableLayer;
             var hasLineOfSightCollisions = Physics.Linecast(selfHeadBone.position, otherHeadBone.position, layersToIgnore);
