@@ -121,7 +121,7 @@ namespace GUZ.Core._Npc2
         {
             // We also initialize NPCs inside Daedalus when we load a save game. It's needed as some data isn't stored on save games.
             // But e.g. inventory items will be skipped as they are stored inside save game VOBs.
-            if (!GameGlobals.SaveGame.IsWorldLoadedForTheFirstTime)
+            if (!GameGlobals.SaveGame.IsWorldLoadedForTheFirstTime || npc.GetUserData2() == null)
             {
                 return;
             }
