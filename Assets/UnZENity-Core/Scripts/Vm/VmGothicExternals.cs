@@ -31,6 +31,7 @@ namespace GUZ.Core.Vm
 
             // AI
             vm.RegisterExternal<NpcInstance>("AI_StandUp", AI_StandUp);
+            vm.RegisterExternal<NpcInstance>("AI_StandUpQuick", AI_StandUpQuick);
             vm.RegisterExternal<NpcInstance, int>("AI_SetWalkMode", AI_SetWalkMode);
             vm.RegisterExternal<NpcInstance>("AI_AlignToFP", AI_AlignToFP);
             vm.RegisterExternal<NpcInstance>("AI_AlignToWP", AI_AlignToWP);
@@ -208,6 +209,11 @@ namespace GUZ.Core.Vm
         #region AI
 
         public static void AI_StandUp(NpcInstance npc)
+        {
+            GameGlobals.NpcAi.ExtAiStandUp(npc);
+        }
+
+        public static void AI_StandUpQuick(NpcInstance npc)
         {
             GameGlobals.NpcAi.ExtAiStandUp(npc);
         }
