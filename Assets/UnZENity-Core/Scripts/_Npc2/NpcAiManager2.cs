@@ -322,9 +322,7 @@ namespace GUZ.Core._Npc2
 
         public bool ExtNpcIsInState(NpcInstance npc, int state)
         {
-            // FIXME - We need to implement it properly. Just fixing NPEs for now!
-            // FIXME - e.g. used for PC_Thief_AFTERTROLL_Condition() from Daedalus.
-            return false;
+            return npc.GetUserData2().Props.StateStart == state;
         }
 
         public bool ExtNpcIsPlayer(NpcInstance npc)
