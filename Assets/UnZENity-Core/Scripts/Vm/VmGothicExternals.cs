@@ -135,7 +135,9 @@ namespace GUZ.Core.Vm
             vm.RegisterExternal<NpcInstance>("Npc_SetToFistMode", Npc_SetToFistMode);
             vm.RegisterExternal<int, NpcInstance, int>("Npc_IsInFightMode", Npc_IsInFightMode);
             vm.RegisterExternal<int, NpcInstance>("Npc_IsPlayer", Npc_IsPlayer);
-            vm.RegisterExternal<int, ItemInstance,NpcInstance>("Npc_OwnedByNpc", Npc_OwnedByNpc);
+            vm.RegisterExternal<int, ItemInstance, NpcInstance>("Npc_OwnedByNpc", Npc_OwnedByNpc);
+            vm.RegisterExternal<int, NpcInstance>("Npc_GetTarget", Npc_GetTarget);
+            vm.RegisterExternal<NpcInstance, NpcInstance>("Npc_SetTarget", Npc_SetTarget);
 
             // Print
             vm.RegisterExternal<string>("PrintDebug", PrintDebug);
@@ -816,7 +818,16 @@ namespace GUZ.Core.Vm
         {
             return Convert.ToInt32(GameGlobals.NpcAi.ExtNpcOwnedByNpc(item, npc));
         }
-
+        
+        public static int Npc_GetTarget(NpcInstance npc)
+        {
+            return Convert.ToInt32(GameGlobals.NpcAi.Npc_GetTarget(npc));
+        }
+        
+        public static void Npc_SetTarget(NpcInstance npc, NpcInstance target)
+        {
+            GameGlobals.NpcAi.Npc_SetTarget(npc, target);
+        }
 
         #endregion
 

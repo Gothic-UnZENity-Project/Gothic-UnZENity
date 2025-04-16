@@ -359,6 +359,16 @@ namespace GUZ.Core._Npc2
             npc.GetUserData2().Props.Attitude = value;
         }
 
+        public bool Npc_GetTarget(NpcInstance npc)
+        {
+            return npc.GetUserData2().Props.TargetNpc != null;
+        }
+
+        public void Npc_SetTarget(NpcInstance npc, NpcInstance target)
+        {
+            npc.GetUserData2().Props.TargetNpc = target;
+        }
+
         public void UpdateEnemyNpc(NpcInstance self)
         {
             var selfNpc = self.GetUserData2();
