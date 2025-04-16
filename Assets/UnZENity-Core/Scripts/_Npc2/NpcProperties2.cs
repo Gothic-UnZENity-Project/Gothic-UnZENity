@@ -86,5 +86,7 @@ namespace GUZ.Core._Npc2
         public float StateTime;
         public LoopState CurrentLoopState = LoopState.None;
         public AbstractAnimationAction CurrentAction;
+        
+        public VmGothicEnums.Attitude Attitude;
     }
 }
