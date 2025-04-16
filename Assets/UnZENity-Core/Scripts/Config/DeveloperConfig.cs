@@ -5,6 +5,8 @@ using MyBox;
 using UnityEngine;
 using ZenKit;
 using ZenKit.Vobs;
+using static GUZ.Core.Config.DeveloperConfigEnums;
+
 
 namespace GUZ.Core.Config
 {
@@ -18,44 +20,14 @@ namespace GUZ.Core.Config
         public float CullingDistance;
     }
 
-    public enum WorldToSpawn
-    {
-        None,
-        // G1
-        G1World,
-        G1OldMine,
-        G1FreeMine,
-        G1OrcGraveyard,
-        G1OrcTempel,
-        // G2
-        G2Newworld,
-        G2OldWorld,
-        G2AddonWorld,
-        G2DragonIsland,
-    }
+
+
+
 
 
     [CreateAssetMenu(fileName = "NewDeveloperConfiguration", menuName = "UnZENity/ScriptableObjects/DeveloperConfiguration", order = 1)]
     public class DeveloperConfig : ScriptableObject
     {
-
-        [NonSerialized]
-        public static Dictionary<WorldToSpawn, string> WorldMappings = new()
-        {
-            { WorldToSpawn.None, "NO MAPPING AVAILABLE. LOAD WORLD AS STATED IN NEW GAME/SAVE GAME!" },
-            // G1
-            { WorldToSpawn.G1World, "world.zen" },
-            { WorldToSpawn.G1OldMine, "oldmine.zen" },
-            { WorldToSpawn.G1FreeMine, "freemine.zen" },
-            { WorldToSpawn.G1OrcGraveyard, "orcgraveyard.zen" },
-            { WorldToSpawn.G1OrcTempel, "orctempel.zen" },
-            // G2
-            { WorldToSpawn.G2Newworld, "newworld.zen" },
-            { WorldToSpawn.G2OldWorld, "oldworld.zen" },
-            { WorldToSpawn.G2AddonWorld, "addonworld.zen" },
-            { WorldToSpawn.G2DragonIsland, "dragonisland.zen" }
-        };
-
         /**
          * ##########
          * ConditionalFieldArrayFilter
@@ -70,6 +42,9 @@ namespace GUZ.Core.Config
 
         [Serializable]
         public class VOBTypesCollection : CollectionWrapper<VirtualObjectType> { }
+
+        [Serializable]
+        public class MonsterTypesCollection : CollectionWrapper<MonsterId> { }
 
 
         /**
@@ -189,7 +164,7 @@ namespace GUZ.Core.Config
 
         [Foldout("NPCs (+ Monsters)", true)]
         [Separator("General")]
-        [OverrideLabel("Enable NPCs")]
+        [OverrideLabel("Enable NPCs & Monsters")]
         public bool EnableNpcs;
 
         [ConditionalField(fieldToCheck: nameof(EnableNpcs), compareValues: true)]
@@ -205,6 +180,11 @@ namespace GUZ.Core.Config
         [Tooltip("Spawn only specific NPCs by naming their IDs in here.")]
         [ConditionalField(fieldToCheck: nameof(EnableNpcs), compareValues: true)]
         public IntCollection SpawnNpcInstances = new();
+
+        [Separator("Monsters only")]
+        [Tooltip("Spawn only specific Monsters by naming their aivar[AIV_MM_REAL_ID] in here.")]
+        [ConditionalField(fieldToCheck: nameof(EnableNpcs), compareValues: true)]
+        public MonsterTypesCollection SpawnMonsterInstances = new();
 
         [Tooltip("WIP - Not production ready.")]
         [ConditionalField(fieldToCheck: nameof(EnableNpcs), compareValues: true)]

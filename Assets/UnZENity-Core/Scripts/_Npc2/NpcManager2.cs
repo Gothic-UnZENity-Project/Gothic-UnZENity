@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using GUZ.Core.Caches;
+using GUZ.Core.Config;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
@@ -48,16 +49,29 @@ namespace GUZ.Core._Npc2
                 {
                     var npcElement = _objectsToInitQueue.Dequeue();
 
+                    var npcId = npcElement.Npc.Id;
+                    var monsterId = npcElement.Npc.GetAiVar(Constants.DaedalusConst.AIVMMRealId);
+
                     // Do not load NPCs we don't want to have via Debug flags.
-                    // Hint: If we filter out NPCs to spawn, we will never get any Monster as they have no Ids set. Except default: 0.
-                    if (GameGlobals.Config.Dev.SpawnNpcInstances.Value.Any() &&
+                    if (npcId != 0 && GameGlobals.Config.Dev.SpawnNpcInstances.Value.Any() &&
                         !GameGlobals.Config.Dev.SpawnNpcInstances.Value.Contains(npcElement.Npc.Id))
                     {
                         continue;
                     }
 
-                    _initializer.InitNpc(npcElement.Npc, npcElement.gameObject);
+                    // Do not load Monsters we don't want to have via Debug flags.
+                    if (npcId == 0 && monsterId != 0 && GameGlobals.Config.Dev.SpawnMonsterInstances.Value.Any() &&
+                        !GameGlobals.Config.Dev.SpawnMonsterInstances.Value.Contains((DeveloperConfigEnums.MonsterId)monsterId))
+                    {
+                        continue;
+                    }
 
+                    _initializer.InitNpc(npcElement.Npc, npcElement.gameObject);
+                    if (npcId != 0 && GameGlobals.Config.Dev.SpawnNpcInstances.Value.Any() &&
+                        !GameGlobals.Config.Dev.SpawnNpcInstances.Value.Contains(npcElement.Npc.Id))
+                    {
+                        continue;
+                    }
                     yield return FrameSkipper.TrySkipToNextFrameCoroutine();
                 }
             }
