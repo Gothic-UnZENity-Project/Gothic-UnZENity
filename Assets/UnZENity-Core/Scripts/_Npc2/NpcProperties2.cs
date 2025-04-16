@@ -55,6 +55,9 @@ namespace GUZ.Core._Npc2
 
         // AI topics
 
+        public NpcInstance EnemyNpc;
+        public NpcInstance TargetNpc;
+
         public enum LoopState
         {
             None,

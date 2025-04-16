@@ -154,7 +154,8 @@ namespace GUZ.Core.Manager
                 .FirstOrDefault();
 
             // without this Dialog box stops and breaks the entire NPC logic
-            if(foundNpc == null){
+            if (foundNpc == null)
+            {
                 return false;
             }
 
@@ -247,6 +248,15 @@ namespace GUZ.Core.Manager
         private static NpcProperties2 GetProperties([CanBeNull] NpcInstance npc)
         {
             return npc?.GetUserData2().Props;
+        }
+
+        public static bool CanSenseNpc(NpcInstance self, NpcInstance other, bool freeLOS)
+        {
+            // TODO: add smell and hearing checks as well
+            var senseRange = (self.SensesRange/1000) * (self.SensesRange / 1000); // daedalus values are in cm, we need them in m
+            if (Vector3.Distance(other.GetUserData2().Go.transform.position,self.GetUserData2().Go.transform.position) > senseRange)
+                return false;
+            return true;
         }
     }
 }

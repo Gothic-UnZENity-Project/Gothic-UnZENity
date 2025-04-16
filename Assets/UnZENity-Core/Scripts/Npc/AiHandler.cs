@@ -157,8 +157,21 @@ namespace GUZ.Core.Npc
             {
                 return;
             }
+            
+            // Update enemy
+            GameGlobals.NpcAi.UpdateEnemyNpc(NpcInstance);
+            
+            if(NpcHelper.CanSenseNpc(NpcInstance, (NpcInstance)GameData.GothicVm.GlobalHero, false))
+            {
+                GameGlobals.NpcAi.ExecutePerception(VmGothicEnums.PerceptionType.AssessPlayer, Properties, NpcInstance, (NpcInstance)GameData.GothicVm.GlobalHero);
+            }
 
-            GameGlobals.NpcAi.ExecutePerception(VmGothicEnums.PerceptionType.AssessPlayer, Properties, NpcInstance, (NpcInstance)GameData.GothicVm.GlobalHero);
+            if(Properties.EnemyNpc != null)
+            {
+                GameGlobals.NpcAi.ExecutePerception(VmGothicEnums.PerceptionType.AssessEnemy, Properties, NpcInstance, Properties.EnemyNpc);
+            }
+
+
             // FIXME - We need to add other active perceptions here:
             //         PERC_ASSESSBODY, PERC_ASSESSITEM, PERC_ASSESSENEMY, PERC_ASSESSFIGHTER
             //         But at best when we test it immediately
