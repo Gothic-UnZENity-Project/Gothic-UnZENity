@@ -390,6 +390,11 @@ namespace GUZ.Core._Npc2
             npc.GetUserData2().Props.TargetNpc = target;
         }
 
+        public void Npc_SendPassivePerc(NpcInstance npc,VmGothicEnums.PerceptionType perc, NpcInstance victim, NpcInstance other)
+        {
+            GameGlobals.NpcAi.ExecutePerception(perc, npc.GetUserData2().Props, npc, victim, other);
+        }
+
         public void UpdateEnemyNpc(NpcInstance self)
         {
             var selfNpc = self.GetUserData2();

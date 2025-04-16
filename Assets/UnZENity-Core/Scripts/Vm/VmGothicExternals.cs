@@ -141,6 +141,7 @@ namespace GUZ.Core.Vm
             vm.RegisterExternal<int, ItemInstance, NpcInstance>("Npc_OwnedByNpc", Npc_OwnedByNpc);
             vm.RegisterExternal<int, NpcInstance>("Npc_GetTarget", Npc_GetTarget);
             vm.RegisterExternal<NpcInstance, NpcInstance>("Npc_SetTarget", Npc_SetTarget);
+            vm.RegisterExternal<NpcInstance, int, NpcInstance, NpcInstance>("Npc_SendPassivePerc", Npc_SendPassivePerc);
 
             // Print
             vm.RegisterExternal<string>("PrintDebug", PrintDebug);
@@ -845,6 +846,11 @@ namespace GUZ.Core.Vm
         public static void Npc_SetTarget(NpcInstance npc, NpcInstance target)
         {
             GameGlobals.NpcAi.Npc_SetTarget(npc, target);
+        }
+
+        public static void Npc_SendPassivePerc(NpcInstance npc, int perc,NpcInstance victim, NpcInstance other)
+        {
+            GameGlobals.NpcAi.Npc_SendPassivePerc(npc, (VmGothicEnums.PerceptionType)perc, victim, other);
         }
 
         #endregion
