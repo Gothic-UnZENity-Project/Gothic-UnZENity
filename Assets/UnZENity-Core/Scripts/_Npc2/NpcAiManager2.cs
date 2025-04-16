@@ -27,7 +27,7 @@ namespace GUZ.Core._Npc2
         /// <summary>
         /// Call an NPC Perception (active like Assess_Player or passive like Assess_Talk are possible).
         /// </summary>
-        public void ExecutePerception(VmGothicEnums.PerceptionType type, NpcProperties2 properties, NpcInstance self, NpcInstance other)
+        public void ExecutePerception(VmGothicEnums.PerceptionType type, NpcProperties2 properties, NpcInstance self, NpcInstance victim, NpcInstance other)
         {
             // Perception isn't set
             if (!properties.Perceptions.TryGetValue(type, out var perceptionFunction))
@@ -40,9 +40,27 @@ namespace GUZ.Core._Npc2
                 return;
             }
 
+            var oldSelf = GameData.GothicVm.GlobalSelf;
+            var oldVictim = GameData.GothicVm.GlobalVictim;
+            var oldOther = GameData.GothicVm.GlobalVictim;
+
             GameData.GothicVm.GlobalSelf = self;
-            GameData.GothicVm.GlobalOther = other;
+            
+            if(other != null)
+            {
+                GameData.GothicVm.GlobalOther = other;
+            }
+
+            if(victim != null)
+            {
+                GameData.GothicVm.GlobalVictim = victim;
+            }
+
             GameData.GothicVm.Call(perceptionFunction);
+            
+            GameData.GothicVm.GlobalSelf = oldSelf;
+            GameData.GothicVm.GlobalVictim = oldVictim;
+            GameData.GothicVm.GlobalVictim = oldOther;
         }
 
         public void ExtNpcSetPerceptionTime(NpcInstance npc, float time)

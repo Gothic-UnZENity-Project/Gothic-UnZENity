@@ -31,7 +31,7 @@ namespace GUZ.VR.Components
             }
             else
             {
-                GameGlobals.NpcAi.ExecutePerception(VmGothicEnums.PerceptionType.AssessTalk, _npcData.Props, _npcData.Instance, (NpcInstance)GameData.GothicVm.GlobalHero);
+                GameGlobals.NpcAi.ExecutePerception(VmGothicEnums.PerceptionType.AssessTalk, _npcData.Props, _npcData.Instance, null, (NpcInstance)GameData.GothicVm.GlobalHero);
             }
         }
     }
