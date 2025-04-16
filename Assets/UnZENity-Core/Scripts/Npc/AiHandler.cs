@@ -163,12 +163,12 @@ namespace GUZ.Core.Npc
             
             if(NpcHelper.CanSenseNpc(NpcInstance, (NpcInstance)GameData.GothicVm.GlobalHero, false))
             {
-                GameGlobals.NpcAi.ExecutePerception(VmGothicEnums.PerceptionType.AssessPlayer, Properties, NpcInstance, (NpcInstance)GameData.GothicVm.GlobalHero);
+                GameGlobals.NpcAi.ExecutePerception(VmGothicEnums.PerceptionType.AssessPlayer, Properties, NpcInstance,null, (NpcInstance)GameData.GothicVm.GlobalHero);
             }
 
             if(Properties.EnemyNpc != null)
             {
-                GameGlobals.NpcAi.ExecutePerception(VmGothicEnums.PerceptionType.AssessEnemy, Properties, NpcInstance, Properties.EnemyNpc);
+                GameGlobals.NpcAi.ExecutePerception(VmGothicEnums.PerceptionType.AssessEnemy, Properties, NpcInstance,null, Properties.EnemyNpc);
             }
 
 

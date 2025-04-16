@@ -605,7 +605,6 @@ namespace GUZ.Core.Vm
             GameGlobals.NpcAi.ExtNpcSetPerceptionTime(npc, time);
         }
         
-        // TODO: permattitude checks true guild
         public static int Npc_GetPermAttitude(NpcInstance self, NpcInstance other)
         {
             return (int)GameGlobals.NpcAi.ExtGetAttitude(self, other);
