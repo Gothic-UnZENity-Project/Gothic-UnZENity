@@ -88,5 +88,6 @@ namespace GUZ.Core._Npc2
         public AbstractAnimationAction CurrentAction;
         
         public VmGothicEnums.Attitude Attitude;
+        public VmGothicEnums.Attitude TempAttitude;
     }
 }

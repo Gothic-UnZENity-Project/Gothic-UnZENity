@@ -358,6 +358,11 @@ namespace GUZ.Core._Npc2
         {
             npc.GetUserData2().Props.Attitude = value;
         }
+        
+        public void ExtSetTempAttitude(NpcInstance npc, VmGothicEnums.Attitude value)
+        {
+            npc.GetUserData2().Props.TempAttitude = value;
+        }
 
         public bool Npc_GetTarget(NpcInstance npc)
         {
