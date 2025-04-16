@@ -192,6 +192,10 @@ namespace GUZ.Core.Manager.Vobs
         /// </summary>
         public void CreateItemMesh(int itemId, GameObject parentGo)
         {
+            if (itemId == -1)
+            {
+                return; // no item
+            }
             var item = VmInstanceManager.TryGetItemData(itemId);
 
             _initializer.CreateItemMesh(item, parentGo, default);
