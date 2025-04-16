@@ -5,6 +5,7 @@ using GUZ.Core.Manager;
 using GUZ.Core.Util;
 using MyBox;
 using UnityEngine;
+using ZenKit;
 using ZenKit.Vobs;
 using Light = ZenKit.Vobs.Light;
 
@@ -61,7 +62,7 @@ namespace GUZ.Core.Caches.StaticCache
                 {
                     var fire = (Fire)vob;
 
-                    if (fire.VobTree.IsNullOrEmpty())
+                    if (fire.VobTree.IsNullOrEmpty() || (GameContext.GameVersionAdapter.Version == GameVersion.Gothic2 && fire.VobTree == "FIRETREE_LARGE.ZEN"))
                     {
                         continue;
                     }
