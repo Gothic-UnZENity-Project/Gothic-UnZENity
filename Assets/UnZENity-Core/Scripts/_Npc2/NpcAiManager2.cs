@@ -416,10 +416,7 @@ namespace GUZ.Core._Npc2
                 .OrderBy(i => Vector3.Distance(i.Go.transform.position, selfPosition)) // get nearest
                 .FirstOrDefault();
 
-            if (foundNpc != null)
-            {
-                selfNpc.Props.EnemyNpc = foundNpc.Instance;
-            }
+            selfNpc.Props.EnemyNpc = foundNpc?.Instance;
         }
     }
 }
