@@ -194,6 +194,7 @@ namespace GUZ.Core.Manager.Vobs
         {
             if (itemId == -1)
             {
+                Debug.LogError("No ItemId found. Is this a bug on daedalus or our side?");
                 return; // no item
             }
             var item = VmInstanceManager.TryGetItemData(itemId);
