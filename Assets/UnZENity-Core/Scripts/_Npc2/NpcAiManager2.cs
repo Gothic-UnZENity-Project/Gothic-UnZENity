@@ -398,28 +398,44 @@ namespace GUZ.Core._Npc2
         public void UpdateEnemyNpc(NpcInstance self)
         {
             var selfNpc = self.GetUserData2();
-            var selfPosition = selfNpc.Go.transform.position;
-            var enemyNpc = selfNpc.Props.EnemyNpc;
+            var selfPosition = selfNpc.Go.transform.position; // Cache position
 
-            NpcContainer2 foundNpc;
-            // Performance shortcut without LINQ.
-            if (enemyNpc != null && NpcHelper.CanSenseNpc(self, enemyNpc, true))
+            NpcContainer2 closestEnemy = null;
+            var closestSqrDist = float.MaxValue;
+
+            foreach (var candidate in MultiTypeCache.NpcCache2)
             {
-                foundNpc = enemyNpc.GetUserData2();
-            }
-            else
-            {
-                foundNpc = MultiTypeCache.NpcCache2
-                    .Where(i => i.Props != null) // ignore empty (safe check)
-                    .Where(i => i.Go != null) // ignore empty (safe check)
-                    .Where(i => i.Instance.Index != self.Index) // ignore self
-                    .Where(i => NpcHelper.CanSenseNpc(self, i.Instance, true)) // can sense the npc
-                    .Where(i => ExtGetAttitude(self, i.Instance) == VmGothicEnums.Attitude.Hostile) // check only enemies
-                    .OrderBy(i => Vector3.Distance(i.Go.transform.position, selfPosition)) // get nearest
-                    .FirstOrDefault();
+                // Fast-fail checks in order of cheapest first
+                if (candidate.Props == null || candidate.Go == null)
+                {
+                    continue;
+                }
+
+                if (candidate.Instance.Index == self.Index)
+                {
+                    continue;
+                }
+
+                if (!NpcHelper.CanSenseNpc(self, candidate.Instance, true))
+                {
+                    continue;
+                }
+
+                if (ExtGetAttitude(self, candidate.Instance) != VmGothicEnums.Attitude.Hostile)
+                {
+                    continue;
+                }
+
+                // Compare squared distances to avoid sqrt calculation
+                var sqrDist = (candidate.Go.transform.position - selfPosition).sqrMagnitude;
+                if (sqrDist < closestSqrDist)
+                {
+                    closestSqrDist = sqrDist;
+                    closestEnemy = candidate;
+                }
             }
 
-            selfNpc.Props.EnemyNpc = foundNpc?.Instance;
+            selfNpc.Props.EnemyNpc = closestEnemy?.Instance;
         }
     }
 }

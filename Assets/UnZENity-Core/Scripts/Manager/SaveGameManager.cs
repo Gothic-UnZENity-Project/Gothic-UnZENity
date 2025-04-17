@@ -158,7 +158,7 @@ namespace GUZ.Core.Manager
         public SaveGame GetSaveGame(int folderSaveId)
         {
             // Load metadata
-            var save = new SaveGame(GameVersion.Gothic1);
+            var save = new SaveGame(GameContext.GameVersionAdapter.Version);
             var saveGamePath = GetSaveGamePath(folderSaveId);
 
             if (!Directory.Exists(saveGamePath))

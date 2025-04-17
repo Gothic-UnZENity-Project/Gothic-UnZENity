@@ -55,6 +55,11 @@ namespace GUZ.Core.Extensions
 
         public static bool EqualsIgnoreCase(this string self, string other)
         {
+            if (self == null)
+            {
+                return other == null;
+            }
+
             return self.Equals(other, StringComparison.OrdinalIgnoreCase);
         }
 
