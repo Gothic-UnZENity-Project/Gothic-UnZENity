@@ -157,8 +157,7 @@ namespace GUZ.Core.Animations
             for (var i = 0; i < _trackInstances.Count; i++)
             {
                 var instance = _trackInstances[i];
-                if (instance.Track.Name.EqualsIgnoreCase(animationName) ||
-                    (instance.Track.AliasName != null && instance.Track.AliasName.EqualsIgnoreCase(animationName)))
+                if (instance.Track.Name.EqualsIgnoreCase(animationName) || instance.Track.AliasName.EqualsIgnoreCase(animationName))
                 {
                     return instance.Track.Duration;
                 }
