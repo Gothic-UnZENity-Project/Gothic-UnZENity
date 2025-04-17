@@ -19,18 +19,18 @@ namespace GUZ.Core.Creator.Meshes.Builder
                 return RootGo;
             }
 
-            // Fix for G1: Damlurker
-            if (Mmb == null)
-            {
-                return null;
-            }
-
             var npcContainer = RootGo.GetComponentInParent<NpcLoader2>().Npc.GetUserData2();
 
             // Cache it f1or faster use during runtime
             npcContainer.PrefabProps.Head = headGo.transform;
             npcContainer.PrefabProps.HeadMorph = headGo.AddComponent<HeadMorph>();
             npcContainer.PrefabProps.HeadMorph.HeadName = npcContainer.Props.BodyData.Head;
+            
+            // Fix for G1: Damlurker
+            if (Mmb == null)
+            {
+                return RootGo;
+            }
 
             var headMeshFilter = headGo.AddComponent<MeshFilter>();
             var headMeshRenderer = headGo.AddComponent<MeshRenderer>();

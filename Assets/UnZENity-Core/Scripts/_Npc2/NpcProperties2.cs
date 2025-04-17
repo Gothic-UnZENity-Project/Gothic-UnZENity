@@ -55,6 +55,9 @@ namespace GUZ.Core._Npc2
 
         // AI topics
 
+        public NpcInstance EnemyNpc;
+        public NpcInstance TargetNpc;
+
         public enum LoopState
         {
             None,
@@ -83,5 +86,11 @@ namespace GUZ.Core._Npc2
         public float StateTime;
         public LoopState CurrentLoopState = LoopState.None;
         public AbstractAnimationAction CurrentAction;
+        
+        // Attitudes
+        // HINT: These values are only used when checking the attitude towards the player
+        // HINT: for attitudes between NPC we directly use the guild attitude
+        public VmGothicEnums.Attitude Attitude = VmGothicEnums.Attitude.Neutral;
+        public VmGothicEnums.Attitude TempAttitude = VmGothicEnums.Attitude.Neutral;
     }
 }

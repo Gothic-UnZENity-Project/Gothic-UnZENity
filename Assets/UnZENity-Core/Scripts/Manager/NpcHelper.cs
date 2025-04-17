@@ -5,16 +5,11 @@ using GUZ.Core._Npc2;
 using GUZ.Core.Caches;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
-using GUZ.Core.Npc;
-using GUZ.Core.Npc.Actions;
-using GUZ.Core.Npc.Actions.AnimationActions;
-using GUZ.Core.Npc.Routines;
 using GUZ.Core.Properties;
 using GUZ.Core.Vm;
 using JetBrains.Annotations;
 using UnityEngine;
 using ZenKit.Daedalus;
-using Object = UnityEngine.Object;
 
 namespace GUZ.Core.Manager
 {
@@ -154,7 +149,8 @@ namespace GUZ.Core.Manager
                 .FirstOrDefault();
 
             // without this Dialog box stops and breaks the entire NPC logic
-            if(foundNpc == null){
+            if (foundNpc == null)
+            {
                 return false;
             }
 
@@ -212,6 +208,28 @@ namespace GUZ.Core.Manager
             return GetProperties(npc).Talents[(VmGothicEnums.Talent)skillId];
         }
 
+        public static VmGothicEnums.Attitude GetPersonAttitude(NpcContainer2 self, NpcContainer2 other)
+        {
+            if (!self.PrefabProps.IsHero() && !other.PrefabProps.IsHero())
+            {
+                return GetGuildAttitude(self.Vob.GuildTrue, other.Vob.Guild);
+            }
+
+            NpcContainer2 npc = self.PrefabProps.IsHero() ? other : self;
+            
+            if(npc.Props.TempAttitude != npc.Props.Attitude)
+            {
+                return npc.Props.TempAttitude;
+            }
+
+            return npc.Props.Attitude;
+        }
+
+        public static VmGothicEnums.Attitude GetGuildAttitude(int selfGuild, int otherGuild)
+        {
+            return (VmGothicEnums.Attitude)GameData.GuildAttitudes[selfGuild * GameData.GuildCount + otherGuild];
+        }
+
         [CanBeNull]
         private static GameObject GetNpc([CanBeNull] NpcInstance npc)
         {
@@ -226,6 +244,21 @@ namespace GUZ.Core.Manager
         private static NpcProperties2 GetProperties([CanBeNull] NpcInstance npc)
         {
             return npc?.GetUserData2().Props;
+        }
+
+        // FIXME - CanSense is not separating between smell, hear, and see as of now. Please add functionality.
+        public static bool CanSenseNpc(NpcInstance self, NpcInstance other, bool freeLOS)
+        {
+            var senseRange = (self.SensesRange/1000) * (self.SensesRange / 1000); // daedalus values are in cm, we need them in m
+            var range = Vector3.Distance(other.GetUserData2().Go.transform.position, self.GetUserData2().Go.transform.position);
+            if (range > senseRange)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
         }
     }
 }

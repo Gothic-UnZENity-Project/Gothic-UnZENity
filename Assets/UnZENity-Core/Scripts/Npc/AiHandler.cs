@@ -6,8 +6,6 @@ using GUZ.Core.Globals;
 using GUZ.Core.Manager;
 using GUZ.Core.Npc.Actions;
 using GUZ.Core.Npc.Actions.AnimationActions;
-using GUZ.Core.Npc.Routines;
-using GUZ.Core.Properties;
 using GUZ.Core.Vm;
 using UnityEngine;
 using ZenKit;
@@ -157,10 +155,23 @@ namespace GUZ.Core.Npc
             {
                 return;
             }
+            
+            GameGlobals.NpcAi.UpdateEnemyNpc(NpcInstance);
 
-            GameGlobals.NpcAi.ExecutePerception(VmGothicEnums.PerceptionType.AssessPlayer, Properties, NpcInstance, (NpcInstance)GameData.GothicVm.GlobalHero);
+            // FIXME - CanSense is not separating between smell, hear, and see as of now. Please add functionality.
+            if(NpcHelper.CanSenseNpc(NpcInstance, (NpcInstance)GameData.GothicVm.GlobalHero, false))
+            {
+                GameGlobals.NpcAi.ExecutePerception(VmGothicEnums.PerceptionType.AssessPlayer, Properties, NpcInstance,null, (NpcInstance)GameData.GothicVm.GlobalHero);
+            }
+
+            if(Properties.EnemyNpc != null)
+            {
+                GameGlobals.NpcAi.ExecutePerception(VmGothicEnums.PerceptionType.AssessEnemy, Properties, NpcInstance,null, Properties.EnemyNpc);
+            }
+
+
             // FIXME - We need to add other active perceptions here:
-            //         PERC_ASSESSBODY, PERC_ASSESSITEM, PERC_ASSESSENEMY, PERC_ASSESSFIGHTER
+            //         PERC_ASSESSBODY, PERC_ASSESSITEM, PERC_ASSESSFIGHTER
             //         But at best when we test it immediately
 
             // Reset timer if we executed Perceptions.
