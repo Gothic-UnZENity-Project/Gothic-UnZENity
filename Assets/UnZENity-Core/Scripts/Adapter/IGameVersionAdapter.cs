@@ -6,7 +6,8 @@ namespace GUZ.Core.Adapter
     {
         GameVersion Version { get; }
         string RootPath { get; }
-        
+        string CutsceneFileSuffix { get; }
+
         /// <summary>
         /// Start world from GothicGame.ini
         /// </summary>

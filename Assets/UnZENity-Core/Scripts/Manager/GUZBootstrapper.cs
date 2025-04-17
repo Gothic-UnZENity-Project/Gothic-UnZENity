@@ -113,7 +113,7 @@ namespace GUZ.Core.Manager
 
         private static void LoadSubtitles()
         {
-            string cutsceneSuffix = GameContext.GameVersionAdapter.Version == GameVersion.Gothic1 ? "CSL" : "LSC";
+            string cutsceneSuffix = GameContext.GameVersionAdapter.CutsceneFileSuffix;
             string cutscenePath =
                 $"{GameContext.GameVersionAdapter.RootPath}/_work/DATA/scripts/content/CUTSCENE/OU.{cutsceneSuffix}";
             GameData.Dialogs.CutsceneLibrary = new(cutscenePath);
