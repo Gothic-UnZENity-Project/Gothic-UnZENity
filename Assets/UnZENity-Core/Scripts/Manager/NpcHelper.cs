@@ -5,16 +5,11 @@ using GUZ.Core._Npc2;
 using GUZ.Core.Caches;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
-using GUZ.Core.Npc;
-using GUZ.Core.Npc.Actions;
-using GUZ.Core.Npc.Actions.AnimationActions;
-using GUZ.Core.Npc.Routines;
 using GUZ.Core.Properties;
 using GUZ.Core.Vm;
 using JetBrains.Annotations;
 using UnityEngine;
 using ZenKit.Daedalus;
-using Object = UnityEngine.Object;
 
 namespace GUZ.Core.Manager
 {
@@ -251,13 +246,19 @@ namespace GUZ.Core.Manager
             return npc?.GetUserData2().Props;
         }
 
+        // FIXME - CanSense is not separating between smell, hear, and see as of now. Please add functionality.
         public static bool CanSenseNpc(NpcInstance self, NpcInstance other, bool freeLOS)
         {
-            // TODO: add smell and hearing checks as well
             var senseRange = (self.SensesRange/1000) * (self.SensesRange / 1000); // daedalus values are in cm, we need them in m
-            if (Vector3.Distance(other.GetUserData2().Go.transform.position,self.GetUserData2().Go.transform.position) > senseRange)
+            var range = Vector3.Distance(other.GetUserData2().Go.transform.position, self.GetUserData2().Go.transform.position);
+            if (range > senseRange)
+            {
                 return false;
-            return true;
+            }
+            else
+            {
+                return true;
+            }
         }
     }
 }

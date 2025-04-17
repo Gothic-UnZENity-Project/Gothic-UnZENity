@@ -62,8 +62,15 @@ namespace GUZ.Core.Caches.StaticCache
                 {
                     var fire = (Fire)vob;
 
-                    if (fire.VobTree.IsNullOrEmpty() || (GameContext.GameVersionAdapter.Version == GameVersion.Gothic2 && fire.VobTree == "FIRETREE_LARGE.ZEN"))
+                    if (fire.VobTree.IsNullOrEmpty())
                     {
+                        continue;
+                    }
+
+                    // FIXME - For some reason, FIRETREE_LARGE.ZEN is broken in G2. Let's fix it properly later.)
+                    if (GameContext.GameVersionAdapter.Version == GameVersion.Gothic2 && fire.VobTree == "FIRETREE_LARGE.ZEN")
+                    {
+                        Debug.LogError("For some reason, FIRETREE_LARGE.ZEN is broken in G2. Let's fix it properly for caching.");
                         continue;
                     }
 

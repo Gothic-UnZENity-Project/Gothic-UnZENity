@@ -401,20 +401,23 @@ namespace GUZ.Core._Npc2
             var selfPosition = selfNpc.Go.transform.position;
             var enemyNpc = selfNpc.Props.EnemyNpc;
 
-            NpcContainer2 foundNpc = null;
+            NpcContainer2 foundNpc;
+            // Performance shortcut without LINQ.
             if (enemyNpc != null && NpcHelper.CanSenseNpc(self, enemyNpc, true))
             {
                 foundNpc = enemyNpc.GetUserData2();
             }
-
-            foundNpc = MultiTypeCache.NpcCache2
-                .Where(i => i.Props != null) // ignore empty (safe check)
-                .Where(i => i.Go != null) // ignore empty (safe check)
-                .Where(i => i.Instance.Index != self.Index) // ignore self
-                .Where(i => NpcHelper.CanSenseNpc(self, i.Instance, true)) // can sense the npc
-                .Where(i => ExtGetAttitude(self, i.Instance) == VmGothicEnums.Attitude.Hostile) // check only enemies
-                .OrderBy(i => Vector3.Distance(i.Go.transform.position, selfPosition)) // get nearest
-                .FirstOrDefault();
+            else
+            {
+                foundNpc = MultiTypeCache.NpcCache2
+                    .Where(i => i.Props != null) // ignore empty (safe check)
+                    .Where(i => i.Go != null) // ignore empty (safe check)
+                    .Where(i => i.Instance.Index != self.Index) // ignore self
+                    .Where(i => NpcHelper.CanSenseNpc(self, i.Instance, true)) // can sense the npc
+                    .Where(i => ExtGetAttitude(self, i.Instance) == VmGothicEnums.Attitude.Hostile) // check only enemies
+                    .OrderBy(i => Vector3.Distance(i.Go.transform.position, selfPosition)) // get nearest
+                    .FirstOrDefault();
+            }
 
             selfNpc.Props.EnemyNpc = foundNpc?.Instance;
         }
