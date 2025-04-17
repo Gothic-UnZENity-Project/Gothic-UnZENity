@@ -1,11 +1,9 @@
 ﻿#if GUZ_HVR_INSTALLED
-using System;
 using GUZ.Core;
 using GUZ.Core._Npc2;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
-using GUZ.Core.Properties;
 using GUZ.Core.Vm;
 using HurricaneVR.Framework.Core;
 using HurricaneVR.Framework.Core.Grabbers;
@@ -31,7 +29,7 @@ namespace GUZ.VR.Components
             }
             else
             {
-                GameGlobals.NpcAi.ExecutePerception(VmGothicEnums.PerceptionType.AssessTalk, _npcData.Props, _npcData.Instance, (NpcInstance)GameData.GothicVm.GlobalHero);
+                GameGlobals.NpcAi.ExecutePerception(VmGothicEnums.PerceptionType.AssessTalk, _npcData.Props, _npcData.Instance, null, (NpcInstance)GameData.GothicVm.GlobalHero);
             }
         }
     }

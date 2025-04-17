@@ -192,6 +192,11 @@ namespace GUZ.Core.Manager.Vobs
         /// </summary>
         public void CreateItemMesh(int itemId, GameObject parentGo)
         {
+            if (itemId == -1)
+            {
+                Debug.LogError("No ItemId found. Is this a bug on daedalus or our side?");
+                return; // no item
+            }
             var item = VmInstanceManager.TryGetItemData(itemId);
 
             _initializer.CreateItemMesh(item, parentGo, default);

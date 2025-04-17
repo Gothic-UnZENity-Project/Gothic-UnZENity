@@ -8,7 +8,8 @@ namespace GUZ.G2
     {
         public GameVersion Version => GameVersion.Gothic2;
         string IGameVersionAdapter.RootPath => GameGlobals.Config.Root.Gothic2Path;
-        
+        public string CutsceneFileSuffix => "LSC";
+
         // FIXME - Load from GothicGame.ini
         public string InitialWorld => "newworld.zen";
     }
