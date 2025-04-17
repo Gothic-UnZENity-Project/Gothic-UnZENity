@@ -1,6 +1,8 @@
 using System.Linq;
+using GUZ.Core.Caches;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
+using GUZ.Core.Manager;
 using GUZ.Core.Npc.Actions;
 using GUZ.Core.Npc.Actions.AnimationActions;
 using GUZ.Core.Vm;
@@ -25,7 +27,7 @@ namespace GUZ.Core._Npc2
         /// <summary>
         /// Call an NPC Perception (active like Assess_Player or passive like Assess_Talk are possible).
         /// </summary>
-        public void ExecutePerception(VmGothicEnums.PerceptionType type, NpcProperties2 properties, NpcInstance self, NpcInstance other)
+        public void ExecutePerception(VmGothicEnums.PerceptionType type, NpcProperties2 properties, NpcInstance self, NpcInstance victim, NpcInstance other)
         {
             // Perception isn't set
             if (!properties.Perceptions.TryGetValue(type, out var perceptionFunction))
@@ -38,9 +40,27 @@ namespace GUZ.Core._Npc2
                 return;
             }
 
+            var oldSelf = GameData.GothicVm.GlobalSelf;
+            var oldVictim = GameData.GothicVm.GlobalVictim;
+            var oldOther = GameData.GothicVm.GlobalVictim;
+
             GameData.GothicVm.GlobalSelf = self;
-            GameData.GothicVm.GlobalOther = other;
+            
+            if(other != null)
+            {
+                GameData.GothicVm.GlobalOther = other;
+            }
+
+            if(victim != null)
+            {
+                GameData.GothicVm.GlobalVictim = victim;
+            }
+
             GameData.GothicVm.Call(perceptionFunction);
+            
+            GameData.GothicVm.GlobalSelf = oldSelf;
+            GameData.GothicVm.GlobalVictim = oldVictim;
+            GameData.GothicVm.GlobalVictim = oldOther;
         }
 
         public void ExtNpcSetPerceptionTime(NpcInstance npc, float time)
@@ -84,12 +104,13 @@ namespace GUZ.Core._Npc2
             {
                 return false;
             }
+            // TODO: Implement a proper fix for head props being null
+            // this is the case for monsters that do not have a separate head mesh 
+            var selfHeadBone = selfContainer.PrefabProps.Head != null ? selfContainer.PrefabProps.Head : selfContainer.Go.transform;
+            var otherHeadBone = otherContainer.PrefabProps.Head != null ? otherContainer.PrefabProps.Head : otherContainer.Go.transform;
 
-            var selfHeadBone = selfContainer.PrefabProps.Head;
-            var otherHeadBone = otherContainer.PrefabProps.Head;
-
-            var distanceToNpc = Vector3.Distance(self.GetUserData2().Go.transform.position, otherHeadBone.position);
-            var inSightRange =  distanceToNpc <= self.SensesRange;
+            var distanceToNpc = Vector3.Distance(selfContainer.Go.transform.position, otherHeadBone.position);
+            var inSightRange = distanceToNpc <= self.SensesRange;
 
             var layersToIgnore = Constants.HandLayer | Constants.GrabbableLayer;
             var hasLineOfSightCollisions = Physics.Linecast(selfHeadBone.position, otherHeadBone.position, layersToIgnore);
@@ -301,9 +322,7 @@ namespace GUZ.Core._Npc2
 
         public bool ExtNpcIsInState(NpcInstance npc, int state)
         {
-            // FIXME - We need to implement it properly. Just fixing NPEs for now!
-            // FIXME - e.g. used for PC_Thief_AFTERTROLL_Condition() from Daedalus.
-            return false;
+            return npc.GetUserData2().Props.StateStart == state;
         }
 
         public bool ExtNpcIsPlayer(NpcInstance npc)
@@ -341,8 +360,66 @@ namespace GUZ.Core._Npc2
 
         public VmGothicEnums.Attitude ExtGetAttitude(NpcInstance self, NpcInstance other)
         {
-            // FIXME - Implement correct one based on Guild of NPCs and Player special treatment.
-            return VmGothicEnums.Attitude.Neutral;
+            var npc1 = self.GetUserData2();
+            var npc2 = other.GetUserData2();
+            if (npc1 == null || npc2 == null)
+            {
+                return VmGothicEnums.Attitude.Neutral;
+            }
+
+            return NpcHelper.GetPersonAttitude(npc1, npc2);
+        }
+
+        public void ExtSetAttitude(NpcInstance npc, VmGothicEnums.Attitude value)
+        {
+            npc.GetUserData2().Props.Attitude = value;
+        }
+        
+        public void ExtSetTempAttitude(NpcInstance npc, VmGothicEnums.Attitude value)
+        {
+            npc.GetUserData2().Props.TempAttitude = value;
+        }
+
+        public bool Npc_GetTarget(NpcInstance npc)
+        {
+            return npc.GetUserData2().Props.TargetNpc != null;
+        }
+
+        public void Npc_SetTarget(NpcInstance npc, NpcInstance target)
+        {
+            npc.GetUserData2().Props.TargetNpc = target;
+        }
+
+        public void Npc_SendPassivePerc(NpcInstance npc,VmGothicEnums.PerceptionType perc, NpcInstance victim, NpcInstance other)
+        {
+            GameGlobals.NpcAi.ExecutePerception(perc, npc.GetUserData2().Props, npc, victim, other);
+        }
+
+        public void UpdateEnemyNpc(NpcInstance self)
+        {
+            var selfNpc = self.GetUserData2();
+            var selfPosition = selfNpc.Go.transform.position;
+            var enemyNpc = selfNpc.Props.EnemyNpc;
+
+            NpcContainer2 foundNpc;
+            // Performance shortcut without LINQ.
+            if (enemyNpc != null && NpcHelper.CanSenseNpc(self, enemyNpc, true))
+            {
+                foundNpc = enemyNpc.GetUserData2();
+            }
+            else
+            {
+                foundNpc = MultiTypeCache.NpcCache2
+                    .Where(i => i.Props != null) // ignore empty (safe check)
+                    .Where(i => i.Go != null) // ignore empty (safe check)
+                    .Where(i => i.Instance.Index != self.Index) // ignore self
+                    .Where(i => NpcHelper.CanSenseNpc(self, i.Instance, true)) // can sense the npc
+                    .Where(i => ExtGetAttitude(self, i.Instance) == VmGothicEnums.Attitude.Hostile) // check only enemies
+                    .OrderBy(i => Vector3.Distance(i.Go.transform.position, selfPosition)) // get nearest
+                    .FirstOrDefault();
+            }
+
+            selfNpc.Props.EnemyNpc = foundNpc?.Instance;
         }
     }
 }

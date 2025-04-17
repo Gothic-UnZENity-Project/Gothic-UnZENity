@@ -126,6 +126,12 @@ namespace GUZ.Core._Npc2
                 return;
             }
 
+            if (npc.GetUserData2() == null)
+            {
+                Debug.LogError($"NPC is not set for {nameof(ExtCreateInvItems)}. Is it an error on Daedalus or our end?");
+                return;
+            }
+
             var props = npc.GetUserData2().Props;
             if (props == null)
             {

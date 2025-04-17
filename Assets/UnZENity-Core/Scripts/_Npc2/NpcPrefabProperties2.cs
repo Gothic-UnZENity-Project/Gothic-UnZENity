@@ -55,5 +55,10 @@ namespace GUZ.Core._Npc2
         {
             return _focusName;
         }
+
+        public bool IsHero()
+        {
+            return _isHero;
+        }
     }
 }
