@@ -885,7 +885,7 @@ public class UberLoggerEditorWindow : EditorWindow, UberLoggerEditor.ILoggerWind
     {
         if(Dirty)
         {
-            CurrentChannels = EditorLogger.CopyChannels();
+            CurrentChannels = EditorLogger.CopyChannels().ToList();
         }
 
         var categories = CurrentChannels;
@@ -1028,7 +1028,7 @@ public class UberLoggerEditorWindow : EditorWindow, UberLoggerEditor.ILoggerWind
     UberLoggerEditor EditorLogger;
 
     List<UberLogger.LogInfo> CurrentLogList = new List<UberLogger.LogInfo>();
-    HashSet<string> CurrentChannels = new HashSet<string>();
+    List<string> CurrentChannels = new List<string>();
 
     //Standard unity pro colours
     Color SizerLineColour;
