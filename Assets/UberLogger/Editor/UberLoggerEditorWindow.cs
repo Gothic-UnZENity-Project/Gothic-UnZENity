@@ -215,12 +215,21 @@ public class UberLoggerEditorWindow : EditorWindow, UberLoggerEditor.ILoggerWind
         GUIStyle unityLogLineOdd = null;
         GUIStyle unitySmallLogLine = null;
 
-        foreach (var style in GUI.skin.customStyles)
-        {
-            if (style.name == "CN EntryBackEven") unityLogLineEven = style;
-            else if (style.name == "CN EntryBackOdd") unityLogLineOdd = style;
-            else if (style.name == "CN StatusInfo") unitySmallLogLine = style;
-        }
+        // foreach (var style in GUI.skin.customStyles)
+        // {
+        //     if (style.name == "CN EntryBackEven") unityLogLineEven = style;
+        //     else if (style.name == "CN EntryBackOdd") unityLogLineOdd = style;
+        //     else if (style.name == "CN StatusInfo") unitySmallLogLine = style;
+        // }
+
+        unityLogLineEven = new GUIStyle("CN EntryBackEven");
+        unityLogLineOdd = new GUIStyle("CN EntryBackOdd");
+        unitySmallLogLine = new GUIStyle("CN StatusInfo");
+
+        // GUZ - Dark mode colors. For light theme ones, please consult https://www.foundations.unity.com/fundamentals/color-palette
+        unityLogLineEven.normal.background = CreateBackgroundTexture(new Color(0.22f, 0.22f, 0.22f, 1));
+        unityLogLineOdd.normal.background = CreateBackgroundTexture(new Color(0.247f, 0.247f, 0.247f, 1));
+        // unitySmallLogLine.normal.background = CreateBackgroundTexture(new Color(35,74,108,255));
 
         EntryStyleBackEven = new GUIStyle(unitySmallLogLine);
 
@@ -241,6 +250,16 @@ public class UberLoggerEditorWindow : EditorWindow, UberLoggerEditor.ILoggerWind
 
         SizerLineColour = new Color(defaultLineColor.r * 0.5f, defaultLineColor.g * 0.5f, defaultLineColor.b * 0.5f);
     }
+
+    // GUZ - BackgroundColors aren't working by fetching styles from Unity CN* entries in our Unity version.
+    private Texture2D CreateBackgroundTexture(Color color)
+    {
+        Texture2D texture = new Texture2D(1, 1);
+        texture.SetPixel(0, 0, color);
+        texture.Apply();
+        return texture;
+    }
+
 
     //Some helper functions to draw buttons that are only as big as their text
     bool ButtonClamped(string text, GUIStyle style, out Vector2 size)
