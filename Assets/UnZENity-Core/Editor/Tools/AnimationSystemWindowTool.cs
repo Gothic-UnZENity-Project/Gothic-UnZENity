@@ -25,7 +25,7 @@ namespace GUZ.Core.Editor.Tools
 
 
 
-        [MenuItem("UnZENity/Animation System Debugger", priority = 200)]
+        [MenuItem("UnZENity/Debug/Animation System Window", priority = 10)]
         public static void ShowWindow()
         {
             var titleContent = new GUIContent("Animation System", Constants.TextureUnZENityLogoTransparent);

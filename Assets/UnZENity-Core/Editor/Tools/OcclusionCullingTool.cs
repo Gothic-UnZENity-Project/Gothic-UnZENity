@@ -4,7 +4,6 @@ using GUZ.Core.Caches;
 using GUZ.Core.Caches.StaticCache;
 using GUZ.Core.Config;
 using GUZ.Core.Creator.Meshes;
-using GUZ.Core.Editor.Editor;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
@@ -28,27 +27,27 @@ namespace GUZ.Core.Editor.Tools
     /// 8. Test if OC data is used in a normal game
     public class OcclusionCullingTool : EditorWindow
     {
-        [MenuItem("UnZENity/Occlusion Culling/Load world mesh for G1", true)]
+        [MenuItem("UnZENity/Build/Occlusion Culling/Load world mesh for G1", true)]
         private static bool ValidateG1OCLoading()
         {
             // If game is in playmode, disable button.
             return !EditorApplication.isPlaying;
         }
 
-        [MenuItem("UnZENity/Occlusion Culling/Load world mesh for G2", true)]
+        [MenuItem("UnZENity/Build/Occlusion Culling/Load world mesh for G2", true)]
         private static bool ValidateG2OCLoading()
         {
             // If game is in playmode, disable button.
             return !EditorApplication.isPlaying;
         }
 
-        [MenuItem("UnZENity/Occlusion Culling/Load world mesh for G1", priority = 1000)]
+        [MenuItem("UnZENity/Build/Occlusion Culling/Load world mesh for G1", priority = 1000)]
         public static async Task LoadWorldMeshG1()
         {
             await LoadWorldMesh(GameVersion.Gothic1);
         }
 
-        [MenuItem("UnZENity/Occlusion Culling/Load world mesh for G2", priority = 1001)]
+        [MenuItem("UnZENity/Build/Occlusion Culling/Load world mesh for G2", priority = 1001)]
         public static async Task LoadWorldMeshG2()
         {
             await LoadWorldMesh(GameVersion.Gothic2);
