@@ -91,6 +91,12 @@ public class UberLoggerEditor : ScriptableObject, UberLogger.ILogger
         }
     }
 
+    // GUZ - Pre-initialize channels to be visible as buttons on top.
+    public void InitializeChannels(string[] channels)
+    {
+        Channels = new HashSet<string>(channels);
+    }
+
     public void Log(LogInfo logInfo)
     {
         lock(this)
