@@ -5,6 +5,7 @@ using System.Linq;
 using System;
 using UberLogger;
 using System.Text.RegularExpressions;
+using UnityEngine.Events;
 
 /// <summary>
 /// The console logging frontend.
@@ -43,6 +44,10 @@ public class UberLoggerEditorWindow : EditorWindow, UberLoggerEditor.ILoggerWind
         }
     }
 
+
+    // GUZ - Provide UnZENity an event to fetch when Channels should be added.
+    public static UnityEvent OnEnableWindow = new();
+
     void OnEnable()
     {
         // Connect to or create the backend
@@ -59,6 +64,9 @@ public class UberLoggerEditorWindow : EditorWindow, UberLoggerEditor.ILoggerWind
         // And, due to Unity serialisation stuff, necessary to do to it here.
         UberLogger.Logger.AddLogger(EditorLogger);
         EditorLogger.AddWindow(this);
+
+        // GUZ - Provide UnZENity an event to fetch when Channels should be added.
+        OnEnableWindow.Invoke();
 
 // _OR_NEWER only became available from 5.3
 #if UNITY_5 || UNITY_5_3_OR_NEWER
