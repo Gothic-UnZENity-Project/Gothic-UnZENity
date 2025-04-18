@@ -329,27 +329,21 @@ public class UberLoggerEditorWindow : EditorWindow, UberLoggerEditor.ILoggerWind
 
     /// <summary>
     /// Draws the channel selector
+    /// GUZ - full rewrite
     /// </summary>
     void DrawChannels()
     {
         var channels = GetChannels();
-        int currentChannelIndex = 0;
-        for(int c1=0; c1<channels.Count; c1++)
-        {
-            if(channels[c1]==CurrentChannel)
-            {
-                currentChannelIndex = c1;
-                break;
-            }
-        }
 
         var content = new GUIContent("S");
         var size = GUI.skin.button.CalcSize(content);
         var drawRect = new Rect(DrawPos, new Vector2(position.width, size.y));
-        currentChannelIndex = GUI.SelectionGrid(drawRect, currentChannelIndex, channels.ToArray(), channels.Count);
-        if(CurrentChannel!=channels[currentChannelIndex])
+
+        var newMask = EditorGUI.MaskField(drawRect, CurrentChannelMask, channels.ToArray());
+
+        if(CurrentChannelMask!=newMask)
         {
-            CurrentChannel = channels[currentChannelIndex];
+            CurrentChannelMask = newMask;
             ClearSelectedMessage();
             MakeDirty = true;
         }
@@ -361,7 +355,14 @@ public class UberLoggerEditorWindow : EditorWindow, UberLoggerEditor.ILoggerWind
     /// </summary>
     bool ShouldShowLog(System.Text.RegularExpressions.Regex regex, LogInfo log)
     {
-        if(log.Channel==CurrentChannel || CurrentChannel=="All" || (CurrentChannel=="No Channel" && String.IsNullOrEmpty(log.Channel)))
+        // Mask.Nothing
+        if (CurrentChannelMask == 0)
+        {
+            return false;
+        }
+
+        // BitMask - 0 == ALL, 1 == NO_CHANNEL, 2...n - Other channels with/without NO_CHANNEL
+        if(IsAllChannels() || IsChannelActive(log))
         {
             if((log.Severity==LogSeverity.Message && ShowMessages)
                || (log.Severity==LogSeverity.Warning && ShowWarnings)
@@ -375,6 +376,30 @@ public class UberLoggerEditorWindow : EditorWindow, UberLoggerEditor.ILoggerWind
         }
         
         return false;
+    }
+
+    private bool IsAllChannels()
+    {
+        // Mask.Everything
+        return CurrentChannelMask == -1;
+    }
+    private bool IsChannelActive(LogInfo log)
+    {
+        if (string.IsNullOrEmpty(log.Channel))
+        {
+            return (CurrentChannelMask & 1) != 0;
+        }
+
+        var channelId = CurrentChannels.IndexOf(log.Channel);
+
+        // Channel not found
+        if (channelId == -1)
+        {
+            return false;
+        }
+
+        channelId++; // Skip next to NO_CHANNEL
+        return (CurrentChannelMask & (1 << channelId)) != 0;
     }
 
     /// <summary>
@@ -816,14 +841,15 @@ public class UberLoggerEditorWindow : EditorWindow, UberLoggerEditor.ILoggerWind
     {
         if(Dirty)
         {
-            CurrentChannels = EditorLogger.CopyChannels();
+            CurrentChannels = EditorLogger.CopyChannels().ToList();
         }
 
         var categories = CurrentChannels;
         
         var channelList = new List<string>();
-        channelList.Add("All");
-        channelList.Add("No Channel");
+        // GUZ - No need for it as we use a MaskField now.
+        // channelList.Add("All");
+        channelList.Add("-No Channel-");
         channelList.AddRange(categories);
         return channelList;
     }
@@ -957,14 +983,14 @@ public class UberLoggerEditorWindow : EditorWindow, UberLoggerEditor.ILoggerWind
     UberLoggerEditor EditorLogger;
 
     List<UberLogger.LogInfo> CurrentLogList = new List<UberLogger.LogInfo>();
-    HashSet<string> CurrentChannels = new HashSet<string>();
+    List<string> CurrentChannels = new List<string>();
 
     //Standard unity pro colours
     Color SizerLineColour;
 
     GUIStyle EntryStyleBackEven;
     GUIStyle EntryStyleBackOdd;
-    string CurrentChannel=null;
+    int CurrentChannelMask = -1; // == MaskField.Everything
     string FilterRegex = null;
     bool ShowErrors = true; 
     bool ShowWarnings = true; 
