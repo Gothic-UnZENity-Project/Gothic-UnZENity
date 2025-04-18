@@ -138,7 +138,9 @@ public class UberLoggerEditor : ScriptableObject, UberLogger.ILogger
         lock(this)
         {
             LogInfo.Clear();
-            Channels.Clear();
+
+            // GUZ - Channels are fixed. Do not clear them.
+            // Channels.Clear();
             NoWarnings = 0;
             NoErrors = 0;
             NoMessages = 0;
