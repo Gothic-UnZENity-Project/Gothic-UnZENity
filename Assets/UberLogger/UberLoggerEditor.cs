@@ -108,7 +108,7 @@ public class UberLoggerEditor : ScriptableObject, UberLogger.ILogger
 
             LogInfo.Add(logInfo);
         }
-        
+
         if(logInfo.Severity==LogSeverity.Error)
         {
             NoErrors++;
@@ -152,11 +152,11 @@ public class UberLoggerEditor : ScriptableObject, UberLogger.ILogger
         }
     }
 
-    public List<LogInfo> CopyLogInfo()
+    public void CopyLogInfoTo(List<LogInfo> container)
     {
         lock(this)
         {
-            return new List<LogInfo>(LogInfo);
+            container.AddRange(LogInfo);
         }
     }
 
