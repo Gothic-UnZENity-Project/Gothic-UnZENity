@@ -14,6 +14,7 @@ using ZenKit;
 using ZenKit.Daedalus;
 using ZenKit.Vobs;
 using Constants = GUZ.Core.Globals.Constants;
+using Logger = GUZ.Core.Util.Logger;
 using TextureFormat = UnityEngine.TextureFormat;
 
 namespace GUZ.Core.Caches.StaticCache
@@ -169,7 +170,7 @@ namespace GUZ.Core.Caches.StaticCache
 
             if (unityTextureFormat != TextureFormat.DXT1 && unityTextureFormat != TextureFormat.RGBA32)
             {
-                Debug.LogError("Only DXT1 and RGBA32 textures are supported for texture arrays as of now!");
+                Logger.LogError("Only DXT1 and RGBA32 textures are supported for texture arrays as of now!", LogCat.PreCaching);
             }
 
             var textureArrayType = TextureCache.TextureArrayTypes.Unknown;
@@ -192,7 +193,7 @@ namespace GUZ.Core.Caches.StaticCache
             }
             else
             {
-                Debug.LogError($"TextureFormat={unityTextureFormat} + MaterialGroup={group} isn't handled for TextureArray so far.");
+                Logger.LogError($"TextureFormat={unityTextureFormat} + MaterialGroup={group} isn't handled for TextureArray so far.", LogCat.PreCaching);
             }
 
             var animationTextures = CalculateAnimationTextures(textureName);

@@ -1,7 +1,6 @@
 using System;
 using GUZ.Core.Util;
 using UnityEditor;
-using UnityEngine;
 using Logger = UberLogger.Logger;
 
 namespace GUZ.Core.Editor.Tools
@@ -19,7 +18,7 @@ namespace GUZ.Core.Editor.Tools
                 if (editorLogWindow == null)
                     return;
 
-                editorLogWindow.InitializeChannels(Enum.GetNames(typeof(GUZLogger.LogModule)));
+                editorLogWindow.InitializeChannels(Enum.GetNames(typeof(LogCat)));
             });
         }
 

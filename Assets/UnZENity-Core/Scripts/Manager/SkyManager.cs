@@ -6,9 +6,11 @@ using GUZ.Core.Config;
 using GUZ.Core.Creator.Sounds;
 using GUZ.Core.Data;
 using GUZ.Core.Extensions;
+using GUZ.Core.Util;
 using GUZ.Core.World;
 using UnityEngine;
 using UnityEngine.Rendering;
+using Logger = GUZ.Core.Util.Logger;
 using Object = UnityEngine.Object;
 using Random = UnityEngine.Random;
 
@@ -146,7 +148,7 @@ namespace GUZ.Core.Manager
             }
             catch (Exception e)
             {
-                Debug.LogError(e);
+                Logger.LogError(e.ToString(), LogCat.Mesh);
                 return;
             }
 

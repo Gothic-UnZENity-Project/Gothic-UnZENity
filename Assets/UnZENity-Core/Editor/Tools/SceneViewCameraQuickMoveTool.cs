@@ -1,5 +1,7 @@
+using GUZ.Core.Util;
 using UnityEditor;
 using UnityEngine;
+using Logger = GUZ.Core.Util.Logger;
 
 namespace GUZ.Core.Editor.Tools
 {
@@ -28,9 +30,9 @@ namespace GUZ.Core.Editor.Tools
         private static void CaptureSceneCameraPosition()
         {
             var sceneView = SceneView.lastActiveSceneView;
-            Debug.Log("Current Scene Camera Position+Rotation:");
-            Debug.Log(sceneView.camera.transform.position);
-            Debug.Log(sceneView.camera.transform.rotation.eulerAngles);
+            Logger.LogEditor("Current Scene Camera Position+Rotation:", LogCat.Debug);
+            Logger.LogEditor(sceneView.camera.transform.position.ToString(), LogCat.Debug);
+            Logger.LogEditor(sceneView.camera.transform.rotation.eulerAngles.ToString(), LogCat.Debug);
         }
 
 

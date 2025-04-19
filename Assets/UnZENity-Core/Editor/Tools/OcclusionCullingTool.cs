@@ -7,12 +7,14 @@ using GUZ.Core.Creator.Meshes;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
+using GUZ.Core.Util;
 using GUZ.G1;
 using GUZ.G2;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using ZenKit;
+using Logger = GUZ.Core.Util.Logger;
 
 namespace GUZ.Core.Editor.Tools
 {
@@ -83,7 +85,7 @@ namespace GUZ.Core.Editor.Tools
 
             var worldName = SceneManager.GetActiveScene().name;
             var world = ResourceLoader.TryGetWorld(worldName, version)!;
-            Debug.Log("DONE - Loading world from ZenKit");
+            Logger.LogEditor("DONE - Loading world from ZenKit", LogCat.PreCaching);
 
             if (world == null)
             {
@@ -94,9 +96,9 @@ namespace GUZ.Core.Editor.Tools
             var worldChunkCache = new WorldChunkCacheCreator();
 
             await stationaryLightCache.CalculateStationaryLights(world.RootObjects).AwaitAndLog();
-            Debug.Log("DONE - Loading stationary light data");
+            Logger.LogEditor("DONE - Loading stationary light data", LogCat.PreCaching);
             await worldChunkCache.CalculateWorldChunks(world, stationaryLightCache.StationaryLightBounds).AwaitAndLog();
-            Debug.Log("DONE - Calculating world chunks");
+            Logger.LogEditor("DONE - Calculating world chunks", LogCat.PreCaching);
 
 
             var worldChunkData = new StaticCacheManager.WorldChunkContainer
@@ -109,7 +111,7 @@ namespace GUZ.Core.Editor.Tools
             };
 
             await MeshFactory.CreateWorld(worldChunkData, world.Mesh, null, null, useTextureArray: false).AwaitAndLog();
-            Debug.Log("DONE - Loading world mesh");
+            Logger.LogEditor("DONE - Loading world mesh", LogCat.PreCaching);
         }
 
         private void OnGUI()

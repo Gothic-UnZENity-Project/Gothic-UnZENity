@@ -31,12 +31,13 @@ namespace GUZ.Core.Util
                 // We assume a default when no data is available.
                 _targetFrameRate = 60;
 
+                // Ite means there is some error in detecting the frame rate in a production build.
                 if (!Application.isEditor)
                 {
-                    Debug.LogWarning($"[{typeof(FrameSkipper)}] No target frame rate found.");
+                    Logger.LogError($"[{typeof(FrameSkipper)}] No target frame rate found.", LogCat.Loading);
                 }
             }
-            Debug.Log($"[{typeof(FrameSkipper)}] Target frame rate set to: {_targetFrameRate}");
+            Logger.Log($"[{typeof(FrameSkipper)}] Target frame rate set to: {_targetFrameRate}", LogCat.Loading);
         }
 
 
@@ -54,7 +55,7 @@ namespace GUZ.Core.Util
         {
             if (Time.realtimeSinceStartup > _maxFrameUsage)
             {
-                // Debug.Log($"FrameSkipper: Not skipped {_debugSkippedCount}x.");
+                // Logger.Log($"FrameSkipper: Not skipped {_debugSkippedCount}x.");
                 await Task.Yield();
             }
             else
@@ -67,7 +68,7 @@ namespace GUZ.Core.Util
         {
             if (Time.realtimeSinceStartup > _maxFrameUsage)
             {
-                // Debug.Log($"FrameSkipper: Not skipped {_debugSkippedCount}x.");
+                // Logger.Log($"FrameSkipper: Not skipped {_debugSkippedCount}x.");
                 yield return null;
             }
             else

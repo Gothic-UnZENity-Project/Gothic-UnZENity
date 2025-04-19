@@ -1,9 +1,11 @@
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using GUZ.Core.Caches;
+using GUZ.Core.Util;
 using GUZ.Core.Vm;
 using UnityEngine;
 using ZenKit;
+using Logger = GUZ.Core.Util.Logger;
 using Vector3 = System.Numerics.Vector3;
 
 namespace GUZ.Core.Creator.Meshes.Builder
@@ -46,7 +48,7 @@ namespace GUZ.Core.Creator.Meshes.Builder
             // Remove head as it will be loaded later.
             if (newAttachments.Remove("BIP01 HEAD"))
             {
-                Debug.Log("Removed default >BIP01 HEAD< attachment mesh from NPC.");
+                Logger.Log("Removed default >BIP01 HEAD< attachment mesh from NPC.", LogCat.Mesh);
             }
 
             return newAttachments;
