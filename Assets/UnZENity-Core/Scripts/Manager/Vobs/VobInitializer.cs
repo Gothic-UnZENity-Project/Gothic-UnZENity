@@ -151,21 +151,6 @@ namespace GUZ.Core.Manager.Vobs
                 case VirtualObjectType.zCVobLight:
                     go = CreateLight((Light)vob, parent, worldPosition);
                     break;
-                case VirtualObjectType.oCNpc:
-                    if (vob.Name.EqualsIgnoreCase(Constants.DaedalusHeroInstanceName))
-                    {
-                        GameGlobals.Player.HeroSpawnPosition = vob.Position.ToUnityVector();
-                        GameGlobals.Player.HeroSpawnRotation = vob.Rotation.ToUnityQuaternion();
-                        break;
-                    }
-
-                    if (!_config.EnableNpcs)
-                    {
-                        break;
-                    }
-
-                    go = CreateNpc((ZenKit.Vobs.Npc)vob);
-                    break;
                 case VirtualObjectType.oCMobLadder:
                     go = CreateDefaultMesh(vob, parent);
                     break;
@@ -336,30 +321,6 @@ namespace GUZ.Core.Manager.Vobs
             go!.GetComponent<VobProperties>().SetData(vob);
 
             return go;
-        }
-
-        /// <summary>
-        /// Initialize NPC and set its data from SaveGame (VOB entry).
-        /// </summary>
-        private GameObject CreateNpc(ZenKit.Vobs.Npc npcVob)
-        {
-            Debug.LogError("NPCs from SaveGame not yet handled.");
-            return null;
-            // var instance = GameData.GothicVm.AllocInstance<NpcInstance>(npcVob.Name);
-            // var npcData = new NpcContainer
-            // {
-            //     Instance = instance,
-            //     Vob = npcVob
-            // };
-            // instance.UserData = npcData;
-            // MultiTypeCache.NpcCache.Add(npcData);
-            //
-            // var newNpc = NpcCreator.InitializeNpc(instance, true, npcVob);
-            //
-            // SetPosAndRot(newNpc, npcVob.Position, npcVob.Rotation);
-            // GameGlobals.NpcMeshCulling.AddCullingEntry(newNpc);
-            //
-            // return newNpc;
         }
 
         /// <summary>

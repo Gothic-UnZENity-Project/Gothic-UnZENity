@@ -23,17 +23,21 @@ namespace GUZ.Core._Npc2
     /// </summary>
     public class NpcInitializer2
     {
-        private GameObject _rootGo;
+        public GameObject RootGo;
         private readonly List<(NpcContainer2 npc, string spawnPoint)> _tmpWldInsertNpcData = new();
 
         private static DaedalusVm Vm => GameData.GothicVm;
 
-        public async Task InitNpcsNewGame(LoadingManager loading, GameObject rootGo)
+        public async Task InitNpcsNewGame(LoadingManager loading)
         {
-            _rootGo = rootGo;
-
             NewRunDaedalus();
             await NewAddLazyLoading(loading);
+        }
+
+        public void InitNpcSaveGame(ZenKit.Vobs.Npc vobNpc)
+        {
+            var npcContainer = AllocZkInstance(vobNpc);
+            SaveGameAddLazyLoading(npcContainer, vobNpc);
         }
 
         /// <summary>
@@ -49,6 +53,22 @@ namespace GUZ.Core._Npc2
         /// --> We will fill the NpcCache with proper values later.
         /// </summary>
         public void ExtWldInsertNpc(int npcInstanceIndex, string spawnPoint)
+        {
+            var userDataObject = AllocZkInstance(npcInstanceIndex);
+
+            // For mesh creation later, we need to store that there is a new NPC or a duplicate Monster to be spawned.
+            _tmpWldInsertNpcData.Add((userDataObject, spawnPoint));
+        }
+
+        private NpcContainer2 AllocZkInstance(ZenKit.Vobs.Npc vobNpc)
+        {
+            var symbol = GameData.GothicVm.GetSymbolByName(vobNpc.Name);
+            var userDataObject = AllocZkInstance(symbol.Index);
+
+            return userDataObject;
+        }
+
+        private NpcContainer2 AllocZkInstance(int npcInstanceIndex)
         {
             var npcSymbol = Vm.GetSymbolByIndex(npcInstanceIndex)!;
             var npcInstance = Vm.AllocInstance<NpcInstance>(npcSymbol);
@@ -67,8 +87,7 @@ namespace GUZ.Core._Npc2
             // IMPORTANT!: NpcInstance.UserData stores a weak pointer. i.e. if we do not store the local variable it would get removed.
             MultiTypeCache.NpcCache2.Add(userDataObject);
 
-            // For mesh creation later, we need to store, that there is a new NPC or a duplicate Monster to be spawned.
-            _tmpWldInsertNpcData.Add((userDataObject, spawnPoint));
+            return userDataObject;
         }
 
         /// <summary>
@@ -85,7 +104,7 @@ namespace GUZ.Core._Npc2
         }
 
         /// <summary>
-        /// Now we will crate the NPCs step-by-step to ensure smooth loading screen fps.
+        /// Now we will create the NPCs step-by-step to ensure smooth loading screen fps.
         /// </summary>
         private async Task NewAddLazyLoading(LoadingManager loading)
         {
@@ -93,16 +112,11 @@ namespace GUZ.Core._Npc2
 
             foreach ((NpcContainer2 npc, string spawnPoint) element in _tmpWldInsertNpcData)
             {
-                // Update progress bar and check if we need to wait for next frame now (As some conditions skip -continue- end of loop and would skip check)
+                // Update the progress bar and check if we need to wait for the next frame now (As some conditions skip -continue- end of loop and would skip check)
                 loading.AddProgress();
                 await FrameSkipper.TrySkipToNextFrame();
 
-                InitZkInstance(element.npc);
-                var go = new GameObject($"{element.npc.Instance.GetName(NpcNameSlot.Slot0)} ({element.npc.Instance.Id})");
-                go.SetParent(_rootGo);
-
-                var loader = go.AddComponent<NpcLoader2>();
-                loader.Npc = element.npc.Instance;
+                var go = InitLazyLoadNpc(element.npc);
 
                 var spawnPoint = GetSpawnPoint(element.npc, element.spawnPoint);
                 if (spawnPoint == null)
@@ -128,6 +142,29 @@ namespace GUZ.Core._Npc2
 
             // Full loading of NPCs is done.
             loading.AddProgress(LoadingManager.LoadingProgressType.VOB, 1f);
+        }
+
+        private void SaveGameAddLazyLoading(NpcContainer2 npc, ZenKit.Vobs.Npc npcVob)
+        {
+            var go = InitLazyLoadNpc(npc);
+
+            go.transform.SetPositionAndRotation(npcVob.Position.ToUnityVector(), npcVob.Rotation.ToUnityQuaternion());
+            GameGlobals.NpcMeshCulling.AddCullingEntry(go);
+        }
+
+        /// <summary>
+        /// InitZkInstance and create a GameObject for the NPC to be loaded later.
+        /// </summary>
+        public GameObject InitLazyLoadNpc(NpcContainer2 npc)
+        {
+            InitZkInstance(npc);
+            var go = new GameObject($"{npc.Instance.GetName(NpcNameSlot.Slot0)} ({npc.Instance.Id})");
+            go.SetParent(RootGo);
+
+            var loader = go.AddComponent<NpcLoader2>();
+            loader.Npc = npc.Instance;
+
+            return go;
         }
 
         private void InitZkInstance(NpcContainer2 npc)

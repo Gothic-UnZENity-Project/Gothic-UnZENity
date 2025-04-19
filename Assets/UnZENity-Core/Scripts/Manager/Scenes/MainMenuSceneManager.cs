@@ -47,14 +47,14 @@ namespace GUZ.Core.Manager.Scenes
         {
             var world = GameGlobals.Config.Dev.PreselectWorldToSpawn;
 
-            if (world == WorldToSpawn.None)
+            if (world == DeveloperConfigEnums.WorldToSpawn.None)
             {
                 // FIXME - Read default from INI file
                 return Constants.SelectedWorld;
             }
             else
             {
-                return DeveloperConfig.WorldMappings[world];
+                return DeveloperConfigEnums.WorldMappings[world];
             }
         }
     }

@@ -258,9 +258,19 @@ namespace GUZ.Core.Creator.Meshes.Builder
                 var meshFilter = meshObj.AddComponent<MeshFilter>();
                 var meshRenderer = meshObj.AddComponent<SkinnedMeshRenderer>();
 
-                // TODO - hard coded as it's the right value for BSFire. Need to be more dynamic by using element which has parent=-1.
-                meshRenderer.rootBone = nodeObjects[0].transform;
                 meshRenderer.material = Constants.LoadingMaterial;
+
+                // Recalculate bbox based on current bones pose+rot when playing animations.
+                // This can become a performance issue which we need to monitor carefully.
+                // On top, the name is misleading: updateWhenOffscreen calculates the bbox at all.
+                // If not set, then no recalculation is done.
+                // @see https://docs.unity3d.com/2022.2/Documentation/Manual/class-SkinnedMeshRenderer.html
+                meshRenderer.updateWhenOffscreen = true;
+
+                // HINT: rootBone setting removed. If used, with updateWhenOffscreen e.g. a sitting animation is adding
+                //       too much bound size during animation.
+                //       Custom AnimationsSystem also played nicely when removing the rootBone.
+                // meshRenderer.rootBone = nodeObjects[0].transform;
 
                 PrepareMeshFilter(meshFilter, softSkinMesh, meshRenderer, meshCounter);
                 PrepareMeshRenderer(meshRenderer, mesh);
