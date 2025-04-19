@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 5021500252358605818}
   - component: {fileID: 7446373068104798209}
   - component: {fileID: 8063449360841054165}
-  - component: {fileID: 1218781300399283494}
   m_Layer: 5
   m_Name: NameCanvas
   m_TagString: Untagged
@@ -85,23 +84,6 @@ MonoBehaviour:
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
   m_PresetInfoIsWorld: 1
---- !u!114 &1218781300399283494
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3261430823668897889}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dc42784cf147c0c48a680349fa168899, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_IgnoreReversedGraphics: 1
-  m_BlockingObjects: 0
-  m_BlockingMask:
-    serializedVersion: 2
-    m_Bits: 4294967295
 --- !u!1 &6503575194566409312
 GameObject:
   m_ObjectHideFlags: 0
@@ -202,7 +184,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3892cc187c4d45ebb4a8c59e3c4af78b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <VisualScheme>k__BackingField: 
   IsSocketed: 0
 --- !u!114 &6759220176799969513
 MonoBehaviour:
@@ -216,7 +197,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b3d4d12525e40a7ac803add610db925, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _properties: {fileID: 6221555039147954839}
   _nameCanvas: {fileID: 3261430823668897889}
 --- !u!114 &-6808202407213995710
 MonoBehaviour:
