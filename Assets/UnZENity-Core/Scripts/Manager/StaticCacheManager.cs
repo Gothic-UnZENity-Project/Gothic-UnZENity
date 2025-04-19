@@ -15,6 +15,7 @@ using MyBox;
 using UnityEngine;
 using CompressionLevel = System.IO.Compression.CompressionLevel;
 using Debug = UnityEngine.Debug;
+using Logger = GUZ.Core.Util.Logger;
 
 namespace GUZ.Core.Manager
 {
@@ -248,7 +249,7 @@ namespace GUZ.Core.Manager
             }
             catch (Exception e)
             {
-                Debug.LogError($"There was some error while storing Global Cache: {e}");
+                Logger.LogError($"There was some error while storing Global Cache: {e}", LogCat.PreCaching);
                 throw;
             }
         }
@@ -277,7 +278,7 @@ namespace GUZ.Core.Manager
             }
             catch (Exception e)
             {
-                Debug.LogError($"There was some error while storing Mesh Cache: {e}");
+                Logger.LogError($"There was some error while storing Mesh Cache: {e}", LogCat.PreCaching);
                 throw;
             }
         }
@@ -297,7 +298,7 @@ namespace GUZ.Core.Manager
             }
             catch (Exception e)
             {
-                Debug.LogError($"There was some error while storing Mesh Cache: {e}");
+                Logger.LogError($"There was some error while storing Mesh Cache: {e}", LogCat.PreCaching);
                 throw;
             }
         }

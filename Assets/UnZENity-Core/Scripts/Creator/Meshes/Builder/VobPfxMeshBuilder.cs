@@ -2,11 +2,13 @@
 using System.Globalization;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
+using GUZ.Core.Util;
 using GUZ.Core.Vm;
 using GUZ.Core.Vob;
 using UnityEngine;
 using UnityEngine.Rendering;
 using ZenKit.Vobs;
+using Logger = GUZ.Core.Util.Logger;
 
 namespace GUZ.Core.Creator.Meshes.Builder
 {
@@ -145,7 +147,7 @@ namespace GUZ.Core.Creator.Meshes.Builder
                         rendererModule.material.ToAdditiveMode();
                         break;
                     default:
-                        Debug.LogWarning($"Particle AlphaFunc {pfx.VisAlphaFuncS} not yet handled.");
+                        Logger.LogWarning($"Particle AlphaFunc {pfx.VisAlphaFuncS} not yet handled.", LogCat.Mesh);
                         break;
                 }
 
@@ -164,7 +166,7 @@ namespace GUZ.Core.Creator.Meshes.Builder
                         rendererModule.alignment = ParticleSystemRenderSpace.Velocity;
                         break;
                     default:
-                        Debug.LogWarning($"visOrientation {pfx.VisOrientationS} not yet handled.");
+                        Logger.LogWarning($"visOrientation {pfx.VisOrientationS} not yet handled.", LogCat.Mesh);
                         break;
                 }
             }
@@ -184,7 +186,7 @@ namespace GUZ.Core.Creator.Meshes.Builder
                         shapeModule.shapeType = ParticleSystemShapeType.Mesh;
                         break;
                     default:
-                        Debug.LogWarning($"Particle ShapeType {pfx.ShpTypeS} not yet handled.");
+                        Logger.LogWarning($"Particle ShapeType {pfx.ShpTypeS} not yet handled.", LogCat.Mesh);
                         break;
                 }
 
@@ -196,7 +198,7 @@ namespace GUZ.Core.Creator.Meshes.Builder
                         shapeModule.radius = float.Parse(shapeDimensions[0], CultureInfo.InvariantCulture) / 100;
                         break;
                     default:
-                        Debug.LogWarning($"shpDim >{pfx.ShpDimS}< not yet handled");
+                        Logger.LogWarning($"shpDim >{pfx.ShpDimS}< not yet handled", LogCat.Mesh);
                         break;
                 }
 

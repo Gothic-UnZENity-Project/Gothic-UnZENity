@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
+using GUZ.Core.Util;
 using JetBrains.Annotations;
 using MyBox;
 using UnityEngine;
 using ZenKit;
+using Logger = GUZ.Core.Util.Logger;
 
 namespace GUZ.Core.Animations
 {
@@ -192,7 +194,7 @@ namespace GUZ.Core.Animations
 
                 if (animationEventFrame <= CurrentKeyFrameIndex)
                 {
-                    Debug.Log($"{_animationEventsToExecuteThisUpdate} - Executing event: at frame {CurrentKeyFrameIndex}");
+                    Logger.LogEditor($"{_animationEventsToExecuteThisUpdate} - Executing event: at frame {CurrentKeyFrameIndex}", LogCat.Animation);
                     _animationEventsToExecuteThisUpdate++;
                 }
                 // We passed the events which need to be played this frame.
@@ -210,7 +212,7 @@ namespace GUZ.Core.Animations
 
                 if (pfxEventFrame <= CurrentKeyFrameIndex)
                 {
-                    Debug.Log($"{_pfxEventsToExecuteThisUpdate} - Executing event: at frame {CurrentKeyFrameIndex}");
+                    Logger.Log($"{_pfxEventsToExecuteThisUpdate} - Executing event: at frame {CurrentKeyFrameIndex}", LogCat.Animation);
                     _pfxEventsToExecuteThisUpdate++;
                 }
                 // We passed the events which need to be played this frame.
@@ -228,7 +230,7 @@ namespace GUZ.Core.Animations
 
                 if (sfxEventFrame <= CurrentKeyFrameIndex)
                 {
-                    Debug.Log($"{_sfxEventsToExecuteThisUpdate} - Executing event: at frame {CurrentKeyFrameIndex}");
+                    Logger.LogEditor($"{_sfxEventsToExecuteThisUpdate} - Executing event: at frame {CurrentKeyFrameIndex}", LogCat.Animation);
                     _sfxEventsToExecuteThisUpdate++;
                 }
                 else
@@ -245,7 +247,7 @@ namespace GUZ.Core.Animations
 
                 if (morphEventFrame <= CurrentKeyFrameIndex)
                 {
-                    Debug.Log($"{_morphEventsToExecuteThisUpdate} - Executing event: at frame {CurrentKeyFrameIndex}");
+                    Logger.LogEditor($"{_morphEventsToExecuteThisUpdate} - Executing event: at frame {CurrentKeyFrameIndex}", LogCat.Animation);
                     _morphEventsToExecuteThisUpdate++;
                 }
                 else

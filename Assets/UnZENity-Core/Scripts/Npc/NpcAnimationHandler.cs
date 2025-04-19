@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections;
 using GUZ.Core.Data.Container;
+using GUZ.Core.Util;
 using GUZ.Core.Vm;
 using MyBox;
 using UnityEngine;
+using Logger = GUZ.Core.Util.Logger;
 
 namespace GUZ.Core.Npc
 {
@@ -136,7 +138,7 @@ namespace GUZ.Core.Npc
                     walkmode = "DIVE";
                     break;
                 default:
-                    Debug.LogWarning($"Animation of type {Properties.WalkMode} not yet implemented.");
+                    Logger.LogWarning($"Animation of type {Properties.WalkMode} not yet implemented.", LogCat.Animation);
                     return "";
             }
 

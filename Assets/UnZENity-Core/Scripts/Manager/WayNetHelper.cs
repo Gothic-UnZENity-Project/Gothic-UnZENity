@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
+using GUZ.Core.Util;
 using GUZ.Core.Vob.WayNet;
 using GUZ.Core.World;
 using JetBrains.Annotations;
 using UnityEngine;
 using Debug = UnityEngine.Debug;
+using Logger = GUZ.Core.Util.Logger;
 
 namespace GUZ.Core.Manager
 {
@@ -302,7 +304,7 @@ namespace GUZ.Core.Manager
                 if (index == -1)
                 {
                     //throw new ArgumentException("The specified waypoint is not in the queue.");
-                    Debug.Log("The specified waypoint " + waypoint.Name + " is not in the queue.");
+                    Logger.Log("The specified waypoint " + waypoint.Name + " is not in the queue.", LogCat.Misc);
                     return;
                 }
 

@@ -4,11 +4,12 @@ using System.Linq;
 using System.Text;
 using GUZ.Core.Caches;
 using GUZ.Core.Globals;
+using GUZ.Core.Util;
 using GUZ.Core.Vm;
 using ZenKit;
 using ZenKit.Daedalus;
 using static GUZ.Core.Globals.Constants;
-using Debug = UnityEngine.Debug;
+using Logger = GUZ.Core.Util.Logger;
 
 namespace GUZ.Core.Manager
 {
@@ -46,7 +47,7 @@ namespace GUZ.Core.Manager
             // cs, pl
             if (CheckEncoding(StringEncoding.CentralEurope, "MOBNAME_CRATE", "Bedna", "Skrzynia"))
             {
-                Debug.Log($"Selecting StringEncoding={StringEncoding.CentralEurope}");
+                Logger.Log($"Selecting StringEncoding={StringEncoding.CentralEurope}", LogCat.Loading);
                 StringEncodingController.SetEncoding(StringEncoding.CentralEurope);
 
                 GameData.Encoding = Encoding.GetEncoding((int)StringEncoding.CentralEurope);;
@@ -54,7 +55,7 @@ namespace GUZ.Core.Manager
             // ru
             else if (CheckEncoding(StringEncoding.EastEurope, "MOBNAME_CRATE", "Коробка"))
             {
-                Debug.Log($"Selecting StringEncoding={StringEncoding.EastEurope}");
+                Logger.Log($"Selecting StringEncoding={StringEncoding.EastEurope}", LogCat.Loading);
                 StringEncodingController.SetEncoding(StringEncoding.EastEurope);
 
                 GameData.Encoding = Encoding.GetEncoding((int)StringEncoding.EastEurope);
@@ -62,7 +63,7 @@ namespace GUZ.Core.Manager
             // de, en (2x), es, fr, it
             else if (CheckEncoding(StringEncoding.WestEurope, "MOBNAME_CRATE", "Kiste", "Crate", "Box", "Caja", "Boite", "Cassa"))
             {
-                Debug.Log($"Selecting StringEncoding={StringEncoding.WestEurope}");
+                Logger.Log($"Selecting StringEncoding={StringEncoding.WestEurope}", LogCat.Loading);
                 StringEncodingController.SetEncoding(StringEncoding.WestEurope);
 
                 GameData.Encoding = Encoding.GetEncoding((int)StringEncoding.WestEurope);

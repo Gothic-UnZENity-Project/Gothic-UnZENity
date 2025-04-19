@@ -4,9 +4,11 @@ using GUZ.Core.Creator;
 using GUZ.Core.Data.ZkEvents;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
+using GUZ.Core.Util;
 using GUZ.Core.Vm;
 using UnityEngine;
 using ZenKit.Daedalus;
+using Logger = GUZ.Core.Util.Logger;
 
 namespace GUZ.Core.Npc.Actions.AnimationActions
 {
@@ -69,7 +71,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
                 case WalkState.Done:
                     return; // NOP
                 default:
-                    Debug.Log($"MovementState {State} not yet implemented.");
+                    Logger.Log($"MovementState {State} not yet implemented.", LogCat.Ai);
                     return;
             }
         }
@@ -86,7 +88,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
                 case VmGothicEnums.WalkMode.Run:
                     return $"S_{weaponState}RUNL";
                 default:
-                    Debug.LogWarning($"Animation of type {Props.WalkMode} not yet implemented.");
+                    Logger.LogWarning($"Animation of type {Props.WalkMode} not yet implemented.", LogCat.Ai);
                     return "";
             }
         }

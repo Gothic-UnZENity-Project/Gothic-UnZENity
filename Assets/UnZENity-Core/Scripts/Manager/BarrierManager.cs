@@ -1,7 +1,9 @@
 using GUZ.Core.Config;
 using GUZ.Core.Creator.Meshes;
 using GUZ.Core.Extensions;
+using GUZ.Core.Util;
 using UnityEngine;
+using Logger = GUZ.Core.Util.Logger;
 using Random = UnityEngine.Random;
 
 namespace GUZ.Core.Manager
@@ -42,13 +44,11 @@ namespace GUZ.Core.Manager
 
         private readonly bool _featureShowBarrierVisual;
         private readonly bool _featureEnableSounds;
-        private readonly bool _featureShowBarrierLogs;
 
         public BarrierManager(DeveloperConfig config)
         {
             _featureShowBarrierVisual = config.EnableBarrierVisual;
             _featureEnableSounds = config.EnableGameSounds;
-            _featureShowBarrierLogs = config.EnableBarrierLogs;
 
             GlobalEventDispatcher.WorldSceneLoaded.AddListener(CreateBarrier);
         }
@@ -104,11 +104,6 @@ namespace GUZ.Core.Manager
 
             if (!_barrierFadeIn)
             {
-                if (_featureShowBarrierLogs)
-                {
-                    Debug.Log("Next Activation: " + _nextActivation);
-                }
-
                 return;
             }
 

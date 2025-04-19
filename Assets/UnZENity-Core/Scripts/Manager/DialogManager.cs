@@ -5,12 +5,12 @@ using GUZ.Core._Npc2;
 using GUZ.Core.Data;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
-using GUZ.Core.Npc;
 using GUZ.Core.Npc.Actions;
 using GUZ.Core.Npc.Actions.AnimationActions;
-using GUZ.Core.Properties;
+using GUZ.Core.Util;
 using UnityEngine;
 using ZenKit.Daedalus;
+using Logger = GUZ.Core.Util.Logger;
 
 namespace GUZ.Core.Manager
 {
@@ -27,7 +27,7 @@ namespace GUZ.Core.Manager
             if (!important)
             {
                 // Don't worry. I assume this even makes no sense at all, as also the "END" dialog would always trigger a return true.
-                Debug.LogError("Npc_CheckInfo isn't implemented for important=0.");
+                Logger.LogError("Npc_CheckInfo isn't implemented for important=0.", LogCat.Dialog);
             }
             return TryGetImportant(npc.GetUserData2().Props.Dialogs, out _);
         }
@@ -144,7 +144,7 @@ namespace GUZ.Core.Manager
 
             if (target != null)
             {
-                Debug.LogWarning("Ai_OutputSvm() - Handling with target not yet implemented!");
+                Logger.LogWarning("Ai_OutputSvm() - Handling with target not yet implemented!", LogCat.Dialog);
             }
 
             npcContainer.Props.AnimationQueue.Enqueue(new OutputSvm(

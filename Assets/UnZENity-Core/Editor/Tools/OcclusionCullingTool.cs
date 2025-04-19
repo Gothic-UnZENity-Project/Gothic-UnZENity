@@ -4,16 +4,17 @@ using GUZ.Core.Caches;
 using GUZ.Core.Caches.StaticCache;
 using GUZ.Core.Config;
 using GUZ.Core.Creator.Meshes;
-using GUZ.Core.Editor.Editor;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
+using GUZ.Core.Util;
 using GUZ.G1;
 using GUZ.G2;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using ZenKit;
+using Logger = GUZ.Core.Util.Logger;
 
 namespace GUZ.Core.Editor.Tools
 {
@@ -28,27 +29,27 @@ namespace GUZ.Core.Editor.Tools
     /// 8. Test if OC data is used in a normal game
     public class OcclusionCullingTool : EditorWindow
     {
-        [MenuItem("UnZENity/Occlusion Culling/Load world mesh for G1", true)]
+        [MenuItem("UnZENity/Build/Occlusion Culling/Load world mesh for G1", true)]
         private static bool ValidateG1OCLoading()
         {
             // If game is in playmode, disable button.
             return !EditorApplication.isPlaying;
         }
 
-        [MenuItem("UnZENity/Occlusion Culling/Load world mesh for G2", true)]
+        [MenuItem("UnZENity/Build/Occlusion Culling/Load world mesh for G2", true)]
         private static bool ValidateG2OCLoading()
         {
             // If game is in playmode, disable button.
             return !EditorApplication.isPlaying;
         }
 
-        [MenuItem("UnZENity/Occlusion Culling/Load world mesh for G1", priority = 1000)]
+        [MenuItem("UnZENity/Build/Occlusion Culling/Load world mesh for G1", priority = 1000)]
         public static async Task LoadWorldMeshG1()
         {
             await LoadWorldMesh(GameVersion.Gothic1);
         }
 
-        [MenuItem("UnZENity/Occlusion Culling/Load world mesh for G2", priority = 1001)]
+        [MenuItem("UnZENity/Build/Occlusion Culling/Load world mesh for G2", priority = 1001)]
         public static async Task LoadWorldMeshG2()
         {
             await LoadWorldMesh(GameVersion.Gothic2);
@@ -84,7 +85,7 @@ namespace GUZ.Core.Editor.Tools
 
             var worldName = SceneManager.GetActiveScene().name;
             var world = ResourceLoader.TryGetWorld(worldName, version)!;
-            Debug.Log("DONE - Loading world from ZenKit");
+            Logger.LogEditor("DONE - Loading world from ZenKit", LogCat.PreCaching);
 
             if (world == null)
             {
@@ -95,9 +96,9 @@ namespace GUZ.Core.Editor.Tools
             var worldChunkCache = new WorldChunkCacheCreator();
 
             await stationaryLightCache.CalculateStationaryLights(world.RootObjects).AwaitAndLog();
-            Debug.Log("DONE - Loading stationary light data");
+            Logger.LogEditor("DONE - Loading stationary light data", LogCat.PreCaching);
             await worldChunkCache.CalculateWorldChunks(world, stationaryLightCache.StationaryLightBounds).AwaitAndLog();
-            Debug.Log("DONE - Calculating world chunks");
+            Logger.LogEditor("DONE - Calculating world chunks", LogCat.PreCaching);
 
 
             var worldChunkData = new StaticCacheManager.WorldChunkContainer
@@ -110,7 +111,7 @@ namespace GUZ.Core.Editor.Tools
             };
 
             await MeshFactory.CreateWorld(worldChunkData, world.Mesh, null, null, useTextureArray: false).AwaitAndLog();
-            Debug.Log("DONE - Loading world mesh");
+            Logger.LogEditor("DONE - Loading world mesh", LogCat.PreCaching);
         }
 
         private void OnGUI()

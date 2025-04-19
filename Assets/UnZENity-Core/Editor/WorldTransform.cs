@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using GUZ.Core.Util;
 using UnityEditor;
 using UnityEngine;
+using Logger = GUZ.Core.Util.Logger;
 using Object = UnityEngine.Object;
 
-namespace GUZ.Core.Editor.Editor
+namespace GUZ.Core.Editor
 {
     /// <summary>
     ///
@@ -86,7 +88,7 @@ namespace GUZ.Core.Editor.Editor
                     editorInstance = CreateEditor(targets, AlignmentInspectorType);
                 }
                 if (editorInstance == null) {
-                    Debug.LogError("Could not create editor !");
+                    Logger.LogErrorEditor("Could not create editor !", LogCat.Debug);
                 }
                 return editorInstance;
             }
@@ -134,7 +136,7 @@ namespace GUZ.Core.Editor.Editor
                 if (method != null) {
                     decoratedMethods[methodName] = method;
                 } else {
-                    Debug.LogError(string.Format("Could not find method {0}", methodName));
+                    Logger.LogErrorEditor(string.Format("Could not find method {0}", methodName), LogCat.Debug);
                 }
             } else {
                 method = decoratedMethods[methodName];

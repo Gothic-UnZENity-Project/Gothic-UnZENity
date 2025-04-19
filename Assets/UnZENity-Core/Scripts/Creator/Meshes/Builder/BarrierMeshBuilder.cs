@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using GUZ.Core.Data.Container;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
+using GUZ.Core.Util;
 using UnityEngine;
 using ZenKit;
+using Logger = GUZ.Core.Util.Logger;
 using Material = UnityEngine.Material;
 using Mesh = UnityEngine.Mesh;
 using Vector3 = System.Numerics.Vector3;
@@ -110,11 +112,11 @@ namespace GUZ.Core.Creator.Meshes.Builder
             {
                 if (bMaterial.Texture.EndsWithIgnoreCase(".TGA"))
                 {
-                    Debug.LogError($"This is supposed to be a decal: ${bMaterial.Texture}");
+                    Logger.LogError($"This is supposed to be a decal: ${bMaterial.Texture}", LogCat.Mesh);
                 }
                 else
                 {
-                    Debug.LogError($"Couldn't get texture from name: {bMaterial.Texture}");
+                    Logger.LogError($"Couldn't get texture from name: {bMaterial.Texture}", LogCat.Mesh);
                 }
             }
 
@@ -132,7 +134,7 @@ namespace GUZ.Core.Creator.Meshes.Builder
             // No texture to add.
             if (bMaterial.Texture.IsEmpty())
             {
-                Debug.LogWarning($"No texture was set for: {bMaterial.Name}");
+                Logger.LogWarning($"No texture was set for: {bMaterial.Name}", LogCat.Mesh);
                 return;
             }
 
@@ -156,7 +158,7 @@ namespace GUZ.Core.Creator.Meshes.Builder
 
             if (subMesh.Triangles.Count % 3 != 0)
             {
-                Debug.LogError("Triangle count is not a multiple of 3");
+                Logger.LogError("Triangle count is not a multiple of 3", LogCat.Mesh);
             }
 
             mesh.SetVertices(subMesh.Vertices);

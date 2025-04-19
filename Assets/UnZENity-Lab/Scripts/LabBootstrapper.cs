@@ -95,8 +95,8 @@ namespace GUZ.Lab
             _configManager.SetDeveloperConfig(DeveloperConfig);
             _configManager.LoadGothicInis(GameVersion.Gothic1);
 
-            Logger.Set(Config.Dev.ZenKitLogLevel, Logging.OnZenKitLogMessage);
-            DirectMusic.Logger.Set(Config.Dev.DirectMusicLogLevel, Logging.OnDirectMusicLogMessage);
+            Logger.Set(Config.Dev.ZenKitLogLevel, Core.Util.Logger.OnZenKitLogMessage);
+            DirectMusic.Logger.Set(Config.Dev.DirectMusicLogLevel, Core.Util.Logger.OnDirectMusicLogMessage);
             _save = new SaveGameManager();
             _story = new StoryManager(Config.Dev);
             _textureManager = GetComponent<TextureManager>();

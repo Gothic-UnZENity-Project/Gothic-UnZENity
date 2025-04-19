@@ -11,7 +11,7 @@ namespace GUZ.VR.Editor
     {
         private const string HVR_COMPILER_FLAG = "GUZ_HVR_INSTALLED";
 
-        [MenuItem("UnZENity/Context/Check HVR status", priority = 1)]
+        [MenuItem("UnZENity/Build/Context/Check HVR status", priority = 1)]
         private static void CheckHVRPluginStatus()
         {
             var hvrFolder = Application.dataPath + "/HurricaneVR";
@@ -34,7 +34,7 @@ namespace GUZ.VR.Editor
         /// <summary>
         /// Activate compiler flag being used inside GvrContext classes. This decides whether to build or don't build HVR classes.
         /// </summary>
-        [MenuItem("UnZENity/Context/Activate HVR in Build", priority = 2)]
+        [MenuItem("UnZENity/Build/Context/Activate HVR in Build", priority = 2)]
         private static void ActivatePlugin()
         {
             ActivatePlugin(NamedBuildTarget.Standalone);
@@ -60,7 +60,7 @@ namespace GUZ.VR.Editor
         /// <summary>
         /// Deactivate compiler flag being used inside GvrContext classes. This decides whether to build or don't build HVR classes.
         /// </summary>
-        [MenuItem("UnZENity/Context/De-activate HVR", priority = 3)]
+        [MenuItem("UnZENity/Build/Context/De-activate HVR", priority = 3)]
         private static void DeactivatePlugin()
         {
             DeactivatePlugin(NamedBuildTarget.Standalone);

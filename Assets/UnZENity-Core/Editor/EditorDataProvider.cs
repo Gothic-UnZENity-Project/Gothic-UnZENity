@@ -5,7 +5,7 @@ using GUZ.Core.Manager.Culling;
 using GUZ.Core.Manager.Vobs;
 using GUZ.Core.World;
 
-namespace GUZ.Core.Editor.Editor
+namespace GUZ.Core.Editor
 {
     /// <summary>
     /// During Editor tool usage, we execute normal game logic. We therefore need to set some properties.

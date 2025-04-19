@@ -1,15 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using GUZ.Core.Caches;
 using GUZ.Core.Config;
-using GUZ.Core.Creator;
 using GUZ.Core.Creator.Meshes;
 using GUZ.Core.Creator.Sounds;
-using GUZ.Core.Data.Container;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Properties;
+using GUZ.Core.Util;
 using GUZ.Core.Vm;
 using GUZ.Core.Vob;
 using GUZ.Core.Vob.WayNet;
@@ -21,6 +19,7 @@ using ZenKit.Util;
 using ZenKit.Vobs;
 using Light = ZenKit.Vobs.Light;
 using LightType = ZenKit.Vobs.LightType;
+using Logger = GUZ.Core.Util.Logger;
 using Object = UnityEngine.Object;
 
 namespace GUZ.Core.Manager.Vobs
@@ -228,7 +227,7 @@ namespace GUZ.Core.Manager.Vobs
                     // Nothing to do.
                     return;
                 default:
-                    Debug.LogError($"VobType={vob.Type} not yet handled. And we didn't know we need to do so. ;-)");
+                    Logger.LogError($"VobType={vob.Type} not yet handled. And we didn't know we need to do so. ;-)", LogCat.Vob);
                     return;
             }
 
@@ -343,7 +342,7 @@ namespace GUZ.Core.Manager.Vobs
         /// </summary>
         private GameObject CreateNpc(ZenKit.Vobs.Npc npcVob)
         {
-            Debug.LogError("NPCs from SaveGame not yet handled.");
+            Logger.LogError("NPCs from SaveGame not yet handled.", LogCat.Vob);
             return null;
             // var instance = GameData.GothicVm.AllocInstance<NpcInstance>(npcVob.Name);
             // var npcData = new NpcContainer
@@ -418,7 +417,7 @@ namespace GUZ.Core.Manager.Vobs
             if (vob.LightStatic)
             {
                 // Logging these will cause stuttering when a lot of them are needed.
-                // Debug.LogWarning($"Non-static lights aren't handled so far. go={vob.Name}");
+                // Logger.LogWarning($"Non-static lights aren't handled so far. go={vob.Name}");
                 return null;
             }
 
@@ -447,7 +446,8 @@ namespace GUZ.Core.Manager.Vobs
 
             if (lightComp.Index == -1)
             {
-                Debug.LogWarning($"Light {vob.Name} not found in StaticCache. Therefore no LightIndex set and ignored by shader. Will be solved later. ;-)");
+                Logger.LogWarning($"Light {vob.Name} not found in StaticCache. Therefore no LightIndex set and ignored by shader. " +
+                                  $"Will be solved later. ;-)", LogCat.Vob);
             }
 
             lightComp.Init();
@@ -485,8 +485,9 @@ namespace GUZ.Core.Manager.Vobs
             if (vobObj == null)
             {
                 Object.Destroy(prefabInstance); // No mesh created. Delete the prefab instance again.
-                Debug.LogError(
-                    $"There should be no! object which can't be found n:{vob.Name} i:{vob.Instance}. We need to use >PxVobItem.instance< to do it right!");
+                Logger.LogError(
+                    $"There should be no! object which can't be found n:{vob.Name} i:{vob.Instance}. " +
+                    $"We need to use >PxVobItem.instance< to do it right!", LogCat.Vob);
                 return null;
             }
 
@@ -532,7 +533,7 @@ namespace GUZ.Core.Manager.Vobs
 
             if (vobObj == null)
             {
-                Debug.LogWarning($"{vob.Name} - mesh for MobContainer not found.");
+                Logger.LogWarning($"{vob.Name} - mesh for MobContainer not found.", LogCat.Vob);
                 return null;
             }
 
@@ -732,7 +733,7 @@ namespace GUZ.Core.Manager.Vobs
 
             if (meshName.IsNullOrEmpty())
             {
-                Debug.LogWarning("VisualName is empty.");
+                Logger.LogWarning("VisualName is empty.", LogCat.Vob);
                 return null;
             }
 
@@ -802,7 +803,7 @@ namespace GUZ.Core.Manager.Vobs
                 return ret;
             }
 
-            Debug.LogWarning($">{meshName}<'s has no mdl/mrm.");
+            Logger.LogWarning($">{meshName}<'s has no mdl/mrm.", LogCat.Vob);
             return null;
         }
 

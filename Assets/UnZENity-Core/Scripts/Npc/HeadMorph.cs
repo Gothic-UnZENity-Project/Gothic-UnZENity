@@ -1,7 +1,9 @@
 using System;
 using GUZ.Core.Extensions;
 using GUZ.Core.Morph;
+using GUZ.Core.Util;
 using UnityEngine;
+using Logger = GUZ.Core.Util.Logger;
 
 namespace GUZ.Core.Npc
 {
@@ -78,7 +80,7 @@ namespace GUZ.Core.Npc
                 return HeadMorphType.Eat;
             }
 
-            Debug.LogError($"{name} as morphMeshType not yet mapped.");
+            Logger.LogError($"{name} as morphMeshType not yet mapped.", LogCat.Animation);
 
             // If nothing found, we return the hurt face. Meme potential? ;-)
             return HeadMorphType.Hurt;

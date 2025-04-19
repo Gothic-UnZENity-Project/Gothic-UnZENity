@@ -1,5 +1,7 @@
+using GUZ.Core.Util;
 using UnityEditor;
 using UnityEngine;
+using Logger = GUZ.Core.Util.Logger;
 
 namespace GUZ.Core.Editor.Tools
 {
@@ -16,23 +18,23 @@ namespace GUZ.Core.Editor.Tools
         private int _selectedPositionIndex;
 
 
-        [MenuItem("UnZENity/SceneView/Capture Camera Position", priority = 101)]
-        private static void CaptureSceneCameraPosition()
-        {
-            var sceneView = SceneView.lastActiveSceneView;
-            Debug.Log("Current Scene Camera Position+Rotation:");
-            Debug.Log(sceneView.camera.transform.position);
-            Debug.Log(sceneView.camera.transform.rotation.eulerAngles);
-        }
-
-
-        [MenuItem("UnZENity/SceneView/Move to Position", priority = 100)]
+        [MenuItem("UnZENity/Debug/SceneView/Move to Position", priority = 100)]
         private static void SetSceneCameraPosition()
         {
             var window = ScriptableObject.CreateInstance<SceneViewCameraQuickMoveTool>();
             window.position = new Rect(0, 0, 250, 100);
             window.ShowPopup();
         }
+
+        [MenuItem("UnZENity/Debug/SceneView/Capture Camera Position", priority = 101)]
+        private static void CaptureSceneCameraPosition()
+        {
+            var sceneView = SceneView.lastActiveSceneView;
+            Logger.LogEditor("Current Scene Camera Position+Rotation:", LogCat.Debug);
+            Logger.LogEditor(sceneView.camera.transform.position.ToString(), LogCat.Debug);
+            Logger.LogEditor(sceneView.camera.transform.rotation.eulerAngles.ToString(), LogCat.Debug);
+        }
+
 
         private void OnGUI()
         {

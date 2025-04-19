@@ -5,11 +5,13 @@ using System.Linq;
 using GUZ.Core.Data.Container;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
+using GUZ.Core.Util;
 using JetBrains.Annotations;
 using UnityEngine;
 using ZenKit;
 using ZenKit.Daedalus;
 using ZenKit.Vobs;
+using Logger = GUZ.Core.Util.Logger;
 using Mesh = ZenKit.Mesh;
 using Texture = ZenKit.Texture;
 using TextureFormat = ZenKit.TextureFormat;
@@ -83,7 +85,7 @@ namespace GUZ.Core.Manager
         {
             if (save == null)
             {
-                Debug.LogError($"SaveGame with id {saveGameId} doesn't exist.");
+                Logger.LogError($"SaveGame with id {saveGameId} doesn't exist.", LogCat.Loading);
                 return;
             }
 
@@ -163,7 +165,7 @@ namespace GUZ.Core.Manager
 
             if (!Directory.Exists(saveGamePath))
             {
-                Debug.LogError($"SaveGame inside folder >{saveGamePath}< doesn't exist.");
+                Logger.LogError($"SaveGame inside folder >{saveGamePath}< doesn't exist.", LogCat.Loading);
                 return null;
             }
 

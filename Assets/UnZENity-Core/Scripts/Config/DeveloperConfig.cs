@@ -108,7 +108,6 @@ namespace GUZ.Core.Config
 
         [OverrideLabel("DirectMusic Log Level")]
         public DirectMusic.LogLevel DirectMusicLogLevel = DirectMusic.LogLevel.Warning;
-        public bool EnableBarrierLogs;
 
 
         /**

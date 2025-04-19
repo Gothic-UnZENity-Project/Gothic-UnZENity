@@ -4,12 +4,14 @@ using System.Collections.Generic;
 using System.Linq;
 using GUZ.Core.Config;
 using GUZ.Core.Debugging;
+using GUZ.Core.Util;
 using GUZ.Core.Vm;
 using GUZ.Core.Vob;
 using MyBox;
 using UnityEngine;
 using ZenKit;
 using ZenKit.Vobs;
+using Logger = GUZ.Core.Util.Logger;
 
 namespace GUZ.Core.Manager.Culling
 {
@@ -240,7 +242,7 @@ namespace GUZ.Core.Manager.Culling
                 if (!bounds.HasValue)
                 {
                     // e.g. ITMICELLO which has no mesh and therefore no cached Bounds.
-                    // Debug.LogError($"Couldn't find mesh for >{obj}< to be used for CullingGroup. Skipping...");
+                    // Logger.LogError($"Couldn't find mesh for >{obj}< to be used for CullingGroup. Skipping...");
                     continue;
                 }
 
@@ -305,7 +307,7 @@ namespace GUZ.Core.Manager.Culling
 
             if (loaderComp == null)
             {
-                Debug.LogError($"Couldn't find VobLoader for >{go}< to be used for CullingGroup. Skipping...");
+                Logger.LogError($"Couldn't find VobLoader for >{go}< to be used for CullingGroup. Skipping...", LogCat.Mesh);
                 return null;
             }
 
@@ -418,7 +420,7 @@ namespace GUZ.Core.Manager.Culling
             {
                 // We can carefully disable this log as some elements aren't cached.
                 // e.g. when there is no texture like for OC_DECORATE_V4.3DS
-                Debug.LogError($"Couldn't find mesh bounds information from StaticCache for >{meshName}<.");
+                Logger.LogError($"Couldn't find mesh bounds information from StaticCache for >{meshName}<.", LogCat.Mesh);
                 return default;
             }
         }

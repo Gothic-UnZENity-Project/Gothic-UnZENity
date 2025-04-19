@@ -1,8 +1,10 @@
 using GUZ.Core._Npc2;
 using GUZ.Core.Globals;
+using GUZ.Core.Util;
 using GUZ.Core.Vm;
 using UnityEngine;
 using static GUZ.Core.Globals.Constants;
+using Logger = GUZ.Core.Util.Logger;
 
 namespace GUZ.Core.Npc.Actions.AnimationActions
 {
@@ -85,7 +87,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
                     walkmode = "Dive";
                     break;
                 default:
-                    Debug.LogWarning($"Animation of type {Props.WalkMode} not yet implemented.");
+                    Logger.LogWarning($"Animation of type {Props.WalkMode} not yet implemented.", LogCat.Ai);
                     return "";
             }
 

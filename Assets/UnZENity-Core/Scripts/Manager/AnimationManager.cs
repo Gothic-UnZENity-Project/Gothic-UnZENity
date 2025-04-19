@@ -8,11 +8,13 @@ using GUZ.Core.Data.ZkEvents;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Npc.Actions;
+using GUZ.Core.Util;
 using JetBrains.Annotations;
 using MyBox;
 using UnityEngine;
 using ZenKit;
 using Animation = UnityEngine.Animation;
+using Logger = GUZ.Core.Util.Logger;
 
 namespace GUZ.Core.Manager
 {
@@ -144,8 +146,9 @@ namespace GUZ.Core.Manager
 
                 if (animData.Animation.Direction == AnimationDirection.Backward)
                 {
-                    Debug.LogWarning(
-                        $"Backwards animations not yet handled. Called for >{animName}< from >{mdsName}<. Currently playing Forward.");
+                    Logger.LogWarning(
+                        $"Backwards animations not yet handled. Called for >{animName}< from >{mdsName}<. Currently playing Forward.",
+                        LogCat.Animation);
                 }
 
                 animData.Clip = CreateAnimationClip(modelAnimation, mdh, go, animData);
@@ -223,7 +226,7 @@ namespace GUZ.Core.Manager
 
             if (anim.ParticleEffects.Any())
             {
-                Debug.LogWarning($"SFX events not yet implemented. Tried to use for {anim.Name}");
+                Logger.LogWarning($"SFX events not yet implemented. Tried to use for {anim.Name}", LogCat.Animation);
             }
         }
 

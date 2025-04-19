@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using GUZ.Core._Npc2;
-using GUZ.Core.Data.Container;
+using GUZ.Core.Util;
 using JetBrains.Annotations;
 using MyBox;
 using UnityEngine;
@@ -10,6 +10,7 @@ using ZenKit;
 using ZenKit.Daedalus;
 using ZenKit.Util;
 using ZenKit.Vobs;
+using Logger = GUZ.Core.Util.Logger;
 using TextureFormat = UnityEngine.TextureFormat;
 
 namespace GUZ.Core.Extensions
@@ -319,7 +320,7 @@ namespace GUZ.Core.Extensions
 
             if (fileName == null)
             {
-                Debug.LogError($"key {svmEntry} not (yet) implemented.");
+                Logger.LogError($"key {svmEntry} not (yet) implemented.", LogCat.Misc);
             }
 
             return fileName;

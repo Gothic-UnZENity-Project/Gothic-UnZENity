@@ -2,8 +2,9 @@ using System.Text.RegularExpressions;
 using GUZ.Core._Npc2;
 using GUZ.Core.Extensions;
 using GUZ.Core.Npc;
-using GUZ.Core.Properties;
+using GUZ.Core.Util;
 using UnityEngine;
+using Logger = GUZ.Core.Util.Logger;
 
 namespace GUZ.Core.Creator.Meshes.Builder
 {
@@ -15,7 +16,7 @@ namespace GUZ.Core.Creator.Meshes.Builder
 
             if (headGo == null)
             {
-                Debug.LogWarning($"No NPC head found for {RootGo.name}");
+                Logger.LogWarning($"No NPC head found for {RootGo.name}", LogCat.Mesh);
                 return RootGo;
             }
 

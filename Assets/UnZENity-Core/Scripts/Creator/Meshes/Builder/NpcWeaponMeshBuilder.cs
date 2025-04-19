@@ -1,7 +1,9 @@
 using GUZ.Core.Extensions;
+using GUZ.Core.Util;
 using GUZ.Core.Vm;
 using UnityEngine;
 using ZenKit.Daedalus;
+using Logger = GUZ.Core.Util.Logger;
 
 namespace GUZ.Core.Creator.Meshes.Builder
 {
@@ -30,7 +32,7 @@ namespace GUZ.Core.Creator.Meshes.Builder
                 case VmGothicEnums.ItemFlags.ItemKatFf:
                     return EquipRangeWeapon();
                 default:
-                    Debug.LogError($"WeaponType {_mainFlag} isn't handled yet.");
+                    Logger.LogError($"WeaponType {_mainFlag} isn't handled yet.", LogCat.Mesh);
                     return null;
             }
         }

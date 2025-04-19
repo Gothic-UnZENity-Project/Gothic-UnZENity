@@ -2,11 +2,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using GUZ.Core.Util;
 using MyBox;
 using UnityEngine;
 using ZenKit;
 using ZenKit.Util;
 using ZenKit.Vobs;
+using Logger = GUZ.Core.Util.Logger;
 using Vector3 = System.Numerics.Vector3;
 
 namespace GUZ.Core.Debugging
@@ -47,7 +49,7 @@ namespace GUZ.Core.Debugging
 
             GameGlobals.SaveGame.SaveCurrentGame(SaveSlot, $"UnZENity-DEBUG - {DateTime.Now}");
 
-            Debug.Log("DONE");
+            Logger.LogEditor("DONE", LogCat.Debug);
         }
 
         private void CompareSaves()
@@ -57,22 +59,23 @@ namespace GUZ.Core.Debugging
 
             var world1 = save1.LoadWorld(WorldToCompare)!;
             var world2 = save2.LoadWorld(WorldToCompare)!;
-            Debug.Log(
-                $"Comparing >{WorldToCompare}< in save slots >{save1.Metadata.Title}< and >{save2.Metadata.Title}<.");
+            Logger.LogEditor(
+                $"Comparing >{WorldToCompare}< in save slots >{save1.Metadata.Title}< and >{save2.Metadata.Title}<.",
+                LogCat.Debug);
 
             var vobsByTypeA = world1.RootObjects.GroupBy(i => i.Type).ToDictionary(i => i.Key, i => i.ToList());
             var vobsByTypeB = world2.RootObjects.GroupBy(i => i.Type).ToDictionary(i => i.Key, i => i.ToList());
 
-            Debug.Log("Comparing VOB counts");
+            Logger.LogEditor("Comparing VOB counts", LogCat.Debug);
             {
                 foreach (var countA in vobsByTypeA)
                 {
-                    Debug.Log("---------");
-                    Debug.Log($"### Checking VOB type >{countA.Key}<");
+                    Logger.LogEditor("---------", LogCat.Debug);
+                    Logger.LogEditor($"### Checking VOB type >{countA.Key}<", LogCat.Debug);
 
                     if (!vobsByTypeB.Keys.Contains(countA.Key))
                     {
-                        Debug.LogError($"VOB type {countA.Key} is missing in slotB.");
+                        Logger.LogErrorEditor($"VOB type {countA.Key} is missing in slotB.", LogCat.Debug);
                     }
                     else
                     {
@@ -84,13 +87,13 @@ namespace GUZ.Core.Debugging
                 vobsByTypeB
                     .Where(i => !vobsByTypeA.Keys.Contains(i.Key))
                     .ToList()
-                    .ForEach(i => Debug.LogError($"VOBs of type >{i.Key}< are missing in slotB."));
+                    .ForEach(i => Logger.LogErrorEditor($"VOBs of type >{i.Key}< are missing in slotB.", LogCat.Debug));
             }
 
             return;
 
-            Debug.Log("--------------------");
-            Debug.Log("Compare close NPCs (excluding Monster)");
+            Logger.LogEditor("--------------------", LogCat.Debug);
+            Logger.LogEditor("Compare close NPCs (excluding Monster)", LogCat.Debug);
             {
                 var npcsA = world1.RootObjects.Where(i => i.Type == VirtualObjectType.oCNpc)
                     .Select(i => (ZenKit.Vobs.Npc)i).ToList();
@@ -109,7 +112,7 @@ namespace GUZ.Core.Debugging
 
                     if (npcB == null)
                     {
-                        Debug.LogError($"NPC {npcA.Name} not found in saveB.");
+                        Logger.LogErrorEditor($"NPC {npcA.Name} not found in saveB.", LogCat.Debug);
                         continue;
                     }
 
@@ -130,14 +133,14 @@ namespace GUZ.Core.Debugging
                 }
             }
 
-            Debug.Log("--------------------");
-            Debug.Log("Compare far away NPCs (excluding Monster)");
+            Logger.LogEditor("--------------------", LogCat.Debug);
+            Logger.LogEditor("Compare far away NPCs (excluding Monster)", LogCat.Debug);
             {
 
             }
 
-            Debug.Log("--------------------");
-            Debug.Log("Comparing oCItem VOBs");
+            Logger.LogEditor("--------------------", LogCat.Debug);
+            Logger.LogEditor("Comparing oCItem VOBs", LogCat.Debug);
             {
                 var vobsA = world1.RootObjects.Where(i => i.Type == VirtualObjectType.oCItem).ToList();
                 var vobsB = world2.RootObjects.Where(i => i.Type == VirtualObjectType.oCItem).ToList();
@@ -156,8 +159,8 @@ namespace GUZ.Core.Debugging
                 }
             }
 
-            Debug.Log("--------------------");
-            Debug.Log("Comparing static VOBs (excluding NPCs+Monsters+Items)");
+            Logger.LogEditor("--------------------", LogCat.Debug);
+            Logger.LogEditor("Comparing static VOBs (excluding NPCs+Monsters+Items)", LogCat.Debug);
             {
                 var vobsA = world1.RootObjects
                     .Where(i => i.Type != VirtualObjectType.oCNpc && i.Type != VirtualObjectType.oCItem).ToList();
@@ -217,11 +220,11 @@ namespace GUZ.Core.Debugging
         {
             if (slotA.Count == slotB.Count)
             {
-                Debug.Log($"VOB count matches: type={slotA.FirstOrDefault()?.Type} slotA={slotA.Count}, slotB={slotB.Count}.");
+                Logger.LogEditor($"VOB count matches: type={slotA.FirstOrDefault()?.Type} slotA={slotA.Count}, slotB={slotB.Count}.", LogCat.Debug);
             }
             else
             {
-                Debug.LogError($"VOB count does not match: type={slotA.FirstOrDefault()?.Type} slotA={slotA.Count}, slotB={slotB.Count}.");
+                Logger.LogErrorEditor($"VOB count does not match: type={slotA.FirstOrDefault()?.Type} slotA={slotA.Count}, slotB={slotB.Count}.", LogCat.Debug);
                 return;
             }
 
@@ -263,7 +266,7 @@ namespace GUZ.Core.Debugging
 
                             if (listA.NotNullOrEmpty())
                             {
-                                Debug.Log($"### Checking VOB Children of {objectName}");
+                                Logger.LogEditor($"### Checking VOB Children of {objectName}", LogCat.Debug);
                                 ComparePropertiesByType(listA, listB);
                             }
                             // Else - all good

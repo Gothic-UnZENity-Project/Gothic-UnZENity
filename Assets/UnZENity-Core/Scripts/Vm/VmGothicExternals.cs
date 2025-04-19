@@ -6,9 +6,11 @@ using GUZ.Core.Caches;
 using GUZ.Core.Creator;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
+using GUZ.Core.Util;
 using UnityEngine;
 using ZenKit;
 using ZenKit.Daedalus;
+using Logger = GUZ.Core.Util.Logger;
 using Random = UnityEngine.Random;
 using Vector3 = System.Numerics.Vector3;
 
@@ -192,7 +194,7 @@ namespace GUZ.Core.Vm
             {
                 if (GameData.GothicVm.GlobalSelf == null)
                 {
-                    Debug.LogWarning($"Method >{sym.Name}< not yet implemented in DaedalusVM.");
+                    Logger.LogWarningEditor($"Method >{sym.Name}< not yet implemented in DaedalusVM.", LogCat.ZenKit);
                 }
                 else
                 {
@@ -200,12 +202,12 @@ namespace GUZ.Core.Vm
                     var selfUserData = GameData.GothicVm.GlobalSelf.UserData as NpcContainer2;
                     var npcName = MultiTypeCache.NpcCache2.FirstOrDefault(x => x.Instance == selfUserData.Instance)?.Go
                         ?.transform.parent.name;
-                    Debug.LogWarning($"Method >{sym.Name}< not yet implemented in DaedalusVM (called on >{npcName}<).");
+                    Logger.LogWarningEditor($"Method >{sym.Name}< not yet implemented in DaedalusVM (called on >{npcName}<).", LogCat.ZenKit);
                 }
             }
             catch (Exception)
             {
-                Debug.LogError("Bug in getting Npc. Fix or delete.");
+                Logger.LogErrorEditor("Bug in getting Npc. Fix or delete.", LogCat.ZenKit);
             }
         }
 
@@ -381,7 +383,7 @@ namespace GUZ.Core.Vm
         {
             if (item == null)
             {
-                Debug.LogError("Hlp_IsItem called with a null item");
+                Logger.LogError("Hlp_IsItem called with a null item", LogCat.ZenKit);
                 return 0;
             }
 
@@ -518,7 +520,7 @@ namespace GUZ.Core.Vm
                 return;
             }
 
-            Debug.Log($"[zspy]: {message}");
+            Logger.Log($"[zspy]: {message}", LogCat.ZSpy);
         }
 
 
@@ -529,7 +531,7 @@ namespace GUZ.Core.Vm
                 return;
             }
 
-            Debug.Log($"[zspy,{channel}]: {message}");
+            Logger.Log($"[zspy,{channel}]: {message}", LogCat.ZSpy);
         }
 
 
@@ -540,7 +542,7 @@ namespace GUZ.Core.Vm
                 return;
             }
 
-            Debug.Log($"[zspy]: {message}");
+            Logger.Log($"[zspy]: {message}", LogCat.ZSpy);
         }
 
 
@@ -551,7 +553,7 @@ namespace GUZ.Core.Vm
                 return;
             }
 
-            Debug.Log($"[zspy,{channel}]: {message}");
+            Logger.Log($"[zspy,{channel}]: {message}", LogCat.ZSpy);
         }
 
         #endregion

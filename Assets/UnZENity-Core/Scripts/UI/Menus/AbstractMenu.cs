@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
+using GUZ.Core.Util;
 using MyBox;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using ZenKit.Daedalus;
+using Logger = GUZ.Core.Util.Logger;
 
 namespace GUZ.Core.UnZENity_Core.Scripts.UI
 {
@@ -310,7 +312,7 @@ namespace GUZ.Core.UnZENity_Core.Scripts.UI
                     ExecuteCommand(itemName, commandName);
                     break;
                 default:
-                    Debug.LogError($"Unknown command {commandName}({action})");
+                    Logger.LogError($"Unknown command {commandName}({action})", LogCat.Ui);
                     break;
             }
         }

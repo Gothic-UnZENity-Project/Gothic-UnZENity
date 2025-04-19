@@ -13,6 +13,7 @@ using MyBox;
 using UnityEngine;
 using ZenKit;
 using ZenKit.Daedalus;
+using Logger = GUZ.Core.Util.Logger;
 using Vector3 = System.Numerics.Vector3;
 
 namespace GUZ.Core._Npc2
@@ -128,14 +129,14 @@ namespace GUZ.Core._Npc2
 
             if (npc.GetUserData2() == null)
             {
-                Debug.LogError($"NPC is not set for {nameof(ExtCreateInvItems)}. Is it an error on Daedalus or our end?");
+                Logger.LogError($"NPC is not set for {nameof(ExtCreateInvItems)}. Is it an error on Daedalus or our end?", LogCat.Npc);
                 return;
             }
 
             var props = npc.GetUserData2().Props;
             if (props == null)
             {
-                Debug.LogError($"NPC not found with index {npc.Index}");
+                Logger.LogError($"NPC not found with index {npc.Index}", LogCat.Npc);
                 return;
             }
             props.Items.TryAdd(itemId, amount);
@@ -257,7 +258,7 @@ namespace GUZ.Core._Npc2
 
             if (newRoutine == null)
             {
-                Debug.LogError($"Routine {formattedRoutineName} couldn't be found.");
+                Logger.LogError($"Routine {formattedRoutineName} couldn't be found.", LogCat.Npc);
                 return;
             }
 

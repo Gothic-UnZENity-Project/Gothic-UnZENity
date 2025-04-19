@@ -19,6 +19,7 @@ using MyBox;
 using UnityEngine;
 using ZenKit;
 using ZenKit.Daedalus;
+using Logger = GUZ.Core.Util.Logger;
 using Object = UnityEngine.Object;
 using WayNet_WayPoint = GUZ.Core.Vob.WayNet.WayPoint;
 
@@ -252,7 +253,7 @@ namespace GUZ.Core.Creator
 
             if (initialSpawnPoint == null)
             {
-                Debug.LogWarning($"spawnPoint={spawnPoint} couldn't be found.");
+                Logger.LogWarning($"spawnPoint={spawnPoint} couldn't be found.", LogCat.Npc);
                 return false;
             }
 
@@ -300,8 +301,9 @@ namespace GUZ.Core.Creator
 
             if (!isPositionFound)
             {
-                Debug.LogError(
-                    $"No suitable spawn point found for NPC >{npc.Go.name}<. Circle search didn't find anything!");
+                Logger.LogError(
+                    $"No suitable spawn point found for NPC >{npc.Go.name}<. Circle search didn't find anything!",
+                    LogCat.Npc);
                 return false;
             }
 

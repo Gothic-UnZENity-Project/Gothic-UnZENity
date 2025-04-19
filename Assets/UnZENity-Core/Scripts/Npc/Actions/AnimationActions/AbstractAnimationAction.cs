@@ -5,11 +5,12 @@ using GUZ.Core.Creator;
 using GUZ.Core.Data.ZkEvents;
 using GUZ.Core.Extensions;
 using GUZ.Core.Manager;
-using GUZ.Core.Properties;
+using GUZ.Core.Util;
 using GUZ.Core.Vm;
 using UnityEngine;
 using ZenKit.Daedalus;
 using EventType = ZenKit.EventType;
+using Logger = GUZ.Core.Util.Logger;
 using Object = UnityEngine.Object;
 
 namespace GUZ.Core.Npc.Actions.AnimationActions
@@ -68,7 +69,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
                     walkmode = "DIVE";
                     break;
                 default:
-                    Debug.LogWarning($"Animation of type {Props.WalkMode} not yet implemented.");
+                    Logger.LogWarning($"Animation of type {Props.WalkMode} not yet implemented.", LogCat.Ai);
                     return "";
             }
 
@@ -87,7 +88,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
 
             if (sfxData.EmptySlot)
             {
-                Debug.LogWarning($"PxEventSfxData.emptySlot not yet implemented: {sfxData.Name}");
+                Logger.LogWarning($"PxEventSfxData.emptySlot not yet implemented: {sfxData.Name}", LogCat.Ai);
             }
         }
 
@@ -103,11 +104,12 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
                     RemoveItem();
                     break;
                 case EventType.TorchInventory:
-                    Debug.Log(
-                        "EventType.inventory_torch: I assume this means: if torch is in inventory, then put it out. But not really sure. Need a NPC with real usage of it to predict right.");
+                    Logger.Log(
+                        "EventType.inventory_torch: I assume this means: if torch is in inventory, then put it out. " +
+                        "But not really sure. Need a NPC with real usage of it to predict right.", LogCat.Ai);
                     break;
                 default:
-                    Debug.LogWarning($"EventType.type {data.Type} not yet supported.");
+                    Logger.LogWarning($"EventType.type {data.Type} not yet supported.", LogCat.Ai);
                     break;
             }
         }

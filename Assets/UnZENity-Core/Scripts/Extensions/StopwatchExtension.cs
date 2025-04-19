@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using GUZ.Core.Util;
 using Debug = UnityEngine.Debug;
 
 namespace GUZ.Core.Extensions
@@ -11,7 +12,7 @@ namespace GUZ.Core.Extensions
         /// </summary>
         public static void Log(this Stopwatch stopwatch, string message)
         {
-            Debug.Log($"[Stopwatch] {message} [{stopwatch.Elapsed.TotalMilliseconds / 1000}s]");
+            Logger.LogEditor($"[StopWatch] {message} [{stopwatch.Elapsed.TotalMilliseconds / 1000}s]", LogCat.Misc);
         }
 
         /// <summary>

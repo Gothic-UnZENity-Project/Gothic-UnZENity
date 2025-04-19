@@ -1,7 +1,9 @@
 using System;
 using GUZ.Core.Globals;
+using GUZ.Core.Util;
 using UnityEngine;
 using ZenKit;
+using Logger = GUZ.Core.Util.Logger;
 
 namespace GUZ.Core.Manager.Scenes
 {
@@ -53,21 +55,21 @@ namespace GUZ.Core.Manager.Scenes
             // Neither is installed
             if (!isG1Installed && !isG2Installed)
             {
-                Debug.Log("No installation of Gothic1 nor Gothic2 found.");
+                Logger.LogWarning("No installation of Gothic1 nor Gothic2 found.", LogCat.Loading);
 
                 _invalidInstallationDir.SetActive(true);
             }
             // Both are installed
             else if (isG1Installed && isG2Installed)
             {
-                Debug.Log("Gothic1 and Gothic2 installation found.");
+                Logger.Log("Gothic1 and Gothic2 installation found.", LogCat.Loading);
             }
             // Only one is installed
             else
             {
                 var version = isG1Installed ? GameVersion.Gothic1 : GameVersion.Gothic2;
 
-                Debug.Log($"Installation for {version} found only.");
+                Logger.Log($"Installation for {version} found only.", LogCat.Loading);
 
                 GameManager.I.InitPhase2(version);
                 GameManager.I.LoadScene(Constants.SceneLogo, Constants.SceneGameVersion);
