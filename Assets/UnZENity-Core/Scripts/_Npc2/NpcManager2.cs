@@ -86,8 +86,25 @@ namespace GUZ.Core._Npc2
         {
             if (GameGlobals.SaveGame.IsNewGame)
                 await _initializer.InitNpcsNewGame(loading);
-            else
-                await _initializer.InitNpcsLoadedGame(loading);
+            // else
+                //await _initializer.InitNpcsLoadedGame(loading);
+        }
+
+        /// <summary>
+        /// World Vobs from a SaveGame contains NPCs if they're close to our hero during save time.
+        /// We will create them here as a "normal" lazy loaded NPC.
+        /// </summary>
+        public void CreateVobNpc(ZenKit.Vobs.Npc vobNpc)
+        {
+            if (vobNpc.Name.EqualsIgnoreCase(Constants.DaedalusHeroInstanceName))
+            {
+                GameGlobals.Player.HeroSpawnPosition = vobNpc.Position.ToUnityVector();
+                GameGlobals.Player.HeroSpawnRotation = vobNpc.Rotation.ToUnityQuaternion();
+                return;
+            }
+
+            // Initialize NPC and set its data from SaveGame (VOB entry).
+            _initializer.InitNpcSaveGame(vobNpc);
         }
 
         public void ExtWldInsertNpc(int npcInstanceIndex, string spawnPoint)
