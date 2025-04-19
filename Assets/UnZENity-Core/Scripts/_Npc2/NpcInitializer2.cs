@@ -23,17 +23,21 @@ namespace GUZ.Core._Npc2
     /// </summary>
     public class NpcInitializer2
     {
-        private GameObject _rootGo;
+        public GameObject RootGo;
         private readonly List<(NpcContainer2 npc, string spawnPoint)> _tmpWldInsertNpcData = new();
 
         private static DaedalusVm Vm => GameData.GothicVm;
 
-        public async Task InitNpcsNewGame(LoadingManager loading, GameObject rootGo)
+        public async Task InitNpcsNewGame(LoadingManager loading)
         {
-            _rootGo = rootGo;
-
             NewRunDaedalus();
             await NewAddLazyLoading(loading);
+        }
+
+        public async Task InitNpcsLoadedGame(LoadingManager loading)
+        {
+
+
         }
 
         /// <summary>
@@ -85,7 +89,7 @@ namespace GUZ.Core._Npc2
         }
 
         /// <summary>
-        /// Now we will crate the NPCs step-by-step to ensure smooth loading screen fps.
+        /// Now we will create the NPCs step-by-step to ensure smooth loading screen fps.
         /// </summary>
         private async Task NewAddLazyLoading(LoadingManager loading)
         {
@@ -93,13 +97,13 @@ namespace GUZ.Core._Npc2
 
             foreach ((NpcContainer2 npc, string spawnPoint) element in _tmpWldInsertNpcData)
             {
-                // Update progress bar and check if we need to wait for next frame now (As some conditions skip -continue- end of loop and would skip check)
+                // Update the progress bar and check if we need to wait for the next frame now (As some conditions skip -continue- end of loop and would skip check)
                 loading.AddProgress();
                 await FrameSkipper.TrySkipToNextFrame();
 
                 InitZkInstance(element.npc);
                 var go = new GameObject($"{element.npc.Instance.GetName(NpcNameSlot.Slot0)} ({element.npc.Instance.Id})");
-                go.SetParent(_rootGo);
+                go.SetParent(RootGo);
 
                 var loader = go.AddComponent<NpcLoader2>();
                 loader.Npc = element.npc.Instance;

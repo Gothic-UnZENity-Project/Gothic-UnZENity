@@ -77,9 +77,17 @@ namespace GUZ.Core._Npc2
             }
         }
 
-        public async Task CreateWorldNpcs(LoadingManager loading, GameObject rootGo)
+        public void SetRootGo(GameObject rootGo)
         {
-            await _initializer.InitNpcsNewGame(loading, rootGo);
+            _initializer.RootGo = rootGo;
+        }
+
+        public async Task CreateWorldNpcs(LoadingManager loading)
+        {
+            if (GameGlobals.SaveGame.IsNewGame)
+                await _initializer.InitNpcsNewGame(loading);
+            else
+                await _initializer.InitNpcsLoadedGame(loading);
         }
 
         public void ExtWldInsertNpc(int npcInstanceIndex, string spawnPoint)
