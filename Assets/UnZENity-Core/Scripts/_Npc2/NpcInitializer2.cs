@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using GUZ.Core.Caches;
@@ -14,6 +15,7 @@ using MyBox;
 using UnityEngine;
 using ZenKit;
 using ZenKit.Daedalus;
+using Object = UnityEngine.Object;
 using WayPoint = GUZ.Core.Vob.WayNet.WayPoint;
 
 namespace GUZ.Core._Npc2
@@ -34,10 +36,25 @@ namespace GUZ.Core._Npc2
             await NewAddLazyLoading(loading);
         }
 
-        public void InitNpcSaveGame(ZenKit.Vobs.Npc vobNpc)
+        public async Task InitNpcsSaveGame(LoadingManager loading)
+        {
+            var saveGameNpcs = GameGlobals.SaveGame.CurrentWorldData.Npcs;
+
+            foreach (var vobNpc in saveGameNpcs)
+            {
+                // Update the progress bar and check if we need to wait for the next frame now (As some conditions skip -continue- end of loop and would skip check)
+                loading.AddProgress();
+                await FrameSkipper.TrySkipToNextFrame();
+
+                var npcContainer = AllocZkInstance(vobNpc);
+                SaveGameAddLazyLoadingAnywhere(npcContainer, vobNpc.ScriptWaypoint);
+            }
+        }
+
+        public void InitNpcVobSaveGame(ZenKit.Vobs.Npc vobNpc)
         {
             var npcContainer = AllocZkInstance(vobNpc);
-            SaveGameAddLazyLoading(npcContainer, vobNpc);
+            SaveGameAddLazyLoadingNearby(npcContainer, vobNpc);
         }
 
         /// <summary>
@@ -64,6 +81,7 @@ namespace GUZ.Core._Npc2
         {
             var symbol = GameData.GothicVm.GetSymbolByName(vobNpc.Name);
             var userDataObject = AllocZkInstance(symbol.Index);
+            userDataObject.Vob = vobNpc;
 
             return userDataObject;
         }
@@ -144,11 +162,40 @@ namespace GUZ.Core._Npc2
             loading.AddProgress(LoadingManager.LoadingProgressType.VOB, 1f);
         }
 
-        private void SaveGameAddLazyLoading(NpcContainer2 npc, ZenKit.Vobs.Npc npcVob)
+        /// <summary>
+        /// Initialize an NPC which is close to our hero in a save game.
+        /// </summary>
+        private void SaveGameAddLazyLoadingNearby(NpcContainer2 npc, ZenKit.Vobs.Npc npcVob)
         {
             var go = InitLazyLoadNpc(npc);
 
             go.transform.SetPositionAndRotation(npcVob.Position.ToUnityVector(), npcVob.Rotation.ToUnityQuaternion());
+            GameGlobals.NpcMeshCulling.AddCullingEntry(go);
+        }
+
+        /// <summary>
+        /// Basically the same logic as SaveGameAddLazyLoadingNearby() but we use the Routine's WP to get the position from.
+        /// </summary>
+        private void SaveGameAddLazyLoadingAnywhere(NpcContainer2 npc, string fallbackWayPoint)
+        {
+            var go = InitLazyLoadNpc(npc);
+
+            var spawnPoint = GetSpawnPoint(npc, fallbackWayPoint);
+
+            // When loading a save game from G1, e.g. TPL_1401_GorNaKosh's WP is wrong. His WP only exists in Old Mine,
+            // but he is also named inside STARTUP_SUB_PSICAMP() which is on world.zen. Simply removing them for now.
+            if (spawnPoint == null)
+            {
+                Debug.LogWarning($"Cannot spawn NPC {npc.Instance.GetName(NpcNameSlot.Slot0)} as waypoint {npc.Props.RoutineCurrent?.Waypoint}/{fallbackWayPoint} does not exist.");
+                Object.Destroy(go);
+                return;
+            }
+            if (spawnPoint.IsFreePoint())
+                npc.Props.CurrentFreePoint = (FreePoint)spawnPoint;
+            else
+                npc.Props.CurrentWayPoint = (WayPoint)spawnPoint;
+            go.transform.SetPositionAndRotation(spawnPoint.Position, spawnPoint.Rotation);
+
             GameGlobals.NpcMeshCulling.AddCullingEntry(go);
         }
 
@@ -213,18 +260,25 @@ namespace GUZ.Core._Npc2
         }
 
         [CanBeNull]
-        private WayNetPoint GetSpawnPoint(NpcContainer2 npc, string spawnPoint)
+        private WayNetPoint GetSpawnPoint(NpcContainer2 npc, string fallbackSpawnPoint)
         {
-            // Find the right spawn point based on currently active routine.
-            if (npc.Props.Routines.Any())
+            // Find the right spawn point based on the currently active routine.
+            if (npc.Props.RoutineCurrent != null)
             {
                 var routineSpawnPointName = npc.Props.RoutineCurrent.Waypoint;
-                return WayNetHelper.GetWayNetPoint(routineSpawnPointName);
+                var wp = WayNetHelper.GetWayNetPoint(routineSpawnPointName);
+
+                // Some Routines have a misspelled WP name. (e.g. Graham at 8am [..]OUSIDE[...] - >T< missing)
+                // We will therefore do a fallback to the previous routine.
+                if (wp == null)
+                    return WayNetHelper.GetWayNetPoint(npc.Props.RoutinePrevious.Waypoint);
+                else
+                    return wp;
             }
             // Fallback: If no routine exists, spawn at the spot which is named inside Wld_insertNpc()
             else
             {
-                return WayNetHelper.GetWayNetPoint(spawnPoint);
+                return WayNetHelper.GetWayNetPoint(fallbackSpawnPoint);
             }
         }
 

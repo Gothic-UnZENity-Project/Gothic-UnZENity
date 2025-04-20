@@ -86,8 +86,8 @@ namespace GUZ.Core._Npc2
         {
             if (GameGlobals.SaveGame.IsNewGame)
                 await _initializer.InitNpcsNewGame(loading);
-            // else
-                //await _initializer.InitNpcsLoadedGame(loading);
+             else
+                await _initializer.InitNpcsSaveGame(loading);
         }
 
         /// <summary>
@@ -104,7 +104,7 @@ namespace GUZ.Core._Npc2
             }
 
             // Initialize NPC and set its data from SaveGame (VOB entry).
-            _initializer.InitNpcSaveGame(vobNpc);
+            _initializer.InitNpcVobSaveGame(vobNpc);
         }
 
         public void ExtWldInsertNpc(int npcInstanceIndex, string spawnPoint)
@@ -381,6 +381,13 @@ namespace GUZ.Core._Npc2
             }
 
             var changed = npcProps.RoutineCurrent != newRoutine;
+
+            if (changed)
+            {
+                var routineIndex = npcProps.Routines.IndexOf(newRoutine);
+                var prevRoutineIndex = routineIndex == 0 ? npcProps.Routines.Count - 1 : routineIndex - 1;;
+                npcProps.RoutinePrevious = npcProps.Routines[prevRoutineIndex];
+            }
             npcProps.RoutineCurrent = newRoutine;
 
             return changed;
