@@ -5,9 +5,11 @@ using GUZ.Core.Caches;
 using GUZ.Core.Caches.StaticCache;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
+using GUZ.Core.Util;
 using UnityEngine;
 using ZenKit;
 using Debug = UnityEngine.Debug;
+using Logger = GUZ.Core.Util.Logger;
 
 namespace GUZ.Core.Manager.Scenes
 {
@@ -67,7 +69,7 @@ namespace GUZ.Core.Manager.Scenes
                     var metadata = await GameGlobals.StaticCache.ReadMetadata();
                     if (metadata.Version == Constants.StaticCacheVersion)
                     {
-                        Debug.Log("World + Global data is already cached and metadata version matches. Skipping...");
+                        Logger.Log("World + Global data is already cached and metadata version matches. Skipping...", LogCat.PreCaching);
                         GameManager.I.LoadScene(Constants.SceneLogo, Constants.ScenePreCaching);
                         return;
                     }
@@ -83,7 +85,7 @@ namespace GUZ.Core.Manager.Scenes
 
                 foreach (var worldName in worldsToLoad)
                 {
-                    Debug.Log($"### PreCaching meshes for world: {worldName}");
+                    Logger.Log($"### PreCaching meshes for world: {worldName}", LogCat.PreCaching);
                     var world = ResourceLoader.TryGetWorld(worldName, GameContext.GameVersionAdapter.Version)!;
                     var stationaryLightCache = new StationaryLightCacheCreator();
                     var worldChunkCache = new WorldChunkCacheCreator();
@@ -115,7 +117,7 @@ namespace GUZ.Core.Manager.Scenes
                     //
                     //     await GameGlobals.StaticCache.LoadCache(loadRoot, worldName);
                     //
-                    //     Debug.Log("DEBUG Loading done!");
+                    //     Logger.Log("DEBUG Loading done!");
                     //     return;
                     // }
                 }
@@ -138,7 +140,7 @@ namespace GUZ.Core.Manager.Scenes
             }
             catch (Exception e)
             {
-                Debug.LogError(e);
+                Logger.LogError(e.ToString(), LogCat.PreCaching);
                 throw;
             }
         }

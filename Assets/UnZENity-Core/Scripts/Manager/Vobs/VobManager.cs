@@ -14,6 +14,7 @@ using GUZ.Core.Vob;
 using MyBox;
 using UnityEngine;
 using ZenKit.Vobs;
+using Logger = GUZ.Core.Util.Logger;
 using Object = UnityEngine.Object;
 
 namespace GUZ.Core.Manager.Vobs
@@ -74,7 +75,7 @@ namespace GUZ.Core.Manager.Vobs
             }
             else
             {
-                Debug.LogError($"No suitable root GO found for type >{type}<");
+                Logger.LogError($"No suitable root GO found for type >{type}<", LogCat.Vob);
                 return null;
             }
         }
@@ -153,7 +154,7 @@ namespace GUZ.Core.Manager.Vobs
                     // DEBUG
                     // if (firstFrameQueueFilledUp != 0)
                     // {
-                    //     Debug.LogWarning($"It took {Time.frameCount - firstFrameQueueFilledUp} frames to clear the queue.");
+                    //     Logger.LogWarning($"It took {Time.frameCount - firstFrameQueueFilledUp} frames to clear the queue.");
                     //     firstFrameQueueFilledUp = 0;
                     // }
                     yield return null;
@@ -194,7 +195,7 @@ namespace GUZ.Core.Manager.Vobs
         {
             if (itemId == -1)
             {
-                Debug.LogError("No ItemId found. Is this a bug on daedalus or our side?");
+                Logger.LogError("No ItemId found. Is this a bug on daedalus or our side?", LogCat.Vob);
                 return; // no item
             }
             var item = VmInstanceManager.TryGetItemData(itemId);
@@ -377,7 +378,7 @@ namespace GUZ.Core.Manager.Vobs
 
                     if (propertiesComponent == null)
                     {
-                        Debug.LogError($"VobProperties component missing on {go.name} ({vob.Type})");
+                        Logger.LogError($"VobProperties component missing on {go.name} ({vob.Type})", LogCat.Vob);
                     }
 
                     GameData.VobsInteractable.Add(go.GetComponent<VobProperties>());

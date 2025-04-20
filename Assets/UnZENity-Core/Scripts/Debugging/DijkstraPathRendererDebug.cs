@@ -4,10 +4,11 @@ using System.Linq;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
+using GUZ.Core.Util;
 using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.Serialization;
-using Debug = UnityEngine.Debug;
+using Logger = GUZ.Core.Util.Logger;
 
 namespace GUZ.Core.Debugging
 {
@@ -43,7 +44,7 @@ namespace GUZ.Core.Debugging
                 var watch = Stopwatch.StartNew();
                 var path = WayNetHelper.FindFastestPath(DebugStart, DebugEnd);
                 watch.Stop();
-                Debug.Log($"Path found in {watch.Elapsed.Seconds} seconds.");
+                Logger.LogEditor($"Path found in {watch.Elapsed.Seconds} seconds.", LogCat.Debug);
 
                 var tempGizmoWayPoints = new List<Vector3>();
                 for (var i = 0; i < path.Length - 1; i++)
@@ -54,8 +55,8 @@ namespace GUZ.Core.Debugging
 
                 _gizmoWayPoints = tempGizmoWayPoints.ToArray();
 
-                Debug.Log("Start: " + _gizmoWayPoints.First());
-                Debug.Log("End: " + _gizmoWayPoints.Last());
+                Logger.LogEditor("Start: " + _gizmoWayPoints.First(), LogCat.Debug);
+                Logger.LogEditor("End: " + _gizmoWayPoints.Last(), LogCat.Debug);
             }
 
             if (PathDistanceCalculation.Count > 0)
@@ -79,7 +80,7 @@ namespace GUZ.Core.Debugging
 
                 if (summarizedDistance > 0.0f)
                 {
-                    Debug.Log($"Summarized distance: {summarizedDistance}");
+                    Logger.Log($"Summarized distance: {summarizedDistance}", LogCat.Debug);
                 }
             }
         }

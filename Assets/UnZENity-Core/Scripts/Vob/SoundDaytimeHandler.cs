@@ -1,9 +1,11 @@
 using System;
 using System.Collections;
+using GUZ.Core.Util;
 using GUZ.Core.World;
 using UnityEngine;
 using UnityEngine.Serialization;
 using ZenKit.Vobs;
+using Logger = GUZ.Core.Util.Logger;
 using Random = UnityEngine.Random;
 
 namespace GUZ.Core.Vob
@@ -42,8 +44,9 @@ namespace GUZ.Core.Vob
             var endTime = Properties.SoundDaytimeData.EndTime;
             if (startTime != (int)startTime || endTime != (int)endTime)
             {
-                Debug.LogError(
-                    $"Currently fractional times for DayTimeAudio aren't supported. Only full hours are handled. start={_startSound1} end={_endSound1}");
+                Logger.LogError(
+                    $"Currently fractional times for DayTimeAudio aren't supported. Only full hours are handled. " +
+                    $"start={_startSound1} end={_endSound1}", LogCat.Audio);
                 return;
             }
 

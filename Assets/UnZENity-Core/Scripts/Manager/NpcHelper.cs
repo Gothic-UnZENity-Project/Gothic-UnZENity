@@ -6,10 +6,12 @@ using GUZ.Core.Caches;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Properties;
+using GUZ.Core.Util;
 using GUZ.Core.Vm;
 using JetBrains.Annotations;
 using UnityEngine;
 using ZenKit.Daedalus;
+using Logger = GUZ.Core.Util.Logger;
 
 namespace GUZ.Core.Manager
 {
@@ -32,7 +34,7 @@ namespace GUZ.Core.Manager
             var percInitSymbol = GameData.GothicVm.GetSymbolByName("InitPerceptions");
             if (percInitSymbol == null)
             {
-                Debug.LogError("InitPerceptions symbol not found.");
+                Logger.LogError("InitPerceptions symbol not found.", LogCat.Npc);
             }
             else
             {

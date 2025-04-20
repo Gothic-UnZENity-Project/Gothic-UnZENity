@@ -5,11 +5,13 @@ using System.Text.RegularExpressions;
 using GUZ.Core.Caches;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
+using GUZ.Core.Util;
 using JetBrains.Annotations;
 using MyBox;
 using UnityEngine;
 using UnityEngine.Rendering;
 using ZenKit;
+using Logger = GUZ.Core.Util.Logger;
 using Material = UnityEngine.Material;
 using Matrix4x4 = System.Numerics.Matrix4x4;
 using Mesh = UnityEngine.Mesh;
@@ -87,7 +89,7 @@ namespace GUZ.Core.Creator.Meshes.Builder
 
             if (Mdh == null)
             {
-                Debug.LogError($"MDH from name >{mdhName}< for object >{RootGo.name}< not found.");
+                Logger.LogError($"MDH from name >{mdhName}< for object >{RootGo.name}< not found.", LogCat.Mesh);
             }
         }
 
@@ -102,7 +104,7 @@ namespace GUZ.Core.Creator.Meshes.Builder
 
             if (Mdm == null)
             {
-                Debug.LogError($"MDH from name >{mdmName}< for object >{RootGo.name}< not found.");
+                Logger.LogError($"MDH from name >{mdmName}< for object >{RootGo.name}< not found.", LogCat.Mesh);
             }
         }
 
@@ -127,7 +129,7 @@ namespace GUZ.Core.Creator.Meshes.Builder
 
             if (Mrm == null)
             {
-                Debug.LogError($"MDH from name >{mrmName}< for object >{RootGo.name}< not found.");
+                Logger.LogError($"MDH from name >{mrmName}< for object >{RootGo.name}< not found.", LogCat.Mesh);
             }
         }
 
@@ -146,7 +148,7 @@ namespace GUZ.Core.Creator.Meshes.Builder
 
             if (Mmb == null)
             {
-                Debug.LogError($"MMB from name >{mmbName}< for object >{RootGo.name}< not found.");
+                Logger.LogError($"MMB from name >{mmbName}< for object >{RootGo.name}< not found.", LogCat.Mesh);
             }
         }
 
@@ -332,13 +334,13 @@ namespace GUZ.Core.Creator.Meshes.Builder
         {
             if (null == mrmData)
             {
-                Debug.LogError("No mesh data could be added to renderer: " + rend.transform.parent.name);
+                Logger.LogError($"No mesh data could be added to renderer: {rend.transform.parent.name}", LogCat.Mesh);
                 return;
             }
 
             if (rend is MeshRenderer && !rend.GetComponent<MeshFilter>().sharedMesh)
             {
-                Debug.LogError($"Null mesh on {rend.gameObject.name}");
+                Logger.LogError($"Null mesh on {rend.gameObject.name}", LogCat.Mesh);
                 return;
             }
 
@@ -352,7 +354,7 @@ namespace GUZ.Core.Creator.Meshes.Builder
                 var materialData = mrmData.SubMeshes[i].Material;
                 if (materialData.Texture.IsEmpty()) // No texture to add.
                 {
-                    Debug.LogWarning("No texture was set for: " + materialData.Name);
+                    Logger.LogWarning("No texture was set for: " + materialData.Name, LogCat.Mesh);
                     return;
                 }
 
@@ -373,7 +375,7 @@ namespace GUZ.Core.Creator.Meshes.Builder
                 // TODO - Therefore consider removing this warning in the future.
                 if (!texture)
                 {
-                    Debug.LogWarning("Couldn't get texture from name: " + materialData.Texture);
+                    Logger.LogWarning($"Couldn't get texture from name: {materialData.Texture}", LogCat.Mesh);
                     continue;
                 }
 
@@ -424,7 +426,7 @@ namespace GUZ.Core.Creator.Meshes.Builder
 
             if (null == mrmData)
             {
-                Debug.LogError("No mesh data could be added to filter: " + meshFilter.transform.parent.name);
+                Logger.LogError($"No mesh data could be added to filter: {meshFilter.transform.parent.name}", LogCat.Mesh);
                 return;
             }
 

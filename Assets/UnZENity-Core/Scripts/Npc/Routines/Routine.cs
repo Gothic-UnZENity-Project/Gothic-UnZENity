@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using GUZ.Core.Util;
 using UnityEngine;
+using Logger = GUZ.Core.Util.Logger;
 
 namespace GUZ.Core.Npc.Routines
 {
@@ -25,8 +27,8 @@ namespace GUZ.Core.Npc.Routines
         {
             if (!CalculateCurrentRoutine())
             {
-                Debug.LogWarning("ChangeRoutine got called but the resulting routine was the same: " +
-                                 $"NPC: >{gameObject.name}< WP: >{CurrentRoutine.Waypoint}<");
+                Logger.LogWarning("ChangeRoutine got called but the resulting routine was the same: " +
+                                 $"NPC: >{gameObject.name}< WP: >{CurrentRoutine.Waypoint}<", LogCat.Ai);
                 return;
             }
 

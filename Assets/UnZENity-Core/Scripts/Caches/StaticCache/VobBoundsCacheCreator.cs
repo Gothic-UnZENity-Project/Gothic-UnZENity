@@ -12,6 +12,7 @@ using UnityEngine;
 using UnityEngine.Rendering.Universal;
 using ZenKit;
 using ZenKit.Vobs;
+using Logger = GUZ.Core.Util.Logger;
 using Object = UnityEngine.Object;
 
 namespace GUZ.Core.Caches.StaticCache
@@ -110,7 +111,9 @@ namespace GUZ.Core.Caches.StaticCache
                         var world = ResourceLoader.TryGetWorld(item.Visual, GameContext.GameVersionAdapter.Version);
                         if (world!.RootObjects.Count != 1)
                         {
-                            Debug.LogError($"Bounds for {item.Visual} couldn't be calculated correctly as focussing on 1 G1 object as of now.");
+                            Logger.LogError(
+                                $"Bounds for {item.Visual} couldn't be calculated correctly as focussing on 1 G1 object as of now.",
+                                LogCat.PreCaching);
                         }
 
                         // FIXME - This Vob has 2 children. One is a Pfx! We would need to calculate these bounds as well.
@@ -122,7 +125,7 @@ namespace GUZ.Core.Caches.StaticCache
                 if (boundingBox == default)
                 {
                     // Re-enable if you want to check which meshes couldn't be found.
-                    // Debug.LogError($"ItemVisual {item.Visual} is neither .mrm, .zen, nor .mmb.");
+                    // GUZLogger.LogError($"ItemVisual {item.Visual} is neither .mrm, .zen, nor .mmb.");
                     continue;
                 }
 
@@ -240,7 +243,8 @@ namespace GUZ.Core.Caches.StaticCache
                     size = new Vector3(bbox.HalfWidth.Y / 100, bbox.HalfWidth.Z / 100, bbox.HalfWidth.X / 100) * 2;
                     break;
                 default:
-                    Debug.LogError($"AxesType {bbox.Axes.Item1}/{bbox.Axes.Item2}/{bbox.Axes.Item3} not yet handled.");
+                    Logger.LogError($"AxesType {bbox.Axes.Item1}/{bbox.Axes.Item2}/{bbox.Axes.Item3} not yet handled.",
+                        LogCat.PreCaching);
                     return default;
             }
 
@@ -281,7 +285,7 @@ namespace GUZ.Core.Caches.StaticCache
             }
             catch (Exception e)
             {
-                Debug.LogError(e);
+                Logger.LogError(e.ToString(), LogCat.PreCaching);
                 return default;
             }
         }

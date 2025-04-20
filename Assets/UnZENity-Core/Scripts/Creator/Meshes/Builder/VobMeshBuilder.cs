@@ -1,6 +1,8 @@
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
+using GUZ.Core.Util;
 using UnityEngine;
+using Logger = GUZ.Core.Util.Logger;
 
 namespace GUZ.Core.Creator.Meshes.Builder
 {
@@ -22,7 +24,7 @@ namespace GUZ.Core.Creator.Meshes.Builder
             }
             else
             {
-                Debug.LogError($"No suitable data for Vob to be created found >{RootGo.name}<");
+                Logger.LogError($"No suitable data for Vob to be created found >{RootGo.name}<", LogCat.Mesh);
                 return null;
             }
 

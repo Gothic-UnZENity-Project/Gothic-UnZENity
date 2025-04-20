@@ -8,6 +8,7 @@ using UnityEngine;
 using ZenKit;
 using ZenKit.Vobs;
 using Light = ZenKit.Vobs.Light;
+using Logger = GUZ.Core.Util.Logger;
 
 namespace GUZ.Core.Caches.StaticCache
 {
@@ -70,7 +71,7 @@ namespace GUZ.Core.Caches.StaticCache
                     // FIXME - For some reason, FIRETREE_LARGE.ZEN is broken in G2. Let's fix it properly later.)
                     if (GameContext.GameVersionAdapter.Version == GameVersion.Gothic2 && fire.VobTree == "FIRETREE_LARGE.ZEN")
                     {
-                        Debug.LogError("For some reason, FIRETREE_LARGE.ZEN is broken in G2. Let's fix it properly for caching.");
+                        Logger.LogError("For some reason, FIRETREE_LARGE.ZEN is broken in G2. Let's fix it properly for caching.", LogCat.PreCaching);
                         continue;
                     }
 

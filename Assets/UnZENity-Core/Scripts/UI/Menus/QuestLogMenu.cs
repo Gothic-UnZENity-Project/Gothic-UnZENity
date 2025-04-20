@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using GUZ.Core.UnZENity_Core.Scripts.UI;
+using GUZ.Core.Util;
 using MyBox;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using ZenKit;
 using ZenKit.Daedalus;
+using Logger = GUZ.Core.Util.Logger;
 
 namespace GUZ.Core.UI
 {
@@ -359,7 +361,7 @@ namespace GUZ.Core.UI
                     ExecuteCommand(itemName, commandName);
                     break;
                 default:
-                    Debug.LogError($"Unknown command {commandName}({action})");
+                    Logger.LogError($"Unknown command {commandName}({action})", LogCat.Ui);
                     break;
             }
         }
@@ -393,7 +395,7 @@ namespace GUZ.Core.UI
 
         public void OnArrowDownClick()
         {
-            Debug.Log($"OnArrowDownClick()");
+            Logger.LogEditor($"OnArrowDownClick()", LogCat.Ui);
             ++_activeListMenu.CurrentListScrollValue;
 
             FillList(_activeListMenu);
