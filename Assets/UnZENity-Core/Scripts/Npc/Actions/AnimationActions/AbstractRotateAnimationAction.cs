@@ -120,7 +120,10 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             else
             {
                 npcTransform.rotation = currentRotation;
-                NpcHeadTransform.rotation = GetDesiredHeadRotation();
+
+                // Many monsters (e.g. Bloodflies) have no head.
+                if (NpcHeadTransform)
+                    NpcHeadTransform.rotation = GetDesiredHeadRotation();
             }
         }
 
