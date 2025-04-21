@@ -251,7 +251,7 @@ MonoBehaviour:
   LeftControllerName: 
   RightManufacturer: 
   RightControllerName: 
-  LeftXRInputSystem: 0
+  LeftControllerType: 0
   RightControllerType: 0
   LeftFeatures: []
   RightFeatures: []
@@ -1088,6 +1088,12 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 1
         m_CallState: 2
+  DistanceGrabbed:
+    m_PersistentCalls:
+      m_Calls: []
+  DistanceReleased:
+    m_PersistentCalls:
+      m_Calls: []
   GrabPointsMeta: []
   Grabbers: []
   HandGrabbers: []
@@ -1881,6 +1887,12 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 1
         m_CallState: 2
+  DistanceGrabbed:
+    m_PersistentCalls:
+      m_Calls: []
+  DistanceReleased:
+    m_PersistentCalls:
+      m_Calls: []
   GrabPointsMeta: []
   Grabbers: []
   HandGrabbers: []
@@ -3141,6 +3153,12 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   UnSocketed:
+    m_PersistentCalls:
+      m_Calls: []
+  DistanceGrabbed:
+    m_PersistentCalls:
+      m_Calls: []
+  DistanceReleased:
     m_PersistentCalls:
       m_Calls: []
   GrabPointsMeta: []
@@ -4446,6 +4464,10 @@ PrefabInstance:
       propertyPath: Tags.Tags
       value: 
       objectReference: {fileID: 11400000, guid: 836908d62a0d2e8489d7e21e7f774964, type: 2}
+    - target: {fileID: 7361793842687818554, guid: a0de35f4e16efb54ba0281586c17416f, type: 3}
+      propertyPath: SFXGrab
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 7394304397544599889, guid: a0de35f4e16efb54ba0281586c17416f, type: 3}
       propertyPath: Released.m_PersistentCalls.m_Calls.Array.size
       value: 1
@@ -4749,6 +4771,10 @@ PrefabInstance:
     - target: {fileID: 8294380945689237843, guid: a0de35f4e16efb54ba0281586c17416f, type: 3}
       propertyPath: BeforeGrabbed.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 8679766008592774819, guid: a0de35f4e16efb54ba0281586c17416f, type: 3}
+      propertyPath: SFXGrab
+      value: 
       objectReference: {fileID: 0}
     - target: {fileID: 9000233391116137559, guid: a0de35f4e16efb54ba0281586c17416f, type: 3}
       propertyPath: Released.m_PersistentCalls.m_Calls.Array.size
