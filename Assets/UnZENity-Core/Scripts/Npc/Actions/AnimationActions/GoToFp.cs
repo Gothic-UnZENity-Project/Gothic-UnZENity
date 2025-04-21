@@ -33,6 +33,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             }
 
             _fp.IsLocked = true;
+            Props.CurrentFreePoint = _fp;
         }
 
         protected override void AnimationEnd()

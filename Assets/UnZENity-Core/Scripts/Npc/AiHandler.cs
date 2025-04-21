@@ -361,5 +361,17 @@ namespace GUZ.Core.Npc
                 StartRoutine(Properties.StateStart);
             }
         }
+
+        public void DisableNpc()
+        {
+            // Stop all animations and reset to T-Pose
+            PrefabProps.AnimationSystem.DisableObject();
+
+            // We need to free the FP. When the NPC is re-enabled, it can walk to it again.
+            if (Properties.CurrentFreePoint != null)
+            {
+                Properties.CurrentFreePoint.IsLocked = false;
+            }
+        }
     }
 }
