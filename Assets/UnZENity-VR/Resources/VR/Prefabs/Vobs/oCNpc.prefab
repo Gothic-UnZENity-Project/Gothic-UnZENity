@@ -386,7 +386,7 @@ MonoBehaviour:
   ShowTriggerGrabIndicator: 1
   ShowForceGrabIndicator: 1
   ForceGrabbable: 1
-  ForcePullOverride: {fileID: 0}
+  ForcePullOverride: {fileID: 11400000, guid: c21a28aaa94889c49a3e87dcbb64260b, type: 2}
   JointOverride: {fileID: 0}
   OneHandStrength: {fileID: 0}
   TwoHandStrength: {fileID: 0}
