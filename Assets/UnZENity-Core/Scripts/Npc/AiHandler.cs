@@ -6,10 +6,12 @@ using GUZ.Core.Globals;
 using GUZ.Core.Manager;
 using GUZ.Core.Npc.Actions;
 using GUZ.Core.Npc.Actions.AnimationActions;
+using GUZ.Core.Util;
 using GUZ.Core.Vm;
 using UnityEngine;
 using ZenKit;
 using ZenKit.Daedalus;
+using Logger = GUZ.Core.Util.Logger;
 
 namespace GUZ.Core.Npc
 {
@@ -140,7 +142,7 @@ namespace GUZ.Core.Npc
             // Go on
             else
             {
-                Debug.Log($"Start playing >{Properties.AnimationQueue.Peek().GetType()}< on >{Go.transform.parent.name}<");
+                Logger.Log($"Start playing >{Properties.AnimationQueue.Peek().GetType()}< on >{Go.transform.parent.name}<", LogCat.Ai);
                 PlayNextAnimation(Properties.AnimationQueue.Dequeue());
             }
         }
@@ -241,7 +243,7 @@ namespace GUZ.Core.Npc
             // When we reached end of ZS_*_END, we also call this method. Check if we really altered the routine action or just restarted it.
             if (didRoutineChange)
             {
-                Debug.Log($"Start new routine >{routineSymbol.Name}< on >{Go.transform.parent.name}<");
+                Logger.Log($"Start new routine >{routineSymbol.Name}< on >{Go.transform.parent.name}<", LogCat.Ai);
                 Properties.StateTime = 0;
             }
         }

@@ -1,7 +1,9 @@
 using System.Collections;
+using GUZ.Core.Util;
 using UnityEngine;
 using UnityEngine.Serialization;
 using ZenKit.Vobs;
+using Logger = GUZ.Core.Util.Logger;
 using Random = UnityEngine.Random;
 
 namespace GUZ.Core.Vob
@@ -35,7 +37,7 @@ namespace GUZ.Core.Vob
         {
             if (Properties.SoundData == null)
             {
-                Debug.LogError("VobSoundProperties.soundData not set. Can't register random sound play!");
+                Logger.LogError("VobSoundProperties.soundData not set. Can't register random sound play!", LogCat.Audio);
                 return;
             }
 

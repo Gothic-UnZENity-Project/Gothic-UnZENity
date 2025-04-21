@@ -1,6 +1,8 @@
 using System;
 using GUZ.Core._Npc2;
+using GUZ.Core.Util;
 using UnityEngine;
+using Logger = GUZ.Core.Util.Logger;
 
 namespace GUZ.Core.Npc.Actions.AnimationActions
 {
@@ -19,7 +21,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             }
             catch (Exception e)
             {
-                Debug.LogError(e);
+                Logger.LogError(e.ToString(), LogCat.Ai);
                 return Quaternion.identity;
                 ;
             }

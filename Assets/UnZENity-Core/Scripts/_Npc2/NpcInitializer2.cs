@@ -15,6 +15,7 @@ using MyBox;
 using UnityEngine;
 using ZenKit;
 using ZenKit.Daedalus;
+using Logger = GUZ.Core.Util.Logger;
 using Object = UnityEngine.Object;
 using WayPoint = GUZ.Core.Vob.WayNet.WayPoint;
 
@@ -139,7 +140,7 @@ namespace GUZ.Core._Npc2
                 var spawnPoint = GetSpawnPoint(element.npc, element.spawnPoint);
                 if (spawnPoint == null)
                 {
-                    Debug.LogWarning($"Cannot spawn NPC as waypoint ${element.spawnPoint} does not exist.");
+                    Logger.LogWarning($"Cannot spawn NPC as waypoint ${element.spawnPoint} does not exist.", LogCat.Npc);
 
                     // FIXME - Destroy GO and NPCInstance (Do not save the instance inside SaveGame as G1 is also removing it?)
                     continue;
@@ -186,7 +187,8 @@ namespace GUZ.Core._Npc2
             // but he is also named inside STARTUP_SUB_PSICAMP() which is on world.zen. Simply removing them for now.
             if (spawnPoint == null)
             {
-                Debug.LogWarning($"Cannot spawn NPC {npc.Instance.GetName(NpcNameSlot.Slot0)} as waypoint {npc.Props.RoutineCurrent?.Waypoint}/{fallbackWayPoint} does not exist.");
+                Logger.LogWarning($"Cannot spawn NPC {npc.Instance.GetName(NpcNameSlot.Slot0)} as waypoint " +
+                                  $"{npc.Props.RoutineCurrent?.Waypoint}/{fallbackWayPoint} does not exist.", LogCat.Npc);
                 Object.Destroy(go);
                 return;
             }
@@ -319,8 +321,8 @@ namespace GUZ.Core._Npc2
                 }
             }
 
-            Debug.LogError(
-                $"No suitable spawn point found for NPC at >{positionToScan}<. Circle search didn't find anything!");
+            Logger.LogError(
+                $"No suitable spawn point found for NPC at >{positionToScan}<. Circle search didn't find anything!", LogCat.Npc);
             return default;
         }
     }

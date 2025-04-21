@@ -2288,7 +2288,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b3d4d12525e40a7ac803add610db925, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _properties: {fileID: 6383736313796596418}
   _nameCanvas: {fileID: 5645382147252430868}
 --- !u!114 &7136319683539270999
 MonoBehaviour:
@@ -2475,7 +2474,7 @@ MonoBehaviour:
   StartLocked: 0
   ConnectedBody: {fileID: 0}
   CloseAngle: 5
-  CloseOverTime: 0.25
+  CloseOverTime: 0
   CloseDetectionTime: 0.5
   SFXThresholdAngle: 2.5
   SFXResetThreshold: 1
@@ -2493,9 +2492,9 @@ MonoBehaviour:
   SecondDoorKnob: {fileID: 0}
   LimitRotation: 1
   MinAngle: 0
-  MaxAngle: 90
+  MaxAngle: 110
   Damper: 10
-  Spring: 5
+  Spring: 0
   TargetAngularVelocity: 0
   DoorLatched: 0
   DoorClosed: 0
@@ -2638,7 +2637,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3647fae04a904a6dbba443f755b63a7d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <VisualScheme>k__BackingField: 
 --- !u!114 &3928131288078199320
 MonoBehaviour:
   m_ObjectHideFlags: 0

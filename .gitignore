@@ -80,10 +80,6 @@ crashlytics-build.properties
 ### Custom Ignores
 Assets/Logs/
 UserSettings/
-Assets/UberLogger.meta
-Assets/UberLogger/
-Assets/Pickle.meta
-Assets/Pickle/
 ProjectSettings/ShaderGraphSettings.asset
 ProjectSettings/Packages/com.unity.testtools.codecoverage/Settings.json
 

@@ -2,6 +2,7 @@
 using System.IO;
 using GUZ.Core.Util;
 using UnityEngine;
+using Logger = GUZ.Core.Util.Logger;
 
 namespace GUZ.Core.Config
 {
@@ -12,7 +13,7 @@ namespace GUZ.Core.Config
             var filePathCaseInsensitive = FileSearchHandler.FindFileCaseInsensitive(filePath);
             if (filePathCaseInsensitive == null)
             {
-                Debug.LogError("The Gothic.ini/GothicGame.ini file does not exist at the specified path :" + filePath);
+                Logger.LogError($"The Gothic.ini/GothicGame.ini file does not exist at the specified path: {filePath}", LogCat.Loading);
                 return null;
             }
 

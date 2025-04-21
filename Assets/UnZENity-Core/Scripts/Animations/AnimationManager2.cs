@@ -3,9 +3,11 @@ using System.IO;
 using System.Linq;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
+using GUZ.Core.Util;
 using JetBrains.Annotations;
 using UnityEngine;
 using ZenKit;
+using Logger = GUZ.Core.Util.Logger;
 
 namespace GUZ.Core.Animations
 {
@@ -138,7 +140,7 @@ namespace GUZ.Core.Animations
 
             if (track.Flags.HasFlag(AnimationFlags.Rotate))
             {
-                Debug.LogWarning($"{track.Name}: Rotation animations are not supported yet.");
+                Logger.LogWarning($"{track.Name}: Rotation animations are not supported yet.", LogCat.Animation);
             }
 
             return track;

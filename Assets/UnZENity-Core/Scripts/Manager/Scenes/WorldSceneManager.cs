@@ -3,16 +3,16 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
-using GUZ.Core.Caches;
 using GUZ.Core.Creator;
 using GUZ.Core.Creator.Meshes;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
+using GUZ.Core.Util;
 using GUZ.Core.Vob.WayNet;
 using MyBox;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using Debug = UnityEngine.Debug;
+using Logger = GUZ.Core.Util.Logger;
 
 namespace GUZ.Core.Manager.Scenes
 {
@@ -134,14 +134,14 @@ namespace GUZ.Core.Manager.Scenes
                 }
                 catch (Exception e)
                 {
-                    Debug.LogError(e);
+                    Logger.LogError(e.ToString(), LogCat.Loading);
                 }
 
                 SceneManager.UnloadSceneAsync(Constants.SceneLoading);
             }
             catch(Exception ex)
             {
-                Debug.LogException(ex);
+                Logger.LogError(ex.ToString(), LogCat.Loading);;
             }
             finally
             {
@@ -207,7 +207,7 @@ namespace GUZ.Core.Manager.Scenes
 
             if (startPoint.Key.IsNullOrEmpty())
             {
-                Debug.LogError("No suitable START_* waypoint found!");
+                Logger.LogError("No suitable START_* waypoint found!", LogCat.Loading);
                 return;
             }
 

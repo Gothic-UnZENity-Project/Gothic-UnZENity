@@ -14,8 +14,7 @@ using MyBox;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using ZenKit;
-using Debug = UnityEngine.Debug;
-using Logger = ZenKit.Logger;
+using Logger = GUZ.Core.Util.Logger;
 
 namespace GUZ.Core
 {
@@ -121,8 +120,8 @@ namespace GUZ.Core
             SceneManager.sceneLoaded += OnSceneLoaded;
             SceneManager.sceneUnloaded += OnSceneUnloaded;
 
-            Logger.Set(Config.Dev.ZenKitLogLevel, Logging.OnZenKitLogMessage);
-            DirectMusic.Logger.Set(Config.Dev.DirectMusicLogLevel, Logging.OnDirectMusicLogMessage);
+            ZenKit.Logger.Set(Config.Dev.ZenKitLogLevel, Util.Logger.OnZenKitLogMessage);
+            DirectMusic.Logger.Set(Config.Dev.DirectMusicLogLevel, Util.Logger.OnDirectMusicLogMessage);
 
             _fileLoggingHandler.Init(Config.Root);
             _frameSkipper.Init();
@@ -149,7 +148,7 @@ namespace GUZ.Core
             var gothicRootPath = GameContext.GameVersionAdapter.RootPath;
 
             // Otherwise, continue loading Gothic.
-            Debug.Log($"Initializing Gothic installation at: {gothicRootPath}");
+            Logger.Log($"Initializing Gothic installation at: {gothicRootPath}", LogCat.Loading);
             ResourceLoader.Init(gothicRootPath);
 
             _gameMusicManager.Init();
@@ -210,7 +209,7 @@ namespace GUZ.Core
 
         private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
-            Debug.Log($"Scene loaded: {scene.name}");
+            Logger.Log($"Scene loaded: {scene.name}", LogCat.Loading);
 
             // Newly created scenes are always the ones which we set as main scenes (i.e. new GameObjects will spawn in here automatically)
             SceneManager.SetActiveScene(scene);
@@ -218,7 +217,8 @@ namespace GUZ.Core
             var sceneManager = scene.GetComponentInChildren<ISceneManager>();
             if (sceneManager == null)
             {
-                Debug.LogError($"{nameof(ISceneManager)} for scene >{scene.name}< not found. Game won't proceed as bootstrapper for scene is invalid/non-existent.");
+                Logger.LogError($"{nameof(ISceneManager)} for scene >{scene.name}< not found. Game won't proceed as " +
+                                "bootstrapper for scene is invalid/non-existent.", LogCat.Loading);
                 return;
             }
             sceneManager.Init();
@@ -226,7 +226,7 @@ namespace GUZ.Core
 
         private void OnSceneUnloaded(Scene scene)
         {
-            Debug.Log($"Scene unloaded: {scene.name}");
+            Logger.Log($"Scene unloaded: {scene.name}", LogCat.Loading);
         }
 
         private void Update()

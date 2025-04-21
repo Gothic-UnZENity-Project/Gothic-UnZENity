@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using GUZ.Core.Caches;
 using GUZ.Core.Extensions;
+using GUZ.Core.Util;
 using JetBrains.Annotations;
 using UnityEngine;
 using ZenKit;
+using Logger = GUZ.Core.Util.Logger;
 using Mesh = UnityEngine.Mesh;
 using Random = UnityEngine.Random;
 
@@ -70,7 +72,7 @@ namespace GUZ.Core.Morph
                 || animationFlags.HasFlag(MorphAnimationFlags.ShapeReference)
                )
             {
-                Debug.LogWarning($"MorphMesh animation with flags {animationFlags} not yet supported!");
+                Logger.LogWarning($"MorphMesh animation with flags {animationFlags} not yet supported!", LogCat.Mesh);
             }
 
             // TODO/HINT - Is also handled via -1 second duration value of morphAnimation.Duration
@@ -88,7 +90,7 @@ namespace GUZ.Core.Morph
 
             if (morphToStop == null)
             {
-                Debug.LogWarning($"MorphAnimation {animationName} not found on {gameObject.name}", gameObject);
+                Logger.LogWarning($"MorphAnimation {animationName} not found on {gameObject.name}", LogCat.Mesh);
                 return;
             }
 

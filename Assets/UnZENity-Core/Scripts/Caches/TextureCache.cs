@@ -10,6 +10,7 @@ using UnityEngine;
 using UnityEngine.Rendering;
 using ZenKit;
 using Debug = UnityEngine.Debug;
+using Logger = GUZ.Core.Util.Logger;
 using Object = UnityEngine.Object;
 using Texture = UnityEngine.Texture;
 using TextureFormat = UnityEngine.TextureFormat;
@@ -210,7 +211,7 @@ namespace GUZ.Core.Caches
             }
             else
             {
-                Debug.LogError($"Texture for Material {materialData.Name} couldn't be found in cache.");
+                Logger.LogError($"Texture for Material {materialData.Name} couldn't be found in cache.", LogCat.PreCaching);
                 arrayIndex = -1;
                 textureArrayType = TextureArrayTypes.Unknown;
                 maxMipLevel = 0;

@@ -1,10 +1,12 @@
 ﻿using System.Collections.Generic;
 using GUZ.Core.Creator.Sounds;
 using GUZ.Core.Extensions;
+using GUZ.Core.Util;
 using MyBox;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using Logger = GUZ.Core.Util.Logger;
 
 namespace GUZ.Core.UI
 {
@@ -155,7 +157,7 @@ namespace GUZ.Core.UI
 
             if (newFont == null)
             {
-                Debug.LogWarning($"Font {newFont} not found.");
+                Logger.LogWarning($"Font {newFont} not found.", LogCat.Ui);
                 return;
             }
 
@@ -166,7 +168,7 @@ namespace GUZ.Core.UI
         {
             if (_audioSource == null)
             {
-                Debug.LogWarning("AudioSource isn't set on UIEvents.cs - Therefore no menu button click could be played.");
+                Logger.LogWarning("AudioSource isn't set on UIEvents.cs - Therefore no menu button click could be played.", LogCat.Ui);
                 return;
             }
 
@@ -179,7 +181,7 @@ namespace GUZ.Core.UI
         {
             if (_audioSource == null)
             {
-                Debug.LogWarning("AudioSource isn't set on UIEvents.cs - Therefore no menu button click could be played.");
+                Logger.LogWarning("AudioSource isn't set on UIEvents.cs - Therefore no menu button click could be played.", LogCat.Ui);
                 return;
             }
 

@@ -21,6 +21,7 @@ using ZenKit.Daedalus;
 using ZenKit.Util;
 using ZenKit.Vobs;
 using Debug = UnityEngine.Debug;
+using Logger = GUZ.Core.Util.Logger;
 using Mesh = UnityEngine.Mesh;
 using Object = UnityEngine.Object;
 using Vector3 = System.Numerics.Vector3;
@@ -84,7 +85,7 @@ namespace GUZ.Core.Creator
             }
             else
             {
-                Debug.LogError($"No suitable root GO found for type >{type}<");
+                Logger.LogError($"No suitable root GO found for type >{type}<", LogCat.Vob);
                 return null;
             }
         }
@@ -388,7 +389,7 @@ namespace GUZ.Core.Creator
                 }
                 default:
                 {
-                    Debug.LogError($"VobType={vob.Type} not yet handled. And we didn't know we need to do so. ;-)");
+                    Logger.LogError($"VobType={vob.Type} not yet handled. And we didn't know we need to do so. ;-)", LogCat.Vob);
                     break;
                 }
             }
@@ -478,7 +479,7 @@ namespace GUZ.Core.Creator
                          VirtualObjectType.zCPFXController
                      })
             {
-                Debug.LogWarning($"{var} not yet implemented.");
+                Logger.LogWarning($"{var} not yet implemented.", LogCat.Vob);
             }
         }
 
@@ -584,7 +585,7 @@ namespace GUZ.Core.Creator
 
                     if (propertiesComponent == null)
                     {
-                        Debug.LogError($"VobProperties component missing on {go.name} ({vob.Type})");
+                        Logger.LogError($"VobProperties component missing on {go.name} ({vob.Type})", LogCat.Vob);
                     }
 
                     GameData.VobsInteractable.Add(go.GetComponent<VobProperties>());
@@ -672,8 +673,9 @@ namespace GUZ.Core.Creator
             if (vobObj == null)
             {
                 Object.Destroy(prefabInstance); // No mesh created. Delete the prefab instance again.
-                Debug.LogError(
-                    $"There should be no! object which can't be found n:{vob.Name} i:{vob.Instance}. We need to use >PxVobItem.instance< to do it right!");
+                Logger.LogError(
+                    $"There should be no! object which can't be found n:{vob.Name} i:{vob.Instance}. " +
+                    $"We need to use >PxVobItem.instance< to do it right!", LogCat.Vob);
                 return null;
             }
 
@@ -689,7 +691,7 @@ namespace GUZ.Core.Creator
 
             if (vobObj == null)
             {
-                Debug.LogWarning($"{vob.Name} - mesh for MobContainer not found.");
+                Logger.LogWarning($"{vob.Name} - mesh for MobContainer not found.", LogCat.Vob);
                 return null;
             }
 
@@ -906,7 +908,7 @@ namespace GUZ.Core.Creator
         /// </summary>
         private static GameObject CreateNpc(ZenKit.Vobs.Npc npcVob)
         {
-            Debug.LogError("Create NPC from saveGame not yet implemented.");
+            Logger.LogError("Create NPC from saveGame not yet implemented.", LogCat.Vob);
             return null;
 
             // var instance = GameData.GothicVm.AllocInstance<NpcInstance>(npcVob.Name);
@@ -1008,7 +1010,7 @@ namespace GUZ.Core.Creator
                 return ret;
             }
 
-            Debug.LogWarning($">{meshName}<'s has no mdl/mrm.");
+            Logger.LogWarning($">{meshName}<'s has no mdl/mrm.", LogCat.Vob);
             return null;
         }
 

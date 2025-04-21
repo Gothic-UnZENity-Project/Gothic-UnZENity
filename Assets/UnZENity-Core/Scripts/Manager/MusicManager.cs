@@ -4,11 +4,13 @@ using System.Linq;
 using DirectMusic;
 using GUZ.Core.Config;
 using GUZ.Core.Globals;
+using GUZ.Core.Util;
 using GUZ.Core.Vob;
 using UnityEngine;
 using ZenKit;
 using ZenKit.Daedalus;
 using ZenKit.Vobs;
+using Logger = GUZ.Core.Util.Logger;
 using Object = UnityEngine.Object;
 
 namespace GUZ.Core.Manager
@@ -223,7 +225,7 @@ namespace GUZ.Core.Manager
             var timing = ToTiming(theme.TransSubType);
             var embellishment = ToEmbellishment(theme.TransType);
 
-            Debug.Log($"Changing music theme to: {theme.File}");
+            Logger.Log($"Changing music theme to: {theme.File}", LogCat.Audio);
 
             _dxPerformance.PlayTransition(segment, embellishment, timing);
 

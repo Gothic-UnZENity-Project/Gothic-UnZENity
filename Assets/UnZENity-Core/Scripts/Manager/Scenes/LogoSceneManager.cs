@@ -2,8 +2,10 @@
 using System.Linq;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
+using GUZ.Core.Util;
 using UnityEngine;
 using UnityEngine.Video;
+using Logger = GUZ.Core.Util.Logger;
 
 namespace GUZ.Core.Manager.Scenes
 {
@@ -15,7 +17,7 @@ namespace GUZ.Core.Manager.Scenes
 
         public void Init()
         {
-            Debug.Log($"INI: playLogoVideos = {GameGlobals.Config.Gothic.IniPlayLogoVideos}");
+            Logger.Log($"INI: playLogoVideos = {GameGlobals.Config.Gothic.IniPlayLogoVideos}", LogCat.Loading);
             if (GameGlobals.Config.Gothic.IniPlayLogoVideos)
             {
                 GameManager.I.LoadScene(Constants.SceneMainMenu, Constants.SceneLogo);
@@ -28,7 +30,7 @@ namespace GUZ.Core.Manager.Scenes
 
             if (_logoVideos.IsEmpty())
             {
-                Debug.Log("No logo videos in format .mp4 found. Skipping scene.");
+                Logger.Log("No logo videos in format .mp4 found. Skipping scene.", LogCat.Loading);
             }
 
             // Start first logo

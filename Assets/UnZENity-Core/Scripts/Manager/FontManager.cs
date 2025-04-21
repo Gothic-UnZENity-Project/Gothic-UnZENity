@@ -8,6 +8,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.TextCore;
 using Constants = GUZ.Core.Globals.Constants;
+using Logger = GUZ.Core.Util.Logger;
 
 namespace GUZ.Core.Manager
 {
@@ -44,7 +45,7 @@ namespace GUZ.Core.Manager
 
             if (font == null || fontTexture == null)
             {
-                Debug.LogError($"[{nameof(FontManager)}]: Could not find font {fontName}");
+                Logger.LogError($"[{nameof(FontManager)}]: Could not find font {fontName}", LogCat.Misc);
                 return null;
             }
             var spriteAsset = ScriptableObject.CreateInstance<TMP_SpriteAsset>();

@@ -1,7 +1,9 @@
 using System;
 using System.Linq;
+using GUZ.Core.Util;
 using JetBrains.Annotations;
 using UnityEngine;
+using Logger = GUZ.Core.Util.Logger;
 
 namespace GUZ.Core.Extensions
 {
@@ -38,7 +40,7 @@ namespace GUZ.Core.Extensions
         {
             if (go == null)
             {
-                Debug.LogError("Empty GameObject provided.");
+                Logger.LogError("Empty GameObject provided.", LogCat.Misc);
                 return null;
             }
             
@@ -49,7 +51,7 @@ namespace GUZ.Core.Extensions
             }
             catch (Exception)
             {
-                Debug.LogError($"Couldn't find GameObject with name >{name}< in parent >{go.name}<");
+                Logger.LogError($"Couldn't find GameObject with name >{name}< in parent >{go.name}<", LogCat.Misc);
                 return null;
             }
 

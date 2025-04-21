@@ -2,7 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using GUZ.Core.Util;
 using UnityEngine;
+using Logger = GUZ.Core.Util.Logger;
 
 namespace GUZ.Core.Extensions
 {
@@ -20,7 +22,7 @@ namespace GUZ.Core.Extensions
             }
             catch (Exception e)
             {
-                Debug.LogError(e);
+                Logger.LogError(e.ToString(), LogCat.Misc);
                 throw;
             }
         }
@@ -37,7 +39,7 @@ namespace GUZ.Core.Extensions
             }
             catch (Exception e)
             {
-                Debug.LogError(e);
+                Logger.LogError(e.ToString(), LogCat.Misc);
                 throw;
             }
         }

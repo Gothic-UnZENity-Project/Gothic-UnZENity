@@ -17,8 +17,8 @@ namespace GUZ.Core.Util
         {
             if (Created && Instance != this)
             {
-                Debug.LogWarning("An instance of this singleton (" + Instance.name + ") already exists. Destroying " +
-                                 gameObject);
+                Logger.LogWarningEditor($"An instance of this singleton ({Instance.name} already exists. Destroying {gameObject}",
+                    LogCat.Misc);
                 Destroy(gameObject);
             }
             else

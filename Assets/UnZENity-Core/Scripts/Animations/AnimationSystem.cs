@@ -4,11 +4,13 @@ using System.Linq;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Npc;
+using GUZ.Core.Util;
 using GUZ.Core.Vm;
 using MyBox;
 using UnityEngine;
 using ZenKit;
 using EventType = ZenKit.EventType;
+using Logger = GUZ.Core.Util.Logger;
 using Object = UnityEngine.Object;
 
 namespace GUZ.Core.Animations
@@ -86,7 +88,7 @@ namespace GUZ.Core.Animations
 #if UNITY_EDITOR
             if (DebugPauseAtPlayAnimation)
             {
-                Debug.Log($"[Break] PlayAnimation: >{animationName}< on >{PrefabProps.Bip01.parent.parent.name}<");
+                Logger.LogEditor($"[Break] PlayAnimation: >{animationName}< on >{PrefabProps.Bip01.parent.parent.name}<", LogCat.Debug);
                 Debug.Break();
             }
 #endif
@@ -95,13 +97,13 @@ namespace GUZ.Core.Animations
 
             if (newTrack == null)
             {
-                Debug.LogWarning($"Animation {animationName} not found and therefore can't be played.");
+                Logger.LogWarning($"Animation {animationName} not found and therefore can't be played.", LogCat.Animation);
                 return false;
             }
 
             // FIXME - Now we need to handle animation flags: M - Move and R - Rotate.
             //         Then S_ROTATEL will work properly and stop once rotated enough.
-            Debug.Log($"Playing animation: {animationName}");
+            Logger.LogEditor($"Playing animation: {animationName}", LogCat.Animation);
 
             if (IsAlreadyPlaying(newTrack))
             {
@@ -182,7 +184,7 @@ namespace GUZ.Core.Animations
 #if UNITY_EDITOR
             if (DebugPauseAtStopAnimation)
             {
-                Debug.Log($"[Break] StopAnimation: >{stoppingAnimationName}< on >{PrefabProps.Bip01.parent.parent.name}<");
+                Logger.LogEditor($"[Break] StopAnimation: >{stoppingAnimationName}< on >{PrefabProps.Bip01.parent.parent.name}<", LogCat.Debug);
                 Debug.Break();
             }
 #endif
@@ -245,7 +247,7 @@ namespace GUZ.Core.Animations
             if (isStartAtLastFrame)
             {
                 // FIXME - Implement
-                Debug.LogError("AnimationFlags.Queue not implemented yet.");
+                Logger.LogError("AnimationFlags.Queue not implemented yet.", LogCat.Animation);
             }
             // else
             // {
@@ -458,7 +460,7 @@ namespace GUZ.Core.Animations
                         // TODO - I assume this means: if torch is in inventory, then put it out. But not really sure. Need a NPC with real usage of it to predict right.
                         break;
                     default:
-                        Debug.LogWarning($"EventType.type {eventTag.Type} not yet supported.");
+                        Logger.LogWarning($"EventType.type {eventTag.Type} not yet supported.", LogCat.Animation);
                         break;
                 }
             }
@@ -491,7 +493,7 @@ namespace GUZ.Core.Animations
 
             foreach (var pfx in pfxEvents)
             {
-                Debug.LogWarning($"Particle Effects are not yet supported. {pfx.Name}");
+                Logger.LogWarning($"Particle Effects are not yet supported. {pfx.Name}", LogCat.Animation);
             }
         }
 
@@ -535,7 +537,7 @@ namespace GUZ.Core.Animations
                     walkMode = "DIVE";
                     break;
                 default:
-                    Debug.LogWarning($"Animation of type {Properties.WalkMode} not yet implemented.");
+                    Logger.LogWarning($"Animation of type {Properties.WalkMode} not yet implemented.", LogCat.Animation);
                     return "";
             }
 
