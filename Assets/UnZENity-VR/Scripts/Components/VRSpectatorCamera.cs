@@ -54,8 +54,7 @@ namespace GUZ.VR.Components
         public SmoothingGroup MediumSmoothing = new() { positionSmoothTime = 0.08f, rotationSmoothTime = 0.08f, verticalSmoothTime = 0.15f };
         public SmoothingGroup HighSmoothing = new() { positionSmoothTime = 0.15f, rotationSmoothTime = 0.15f, verticalSmoothTime = 0.25f };
 
-
-
+        
         private SmoothingGroup _selectedSmoothingGroup;
 
         // Internal variables for smoothing calculations
@@ -66,7 +65,7 @@ namespace GUZ.VR.Components
 
         private void Start()
         {
-            // Disable whole feature if we're not on Windows or Editor build
+            // Disable the whole feature if we're not on Windows or Editor build.
             // Save some CPU cycles for Android builds as we don't have a second screen there.
 #if !UNITY_EDITOR && !UNITY_STANDALONE
             GetComponent<Camera>().enabled = false;
@@ -105,7 +104,7 @@ namespace GUZ.VR.Components
             if (_vrCameraTransform == null)
                 return;
 
-            // Get target position with potential modifications
+            // Get the target position with potential modifications
             var targetPosition = _vrCameraTransform.position;
 
             // Handle vertical movement separately if enabled
@@ -116,41 +115,19 @@ namespace GUZ.VR.Components
                 targetPosition.y = _currentY;
             }
 
-            // Calculate offset position (pulling the camera back slightly)
-            var offsetPosition = targetPosition - _vrCameraTransform.forward;
-
-            // Smooth position changes
-            var smoothedPosition = Vector3.SmoothDamp(
+            transform.position = Vector3.SmoothDamp(
                 transform.position,
-                offsetPosition,
+                targetPosition,
                 ref _positionVelocity,
                 _selectedSmoothingGroup.positionSmoothTime
             );
 
-            // Convert current and target rotations to euler angles
-            var currentRotation = transform.rotation.eulerAngles;
-            var targetRotation = _vrCameraTransform.rotation.eulerAngles;
-
-            // Fix rotation to avoid 360-degree jumps
-            currentRotation.x = FixAngle(currentRotation.x);
-            currentRotation.y = FixAngle(currentRotation.y);
-            currentRotation.z = FixAngle(currentRotation.z);
-
-            targetRotation.x = FixAngle(targetRotation.x);
-            targetRotation.y = FixAngle(targetRotation.y);
-            targetRotation.z = FixAngle(targetRotation.z);
-
-            // Smooth rotation changes
-            var smoothedRotation = Vector3.SmoothDamp(
-                currentRotation,
-                targetRotation,
-                ref _rotationVelocity,
-                _selectedSmoothingGroup.rotationSmoothTime
+            transform.rotation = Quaternion.Slerp(
+                transform.rotation,
+                _vrCameraTransform.rotation,
+                // Use an exponential ease-in/out for more natural-feeling camera movement
+                1.0f - Mathf.Exp(-Time.deltaTime / _selectedSmoothingGroup.rotationSmoothTime)
             );
-
-            // Apply smoothed values
-            transform.position = smoothedPosition;
-            transform.rotation = Quaternion.Euler(smoothedRotation);
         }
 
         /// <summary>
