@@ -66,6 +66,15 @@ namespace GUZ.VR.Components
 
         private void Start()
         {
+            // Disable whole feature if we're not on Windows or Editor build
+            // Save some CPU cycles for Android builds as we don't have a second screen there.
+#if !UNITY_EDITOR && !UNITY_STANDALONE
+            GetComponent<Camera>().enabled = false;
+            this.enabled = false;
+            gameObject.SetActive(false);
+            return;
+#endif
+
             var playerController = GameContext.InteractionAdapter.GetCurrentPlayerController().GetComponent<VRPlayerController>();
             playerController.Teleporter.PositionUpdate.AddListener(SetPositionOnce);
             GlobalEventDispatcher.PlayerFallingChanged.AddListener(DisablePositionSmoothing);
