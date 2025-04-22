@@ -1,6 +1,7 @@
 using System;
+using GUZ.Core;
+using GUZ.VR.Components.HVROverrides;
 using MyBox;
-using UnityEditor;
 using UnityEngine;
 
 namespace GUZ.VR.Components
@@ -65,6 +66,10 @@ namespace GUZ.VR.Components
 
         private void Start()
         {
+            var playerController = GameContext.InteractionAdapter.GetCurrentPlayerController().GetComponent<VRPlayerController>();
+            playerController.Teleporter.PositionUpdate.AddListener(SetPositionOnce);
+            GlobalEventDispatcher.PlayerFallingChanged.AddListener(DisablePositionSmoothing);
+
             SetSmoothness();
 
             if (_spectatorCamera != null)
@@ -139,6 +144,17 @@ namespace GUZ.VR.Components
             transform.rotation = Quaternion.Euler(smoothedRotation);
         }
 
+        /// <summary>
+        /// If we - e.g. - teleport to a new position, we need to set the position once.
+        /// Otherwise, the camera would fly to this position slowly.
+        /// </summary>
+        private void SetPositionOnce(Vector3 position)
+        {
+            transform.position = position;
+            transform.rotation = _vrCameraTransform.rotation;
+            _currentY = _vrCameraTransform.position.y;
+        }
+
         private void SetSmoothness()
         {
             _selectedSmoothingGroup = SmoothingLvl switch
@@ -149,6 +165,11 @@ namespace GUZ.VR.Components
                 SmoothingLevel.High => HighSmoothing,
                 _ => throw new ArgumentOutOfRangeException()
             };
+        }
+
+        private void DisablePositionSmoothing(bool disableSmoothing)
+        {
+            throw new NotImplementedException("We need to disable smoothing if we fall down or fly, ... And reenable once normal movement is restarted.");
         }
 
         /// <summary>
