@@ -2968,24 +2968,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _vrCameraTransform: {fileID: 8391885030032322550}
   _spectatorCamera: {fileID: 5753945146512928740}
-  SmoothingLvl: 1
-  reduceVerticalBobbing: 1
-  NoneSmoothing:
-    positionSmoothTime: 0
-    rotationSmoothTime: 0
-    verticalSmoothTime: 0
-  LowSmoothing:
-    positionSmoothTime: 0.02
-    rotationSmoothTime: 0.02
-    verticalSmoothTime: 0.05
-  MediumSmoothing:
-    positionSmoothTime: 0.08
-    rotationSmoothTime: 0.08
-    verticalSmoothTime: 0.15
-  HighSmoothing:
-    positionSmoothTime: 0.15
-    rotationSmoothTime: 0.15
-    verticalSmoothTime: 0.25
+  SmoothingLvl: 2
+  NoneRotationSmoothing: 0
+  LowRotationSmoothing: 0.02
+  MediumRotationSmoothing: 0.08
+  HighRotationSmoothing: 0.15
 --- !u!20 &5753945146512928740
 Camera:
   m_ObjectHideFlags: 0

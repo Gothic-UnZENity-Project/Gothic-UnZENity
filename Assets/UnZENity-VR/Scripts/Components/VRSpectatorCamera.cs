@@ -42,26 +42,23 @@ namespace GUZ.VR.Components
         private Camera _spectatorCamera;
 
         [Header("Smoothing Settings")]
-
-        [OverrideLabel("SmoothingLevel")]
+        [OverrideLabel("Smoothing Level")]
         public SmoothingLevel SmoothingLvl = SmoothingLevel.Medium;
 
-        [Tooltip("Apply additional smoothing to quick vertical movements")]
-        public bool reduceVerticalBobbing = true;
-
-        public SmoothingGroup NoneSmoothing = new() { positionSmoothTime = 0.0f, rotationSmoothTime = 0.0f, verticalSmoothTime = 0.0f };
-        public SmoothingGroup LowSmoothing = new() { positionSmoothTime = 0.02f, rotationSmoothTime = 0.02f, verticalSmoothTime = 0.05f };
-        public SmoothingGroup MediumSmoothing = new() { positionSmoothTime = 0.08f, rotationSmoothTime = 0.08f, verticalSmoothTime = 0.15f };
-        public SmoothingGroup HighSmoothing = new() { positionSmoothTime = 0.15f, rotationSmoothTime = 0.15f, verticalSmoothTime = 0.25f };
+        [Range(0.0f, 1.0f)]
+        public float NoneRotationSmoothing = 0.0f;
+        [Range(0.0f, 1.0f)]
+        public float LowRotationSmoothing = 0.02f;
+        [Range(0.0f, 1.0f)]
+        public float MediumRotationSmoothing = 0.08f;
+        [Range(0.0f, 1.0f)]
+        public float HighRotationSmoothing = 0.15f;
 
         
-        private SmoothingGroup _selectedSmoothingGroup;
+        private float _selectedSmoothingValue;
 
         // Internal variables for smoothing calculations
         private Vector3 _positionVelocity;
-        private Vector3 _rotationVelocity;
-        private float _verticalVelocity;
-        private float _currentY;
 
         private void Start()
         {
@@ -75,8 +72,7 @@ namespace GUZ.VR.Components
 #endif
 
             var playerController = GameContext.InteractionAdapter.GetCurrentPlayerController().GetComponent<VRPlayerController>();
-            playerController.Teleporter.PositionUpdate.AddListener(SetPositionOnce);
-            GlobalEventDispatcher.PlayerFallingChanged.AddListener(DisablePositionSmoothing);
+            playerController.Teleporter.PositionUpdate.AddListener(SetTeleportPosition);
 
             SetSmoothness();
 
@@ -90,7 +86,6 @@ namespace GUZ.VR.Components
                 // Initialize position to avoid jumps at startup
                 transform.position = _vrCameraTransform.position;
                 transform.rotation = _vrCameraTransform.rotation;
-                _currentY = _vrCameraTransform.position.y;
             }
         }
 
@@ -104,29 +99,11 @@ namespace GUZ.VR.Components
             if (_vrCameraTransform == null)
                 return;
 
-            // Get the target position with potential modifications
-            var targetPosition = _vrCameraTransform.position;
-
-            // Handle vertical movement separately if enabled
-            if (reduceVerticalBobbing)
-            {
-                // Smooth Y position separately with a longer smooth time
-                _currentY = Mathf.SmoothDamp(_currentY, targetPosition.y, ref _verticalVelocity, _selectedSmoothingGroup.verticalSmoothTime);
-                targetPosition.y = _currentY;
-            }
-
-            transform.position = Vector3.SmoothDamp(
-                transform.position,
-                targetPosition,
-                ref _positionVelocity,
-                _selectedSmoothingGroup.positionSmoothTime
-            );
-
             transform.rotation = Quaternion.Slerp(
                 transform.rotation,
                 _vrCameraTransform.rotation,
                 // Use an exponential ease-in/out for more natural-feeling camera movement
-                1.0f - Mathf.Exp(-Time.deltaTime / _selectedSmoothingGroup.rotationSmoothTime)
+                1.0f - Mathf.Exp(-Time.deltaTime / _selectedSmoothingValue)
             );
         }
 
@@ -134,41 +111,23 @@ namespace GUZ.VR.Components
         /// If we - e.g. - teleport to a new position, we need to set the position once.
         /// Otherwise, the camera would fly to this position slowly.
         /// </summary>
-        private void SetPositionOnce(Vector3 position)
+        private void SetTeleportPosition(Vector3 position)
         {
-            transform.position = position;
+            // 1.7 == ~normal person size rather than at the bottom of the screen.
+            transform.position = position + new Vector3(0, 1.7f, 0);
             transform.rotation = _vrCameraTransform.rotation;
-            _currentY = _vrCameraTransform.position.y;
         }
 
         private void SetSmoothness()
         {
-            _selectedSmoothingGroup = SmoothingLvl switch
+            _selectedSmoothingValue = SmoothingLvl switch
             {
-                SmoothingLevel.None => NoneSmoothing,
-                SmoothingLevel.Low => LowSmoothing,
-                SmoothingLevel.Medium => MediumSmoothing,
-                SmoothingLevel.High => HighSmoothing,
+                SmoothingLevel.None => NoneRotationSmoothing,
+                SmoothingLevel.Low => LowRotationSmoothing,
+                SmoothingLevel.Medium => MediumRotationSmoothing,
+                SmoothingLevel.High => HighRotationSmoothing,
                 _ => throw new ArgumentOutOfRangeException()
             };
-        }
-
-        private void DisablePositionSmoothing(bool disableSmoothing)
-        {
-            throw new NotImplementedException("We need to disable smoothing if we fall down or fly, ... And reenable once normal movement is restarted.");
-        }
-
-        /// <summary>
-        /// Helper method to handle angle wrapping for proper rotation smoothing
-        /// </summary>
-        private float FixAngle(float angle)
-        {
-            if (angle > 180)
-            {
-                angle -= 360;
-            }
-
-            return angle;
         }
     }
 }

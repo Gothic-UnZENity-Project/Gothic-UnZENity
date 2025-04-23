@@ -32,7 +32,5 @@ namespace GUZ.Core
         public static readonly UnityEvent<string, string> LevelChangeTriggered = new();
         
         public static readonly UnityEvent<string, object> PlayerPrefUpdated = new();
-
-        public static readonly UnityEvent<bool> PlayerFallingChanged = new();
     }
 }
