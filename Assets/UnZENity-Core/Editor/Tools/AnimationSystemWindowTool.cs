@@ -21,7 +21,9 @@ namespace GUZ.Core.Editor.Tools
         private bool _isTimeScaleFoldedOut;
 
         private GUILayoutOption _buttonSmall = GUILayout.Width(50);
+        private GUILayoutOption _buttonMedium = GUILayout.Width(75);
         private GUILayoutOption _buttonWide = GUILayout.Width(100);
+        private GUILayoutOption _buttonUltraWide = GUILayout.Width(200);
 
 
 
@@ -86,18 +88,29 @@ namespace GUZ.Core.Editor.Tools
             // Green == already collected once at least
             GUI.backgroundColor = _animationSystems.Any() ? Color.green : Color.grey;
 
+            EditorGUILayout.BeginHorizontal();
             // Re-Collect AnimationSystems
-            if (GUILayout.Button("(Re)collect Animation Systems", GUILayout.Width(400)))
+            if (GUILayout.Button("(Re)collect Animation Systems", _buttonUltraWide))
             {
                 var emptyElement = new[] { new { name = "<<Choose NPC>>", animComp = (AnimationSystem)null } };
 
+                var no = 0;
                 // Add additional empty element to the Dictionary
                 _animationSystems = emptyElement
                     .Concat(FindObjectsOfType<AnimationSystem>()
                         .Select(animComp => new { animComp.GetComponentInParent<NpcLoader2>().name, animComp }))
-                    .ToDictionary(i => i.name, i => i.animComp);
+                    .ToDictionary(i => $"#{no++} - {i.name}", i => i.animComp); // We need to have a unique key for the Dict as e.g. Meatbug will be there multiple times.
             }
             GUI.backgroundColor = origBack;
+
+            if (GUILayout.Button("Select in Inspector", _buttonUltraWide))
+            {
+                if (_targetAnimationSystem != null)
+                {
+                    Selection.activeObject = _targetAnimationSystem.GetComponentInParent<NpcLoader2>();
+                }
+            }
+            EditorGUILayout.EndHorizontal();
         }
 
         private void DrawTimeScale()
@@ -208,7 +221,7 @@ namespace GUZ.Core.Editor.Tools
             foreach (var trackInstance in _targetAnimationSystem.DebugTrackInstances)
             {
                 EditorGUILayout.BeginHorizontal();
-                EditorGUILayout.LabelField($"{trackInstance.Track.Layer:D2} - {trackInstance.Track.Name}");
+                EditorGUILayout.LabelField($"{trackInstance.Track.Layer:D2} - {trackInstance.Track.AliasName ?? trackInstance.Track.Name}");
                 EditorGUILayout.LabelField(
                     $"{trackInstance.CurrentTime:F2} / {trackInstance.Track.Duration:F2} - {trackInstance.State}");
                 EditorGUILayout.EndHorizontal();

@@ -2,8 +2,14 @@ using UnityEngine;
 
 namespace GUZ.Core.Npc
 {
+    [RequireComponent(typeof(CapsuleCollider))]
     public class RootCollisionHandler : BasePlayerBehaviour
     {
+        [SerializeField]
+        private CapsuleCollider _capsuleCollider;
+
+        private SkinnedMeshRenderer[] _meshRenderers;
+
         protected override void Awake()
         {
             base.Awake();
@@ -18,6 +24,22 @@ namespace GUZ.Core.Npc
         /// </summary>
         private void Update()
         {
+            if (_meshRenderers == null)
+            {
+                _meshRenderers = Go.GetComponentsInChildren<SkinnedMeshRenderer>();
+            }
+
+            var bbox = new Bounds();
+
+            foreach (var rend in _meshRenderers)
+            {
+                bbox.Encapsulate(rend.localBounds);
+            }
+
+            // We only want to move the Collider to the center of the body in vertical orientation. A slight move left/right can be ignored.
+            _capsuleCollider.center = new Vector3(0, bbox.center.y, 0);
+            _capsuleCollider.height = bbox.size.y;
+
             /*
              * NPC GO hierarchy:
              *

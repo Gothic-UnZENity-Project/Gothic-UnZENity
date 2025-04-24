@@ -302,7 +302,14 @@ namespace GUZ.Core._Npc2
             }
             else
             {
-                npc2Pos = npc2.GetUserData2().Go.transform.position;
+                var go = npc2.GetUserData2().Go;
+
+                // e.g. Triggered at Grd_214_Torwache_NODUSTY_Condition as Dusty is not yet spawned.
+                // Hint: Could be optimized/overcome if we copy pos+rot between GO and ZenKitVob each frame.
+                if (go == null)
+                    return int.MaxValue;
+                else
+                    npc2Pos = go.transform.position;
             }
 
             return (int)(Vector3.Distance(npc1Pos, npc2Pos) * 100);

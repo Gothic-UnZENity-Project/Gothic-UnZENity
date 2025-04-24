@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using GUZ.Core.Caches;
+using GUZ.Core.Config;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
@@ -49,24 +50,62 @@ namespace GUZ.Core._Npc2
                 {
                     var npcElement = _objectsToInitQueue.Dequeue();
 
+                    var npcId = npcElement.Npc.Id;
+                    var monsterId = npcElement.Npc.GetAiVar(Constants.DaedalusConst.AIVMMRealId);
+
                     // Do not load NPCs we don't want to have via Debug flags.
-                    // Hint: If we filter out NPCs to spawn, we will never get any Monster as they have no Ids set. Except default: 0.
-                    if (GameGlobals.Config.Dev.SpawnNpcInstances.Value.Any() &&
+                    if (npcId != 0 && GameGlobals.Config.Dev.SpawnNpcInstances.Value.Any() &&
                         !GameGlobals.Config.Dev.SpawnNpcInstances.Value.Contains(npcElement.Npc.Id))
                     {
                         continue;
                     }
 
-                    _initializer.InitNpc(npcElement.Npc, npcElement.gameObject);
+                    // Do not load Monsters we don't want to have via Debug flags.
+                    if (npcId == 0 && monsterId != 0 && GameGlobals.Config.Dev.SpawnMonsterInstances.Value.Any() &&
+                        !GameGlobals.Config.Dev.SpawnMonsterInstances.Value.Contains((DeveloperConfigEnums.MonsterId)monsterId))
+                    {
+                        continue;
+                    }
 
+                    _initializer.InitNpc(npcElement.Npc, npcElement.gameObject);
+                    if (npcId != 0 && GameGlobals.Config.Dev.SpawnNpcInstances.Value.Any() &&
+                        !GameGlobals.Config.Dev.SpawnNpcInstances.Value.Contains(npcElement.Npc.Id))
+                    {
+                        continue;
+                    }
                     yield return FrameSkipper.TrySkipToNextFrameCoroutine();
                 }
             }
         }
 
-        public async Task CreateWorldNpcs(LoadingManager loading, GameObject rootGo)
+        public void SetRootGo(GameObject rootGo)
         {
-            await _initializer.InitNpcsNewGame(loading, rootGo);
+            _initializer.RootGo = rootGo;
+        }
+
+        public async Task CreateWorldNpcs(LoadingManager loading)
+        {
+            if (GameGlobals.SaveGame.IsNewGame)
+                await _initializer.InitNpcsNewGame(loading);
+             else
+                await _initializer.InitNpcsSaveGame(loading);
+        }
+
+        /// <summary>
+        /// World Vobs from a SaveGame contains NPCs if they're close to our hero during save time.
+        /// We will create them here as a "normal" lazy loaded NPC.
+        /// </summary>
+        public void CreateVobNpc(ZenKit.Vobs.Npc vobNpc)
+        {
+            if (vobNpc.Name.EqualsIgnoreCase(Constants.DaedalusHeroInstanceName))
+            {
+                GameGlobals.Player.HeroSpawnPosition = vobNpc.Position.ToUnityVector();
+                GameGlobals.Player.HeroSpawnRotation = vobNpc.Rotation.ToUnityQuaternion();
+                return;
+            }
+
+            // Initialize NPC and set its data from SaveGame (VOB entry).
+            _initializer.InitNpcVobSaveGame(vobNpc);
         }
 
         public void ExtWldInsertNpc(int npcInstanceIndex, string spawnPoint)
@@ -343,6 +382,13 @@ namespace GUZ.Core._Npc2
             }
 
             var changed = npcProps.RoutineCurrent != newRoutine;
+
+            if (changed)
+            {
+                var routineIndex = npcProps.Routines.IndexOf(newRoutine);
+                var prevRoutineIndex = routineIndex == 0 ? npcProps.Routines.Count - 1 : routineIndex - 1;;
+                npcProps.RoutinePrevious = npcProps.Routines[prevRoutineIndex];
+            }
             npcProps.RoutineCurrent = newRoutine;
 
             return changed;
