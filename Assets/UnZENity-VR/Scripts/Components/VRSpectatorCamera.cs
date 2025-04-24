@@ -49,11 +49,17 @@ namespace GUZ.VR.Components
             // Disable the whole feature if we're not on Windows or Editor build.
             // Save some CPU cycles for Android builds as we don't have a second screen there.
 #if !UNITY_EDITOR && !UNITY_STANDALONE
-            GetComponent<Camera>().enabled = false;
-            this.enabled = false;
-            gameObject.SetActive(false);
+            DisableSpectatorCamera();
             return;
 #endif
+
+            // If we have Device Simulator AND Spectator camera active, then the camera won't move at all in GameView.
+            // And to be honest: We don't need the Spectator camera at that time.
+            if (GameGlobals.Config.Dev.EnableVRDeviceSimulator)
+            {
+                DisableSpectatorCamera();
+                return;
+            }
 
             var playerController = GameContext.InteractionAdapter.GetCurrentPlayerController().GetComponent<VRPlayerController>();
             playerController.Teleporter.PositionUpdate.AddListener(SetTeleportPosition);
@@ -71,6 +77,13 @@ namespace GUZ.VR.Components
                 transform.position = _vrCameraTransform.position;
                 transform.rotation = _vrCameraTransform.rotation;
             }
+        }
+
+        private void DisableSpectatorCamera()
+        {
+            GetComponent<Camera>().enabled = false;
+            this.enabled = false;
+            gameObject.SetActive(false);
         }
 
         private void OnValidate()
