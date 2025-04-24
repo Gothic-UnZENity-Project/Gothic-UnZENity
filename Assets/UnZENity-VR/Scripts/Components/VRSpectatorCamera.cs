@@ -8,22 +8,6 @@ namespace GUZ.VR.Components
 {
     public class VRSpectatorCamera : MonoBehaviour
     {
-        [Serializable]
-        public class SmoothingGroup
-        {
-            [Range(0.0f, 1.0f)]
-            [Tooltip("How quickly position changes are smoothed (lower = smoother but more lag)")]
-            public float positionSmoothTime;
-
-            [Range(0.0f, 1.0f)]
-            [Tooltip("How quickly rotation changes are smoothed (lower = smoother but more lag)")]
-            public float rotationSmoothTime;
-
-            [Range(0.0f, 1.0f)]
-            [Tooltip("Strength of vertical movement reduction (lower = more reduction)")]
-            public float verticalSmoothTime;
-        }
-
         public enum SmoothingLevel
         {
             None,
