@@ -41,6 +41,11 @@ namespace GUZ.Core.UnZENity_Core.Scripts.UI
 
         protected abstract bool IsMenuItemInitiallyActive(string menuItemName);
 
+        protected virtual void Awake()
+        {
+            MenuHandler = transform.parent.GetComponent<MenuHandler>();
+        }
+
         public void ToggleVisibility()
         {
             if (gameObject.activeSelf)
@@ -65,8 +70,6 @@ namespace GUZ.Core.UnZENity_Core.Scripts.UI
 
         protected void CreateRootElements(string menuDefName)
         {
-            MenuHandler = transform.parent.GetComponent<MenuHandler>();
-
             var menuInstance = GameData.MenuVm.InitInstance<MenuInstance>(menuDefName);
 
             var backPic = GameGlobals.Textures.GetMaterial(menuInstance.BackPic);

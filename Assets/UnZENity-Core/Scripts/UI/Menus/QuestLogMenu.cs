@@ -85,8 +85,10 @@ namespace GUZ.Core.UI
         /// 3. Use this data to create GameObjects dynamically based on Template elements (button, text, ...)
         /// 3. For lists (e.g. active missions), create the list items and arrows (do not them fill yet)
         /// </summary>
-        private void Awake()
+        protected override void Awake()
         {
+            base.Awake();
+
             Setup();
             UpdateDayAndTime(GameManager.I.Time.GetCurrentDateTime());
             GlobalEventDispatcher.GameTimeMinuteChangeCallback.AddListener(UpdateDayAndTime);

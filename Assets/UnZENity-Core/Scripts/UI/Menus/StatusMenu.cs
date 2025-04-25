@@ -24,8 +24,9 @@ namespace GUZ.Core.UI
         private string _itemTalentDescriptionPattern = "MENU_ITEM_TALENT_{0}";
 
 
-        private void Awake()
+        protected override void Awake()
         {
+            base.Awake();
             Setup();
         }
 

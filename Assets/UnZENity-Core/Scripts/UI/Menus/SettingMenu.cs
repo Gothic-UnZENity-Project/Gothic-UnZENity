@@ -1,3 +1,4 @@
+using System;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.UI;
@@ -10,6 +11,7 @@ using UnityEngine.UI;
 
 namespace GUZ.Core.Menu
 {
+    [Obsolete("Use SettingsMenu.cs for dynamic setting setup instead.")]
     public class SettingsMainMenu : AbstractMenu
     {
         public GameObject SettingsMenu;

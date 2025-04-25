@@ -29,8 +29,9 @@ namespace GUZ.Core.UnZENity_Core.Scripts.UI
 
         private string _saveLoadStatus;
 
-        private void Awake()
+        protected override void Awake()
         {
+            base.Awake();
             Setup();
         }
 

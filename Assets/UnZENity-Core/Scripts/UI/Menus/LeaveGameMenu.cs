@@ -4,8 +4,9 @@ namespace GUZ.Core.UnZENity_Core.Scripts.UI
 {
     public class LeaveGameMenu : AbstractMenu
     {
-        private void Awake()
+        protected override void Awake()
         {
+            base.Awake();
             Setup();
         }
 

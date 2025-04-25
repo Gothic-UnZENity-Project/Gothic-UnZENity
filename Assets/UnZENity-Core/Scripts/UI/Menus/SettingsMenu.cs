@@ -1,36 +1,37 @@
+using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
+using GUZ.Core.UI;
+using GUZ.Core.UnZENity_Core.Scripts.UI;
+using MyBox;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using ZenKit.Daedalus;
+using UnityEngine.UI;
 
-namespace GUZ.Core.UnZENity_Core.Scripts.UI
+namespace GUZ.Core.Menu
 {
-    public class MainMenu : AbstractMenu
+    public class SettingsMenu : AbstractMenu
     {
         protected override void Awake()
         {
             base.Awake();
-            Setup();
-        }
 
-        private void Setup()
-        {
-            CreateRootElements("MENU_MAIN");
+            CreateRootElements("MENU_OPTIONS");
         }
 
         protected override void Undefined(string itemName, string commandName)
         {
-            return;
+            throw new System.NotImplementedException();
         }
 
         protected override void Back(string itemName, string commandName)
         {
-            MenuHandler.BackMenu();
+            throw new System.NotImplementedException();
         }
 
         protected override void StartMenu(string itemName, string commandName)
         {
-            MenuHandler.OpenMenu(commandName);
+            throw new System.NotImplementedException();
         }
 
         protected override void StartItem(string itemName, string commandName)
@@ -40,11 +41,7 @@ namespace GUZ.Core.UnZENity_Core.Scripts.UI
 
         protected override void Close(string itemName, string commandName)
         {
-            MenuHandler.ToggleVisibility();
-            if (commandName == "NEW_GAME")
-            {
-                GameManager.I.LoadWorld(Constants.SelectedWorld, -1, SceneManager.GetActiveScene().name);
-            }
+            throw new System.NotImplementedException();
         }
 
         protected override void ConsoleCommand(string itemName, string commandName)
@@ -64,10 +61,7 @@ namespace GUZ.Core.UnZENity_Core.Scripts.UI
 
         protected override bool IsMenuItemInitiallyActive(string menuItemName)
         {
-            return ((MenuItemCache[menuItemName].item.Flags & MenuItemFlag.OnlyInGame) == 0 &&
-                    !GameData.InGameAndAlive) ||
-                   ((MenuItemCache[menuItemName].item.Flags & MenuItemFlag.OnlyOutGame) == 0 &&
-                    GameData.InGameAndAlive);
+            throw new System.NotImplementedException();
         }
     }
 }
