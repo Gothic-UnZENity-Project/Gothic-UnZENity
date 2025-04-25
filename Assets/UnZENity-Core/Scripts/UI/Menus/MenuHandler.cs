@@ -6,15 +6,21 @@ namespace GUZ.Core.UI.Menus
 {
     public class MenuHandler : MonoBehaviour
     {
-        private Dictionary<string, GameObject> menuList = new();
-        private string currentMenu;
-        private Stack<string> menuQueue = new();
+        private Dictionary<string, GameObject> _menuList = new();
+        private string _currentMenu;
+        private Stack<string> _menuQueue = new();
 
-        [SerializeField] private GameObject mainMenuPrefab;
-        [SerializeField] private GameObject saveMenuPrefab;
-        [SerializeField] private GameObject loadMenuPrefab;
-        [SerializeField] private GameObject settingsMenuPrefab;
-        [SerializeField] private GameObject leaveMenuPrefab;
+        [SerializeField] private GameObject _mainMenuPrefab;
+        [SerializeField] private GameObject _saveMenuPrefab;
+        [SerializeField] private GameObject _loadMenuPrefab;
+        [SerializeField] private GameObject _leaveMenuPrefab;
+
+        [SerializeField] private GameObject _settingsMenuPrefab;
+        [SerializeField] private GameObject _settingsGameMenuPrefab;
+        [SerializeField] private GameObject _settingsGraphicsMenuPrefab;
+        [SerializeField] private GameObject _settingsVideoMenuPrefab;
+        [SerializeField] private GameObject _settingsAudioMenuPrefab;
+        [SerializeField] private GameObject _settingsControlsMenuPrefab;
 
         private void OnEnable()
         {
@@ -25,23 +31,23 @@ namespace GUZ.Core.UI.Menus
 
         private void InitializeMenus()
         {
-            if (menuList.Count != 0)
+            if (_menuList.Count != 0)
             {
                 return;
             }
 
-            GameObject menu = null;
-            menu = Instantiate(mainMenuPrefab, transform);
-            menuList.Add("MENU_MAIN", menu);
-            menu = Instantiate(loadMenuPrefab, transform);
-            menuList.Add("MENU_SAVEGAME_LOAD", menu);
-            menu = Instantiate(saveMenuPrefab, transform);
-            menuList.Add("MENU_SAVEGAME_SAVE", menu);
-            menu = Instantiate(settingsMenuPrefab, transform);
-            menuList.Add("MENU_OPTIONS", menu);
-            menu = Instantiate(leaveMenuPrefab, transform);
-            menuList.Add("MENU_LEAVE_GAME", menu);
-            
+            _menuList.Add("MENU_MAIN", Instantiate(_mainMenuPrefab, transform));
+            _menuList.Add("MENU_SAVEGAME_LOAD", Instantiate(_loadMenuPrefab, transform));
+            _menuList.Add("MENU_SAVEGAME_SAVE", Instantiate(_saveMenuPrefab, transform));
+            _menuList.Add("MENU_LEAVE_GAME", Instantiate(_leaveMenuPrefab, transform));
+
+            _menuList.Add("MENU_OPTIONS", Instantiate(_settingsMenuPrefab, transform));
+            _menuList.Add("MENU_OPT_GAME", Instantiate(_settingsGameMenuPrefab, transform));
+            _menuList.Add("MENU_OPT_GRAPHICS", Instantiate(_settingsGraphicsMenuPrefab, transform));
+            _menuList.Add("MENU_OPT_VIDEO", Instantiate(_settingsVideoMenuPrefab, transform));
+            _menuList.Add("MENU_OPT_AUDIO", Instantiate(_settingsAudioMenuPrefab, transform));
+            _menuList.Add("MENU_OPT_CONTROLS", Instantiate(_settingsControlsMenuPrefab, transform));
+
             GameContext.InteractionAdapter.InitUIInteraction();
             
             CloseAllMenus();
@@ -53,8 +59,8 @@ namespace GUZ.Core.UI.Menus
             if (gameObject.activeSelf)
             {
                 CloseAllMenus();
-                menuQueue.Clear();
-                currentMenu = null;
+                _menuQueue.Clear();
+                _currentMenu = null;
             }
 
             gameObject.SetActive(!gameObject.activeSelf);
@@ -62,25 +68,25 @@ namespace GUZ.Core.UI.Menus
 
         public void OpenMenu(string menuName)
         {
-            if (!currentMenu.IsNullOrEmpty())
+            if (!_currentMenu.IsNullOrEmpty())
             {
-                menuQueue.Push(currentMenu);
+                _menuQueue.Push(_currentMenu);
             }
 
-            currentMenu = menuName;
+            _currentMenu = menuName;
 
             CloseAllMenus();
-            if (!menuList.ContainsKey(menuName))
+            if (!_menuList.ContainsKey(menuName))
             {
                 return;
             }
 
-            menuList[menuName].SetActive(true);
+            _menuList[menuName].SetActive(true);
         }
 
         private void CloseAllMenus()
         {
-            foreach (var menu in menuList.Values)
+            foreach (var menu in _menuList.Values)
             {
                 menu.SetActive(false);
             }
@@ -88,7 +94,7 @@ namespace GUZ.Core.UI.Menus
 
         public void BackMenu()
         {
-            var nextMenu = menuQueue.TryPop(out string result);
+            var nextMenu = _menuQueue.TryPop(out string result);
             if (nextMenu)
             {
                 OpenMenu(result);
