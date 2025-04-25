@@ -274,6 +274,12 @@ namespace GUZ.Core.UI.Menus
                 textComp.alignment = TextAlignmentOptions.Center;
             }
 
+            // By default, we let text overflow. This ensures we won't have it being wrapped if we have text >1px too long.
+            if (item.Flags.HasFlag(MenuItemFlag.Multiline))
+            {
+                textComp.textWrappingMode = TextWrappingModes.Normal;
+            }
+
             // Text shall always be rendered from top to bottom. Otherwise, e.g. MENUITEM_OPT_HEADING will be rendered y-centered.
             // VerticalAlignment setting stored on Prefab isn't being used by Unity. We therefore need to set it now.
             textComp.verticalAlignment = VerticalAlignmentOptions.Top;
