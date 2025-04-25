@@ -268,6 +268,10 @@ namespace GUZ.Core.UnZENity_Core.Scripts.UI
                 textComp.alignment = TextAlignmentOptions.Center;
             }
 
+            // Text shall always be rendered from top to bottom. Otherwise, e.g. MENUITEM_OPT_HEADING will be rendered y-centered.
+            // VerticalAlignment setting stored on Prefab isn't being used by Unity. We therefore need to set it now.
+            textComp.verticalAlignment = VerticalAlignmentOptions.Top;
+
             textComp.text = item.GetText(0);
             textComp.spriteAsset = GameGlobals.Font.TryGetFont(item.FontName);
             textComp.fontSize = item.FontName.ToLowerInvariant().Contains("font_old_10_white") ? 16 : 36;

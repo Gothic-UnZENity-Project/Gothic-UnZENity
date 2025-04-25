@@ -26,12 +26,12 @@ namespace GUZ.Core.Menu
 
         protected override void Back(string itemName, string commandName)
         {
-            throw new System.NotImplementedException();
+            MenuHandler.BackMenu();
         }
 
         protected override void StartMenu(string itemName, string commandName)
         {
-            throw new System.NotImplementedException();
+
         }
 
         protected override void StartItem(string itemName, string commandName)
@@ -61,7 +61,7 @@ namespace GUZ.Core.Menu
 
         protected override bool IsMenuItemInitiallyActive(string menuItemName)
         {
-            throw new System.NotImplementedException();
+            return true;
         }
     }
 }
