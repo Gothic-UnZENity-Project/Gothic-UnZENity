@@ -44,6 +44,11 @@ namespace GUZ.VR.Components.UI
 
         public void ShowSubtitles(string text)
         {
+            if (!GameGlobals.Config.Dev.ShowSubtitles)
+            {
+                return;
+            }
+
             gameObject.SetActive(true);
             _dialogText.text = text;
         }
