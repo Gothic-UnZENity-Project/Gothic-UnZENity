@@ -1,9 +1,11 @@
-﻿using GUZ.Core.Manager;
+﻿using System;
+using GUZ.Core.Manager;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace GUZ.Core.UI.Main
+namespace GUZ.Core.UI.Menus.Settings
 {
+    [Obsolete("Use SettingsAudioMenu.cs instead.")]
     public class SoundMenuHandler : MonoBehaviour
     {
         [SerializeField] private Slider _musicVolumeSlider;

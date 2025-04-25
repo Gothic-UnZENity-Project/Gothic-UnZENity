@@ -25,21 +25,27 @@ namespace GUZ.Core.UI.Menus
         protected float PixelRatioX;
         protected float PixelRatioY;
 
-        protected abstract void Undefined(string itemName, string commandName); // e.g.
-        protected abstract void Back(string itemName, string commandName); // e.g.
+        protected abstract void Undefined(string itemName, string commandName);
+
+        protected virtual void Back(string itemName, string commandName)
+        {
+            MenuHandler.BackMenu();
+        }
 
         protected abstract void StartMenu(string itemName, string commandName);
 
-        // e.g.
-        protected abstract void StartItem(string itemName, string commandName); // e.g.
+        protected abstract void StartItem(string itemName, string commandName);
 
         protected abstract void Close(string itemName, string commandName);
 
-        protected abstract void ConsoleCommand(string itemName, string commandName); // e.g.
-        protected abstract void PlaySound(string itemName, string commandName); // e.g.
-        protected abstract void ExecuteCommand(string itemName, string commandName); // e.g.
+        protected abstract void ConsoleCommand(string itemName, string commandName);
+        protected abstract void PlaySound(string itemName, string commandName);
+        protected abstract void ExecuteCommand(string itemName, string commandName);
 
-        protected abstract bool IsMenuItemInitiallyActive(string menuItemName);
+        protected virtual bool IsMenuItemInitiallyActive(string menuItemName)
+        {
+            return true;
+        }
 
         protected virtual void Awake()
         {

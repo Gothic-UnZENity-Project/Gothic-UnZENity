@@ -71,11 +71,6 @@ namespace GUZ.Core.UI.Menus
             return;
         }
 
-        protected override void Back(string itemName, string commandName)
-        {
-            MenuHandler.BackMenu();
-        }
-
         protected override void StartMenu(string itemName, string commandName)
         {
             MenuHandler.OpenMenu(commandName);

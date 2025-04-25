@@ -95,11 +95,6 @@ namespace GUZ.Core.UI.Menus
             throw new NotImplementedException();
         }
 
-        protected override void Back(string itemName, string commandName)
-        {
-            throw new NotImplementedException();
-        }
-
         protected override void StartMenu(string itemName, string commandName)
         {
             throw new NotImplementedException();
@@ -128,14 +123,6 @@ namespace GUZ.Core.UI.Menus
         protected override void ExecuteCommand(string itemName, string commandName)
         {
             throw new NotImplementedException();
-        }
-
-        /// <summary>
-        /// There are no elements to hide in Status menu.
-        /// </summary>
-        protected override bool IsMenuItemInitiallyActive(string menuItemName)
-        {
-            return true;
         }
     }
 }
