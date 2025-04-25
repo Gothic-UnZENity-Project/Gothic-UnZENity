@@ -1,9 +1,9 @@
+using System;
 using GUZ.Core.Globals;
-using UnityEngine;
 using UnityEngine.SceneManagement;
 using ZenKit.Daedalus;
 
-namespace GUZ.Core.UnZENity_Core.Scripts.UI
+namespace GUZ.Core.UI.Menus
 {
     public class MainMenu : AbstractMenu
     {
@@ -35,7 +35,7 @@ namespace GUZ.Core.UnZENity_Core.Scripts.UI
 
         protected override void StartItem(string itemName, string commandName)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         protected override void Close(string itemName, string commandName)
@@ -49,17 +49,17 @@ namespace GUZ.Core.UnZENity_Core.Scripts.UI
 
         protected override void ConsoleCommand(string itemName, string commandName)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         protected override void PlaySound(string itemName, string commandName)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         protected override void ExecuteCommand(string itemName, string commandName)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         protected override bool IsMenuItemInitiallyActive(string menuItemName)

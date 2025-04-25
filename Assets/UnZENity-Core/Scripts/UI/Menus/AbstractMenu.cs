@@ -11,7 +11,7 @@ using UnityEngine.UI;
 using ZenKit.Daedalus;
 using Logger = GUZ.Core.Util.Logger;
 
-namespace GUZ.Core.UnZENity_Core.Scripts.UI
+namespace GUZ.Core.UI.Menus
 {
     public abstract class AbstractMenu : MonoBehaviour
     {

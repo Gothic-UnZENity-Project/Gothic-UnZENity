@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Linq;
 using GUZ.Core.Globals;
-using GUZ.Core.UnZENity_Core.Scripts.UI;
 using MyBox;
 using TMPro;
 
-namespace GUZ.Core.UI
+namespace GUZ.Core.UI.Menus
 {
     public class StatusMenu : AbstractMenu
     {

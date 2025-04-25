@@ -9,7 +9,7 @@ using UnityEngine.SceneManagement;
 using ZenKit;
 using ZenKit.Daedalus;
 
-namespace GUZ.Core.UnZENity_Core.Scripts.UI
+namespace GUZ.Core.UI.Menus
 {
     public class SaveMenu : AbstractMenu
     {

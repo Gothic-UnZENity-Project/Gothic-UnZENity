@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using MyBox;
 using UnityEngine;
 
-namespace GUZ.Core.UnZENity_Core.Scripts.UI
+namespace GUZ.Core.UI.Menus
 {
     public class MenuHandler : MonoBehaviour
     {

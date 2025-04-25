@@ -5354,7 +5354,7 @@ MonoBehaviour:
   MouseSensitivityX: 1
   IsGrounded: 0
   _actualVelocity: 0
-  menuHandler: {fileID: 4465833774847289275}
+  MenuHandler: {fileID: 4465833774847289275}
 --- !u!114 &6717938044841316945
 MonoBehaviour:
   m_ObjectHideFlags: 0

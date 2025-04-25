@@ -1,14 +1,6 @@
-using GUZ.Core.Extensions;
-using GUZ.Core.Globals;
-using GUZ.Core.UI;
-using GUZ.Core.UnZENity_Core.Scripts.UI;
-using MyBox;
-using TMPro;
-using UnityEngine;
-using UnityEngine.SceneManagement;
-using UnityEngine.UI;
+using System;
 
-namespace GUZ.Core.Menu
+namespace GUZ.Core.UI.Menus
 {
     public class SettingsMenu : AbstractMenu
     {
@@ -21,7 +13,7 @@ namespace GUZ.Core.Menu
 
         protected override void Undefined(string itemName, string commandName)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         protected override void Back(string itemName, string commandName)
@@ -31,32 +23,32 @@ namespace GUZ.Core.Menu
 
         protected override void StartMenu(string itemName, string commandName)
         {
-
+            MenuHandler.OpenMenu(commandName);
         }
 
         protected override void StartItem(string itemName, string commandName)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         protected override void Close(string itemName, string commandName)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         protected override void ConsoleCommand(string itemName, string commandName)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         protected override void PlaySound(string itemName, string commandName)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         protected override void ExecuteCommand(string itemName, string commandName)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         protected override bool IsMenuItemInitiallyActive(string menuItemName)

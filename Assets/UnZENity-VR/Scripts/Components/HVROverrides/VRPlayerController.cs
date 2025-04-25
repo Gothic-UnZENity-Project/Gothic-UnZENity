@@ -2,7 +2,7 @@
 using GUZ.Core;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
-using GUZ.Core.UnZENity_Core.Scripts.UI;
+using GUZ.Core.UI.Menus;
 using HurricaneVR.Framework.Core.Player;
 using MyBox;
 using UnityEngine.SceneManagement;
@@ -15,8 +15,8 @@ namespace GUZ.VR.Components.HVROverrides
     {
         private VRPlayerInputs _guzInputs => (VRPlayerInputs)Inputs;
 
-        [FormerlySerializedAs("MainMenu")] [Separator("GUZ - Settings")]
-        public MenuHandler menuHandler;
+        [Separator("GUZ - Settings")]
+        public MenuHandler MenuHandler;
 
 
         protected override void Start()
@@ -25,7 +25,7 @@ namespace GUZ.VR.Components.HVROverrides
             GlobalEventDispatcher.PlayerPrefUpdated.AddListener(OnPlayerPrefsUpdated);
 
             // Enabled later via button press or other events
-            menuHandler.gameObject.SetActive(false);
+            MenuHandler.gameObject.SetActive(false);
         }
 
         protected override void Update()
@@ -35,7 +35,7 @@ namespace GUZ.VR.Components.HVROverrides
             if (_guzInputs.IsMenuActivated && IsGameScene())
             {
                 GameData.InGameAndAlive = true;
-                menuHandler.ToggleVisibility();
+                MenuHandler.ToggleVisibility();
             }
         }
 
