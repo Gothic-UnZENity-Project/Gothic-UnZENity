@@ -1,5 +1,6 @@
 using System;
 using GUZ.Core.Globals;
+using GUZ.Core.UI.Menus.Adapter.Menu;
 using UnityEngine.SceneManagement;
 using ZenKit.Daedalus;
 
@@ -15,7 +16,7 @@ namespace GUZ.Core.UI.Menus
 
         private void Setup()
         {
-            CreateRootElements("MENU_MAIN");
+            CreateRootElements(new MenuInstanceAdapter("MENU_MAIN"));
         }
 
         protected override void Undefined(string itemName, string commandName)

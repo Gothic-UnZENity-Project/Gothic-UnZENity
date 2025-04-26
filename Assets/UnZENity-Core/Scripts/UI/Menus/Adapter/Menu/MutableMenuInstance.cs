@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using GUZ.Core.UI.Menus.Adapter.MenuItem;
 using ZenKit.Daedalus;
 
@@ -5,6 +6,8 @@ namespace GUZ.Core.UI.Menus.Adapter.Menu
 {
     public class MutableMenuInstance : IMenuInstance
     {
+        public List<IMenuItemInstance> Items { get; set; }
+
         public IMenuItemInstance GetMenuItemInstance(string menuItemName)
         {
             throw new System.NotImplementedException();
@@ -12,7 +15,7 @@ namespace GUZ.Core.UI.Menus.Adapter.Menu
 
         public string GetItem(int i)
         {
-            throw new System.NotImplementedException();
+            return "";
         }
 
         public string BackPic { get; set; }

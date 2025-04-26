@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using GUZ.Core.Caches;
 using GUZ.Core.Extensions;
+using GUZ.Core.UI.Menus.Adapter.Menu;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -39,7 +40,7 @@ namespace GUZ.Core.UI.Menus
         {
             _saveLoadStatus = _isSaving ? "SAVE" : "LOAD";
 
-            CreateRootElements($"MENU_SAVEGAME_{_saveLoadStatus}");
+            CreateRootElements(new MenuInstanceAdapter($"MENU_SAVEGAME_{_saveLoadStatus}"));
 
             var thumbnailGo = MenuItemCache["MENUITEM_LOADSAVE_THUMBPIC"].go;
             Thumbnail = ResourceLoader.TryGetPrefabObject(PrefabType.UiThumbnail, name: "Thumbnail",

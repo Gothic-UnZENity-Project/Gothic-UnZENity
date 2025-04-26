@@ -1,4 +1,5 @@
 using System;
+using GUZ.Core.UI.Menus.Adapter.Menu;
 using UnityEngine;
 
 namespace GUZ.Core.UI.Menus
@@ -13,7 +14,7 @@ namespace GUZ.Core.UI.Menus
 
         private void Setup()
         {
-            CreateRootElements("MENU_LEAVE_GAME");
+            CreateRootElements(new MenuInstanceAdapter("MENU_LEAVE_GAME"));
         }
 
         protected override void Undefined(string itemName, string commandName)

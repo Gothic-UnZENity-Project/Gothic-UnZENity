@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using GUZ.Core.UI.Menus.Adapter.Menu;
 using GUZ.Core.UI.Menus.Adapter.MenuItem;
 using GUZ.Core.Util;
 using MyBox;
@@ -121,7 +122,7 @@ namespace GUZ.Core.UI.Menus
 
         private void Setup()
         {
-            CreateRootElements("MENU_LOG");
+            CreateRootElements(new MenuInstanceAdapter("MENU_LOG"));
             //open gothic also hides it in screen init
             MenuItemCache[_instanceContentViewer].go.SetActive(false);
 

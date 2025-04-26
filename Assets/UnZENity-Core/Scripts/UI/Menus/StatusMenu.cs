@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using GUZ.Core.Globals;
+using GUZ.Core.UI.Menus.Adapter.Menu;
 using MyBox;
 using TMPro;
 
@@ -31,7 +32,7 @@ namespace GUZ.Core.UI.Menus
 
         private void Setup()
         {
-            CreateRootElements("MENU_STATUS");
+            CreateRootElements(new MenuInstanceAdapter("MENU_STATUS"));
             UpdateData();
         }
 

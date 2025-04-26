@@ -1,4 +1,5 @@
 using System;
+using GUZ.Core.UI.Menus.Adapter.Menu;
 
 namespace GUZ.Core.UI.Menus.Settings
 {
@@ -7,8 +8,8 @@ namespace GUZ.Core.UI.Menus.Settings
         protected override void Awake()
         {
             base.Awake();
-
-            CreateRootElements("MENU_OPT_AUDIO");
+            
+            CreateRootElements(new MenuInstanceAdapter("MENU_OPT_AUDIO"));
         }
 
         protected override void Undefined(string itemName, string commandName)

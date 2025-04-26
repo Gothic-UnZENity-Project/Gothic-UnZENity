@@ -4,6 +4,8 @@ namespace GUZ.Core.UI.Menus.Adapter.MenuItem
 {
     public interface IMenuItemInstance
     {
+        public string Name { get; set; }
+        
         public string FontName { get; set; }
         public string BackPic { get; set; }
         public string AlphaMode { get; set; }

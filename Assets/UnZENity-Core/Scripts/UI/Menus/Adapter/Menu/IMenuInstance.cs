@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using GUZ.Core.Globals;
 using GUZ.Core.UI.Menus.Adapter.MenuItem;
 using ZenKit.Daedalus;
@@ -6,6 +7,7 @@ namespace GUZ.Core.UI.Menus.Adapter.Menu
 {
     public interface IMenuInstance
     {
+        List<IMenuItemInstance> Items { get; set; }
         IMenuItemInstance GetMenuItemInstance(string menuItemName);
 
         string GetItem(int i);

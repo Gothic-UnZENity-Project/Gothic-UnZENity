@@ -1,9 +1,25 @@
+using System;
+using GUZ.Core.Globals;
 using ZenKit.Daedalus;
 
 namespace GUZ.Core.UI.Menus.Adapter.MenuItem
 {
     public class MutableMenuItemInstance : IMenuItemInstance
     {
+        public MutableMenuItemInstance()
+        {
+            // Set default values based on G1 C_MENU_ITEM_DEF
+            FontName = GameData.MenuVm.GetSymbolByName("MENU_FONT_DEFAULT").GetString(0);
+            MenuItemType = MenuItemType.Text;
+            Flags = MenuItemFlag.ChromaKeyed | MenuItemFlag.Transparent | MenuItemFlag.Selectable;
+            PosX = 0;
+            PosY = 0;
+            DimX = -1;
+            DimY = -1;
+        }
+        
+        public string Name { get; set; }
+        
         public string FontName { get; set; }
         public string BackPic { get; set; }
         public string AlphaMode { get; set; }
@@ -26,35 +42,36 @@ namespace GUZ.Core.UI.Menus.Adapter.MenuItem
         public string HideIfOptionSectionSet { get; set; }
         public string HideIfOptionSet { get; set; }
         public int HideOnValue { get; set; }
-        
+
+        public string[] Texts;
         public string GetText(int i)
         {
-            throw new System.NotImplementedException();
+            return Texts.Length > i ? Texts[i] : string.Empty;
         }
 
         public MenuItemSelectAction GetOnSelAction(int i)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public string GetOnSelActionS(int i)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public int GetOnEventAction(MenuItemEventAction i)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public float GetUserFloat(int i)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public string GetUserString(int i)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
     }
 }

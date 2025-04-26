@@ -1,4 +1,5 @@
 using System;
+using GUZ.Core.UI.Menus.Adapter.Menu;
 
 namespace GUZ.Core.UI.Menus.Settings
 {
@@ -8,7 +9,7 @@ namespace GUZ.Core.UI.Menus.Settings
         {
             base.Awake();
 
-            CreateRootElements("MENU_OPT_GRAPHICS");
+            CreateRootElements(new MenuInstanceAdapter("MENU_OPT_GRAPHICS"));
         }
 
         protected override void Undefined(string itemName, string commandName)

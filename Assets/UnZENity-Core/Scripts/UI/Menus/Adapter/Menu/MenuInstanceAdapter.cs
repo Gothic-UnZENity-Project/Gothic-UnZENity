@@ -1,5 +1,9 @@
+using System.Collections.Generic;
+using System.Linq;
+using Codice.CM.Common.Purge;
 using GUZ.Core.Globals;
 using GUZ.Core.UI.Menus.Adapter.MenuItem;
+using MyBox;
 using ZenKit.Daedalus;
 
 namespace GUZ.Core.UI.Menus.Adapter.Menu
@@ -7,21 +11,35 @@ namespace GUZ.Core.UI.Menus.Adapter.Menu
     public class MenuInstanceAdapter : IMenuInstance
     {
         private readonly MenuInstance _menuInstance;
-    
+        public List<IMenuItemInstance> Items { get; set; }
+
         public MenuInstanceAdapter(string name)
         {
             _menuInstance = GameData.MenuVm.InitInstance<MenuInstance>(name);
-        }
-        
-        public MenuInstanceAdapter(MenuInstance menuInstance)
-        {
-            _menuInstance = menuInstance;
+
+            // We immediately initialize all menu entries as we will later change Index of them (e.g. add a new menu in between).
+            Items = new();
+            for (var i = 0;; i++)
+            {
+                var itemName = _menuInstance.GetItem(i);
+
+                // We passed the last element.
+                if (itemName.IsNullOrEmpty())
+                    break;
+
+                var instance = GameData.MenuVm.InitInstance<MenuItemInstance>(itemName);
+                Items.Add(new MenuItemInstanceAdapter(instance, itemName));
+            }
         }
 
+        public void InsertItemAt(int index, IMenuItemInstance menuItemInstance)
+        {
+            Items.Insert(index, menuItemInstance);
+        }
+        
         public IMenuItemInstance GetMenuItemInstance(string menuItemName)
         {
-            var itemInstance = GameData.MenuVm.InitInstance<MenuItemInstance>(menuItemName);
-            return new MenuItemInstanceAdapter(itemInstance);
+            return Items.First(i => i.Name == menuItemName);
         }
 
         public string GetItem(int i)

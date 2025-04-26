@@ -6,10 +6,13 @@ namespace GUZ.Core.UI.Menus.Adapter.MenuItem
     {
         private readonly MenuItemInstance _menuItemInstance;
     
-        public MenuItemInstanceAdapter(MenuItemInstance menuItemInstance)
+        public MenuItemInstanceAdapter(MenuItemInstance menuItemInstance, string menuItemName)
         {
             _menuItemInstance = menuItemInstance;
+            Name = menuItemName;
         }
+
+        public string Name { get; set; }
 
         public string FontName
         {

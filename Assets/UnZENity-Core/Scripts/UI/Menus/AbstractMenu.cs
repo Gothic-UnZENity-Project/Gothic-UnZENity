@@ -76,10 +76,8 @@ namespace GUZ.Core.UI.Menus
             gameObject.SetActive(false);
         }
 
-        protected void CreateRootElements(string menuDefName)
+        protected void CreateRootElements(IMenuInstance menuInstance)
         {
-            var menuInstance = new MenuInstanceAdapter(menuDefName);
-
             var backPic = GameGlobals.Textures.GetMaterial(menuInstance.BackPic);
             Background.GetComponentInChildren<MeshRenderer>().sharedMaterial = backPic;
 
@@ -97,34 +95,24 @@ namespace GUZ.Core.UI.Menus
             PixelRatioX = (float)virtualPixelX / realPixelX; // for normal G1, should be 16 (=8192 / 512)
             PixelRatioY = (float)virtualPixelY / realPixelY;
 
-            for (var i = 0;; i++)
+            foreach (var item in menuInstance.Items)
             {
-                var menuItemName = menuInstance.GetItem(i);
-
-                // We passed the last item.
-                if (menuItemName.IsNullOrEmpty())
-                {
-                    break;
-                }
-
-                CreateMenuItem(menuInstance, menuItemName);
+                CreateMenuItem(menuInstance, item);
             }
         }
 
-        protected void CreateMenuItem(IMenuInstance main, string menuItemName)
+        private void CreateMenuItem(IMenuInstance main, IMenuItemInstance item)
         {
-            var item = main.GetMenuItemInstance(menuItemName);
-
             GameObject itemGo;
 
             if (item.MenuItemType == MenuItemType.ListBox)
             {
-                itemGo = ResourceLoader.TryGetPrefabObject(PrefabType.UiEmpty, name: menuItemName,
+                itemGo = ResourceLoader.TryGetPrefabObject(PrefabType.UiEmpty, name: item.Name,
                     position: Vector3.zero, parent: Canvas)!;
             }
             else if (item.Flags.HasFlag(MenuItemFlag.Selectable))
             {
-                itemGo = ResourceLoader.TryGetPrefabObject(PrefabType.UiButton, name: menuItemName, parent: Canvas)!;
+                itemGo = ResourceLoader.TryGetPrefabObject(PrefabType.UiButton, name: item.Name, parent: Canvas)!;
                 var button = itemGo.GetComponentInChildren<Button>();
 
                 button.onClick.AddListener(() =>
@@ -153,26 +141,26 @@ namespace GUZ.Core.UI.Menus
                         }
                         catch (Exception e)
                         {
-                            OnMenuItemClicked(action, menuItemName, actionName);
+                            OnMenuItemClicked(action, item.Name, actionName);
                             break;
                         }
 
-                        OnMenuItemClicked(action, menuItemName, actionName);
+                        OnMenuItemClicked(action, item.Name, actionName);
                     }
                 });
             }
             else if (item.MenuItemType == MenuItemType.Text)
             {
-                itemGo = ResourceLoader.TryGetPrefabObject(PrefabType.UiText, name: menuItemName, parent: Canvas)!;
+                itemGo = ResourceLoader.TryGetPrefabObject(PrefabType.UiText, name: item.Name, parent: Canvas)!;
             }
             else
             {
-                itemGo = ResourceLoader.TryGetPrefabObject(PrefabType.UiEmpty, name: menuItemName, parent: Canvas)!;
+                itemGo = ResourceLoader.TryGetPrefabObject(PrefabType.UiEmpty, name: item.Name, parent: Canvas)!;
             }
 
             itemGo.transform.localPosition = Vector3.zero;
 
-            MenuItemCache[menuItemName] = (item, itemGo);
+            MenuItemCache[item.Name] = (item, itemGo);
 
             var rect = itemGo.GetComponent<RectTransform>();
             var halfMainWidth = (float)main.DimX / 2;
@@ -240,7 +228,7 @@ namespace GUZ.Core.UI.Menus
             }
 
             //item disabled (grayed out and not interactable)
-            if (!IsMenuItemInitiallyActive(menuItemName))
+            if (!IsMenuItemInitiallyActive(item.Name))
             {
                 if (textComp != null)
                 {
