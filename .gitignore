@@ -99,3 +99,4 @@ Assets/HurricaneVR/
 Assets/StreamingAssets/GameSettings.dev.json
 Assets/StreamingAssets/GameSettings.dev.json.meta
 Assets/UnZENity-Core/Resources/DeveloperConfigs/Local/*
+!Assets/UnZENity-Core/Resources/DeveloperConfigs/Local/.gitkeep
