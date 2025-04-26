@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using GUZ.Core.UI.Menus.Adapter.MenuItem;
 using GUZ.Core.Util;
 using MyBox;
 using TMPro;
@@ -69,7 +70,7 @@ namespace GUZ.Core.UI.Menus
         private class ListItemContainer
         {
             public string InstanceName;
-            public MenuItemInstance Instance;
+            public IMenuItemInstance Instance;
             public List<SaveLogTopic> LogTopics;
             public GameObject RootGo;
             public GameObject[] ItemGOs;

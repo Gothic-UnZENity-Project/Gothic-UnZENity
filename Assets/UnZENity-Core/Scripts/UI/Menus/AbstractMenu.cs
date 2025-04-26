@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
+using GUZ.Core.UI.Menus.Adapter.Menu;
+using GUZ.Core.UI.Menus.Adapter.MenuItem;
 using GUZ.Core.Util;
 using MyBox;
 using TMPro;
@@ -19,7 +21,7 @@ namespace GUZ.Core.UI.Menus
         [SerializeField] protected GameObject Canvas;
         [SerializeField] protected GameObject Background;
 
-        protected Dictionary<string, (MenuItemInstance item, GameObject go)> MenuItemCache = new();
+        protected Dictionary<string, (IMenuItemInstance item, GameObject go)> MenuItemCache = new();
 
         // Pixel ratio of whole menu (Canvas) is based on background picture pixel and virtual pixels named inside Daedalus.
         protected float PixelRatioX;
@@ -76,7 +78,7 @@ namespace GUZ.Core.UI.Menus
 
         protected void CreateRootElements(string menuDefName)
         {
-            var menuInstance = GameData.MenuVm.InitInstance<MenuInstance>(menuDefName);
+            var menuInstance = new MenuInstanceAdapter(menuDefName);
 
             var backPic = GameGlobals.Textures.GetMaterial(menuInstance.BackPic);
             Background.GetComponentInChildren<MeshRenderer>().sharedMaterial = backPic;
@@ -109,9 +111,9 @@ namespace GUZ.Core.UI.Menus
             }
         }
 
-        private void CreateMenuItem(MenuInstance main, string menuItemName)
+        protected void CreateMenuItem(IMenuInstance main, string menuItemName)
         {
-            var item = GameData.MenuVm.InitInstance<MenuItemInstance>(menuItemName);
+            var item = main.GetMenuItemInstance(menuItemName);
 
             GameObject itemGo;
 
@@ -262,7 +264,7 @@ namespace GUZ.Core.UI.Menus
             }
         }
 
-        private void SetTextDimensions(TMP_Text textComp, MenuItemInstance item,
+        private void SetTextDimensions(TMP_Text textComp, IMenuItemInstance item,
             float itemWidth, float itemHeight)
         {
             // frameSizeX/Y are text paddings from left-right and/or top/bottom.
