@@ -66,9 +66,9 @@ namespace GUZ.Core.UI.Menus
             gameObject.SetActive(!gameObject.activeSelf);
         }
 
-        public void OpenMenu(string menuName)
+        public void OpenMenu(string menuName, bool viaBackButton = false)
         {
-            if (!_currentMenu.IsNullOrEmpty())
+            if (!viaBackButton && !_currentMenu.IsNullOrEmpty())
             {
                 _menuQueue.Push(_currentMenu);
             }
@@ -97,7 +97,7 @@ namespace GUZ.Core.UI.Menus
             var nextMenu = _menuQueue.TryPop(out string result);
             if (nextMenu)
             {
-                OpenMenu(result);
+                OpenMenu(result, true);
             }
             else
             {
