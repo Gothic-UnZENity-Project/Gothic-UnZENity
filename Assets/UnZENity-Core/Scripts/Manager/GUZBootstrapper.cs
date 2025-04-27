@@ -34,6 +34,7 @@ namespace GUZ.Core.Manager
             LoadFonts();
             LoadGuildData();
 
+            GameContext.IsZenKitInitialized = true;
             GlobalEventDispatcher.ZenKitBootstrapped.Invoke();
         }
 

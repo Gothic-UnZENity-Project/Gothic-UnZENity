@@ -8,6 +8,7 @@ namespace GUZ.Core
 {
     public static class GameContext
     {
+        public static bool IsZenKitInitialized;
         public static bool IsControlsInitialized;
         public static bool IsGameVersionInitialized;
 
