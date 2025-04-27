@@ -5,6 +5,7 @@ using GUZ.Core.Adapter;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.UI.Menus.Adapter.Menu;
+using GUZ.Core.UI.Menus.Adapter.MenuItem;
 using GUZ.VR.Components;
 using GUZ.VR.Components.HVROverrides;
 using HurricaneVR.Framework.Core.UI;
@@ -166,9 +167,15 @@ namespace GUZ.VR.Adapter
         /// <summary>
         /// Update menu entries based on VR needs.
         /// </summary>
-        public void UpdateMainMenu(IMenuInstance mainMenu)
+        public void UpdateMainMenu(IMenuInstance mainAbstractMenu)
         {
+            var parentControlsMenu = mainAbstractMenu.FindSubMenu("MENU_OPT_CONTROLS").Parent;
+            parentControlsMenu.FindMenuItem("MENUITEM_OPT_CONTROLS", out var controlsMenuItem, out var controlsItemIndex);
+
+            var vrControlsMenu = new MutableMenuItemInstance(controlsMenuItem);
+            vrControlsMenu.SetText(0, "VR");
             
+            parentControlsMenu.ReplaceItemAt(controlsItemIndex, vrControlsMenu);
         }
     }
 }

@@ -25,7 +25,7 @@ namespace GUZ.Core.UI.Menus
         [SerializeField] private GameObject _settingsControlsMenuPrefab;
 
         // Cached MainMenu tree hierarchy of submenus (load, save, settings) and their children (sub-settings, settings fields)
-        public IMenuInstance MainMenuHierarchy { get; private set; }
+        public IMenuInstance MainAbstractMenuHierarchy { get; private set; }
 
         private void Awake()
         {
@@ -40,9 +40,9 @@ namespace GUZ.Core.UI.Menus
         private void InitializeMenus()
         {
             // Initialize whole ZenKit Menu.dat hierarchy.
-            MainMenuHierarchy = new MenuInstanceAdapter("MENU_MAIN");
+            MainAbstractMenuHierarchy = new MenuInstanceAdapter("MENU_MAIN", null);
 
-            GameContext.InteractionAdapter.UpdateMainMenu(MainMenuHierarchy);
+            GameContext.InteractionAdapter.UpdateMainMenu(MainAbstractMenuHierarchy);
             
             InstantiateMenu("MENU_MAIN", _mainMenuPrefab);
             InstantiateMenu("MENU_SAVEGAME_LOAD", _loadMenuPrefab);
@@ -64,7 +64,7 @@ namespace GUZ.Core.UI.Menus
         private void InstantiateMenu(string menuName, GameObject prefab)
         {
             var go = Instantiate(prefab, transform);
-            go.GetComponent<AbstractMenu>().InitializeMenu(MainMenuHierarchy.FindSubMenu(menuName));
+            go.GetComponent<AbstractMenu>().InitializeMenu(MainAbstractMenuHierarchy.FindSubMenu(menuName));
             
             _menuList.Add(menuName, go);
         }

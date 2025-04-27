@@ -7,16 +7,16 @@ namespace GUZ.Core.UI.Menus.Adapter.MenuItem
     {
         public string Name { get; set; }
         private readonly MenuItemInstance _menuItemInstance;
-        public IMenuInstance MenuInstance { get; set; }
+        public IMenuInstance AbstractMenuInstance { get; set; }
 
         
-        public MenuItemInstanceAdapter(MenuItemInstance menuItemInstance, string menuItemName)
+        public MenuItemInstanceAdapter(MenuItemInstance menuItemInstance, string menuItemName, IMenuInstance parentAbstractMenu)
         {
             _menuItemInstance = menuItemInstance;
             Name = menuItemName;
             
             if (_menuItemInstance.GetOnSelAction(0) == MenuItemSelectAction.StartMenu)
-                MenuInstance = new MenuInstanceAdapter(_menuItemInstance.GetOnSelActionS(0));
+                AbstractMenuInstance = new MenuInstanceAdapter(_menuItemInstance.GetOnSelActionS(0), parentAbstractMenu);
         }
 
 
@@ -155,6 +155,11 @@ namespace GUZ.Core.UI.Menus.Adapter.MenuItem
         public string GetText(int i)
         {
             return _menuItemInstance.GetText(i);
+        }
+
+        public void SetText(int i, string text)
+        {
+            _menuItemInstance.SetText(i, text);
         }
 
         public MenuItemSelectAction GetOnSelAction(int i)

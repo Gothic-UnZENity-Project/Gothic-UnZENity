@@ -4,9 +4,10 @@ using ZenKit.Daedalus;
 
 namespace GUZ.Core.UI.Menus.Adapter.Menu
 {
-    public class MutableMenuInstance : IMenuInstance
+    public class MutableAbstractMenuInstance : IMenuInstance
     {
         public string Name { get; set; }
+        public IMenuInstance Parent { get; set; }
         public List<IMenuItemInstance> Items { get; set; }
 
         public IMenuItemInstance GetMenuItemInstance(string menuItemName)
@@ -17,6 +18,16 @@ namespace GUZ.Core.UI.Menus.Adapter.Menu
         public IMenuInstance FindSubMenu(string subMenuName)
         {
             throw new System.NotImplementedException();
+        }
+
+        public void FindMenuItem(string menuItemName, out IMenuItemInstance menuItemInstance, out int index)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void ReplaceItemAt(int index, IMenuItemInstance item)
+        {
+            Items[index] = item;
         }
 
         public string GetItem(int i)

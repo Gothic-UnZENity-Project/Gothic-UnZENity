@@ -8,10 +8,27 @@ namespace GUZ.Core.UI.Menus.Adapter.Menu
     public interface IMenuInstance
     {
         public string Name {get; set;}
+        public IMenuInstance Parent {get; set;}
         List<IMenuItemInstance> Items { get; set; }
-        IMenuItemInstance GetMenuItemInstance(string menuItemName);
 
-        [CanBeNull] public IMenuInstance FindSubMenu(string subMenuName);
+        [CanBeNull]
+        IMenuInstance FindSubMenu(string subMenuName)
+        {
+            if (this.Name == subMenuName)
+                return this;
+    
+            foreach (var menuItem in Items)
+            {
+                var foundMenu = menuItem.AbstractMenuInstance?.FindSubMenu(subMenuName);
+                if (foundMenu != null)
+                    return foundMenu;
+            }
+
+            return null;
+        }
+        
+        void FindMenuItem(string menuItemName, out IMenuItemInstance menuItemInstance, out int index);
+        void ReplaceItemAt(int index, IMenuItemInstance item);
         
         string GetItem(int i);
         

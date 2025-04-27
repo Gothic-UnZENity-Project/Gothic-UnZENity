@@ -1,8 +1,9 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using Codice.CM.Common.Purge;
 using GUZ.Core.Globals;
 using GUZ.Core.UI.Menus.Adapter.MenuItem;
+using JetBrains.Annotations;
 using MyBox;
 using ZenKit.Daedalus;
 
@@ -11,13 +12,16 @@ namespace GUZ.Core.UI.Menus.Adapter.Menu
     public class MenuInstanceAdapter : IMenuInstance
     {
         public string Name { get; set; }
+        public IMenuInstance Parent { get; set; }
+        public IMenuInstance ParentAbstract { get; set; }
         public List<IMenuItemInstance> Items { get; set; }
 
         private readonly MenuInstance _menuInstance;
 
-        public MenuInstanceAdapter(string name)
+        public MenuInstanceAdapter(string name, [CanBeNull] IMenuInstance parentAbstractMenu)
         {
             Name = name;
+            ParentAbstract = parentAbstractMenu;
             
             _menuInstance = GameData.MenuVm.InitInstance<MenuInstance>(name);
             
@@ -32,7 +36,7 @@ namespace GUZ.Core.UI.Menus.Adapter.Menu
                     break;
 
                 var instance = GameData.MenuVm.InitInstance<MenuItemInstance>(itemName);
-                Items.Add(new MenuItemInstanceAdapter(instance, itemName));
+                Items.Add(new MenuItemInstanceAdapter(instance, itemName, this));
             }
         }
 
@@ -46,19 +50,26 @@ namespace GUZ.Core.UI.Menus.Adapter.Menu
             return Items.First(i => i.Name == menuItemName);
         }
 
-        public IMenuInstance FindSubMenu(string subMenuName)
+        public void FindMenuItem(string menuItemName, out IMenuItemInstance menuItemInstance, out int index)
         {
-            if (this.Name == subMenuName)
-                return this;
-        
-            foreach (var menuItem in Items)
+            menuItemInstance = null;
+            index = -1;
+            
+            for (var i = 0; i < Items.Count; i++)
             {
-                var foundMenu = menuItem.MenuInstance.FindSubMenu(subMenuName);
-                if (foundMenu != null)
-                    return foundMenu;
+                var item = Items[i];
+                if (item.Name == menuItemName)
+                {
+                    menuItemInstance = item;
+                    index = i;
+                    return;
+                }
             }
-    
-            return null;
+        }
+
+        public void ReplaceItemAt(int index, IMenuItemInstance item)
+        {
+            throw new NotImplementedException();
         }
 
         public string GetItem(int i)

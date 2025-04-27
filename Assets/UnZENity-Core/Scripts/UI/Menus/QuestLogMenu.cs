@@ -86,9 +86,9 @@ namespace GUZ.Core.UI.Menus
         /// 3. Use this data to create GameObjects dynamically based on Template elements (button, text, ...)
         /// 3. For lists (e.g. active missions), create the list items and arrows (do not them fill yet)
         /// </summary>
-        public override void InitializeMenu(IMenuInstance menuInstance)
+        public override void InitializeMenu(IMenuInstance abstractMenuInstance)
         {
-            base.InitializeMenu(menuInstance);
+            base.InitializeMenu(abstractMenuInstance);
 
             Setup();
             UpdateDayAndTime(GameManager.I.Time.GetCurrentDateTime());

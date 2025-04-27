@@ -24,9 +24,9 @@ namespace GUZ.Core.UI.Menus
         private string _itemTalentDescriptionPattern = "MENU_ITEM_TALENT_{0}";
 
 
-        public override void InitializeMenu(IMenuInstance menuInstance)
+        public override void InitializeMenu(IMenuInstance abstractMenuInstance)
         {
-            base.InitializeMenu(menuInstance);
+            base.InitializeMenu(abstractMenuInstance);
             Setup();
         }
 

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using GUZ.Core.Extensions;
 using UnityEngine;
 using ZenKit.Vobs;
 using Material = UnityEngine.Material;
@@ -8,6 +9,15 @@ namespace GUZ.Core.Globals
 {
     public static class Constants
     {
+        public static class DaedalusMenu
+        {
+            public static int MaxUserStrings => GameData.MenuVm.GetSymbolInt("MAX_USERSTRINGS");
+            public static int MaxItems => GameData.MenuVm.GetSymbolInt("MAX_ITEMS");
+            public static int MaxEvent => GameData.MenuVm.GetSymbolInt("MAX_EVENTS");
+            public static int MaxSelActions => GameData.MenuVm.GetSymbolInt("MAX_SEL_ACTIONS");
+            public static int MaxUserVars => GameData.MenuVm.GetSymbolInt("MAX_USERVARS");
+        }
+        
         public static class Daedalus
         {
             public static string DoorLockSoundName => "DOOR_LOCK.WAV";

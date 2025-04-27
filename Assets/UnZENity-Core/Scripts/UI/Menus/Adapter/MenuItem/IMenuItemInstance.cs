@@ -6,7 +6,7 @@ namespace GUZ.Core.UI.Menus.Adapter.MenuItem
     public interface IMenuItemInstance
     {
         string Name { get; set; }
-        IMenuInstance MenuInstance { get; set; }
+        IMenuInstance AbstractMenuInstance { get; set; }
         
         string FontName { get; set; }
         string BackPic { get; set; }
@@ -31,6 +31,7 @@ namespace GUZ.Core.UI.Menus.Adapter.MenuItem
         string HideIfOptionSet { get; set; }
         int HideOnValue { get; set; }
         string GetText(int i);
+        void SetText(int i, string text);
         MenuItemSelectAction GetOnSelAction(int i);
         string GetOnSelActionS(int i);
         int GetOnEventAction(MenuItemEventAction i);

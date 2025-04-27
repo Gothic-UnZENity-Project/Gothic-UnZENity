@@ -30,9 +30,9 @@ namespace GUZ.Core.UI.Menus
 
         private string _saveLoadStatus;
 
-        public override void InitializeMenu(IMenuInstance menuInstance)
+        public override void InitializeMenu(IMenuInstance abstractMenuInstance)
         {
-            base.InitializeMenu(menuInstance);
+            base.InitializeMenu(abstractMenuInstance);
             Setup();
         }
 
