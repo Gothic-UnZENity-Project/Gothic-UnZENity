@@ -9,20 +9,12 @@ using ZenKit.Daedalus;
 
 namespace GUZ.Core.UI.Menus.Adapter.Menu
 {
-    public class MenuInstanceAdapter : IMenuInstance
+    public class MenuInstanceAdapter : AbstractMenuInstance
     {
-        public string Name { get; set; }
-        public IMenuInstance Parent { get; set; }
-        public IMenuInstance ParentAbstract { get; set; }
-        public List<IMenuItemInstance> Items { get; set; }
-
         private readonly MenuInstance _menuInstance;
 
-        public MenuInstanceAdapter(string name, [CanBeNull] IMenuInstance parentAbstractMenu)
+        public MenuInstanceAdapter(string name, [CanBeNull] AbstractMenuInstance parentAbstractMenu): base(name, parentAbstractMenu)
         {
-            Name = name;
-            ParentAbstract = parentAbstractMenu;
-            
             _menuInstance = GameData.MenuVm.InitInstance<MenuInstance>(name);
             
             // We immediately initialize all menu entries as we will later change Index of them (e.g. add a new menu in between).
@@ -40,110 +32,88 @@ namespace GUZ.Core.UI.Menus.Adapter.Menu
             }
         }
 
-        public void InsertItemAt(int index, IMenuItemInstance menuItemInstance)
+        public void InsertItemAt(int index, AbstractMenuItemInstance menuItemInstance)
         {
             Items.Insert(index, menuItemInstance);
         }
         
-        public IMenuItemInstance GetMenuItemInstance(string menuItemName)
+        public AbstractMenuItemInstance GetMenuItemInstance(string menuItemName)
         {
             return Items.First(i => i.Name == menuItemName);
         }
 
-        public void FindMenuItem(string menuItemName, out IMenuItemInstance menuItemInstance, out int index)
-        {
-            menuItemInstance = null;
-            index = -1;
-            
-            for (var i = 0; i < Items.Count; i++)
-            {
-                var item = Items[i];
-                if (item.Name == menuItemName)
-                {
-                    menuItemInstance = item;
-                    index = i;
-                    return;
-                }
-            }
-        }
-
-        public void ReplaceItemAt(int index, IMenuItemInstance item)
-        {
-            throw new NotImplementedException();
-        }
-
-        public string GetItem(int i)
+        public override string GetItem(int i)
         {
             return _menuInstance.GetItem(i);
         }
 
-        public string BackPic
+        public override string BackPic
         {
             get => _menuInstance.BackPic;
             set => _menuInstance.BackPic = value;
         }
 
-        public string BackWorld
+        public override string BackWorld
         {
             get => _menuInstance.BackWorld;
             set => _menuInstance.BackWorld = value;
         }
 
-        public int PosX
+        public override int PosX
         {
             get => _menuInstance.PosX;
             set => _menuInstance.PosX = value;
         }
 
-        public int PosY
+        public override int PosY
         {
             get => _menuInstance.PosY;
             set => _menuInstance.PosY = value;
         }
 
-        public int DimX
+        public override int DimX
         {
             get => _menuInstance.DimX;
             set => _menuInstance.DimX = value;
         }
 
-        public int DimY
+        public override int DimY
         {
             get => _menuInstance.DimY;
             set => _menuInstance.DimY = value;
         }
 
-        public int Alpha
+        public override int Alpha
         {
             get => _menuInstance.Alpha;
             set => _menuInstance.Alpha = value;
         }
 
-        public string MusicTheme
+        public override string MusicTheme
         {
             get => _menuInstance.MusicTheme;
             set => _menuInstance.MusicTheme = value;
         }
 
-        public int EventTimerMsec
+        public override int EventTimerMsec
         {
             get => _menuInstance.EventTimerMsec;
             set => _menuInstance.EventTimerMsec = value;
         }
 
-        public MenuFlag Flags
+        public override MenuFlag Flags
         {
             get => _menuInstance.Flags;
             set => _menuInstance.Flags = value;
         }
 
-        public int DefaultOutGame
+        public override int DefaultOutGame
         {
             get => _menuInstance.DefaultOutGame;
             set => _menuInstance.DefaultOutGame = value;
         }
 
-        public int DefaultInGame
+        public override int DefaultInGame
         {
             get => _menuInstance.DefaultInGame;
             set => _menuInstance.DefaultInGame = value;

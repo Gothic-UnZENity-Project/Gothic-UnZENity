@@ -25,7 +25,7 @@ namespace GUZ.Core.UI.Menus
         [SerializeField] private GameObject _settingsControlsMenuPrefab;
 
         // Cached MainMenu tree hierarchy of submenus (load, save, settings) and their children (sub-settings, settings fields)
-        public IMenuInstance MainAbstractMenuHierarchy { get; private set; }
+        public AbstractMenuInstance MainAbstractMenuHierarchy { get; private set; }
 
         private void Awake()
         {
@@ -44,6 +44,10 @@ namespace GUZ.Core.UI.Menus
 
             GameContext.InteractionAdapter.UpdateMainMenu(MainAbstractMenuHierarchy);
             
+            // FIXME - MENU_OPT_CONTROLS will throw a NPE
+            //         Make logic more dynamic.
+            //         Aka load all Menus and instantiate here.
+            //         Prefabs itself will be dynamically loaded via name. e.g. MENU_MAIN.prefab
             InstantiateMenu("MENU_MAIN", _mainMenuPrefab);
             InstantiateMenu("MENU_SAVEGAME_LOAD", _loadMenuPrefab);
             InstantiateMenu("MENU_SAVEGAME_SAVE", _saveMenuPrefab);
@@ -64,7 +68,7 @@ namespace GUZ.Core.UI.Menus
         private void InstantiateMenu(string menuName, GameObject prefab)
         {
             var go = Instantiate(prefab, transform);
-            go.GetComponent<AbstractMenu>().InitializeMenu(MainAbstractMenuHierarchy.FindSubMenu(menuName));
+            go.GetComponent<AbstractMenu>().InitializeMenu(MainAbstractMenuHierarchy.FindMenu(menuName));
             
             _menuList.Add(menuName, go);
         }

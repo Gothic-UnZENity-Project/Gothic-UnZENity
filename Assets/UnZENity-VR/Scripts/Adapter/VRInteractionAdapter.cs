@@ -167,15 +167,15 @@ namespace GUZ.VR.Adapter
         /// <summary>
         /// Update menu entries based on VR needs.
         /// </summary>
-        public void UpdateMainMenu(IMenuInstance mainAbstractMenu)
+        public void UpdateMainMenu(AbstractMenuInstance mainMenu)
         {
-            var parentControlsMenu = mainAbstractMenu.FindSubMenu("MENU_OPT_CONTROLS").Parent;
+            var parentControlsMenu = mainMenu.FindMenu("MENU_OPT_CONTROLS").Parent;
             parentControlsMenu.FindMenuItem("MENUITEM_OPT_CONTROLS", out var controlsMenuItem, out var controlsItemIndex);
 
-            var vrControlsMenu = new MutableMenuItemInstance(controlsMenuItem);
-            vrControlsMenu.SetText(0, "VR");
+            var vrControlsMenuItem = new MutableMenuItemInstance("MENUITEM_UNZENITY_OPT_VR", controlsMenuItem);
+            vrControlsMenuItem.SetText(0, "VR");
             
-            parentControlsMenu.ReplaceItemAt(controlsItemIndex, vrControlsMenu);
+            parentControlsMenu.ReplaceItemAt(controlsItemIndex, vrControlsMenuItem);
         }
     }
 }

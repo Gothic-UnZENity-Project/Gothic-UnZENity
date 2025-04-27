@@ -71,7 +71,7 @@ namespace GUZ.Core.UI.Menus
         private class ListItemContainer
         {
             public string InstanceName;
-            public IMenuItemInstance Instance;
+            public AbstractMenuItemInstance Instance;
             public List<SaveLogTopic> LogTopics;
             public GameObject RootGo;
             public GameObject[] ItemGOs;
@@ -86,9 +86,9 @@ namespace GUZ.Core.UI.Menus
         /// 3. Use this data to create GameObjects dynamically based on Template elements (button, text, ...)
         /// 3. For lists (e.g. active missions), create the list items and arrows (do not them fill yet)
         /// </summary>
-        public override void InitializeMenu(IMenuInstance abstractMenuInstance)
+        public override void InitializeMenu(AbstractMenuInstance menuInstance)
         {
-            base.InitializeMenu(abstractMenuInstance);
+            base.InitializeMenu(menuInstance);
 
             Setup();
             UpdateDayAndTime(GameManager.I.Time.GetCurrentDateTime());

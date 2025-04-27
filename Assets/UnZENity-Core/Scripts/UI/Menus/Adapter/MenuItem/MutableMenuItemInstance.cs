@@ -7,12 +7,12 @@ using ZenKit.Daedalus;
 
 namespace GUZ.Core.UI.Menus.Adapter.MenuItem
 {
-    public class MutableMenuItemInstance : IMenuItemInstance
+    public class MutableMenuItemInstance : AbstractMenuItemInstance
     {
         /// <summary>
         /// Copy constructor. Mostly copying dimensions and look.
         /// </summary>
-        public MutableMenuItemInstance(IMenuItemInstance reference)
+        public MutableMenuItemInstance(string menuItemName, AbstractMenuItemInstance reference): base(menuItemName)
         {
             FontName = reference.FontName;
             BackPic = reference.BackPic;
@@ -38,64 +38,38 @@ namespace GUZ.Core.UI.Menus.Adapter.MenuItem
             HideOnValue = reference.HideOnValue;
         }
 
-        public string Name { get; set; }
-        public IMenuInstance AbstractMenuInstance { get; set; }
-        
-        public string FontName { get; set; }
-        public string BackPic { get; set; }
-        public string AlphaMode { get; set; }
-        public int Alpha { get; set; }
-        public MenuItemType MenuItemType { get; set; }
-        public string OnChgSetOption { get; set; }
-        public string OnChgSetOptionSection { get; set; }
-        public int PosX { get; set; }
-        public int PosY { get; set; }
-        public int DimX { get; set; }
-        public int DimY { get; set; }
-        public float SizeStartScale { get; set; }
-        public MenuItemFlag Flags { get; set; }
-        public float OpenDelayTime { get; set; }
-        public float OpenDuration { get; set; }
-        public int FramePosX { get; set; }
-        public int FramePosY { get; set; }
-        public int FrameSizeX { get; set; }
-        public int FrameSizeY { get; set; }
-        public string HideIfOptionSectionSet { get; set; }
-        public string HideIfOptionSet { get; set; }
-        public int HideOnValue { get; set; }
-
         private string[] _texts = new string[Constants.DaedalusMenu.MaxUserStrings];
-        public string GetText(int i)
+        public override string GetText(int i)
         {
             return _texts[i];
         }
 
-        public void SetText(int i, string text)
+        public override void SetText(int i, string text)
         {
             _texts[i] = text;
         }
 
-        public MenuItemSelectAction GetOnSelAction(int i)
+        public override MenuItemSelectAction GetOnSelAction(int i)
         {
             throw new NotImplementedException();
         }
 
-        public string GetOnSelActionS(int i)
+        public override string GetOnSelActionS(int i)
         {
             throw new NotImplementedException();
         }
 
-        public int GetOnEventAction(MenuItemEventAction i)
+        public override int GetOnEventAction(MenuItemEventAction i)
         {
             throw new NotImplementedException();
         }
 
-        public float GetUserFloat(int i)
+        public override float GetUserFloat(int i)
         {
             throw new NotImplementedException();
         }
 
-        public string GetUserString(int i)
+        public override string GetUserString(int i)
         {
             throw new NotImplementedException();
         }

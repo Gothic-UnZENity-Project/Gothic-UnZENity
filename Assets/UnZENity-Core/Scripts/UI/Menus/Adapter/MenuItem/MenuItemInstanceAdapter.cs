@@ -3,186 +3,183 @@ using ZenKit.Daedalus;
 
 namespace GUZ.Core.UI.Menus.Adapter.MenuItem
 {
-    public class MenuItemInstanceAdapter : IMenuItemInstance
+    public class MenuItemInstanceAdapter : AbstractMenuItemInstance
     {
-        public string Name { get; set; }
         private readonly MenuItemInstance _menuItemInstance;
-        public IMenuInstance AbstractMenuInstance { get; set; }
-
         
-        public MenuItemInstanceAdapter(MenuItemInstance menuItemInstance, string menuItemName, IMenuInstance parentAbstractMenu)
+        public MenuItemInstanceAdapter(MenuItemInstance menuItemInstance, string menuItemName, AbstractMenuInstance parentAbstractMenu):
+            base(menuItemName)
         {
             _menuItemInstance = menuItemInstance;
-            Name = menuItemName;
             
             if (_menuItemInstance.GetOnSelAction(0) == MenuItemSelectAction.StartMenu)
-                AbstractMenuInstance = new MenuInstanceAdapter(_menuItemInstance.GetOnSelActionS(0), parentAbstractMenu);
+                MenuInstance = new MenuInstanceAdapter(_menuItemInstance.GetOnSelActionS(0), parentAbstractMenu);
         }
 
 
-        public string FontName
+        public override string FontName
         {
             get => _menuItemInstance.FontName;
             set => _menuItemInstance.FontName = value;
         }
 
-        public string BackPic
+        public override string BackPic
         {
             get => _menuItemInstance.BackPic;
             set => _menuItemInstance.BackPic = value;
         }
 
-        public string AlphaMode
+        public override string AlphaMode
         {
             get => _menuItemInstance.AlphaMode;
             set => _menuItemInstance.AlphaMode = value;
         }
 
-        public int Alpha
+        public override int Alpha
         {
             get => _menuItemInstance.Alpha;
             set => _menuItemInstance.Alpha = value;
         }
 
-        public MenuItemType MenuItemType
+        public override  MenuItemType MenuItemType
         {
             get => _menuItemInstance.MenuItemType;
             set => _menuItemInstance.MenuItemType = value;
         }
 
-        public string OnChgSetOption
+        public override  string OnChgSetOption
         {
             get => _menuItemInstance.OnChgSetOption;
             set => _menuItemInstance.OnChgSetOption = value;
         }
 
-        public string OnChgSetOptionSection
+        public override  string OnChgSetOptionSection
         {
             get => _menuItemInstance.OnChgSetOptionSection;
             set => _menuItemInstance.OnChgSetOptionSection = value;
         }
 
-        public int PosX
+        public override  int PosX
         {
             get => _menuItemInstance.PosX;
             set => _menuItemInstance.PosX = value;
         }
 
-        public int PosY
+        public override  int PosY
         {
             get => _menuItemInstance.PosY;
             set => _menuItemInstance.PosY = value;
         }
 
-        public int DimX
+        public override  int DimX
         {
             get => _menuItemInstance.DimX;
             set => _menuItemInstance.DimX = value;
         }
 
-        public int DimY
+        public override  int DimY
         {
             get => _menuItemInstance.DimY;
             set => _menuItemInstance.DimY = value;
         }
 
-        public float SizeStartScale
+        public override  float SizeStartScale
         {
             get => _menuItemInstance.SizeStartScale;
             set => _menuItemInstance.SizeStartScale = value;
         }
 
-        public MenuItemFlag Flags
+        public override  MenuItemFlag Flags
         {
             get => _menuItemInstance.Flags;
             set => _menuItemInstance.Flags = value;
         }
 
-        public float OpenDelayTime
+        public override  float OpenDelayTime
         {
             get => _menuItemInstance.OpenDelayTime;
             set => _menuItemInstance.OpenDelayTime = value;
         }
 
-        public float OpenDuration
+        public override  float OpenDuration
         {
             get => _menuItemInstance.OpenDuration;
             set => _menuItemInstance.OpenDuration = value;
         }
 
-        public int FramePosX
+        public override  int FramePosX
         {
             get => _menuItemInstance.FramePosX;
             set => _menuItemInstance.FramePosX = value;
         }
 
-        public int FramePosY
+        public override  int FramePosY
         {
             get => _menuItemInstance.FramePosY;
             set => _menuItemInstance.FramePosY = value;
         }
 
-        public int FrameSizeX
+        public override  int FrameSizeX
         {
             get => _menuItemInstance.FrameSizeX;
             set => _menuItemInstance.FrameSizeX = value;
         }
 
-        public int FrameSizeY
+        public override  int FrameSizeY
         {
             get => _menuItemInstance.FrameSizeY;
             set => _menuItemInstance.FrameSizeY = value;
         }
 
-        public string HideIfOptionSectionSet
+        public override  string HideIfOptionSectionSet
         {
             get => _menuItemInstance.HideIfOptionSectionSet;
             set => _menuItemInstance.HideIfOptionSectionSet = value;
         }
 
-        public string HideIfOptionSet
+        public override  string HideIfOptionSet
         {
             get => _menuItemInstance.HideIfOptionSet;
             set => _menuItemInstance.HideIfOptionSet = value;
         }
 
-        public int HideOnValue
+        public override  int HideOnValue
         {
             get => _menuItemInstance.HideOnValue;
             set => _menuItemInstance.HideOnValue = value;
         }
 
-        public string GetText(int i)
+        public override string GetText(int i)
         {
             return _menuItemInstance.GetText(i);
         }
 
-        public void SetText(int i, string text)
+        public override void SetText(int i, string text)
         {
             _menuItemInstance.SetText(i, text);
         }
 
-        public MenuItemSelectAction GetOnSelAction(int i)
+        public override MenuItemSelectAction GetOnSelAction(int i)
         {
             return _menuItemInstance.GetOnSelAction(i);
         }
 
-        public string GetOnSelActionS(int i)
+        public override string GetOnSelActionS(int i)
         {
             return _menuItemInstance.GetOnSelActionS(i);
         }
 
-        public int GetOnEventAction(MenuItemEventAction i)
+        public override int GetOnEventAction(MenuItemEventAction i)
         {
             return _menuItemInstance.GetOnEventAction(i);
         }
 
-        public float GetUserFloat(int i)
+        public override float GetUserFloat(int i)
         {
             return _menuItemInstance.GetUserFloat(i);
         }
 
-        public string GetUserString(int i)
+        public override string GetUserString(int i)
         {
             return _menuItemInstance.GetUserString(i);
         }

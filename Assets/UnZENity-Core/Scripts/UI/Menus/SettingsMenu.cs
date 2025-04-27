@@ -9,9 +9,9 @@ namespace GUZ.Core.UI.Menus
 {
     public class SettingsMenu : AbstractMenu
     {
-        public override void InitializeMenu(IMenuInstance abstractMenuInstance)
+        public override void InitializeMenu(AbstractMenuInstance menuInstance)
         {
-            base.InitializeMenu(abstractMenuInstance);
+            base.InitializeMenu(menuInstance);
 
             // menuInstance.GetMenuItemInstance("MENUITEM_OPT_HEADING").PosY -= GetSymbolInt("MENU_OPT_DY");
             //

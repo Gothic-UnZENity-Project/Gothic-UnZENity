@@ -18,21 +18,21 @@ namespace GUZ.Core.UI.Menus
     public abstract class AbstractMenu : MonoBehaviour
     {
         protected MenuHandler MenuHandler;
-        protected IMenuInstance AbstractMenuInstance;
+        protected AbstractMenuInstance MenuInstance;
         [SerializeField] protected GameObject Canvas;
         [SerializeField] protected GameObject Background;
 
-        protected Dictionary<string, (IMenuItemInstance item, GameObject go)> MenuItemCache = new();
+        protected Dictionary<string, (AbstractMenuItemInstance item, GameObject go)> MenuItemCache = new();
 
         // Pixel ratio of whole menu (Canvas) is based on background picture pixel and virtual pixels named inside Daedalus.
         protected float PixelRatioX;
         protected float PixelRatioY;
 
-        public virtual void InitializeMenu(IMenuInstance abstractMenuInstance)
+        public virtual void InitializeMenu(AbstractMenuInstance menuInstance)
         {
             MenuHandler = transform.parent.GetComponent<MenuHandler>();
             
-            AbstractMenuInstance = abstractMenuInstance;
+            MenuInstance = menuInstance;
             CreateRootElements();
         }
         
@@ -82,7 +82,7 @@ namespace GUZ.Core.UI.Menus
 
         private void CreateRootElements()
         {
-            var backPic = GameGlobals.Textures.GetMaterial(AbstractMenuInstance.BackPic);
+            var backPic = GameGlobals.Textures.GetMaterial(MenuInstance.BackPic);
             Background.GetComponentInChildren<MeshRenderer>().sharedMaterial = backPic;
 
             // Set canvas size based on texture size of background
@@ -91,21 +91,21 @@ namespace GUZ.Core.UI.Menus
             canvasRect.SetHeight(backPic.mainTexture.height);
 
             // Calculate pixelRatio for virtual positions of child elements.
-            var virtualPixelX = AbstractMenuInstance.DimX + 1;
-            var virtualPixelY = AbstractMenuInstance.DimY + 1;
+            var virtualPixelX = MenuInstance.DimX + 1;
+            var virtualPixelY = MenuInstance.DimY + 1;
             var realPixelX = backPic.mainTexture.width;
             var realPixelY = backPic.mainTexture.height;
 
             PixelRatioX = (float)virtualPixelX / realPixelX; // for normal G1, should be 16 (=8192 / 512)
             PixelRatioY = (float)virtualPixelY / realPixelY;
 
-            foreach (var item in AbstractMenuInstance.Items)
+            foreach (var item in MenuInstance.Items)
             {
                 CreateMenuItem(item);
             }
         }
 
-        private void CreateMenuItem(IMenuItemInstance item)
+        private void CreateMenuItem(AbstractMenuItemInstance item)
         {
             GameObject itemGo;
 
@@ -167,8 +167,8 @@ namespace GUZ.Core.UI.Menus
             MenuItemCache[item.Name] = (item, itemGo);
 
             var rect = itemGo.GetComponent<RectTransform>();
-            var halfMainWidth = (float)AbstractMenuInstance.DimX / 2;
-            var halfMainHeight = (float)AbstractMenuInstance.DimY / 2;
+            var halfMainWidth = (float)MenuInstance.DimX / 2;
+            var halfMainHeight = (float)MenuInstance.DimY / 2;
 
             float itemWidth;
             if (item.DimX > 0)
@@ -180,7 +180,7 @@ namespace GUZ.Core.UI.Menus
             else
             {
                 // We assume the element can be drawn until end of whole UI.
-                itemWidth = ((float)AbstractMenuInstance.DimX - item.PosX);
+                itemWidth = ((float)MenuInstance.DimX - item.PosX);
             }
 
             rect.SetPositionX((item.PosX - halfMainWidth + itemWidth / 2) / PixelRatioX);
@@ -194,7 +194,7 @@ namespace GUZ.Core.UI.Menus
             else
             {
                 // We assume the element can be drawn until end of whole UI.
-                itemHeight = (float)AbstractMenuInstance.DimY - item.PosY;
+                itemHeight = (float)MenuInstance.DimY - item.PosY;
             }
 
             rect.SetPositionY((halfMainHeight - item.PosY - itemHeight / 2) / PixelRatioY);
@@ -256,7 +256,7 @@ namespace GUZ.Core.UI.Menus
             }
         }
 
-        private void SetTextDimensions(TMP_Text textComp, IMenuItemInstance item,
+        private void SetTextDimensions(TMP_Text textComp, AbstractMenuItemInstance item,
             float itemWidth, float itemHeight)
         {
             // frameSizeX/Y are text paddings from left-right and/or top/bottom.
