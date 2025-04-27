@@ -1,5 +1,6 @@
 using System;
 using GUZ.Core.Globals;
+using GUZ.Core.UI.Menus.Adapter.Menu;
 using ZenKit.Daedalus;
 
 namespace GUZ.Core.UI.Menus.Adapter.MenuItem
@@ -17,8 +18,9 @@ namespace GUZ.Core.UI.Menus.Adapter.MenuItem
             DimX = -1;
             DimY = -1;
         }
-        
+
         public string Name { get; set; }
+        public IMenuInstance MenuInstance { get; set; }
         
         public string FontName { get; set; }
         public string BackPic { get; set; }

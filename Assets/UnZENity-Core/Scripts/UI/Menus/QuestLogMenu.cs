@@ -86,9 +86,9 @@ namespace GUZ.Core.UI.Menus
         /// 3. Use this data to create GameObjects dynamically based on Template elements (button, text, ...)
         /// 3. For lists (e.g. active missions), create the list items and arrows (do not them fill yet)
         /// </summary>
-        protected override void Awake()
+        public override void InitializeMenu(IMenuInstance menuInstance)
         {
-            base.Awake();
+            base.InitializeMenu(menuInstance);
 
             Setup();
             UpdateDayAndTime(GameManager.I.Time.GetCurrentDateTime());
@@ -122,8 +122,7 @@ namespace GUZ.Core.UI.Menus
 
         private void Setup()
         {
-            CreateRootElements(new MenuInstanceAdapter("MENU_LOG"));
-            //open gothic also hides it in screen init
+            // Open Gothic also hides it in its screen init
             MenuItemCache[_instanceContentViewer].go.SetActive(false);
 
             CreateLists();

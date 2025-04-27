@@ -10,13 +10,17 @@ namespace GUZ.Core.UI.Menus.Adapter.Menu
 {
     public class MenuInstanceAdapter : IMenuInstance
     {
-        private readonly MenuInstance _menuInstance;
+        public string Name { get; set; }
         public List<IMenuItemInstance> Items { get; set; }
+
+        private readonly MenuInstance _menuInstance;
 
         public MenuInstanceAdapter(string name)
         {
+            Name = name;
+            
             _menuInstance = GameData.MenuVm.InitInstance<MenuInstance>(name);
-
+            
             // We immediately initialize all menu entries as we will later change Index of them (e.g. add a new menu in between).
             Items = new();
             for (var i = 0;; i++)

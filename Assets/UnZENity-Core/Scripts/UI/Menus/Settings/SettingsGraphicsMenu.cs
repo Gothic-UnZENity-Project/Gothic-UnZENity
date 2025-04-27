@@ -5,13 +5,6 @@ namespace GUZ.Core.UI.Menus.Settings
 {
     public class SettingsGraphicsMenu : AbstractMenu
     {
-        protected override void Awake()
-        {
-            base.Awake();
-
-            CreateRootElements(new MenuInstanceAdapter("MENU_OPT_GRAPHICS"));
-        }
-
         protected override void Undefined(string itemName, string commandName)
         {
             throw new NotImplementedException();

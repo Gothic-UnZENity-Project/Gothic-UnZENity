@@ -8,17 +8,6 @@ namespace GUZ.Core.UI.Menus
 {
     public class MainMenu : AbstractMenu
     {
-        protected override void Awake()
-        {
-            base.Awake();
-            Setup();
-        }
-
-        private void Setup()
-        {
-            CreateRootElements(new MenuInstanceAdapter("MENU_MAIN"));
-        }
-
         protected override void Undefined(string itemName, string commandName)
         {
             return;

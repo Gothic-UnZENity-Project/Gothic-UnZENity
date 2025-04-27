@@ -6,17 +6,6 @@ namespace GUZ.Core.UI.Menus
 {
     public class LeaveGameMenu : AbstractMenu
     {
-        protected override void Awake()
-        {
-            base.Awake();
-            Setup();
-        }
-
-        private void Setup()
-        {
-            CreateRootElements(new MenuInstanceAdapter("MENU_LEAVE_GAME"));
-        }
-
         protected override void Undefined(string itemName, string commandName)
         {
             return;

@@ -18,6 +18,7 @@ namespace GUZ.Core.UI.Menus
     public abstract class AbstractMenu : MonoBehaviour
     {
         protected MenuHandler MenuHandler;
+        protected IMenuInstance MenuInstance;
         [SerializeField] protected GameObject Canvas;
         [SerializeField] protected GameObject Background;
 
@@ -27,6 +28,14 @@ namespace GUZ.Core.UI.Menus
         protected float PixelRatioX;
         protected float PixelRatioY;
 
+        public virtual void InitializeMenu(IMenuInstance menuInstance)
+        {
+            MenuHandler = transform.parent.GetComponent<MenuHandler>();
+            
+            MenuInstance = menuInstance;
+            CreateRootElements();
+        }
+        
         protected abstract void Undefined(string itemName, string commandName);
 
         protected virtual void Back(string itemName, string commandName)
@@ -48,12 +57,7 @@ namespace GUZ.Core.UI.Menus
         {
             return true;
         }
-
-        protected virtual void Awake()
-        {
-            MenuHandler = transform.parent.GetComponent<MenuHandler>();
-        }
-
+        
         public void ToggleVisibility()
         {
             if (gameObject.activeSelf)
@@ -76,9 +80,9 @@ namespace GUZ.Core.UI.Menus
             gameObject.SetActive(false);
         }
 
-        protected void CreateRootElements(IMenuInstance menuInstance)
+        private void CreateRootElements()
         {
-            var backPic = GameGlobals.Textures.GetMaterial(menuInstance.BackPic);
+            var backPic = GameGlobals.Textures.GetMaterial(MenuInstance.BackPic);
             Background.GetComponentInChildren<MeshRenderer>().sharedMaterial = backPic;
 
             // Set canvas size based on texture size of background
@@ -87,21 +91,21 @@ namespace GUZ.Core.UI.Menus
             canvasRect.SetHeight(backPic.mainTexture.height);
 
             // Calculate pixelRatio for virtual positions of child elements.
-            var virtualPixelX = menuInstance.DimX + 1;
-            var virtualPixelY = menuInstance.DimY + 1;
+            var virtualPixelX = MenuInstance.DimX + 1;
+            var virtualPixelY = MenuInstance.DimY + 1;
             var realPixelX = backPic.mainTexture.width;
             var realPixelY = backPic.mainTexture.height;
 
             PixelRatioX = (float)virtualPixelX / realPixelX; // for normal G1, should be 16 (=8192 / 512)
             PixelRatioY = (float)virtualPixelY / realPixelY;
 
-            foreach (var item in menuInstance.Items)
+            foreach (var item in MenuInstance.Items)
             {
-                CreateMenuItem(menuInstance, item);
+                CreateMenuItem(item);
             }
         }
 
-        private void CreateMenuItem(IMenuInstance main, IMenuItemInstance item)
+        private void CreateMenuItem(IMenuItemInstance item)
         {
             GameObject itemGo;
 
@@ -163,8 +167,8 @@ namespace GUZ.Core.UI.Menus
             MenuItemCache[item.Name] = (item, itemGo);
 
             var rect = itemGo.GetComponent<RectTransform>();
-            var halfMainWidth = (float)main.DimX / 2;
-            var halfMainHeight = (float)main.DimY / 2;
+            var halfMainWidth = (float)MenuInstance.DimX / 2;
+            var halfMainHeight = (float)MenuInstance.DimY / 2;
 
             float itemWidth;
             if (item.DimX > 0)
@@ -176,7 +180,7 @@ namespace GUZ.Core.UI.Menus
             else
             {
                 // We assume the element can be drawn until end of whole UI.
-                itemWidth = ((float)main.DimX - item.PosX);
+                itemWidth = ((float)MenuInstance.DimX - item.PosX);
             }
 
             rect.SetPositionX((item.PosX - halfMainWidth + itemWidth / 2) / PixelRatioX);
@@ -190,7 +194,7 @@ namespace GUZ.Core.UI.Menus
             else
             {
                 // We assume the element can be drawn until end of whole UI.
-                itemHeight = (float)main.DimY - item.PosY;
+                itemHeight = (float)MenuInstance.DimY - item.PosY;
             }
 
             rect.SetPositionY((halfMainHeight - item.PosY - itemHeight / 2) / PixelRatioY);

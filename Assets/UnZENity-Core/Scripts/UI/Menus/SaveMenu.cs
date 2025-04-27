@@ -30,17 +30,15 @@ namespace GUZ.Core.UI.Menus
 
         private string _saveLoadStatus;
 
-        protected override void Awake()
+        public override void InitializeMenu(IMenuInstance menuInstance)
         {
-            base.Awake();
+            base.InitializeMenu(menuInstance);
             Setup();
         }
 
         private void Setup()
         {
             _saveLoadStatus = _isSaving ? "SAVE" : "LOAD";
-
-            CreateRootElements(new MenuInstanceAdapter($"MENU_SAVEGAME_{_saveLoadStatus}"));
 
             var thumbnailGo = MenuItemCache["MENUITEM_LOADSAVE_THUMBPIC"].go;
             Thumbnail = ResourceLoader.TryGetPrefabObject(PrefabType.UiThumbnail, name: "Thumbnail",

@@ -5,13 +5,6 @@ namespace GUZ.Core.UI.Menus.Settings
 {
     public class SettingsAudioMenu : AbstractMenu
     {
-        protected override void Awake()
-        {
-            base.Awake();
-            
-            CreateRootElements(new MenuInstanceAdapter("MENU_OPT_AUDIO"));
-        }
-
         protected override void Undefined(string itemName, string commandName)
         {
             throw new NotImplementedException();

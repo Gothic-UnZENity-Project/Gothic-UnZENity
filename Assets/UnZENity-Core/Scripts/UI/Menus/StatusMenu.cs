@@ -24,15 +24,14 @@ namespace GUZ.Core.UI.Menus
         private string _itemTalentDescriptionPattern = "MENU_ITEM_TALENT_{0}";
 
 
-        protected override void Awake()
+        public override void InitializeMenu(IMenuInstance menuInstance)
         {
-            base.Awake();
+            base.InitializeMenu(menuInstance);
             Setup();
         }
 
         private void Setup()
         {
-            CreateRootElements(new MenuInstanceAdapter("MENU_STATUS"));
             UpdateData();
         }
 

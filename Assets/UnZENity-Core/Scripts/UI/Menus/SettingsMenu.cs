@@ -9,27 +9,23 @@ namespace GUZ.Core.UI.Menus
 {
     public class SettingsMenu : AbstractMenu
     {
-        protected override void Awake()
+        public override void InitializeMenu(IMenuInstance menuInstance)
         {
-            base.Awake();
+            base.InitializeMenu(menuInstance);
 
-            var menuInstance = new MenuInstanceAdapter("MENU_OPTIONS");
-
-            menuInstance.GetMenuItemInstance("MENUITEM_OPT_HEADING").PosY -= GetSymbolInt("MENU_OPT_DY");
-            
-            // Data is heavily extracted from MENUITEM_OPT_GAME
-            // We simply show the menu above the first element: GameSettings
-            menuInstance.InsertItemAt(0, new MutableMenuItemInstance
-            {
-                Name = "VR Menu",
-                Flags = MenuItemFlag.Centered,
-                PosY = GetSymbolInt("MENU_OPT_START_Y") - GetSymbolInt("MENU_OPT_DY"),
-                DimX = 8192,
-                DimY = 750,
-                Texts = new []{ "<<VR MENU>> (Translate)" }
-            });
-            
-            CreateRootElements(menuInstance);
+            // menuInstance.GetMenuItemInstance("MENUITEM_OPT_HEADING").PosY -= GetSymbolInt("MENU_OPT_DY");
+            //
+            // // Data is heavily extracted from MENUITEM_OPT_GAME
+            // // We simply show the menu above the first element: GameSettings
+            // menuInstance.InsertItemAt(0, new MutableMenuItemInstance
+            // {
+            //     Name = "VR Menu",
+            //     Flags = MenuItemFlag.Centered,
+            //     PosY = GetSymbolInt("MENU_OPT_START_Y") - GetSymbolInt("MENU_OPT_DY"),
+            //     DimX = 8192,
+            //     DimY = 750,
+            //     Texts = new []{ "<<VR MENU>> (Translate)" }
+            // });
         }
 
         private string GetSymbolString(string symbolName)

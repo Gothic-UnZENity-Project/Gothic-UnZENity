@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using GUZ.Core.UI.Menus.Adapter.Menu;
+using JetBrains.Annotations;
 using MyBox;
 using UnityEngine;
 
@@ -22,35 +24,64 @@ namespace GUZ.Core.UI.Menus
         [SerializeField] private GameObject _settingsAudioMenuPrefab;
         [SerializeField] private GameObject _settingsControlsMenuPrefab;
 
-        private void OnEnable()
+        // Cached MainMenu tree hierarchy of submenus (load, save, settings) and their children (sub-settings, settings fields)
+        public IMenuInstance MainMenuHierarchy { get; private set; }
+
+        private void Awake()
         {
             InitializeMenus();
-            
+        }
+
+        private void OnEnable()
+        {
             OpenMenu("MENU_MAIN");
         }
 
         private void InitializeMenus()
         {
-            if (_menuList.Count != 0)
-            {
-                return;
-            }
+            // Initialize whole ZenKit Menu.dat hierarchy.
+            MainMenuHierarchy = new MenuInstanceAdapter("MENU_MAIN");
 
-            _menuList.Add("MENU_MAIN", Instantiate(_mainMenuPrefab, transform));
-            _menuList.Add("MENU_SAVEGAME_LOAD", Instantiate(_loadMenuPrefab, transform));
-            _menuList.Add("MENU_SAVEGAME_SAVE", Instantiate(_saveMenuPrefab, transform));
-            _menuList.Add("MENU_LEAVE_GAME", Instantiate(_leaveMenuPrefab, transform));
+            InstantiateMenu("MENU_MAIN", _mainMenuPrefab);
+            InstantiateMenu("MENU_SAVEGAME_LOAD", _loadMenuPrefab);
+            InstantiateMenu("MENU_SAVEGAME_SAVE", _saveMenuPrefab);
+            InstantiateMenu("MENU_LEAVE_GAME", _leaveMenuPrefab);
 
-            _menuList.Add("MENU_OPTIONS", Instantiate(_settingsMenuPrefab, transform));
-            _menuList.Add("MENU_OPT_GAME", Instantiate(_settingsGameMenuPrefab, transform));
-            _menuList.Add("MENU_OPT_GRAPHICS", Instantiate(_settingsGraphicsMenuPrefab, transform));
-            _menuList.Add("MENU_OPT_VIDEO", Instantiate(_settingsVideoMenuPrefab, transform));
-            _menuList.Add("MENU_OPT_AUDIO", Instantiate(_settingsAudioMenuPrefab, transform));
-            _menuList.Add("MENU_OPT_CONTROLS", Instantiate(_settingsControlsMenuPrefab, transform));
+            InstantiateMenu("MENU_OPTIONS", _settingsMenuPrefab);
+            InstantiateMenu("MENU_OPT_GAME", _settingsGameMenuPrefab);
+            InstantiateMenu("MENU_OPT_GRAPHICS", _settingsGraphicsMenuPrefab);
+            InstantiateMenu("MENU_OPT_VIDEO", _settingsVideoMenuPrefab);
+            InstantiateMenu("MENU_OPT_AUDIO", _settingsAudioMenuPrefab);
+            InstantiateMenu("MENU_OPT_CONTROLS", _settingsControlsMenuPrefab);
 
             GameContext.InteractionAdapter.InitUIInteraction();
             
             CloseAllMenus();
+        }
+
+        private void InstantiateMenu(string menuName, GameObject prefab)
+        {
+            var go = Instantiate(prefab, transform);
+            go.GetComponent<AbstractMenu>().InitializeMenu(FindMenuInstance(MainMenuHierarchy, menuName));
+            
+            _menuList.Add(menuName, go);
+        }
+
+        private IMenuInstance FindMenuInstance([CanBeNull] IMenuInstance searchMenuInstance, string menuName)
+        {
+            if (searchMenuInstance == null)
+                return null;
+            if (searchMenuInstance.Name == menuName)
+                return searchMenuInstance;
+            
+            foreach (var menuItem in searchMenuInstance.Items)
+            {
+                var foundMenu = FindMenuInstance(menuItem.MenuInstance, menuName);
+                if (foundMenu != null)
+                    return foundMenu;
+            }
+        
+            return null;
         }
 
         public void ToggleVisibility()

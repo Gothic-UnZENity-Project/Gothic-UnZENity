@@ -6,6 +6,7 @@ namespace GUZ.Core.UI.Menus.Adapter.Menu
 {
     public class MutableMenuInstance : IMenuInstance
     {
+        public string Name { get; set; }
         public List<IMenuItemInstance> Items { get; set; }
 
         public IMenuItemInstance GetMenuItemInstance(string menuItemName)

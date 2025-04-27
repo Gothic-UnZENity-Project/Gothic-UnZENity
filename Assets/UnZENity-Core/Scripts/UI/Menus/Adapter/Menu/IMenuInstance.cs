@@ -7,6 +7,7 @@ namespace GUZ.Core.UI.Menus.Adapter.Menu
 {
     public interface IMenuInstance
     {
+        public string Name {get; set;}
         List<IMenuItemInstance> Items { get; set; }
         IMenuItemInstance GetMenuItemInstance(string menuItemName);
 

@@ -1,18 +1,24 @@
+using GUZ.Core.UI.Menus.Adapter.Menu;
 using ZenKit.Daedalus;
 
 namespace GUZ.Core.UI.Menus.Adapter.MenuItem
 {
     public class MenuItemInstanceAdapter : IMenuItemInstance
     {
+        public string Name { get; set; }
         private readonly MenuItemInstance _menuItemInstance;
-    
+        public IMenuInstance MenuInstance { get; set; }
+
+        
         public MenuItemInstanceAdapter(MenuItemInstance menuItemInstance, string menuItemName)
         {
             _menuItemInstance = menuItemInstance;
             Name = menuItemName;
+            
+            if (_menuItemInstance.GetOnSelAction(0) == MenuItemSelectAction.StartMenu)
+                MenuInstance = new MenuInstanceAdapter(_menuItemInstance.GetOnSelActionS(0));
         }
 
-        public string Name { get; set; }
 
         public string FontName
         {

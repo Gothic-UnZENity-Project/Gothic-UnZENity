@@ -1,38 +1,40 @@
+using GUZ.Core.UI.Menus.Adapter.Menu;
 using ZenKit.Daedalus;
 
 namespace GUZ.Core.UI.Menus.Adapter.MenuItem
 {
     public interface IMenuItemInstance
     {
-        public string Name { get; set; }
+        string Name { get; set; }
+        IMenuInstance MenuInstance { get; set; }
         
-        public string FontName { get; set; }
-        public string BackPic { get; set; }
-        public string AlphaMode { get; set; }
-        public int Alpha { get; set; }
-        public MenuItemType MenuItemType { get; set; }
-        public string OnChgSetOption { get; set; }
-        public string OnChgSetOptionSection { get; set; }
-        public int PosX { get; set; }
-        public int PosY { get; set; }
-        public int DimX { get; set; }
-        public int DimY { get; set; }
-        public float SizeStartScale { get; set; }
-        public MenuItemFlag Flags { get; set; }
-        public float OpenDelayTime { get; set; }
-        public float OpenDuration { get; set; }
-        public int FramePosX { get; set; }
-        public int FramePosY { get; set; }
-        public int FrameSizeX { get; set; }
-        public int FrameSizeY { get; set; }
-        public string HideIfOptionSectionSet { get; set; }
-        public string HideIfOptionSet { get; set; }
-        public int HideOnValue { get; set; }
-        public string GetText(int i);
-        public MenuItemSelectAction GetOnSelAction(int i);
-        public string GetOnSelActionS(int i);
-        public int GetOnEventAction(MenuItemEventAction i);
-        public float GetUserFloat(int i);
-        public string GetUserString(int i);
+        string FontName { get; set; }
+        string BackPic { get; set; }
+        string AlphaMode { get; set; }
+        int Alpha { get; set; }
+        MenuItemType MenuItemType { get; set; }
+        string OnChgSetOption { get; set; }
+        string OnChgSetOptionSection { get; set; }
+        int PosX { get; set; }
+        int PosY { get; set; }
+        int DimX { get; set; }
+        int DimY { get; set; }
+        float SizeStartScale { get; set; }
+        MenuItemFlag Flags { get; set; }
+        float OpenDelayTime { get; set; }
+        float OpenDuration { get; set; }
+        int FramePosX { get; set; }
+        int FramePosY { get; set; }
+        int FrameSizeX { get; set; }
+        int FrameSizeY { get; set; }
+        string HideIfOptionSectionSet { get; set; }
+        string HideIfOptionSet { get; set; }
+        int HideOnValue { get; set; }
+        string GetText(int i);
+        MenuItemSelectAction GetOnSelAction(int i);
+        string GetOnSelActionS(int i);
+        int GetOnEventAction(MenuItemEventAction i);
+        float GetUserFloat(int i);
+        string GetUserString(int i);
     }
 }
