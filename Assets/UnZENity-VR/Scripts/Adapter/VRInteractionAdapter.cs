@@ -4,6 +4,7 @@ using GUZ.Core;
 using GUZ.Core.Adapter;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
+using GUZ.Core.UI.Menus.Adapter.Menu;
 using GUZ.VR.Components;
 using GUZ.VR.Components.HVROverrides;
 using HurricaneVR.Framework.Core.UI;
@@ -160,6 +161,14 @@ namespace GUZ.VR.Adapter
             }
             
             chapterPrefab.GetComponent<VRIntroduceChapter>().DisplayIntroduction(chapter, text, texture, wav, time);
+        }
+
+        /// <summary>
+        /// Update menu entries based on VR needs.
+        /// </summary>
+        public void UpdateMainMenu(IMenuInstance mainMenu)
+        {
+            
         }
     }
 }

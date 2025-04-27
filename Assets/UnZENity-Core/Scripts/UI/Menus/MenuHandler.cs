@@ -42,6 +42,8 @@ namespace GUZ.Core.UI.Menus
             // Initialize whole ZenKit Menu.dat hierarchy.
             MainMenuHierarchy = new MenuInstanceAdapter("MENU_MAIN");
 
+            GameContext.InteractionAdapter.UpdateMainMenu(MainMenuHierarchy);
+            
             InstantiateMenu("MENU_MAIN", _mainMenuPrefab);
             InstantiateMenu("MENU_SAVEGAME_LOAD", _loadMenuPrefab);
             InstantiateMenu("MENU_SAVEGAME_SAVE", _saveMenuPrefab);
@@ -62,26 +64,9 @@ namespace GUZ.Core.UI.Menus
         private void InstantiateMenu(string menuName, GameObject prefab)
         {
             var go = Instantiate(prefab, transform);
-            go.GetComponent<AbstractMenu>().InitializeMenu(FindMenuInstance(MainMenuHierarchy, menuName));
+            go.GetComponent<AbstractMenu>().InitializeMenu(MainMenuHierarchy.FindSubMenu(menuName));
             
             _menuList.Add(menuName, go);
-        }
-
-        private IMenuInstance FindMenuInstance([CanBeNull] IMenuInstance searchMenuInstance, string menuName)
-        {
-            if (searchMenuInstance == null)
-                return null;
-            if (searchMenuInstance.Name == menuName)
-                return searchMenuInstance;
-            
-            foreach (var menuItem in searchMenuInstance.Items)
-            {
-                var foundMenu = FindMenuInstance(menuItem.MenuInstance, menuName);
-                if (foundMenu != null)
-                    return foundMenu;
-            }
-        
-            return null;
         }
 
         public void ToggleVisibility()

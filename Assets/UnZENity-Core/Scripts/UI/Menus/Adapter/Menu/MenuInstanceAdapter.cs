@@ -46,6 +46,21 @@ namespace GUZ.Core.UI.Menus.Adapter.Menu
             return Items.First(i => i.Name == menuItemName);
         }
 
+        public IMenuInstance FindSubMenu(string subMenuName)
+        {
+            if (this.Name == subMenuName)
+                return this;
+        
+            foreach (var menuItem in Items)
+            {
+                var foundMenu = menuItem.MenuInstance.FindSubMenu(subMenuName);
+                if (foundMenu != null)
+                    return foundMenu;
+            }
+    
+            return null;
+        }
+
         public string GetItem(int i)
         {
             return _menuInstance.GetItem(i);

@@ -14,6 +14,11 @@ namespace GUZ.Core.UI.Menus.Adapter.Menu
             throw new System.NotImplementedException();
         }
 
+        public IMenuInstance FindSubMenu(string subMenuName)
+        {
+            throw new System.NotImplementedException();
+        }
+
         public string GetItem(int i)
         {
             return "";

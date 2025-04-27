@@ -1,6 +1,7 @@
 using System;
 using GUZ.Core;
 using GUZ.Core.Adapter;
+using GUZ.Core.UI.Menus.Adapter.Menu;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -69,6 +70,11 @@ namespace GUZ.Flat
         }
 
         public void IntroduceChapter(string chapter, string text, string texture, string wav, int time)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void UpdateMainMenu(IMenuInstance mainMenu)
         {
             throw new NotImplementedException();
         }
