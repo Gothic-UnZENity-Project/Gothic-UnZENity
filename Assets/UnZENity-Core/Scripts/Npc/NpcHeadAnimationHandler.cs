@@ -12,7 +12,7 @@ namespace GUZ.Core.Npc
     {
         private bool _doLookAtNpc;
         private Transform _destTransform;
-        private Quaternion _initialHeadRotation;
+        // private Quaternion _initialHeadRotation;
         private Quaternion _prevHeadRotation;
 
         private const float _headLookDegreeMax = 80f;
@@ -30,7 +30,7 @@ namespace GUZ.Core.Npc
         {
             _doLookAtNpc = true;
             _destTransform = destinationTransform;
-            _initialHeadRotation = PrefabProps.Head.rotation;
+            // _initialHeadRotation = PrefabProps.Head.rotation;
             _prevHeadRotation = PrefabProps.Head.rotation;
         }
 
@@ -117,13 +117,20 @@ namespace GUZ.Core.Npc
             );
         }
 
+        /// <summary>
+        /// With the new AnimationSystem, head has normally an animation being set.
+        /// It means we simply do not update the head rotation here at LateUpdate() and the head will turn back to its original position immediately.
+        /// </summary>
         private void RotateBackToOriginal()
         {
-            PrefabProps.Head.rotation = Quaternion.RotateTowards(
-                _prevHeadRotation,
-                _initialHeadRotation,
-                Time.deltaTime * _headLookRotateSpeed
-            );
+            return;
+
+            // HINT: Old logic returning to original position, but e.g. Orry would then rotate his body back and his "original" head position is now wrong.
+            // PrefabProps.Head.rotation = Quaternion.RotateTowards(
+            //     _prevHeadRotation,
+            //     _initialHeadRotation,
+            //     Time.deltaTime * _headLookRotateSpeed
+            // );
         }
     }
 }

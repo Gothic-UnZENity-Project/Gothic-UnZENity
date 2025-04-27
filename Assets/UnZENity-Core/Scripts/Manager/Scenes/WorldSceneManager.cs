@@ -27,10 +27,12 @@ namespace GUZ.Core.Manager.Scenes
         
         /// <summary>
         /// Order of loading:
-        /// 1. World - Mesh of the world
-        /// 2. VOBs - First entry, as we slice world chunks based on light VOBs
+        /// 1. Cache data
+        /// 2. World - Mesh of the world
         /// 3. WayPoints - Needed for spawning NPCs when world is loaded the first time
-        /// 4. NPCs - If we load the world for the first time, we leverage their current routine's values
+        /// 4. VOBs - First entry, as we slice world chunks based on light VOBs
+        /// 5. NPCs - If we load the world for the first time, we leverage their current routine's values
+        /// 6. Stationary lights
         /// </summary>
         private async Task LoadWorldContentAsync()
         {
@@ -40,17 +42,18 @@ namespace GUZ.Core.Manager.Scenes
             var worldRoot = new GameObject("World");
             var vobRoot = new GameObject("VOBs");
             var npcRoot = new GameObject("NPCs");
-            // We need to disable all vob meshes during loading. Otherwise loading time will increase from 10 seconds to 10 minutes. ;-)
+            // We need to disable all vob meshes during loading. Otherwise, loading time will increase from 10 seconds to 10 minutes. ;-)
             worldRoot.SetActive(false);
             vobRoot.SetActive(false);
+            npcRoot.SetActive(false);
 
             var fullWatch = Stopwatch.StartNew();
             try
             {
+                // 1.1
                 // Global cache and global calculations (TextureArray) only need to be done once.
                 if (!GameGlobals.StaticCache.IsGlobalCacheLoaded)
                 {
-                    // 0.1
                     // Load global Static cache and arrange it in memory
                     await GameGlobals.StaticCache.LoadGlobalCache();
                     watch.LogAndRestart("StaticCache - Global loaded");
@@ -59,12 +62,12 @@ namespace GUZ.Core.Manager.Scenes
                     watch.LogAndRestart("Texture array created");
                 }
 
-                // 0.2
+                // 1.2
                 // Load world cache
                 await GameGlobals.StaticCache.LoadWorldCache(GameGlobals.SaveGame.CurrentWorldName).AwaitAndLog();
                 watch.LogAndRestart("StaticCache - World loaded");
 
-                // 1. Load world based on cached Chunks
+                // 2. Load world based on cached Chunks
                 if (config.Dev.EnableWorldMesh)
                 {
                     await MeshFactory.CreateWorld(
@@ -76,35 +79,40 @@ namespace GUZ.Core.Manager.Scenes
                     watch.LogAndRestart("World loaded");
                 }
 
-                // 2.
+                // 3. WayNet
+                WayNetCreator.Create(config.Dev, GameGlobals.SaveGame.CurrentWorldData);
+                watch.LogAndRestart("WayNet initialized");
+
+
+                // 4. VOBs
                 // Build the world and vob meshes, populating the texture arrays.
                 // We need to start creating Vobs as we need to calculate world slicing based on amount of lights at a certain space afterward.
                 if (config.Dev.EnableVOBs)
                 {
+                    // If we load a SaveGame, then nearby NPCs are stored as VOB and will be created as GOs inside NpcManager. We need to prepare it before.
+                    GameGlobals.Npcs.SetRootGo(npcRoot);
+
                     await GameGlobals.Vobs.CreateWorldVobsAsync(config.Dev, GameGlobals.Loading, GameGlobals.SaveGame.CurrentWorldData.Vobs, vobRoot)
                         .AwaitAndLog();
                     watch.LogAndRestart("VOBs created");
                 }
 
-                // 3. Stationary lights
-                // They are affecting (1) World Mesh and (2) VOB meshes.
-                // We therefore need to initialize them after both are created.
-                GameGlobals.Lights.InitStationaryLights();
-                watch.LogAndRestart("Stationary lights initialized");
-
-                // 3.
-                WayNetCreator.Create(config.Dev, GameGlobals.SaveGame.CurrentWorldData);
-                watch.LogAndRestart("WayNet initialized");
-
-                // 4.
+                // 5. NPCs
                 // If the world is visited for the first time, then we need to load Npcs via Wld_InsertNpc()
                 GameGlobals.Npcs.CacheHero();
                 if (config.Dev.EnableNpcs)
                 {
                     // await NpcCreator.CreateAsync(config.Dev, GameGlobals.Loading).AwaitAndLog();
-                    await GameGlobals.Npcs.CreateWorldNpcs(GameGlobals.Loading, npcRoot).AwaitAndLog();
+                    await GameGlobals.Npcs.CreateWorldNpcs(GameGlobals.Loading).AwaitAndLog();
                     watch.LogAndRestart("NPCs created");
                 }
+
+                // 6. Stationary lights
+                // They are affecting (1) World Mesh and (2) VOB meshes.
+                // We therefore need to initialize them after both are created.
+                GameGlobals.Lights.InitStationaryLights();
+                watch.LogAndRestart("Stationary lights initialized");
+
 
                 // World fully loaded
                 // TODO - Does this call add benefits for memory?
@@ -113,6 +121,7 @@ namespace GUZ.Core.Manager.Scenes
                 // TODO - Still needed?
                 worldRoot.SetActive(true);
                 vobRoot.SetActive(true);
+                npcRoot.SetActive(true);
 
                 GameGlobals.Sky.InitWorld();
 

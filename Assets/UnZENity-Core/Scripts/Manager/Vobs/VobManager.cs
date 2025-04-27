@@ -277,14 +277,19 @@ namespace GUZ.Core.Manager.Vobs
                 loading.AddProgress();
                 await FrameSkipper.TrySkipToNextFrame();
 
-                // A LevelCompo contains no data. Simply check its children.
-                if (vob.Type == VirtualObjectType.zCVobLevelCompo)
+                switch (vob.Type)
                 {
-                    await CreateWorldVobs(config, loading, vob.Children);
-                    continue;
+                    // A LevelCompo contains no data. Simply check its children.
+                    case VirtualObjectType.zCVobLevelCompo:
+                        await CreateWorldVobs(config, loading, vob.Children);
+                        continue;
+                    case VirtualObjectType.oCNpc:
+                        GameGlobals.Npcs.CreateVobNpc((ZenKit.Vobs.Npc)vob);
+                        continue;
                 }
+
                 // If our VOB type is ignored by Dev config, skip it and its children.
-                else if (!config.SpawnVOBTypes.Value.IsEmpty() && !config.SpawnVOBTypes.Value.Contains(vob.Type))
+                if (!config.SpawnVOBTypes.Value.IsEmpty() && !config.SpawnVOBTypes.Value.Contains(vob.Type))
                 {
                     continue;
                 }
@@ -297,14 +302,14 @@ namespace GUZ.Core.Manager.Vobs
                 {
                     var go = CreateVobLazily(config, vob);
 
-                    // We assume, that all VOBs with meshes are lazy loaded only.
+                    // We assume that all VOBs with meshes are lazy loaded only.
                     AddToMobInteractableList(vob, go);
                 }
             }
         }
 
         /// <summary>
-        /// Eager loading a VOB simply means, we call the Init() method immediately.
+        /// Eager loading a VOB simply means we call the Init() method immediately.
         /// </summary>
         private void CreateVobNow(IVirtualObject vob)
         {

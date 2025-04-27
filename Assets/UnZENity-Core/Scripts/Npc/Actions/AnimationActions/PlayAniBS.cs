@@ -4,16 +4,19 @@ using GUZ.Core.Vm;
 
 namespace GUZ.Core.Npc.Actions.AnimationActions
 {
-    public class PlayAniBs : AbstractAnimationAction
+    public class PlayAniBs : PlayAni
     {
+        private VmGothicEnums.BodyState _bodyState => (VmGothicEnums.BodyState)Action.Int0;
+
+
         public PlayAniBs(AnimationAction action, NpcContainer2 npcContainer) : base(action, npcContainer)
         {
         }
 
         public override void Start()
         {
-            Props.BodyState = (VmGothicEnums.BodyState)Action.Int0;
-            PrefabProps.AnimationSystem.PlayAnimation(Action.String0);
+            base.Start();
+            Props.BodyState = _bodyState;
         }
     }
 }

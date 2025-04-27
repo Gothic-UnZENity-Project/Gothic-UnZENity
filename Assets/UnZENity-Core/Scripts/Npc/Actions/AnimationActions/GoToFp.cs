@@ -26,10 +26,14 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             var npcPos = NpcGo.transform.position;
             _fp = WayNetHelper.FindNearestFreePoint(npcPos, Destination);
 
-            if (_fp != null)
+            if (_fp == null)
             {
-                _fp.IsLocked = true;
+                IsFinishedFlag = true;
+                return;
             }
+
+            _fp.IsLocked = true;
+            Props.CurrentFreePoint = _fp;
         }
 
         protected override void AnimationEnd()

@@ -102,13 +102,15 @@ namespace GUZ.Core.Manager.Culling
                 if (wasOutOfDistance && !initializedNow)
                 {
                     // If we walked to an NPC in our game, the NPC will be re-enabled and Routines get reset.
-                    go.GetComponentInChildren<AiHandler>()?.ReEnableNpc();
+                    npcData.PrefabProps?.AiHandler?.ReEnableNpc();
                 }
             }
             // When an NPC gets invisible, we need to check for their next respawn from their initially spawned position.
             else
             {
                 var props = npcData.Props;
+
+                npcData.PrefabProps?.AiHandler?.DisableNpc();
 
                 if (props.RoutineCurrent != null)
                 {

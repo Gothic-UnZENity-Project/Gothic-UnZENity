@@ -58,6 +58,17 @@ namespace GUZ.Core.Animations
             _meshBoneRot = _bones.Select(i => i.transform.localRotation).ToArray();
         }
 
+        public void DisableObject()
+        {
+            // If an NPC is culled out, the old positions are still set. We need to reset them to ensure we have an idle NPC starting.
+            for (var i = 0; i < _bones.Length; i++)
+            {
+                _bones[i].SetLocalPositionAndRotation(_meshBonePos[i], _meshBoneRot[i]);
+            }
+
+            _trackInstances.Clear();
+        }
+
         private void CollectBones(Transform bone, Dictionary<string, Transform> bones)
         {
             // Bones always start with BIP01. Other elements are Prefab specific.
@@ -280,7 +291,6 @@ namespace GUZ.Core.Animations
             lowerLayerTrack.BlendOutBones(bonesToSkip.ToArray(), 0f);
         }
 
-
         private void Update()
         {
             if (_trackInstances.Count == 0)
@@ -400,6 +410,7 @@ namespace GUZ.Core.Animations
                     continue;
                 }
 
+                // Stop, if we have no Root bone
                 var boneIndex = trackInstance.GetBoneIndex(Constants.Animations.RootBoneName);
                 if (boneIndex == -1)
                 {
