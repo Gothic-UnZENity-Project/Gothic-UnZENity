@@ -15,6 +15,7 @@ namespace GUZ.Core._Npc2
 
         // Routines
         public List<RoutineData> Routines = new();
+        public RoutineData RoutinePrevious;
         public RoutineData RoutineCurrent;
 
         // WayNet

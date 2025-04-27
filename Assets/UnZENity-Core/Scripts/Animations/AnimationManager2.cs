@@ -179,7 +179,13 @@ namespace GUZ.Core.Animations
             var firstSample = modelAnim.Samples[0];
             var lastSample = modelAnim.Samples[modelAnim.SampleCount - boneCount];
 
-            var movement = (lastSample.Position - firstSample.Position).ToUnityVector();
+            // We track xz axis for movement check only.
+            // Otherwise, e.g. T_STAND_2_SIT will be marked as "move"
+            var unityFirstSamplePos = firstSample.Position.ToUnityVector();
+            var unityLastSamplePos = lastSample.Position.ToUnityVector();
+            var firstSampleMovePos = new Vector3(unityFirstSamplePos.x, 0, unityFirstSamplePos.z);
+            var lastSampleMovePos = new Vector3(unityLastSamplePos.x, 0, unityLastSamplePos.z);
+            var movement = lastSampleMovePos - firstSampleMovePos;
 
             if (movement.sqrMagnitude < _movementThreshold)
             {
@@ -188,7 +194,7 @@ namespace GUZ.Core.Animations
 
             track.IsMoving = true;
 
-            // TODO - We can also check if we do a "movement" calculation based on each frame. Then animations might "woggle" during walk instead of walking on a rubber band.
+            // TODO - We can also check if we do a "movement" calculation based on each frame. Then animations might "wiggle" during walk instead of walking on a rubber band.
             track.MovementSpeed = movement * (modelAnim.FrameCount / modelAnim.Fps);
         }
 
