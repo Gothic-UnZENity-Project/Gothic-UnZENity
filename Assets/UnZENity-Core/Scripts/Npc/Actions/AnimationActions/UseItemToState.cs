@@ -1,6 +1,5 @@
 using GUZ.Core._Npc2;
-using GUZ.Core.Creator;
-using GUZ.Core.Data.ZkEvents;
+using GUZ.Core.Util;
 using GUZ.Core.Vm;
 
 namespace GUZ.Core.Npc.Actions.AnimationActions
@@ -25,41 +24,57 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
 
         private void PlayTransitionAnimation()
         {
-            var oldItemAnimationState = Props.ItemAnimationState;
-            int newItemAnimationState;
-            if (DesiredState > Props.ItemAnimationState)
+            int current = Props.ItemAnimationState;
+            int target = DesiredState;
+            int step = (target > current) ? 1 : -1;
+            
+            var item = VmInstanceManager.TryGetItemData(ItemToUse);
+
+            while (current != target)
+            {
+                int next = current + step;
+
+                var oldState = current == -1 ? "STAND" : $"S{current}";
+                var newState = next == -1 ? "STAND" : $"S{next}";
+                var animationName = string.Format(_animationScheme, item.SchemeName, oldState, newState);
+
+                bool animationFound = PrefabProps.AnimationSystem.PlayAnimation(animationName);
+
+                if (animationFound)
+                {
+                    Props.ItemAnimationState = next;
+                    if (step > 0)
+                    {
+                        Props.HasItemEquipped = true;
+                        Props.CurrentItem = ItemToUse;
+                    }
+                    else
+                    {
+                        Props.HasItemEquipped = false;
+                        Props.CurrentItem = -1;
+                    }
+                    AnimationEndEventTime = PrefabProps.AnimationSystem.GetAnimationDuration(animationName);
+                    return; // Let animation end event continue the transition
+                }
+
+                // If we can't play the transition animation, try jumping to the next possible state
+                current = next;
+            }
+
+            // If we exited the while loop, we couldn't find any animation along the path
+            // Just set to target state and log a warning
+            Props.ItemAnimationState = target;
+            if (step > 0)
             {
                 Props.HasItemEquipped = true;
                 Props.CurrentItem = ItemToUse;
-                newItemAnimationState = ++Props.ItemAnimationState;
             }
             else
             {
                 Props.HasItemEquipped = false;
                 Props.CurrentItem = -1;
-                // e.g. Babe brush doesn't call it automatically. We therefore need to force remove the brush item from hand.
-                // AnimationEventCallback(new() { Type = ZenKit.EventType.ItemDestroy });
-                newItemAnimationState = --Props.ItemAnimationState;
             }
-
-            var item = VmInstanceManager.TryGetItemData(ItemToUse);
-            var oldState = oldItemAnimationState == -1 ? "STAND" : $"S{oldItemAnimationState}";
-            var newState = newItemAnimationState == -1 ? "STAND" : $"S{newItemAnimationState}";
-
-            // e.g. T_POTION_STAND_2_S0
-            var animationName = string.Format(_animationScheme, item.SchemeName, oldState, newState);
-
-            var animationFound = PrefabProps.AnimationSystem.PlayAnimation(animationName);
-
-            // e.g. BABE-T_BRUSH_S1_2_S0.man doesn't exist, but we can skip and use next one (S0_2_Stand)
-            if (!animationFound)
-            {
-                // Go on with next animation.
-                PlayTransitionAnimation();
-                return;
-            }
-
-            AnimationEndEventTime = PrefabProps.AnimationSystem.GetAnimationDuration(animationName);
+            Logger.LogWarningEditor($"No animation found for transition from {Props.ItemAnimationState} to {DesiredState} for item {ItemToUse}. Forced state update.",LogCat.Animation);
         }
 
         protected override void AnimationEnd()
