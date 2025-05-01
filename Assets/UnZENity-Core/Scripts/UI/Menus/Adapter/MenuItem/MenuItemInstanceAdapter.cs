@@ -164,9 +164,19 @@ namespace GUZ.Core.UI.Menus.Adapter.MenuItem
             return _menuItemInstance.GetOnSelAction(i);
         }
 
+        public override void SetOnSelAction(int i, MenuItemSelectAction action)
+        {
+            _menuItemInstance.SetOnSelAction(i, (int)action);
+        }
+
         public override string GetOnSelActionS(int i)
         {
             return _menuItemInstance.GetOnSelActionS(i);
+        }
+
+        public override void SetOnSelActionS(int i, string actionS)
+        {
+            _menuItemInstance.SetOnSelActionS(i, actionS);
         }
 
         public override int GetOnEventAction(MenuItemEventAction i)

@@ -1,8 +1,5 @@
 using System;
-using System.Collections.Generic;
 using GUZ.Core.Globals;
-using GUZ.Core.UI.Menus.Adapter.Menu;
-using MyBox;
 using ZenKit.Daedalus;
 
 namespace GUZ.Core.UI.Menus.Adapter.MenuItem
@@ -49,14 +46,26 @@ namespace GUZ.Core.UI.Menus.Adapter.MenuItem
             _texts[i] = text;
         }
 
+        private MenuItemSelectAction[] _onSelActions = new MenuItemSelectAction[Constants.DaedalusMenu.MaxSelActions];
         public override MenuItemSelectAction GetOnSelAction(int i)
         {
-            throw new NotImplementedException();
+            return _onSelActions[i];
         }
 
+        public override void SetOnSelAction(int i, MenuItemSelectAction action)
+        {
+            _onSelActions[i] = action;
+        }
+
+        private string[] _onSelActionStrings = new string[Constants.DaedalusMenu.MaxSelActions];
         public override string GetOnSelActionS(int i)
         {
-            throw new NotImplementedException();
+            return _onSelActionStrings[i];
+        }
+
+        public override void SetOnSelActionS(int i, string actionS)
+        {
+            _onSelActionStrings[i] = actionS;
         }
 
         public override int GetOnEventAction(MenuItemEventAction i)

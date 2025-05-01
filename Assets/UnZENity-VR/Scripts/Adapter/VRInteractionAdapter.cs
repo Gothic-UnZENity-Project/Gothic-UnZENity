@@ -14,6 +14,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.XR;
 using UnityEngine.XR.Management;
+using ZenKit.Daedalus;
 
 namespace GUZ.VR.Adapter
 {
@@ -170,14 +171,28 @@ namespace GUZ.VR.Adapter
         /// </summary>
         public void UpdateMainMenu(AbstractMenuInstance mainMenu)
         {
-            var parentControlsMenu = mainMenu.FindMenu("MENU_OPT_CONTROLS").Parent;
-            parentControlsMenu.FindMenuItem("MENUITEM_OPT_CONTROLS", out var controlsMenuItem, out var controlsItemIndex);
+            // Find OPT_CONTROLS menu item to overwrite
+            var controlsMenuParent = mainMenu.FindMenu("MENU_OPT_CONTROLS").Parent;
+            controlsMenuParent.FindMenuItem("MENUITEM_OPT_CONTROLS", out var controlsMenuItem, out var controlsItemIndex);
 
+            // Create VR Menu
             var vrControlsMenuItem = new MutableMenuItemInstance("MENUITEM_UNZENITY_OPT_VR", controlsMenuItem);
-            vrControlsMenuItem.SetText(0, "VR");
-            vrControlsMenuItem.MenuInstance = new MutableMenuInstance("MENU_UNZENITY_OPT_VR", parentControlsMenu);
+            controlsMenuParent.ReplaceItemAt(controlsItemIndex, vrControlsMenuItem);
+
+            vrControlsMenuItem.SetText(0, "<<VR>>");
+            vrControlsMenuItem.SetOnSelAction(0, MenuItemSelectAction.StartMenu);
+            vrControlsMenuItem.SetOnSelActionS(0, "MENU_UNZENITY_OPT_VR");
+            var vrControlsMenu = new MutableMenuInstance("MENU_UNZENITY_OPT_VR", controlsMenuParent);
+            vrControlsMenuItem.MenuInstance = vrControlsMenu;
             
-            parentControlsMenu.ReplaceItemAt(controlsItemIndex, vrControlsMenuItem);
+            // Add back button
+            var someOptionsMenu = mainMenu.FindMenu("MENU_OPT_GRAPHICS");
+            someOptionsMenu.FindMenuItem("MENUITEM_GRA_BACK", out var backButtonReference, out _);
+            var backButton = new MutableMenuItemInstance("MENU_UNZENITY_OPT_VR_BACK", backButtonReference);
+            
+            backButton.SetText(0, backButtonReference.GetText(0)); // Text: BACK
+            backButton.SetOnSelAction(0, MenuItemSelectAction.Back);
+            vrControlsMenu.Items.Add(backButton);
         }
     }
 }

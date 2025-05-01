@@ -16,6 +16,8 @@ namespace GUZ.Core.Globals
             public static int MaxEvent => GameData.MenuVm.GetSymbolInt("MAX_EVENTS");
             public static int MaxSelActions => GameData.MenuVm.GetSymbolInt("MAX_SEL_ACTIONS");
             public static int MaxUserVars => GameData.MenuVm.GetSymbolInt("MAX_USERVARS");
+            
+            public static string BackPic => GameData.MenuVm.GetSymbolString("MENU_BACK_PIC");
         }
         
         public static class Daedalus

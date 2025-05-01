@@ -45,23 +45,7 @@ namespace GUZ.Core.UI.Menus
 
             GameContext.InteractionAdapter.UpdateMainMenu(MainMenuHierarchy);
             
-            // FIXME - MENU_OPT_CONTROLS will throw a NPE
-            //         Make logic more dynamic.
-            //         Aka load all Menus and instantiate here.
-            //         Prefabs itself will be dynamically loaded via name. e.g. MENU_MAIN.prefab
             InstantiateMenus();
-            
-            // InstantiateMenu("MENU_MAIN", _mainMenuPrefab);
-            // InstantiateMenu("MENU_SAVEGAME_LOAD", _loadMenuPrefab);
-            // InstantiateMenu("MENU_SAVEGAME_SAVE", _saveMenuPrefab);
-            // InstantiateMenu("MENU_LEAVE_GAME", _leaveMenuPrefab);
-            //
-            // InstantiateMenu("MENU_OPTIONS", _settingsMenuPrefab);
-            // InstantiateMenu("MENU_OPT_GAME", _settingsGameMenuPrefab);
-            // InstantiateMenu("MENU_OPT_GRAPHICS", _settingsGraphicsMenuPrefab);
-            // InstantiateMenu("MENU_OPT_VIDEO", _settingsVideoMenuPrefab);
-            // InstantiateMenu("MENU_OPT_AUDIO", _settingsAudioMenuPrefab);
-            // InstantiateMenu("MENU_OPT_CONTROLS", _settingsControlsMenuPrefab);
 
             GameContext.InteractionAdapter.InitUIInteraction();
             
