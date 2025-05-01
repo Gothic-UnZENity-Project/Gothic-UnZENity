@@ -6,8 +6,8 @@ namespace GUZ.Core.UI.Menus.Adapter.Menu
 {
     public class MutableMenuInstance : AbstractMenuInstance
     {
-        public MutableMenuInstance(string name, [CanBeNull] AbstractMenuInstance parentAbstractMenu)
-            : base(name, parentAbstractMenu)
+        public MutableMenuInstance(string name, [CanBeNull] AbstractMenuInstance parentMenu)
+            : base(name, parentMenu)
         {
             
         }

@@ -1,8 +1,9 @@
 using System.Collections.Generic;
 using GUZ.Core.UI.Menus.Adapter.Menu;
-using JetBrains.Annotations;
+using GUZ.Core.Util;
 using MyBox;
 using UnityEngine;
+using Logger = GUZ.Core.Util.Logger;
 
 namespace GUZ.Core.UI.Menus
 {
@@ -25,7 +26,7 @@ namespace GUZ.Core.UI.Menus
         [SerializeField] private GameObject _settingsControlsMenuPrefab;
 
         // Cached MainMenu tree hierarchy of submenus (load, save, settings) and their children (sub-settings, settings fields)
-        public AbstractMenuInstance MainAbstractMenuHierarchy { get; private set; }
+        public AbstractMenuInstance MainMenuHierarchy { get; private set; }
 
         private void Awake()
         {
@@ -40,35 +41,56 @@ namespace GUZ.Core.UI.Menus
         private void InitializeMenus()
         {
             // Initialize whole ZenKit Menu.dat hierarchy.
-            MainAbstractMenuHierarchy = new MenuInstanceAdapter("MENU_MAIN", null);
+            MainMenuHierarchy = new MenuInstanceAdapter("MENU_MAIN", null);
 
-            GameContext.InteractionAdapter.UpdateMainMenu(MainAbstractMenuHierarchy);
+            GameContext.InteractionAdapter.UpdateMainMenu(MainMenuHierarchy);
             
             // FIXME - MENU_OPT_CONTROLS will throw a NPE
             //         Make logic more dynamic.
             //         Aka load all Menus and instantiate here.
             //         Prefabs itself will be dynamically loaded via name. e.g. MENU_MAIN.prefab
-            InstantiateMenu("MENU_MAIN", _mainMenuPrefab);
-            InstantiateMenu("MENU_SAVEGAME_LOAD", _loadMenuPrefab);
-            InstantiateMenu("MENU_SAVEGAME_SAVE", _saveMenuPrefab);
-            InstantiateMenu("MENU_LEAVE_GAME", _leaveMenuPrefab);
-
-            InstantiateMenu("MENU_OPTIONS", _settingsMenuPrefab);
-            InstantiateMenu("MENU_OPT_GAME", _settingsGameMenuPrefab);
-            InstantiateMenu("MENU_OPT_GRAPHICS", _settingsGraphicsMenuPrefab);
-            InstantiateMenu("MENU_OPT_VIDEO", _settingsVideoMenuPrefab);
-            InstantiateMenu("MENU_OPT_AUDIO", _settingsAudioMenuPrefab);
-            InstantiateMenu("MENU_OPT_CONTROLS", _settingsControlsMenuPrefab);
+            InstantiateMenus();
+            
+            // InstantiateMenu("MENU_MAIN", _mainMenuPrefab);
+            // InstantiateMenu("MENU_SAVEGAME_LOAD", _loadMenuPrefab);
+            // InstantiateMenu("MENU_SAVEGAME_SAVE", _saveMenuPrefab);
+            // InstantiateMenu("MENU_LEAVE_GAME", _leaveMenuPrefab);
+            //
+            // InstantiateMenu("MENU_OPTIONS", _settingsMenuPrefab);
+            // InstantiateMenu("MENU_OPT_GAME", _settingsGameMenuPrefab);
+            // InstantiateMenu("MENU_OPT_GRAPHICS", _settingsGraphicsMenuPrefab);
+            // InstantiateMenu("MENU_OPT_VIDEO", _settingsVideoMenuPrefab);
+            // InstantiateMenu("MENU_OPT_AUDIO", _settingsAudioMenuPrefab);
+            // InstantiateMenu("MENU_OPT_CONTROLS", _settingsControlsMenuPrefab);
 
             GameContext.InteractionAdapter.InitUIInteraction();
             
             CloseAllMenus();
         }
 
+        private void InstantiateMenus()
+        {
+            var menuInstanceNames = MainMenuHierarchy.GetMenuInstanceNamesRecursive();
+
+            foreach (var menuName in menuInstanceNames)
+            {
+                var go = ResourceLoader.TryGetPrefabObject($"Prefabs/UI/Menus/{menuName}", parent: this.gameObject, worldPositionStays: false);
+                
+                if (go == null)
+                {
+                    Logger.LogError($"Could not find UI Menu prefab >{menuName}<", LogCat.Ui);
+                    return;
+                }
+
+                go.GetComponent<AbstractMenu>().InitializeMenu(MainMenuHierarchy.FindMenu(menuName));
+                _menuList.Add(menuName, go);
+            }
+        }
+        
         private void InstantiateMenu(string menuName, GameObject prefab)
         {
             var go = Instantiate(prefab, transform);
-            go.GetComponent<AbstractMenu>().InitializeMenu(MainAbstractMenuHierarchy.FindMenu(menuName));
+            go.GetComponent<AbstractMenu>().InitializeMenu(MainMenuHierarchy.FindMenu(menuName));
             
             _menuList.Add(menuName, go);
         }

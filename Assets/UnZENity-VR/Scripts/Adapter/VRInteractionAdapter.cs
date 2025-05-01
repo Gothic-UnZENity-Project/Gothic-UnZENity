@@ -166,6 +166,7 @@ namespace GUZ.VR.Adapter
 
         /// <summary>
         /// Update menu entries based on VR needs.
+        /// --> Replace control menu with VR settings menu
         /// </summary>
         public void UpdateMainMenu(AbstractMenuInstance mainMenu)
         {
@@ -174,6 +175,7 @@ namespace GUZ.VR.Adapter
 
             var vrControlsMenuItem = new MutableMenuItemInstance("MENUITEM_UNZENITY_OPT_VR", controlsMenuItem);
             vrControlsMenuItem.SetText(0, "VR");
+            vrControlsMenuItem.MenuInstance = new MutableMenuInstance("MENU_UNZENITY_OPT_VR", parentControlsMenu);
             
             parentControlsMenu.ReplaceItemAt(controlsItemIndex, vrControlsMenuItem);
         }

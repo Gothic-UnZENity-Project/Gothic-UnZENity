@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using GUZ.Core.UI.Menus.Adapter.MenuItem;
 using JetBrains.Annotations;
 using ZenKit.Daedalus;
@@ -17,6 +18,28 @@ namespace GUZ.Core.UI.Menus.Adapter.Menu
             Parent = parentMenu;
         }
 
+        public List<string> GetMenuInstanceNamesRecursive()
+        {
+            var menuInstanceNames = new List<string>();
+
+            menuInstanceNames.Add(Name);
+
+            if (Items == null)
+            {
+                return menuInstanceNames;
+            }
+
+            foreach (var item in Items)
+            {
+                if (item.MenuInstance != null)
+                {
+                    menuInstanceNames.AddRange(item.MenuInstance.GetMenuInstanceNamesRecursive());
+                }
+            }
+
+            return menuInstanceNames;
+        }
+        
         [CanBeNull]
         public AbstractMenuInstance FindMenu(string subMenuName)
         {

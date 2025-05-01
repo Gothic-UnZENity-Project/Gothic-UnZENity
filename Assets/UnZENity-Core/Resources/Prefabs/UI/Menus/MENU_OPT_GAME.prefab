@@ -111,8 +111,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2282871596405899006}
+  - component: {fileID: 5219553991090747807}
   m_Layer: 0
-  m_Name: MenuSkeleton
+  m_Name: MENU_OPT_GAME
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -134,6 +135,20 @@ Transform:
   - {fileID: 2250348072498691615}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5219553991090747807
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8412591900964177680}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 27292b41f274466b8f259419ff7e220b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Canvas: {fileID: 4377388513586376009}
+  Background: {fileID: 7348004100775829510}
 --- !u!1001 &4136749761303385679
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -246,5 +261,10 @@ PrefabInstance:
 --- !u!224 &5251646276479726567 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 8181131269388117416, guid: 4c82f166e82eb4d489e539f0b15e066d, type: 3}
+  m_PrefabInstance: {fileID: 4136749761303385679}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &7348004100775829510 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6670382117503956553, guid: 4c82f166e82eb4d489e539f0b15e066d, type: 3}
   m_PrefabInstance: {fileID: 4136749761303385679}
   m_PrefabAsset: {fileID: 0}

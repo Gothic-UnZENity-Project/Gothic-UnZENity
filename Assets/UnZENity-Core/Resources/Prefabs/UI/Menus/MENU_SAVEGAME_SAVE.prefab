@@ -111,9 +111,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2282871596405899006}
-  - component: {fileID: 7331009947935625712}
+  - component: {fileID: 6897887152949090502}
   m_Layer: 0
-  m_Name: MenuSettingsAudio
+  m_Name: MENU_SAVEGAME_SAVE
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -135,7 +135,7 @@ Transform:
   - {fileID: 2250348072498691615}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &7331009947935625712
+--- !u!114 &6897887152949090502
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -144,11 +144,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 8412591900964177680}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6e7c7c2f0001431f883ed379c994428f, type: 3}
+  m_Script: {fileID: 11500000, guid: 9632d942779c4970b7328ab823778239, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   Canvas: {fileID: 4377388513586376009}
   Background: {fileID: 7348004100775829510}
+  _isSaving: 1
 --- !u!1001 &4136749761303385679
 PrefabInstance:
   m_ObjectHideFlags: 0
