@@ -12,6 +12,8 @@ namespace GUZ.Core
         public static bool IsControlsInitialized;
         public static bool IsGameVersionInitialized;
 
+        public static string GameLanguage;
+
         public static IInteractionAdapter InteractionAdapter;
         public static IMenuAdapter MenuAdapter;
         public static IDialogAdapter DialogAdapter;

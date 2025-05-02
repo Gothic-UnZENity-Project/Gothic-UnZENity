@@ -56,13 +56,6 @@ namespace GUZ.Core.Globals
             public const string RootBoneName = "BIP01";
         }
 
-        public static class Translations
-        {
-            public const string MenuSmoothSpectatorLabel = "com.unzenity.vr.ui.menu.controls.spectator.label"; // Spectator Camera Smoothness
-            public const string MenuSmoothSpectatorLabelDescription = "com.unzenity.vr.ui.menu.controls.spectator.description"; // Set rotations smoothing of monitor camera (PCVR only)
-            public const string MenuSmoothSpectatorValue = "com.unzenity.vr.ui.menu.controls.spectator.value"; // off|low|medium|high
-        }
-        
 
         // Unity shaders
         public static readonly Shader ShaderUnlit = Shader.Find("Universal Render Pipeline/Unlit");

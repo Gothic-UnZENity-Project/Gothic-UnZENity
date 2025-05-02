@@ -2,6 +2,7 @@ using GUZ.Core.Adapter;
 using GUZ.Core.Globals;
 using GUZ.Core.UI.Menus.Adapter.Menu;
 using GUZ.Core.UI.Menus.Adapter.MenuItem;
+using GUZ.VR.Manager;
 using ZenKit.Daedalus;
 
 namespace GUZ.VR.Adapter
@@ -39,7 +40,7 @@ namespace GUZ.VR.Adapter
             controlsMenuParent.ReplaceItemAt(controlsItemIndex, vrControlsMenuItem);
 
             // Add some setting
-            vrControlsMenuItem.SetText(0, "<<VR>>");
+            vrControlsMenuItem.SetText(0, VRMenuLocalization.GetText("menuitem.vr"));
             vrControlsMenuItem.SetOnSelAction(0, MenuItemSelectAction.StartMenu);
             vrControlsMenuItem.SetOnSelActionS(0, "MENU_UNZENITY_OPT_VR");
             vrControlsMenuItem.MenuInstance = vrControlsMenu;
@@ -51,8 +52,8 @@ namespace GUZ.VR.Adapter
         {
             var subtitlesLabel = gameMenu.FindMenuItem("MENUITEM_GAME_SUB_TITLES", out _);
             var smoothingLabel= new MutableMenuItemInstance("MENUITEM_UNZENITY_OPT_VR_SMOOTHSPECTATOR", subtitlesLabel);
-            smoothingLabel.SetText(0, Constants.Translations.MenuSmoothSpectatorLabel);
-            smoothingLabel.SetText(1, Constants.Translations.MenuSmoothSpectatorLabelDescription);
+            smoothingLabel.SetText(0, VRMenuLocalization.GetText("menuitem.smooth.label"));
+            smoothingLabel.SetText(1, VRMenuLocalization.GetText("menuitem.smooth.description"));
             
             return smoothingLabel;
         }
@@ -61,7 +62,7 @@ namespace GUZ.VR.Adapter
         {
             var subtitlesChoice = gameMenu.FindMenuItem("MENUITEM_GAME_SUB_TITLES_CHOICE", out _);
             var smoothingSetting = new MutableMenuItemInstance("MENUITEM_UNZENITY_OPT_VR_SMOOTHSPECTATOR_CHOICE", subtitlesChoice);
-            smoothingSetting.SetText(0, Constants.Translations.MenuSmoothSpectatorValue);
+            smoothingSetting.SetText(0, VRMenuLocalization.GetText("menuitem.smooth.value"));
             
             return smoothingSetting;
         }
