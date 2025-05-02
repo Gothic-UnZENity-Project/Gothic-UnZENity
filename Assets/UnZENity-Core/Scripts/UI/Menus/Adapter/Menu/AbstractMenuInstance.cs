@@ -41,14 +41,14 @@ namespace GUZ.Core.UI.Menus.Adapter.Menu
         }
         
         [CanBeNull]
-        public AbstractMenuInstance FindMenu(string subMenuName)
+        public AbstractMenuInstance FindMenuRecursive(string subMenuName)
         {
             if (Name == subMenuName)
                 return this;
     
             foreach (var menuItem in Items)
             {
-                var foundMenu = menuItem.MenuInstance?.FindMenu(subMenuName);
+                var foundMenu = menuItem.MenuInstance?.FindMenuRecursive(subMenuName);
                 if (foundMenu != null)
                     return foundMenu;
             }
@@ -56,9 +56,9 @@ namespace GUZ.Core.UI.Menus.Adapter.Menu
             return null;
         }
 
-        public void FindMenuItem(string menuItemName, out AbstractMenuItemInstance menuItemInstance, out int index)
+        [CanBeNull]
+        public AbstractMenuItemInstance FindMenuItem(string menuItemName, out int index)
         {
-            menuItemInstance = null;
             index = -1;
             
             for (var i = 0; i < Items.Count; i++)
@@ -66,11 +66,12 @@ namespace GUZ.Core.UI.Menus.Adapter.Menu
                 var item = Items[i];
                 if (item.Name == menuItemName)
                 {
-                    menuItemInstance = item;
                     index = i;
-                    return;
+                    return item;
                 }
             }
+            
+            return null;
         }
 
         public void ReplaceItemAt(int index, AbstractMenuItemInstance item)

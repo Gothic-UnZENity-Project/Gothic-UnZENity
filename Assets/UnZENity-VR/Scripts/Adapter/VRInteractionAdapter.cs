@@ -164,36 +164,6 @@ namespace GUZ.VR.Adapter
             
             chapterPrefab.GetComponent<VRIntroduceChapter>().DisplayIntroduction(chapter, text, texture, wav, time);
         }
-
-        /// <summary>
-        /// Update menu entries based on VR needs.
-        /// --> Replace control menu with VR settings menu
-        /// </summary>
-        public void UpdateMainMenu(AbstractMenuInstance mainMenu)
-        {
-            // Find OPT_CONTROLS menu item to overwrite
-            var controlsMenuParent = mainMenu.FindMenu("MENU_OPT_CONTROLS").Parent;
-            controlsMenuParent.FindMenuItem("MENUITEM_OPT_CONTROLS", out var controlsMenuItem, out var controlsItemIndex);
-
-            // Create VR Menu
-            var vrControlsMenuItem = new MutableMenuItemInstance("MENUITEM_UNZENITY_OPT_VR", controlsMenuItem);
-            controlsMenuParent.ReplaceItemAt(controlsItemIndex, vrControlsMenuItem);
-
-            vrControlsMenuItem.SetText(0, "<<VR>>");
-            vrControlsMenuItem.SetOnSelAction(0, MenuItemSelectAction.StartMenu);
-            vrControlsMenuItem.SetOnSelActionS(0, "MENU_UNZENITY_OPT_VR");
-            var vrControlsMenu = new MutableMenuInstance("MENU_UNZENITY_OPT_VR", controlsMenuParent);
-            vrControlsMenuItem.MenuInstance = vrControlsMenu;
-            
-            // Add back button
-            var someOptionsMenu = mainMenu.FindMenu("MENU_OPT_GRAPHICS");
-            someOptionsMenu.FindMenuItem("MENUITEM_GRA_BACK", out var backButtonReference, out _);
-            var backButton = new MutableMenuItemInstance("MENU_UNZENITY_OPT_VR_BACK", backButtonReference);
-            
-            backButton.SetText(0, backButtonReference.GetText(0)); // Text: BACK
-            backButton.SetOnSelAction(0, MenuItemSelectAction.Back);
-            vrControlsMenu.Items.Add(backButton);
-        }
     }
 }
 #endif

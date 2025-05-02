@@ -13,6 +13,7 @@ namespace GUZ.Core
         public static bool IsGameVersionInitialized;
 
         public static IInteractionAdapter InteractionAdapter;
+        public static IMenuAdapter MenuAdapter;
         public static IDialogAdapter DialogAdapter;
         public static IGameVersionAdapter GameVersionAdapter;
 

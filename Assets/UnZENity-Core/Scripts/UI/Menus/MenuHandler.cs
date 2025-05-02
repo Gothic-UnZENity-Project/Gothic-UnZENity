@@ -43,7 +43,7 @@ namespace GUZ.Core.UI.Menus
             // Initialize whole ZenKit Menu.dat hierarchy.
             MainMenuHierarchy = new MenuInstanceAdapter("MENU_MAIN", null);
 
-            GameContext.InteractionAdapter.UpdateMainMenu(MainMenuHierarchy);
+            GameContext.MenuAdapter.UpdateMainMenu(MainMenuHierarchy);
             
             InstantiateMenus();
 
@@ -66,7 +66,7 @@ namespace GUZ.Core.UI.Menus
                     return;
                 }
 
-                go.GetComponent<AbstractMenu>().InitializeMenu(MainMenuHierarchy.FindMenu(menuName));
+                go.GetComponent<AbstractMenu>().InitializeMenu(MainMenuHierarchy.FindMenuRecursive(menuName));
                 _menuList.Add(menuName, go);
             }
         }
@@ -74,7 +74,7 @@ namespace GUZ.Core.UI.Menus
         private void InstantiateMenu(string menuName, GameObject prefab)
         {
             var go = Instantiate(prefab, transform);
-            go.GetComponent<AbstractMenu>().InitializeMenu(MainMenuHierarchy.FindMenu(menuName));
+            go.GetComponent<AbstractMenu>().InitializeMenu(MainMenuHierarchy.FindMenuRecursive(menuName));
             
             _menuList.Add(menuName, go);
         }
