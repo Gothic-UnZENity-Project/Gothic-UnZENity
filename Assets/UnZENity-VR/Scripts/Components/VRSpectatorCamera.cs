@@ -1,8 +1,8 @@
+#if GUZ_HVR_INSTALLED
 using System;
 using GUZ.Core;
 using GUZ.Core.Util;
 using GUZ.VR.Components.HVROverrides;
-using MyBox;
 using UnityEngine;
 using Logger = GUZ.Core.Util.Logger;
 
@@ -134,3 +134,4 @@ namespace GUZ.VR.Components
         }
     }
 }
+#endif
