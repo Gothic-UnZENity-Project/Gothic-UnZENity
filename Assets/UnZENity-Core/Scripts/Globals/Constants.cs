@@ -11,6 +11,27 @@ namespace GUZ.Core.Globals
     {
         public static class DaedalusMenu
         {
+            
+            public static readonly string[] DisabledGothicMenuSettings =
+            {
+                // Whole submenus
+                "MENUITEM_OPT_GRAPHICS", "MENUITEM_OPT_VIDEO", "MENUITEM_OPT_CONTROLS",
+                // Parts of main SETTINGS menu
+                "MENUITEM_PERF", "MENUITEM_PERF_CHOICE",
+                // Parts of GAME menu
+                "MENUITEM_GAME_ANIMATE_WINDOWS", "MENUITEM_GAME_ANIMATE_WINDOWS_CHOICE",
+                "MENUITEM_GAME_LOOKAROUND_INVERSE", "MENUITEM_GAME_LOOKAROUND_INVERSE_CHOICE",
+                "MENUITEM_M", "MENUITEM_M_CHOICE",
+                "MENUITEM_MSENSITIVITY", "MENUITEM_MSENSITIVITY_SLIDER",
+                "MENUITEM_GAME_BLOOD", "MENUITEM_GAME_BLOOD_CHOICE",
+                // Parts of AUDIO menu
+                "MENUITEM_AUDIO_SFXVOL", "MENUITEM_AUDIO_SFXVOL_SLIDER",
+                "MENUITEM_AUDIO_PROVIDER", "MENUITEM_AUDIO_PROVIDER_CHOICE",
+                "MENUITEM_AUDIO_SPEEKER", "MENUITEM_AUDIO_SPEEKER_CHOICE",
+                "MENUITEM_AUDIO_REVERB", "MENUITEM_AUDIO_REVERB_CHOICE",
+                "MENUITEM_AUDIO_SAMPLERATE", "MENUITEM_AUDIO_SAMPLERATE_CHOICE"
+            };
+            
             public static int MaxUserStrings => GameData.MenuVm.GetSymbolInt("MAX_USERSTRINGS");
             public static int MaxItems => GameData.MenuVm.GetSymbolInt("MAX_ITEMS");
             public static int MaxEvent => GameData.MenuVm.GetSymbolInt("MAX_EVENTS");

@@ -105,7 +105,7 @@ namespace GUZ.Core.UI.Menus
             throw new System.NotImplementedException();
         }
 
-        protected override bool IsMenuItemInitiallyActive(string menuItemName)
+        protected override bool IsMenuItemActive(string menuItemName)
         {
             return (MenuItemCache[menuItemName].item.Flags & MenuItemFlag.Disabled) == 0;
         }

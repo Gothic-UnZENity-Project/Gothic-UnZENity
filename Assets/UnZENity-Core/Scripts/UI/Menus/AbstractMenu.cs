@@ -55,9 +55,12 @@ namespace GUZ.Core.UI.Menus
         protected abstract void PlaySound(string itemName, string commandName);
         protected abstract void ExecuteCommand(string itemName, string commandName);
 
-        protected virtual bool IsMenuItemInitiallyActive(string menuItemName)
+        protected virtual bool IsMenuItemActive(string menuItemName)
         {
-            return true;
+            if (Constants.DaedalusMenu.DisabledGothicMenuSettings.Contains(menuItemName))
+                return false;
+            else
+                return true;
         }
         
         public void ToggleVisibility()
@@ -106,7 +109,7 @@ namespace GUZ.Core.UI.Menus
                 CreateMenuItem(item);
             }
         }
-
+        
         private void CreateMenuItem(AbstractMenuItemInstance item)
         {
             GameObject itemGo;
@@ -209,7 +212,7 @@ namespace GUZ.Core.UI.Menus
             }
 
             //item disabled (grayed out and not interactable)
-            if (!IsMenuItemInitiallyActive(item.Name))
+            if (!IsMenuItemActive(item.Name))
             {
                 if (textComp != null)
                 {
@@ -320,15 +323,8 @@ namespace GUZ.Core.UI.Menus
 
         private void HandleChoiceBoxClick(AbstractMenuItemInstance item, GameObject itemGo)
         {
-            // FIXME - These elements are used to determine Gothic.ini element to overwrite after change.
             var option = item.OnChgSetOption;
             var optionSection = item.OnChgSetOptionSection;
-
-            if (optionSection != "UnZENity")
-            {
-                Logger.LogWarning("We handle our own settings for now only!", LogCat.Ui);
-                return;
-            }
 
             var options = item.GetText(0).Split("|");
             var textComp = itemGo.GetComponentInChildren<TMP_Text>();

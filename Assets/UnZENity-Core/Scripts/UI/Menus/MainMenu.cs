@@ -47,7 +47,7 @@ namespace GUZ.Core.UI.Menus
             throw new NotImplementedException();
         }
 
-        protected override bool IsMenuItemInitiallyActive(string menuItemName)
+        protected override bool IsMenuItemActive(string menuItemName)
         {
             return ((MenuItemCache[menuItemName].item.Flags & MenuItemFlag.OnlyInGame) == 0 &&
                     !GameData.InGameAndAlive) ||
