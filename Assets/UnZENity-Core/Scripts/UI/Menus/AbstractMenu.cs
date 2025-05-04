@@ -334,12 +334,12 @@ namespace GUZ.Core.UI.Menus
 
             if (currentIndex == -1 || nextIndex >= options.Length)
             {
-                GameGlobals.Config.Gothic.SetInt(option, 0);
+                GameGlobals.Config.Gothic.SetInt(optionSection, option, 0);
                 textComp.text = options[0];
             }
             else
             {
-                GameGlobals.Config.Gothic.SetInt(option, currentIndex+1);
+                GameGlobals.Config.Gothic.SetInt(optionSection, option, currentIndex+1);
                 textComp.text = options[currentIndex+1];
             }
         }

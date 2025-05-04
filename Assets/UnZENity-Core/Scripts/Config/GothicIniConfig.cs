@@ -7,6 +7,10 @@ namespace GUZ.Core.Config
 {
     public class GothicIniConfig
     {
+        private readonly Dictionary<string, string> _config;
+        private readonly GothicIniWriter _gothicIniWriter;
+        
+        public readonly string IniFilePath;
         public string IniSkyDayColor(int index) => _config.GetValueOrDefault($"zDayColor{index}", "0 0 0");
         public bool IniPlayLogoVideos => Convert.ToBoolean(Convert.ToInt16(_config.GetValueOrDefault("playLogoVideos", "1")));
         
@@ -19,15 +23,21 @@ namespace GUZ.Core.Config
                 return playerInstanceName.IsNullOrEmpty() ? "PC_HERO" : playerInstanceName;
             }
         }
+
         
-        private readonly Dictionary<string, string> _config;
-
-
-        public void SetInt(string settingName, int value)
+        public GothicIniConfig(Dictionary<string, string> config, string iniFilePath)
         {
-            _config[settingName] = value.ToString();
+            _config = config;
+            IniFilePath = iniFilePath;
+            _gothicIniWriter = new GothicIniWriter(iniFilePath);
+        }
+        
+        public void SetInt(string section, string key, int value)
+        {
+            _config[key] = value.ToString();
 
-            GlobalEventDispatcher.PlayerPrefUpdated.Invoke(settingName, value);
+            _gothicIniWriter.WriteSetting(section, key, value.ToString());
+            GlobalEventDispatcher.PlayerPrefUpdated.Invoke(key, value);
         }
         
         public int GetInt(string settingName, int defaultValue = 0)
@@ -36,11 +46,6 @@ namespace GUZ.Core.Config
                 return Convert.ToInt32(value);
             else
                 return defaultValue;
-        }
-        
-        public GothicIniConfig(Dictionary<string, string> config)
-        {
-            _config = config;
         }
     }
 }
