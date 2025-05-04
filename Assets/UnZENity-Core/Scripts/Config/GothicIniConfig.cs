@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using JetBrains.Annotations;
 using MyBox;
 
@@ -33,14 +34,6 @@ namespace GUZ.Core.Config
             IniFilePath = iniFilePath;
             _gothicIniWriter = new GothicIniWriter(iniFilePath);
         }
-        
-        public void SetInt(string section, string key, int value)
-        {
-            _config[key] = value.ToString();
-
-            _gothicIniWriter.WriteSetting(section, key, value.ToString());
-            GlobalEventDispatcher.PlayerPrefUpdated.Invoke(key, value);
-        }
 
         public string GetString(string settingName, string defaultValue = "")
         {
@@ -50,9 +43,32 @@ namespace GUZ.Core.Config
                 return defaultValue;
         }
         
+        private void SetString(string section, string key, string value)
+        {
+            _config[key] = value;
+
+            _gothicIniWriter.WriteSetting(section, key, value);
+            GlobalEventDispatcher.PlayerPrefUpdated.Invoke(key, value);
+        }
+        
         public int GetInt(string settingName, int defaultValue = 0)
         {
             return Convert.ToInt32(GetString(settingName, defaultValue.ToString()));
+        }
+        
+        public void SetInt(string section, string key, int value)
+        {
+            SetString(section, key, value.ToString());
+        }
+        
+        public float GetFloat(string settingName, float defaultValue = 1f)
+        {
+            return Convert.ToSingle(GetString(settingName, defaultValue.ToString(CultureInfo.InvariantCulture)));
+        }
+        
+        public void SetFloat(string section, string key, float value)
+        {
+            SetString(section, key, value.ToString(CultureInfo.InvariantCulture));
         }
     }
 }

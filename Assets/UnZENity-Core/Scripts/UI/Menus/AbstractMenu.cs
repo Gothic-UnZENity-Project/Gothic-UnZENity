@@ -137,8 +137,7 @@ namespace GUZ.Core.UI.Menus
             {
                 itemGo = ResourceLoader.TryGetPrefabObject(PrefabType.UiSlider, name: item.Name, parent: Canvas)!;
 
-                var handlebarImage = itemGo.GetComponentInChildren<Image>();
-                handlebarImage.material = GameGlobals.Textures.GetMaterial(item.GetUserString(0)); // Set image for handle bar.
+                SetSliderValues(itemGo, item);
             }
             else if (item.MenuItemType == MenuItemType.Text)
             {
@@ -289,6 +288,28 @@ namespace GUZ.Core.UI.Menus
             }
 
             textComp.text = text0;
+        }
+
+        private void SetSliderValues(GameObject go, AbstractMenuItemInstance item)
+        {
+            var slider = go.GetComponentInChildren<Slider>();
+
+            // e.g. setting of userFloat[0] == 15 --> 15 steps to display on Slider (1...15; both are inclusive).
+            // HINT: We shift scale by +1 from 0...15 to 0...16 to properly map it to ini values.
+            slider.minValue = 1;
+            slider.maxValue = item.GetUserFloat(0) + 1; // Steps
+
+            var stepAmount = 1 / item.GetUserFloat(0);
+            var currentIniValue = GameGlobals.Config.Gothic.GetFloat(item.OnChgSetOption);
+            
+            // Convert INI value (0...1) to slider value (1...maxValue)
+            // Example: INI value 0.5 with 15 steps -> should result in slider position 8 
+            var sliderValue = Mathf.Round(currentIniValue / stepAmount) + 1; // +1, as minValue == 1, not zero
+            slider.value = sliderValue;
+            
+            // Set image for handle bar.
+            var handlebarImage = go.GetComponentInChildren<Image>();
+            handlebarImage.material = GameGlobals.Textures.GetMaterial(item.GetUserString(0));
         }
 
         /// <summary>
