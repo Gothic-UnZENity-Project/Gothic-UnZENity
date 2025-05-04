@@ -13,18 +13,6 @@ namespace GUZ.Core.UI.Menus
         private string _currentMenu;
         private Stack<string> _menuQueue = new();
 
-        [SerializeField] private GameObject _mainMenuPrefab;
-        [SerializeField] private GameObject _saveMenuPrefab;
-        [SerializeField] private GameObject _loadMenuPrefab;
-        [SerializeField] private GameObject _leaveMenuPrefab;
-
-        [SerializeField] private GameObject _settingsMenuPrefab;
-        [SerializeField] private GameObject _settingsGameMenuPrefab;
-        [SerializeField] private GameObject _settingsGraphicsMenuPrefab;
-        [SerializeField] private GameObject _settingsVideoMenuPrefab;
-        [SerializeField] private GameObject _settingsAudioMenuPrefab;
-        [SerializeField] private GameObject _settingsControlsMenuPrefab;
-
         // Cached MainMenu tree hierarchy of submenus (load, save, settings) and their children (sub-settings, settings fields)
         public AbstractMenuInstance MainMenuHierarchy { get; private set; }
 
