@@ -10,12 +10,14 @@ namespace GUZ.VR.Manager
         {
             { "en", new() {
                 { "menuitem.vr", "VR" },
+                { "menuitem.vr.headline", "VR SETTINGS" },
                 { "menuitem.smooth.label", "Spectator Smoothing" },
                 { "menuitem.smooth.description", "Set smoothing of spectator camera (PCVR only)" },
                 { "menuitem.smooth.value", "off|low|medium|high" },
             }},
             { "de", new() {
                 { "menuitem.vr", "VR" },
+                { "menuitem.vr.headline", "VR EINSTELLUNGEN" },
                 { "menuitem.smooth.label", "Spectator Glättung" },
                 { "menuitem.smooth.description", "Glätten kleiner Bewegungsruckler des Spectators (nur PCVR)" },
                 { "menuitem.smooth.value", "aus|gering|mittel|hoch" },

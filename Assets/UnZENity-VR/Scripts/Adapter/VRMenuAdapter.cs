@@ -20,6 +20,7 @@ namespace GUZ.VR.Adapter
             // Will be used to clone render settings from its items.
             var gameMenu = mainMenu.FindMenuRecursive("MENU_OPT_GAME")!;
 
+            vrControlsMenu.Items.Add(CreateHeadline(gameMenu));
             vrControlsMenu.Items.Add(CreateSmoothSpectatorLabel(gameMenu));
             vrControlsMenu.Items.Add(CreateSmoothSpectatorChoicebox(gameMenu));
 
@@ -46,6 +47,15 @@ namespace GUZ.VR.Adapter
             vrControlsMenuItem.MenuInstance = vrControlsMenu;
 
             return vrControlsMenu;
+        }
+
+        private MutableMenuItemInstance CreateHeadline(AbstractMenuInstance gameMenu)
+        {
+            var gameHeadline = gameMenu.FindMenuItem("MENUITEM_GAME_HEADLINE", out _);
+            var vrHeadline = new MutableMenuItemInstance("MENUITEM_UNZENITY_OPT_VR_HEADLINE", gameHeadline);
+            vrHeadline.SetText(0, VRMenuLocalization.GetText("menuitem.vr.headline"));
+            
+            return vrHeadline;
         }
 
         private MutableMenuItemInstance CreateSmoothSpectatorLabel(AbstractMenuInstance gameMenu)
