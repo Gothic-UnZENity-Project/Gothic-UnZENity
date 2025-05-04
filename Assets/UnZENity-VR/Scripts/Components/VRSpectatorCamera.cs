@@ -130,7 +130,7 @@ namespace GUZ.VR.Components
                 _ => throw new ArgumentOutOfRangeException()
             };
             
-            Logger.Log($"Setting Spectator Camera Smoothness factor to >{_selectedSmoothingValue}<.", LogCat.VR);
+            Logger.Log($"Setting Spectator Camera Smoothness factor to {smoothSetting}:{_selectedSmoothingValue}.", LogCat.VR);
         }
     }
 }

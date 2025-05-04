@@ -328,10 +328,11 @@ namespace GUZ.Core.UI.Menus
             var options = item.GetText(0).Split("|");
             var textComp = itemGo.GetComponentInChildren<TMP_Text>();
             var currentText = textComp.text;
-
             var currentIndex = options.IndexOfItem(currentText);
+            
+            var nextIndex = currentIndex + 1;
 
-            if (currentIndex == -1 || currentIndex >= options.Length)
+            if (currentIndex == -1 || nextIndex >= options.Length)
             {
                 GameGlobals.Config.Gothic.SetInt(option, 0);
                 textComp.text = options[0];
