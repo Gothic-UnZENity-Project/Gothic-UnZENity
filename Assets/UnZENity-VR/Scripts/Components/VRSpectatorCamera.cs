@@ -1,8 +1,10 @@
 using System;
 using GUZ.Core;
+using GUZ.Core.Util;
 using GUZ.VR.Components.HVROverrides;
 using MyBox;
 using UnityEngine;
+using Logger = GUZ.Core.Util.Logger;
 
 namespace GUZ.VR.Components
 {
@@ -15,8 +17,7 @@ namespace GUZ.VR.Components
             Medium,
             High
         }
-
-
+        
         [Tooltip("Reference to the VR camera/head transform that will be followed")]
         [SerializeField]
         private Transform _vrCameraTransform;
@@ -25,25 +26,13 @@ namespace GUZ.VR.Components
         [SerializeField]
         private Camera _spectatorCamera;
 
-        [Header("Smoothing Settings")]
-        [OverrideLabel("Smoothing Level")]
-        public SmoothingLevel SmoothingLvl = SmoothingLevel.Medium;
 
-        [Range(0.0f, 1.0f)]
-        public float NoneRotationSmoothing = 0.0f;
-        [Range(0.0f, 1.0f)]
-        public float LowRotationSmoothing = 0.02f;
-        [Range(0.0f, 1.0f)]
-        public float MediumRotationSmoothing = 0.08f;
-        [Range(0.0f, 1.0f)]
-        public float HighRotationSmoothing = 0.15f;
-
-        
         private float _selectedSmoothingValue;
 
         // Internal variables for smoothing calculations
         private Vector3 _positionVelocity;
 
+        
         private void Start()
         {
             // Disable the whole feature if we're not on Windows or Editor build.
@@ -61,6 +50,16 @@ namespace GUZ.VR.Components
                 return;
             }
 
+            // All settings say: Yes, we want the spectator mode. Then let's wait for Gothic Inis to be loaded.
+            GlobalEventDispatcher.GothicInisInitialized.AddListener(GothicStart);
+        }
+
+        /// <summary>
+        /// We need to delay the setup until Gothic version is selected.
+        /// Otherwise, Ini is not yet initialized, and we can't use smootheness value from it.
+        /// </summary>
+        private void GothicStart()
+        {
             var playerController = GameContext.InteractionAdapter.GetCurrentPlayerController().GetComponent<VRPlayerController>();
             playerController.Teleporter.PositionUpdate.AddListener(SetTeleportPosition);
 
@@ -77,6 +76,14 @@ namespace GUZ.VR.Components
                 transform.position = _vrCameraTransform.position;
                 transform.rotation = _vrCameraTransform.rotation;
             }
+            
+            GlobalEventDispatcher.PlayerPrefUpdated.AddListener((setting, _) =>
+            {
+                if (setting == VRConstants.IniNames.SmoothSpectator)
+                {
+                    SetSmoothness();
+                }
+            });
         }
 
         private void DisableSpectatorCamera()
@@ -84,11 +91,6 @@ namespace GUZ.VR.Components
             GetComponent<Camera>().enabled = false;
             this.enabled = false;
             gameObject.SetActive(false);
-        }
-
-        private void OnValidate()
-        {
-            SetSmoothness();
         }
 
         private void LateUpdate()
@@ -117,14 +119,18 @@ namespace GUZ.VR.Components
 
         private void SetSmoothness()
         {
-            _selectedSmoothingValue = SmoothingLvl switch
+            var smoothSetting = GameGlobals.Config.Gothic.GetInt(VRConstants.IniNames.SmoothSpectator, (int)SmoothingLevel.None);
+            
+            _selectedSmoothingValue = (SmoothingLevel)smoothSetting switch
             {
-                SmoothingLevel.None => NoneRotationSmoothing,
-                SmoothingLevel.Low => LowRotationSmoothing,
-                SmoothingLevel.Medium => MediumRotationSmoothing,
-                SmoothingLevel.High => HighRotationSmoothing,
+                SmoothingLevel.None => VRConstants.SpectatorSmoothingNone,
+                SmoothingLevel.Low => VRConstants.SpectatorSmoothingLow,
+                SmoothingLevel.Medium => VRConstants.SpectatorSmoothingMedium,
+                SmoothingLevel.High => VRConstants.SpectatorSmoothingHigh,
                 _ => throw new ArgumentOutOfRangeException()
             };
+            
+            Logger.Log($"Setting Spectator Camera Smoothness factor to >{_selectedSmoothingValue}<.", LogCat.VR);
         }
     }
 }

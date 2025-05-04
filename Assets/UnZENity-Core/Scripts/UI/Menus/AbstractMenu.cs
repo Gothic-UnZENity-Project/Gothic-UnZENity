@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using GUZ.Core.Config;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.UI.Menus.Adapter.Menu;
@@ -119,39 +120,14 @@ namespace GUZ.Core.UI.Menus
                 itemGo = ResourceLoader.TryGetPrefabObject(PrefabType.UiButton, name: item.Name, parent: Canvas)!;
                 var button = itemGo.GetComponentInChildren<Button>();
 
-                button.onClick.AddListener(() =>
-                {
-                    for (int i = 0;; i++)
-                    {
-                        MenuItemSelectAction action;
-                        try
-                        {
-                            action = item.GetOnSelAction(i);
-                        }
-                        catch (Exception e)
-                        {
-                            break;
-                        }
+                button.onClick.AddListener(() => HandleMenuItemClick(item));
+            }
+            else if (item.MenuItemType == MenuItemType.ChoiceBox)
+            {
+                itemGo = ResourceLoader.TryGetPrefabObject(PrefabType.UiButton, name: item.Name, parent: Canvas)!;
+                var button = itemGo.GetComponentInChildren<Button>();
 
-                        if (action == null || action == MenuItemSelectAction.Undefined)
-                        {
-                            break;
-                        }
-
-                        string actionName = "";
-                        try
-                        {
-                            actionName = item.GetOnSelActionS(i);
-                        }
-                        catch (Exception e)
-                        {
-                            OnMenuItemClicked(action, item.Name, actionName);
-                            break;
-                        }
-
-                        OnMenuItemClicked(action, item.Name, actionName);
-                    }
-                });
+                button.onClick.AddListener(() => HandleChoiceBoxClick(item, itemGo));
             }
             else if (item.MenuItemType == MenuItemType.Text)
             {
@@ -215,8 +191,7 @@ namespace GUZ.Core.UI.Menus
                 }
 
                 backPicGo.transform.localPosition = Vector3.zero;
-
-
+                
                 var backPictRenderer = backPicGo.GetComponentInChildren<MeshRenderer>();
                 backPictRenderer.sharedMaterial = backPic;
 
@@ -229,6 +204,7 @@ namespace GUZ.Core.UI.Menus
             if (textComp != null)
             {
                 SetTextDimensions(textComp, item, itemWidth, itemHeight);
+                SetText(textComp, item);
             }
 
             //item disabled (grayed out and not interactable)
@@ -278,7 +254,6 @@ namespace GUZ.Core.UI.Menus
             // VerticalAlignment setting stored on Prefab isn't being used by Unity. We therefore need to set it now.
             textComp.verticalAlignment = VerticalAlignmentOptions.Top;
 
-            textComp.text = item.GetText(0);
             textComp.spriteAsset = GameGlobals.Font.TryGetFont(item.FontName);
             textComp.fontSize = item.FontName.ToLowerInvariant().Contains("font_old_10_white") ? 16 : 36;
 
@@ -289,13 +264,85 @@ namespace GUZ.Core.UI.Menus
             textRect.SetHeight(textHeight / PixelRatioY);
         }
 
+        private void SetText(TMP_Text textComp, AbstractMenuItemInstance item)
+        {
+            var text0 = item.GetText(0);
+            
+            if (item.MenuItemType == MenuItemType.ChoiceBox)
+            {
+                text0 = text0.Split("|")[0];
+            }
+
+            textComp.text = text0;
+        }
+
         /// <summary>
         /// This function is used as a callback for menu items when they are clicked.
-        /// The itemName argument is mostly needed for the Loading menu as it calls Close when loading a save.
         /// </summary>
-        /// <param name="action">Represents which function to call</param>
-        /// <param name="itemName">Represents the name of the menu item</param>
-        /// <param name="commandName">Represents additional behaviour for the action</param>
+        private void HandleMenuItemClick(AbstractMenuItemInstance item)
+        {
+            for (var i = 0;; i++)
+            {
+                MenuItemSelectAction action;
+                try
+                {
+                    action = item.GetOnSelAction(i);
+                }
+                catch (Exception e)
+                {
+                    break;
+                }
+        
+                if (action == MenuItemSelectAction.Undefined)
+                {
+                    break;
+                }
+        
+                string actionName = "";
+                try
+                {
+                    actionName = item.GetOnSelActionS(i);
+                }
+                catch (Exception e)
+                {
+                    OnMenuItemClicked(action, item.Name, actionName);
+                    break;
+                }
+        
+                OnMenuItemClicked(action, item.Name, actionName);
+            }
+        }
+
+        private void HandleChoiceBoxClick(AbstractMenuItemInstance item, GameObject itemGo)
+        {
+            // FIXME - These elements are used to determine Gothic.ini element to overwrite after change.
+            var option = item.OnChgSetOption;
+            var optionSection = item.OnChgSetOptionSection;
+
+            if (optionSection != "UnZENity")
+            {
+                Logger.LogWarning("We handle our own settings for now only!", LogCat.Ui);
+                return;
+            }
+
+            var options = item.GetText(0).Split("|");
+            var textComp = itemGo.GetComponentInChildren<TMP_Text>();
+            var currentText = textComp.text;
+
+            var currentIndex = options.IndexOfItem(currentText);
+
+            if (currentIndex == -1 || currentIndex >= options.Length)
+            {
+                GameGlobals.Config.Gothic.SetInt(option, 0);
+                textComp.text = options[0];
+            }
+            else
+            {
+                GameGlobals.Config.Gothic.SetInt(option, currentIndex+1);
+                textComp.text = options[currentIndex+1];
+            }
+        }
+        
         private void OnMenuItemClicked(MenuItemSelectAction action, string itemName, string commandName)
         {
             switch (action)

@@ -63,6 +63,8 @@ namespace GUZ.VR.Adapter
             var subtitlesChoice = gameMenu.FindMenuItem("MENUITEM_GAME_SUB_TITLES_CHOICE", out _);
             var smoothingSetting = new MutableMenuItemInstance("MENUITEM_UNZENITY_OPT_VR_SMOOTHSPECTATOR_CHOICE", subtitlesChoice);
             smoothingSetting.SetText(0, VRMenuLocalization.GetText("menuitem.smooth.value"));
+            smoothingSetting.OnChgSetOption = VRConstants.IniNames.SmoothSpectator;
+            smoothingSetting.OnChgSetOptionSection = Constants.IniSection;
             
             return smoothingSetting;
         }

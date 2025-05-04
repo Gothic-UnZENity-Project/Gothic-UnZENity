@@ -57,6 +57,9 @@ namespace GUZ.Core.Globals
         }
 
 
+        public const string IniSection = "UnZENity"; // [UnZENity]
+        
+
         // Unity shaders
         public static readonly Shader ShaderUnlit = Shader.Find("Universal Render Pipeline/Unlit");
         public static readonly Shader ShaderUnlitParticles = Shader.Find("Universal Render Pipeline/Particles/Unlit");
