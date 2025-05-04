@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using GUZ.Core.Config;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
@@ -270,7 +271,11 @@ namespace GUZ.Core.UI.Menus
             
             if (item.MenuItemType == MenuItemType.ChoiceBox)
             {
-                text0 = text0.Split("|")[0];
+                // We try to load setting from Ini file.
+                var entries = text0.Split("|");
+                var entryIndex = GameGlobals.Config.Gothic.GetInt(item.OnChgSetOption);
+                // We need to ensure that we're not out-of-bounds.
+                text0 = entryIndex >= entries.Length ? entries[0] : entries[entryIndex];
             }
 
             textComp.text = text0;

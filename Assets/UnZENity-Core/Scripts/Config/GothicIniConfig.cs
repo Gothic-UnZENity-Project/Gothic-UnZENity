@@ -39,13 +39,18 @@ namespace GUZ.Core.Config
             _gothicIniWriter.WriteSetting(section, key, value.ToString());
             GlobalEventDispatcher.PlayerPrefUpdated.Invoke(key, value);
         }
+
+        public string GetString(string settingName, string defaultValue = "")
+        {
+            if (_config.TryGetValue(settingName, out var value))
+                return value;
+            else
+                return defaultValue;
+        }
         
         public int GetInt(string settingName, int defaultValue = 0)
         {
-            if (_config.TryGetValue(settingName, out var value))
-                return Convert.ToInt32(value);
-            else
-                return defaultValue;
+            return Convert.ToInt32(GetString(settingName, defaultValue.ToString()));
         }
     }
 }
