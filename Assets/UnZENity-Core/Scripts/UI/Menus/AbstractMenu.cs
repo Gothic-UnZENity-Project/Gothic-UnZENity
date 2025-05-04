@@ -133,6 +133,13 @@ namespace GUZ.Core.UI.Menus
 
                 button.onClick.AddListener(() => HandleChoiceBoxClick(item, itemGo));
             }
+            else if (item.MenuItemType == MenuItemType.Slider)
+            {
+                itemGo = ResourceLoader.TryGetPrefabObject(PrefabType.UiSlider, name: item.Name, parent: Canvas)!;
+
+                var handlebarImage = itemGo.GetComponentInChildren<Image>();
+                handlebarImage.material = GameGlobals.Textures.GetMaterial(item.GetUserString(0)); // Set image for handle bar.
+            }
             else if (item.MenuItemType == MenuItemType.Text)
             {
                 itemGo = ResourceLoader.TryGetPrefabObject(PrefabType.UiText, name: item.Name, parent: Canvas)!;

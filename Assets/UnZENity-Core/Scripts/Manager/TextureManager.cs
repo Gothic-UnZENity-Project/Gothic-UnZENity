@@ -21,8 +21,6 @@ public class TextureManager : MonoBehaviour
     [NonSerialized]
     public Material GothicLoadingMenuMaterial;
     public Material ButtonMaterial;
-    public Material SliderMaterial;
-    public Material SliderPositionMaterial;
     public Material FillerMaterial;
     [NonSerialized] public Material ArrowUpMaterial;
     [NonSerialized] public Material ArrowDownMaterial;
@@ -70,8 +68,6 @@ public class TextureManager : MonoBehaviour
         LoadingBarMaterial.mainTexture = TextureCache.TryGetTexture("PROGRESS_BAR.TGA");
         BackgroundMaterial.mainTexture = TextureCache.TryGetTexture("LOG_PAPER.TGA");
         ButtonMaterial.mainTexture = TextureCache.TryGetTexture("INV_SLOT.TGA");
-        SliderMaterial.mainTexture = TextureCache.TryGetTexture("MENU_SLIDER_BACK.TGA");
-        SliderPositionMaterial.mainTexture = TextureCache.TryGetTexture("MENU_SLIDER_POS.TGA");
         FillerMaterial.mainTexture = TextureCache.TryGetTexture("MENU_BUTTONBACK.TGA");
         MapMaterial.mainTexture = TextureCache.TryGetTexture("MAP_WORLD_ORC.TGA");
 
