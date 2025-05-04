@@ -11,6 +11,8 @@ namespace GUZ.Core.Config
         private readonly GothicIniWriter _gothicIniWriter;
         
         public readonly string IniFilePath;
+
+        public bool IniSubtitles => Convert.ToBoolean(_config.GetValueOrDefault("subTitles", "1"));
         public string IniSkyDayColor(int index) => _config.GetValueOrDefault($"zDayColor{index}", "0 0 0");
         public bool IniPlayLogoVideos => Convert.ToBoolean(Convert.ToInt16(_config.GetValueOrDefault("playLogoVideos", "1")));
         

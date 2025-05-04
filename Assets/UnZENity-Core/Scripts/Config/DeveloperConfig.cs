@@ -185,10 +185,6 @@ namespace GUZ.Core.Config
         [ConditionalField(fieldToCheck: nameof(EnableNpcs), compareValues: true)]
         public MonsterTypesCollection SpawnMonsterInstances = new();
 
-        [Separator("Immersion")]
-        [OverrideLabel("Show Subtitles")]
-        public bool ShowSubtitles = true;
-
         [Tooltip("WIP - Not production ready.")]
         [ConditionalField(fieldToCheck: nameof(EnableNpcs), compareValues: true)]
         public bool EnableNpcEyeBlinking;
