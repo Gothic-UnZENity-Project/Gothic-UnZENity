@@ -9,6 +9,7 @@ using GUZ.Core.UI.Menus.Adapter.MenuItem;
 using GUZ.Core.Util;
 using MyBox;
 using TMPro;
+using Unity.VisualScripting.YamlDotNet.Core.Tokens;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -294,18 +295,21 @@ namespace GUZ.Core.UI.Menus
         {
             var slider = go.GetComponentInChildren<Slider>();
 
-            // e.g. setting of userFloat[0] == 15 --> 15 steps to display on Slider (1...15; both are inclusive).
-            // HINT: We shift scale by +1 from 0...15 to 0...16 to properly map it to ini values.
+            // e.g., setting of userFloat[0] == 15 --> 16 steps to display on Slider (1...16; both are inclusive).
+            // HINT: We shift scale by +1 from 0...15 to 1...16 to properly map it to ini values.
             slider.minValue = 1;
             slider.maxValue = item.GetUserFloat(0) + 1; // Steps
+            slider.wholeNumbers = true;
 
-            var stepAmount = 1 / item.GetUserFloat(0);
+            var stepAmount = 1 / (item.GetUserFloat(0)); // -1 as we use elements from 0...15
             var currentIniValue = GameGlobals.Config.Gothic.GetFloat(item.OnChgSetOption);
             
             // Convert INI value (0...1) to slider value (1...maxValue)
-            // Example: INI value 0.5 with 15 steps -> should result in slider position 8 
             var sliderValue = Mathf.Round(currentIniValue / stepAmount) + 1; // +1, as minValue == 1, not zero
             slider.value = sliderValue;
+            
+            // Handle changes
+            slider.onValueChanged.AddListener(value => HandleSliderValueChange(item, stepAmount, value));
             
             // Set image for handle bar.
             var handlebarImage = go.GetComponentInChildren<Image>();
@@ -371,6 +375,14 @@ namespace GUZ.Core.UI.Menus
                 GameGlobals.Config.Gothic.SetInt(optionSection, option, currentIndex+1);
                 textComp.text = options[currentIndex+1];
             }
+        }
+
+        private void HandleSliderValueChange(AbstractMenuItemInstance item, float stepAmount, float value)
+        {
+            var iniValue = stepAmount * (value - 1); // -1 as we need to normalize back to 0...1
+            iniValue = (float)Math.Round(iniValue, 9);
+            
+            GameGlobals.Config.Gothic.SetFloat(item.OnChgSetOptionSection, item.OnChgSetOption, iniValue);
         }
         
         private void OnMenuItemClicked(MenuItemSelectAction action, string itemName, string commandName)
