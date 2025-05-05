@@ -28,7 +28,7 @@ namespace GUZ.Core.Manager
             Thr = 1 << 2
         }
 
-        [Obsolete] public static MusicManager I;
+        private const string _backgroundMusicGOName = "BackgroundMusic";
 
         private Performance _dxPerformance;
         private AudioSource _audioSourceComp;
@@ -51,21 +51,14 @@ namespace GUZ.Core.Manager
         private const int _bufferSize = 2048;
         private const int _frequencyRate = 44100;
 
-        private readonly bool _featureEnabled;
 
         public MusicManager(DeveloperConfig config)
         {
-            I = this;
-            _featureEnabled = config.EnableGameMusic;
+            
         }
 
         public void Init()
         {
-            if (!_featureEnabled)
-            {
-                return;
-            }
-
             _dxPerformance = Performance.Create(_frequencyRate);
 
             InitializeUnity();
@@ -86,20 +79,47 @@ namespace GUZ.Core.Manager
                 RemoveMusicZone(go);
                 Play(SegmentTags.Std);
             });
+            
+            GlobalEventDispatcher.PlayerPrefUpdated.AddListener((key, value) =>
+            {
+                if (key == "musicVolume" || key == "musicEnabled")
+                {
+                    SetMusicFromIni();
+                }
+            });
         }
 
         private void InitializeUnity()
         {
-            var backgroundMusic = GameObject.Find("BackgroundMusic");
+            var backgroundMusic = GameObject.Find(_backgroundMusicGOName);
             _audioSourceComp = backgroundMusic.GetComponent<AudioSource>();
             _reverbFilterComp = backgroundMusic.GetComponent<AudioReverbFilter>();
 
+            SetMusicFromIni();
+            
             var audioClip = AudioClip.Create("Music", _bufferSize * 2, 2, _frequencyRate, true, PCMReaderCallback);
 
             _audioSourceComp.priority = 0;
             _audioSourceComp.clip = audioClip;
             _audioSourceComp.loop = true;
             _audioSourceComp.Play();
+        }
+
+        /// <summary>
+        /// Set values based on Gothic.ini
+        /// </summary>
+        private void SetMusicFromIni()
+        {
+            // If we disable the music component, we can't re-enable music again. It's better to mute it.
+            if (!GameGlobals.Config.Gothic.IniMusicEnabled)
+            {
+                _audioSourceComp.volume = 0f;
+            }
+            else
+            {
+                // A music sound of 1f is way too loud. We therefore turn it down based on some experience.
+                _audioSourceComp.volume = GameGlobals.Config.Gothic.IniMusicVolume / 3;
+            }
         }
 
         private void OnMainMenuLoaded()
@@ -208,11 +228,6 @@ namespace GUZ.Core.Manager
 
         public void Play(MusicThemeInstance theme)
         {
-            if (!_featureEnabled)
-            {
-                return;
-            }
-
             // Do not restart the current theme if already playing.
             // Multiple MusicThemeInstances can reference the same audio. Therefore, checking actual files only.
             if (_currentTheme != null && theme.File == _currentTheme.File)

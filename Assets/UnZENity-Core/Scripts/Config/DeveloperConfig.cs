@@ -214,7 +214,6 @@ namespace GUZ.Core.Config
          */
 
         [Foldout("Audio", true)]
-        public bool EnableGameMusic = true;
         public bool EnableGameSounds = true;
 
 
