@@ -9,15 +9,15 @@ namespace GUZ.VR.Manager
         private static Dictionary<string, Dictionary<string, string>> _translations = new()
         {
             { "en", new() {
-                { "menuitem.vr", "VR" },
-                { "menuitem.vr.headline", "VR SETTINGS" },
+                { "menuitem.vr_accessibility", "VR Accessibility" },
+                { "menuitem.vr_accessibility.headline", "VR ACCESSIBILITY SETTINGS" },
                 { "menuitem.smooth.label", "Spectator Smoothing" },
                 { "menuitem.smooth.description", "Set smoothing of spectator camera (PCVR only)" },
                 { "menuitem.smooth.value", "off|low|medium|high" },
             }},
             { "de", new() {
-                { "menuitem.vr", "VR" },
-                { "menuitem.vr.headline", "VR EINSTELLUNGEN" },
+                { "menuitem.vr_accessibility", "VR Barrierefreiheit" },
+                { "menuitem.vr_accessibility.headline", "VR BARRIEREFREIHEIT EINSTELLUNGEN" },
                 { "menuitem.smooth.label", "Spectator Glättung" },
                 { "menuitem.smooth.description", "Glätten kleiner Bewegungsruckler des Spectators (nur PCVR)" },
                 { "menuitem.smooth.value", "aus|gering|mittel|hoch" },

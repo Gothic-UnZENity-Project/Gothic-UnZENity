@@ -40,7 +40,7 @@ namespace GUZ.Core.Config
 
         private bool IsUnZENitySetting(string section)
         {
-            return section == Constants.IniSection;
+            return section.Contains("UNZENITY");
         }
         
         /// <summary>
