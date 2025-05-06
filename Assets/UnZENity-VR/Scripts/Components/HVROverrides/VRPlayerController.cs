@@ -1,12 +1,10 @@
 #if GUZ_HVR_INSTALLED
 using GUZ.Core;
 using GUZ.Core.Globals;
-using GUZ.Core.Manager;
 using GUZ.Core.UI.Menus;
 using HurricaneVR.Framework.Core.Player;
 using MyBox;
 using UnityEngine.SceneManagement;
-using UnityEngine.Serialization;
 using Constants = GUZ.Core.Globals.Constants;
 
 namespace GUZ.VR.Components.HVROverrides
@@ -52,6 +50,7 @@ namespace GUZ.VR.Components.HVROverrides
             // We have our player created before Gothic inis are loaded. We therefore need to set some default values.
             if (useDefaultValues)
             {
+                CameraRig.SetSitStandMode(HVRSitStand.PlayerHeight);
                 DirectionStyle = PlayerDirectionMode.Camera;
                 RotationType = RotationType.Snap;
                 SnapAmount = 45f;
@@ -59,7 +58,11 @@ namespace GUZ.VR.Components.HVROverrides
 
                 return;
             }
-            
+
+            var sitStandSetting =
+                GameGlobals.Config.Gothic.GetInt(VRConstants.IniNames.SitStand, (int)HVRSitStand.PlayerHeight);
+            CameraRig.SetSitStandMode((HVRSitStand)sitStandSetting);
+
             DirectionStyle = (PlayerDirectionMode)GameGlobals.Config.Gothic.GetInt(VRConstants.IniNames.MoveDirection, (int)PlayerDirectionMode.Camera);
             RotationType = (RotationType)GameGlobals.Config.Gothic.GetInt(VRConstants.IniNames.RotationType, (int)RotationType.Smooth);
 
@@ -99,7 +102,8 @@ namespace GUZ.VR.Components.HVROverrides
             if (preferenceKey == VRConstants.IniNames.MoveDirection ||
                 preferenceKey == VRConstants.IniNames.RotationType ||
                 preferenceKey == VRConstants.IniNames.SnapRotationAmount ||
-                preferenceKey == VRConstants.IniNames.SmoothRotationSpeed)
+                preferenceKey == VRConstants.IniNames.SmoothRotationSpeed ||
+                preferenceKey == VRConstants.IniNames.SitStand)
             {
                 SetNormalControls();
             }

@@ -4,6 +4,7 @@ namespace GUZ.VR
     {
         public static class IniNames
         {
+            public const string SitStand = "sitStand";
             public const string MoveDirection = "moveDirection";
             public const string RotationType = "rotationType";
             public const string SnapRotationAmount = "snapRotationAmount";

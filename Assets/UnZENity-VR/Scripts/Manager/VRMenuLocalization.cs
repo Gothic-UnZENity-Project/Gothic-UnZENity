@@ -11,6 +11,9 @@ namespace GUZ.VR.Manager
             { "en", new() {
                 { "menuitem.vr_accessibility", "VR Accessibility" },
                 { "menuitem.vr_accessibility.headline", "VR ACCESSIBILITY SETTINGS" },
+                { "menuitem.sitStand.label", "Seated Mode" },
+                { "menuitem.sitStand.description", "-PlayerHeight- means no scale" },
+                { "menuitem.sitStand.value", "sitting|standing|player height" },
                 { "menuitem.moveDirection.label", "Move Direction" },
                 { "menuitem.moveDirection.description", "" },
                 { "menuitem.moveDirection.value", "camera|left controller|right controller" },
@@ -29,6 +32,9 @@ namespace GUZ.VR.Manager
             { "de", new() {
                 { "menuitem.vr_accessibility", "VR Barrierefreiheit" },
                 { "menuitem.vr_accessibility.headline", "VR BARRIEREFREIHEIT EINSTELLUNGEN" },
+                { "menuitem.sitStand.label", "Sitzmodus" },
+                { "menuitem.sitStand.description", "-Spielerhöhe- bedeutet keine Skalierung" },
+                { "menuitem.sitStand.value", "sitzend|stehend|spielerhöhe" },
                 { "menuitem.moveDirection.label", "Bewegungsrichtung" },
                 { "menuitem.moveDirection.description", "" },
                 { "menuitem.moveDirection.value", "Kamera|linker Controller|rechter Controller" },

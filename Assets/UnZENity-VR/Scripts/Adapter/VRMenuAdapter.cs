@@ -27,22 +27,25 @@ namespace GUZ.VR.Adapter
             
             vrAccessibilityMenu.Items.Add(CreateAccessibilityHeadline(gameMenu));
 
-            vrAccessibilityMenu.Items.Add(CreateMoveDirectionLabel(gameMenu, menuStartY + menuDY * 0));
-            vrAccessibilityMenu.Items.Add(CreateMoveDirectionChoicebox(gameMenu, menuStartY + menuDY * 0));
-            vrAccessibilityMenu.Items.Add(CreateRotationTypeLabel(gameMenu, menuStartY + menuDY * 1));
-            vrAccessibilityMenu.Items.Add(CreateRotationTypeChoicebox(gameMenu, menuStartY + menuDY * 1));
-            vrAccessibilityMenu.Items.Add(CreateSmoothRotationSpeedLabel(gameMenu, menuStartY + menuDY * 2));
-            vrAccessibilityMenu.Items.Add(CreateSmoothRotationSpeedSlider(gameMenu, menuStartY + menuDY * 2));
-            vrAccessibilityMenu.Items.Add(CreateSnapRotationLabel(gameMenu, menuStartY + menuDY * 3));
-            vrAccessibilityMenu.Items.Add(CreateSnapRotationChoicebox(gameMenu, menuStartY + menuDY * 3));
-            vrAccessibilityMenu.Items.Add(CreateSmoothSpectatorLabel(gameMenu, menuStartY + menuDY * 4));
-            vrAccessibilityMenu.Items.Add(CreateSmoothSpectatorChoicebox(gameMenu, menuStartY + menuDY * 4));
+            vrAccessibilityMenu.Items.Add(CreateSitStandLabel(gameMenu, menuStartY + menuDY * 0));
+            vrAccessibilityMenu.Items.Add(CreateSitStandChoicebox(gameMenu, menuStartY + menuDY * 0));
+            vrAccessibilityMenu.Items.Add(CreateMoveDirectionLabel(gameMenu, menuStartY + menuDY * 1));
+            vrAccessibilityMenu.Items.Add(CreateMoveDirectionChoicebox(gameMenu, menuStartY + menuDY * 1));
+            vrAccessibilityMenu.Items.Add(CreateRotationTypeLabel(gameMenu, menuStartY + menuDY * 2));
+            vrAccessibilityMenu.Items.Add(CreateRotationTypeChoicebox(gameMenu, menuStartY + menuDY * 2));
+            vrAccessibilityMenu.Items.Add(CreateSmoothRotationSpeedLabel(gameMenu, menuStartY + menuDY * 3));
+            vrAccessibilityMenu.Items.Add(CreateSmoothRotationSpeedSlider(gameMenu, menuStartY + menuDY * 3));
+            vrAccessibilityMenu.Items.Add(CreateSnapRotationLabel(gameMenu, menuStartY + menuDY * 4));
+            vrAccessibilityMenu.Items.Add(CreateSnapRotationChoicebox(gameMenu, menuStartY + menuDY * 4));
+            vrAccessibilityMenu.Items.Add(CreateSmoothSpectatorLabel(gameMenu, menuStartY + menuDY * 5));
+            vrAccessibilityMenu.Items.Add(CreateSmoothSpectatorChoicebox(gameMenu, menuStartY + menuDY * 5));
 
             vrAccessibilityMenu.Items.Add(CreateBackButton(mainMenu));
 
 
             // TODO
             // var vrImmersionMenu = "";
+            // FIXME - Add - Setting: ItemCollisionWhileDragged
         }
 
         private MutableMenuInstance CreateAccessibilityMenu(AbstractMenuInstance mainMenu)
@@ -74,6 +77,34 @@ namespace GUZ.VR.Adapter
             vrHeadline.SetText(0, VRMenuLocalization.GetText("menuitem.vr_accessibility.headline"));
             
             return vrHeadline;
+        }
+        
+        private AbstractMenuItemInstance CreateSitStandChoicebox(AbstractMenuInstance gameMenu, int posY)
+        {
+            var subtitlesLabel = gameMenu.FindMenuItem("MENUITEM_GAME_SUB_TITLES", out _);
+            var sitStandLabel= new MutableMenuItemInstance("MENUITEM_UNZENITY_OPT_VR_ACCESSIBILITY_SIT_STAND", subtitlesLabel);
+            
+            sitStandLabel.PosY = posY;
+            
+            sitStandLabel.SetText(0, VRMenuLocalization.GetText("menuitem.sitStand.label"));
+            sitStandLabel.SetText(1, VRMenuLocalization.GetText("menuitem.sitStand.description"));
+            
+            return sitStandLabel;
+        }
+
+        private AbstractMenuItemInstance CreateSitStandLabel(AbstractMenuInstance gameMenu, int posY)
+        {
+            var subtitlesChoice = gameMenu.FindMenuItem("MENUITEM_GAME_SUB_TITLES_CHOICE", out _);
+            var sitStandSetting = new MutableMenuItemInstance("MENUITEM_UNZENITY_OPT_VR_ACCESSIBILITY_SIT_STAND_CHOICE", subtitlesChoice);
+
+            sitStandSetting.PosY = posY;
+            sitStandSetting.SetUserFloat(3, (int)HVRSitStand.PlayerHeight); // Default value if no INI value exists.
+
+            sitStandSetting.SetText(0, VRMenuLocalization.GetText("menuitem.sitStand.value"));
+            sitStandSetting.OnChgSetOption = VRConstants.IniNames.SitStand;
+            sitStandSetting.OnChgSetOptionSection = VRConstants.IniSectionAccessibility;
+            
+            return sitStandSetting;
         }
         
         private AbstractMenuItemInstance CreateMoveDirectionLabel(AbstractMenuInstance gameMenu, int posY)
