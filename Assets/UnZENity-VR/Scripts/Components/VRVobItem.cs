@@ -60,10 +60,11 @@ namespace GUZ.VR.Components
             DynamicMaterialManager.SetDynamicValue(gameObject, Constants.ShaderPropertyTransparency, Constants.ShaderPropertyTransparencyValue);
 
             // If we want Item collisions, we just temporarily deactivate them until the item is free of collisions.
-            if (PlayerPrefsManager.ItemCollisionWhileDragged)
-            {
-                StartCoroutine(ReEnableCollisionRoutine());
-            }
+            // FIXME - Fetch Collision dragging from Ini settings
+            // if (PlayerPrefsManager.ItemCollisionWhileDragged)
+            // {
+            //     StartCoroutine(ReEnableCollisionRoutine());
+            // }
 
             GameGlobals.VobMeshCulling?.StartTrackVobPositionUpdates(gameObject);
             VRPlayerManager.SetGrab(grabber, grabbable);
