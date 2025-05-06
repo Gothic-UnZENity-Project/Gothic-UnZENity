@@ -67,7 +67,7 @@ namespace GUZ.VR.Components
 
             if (_spectatorCamera != null)
             {
-                _spectatorCamera.fieldOfView = _vrCameraTransform.GetComponent<Camera>().fieldOfView;
+                _spectatorCamera.cullingMask = _vrCameraTransform.GetComponent<Camera>().cullingMask;
             }
 
             if (_vrCameraTransform != null)
