@@ -1,8 +1,10 @@
+using Codice.CM.Common;
 using GUZ.Core.Adapter;
 using GUZ.Core.UI.Menus.Adapter.Menu;
 using GUZ.Core.UI.Menus.Adapter.MenuItem;
 using GUZ.VR.Manager;
 using ZenKit.Daedalus;
+using Constants = GUZ.Core.Globals.Constants;
 
 namespace GUZ.VR.Adapter
 {
@@ -19,9 +21,21 @@ namespace GUZ.VR.Adapter
             // Will be used to clone render settings from its items.
             var gameMenu = mainMenu.FindMenuRecursive("MENU_OPT_GAME")!;
 
-            vrAccessibilityMenu.Items.Add(CreateHeadline(gameMenu));
-            vrAccessibilityMenu.Items.Add(CreateSmoothSpectatorLabel(gameMenu));
-            vrAccessibilityMenu.Items.Add(CreateSmoothSpectatorChoicebox(gameMenu));
+            var menuStartY = Constants.DaedalusMenu.MenuStartY;
+            var menuDY = Constants.DaedalusMenu.MenuDY;
+            
+            vrAccessibilityMenu.Items.Add(CreateAccessibilityHeadline(gameMenu));
+
+            vrAccessibilityMenu.Items.Add(CreateMoveDirectionLabel(gameMenu, menuStartY + menuDY * 0));
+            vrAccessibilityMenu.Items.Add(CreateMoveDirectionChoicebox(gameMenu, menuStartY + menuDY * 0));
+            vrAccessibilityMenu.Items.Add(CreateRotationTypeLabel(gameMenu, menuStartY + menuDY * 1));
+            vrAccessibilityMenu.Items.Add(CreateRotationTypeChoicebox(gameMenu, menuStartY + menuDY * 1));
+            vrAccessibilityMenu.Items.Add(CreateSnapRotationLabel(gameMenu, menuStartY + menuDY * 2));
+            vrAccessibilityMenu.Items.Add(CreateSnapRotationChoicebox(gameMenu, menuStartY + menuDY * 2));
+            vrAccessibilityMenu.Items.Add(CreateSmoothRotationSpeedLabel(gameMenu, menuStartY + menuDY * 3));
+            vrAccessibilityMenu.Items.Add(CreateSmoothRotationSpeedSlider(gameMenu, menuStartY + menuDY * 3));
+            vrAccessibilityMenu.Items.Add(CreateSmoothSpectatorLabel(gameMenu, menuStartY + menuDY * 4));
+            vrAccessibilityMenu.Items.Add(CreateSmoothSpectatorChoicebox(gameMenu, menuStartY + menuDY * 4));
 
             vrAccessibilityMenu.Items.Add(CreateBackButton(mainMenu));
 
@@ -52,7 +66,7 @@ namespace GUZ.VR.Adapter
             return vrControlsMenu;
         }
 
-        private MutableMenuItemInstance CreateHeadline(AbstractMenuInstance gameMenu)
+        private MutableMenuItemInstance CreateAccessibilityHeadline(AbstractMenuInstance gameMenu)
         {
             var gameHeadline = gameMenu.FindMenuItem("MENUITEM_GAME_HEADLINE", out _);
             var vrHeadline = new MutableMenuItemInstance("MENUITEM_UNZENITY_OPT_VR_ACCESSIBILITY_HEADLINE", gameHeadline);
@@ -60,21 +74,135 @@ namespace GUZ.VR.Adapter
             
             return vrHeadline;
         }
+        
+        private AbstractMenuItemInstance CreateMoveDirectionLabel(AbstractMenuInstance gameMenu, int posY)
+        {
+            var subtitlesLabel = gameMenu.FindMenuItem("MENUITEM_GAME_SUB_TITLES", out _);
+            var moveDirectionLabel= new MutableMenuItemInstance("MENUITEM_UNZENITY_OPT_VR_ACCESSIBILITY_MOVE_DIRECTION", subtitlesLabel);
+            
+            moveDirectionLabel.PosY = posY;
+            
+            moveDirectionLabel.SetText(0, VRMenuLocalization.GetText("menuitem.moveDirection.label"));
+            moveDirectionLabel.SetText(1, VRMenuLocalization.GetText("menuitem.moveDirection.description"));
+            
+            return moveDirectionLabel;
+        }
+        
+        private AbstractMenuItemInstance CreateMoveDirectionChoicebox(AbstractMenuInstance gameMenu, int posY)
+        {
+            var subtitlesChoice = gameMenu.FindMenuItem("MENUITEM_GAME_SUB_TITLES_CHOICE", out _);
+            var moveDirectionSetting = new MutableMenuItemInstance("MENUITEM_UNZENITY_OPT_VR_ACCESSIBILITY_MOVE_DIRECTION_CHOICE", subtitlesChoice);
 
-        private MutableMenuItemInstance CreateSmoothSpectatorLabel(AbstractMenuInstance gameMenu)
+            moveDirectionSetting.PosY = posY;
+
+            moveDirectionSetting.SetText(0, VRMenuLocalization.GetText("menuitem.moveDirection.value"));
+            moveDirectionSetting.OnChgSetOption = VRConstants.IniNames.MoveDirection;
+            moveDirectionSetting.OnChgSetOptionSection = VRConstants.IniSectionAccessibility;
+            
+            return moveDirectionSetting;
+        }
+        
+        private AbstractMenuItemInstance CreateRotationTypeLabel(AbstractMenuInstance gameMenu, int posY)
+        {
+            var subtitlesLabel = gameMenu.FindMenuItem("MENUITEM_GAME_SUB_TITLES", out _);
+            var rotationTypeLabel= new MutableMenuItemInstance("MENUITEM_UNZENITY_OPT_VR_ACCESSIBILITY_ROTATION_TYPE", subtitlesLabel);
+            
+            rotationTypeLabel.PosY = posY;
+            
+            rotationTypeLabel.SetText(0, VRMenuLocalization.GetText("menuitem.rotationType.label"));
+            rotationTypeLabel.SetText(1, VRMenuLocalization.GetText("menuitem.rotationType.description"));
+            
+            return rotationTypeLabel;
+        }
+
+        private AbstractMenuItemInstance CreateRotationTypeChoicebox(AbstractMenuInstance gameMenu, int posY)
+        {
+            var subtitlesChoice = gameMenu.FindMenuItem("MENUITEM_GAME_SUB_TITLES_CHOICE", out _);
+            var rotationTypeSetting = new MutableMenuItemInstance("MENUITEM_UNZENITY_OPT_VR_ACCESSIBILITY_ROTATION_TYPE_CHOICE", subtitlesChoice);
+
+            rotationTypeSetting.PosY = posY;
+
+            rotationTypeSetting.SetText(0, VRMenuLocalization.GetText("menuitem.rotationType.value"));
+            rotationTypeSetting.OnChgSetOption = VRConstants.IniNames.RotationType;
+            rotationTypeSetting.OnChgSetOptionSection = VRConstants.IniSectionAccessibility;
+            
+            return rotationTypeSetting;
+        }
+        
+        private AbstractMenuItemInstance CreateSnapRotationLabel(AbstractMenuInstance gameMenu, int posY)
+        {
+            var subtitlesLabel = gameMenu.FindMenuItem("MENUITEM_GAME_SUB_TITLES", out _);
+            var smoothRotationLabel= new MutableMenuItemInstance("MENUITEM_UNZENITY_OPT_VR_ACCESSIBILITY_SNAP_ROTATION", subtitlesLabel);
+            
+            smoothRotationLabel.PosY = posY;
+            
+            smoothRotationLabel.SetText(0, VRMenuLocalization.GetText("menuitem.snapRotation.label"));
+            smoothRotationLabel.SetText(1, VRMenuLocalization.GetText("menuitem.snapRotation.description"));
+            
+            return smoothRotationLabel;
+        }
+        
+        private AbstractMenuItemInstance CreateSnapRotationChoicebox(AbstractMenuInstance gameMenu, int posY)
+        {
+            var subtitlesChoice = gameMenu.FindMenuItem("MENUITEM_GAME_SUB_TITLES_CHOICE", out _);
+            var snapRotationSetting = new MutableMenuItemInstance("MENUITEM_UNZENITY_OPT_VR_ACCESSIBILITY_SNAP_ROTATION_CHOICE", subtitlesChoice);
+
+            snapRotationSetting.PosY = posY;
+
+            snapRotationSetting.SetText(0, VRMenuLocalization.GetText("menuitem.snapRotation.value"));
+            snapRotationSetting.OnChgSetOption = VRConstants.IniNames.SnapRotationAmount;
+            snapRotationSetting.OnChgSetOptionSection = VRConstants.IniSectionAccessibility;
+            
+            return snapRotationSetting;
+        }
+
+        private AbstractMenuItemInstance CreateSmoothRotationSpeedLabel(AbstractMenuInstance gameMenu, int posY)
+        {
+            var subtitlesLabel = gameMenu.FindMenuItem("MENUITEM_GAME_SUB_TITLES", out _);
+            var smoothRotationLabel= new MutableMenuItemInstance("MENUITEM_UNZENITY_OPT_VR_ACCESSIBILITY_SMOOTH_ROTATION", subtitlesLabel);
+            
+            smoothRotationLabel.PosY = posY;
+            
+            smoothRotationLabel.SetText(0, VRMenuLocalization.GetText("menuitem.smoothRotation.label"));
+            smoothRotationLabel.SetText(1, VRMenuLocalization.GetText("menuitem.smoothRotation.description"));
+            
+            return smoothRotationLabel;
+        }
+        
+        private AbstractMenuItemInstance CreateSmoothRotationSpeedSlider(AbstractMenuInstance gameMenu, int posY)
+        {
+            var mouseSlider = gameMenu.FindMenuItem("MENUITEM_MSENSITIVITY_SLIDER", out _);
+            var smoothRotationSetting = new MutableMenuItemInstance("MENUITEM_UNZENITY_OPT_VR_ACCESSIBILITY_SMOOTH_ROTATION_SLIDER", mouseSlider);
+
+            smoothRotationSetting.PosY = posY;
+
+            smoothRotationSetting.SetUserFloat(0, VRConstants.SmoothTurnSettingAmount);
+            smoothRotationSetting.OnChgSetOption = VRConstants.IniNames.SmoothRotationAmount;
+            smoothRotationSetting.OnChgSetOptionSection = VRConstants.IniSectionAccessibility;
+            
+            return smoothRotationSetting;
+        }
+
+        private MutableMenuItemInstance CreateSmoothSpectatorLabel(AbstractMenuInstance gameMenu, int posY)
         {
             var subtitlesLabel = gameMenu.FindMenuItem("MENUITEM_GAME_SUB_TITLES", out _);
             var smoothingLabel= new MutableMenuItemInstance("MENUITEM_UNZENITY_OPT_VR_ACCESSIBILITY_SMOOTHSPECTATOR", subtitlesLabel);
+            
+            smoothingLabel.PosY = posY;
+            
             smoothingLabel.SetText(0, VRMenuLocalization.GetText("menuitem.smooth.label"));
             smoothingLabel.SetText(1, VRMenuLocalization.GetText("menuitem.smooth.description"));
             
             return smoothingLabel;
         }
         
-        private MutableMenuItemInstance CreateSmoothSpectatorChoicebox(AbstractMenuInstance gameMenu)
+        private MutableMenuItemInstance CreateSmoothSpectatorChoicebox(AbstractMenuInstance gameMenu, int posY)
         {
             var subtitlesChoice = gameMenu.FindMenuItem("MENUITEM_GAME_SUB_TITLES_CHOICE", out _);
             var smoothingSetting = new MutableMenuItemInstance("MENUITEM_UNZENITY_OPT_VR_ACCESSIBILITY_SMOOTHSPECTATOR_CHOICE", subtitlesChoice);
+
+            smoothingSetting.PosY = posY;
+
             smoothingSetting.SetText(0, VRMenuLocalization.GetText("menuitem.smooth.value"));
             smoothingSetting.OnChgSetOption = VRConstants.IniNames.SmoothSpectator;
             smoothingSetting.OnChgSetOptionSection = VRConstants.IniSectionAccessibility;

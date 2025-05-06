@@ -39,6 +39,9 @@ namespace GUZ.Core.Globals
             public static int MaxUserVars => GameData.MenuVm.GetSymbolInt("MAX_USERVARS");
             
             public static string BackPic => GameData.MenuVm.GetSymbolString("MENU_BACK_PIC");
+
+            public static int MenuStartY => GameData.MenuVm.GetSymbolInt("MENU_START_Y");
+            public static int MenuDY => GameData.MenuVm.GetSymbolInt("MENU_DY");
         }
         
         public static class Daedalus

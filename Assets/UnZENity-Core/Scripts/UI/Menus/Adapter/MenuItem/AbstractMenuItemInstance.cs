@@ -43,6 +43,8 @@ namespace GUZ.Core.UI.Menus.Adapter.MenuItem
         public abstract void SetOnSelActionS(int i, string actionS);
         public abstract int GetOnEventAction(MenuItemEventAction i);
         public abstract float GetUserFloat(int i);
+        public abstract void SetUserFloat(int i, float value);
         public abstract string GetUserString(int i);
+        public abstract void SetUserString(int i, string text);
     }
 }

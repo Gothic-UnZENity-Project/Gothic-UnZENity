@@ -189,9 +189,19 @@ namespace GUZ.Core.UI.Menus.Adapter.MenuItem
             return _menuItemInstance.GetUserFloat(i);
         }
 
+        public override void SetUserFloat(int i, float value)
+        {
+            _menuItemInstance.SetUserFloat(i, value);
+        }
+
         public override string GetUserString(int i)
         {
             return _menuItemInstance.GetUserString(i);
+        }
+
+        public override void SetUserString(int i, string text)
+        {
+            _menuItemInstance.SetUserString(i, text);
         }
     }
 }
