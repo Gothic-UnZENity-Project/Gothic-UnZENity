@@ -14,7 +14,7 @@ namespace GUZ.Core.Config
         public readonly string IniFilePath;
 
         // GAME
-        public bool IniSubtitles => Convert.ToBoolean(_config.GetValueOrDefault("subTitles", "1"));
+        public bool IniSubtitles => Convert.ToBoolean(Convert.ToInt16(_config.GetValueOrDefault("subTitles", "1")));
         public bool IniPlayLogoVideos => Convert.ToBoolean(Convert.ToInt16(_config.GetValueOrDefault("playLogoVideos", "1")));
 
         // SOUND
