@@ -98,6 +98,7 @@ namespace GUZ.VR.Components
             if (_vrCameraTransform == null)
                 return;
 
+            transform.position = _vrCameraTransform.position;
             transform.rotation = Quaternion.Slerp(
                 transform.rotation,
                 _vrCameraTransform.rotation,
