@@ -105,6 +105,17 @@ namespace GUZ.Core.Animations
             track.BoneNames = modelAnimation.NodeIndices
                 .Select(nodeIndex => modelHierarchy.Nodes[nodeIndex].Name)
                 .ToArray();
+            
+            track.BoneNamesDictionary = new Dictionary<string, int>(modelAnimation.NodeCount);
+            // Store the actual node indices used by this animation
+            var animationNodeIndices = modelAnimation.NodeIndices.ToArray(); 
+            for (int i = 0; i < animationNodeIndices.Length; i++)
+            {
+                var actualNodeIndex = animationNodeIndices[i];
+                var boneName = modelHierarchy.Nodes[actualNodeIndex].Name;
+                // Map bone name to its index within this animation track's bone list (0 to BoneCount-1)
+                track.BoneNamesDictionary.Add(boneName, i); 
+            }
 
             // Process animation samples
             track.BoneCount = modelAnimation.NodeCount;

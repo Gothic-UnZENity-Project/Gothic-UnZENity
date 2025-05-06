@@ -47,6 +47,7 @@ namespace GUZ.Core.Animations
         public List<IEventCameraTremor> CameraTremors => _animation.CameraTremors;
 
         public string[] BoneNames;
+        public Dictionary<string, int> BoneNamesDictionary; // this exists as it's faster to search in a dict instead of linear array search
         public int BoneCount;
         public int FrameCount;
         public AnimationKeyFrame[] KeyFrames;

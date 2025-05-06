@@ -475,7 +475,7 @@ namespace GUZ.Core.Animations
 
         public int GetBoneIndex(string boneName)
         {
-            return Track.BoneNames.IndexOfItem(boneName);
+            return Track.BoneNamesDictionary.GetValueOrDefault(boneName, -1);
         }
 
         [CanBeNull]
