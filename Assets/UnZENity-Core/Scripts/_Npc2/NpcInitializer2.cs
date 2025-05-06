@@ -120,6 +120,7 @@ namespace GUZ.Core._Npc2
             // Inside Startup.d, it's always STARTUP_{MAPNAME} and INIT_{MAPNAME}
             // FIXME - Inside Startup.d some Startup_*() functions also call Init_*() some not. How to handle properly? (Force calling it here? Even if done twice?)
             GameData.GothicVm.Call($"STARTUP_{GameGlobals.SaveGame.CurrentWorldName.ToUpper().RemoveEnd(".ZEN")}");
+            GameData.GothicVm.Call($"INIT_{GameGlobals.SaveGame.CurrentWorldName.ToUpper().RemoveEnd(".ZEN")}"); // call init as well, as per opengothic
         }
 
         /// <summary>
