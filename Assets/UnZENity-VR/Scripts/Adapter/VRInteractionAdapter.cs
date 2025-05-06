@@ -27,6 +27,7 @@ namespace GUZ.VR.Adapter
         public VRInteractionAdapter()
         {
             GlobalEventDispatcher.LoadingSceneLoaded.AddListener(OnLoadingSceneLoaded);
+            GlobalEventDispatcher.GothicInisInitialized.AddListener(() => _playerController.SetNormalControls());
         }
 
         public string GetContextName()
@@ -65,15 +66,7 @@ namespace GUZ.VR.Adapter
             // world scene and removed whenever we change the world.
             SceneManager.MoveGameObjectToScene(go, scene);
 
-            if (scene.name is Constants.SceneMainMenu or Constants.SceneLoading)
-            {
-                _playerController.SetLockedControls();
-            }
-            // Normal game
-            else
-            {
-                _playerController.SetNormalControls();
-            }
+            _playerController.SetNormalControls(true);
 
             return _playerController.gameObject;
         }

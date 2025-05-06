@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace GUZ.Core.Manager
 {
+    [Obsolete("Use GameGlobals.Config.Gothic.Get*() instead")]
     public class PlayerPrefsManager
     {
         // Movement - Direction

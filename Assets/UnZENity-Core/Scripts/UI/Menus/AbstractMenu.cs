@@ -283,7 +283,8 @@ namespace GUZ.Core.UI.Menus
             {
                 // We try to load setting from Ini file.
                 var entries = text0.Split("|");
-                var entryIndex = GameGlobals.Config.Gothic.GetInt(item.OnChgSetOption);
+                var defaultIfNoIniExists = (int)item.GetUserFloat(3);
+                var entryIndex = GameGlobals.Config.Gothic.GetInt(item.OnChgSetOption, defaultIfNoIniExists);
                 // We need to ensure that we're not out-of-bounds.
                 text0 = entryIndex >= entries.Length ? entries[0] : entries[entryIndex];
             }
@@ -302,7 +303,8 @@ namespace GUZ.Core.UI.Menus
             slider.wholeNumbers = true;
 
             var stepAmount = 1 / (item.GetUserFloat(0)); // -1 as we use elements from 0...15
-            var currentIniValue = GameGlobals.Config.Gothic.GetFloat(item.OnChgSetOption);
+            var defaultIfNoIniExists = item.GetUserFloat(3) != 0 ? item.GetUserFloat(3) : 1;
+            var currentIniValue = GameGlobals.Config.Gothic.GetFloat(item.OnChgSetOption, defaultIfNoIniExists);
             
             // Convert INI value (0...1) to slider value (1...maxValue)
             var sliderValue = Mathf.Round(currentIniValue / stepAmount) + 1; // +1, as minValue == 1, not zero

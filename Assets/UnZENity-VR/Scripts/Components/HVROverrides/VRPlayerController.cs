@@ -47,12 +47,29 @@ namespace GUZ.VR.Components.HVROverrides
         /// <summary>
         /// Used in game scenes where you play the game (world.unity, ...)
         /// </summary>
-        public void SetNormalControls()
+        public void SetNormalControls(bool useDefaultValues = false)
         {
-            DirectionStyle = (PlayerDirectionMode)PlayerPrefsManager.DirectionMode;
-            RotationType = (RotationType)PlayerPrefsManager.RotationType;
-            SnapAmount = PlayerPrefsManager.SnapRotationAmount;
-            SmoothTurnSpeed = PlayerPrefsManager.SmoothRotationSpeed;
+            // We have our player created before Gothic inis are loaded. We therefore need to set some default values.
+            if (useDefaultValues)
+            {
+                DirectionStyle = PlayerDirectionMode.Camera;
+                RotationType = RotationType.Snap;
+                SnapAmount = 45f;
+                SmoothTurnSpeed = 90f;
+
+                return;
+            }
+            
+            DirectionStyle = (PlayerDirectionMode)GameGlobals.Config.Gothic.GetInt(VRConstants.IniNames.MoveDirection, (int)PlayerDirectionMode.Camera);
+            RotationType = (RotationType)GameGlobals.Config.Gothic.GetInt(VRConstants.IniNames.RotationType, (int)RotationType.Smooth);
+
+            var snapSetting = GameGlobals.Config.Gothic.GetInt(VRConstants.IniNames.SnapRotationAmount, VRConstants.SnapRotationDefaultValue);
+            // e.g., 20° = 5° + 3*5°
+            SnapAmount = VRConstants.SnapRotationAmountSettingTickAmount + VRConstants.SnapRotationAmountSettingTickAmount * snapSetting;
+            
+            var smoothSetting = GameGlobals.Config.Gothic.GetFloat(VRConstants.IniNames.SmoothRotationSpeed, VRConstants.SmoothRotationDefaultValue);
+            // e.g., 50 = 5 + 90 * 0.5f
+            SmoothTurnSpeed = VRConstants.SmoothRotationMinSpeed + VRConstants.SmoothRotationMaxAdditionalSpeed * smoothSetting;
         }
 
         /// <summary>
@@ -79,7 +96,13 @@ namespace GUZ.VR.Components.HVROverrides
         private void OnPlayerPrefsUpdated(string preferenceKey, object value)
         {
             // Just update everything.
-            SetNormalControls();
+            if (preferenceKey == VRConstants.IniNames.MoveDirection ||
+                preferenceKey == VRConstants.IniNames.RotationType ||
+                preferenceKey == VRConstants.IniNames.SnapRotationAmount ||
+                preferenceKey == VRConstants.IniNames.SmoothRotationSpeed)
+            {
+                SetNormalControls();
+            }
         }
 
         /// <summary>
