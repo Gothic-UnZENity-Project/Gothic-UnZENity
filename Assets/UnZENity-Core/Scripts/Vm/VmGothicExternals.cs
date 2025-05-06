@@ -145,6 +145,8 @@ namespace GUZ.Core.Vm
             vm.RegisterExternal<int, NpcInstance>("Npc_GetTarget", Npc_GetTarget);
             vm.RegisterExternal<NpcInstance, NpcInstance>("Npc_SetTarget", Npc_SetTarget);
             vm.RegisterExternal<NpcInstance, int, NpcInstance, NpcInstance>("Npc_SendPassivePerc", Npc_SendPassivePerc);
+            vm.RegisterExternal<int, NpcInstance, int>("Npc_SetTrueGuild", Npc_SetTrueGuild);
+            vm.RegisterExternal<int, NpcInstance>("Npc_GetTrueGuild", Npc_GetTrueGuild);
 
             // Print
             vm.RegisterExternal<string>("PrintDebug", PrintDebug);
@@ -862,6 +864,17 @@ namespace GUZ.Core.Vm
         public static void Npc_SendPassivePerc(NpcInstance npc, int perc,NpcInstance victim, NpcInstance other)
         {
             GameGlobals.NpcAi.Npc_SendPassivePerc(npc, (VmGothicEnums.PerceptionType)perc, victim, other);
+        }        
+        
+        public static int Npc_SetTrueGuild(NpcInstance npc, int guild)
+        {
+            GameGlobals.NpcAi.Npc_SetTrueGuild(npc, guild);
+            return 0;
+        }       
+        
+        public static int Npc_GetTrueGuild(NpcInstance npc)
+        {
+            return GameGlobals.NpcAi.Npc_GetTrueGuild(npc);
         }
 
         #endregion

@@ -402,6 +402,21 @@ namespace GUZ.Core._Npc2
             GameGlobals.NpcAi.ExecutePerception(perc, npc.GetUserData2().Props, npc, victim, other);
         }
 
+        public void Npc_SetTrueGuild(NpcInstance npc, int guild)
+        {
+            npc.GetUserData2().Props.TrueGuild = (VmGothicEnums.Guild) guild;
+        }
+
+        public int Npc_GetTrueGuild(NpcInstance npc)
+        {
+            var npcUserData = npc.GetUserData2();
+            var npcGuild  = npcUserData.Props.TrueGuild;
+
+            return npcGuild == 0 ? // No True Guild
+                npc.Guild : (int)npcGuild;
+        }
+        
+
         public void UpdateEnemyNpc(NpcInstance self)
         {
             var selfNpc = self.GetUserData2();

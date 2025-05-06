@@ -93,5 +93,7 @@ namespace GUZ.Core._Npc2
         // HINT: for attitudes between NPC we directly use the guild attitude
         public VmGothicEnums.Attitude Attitude = VmGothicEnums.Attitude.Neutral;
         public VmGothicEnums.Attitude TempAttitude = VmGothicEnums.Attitude.Neutral;
+
+        public VmGothicEnums.Guild TrueGuild;
     }
 }

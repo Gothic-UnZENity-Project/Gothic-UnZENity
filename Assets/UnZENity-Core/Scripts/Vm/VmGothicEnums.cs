@@ -216,5 +216,128 @@ namespace GUZ.Core.Vm
             Awake = 1,
             AwakeDoAiOnly = 2
         }
+
+        public enum Guild
+        {
+            GIL_NONE = 0, // (keine)
+            GIL_HUMAN = 1, // Special Guild -> To set Constants for ALL Human Guilds --> wird verwendet in Species.d
+            GIL_PAL = 1, // Paladin
+            GIL_MIL = 2, // Miliz
+            GIL_VLK = 3, // Bürger
+            GIL_KDF = 4, // Magier
+            GIL_NOV = 5, // Magier Novize
+            GIL_DJG = 6, // Drachenjäger
+            GIL_SLD = 7, // Söldner
+            GIL_BAU = 8, // Bauer
+            GIL_BDT = 9, // Bandit
+            GIL_STRF = 10, // Prisoner, Sträfling
+            GIL_DMT = 11, // Dementoren
+            GIL_OUT = 12, // Outlander (z.B. kleine Bauernhöfe)
+            GIL_PIR = 13, // Pirat
+            GIL_KDW = 14, // KDW
+            GIL_EMPTY_D = 15, // NICHT VERWENDEN!
+
+            //-----------------------------------------------
+            GIL_PUBLIC = 15, // für öffentliche Portalräume
+
+            //-----------------------------------------------
+            GIL_SEPERATOR_HUM = 16,
+            GIL_MEATBUG = 17,
+            GIL_SHEEP = 18,
+            GIL_GOBBO = 19, // Green Goblin / Black Goblin
+            GIL_GOBBO_SKELETON = 20,
+            GIL_SUMMONED_GOBBO_SKELETON = 21,
+            GIL_SCAVENGER = 22, // (bei Bedarf) Scavenger / Evil Scavenger /OrcBiter
+            GIL_GIANT_RAT = 23,
+            GIL_GIANT_BUG = 24,
+            GIL_BLOODFLY = 25,
+            GIL_WARAN = 26, // Waren / Feuerwaran
+            GIL_WOLF = 27, // Wolf / Warg
+            GIL_SUMMONED_WOLF = 28,
+            GIL_MINECRAWLER = 29, // Minecrawler / Minecrawler Warrior
+            GIL_LURKER = 30,
+            GIL_SKELETON = 31,
+            GIL_SUMMONED_SKELETON = 32,
+            GIL_SKELETON_MAGE = 33,
+            GIL_ZOMBIE = 34,
+            GIL_SNAPPER = 35, // Snapper / Dragon Snapper /Razor
+            GIL_SHADOWBEAST = 36, //Shadowbeast / Bloodhound
+            GIL_SHADOWBEAST_SKELETON = 37,
+            GIL_HARPY = 38,
+            GIL_STONEGOLEM = 39,
+            GIL_FIREGOLEM = 40,
+            GIL_ICEGOLEM = 41,
+            GIL_SUMMONED_GOLEM = 42,
+            GIL_DEMON = 43,
+            GIL_SUMMONED_DEMON = 44,
+            GIL_TROLL = 45, // Troll / Schwarzer Troll
+            GIL_SWAMPSHARK = 46, // (bei Bedarf)
+            GIL_DRAGON = 47, // Feuerdrache / Eisdrache / Felsdrache / Sumpfdrache / Untoter Drache
+            GIL_MOLERAT = 48, // Molerat
+            GIL_ALLIGATOR = 49,
+            GIL_SWAMPGOLEM = 50,
+            GIL_Stoneguardian = 51,
+            GIL_Gargoyle = 52,
+            GIL_Empty_A = 53,
+            GIL_SummonedGuardian = 54,
+            GIL_SummonedZombie = 55,
+            GIL_EMPTY_B = 56,
+            GIL_EMPTY_C = 57,
+            GIL_SEPERATOR_ORC = 58, // (ehem. 37)
+            GIL_ORC = 59, // Ork-Krieger / Ork-Shamane / Ork-Elite
+            GIL_FRIENDLY_ORC = 60, // Ork-Sklave / Ur-Shak
+            GIL_UNDEADORC = 61,
+            GIL_DRACONIAN = 62,
+            GIL_EMPTY_X = 63,
+            GIL_EMPTY_Y = 64,
+            GIL_EMPTY_Z = 65,
+            GIL_MAX = 66,
+
+            // Gothic 1 guilds
+            GIL_G1_NONE = GIL_NONE,
+            GIL_G1_HUMAN = GIL_HUMAN,
+            GIL_G1_EBR = 1, // Erzbaron
+            GIL_G1_GRD = 2, // Gardist
+            GIL_G1_STT = 3, // Schatten
+            GIL_G1_KDF = GIL_KDF,
+            GIL_G1_VLK = 5, // Buddler
+            GIL_G1_KDW = 6, // Wassermagier
+            GIL_G1_SLD = GIL_SLD,
+            GIL_G1_ORG = 8, // Bandit
+            GIL_G1_BAU = 9, // Bauer
+            GIL_G1_SFB = 10, // Schuerfer
+            GIL_G1_GUR = 11, // Guru
+            GIL_G1_NOV = 12, // Novize
+            GIL_G1_TPL = 13, // Templer
+            GIL_G1_DMB = 14, // Darkmagic Xardas
+            GIL_G1_BAB = 15, // Female
+            GIL_G1_SEPERATOR_HUM = GIL_SEPERATOR_HUM,
+            GIL_G1_WARAN = 17,
+            GIL_G1_SLF = 18, // Sleeper
+            GIL_G1_GOBBO = GIL_GOBBO,
+            GIL_G1_TROLL = 20,
+            GIL_G1_SNAPPER = 21,
+            GIL_G1_MINECRAWLER = 22,
+            GIL_G1_MEATBUG = 23,
+            GIL_G1_SCAVENGER = 24,
+            GIL_G1_DEMON = 25,
+            GIL_G1_WOLF = 26,
+            GIL_G1_SHADOWBEAST = 27,
+            GIL_G1_BLOODFLY = 28,
+            GIL_G1_SWAMPSHARK = 29,
+            GIL_G1_ZOMBIE = 30,
+            GIL_G1_UNDEADORC = 31,
+            GIL_G1_SKELETON = 32,
+            GIL_G1_ORCDOG = 33,
+            GIL_G1_MOLERAT = 34,
+            GIL_G1_GOLEM = 35,
+            GIL_G1_LURKER = 36,
+            GIL_G1_SEPERATOR_ORC = 37,
+            GIL_G1_ORCSHAMAN = 38,
+            GIL_G1_ORCWARROIR = 39,
+            GIL_G1_ORCSCOUT = 40,
+            GIL_G1_ORCSLAVE = 41,
+            GIL_G1_MAX = 42,
+        }
     }
 }
