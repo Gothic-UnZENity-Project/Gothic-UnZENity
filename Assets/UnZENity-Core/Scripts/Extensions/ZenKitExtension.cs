@@ -315,6 +315,10 @@ namespace GUZ.Core.Extensions
                 "$smalltalk23" => svm.Smalltalk23,
                 "$smalltalk24" => svm.Smalltalk24,
                 "$om" => svm.Om,
+                "$sc_heyturnaround" => svm.ScHeyTurnAround,
+                "$sc_heyturnaround02" => svm.ScHeyTurnAround02,
+                "$sc_heyturnaround03" => svm.ScHeyTurnAround03,
+                "$sc_heyturnaround04" => svm.ScHeyTurnAround04,
                 _ => null
             };
 
