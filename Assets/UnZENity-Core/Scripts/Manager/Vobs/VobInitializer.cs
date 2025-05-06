@@ -158,9 +158,8 @@ namespace GUZ.Core.Manager.Vobs
                     // TODO - We need to check if it's the case for a loaded game
                     ((IMover)vob).MoverState = (int)VmGothicEnums.MoverState.Closed;
 
-                    // For SaveGame comparison, we load our fallback Prefab and set VobProperties.
-                    // Remove it from here once we properly implement and handle it.
-                    CreateEmptyDefaultVob(vob, parent);
+                    // TODO - We need to implement animations for this vob type
+                    CreateDefaultMesh(vob, parent);
                     return;
                 case VirtualObjectType.zCPFXController:
                     // A Particle controller makes no sense without a visual to show.

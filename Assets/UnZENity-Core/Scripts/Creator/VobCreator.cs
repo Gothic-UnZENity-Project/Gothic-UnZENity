@@ -43,7 +43,6 @@ namespace GUZ.Core.Creator
             VirtualObjectType.zCVobSpot,
             VirtualObjectType.zCVobStartpoint,
             VirtualObjectType.oCTriggerChangeLevel,
-            VirtualObjectType.zCMover,
             VirtualObjectType.zCPFXController,
             VirtualObjectType.zCTriggerList,
             VirtualObjectType.zCVobLevelCompo
@@ -546,6 +545,9 @@ namespace GUZ.Core.Creator
                     break;
                 case VirtualObjectType.zCVobAnimate:
                     go = ResourceLoader.TryGetPrefabObject(PrefabType.VobAnimate);
+                    break;
+                case VirtualObjectType.zCMover:
+                    go = ResourceLoader.TryGetPrefabObject(PrefabType.VobMover);
                     break;
                 default:
                     go = ResourceLoader.TryGetPrefabObject(PrefabType.Vob);
