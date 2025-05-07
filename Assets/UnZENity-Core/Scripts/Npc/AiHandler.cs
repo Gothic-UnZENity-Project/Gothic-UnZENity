@@ -166,10 +166,11 @@ namespace GUZ.Core.Npc
                 GameGlobals.NpcAi.ExecutePerception(VmGothicEnums.PerceptionType.AssessPlayer, Properties, NpcInstance,null, (NpcInstance)GameData.GothicVm.GlobalHero);
             }
 
-            if(Properties.EnemyNpc != null)
-            {
-                GameGlobals.NpcAi.ExecutePerception(VmGothicEnums.PerceptionType.AssessEnemy, Properties, NpcInstance,null, Properties.EnemyNpc);
-            }
+            // FIXME - Throws a lot of errors and warnings when NPCs are nearby monsters (e.g. Bridge guard next to OC)
+            // if(Properties.EnemyNpc != null)
+            // {
+            //     GameGlobals.NpcAi.ExecutePerception(VmGothicEnums.PerceptionType.AssessEnemy, Properties, NpcInstance,null, Properties.EnemyNpc);
+            // }
 
 
             // FIXME - We need to add other active perceptions here:
