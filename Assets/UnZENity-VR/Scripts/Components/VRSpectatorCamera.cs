@@ -65,11 +65,6 @@ namespace GUZ.VR.Components
 
             SetSmoothness();
 
-            if (_spectatorCamera != null)
-            {
-                _spectatorCamera.cullingMask = _vrCameraTransform.GetComponent<Camera>().cullingMask;
-            }
-
             if (_vrCameraTransform != null)
             {
                 // Initialize position to avoid jumps at startup
