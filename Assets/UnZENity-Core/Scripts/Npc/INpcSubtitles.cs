@@ -1,4 +1,4 @@
-namespace GUZ.Core._Npc2
+namespace GUZ.Core.Npc
 {
     public interface INpcSubtitles
     {

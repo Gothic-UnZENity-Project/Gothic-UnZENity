@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using GUZ.Core.Caches;
 using GUZ.Core.Config;
+using GUZ.Core.Data.Container;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
@@ -17,16 +18,16 @@ using ZenKit.Daedalus;
 using Logger = GUZ.Core.Util.Logger;
 using Vector3 = System.Numerics.Vector3;
 
-namespace GUZ.Core._Npc2
+namespace GUZ.Core.Npc
 {
     /// <summary>
     /// Manage all NPC related calls a(Ext* engine calls and e.g. load Npcs at WorldSceneManager time)
     /// </summary>
-    public class NpcManager2
+    public class NpcManager
     {
         // Supporter class where the whole Init() logic is outsourced for better readability.
-        private NpcInitializer2 _initializer = new ();
-        private Queue<NpcLoader2> _objectsToInitQueue = new();
+        private NpcInitializer _initializer = new ();
+        private Queue<NpcLoader> _objectsToInitQueue = new();
 
         private static DaedalusVm _vm => GameData.GothicVm;
 
@@ -182,7 +183,7 @@ namespace GUZ.Core._Npc2
             props.Items[itemId] += amount;
         }
 
-        public NpcContainer2 GetHeroContainer()
+        public NpcContainer GetHeroContainer()
         {
             return ((NpcInstance)GameData.GothicVm.GlobalHero).GetUserData2();
         }
@@ -225,14 +226,14 @@ namespace GUZ.Core._Npc2
             vobNpc.Name = GameGlobals.Config.Gothic.PlayerInstanceName;
             vobNpc.Player = true;
 
-            var npcData = new NpcContainer2
+            var npcData = new NpcContainer
             {
                 Instance = heroInstance,
                 Vob = vobNpc,
                 Go = playerGo,
                 Props = new(),
                 // We need to set it now, as the normal "init" logic of the Awake function in this Comp won't work.
-                PrefabProps = playerGo.GetComponentInChildren<NpcPrefabProperties2>()
+                PrefabProps = playerGo.GetComponentInChildren<NpcPrefabProperties>()
             };
 
             npcData.PrefabProps.Head = Camera.main!.transform;
@@ -396,7 +397,7 @@ namespace GUZ.Core._Npc2
 
         public bool InitNpc(GameObject go, bool initImmediately = false)
         {
-            go.TryGetComponent(out NpcLoader2 loaderComp);
+            go.TryGetComponent(out NpcLoader loaderComp);
 
             if (loaderComp == null || loaderComp.IsLoaded)
             {

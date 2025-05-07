@@ -1,8 +1,9 @@
-using GUZ.Core._Npc2;
+using GUZ.Core.Animations;
 using GUZ.Core.Config;
 using GUZ.Core.Manager;
 using GUZ.Core.Manager.Culling;
 using GUZ.Core.Manager.Vobs;
+using GUZ.Core.Npc;
 using GUZ.Core.World;
 
 namespace GUZ.Core
@@ -24,8 +25,8 @@ namespace GUZ.Core
         public StationaryLightsManager Lights { get; }
         public StoryManager Story { get; }
         public VobManager Vobs { get; }
-        public NpcManager2 Npcs { get; }
-        public NpcAiManager2 NpcAi { get; }
+        public NpcManager Npcs { get; }
+        public NpcAiManager NpcAi { get; }
         public AnimationManager Animations { get; }
         public VobMeshCullingManager VobMeshCulling { get; }
         public NpcMeshCullingManager NpcMeshCulling { get; }

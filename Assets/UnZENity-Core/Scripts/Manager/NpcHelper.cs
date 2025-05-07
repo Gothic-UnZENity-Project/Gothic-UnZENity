@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using GUZ.Core._Npc2;
 using GUZ.Core.Caches;
+using GUZ.Core.Data.Container;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Properties;
@@ -135,7 +135,6 @@ namespace GUZ.Core.Manager
             var npc = GetProperties(npcInstance);
             var npcPos = npcInstance.GetUserData2().Go.transform.position;
 
-            // FIXME - Add Guild check
             // FIXME - add range check based on perceiveAll's range (npc.sense_range)
             var foundNpc = MultiTypeCache.NpcCache2
                 .Where(i => i.Props != null) // ignore empty (safe check)
@@ -147,6 +146,7 @@ namespace GUZ.Core.Manager
                 .Where(i => specificNpcIndex < 0 ||
                             specificNpcIndex == i.Instance.Index) // Specific NPC is found right now?
                 .Where(i => aiState < 0 || npc.State == i.Props.State)
+                .Where(i => i.Instance.Guild == guild) // check guild
                 .OrderBy(i => Vector3.Distance(i.Go.transform.position, npcPos)) // get nearest
                 .FirstOrDefault();
 
@@ -210,14 +210,14 @@ namespace GUZ.Core.Manager
             return GetProperties(npc).Talents[(VmGothicEnums.Talent)skillId];
         }
 
-        public static VmGothicEnums.Attitude GetPersonAttitude(NpcContainer2 self, NpcContainer2 other)
+        public static VmGothicEnums.Attitude GetPersonAttitude(NpcContainer self, NpcContainer other)
         {
             if (!self.PrefabProps.IsHero() && !other.PrefabProps.IsHero())
             {
                 return GetGuildAttitude(self.Vob.GuildTrue, other.Vob.Guild);
             }
 
-            NpcContainer2 npc = self.PrefabProps.IsHero() ? other : self;
+            NpcContainer npc = self.PrefabProps.IsHero() ? other : self;
             
             if(npc.Props.TempAttitude != npc.Props.Attitude)
             {
@@ -238,12 +238,12 @@ namespace GUZ.Core.Manager
             return npc.GetUserData2().Go;
         }
 
-        private static NpcContainer2 GetContainer(NpcInstance npc)
+        private static NpcContainer GetContainer(NpcInstance npc)
         {
             return npc.GetUserData2();
         }
 
-        private static NpcProperties2 GetProperties([CanBeNull] NpcInstance npc)
+        private static NpcProperties GetProperties([CanBeNull] NpcInstance npc)
         {
             return npc?.GetUserData2().Props;
         }
@@ -251,8 +251,9 @@ namespace GUZ.Core.Manager
         // FIXME - CanSense is not separating between smell, hear, and see as of now. Please add functionality.
         public static bool CanSenseNpc(NpcInstance self, NpcInstance other, bool freeLOS)
         {
-            var senseRange = (self.SensesRange/1000) * (self.SensesRange / 1000); // daedalus values are in cm, we need them in m
-            var range = Vector3.Distance(other.GetUserData2().Go.transform.position, self.GetUserData2().Go.transform.position);
+            var senseRange = (self.SensesRange / 100); // daedalus values are in cm, we need them in m
+            var range = Vector3.Distance(other.GetUserData2().Go.transform.position,
+                self.GetUserData2().Go.transform.position);
             if (range > senseRange)
             {
                 return false;

@@ -1,5 +1,4 @@
-using GUZ.Core._Npc2;
-using GUZ.Core.Creator;
+using GUZ.Core.Data.Container;
 
 namespace GUZ.Core.Npc.Actions.AnimationActions
 {
@@ -7,7 +6,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
     {
         private string _animName => Action.String0;
 
-        public PlayAni(AnimationAction action, NpcContainer2 npcContainer) : base(action, npcContainer)
+        public PlayAni(AnimationAction action, NpcContainer npcContainer) : base(action, npcContainer)
         {
         }
 

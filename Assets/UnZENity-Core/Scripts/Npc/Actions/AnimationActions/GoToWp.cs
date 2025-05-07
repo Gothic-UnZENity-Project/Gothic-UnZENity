@@ -1,6 +1,5 @@
 using System.Collections.Generic;
-using GUZ.Core._Npc2;
-using GUZ.Core.Data.ZkEvents;
+using GUZ.Core.Data.Container;
 using GUZ.Core.Manager;
 using GUZ.Core.Vob.WayNet;
 using GUZ.Core.World;
@@ -14,7 +13,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
 
         private Stack<DijkstraWaypoint> _route;
 
-        public GoToWp(AnimationAction action, NpcContainer2 npcContainer) : base(action, npcContainer)
+        public GoToWp(AnimationAction action, NpcContainer npcContainer) : base(action, npcContainer)
         {
         }
 

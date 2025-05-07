@@ -1,12 +1,10 @@
 using System.Linq;
-using GUZ.Core._Npc2;
 using GUZ.Core.Creator;
 using GUZ.Core.Creator.Sounds;
+using GUZ.Core.Data.Container;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
-using GUZ.Core.Manager;
 using UnityEngine;
-using ZenKit.Daedalus;
 using Random = UnityEngine.Random;
 
 namespace GUZ.Core.Npc.Actions.AnimationActions
@@ -21,7 +19,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
         private string _randomDialogAnimationName;
 
 
-        public Output(AnimationAction action, NpcContainer2 npcContainer) : base(action, npcContainer)
+        public Output(AnimationAction action, NpcContainer npcContainer) : base(action, npcContainer)
         { }
 
         public override void Start()

@@ -418,6 +418,26 @@ namespace GUZ.Core.Animations
             }
         }
 
+        private void ProcessBoneStateChange(string boneName, AnimationState targetState, float blendTime,
+                                             AnimationState conditionState, ref int counter)
+        {
+            // Use the dictionary for efficient bone index lookup
+            if (!Track.BoneNamesDictionary.TryGetValue(boneName, out var boneIndex))
+            {
+                return;
+            }
+
+            // Check if the bone is currently in the specified condition state and decrement counter if so
+            if (BoneStates[boneIndex] == conditionState)
+            {
+                counter--;
+            }
+
+            // Update the bone's state and blend time
+            BoneStates[boneIndex] = targetState;
+            BoneBlendTimes[boneIndex] = blendTime;
+        }
+
         public void BlendOutBones(string[] boneNames, float blendOutTime)
         {
             // Skip partial BlendOut if we're already blending out.
@@ -426,22 +446,10 @@ namespace GUZ.Core.Animations
                 return;
             }
 
-            for (var i = 0; i < boneNames.Length; i++)
+            foreach (var boneName in boneNames)
             {
-                var boneName = boneNames[i];
-                var boneIndex = Track.BoneNames.IndexOfItem(boneName);
-
-                if (boneIndex == -1)
-                {
-                    continue;
-                }
-
-                if (BoneStates[boneIndex] == AnimationState.Play)
-                {
-                    BoneAmountStatePlay--;
-                }
-                BoneStates[boneIndex] = AnimationState.BlendOut;
-                BoneBlendTimes[boneIndex] = blendOutTime;
+                ProcessBoneStateChange(boneName, AnimationState.BlendOut, blendOutTime,
+                                       AnimationState.Play, ref BoneAmountStatePlay);
             }
         }
 
@@ -453,29 +461,16 @@ namespace GUZ.Core.Animations
                 return;
             }
 
-            for (var i = 0; i < boneNames.Length; i++)
+            foreach (var boneName in boneNames)
             {
-                var boneName = boneNames[i];
-                var boneIndex = Track.BoneNames.IndexOfItem(boneName);
-
-                if (boneIndex == -1)
-                {
-                    continue;
-                }
-
-                if (BoneStates[boneIndex] == AnimationState.Stop)
-                {
-                    BoneAmountStateStop--;
-                }
-
-                BoneStates[boneIndex] = AnimationState.BlendIn;
-                BoneBlendTimes[boneIndex] = blendInTime;
+                ProcessBoneStateChange(boneName, AnimationState.BlendIn, blendInTime,
+                                       AnimationState.Stop, ref BoneAmountStateStop);
             }
         }
 
         public int GetBoneIndex(string boneName)
         {
-            return Track.BoneNames.IndexOfItem(boneName);
+            return Track.BoneNamesDictionary.GetValueOrDefault(boneName, -1);
         }
 
         [CanBeNull]

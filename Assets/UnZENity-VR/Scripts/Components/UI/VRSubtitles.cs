@@ -1,6 +1,5 @@
 ﻿#if GUZ_HVR_INSTALLED
 using GUZ.Core;
-using GUZ.Core._Npc2;
 using GUZ.Core.Npc;
 using TMPro;
 using UnityEngine;

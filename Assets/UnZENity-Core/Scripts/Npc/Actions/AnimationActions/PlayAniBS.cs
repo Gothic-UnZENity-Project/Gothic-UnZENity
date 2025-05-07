@@ -1,5 +1,4 @@
-using GUZ.Core._Npc2;
-using GUZ.Core.Creator;
+using GUZ.Core.Data.Container;
 using GUZ.Core.Vm;
 
 namespace GUZ.Core.Npc.Actions.AnimationActions
@@ -9,7 +8,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
         private VmGothicEnums.BodyState _bodyState => (VmGothicEnums.BodyState)Action.Int0;
 
 
-        public PlayAniBs(AnimationAction action, NpcContainer2 npcContainer) : base(action, npcContainer)
+        public PlayAniBs(AnimationAction action, NpcContainer npcContainer) : base(action, npcContainer)
         {
         }
 

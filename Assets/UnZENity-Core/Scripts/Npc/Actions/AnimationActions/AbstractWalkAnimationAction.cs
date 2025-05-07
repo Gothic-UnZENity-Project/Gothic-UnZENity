@@ -1,13 +1,10 @@
 using System;
-using GUZ.Core._Npc2;
-using GUZ.Core.Creator;
-using GUZ.Core.Data.ZkEvents;
+using GUZ.Core.Data.Container;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
 using GUZ.Core.Util;
 using GUZ.Core.Vm;
 using UnityEngine;
-using ZenKit.Daedalus;
 using Logger = GUZ.Core.Util.Logger;
 
 namespace GUZ.Core.Npc.Actions.AnimationActions
@@ -26,7 +23,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
 
         protected WalkState State = WalkState.Initial;
 
-        protected AbstractWalkAnimationAction(AnimationAction action, NpcContainer2 npcContainer) : base(action, npcContainer)
+        protected AbstractWalkAnimationAction(AnimationAction action, NpcContainer npcContainer) : base(action, npcContainer)
         {
         }
 

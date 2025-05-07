@@ -1,8 +1,6 @@
 using System;
 using System.Linq;
-using GUZ.Core._Npc2;
-using GUZ.Core.Creator;
-using GUZ.Core.Data.ZkEvents;
+using GUZ.Core.Data.Container;
 using GUZ.Core.Extensions;
 using GUZ.Core.Manager;
 using GUZ.Core.Properties;
@@ -23,7 +21,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
 
         private bool IsStopUsingMob => Action.Int0 <= -1;
 
-        public UseMob(AnimationAction action, NpcContainer2 npcContainer) : base(action, npcContainer)
+        public UseMob(AnimationAction action, NpcContainer npcContainer) : base(action, npcContainer)
         {
         }
 

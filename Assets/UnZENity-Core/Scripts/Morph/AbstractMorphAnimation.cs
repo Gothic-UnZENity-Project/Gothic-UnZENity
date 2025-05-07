@@ -41,9 +41,9 @@ namespace GUZ.Core.Morph
         protected virtual void Start()
         {
             // As we don't set component inside Prefab, we need to assign mesh later at runtime.
-            if (_mesh == null)
+            if (_mesh == null && TryGetComponent<MeshFilter>(out var meshFilter))
             {
-                _mesh = GetComponent<MeshFilter>().mesh;
+                _mesh = meshFilter.mesh;
             }
         }
 

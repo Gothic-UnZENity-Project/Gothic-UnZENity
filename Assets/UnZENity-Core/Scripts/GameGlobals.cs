@@ -1,8 +1,9 @@
-using GUZ.Core._Npc2;
+using GUZ.Core.Animations;
 using GUZ.Core.Config;
 using GUZ.Core.Manager;
 using GUZ.Core.Manager.Culling;
 using GUZ.Core.Manager.Vobs;
+using GUZ.Core.Npc;
 using GUZ.Core.World;
 
 namespace GUZ.Core
@@ -25,8 +26,8 @@ namespace GUZ.Core
         public static FontManager Font => Instance.Font;
         public static StationaryLightsManager Lights => Instance.Lights;
         public static VobManager Vobs => Instance.Vobs;
-        public static NpcManager2 Npcs => Instance.Npcs;
-        public static NpcAiManager2 NpcAi => Instance.NpcAi;
+        public static NpcManager Npcs => Instance.Npcs;
+        public static NpcAiManager NpcAi => Instance.NpcAi;
         public static AnimationManager Animations => Instance.Animations;
         public static VobMeshCullingManager VobMeshCulling => Instance.VobMeshCulling;
         public static NpcMeshCullingManager NpcMeshCulling => Instance.NpcMeshCulling;

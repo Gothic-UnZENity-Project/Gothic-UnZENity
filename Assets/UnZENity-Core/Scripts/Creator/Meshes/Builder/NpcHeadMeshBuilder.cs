@@ -1,5 +1,4 @@
 using System.Text.RegularExpressions;
-using GUZ.Core._Npc2;
 using GUZ.Core.Extensions;
 using GUZ.Core.Npc;
 using GUZ.Core.Util;
@@ -20,7 +19,7 @@ namespace GUZ.Core.Creator.Meshes.Builder
                 return RootGo;
             }
 
-            var npcContainer = RootGo.GetComponentInParent<NpcLoader2>().Npc.GetUserData2();
+            var npcContainer = RootGo.GetComponentInParent<NpcLoader>().Npc.GetUserData2();
 
             // Cache it f1or faster use during runtime
             npcContainer.PrefabProps.Head = headGo.transform;

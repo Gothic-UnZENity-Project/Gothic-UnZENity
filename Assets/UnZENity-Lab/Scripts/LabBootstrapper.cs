@@ -1,13 +1,13 @@
 using System.Collections;
 using GUZ.Core;
-using GUZ.Core._Npc2;
+using GUZ.Core.Animations;
 using GUZ.Core.Caches;
 using GUZ.Core.Config;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
 using GUZ.Core.Manager.Culling;
 using GUZ.Core.Manager.Vobs;
-using GUZ.Core.Util;
+using GUZ.Core.Npc;
 using GUZ.Core.Vm;
 using GUZ.Core.World;
 using GUZ.Lab.Handler;
@@ -42,7 +42,7 @@ namespace GUZ.Lab
         private FontManager _fontManager;
         private StoryManager _story;
         private VobManager _vobManager;
-        private NpcManager2 _npcManager;
+        private NpcManager _npcManager;
         private AnimationManager _animationManager;
         private SkyManager _skyManager;
         private GameTime _gameTime;
@@ -59,8 +59,8 @@ namespace GUZ.Lab
         public FontManager Font => _fontManager;
         public StationaryLightsManager Lights => null;
         public VobManager Vobs => _vobManager;
-        public NpcManager2 Npcs => _npcManager;
-        public NpcAiManager2 NpcAi => null;
+        public NpcManager Npcs => _npcManager;
+        public NpcAiManager NpcAi => null;
         public AnimationManager Animations => _animationManager;
         public VobMeshCullingManager VobMeshCulling => null;
         public NpcMeshCullingManager NpcMeshCulling => null;
@@ -104,7 +104,7 @@ namespace GUZ.Lab
             _npcRoutineManager = new RoutineManager(Config.Dev);
             _gameMusicManager = new MusicManager(Config.Dev);
             _videoManager = new VideoManager(Config.Dev);
-            _npcManager = new NpcManager2();
+            _npcManager = new NpcManager();
             _vobManager = new VobManager();
             _animationManager = new AnimationManager();
             _gameTime = new GameTime(Config.Dev, this);

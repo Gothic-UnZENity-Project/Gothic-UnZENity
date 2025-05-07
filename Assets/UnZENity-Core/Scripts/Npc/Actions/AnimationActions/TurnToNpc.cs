@@ -1,5 +1,4 @@
-using GUZ.Core._Npc2;
-using GUZ.Core.Data.ZkEvents;
+using GUZ.Core.Data.Container;
 using GUZ.Core.Extensions;
 using UnityEngine;
 
@@ -10,7 +9,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
         private int OtherId => Action.Int0;
         private int OtherIndex => Action.Int1;
 
-        public TurnToNpc(AnimationAction action, NpcContainer2 npcContainer) : base(action, npcContainer)
+        public TurnToNpc(AnimationAction action, NpcContainer npcContainer) : base(action, npcContainer)
         {
             PlayAnimation = false;
         }

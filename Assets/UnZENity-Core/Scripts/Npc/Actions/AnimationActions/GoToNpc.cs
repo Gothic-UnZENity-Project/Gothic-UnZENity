@@ -1,5 +1,4 @@
-using GUZ.Core._Npc2;
-using GUZ.Core.Data.ZkEvents;
+using GUZ.Core.Data.Container;
 using GUZ.Core.Extensions;
 using UnityEngine;
 
@@ -9,7 +8,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
     {
         private Transform _destinationTransform;
 
-        public GoToNpc(AnimationAction action, NpcContainer2 npcContainer) : base(action, npcContainer)
+        public GoToNpc(AnimationAction action, NpcContainer npcContainer) : base(action, npcContainer)
         {
         }
 

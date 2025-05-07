@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using GUZ.Core.Caches;
 using GUZ.Core.Creator.Meshes;
+using GUZ.Core.Data.Container;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
@@ -19,15 +19,15 @@ using Logger = GUZ.Core.Util.Logger;
 using Object = UnityEngine.Object;
 using WayPoint = GUZ.Core.Vob.WayNet.WayPoint;
 
-namespace GUZ.Core._Npc2
+namespace GUZ.Core.Npc
 {
     /// <summary>
     /// Wrapper for Initialization topics from NpcManager
     /// </summary>
-    public class NpcInitializer2
+    public class NpcInitializer
     {
         public GameObject RootGo;
-        private readonly List<(NpcContainer2 npc, string spawnPoint)> _tmpWldInsertNpcData = new();
+        private readonly List<(NpcContainer npc, string spawnPoint)> _tmpWldInsertNpcData = new();
 
         private static DaedalusVm Vm => GameData.GothicVm;
 
@@ -78,7 +78,7 @@ namespace GUZ.Core._Npc2
             _tmpWldInsertNpcData.Add((userDataObject, spawnPoint));
         }
 
-        private NpcContainer2 AllocZkInstance(ZenKit.Vobs.Npc vobNpc)
+        private NpcContainer AllocZkInstance(ZenKit.Vobs.Npc vobNpc)
         {
             var symbol = GameData.GothicVm.GetSymbolByName(vobNpc.Name);
             var userDataObject = AllocZkInstance(symbol.Index);
@@ -87,12 +87,12 @@ namespace GUZ.Core._Npc2
             return userDataObject;
         }
 
-        private NpcContainer2 AllocZkInstance(int npcInstanceIndex)
+        private NpcContainer AllocZkInstance(int npcInstanceIndex)
         {
             var npcSymbol = Vm.GetSymbolByIndex(npcInstanceIndex)!;
             var npcInstance = Vm.AllocInstance<NpcInstance>(npcSymbol);
 
-            var userDataObject = new NpcContainer2
+            var userDataObject = new NpcContainer
             {
                 Instance = npcInstance,
                 Props = new(),
@@ -120,6 +120,7 @@ namespace GUZ.Core._Npc2
             // Inside Startup.d, it's always STARTUP_{MAPNAME} and INIT_{MAPNAME}
             // FIXME - Inside Startup.d some Startup_*() functions also call Init_*() some not. How to handle properly? (Force calling it here? Even if done twice?)
             GameData.GothicVm.Call($"STARTUP_{GameGlobals.SaveGame.CurrentWorldName.ToUpper().RemoveEnd(".ZEN")}");
+            GameData.GothicVm.Call($"INIT_{GameGlobals.SaveGame.CurrentWorldName.ToUpper().RemoveEnd(".ZEN")}"); // call init as well, as per opengothic
         }
 
         /// <summary>
@@ -129,7 +130,7 @@ namespace GUZ.Core._Npc2
         {
             loading.SetPhase(LoadingManager.LoadingProgressType.Npc, _tmpWldInsertNpcData.Count);
 
-            foreach ((NpcContainer2 npc, string spawnPoint) element in _tmpWldInsertNpcData)
+            foreach ((NpcContainer npc, string spawnPoint) element in _tmpWldInsertNpcData)
             {
                 // Update the progress bar and check if we need to wait for the next frame now (As some conditions skip -continue- end of loop and would skip check)
                 loading.AddProgress();
@@ -166,7 +167,7 @@ namespace GUZ.Core._Npc2
         /// <summary>
         /// Initialize an NPC which is close to our hero in a save game.
         /// </summary>
-        private void SaveGameAddLazyLoadingNearby(NpcContainer2 npc, ZenKit.Vobs.Npc npcVob)
+        private void SaveGameAddLazyLoadingNearby(NpcContainer npc, ZenKit.Vobs.Npc npcVob)
         {
             var go = InitLazyLoadNpc(npc);
 
@@ -177,7 +178,7 @@ namespace GUZ.Core._Npc2
         /// <summary>
         /// Basically the same logic as SaveGameAddLazyLoadingNearby() but we use the Routine's WP to get the position from.
         /// </summary>
-        private void SaveGameAddLazyLoadingAnywhere(NpcContainer2 npc, string fallbackWayPoint)
+        private void SaveGameAddLazyLoadingAnywhere(NpcContainer npc, string fallbackWayPoint)
         {
             var go = InitLazyLoadNpc(npc);
 
@@ -204,19 +205,19 @@ namespace GUZ.Core._Npc2
         /// <summary>
         /// InitZkInstance and create a GameObject for the NPC to be loaded later.
         /// </summary>
-        public GameObject InitLazyLoadNpc(NpcContainer2 npc)
+        public GameObject InitLazyLoadNpc(NpcContainer npc)
         {
             InitZkInstance(npc);
             var go = new GameObject($"{npc.Instance.GetName(NpcNameSlot.Slot0)} ({npc.Instance.Id})");
             go.SetParent(RootGo);
 
-            var loader = go.AddComponent<NpcLoader2>();
+            var loader = go.AddComponent<NpcLoader>();
             loader.Npc = npc.Instance;
 
             return go;
         }
 
-        private void InitZkInstance(NpcContainer2 npc)
+        private void InitZkInstance(NpcContainer npc)
         {
             // As we have our back reference between NpcInstance and NpcData, we can now initialize the object on ZenKit side.
             // Lookups like Npc_SetTalentValue() will work now as NpcInstance.UserData() points to our object which stores the information.
@@ -262,7 +263,7 @@ namespace GUZ.Core._Npc2
         }
 
         [CanBeNull]
-        private WayNetPoint GetSpawnPoint(NpcContainer2 npc, string fallbackSpawnPoint)
+        private WayNetPoint GetSpawnPoint(NpcContainer npc, string fallbackSpawnPoint)
         {
             // Find the right spawn point based on the currently active routine.
             if (npc.Props.RoutineCurrent != null)

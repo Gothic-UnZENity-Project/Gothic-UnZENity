@@ -1,10 +1,10 @@
-using GUZ.Core._Npc2;
+using GUZ.Core.Data.Container;
 
 namespace GUZ.Core.Npc.Actions.AnimationActions
 {
     public class StartState : AbstractAnimationAction
     {
-        public StartState(AnimationAction action, NpcContainer2 npcContainer) : base(action, npcContainer)
+        public StartState(AnimationAction action, NpcContainer npcContainer) : base(action, npcContainer)
         {
         }
 

@@ -1,4 +1,4 @@
-using GUZ.Core._Npc2;
+using GUZ.Core.Data.Container;
 using GUZ.Core.Manager;
 using UnityEngine;
 
@@ -9,7 +9,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
         private Transform _destinationTransform;
         private string WaypointName => Action.String0;
 
-        public LookAt(AnimationAction action, NpcContainer2 npcContainer) : base(action, npcContainer)
+        public LookAt(AnimationAction action, NpcContainer npcContainer) : base(action, npcContainer)
         {
         }
 

@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using GUZ.Core._Npc2;
 using GUZ.Core.Animations;
 using GUZ.Core.Globals;
+using GUZ.Core.Npc;
 using UnityEditor;
 using UnityEngine;
 using AnimationState = GUZ.Core.Animations.AnimationState;
@@ -98,7 +98,7 @@ namespace GUZ.Core.Editor.Tools
                 // Add additional empty element to the Dictionary
                 _animationSystems = emptyElement
                     .Concat(FindObjectsOfType<AnimationSystem>()
-                        .Select(animComp => new { animComp.GetComponentInParent<NpcLoader2>().name, animComp }))
+                        .Select(animComp => new { animComp.GetComponentInParent<NpcLoader>().name, animComp }))
                     .ToDictionary(i => $"#{no++} - {i.name}", i => i.animComp); // We need to have a unique key for the Dict as e.g. Meatbug will be there multiple times.
             }
             GUI.backgroundColor = origBack;
@@ -107,7 +107,7 @@ namespace GUZ.Core.Editor.Tools
             {
                 if (_targetAnimationSystem != null)
                 {
-                    Selection.activeObject = _targetAnimationSystem.GetComponentInParent<NpcLoader2>();
+                    Selection.activeObject = _targetAnimationSystem.GetComponentInParent<NpcLoader>();
                 }
             }
             EditorGUILayout.EndHorizontal();

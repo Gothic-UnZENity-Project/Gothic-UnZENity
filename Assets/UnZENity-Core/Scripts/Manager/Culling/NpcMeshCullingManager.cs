@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using GUZ.Core._Npc2;
 using GUZ.Core.Config;
 using GUZ.Core.Creator;
 using GUZ.Core.Extensions;
@@ -78,7 +77,7 @@ namespace GUZ.Core.Manager.Culling
             var isInVisibleRange = evt.currentDistance == 0;
             var wasOutOfDistance = evt.previousDistance != 0;
 
-            var loaderComp = go.GetComponent<NpcLoader2>();
+            var loaderComp = go.GetComponent<NpcLoader>();
             var npcData = loaderComp.Npc.GetUserData2();
             var isInitialized = loaderComp.IsLoaded;
 

@@ -1,11 +1,10 @@
-using GUZ.Core._Npc2;
-using GUZ.Core.Npc.Routines;
+using GUZ.Core.Data.Container;
 
 namespace GUZ.Core.Npc.Actions.AnimationActions
 {
     public class ContinueRoutine : AbstractAnimationAction
     {
-        public ContinueRoutine(AnimationAction action, NpcContainer2 npcContainer) : base(action, npcContainer)
+        public ContinueRoutine(AnimationAction action, NpcContainer npcContainer) : base(action, npcContainer)
         {
         }
 

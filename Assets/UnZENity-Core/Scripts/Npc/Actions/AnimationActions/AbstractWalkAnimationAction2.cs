@@ -1,4 +1,4 @@
-using GUZ.Core._Npc2;
+using GUZ.Core.Data.Container;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
 using GUZ.Core.Util;
@@ -12,7 +12,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
     {
         protected Transform NpcTransform => NpcGo.transform;
 
-        protected AbstractWalkAnimationAction2(AnimationAction action, NpcContainer2 npcContainer) : base(action, npcContainer)
+        protected AbstractWalkAnimationAction2(AnimationAction action, NpcContainer npcContainer) : base(action, npcContainer)
         {
         }
 

@@ -1,49 +1,51 @@
-using System.Collections.Generic;
-using GUZ.Core.Data;
-using GUZ.Core.Data.Container;
-using GUZ.Core.Npc;
+﻿using System.Collections.Generic;
 using GUZ.Core.Npc.Actions.AnimationActions;
+using GUZ.Core.Npc.Routines;
 using GUZ.Core.Vm;
 using GUZ.Core.Vob.WayNet;
-using UnityEngine;
 using ZenKit.Daedalus;
 
 namespace GUZ.Core.Properties
 {
-    /// <summary>
-    /// This component is attached to the root of NPC/Monster prefab.
-    /// It's data is filled, whenever we call GothicVM.InitNpc(). This call triggers DaedalusVM to execute INSTANCE logic and we will fetch it with this object.
-    /// </summary>
-    public class NpcProperties : VobProperties
+    public class NpcProperties
     {
-        public NpcContainer NpcData;
-        public NpcInstance NpcInstance => NpcData.Instance;
+        // Misc
+        public List<InfoInstance> Dialogs = new();
+        public VmGothicEnums.WalkMode WalkMode;
 
-        public AudioSource NpcSound;
-        public Transform Bip01;
+        // Routines
+        public List<RoutineData> Routines = new();
+        public RoutineData RoutinePrevious;
+        public RoutineData RoutineCurrent;
 
-        public Transform ColliderRootMotion;
-
-        public Transform Head;
-        public HeadMorph HeadMorph;
-
+        // WayNet
         public WayPoint CurrentWayPoint;
         public FreePoint CurrentFreePoint;
 
-        public List<InfoInstance> Dialogs = new();
+        // NPC items/talents/...
+        public Dictionary<VmGothicEnums.Talent, int> Talents = new();
+        public VmGothicEnums.WeaponState WeaponState;
+
+        public List<ItemInstance> EquippedItems = new();
+        public Dictionary<uint, int> Items = new(); // itemId => amount
+        public string UsedItemSlot;
+        public bool HasItemEquipped;
+        public int CurrentItem = -1;
+        // We need to start with an "invalid" value as >0< is an allowed state value like in >t_Potion_Stand_2_S0<
+        public int ItemAnimationState = -1;
+
+        public int CurrentInteractableStateId = -1;
 
         // Visual
         public string MdmName;
-        public string BaseMdsName;
+        public string MdsNameBase;
+        public string MdsNameOverlay;
+        public string[] MdsNames => new[] { MdsNameBase, MdsNameOverlay };
 
-        public string OverlayMdsName;
+        // An MDS file has always an MDH file named identically
+        public string MdhNameBase => MdsNameBase;
+        public string MdhNameOverlay => MdsNameOverlay;
 
-        public string[] MdsNames => new[] { BaseMdsName, OverlayMdsName };
-        public string BaseMdhName => BaseMdsName;
-        public string OverlayMdhName => OverlayMdsName;
-        public string[] MdhNames => new[] { BaseMdhName, OverlayMdhName };
-
-        public List<ItemInstance> EquippedItems = new();
         public VmGothicExternals.ExtSetVisualBodyData BodyData;
 
         // Perceptions
@@ -51,51 +53,11 @@ namespace GUZ.Core.Properties
         public float PerceptionTime = 5f; // Default in seconds
         public float CurrentPerceptionTime;
 
-        // NPC items/talents/...
-        public Dictionary<VmGothicEnums.Talent, int> Talents = new();
-        public Dictionary<uint, int> Items = new(); // itemId => amount
 
+        // AI topics
 
-        public readonly Queue<AbstractAnimationAction> AnimationQueue = new();
-        public VmGothicEnums.WalkMode WalkMode;
-        public VmGothicEnums.WeaponState WeaponState;
-
-        // HINT: These information aren't set within Daedalus. We need to define them manually.
-        // HINT: i.e. every animation might have a BS. E.g. when AI_TakeItem() is called, we set BS.BS_TAKEITEM
-        public VmGothicEnums.BodyState BodyState;
-
-        public GameObject CurrentInteractable; // e.g. PSI_CAULDRON
-
-        public GameObject CurrentInteractableSlot; // e.g. ZS_0
-
-        public int CurrentInteractableStateId = -1;
-
-        public uint PrevStateStart;
-
-        // State itself always means start state function. Gothic assumes this when checking for aistate.
-        public int State => StateStart;
-
-        public int StateStart;
-        public int StateLoop;
-        public int StateEnd;
-
-        // State time is activated within AI_StartState()
-        // e.g. used to handle random wait loops for idle eating animations (eat a cheese only every n-m seconds)
-        public bool IsStateTimeActive;
-
-        public float StateTime;
-
-        public LoopState CurrentLoopState = LoopState.None;
-
-        public AbstractAnimationAction CurrentAction;
-
-        public bool HasItemEquipped;
-
-        public int CurrentItem = -1;
-        public string UsedItemSlot;
-
-        // We need to start with an "invalid" value as >0< is an allowed state value like in >t_Potion_Stand_2_S0<
-        public int ItemAnimationState = -1;
+        public NpcInstance EnemyNpc;
+        public NpcInstance TargetNpc;
 
         public enum LoopState
         {
@@ -105,10 +67,33 @@ namespace GUZ.Core.Properties
             End,
             AfterEnd
         }
+        public readonly Queue<AbstractAnimationAction> AnimationQueue = new();
 
-        public override string GetFocusName()
-        {
-            return NpcInstance.GetName(0);
-        }
+        // State itself always means start state function. Gothic assumes this when checking for aistate.
+        public int State => StateStart;
+        public uint PrevStateStart;
+
+        // HINT: This information isn't set within Daedalus. We need to define it manually.
+        // HINT: i.e. every animation might have a BS. E.g. when AI_TakeItem() is called, we set BS.BS_TAKEITEM
+        public VmGothicEnums.BodyState BodyState;
+
+        public int StateStart;
+        public int StateLoop;
+        public int StateEnd;
+
+        // State time is activated within AI_StartState()
+        // e.g. used to handle random wait loops for idle eating animations (eat a cheese only every n-m seconds)
+        public bool IsStateTimeActive;
+        public float StateTime;
+        public LoopState CurrentLoopState = LoopState.None;
+        public AbstractAnimationAction CurrentAction;
+        
+        // Attitudes
+        // HINT: These values are only used when checking the attitude towards the player
+        // HINT: for attitudes between NPC we directly use the guild attitude
+        public VmGothicEnums.Attitude Attitude = VmGothicEnums.Attitude.Neutral;
+        public VmGothicEnums.Attitude TempAttitude = VmGothicEnums.Attitude.Neutral;
+
+        public VmGothicEnums.Guild TrueGuild;
     }
 }

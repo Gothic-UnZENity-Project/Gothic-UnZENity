@@ -1,9 +1,7 @@
-using GUZ.Core._Npc2;
-using GUZ.Core.Data.ZkEvents;
+using GUZ.Core.Data.Container;
 using GUZ.Core.Manager;
 using GUZ.Core.Vob.WayNet;
 using UnityEngine;
-using ZenKit.Daedalus;
 
 namespace GUZ.Core.Npc.Actions.AnimationActions
 {
@@ -15,7 +13,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
 
         private FreePoint _freePoint;
 
-        public GoToFp(AnimationAction action, NpcContainer2 npcContainer) : base(action, npcContainer)
+        public GoToFp(AnimationAction action, NpcContainer npcContainer) : base(action, npcContainer)
         {
         }
 

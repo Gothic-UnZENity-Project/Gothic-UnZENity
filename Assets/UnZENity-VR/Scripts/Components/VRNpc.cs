@@ -1,9 +1,10 @@
 ﻿#if GUZ_HVR_INSTALLED
 using GUZ.Core;
-using GUZ.Core._Npc2;
+using GUZ.Core.Data.Container;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
+using GUZ.Core.Npc;
 using GUZ.Core.Vm;
 using HurricaneVR.Framework.Core;
 using HurricaneVR.Framework.Core.Grabbers;
@@ -14,11 +15,11 @@ namespace GUZ.VR.Components
 {
     public class VRNpc : MonoBehaviour
     {
-        private NpcContainer2 _npcData;
+        private NpcContainer _npcData;
 
         private void Awake()
         {
-            _npcData = GetComponentInParent<NpcLoader2>().Npc.GetUserData2();
+            _npcData = GetComponentInParent<NpcLoader>().Npc.GetUserData2();
         }
 
         public void OnGrabbed(HVRGrabberBase grabber, HVRGrabbable grabbable)

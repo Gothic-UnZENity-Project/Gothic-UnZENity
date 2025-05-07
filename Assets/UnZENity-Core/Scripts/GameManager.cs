@@ -1,5 +1,5 @@
 using System.Diagnostics;
-using GUZ.Core._Npc2;
+using GUZ.Core.Animations;
 using GUZ.Core.Caches;
 using GUZ.Core.Config;
 using GUZ.Core.Extensions;
@@ -8,6 +8,7 @@ using GUZ.Core.Manager;
 using GUZ.Core.Manager.Culling;
 using GUZ.Core.Manager.Scenes;
 using GUZ.Core.Manager.Vobs;
+using GUZ.Core.Npc;
 using GUZ.Core.Util;
 using GUZ.Core.World;
 using MyBox;
@@ -53,8 +54,8 @@ namespace GUZ.Core
         public StationaryLightsManager Lights { get; private set; }
 
         public VobManager Vobs { get; private set; }
-        public NpcManager2 Npcs { get; private set; }
-        public NpcAiManager2 NpcAi { get; private set; }
+        public NpcManager Npcs { get; private set; }
+        public NpcAiManager NpcAi { get; private set; }
         public AnimationManager Animations { get; private set; }
         public VobMeshCullingManager VobMeshCulling { get; private set; }
         public NpcMeshCullingManager NpcMeshCulling { get; private set; }
@@ -87,8 +88,8 @@ namespace GUZ.Core
             Loading = new LoadingManager();
             StaticCache = new StaticCacheManager();
             Vobs = new VobManager();
-            Npcs = new NpcManager2();
-            NpcAi = new NpcAiManager2();
+            Npcs = new NpcManager();
+            NpcAi = new NpcAiManager();
             Animations = new AnimationManager();
             VobMeshCulling = new VobMeshCullingManager(DeveloperConfig, this);
             NpcMeshCulling = new NpcMeshCullingManager(DeveloperConfig);
@@ -120,8 +121,8 @@ namespace GUZ.Core
             SceneManager.sceneLoaded += OnSceneLoaded;
             SceneManager.sceneUnloaded += OnSceneUnloaded;
 
-            ZenKit.Logger.Set(Config.Dev.ZenKitLogLevel, Util.Logger.OnZenKitLogMessage);
-            DirectMusic.Logger.Set(Config.Dev.DirectMusicLogLevel, Util.Logger.OnDirectMusicLogMessage);
+            ZenKit.Logger.Set(Config.Dev.ZenKitLogLevel, Logger.OnZenKitLogMessage);
+            DirectMusic.Logger.Set(Config.Dev.DirectMusicLogLevel, Logger.OnDirectMusicLogMessage);
 
             _fileLoggingHandler.Init(Config.Root);
             _frameSkipper.Init();

@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using GUZ.Core._Npc2;
 using GUZ.Core.Data;
+using GUZ.Core.Data.Container;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
+using GUZ.Core.Npc;
 using GUZ.Core.Npc.Actions;
 using GUZ.Core.Npc.Actions.AnimationActions;
+using GUZ.Core.Properties;
 using GUZ.Core.Util;
 using UnityEngine;
 using ZenKit.Daedalus;
@@ -36,7 +38,7 @@ namespace GUZ.Core.Manager
         /// initialDialogStarting - We only stop current AI routine if this is the first time the dialog box opens/NPC
         ///     talks important things. Otherwise, the ZS_*_End will get called every time we re-open a dialog in between.
         /// </summary>
-        public static void StartDialog(NpcContainer2 npcContainer, bool initialDialogStarting)
+        public static void StartDialog(NpcContainer npcContainer, bool initialDialogStarting)
         {
             if (initialDialogStarting)
             {
@@ -204,12 +206,12 @@ namespace GUZ.Core.Manager
             props.AnimationQueue.Enqueue(new StopProcessInfos(new AnimationAction(), npc.GetUserData2()));
         }
 
-        public static void MainSelectionClicked(NpcContainer2 npcContainer, InfoInstance infoInstance)
+        public static void MainSelectionClicked(NpcContainer npcContainer, InfoInstance infoInstance)
         {
             CallMainInformation(npcContainer, infoInstance);
         }
 
-        public static void SubSelectionClicked(NpcContainer2 npcContainer, int dialogId)
+        public static void SubSelectionClicked(NpcContainer npcContainer, int dialogId)
         {
             CallInformation(npcContainer, dialogId);
         }
@@ -217,7 +219,7 @@ namespace GUZ.Core.Manager
         /// <summary>
         /// Skip/Stop current Dialog's .wav entry now.
         /// </summary>
-        public static void SkipCurrentDialogLine(NpcProperties2 props)
+        public static void SkipCurrentDialogLine(NpcProperties props)
         {
 
             if (props.CurrentAction.GetType() == typeof(Output))
@@ -226,7 +228,7 @@ namespace GUZ.Core.Manager
             }
         }
 
-        public static void StopDialog(NpcContainer2 npc)
+        public static void StopDialog(NpcContainer npc)
         {
             GameData.Dialogs.CurrentDialog.Instance = null;
             GameData.Dialogs.CurrentDialog.Options.Clear();
@@ -245,7 +247,7 @@ namespace GUZ.Core.Manager
         /// <summary>
         /// A C_Info is clicked (main dialog entry)
         /// </summary>
-        private static void CallMainInformation(NpcContainer2 npcContainer, InfoInstance infoInstance)
+        private static void CallMainInformation(NpcContainer npcContainer, InfoInstance infoInstance)
         {
             // Set a new CurrentInstance for potential sub-dialog choices to fetch later.
             GameData.Dialogs.CurrentDialog.Instance = npcContainer.Props.Dialogs
@@ -259,7 +261,7 @@ namespace GUZ.Core.Manager
             CallInformation(npcContainer, infoInstance.Information);
         }
 
-        private static void CallInformation(NpcContainer2 npcContainer, int information)
+        private static void CallInformation(NpcContainer npcContainer, int information)
         {
             GameContext.DialogAdapter.HideDialog();
 
@@ -300,12 +302,12 @@ namespace GUZ.Core.Manager
             return npc.GetUserData2().Go;
         }
 
-        private static NpcContainer2 GetNpcContainer(NpcInstance npc)
+        private static NpcContainer GetNpcContainer(NpcInstance npc)
         {
             return npc.GetUserData2();
         }
 
-        private static NpcProperties2 GetProperties(NpcInstance npc)
+        private static NpcProperties GetProperties(NpcInstance npc)
         {
             return npc.GetUserData2().Props;
         }

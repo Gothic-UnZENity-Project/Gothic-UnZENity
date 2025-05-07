@@ -1,12 +1,11 @@
 using System.Collections;
 using GUZ.Core;
-using GUZ.Core._Npc2;
 using GUZ.Core.Animations;
 using GUZ.Core.Caches;
+using GUZ.Core.Data.Container;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Npc;
-using GUZ.Core.Properties;
 using GUZ.Core.Vm;
 using GUZ.Lab.Mocks;
 using UnityEngine;
@@ -39,7 +38,7 @@ namespace GUZ.Lab.Handler
             var animHeadHandler = npcRoot.GetComponent<NpcHeadAnimationHandler>();
 
             // For UseItemToState animations
-            var props = npcRoot.GetComponentInParent<NpcLoader2>().Npc.GetUserData2().Props;
+            var props = npcRoot.GetComponentInParent<NpcLoader>().Npc.GetUserData2().Props;
             var beerSymbol = GameData.GothicVm.GetSymbolByName("ItFoBeer");
             props.CurrentItem = beerSymbol!.Index;
 
@@ -122,14 +121,14 @@ namespace GUZ.Lab.Handler
         private void BootstrapBloodwyn()
         {
             var newNpc = new GameObject();
-            var loaderComp = newNpc.AddComponent<NpcLoader2>();
+            var loaderComp = newNpc.AddComponent<NpcLoader>();
 
             newNpc.SetParent(NpcSlotGo);
 
             var npcSymbol = GameData.GothicVm.GetSymbolByName(_bloodwynInstanceId)!;
             _bloodwynInstance = GameData.GothicVm.AllocInstance<NpcInstance>(npcSymbol);
 
-            var npcData = new NpcContainer2
+            var npcData = new NpcContainer
             {
                 Instance = _bloodwynInstance,
                 Props = new()

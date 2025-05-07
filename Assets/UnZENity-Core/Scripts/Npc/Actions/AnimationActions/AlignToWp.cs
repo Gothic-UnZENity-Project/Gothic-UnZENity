@@ -1,5 +1,5 @@
 using System;
-using GUZ.Core._Npc2;
+using GUZ.Core.Data.Container;
 using GUZ.Core.Util;
 using UnityEngine;
 using Logger = GUZ.Core.Util.Logger;
@@ -8,7 +8,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
 {
     public class AlignToWp : AbstractRotateAnimationAction
     {
-        public AlignToWp(AnimationAction action, NpcContainer2 npcContainer) : base(action, npcContainer)
+        public AlignToWp(AnimationAction action, NpcContainer npcContainer) : base(action, npcContainer)
         {
         }
 

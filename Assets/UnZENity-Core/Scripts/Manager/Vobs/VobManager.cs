@@ -41,7 +41,6 @@ namespace GUZ.Core.Manager.Vobs
             VirtualObjectType.zCVobSpot,
             VirtualObjectType.zCVobStartpoint,
             VirtualObjectType.oCTriggerChangeLevel,
-            VirtualObjectType.zCMover,
             VirtualObjectType.zCPFXController,
             VirtualObjectType.zCTriggerList,
             VirtualObjectType.zCVobLevelCompo

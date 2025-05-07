@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Globalization;
 using System.Linq;
-using GUZ.Core._Npc2;
 using GUZ.Core.Caches;
 using GUZ.Core.Creator;
+using GUZ.Core.Data.Container;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
 using GUZ.Core.Util;
-using UnityEngine;
 using ZenKit;
 using ZenKit.Daedalus;
 using Logger = GUZ.Core.Util.Logger;
@@ -145,6 +144,8 @@ namespace GUZ.Core.Vm
             vm.RegisterExternal<int, NpcInstance>("Npc_GetTarget", Npc_GetTarget);
             vm.RegisterExternal<NpcInstance, NpcInstance>("Npc_SetTarget", Npc_SetTarget);
             vm.RegisterExternal<NpcInstance, int, NpcInstance, NpcInstance>("Npc_SendPassivePerc", Npc_SendPassivePerc);
+            vm.RegisterExternal<int, NpcInstance, int>("Npc_SetTrueGuild", Npc_SetTrueGuild);
+            vm.RegisterExternal<int, NpcInstance>("Npc_GetTrueGuild", Npc_GetTrueGuild);
 
             // Print
             vm.RegisterExternal<string>("PrintDebug", PrintDebug);
@@ -199,7 +200,7 @@ namespace GUZ.Core.Vm
                 else
                 {
                     // Add additional log information if existing.
-                    var selfUserData = GameData.GothicVm.GlobalSelf.UserData as NpcContainer2;
+                    var selfUserData = GameData.GothicVm.GlobalSelf.UserData as NpcContainer;
                     var npcName = MultiTypeCache.NpcCache2.FirstOrDefault(x => x.Instance == selfUserData.Instance)?.Go
                         ?.transform.parent.name;
                     Logger.LogWarningEditor($"Method >{sym.Name}< not yet implemented in DaedalusVM (called on >{npcName}<).", LogCat.ZenKit);
@@ -862,6 +863,17 @@ namespace GUZ.Core.Vm
         public static void Npc_SendPassivePerc(NpcInstance npc, int perc,NpcInstance victim, NpcInstance other)
         {
             GameGlobals.NpcAi.Npc_SendPassivePerc(npc, (VmGothicEnums.PerceptionType)perc, victim, other);
+        }        
+        
+        public static int Npc_SetTrueGuild(NpcInstance npc, int guild)
+        {
+            GameGlobals.NpcAi.Npc_SetTrueGuild(npc, guild);
+            return 0;
+        }       
+        
+        public static int Npc_GetTrueGuild(NpcInstance npc)
+        {
+            return GameGlobals.NpcAi.Npc_GetTrueGuild(npc);
         }
 
         #endregion

@@ -1,4 +1,4 @@
-using GUZ.Core._Npc2;
+using GUZ.Core.Data.Container;
 using GUZ.Core.Globals;
 using GUZ.Core.Util;
 using GUZ.Core.Vm;
@@ -18,7 +18,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
 
         private Transform NpcHeadTransform => PrefabProps.Head;
 
-        protected AbstractRotateAnimationAction(AnimationAction action, NpcContainer2 npcContainer) : base(action, npcContainer)
+        protected AbstractRotateAnimationAction(AnimationAction action, NpcContainer npcContainer) : base(action, npcContainer)
         {
         }
 
