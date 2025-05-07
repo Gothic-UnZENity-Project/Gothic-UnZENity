@@ -18,18 +18,18 @@ MonoBehaviour:
   EnableVRDeviceSimulator: 0
   ZenKitLogLevel: 1
   EnableZSpyLogs: 0
+  ZSpyChannel: 9
   DirectMusicLogLevel: 30
-  EnableBarrierLogs: 0
   EnableMainMenu: 1
   LoadFromSaveSlot: 0
   SaveSlotToLoad: 0
   PreselectWorldToSpawn: 0
   SpawnAtWaypoint: 
+  SpeedUpLoading: 0
   EnableVOBs: 1
   SpawnVOBTypes:
     Value: 
   EnableVOBMeshCulling: 1
-  LazyLoadVobs: 1
   SmallVOBMeshCullingGroup:
     MaximumObjectSize: 0.2
     CullingDistance: 50
@@ -43,16 +43,17 @@ MonoBehaviour:
   ShowNamesOnHoveredVOBs: 1
   ShowVOBMeshCullingGizmos: 0
   ShowCapsuleOverlapGizmos: 0
-  EnableNpcs: 0
+  EnableNpcs: 1
   EnableNpcMeshCulling: 1
   NpcCullingDistance: 50
   SpawnNpcInstances:
+    Value: 
+  SpawnMonsterInstances:
     Value: 
   EnableNpcEyeBlinking: 0
   ShowFreePoints: 0
   ShowWayPoints: 0
   ShowWayEdges: 0
-  EnableGameMusic: 1
   EnableGameSounds: 1
   SunLightColor: {r: 0.69, g: 0.69, b: 0.69, a: 1}
   SunLightIntensity: 1
@@ -64,5 +65,6 @@ MonoBehaviour:
   EnableWorldMesh: 1
   EnableBarrierVisual: 1
   CompressStaticCacheFiles: 1
+  AlwaysRecreateCache: 0
   EnableDecalVisuals: 0
   EnableParticleEffects: 0
