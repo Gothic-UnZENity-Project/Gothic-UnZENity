@@ -34,6 +34,7 @@ namespace GUZ.Core.Manager
             LoadFonts();
             LoadGuildData();
 
+            GameContext.IsZenKitInitialized = true;
             GlobalEventDispatcher.ZenKitBootstrapped.Invoke();
         }
 
@@ -49,8 +50,13 @@ namespace GUZ.Core.Manager
             {
                 Logger.Log($"Selecting StringEncoding={StringEncoding.CentralEurope}", LogCat.Loading);
                 StringEncodingController.SetEncoding(StringEncoding.CentralEurope);
-
-                GameData.Encoding = Encoding.GetEncoding((int)StringEncoding.CentralEurope);;
+                
+                GameData.Encoding = Encoding.GetEncoding((int)StringEncoding.CentralEurope);
+ 
+                if (CheckEncoding(StringEncoding.CentralEurope, "MOBNAME_CRATE", "Bedna"))
+                    GameData.Language = "cs";
+                else
+                    GameData.Language = "pl";
             }
             // ru
             else if (CheckEncoding(StringEncoding.EastEurope, "MOBNAME_CRATE", "Коробка"))
@@ -59,14 +65,25 @@ namespace GUZ.Core.Manager
                 StringEncodingController.SetEncoding(StringEncoding.EastEurope);
 
                 GameData.Encoding = Encoding.GetEncoding((int)StringEncoding.EastEurope);
+                GameData.Language = "ru";
             }
             // de, en (2x), es, fr, it
             else if (CheckEncoding(StringEncoding.WestEurope, "MOBNAME_CRATE", "Kiste", "Crate", "Box", "Caja", "Boite", "Cassa"))
             {
                 Logger.Log($"Selecting StringEncoding={StringEncoding.WestEurope}", LogCat.Loading);
                 StringEncodingController.SetEncoding(StringEncoding.WestEurope);
-
                 GameData.Encoding = Encoding.GetEncoding((int)StringEncoding.WestEurope);
+
+                if (CheckEncoding(StringEncoding.WestEurope, "MOBNAME_CRATE", "Kiste"))
+                    GameData.Language = "de";
+                else if (CheckEncoding(StringEncoding.WestEurope, "MOBNAME_CRATE", "Crate"))
+                    GameData.Language = "en";
+                else if (CheckEncoding(StringEncoding.WestEurope, "MOBNAME_CRATE", "Caja"))
+                    GameData.Language = "es";
+                else if (CheckEncoding(StringEncoding.WestEurope, "MOBNAME_CRATE", "Boite"))
+                    GameData.Language = "fr";
+                else
+                    GameData.Language = "it";
             }
             // Nothing found
             // TODO - Potentially re-enable error label on screen to say: We couldn't identify your language.

@@ -25,18 +25,16 @@ namespace GUZ.Core.UI
 
         private void Awake()
         {
-            GlobalEventDispatcher.ZenKitBootstrapped.AddListener(OnZenKitInitialized);
+            if (GameContext.IsZenKitInitialized && _uiHover == null)
+                InitializeAudio();
         }
 
-        private void OnZenKitInitialized()
+        private void InitializeAudio()
         {
             // Set sound files for button clicks initially.
-            if (_uiHover == null)
-            {
-                _uiHover = SoundCreator.ToAudioClip("inv_change");
-                _uiClick = SoundCreator.ToAudioClip("inv_open");
-                _uiReturnClick = SoundCreator.ToAudioClip("inv_close");
-            }
+            _uiHover = SoundCreator.ToAudioClip("inv_change");
+            _uiClick = SoundCreator.ToAudioClip("inv_open");
+            _uiReturnClick = SoundCreator.ToAudioClip("inv_close");
         }
 
         /// <summary>
@@ -190,7 +188,7 @@ namespace GUZ.Core.UI
 
         private void OnDestroy()
         {
-            GlobalEventDispatcher.ZenKitBootstrapped.RemoveListener(OnZenKitInitialized);
+            GlobalEventDispatcher.ZenKitBootstrapped.RemoveListener(InitializeAudio);
         }
     }
 }

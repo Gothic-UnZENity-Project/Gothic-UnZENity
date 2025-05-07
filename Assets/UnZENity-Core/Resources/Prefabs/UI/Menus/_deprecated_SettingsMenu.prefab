@@ -7546,7 +7546,7 @@ GameObject:
   - component: {fileID: 8814463014063971082}
   - component: {fileID: 2450112519721880446}
   m_Layer: 5
-  m_Name: SettingsMenu
+  m_Name: _deprecated_SettingsMenu
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

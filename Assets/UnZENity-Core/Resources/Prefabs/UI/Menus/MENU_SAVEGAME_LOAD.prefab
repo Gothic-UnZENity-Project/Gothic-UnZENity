@@ -113,7 +113,7 @@ GameObject:
   - component: {fileID: 2282871596405899006}
   - component: {fileID: 6897887152949090502}
   m_Layer: 0
-  m_Name: MenuSave
+  m_Name: MENU_SAVEGAME_LOAD
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -149,7 +149,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Canvas: {fileID: 4377388513586376009}
   Background: {fileID: 7348004100775829510}
-  _isSaving: 1
+  _isSaving: 0
 --- !u!1001 &4136749761303385679
 PrefabInstance:
   m_ObjectHideFlags: 0

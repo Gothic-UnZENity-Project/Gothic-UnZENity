@@ -177,6 +177,27 @@ namespace GUZ.Core.Extensions
             return data;
         }
 
+        [CanBeNull]
+        public static string GetSymbolString(this DaedalusVm vm, string symbolName, ushort index = 0)
+        {
+            var symbol = vm.GetSymbolByName(symbolName);
+            if (symbol == null)
+                return string.Empty;
+            
+            return symbol.GetString(index);
+        }
+        
+        [CanBeNull]
+        public static int GetSymbolInt(this DaedalusVm vm, string symbolName, ushort index = 0)
+        {
+            var symbol = vm.GetSymbolByName(symbolName);
+
+            if (symbol == null)
+                return -1;
+            
+            return symbol.GetInt(index);
+        }
+        
         /// <summary>
         /// Leveraging switch statements with string => member mapping as it's faster than reflection.
         /// https://www.jacksondunstan.com/articles/2972

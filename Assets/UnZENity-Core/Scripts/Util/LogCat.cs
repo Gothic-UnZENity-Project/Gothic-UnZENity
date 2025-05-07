@@ -22,6 +22,7 @@ namespace GUZ.Core.Util
 
         // Misc
         Misc,
+        VR,
         Vob,
         Audio,
         Debug,

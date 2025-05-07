@@ -47,6 +47,8 @@ namespace GUZ.Core.Config
 
             Gothic = new GothicIniConfig(IniLoader.LoadFile(gothicIniPath));
             GothicGame = new GothicGameIniConfig(IniLoader.LoadFile(gothicGameIniPath));
+            
+            GlobalEventDispatcher.GothicInisInitialized.Invoke();
         }
 
         public bool CheckIfGothicInstallationExists(GameVersion version)

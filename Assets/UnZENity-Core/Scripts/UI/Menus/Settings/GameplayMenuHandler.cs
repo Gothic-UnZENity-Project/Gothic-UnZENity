@@ -1,10 +1,12 @@
+using System;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
 using TMPro;
 using UnityEngine;
 
-namespace GUZ.Core.UI.Main
+namespace GUZ.Core.UI.Menus.Settings
 {
+    [Obsolete("Use SettingsGameMenu.cs instead.")]
     public class GameplayMenuHandler : MonoBehaviour
     {
         [SerializeField] private TMP_Text _dragCollisionText;

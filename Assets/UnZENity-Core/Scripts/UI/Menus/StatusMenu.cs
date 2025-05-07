@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Linq;
 using GUZ.Core.Globals;
-using GUZ.Core.UnZENity_Core.Scripts.UI;
+using GUZ.Core.UI.Menus.Adapter.Menu;
 using MyBox;
 using TMPro;
 
-namespace GUZ.Core.UI
+namespace GUZ.Core.UI.Menus
 {
     public class StatusMenu : AbstractMenu
     {
@@ -24,14 +24,14 @@ namespace GUZ.Core.UI
         private string _itemTalentDescriptionPattern = "MENU_ITEM_TALENT_{0}";
 
 
-        private void Awake()
+        public override void InitializeMenu(AbstractMenuInstance menuInstance)
         {
+            base.InitializeMenu(menuInstance);
             Setup();
         }
 
         private void Setup()
         {
-            CreateRootElements("MENU_STATUS");
             UpdateData();
         }
 
@@ -95,11 +95,6 @@ namespace GUZ.Core.UI
             throw new NotImplementedException();
         }
 
-        protected override void Back(string itemName, string commandName)
-        {
-            throw new NotImplementedException();
-        }
-
         protected override void StartMenu(string itemName, string commandName)
         {
             throw new NotImplementedException();
@@ -128,14 +123,6 @@ namespace GUZ.Core.UI
         protected override void ExecuteCommand(string itemName, string commandName)
         {
             throw new NotImplementedException();
-        }
-
-        /// <summary>
-        /// There are no elements to hide in Status menu.
-        /// </summary>
-        protected override bool IsMenuItemInitiallyActive(string menuItemName)
-        {
-            return true;
         }
     }
 }

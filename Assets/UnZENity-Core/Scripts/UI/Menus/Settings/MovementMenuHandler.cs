@@ -1,10 +1,12 @@
+using System;
 using GUZ.Core.Manager;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace GUZ.Core.UI.Main
+namespace GUZ.Core.UI.Menus.Settings
 {
+    [Obsolete("Use SettingsControlsMenu.cs instead.")]
     public class MovementMenuHandler : MonoBehaviour
     {
         [SerializeField] private TMP_Dropdown _movementTypeDropdown;

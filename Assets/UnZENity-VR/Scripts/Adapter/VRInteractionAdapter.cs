@@ -4,6 +4,8 @@ using GUZ.Core;
 using GUZ.Core.Adapter;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
+using GUZ.Core.UI.Menus.Adapter.Menu;
+using GUZ.Core.UI.Menus.Adapter.MenuItem;
 using GUZ.VR.Components;
 using GUZ.VR.Components.HVROverrides;
 using HurricaneVR.Framework.Core.UI;
@@ -12,6 +14,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.XR;
 using UnityEngine.XR.Management;
+using ZenKit.Daedalus;
 
 namespace GUZ.VR.Adapter
 {
@@ -34,7 +37,7 @@ namespace GUZ.VR.Adapter
         private void OnLoadingSceneLoaded()
         {
             // Needed for: World -> Open MainMenu -> Hit "Load"/"New Game"
-            _playerController.menuHandler.gameObject.SetActive(false);
+            _playerController.MenuHandler.gameObject.SetActive(false);
         }
 
         public float GetFrameRate()
