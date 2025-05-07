@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using GUZ.Core.Caches;
 using GUZ.Core.Extensions;
+using GUZ.Core.UI.Menus.Adapter.Menu;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -9,7 +10,7 @@ using UnityEngine.SceneManagement;
 using ZenKit;
 using ZenKit.Daedalus;
 
-namespace GUZ.Core.UnZENity_Core.Scripts.UI
+namespace GUZ.Core.UI.Menus
 {
     public class SaveMenu : AbstractMenu
     {
@@ -29,16 +30,15 @@ namespace GUZ.Core.UnZENity_Core.Scripts.UI
 
         private string _saveLoadStatus;
 
-        private void Awake()
+        public override void InitializeMenu(AbstractMenuInstance menuInstance)
         {
+            base.InitializeMenu(menuInstance);
             Setup();
         }
 
         private void Setup()
         {
             _saveLoadStatus = _isSaving ? "SAVE" : "LOAD";
-
-            CreateRootElements($"MENU_SAVEGAME_{_saveLoadStatus}");
 
             var thumbnailGo = MenuItemCache["MENUITEM_LOADSAVE_THUMBPIC"].go;
             Thumbnail = ResourceLoader.TryGetPrefabObject(PrefabType.UiThumbnail, name: "Thumbnail",
@@ -68,11 +68,6 @@ namespace GUZ.Core.UnZENity_Core.Scripts.UI
         protected override void Undefined(string itemName, string commandName)
         {
             return;
-        }
-
-        protected override void Back(string itemName, string commandName)
-        {
-            MenuHandler.BackMenu();
         }
 
         protected override void StartMenu(string itemName, string commandName)
@@ -110,7 +105,7 @@ namespace GUZ.Core.UnZENity_Core.Scripts.UI
             throw new System.NotImplementedException();
         }
 
-        protected override bool IsMenuItemInitiallyActive(string menuItemName)
+        protected override bool IsMenuItemActive(string menuItemName)
         {
             return (MenuItemCache[menuItemName].item.Flags & MenuItemFlag.Disabled) == 0;
         }

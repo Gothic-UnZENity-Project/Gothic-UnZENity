@@ -4,6 +4,8 @@ using GUZ.Core;
 using GUZ.Core.Adapter;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
+using GUZ.Core.UI.Menus.Adapter.Menu;
+using GUZ.Core.UI.Menus.Adapter.MenuItem;
 using GUZ.VR.Components;
 using GUZ.VR.Components.HVROverrides;
 using HurricaneVR.Framework.Core.UI;
@@ -12,6 +14,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.XR;
 using UnityEngine.XR.Management;
+using ZenKit.Daedalus;
 
 namespace GUZ.VR.Adapter
 {
@@ -24,6 +27,7 @@ namespace GUZ.VR.Adapter
         public VRInteractionAdapter()
         {
             GlobalEventDispatcher.LoadingSceneLoaded.AddListener(OnLoadingSceneLoaded);
+            GlobalEventDispatcher.GothicInisInitialized.AddListener(() => _playerController.SetNormalControls());
         }
 
         public string GetContextName()
@@ -34,7 +38,7 @@ namespace GUZ.VR.Adapter
         private void OnLoadingSceneLoaded()
         {
             // Needed for: World -> Open MainMenu -> Hit "Load"/"New Game"
-            _playerController.menuHandler.gameObject.SetActive(false);
+            _playerController.MenuHandler.gameObject.SetActive(false);
         }
 
         public float GetFrameRate()
@@ -62,15 +66,7 @@ namespace GUZ.VR.Adapter
             // world scene and removed whenever we change the world.
             SceneManager.MoveGameObjectToScene(go, scene);
 
-            if (scene.name is Constants.SceneMainMenu or Constants.SceneLoading)
-            {
-                _playerController.SetLockedControls();
-            }
-            // Normal game
-            else
-            {
-                _playerController.SetNormalControls();
-            }
+            _playerController.SetNormalControls(true);
 
             return _playerController.gameObject;
         }

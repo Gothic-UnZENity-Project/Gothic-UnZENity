@@ -212,10 +212,7 @@ namespace GUZ.Core.Creator
                 case VirtualObjectType.oCZoneMusic:
                 case VirtualObjectType.oCZoneMusicDefault:
                 {
-                    if (config.EnableGameMusic)
-                    {
-                        go = CreateZoneMusic((ZoneMusic)vob, parent);
-                    }
+                    go = CreateZoneMusic((ZoneMusic)vob, parent);
 
                     break;
                 }

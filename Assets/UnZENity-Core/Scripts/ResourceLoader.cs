@@ -5,12 +5,13 @@ using System.Linq;
 using DirectMusic;
 using GUZ.Core.Creator.Sounds;
 using GUZ.Core.Data;
-using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
+using GUZ.Core.Util;
 using JetBrains.Annotations;
 using UnityEngine;
 using ZenKit;
 using Font = ZenKit.Font;
+using Logger = GUZ.Core.Util.Logger;
 using Mesh = ZenKit.Mesh;
 using Object = UnityEngine.Object;
 using Texture = ZenKit.Texture;
@@ -237,12 +238,6 @@ namespace GUZ.Core
         }
 
         [CanBeNull]
-        private static GameObject TryGetPrefab(PrefabType key)
-        {
-            return _prefab.TryLoad(key.Path(), out var item) ? item : null;
-        }
-
-        [CanBeNull]
         public static GameObject TryGetPrefabObject(PrefabType key, Vector3 position = default, Quaternion rotation = default, string name = null, GameObject parent = null)
         {
             var go = Object.Instantiate(TryGetPrefab(key), position, rotation, parent?.transform);
@@ -253,6 +248,57 @@ namespace GUZ.Core
             }
 
             return go;
+        }
+
+        /// <summary>
+        /// Alternative way to load a dynamically named prefab and cache it.
+        /// 
+        /// HINT: Please check if using PrefabType overload is better suited before using this function.
+        /// </summary>
+        public static GameObject TryGetPrefabObject(string prefabPath, Vector3 position = default, Quaternion rotation = default, string name = null, GameObject parent = null)
+        {
+            var go = Object.Instantiate(TryGetPrefab(prefabPath), position, rotation, parent?.transform);
+
+            if (name != null)
+            {
+                go.name = name;
+            }
+
+            return go;
+        }
+        
+        /// <summary>
+        /// Alternative way to load a dynamically named prefab and cache it.
+        /// 
+        /// HINT: Please check if using PrefabType overload is better suited before using this function.
+        /// </summary>
+        public static GameObject TryGetPrefabObject(string prefabPath, string name = null, GameObject parent = null, bool worldPositionStays = true)
+        {
+            var go = Object.Instantiate(TryGetPrefab(prefabPath), parent?.transform, worldPositionStays);
+
+            if (name != null)
+            {
+                go.name = name;
+            }
+
+            return go;
+        }
+
+        [CanBeNull]
+        private static GameObject TryGetPrefab(PrefabType key)
+        {
+            return _prefab.TryLoad(key.Path(), out var item) ? item : null;
+        }
+        
+        [CanBeNull]
+        private static GameObject TryGetPrefab(string prefabPath)
+        {
+            _prefab.TryLoad(prefabPath, out var item);
+            
+            if (item == null)
+                Logger.LogError($"Prefab at >{prefabPath}< not found.", LogCat.Loading);
+            
+            return item;
         }
 
         [NotNull]

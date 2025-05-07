@@ -7,6 +7,7 @@ namespace GUZ.Core
         UiEmpty, // Contains a RectTransform only
         UiText,
         UiButton,
+        UiSlider,
         UiButtonTextured,
         UiTexture,
         UiThumbnail,
@@ -51,6 +52,7 @@ namespace GUZ.Core
                 PrefabType.UiEmpty => "Prefabs/UI/Empty",
                 PrefabType.UiText => "Prefabs/UI/Text",
                 PrefabType.UiButton => "Prefabs/UI/Button",
+                PrefabType.UiSlider => "Prefabs/UI/Slider",
                 PrefabType.UiButtonTextured => "Prefabs/UI/ButtonTextured",
                 PrefabType.UiTexture => "Prefabs/UI/Texture",
                 PrefabType.UiThumbnail => "Prefabs/UI/Thumbnail",

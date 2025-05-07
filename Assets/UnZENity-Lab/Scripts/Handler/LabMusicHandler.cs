@@ -9,8 +9,9 @@ namespace GUZ.Lab.Handler
 {
     public class LabMusicHandler : AbstractLabHandler
     {
-        [FormerlySerializedAs("fileSelector")] public TMP_Dropdown FileSelector;
+        public TMP_Dropdown FileSelector;
 
+        public MusicManager MusicManager;
 
         public override void Bootstrap()
         {
@@ -25,7 +26,7 @@ namespace GUZ.Lab.Handler
 
         public void MusicPlayClick()
         {
-            MusicManager.I.Play(FileSelector.options[FileSelector.value].text);
+            MusicManager.Play(FileSelector.options[FileSelector.value].text);
         }
     }
 }

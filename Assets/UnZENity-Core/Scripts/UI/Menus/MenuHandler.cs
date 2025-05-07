@@ -1,50 +1,70 @@
 using System.Collections.Generic;
+using GUZ.Core.UI.Menus.Adapter.Menu;
+using GUZ.Core.Util;
 using MyBox;
 using UnityEngine;
+using Logger = GUZ.Core.Util.Logger;
 
-namespace GUZ.Core.UnZENity_Core.Scripts.UI
+namespace GUZ.Core.UI.Menus
 {
     public class MenuHandler : MonoBehaviour
     {
-        private Dictionary<string, GameObject> menuList = new();
-        private string currentMenu;
-        private Stack<string> menuQueue = new();
+        private Dictionary<string, GameObject> _menuList = new();
+        private string _currentMenu;
+        private Stack<string> _menuQueue = new();
 
-        [SerializeField] private GameObject mainMenuPrefab;
-        [SerializeField] private GameObject saveMenuPrefab;
-        [SerializeField] private GameObject loadMenuPrefab;
-        [SerializeField] private GameObject settingsMenuPrefab;
-        [SerializeField] private GameObject leaveMenuPrefab;
+        // Cached MainMenu tree hierarchy of submenus (load, save, settings) and their children (sub-settings, settings fields)
+        public AbstractMenuInstance MainMenuHierarchy { get; private set; }
+
+        private void Awake()
+        {
+            InitializeMenus();
+        }
 
         private void OnEnable()
         {
-            InitializeMenus();
-            
             OpenMenu("MENU_MAIN");
         }
 
         private void InitializeMenus()
         {
-            if (menuList.Count != 0)
-            {
-                return;
-            }
+            // Initialize whole ZenKit Menu.dat hierarchy.
+            MainMenuHierarchy = new MenuInstanceAdapter("MENU_MAIN", null);
 
-            GameObject menu = null;
-            menu = Instantiate(mainMenuPrefab, transform);
-            menuList.Add("MENU_MAIN", menu);
-            menu = Instantiate(loadMenuPrefab, transform);
-            menuList.Add("MENU_SAVEGAME_LOAD", menu);
-            menu = Instantiate(saveMenuPrefab, transform);
-            menuList.Add("MENU_SAVEGAME_SAVE", menu);
-            menu = Instantiate(settingsMenuPrefab, transform);
-            menuList.Add("MENU_OPTIONS", menu);
-            menu = Instantiate(leaveMenuPrefab, transform);
-            menuList.Add("MENU_LEAVE_GAME", menu);
+            GameContext.MenuAdapter.UpdateMainMenu(MainMenuHierarchy);
             
+            InstantiateMenus();
+
             GameContext.InteractionAdapter.InitUIInteraction();
             
             CloseAllMenus();
+        }
+
+        private void InstantiateMenus()
+        {
+            var menuInstanceNames = MainMenuHierarchy.GetMenuInstanceNamesRecursive();
+
+            foreach (var menuName in menuInstanceNames)
+            {
+                var go = ResourceLoader.TryGetPrefabObject($"Prefabs/UI/Menus/{menuName}", parent: this.gameObject, worldPositionStays: false);
+                
+                if (go == null)
+                {
+                    Logger.LogError($"Could not find UI Menu prefab >{menuName}<", LogCat.Ui);
+                    return;
+                }
+
+                go.GetComponent<AbstractMenu>().InitializeMenu(MainMenuHierarchy.FindMenuRecursive(menuName));
+                _menuList.Add(menuName, go);
+            }
+        }
+        
+        private void InstantiateMenu(string menuName, GameObject prefab)
+        {
+            var go = Instantiate(prefab, transform);
+            go.GetComponent<AbstractMenu>().InitializeMenu(MainMenuHierarchy.FindMenuRecursive(menuName));
+            
+            _menuList.Add(menuName, go);
         }
 
         public void ToggleVisibility()
@@ -53,34 +73,34 @@ namespace GUZ.Core.UnZENity_Core.Scripts.UI
             if (gameObject.activeSelf)
             {
                 CloseAllMenus();
-                menuQueue.Clear();
-                currentMenu = null;
+                _menuQueue.Clear();
+                _currentMenu = null;
             }
 
             gameObject.SetActive(!gameObject.activeSelf);
         }
 
-        public void OpenMenu(string menuName)
+        public void OpenMenu(string menuName, bool viaBackButton = false)
         {
-            if (!currentMenu.IsNullOrEmpty())
+            if (!viaBackButton && !_currentMenu.IsNullOrEmpty())
             {
-                menuQueue.Push(currentMenu);
+                _menuQueue.Push(_currentMenu);
             }
 
-            currentMenu = menuName;
+            _currentMenu = menuName;
 
             CloseAllMenus();
-            if (!menuList.ContainsKey(menuName))
+            if (!_menuList.ContainsKey(menuName))
             {
                 return;
             }
 
-            menuList[menuName].SetActive(true);
+            _menuList[menuName].SetActive(true);
         }
 
         private void CloseAllMenus()
         {
-            foreach (var menu in menuList.Values)
+            foreach (var menu in _menuList.Values)
             {
                 menu.SetActive(false);
             }
@@ -88,10 +108,10 @@ namespace GUZ.Core.UnZENity_Core.Scripts.UI
 
         public void BackMenu()
         {
-            var nextMenu = menuQueue.TryPop(out string result);
+            var nextMenu = _menuQueue.TryPop(out string result);
             if (nextMenu)
             {
-                OpenMenu(result);
+                OpenMenu(result, true);
             }
             else
             {

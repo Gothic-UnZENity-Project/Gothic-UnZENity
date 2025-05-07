@@ -45,8 +45,10 @@ namespace GUZ.Core.Config
             var gothicIniPath = Path.Combine(rootPath, "system/Gothic.ini");
             var gothicGameIniPath = Path.Combine(rootPath, "system/GothicGame.ini");
 
-            Gothic = new GothicIniConfig(IniLoader.LoadFile(gothicIniPath));
-            GothicGame = new GothicGameIniConfig(IniLoader.LoadFile(gothicGameIniPath));
+            Gothic = new GothicIniConfig(IniLoader.LoadFile(gothicIniPath), gothicIniPath);
+            GothicGame = new GothicGameIniConfig(IniLoader.LoadFile(gothicGameIniPath), gothicGameIniPath);
+            
+            GlobalEventDispatcher.GothicInisInitialized.Invoke();
         }
 
         public bool CheckIfGothicInstallationExists(GameVersion version)

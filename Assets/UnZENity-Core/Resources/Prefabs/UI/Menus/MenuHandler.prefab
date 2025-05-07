@@ -44,8 +44,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9305aaeea2e2485cb173e2cef57ad482, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mainMenuPrefab: {fileID: 8412591900964177680, guid: dfbc1d6c1e7353c4a8a11fb425e430d5, type: 3}
-  saveMenuPrefab: {fileID: 8412591900964177680, guid: ab21d2f607788e5438cfa58fefe8476a, type: 3}
-  loadMenuPrefab: {fileID: 8412591900964177680, guid: 00556207a092eeb49988635d2993857e, type: 3}
-  settingsMenuPrefab: {fileID: 5827635276208223651, guid: b2f7ec490b212544e97a98adc4cb9d50, type: 3}
-  leaveMenuPrefab: {fileID: 8412591900964177680, guid: db565c278137ef540b29949d896ef3b3, type: 3}
+  _mainMenuPrefab: {fileID: 8412591900964177680, guid: dfbc1d6c1e7353c4a8a11fb425e430d5, type: 3}
+  _saveMenuPrefab: {fileID: 8412591900964177680, guid: ab21d2f607788e5438cfa58fefe8476a, type: 3}
+  _loadMenuPrefab: {fileID: 8412591900964177680, guid: 00556207a092eeb49988635d2993857e, type: 3}
+  _leaveMenuPrefab: {fileID: 8412591900964177680, guid: db565c278137ef540b29949d896ef3b3, type: 3}
+  _settingsMenuPrefab: {fileID: 8412591900964177680, guid: 424b55c95735e244e93dcee1fb64370a, type: 3}
+  _settingsGameMenuPrefab: {fileID: 8412591900964177680, guid: ee2844d5869be5c4f9c2f45b4ddf6eca, type: 3}
+  _settingsGraphicsMenuPrefab: {fileID: 8412591900964177680, guid: d1554e689cef7a444a1da26bd50e2ab1, type: 3}
+  _settingsVideoMenuPrefab: {fileID: 8412591900964177680, guid: f7545351c29eb8d46ade1f558c486ebe, type: 3}
+  _settingsAudioMenuPrefab: {fileID: 8412591900964177680, guid: 7dd29a229a3f08f4eba82d6d2b41e332, type: 3}
+  _settingsControlsMenuPrefab: {fileID: 8412591900964177680, guid: 63d4d95ff0c09af4fb148fc75b96cc39, type: 3}

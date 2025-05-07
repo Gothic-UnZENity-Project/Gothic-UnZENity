@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using GUZ.Core.UnZENity_Core.Scripts.UI;
+using GUZ.Core.UI.Menus.Adapter.Menu;
+using GUZ.Core.UI.Menus.Adapter.MenuItem;
 using GUZ.Core.Util;
 using MyBox;
 using TMPro;
@@ -11,7 +12,7 @@ using ZenKit;
 using ZenKit.Daedalus;
 using Logger = GUZ.Core.Util.Logger;
 
-namespace GUZ.Core.UI
+namespace GUZ.Core.UI.Menus
 {
     /// <summary>
     /// The quest log contains of three major areas:
@@ -70,7 +71,7 @@ namespace GUZ.Core.UI
         private class ListItemContainer
         {
             public string InstanceName;
-            public MenuItemInstance Instance;
+            public AbstractMenuItemInstance Instance;
             public List<SaveLogTopic> LogTopics;
             public GameObject RootGo;
             public GameObject[] ItemGOs;
@@ -85,8 +86,10 @@ namespace GUZ.Core.UI
         /// 3. Use this data to create GameObjects dynamically based on Template elements (button, text, ...)
         /// 3. For lists (e.g. active missions), create the list items and arrows (do not them fill yet)
         /// </summary>
-        private void Awake()
+        public override void InitializeMenu(AbstractMenuInstance menuInstance)
         {
+            base.InitializeMenu(menuInstance);
+
             Setup();
             UpdateDayAndTime(GameManager.I.Time.GetCurrentDateTime());
             GlobalEventDispatcher.GameTimeMinuteChangeCallback.AddListener(UpdateDayAndTime);
@@ -98,7 +101,7 @@ namespace GUZ.Core.UI
             MenuItemCache[_instanceTime].go.GetComponent<TMP_Text>().SetText(time.TimeOfDay.ToString(@"hh\:mm"));
         }
 
-        protected override bool IsMenuItemInitiallyActive(string menuItemName)
+        protected override bool IsMenuItemActive(string menuItemName)
         {
             return !_initiallyDisabledMenuItems.Contains(menuItemName);
         }
@@ -119,8 +122,7 @@ namespace GUZ.Core.UI
 
         private void Setup()
         {
-            CreateRootElements("MENU_LOG");
-            //open gothic also hides it in screen init
+            // Open Gothic also hides it in its screen init
             MenuItemCache[_instanceContentViewer].go.SetActive(false);
 
             CreateLists();
@@ -402,11 +404,6 @@ namespace GUZ.Core.UI
         }
 
         protected override void Undefined(string itemName, string commandName)
-        {
-            throw new NotImplementedException();
-        }
-
-        protected override void Back(string itemName, string commandName)
         {
             throw new NotImplementedException();
         }

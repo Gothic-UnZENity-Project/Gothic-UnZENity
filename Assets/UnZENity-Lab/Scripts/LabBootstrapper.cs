@@ -137,6 +137,7 @@ namespace GUZ.Lab
 
             LabNpcAnimationHandler.Bootstrap();
             LabMusicHandler.Bootstrap();
+            LabMusicHandler.MusicManager = _gameMusicManager;
             LabSoundHandler.Bootstrap();
             LabVideoHandler.Bootstrap();
             NpcDialogHandler.Bootstrap();

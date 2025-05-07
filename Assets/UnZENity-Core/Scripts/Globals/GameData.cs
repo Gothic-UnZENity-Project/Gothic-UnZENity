@@ -17,6 +17,7 @@ namespace GUZ.Core.Globals
         /// Represents the currently installed Gothic language (windows-1250,1251,1252)
         /// </summary>
         public static Encoding Encoding;
+        public static string Language;
         public static DaedalusVm GothicVm;
         public static DaedalusVm MenuVm;
         public static DaedalusVm SfxVm; // Sound FX

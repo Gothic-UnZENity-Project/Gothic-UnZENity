@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
+using GUZ.Core.UI.Menus.Adapter.Menu;
+using GUZ.Core.UI.Menus.Adapter.MenuItem;
 using GUZ.Core.Util;
 using MyBox;
 using TMPro;
@@ -11,36 +14,54 @@ using UnityEngine.UI;
 using ZenKit.Daedalus;
 using Logger = GUZ.Core.Util.Logger;
 
-namespace GUZ.Core.UnZENity_Core.Scripts.UI
+namespace GUZ.Core.UI.Menus
 {
     public abstract class AbstractMenu : MonoBehaviour
     {
         protected MenuHandler MenuHandler;
+        protected AbstractMenuInstance MenuInstance;
         [SerializeField] protected GameObject Canvas;
         [SerializeField] protected GameObject Background;
 
-        protected Dictionary<string, (MenuItemInstance item, GameObject go)> MenuItemCache = new();
+        protected Dictionary<string, (AbstractMenuItemInstance item, GameObject go)> MenuItemCache = new();
 
         // Pixel ratio of whole menu (Canvas) is based on background picture pixel and virtual pixels named inside Daedalus.
         protected float PixelRatioX;
         protected float PixelRatioY;
 
-        protected abstract void Undefined(string itemName, string commandName); // e.g.
-        protected abstract void Back(string itemName, string commandName); // e.g.
+        public virtual void InitializeMenu(AbstractMenuInstance menuInstance)
+        {
+            MenuHandler = transform.parent.GetComponent<MenuHandler>();
+            
+            MenuInstance = menuInstance;
+            CreateRootElements();
+        }
+        
+        protected abstract void Undefined(string itemName, string commandName);
+
+        protected virtual void Back(string itemName, string commandName)
+        {
+            MenuHandler.BackMenu();
+        }
 
         protected abstract void StartMenu(string itemName, string commandName);
 
-        // e.g.
-        protected abstract void StartItem(string itemName, string commandName); // e.g.
+        protected abstract void StartItem(string itemName, string commandName);
 
         protected abstract void Close(string itemName, string commandName);
 
-        protected abstract void ConsoleCommand(string itemName, string commandName); // e.g.
-        protected abstract void PlaySound(string itemName, string commandName); // e.g.
-        protected abstract void ExecuteCommand(string itemName, string commandName); // e.g.
+        protected abstract void ConsoleCommand(string itemName, string commandName);
+        protected abstract void PlaySound(string itemName, string commandName);
+        protected abstract void ExecuteCommand(string itemName, string commandName);
 
-        protected abstract bool IsMenuItemInitiallyActive(string menuItemName);
-
+        protected virtual bool IsMenuItemActive(string menuItemName)
+        {
+            if (Constants.DaedalusMenu.DisabledGothicMenuSettings.Contains(menuItemName))
+                return false;
+            else
+                return true;
+        }
+        
         public void ToggleVisibility()
         {
             if (gameObject.activeSelf)
@@ -63,13 +84,9 @@ namespace GUZ.Core.UnZENity_Core.Scripts.UI
             gameObject.SetActive(false);
         }
 
-        protected void CreateRootElements(string menuDefName)
+        private void CreateRootElements()
         {
-            MenuHandler = transform.parent.GetComponent<MenuHandler>();
-
-            var menuInstance = GameData.MenuVm.InitInstance<MenuInstance>(menuDefName);
-
-            var backPic = GameGlobals.Textures.GetMaterial(menuInstance.BackPic);
+            var backPic = GameGlobals.Textures.GetMaterial(MenuInstance.BackPic);
             Background.GetComponentInChildren<MeshRenderer>().sharedMaterial = backPic;
 
             // Set canvas size based on texture size of background
@@ -78,94 +95,65 @@ namespace GUZ.Core.UnZENity_Core.Scripts.UI
             canvasRect.SetHeight(backPic.mainTexture.height);
 
             // Calculate pixelRatio for virtual positions of child elements.
-            var virtualPixelX = menuInstance.DimX + 1;
-            var virtualPixelY = menuInstance.DimY + 1;
+            var virtualPixelX = MenuInstance.DimX + 1;
+            var virtualPixelY = MenuInstance.DimY + 1;
             var realPixelX = backPic.mainTexture.width;
             var realPixelY = backPic.mainTexture.height;
 
             PixelRatioX = (float)virtualPixelX / realPixelX; // for normal G1, should be 16 (=8192 / 512)
             PixelRatioY = (float)virtualPixelY / realPixelY;
 
-            for (var i = 0;; i++)
+            foreach (var item in MenuInstance.Items)
             {
-                var menuItemName = menuInstance.GetItem(i);
-
-                // We passed the last item.
-                if (menuItemName.IsNullOrEmpty())
-                {
-                    break;
-                }
-
-                CreateMenuItem(menuInstance, menuItemName);
+                CreateMenuItem(item);
             }
         }
-
-        private void CreateMenuItem(MenuInstance main, string menuItemName)
+        
+        private void CreateMenuItem(AbstractMenuItemInstance item)
         {
-            var item = GameData.MenuVm.InitInstance<MenuItemInstance>(menuItemName);
-
             GameObject itemGo;
 
             if (item.MenuItemType == MenuItemType.ListBox)
             {
-                itemGo = ResourceLoader.TryGetPrefabObject(PrefabType.UiEmpty, name: menuItemName,
+                itemGo = ResourceLoader.TryGetPrefabObject(PrefabType.UiEmpty, name: item.Name,
                     position: Vector3.zero, parent: Canvas)!;
             }
             else if (item.Flags.HasFlag(MenuItemFlag.Selectable))
             {
-                itemGo = ResourceLoader.TryGetPrefabObject(PrefabType.UiButton, name: menuItemName, parent: Canvas)!;
+                itemGo = ResourceLoader.TryGetPrefabObject(PrefabType.UiButton, name: item.Name, parent: Canvas)!;
                 var button = itemGo.GetComponentInChildren<Button>();
 
-                button.onClick.AddListener(() =>
-                {
-                    for (int i = 0;; i++)
-                    {
-                        MenuItemSelectAction action;
-                        try
-                        {
-                            action = item.GetOnSelAction(i);
-                        }
-                        catch (Exception e)
-                        {
-                            break;
-                        }
+                button.onClick.AddListener(() => HandleMenuItemClick(item));
+            }
+            else if (item.MenuItemType == MenuItemType.ChoiceBox)
+            {
+                itemGo = ResourceLoader.TryGetPrefabObject(PrefabType.UiButton, name: item.Name, parent: Canvas)!;
+                var button = itemGo.GetComponentInChildren<Button>();
 
-                        if (action == null || action == MenuItemSelectAction.Undefined)
-                        {
-                            break;
-                        }
+                button.onClick.AddListener(() => HandleChoiceBoxClick(item, itemGo));
+            }
+            else if (item.MenuItemType == MenuItemType.Slider)
+            {
+                itemGo = ResourceLoader.TryGetPrefabObject(PrefabType.UiSlider, name: item.Name, parent: Canvas)!;
 
-                        string actionName = "";
-                        try
-                        {
-                            actionName = item.GetOnSelActionS(i);
-                        }
-                        catch (Exception e)
-                        {
-                            OnMenuItemClicked(action, menuItemName, actionName);
-                            break;
-                        }
-
-                        OnMenuItemClicked(action, menuItemName, actionName);
-                    }
-                });
+                SetSliderValues(itemGo, item);
             }
             else if (item.MenuItemType == MenuItemType.Text)
             {
-                itemGo = ResourceLoader.TryGetPrefabObject(PrefabType.UiText, name: menuItemName, parent: Canvas)!;
+                itemGo = ResourceLoader.TryGetPrefabObject(PrefabType.UiText, name: item.Name, parent: Canvas)!;
             }
             else
             {
-                itemGo = ResourceLoader.TryGetPrefabObject(PrefabType.UiEmpty, name: menuItemName, parent: Canvas)!;
+                itemGo = ResourceLoader.TryGetPrefabObject(PrefabType.UiEmpty, name: item.Name, parent: Canvas)!;
             }
 
             itemGo.transform.localPosition = Vector3.zero;
 
-            MenuItemCache[menuItemName] = (item, itemGo);
+            MenuItemCache[item.Name] = (item, itemGo);
 
             var rect = itemGo.GetComponent<RectTransform>();
-            var halfMainWidth = (float)main.DimX / 2;
-            var halfMainHeight = (float)main.DimY / 2;
+            var halfMainWidth = (float)MenuInstance.DimX / 2;
+            var halfMainHeight = (float)MenuInstance.DimY / 2;
 
             float itemWidth;
             if (item.DimX > 0)
@@ -177,7 +165,7 @@ namespace GUZ.Core.UnZENity_Core.Scripts.UI
             else
             {
                 // We assume the element can be drawn until end of whole UI.
-                itemWidth = ((float)main.DimX - item.PosX);
+                itemWidth = ((float)MenuInstance.DimX - item.PosX);
             }
 
             rect.SetPositionX((item.PosX - halfMainWidth + itemWidth / 2) / PixelRatioX);
@@ -191,7 +179,7 @@ namespace GUZ.Core.UnZENity_Core.Scripts.UI
             else
             {
                 // We assume the element can be drawn until end of whole UI.
-                itemHeight = (float)main.DimY - item.PosY;
+                itemHeight = (float)MenuInstance.DimY - item.PosY;
             }
 
             rect.SetPositionY((halfMainHeight - item.PosY - itemHeight / 2) / PixelRatioY);
@@ -212,8 +200,7 @@ namespace GUZ.Core.UnZENity_Core.Scripts.UI
                 }
 
                 backPicGo.transform.localPosition = Vector3.zero;
-
-
+                
                 var backPictRenderer = backPicGo.GetComponentInChildren<MeshRenderer>();
                 backPictRenderer.sharedMaterial = backPic;
 
@@ -226,10 +213,11 @@ namespace GUZ.Core.UnZENity_Core.Scripts.UI
             if (textComp != null)
             {
                 SetTextDimensions(textComp, item, itemWidth, itemHeight);
+                SetText(textComp, item);
             }
 
             //item disabled (grayed out and not interactable)
-            if (!IsMenuItemInitiallyActive(menuItemName))
+            if (!IsMenuItemActive(item.Name))
             {
                 if (textComp != null)
                 {
@@ -253,7 +241,7 @@ namespace GUZ.Core.UnZENity_Core.Scripts.UI
             }
         }
 
-        private void SetTextDimensions(TMP_Text textComp, MenuItemInstance item,
+        private void SetTextDimensions(TMP_Text textComp, AbstractMenuItemInstance item,
             float itemWidth, float itemHeight)
         {
             // frameSizeX/Y are text paddings from left-right and/or top/bottom.
@@ -265,7 +253,16 @@ namespace GUZ.Core.UnZENity_Core.Scripts.UI
                 textComp.alignment = TextAlignmentOptions.Center;
             }
 
-            textComp.text = item.GetText(0);
+            // By default, we let text overflow. This ensures we won't have it being wrapped if we have text >1px too long.
+            if (item.Flags.HasFlag(MenuItemFlag.Multiline))
+            {
+                textComp.textWrappingMode = TextWrappingModes.Normal;
+            }
+
+            // Text shall always be rendered from top to bottom. Otherwise, e.g. MENUITEM_OPT_HEADING will be rendered y-centered.
+            // VerticalAlignment setting stored on Prefab isn't being used by Unity. We therefore need to set it now.
+            textComp.verticalAlignment = VerticalAlignmentOptions.Top;
+
             textComp.spriteAsset = GameGlobals.Font.TryGetFont(item.FontName);
             textComp.fontSize = item.FontName.ToLowerInvariant().Contains("font_old_10_white") ? 16 : 36;
 
@@ -276,13 +273,118 @@ namespace GUZ.Core.UnZENity_Core.Scripts.UI
             textRect.SetHeight(textHeight / PixelRatioY);
         }
 
+        private void SetText(TMP_Text textComp, AbstractMenuItemInstance item)
+        {
+            var text0 = item.GetText(0);
+            
+            if (item.MenuItemType == MenuItemType.ChoiceBox)
+            {
+                // We try to load setting from Ini file.
+                var entries = text0.Split("|");
+                var defaultIfNoIniExists = (int)item.GetUserFloat(3);
+                var entryIndex = GameGlobals.Config.Gothic.GetInt(item.OnChgSetOption, defaultIfNoIniExists);
+                // We need to ensure that we're not out-of-bounds.
+                text0 = entryIndex >= entries.Length ? entries[0] : entries[entryIndex];
+            }
+
+            textComp.text = text0;
+        }
+
+        private void SetSliderValues(GameObject go, AbstractMenuItemInstance item)
+        {
+            var slider = go.GetComponentInChildren<Slider>();
+
+            // e.g., setting of userFloat[0] == 15 --> 16 steps to display on Slider (1...16; both are inclusive).
+            // HINT: We shift scale by +1 from 0...15 to 1...16 to properly map it to ini values.
+            slider.minValue = 1;
+            slider.maxValue = item.GetUserFloat(0) + 1; // Steps
+            slider.wholeNumbers = true;
+
+            var stepAmount = 1 / (item.GetUserFloat(0)); // -1 as we use elements from 0...15
+            var defaultIfNoIniExists = item.GetUserFloat(3) != 0 ? item.GetUserFloat(3) : 1;
+            var currentIniValue = GameGlobals.Config.Gothic.GetFloat(item.OnChgSetOption, defaultIfNoIniExists);
+            
+            // Convert INI value (0...1) to slider value (1...maxValue)
+            var sliderValue = Mathf.Round(currentIniValue / stepAmount) + 1; // +1, as minValue == 1, not zero
+            slider.value = sliderValue;
+            
+            // Handle changes
+            slider.onValueChanged.AddListener(value => HandleSliderValueChange(item, stepAmount, value));
+            
+            // Set image for handle bar.
+            var handlebarImage = go.GetComponentInChildren<Image>();
+            handlebarImage.material = GameGlobals.Textures.GetMaterial(item.GetUserString(0));
+        }
+
         /// <summary>
         /// This function is used as a callback for menu items when they are clicked.
-        /// The itemName argument is mostly needed for the Loading menu as it calls Close when loading a save.
         /// </summary>
-        /// <param name="action">Represents which function to call</param>
-        /// <param name="itemName">Represents the name of the menu item</param>
-        /// <param name="commandName">Represents additional behaviour for the action</param>
+        private void HandleMenuItemClick(AbstractMenuItemInstance item)
+        {
+            for (var i = 0;; i++)
+            {
+                MenuItemSelectAction action;
+                try
+                {
+                    action = item.GetOnSelAction(i);
+                }
+                catch (Exception e)
+                {
+                    break;
+                }
+        
+                if (action == MenuItemSelectAction.Undefined)
+                {
+                    break;
+                }
+        
+                string actionName = "";
+                try
+                {
+                    actionName = item.GetOnSelActionS(i);
+                }
+                catch (Exception e)
+                {
+                    OnMenuItemClicked(action, item.Name, actionName);
+                    break;
+                }
+        
+                OnMenuItemClicked(action, item.Name, actionName);
+            }
+        }
+
+        private void HandleChoiceBoxClick(AbstractMenuItemInstance item, GameObject itemGo)
+        {
+            var option = item.OnChgSetOption;
+            var optionSection = item.OnChgSetOptionSection;
+
+            var options = item.GetText(0).Split("|");
+            var textComp = itemGo.GetComponentInChildren<TMP_Text>();
+            var currentText = textComp.text;
+            var currentIndex = options.IndexOfItem(currentText);
+            
+            var nextIndex = currentIndex + 1;
+
+            if (currentIndex == -1 || nextIndex >= options.Length)
+            {
+                GameGlobals.Config.Gothic.SetInt(optionSection, option, 0);
+                textComp.text = options[0];
+            }
+            else
+            {
+                GameGlobals.Config.Gothic.SetInt(optionSection, option, currentIndex+1);
+                textComp.text = options[currentIndex+1];
+            }
+        }
+
+        private void HandleSliderValueChange(AbstractMenuItemInstance item, float stepAmount, float value)
+        {
+            var iniValue = stepAmount * (value - 1); // -1 as we need to normalize back to 0...1
+            iniValue = (float)Math.Round(iniValue, 9);
+            
+            GameGlobals.Config.Gothic.SetFloat(item.OnChgSetOptionSection, item.OnChgSetOption, iniValue);
+        }
+        
         private void OnMenuItemClicked(MenuItemSelectAction action, string itemName, string commandName)
         {
             switch (action)
