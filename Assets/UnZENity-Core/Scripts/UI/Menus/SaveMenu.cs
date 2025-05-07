@@ -14,6 +14,7 @@ namespace GUZ.Core.UI.Menus
 {
     public class SaveMenu : AbstractMenu
     {
+        private bool _isInitialized;
         private GameObject[] SaveSlots = new GameObject[16];
 
         private GameObject Thumbnail;
@@ -30,10 +31,31 @@ namespace GUZ.Core.UI.Menus
 
         private string _saveLoadStatus;
 
+        /// <summary>
+        /// Pre-fill the Load Game entries with names and textures (if existing)
+        /// </summary>
+        private void Start()
+        {
+            Thumbnail.GetComponent<MeshRenderer>().material =
+                GameGlobals.Textures.GetEmptyMaterial(MaterialExtension.BlendMode.Opaque);
+        }
+
+        private void OnEnable()
+        {
+            // InitializeMenu() is called after first OnEnable().
+            if (!_isInitialized)
+                return;
+            
+            FillSaveGameEntries();
+        }
+        
         public override void InitializeMenu(AbstractMenuInstance menuInstance)
         {
             base.InitializeMenu(menuInstance);
             Setup();
+
+            _isInitialized = true;
+            FillSaveGameEntries();
         }
 
         private void Setup()
@@ -108,20 +130,6 @@ namespace GUZ.Core.UI.Menus
         protected override bool IsMenuItemActive(string menuItemName)
         {
             return (MenuItemCache[menuItemName].item.Flags & MenuItemFlag.Disabled) == 0;
-        }
-
-        /// <summary>
-        /// Pre-fill the Load Game entries with names and textures (if existing)
-        /// </summary>
-        private void Start()
-        {
-            Thumbnail.GetComponent<MeshRenderer>().material =
-                GameGlobals.Textures.GetEmptyMaterial(MaterialExtension.BlendMode.Opaque);
-        }
-
-        private void OnEnable()
-        {
-            FillSaveGameEntries();
         }
 
         private void FillSaveGameEntries()
