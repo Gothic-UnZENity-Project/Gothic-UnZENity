@@ -1,9 +1,9 @@
 using System.Collections.Generic;
-using GUZ.Core._Npc2;
 using GUZ.Core.Animations;
 using GUZ.Core.Data.Container;
 using TMPro;
 using UnityEngine;
+using Container_NpcContainer = GUZ.Core.Data.Container.NpcContainer;
 
 namespace GUZ.Core.Caches
 {
@@ -20,8 +20,8 @@ namespace GUZ.Core.Caches
         ///     * We need to ensure that any time an NpcInstance.UserData contains an NpcData object, that it is stored here.
         ///       Otherwise, UserData's WeakReference pointer gets cleared.
         /// </summary>
-        public static readonly List<NpcContainer> NpcCache = new();
-        public static readonly List<NpcContainer2> NpcCache2 = new();
+        public static readonly List<Container_NpcContainer> NpcCache = new();
+        public static readonly List<NpcContainer> NpcCache2 = new();
 
 
         /// <summary>

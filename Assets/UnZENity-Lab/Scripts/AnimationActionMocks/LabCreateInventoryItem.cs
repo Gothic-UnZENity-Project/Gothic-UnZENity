@@ -1,4 +1,4 @@
-using GUZ.Core._Npc2;
+using GUZ.Core.Data.Container;
 using GUZ.Core.Globals;
 using GUZ.Core.Npc.Actions;
 using GUZ.Core.Vm;
@@ -7,7 +7,7 @@ namespace GUZ.Lab.AnimationActionMocks
 {
     public class LabCreateInventoryItem : AbstractLabAnimationAction
     {
-        public LabCreateInventoryItem(AnimationAction action, NpcContainer2 npcContainer) : base(action, npcContainer)
+        public LabCreateInventoryItem(AnimationAction action, NpcContainer npcContainer) : base(action, npcContainer)
         {
         }
 

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using GUZ.Core._Npc2;
+using GUZ.Core.Data.Container;
 using GUZ.Core.Util;
 using JetBrains.Annotations;
 using MyBox;
@@ -42,9 +42,9 @@ namespace GUZ.Core.Extensions
         /// Convenient shortcut to retrieve and cast NpcData object from NpcInstance property.
         /// </summary>
         [CanBeNull]
-        public static NpcContainer2 GetUserData2(this NpcInstance instance)
+        public static NpcContainer GetUserData2(this NpcInstance instance)
         {
-            return instance?.UserData as NpcContainer2;
+            return instance?.UserData as NpcContainer;
         }
 
         public static TextureFormat AsUnityTextureFormat(this ZenKit.TextureFormat format)

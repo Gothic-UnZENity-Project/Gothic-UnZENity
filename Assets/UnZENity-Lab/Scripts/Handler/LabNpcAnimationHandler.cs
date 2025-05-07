@@ -4,7 +4,6 @@ using System.Linq;
 using GUZ.Core;
 using GUZ.Core.Caches;
 using GUZ.Core.Creator.Meshes;
-using GUZ.Core.Data;
 using GUZ.Core.Data.Container;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
@@ -129,17 +128,12 @@ namespace GUZ.Lab.Handler
             var npcInstance = GameData.GothicVm.InitInstance<NpcInstance>(npcSymbol!);
             var npcProps = newNpc.GetComponent<NpcProperties>();
 
-            npcProps.NpcData.Instance = npcInstance;
-
             var npcContainerData = new NpcContainer
             {
                 Instance = npcInstance,
-                Properties =  npcProps
+                Props =  npcProps
             };
             MultiTypeCache.NpcCache.Add(npcContainerData);
-
-            npcProps.NpcData.Instance = npcInstance;
-            npcProps.OverlayMdsName = npcData.MdhMds;
 
             var body = new VmGothicExternals.ExtSetVisualBodyData
             {

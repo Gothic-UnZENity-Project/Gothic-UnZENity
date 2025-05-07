@@ -1,11 +1,10 @@
 #if GUZ_HVR_INSTALLED
 using GUZ.Core;
-using GUZ.Core._Npc2;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
+using GUZ.Core.Npc;
 using GUZ.Core.Properties;
-using GUZ.Core.Vob;
 using HurricaneVR.Framework.Core;
 using HurricaneVR.Framework.Core.Grabbers;
 using TMPro;
@@ -52,7 +51,7 @@ namespace GUZ.VR.Components
                 return;
             }
 
-            var npcLoader = GetComponentInParent<NpcLoader2>();
+            var npcLoader = GetComponentInParent<NpcLoader>();
             if (npcLoader != null)
             {
                 _nameCanvas.GetComponentInChildren<TMP_Text>().text = npcLoader.Npc.GetUserData2().PrefabProps.GetFocusName();

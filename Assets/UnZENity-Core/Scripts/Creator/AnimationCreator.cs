@@ -1,16 +1,7 @@
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using GUZ.Core._Npc2;
-using GUZ.Core.Caches;
-using GUZ.Core.Data.ZkEvents;
-using GUZ.Core.Extensions;
+using GUZ.Core.Data.Container;
 using GUZ.Core.Npc;
-using GUZ.Core.Npc.Actions;
-using MyBox;
 using UnityEngine;
-using ZenKit;
 using Animation = UnityEngine.Animation;
 
 namespace GUZ.Core.Creator
@@ -41,12 +32,12 @@ namespace GUZ.Core.Creator
             animationComp.Stop();
         }
 
-        public static void PlayHeadMorphAnimation(NpcContainer2 npcContainer, HeadMorph.HeadMorphType type)
+        public static void PlayHeadMorphAnimation(NpcContainer npcContainer, HeadMorph.HeadMorphType type)
         {
             npcContainer.PrefabProps.HeadMorph.StartAnimation(npcContainer.Props.BodyData.Head, type);
         }
 
-        public static void StopHeadMorphAnimation(NpcContainer2 npcContainer, HeadMorph.HeadMorphType type)
+        public static void StopHeadMorphAnimation(NpcContainer npcContainer, HeadMorph.HeadMorphType type)
         {
             npcContainer.PrefabProps.HeadMorph.StopAnimation(type);
         }

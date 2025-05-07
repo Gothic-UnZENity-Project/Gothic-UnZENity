@@ -1,3 +1,4 @@
+﻿using GUZ.Core.Npc;
 using GUZ.Core.Properties;
 using UnityEngine;
 using ZenKit.Daedalus;
@@ -5,17 +6,23 @@ using ZenKit.Daedalus;
 namespace GUZ.Core.Data.Container
 {
     /// <summary>
-    /// Container class for NPC data. It includes references to ZenKit
-    ///   1. NpcInstance with default data
-    ///   2. Vobs.Npc for data to save in a save game
-    /// and UnZENity:
-    ///   1. NpcProperties - Component storing data next to its GameObject
+    /// Data object containing references to information needed on ZenKit and Unity side.
     /// </summary>
     public class NpcContainer
     {
+        // ZenKit data
         public NpcInstance Instance;
         public ZenKit.Vobs.Npc Vob;
-        public NpcProperties Properties;
-        public GameObject Go => Properties.gameObject;
+
+        // Unity Data
+        public GameObject Go;
+        /// <summary>
+        /// Unity Properties which are loaded from Daedalus and won't be stored on ZenKit data.
+        /// </summary>
+        public NpcProperties Props;
+
+        // Cache objects from Prefab
+        public NpcPrefabProperties PrefabProps;
+
     }
 }

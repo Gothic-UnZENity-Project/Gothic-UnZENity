@@ -6,9 +6,9 @@ using GUZ.Core.Properties;
 using UnityEngine;
 using ZenKit.Daedalus;
 
-namespace GUZ.Core._Npc2
+namespace GUZ.Core.Npc
 {
-    public class NpcPrefabProperties2 : VobProperties
+    public class NpcPrefabProperties : VobProperties
     {
         // Hero has different behaviour. e.g. no AIHandler attached and we therefore set the data from above (CacheHero())
         [SerializeField]
@@ -45,7 +45,7 @@ namespace GUZ.Core._Npc2
             }
 
             // else
-            var npcContainer = GetComponentInParent<NpcLoader2>().Npc.GetUserData2();
+            var npcContainer = GetComponentInParent<NpcLoader>().Npc.GetUserData2();
             npcContainer.PrefabProps = this;
             _focusName = npcContainer.Instance.GetName(NpcNameSlot.Slot0);
         }

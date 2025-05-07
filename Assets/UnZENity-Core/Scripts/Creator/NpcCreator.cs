@@ -1,11 +1,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using GUZ.Core._Npc2;
 using GUZ.Core.Caches;
 using GUZ.Core.Config;
-using GUZ.Core.Creator.Meshes;
-using GUZ.Core.Data.Container;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
@@ -14,12 +11,12 @@ using GUZ.Core.Properties;
 using GUZ.Core.Util;
 using GUZ.Core.Vm;
 using GUZ.Core.Vob.WayNet;
-using JetBrains.Annotations;
 using MyBox;
 using UnityEngine;
 using ZenKit;
 using ZenKit.Daedalus;
 using Logger = GUZ.Core.Util.Logger;
+using NpcContainer = GUZ.Core.Data.Container.NpcContainer;
 using Object = UnityEngine.Object;
 using WayNet_WayPoint = GUZ.Core.Vob.WayNet.WayPoint;
 
@@ -113,7 +110,7 @@ namespace GUZ.Core.Creator
             return _npcRootGo;
         }
 
-        private static NpcProperties2 GetProperties(NpcInstance npc)
+        private static NpcProperties GetProperties(NpcInstance npc)
         {
             return npc.GetUserData2().Props;
         }

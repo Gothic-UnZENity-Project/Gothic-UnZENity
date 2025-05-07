@@ -1,4 +1,4 @@
-using GUZ.Core._Npc2;
+using GUZ.Core.Data.Container;
 using GUZ.Core.Util;
 using GUZ.Core.Vm;
 
@@ -13,7 +13,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
         private int DesiredState => Action.Int1;
 
 
-        public UseItemToState(AnimationAction action, NpcContainer2 npcContainer) : base(action, npcContainer)
+        public UseItemToState(AnimationAction action, NpcContainer npcContainer) : base(action, npcContainer)
         {
         }
 

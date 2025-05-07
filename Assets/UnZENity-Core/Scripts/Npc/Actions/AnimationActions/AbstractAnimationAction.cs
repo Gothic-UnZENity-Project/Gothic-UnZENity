@@ -1,10 +1,11 @@
 using System;
 using System.Linq;
-using GUZ.Core._Npc2;
 using GUZ.Core.Creator;
+using GUZ.Core.Data.Container;
 using GUZ.Core.Data.ZkEvents;
 using GUZ.Core.Extensions;
 using GUZ.Core.Manager;
+using GUZ.Core.Properties;
 using GUZ.Core.Util;
 using GUZ.Core.Vm;
 using UnityEngine;
@@ -18,18 +19,18 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
     public abstract class AbstractAnimationAction
     {
         protected readonly AnimationAction Action;
-        protected readonly NpcContainer2 NpcContainer;
+        protected readonly NpcContainer NpcContainer;
         protected readonly NpcInstance NpcInstance;
         protected readonly GameObject NpcGo;
-        protected readonly NpcProperties2 Props;
-        protected readonly NpcPrefabProperties2 PrefabProps;
+        protected readonly NpcProperties Props;
+        protected readonly NpcPrefabProperties PrefabProps;
 
         protected float ActionTime;
         protected float AnimationEndEventTime;
 
         protected bool IsFinishedFlag;
 
-        public AbstractAnimationAction(AnimationAction action, NpcContainer2 npcData)
+        public AbstractAnimationAction(AnimationAction action, NpcContainer npcData)
         {
             Action = action;
             NpcContainer = npcData;

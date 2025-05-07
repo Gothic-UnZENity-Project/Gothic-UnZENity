@@ -1,18 +1,20 @@
 using System.Linq;
 using GUZ.Core.Caches;
+using GUZ.Core.Data.Container;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
 using GUZ.Core.Npc.Actions;
 using GUZ.Core.Npc.Actions.AnimationActions;
+using GUZ.Core.Properties;
 using GUZ.Core.Vm;
 using UnityEngine;
 using ZenKit.Daedalus;
 using Vector3 = UnityEngine.Vector3;
 
-namespace GUZ.Core._Npc2
+namespace GUZ.Core.Npc
 {
-    public class NpcAiManager2
+    public class NpcAiManager
     {
         public void ExtNpcPerceptionEnable(NpcInstance npc, VmGothicEnums.PerceptionType perception, int function)
         {
@@ -27,7 +29,7 @@ namespace GUZ.Core._Npc2
         /// <summary>
         /// Call an NPC Perception (active like Assess_Player or passive like Assess_Talk are possible).
         /// </summary>
-        public void ExecutePerception(VmGothicEnums.PerceptionType type, NpcProperties2 properties, NpcInstance self, NpcInstance victim, NpcInstance other)
+        public void ExecutePerception(VmGothicEnums.PerceptionType type, NpcProperties properties, NpcInstance self, NpcInstance victim, NpcInstance other)
         {
             // Perception isn't set
             if (!properties.Perceptions.TryGetValue(type, out var perceptionFunction))
@@ -422,7 +424,7 @@ namespace GUZ.Core._Npc2
             var selfNpc = self.GetUserData2();
             var selfPosition = selfNpc.Go.transform.position; // Cache position
 
-            NpcContainer2 closestEnemy = null;
+            NpcContainer closestEnemy = null;
             var closestSqrDist = float.MaxValue;
 
             foreach (var candidate in MultiTypeCache.NpcCache2)

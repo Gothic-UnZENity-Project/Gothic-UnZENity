@@ -1,4 +1,4 @@
-using GUZ.Core._Npc2;
+using GUZ.Core.Data.Container;
 using GUZ.Core.Npc.Actions;
 using GUZ.Core.Npc.Actions.AnimationActions;
 
@@ -14,7 +14,7 @@ namespace GUZ.Lab.AnimationActionMocks
     /// </summary>
     public abstract class AbstractLabAnimationAction : AbstractAnimationAction
     {
-        protected AbstractLabAnimationAction(AnimationAction action, NpcContainer2 npcContainer) : base(action, npcContainer)
+        protected AbstractLabAnimationAction(AnimationAction action, NpcContainer npcContainer) : base(action, npcContainer)
         {
         }
 

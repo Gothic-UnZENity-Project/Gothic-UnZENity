@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Globalization;
 using System.Linq;
-using GUZ.Core._Npc2;
 using GUZ.Core.Caches;
 using GUZ.Core.Creator;
+using GUZ.Core.Data.Container;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
 using GUZ.Core.Util;
-using UnityEngine;
 using ZenKit;
 using ZenKit.Daedalus;
 using Logger = GUZ.Core.Util.Logger;
@@ -201,7 +200,7 @@ namespace GUZ.Core.Vm
                 else
                 {
                     // Add additional log information if existing.
-                    var selfUserData = GameData.GothicVm.GlobalSelf.UserData as NpcContainer2;
+                    var selfUserData = GameData.GothicVm.GlobalSelf.UserData as NpcContainer;
                     var npcName = MultiTypeCache.NpcCache2.FirstOrDefault(x => x.Instance == selfUserData.Instance)?.Go
                         ?.transform.parent.name;
                     Logger.LogWarningEditor($"Method >{sym.Name}< not yet implemented in DaedalusVM (called on >{npcName}<).", LogCat.ZenKit);

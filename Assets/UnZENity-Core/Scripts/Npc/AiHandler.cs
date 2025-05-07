@@ -1,11 +1,11 @@
-﻿using GUZ.Core._Npc2;
-using GUZ.Core.Creator;
+﻿using GUZ.Core.Creator;
 using GUZ.Core.Data.ZkEvents;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
 using GUZ.Core.Npc.Actions;
 using GUZ.Core.Npc.Actions.AnimationActions;
+using GUZ.Core.Properties;
 using GUZ.Core.Util;
 using GUZ.Core.Vm;
 using UnityEngine;
@@ -39,7 +39,7 @@ namespace GUZ.Core.Npc
             Properties.CurrentAction.Tick();
 
             // Add new milliseconds when stateTime shall be measured.
-            if (Properties.IsStateTimeActive && Properties.CurrentLoopState == NpcProperties2.LoopState.Loop)
+            if (Properties.IsStateTimeActive && Properties.CurrentLoopState == NpcProperties.LoopState.Loop)
             {
                 Properties.StateTime += Time.deltaTime;
             }
@@ -63,10 +63,10 @@ namespace GUZ.Core.Npc
                 switch (Properties.CurrentLoopState)
                 {
                     // None means, the NPC is newly created and didn't execute any Routine as of now.
-                    case NpcProperties2.LoopState.None:
+                    case NpcProperties.LoopState.None:
                         RestartCurrentRoutine();
                         break;
-                    case NpcProperties2.LoopState.Start:
+                    case NpcProperties.LoopState.Start:
                         if (Properties.StateStart == 0)
                         {
                             return;
@@ -84,12 +84,12 @@ namespace GUZ.Core.Npc
                         }
 
 
-                        Properties.CurrentLoopState = NpcProperties2.LoopState.Loop;
+                        Properties.CurrentLoopState = NpcProperties.LoopState.Loop;
                         break;
-                    case NpcProperties2.LoopState.Loop:
+                    case NpcProperties.LoopState.Loop:
                         if (Properties.StateLoop == 0 && Properties.StateStart != 0)
                         {
-                            Properties.CurrentLoopState = NpcProperties2.LoopState.Start;
+                            Properties.CurrentLoopState = NpcProperties.LoopState.Start;
                             return;
                         }
 
@@ -101,7 +101,7 @@ namespace GUZ.Core.Npc
                                 // Some ZS_*_Loop return !=0 when they want to quit.
                                 if (loopResponse != _daedalusLoopContinue)
                                 {
-                                    Properties.CurrentLoopState = NpcProperties2.LoopState.End;
+                                    Properties.CurrentLoopState = NpcProperties.LoopState.End;
                                 }
                                 break;
                             default:
@@ -111,7 +111,7 @@ namespace GUZ.Core.Npc
 
                         break;
 
-                    case NpcProperties2.LoopState.End:
+                    case NpcProperties.LoopState.End:
                         if (Properties.StateEnd != 0)
                         {
                             loopSymbol = Vm.GetSymbolByIndex(Properties.StateEnd)!;
@@ -127,11 +127,11 @@ namespace GUZ.Core.Npc
                         }
 
                         // We filled the AnimationQueue with the ZS_*_End() animations once. END isn't looping.
-                        Properties.CurrentLoopState = NpcProperties2.LoopState.AfterEnd;
+                        Properties.CurrentLoopState = NpcProperties.LoopState.AfterEnd;
                         break;
-                    case NpcProperties2.LoopState.AfterEnd:
+                    case NpcProperties.LoopState.AfterEnd:
                         // We're done. Restart normal routine.
-                        Properties.CurrentLoopState = NpcProperties2.LoopState.Start;
+                        Properties.CurrentLoopState = NpcProperties.LoopState.Start;
 
                         // If we're inside another ZS_*_ loop via Ai_StartState(), we will exit it now. If not, we will simply restart current ZS_* routine.
                         RestartCurrentRoutine();
@@ -234,7 +234,7 @@ namespace GUZ.Core.Npc
                 Properties.StateEnd = symbolEnd.Index;
             }
 
-            Properties.CurrentLoopState = NpcProperties2.LoopState.Start;
+            Properties.CurrentLoopState = NpcProperties.LoopState.Start;
 
             // We need to properly start state time as e.g. ZS_Cook won't call AI_StartState() or Npc_SetStateTime()
             // But it's required as it checks immediately how long the Cauldron is already been whirled.
@@ -261,12 +261,12 @@ namespace GUZ.Core.Npc
 
             if (stopCurrentStateImmediately)
             {
-                Properties.CurrentLoopState = NpcProperties2.LoopState.None;
+                Properties.CurrentLoopState = NpcProperties.LoopState.None;
                 AnimationCreator.StopAnimation(Go);
             }
             else
             {
-                Properties.CurrentLoopState = NpcProperties2.LoopState.End; // Next frame, the End logic will be executed.
+                Properties.CurrentLoopState = NpcProperties.LoopState.End; // Next frame, the End logic will be executed.
             }
         }
 
