@@ -10,17 +10,6 @@ namespace GUZ.Core.Manager.Scenes
     /// </summary>
     public class BootstrapSceneManager : MonoBehaviour, ISceneManager
     {
-
-        // FIXME - Move to Player.unity scene
-        [SerializeField] private AudioSource _music;
-
-        // FIXME - Move to Player.unity scene
-        private void Start()
-        {
-            _music.volume = PlayerPrefsManager.MusicVolume;
-            GlobalEventDispatcher.PlayerPrefUpdated.AddListener(OnPlayerPrefUpdated);
-        }
-
         public void Init()
         {
             StartCoroutine(BootUnity());
@@ -41,18 +30,6 @@ namespace GUZ.Core.Manager.Scenes
             
             // Load Player scene
             GameManager.I.LoadScene(Constants.ScenePlayer);
-        }
-
-        // FIXME - Move to Player.unity scene
-        private void OnPlayerPrefUpdated(string key, object value)
-        {
-            _music.volume = PlayerPrefsManager.MusicVolume;
-        }
-        
-        // FIXME - Move to Player.unity scene
-        private void OnDestroy()
-        {
-            GlobalEventDispatcher.PlayerPrefUpdated.RemoveListener(OnPlayerPrefUpdated);
         }
     }
 }

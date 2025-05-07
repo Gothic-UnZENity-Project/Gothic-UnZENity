@@ -1,12 +1,10 @@
 #if GUZ_HVR_INSTALLED
 using GUZ.Core;
 using GUZ.Core.Globals;
-using GUZ.Core.Manager;
 using GUZ.Core.UI.Menus;
 using HurricaneVR.Framework.Core.Player;
 using MyBox;
 using UnityEngine.SceneManagement;
-using UnityEngine.Serialization;
 using Constants = GUZ.Core.Globals.Constants;
 
 namespace GUZ.VR.Components.HVROverrides
@@ -47,12 +45,34 @@ namespace GUZ.VR.Components.HVROverrides
         /// <summary>
         /// Used in game scenes where you play the game (world.unity, ...)
         /// </summary>
-        public void SetNormalControls()
+        public void SetNormalControls(bool useDefaultValues = false)
         {
-            DirectionStyle = (PlayerDirectionMode)PlayerPrefsManager.DirectionMode;
-            RotationType = (RotationType)PlayerPrefsManager.RotationType;
-            SnapAmount = PlayerPrefsManager.SnapRotationAmount;
-            SmoothTurnSpeed = PlayerPrefsManager.SmoothRotationSpeed;
+            // We have our player created before Gothic inis are loaded. We therefore need to set some default values.
+            if (useDefaultValues)
+            {
+                CameraRig.SetSitStandMode(HVRSitStand.PlayerHeight);
+                DirectionStyle = PlayerDirectionMode.Camera;
+                RotationType = RotationType.Snap;
+                SnapAmount = 45f;
+                SmoothTurnSpeed = 90f;
+
+                return;
+            }
+
+            var sitStandSetting =
+                GameGlobals.Config.Gothic.GetInt(VRConstants.IniNames.SitStand, (int)HVRSitStand.PlayerHeight);
+            CameraRig.SetSitStandMode((HVRSitStand)sitStandSetting);
+
+            DirectionStyle = (PlayerDirectionMode)GameGlobals.Config.Gothic.GetInt(VRConstants.IniNames.MoveDirection, (int)PlayerDirectionMode.Camera);
+            RotationType = (RotationType)GameGlobals.Config.Gothic.GetInt(VRConstants.IniNames.RotationType, (int)RotationType.Smooth);
+
+            var snapSetting = GameGlobals.Config.Gothic.GetInt(VRConstants.IniNames.SnapRotationAmount, VRConstants.SnapRotationDefaultValue);
+            // e.g., 20° = 5° + 3*5°
+            SnapAmount = VRConstants.SnapRotationAmountSettingTickAmount + VRConstants.SnapRotationAmountSettingTickAmount * snapSetting;
+            
+            var smoothSetting = GameGlobals.Config.Gothic.GetFloat(VRConstants.IniNames.SmoothRotationSpeed, VRConstants.SmoothRotationDefaultValue);
+            // e.g., 50 = 5 + 90 * 0.5f
+            SmoothTurnSpeed = VRConstants.SmoothRotationMinSpeed + VRConstants.SmoothRotationMaxAdditionalSpeed * smoothSetting;
         }
 
         /// <summary>
@@ -79,7 +99,14 @@ namespace GUZ.VR.Components.HVROverrides
         private void OnPlayerPrefsUpdated(string preferenceKey, object value)
         {
             // Just update everything.
-            SetNormalControls();
+            if (preferenceKey == VRConstants.IniNames.MoveDirection ||
+                preferenceKey == VRConstants.IniNames.RotationType ||
+                preferenceKey == VRConstants.IniNames.SnapRotationAmount ||
+                preferenceKey == VRConstants.IniNames.SmoothRotationSpeed ||
+                preferenceKey == VRConstants.IniNames.SitStand)
+            {
+                SetNormalControls();
+            }
         }
 
         /// <summary>

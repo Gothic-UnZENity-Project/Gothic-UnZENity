@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using JetBrains.Annotations;
 using MyBox;
 
@@ -7,8 +8,21 @@ namespace GUZ.Core.Config
 {
     public class GothicIniConfig
     {
-        public string IniSkyDayColor(int index) => _config.GetValueOrDefault($"zDayColor{index}", "0 0 0");
+        private readonly Dictionary<string, string> _config;
+        private readonly GothicIniWriter _gothicIniWriter;
+        
+        public readonly string IniFilePath;
+
+        // GAME
+        public bool IniSubtitles => Convert.ToBoolean(Convert.ToInt16(_config.GetValueOrDefault("subTitles", "1")));
         public bool IniPlayLogoVideos => Convert.ToBoolean(Convert.ToInt16(_config.GetValueOrDefault("playLogoVideos", "1")));
+
+        // SOUND
+        public bool IniMusicEnabled => Convert.ToBoolean(Convert.ToInt16(_config.GetValueOrDefault("musicEnabled", "1")));
+        public float IniMusicVolume => Convert.ToSingle(_config.GetValueOrDefault("musicVolume", "1"));
+        
+        // SKY_OUTDOOR
+        public string IniSkyDayColor(int index) => _config.GetValueOrDefault($"zDayColor{index}", "0 0 0");
         
         [NotNull]
         public string PlayerInstanceName
@@ -19,28 +33,49 @@ namespace GUZ.Core.Config
                 return playerInstanceName.IsNullOrEmpty() ? "PC_HERO" : playerInstanceName;
             }
         }
+
         
-        private readonly Dictionary<string, string> _config;
-
-
-        public void SetInt(string settingName, int value)
+        public GothicIniConfig(Dictionary<string, string> config, string iniFilePath)
         {
-            _config[settingName] = value.ToString();
-
-            GlobalEventDispatcher.PlayerPrefUpdated.Invoke(settingName, value);
+            _config = config;
+            IniFilePath = iniFilePath;
+            _gothicIniWriter = new GothicIniWriter(iniFilePath);
         }
-        
-        public int GetInt(string settingName, int defaultValue = 0)
+
+        public string GetString(string settingName, string defaultValue = "")
         {
             if (_config.TryGetValue(settingName, out var value))
-                return Convert.ToInt32(value);
+                return value;
             else
                 return defaultValue;
         }
         
-        public GothicIniConfig(Dictionary<string, string> config)
+        private void SetString(string section, string key, string value)
         {
-            _config = config;
+            _config[key] = value;
+
+            _gothicIniWriter.WriteSetting(section, key, value);
+            GlobalEventDispatcher.PlayerPrefUpdated.Invoke(key, value);
+        }
+        
+        public int GetInt(string settingName, int defaultValue = 0)
+        {
+            return Convert.ToInt32(GetString(settingName, defaultValue.ToString()));
+        }
+        
+        public void SetInt(string section, string key, int value)
+        {
+            SetString(section, key, value.ToString());
+        }
+        
+        public float GetFloat(string settingName, float defaultValue = 1f)
+        {
+            return Convert.ToSingle(GetString(settingName, defaultValue.ToString(CultureInfo.InvariantCulture)));
+        }
+        
+        public void SetFloat(string section, string key, float value)
+        {
+            SetString(section, key, value.ToString(CultureInfo.InvariantCulture));
         }
     }
 }

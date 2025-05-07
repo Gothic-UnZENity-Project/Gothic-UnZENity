@@ -33,6 +33,9 @@ namespace GUZ.Core.UI.Menus.Adapter.MenuItem
             HideIfOptionSectionSet = reference.HideIfOptionSectionSet;
             HideIfOptionSet = reference.HideIfOptionSet;
             HideOnValue = reference.HideOnValue;
+            
+            // for Slider: .tga of slider button
+            SetUserString(0, reference.GetUserString(0));
         }
 
         private string[] _texts = new string[Constants.DaedalusMenu.MaxUserStrings];
@@ -73,14 +76,26 @@ namespace GUZ.Core.UI.Menus.Adapter.MenuItem
             throw new NotImplementedException();
         }
 
+        private float[] _userFloats = new float[Constants.DaedalusMenu.MaxUserVars];
         public override float GetUserFloat(int i)
         {
-            throw new NotImplementedException();
+            return _userFloats[i];
         }
 
+        public override void SetUserFloat(int i, float value)
+        {
+            _userFloats[i] = value;
+        }
+
+        private string[] _userStrings = new string[Constants.DaedalusMenu.MaxUserVars];
         public override string GetUserString(int i)
         {
-            throw new NotImplementedException();
+            return _userStrings[i];
+        }
+
+        public override void SetUserString(int i, string text)
+        {
+            _userStrings[i] = text;
         }
     }
 }

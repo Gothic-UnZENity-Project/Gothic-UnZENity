@@ -101,7 +101,7 @@ namespace GUZ.Core.UI.Menus
             MenuItemCache[_instanceTime].go.GetComponent<TMP_Text>().SetText(time.TimeOfDay.ToString(@"hh\:mm"));
         }
 
-        protected override bool IsMenuItemInitiallyActive(string menuItemName)
+        protected override bool IsMenuItemActive(string menuItemName)
         {
             return !_initiallyDisabledMenuItems.Contains(menuItemName);
         }

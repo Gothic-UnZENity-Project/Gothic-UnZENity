@@ -113,7 +113,7 @@ GameObject:
   - component: {fileID: 2282871596405899006}
   - component: {fileID: 4541480854365842519}
   m_Layer: 0
-  m_Name: MENU_UNZENITY_OPT_VR
+  m_Name: MENU_UNZENITY_OPT_VR_ACCESSIBILITY
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -6,12 +6,15 @@ namespace GUZ.Core.Config
     {
         private readonly Dictionary<string, string> _config;
 
-        // TBD - Add INI entries here
+        public readonly string IniFilePath;
+
+        // TODO - Add INI entries here
 
 
-        public GothicGameIniConfig(Dictionary<string, string> config)
+        public GothicGameIniConfig(Dictionary<string, string> config, string iniFilePath)
         {
             _config = config;
+            IniFilePath = iniFilePath;
         }
     }
 }

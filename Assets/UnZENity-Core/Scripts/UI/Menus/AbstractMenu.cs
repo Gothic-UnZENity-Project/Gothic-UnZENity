@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using GUZ.Core.Config;
+using System.Linq;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.UI.Menus.Adapter.Menu;
@@ -54,9 +54,12 @@ namespace GUZ.Core.UI.Menus
         protected abstract void PlaySound(string itemName, string commandName);
         protected abstract void ExecuteCommand(string itemName, string commandName);
 
-        protected virtual bool IsMenuItemInitiallyActive(string menuItemName)
+        protected virtual bool IsMenuItemActive(string menuItemName)
         {
-            return true;
+            if (Constants.DaedalusMenu.DisabledGothicMenuSettings.Contains(menuItemName))
+                return false;
+            else
+                return true;
         }
         
         public void ToggleVisibility()
@@ -105,7 +108,7 @@ namespace GUZ.Core.UI.Menus
                 CreateMenuItem(item);
             }
         }
-
+        
         private void CreateMenuItem(AbstractMenuItemInstance item)
         {
             GameObject itemGo;
@@ -128,6 +131,12 @@ namespace GUZ.Core.UI.Menus
                 var button = itemGo.GetComponentInChildren<Button>();
 
                 button.onClick.AddListener(() => HandleChoiceBoxClick(item, itemGo));
+            }
+            else if (item.MenuItemType == MenuItemType.Slider)
+            {
+                itemGo = ResourceLoader.TryGetPrefabObject(PrefabType.UiSlider, name: item.Name, parent: Canvas)!;
+
+                SetSliderValues(itemGo, item);
             }
             else if (item.MenuItemType == MenuItemType.Text)
             {
@@ -208,7 +217,7 @@ namespace GUZ.Core.UI.Menus
             }
 
             //item disabled (grayed out and not interactable)
-            if (!IsMenuItemInitiallyActive(item.Name))
+            if (!IsMenuItemActive(item.Name))
             {
                 if (textComp != null)
                 {
@@ -270,10 +279,41 @@ namespace GUZ.Core.UI.Menus
             
             if (item.MenuItemType == MenuItemType.ChoiceBox)
             {
-                text0 = text0.Split("|")[0];
+                // We try to load setting from Ini file.
+                var entries = text0.Split("|");
+                var defaultIfNoIniExists = (int)item.GetUserFloat(3);
+                var entryIndex = GameGlobals.Config.Gothic.GetInt(item.OnChgSetOption, defaultIfNoIniExists);
+                // We need to ensure that we're not out-of-bounds.
+                text0 = entryIndex >= entries.Length ? entries[0] : entries[entryIndex];
             }
 
             textComp.text = text0;
+        }
+
+        private void SetSliderValues(GameObject go, AbstractMenuItemInstance item)
+        {
+            var slider = go.GetComponentInChildren<Slider>();
+
+            // e.g., setting of userFloat[0] == 15 --> 16 steps to display on Slider (1...16; both are inclusive).
+            // HINT: We shift scale by +1 from 0...15 to 1...16 to properly map it to ini values.
+            slider.minValue = 1;
+            slider.maxValue = item.GetUserFloat(0) + 1; // Steps
+            slider.wholeNumbers = true;
+
+            var stepAmount = 1 / (item.GetUserFloat(0)); // -1 as we use elements from 0...15
+            var defaultIfNoIniExists = item.GetUserFloat(3) != 0 ? item.GetUserFloat(3) : 1;
+            var currentIniValue = GameGlobals.Config.Gothic.GetFloat(item.OnChgSetOption, defaultIfNoIniExists);
+            
+            // Convert INI value (0...1) to slider value (1...maxValue)
+            var sliderValue = Mathf.Round(currentIniValue / stepAmount) + 1; // +1, as minValue == 1, not zero
+            slider.value = sliderValue;
+            
+            // Handle changes
+            slider.onValueChanged.AddListener(value => HandleSliderValueChange(item, stepAmount, value));
+            
+            // Set image for handle bar.
+            var handlebarImage = go.GetComponentInChildren<Image>();
+            handlebarImage.material = GameGlobals.Textures.GetMaterial(item.GetUserString(0));
         }
 
         /// <summary>
@@ -315,15 +355,8 @@ namespace GUZ.Core.UI.Menus
 
         private void HandleChoiceBoxClick(AbstractMenuItemInstance item, GameObject itemGo)
         {
-            // FIXME - These elements are used to determine Gothic.ini element to overwrite after change.
             var option = item.OnChgSetOption;
             var optionSection = item.OnChgSetOptionSection;
-
-            if (optionSection != "UnZENity")
-            {
-                Logger.LogWarning("We handle our own settings for now only!", LogCat.Ui);
-                return;
-            }
 
             var options = item.GetText(0).Split("|");
             var textComp = itemGo.GetComponentInChildren<TMP_Text>();
@@ -334,14 +367,22 @@ namespace GUZ.Core.UI.Menus
 
             if (currentIndex == -1 || nextIndex >= options.Length)
             {
-                GameGlobals.Config.Gothic.SetInt(option, 0);
+                GameGlobals.Config.Gothic.SetInt(optionSection, option, 0);
                 textComp.text = options[0];
             }
             else
             {
-                GameGlobals.Config.Gothic.SetInt(option, currentIndex+1);
+                GameGlobals.Config.Gothic.SetInt(optionSection, option, currentIndex+1);
                 textComp.text = options[currentIndex+1];
             }
+        }
+
+        private void HandleSliderValueChange(AbstractMenuItemInstance item, float stepAmount, float value)
+        {
+            var iniValue = stepAmount * (value - 1); // -1 as we need to normalize back to 0...1
+            iniValue = (float)Math.Round(iniValue, 9);
+            
+            GameGlobals.Config.Gothic.SetFloat(item.OnChgSetOptionSection, item.OnChgSetOption, iniValue);
         }
         
         private void OnMenuItemClicked(MenuItemSelectAction action, string itemName, string commandName)
