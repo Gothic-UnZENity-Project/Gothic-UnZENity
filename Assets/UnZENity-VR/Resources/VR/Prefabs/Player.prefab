@@ -2968,11 +2968,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _vrCameraTransform: {fileID: 8391885030032322550}
   _spectatorCamera: {fileID: 5753945146512928740}
-  SmoothingLvl: 2
-  NoneRotationSmoothing: 0
-  LowRotationSmoothing: 0.02
-  MediumRotationSmoothing: 0.08
-  HighRotationSmoothing: 0.15
 --- !u!20 &5753945146512928740
 Camera:
   m_ObjectHideFlags: 0
@@ -5562,7 +5557,6 @@ MonoBehaviour:
   ColliderRootMotion: {fileID: 0}
   AiHandler: {fileID: 0}
   Animation: {fileID: 0}
-  AnimationHandler: {fileID: 0}
   AnimationSystem: {fileID: 0}
   AnimationHeadHandler: {fileID: 0}
 --- !u!4 &8391885031051259193 stripped

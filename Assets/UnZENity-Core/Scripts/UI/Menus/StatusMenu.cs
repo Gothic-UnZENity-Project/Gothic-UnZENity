@@ -23,6 +23,11 @@ namespace GUZ.Core.UI.Menus
         private string _itemTalentSkillPattern = "MENU_ITEM_TALENT_{0}_SKILL";
         private string _itemTalentDescriptionPattern = "MENU_ITEM_TALENT_{0}";
 
+        
+        private void Awake()
+        {
+            InitializeMenu(new MenuInstanceAdapter("MENU_STATUS", null));
+        }
 
         public override void InitializeMenu(AbstractMenuInstance menuInstance)
         {
