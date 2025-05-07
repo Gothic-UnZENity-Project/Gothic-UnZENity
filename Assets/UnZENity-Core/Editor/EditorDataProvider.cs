@@ -1,4 +1,5 @@
 ﻿using GUZ.Core._Npc2;
+using GUZ.Core.Animations;
 using GUZ.Core.Config;
 using GUZ.Core.Manager;
 using GUZ.Core.Manager.Culling;

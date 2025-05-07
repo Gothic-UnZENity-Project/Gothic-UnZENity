@@ -93,7 +93,7 @@ namespace GUZ.Core.Animations
             }
 #endif
 
-            var newTrack = AnimationManager2.GetTrack(animationName, Properties.MdsNameBase, Properties.MdsNameOverlay);
+            var newTrack = GameGlobals.Animations.GetTrack(animationName, Properties.MdsNameBase, Properties.MdsNameOverlay);
 
             if (newTrack == null)
             {

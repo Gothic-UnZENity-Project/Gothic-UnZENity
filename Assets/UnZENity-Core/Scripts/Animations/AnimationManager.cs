@@ -11,18 +11,18 @@ using Logger = GUZ.Core.Util.Logger;
 
 namespace GUZ.Core.Animations
 {
-    public class AnimationManager2
+    public class AnimationManager
     {
         private const float _movementThreshold = 0.4f; // If magnitude of first and last frame positions is higher than this, we have a movement animation.
 
         [ItemCanBeNull]
-        private static Dictionary<string, AnimationTrack> _tracks = new();
+        private Dictionary<string, AnimationTrack> _tracks = new();
 
 
         /// <summary>
         /// Try to load animation based on both MDS values: overlay + base.
         /// </summary>
-        public static AnimationTrack GetTrack(string animName, string mdsBase, string mdsOverlay)
+        public AnimationTrack GetTrack(string animName, string mdsBase, string mdsOverlay)
         {
             var track = GetTrack(animName, mdsOverlay);
             if (track == null)
@@ -32,7 +32,7 @@ namespace GUZ.Core.Animations
             return track;
         }
 
-        private static AnimationTrack GetTrack(string animName, string mdsName)
+        private AnimationTrack GetTrack(string animName, string mdsName)
         {
             if (mdsName == null)
             {
@@ -96,7 +96,7 @@ namespace GUZ.Core.Animations
             return track;
         }
 
-        private static AnimationTrack CreateTrack(IModelAnimation modelAnimation,
+        private AnimationTrack CreateTrack(IModelAnimation modelAnimation,
             IModelHierarchy modelHierarchy, IAnimation anim, IAnimationAlias animAlias)
         {
             var track = new AnimationTrack(anim, animAlias, modelAnimation);
@@ -157,7 +157,7 @@ namespace GUZ.Core.Animations
             return track;
         }
 
-        private static void AddTrackDuration(AnimationTrack track, IModelAnimation modelAnimation)
+        private void AddTrackDuration(AnimationTrack track, IModelAnimation modelAnimation)
         {
             track.Duration = modelAnimation.FrameCount / modelAnimation.Fps;
         }
@@ -169,7 +169,7 @@ namespace GUZ.Core.Animations
         /// We don't use Flags.Move as also idle animations would move the characters (based on animation data).
         /// Using our own calculation is a workaround found on OpenGothic.
         /// </summary>
-        private static void SetClipMovementSpeed(AnimationTrack track, IModelAnimation modelAnim, IModelHierarchy mdh)
+        private void SetClipMovementSpeed(AnimationTrack track, IModelAnimation modelAnim, IModelHierarchy mdh)
         {
             // We assume, that only lowest level animations are movement animations. (e.g. S_WALKL)
             if (track.Layer != 1)
@@ -212,7 +212,7 @@ namespace GUZ.Core.Animations
         /// <summary>
         /// .man files are combined of MDSNAME-ANIMATIONNAME.man
         /// </summary>
-        private static string GetCombinedAnimationKey(string mdsKey, string animKey)
+        private string GetCombinedAnimationKey(string mdsKey, string animKey)
         {
             var preparedMdsKey = GetPreparedKey(mdsKey);
             var preparedAnimKey = GetPreparedKey(animKey);
@@ -223,7 +223,7 @@ namespace GUZ.Core.Animations
         /// <summary>
         /// Basically extract file ending and lower names.
         /// </summary>
-        private static string GetPreparedKey(string key)
+        private string GetPreparedKey(string key)
         {
             var lowerKey = key.ToLower();
             var extension = Path.GetExtension(lowerKey);

@@ -20,7 +20,6 @@ namespace GUZ.Core._Npc2
         public Transform ColliderRootMotion;
         public AiHandler AiHandler;
         public Animation Animation;
-        public NpcAnimationHandler AnimationHandler;
         public AnimationSystem AnimationSystem;
         public NpcHeadAnimationHandler AnimationHeadHandler;
         public INpcSubtitles NpcSubtitles;
