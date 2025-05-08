@@ -136,7 +136,7 @@ namespace GUZ.Core.Manager
             var npcPos = npcInstance.GetUserData2().Go.transform.position;
 
             // FIXME - add range check based on perceiveAll's range (npc.sense_range)
-            var foundNpc = MultiTypeCache.NpcCache2
+            var foundNpc = MultiTypeCache.NpcCache
                 .Where(i => i.Props != null) // ignore empty (safe check)
                 .Where(i => i.Go != null) // ignore empty (safe check)
                 .Where(i => i.Instance.Index != npcInstance.Index) // ignore self

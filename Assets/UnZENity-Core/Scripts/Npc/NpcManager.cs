@@ -146,7 +146,7 @@ namespace GUZ.Core.Npc
 
         public NpcInstance ExtHlpGetNpc(int instanceId)
         {
-            return MultiTypeCache.NpcCache2
+            return MultiTypeCache.NpcCache
                 .FirstOrDefault(i => i.Instance.Index == instanceId)?
                 .Instance;
         }
@@ -205,7 +205,7 @@ namespace GUZ.Core.Npc
             {
                 // We assume, that this call is only made when the cache got cleared before as we loaded another world.
                 // Therefore, we re-add it now.
-                MultiTypeCache.NpcCache2.Add(((NpcInstance)GameData.GothicVm.GlobalHero).GetUserData2());
+                MultiTypeCache.NpcCache.Add(((NpcInstance)GameData.GothicVm.GlobalHero).GetUserData2());
 
                 return;
             }
@@ -241,7 +241,7 @@ namespace GUZ.Core.Npc
 
             heroInstance.UserData = npcData;
 
-            MultiTypeCache.NpcCache2.Add(npcData);
+            MultiTypeCache.NpcCache.Add(npcData);
             _vm.InitInstance(heroInstance);
 
             _vm.GlobalHero = heroInstance;
@@ -481,6 +481,12 @@ namespace GUZ.Core.Npc
             }
 
             return true;
+        }
+
+        public void ExtNpcSetTalentSkill(NpcInstance npc, VmGothicEnums.Talent talent, int level)
+        {
+            // FIXME - TBD.
+            // FIXME - In OpenGothic it adds MDS overlays based on skill level.
         }
     }
 }

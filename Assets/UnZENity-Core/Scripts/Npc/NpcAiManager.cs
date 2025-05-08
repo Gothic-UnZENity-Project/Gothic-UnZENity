@@ -427,7 +427,7 @@ namespace GUZ.Core.Npc
             NpcContainer closestEnemy = null;
             var closestSqrDist = float.MaxValue;
 
-            foreach (var candidate in MultiTypeCache.NpcCache2)
+            foreach (var candidate in MultiTypeCache.NpcCache)
             {
                 // Fast-fail checks in order of cheapest first
                 if (candidate.Props == null || candidate.Go == null)

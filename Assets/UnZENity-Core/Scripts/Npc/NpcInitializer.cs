@@ -104,7 +104,7 @@ namespace GUZ.Core.Npc
             npcInstance.UserData = userDataObject;
 
             // IMPORTANT!: NpcInstance.UserData stores a weak pointer. i.e. if we do not store the local variable it would get removed.
-            MultiTypeCache.NpcCache2.Add(userDataObject);
+            MultiTypeCache.NpcCache.Add(userDataObject);
 
             return userDataObject;
         }

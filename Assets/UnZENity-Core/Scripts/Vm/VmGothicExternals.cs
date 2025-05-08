@@ -201,7 +201,7 @@ namespace GUZ.Core.Vm
                 {
                     // Add additional log information if existing.
                     var selfUserData = GameData.GothicVm.GlobalSelf.UserData as NpcContainer;
-                    var npcName = MultiTypeCache.NpcCache2.FirstOrDefault(x => x.Instance == selfUserData.Instance)?.Go
+                    var npcName = MultiTypeCache.NpcCache.FirstOrDefault(x => x.Instance == selfUserData.Instance)?.Go
                         ?.transform.parent.name;
                     Logger.LogWarningEditor($"Method >{sym.Name}< not yet implemented in DaedalusVM (called on >{npcName}<).", LogCat.ZenKit);
                 }
@@ -681,7 +681,7 @@ namespace GUZ.Core.Vm
 
         public static void Npc_SetTalentSkill(NpcInstance npc, int talent, int level)
         {
-            NpcCreator.ExtNpcSetTalentSkill(npc, (VmGothicEnums.Talent)talent, level);
+            GameGlobals.Npcs.ExtNpcSetTalentSkill(npc, (VmGothicEnums.Talent)talent, level);
         }
 
         public static string Npc_GetNearestWP(NpcInstance npc)
@@ -889,7 +889,7 @@ namespace GUZ.Core.Vm
         public static void Ta(NpcInstance npc, int startH, int stopH, int action,
             string waypoint)
         {
-            NpcCreator.ExtTaMin(npc, startH, 0, stopH, 0, action, waypoint);
+            GameGlobals.Npcs.ExtTaMin(npc, startH, 0, stopH, 0, action, waypoint);
         }
 
         public static void Npc_ExchangeRoutine(NpcInstance self, string routineName)

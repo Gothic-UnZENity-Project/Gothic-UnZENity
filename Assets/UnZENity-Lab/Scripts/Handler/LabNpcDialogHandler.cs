@@ -140,7 +140,7 @@ namespace GUZ.Lab.Handler
 
             _bloodwynInstance.UserData = npcData;
             loaderComp.Npc = _bloodwynInstance;
-            MultiTypeCache.NpcCache2.Add(npcData);
+            MultiTypeCache.NpcCache.Add(npcData);
 
             newNpc.name = _bloodwynInstance.GetName(NpcNameSlot.Slot0);
             GameData.GothicVm.GlobalSelf = _bloodwynInstance;
