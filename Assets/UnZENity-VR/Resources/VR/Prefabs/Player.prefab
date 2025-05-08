@@ -5322,9 +5322,9 @@ MonoBehaviour:
   MoveSpeed: 1.5
   SprintAcceleration: 20
   RunSpeed: 3.5
-  Gravity: 5
-  MaxFallSpeed: 5
-  JumpVelocity: 2
+  Gravity: 10
+  MaxFallSpeed: 20
+  JumpVelocity: 3
   DoubleClickThreshold: 0.25
   RotationType: 0
   SmoothTurnSpeed: 250
