@@ -26,6 +26,7 @@ namespace GUZ.Core.Manager.Culling
         {
             base.PreWorldCreate();
             _spheres = null;
+            _visibleNpcs.ClearAndReleaseMemory();
         }
 
 
