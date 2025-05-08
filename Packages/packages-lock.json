@@ -289,9 +289,9 @@
       "source": "git",
       "dependencies": {
         "com.unity.xr.core-utils": "2.2.0",
-        "com.unity.xr.openxr": "1.7.0"
+        "com.unity.xr.openxr": "1.8.2"
       },
-      "hash": "96e2d8c4eac1e71eae1e66c8a4879e39d8cd503b"
+      "hash": "14aca194de7ecd85573ef143f77a34a4b014d8cb"
     },
     "com.unzenity.core.binaries": {
       "version": "https://github.com/Gothic-UnZENity-Project/binary-dependencies.git?path=/UnZENity-Core",
