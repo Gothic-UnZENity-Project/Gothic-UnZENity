@@ -31,7 +31,10 @@ namespace GUZ.Core.Manager
                 // Don't worry. I assume this even makes no sense at all, as also the "END" dialog would always trigger a return true.
                 Logger.LogError("Npc_CheckInfo isn't implemented for important=0.", LogCat.Dialog);
             }
-            return TryGetImportant(npc.GetUserData2().Props.Dialogs, out _);
+
+            GameGlobals.Npcs.SetDialogs(npc.GetUserData());
+            
+            return TryGetImportant(npc.GetUserData().Props.Dialogs, out _);
         }
 
         /// <summary>
@@ -42,6 +45,9 @@ namespace GUZ.Core.Manager
         {
             if (initialDialogStarting)
             {
+                // Optimization: We expect, that AmbientInfos are assigned before Ai_ProcessInfos() is called.
+                GameGlobals.Npcs.SetDialogs(npcContainer);
+
                 GameContext.DialogAdapter.StartDialogInitially();
             }
 

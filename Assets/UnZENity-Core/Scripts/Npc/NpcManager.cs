@@ -488,5 +488,14 @@ namespace GUZ.Core.Npc
             // FIXME - TBD.
             // FIXME - In OpenGothic it adds MDS overlays based on skill level.
         }
+
+        public void SetDialogs(NpcContainer npcContainer)
+        {
+            var npcIndex = npcContainer.Instance.Index;
+            npcContainer.Props.Dialogs = GameData.Dialogs.Instances
+                .Where(dialog => dialog.Npc == npcIndex)
+                .OrderByDescending(dialog => dialog.Important)
+                .ToList();
+        }
     }
 }
