@@ -48,6 +48,8 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
 
         protected override void OnDestinationReached()
         {
+            base.OnDestinationReached();
+            
             Props.CurrentFreePoint = _fp;
 
             AnimationEnd();

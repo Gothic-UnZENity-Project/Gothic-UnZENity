@@ -27,13 +27,14 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
         {
         }
 
-        protected abstract void OnDestinationReached();
-
         /// <summary>
         /// We need to define the final destination spot within overriding class.
         /// </summary>
         protected abstract Vector3 GetWalkDestination();
 
+        protected string _executedWalkModeAnimationString;
+        
+        
         public override void Start()
         {
             base.Start();
@@ -41,6 +42,11 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             PhysicsHelper.EnablePhysicsForNpc(PrefabProps);
         }
 
+        protected virtual void OnDestinationReached()
+        {
+            PrefabProps.AnimationSystem.StopAnimation(_executedWalkModeAnimationString);
+        }
+        
         public override void Tick()
         {
             base.Tick();
@@ -92,8 +98,8 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
 
         private void StartWalk()
         {
-            var animName = GetWalkModeAnimationString();
-            PrefabProps.AnimationSystem.PlayAnimation(animName);
+            _executedWalkModeAnimationString = GetWalkModeAnimationString();
+            PrefabProps.AnimationSystem.PlayAnimation(_executedWalkModeAnimationString);
 
             State = WalkState.Walk;
         }
