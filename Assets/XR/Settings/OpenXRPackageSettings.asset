@@ -33,11 +33,11 @@ MonoBehaviour:
   m_Name: PICOSpatialMesh Android
   m_EditorClassIdentifier: 
   m_enabled: 0
-  nameUi: 
-  version: 
-  featureIdInternal: 
-  openxrExtensionStrings: 
-  company: 
+  nameUi: PICO Spatial Mesh
+  version: 1.0.0
+  featureIdInternal: com.pico.openxr.feature.spatialmesh
+  openxrExtensionStrings: XR_PICO_spatial_mesh XR_PICO_spatial_sensing XR_EXT_future
+  company: PICO
   priority: 0
   required: 0
   LOD: 0
@@ -112,11 +112,11 @@ MonoBehaviour:
   m_Name: PICOSceneCapture Android
   m_EditorClassIdentifier: 
   m_enabled: 0
-  nameUi: 
-  version: 
-  featureIdInternal: 
-  openxrExtensionStrings: 
-  company: 
+  nameUi: PICO Scene Capture
+  version: 1.0.0
+  featureIdInternal: com.pico.openxr.feature.scenecapture
+  openxrExtensionStrings: XR_PICO_scene_capture XR_PICO_spatial_sensing XR_EXT_future
+  company: PICO
   priority: 0
   required: 0
 --- !u!114 &-5918777525122221150
@@ -213,11 +213,11 @@ MonoBehaviour:
   m_Name: PICO4UltraControllerProfile Android
   m_EditorClassIdentifier: 
   m_enabled: 0
-  nameUi: 
-  version: 
-  featureIdInternal: 
-  openxrExtensionStrings: 
-  company: 
+  nameUi: PICO4 Ultra Touch Controller Profile
+  version: 1.0.0
+  featureIdInternal: com.unity.openxr.feature.input.PICO4Ultratouch
+  openxrExtensionStrings: XR_BD_controller_interaction
+  company: PICO
   priority: 0
   required: 0
 --- !u!114 &-4492370360389853125
@@ -386,11 +386,11 @@ MonoBehaviour:
   m_Name: PICOSpatialAnchor Android
   m_EditorClassIdentifier: 
   m_enabled: 0
-  nameUi: 
-  version: 
-  featureIdInternal: 
-  openxrExtensionStrings: 
-  company: 
+  nameUi: PICO Spatial Anchor
+  version: 1.0.0
+  featureIdInternal: com.pico.openxr.feature.spatialanchor
+  openxrExtensionStrings: XR_PICO_spatial_anchor XR_PICO_spatial_sensing XR_EXT_future
+  company: PICO
   priority: 0
   required: 0
 --- !u!114 &-2533738380611187352
@@ -544,7 +544,8 @@ MonoBehaviour:
   version: 1.0.0
   featureIdInternal: com.unity.openxr.pico.features
   openxrExtensionStrings: XR_EXT_local_floor XR_FB_triangle_mesh XR_FB_composition_layer_alpha_blend
-    XR_KHR_composition_layer_color_scale_bias XR_KHR_composition_layer_cylinderXR_KHR_composition_layer_equirectXR_KHR_composition_layer_cube
+    XR_KHR_composition_layer_color_scale_bias XR_KHR_composition_layer_cylinder XR_KHR_composition_layer_equirect
+    XR_KHR_composition_layer_cube
   company: PICO
   priority: 0
   required: 0
@@ -637,11 +638,11 @@ MonoBehaviour:
   m_Name: BodyTrackingFeature Android
   m_EditorClassIdentifier: 
   m_enabled: 0
-  nameUi: 
-  version: 
-  featureIdInternal: 
-  openxrExtensionStrings: 
-  company: 
+  nameUi: PICO Body Tracking
+  version: 1.0.0
+  featureIdInternal: com.pico.openxr.feature.PICO_BodyTracking
+  openxrExtensionStrings: XR_BD_body_tracking XR_PICO_body_tracking2
+  company: PICO
   priority: 0
   required: 0
 --- !u!114 &1721832157923820321
@@ -790,6 +791,7 @@ MonoBehaviour:
   m_Name: Android
   m_EditorClassIdentifier: 
   features:
+  - {fileID: 1334689538305467106}
   - {fileID: 6812285598239836352}
   - {fileID: -3983660480734472317}
   - {fileID: -332764730267102851}
@@ -810,9 +812,13 @@ MonoBehaviour:
   - {fileID: 7051114072204557114}
   - {fileID: -3767426411331881515}
   - {fileID: 346038476301611093}
+  - {fileID: -4603854506387641800}
   - {fileID: 9219605285230895480}
   - {fileID: 238323431353500125}
   - {fileID: 2499955303954065424}
+  - {fileID: -6141741419973945741}
+  - {fileID: -2805028502496846468}
+  - {fileID: -7532106903231179020}
   - {fileID: 8833097018418957246}
   m_renderMode: 1
   m_depthSubmissionMode: 0
@@ -872,7 +878,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_enabled: 0
   nameUi: OpenXR Passthrough
-  version: 0.0.1
+  version: 1.0.0
   featureIdInternal: com.pico.openxr.feature.passthrough
   openxrExtensionStrings: XR_FB_passthrough
   company: PICO
@@ -1037,7 +1043,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_enabled: 0
   nameUi: PICO Support
-  version: 1.0.0
+  version: 1.4.1
   featureIdInternal: com.unity.openxr.feature.pico
   openxrExtensionStrings: 
   company: PICO
