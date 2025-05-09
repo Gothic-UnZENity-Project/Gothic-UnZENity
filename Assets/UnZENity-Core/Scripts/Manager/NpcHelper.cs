@@ -59,7 +59,7 @@ namespace GUZ.Core.Manager
         {
             var npcGo = GetNpc(npcInstance);
 
-            var prefabProps = npcInstance.GetUserData2().PrefabProps;
+            var prefabProps = npcInstance.GetUserData().PrefabProps;
 
             VobProperties vob;
 
@@ -133,7 +133,7 @@ namespace GUZ.Core.Manager
             bool detectPlayer)
         {
             var npc = GetProperties(npcInstance);
-            var npcPos = npcInstance.GetUserData2().Go.transform.position;
+            var npcPos = npcInstance.GetUserData().Go.transform.position;
 
             // FIXME - add range check based on perceiveAll's range (npc.sense_range)
             var foundNpc = MultiTypeCache.NpcCache
@@ -235,25 +235,25 @@ namespace GUZ.Core.Manager
         [CanBeNull]
         private static GameObject GetNpc([CanBeNull] NpcInstance npc)
         {
-            return npc.GetUserData2().Go;
+            return npc.GetUserData().Go;
         }
 
         private static NpcContainer GetContainer(NpcInstance npc)
         {
-            return npc.GetUserData2();
+            return npc.GetUserData();
         }
 
         private static NpcProperties GetProperties([CanBeNull] NpcInstance npc)
         {
-            return npc?.GetUserData2().Props;
+            return npc?.GetUserData().Props;
         }
 
         // FIXME - CanSense is not separating between smell, hear, and see as of now. Please add functionality.
         public static bool CanSenseNpc(NpcInstance self, NpcInstance other, bool freeLOS)
         {
             var senseRange = (self.SensesRange / 100); // daedalus values are in cm, we need them in m
-            var range = Vector3.Distance(other.GetUserData2().Go.transform.position,
-                self.GetUserData2().Go.transform.position);
+            var range = Vector3.Distance(other.GetUserData().Go.transform.position,
+                self.GetUserData().Go.transform.position);
             if (range > senseRange)
             {
                 return false;

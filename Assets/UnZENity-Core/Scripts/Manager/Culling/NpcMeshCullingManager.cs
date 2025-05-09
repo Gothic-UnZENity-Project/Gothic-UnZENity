@@ -79,7 +79,7 @@ namespace GUZ.Core.Manager.Culling
             var wasOutOfDistance = evt.previousDistance != 0;
 
             var loaderComp = go.GetComponent<NpcLoader>();
-            var npcData = loaderComp.Npc.GetUserData2();
+            var npcData = loaderComp.Npc.GetUserData();
             var isInitialized = loaderComp.IsLoaded;
 
             if (!isInVisibleRange && isInitialized)

@@ -42,7 +42,7 @@ namespace GUZ.Core.Extensions
         /// Convenient shortcut to retrieve and cast NpcData object from NpcInstance property.
         /// </summary>
         [CanBeNull]
-        public static NpcContainer GetUserData2(this NpcInstance instance)
+        public static NpcContainer GetUserData(this NpcInstance instance)
         {
             return instance?.UserData as NpcContainer;
         }

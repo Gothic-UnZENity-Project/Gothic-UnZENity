@@ -229,14 +229,9 @@ namespace GUZ.Core.Npc
 
         public void InitNpc(NpcInstance npcInstance, GameObject lazyLoadGo)
         {
-            var npcData = npcInstance.GetUserData2();
+            var npcData = npcInstance.GetUserData();
             var newNpc = ResourceLoader.TryGetPrefabObject(PrefabType.Npc, parent: lazyLoadGo)!;
             var props = npcData.Props;
-
-            npcData.Props.Dialogs = GameData.Dialogs.Instances
-                .Where(dialog => dialog.Npc == npcInstance.Index)
-                .OrderByDescending(dialog => dialog.Important)
-                .ToList();
 
             // We set the root of Prefab as the new Root object. LazyLoading Root-GO isn't needed for anything, but it's name anymore.
             newNpc.name = "Root";

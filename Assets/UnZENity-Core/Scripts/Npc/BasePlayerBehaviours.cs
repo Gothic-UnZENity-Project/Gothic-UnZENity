@@ -22,7 +22,7 @@ namespace GUZ.Core.Npc
             var lazyComp = GetComponentInParent<NpcLoader>();
 
             // As we lazy load NPCs, the NpcInstance is always set inside NpcLoader before we initialize this prefab!
-            NpcData = lazyComp.Npc.GetUserData2();
+            NpcData = lazyComp.Npc.GetUserData();
         }
     }
 }

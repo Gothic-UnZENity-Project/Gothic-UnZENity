@@ -38,7 +38,7 @@ namespace GUZ.Lab.Handler
             var animHeadHandler = npcRoot.GetComponent<NpcHeadAnimationHandler>();
 
             // For UseItemToState animations
-            var props = npcRoot.GetComponentInParent<NpcLoader>().Npc.GetUserData2().Props;
+            var props = npcRoot.GetComponentInParent<NpcLoader>().Npc.GetUserData().Props;
             var beerSymbol = GameData.GothicVm.GetSymbolByName("ItFoBeer");
             props.CurrentItem = beerSymbol!.Index;
 

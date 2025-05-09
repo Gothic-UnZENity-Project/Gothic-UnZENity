@@ -138,9 +138,9 @@ namespace GUZ.Core.Manager
 
             var npcTalkingTo = isHero ? target : self;
 
-            npcTalkingTo.GetUserData2().Props.AnimationQueue.Enqueue(new Output(
+            npcTalkingTo.GetUserData().Props.AnimationQueue.Enqueue(new Output(
                 new AnimationAction(int0: speakerId, string0: outputName),
-                npcTalkingTo.GetUserData2()));
+                npcTalkingTo.GetUserData()));
         }
 
         /// <summary>
@@ -202,14 +202,14 @@ namespace GUZ.Core.Manager
         {
             var props = GetProperties(npc);
 
-            props.AnimationQueue.Enqueue(new StartProcessInfos(new AnimationAction(bool0: true), npc.GetUserData2()));
+            props.AnimationQueue.Enqueue(new StartProcessInfos(new AnimationAction(bool0: true), npc.GetUserData()));
         }
 
         public static void ExtAiStopProcessInfos(NpcInstance npc)
         {
             var props = GetProperties(npc);
 
-            props.AnimationQueue.Enqueue(new StopProcessInfos(new AnimationAction(), npc.GetUserData2()));
+            props.AnimationQueue.Enqueue(new StopProcessInfos(new AnimationAction(), npc.GetUserData()));
         }
 
         public static void MainSelectionClicked(NpcContainer npcContainer, InfoInstance infoInstance)
@@ -305,17 +305,17 @@ namespace GUZ.Core.Manager
 
         private static GameObject GetGo(NpcInstance npc)
         {
-            return npc.GetUserData2().Go;
+            return npc.GetUserData().Go;
         }
 
         private static NpcContainer GetNpcContainer(NpcInstance npc)
         {
-            return npc.GetUserData2();
+            return npc.GetUserData();
         }
 
         private static NpcProperties GetProperties(NpcInstance npc)
         {
-            return npc.GetUserData2().Props;
+            return npc.GetUserData().Props;
         }
     }
 }

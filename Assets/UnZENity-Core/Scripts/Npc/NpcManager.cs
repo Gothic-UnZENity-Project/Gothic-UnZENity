@@ -116,19 +116,19 @@ namespace GUZ.Core.Npc
 
         public void ExtNpcSetTalentValue(NpcInstance npc, VmGothicEnums.Talent talent, int level)
         {
-            var props = npc.GetUserData2().Props;
+            var props = npc.GetUserData().Props;
             props.Talents[talent] = level;
         }
 
         public void ExtMdlSetVisual(NpcInstance npc, string visual)
         {
-            var props = npc.GetUserData2().Props;
+            var props = npc.GetUserData().Props;
             props.MdsNameBase = visual;
         }
 
         public void ExtSetVisualBody(VmGothicExternals.ExtSetVisualBodyData data)
         {
-            var props = data.Npc.GetUserData2().Props;
+            var props = data.Npc.GetUserData().Props;
 
             props.BodyData = data;
 
@@ -153,7 +153,7 @@ namespace GUZ.Core.Npc
 
         public void ExtNpcChangeAttribute(NpcInstance npc, int attributeId, int value)
         {
-            var vob = npc.GetUserData2().Vob;
+            var vob = npc.GetUserData().Vob;
 
             vob.Attributes[attributeId] = value;
         }
@@ -167,13 +167,13 @@ namespace GUZ.Core.Npc
                 return;
             }
 
-            if (npc.GetUserData2() == null)
+            if (npc.GetUserData() == null)
             {
                 Logger.LogError($"NPC is not set for {nameof(ExtCreateInvItems)}. Is it an error on Daedalus or our end?", LogCat.Npc);
                 return;
             }
 
-            var props = npc.GetUserData2().Props;
+            var props = npc.GetUserData().Props;
             if (props == null)
             {
                 Logger.LogError($"NPC not found with index {npc.Index}", LogCat.Npc);
@@ -185,12 +185,12 @@ namespace GUZ.Core.Npc
 
         public NpcContainer GetHeroContainer()
         {
-            return ((NpcInstance)GameData.GothicVm.GlobalHero).GetUserData2();
+            return ((NpcInstance)GameData.GothicVm.GlobalHero).GetUserData();
         }
 
         public GameObject GetHeroGameObject()
         {
-            return ((NpcInstance)GameData.GothicVm.GlobalHero).GetUserData2().Go;
+            return ((NpcInstance)GameData.GothicVm.GlobalHero).GetUserData().Go;
         }
 
         /// <summary>
@@ -205,7 +205,7 @@ namespace GUZ.Core.Npc
             {
                 // We assume, that this call is only made when the cache got cleared before as we loaded another world.
                 // Therefore, we re-add it now.
-                MultiTypeCache.NpcCache.Add(((NpcInstance)GameData.GothicVm.GlobalHero).GetUserData2());
+                MultiTypeCache.NpcCache.Add(((NpcInstance)GameData.GothicVm.GlobalHero).GetUserData());
 
                 return;
             }
@@ -250,18 +250,18 @@ namespace GUZ.Core.Npc
         public void ExtMdlSetModelScale(NpcInstance npc, Vector3 scale)
         {
             // FIXME - Set this value on actual GameObject later.
-            npc.GetUserData2().Vob.ModelScale = scale;
+            npc.GetUserData().Vob.ModelScale = scale;
         }
 
         public void ExtSetModelFatness(NpcInstance npc, float fatness)
         {
             // FIXME - Set this value on actual GameObject later.
-            npc.GetUserData2().Vob.ModelFatness = fatness;
+            npc.GetUserData().Vob.ModelFatness = fatness;
         }
 
         public void ExtEquipItem(NpcInstance npc, int itemId)
         {
-            var props = npc.GetUserData2().Props;
+            var props = npc.GetUserData().Props;
             var itemData = VmInstanceManager.TryGetItemData(itemId);
 
             props.EquippedItems.Add(itemData);
@@ -269,12 +269,12 @@ namespace GUZ.Core.Npc
 
         public void ExtApplyOverlayMds(NpcInstance npc, string overlayName)
         {
-            npc.GetUserData2().Props.MdsNameOverlay = overlayName;
+            npc.GetUserData().Props.MdsNameOverlay = overlayName;
         }
 
         public void ExtNpcSetToFistMode(NpcInstance npc)
         {
-            var npcProperties = npc.GetUserData2().Props;
+            var npcProperties = npc.GetUserData().Props;
 
             npcProperties.WeaponState = VmGothicEnums.WeaponState.Fist;
 
@@ -285,7 +285,7 @@ namespace GUZ.Core.Npc
                 return;
             }
 
-            var slotGo = npc.GetUserData2().Go.FindChildRecursively(npcProperties.UsedItemSlot);
+            var slotGo = npc.GetUserData().Go.FindChildRecursively(npcProperties.UsedItemSlot);
             var item = slotGo!.transform.GetChild(0);
 
             Object.Destroy(item.gameObject);
@@ -307,7 +307,7 @@ namespace GUZ.Core.Npc
 
         public void ExtTaMin(NpcInstance npc, int startH, int startM, int stopH, int stopM, int action, string waypoint)
         {
-            var props = npc.GetUserData2().Props;
+            var props = npc.GetUserData().Props;
 
             RoutineData routine = new()
             {
@@ -337,7 +337,7 @@ namespace GUZ.Core.Npc
                 return;
             }
 
-            npc.GetUserData2().Props.Routines.Clear();
+            npc.GetUserData().Props.Routines.Clear();
 
             // We always need to set "self" before executing any Daedalus function.
             GameData.GothicVm.GlobalSelf = npc;
@@ -351,7 +351,7 @@ namespace GUZ.Core.Npc
         /// </summary>
         private bool CalculateCurrentRoutine(NpcInstance npc)
         {
-            var npcProps = npc.GetUserData2().Props;
+            var npcProps = npc.GetUserData().Props;
             var currentTime = GameGlobals.Time.GetCurrentDateTime();
             var normalizedNow = currentTime.Hour % 24 * 60 + currentTime.Minute;
             RoutineData newRoutine = null;
@@ -421,15 +421,15 @@ namespace GUZ.Core.Npc
 
         public string ExtNpcGetNextWp(NpcInstance npc)
         {
-            var pos = npc.GetUserData2().Go.transform.position;
+            var pos = npc.GetUserData().Go.transform.position;
 
             return WayNetHelper.FindNearestWayPoint(pos, true).Name;
         }
 
         public bool ExtWldIsFpAvailable(NpcInstance npc, string fpNamePart)
         {
-            var props = npc.GetUserData2().Props;
-            var npcGo = npc.GetUserData2().Go;
+            var props = npc.GetUserData().Props;
+            var npcGo = npc.GetUserData().Go;
             var freePoints =
                 WayNetHelper.FindFreePointsWithName(npcGo.transform.position, fpNamePart, _fpLookupDistance);
 
@@ -453,15 +453,15 @@ namespace GUZ.Core.Npc
 
         public string ExtGetNearestWayPoint(NpcInstance npc)
         {
-            var pos = npc.GetUserData2().Go.transform.position;
+            var pos = npc.GetUserData().Go.transform.position;
 
             return WayNetHelper.FindNearestWayPoint(pos).Name;
         }
 
         public bool ExtIsNextFpAvailable(NpcInstance npc, string fpNamePart)
         {
-            var props = npc.GetUserData2().Props;
-            var pos = npc.GetUserData2().Go.transform.position;
+            var props = npc.GetUserData().Props;
+            var pos = npc.GetUserData().Go.transform.position;
             var fp = WayNetHelper.FindNearestFreePoint(pos, fpNamePart);
 
             if (fp == null)

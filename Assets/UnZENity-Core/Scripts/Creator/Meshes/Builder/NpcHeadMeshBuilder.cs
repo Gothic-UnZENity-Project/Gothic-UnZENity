@@ -19,7 +19,7 @@ namespace GUZ.Core.Creator.Meshes.Builder
                 return RootGo;
             }
 
-            var npcContainer = RootGo.GetComponentInParent<NpcLoader>().Npc.GetUserData2();
+            var npcContainer = RootGo.GetComponentInParent<NpcLoader>().Npc.GetUserData();
 
             // Cache it f1or faster use during runtime
             npcContainer.PrefabProps.Head = headGo.transform;
