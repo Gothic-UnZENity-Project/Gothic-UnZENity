@@ -188,7 +188,8 @@ namespace GUZ.Core.Manager
                 return int.MaxValue;
             }
 
-            return (int)Vector3.Distance(npcPos, waypoint.Position);
+            // *100 as Gothic metrics are in cm, not m.
+            return (int)(Vector3.Distance(npcPos, waypoint.Position) * 100);
         }
 
         public static void ExtNpcClearInventory(NpcInstance npc)
