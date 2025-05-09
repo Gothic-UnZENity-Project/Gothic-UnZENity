@@ -8,6 +8,7 @@ using GUZ.Core.Npc.Actions.AnimationActions;
 using GUZ.Core.Properties;
 using GUZ.Core.Util;
 using GUZ.Core.Vm;
+using MyBox;
 using UnityEngine;
 using ZenKit;
 using ZenKit.Daedalus;
@@ -203,7 +204,10 @@ namespace GUZ.Core.Npc
         public void StartRoutine(int action, string wayPointName)
         {
             // We need to set WayPoint within Daedalus instance as it calls _self.wp_ during routine loops.
-            NpcInstance.Wp = wayPointName;
+            // If e.g. AssessSc()+B_CheckForImportantInfo() changes state to ZS_TALK(), we have no WP set. Therefore keep original one.
+            if (wayPointName.NotNullOrEmpty())
+                NpcInstance.Wp = wayPointName;
+            
             StartRoutine(action);
         }
 
