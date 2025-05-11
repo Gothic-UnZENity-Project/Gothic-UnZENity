@@ -1,9 +1,16 @@
 using GUZ.Core.Data.Container;
+using GUZ.Core.Globals;
+using ZenKit.Daedalus;
 
 namespace GUZ.Core.Npc.Actions.AnimationActions
 {
     public class StartState : AbstractAnimationAction
     {
+        private int _action => Action.Int0;
+        private string _wayPoint => Action.String0;
+        private NpcInstance _other => Action.Instance0;
+        private NpcInstance _victim => Action.Instance1;
+        
         public StartState(AnimationAction action, NpcContainer npcContainer) : base(action, npcContainer)
         {
         }
@@ -17,14 +24,14 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             Props.IsStateTimeActive = true;
             Props.StateTime = 0;
 
-            ai.StartRoutine(Action.Int0, Action.String0);
+            GameData.GothicVm.GlobalOther = _other;
+            GameData.GothicVm.GlobalVictim = _victim;
+            ai.StartRoutine(_action, _wayPoint);
         }
 
         /// <summary>
         /// This one is actually no animation, but we need to call Start() only.
-        /// FIXME - We need to create an additional inheritance below AbstractAnimationAction if we have more like this class.
         /// </summary>
-        /// <returns></returns>
         public override bool IsFinished()
         {
             return true;

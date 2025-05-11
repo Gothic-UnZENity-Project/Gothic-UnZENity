@@ -164,8 +164,11 @@ namespace GUZ.Core.Npc
 
         public void ExtAiStartState(NpcInstance npc, int action, bool stopCurrentState, string wayPointName)
         {
+            var other = (NpcInstance)GameData.GothicVm.GlobalOther;
+            var victim = (NpcInstance)GameData.GothicVm.GlobalOther;
+            
             npc.GetUserData().Props.AnimationQueue.Enqueue(new StartState(
-                new AnimationAction(int0: action, bool0: stopCurrentState, string0: wayPointName),
+                new AnimationAction(int0: action, bool0: stopCurrentState, string0: wayPointName, instance0: other, instance1: victim),
                 npc.GetUserData()));
         }
 
