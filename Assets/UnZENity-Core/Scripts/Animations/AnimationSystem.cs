@@ -179,16 +179,17 @@ namespace GUZ.Core.Animations
             return 0f;
         }
 
-        public void StopAnimation(string stoppingAnimationName)
+        public void StopAnimation(string animationName)
         {
 #if UNITY_EDITOR
             if (DebugPauseAtStopAnimation)
             {
-                Logger.LogEditor($"[Break] StopAnimation: >{stoppingAnimationName}< on >{PrefabProps.Bip01.parent.parent.name}<", LogCat.Debug);
+                Logger.LogEditor($"[Break] StopAnimation: >{animationName}< on >{PrefabProps.Bip01.parent.parent.name}<", LogCat.Debug);
                 Debug.Break();
             }
 #endif
 
+            Logger.LogEditor($"Stopping animation: {animationName}", LogCat.Animation);
             AnimationTrackInstance instanceToStop = null;
 
             // Fetch and blend out Animation.
@@ -196,7 +197,7 @@ namespace GUZ.Core.Animations
             {
                 var instance = _trackInstances[i];
                 // If animation is found, then mark it as "BlendOut"
-                if (instance.Track.Name.EqualsIgnoreCase(stoppingAnimationName))
+                if (instance.Track.Name.EqualsIgnoreCase(animationName))
                 {
                     instanceToStop = instance;
                     instance.BlendOutTrack(instance.Track.BlendOut);
@@ -213,12 +214,13 @@ namespace GUZ.Core.Animations
             for (var i = 0; i < _trackInstances.Count; i++)
             {
                 var instance = _trackInstances[i];
-                if (instance.Track.Name.EqualsIgnoreCase(stoppingAnimationName))
+                if (instance.Track.Name.EqualsIgnoreCase(animationName))
                 {
                     continue;
                 }
 
-                if (instance.Track.Layer < instanceToStop.Track.Layer)
+                // We BlendIn track bones from lower level animations, but only! if the animation isn't in a full-stop phase (!BlendOut/!Stop)
+                if (instance.Track.Layer < instanceToStop.Track.Layer && (instance.State is AnimationState.BlendIn or AnimationState.Play))
                 {
                     instance.BlendInBones(instanceToStop.Track.BoneNames, instanceToStop.Track.BlendOut);
                 }
