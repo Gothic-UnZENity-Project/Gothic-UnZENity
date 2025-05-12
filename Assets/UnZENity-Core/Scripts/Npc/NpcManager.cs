@@ -16,7 +16,6 @@ using UnityEngine;
 using ZenKit;
 using ZenKit.Daedalus;
 using Logger = GUZ.Core.Util.Logger;
-using Vector3 = System.Numerics.Vector3;
 
 namespace GUZ.Core.Npc
 {
@@ -28,6 +27,7 @@ namespace GUZ.Core.Npc
         // Supporter class where the whole Init() logic is outsourced for better readability.
         private NpcInitializer _initializer = new ();
         private Queue<NpcLoader> _objectsToInitQueue = new();
+        private Queue<NpcContainer> _objectToReEnableQueue = new();
 
         private static DaedalusVm _vm => GameData.GothicVm;
 
@@ -37,6 +37,7 @@ namespace GUZ.Core.Npc
         public void Init(ICoroutineManager coroutineManager)
         {
             coroutineManager.StartCoroutine(InitNpcCoroutine());
+            coroutineManager.StartCoroutine(ReEnableNpcCoroutine());
         }
 
         private IEnumerator InitNpcCoroutine()
@@ -50,7 +51,6 @@ namespace GUZ.Core.Npc
                 else
                 {
                     var npcElement = _objectsToInitQueue.Dequeue();
-
                     var npcId = npcElement.Npc.Id;
                     var monsterId = npcElement.Npc.GetAiVar(Constants.DaedalusConst.AIVMMRealId);
 
@@ -63,7 +63,8 @@ namespace GUZ.Core.Npc
 
                     // Do not load Monsters we don't want to have via Debug flags.
                     if (npcId == 0 && monsterId != 0 && GameGlobals.Config.Dev.SpawnMonsterInstances.Value.Any() &&
-                        !GameGlobals.Config.Dev.SpawnMonsterInstances.Value.Contains((DeveloperConfigEnums.MonsterId)monsterId))
+                        !GameGlobals.Config.Dev.SpawnMonsterInstances.Value.Contains(
+                            (DeveloperConfigEnums.MonsterId)monsterId))
                     {
                         continue;
                     }
@@ -74,6 +75,28 @@ namespace GUZ.Core.Npc
                     {
                         continue;
                     }
+                }
+
+                yield return FrameSkipper.TrySkipToNextFrameCoroutine();
+            }
+        }
+
+        /// <summary>
+        /// Reset one-by-one. Otherwise NPCs will spawn over another if starting from the same WayPoint.
+        /// </summary>
+        private IEnumerator ReEnableNpcCoroutine()
+        {
+            while (true)
+            {
+                if (_objectToReEnableQueue.IsEmpty())
+                {
+                    yield return null;
+                }
+                else
+                {
+                    var npcData = _objectToReEnableQueue.Dequeue();
+                    // If we walked to an NPC in our game, the NPC will be re-enabled and Routines get reset.
+                    npcData.PrefabProps?.AiHandler?.ReEnableNpc();
                     yield return FrameSkipper.TrySkipToNextFrameCoroutine();
                 }
             }
@@ -82,6 +105,11 @@ namespace GUZ.Core.Npc
         public void SetRootGo(GameObject rootGo)
         {
             _initializer.RootGo = rootGo;
+        }
+
+        public Vector3 GetFreeAreaAtSpawnPoint(Vector3 positionToScan)
+        {
+            return _initializer.GetFreeAreaAtSpawnPoint(positionToScan);
         }
 
         public async Task CreateWorldNpcs(LoadingManager loading)
@@ -247,7 +275,7 @@ namespace GUZ.Core.Npc
             _vm.GlobalHero = heroInstance;
         }
 
-        public void ExtMdlSetModelScale(NpcInstance npc, Vector3 scale)
+        public void ExtMdlSetModelScale(NpcInstance npc, System.Numerics.Vector3 scale)
         {
             // FIXME - Set this value on actual GameObject later.
             npc.GetUserData().Vob.ModelScale = scale;
@@ -417,6 +445,11 @@ namespace GUZ.Core.Npc
             }
 
             return true;
+        }
+        
+        public void ReEnableNpc(NpcContainer npcData)
+        {
+            _objectToReEnableQueue.Enqueue(npcData);
         }
 
         public string ExtNpcGetNextWp(NpcInstance npc)

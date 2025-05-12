@@ -29,7 +29,6 @@ namespace GUZ.Core.Manager.Culling
             _visibleNpcs.ClearAndReleaseMemory();
         }
 
-
         public override void AddCullingEntry(GameObject go)
         {
             Objects.Add(go);
@@ -95,14 +94,12 @@ namespace GUZ.Core.Manager.Culling
                 var initializedNow = GameGlobals.Npcs.InitNpc(go);
                 _visibleNpcs.TryAdd(evt.index, go.transform);
 
-
                 // If the NPC !wasOutOfDistance (==wasInDistanceAlready), then we spawned our VRPlayer next to the NPC
                 // (e.g. from a save game) and we need to go on with the current routine instead of "resetting" the routine.
                 // (Which would respawn NPC at a waypoint, which is wrong.)
                 if (wasOutOfDistance && !initializedNow)
                 {
-                    // If we walked to an NPC in our game, the NPC will be re-enabled and Routines get reset.
-                    npcData.PrefabProps?.AiHandler?.ReEnableNpc();
+                    GameGlobals.Npcs.ReEnableNpc(npcData);
                 }
             }
             // When an NPC gets invisible, we need to check for their next respawn from their initially spawned position.

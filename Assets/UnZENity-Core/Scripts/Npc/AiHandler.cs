@@ -325,7 +325,8 @@ namespace GUZ.Core.Npc
             var currentRoutine = Properties.RoutineCurrent;
             if (currentRoutine != null)
             {
-                gameObject.transform.position = WayNetHelper.GetWayNetPoint(currentRoutine.Waypoint).Position;
+                var wpPos = WayNetHelper.GetWayNetPoint(currentRoutine.Waypoint).Position;
+                gameObject.transform.position = GameGlobals.Npcs.GetFreeAreaAtSpawnPoint(wpPos);
             }
 
             // Animation state handling

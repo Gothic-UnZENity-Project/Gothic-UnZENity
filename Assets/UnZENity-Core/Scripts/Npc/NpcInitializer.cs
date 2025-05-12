@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using GUZ.Core.Caches;
 using GUZ.Core.Creator.Meshes;
@@ -283,7 +282,7 @@ namespace GUZ.Core.Npc
         /// <summary>
         /// Check if NPC/Monster will spawn inside another and do a circulated free V3 check around the area.
         /// </summary>
-        private Vector3 GetFreeAreaAtSpawnPoint(Vector3 positionToScan)
+        public Vector3 GetFreeAreaAtSpawnPoint(Vector3 positionToScan)
         {
             var isPositionFound = false;
             var testRadius = 1f; // ~2x size of normal bounding box of an NPC.
