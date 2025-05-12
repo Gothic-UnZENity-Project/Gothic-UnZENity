@@ -134,6 +134,7 @@ namespace GUZ.Core.Manager
         {
             var npc = GetProperties(npcInstance);
             var npcPos = npcInstance.GetUserData().Go.transform.position;
+            var npcVob = npcInstance.GetUserData().Vob;
 
             // FIXME - add range check based on perceiveAll's range (npc.sense_range)
             var foundNpc = MultiTypeCache.NpcCache
@@ -145,7 +146,7 @@ namespace GUZ.Core.Manager
                             GameData.GothicVm.GlobalHero!.Index) // if we don't detect player, then skip it
                 .Where(i => specificNpcIndex < 0 ||
                             specificNpcIndex == i.Instance.Index) // Specific NPC is found right now?
-                .Where(i => aiState < 0 || npc.State == i.Props.State)
+                .Where(i => aiState < 0 || npcVob.CurrentStateIndex == i.Vob.CurrentStateIndex)
                 .Where(i => i.Instance.Guild == guild) // check guild
                 .OrderBy(i => Vector3.Distance(i.Go.transform.position, npcPos)) // get nearest
                 .FirstOrDefault();

@@ -19,6 +19,10 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
         {
             var ai = PrefabProps.AiHandler;
 
+            Vob.NextStateIndex = _action;
+            Vob.NextStateName = GameData.GothicVm.GetSymbolByIndex(_action)!.Name;
+            Vob.NextStateValid = true;
+            
             ai.ClearState(Action.Bool0);
 
             Props.IsStateTimeActive = true;
@@ -26,7 +30,6 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
 
             GameData.GothicVm.GlobalOther = _other;
             GameData.GothicVm.GlobalVictim = _victim;
-            ai.StartRoutine(_action, _wayPoint);
         }
 
         /// <summary>

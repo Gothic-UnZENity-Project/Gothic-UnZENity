@@ -9,6 +9,8 @@ namespace GUZ.Core.Properties
 {
     public class NpcProperties
     {
+        public ZenKit.Vobs.Npc NpcVob = new ();
+        
         // Misc
         public List<InfoInstance> Dialogs = new();
         public VmGothicEnums.WalkMode WalkMode;
@@ -69,15 +71,11 @@ namespace GUZ.Core.Properties
         }
         public readonly Queue<AbstractAnimationAction> AnimationQueue = new();
 
-        // State itself always means start state function. Gothic assumes this when checking for aistate.
-        public int State => StateStart;
-        public uint PrevStateStart;
-
         // HINT: This information isn't set within Daedalus. We need to define it manually.
         // HINT: i.e. every animation might have a BS. E.g. when AI_TakeItem() is called, we set BS.BS_TAKEITEM
         public VmGothicEnums.BodyState BodyState;
 
-        public int StateStart;
+        // StateStart is fetched from ZenKit.Vobs.Npc.CurrentStateIndex
         public int StateLoop;
         public int StateEnd;
 

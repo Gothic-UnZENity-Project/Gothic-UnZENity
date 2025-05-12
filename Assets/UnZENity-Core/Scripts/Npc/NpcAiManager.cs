@@ -279,7 +279,7 @@ namespace GUZ.Core.Npc
 
         public bool ExtNpcWasInState(NpcInstance npc, uint action)
         {
-            return npc.GetUserData().Props.PrevStateStart == action;
+            return npc.GetUserData().Vob.LastAiState == action;
         }
 
         public VmGothicEnums.BodyState ExtGetBodyState(NpcInstance npc)
@@ -334,7 +334,7 @@ namespace GUZ.Core.Npc
 
         public bool ExtNpcIsInState(NpcInstance npc, int state)
         {
-            return npc.GetUserData().Props.StateStart == state;
+            return npc.GetUserData().Vob.CurrentStateIndex == state;
         }
 
         public bool ExtNpcIsPlayer(NpcInstance npc)
