@@ -12,10 +12,11 @@ namespace GUZ.Core.Npc
         [NonSerialized]
         public NpcContainer NpcData;
 
+        public NpcInstance NpcInstance => NpcData.Instance;
+        public ZenKit.Vobs.Npc Vob => NpcData.Vob;
+        public GameObject Go => NpcData.Go;
         public NpcProperties Properties => NpcData.Props;
         public NpcPrefabProperties PrefabProps => NpcData.PrefabProps;
-        public NpcInstance NpcInstance => NpcData.Instance;
-        public GameObject Go => NpcData.Go;
 
         protected virtual void Awake()
         {

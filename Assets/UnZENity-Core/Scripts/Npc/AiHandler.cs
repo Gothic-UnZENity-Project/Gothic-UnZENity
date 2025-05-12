@@ -267,7 +267,8 @@ namespace GUZ.Core.Npc
             if (stopCurrentStateImmediately)
             {
                 Properties.CurrentLoopState = NpcProperties.LoopState.None;
-                AnimationCreator.StopAnimation(Go);
+
+                PrefabProps.AnimationSystem.StopAllAnimations();
             }
             else
             {

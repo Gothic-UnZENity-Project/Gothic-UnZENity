@@ -84,7 +84,7 @@ namespace GUZ.Core.Manager.Culling
 
             if (!isInVisibleRange && isInitialized)
             {
-                AnimationCreator.StopAnimation(go);
+                npcData.PrefabProps.AnimationSystem.StopAllAnimations();
             }
 
             go.SetActive(isInVisibleRange);

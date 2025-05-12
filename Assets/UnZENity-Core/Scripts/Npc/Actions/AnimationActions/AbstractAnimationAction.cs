@@ -150,11 +150,6 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             Object.Destroy(item.gameObject);
         }
 
-        public void AnimationBlendOutEventCallback(SerializableEventBlendOutSignal eventData)
-        {
-            AnimationCreator.StartBlendOutAnimation(eventData.CurrentAnimName, eventData.BlendOutTime, NpcGo);
-        }
-
         /// <summary>
         /// Called every update cycle.
         /// Can be used to handle frequent things internally.

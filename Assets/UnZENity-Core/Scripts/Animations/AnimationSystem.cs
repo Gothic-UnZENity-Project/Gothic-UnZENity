@@ -573,5 +573,23 @@ namespace GUZ.Core.Animations
 
             Object.Destroy(item.gameObject);
         }
+
+        public void StopAllAnimations()
+        {
+            // FIXME - Implement
+            Logger.LogWarning("StopAllAnimations not yet implemented.", LogCat.Animation);
+        }
+
+        public void PlayHeadAnimation(HeadMorph.HeadMorphType viseme)
+        {
+            // FIXME - Implement
+            Logger.LogWarning("PlayHeadAnimation not yet implemented.", LogCat.Animation);
+        }
+
+        public void StopHeadAnimation(HeadMorph.HeadMorphType viseme)
+        {
+            // FIXME - Implement
+            Logger.LogWarning("StopHeadAnimation not yet implemented.", LogCat.Animation);
+        }
     }
 }
