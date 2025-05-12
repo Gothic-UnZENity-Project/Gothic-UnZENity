@@ -271,11 +271,15 @@ namespace GUZ.Core.Npc
         }
 
         /// <summary>
-        /// Clear ZS functions. If stopCurrentState=true, then stop current animation and don't execute with ZS_*_End()
+        /// Clear ZS functions. If callEndFunction=true, then ZS_*_End() animations will play before moving to new animation.
         /// </summary>
-        public void ClearState(bool stopCurrentStateImmediately)
+        public void ClearState(bool callEndFunction)
         {
-            if (stopCurrentStateImmediately)
+            if (callEndFunction)
+            {
+                Properties.CurrentLoopState = NpcProperties.LoopState.End; // Next frame/after current animations are done, the End logic will be executed.
+            }
+            else
             {
                 // Whenever we change routine, we reset some data to "start" from scratch as if the NPC got spawned.
                 Vob.CurrentStateValid = false;
@@ -284,10 +288,6 @@ namespace GUZ.Core.Npc
                 Properties.CurrentLoopState = NpcProperties.LoopState.None; // i.e. call StartNextState() next frame
 
                 PrefabProps.AnimationSystem.StopAllAnimations();
-            }
-            else
-            {
-                Properties.CurrentLoopState = NpcProperties.LoopState.End; // Next frame/after current animations are done, the End logic will be executed.
             }
         }
 

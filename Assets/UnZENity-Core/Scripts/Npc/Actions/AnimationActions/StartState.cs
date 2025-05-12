@@ -7,6 +7,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
     public class StartState : AbstractAnimationAction
     {
         private int _action => Action.Int0;
+        private bool _callEndFunction => Action.Bool0;
         private string _wayPoint => Action.String0;
         private NpcInstance _other => Action.Instance0;
         private NpcInstance _victim => Action.Instance1;
@@ -23,7 +24,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             Vob.NextStateName = GameData.GothicVm.GetSymbolByIndex(_action)!.Name;
             Vob.NextStateValid = true;
             
-            ai.ClearState(Action.Bool0);
+            ai.ClearState(_callEndFunction);
 
             Props.IsStateTimeActive = true;
             Props.StateTime = 0;
