@@ -154,13 +154,8 @@ namespace GUZ.Core.Manager.Vobs
                     go = CreateDefaultMesh(vob, parent);
                     break;
                 case VirtualObjectType.zCMover:
-                    // Each mover starts "Closed", when game boots. (At least for a new game.)
-                    // TODO - We need to check if it's the case for a loaded game
-                    ((IMover)vob).MoverState = (int)VmGothicEnums.MoverState.Closed;
-
-                    // TODO - We need to implement animations for this vob type
-                    CreateDefaultMesh(vob, parent);
-                    return;
+                    go = CreateMover((IMover)vob, parent);
+                    break;
                 case VirtualObjectType.zCPFXController:
                     // A Particle controller makes no sense without a visual to show.
                     // Therefore, removing it now (as it's also not included in official G1 saves, and not visible within Spacer)
@@ -411,6 +406,19 @@ namespace GUZ.Core.Manager.Vobs
             }
 
             lightComp.Init();
+
+            return go;
+        }
+
+        private GameObject CreateMover(IMover vob, GameObject parent)
+        {
+            // Each mover starts "Closed", when game boots. (At least for a new game.)
+            // TODO - We need to check if it's the case for a loaded game
+            vob.MoverState = (int)VmGothicEnums.MoverState.Closed;
+
+            // TODO - We need to implement animations for this vob type
+            var go = CreateDefaultMesh(vob, parent);
+            SetPosAndRot(go, vob);
 
             return go;
         }
