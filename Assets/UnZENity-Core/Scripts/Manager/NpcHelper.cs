@@ -147,7 +147,7 @@ namespace GUZ.Core.Manager
                 .Where(i => specificNpcIndex < 0 ||
                             specificNpcIndex == i.Instance.Index) // Specific NPC is found right now?
                 .Where(i => aiState < 0 || npcVob.CurrentStateIndex == i.Vob.CurrentStateIndex)
-                .Where(i => i.Instance.Guild == guild) // check guild
+                .Where(i => guild < 0 || i.Instance.Guild == guild) // check guild
                 .OrderBy(i => Vector3.Distance(i.Go.transform.position, npcPos)) // get nearest
                 .FirstOrDefault();
 
