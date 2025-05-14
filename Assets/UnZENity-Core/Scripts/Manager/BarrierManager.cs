@@ -72,6 +72,7 @@ namespace GUZ.Core.Manager
             for (var i = 0; i < _thunderSoundSources.Length; i++)
             {
                 _thunderSoundSources[i] = _barrier.AddComponent<AudioSource>();
+                _thunderSoundSources[i].volume = 0.3f; // We reduce its sound, as it's too noisy with 100%. Like music, we start with 0.3f.
                 // AddThunder(i);
             }
         }
