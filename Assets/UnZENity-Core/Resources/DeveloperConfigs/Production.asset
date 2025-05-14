@@ -49,7 +49,7 @@ MonoBehaviour:
   SpawnNpcInstances:
     Value: 
   SpawnMonsterInstances:
-    Value: 
+    Value: 00000000
   EnableNpcEyeBlinking: 0
   ShowFreePoints: 0
   ShowWayPoints: 0
