@@ -6833,6 +6833,14 @@ PrefabInstance:
       propertyPath: _isHero
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 1276042354778526045, guid: 323b5eef6ff0c014ca5dadf66503a4fe, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 4300127462305303291, guid: 323b5eef6ff0c014ca5dadf66503a4fe, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 100
+      objectReference: {fileID: 0}
     - target: {fileID: 7339275886835513150, guid: 323b5eef6ff0c014ca5dadf66503a4fe, type: 3}
       propertyPath: m_Name
       value: Menu-Subtitles
@@ -6851,7 +6859,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7369722077890996068, guid: 323b5eef6ff0c014ca5dadf66503a4fe, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 7369722077890996068, guid: 323b5eef6ff0c014ca5dadf66503a4fe, type: 3}
       propertyPath: m_LocalRotation.w
@@ -6880,6 +6888,10 @@ PrefabInstance:
     - target: {fileID: 7369722077890996068, guid: 323b5eef6ff0c014ca5dadf66503a4fe, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9138485363306559031, guid: 323b5eef6ff0c014ca5dadf66503a4fe, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 100
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects:
