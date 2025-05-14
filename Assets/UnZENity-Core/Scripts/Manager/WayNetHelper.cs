@@ -58,11 +58,14 @@ namespace GUZ.Core.Manager
             return wayPoint.Value;
         }
 
+        /// <summary>
+        /// npcOnFp -> If the NPC already stands on an FP, we will use this one as return value. (e.g., after ZS_TALK goes back to ZS_SMALLTALK)
+        /// </summary>
         [CanBeNull]
-        public static FreePoint FindNearestFreePoint(Vector3 lookupPosition, string fpNamePart)
+        public static FreePoint FindNearestFreePoint(Vector3 lookupPosition, string fpNamePart, FreePoint npcOnFp)
         {
             return GameData.FreePoints
-                .Where(pair => pair.Value.Name.ContainsIgnoreCase(fpNamePart) && !pair.Value.IsLocked)
+                .Where(pair => pair.Value.Name.ContainsIgnoreCase(fpNamePart) && (pair.Value == npcOnFp || !pair.Value.IsLocked))
                 .OrderBy(pair => Vector3.Distance(pair.Value.Position, lookupPosition))
                 .Select(pair => pair.Value)
                 .FirstOrDefault();

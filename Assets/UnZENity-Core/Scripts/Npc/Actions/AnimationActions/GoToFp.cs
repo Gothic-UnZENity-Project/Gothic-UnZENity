@@ -9,7 +9,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
     {
         private FreePoint _fp;
 
-        private string Destination => Action.String0;
+        private string _destination => Action.String0;
 
         private FreePoint _freePoint;
 
@@ -22,7 +22,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             base.Start();
 
             var npcPos = NpcGo.transform.position;
-            _fp = WayNetHelper.FindNearestFreePoint(npcPos, Destination);
+            _fp = WayNetHelper.FindNearestFreePoint(npcPos, _destination, Props.CurrentFreePoint);
 
             if (_fp == null)
             {

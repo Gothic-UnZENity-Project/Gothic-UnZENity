@@ -495,7 +495,7 @@ namespace GUZ.Core.Npc
         {
             var props = npc.GetUserData().Props;
             var pos = npc.GetUserData().Go.transform.position;
-            var fp = WayNetHelper.FindNearestFreePoint(pos, fpNamePart);
+            var fp = WayNetHelper.FindNearestFreePoint(pos, fpNamePart, null);
 
             if (fp == null)
             {
