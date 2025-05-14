@@ -207,8 +207,13 @@ namespace GUZ.Core.Npc
         public GameObject InitLazyLoadNpc(NpcContainer npc)
         {
             InitZkInstance(npc);
-            var go = new GameObject($"{npc.Instance.GetName(NpcNameSlot.Slot0)} ({npc.Instance.Id})");
+            var go = new GameObject();
             go.SetParent(RootGo);
+
+            if (npc.Instance.Id > 0)
+                go.name = $"{npc.Instance.GetName(NpcNameSlot.Slot0)} ({npc.Instance.Id})";
+            else
+                go.name = npc.Instance.GetName(NpcNameSlot.Slot0);
 
             var loader = go.AddComponent<NpcLoader>();
             loader.Npc = npc.Instance;
