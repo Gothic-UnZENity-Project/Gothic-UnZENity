@@ -201,6 +201,9 @@ namespace GUZ.Core.Npc
             GameGlobals.NpcMeshCulling.AddCullingEntry(go);
         }
 
+        // Just some number to find a monster easier when debugging in Unity Inspector.
+        private int _monsterIndex;
+        
         /// <summary>
         /// InitZkInstance and create a GameObject for the NPC to be loaded later.
         /// </summary>
@@ -213,7 +216,7 @@ namespace GUZ.Core.Npc
             if (npc.Instance.Id > 0)
                 go.name = $"{npc.Instance.GetName(NpcNameSlot.Slot0)} ({npc.Instance.Id})";
             else
-                go.name = npc.Instance.GetName(NpcNameSlot.Slot0);
+                go.name = $"{npc.Instance.GetName(NpcNameSlot.Slot0)} ({_monsterIndex++})";
 
             var loader = go.AddComponent<NpcLoader>();
             loader.Npc = npc.Instance;
