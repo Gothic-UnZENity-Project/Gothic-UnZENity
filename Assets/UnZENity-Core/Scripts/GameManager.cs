@@ -27,7 +27,6 @@ namespace GUZ.Core
         private FileLoggingHandler _fileLoggingHandler;
         private FrameSkipper _frameSkipper;
         private BarrierManager _barrierManager;
-        private MusicManager _gameMusicManager;
 
         public ConfigManager Config { get; private set; }
 
@@ -42,6 +41,8 @@ namespace GUZ.Core
         public GameTime Time { get; private set; }
         
         public VideoManager Video { get; private set; }
+        
+        public MusicManager Music { get; private set; }
 
         public RoutineManager Routines { get; private set; }
 
@@ -100,7 +101,7 @@ namespace GUZ.Core
             Time = new GameTime(DeveloperConfig, this);
             Video = new VideoManager(DeveloperConfig);
             Sky = new SkyManager(DeveloperConfig, Time);
-            _gameMusicManager = new MusicManager(DeveloperConfig);
+            Music = new MusicManager(DeveloperConfig);
             Story = new StoryManager(DeveloperConfig);
             Routines = new RoutineManager(DeveloperConfig);
         }
@@ -152,7 +153,7 @@ namespace GUZ.Core
             Logger.Log($"Initializing Gothic installation at: {gothicRootPath}", LogCat.Loading);
             ResourceLoader.Init(gothicRootPath);
 
-            _gameMusicManager.Init();
+            Music.Init();
             StaticCache.Init(DeveloperConfig);
             Textures.Init();
             Vobs.Init(this);
@@ -270,7 +271,7 @@ namespace GUZ.Core
             Lights = null;
             Time = null;
             Sky = null;
-            _gameMusicManager = null;
+            Music = null;
             Routines = null;
         }
 

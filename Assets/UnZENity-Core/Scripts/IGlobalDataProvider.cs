@@ -19,6 +19,7 @@ namespace GUZ.Core
         public SkyManager Sky { get; }
         public GameTime Time { get; }
         public VideoManager Video { get; }
+        public MusicManager Music { get; }
         public RoutineManager Routines { get; }
         public TextureManager Textures { get; }
         public FontManager Font { get; }

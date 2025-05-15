@@ -54,6 +54,7 @@ namespace GUZ.Lab
         public PlayerManager Player => null;
         public SkyManager Sky => _skyManager;
         public GameTime Time => _gameTime;
+        public MusicManager Music => Music;
         public RoutineManager Routines => _npcRoutineManager;
         public TextureManager Textures => _textureManager;
         public FontManager Font => _fontManager;
