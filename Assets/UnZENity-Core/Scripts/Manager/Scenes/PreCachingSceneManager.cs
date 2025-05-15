@@ -63,6 +63,8 @@ namespace GUZ.Core.Manager.Scenes
             {
                 var worldsToLoad = GameContext.GameVersionAdapter.Version == GameVersion.Gothic1 ? _gothic1Worlds : _gothic2Worlds;
 
+                GameGlobals.Music.Play("KAT_DAY_STD");
+                
                 // DEBUG - Remove this IF to enforce recreation of cache.
                 if (!GameGlobals.Config.Dev.AlwaysRecreateCache && GameGlobals.StaticCache.DoCacheFilesExist(worldsToLoad))
                 {
