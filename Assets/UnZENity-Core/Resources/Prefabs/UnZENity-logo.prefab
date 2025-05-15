@@ -174,7 +174,9 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Gothic-UnZENity (VR)
+  m_text: 'Gothic-UnZENity
+
+    (VR)'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: ed34b05229166f3469c21b7208879736, type: 2}
   m_sharedMaterial: {fileID: 5152873236376385906, guid: ed34b05229166f3469c21b7208879736, type: 2}
