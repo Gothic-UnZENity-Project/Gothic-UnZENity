@@ -18,14 +18,14 @@ namespace GUZ.Core.Manager
         private const string _noSoundName = "nosound.wav";
 
         [CanBeNull]
-        public static VobProperties GetFreeInteractableWithin10M(Vector3 position, string visualScheme)
+        public static (IInteractiveObject vob, GameObject go) GetFreeInteractableWithin10M(Vector3 position, string visualScheme)
         {
-            // FIXME - Needs to be altered to use ZenKit objects instead of Unity ones.
-            //         This ensures we can always use the data, even when objects are lazy loaded and not yet existing.
-            return GameData.VobsInteractable
-                .Where(i => Vector3.Distance(i.transform.position, position) < _lookupDistance)
-                .Where(i => i.VisualScheme.EqualsIgnoreCase(visualScheme))
-                .OrderBy(i => Vector3.Distance(i.transform.position, position))
+            if (!GameData.VobsInteractable.TryGetValue(visualScheme.ToUpper(), out var vobs))
+                return default;
+            
+            return vobs
+                .Where(pair => Vector3.Distance(pair.Vob.Position.ToUnityVector(), position) < _lookupDistance)
+                .OrderBy(pair => Vector3.Distance(pair.Vob.Position.ToUnityVector(), position))
                 .FirstOrDefault();
         }
 
@@ -54,7 +54,8 @@ namespace GUZ.Core.Manager
                 return null;
             }
 
-            var zm = go.transform.GetChild(0);
+            // We need to move into next elements starting from VobLoader root.
+            var zm = go.transform.GetChild(0).GetChild(0);
 
             return zm.gameObject.GetAllDirectChildren()
                 .Where(i => i.name.ContainsIgnoreCase("ZS"))

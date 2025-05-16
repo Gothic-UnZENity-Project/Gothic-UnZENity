@@ -2,16 +2,18 @@ using System;
 using System.Linq;
 using GUZ.Core.Data.Container;
 using GUZ.Core.Extensions;
+using GUZ.Core.Globals;
 using GUZ.Core.Manager;
 using GUZ.Core.Properties;
 using GUZ.Core.Vm;
+using GUZ.Core.Vob;
 using JetBrains.Annotations;
 using UnityEngine;
 using ZenKit.Vobs;
 
 namespace GUZ.Core.Npc.Actions.AnimationActions
 {
-    public class UseMob : AbstractWalkAnimationAction
+    public class UseMob : AbstractWalkAnimationAction2
     {
         private const string _mobTransitionAnimationString = "T_{0}{1}{2}_2_{3}";
         private const string _mobLoopAnimationString = "S_{0}_S{1}";
@@ -19,7 +21,12 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
         private GameObject _slotGo;
         private Vector3 _destination;
 
-        private bool IsStopUsingMob => Action.Int0 <= -1;
+        private int _desiredState => Action.Int0;
+        private bool IsStopUsingMob => _desiredState <= -1;
+
+        private bool _isMobFoundButNotYetInitialized;
+        private string _currentMobAnimation;
+
 
         public UseMob(AnimationAction action, NpcContainer npcContainer) : base(action, npcContainer)
         {
@@ -27,8 +34,6 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
 
         public override void Start()
         {
-            base.Start();
-
             // NPC is already interacting with a Mob, we therefore assume it's a change of state (e.g. -1 to stop Mob usage)
             if (Props.BodyState == VmGothicEnums.BodyState.BsMobinteract)
             {
@@ -40,8 +45,30 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             }
 
             // Else: We have a new animation where we seek the Mob before walking towards and executing action.
-            var mob = GetNearestMob();
-            var slot = GetNearestMobSlot(mob);
+            var go = GetNearestMob();
+            _mobGo = go;
+
+            if (go == null)
+            {
+                IsFinishedFlag = true;
+                return;
+            }
+            
+            if (go.GetComponent<VobLoader>().IsLoaded)
+                StartNow();
+            else
+                StartDelayed();
+        }
+
+
+        private void StartNow()
+        {
+            // We call Start only if the Mobsi is already available.
+            base.Start();
+
+            _isMobFoundButNotYetInitialized = false;
+
+            var slot = GetNearestMobSlot();
 
             if (slot == null)
             {
@@ -49,7 +76,6 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
                 return;
             }
 
-            _mobGo = mob;
             _slotGo = slot;
             _destination = _slotGo.transform.position;
 
@@ -58,23 +84,88 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             Props.BodyState = VmGothicEnums.BodyState.BsMobinteract;
         }
 
+        /// <summary>
+        /// We need to wait until it's there...
+        /// </summary>
+        private void StartDelayed()
+        {
+            _isMobFoundButNotYetInitialized = true;
+        }
+        
+        public override void Tick()
+        {
+            if (_isMobFoundButNotYetInitialized)
+            {
+                if (!_mobGo.GetComponent<VobLoader>().IsLoaded)
+                {
+                    return;
+                }
+                else
+                {
+                    StartNow();
+                }
+            }
+
+            
+            if (IsDestReached)
+            {
+                TickMobUsage();
+            }
+            else
+            {
+                base.Tick();
+            }
+        }
+
+        private void TickMobUsage()
+        {
+            if (PrefabProps.AnimationSystem.IsPlaying(_currentMobAnimation))
+                return;
+            
+            UpdateState();
+
+            // If we arrived at the Mobsi, we will further execute the transitions step-by-step until demanded state is reached.
+            if (Props.CurrentInteractableStateId != _desiredState)
+            {
+                PlayTransitionAnimation();
+                return;
+            }
+
+            // Mobsi isn't in use any longer
+            if (Props.CurrentInteractableStateId == -1)
+            {
+                PrefabProps.CurrentInteractable = null;
+                PrefabProps.CurrentInteractableSlot = null;
+                Props.BodyState = VmGothicEnums.BodyState.BsStand;
+
+                PhysicsHelper.EnablePhysicsForNpc(PrefabProps);
+            }
+            // Loop Mobsi animation until the same UseMob with -1 is called.
+            else
+            {
+                var mobVisualName = _mobGo.GetComponentInChildren<VobProperties>().VisualScheme;
+                var animName = string.Format(_mobLoopAnimationString, mobVisualName, _desiredState);
+                PrefabProps.AnimationSystem.PlayAnimation(animName);
+            }
+
+            IsFinishedFlag = true;
+        }
+
         [CanBeNull]
         private GameObject GetNearestMob()
         {
             var pos = NpcGo.transform.position;
-            return VobHelper.GetFreeInteractableWithin10M(pos, Action.String0)?.gameObject;
+            return VobHelper.GetFreeInteractableWithin10M(pos, Action.String0).go;
         }
 
         [CanBeNull]
-        private GameObject GetNearestMobSlot(GameObject mob)
+        private GameObject GetNearestMobSlot()
         {
-            if (mob == null)
-            {
+            if (_mobGo == null)
                 return null;
-            }
 
             var pos = NpcGo.transform.position;
-            var slot = VobHelper.GetNearestSlot(mob.gameObject, pos);
+            var slot = VobHelper.GetNearestSlot(_mobGo, pos);
 
             return slot;
         }
@@ -88,10 +179,13 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
 
         private void StartMobUseAnimation()
         {
-            State = WalkState.Done;
+            // Place item for Mobsi usage in hand. Will be "spawned" via animation >EventType.ItemInsert< later.
+            var itemName = ((InteractiveObject)_mobGo.GetComponentInChildren<VobProperties>().Properties).Item;
+            var item = VmInstanceManager.TryGetItemData(itemName);
+            Props.CurrentItem = item!.Index;
+            
             PhysicsHelper.DisablePhysicsForNpc(PrefabProps);
 
-            // AnimationCreator.StopAnimation(NpcGo);
             NpcGo.transform.SetPositionAndRotation(_slotGo.transform.position, _slotGo.transform.rotation);
 
             PlayTransitionAnimation();
@@ -117,58 +211,17 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             return _destination;
         }
 
-        /// <summary>
-        /// Only after the Mob is reached and final transition animation is done, we will finalize this Action.
-        /// </summary>
-        protected override void AnimationEnd()
-        {
-            base.AnimationEnd();
-            IsFinishedFlag = false;
-
-            if (State != WalkState.Done)
-            {
-                return;
-            }
-
-            UpdateState();
-
-            // If we arrived at the Mobsi, we will further execute the transitions step-by-step until demanded state is reached.
-            if (Props.CurrentInteractableStateId != Action.Int0)
-            {
-                PlayTransitionAnimation();
-                return;
-            }
-
-            // Mobsi isn't in use any longer
-            if (Props.CurrentInteractableStateId == -1)
-            {
-                PrefabProps.CurrentInteractable = null;
-                PrefabProps.CurrentInteractableSlot = null;
-                Props.BodyState = VmGothicEnums.BodyState.BsStand;
-
-                PhysicsHelper.EnablePhysicsForNpc(PrefabProps);
-            }
-            // Loop Mobsi animation until the same UseMob with -1 is called.
-            else
-            {
-                var mobVisualName = _mobGo.GetComponent<VobProperties>().VisualScheme;
-                var animName = string.Format(_mobLoopAnimationString, mobVisualName, Action.Int0);
-                PrefabProps.AnimationSystem.PlayAnimation(animName);
-            }
-
-            IsFinishedFlag = true;
-        }
-
         private void UpdateState()
         {
             // FIXME - We need to check. For Cauldron/Cook we have only t_s0_2_Stand, but not t_s1_2_s0 - But is it for all of them?
             if (IsStopUsingMob)
             {
                 Props.CurrentInteractableStateId = -1;
+                Props.CurrentItem = -1;
             }
             else
             {
-                var newStateAddition = Props.CurrentInteractableStateId > Action.Int0 ? -1 : +1;
+                var newStateAddition = Props.CurrentInteractableStateId > _desiredState ? -1 : +1;
                 Props.CurrentInteractableStateId += newStateAddition;
             }
         }
@@ -196,25 +249,12 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
                 };
             }
 
-            var mobVisualName = _mobGo.GetComponent<VobProperties>().VisualScheme;
+            var mobVisualName = _mobGo.GetComponentInChildren<VobProperties>().VisualScheme;
             var slotPositionName = GetSlotPositionTag(_slotGo.name);
             var animName = string.Format(_mobTransitionAnimationString, mobVisualName, slotPositionName, from, to);
 
+            _currentMobAnimation = animName;
             PrefabProps.AnimationSystem.PlayAnimation(animName);
-        }
-
-        protected override void InsertItem(string slot1, string slot2)
-        {
-            if (slot2.Any())
-            {
-                throw new Exception("Slot 2 is set but not yet handled by InsertItem as AnimationEvent.");
-            }
-
-            var slotGo = NpcGo.FindChildRecursively(slot1);
-            var item = ((InteractiveObject)_mobGo.GetComponent<VobProperties>().Properties).Item;
-            GameGlobals.Vobs.CreateItemMesh(item, slotGo);
-
-            Props.UsedItemSlot = slot1;
         }
     }
 }

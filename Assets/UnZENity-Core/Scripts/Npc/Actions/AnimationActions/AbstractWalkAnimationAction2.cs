@@ -11,12 +11,16 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
     public abstract class AbstractWalkAnimationAction2 : AbstractAnimationAction
     {
         protected Transform NpcTransform => NpcGo.transform;
+        protected bool IsDestReached;
 
         protected AbstractWalkAnimationAction2(AnimationAction action, NpcContainer npcContainer) : base(action, npcContainer)
         {
         }
 
-        protected abstract void OnDestinationReached();
+        protected virtual void OnDestinationReached()
+        {
+            StopWalk();
+        }
 
         /// <summary>
         /// We need to define the final destination spot within overriding class.
@@ -51,7 +55,6 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             }
 
             HandleRotation();
-
         }
 
         private string GetWalkModeAnimationString()
@@ -76,6 +79,14 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             PrefabProps.AnimationSystem.PlayAnimation(animName);
         }
 
+        protected virtual void StopWalk()
+        {
+            PhysicsHelper.EnablePhysicsForNpc(PrefabProps);
+
+            var animName = GetWalkModeAnimationString();
+            PrefabProps.AnimationSystem.StopAnimation(animName);
+        }
+
         private bool IsDestinationReached()
         {
             var npcPos = NpcTransform.position;
@@ -85,7 +96,12 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             var distance = Vector3.Distance(npcDistPos, walkPos);
 
             // FIXME - Scorpio is above FP, but values don't represent it.
-            return distance < Constants.NpcDestinationReachedThreshold;
+            if (distance < Constants.NpcDestinationReachedThreshold)
+            {
+                IsDestReached = true;
+            }
+
+            return IsDestReached;
         }
 
         private void HandleRotation()

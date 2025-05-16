@@ -11,6 +11,7 @@ using GUZ.Core.Vm;
 using JetBrains.Annotations;
 using UnityEngine;
 using ZenKit.Daedalus;
+using ZenKit.Vobs;
 using Logger = GUZ.Core.Util.Logger;
 
 namespace GUZ.Core.Manager
@@ -50,7 +51,7 @@ namespace GUZ.Core.Manager
         public static bool ExtIsMobAvailable(NpcInstance npcInstance, string vobName)
         {
             var npc = GetNpc(npcInstance);
-            var vob = VobHelper.GetFreeInteractableWithin10M(npc.transform.position, vobName);
+            var vob = VobHelper.GetFreeInteractableWithin10M(npc.transform.position, vobName).vob;
 
             return vob != null;
         }
@@ -61,28 +62,17 @@ namespace GUZ.Core.Manager
 
             var prefabProps = npcInstance.GetUserData().PrefabProps;
 
-            VobProperties vob;
+            IInteractiveObject vob;
 
             if (prefabProps.CurrentInteractable != null)
-            {
-                vob = prefabProps.CurrentInteractable.GetComponent<VobProperties>();
-            }
+                vob = prefabProps.CurrentInteractable.GetComponent<VobInteractiveProperties>().InteractiveProperties;
             else
-            {
-                vob = VobHelper.GetFreeInteractableWithin10M(npcGo.transform.position, scheme);
-            }
+                vob = VobHelper.GetFreeInteractableWithin10M(npcGo.transform.position, scheme).vob;
 
-            if (vob == null || vob.VisualScheme != scheme)
-            {
+            if (vob == null)
                 return -1;
-            }
 
-            if (vob is VobInteractiveProperties interactiveVob)
-            {
-                return Math.Max(0, interactiveVob.InteractiveProperties.State);
-            }
-
-            return -1;
+            return Math.Max(0, vob.State);
         }
 
         public static ItemInstance ExtNpcGetEquippedMeleeWeapon(NpcInstance npc)

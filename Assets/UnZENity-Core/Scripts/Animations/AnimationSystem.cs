@@ -591,5 +591,16 @@ namespace GUZ.Core.Animations
             // FIXME - Implement
             Logger.LogWarning("StopHeadAnimation not yet implemented.", LogCat.Animation);
         }
+
+        public bool IsPlaying(string animationName)
+        {
+            foreach (var trackInstance in _trackInstances)
+            {
+                if (trackInstance.Track.Name.EqualsIgnoreCase(animationName))
+                    return true;
+            }
+            
+            return false;
+        }
     }
 }
