@@ -61,6 +61,18 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
                 StartDelayed();
         }
 
+        public override bool IsFinished()
+        {
+            if (base.IsFinished())
+            {
+                PrefabProps.AnimationSystem.EnableMovement();
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
 
         private void StartNow()
         {
@@ -180,6 +192,8 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
 
         private void StartMobUseAnimation()
         {
+            PrefabProps.AnimationSystem.DisableMovement();
+            
             // Place item for Mobsi usage in hand - if needed. Will be "spawned" via animation >EventType.ItemInsert< later.
             var itemName = ((InteractiveObject)_mobGo.GetComponentInChildren<VobProperties>().Properties).Item;
             if (itemName.NotNullOrEmpty())

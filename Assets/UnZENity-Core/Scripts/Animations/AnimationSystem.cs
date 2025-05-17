@@ -38,6 +38,8 @@ namespace GUZ.Core.Animations
         private Vector3[] _meshBonePos;
         private Quaternion[] _meshBoneRot;
         private List<AnimationTrackInstance> _trackInstances = new();
+        private bool _isMovementEnabled = true;
+        
 
         protected override void Awake()
         {
@@ -402,6 +404,9 @@ namespace GUZ.Core.Animations
 
         private void ApplyFinalMovement()
         {
+            if (!_isMovementEnabled)
+                return;
+            
             var finalMovement = Vector3.zero;
             for (var i = 0; i < _trackInstances.Count; i++)
             {
@@ -601,6 +606,16 @@ namespace GUZ.Core.Animations
             }
             
             return false;
+        }
+
+        public void DisableMovement()
+        {
+            _isMovementEnabled = false;
+        }
+
+        public void EnableMovement()
+        {
+            _isMovementEnabled = true;
         }
     }
 }
