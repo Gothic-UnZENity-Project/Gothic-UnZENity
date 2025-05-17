@@ -8,6 +8,7 @@ using GUZ.Core.Properties;
 using GUZ.Core.Vm;
 using GUZ.Core.Vob;
 using JetBrains.Annotations;
+using MyBox;
 using UnityEngine;
 using ZenKit.Vobs;
 
@@ -179,10 +180,13 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
 
         private void StartMobUseAnimation()
         {
-            // Place item for Mobsi usage in hand. Will be "spawned" via animation >EventType.ItemInsert< later.
+            // Place item for Mobsi usage in hand - if needed. Will be "spawned" via animation >EventType.ItemInsert< later.
             var itemName = ((InteractiveObject)_mobGo.GetComponentInChildren<VobProperties>().Properties).Item;
-            var item = VmInstanceManager.TryGetItemData(itemName);
-            Props.CurrentItem = item!.Index;
+            if (itemName.NotNullOrEmpty())
+            {
+                var item = VmInstanceManager.TryGetItemData(itemName);
+                Props.CurrentItem = item!.Index;
+            }
             
             PhysicsHelper.DisablePhysicsForNpc(PrefabProps);
 
