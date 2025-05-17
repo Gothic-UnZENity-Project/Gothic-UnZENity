@@ -34,7 +34,7 @@ namespace GUZ.Core.Manager
 
             GameGlobals.Npcs.SetDialogs(npc.GetUserData());
             
-            return TryGetImportant(npc.GetUserData().Props.Dialogs, out _);
+            return TryGetImportant(npc.GetUserData(), out _);
         }
 
         /// <summary>
@@ -63,7 +63,7 @@ namespace GUZ.Core.Manager
                 GameContext.DialogAdapter.ShowDialog(npcContainer.Go);
             }
             // There is at least one important entry, the NPC wants to talk to the hero about.
-            else if (initialDialogStarting && TryGetImportant(npcContainer.Props.Dialogs, out var infoInstance))
+            else if (initialDialogStarting && TryGetImportant(npcContainer, out var infoInstance))
             {
                 GameData.Dialogs.CurrentDialog.Instance = infoInstance;
                 CallMainInformation(npcContainer, infoInstance);
@@ -99,9 +99,9 @@ namespace GUZ.Core.Manager
         /// <summary>
         /// If something is important, then call it automatically.
         /// </summary>
-        private static bool TryGetImportant(List<InfoInstance> dialogs, out InfoInstance item)
+        private static bool TryGetImportant(NpcContainer npcContainer, out InfoInstance item)
         {
-            foreach (var dialog in dialogs)
+            foreach (var dialog in npcContainer.Props.Dialogs)
             {
                 // Dialog is not important.
                 if (dialog.Important != 1)
@@ -116,7 +116,18 @@ namespace GUZ.Core.Manager
                 }
 
                 // No dialog condition exists or dialog condition() is false.
-                if (dialog.Condition == 0 || GameData.GothicVm.Call<int>(dialog.Condition) == 0)
+                if (dialog.Condition == 0)
+                {
+                    continue;
+                }
+                
+                // TODO - Should be outsourced to some VmManager.Call<int> function which sets and resets values.
+                var oldSelf = GameData.GothicVm.GlobalSelf;
+                GameData.GothicVm.GlobalSelf = npcContainer.Instance;
+                var conditionResult = GameData.GothicVm.Call<int>(dialog.Condition);
+                GameData.GothicVm.GlobalSelf = oldSelf;
+
+                if (conditionResult == 0)
                 {
                     continue;
                 }
