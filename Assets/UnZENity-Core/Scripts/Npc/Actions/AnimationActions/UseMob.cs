@@ -5,12 +5,14 @@ using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
 using GUZ.Core.Properties;
+using GUZ.Core.Util;
 using GUZ.Core.Vm;
 using GUZ.Core.Vob;
 using JetBrains.Annotations;
 using MyBox;
 using UnityEngine;
 using ZenKit.Vobs;
+using Logger = GUZ.Core.Util.Logger;
 
 namespace GUZ.Core.Npc.Actions.AnimationActions
 {
@@ -22,6 +24,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
         private GameObject _slotGo;
         private Vector3 _destination;
 
+        private string _schemeName => Action.String0;
         private int _desiredState => Action.Int0;
         private bool IsStopUsingMob => _desiredState <= -1;
 
@@ -35,6 +38,13 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
 
         public override void Start()
         {
+            if (_schemeName.EqualsIgnoreCase("BENCH"))
+            {
+                Logger.LogWarningEditor("AI_UseMob() for >BENCH< looks weird. Skipping it for now.", LogCat.Animation);
+                IsFinishedFlag = true;
+                return;
+            }
+            
             // NPC is already interacting with a Mob, we therefore assume it's a change of state (e.g. -1 to stop Mob usage)
             if (Props.BodyState == VmGothicEnums.BodyState.BsMobinteract)
             {

@@ -65,7 +65,17 @@ namespace GUZ.Core.Manager
             IInteractiveObject vob;
 
             if (prefabProps.CurrentInteractable != null)
-                vob = prefabProps.CurrentInteractable.GetComponent<VobInteractiveProperties>().InteractiveProperties;
+            {
+                try
+                {
+                    vob = prefabProps.CurrentInteractable.GetComponent<VobInteractiveProperties>().InteractiveProperties;
+                }
+                catch (Exception)
+                {
+                    Logger.LogError($"Wld_GetMobState() returned an exception for {npcGo.name}", LogCat.Npc);
+                    return -1;
+                }
+            }
             else
                 vob = VobHelper.GetFreeInteractableWithin10M(npcGo.transform.position, scheme).vob;
 
