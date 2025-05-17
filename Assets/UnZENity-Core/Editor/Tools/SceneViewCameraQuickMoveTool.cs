@@ -18,7 +18,7 @@ namespace GUZ.Core.Editor.Tools
         private int _selectedPositionIndex;
 
 
-        [MenuItem("UnZENity/Debug/SceneView/Move to Position", priority = 100)]
+        [MenuItem("UnZENity/Debug/SceneView/Move to Position", priority = 200)]
         private static void SetSceneCameraPosition()
         {
             var window = ScriptableObject.CreateInstance<SceneViewCameraQuickMoveTool>();
@@ -26,7 +26,7 @@ namespace GUZ.Core.Editor.Tools
             window.ShowPopup();
         }
 
-        [MenuItem("UnZENity/Debug/SceneView/Capture Camera Position", priority = 101)]
+        [MenuItem("UnZENity/Debug/SceneView/Capture Camera Position", priority = 201)]
         private static void CaptureSceneCameraPosition()
         {
             var sceneView = SceneView.lastActiveSceneView;
