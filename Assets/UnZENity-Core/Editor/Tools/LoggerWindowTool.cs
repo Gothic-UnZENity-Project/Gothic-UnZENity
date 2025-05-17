@@ -1,4 +1,5 @@
 using System;
+using GUZ.Core.Globals;
 using GUZ.Core.Util;
 using UnityEditor;
 using Logger = UberLogger.Logger;
@@ -9,7 +10,6 @@ namespace GUZ.Core.Editor.Tools
     [InitializeOnLoad]
     public static class LoggerWindowTool
     {
-
         static LoggerWindowTool()
         {
             UberLoggerEditorWindow.OnEnableWindow.AddListener(() =>
@@ -26,6 +26,12 @@ namespace GUZ.Core.Editor.Tools
         public static void ShowUberLoggerWindow()
         {
             UberLoggerEditorWindow.Init();
+        }
+
+        [MenuItem(itemName: "UnZENity/Debug/Print Daedalus StackTrace", priority = 2)]
+        public static void PrintStackTrace()
+        {
+            GameData.GothicVm?.PrintStackTrace();
         }
     }
 }
