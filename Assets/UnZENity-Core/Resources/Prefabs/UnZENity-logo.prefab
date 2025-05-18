@@ -49,7 +49,7 @@ GameObject:
   - component: {fileID: 9171082860700282786}
   - component: {fileID: 874192176810593886}
   m_Layer: 5
-  m_Name: UnZENity-logo
+  m_Name: UnZENity-Logo
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -176,7 +176,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: 'Gothic-UnZENity
 
-    (VR)'
+    VR'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: ed34b05229166f3469c21b7208879736, type: 2}
   m_sharedMaterial: {fileID: 5152873236376385906, guid: ed34b05229166f3469c21b7208879736, type: 2}
