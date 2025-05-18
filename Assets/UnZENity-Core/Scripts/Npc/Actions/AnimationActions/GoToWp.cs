@@ -21,7 +21,6 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
         {
             var currentWaypoint = Props.CurrentWayPoint ?? WayNetHelper.FindNearestWayPoint(PrefabProps.Bip01.position);
             var destinationWaypoint = (WayPoint)WayNetHelper.GetWayNetPoint(Destination);
-
             
             /*
              * Two situations, when this action can be skipped:

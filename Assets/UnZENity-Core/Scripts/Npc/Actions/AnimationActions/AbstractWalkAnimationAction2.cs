@@ -50,11 +50,10 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             }
 
             if (IsDestinationReached())
-            {
                 OnDestinationReached();
-            }
-
-            HandleRotation();
+            // Do not rotate when a destination is reached this frame. Either rotate next frame (e.g. GoToWP.nextRoute) or stop it fully.
+            else
+                HandleRotation();
         }
 
         private string GetWalkModeAnimationString()
