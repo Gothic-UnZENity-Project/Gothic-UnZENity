@@ -48,6 +48,10 @@ namespace GUZ.Core.UI.Menus
 
         protected override bool IsMenuItemActive(string menuItemName)
         {
+            // FIXME - Saving is not yet working in UnZENity. We therefore disable it for now.
+            if (menuItemName == "MENUITEM_MAIN_SAVEGAME_SAVE")
+                return false;
+            
             return ((MenuItemCache[menuItemName].item.Flags & MenuItemFlag.OnlyInGame) == 0 &&
                     !GameData.InGameAndAlive) ||
                    ((MenuItemCache[menuItemName].item.Flags & MenuItemFlag.OnlyOutGame) == 0 &&

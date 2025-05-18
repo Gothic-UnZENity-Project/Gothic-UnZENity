@@ -132,11 +132,7 @@ namespace GUZ.Core.UI.Menus
 
         protected override bool IsMenuItemActive(string menuItemName)
         {
-            if (_isLoading)
-                return (MenuItemCache[menuItemName].item.Flags & MenuItemFlag.Disabled) == 0;
-            // SaveGame menu
-            else
-                return false;
+            return (MenuItemCache[menuItemName].item.Flags & MenuItemFlag.Disabled) == 0;
         }
 
         private void FillSaveGameEntries()
