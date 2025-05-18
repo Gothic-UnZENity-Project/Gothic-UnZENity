@@ -70,6 +70,8 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
 
             if (_route.Count != 0)
             {
+                // We need to reset this flag now. Otherwise, we will skip all movement elements...
+                IsDestReached = false;
                 return;
             }
 
