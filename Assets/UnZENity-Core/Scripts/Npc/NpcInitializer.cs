@@ -6,6 +6,7 @@ using GUZ.Core.Data.Container;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
+using GUZ.Core.Properties;
 using GUZ.Core.Util;
 using GUZ.Core.Vm;
 using GUZ.Core.Vob.WayNet;
@@ -198,6 +199,13 @@ namespace GUZ.Core.Npc
                 npc.Props.CurrentWayPoint = (WayPoint)spawnPoint;
             go.transform.SetPositionAndRotation(spawnPoint.Position, spawnPoint.Rotation);
 
+            // Prepare some variables, which need to be calculated from save game.
+            // We simply say: Restart whole logic for NPCs  .
+            // FIXME - It's a hack for now, as the normal Vob.*Routine/*State variables aren't handled as of now.
+            npc.Props.CurrentLoopState = NpcProperties.LoopState.None;
+            npc.Vob.CurrentStateValid = false;
+            npc.Vob.NextStateValid = false;
+            
             GameGlobals.NpcMeshCulling.AddCullingEntry(go);
         }
 
