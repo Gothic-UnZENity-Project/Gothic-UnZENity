@@ -1,6 +1,5 @@
 using System;
 using GUZ.Core.Globals;
-using GUZ.Core.UI.Menus.Adapter.Menu;
 using UnityEngine.SceneManagement;
 using ZenKit.Daedalus;
 
@@ -28,7 +27,7 @@ namespace GUZ.Core.UI.Menus
             MenuHandler.ToggleVisibility();
             if (commandName == "NEW_GAME")
             {
-                GameManager.I.LoadWorld(Constants.SelectedWorld, -1, SceneManager.GetActiveScene().name);
+                GameManager.I.LoadWorld(Constants.SelectedWorld, 0, SceneManager.GetActiveScene().name);
             }
         }
 
