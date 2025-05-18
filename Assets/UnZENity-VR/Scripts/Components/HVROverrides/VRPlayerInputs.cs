@@ -105,6 +105,19 @@ namespace GUZ.VR.Components.HVROverrides
                 return base.GetCrouch();
             }
         }
+        
+        protected override bool GetSprinting()
+        {
+            // If HVRSimulator is active
+            if (UseWASD)
+            {
+                return Keyboard.current[Key.LeftShift].isPressed;
+            }
+            else
+            {
+                return base.GetSprinting();
+            }
+        }
 
     }
 }
