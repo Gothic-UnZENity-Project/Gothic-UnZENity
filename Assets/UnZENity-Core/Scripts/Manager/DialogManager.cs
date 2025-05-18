@@ -80,12 +80,19 @@ namespace GUZ.Core.Manager
                         continue;
                     }
 
+                    
+                    // TODO - Should be outsourced to some VmManager.Call<int> function which sets and resets values.
+                    var oldSelf = GameData.GothicVm.GlobalSelf;
+                    GameData.GothicVm.GlobalSelf = npcContainer.Instance;
+                    var conditionResult = GameData.GothicVm.Call<int>(dialog.Condition);
+                    GameData.GothicVm.GlobalSelf = oldSelf;
+
                     // Dialog condition is false
-                    if (dialog.Condition == 0 || GameData.GothicVm.Call<int>(dialog.Condition) <= 0)
+                    if (conditionResult == 0)
                     {
                         continue;
                     }
-
+                    
                     // We can now add the dialog
                     selectableDialogs.Add(dialog);
                 }

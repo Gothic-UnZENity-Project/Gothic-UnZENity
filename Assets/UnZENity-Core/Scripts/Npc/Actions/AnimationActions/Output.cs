@@ -1,5 +1,4 @@
 using System.Linq;
-using GUZ.Core.Creator;
 using GUZ.Core.Creator.Sounds;
 using GUZ.Core.Data.Container;
 using GUZ.Core.Extensions;
@@ -117,7 +116,6 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
                     PrefabProps.AnimationSystem.StopHeadAnimation(HeadMorph.HeadMorphType.Viseme);
                     PrefabProps.NpcSubtitles.HideSubtitles();
                 }
-
 
                 return true;
             }
