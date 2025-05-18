@@ -164,7 +164,7 @@ namespace GUZ.Core
             GlobalEventDispatcher.LevelChangeTriggered.AddListener((world, spawn) =>
             {
                 Player.LastLevelChangeTriggerVobName = spawn;
-                LoadWorld(world, -1, SceneManager.GetActiveScene().name);
+                LoadWorld(world, SaveGameManager.SlotId.WorldChangeOnly, SceneManager.GetActiveScene().name);
             });
 
             watch.Log("Phase2 (mostly ZenKit) initialized in");
@@ -186,7 +186,7 @@ namespace GUZ.Core
         /// saveGameId = -1 -> Change World
         /// </summary>
         /// <param name="saveGameId">-1-15</param>
-        public void LoadWorld(string worldName, int saveGameId, string sceneToUnload = null)
+        public void LoadWorld(string worldName, SaveGameManager.SlotId saveGameId, string sceneToUnload = null)
         {
             // We need to add .zen as early as possible as all related data needs the file ending.
             worldName += worldName.EndsWithIgnoreCase(".zen") ? "" : ".zen";

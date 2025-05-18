@@ -35,8 +35,8 @@ namespace GUZ.Core.Manager
     /// </summary>
     public class SaveGameManager
     {
-        public int SaveGameId;
-        public bool IsNewGame => SaveGameId < 1;
+        public SlotId SaveGameId;
+        public bool IsNewGame => SaveGameId == SlotId.NewGame;
         public bool IsLoadedGame => !IsNewGame;
         public bool IsFirstWorldLoadingFromSaveGame; // Check if we load save game right now!
 
@@ -56,10 +56,29 @@ namespace GUZ.Core.Manager
         public string CurrentWorldName;
         public WorldContainer CurrentWorldData => _worlds[CurrentWorldName];
 
-        // When we load data like World.Mesh, we can't cache it for memory reasons.
-        // But we need to store the reference to the parent object (World) in here as long as we want to work with the sub-data.
 
+        public enum SlotId
+        {
+            WorldChangeOnly = -1,
+            NewGame = 0,
+            Slot1 = 1,
+            Slot2 = 2,
+            Slot3 = 3,
+            Slot4 = 4,
+            Slot5 = 5,
+            Slot6 = 6,
+            Slot7 = 7,
+            Slot8 = 8,
+            Slot9 = 9,
+            Slot10 = 10,
+            Slot11 = 11,
+            Slot12 = 12,
+            Slot13 = 13,
+            Slot14 = 14,
+            Slot15 = 15
+        }
 
+            
         public void Init()
         {
             // Nothing to do for now.
@@ -76,12 +95,12 @@ namespace GUZ.Core.Manager
         /// <summary>
         /// Hint: G1 save game folders start with 1. We leverage the same numbering.
         /// </summary>
-        public void LoadSavedGame(int saveGameId)
+        public void LoadSavedGame(SlotId saveGameId)
         {
             LoadSavedGame(saveGameId, GetSaveGame(saveGameId));
         }
 
-        public void LoadSavedGame(int saveGameId, SaveGame save)
+        public void LoadSavedGame(SlotId saveGameId, SaveGame save)
         {
             if (save == null)
             {
@@ -157,7 +176,7 @@ namespace GUZ.Core.Manager
         }
 
         [CanBeNull]
-        public SaveGame GetSaveGame(int folderSaveId)
+        public SaveGame GetSaveGame(SlotId folderSaveId)
         {
             // Load metadata
             var save = new SaveGame(GameContext.GameVersionAdapter.Version);
@@ -182,7 +201,7 @@ namespace GUZ.Core.Manager
         ///
         /// Hint: Needs to be called after EndOfFrame to ensure we can do a screenshot as thumbnail.
         /// </summary>
-        public void SaveCurrentGame(int saveGameId, string title)
+        public void SaveCurrentGame(SlotId saveGameId, string title)
         {
             var saveGame = new SaveGame(GameContext.GameVersionAdapter.Version);
             saveGame.Metadata.Title = title;
@@ -421,10 +440,10 @@ namespace GUZ.Core.Manager
             vob.AiVars = vobAiVars;
         }
 
-        private string GetSaveGamePath(int folderSaveId)
+        private string GetSaveGamePath(SlotId folderSaveId)
         {
             var gothicDir = GameContext.GameVersionAdapter.RootPath;
-            return Path.GetFullPath(Path.Join(gothicDir, $"Saves/savegame{folderSaveId}"));
+            return Path.GetFullPath(Path.Join(gothicDir, $"Saves/savegame{(int)folderSaveId}"));
         }
     }
 }

@@ -2,13 +2,16 @@ using System;
 using System.IO;
 using GUZ.Core.Caches;
 using GUZ.Core.Extensions;
+using GUZ.Core.Manager;
 using GUZ.Core.UI.Menus.Adapter.Menu;
+using GUZ.Core.Util;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using ZenKit;
 using ZenKit.Daedalus;
+using Logger = GUZ.Core.Util.Logger;
 
 namespace GUZ.Core.UI.Menus
 {
@@ -129,7 +132,11 @@ namespace GUZ.Core.UI.Menus
 
         protected override bool IsMenuItemActive(string menuItemName)
         {
-            return (MenuItemCache[menuItemName].item.Flags & MenuItemFlag.Disabled) == 0;
+            if (_isLoading)
+                return (MenuItemCache[menuItemName].item.Flags & MenuItemFlag.Disabled) == 0;
+            // SaveGame menu
+            else
+                return false;
         }
 
         private void FillSaveGameEntries()
@@ -150,7 +157,7 @@ namespace GUZ.Core.UI.Menus
                 var folderSaveId = int.Parse(saveGameFolderName.Remove(0, "savegame".Length));
 
                 // Load metadata
-                var save = GameGlobals.SaveGame.GetSaveGame(folderSaveId);
+                var save = GameGlobals.SaveGame.GetSaveGame((SaveGameManager.SlotId)folderSaveId);
                 _saves[folderSaveId] = save;
 
                 // Set metadata to slot
@@ -203,7 +210,8 @@ namespace GUZ.Core.UI.Menus
 
             if (!int.TryParse(numberPart, out int id))
             {
-                id = -2;
+                Logger.LogError($"Save Game Not Found for {inputName}. Using New game instead.", LogCat.Loading);
+                id = (int)SaveGameManager.SlotId.NewGame;
             }
             if (_isLoading)
             {
@@ -215,11 +223,11 @@ namespace GUZ.Core.UI.Menus
                 }
 
                 // Can be triggered from Scene:mainMenu or Scene:AnyWorld, therefore removing active scene.
-                GameManager.I.LoadWorld(save.Metadata.World, id, SceneManager.GetActiveScene().name);
+                GameManager.I.LoadWorld(save.Metadata.World, (SaveGameManager.SlotId)id, SceneManager.GetActiveScene().name);
             }
             else
             {
-                GameGlobals.SaveGame.SaveCurrentGame(id, $"UnZENity - {DateTime.Now}");
+                GameGlobals.SaveGame.SaveCurrentGame((SaveGameManager.SlotId)id, $"UnZENity - {DateTime.Now}");
                 FillSaveGameEntries();
             }
         }

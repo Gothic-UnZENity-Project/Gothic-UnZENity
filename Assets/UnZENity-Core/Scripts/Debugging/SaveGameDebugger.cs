@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using GUZ.Core.Manager;
 using GUZ.Core.Util;
 using MyBox;
 using UnityEngine;
@@ -47,15 +48,15 @@ namespace GUZ.Core.Debugging
         {
             yield return new WaitForEndOfFrame();
 
-            GameGlobals.SaveGame.SaveCurrentGame(SaveSlot, $"UnZENity-DEBUG - {DateTime.Now}");
+            GameGlobals.SaveGame.SaveCurrentGame((SaveGameManager.SlotId)SaveSlot, $"UnZENity-DEBUG - {DateTime.Now}");
 
             Logger.LogEditor("DONE", LogCat.Debug);
         }
 
         private void CompareSaves()
         {
-            var save1 = GameGlobals.SaveGame.GetSaveGame(SaveSlot1ToCompare)!;
-            var save2 = GameGlobals.SaveGame.GetSaveGame(SaveSlot2ToCompare)!;
+            var save1 = GameGlobals.SaveGame.GetSaveGame((SaveGameManager.SlotId)SaveSlot1ToCompare)!;
+            var save2 = GameGlobals.SaveGame.GetSaveGame((SaveGameManager.SlotId)SaveSlot2ToCompare)!;
 
             var world1 = save1.LoadWorld(WorldToCompare)!;
             var world2 = save2.LoadWorld(WorldToCompare)!;
