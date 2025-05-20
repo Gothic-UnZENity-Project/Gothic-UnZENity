@@ -46,6 +46,15 @@ namespace GUZ.Lab.Handler
 
             while (true)
             {
+                {
+                    animSystem.DisableMovement();
+                    animSystem.PlayAnimation("T_BENCH_Stand_2_S0");
+                    yield return new WaitForSeconds(3f);
+                    animSystem.PlayAnimation("T_BENCH_S0_2_S1");
+                    yield return new WaitForSeconds(3f);
+                }
+                continue;
+                
                 // Sit down - Moves forward and hovers over ground like a magician on his carpet.
                 {
                     // Humans Militia have no CollisionVolumeScale change (CVS).

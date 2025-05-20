@@ -39,7 +39,11 @@ namespace GUZ.Core.Animations
         private Quaternion[] _meshBoneRot;
         private List<AnimationTrackInstance> _trackInstances = new();
         private bool _isMovementEnabled = true;
-        
+        private bool _isSittingInverted;
+
+        // Some sitting animations are rotated wrong. They need to be inverted in y-axis.
+        private string[] _animationsToInvertYAxis = new[] { "S_BENCH_S1", "S_THRONE_S1" };
+
 
         protected override void Awake()
         {
@@ -135,6 +139,7 @@ namespace GUZ.Core.Animations
                 }
             }
 
+            PrePlayAnimation(newTrackInstance);
             _trackInstances.Add(newTrackInstance);
 
             // As Blending isn't always 1f at each time, we ensure some smoothness by sorting the TrackInstances like:
@@ -322,6 +327,7 @@ namespace GUZ.Core.Animations
                         }
                         break;
                     case AnimationState.Stop:
+                        PreStopAnimation(instance);
                         _trackInstances.Remove(instance);
                         break;
                     default:
@@ -331,7 +337,20 @@ namespace GUZ.Core.Animations
 
             ApplyFinalPose();
             ApplyFinalMovement();
+            ApplyFinalRotation();
             ApplyEvents();
+        }
+
+        private void PrePlayAnimation(AnimationTrackInstance instance)
+        {
+            if (_animationsToInvertYAxis.Contains(instance.Track.Name.ToUpper()))
+                _isSittingInverted = true;
+        }
+        
+        private void PreStopAnimation(AnimationTrackInstance instance)
+        {
+            if (_animationsToInvertYAxis.Contains(instance.Track.Name.ToUpper()))
+                _isSittingInverted = false;
         }
 
         private void ApplyFinalPose()
@@ -429,6 +448,15 @@ namespace GUZ.Core.Animations
 
             // Pos change is applied with rotated value.
             PrefabProps.Go.transform.localPosition += PrefabProps.Go.transform.rotation * finalMovement;
+        }
+
+        private void ApplyFinalRotation()
+        {
+            if (!_isSittingInverted)
+                return;
+
+            var currentRotation = PrefabProps.Bip01.transform.localRotation.eulerAngles;
+            PrefabProps.Bip01.transform.localRotation = Quaternion.Euler(currentRotation.x, -currentRotation.y, currentRotation.z);
         }
 
         private void ApplyEvents()
