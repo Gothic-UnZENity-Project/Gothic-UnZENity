@@ -55,7 +55,6 @@ namespace GUZ.Core.Properties
         public float PerceptionTime = 5f; // Default in seconds
         public float CurrentPerceptionTime;
 
-
         // AI topics
 
         public NpcInstance EnemyNpc;
@@ -93,5 +92,6 @@ namespace GUZ.Core.Properties
         public VmGothicEnums.Attitude TempAttitude = VmGothicEnums.Attitude.Neutral;
 
         public VmGothicEnums.Guild TrueGuild;
+        public float RefuseTalkTimer;
     }
 }

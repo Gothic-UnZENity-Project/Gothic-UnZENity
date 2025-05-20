@@ -146,6 +146,9 @@ namespace GUZ.Core.Vm
             vm.RegisterExternal<NpcInstance, int, NpcInstance, NpcInstance>("Npc_SendPassivePerc", Npc_SendPassivePerc);
             vm.RegisterExternal<int, NpcInstance, int>("Npc_SetTrueGuild", Npc_SetTrueGuild);
             vm.RegisterExternal<int, NpcInstance>("Npc_GetTrueGuild", Npc_GetTrueGuild);
+            vm.RegisterExternal<NpcInstance, int>("Npc_SetRefuseTalk", Npc_SetRefuseTalk);
+            vm.RegisterExternal<int, NpcInstance>("Npc_RefuseTalk", Npc_RefuseTalk);
+
 
             // Print
             vm.RegisterExternal<string>("PrintDebug", PrintDebug);
@@ -852,12 +855,12 @@ namespace GUZ.Core.Vm
         
         public static int Npc_GetTarget(NpcInstance npc)
         {
-            return Convert.ToInt32(GameGlobals.NpcAi.Npc_GetTarget(npc));
+            return Convert.ToInt32(GameGlobals.NpcAi.ExtGetTarget(npc));
         }
         
         public static void Npc_SetTarget(NpcInstance npc, NpcInstance target)
         {
-            GameGlobals.NpcAi.Npc_SetTarget(npc, target);
+            GameGlobals.NpcAi.ExtSetTarget(npc, target);
         }
 
         public static void Npc_SendPassivePerc(NpcInstance npc, int perc,NpcInstance victim, NpcInstance other)
@@ -867,13 +870,23 @@ namespace GUZ.Core.Vm
         
         public static int Npc_SetTrueGuild(NpcInstance npc, int guild)
         {
-            GameGlobals.NpcAi.Npc_SetTrueGuild(npc, guild);
+            GameGlobals.NpcAi.ExtSetTrueGuild(npc, guild);
             return 0;
         }       
         
         public static int Npc_GetTrueGuild(NpcInstance npc)
         {
-            return GameGlobals.NpcAi.Npc_GetTrueGuild(npc);
+            return GameGlobals.NpcAi.ExtGetTrueGuild(npc);
+        }
+
+        public static void Npc_SetRefuseTalk(NpcInstance npc, int refuseSeconds)
+        {
+            GameGlobals.NpcAi.ExtSetRefuseTalk(npc, refuseSeconds);
+        }
+
+        public static int Npc_RefuseTalk(NpcInstance npc)
+        {
+            return Convert.ToInt32(GameGlobals.NpcAi.ExtRefuseTalk(npc));
         }
 
         #endregion

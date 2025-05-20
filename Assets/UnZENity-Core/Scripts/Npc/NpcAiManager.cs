@@ -392,12 +392,12 @@ namespace GUZ.Core.Npc
             npc.GetUserData().Props.TempAttitude = value;
         }
 
-        public bool Npc_GetTarget(NpcInstance npc)
+        public bool ExtGetTarget(NpcInstance npc)
         {
             return npc.GetUserData().Props.TargetNpc != null;
         }
 
-        public void Npc_SetTarget(NpcInstance npc, NpcInstance target)
+        public void ExtSetTarget(NpcInstance npc, NpcInstance target)
         {
             npc.GetUserData().Props.TargetNpc = target;
         }
@@ -407,12 +407,12 @@ namespace GUZ.Core.Npc
             GameGlobals.NpcAi.ExecutePerception(perc, npc.GetUserData().Props, npc, victim, other);
         }
 
-        public void Npc_SetTrueGuild(NpcInstance npc, int guild)
+        public void ExtSetTrueGuild(NpcInstance npc, int guild)
         {
             npc.GetUserData().Props.TrueGuild = (VmGothicEnums.Guild) guild;
         }
 
-        public int Npc_GetTrueGuild(NpcInstance npc)
+        public int ExtGetTrueGuild(NpcInstance npc)
         {
             var npcUserData = npc.GetUserData();
             var npcGuild  = npcUserData.Props.TrueGuild;
@@ -463,6 +463,16 @@ namespace GUZ.Core.Npc
             }
 
             selfNpc.Props.EnemyNpc = closestEnemy?.Instance;
+        }
+
+        public void ExtSetRefuseTalk(NpcInstance self, int refuseSeconds)
+        {
+            self.GetUserData().Props.RefuseTalkTimer = refuseSeconds;
+        }
+
+        public bool ExtRefuseTalk(NpcInstance self)
+        {
+            return self.GetUserData().Props.RefuseTalkTimer > 0f;
         }
     }
 }

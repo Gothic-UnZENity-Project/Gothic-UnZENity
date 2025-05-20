@@ -35,6 +35,7 @@ namespace GUZ.Core.Npc
         private void Update()
         {
             ExecuteActivePerceptions();
+            ExecuteStates();
 
             Properties.CurrentAction.Tick();
 
@@ -179,6 +180,12 @@ namespace GUZ.Core.Npc
 
             // Reset timer if we executed Perceptions.
             Properties.CurrentPerceptionTime = 0f;
+        }
+
+        private void ExecuteStates()
+        {
+            if (Properties.RefuseTalkTimer > 0f)
+                Properties.RefuseTalkTimer -= Time.deltaTime;
         }
 
         /// <summary>
