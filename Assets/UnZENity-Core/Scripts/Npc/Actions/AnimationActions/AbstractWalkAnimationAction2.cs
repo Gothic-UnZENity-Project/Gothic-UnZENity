@@ -112,25 +112,5 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             var destinationRotation = Quaternion.LookRotation(direction);
             NpcTransform.rotation = Quaternion.RotateTowards(NpcTransform.rotation, destinationRotation, Time.deltaTime * Constants.NpcRotationSpeed); 
         }
-
-        /// <summary>
-        /// We need to alter rootNode's position once walk animation is done.
-        /// </summary>
-        protected override void AnimationEnd()
-        {
-            base.AnimationEnd();
-
-            // We need to ensure, that physics are always active when an NPC walks!
-            PhysicsHelper.EnablePhysicsForNpc(PrefabProps);
-
-            NpcTransform.localPosition = PrefabProps.Bip01.position;
-            PrefabProps.Bip01.localPosition = Vector3.zero;
-            PrefabProps.ColliderRootMotion.localPosition = Vector3.zero;
-
-            // TODO - Needed?
-            // root.SetLocalPositionAndRotation(
-            //     root.localPosition + bip01Transform.localPosition,
-            //     root.localRotation * bip01Transform.localRotation);
-        }
     }
 }
