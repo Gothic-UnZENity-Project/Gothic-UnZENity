@@ -13,7 +13,7 @@ namespace GUZ.Core.Animations
 {
     public class AnimationManager
     {
-        private const float _movementThreshold = 0.4f; // If magnitude of first and last frame positions is higher than this, we have a movement animation.
+        private const float _movementThreshold = 0.3f; // If magnitude of first and last frame positions is higher than this, we have a movement animation.
 
         [ItemCanBeNull]
         private Dictionary<string, AnimationTrack> _tracks = new();
