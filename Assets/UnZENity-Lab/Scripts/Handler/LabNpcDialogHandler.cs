@@ -47,7 +47,6 @@ namespace GUZ.Lab.Handler
             while (true)
             {
                 {
-                    animSystem.DisableMovement();
                     animSystem.PlayAnimation("T_BENCH_Stand_2_S0");
                     yield return new WaitForSeconds(3f);
                     animSystem.PlayAnimation("T_BENCH_S0_2_S1");

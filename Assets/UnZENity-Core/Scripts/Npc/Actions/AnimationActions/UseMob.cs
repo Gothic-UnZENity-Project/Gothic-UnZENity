@@ -1,5 +1,7 @@
+using System.Linq;
 using GUZ.Core.Data.Container;
 using GUZ.Core.Extensions;
+using GUZ.Core.Globals;
 using GUZ.Core.Manager;
 using GUZ.Core.Properties;
 using GUZ.Core.Vm;
@@ -8,6 +10,7 @@ using JetBrains.Annotations;
 using MyBox;
 using UnityEngine;
 using ZenKit.Vobs;
+using Logger = GUZ.Core.Util.Logger;
 
 namespace GUZ.Core.Npc.Actions.AnimationActions
 {
@@ -59,19 +62,6 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
                 StartDelayed();
         }
 
-        public override bool IsFinished()
-        {
-            if (base.IsFinished())
-            {
-                PrefabProps.AnimationSystem.EnableMovement();
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-
         private void StartNow()
         {
             // We call Start only if the Mobsi is already available.
@@ -92,7 +82,24 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
 
             PrefabProps.CurrentInteractable = _mobGo;
             PrefabProps.CurrentInteractableSlot = _slotGo;
-            Props.BodyState = VmGothicEnums.BodyState.BsMobinteract;
+
+            SetBodyState();
+        }
+
+        private void SetBodyState()
+        {
+            var mobsiScheme = _mobGo.GetComponentInChildren<VobProperties>().VisualScheme;
+
+            if (Constants.Daedalus.MobSit.Contains(mobsiScheme))
+                Props.BodyState = VmGothicEnums.BodyState.BsSit;
+            else if (Constants.Daedalus.MobLie.Contains(mobsiScheme))
+                Props.BodyState = VmGothicEnums.BodyState.BsLie;
+            else if (Constants.Daedalus.MobClimb.Contains(mobsiScheme))
+                Props.BodyState = VmGothicEnums.BodyState.BsClimb;
+            else if (Constants.Daedalus.MobNotInterruptable.Contains(mobsiScheme))
+                Props.BodyState = VmGothicEnums.BodyState.BsMobinteract;
+            else
+                Props.BodyState = VmGothicEnums.BodyState.BsMobinteractInterrupt;
         }
 
         /// <summary>
@@ -190,8 +197,6 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
 
         private void StartMobUseAnimation()
         {
-            PrefabProps.AnimationSystem.DisableMovement();
-            
             // Place item for Mobsi usage in hand - if needed. Will be "spawned" via animation >EventType.ItemInsert< later.
             var itemName = ((InteractiveObject)_mobGo.GetComponentInChildren<VobProperties>().Properties).Item;
             if (itemName.NotNullOrEmpty())

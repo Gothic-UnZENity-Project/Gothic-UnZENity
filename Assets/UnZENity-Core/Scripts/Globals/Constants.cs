@@ -54,6 +54,11 @@ namespace GUZ.Core.Globals
             public static string DoorUnlockSoundName => "DOOR_UNLOCK.WAV"; // _STR_*_UNLOCK value above couldn't be found/isn't used in G1, therefore we use this as fallback.
 
 
+            public static string[] MobSit => GameData.GothicVm.GetSymbolByName("MOB_SIT").GetString(0).Split(',');
+            public static string[] MobLie => GameData.GothicVm.GetSymbolByName("MOB_LIE").GetString(0).Split(',');
+            public static string[] MobClimb => GameData.GothicVm.GetSymbolByName("MOB_CLIMB").GetString(0).Split(',');
+            public static string[] MobNotInterruptable => GameData.GothicVm.GetSymbolByName("MOB_NOTINTERRUPTABLE").GetString(0).Split(',');
+            
             public static List<string> TalentTitles
             {
                 get
