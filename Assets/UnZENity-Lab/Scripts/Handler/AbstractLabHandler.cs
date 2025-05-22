@@ -36,7 +36,7 @@ namespace GUZ.Lab.Handler
 
             itemGo.GetComponentInChildren<VobItemProperties>().SetData(null, item);
 
-            return gameObject;
+            return itemGo;
         }
     }
 }

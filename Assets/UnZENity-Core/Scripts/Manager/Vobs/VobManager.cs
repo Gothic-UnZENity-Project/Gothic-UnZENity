@@ -303,7 +303,7 @@ namespace GUZ.Core.Manager.Vobs
                 }
                 else
                 {
-                    var go = CreateVobLazily(config, vob);
+                    var go = CreateVobLazily(vob);
 
                     // We assume that all VOBs with meshes are lazy loaded only.
                     AddToMobInteractableList(vob, go);
@@ -319,25 +319,39 @@ namespace GUZ.Core.Manager.Vobs
             InitVobNow(vob, GetRootGameObjectOfType(vob.Type));
         }
 
+        public GameObject CreateItem(Item item)
+        {
+            // We need to call the LazyLoad creation to have VobLoader.component added (as normal Items in the world)
+            var go = CreateVobLazily(item);
+
+            // We initialize the object directly, though.
+            var loader = go.GetComponent<VobLoader>();
+            loader.IsLoaded = true;
+
+            _initializer.InitVob(loader.Vob, loader.gameObject, default);
+
+            return go;
+        }
+        
         /// <summary>
         /// When we Lazy Load a VOB, we add a component which stores initialization data.
         /// Once Culling fetches the object, we will read this data and call InitVob() later.
         /// </summary>
-        private GameObject CreateVobLazily(DeveloperConfig config, IVirtualObject vob)
+        private GameObject CreateVobLazily(IVirtualObject vob)
         {
             // Skip disabled features.
             switch (vob.Visual!.Type)
             {
                 case VisualType.Decal:
                     // Skip object
-                    if (!config.EnableDecalVisuals)
+                    if (!GameGlobals.Config.Dev.EnableDecalVisuals)
                     {
                         return null;
                     }
                     break;
                 case VisualType.ParticleEffect:
                     // Skip object
-                    if (!config.EnableParticleEffects)
+                    if (!GameGlobals.Config.Dev.EnableParticleEffects)
                     {
                         return null;
                     }

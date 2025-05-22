@@ -7,7 +7,9 @@ using GUZ.Core;
 using GUZ.Core.Creator;
 using GUZ.Core.Creator.Meshes;
 using GUZ.Core.Extensions;
+using GUZ.Core.Globals;
 using GUZ.Core.Properties;
+using GUZ.Core.Util;
 using GUZ.Core.Vm;
 using HurricaneVR.Framework.Components;
 using HurricaneVR.Framework.Core;
@@ -16,6 +18,7 @@ using MyBox;
 using UnityEngine;
 using ZenKit.Daedalus;
 using ZenKit.Vobs;
+using Logger = GUZ.Core.Util.Logger;
 
 namespace GUZ.VR.Components.VobContainer
 {
@@ -77,7 +80,7 @@ namespace GUZ.VR.Components.VobContainer
             if (_openingForTheFirstTime)
             {
                 AlignSockets();
-                InitializeContent();
+                StartCoroutine(InitializeContent());
                 _openingForTheFirstTime = false;
             }
             
@@ -174,20 +177,20 @@ namespace GUZ.VR.Components.VobContainer
             }
         }
         
-        private void InitializeContent()
+        private IEnumerator InitializeContent()
         {
             var contents = _containerProperties.ContainerProperties?.Contents;
 
             if (string.IsNullOrEmpty(contents))
             {
-                return;
+                yield break;
             }
 
             var contentItems = ParseContent(contents);
 
             PreSpawnContent(out AudioClip grabAudio, out AudioClip releaseAudio);
-            SpawnContent(contentItems);
-            StartCoroutine(PostSpawnContent(grabAudio, releaseAudio));
+            yield return SpawnContent(contentItems);
+            yield return PostSpawnContent(grabAudio, releaseAudio);
         }
         
         private List<ContentItem> ParseContent(string contents)
@@ -235,35 +238,44 @@ namespace GUZ.VR.Components.VobContainer
             }
         }
 
-        private void SpawnContent(List<ContentItem> contentItems)
+        private IEnumerator SpawnContent(List<ContentItem> contentItems)
         {
             var sockets = _socketContainer.Sockets;
 
             if (contentItems.Count > sockets.Count)
             {
-                Debug.LogError("There are more items in a container than HVRSockets available. Please implement pagination to ensure everything is visible and can be grabbed!");
+                Logger.LogError("There are more items in a container than HVRSockets available. Please implement pagination to ensure everything is visible and can be grabbed!", LogCat.VR);
             }
 
             for (var i = 0; i < Math.Min(contentItems.Count, sockets.Count); i++)
             {
                 var currentItem = contentItems[i];
-                var currentSocket = sockets[i];
-                var itemInstance = VmInstanceManager.TryGetItemData(currentItem.Name);
-                Debug.Log(itemInstance.Name);
+
+                var zkVob = new Item
+                {
+                    Name = currentItem.Name,
+                    Visual = new VisualMesh
+                    {
+                        Name = currentItem.Name
+                    }
+                };
+
+                var go = GameGlobals.Vobs.CreateItem(zkVob);
+
+                // Wait 1 frame to ensure our mesh bounds can be calculated by HVR Socket.
+                yield return null;
                 
-                var go = TempCreateItem(itemInstance);
+                PlaceObjectIntoContainer(go);
+            }
+        }
 
-                // We need to parent our item to the normal Vob tree. Because putting it into a slot changes the parent to the slot-GO.
-                // And when grabbed out of the chest, HVR will re-parent the object to it's original parent.
-                // If the chest or sth. else ist the parent, a culling of the chest will hide the item (e.g. in our hand).
-                var parentGo = GameGlobals.Vobs.GetRootGameObjectOfType(VirtualObjectType.oCItem);
-                go.SetParent(parentGo);
-
-                // With this, we move the object into the chest and the "auto-collector" will trigger and move the object to the first free Socket.
-                // TODO - The order of items might be wrong if e.g. a huge sword with order-ID 0 is colliding with the chest and therefore
-                //        sliding down too slow (due to collisions inside the chest) it might get another slot-ID.
-                //        It's up to us if this is an issue or even worth a word.
-                go.transform.position = currentSocket.transform.position;
+        private void PlaceObjectIntoContainer(GameObject itemGo)
+        {
+            var grabbable = itemGo.GetComponentInChildren<HVRGrabbable>(true);
+            if (_socketContainer.TryFindAvailableSocket(grabbable, out var socket))
+            {
+                socket.TryGrab(grabbable, true, true);
+                itemGo.transform.localPosition = Vector3.zero; // We need to reset position as the element won't be placed inside it's parent in the chest.
             }
         }
         

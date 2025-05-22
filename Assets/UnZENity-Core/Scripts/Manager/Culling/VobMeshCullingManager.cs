@@ -455,6 +455,7 @@ namespace GUZ.Core.Manager.Culling
             // Check Small list
             var index = _vobObjectsSmall.IndexOf(rootGo);
             var vobType = VobList.Small;
+            
             // Check Medium list
             if (index == -1)
             {
