@@ -157,6 +157,16 @@ namespace GUZ.VR.Adapter
             
             chapterPrefab.GetComponent<VRIntroduceChapter>().DisplayIntroduction(chapter, text, texture, wav, time);
         }
+
+        public void DisableMenus()
+        {
+            _playerController.VrInputs.IsMenuButtonEnabled = false;
+        }
+
+        public void EnableMenus()
+        {
+            _playerController.VrInputs.IsMenuButtonEnabled = true;
+        }
     }
 }
 #endif

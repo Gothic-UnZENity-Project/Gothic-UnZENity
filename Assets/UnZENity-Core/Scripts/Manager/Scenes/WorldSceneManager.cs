@@ -36,6 +36,8 @@ namespace GUZ.Core.Manager.Scenes
         /// </summary>
         private async Task LoadWorldContentAsync()
         {
+            GameContext.InteractionAdapter.DisableMenus();
+            
             var watch = Stopwatch.StartNew();
             var config = GameGlobals.Config;
 
@@ -145,6 +147,7 @@ namespace GUZ.Core.Manager.Scenes
             }
             finally
             {
+                GameContext.InteractionAdapter.EnableMenus();
                 fullWatch.Log("Full world loaded");
             }
         }

@@ -74,6 +74,16 @@ namespace GUZ.Flat
             throw new NotImplementedException();
         }
 
+        public void DisableMenus()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void EnableMenus()
+        {
+            throw new NotImplementedException();
+        }
+
         public void UpdateMainMenu(AbstractMenuInstance mainMenu)
         {
             throw new NotImplementedException();

@@ -11,7 +11,7 @@ namespace GUZ.VR.Components.HVROverrides
 {
     public class VRPlayerController : HVRPlayerController
     {
-        private VRPlayerInputs _guzInputs => (VRPlayerInputs)Inputs;
+        public VRPlayerInputs VrInputs => (VRPlayerInputs)Inputs;
 
         [Separator("GUZ - Settings")]
         public MenuHandler MenuHandler;
@@ -30,7 +30,7 @@ namespace GUZ.VR.Components.HVROverrides
         {
             base.Update();
 
-            if (_guzInputs.IsMenuActivated && IsGameScene())
+            if (VrInputs.IsMenuActivated && IsGameScene())
             {
                 GameData.InGameAndAlive = true;
                 MenuHandler.ToggleVisibility();

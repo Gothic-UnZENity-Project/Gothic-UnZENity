@@ -39,6 +39,7 @@ namespace GUZ.Core.Manager.Scenes
             _mainMenuImageBackground.GetComponent<MeshRenderer>().material = GameGlobals.Textures.MainMenuImageBackgroundMaterial;
 
             GameContext.InteractionAdapter.TeleportPlayerTo(Vector3.zero);
+            GameContext.InteractionAdapter.DisableMenus();
 
             GlobalEventDispatcher.MainMenuSceneLoaded.Invoke();
         }

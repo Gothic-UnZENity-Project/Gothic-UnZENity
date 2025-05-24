@@ -63,9 +63,8 @@ namespace GUZ.Core.Manager.Scenes
             {
                 var worldsToLoad = GameContext.GameVersionAdapter.Version == GameVersion.Gothic1 ? _gothic1Worlds : _gothic2Worlds;
 
+                // Sleeper temple music (similar to installation music)
                 GameGlobals.Music.Play("KAT_DAY_STD");
-                
-                // DEBUG - Remove this IF to enforce recreation of cache.
                 if (!GameGlobals.Config.Dev.AlwaysRecreateCache && GameGlobals.StaticCache.DoCacheFilesExist(worldsToLoad))
                 {
                     var metadata = await GameGlobals.StaticCache.ReadMetadata();
@@ -76,6 +75,8 @@ namespace GUZ.Core.Manager.Scenes
                         return;
                     }
                 }
+
+                GameContext.InteractionAdapter.DisableMenus();
 
                 var watch = Stopwatch.StartNew();
                 var overallWatch = Stopwatch.StartNew();
@@ -144,6 +145,11 @@ namespace GUZ.Core.Manager.Scenes
             {
                 Logger.LogError(e.ToString(), LogCat.PreCaching);
                 throw;
+            }
+            finally
+            {
+                // We need to grant the player always the option to quit the game via menu if something fails.
+                GameContext.InteractionAdapter.EnableMenus();
             }
         }
     }

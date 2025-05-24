@@ -16,5 +16,7 @@ namespace GUZ.Core.Adapter
         void TeleportPlayerTo(Vector3 position, Quaternion rotation = default);
         void InitUIInteraction();
         void IntroduceChapter(string chapter, string text, string texture, string wav, int time);
+        void DisableMenus();
+        void EnableMenus();
     }
 }
