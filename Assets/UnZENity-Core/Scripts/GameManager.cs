@@ -234,6 +234,7 @@ namespace GUZ.Core
         private void Update()
         {
             NpcMeshCulling.Update();
+            Loading.Update();
         }
 
         private void FixedUpdate()

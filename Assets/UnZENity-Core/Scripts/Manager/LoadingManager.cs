@@ -1,70 +1,44 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using GUZ.Core.Extensions;
-using MyBox;
-using UnityEngine;
-using UnityEngine.UI;
+using GUZ.Core.UI.Menus.LoadingBars;
 
 namespace GUZ.Core.Manager
 {
     public class LoadingManager
     {
-        public enum LoadingProgressType
-        {
-            WorldMesh,
-            VOB,
-            Npc
-        }
+        private AbstractLoadingBarHandler _loadingBarHandler;
+        private Dictionary<string, float> _progressByType = new();
 
-        private GameObject _progressBar;
-        private readonly Dictionary<LoadingProgressType, float> _progressByType = new();
+        private string _currentType;
+        private float _currentProgressPerElement;
 
-        private LoadingProgressType _currentType;
-        private float _currentAmountPerUpdate;
-        
+        // Recalculate and update loading bar next frame if something changed. Do not recalculate with every Tick() (for sake of performance)
+        private bool _isDirty;
+
         public void Init()
         {
-            // Initializing the Dictionary with the default progress (which is 0) for each type
-            foreach (LoadingProgressType progressType in Enum.GetValues(typeof(LoadingProgressType)))
+            // NOP
+        }
+
+        public void Update()
+        {
+            if (_isDirty)
             {
-                _progressByType.TryAdd(progressType, 0f);
+                UpdateLoadingBar();
+                _isDirty = false;
             }
         }
 
         /// <summary>
         /// Called whenever a world loading starts (i.e. reset loading state and rearrange some data)
         /// </summary>
-        public void InitLoading(GameObject loadingArea)
+        public void InitLoading(AbstractLoadingBarHandler loadingBarHandler)
         {
-            _progressBar = loadingArea.FindChildRecursively("ProgressBar");
-            
-            SetMaterialForLoading(loadingArea);
-            ResetProgress();
-        }
-
-        private void SetMaterialForLoading(GameObject loadingArea)
-        {
-            // On G1+world.zen it's either Gomez in his throne room (NewGame) or Gorn holding his Axe (LoadGame)
-            var textureNameForLoadingScreen = GameGlobals.SaveGame.IsNewGame
-                ? "LOADING.TGA"
-                : $"LOADING_{GameGlobals.SaveGame.CurrentWorldName.ToUpper().RemoveEnd(".ZEN")}.TGA";
-            GameGlobals.Textures.SetTexture(textureNameForLoadingScreen, GameGlobals.Textures.GothicLoadingMenuMaterial);
-            
-            var tm = GameGlobals.Textures;
-            loadingArea.FindChildRecursively("LoadingImage").GetComponent<Image>().material = tm.GothicLoadingMenuMaterial;
-            loadingArea.FindChildRecursively("ProgressBackground").GetComponent<Image>().material = tm.LoadingBarBackgroundMaterial;
-            loadingArea.FindChildRecursively("ProgressBar").GetComponent<Image>().material = tm.LoadingBarMaterial;
+            _loadingBarHandler = loadingBarHandler;
+            _progressByType = loadingBarHandler.GetProgressTypes().ToDictionary(i => i, i => 0f);
         }
         
-        public void ResetProgress()
-        {
-            foreach (var progressType in _progressByType.Keys.ToList())
-            {
-                _progressByType[progressType] = 0f;
-            }
-        }
-
         private float CalculateOverallProgress()
         {
             var totalProgress = 0f;
@@ -84,34 +58,42 @@ namespace GUZ.Core.Manager
             var overallProgress = CalculateOverallProgress();
 
             // Update the loading bar with the overall progress
-            _progressBar.GetComponent<Image>().fillAmount = overallProgress;
+            _loadingBarHandler.ProgressBarImage.fillAmount = overallProgress;
         }
 
         /// <summary>
         /// We only load one type of game data at once. We can therefore set it initially and call an AddProgress() without parameters later.
         /// </summary>
-        public void SetPhase(LoadingProgressType type, float amountPerUpdate)
+        public void SetPhase(string type, int amountOfElements)
+        {
+            SetPhase(type, 1f / amountOfElements);
+        }
+        
+        private void SetPhase(string type, float progressPerElement)
         {
             _currentType = type;
-            _currentAmountPerUpdate = amountPerUpdate;
+            _currentProgressPerElement = progressPerElement;
         }
 
         /// <summary>
         /// Add a single progress entry based on SetProgressStep() data.
         /// </summary>
-        public void AddProgress()
+        public void Tick()
         {
-            AddProgress(_currentType, _currentAmountPerUpdate);
+            _progressByType[_currentType] += _currentProgressPerElement;
+            _isDirty = true; // Recalculate and render ProgressBar update next frame.
         }
 
-        public void AddProgress(LoadingProgressType progressType, float progress)
+        /// <summary>
+        /// Our count-calculations for steps can be wrong (e.g. if execution of AddProgress() is called too few times).
+        /// Therefore, we clean it up and sanitize the loading bar a little.
+        /// </summary>
+        public void FinalizePhase()
         {
-            var newProgress = _progressByType[progressType] + progress;
-            _progressByType[progressType] = newProgress;
-            if (_progressBar != null)
-            {
-                UpdateLoadingBar();
-            }
+            _progressByType[_currentType] = 1f;
+
+            _currentType = null;
+            _currentProgressPerElement = 0;
         }
     }
 }

@@ -6,6 +6,7 @@ using GUZ.Core.Caches.StaticCache;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
+using GUZ.Core.UI.Menus.LoadingBars;
 using GUZ.Core.Util;
 using JetBrains.Annotations;
 using UnityEditor;
@@ -51,9 +52,8 @@ namespace GUZ.Core.Creator.Meshes.Builder
             RootGo.isStatic = true;
 
             var chunksCount = _worldChunks.OpaqueChunks.Count + _worldChunks.TransparentChunks.Count + _worldChunks.WaterChunks.Count;
-            var progressPerChunk = 1f / chunksCount;
             
-            loading?.SetPhase(LoadingManager.LoadingProgressType.WorldMesh, progressPerChunk);
+            loading?.SetPhase(nameof(WorldLoadingBarHandler.ProgressType.WorldMesh), chunksCount);
 
             await BuildChunkType(_worldChunks.OpaqueChunks, TextureCache.TextureArrayTypes.Opaque, loading);
             await BuildChunkType(_worldChunks.TransparentChunks, TextureCache.TextureArrayTypes.Transparent, loading);
@@ -132,7 +132,7 @@ namespace GUZ.Core.Creator.Meshes.Builder
 #endif
 
 
-                loading?.AddProgress();
+                loading?.Tick();
             }
         }
 

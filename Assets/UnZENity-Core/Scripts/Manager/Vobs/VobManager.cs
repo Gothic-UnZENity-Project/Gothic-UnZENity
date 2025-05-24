@@ -7,7 +7,7 @@ using GUZ.Core.Config;
 using GUZ.Core.Creator.Sounds;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
-using GUZ.Core.Properties;
+using GUZ.Core.UI.Menus.LoadingBars;
 using GUZ.Core.Util;
 using GUZ.Core.Vm;
 using GUZ.Core.Vob;
@@ -232,7 +232,7 @@ namespace GUZ.Core.Manager.Vobs
         
         private void PreCreateWorldVobs(List<IVirtualObject> vobs, GameObject rootGo, LoadingManager loading)
         {
-            loading.SetPhase(LoadingManager.LoadingProgressType.VOB, GetTotalVobCount(vobs));
+            loading.SetPhase(nameof(WorldLoadingBarHandler.ProgressType.VOB), GetTotalVobCount(vobs));
 
             _cullingVobObjects.Clear();
 
@@ -277,7 +277,7 @@ namespace GUZ.Core.Manager.Vobs
             foreach (var vob in vobs)
             {
                 // It's simpler to have both of them in here.
-                loading.AddProgress();
+                loading.Tick();
                 await FrameSkipper.TrySkipToNextFrame();
 
                 switch (vob.Type)

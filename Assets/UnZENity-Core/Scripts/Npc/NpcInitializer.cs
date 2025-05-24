@@ -7,6 +7,7 @@ using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
 using GUZ.Core.Properties;
+using GUZ.Core.UI.Menus.LoadingBars;
 using GUZ.Core.Util;
 using GUZ.Core.Vm;
 using GUZ.Core.Vob.WayNet;
@@ -44,7 +45,7 @@ namespace GUZ.Core.Npc
             foreach (var vobNpc in saveGameNpcs)
             {
                 // Update the progress bar and check if we need to wait for the next frame now (As some conditions skip -continue- end of loop and would skip check)
-                loading.AddProgress();
+                loading.Tick();
                 await FrameSkipper.TrySkipToNextFrame();
 
                 var npcContainer = AllocZkInstance(vobNpc);
@@ -128,12 +129,12 @@ namespace GUZ.Core.Npc
         /// </summary>
         private async Task NewAddLazyLoading(LoadingManager loading)
         {
-            loading.SetPhase(LoadingManager.LoadingProgressType.Npc, _tmpWldInsertNpcData.Count);
+            loading.SetPhase(nameof(WorldLoadingBarHandler.ProgressType.Npc), _tmpWldInsertNpcData.Count);
 
             foreach ((NpcContainer npc, string spawnPoint) element in _tmpWldInsertNpcData)
             {
                 // Update the progress bar and check if we need to wait for the next frame now (As some conditions skip -continue- end of loop and would skip check)
-                loading.AddProgress();
+                loading.Tick();
                 await FrameSkipper.TrySkipToNextFrame();
 
                 var go = InitLazyLoadNpc(element.npc);
@@ -161,7 +162,7 @@ namespace GUZ.Core.Npc
             }
 
             // Full loading of NPCs is done.
-            loading.AddProgress(LoadingManager.LoadingProgressType.VOB, 1f);
+            loading.FinalizePhase();
         }
 
         /// <summary>

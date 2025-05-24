@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
+using GUZ.Core.UI.Menus.LoadingBars;
 using GUZ.Core.Util;
 using GUZ.Core.Vm;
 using MyBox;
@@ -29,8 +30,12 @@ namespace GUZ.Core.Caches.StaticCache
         /// We cache all texture information. In G1.world.zen, there are about 25 which aren't used in normal mesh (maybe in portals only?)
         /// But for sake of simplicity, we use them all.
         /// </summary>
-        public async Task CalculateTextureArrayInformation(IMesh worldMesh)
+        public async Task CalculateTextureArrayInformation(IMesh worldMesh, int worldIndex)
         {
+            GameGlobals.Loading.SetPhase(
+                $"{nameof(PreCachingLoadingBarHandler.ProgressTypesPerWorld.CalculateTextureArrayInformationMesh)}_{worldIndex}",
+                worldMesh.MaterialCount);
+            
             foreach (var material in worldMesh.Materials)
             {
                 if (TextureArrayInformation.ContainsKey(material.Texture))
@@ -39,14 +44,39 @@ namespace GUZ.Core.Caches.StaticCache
                 }
 
                 AddTextureToCache(material.Group, material.Texture);
+
+                GameGlobals.Loading.Tick();
                 await FrameSkipper.TrySkipToNextFrame();
             }
+
+            GameGlobals.Loading.FinalizePhase();
         }
 
-        public async Task CalculateTextureArrayInformation(List<IVirtualObject> vobs)
+        public async Task CalculateTextureArrayInformation(List<IVirtualObject> vobs, int worldIndex)
+        {
+            var elementAmount = CalculateElementAmount(vobs);
+            GameGlobals.Loading.SetPhase($"{nameof(PreCachingLoadingBarHandler.ProgressTypesPerWorld.CalculateTextureArrayInformationVobs)}_{worldIndex}", elementAmount);
+            
+            await CalculateTextureArrayInformation(vobs);
+            GameGlobals.Loading.FinalizePhase();
+        }
+        
+        private int CalculateElementAmount(List<IVirtualObject> vobs)
+        {
+            var count = 0;
+            foreach (var vob in vobs)
+            {
+                count++; // We count each element as we update potentially with each FrameSkipper call, which is unaffected if it's a light or sth. else.
+                count += CalculateElementAmount(vob.Children);
+            }
+            return count;
+        }
+        
+        private async Task CalculateTextureArrayInformation(List<IVirtualObject> vobs)
         {
             foreach (var vob in vobs)
             {
+                GameGlobals.Loading.Tick();
                 await FrameSkipper.TrySkipToNextFrame();
 
                 // We ignore oCItem for now as we will load them all in one afterward.
@@ -54,7 +84,7 @@ namespace GUZ.Core.Caches.StaticCache
                 if (vob.Type == VirtualObjectType.oCItem || !Constants.StaticCacheVobTypes.Contains(vob.Type))
                 {
                     // Check children
-                    CalculateTextureArrayInformation(vob.Children);
+                    await CalculateTextureArrayInformation(vob.Children);
                     continue;
                 }
 
@@ -75,7 +105,7 @@ namespace GUZ.Core.Caches.StaticCache
                 }
 
                 // Recursive
-                CalculateTextureArrayInformation(vob.Children);
+                await CalculateTextureArrayInformation(vob.Children);
             }
         }
 
@@ -87,10 +117,13 @@ namespace GUZ.Core.Caches.StaticCache
         {
             var allItems = GameData.GothicVm.GetInstanceSymbols("C_Item");
 
+            GameGlobals.Loading.SetPhase(nameof(PreCachingLoadingBarHandler.ProgressTypesGlobal.CalculateItemTextureArrayInformation), allItems.Count);
+            
             foreach (var obj in allItems)
             {
                 await FrameSkipper.TrySkipToNextFrame();
-
+                GameGlobals.Loading.Tick();
+                
                 var item = VmInstanceManager.TryGetItemData(obj.Name);
 
                 if (item == null)
@@ -100,6 +133,8 @@ namespace GUZ.Core.Caches.StaticCache
 
                 AddTexInfoForItem(item);
             }
+            
+            GameGlobals.Loading.FinalizePhase();
         }
 
         private void AddTexInfoForSingleVob(IVirtualObject vob)
