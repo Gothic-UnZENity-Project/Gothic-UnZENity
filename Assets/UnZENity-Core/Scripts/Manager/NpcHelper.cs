@@ -68,7 +68,8 @@ namespace GUZ.Core.Manager
             {
                 try
                 {
-                    vob = prefabProps.CurrentInteractable.GetComponent<VobInteractiveProperties>().InteractiveProperties;
+                    // Check current gameobject and children as well
+                    vob = prefabProps.CurrentInteractable.GetComponentInChildren<VobInteractiveProperties>().InteractiveProperties;
                 }
                 catch (Exception)
                 {
