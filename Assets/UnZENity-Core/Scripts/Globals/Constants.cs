@@ -15,7 +15,7 @@ namespace GUZ.Core.Globals
             public static readonly string[] DisabledGothicMenuSettings =
             {
                 // Whole submenus
-                "MENUITEM_OPT_GRAPHICS", "MENUITEM_OPT_VIDEO", "MENUITEM_OPT_CONTROLS",
+                "MENUITEM_OPT_VIDEO", "MENUITEM_OPT_CONTROLS",
                 // Parts of main SETTINGS menu
                 "MENUITEM_PERF", "MENUITEM_PERF_CHOICE",
                 // Parts of GAME menu
@@ -24,6 +24,10 @@ namespace GUZ.Core.Globals
                 "MENUITEM_M", "MENUITEM_M_CHOICE",
                 "MENUITEM_MSENSITIVITY", "MENUITEM_MSENSITIVITY_SLIDER",
                 "MENUITEM_GAME_BLOOD", "MENUITEM_GAME_BLOOD_CHOICE",
+                // Parts of GRAPHICS menu
+                "MENUITEM_GRA_TEXQUAL", "MENUITEM_GRA_TEXQUAL_SLIDER",
+                "MENUITEM_GRA_MODEL_DETAIL", "MENUITEM_GRA_MODEL_DETAIL_SLIDER",
+                "MENUITEM_GRA_SKY_EFFECTS", "MENUITEM_GRA_SKY_EFFECTS_CHOICE",
                 // Parts of AUDIO menu
                 "MENUITEM_AUDIO_SFXVOL", "MENUITEM_AUDIO_SFXVOL_SLIDER",
                 "MENUITEM_AUDIO_PROVIDER", "MENUITEM_AUDIO_PROVIDER_CHOICE",
@@ -192,15 +196,6 @@ namespace GUZ.Core.Globals
         // Custom Tags
         public const string VobTag = "GUZVob";
 
-        
-        //Collection of PlayerPref entries for VR settings
-        public const string PlayerPrefDirectionMode = "DirectionMode";
-        public const string PlayerPrefRotationType = "RotationType";
-        public const string PlayerPrefSnapRotationAmount = "SnapRotationAmount";
-        public const string PlayerPrefSmoothRotationSpeed = "SmoothRotationSpeed";
-        public const string PlayerPrefMusicVolume = "MusicVolume";
-        public const string PlayerPrefSoundEffectsVolume = "SoundEffectsVolume";
-        public const string PlayerPrefItemCollisionWhileDragged = "ItemCollisionWhileDragged";
         
         // FIXME - load from INI file!
         public static string SelectedWorld { get; set; } = "world.zen";

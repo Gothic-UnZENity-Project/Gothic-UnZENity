@@ -17,6 +17,13 @@ namespace GUZ.Core.Config
         public bool IniSubtitles => Convert.ToBoolean(Convert.ToInt16(_config.GetValueOrDefault("subTitles", "1")));
         public bool IniPlayLogoVideos => Convert.ToBoolean(Convert.ToInt16(_config.GetValueOrDefault("playLogoVideos", "1")));
 
+        // GRAPHICS
+        public const string IniKeyVisualRange = "sightValue";
+        // G1 default: 20 (aka 20m...300m)
+        // UnZENity (example): 40...600
+        public const int IniVisualRangeFactor = 40;
+        public int IniVisualRange => Convert.ToInt32(_config.GetValueOrDefault(IniKeyVisualRange, "4"));
+        
         // SOUND
         public bool IniMusicEnabled => Convert.ToBoolean(Convert.ToInt16(_config.GetValueOrDefault("musicEnabled", "1")));
         public float IniMusicVolume => Convert.ToSingle(_config.GetValueOrDefault("musicVolume", "1"), CultureInfo.InvariantCulture);

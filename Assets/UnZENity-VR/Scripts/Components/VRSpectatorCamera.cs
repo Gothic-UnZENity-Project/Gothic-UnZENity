@@ -1,6 +1,7 @@
 #if GUZ_HVR_INSTALLED
 using System;
 using GUZ.Core;
+using GUZ.Core.Config;
 using GUZ.Core.Util;
 using GUZ.VR.Components.HVROverrides;
 using UnityEngine;
@@ -64,6 +65,7 @@ namespace GUZ.VR.Components
             playerController.Teleporter.PositionUpdate.AddListener(SetTeleportPosition);
 
             SetSmoothness();
+            SetRenderDistance(GameGlobals.Config.Gothic.IniVisualRange);
 
             if (_vrCameraTransform != null)
             {
@@ -72,11 +74,15 @@ namespace GUZ.VR.Components
                 transform.rotation = _vrCameraTransform.rotation;
             }
             
-            GlobalEventDispatcher.PlayerPrefUpdated.AddListener((setting, _) =>
+            GlobalEventDispatcher.PlayerPrefUpdated.AddListener((key, value) =>
             {
-                if (setting == VRConstants.IniNames.SmoothSpectator)
+                if (key == VRConstants.IniNames.SmoothSpectator)
                 {
                     SetSmoothness();
+                }
+                else if (key == GothicIniConfig.IniKeyVisualRange)
+                {
+                    SetRenderDistance(int.Parse((string)value));
                 }
             });
         }
@@ -127,6 +133,12 @@ namespace GUZ.VR.Components
             };
             
             Logger.Log($"Setting Spectator Camera Smoothness factor to {smoothSetting}:{_selectedSmoothingValue}.", LogCat.VR);
+        }
+
+        private void SetRenderDistance(int value)
+        {
+            // Starting with value=0 (20%) and ending with value=14 (300%)
+            _spectatorCamera.farClipPlane = GothicIniConfig.IniVisualRangeFactor * (value + 1);
         }
     }
 }
