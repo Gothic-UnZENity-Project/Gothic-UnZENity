@@ -139,6 +139,7 @@ namespace GUZ.Core.Manager.Scenes
                     Logger.LogError(e.ToString(), LogCat.Loading);
                 }
 
+                GameGlobals.Loading.StopLoading();
                 SceneManager.UnloadSceneAsync(Constants.SceneLoading);
             }
             catch(Exception ex)
@@ -147,7 +148,6 @@ namespace GUZ.Core.Manager.Scenes
             }
             finally
             {
-                GameGlobals.Loading.StopLoading();
                 GameContext.InteractionAdapter.EnableMenus();
                 fullWatch.Log("Full world loaded");
             }

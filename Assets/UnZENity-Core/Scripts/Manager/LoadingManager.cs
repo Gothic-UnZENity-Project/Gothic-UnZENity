@@ -14,6 +14,7 @@ namespace GUZ.Core.Manager
         private string _currentType;
         private float _currentProgressPerElement;
 
+        private bool _isInitialized;
         // Recalculate and update loading bar next frame if something changed. Do not recalculate with every Tick() (for sake of performance)
         private bool _isDirty;
 
@@ -24,10 +25,10 @@ namespace GUZ.Core.Manager
 
         public void Update()
         {
-            if (_isDirty)
+            if (_isInitialized && _isDirty)
             {
-                UpdateLoadingBar();
                 _isDirty = false;
+                UpdateLoadingBar();
             }
         }
 
@@ -38,6 +39,7 @@ namespace GUZ.Core.Manager
         {
             _loadingBarHandler = loadingBarHandler;
             _progressByType = loadingBarHandler.GetProgressTypes().ToDictionary(i => i, i => 0f);
+            _isInitialized = true;
         }
         
         private float CalculateOverallProgress()
@@ -91,6 +93,9 @@ namespace GUZ.Core.Manager
         /// </summary>
         public void FinalizePhase()
         {
+            if (!_isInitialized)
+                return;
+            
             _progressByType[_currentType] = 1f;
 
             _currentType = null;
@@ -99,11 +104,16 @@ namespace GUZ.Core.Manager
 
         public void StopLoading()
         {
-            FinalizePhase();
+            if (!_isInitialized)
+                return;
+
+            _isDirty = false;
+            _isInitialized = false;
             
             _loadingBarHandler = null;
             _progressByType.ClearAndReleaseMemory();
-            _isDirty = false;
+            _currentType = null;
+            _currentProgressPerElement = 0f;
         }
     }
 }
