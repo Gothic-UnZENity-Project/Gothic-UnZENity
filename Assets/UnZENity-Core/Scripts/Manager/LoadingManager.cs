@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using GUZ.Core.Extensions;
 using GUZ.Core.UI.Menus.LoadingBars;
 
 namespace GUZ.Core.Manager
@@ -94,6 +95,15 @@ namespace GUZ.Core.Manager
 
             _currentType = null;
             _currentProgressPerElement = 0;
+        }
+
+        public void StopLoading()
+        {
+            FinalizePhase();
+            
+            _loadingBarHandler = null;
+            _progressByType.ClearAndReleaseMemory();
+            _isDirty = false;
         }
     }
 }

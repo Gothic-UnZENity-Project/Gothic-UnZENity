@@ -150,6 +150,8 @@ namespace GUZ.Core.Manager.Scenes
             }
             finally
             {
+                GameGlobals.Loading.StopLoading();
+
                 // We need to grant the player always the option to quit the game via menu if something fails.
                 GameContext.InteractionAdapter.EnableMenus();
             }

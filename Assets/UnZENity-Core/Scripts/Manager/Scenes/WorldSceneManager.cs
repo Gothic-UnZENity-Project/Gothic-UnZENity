@@ -147,6 +147,7 @@ namespace GUZ.Core.Manager.Scenes
             }
             finally
             {
+                GameGlobals.Loading.StopLoading();
                 GameContext.InteractionAdapter.EnableMenus();
                 fullWatch.Log("Full world loaded");
             }
