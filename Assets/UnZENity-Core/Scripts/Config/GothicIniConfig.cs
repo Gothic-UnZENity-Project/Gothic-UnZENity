@@ -26,7 +26,7 @@ namespace GUZ.Core.Config
         
         // SOUND
         public bool IniMusicEnabled => Convert.ToBoolean(Convert.ToInt16(_config.GetValueOrDefault("musicEnabled", "1")));
-        public float IniMusicVolume => Convert.ToSingle(_config.GetValueOrDefault("musicVolume", "1"), CultureInfo.InvariantCulture);
+        public float IniMusicVolume => Convert.ToSingle(_config.GetValueOrDefault("musicVolume", "1"));
         
         // SKY_OUTDOOR
         public string IniSkyDayColor(int index) => _config.GetValueOrDefault($"zDayColor{index}", "0 0 0");
@@ -77,12 +77,12 @@ namespace GUZ.Core.Config
         
         public float GetFloat(string settingName, float defaultValue = 1f)
         {
-            return Convert.ToSingle(GetString(settingName, defaultValue.ToString(CultureInfo.InvariantCulture)), CultureInfo.InvariantCulture);
+            return Convert.ToSingle(GetString(settingName, defaultValue.ToString()));
         }
         
         public void SetFloat(string section, string key, float value)
         {
-            SetString(section, key, value.ToString(CultureInfo.InvariantCulture));
+            SetString(section, key, value.ToString());
         }
     }
 }

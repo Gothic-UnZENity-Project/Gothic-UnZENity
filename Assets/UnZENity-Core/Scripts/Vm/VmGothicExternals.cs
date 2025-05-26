@@ -1044,7 +1044,7 @@ namespace GUZ.Core.Vm
 
         public static string FloatToString(float x)
         {
-            return x.ToString(CultureInfo.InvariantCulture);
+            return x.ToString();
         }
 
 

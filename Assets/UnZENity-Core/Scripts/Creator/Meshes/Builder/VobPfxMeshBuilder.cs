@@ -43,9 +43,9 @@ namespace GUZ.Core.Creator.Meshes.Builder
             if (gravity.Length == 3)
             {
                 // Gravity seems too low. Therefore *10k.
-                gravityX = float.Parse(gravity[0], CultureInfo.InvariantCulture) * 10000;
-                gravityY = float.Parse(gravity[1], CultureInfo.InvariantCulture) * 10000;
-                gravityZ = float.Parse(gravity[2], CultureInfo.InvariantCulture) * 10000;
+                gravityX = float.Parse(gravity[0]) * 10000;
+                gravityY = float.Parse(gravity[1]) * 10000;
+                gravityZ = float.Parse(gravity[2]) * 10000;
             }
 
             // Main module
@@ -195,7 +195,7 @@ namespace GUZ.Core.Creator.Meshes.Builder
                 {
                     case 1:
                         // cm in m
-                        shapeModule.radius = float.Parse(shapeDimensions[0], CultureInfo.InvariantCulture) / 100;
+                        shapeModule.radius = float.Parse(shapeDimensions[0]) / 100;
                         break;
                     default:
                         Logger.LogWarning($"shpDim >{pfx.ShpDimS}< not yet handled", LogCat.Mesh);

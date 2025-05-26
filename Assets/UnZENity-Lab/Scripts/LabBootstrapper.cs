@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Globalization;
 using GUZ.Core;
 using GUZ.Core.Animations;
 using GUZ.Core.Caches;
@@ -73,6 +74,11 @@ namespace GUZ.Lab
         private void Awake()
         {
             GameContext.IsLab = true;
+            
+            // We need to set culture to this, otherwise e.g. polish numbers aren't parsed correct.
+            CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;
+            CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.InvariantCulture;
+            
             StartCoroutine(BootLab());
         }
 
