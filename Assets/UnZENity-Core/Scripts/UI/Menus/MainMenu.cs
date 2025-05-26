@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using GUZ.Core.Globals;
 using UnityEngine.SceneManagement;
 using ZenKit.Daedalus;
@@ -46,10 +47,14 @@ namespace GUZ.Core.UI.Menus
             throw new NotImplementedException();
         }
 
+        // FIXME - Saving and other elements aren't working yet. We therefore disable it for now.
+        private string[] _ignoredMainMenuEntries = {
+            "MENUITEM_MAIN_SAVEGAME_SAVE", "MENUITEM_MAIN_SAVEGAME_LOAD",
+            "MENUITEM_MAIN_INTRO", "MENUITEM_MAIN_CREDITS" };
+        
         protected override bool IsMenuItemActive(string menuItemName)
         {
-            // FIXME - Saving is not yet working in UnZENity. We therefore disable it for now.
-            if (menuItemName == "MENUITEM_MAIN_SAVEGAME_SAVE")
+            if (_ignoredMainMenuEntries.Contains(menuItemName))
                 return false;
             
             return ((MenuItemCache[menuItemName].item.Flags & MenuItemFlag.OnlyInGame) == 0 &&
