@@ -38,6 +38,11 @@ namespace GUZ.Core.Animations
         private Vector3[] _meshBonePos;
         private Quaternion[] _meshBoneRot;
         private List<AnimationTrackInstance> _trackInstances = new();
+        private bool _isSittingInverted;
+
+        // Some sitting animations are rotated wrong. They need to be inverted in y-axis.
+        private string[] _animationsToInvertYAxis = new[] { "S_BENCH_S1", "S_THRONE_S1" };
+
 
         protected override void Awake()
         {
@@ -133,6 +138,7 @@ namespace GUZ.Core.Animations
                 }
             }
 
+            PrePlayAnimation(newTrackInstance);
             _trackInstances.Add(newTrackInstance);
 
             // As Blending isn't always 1f at each time, we ensure some smoothness by sorting the TrackInstances like:
@@ -179,16 +185,17 @@ namespace GUZ.Core.Animations
             return 0f;
         }
 
-        public void StopAnimation(string stoppingAnimationName)
+        public void StopAnimation(string animationName)
         {
 #if UNITY_EDITOR
             if (DebugPauseAtStopAnimation)
             {
-                Logger.LogEditor($"[Break] StopAnimation: >{stoppingAnimationName}< on >{PrefabProps.Bip01.parent.parent.name}<", LogCat.Debug);
+                Logger.LogEditor($"[Break] StopAnimation: >{animationName}< on >{PrefabProps.Bip01.parent.parent.name}<", LogCat.Debug);
                 Debug.Break();
             }
 #endif
 
+            Logger.LogEditor($"Stopping animation: {animationName}", LogCat.Animation);
             AnimationTrackInstance instanceToStop = null;
 
             // Fetch and blend out Animation.
@@ -196,7 +203,7 @@ namespace GUZ.Core.Animations
             {
                 var instance = _trackInstances[i];
                 // If animation is found, then mark it as "BlendOut"
-                if (instance.Track.Name.EqualsIgnoreCase(stoppingAnimationName))
+                if (instance.Track.Name.EqualsIgnoreCase(animationName))
                 {
                     instanceToStop = instance;
                     instance.BlendOutTrack(instance.Track.BlendOut);
@@ -213,12 +220,13 @@ namespace GUZ.Core.Animations
             for (var i = 0; i < _trackInstances.Count; i++)
             {
                 var instance = _trackInstances[i];
-                if (instance.Track.Name.EqualsIgnoreCase(stoppingAnimationName))
+                if (instance.Track.Name.EqualsIgnoreCase(animationName))
                 {
                     continue;
                 }
 
-                if (instance.Track.Layer < instanceToStop.Track.Layer)
+                // We BlendIn track bones from lower level animations, but only! if the animation isn't in a full-stop phase (!BlendOut/!Stop)
+                if (instance.Track.Layer < instanceToStop.Track.Layer && (instance.State is AnimationState.BlendIn or AnimationState.Play))
                 {
                     instance.BlendInBones(instanceToStop.Track.BoneNames, instanceToStop.Track.BlendOut);
                 }
@@ -318,6 +326,7 @@ namespace GUZ.Core.Animations
                         }
                         break;
                     case AnimationState.Stop:
+                        PreStopAnimation(instance);
                         _trackInstances.Remove(instance);
                         break;
                     default:
@@ -327,7 +336,20 @@ namespace GUZ.Core.Animations
 
             ApplyFinalPose();
             ApplyFinalMovement();
+            ApplyFinalRotation();
             ApplyEvents();
+        }
+
+        private void PrePlayAnimation(AnimationTrackInstance instance)
+        {
+            if (_animationsToInvertYAxis.Contains(instance.Track.Name.ToUpper()))
+                _isSittingInverted = true;
+        }
+        
+        private void PreStopAnimation(AnimationTrackInstance instance)
+        {
+            if (_animationsToInvertYAxis.Contains(instance.Track.Name.ToUpper()))
+                _isSittingInverted = false;
         }
 
         private void ApplyFinalPose()
@@ -422,6 +444,15 @@ namespace GUZ.Core.Animations
 
             // Pos change is applied with rotated value.
             PrefabProps.Go.transform.localPosition += PrefabProps.Go.transform.rotation * finalMovement;
+        }
+
+        private void ApplyFinalRotation()
+        {
+            if (!_isSittingInverted)
+                return;
+
+            var currentRotation = PrefabProps.Bip01.transform.localRotation.eulerAngles;
+            PrefabProps.Bip01.transform.localRotation = Quaternion.Euler(currentRotation.x, -currentRotation.y, currentRotation.z);
         }
 
         private void ApplyEvents()
@@ -570,6 +601,35 @@ namespace GUZ.Core.Animations
             var item = slotGo!.GetChild(0);
 
             Object.Destroy(item.gameObject);
+        }
+
+        public void StopAllAnimations()
+        {
+            // FIXME - Implement
+            Logger.LogWarning("StopAllAnimations not yet implemented.", LogCat.Animation);
+        }
+
+        public void PlayHeadAnimation(HeadMorph.HeadMorphType viseme)
+        {
+            // FIXME - Implement
+            Logger.LogWarning("PlayHeadAnimation not yet implemented.", LogCat.Animation);
+        }
+
+        public void StopHeadAnimation(HeadMorph.HeadMorphType viseme)
+        {
+            // FIXME - Implement
+            Logger.LogWarning("StopHeadAnimation not yet implemented.", LogCat.Animation);
+        }
+
+        public bool IsPlaying(string animationName)
+        {
+            foreach (var trackInstance in _trackInstances)
+            {
+                if (trackInstance.Track.Name.EqualsIgnoreCase(animationName))
+                    return true;
+            }
+            
+            return false;
         }
     }
 }

@@ -5,8 +5,10 @@ using GUZ.Core.Npc.Routines;
 using GUZ.Core.Properties;
 using GUZ.Core.Vob.WayNet;
 using GUZ.Core.World;
+using UnityEngine;
 using ZenKit;
 using ZenKit.Daedalus;
+using ZenKit.Vobs;
 using WayNet_WayPoint = GUZ.Core.Vob.WayNet.WayPoint;
 
 namespace GUZ.Core.Globals
@@ -29,7 +31,9 @@ namespace GUZ.Core.Globals
 
         // Reorganized waypoints from world data.
         public static Dictionary<string, DijkstraWaypoint> DijkstraWaypoints = new();
-        public static readonly List<VobProperties> VobsInteractable = new();
+        
+        // [IInteractiveObject] => VisualScheme (aka vob.Visual.Name.SubString("_");
+        public static readonly Dictionary<string, List<(IInteractiveObject Vob, GameObject Go)>> VobsInteractable = new();
 
         /// <summary>
         /// Store and update global NPC information about dialog options already listened to.

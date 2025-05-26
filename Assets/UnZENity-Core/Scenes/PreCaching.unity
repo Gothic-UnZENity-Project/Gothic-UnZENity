@@ -122,6 +122,28 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!114 &1208102672 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6200351600589280705, guid: 03e7b79559c84ac4385aae4c205ba41d, type: 3}
+  m_PrefabInstance: {fileID: 2085289317}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1228208819 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3603560066406760518, guid: 03e7b79559c84ac4385aae4c205ba41d, type: 3}
+  m_PrefabInstance: {fileID: 2085289317}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1781062260
 GameObject:
   m_ObjectHideFlags: 0
@@ -166,7 +188,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 39d30e5b0f3a46be9bb33a0b50b2f51a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _loadingArea: {fileID: 2085289318}
+  _loadingBarHandler: {fileID: 2085289323}
 --- !u!1001 &2085289317
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -222,13 +244,42 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 2275007553886627835, guid: 03e7b79559c84ac4385aae4c205ba41d, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2085289323}
   m_SourcePrefab: {fileID: 100100000, guid: 03e7b79559c84ac4385aae4c205ba41d, type: 3}
 --- !u!1 &2085289318 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2275007553886627835, guid: 03e7b79559c84ac4385aae4c205ba41d, type: 3}
   m_PrefabInstance: {fileID: 2085289317}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &2085289323
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2085289318}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 450b3791b2984740b94c0a437258e9f7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  LoadingImage: {fileID: 2085289326}
+  ProgressBackgroundImage: {fileID: 1208102672}
+  ProgressBarImage: {fileID: 1228208819}
+--- !u!114 &2085289326 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3881093091310540017, guid: 03e7b79559c84ac4385aae4c205ba41d, type: 3}
+  m_PrefabInstance: {fileID: 2085289317}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

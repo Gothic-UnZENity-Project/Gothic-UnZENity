@@ -1,6 +1,6 @@
 using System;
+using System.Linq;
 using GUZ.Core.Globals;
-using GUZ.Core.UI.Menus.Adapter.Menu;
 using UnityEngine.SceneManagement;
 using ZenKit.Daedalus;
 
@@ -28,7 +28,7 @@ namespace GUZ.Core.UI.Menus
             MenuHandler.ToggleVisibility();
             if (commandName == "NEW_GAME")
             {
-                GameManager.I.LoadWorld(Constants.SelectedWorld, -1, SceneManager.GetActiveScene().name);
+                GameManager.I.LoadWorld(Constants.SelectedWorld, 0, SceneManager.GetActiveScene().name);
             }
         }
 
@@ -47,8 +47,16 @@ namespace GUZ.Core.UI.Menus
             throw new NotImplementedException();
         }
 
+        // FIXME - Saving and other elements aren't working yet. We therefore disable it for now.
+        private string[] _ignoredMainMenuEntries = {
+            "MENUITEM_MAIN_SAVEGAME_SAVE", "MENUITEM_MAIN_SAVEGAME_LOAD",
+            "MENUITEM_MAIN_INTRO", "MENUITEM_MAIN_CREDITS" };
+        
         protected override bool IsMenuItemActive(string menuItemName)
         {
+            if (_ignoredMainMenuEntries.Contains(menuItemName))
+                return false;
+            
             return ((MenuItemCache[menuItemName].item.Flags & MenuItemFlag.OnlyInGame) == 0 &&
                     !GameData.InGameAndAlive) ||
                    ((MenuItemCache[menuItemName].item.Flags & MenuItemFlag.OnlyOutGame) == 0 &&

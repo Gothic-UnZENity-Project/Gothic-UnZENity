@@ -20,8 +20,7 @@ namespace GUZ.Core.Caches
         ///     * We need to ensure that any time an NpcInstance.UserData contains an NpcData object, that it is stored here.
         ///       Otherwise, UserData's WeakReference pointer gets cleared.
         /// </summary>
-        public static readonly List<Container_NpcContainer> NpcCache = new();
-        public static readonly List<NpcContainer> NpcCache2 = new();
+        public static readonly List<NpcContainer> NpcCache = new();
 
 
         /// <summary>
@@ -49,13 +48,11 @@ namespace GUZ.Core.Caches
             GlobalEventDispatcher.LoadingSceneLoaded.AddListener(delegate
             {
                 NpcCache.Clear();
-                NpcCache2.Clear();
             });
         }
 
         public static void Dispose()
         {
-            NpcCache.Clear();
             AnimationDataCache.Clear();
             AnimationTrackCache.Clear();
             FontCache.Clear();

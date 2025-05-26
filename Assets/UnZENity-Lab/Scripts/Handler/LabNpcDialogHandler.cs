@@ -38,7 +38,7 @@ namespace GUZ.Lab.Handler
             var animHeadHandler = npcRoot.GetComponent<NpcHeadAnimationHandler>();
 
             // For UseItemToState animations
-            var props = npcRoot.GetComponentInParent<NpcLoader>().Npc.GetUserData2().Props;
+            var props = npcRoot.GetComponentInParent<NpcLoader>().Npc.GetUserData().Props;
             var beerSymbol = GameData.GothicVm.GetSymbolByName("ItFoBeer");
             props.CurrentItem = beerSymbol!.Index;
 
@@ -46,6 +46,14 @@ namespace GUZ.Lab.Handler
 
             while (true)
             {
+                {
+                    animSystem.PlayAnimation("T_BENCH_Stand_2_S0");
+                    yield return new WaitForSeconds(3f);
+                    animSystem.PlayAnimation("T_BENCH_S0_2_S1");
+                    yield return new WaitForSeconds(3f);
+                }
+                continue;
+                
                 // Sit down - Moves forward and hovers over ground like a magician on his carpet.
                 {
                     // Humans Militia have no CollisionVolumeScale change (CVS).
@@ -140,7 +148,7 @@ namespace GUZ.Lab.Handler
 
             _bloodwynInstance.UserData = npcData;
             loaderComp.Npc = _bloodwynInstance;
-            MultiTypeCache.NpcCache2.Add(npcData);
+            MultiTypeCache.NpcCache.Add(npcData);
 
             newNpc.name = _bloodwynInstance.GetName(NpcNameSlot.Slot0);
             GameData.GothicVm.GlobalSelf = _bloodwynInstance;

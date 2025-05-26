@@ -48,11 +48,12 @@ MonoBehaviour:
   NpcCullingDistance: 50
   SpawnNpcInstances:
     Value: 
+  SpawnMonsterInstances:
+    Value: 
   EnableNpcEyeBlinking: 0
   ShowFreePoints: 0
   ShowWayPoints: 0
   ShowWayEdges: 0
-  EnableGameMusic: 1
   EnableGameSounds: 1
   SunLightColor: {r: 0.6901961, g: 0.6901961, b: 0.6901961, a: 1}
   SunLightIntensity: 1

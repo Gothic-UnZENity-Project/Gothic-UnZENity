@@ -11,12 +11,16 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
     public abstract class AbstractWalkAnimationAction2 : AbstractAnimationAction
     {
         protected Transform NpcTransform => NpcGo.transform;
+        protected bool IsDestReached;
 
         protected AbstractWalkAnimationAction2(AnimationAction action, NpcContainer npcContainer) : base(action, npcContainer)
         {
         }
 
-        protected abstract void OnDestinationReached();
+        protected virtual void OnDestinationReached()
+        {
+            StopWalk();
+        }
 
         /// <summary>
         /// We need to define the final destination spot within overriding class.
@@ -46,12 +50,10 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             }
 
             if (IsDestinationReached())
-            {
                 OnDestinationReached();
-            }
-
-            HandleRotation();
-
+            // Do not rotate when a destination is reached this frame. Either rotate next frame (e.g. GoToWP.nextRoute) or stop it fully.
+            else
+                HandleRotation();
         }
 
         private string GetWalkModeAnimationString()
@@ -76,6 +78,14 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             PrefabProps.AnimationSystem.PlayAnimation(animName);
         }
 
+        protected virtual void StopWalk()
+        {
+            PhysicsHelper.EnablePhysicsForNpc(PrefabProps);
+
+            var animName = GetWalkModeAnimationString();
+            PrefabProps.AnimationSystem.StopAnimation(animName);
+        }
+
         private bool IsDestinationReached()
         {
             var npcPos = NpcTransform.position;
@@ -85,7 +95,12 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             var distance = Vector3.Distance(npcDistPos, walkPos);
 
             // FIXME - Scorpio is above FP, but values don't represent it.
-            return distance < Constants.NpcDestinationReachedThreshold;
+            if (distance < Constants.NpcDestinationReachedThreshold)
+            {
+                IsDestReached = true;
+            }
+
+            return IsDestReached;
         }
 
         private void HandleRotation()
@@ -96,26 +111,6 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             var direction = (sameHeightDirection - npcPos);
             var destinationRotation = Quaternion.LookRotation(direction);
             NpcTransform.rotation = Quaternion.RotateTowards(NpcTransform.rotation, destinationRotation, Time.deltaTime * Constants.NpcRotationSpeed); 
-        }
-
-        /// <summary>
-        /// We need to alter rootNode's position once walk animation is done.
-        /// </summary>
-        protected override void AnimationEnd()
-        {
-            base.AnimationEnd();
-
-            // We need to ensure, that physics are always active when an NPC walks!
-            PhysicsHelper.EnablePhysicsForNpc(PrefabProps);
-
-            NpcTransform.localPosition = PrefabProps.Bip01.position;
-            PrefabProps.Bip01.localPosition = Vector3.zero;
-            PrefabProps.ColliderRootMotion.localPosition = Vector3.zero;
-
-            // TODO - Needed?
-            // root.SetLocalPositionAndRotation(
-            //     root.localPosition + bip01Transform.localPosition,
-            //     root.localRotation * bip01Transform.localRotation);
         }
     }
 }

@@ -80,6 +80,11 @@ namespace GUZ.Core.UI.Menus
             public GameObject ArrowDownGo;
         }
 
+        private void Awake()
+        {
+            InitializeMenu(new MenuInstanceAdapter("MENU_LOG", null));
+        }
+
         /// <summary>
         /// When opening the Log for the first time:
         /// 1. Load Daedalus information for menus (UI dimensions, labels, ...)

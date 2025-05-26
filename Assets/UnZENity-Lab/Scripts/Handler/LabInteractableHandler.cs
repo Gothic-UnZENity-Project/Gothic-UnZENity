@@ -1,4 +1,7 @@
+using System.Collections;
 using GUZ.Core;
+using HurricaneVR.Framework.Core;
+using HurricaneVR.Framework.Core.Sockets;
 using UnityEngine;
 
 namespace GUZ.Lab.Handler
@@ -16,7 +19,7 @@ namespace GUZ.Lab.Handler
         public override void Bootstrap()
         {
             InitOCMobDoor();
-            InitOCMobContainer();
+            StartCoroutine(InitOCMobContainer());
             InitOCMobFire();
             InitOCMobBed();
             InitOCMobSwitch();
@@ -33,9 +36,9 @@ namespace GUZ.Lab.Handler
             SpawnInteractable("BED_1_OC", PrefabType.VobDoor, DoorsGO, new Vector3(0, 0, -4));
         }
 
-        private void InitOCMobContainer()
+        private IEnumerator InitOCMobContainer()
         {
-            SpawnInteractable("CHESTBIG_OCCHESTLARGE", PrefabType.VobContainer, ContainersGO, position: new(0,0,0));
+            var chest1 = SpawnInteractable("CHESTBIG_OCCHESTLARGE", PrefabType.VobContainer, ContainersGO, position: new(0,0,0));
             SpawnInteractable("CHESTBIG_OCCHESTMEDIUM", PrefabType.VobContainer, ContainersGO, position: new(0,0,-2));
             SpawnInteractable("CHESTBIG_OCCRATELARGE", PrefabType.VobContainer, ContainersGO, position: new(0,0,-4));
             SpawnInteractable("CHESTBIG_ORCMUMMY", PrefabType.VobContainer, ContainersGO, position: new(0,0,-6));
@@ -44,7 +47,15 @@ namespace GUZ.Lab.Handler
             SpawnInteractable("CHESTSMALL_OCCRATESMALL", PrefabType.VobContainer, ContainersGO, position: new(0,0,0-12));
             SpawnInteractable("CHESTSMALL_OCCRATESMALLLOCKED", PrefabType.VobContainer, ContainersGO, position: new(0,0,-14));
             
-            SpawnItem("ItMwPickaxe", ContainersGO, new Vector3(1.25f, 0.25f, 0));
+            var item1 = SpawnItem("ItMwPickaxe", ContainersGO, new Vector3(1.25f, 0.25f, 0));
+
+            // Wait 1 frame for Sockets to become active.
+            yield return null;
+
+            var socketContainer = chest1.GetComponentInChildren<HVRSocketContainer>(true);
+            var grabbable = item1.GetComponentInChildren<HVRGrabbable>(true);
+            if (socketContainer.TryFindAvailableSocket(grabbable, out var socket))
+                socket.TryGrab(grabbable, true, true);
         }
 
         private void InitOCMobFire()

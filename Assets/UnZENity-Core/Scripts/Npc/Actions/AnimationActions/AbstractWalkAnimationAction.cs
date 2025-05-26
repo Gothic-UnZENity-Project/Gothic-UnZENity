@@ -9,7 +9,7 @@ using Logger = GUZ.Core.Util.Logger;
 
 namespace GUZ.Core.Npc.Actions.AnimationActions
 {
-    [Obsolete("Successor is AbstractWalkAnimationAction2, but it needs to be tested with (1)GoToFp, (2)GoToNpc, (3)UseMob, (4)GoToNextFp first.")]
+    [Obsolete("Successor is AbstractWalkAnimationAction2, but it needs to be tested with (1)GoToFp, (2)GoToNpc, (3)GoToNextFp first.")]
     public abstract class AbstractWalkAnimationAction : AbstractAnimationAction
     {
         protected enum WalkState
@@ -27,13 +27,14 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
         {
         }
 
-        protected abstract void OnDestinationReached();
-
         /// <summary>
         /// We need to define the final destination spot within overriding class.
         /// </summary>
         protected abstract Vector3 GetWalkDestination();
 
+        protected string _executedWalkModeAnimationString;
+        
+        
         public override void Start()
         {
             base.Start();
@@ -41,6 +42,11 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             PhysicsHelper.EnablePhysicsForNpc(PrefabProps);
         }
 
+        protected virtual void OnDestinationReached()
+        {
+            PrefabProps.AnimationSystem.StopAnimation(_executedWalkModeAnimationString);
+        }
+        
         public override void Tick()
         {
             base.Tick();
@@ -92,8 +98,8 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
 
         private void StartWalk()
         {
-            var animName = GetWalkModeAnimationString();
-            PrefabProps.AnimationSystem.PlayAnimation(animName);
+            _executedWalkModeAnimationString = GetWalkModeAnimationString();
+            PrefabProps.AnimationSystem.PlayAnimation(_executedWalkModeAnimationString);
 
             State = WalkState.Walk;
         }

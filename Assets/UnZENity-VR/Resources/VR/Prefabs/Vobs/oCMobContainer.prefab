@@ -145,7 +145,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1331007062290274861}
-  - component: {fileID: 7217202807472270995}
+  - component: {fileID: 2068798161284896258}
   - component: {fileID: 6631408002559807406}
   - component: {fileID: 3492144785080063237}
   - component: {fileID: 7889487273161906977}
@@ -173,7 +173,7 @@ Transform:
   - {fileID: 5640333071072282186}
   m_Father: {fileID: 7540743326042314200}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &7217202807472270995
+--- !u!114 &2068798161284896258
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -182,15 +182,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 251161015644863541}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a27bb777100ada4459dda04ca3779632, type: 3}
+  m_Script: {fileID: 11500000, guid: 7825d73edbaf4c528607f54c7c8177e4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   BeforeGrabbed:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 2596048974797699402}
-        m_TargetAssemblyTypeName: GUZ.HVR.Components.VobContainer.HVRVobContainerSocketInventory,
-          Assembly-CSharp
+        m_TargetAssemblyTypeName: GUZ.VR.Components.VobContainer.VRVobContainerSocketInventory,
+          UnZENity.VR
         m_MethodName: OnBeforeGrabbed
         m_Mode: 0
         m_Arguments:
@@ -208,8 +208,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 2596048974797699402}
-        m_TargetAssemblyTypeName: GUZ.HVR.Components.VobContainer.HVRVobContainerSocketInventory,
-          Assembly-CSharp
+        m_TargetAssemblyTypeName: GUZ.VR.Components.VobContainer.VRVobContainerSocketInventory,
+          UnZENity.VR
         m_MethodName: OnReleased
         m_Mode: 0
         m_Arguments:
@@ -242,8 +242,7 @@ MonoBehaviour:
   GrabbableMustBeHeld: 1
   GrabsFromHand: 0
   HoverActions: []
-  HandGrabActions:
-  - {fileID: 6631408002559807406}
+  HandGrabActions: []
   ParentDisablesGrab: 0
   ParentGrabbable: {fileID: 0}
   CanRemoveGrabbable: 1
@@ -252,8 +251,8 @@ MonoBehaviour:
   CanGrabStabbingGrabbable: 0
   AudioGrabbedOverride: {fileID: 0}
   AudioReleasedOverride: {fileID: 0}
-  AudioGrabbedFallback: {fileID: 8300000, guid: 9b424bd470d64e34f81ec06f2463c847, type: 3}
-  AudioReleasedFallback: {fileID: 8300000, guid: 9b424bd470d64e34f81ec06f2463c847, type: 3}
+  AudioGrabbedFallback: {fileID: 0}
+  AudioReleasedFallback: {fileID: 0}
   SocketFilters: []
   FilterCondition: 0
   DistanceSource: {fileID: 0}
@@ -340,7 +339,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4631181226643453429}
-  - component: {fileID: 1374613663307227583}
+  - component: {fileID: 5107614416435698260}
   - component: {fileID: 7704032126957309203}
   - component: {fileID: 6214475728348187998}
   - component: {fileID: 8532409929422760468}
@@ -368,7 +367,7 @@ Transform:
   - {fileID: 2284910499048319778}
   m_Father: {fileID: 7540743326042314200}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1374613663307227583
+--- !u!114 &5107614416435698260
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -377,15 +376,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 1058267453060700974}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a27bb777100ada4459dda04ca3779632, type: 3}
+  m_Script: {fileID: 11500000, guid: 7825d73edbaf4c528607f54c7c8177e4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   BeforeGrabbed:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 2596048974797699402}
-        m_TargetAssemblyTypeName: GUZ.HVR.Components.VobContainer.HVRVobContainerSocketInventory,
-          Assembly-CSharp
+        m_TargetAssemblyTypeName: GUZ.VR.Components.VobContainer.VRVobContainerSocketInventory,
+          UnZENity.VR
         m_MethodName: OnBeforeGrabbed
         m_Mode: 0
         m_Arguments:
@@ -403,8 +402,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 2596048974797699402}
-        m_TargetAssemblyTypeName: GUZ.HVR.Components.VobContainer.HVRVobContainerSocketInventory,
-          Assembly-CSharp
+        m_TargetAssemblyTypeName: GUZ.VR.Components.VobContainer.VRVobContainerSocketInventory,
+          UnZENity.VR
         m_MethodName: OnReleased
         m_Mode: 0
         m_Arguments:
@@ -437,8 +436,7 @@ MonoBehaviour:
   GrabbableMustBeHeld: 1
   GrabsFromHand: 0
   HoverActions: []
-  HandGrabActions:
-  - {fileID: 7704032126957309203}
+  HandGrabActions: []
   ParentDisablesGrab: 0
   ParentGrabbable: {fileID: 0}
   CanRemoveGrabbable: 1
@@ -447,8 +445,8 @@ MonoBehaviour:
   CanGrabStabbingGrabbable: 0
   AudioGrabbedOverride: {fileID: 0}
   AudioReleasedOverride: {fileID: 0}
-  AudioGrabbedFallback: {fileID: 8300000, guid: 9b424bd470d64e34f81ec06f2463c847, type: 3}
-  AudioReleasedFallback: {fileID: 8300000, guid: 9b424bd470d64e34f81ec06f2463c847, type: 3}
+  AudioGrabbedFallback: {fileID: 0}
+  AudioReleasedFallback: {fileID: 0}
   SocketFilters: []
   FilterCondition: 0
   DistanceSource: {fileID: 0}
@@ -535,7 +533,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 307042857072999374}
-  - component: {fileID: 41431669823926857}
+  - component: {fileID: 1400880665549751298}
   - component: {fileID: 5237845654143607884}
   - component: {fileID: 1875918564020284620}
   - component: {fileID: 9153324367550496876}
@@ -563,7 +561,7 @@ Transform:
   - {fileID: 4761148254868819460}
   m_Father: {fileID: 7540743326042314200}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &41431669823926857
+--- !u!114 &1400880665549751298
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -572,15 +570,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 1378983584142208125}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a27bb777100ada4459dda04ca3779632, type: 3}
+  m_Script: {fileID: 11500000, guid: 7825d73edbaf4c528607f54c7c8177e4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   BeforeGrabbed:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 2596048974797699402}
-        m_TargetAssemblyTypeName: GUZ.HVR.Components.VobContainer.HVRVobContainerSocketInventory,
-          Assembly-CSharp
+        m_TargetAssemblyTypeName: GUZ.VR.Components.VobContainer.VRVobContainerSocketInventory,
+          UnZENity.VR
         m_MethodName: OnBeforeGrabbed
         m_Mode: 0
         m_Arguments:
@@ -598,8 +596,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 2596048974797699402}
-        m_TargetAssemblyTypeName: GUZ.HVR.Components.VobContainer.HVRVobContainerSocketInventory,
-          Assembly-CSharp
+        m_TargetAssemblyTypeName: GUZ.VR.Components.VobContainer.VRVobContainerSocketInventory,
+          UnZENity.VR
         m_MethodName: OnReleased
         m_Mode: 0
         m_Arguments:
@@ -632,8 +630,7 @@ MonoBehaviour:
   GrabbableMustBeHeld: 1
   GrabsFromHand: 0
   HoverActions: []
-  HandGrabActions:
-  - {fileID: 5237845654143607884}
+  HandGrabActions: []
   ParentDisablesGrab: 0
   ParentGrabbable: {fileID: 0}
   CanRemoveGrabbable: 1
@@ -642,8 +639,8 @@ MonoBehaviour:
   CanGrabStabbingGrabbable: 0
   AudioGrabbedOverride: {fileID: 0}
   AudioReleasedOverride: {fileID: 0}
-  AudioGrabbedFallback: {fileID: 8300000, guid: 9b424bd470d64e34f81ec06f2463c847, type: 3}
-  AudioReleasedFallback: {fileID: 8300000, guid: 9b424bd470d64e34f81ec06f2463c847, type: 3}
+  AudioGrabbedFallback: {fileID: 0}
+  AudioReleasedFallback: {fileID: 0}
   SocketFilters: []
   FilterCondition: 0
   DistanceSource: {fileID: 0}
@@ -980,18 +977,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   AutoPopulate: 0
   Sockets:
-  - {fileID: 8744246182119920438}
-  - {fileID: 7217202807472270995}
-  - {fileID: 9199396035969713569}
-  - {fileID: 5288773767792992687}
-  - {fileID: 1650341525509540403}
-  - {fileID: 41431669823926857}
-  - {fileID: 3344203670231043850}
-  - {fileID: 1718324186881852430}
-  - {fileID: 5451276034633494523}
-  - {fileID: 2830219026482579767}
-  - {fileID: 6878944202598868553}
-  - {fileID: 1374613663307227583}
+  - {fileID: 460912401819730574}
+  - {fileID: 2068798161284896258}
+  - {fileID: 434496938754058533}
+  - {fileID: 8347235457135870769}
+  - {fileID: 3365376229907307829}
+  - {fileID: 1400880665549751298}
+  - {fileID: 3512912330453459546}
+  - {fileID: 4831163821002425351}
+  - {fileID: 215847821362296566}
+  - {fileID: 9212084663057130141}
+  - {fileID: 5972213289072785166}
+  - {fileID: 5107614416435698260}
 --- !u!114 &2596048974797699402
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1096,7 +1093,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2167775827064764224}
-  - component: {fileID: 1650341525509540403}
+  - component: {fileID: 3365376229907307829}
   - component: {fileID: 1681842281664203449}
   - component: {fileID: 6457455381913810790}
   - component: {fileID: 4667297139685793446}
@@ -1124,7 +1121,7 @@ Transform:
   - {fileID: 5732501220527278716}
   m_Father: {fileID: 7540743326042314200}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1650341525509540403
+--- !u!114 &3365376229907307829
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1133,15 +1130,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 3676950170103165385}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a27bb777100ada4459dda04ca3779632, type: 3}
+  m_Script: {fileID: 11500000, guid: 7825d73edbaf4c528607f54c7c8177e4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   BeforeGrabbed:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 2596048974797699402}
-        m_TargetAssemblyTypeName: GUZ.HVR.Components.VobContainer.HVRVobContainerSocketInventory,
-          Assembly-CSharp
+        m_TargetAssemblyTypeName: GUZ.VR.Components.VobContainer.VRVobContainerSocketInventory,
+          UnZENity.VR
         m_MethodName: OnBeforeGrabbed
         m_Mode: 0
         m_Arguments:
@@ -1159,8 +1156,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 2596048974797699402}
-        m_TargetAssemblyTypeName: GUZ.HVR.Components.VobContainer.HVRVobContainerSocketInventory,
-          Assembly-CSharp
+        m_TargetAssemblyTypeName: GUZ.VR.Components.VobContainer.VRVobContainerSocketInventory,
+          UnZENity.VR
         m_MethodName: OnReleased
         m_Mode: 0
         m_Arguments:
@@ -1193,8 +1190,7 @@ MonoBehaviour:
   GrabbableMustBeHeld: 1
   GrabsFromHand: 0
   HoverActions: []
-  HandGrabActions:
-  - {fileID: 1681842281664203449}
+  HandGrabActions: []
   ParentDisablesGrab: 0
   ParentGrabbable: {fileID: 0}
   CanRemoveGrabbable: 1
@@ -1203,8 +1199,8 @@ MonoBehaviour:
   CanGrabStabbingGrabbable: 0
   AudioGrabbedOverride: {fileID: 0}
   AudioReleasedOverride: {fileID: 0}
-  AudioGrabbedFallback: {fileID: 8300000, guid: 9b424bd470d64e34f81ec06f2463c847, type: 3}
-  AudioReleasedFallback: {fileID: 8300000, guid: 9b424bd470d64e34f81ec06f2463c847, type: 3}
+  AudioGrabbedFallback: {fileID: 0}
+  AudioReleasedFallback: {fileID: 0}
   SocketFilters: []
   FilterCondition: 0
   DistanceSource: {fileID: 0}
@@ -1291,7 +1287,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 9056431333970367247}
-  - component: {fileID: 6878944202598868553}
+  - component: {fileID: 5972213289072785166}
   - component: {fileID: 6036487359392924953}
   - component: {fileID: 2559447240399077539}
   - component: {fileID: 2099805584684839997}
@@ -1319,7 +1315,7 @@ Transform:
   - {fileID: 6533107652767945040}
   m_Father: {fileID: 7540743326042314200}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &6878944202598868553
+--- !u!114 &5972213289072785166
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1328,15 +1324,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 3808700244132799788}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a27bb777100ada4459dda04ca3779632, type: 3}
+  m_Script: {fileID: 11500000, guid: 7825d73edbaf4c528607f54c7c8177e4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   BeforeGrabbed:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 2596048974797699402}
-        m_TargetAssemblyTypeName: GUZ.HVR.Components.VobContainer.HVRVobContainerSocketInventory,
-          Assembly-CSharp
+        m_TargetAssemblyTypeName: GUZ.VR.Components.VobContainer.VRVobContainerSocketInventory,
+          UnZENity.VR
         m_MethodName: OnBeforeGrabbed
         m_Mode: 0
         m_Arguments:
@@ -1354,8 +1350,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 2596048974797699402}
-        m_TargetAssemblyTypeName: GUZ.HVR.Components.VobContainer.HVRVobContainerSocketInventory,
-          Assembly-CSharp
+        m_TargetAssemblyTypeName: GUZ.VR.Components.VobContainer.VRVobContainerSocketInventory,
+          UnZENity.VR
         m_MethodName: OnReleased
         m_Mode: 0
         m_Arguments:
@@ -1388,8 +1384,7 @@ MonoBehaviour:
   GrabbableMustBeHeld: 1
   GrabsFromHand: 0
   HoverActions: []
-  HandGrabActions:
-  - {fileID: 6036487359392924953}
+  HandGrabActions: []
   ParentDisablesGrab: 0
   ParentGrabbable: {fileID: 0}
   CanRemoveGrabbable: 1
@@ -1398,8 +1393,8 @@ MonoBehaviour:
   CanGrabStabbingGrabbable: 0
   AudioGrabbedOverride: {fileID: 0}
   AudioReleasedOverride: {fileID: 0}
-  AudioGrabbedFallback: {fileID: 8300000, guid: 9b424bd470d64e34f81ec06f2463c847, type: 3}
-  AudioReleasedFallback: {fileID: 8300000, guid: 9b424bd470d64e34f81ec06f2463c847, type: 3}
+  AudioGrabbedFallback: {fileID: 0}
+  AudioReleasedFallback: {fileID: 0}
   SocketFilters: []
   FilterCondition: 0
   DistanceSource: {fileID: 0}
@@ -1735,7 +1730,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1517987782394978120}
-  - component: {fileID: 3344203670231043850}
+  - component: {fileID: 3512912330453459546}
   - component: {fileID: 2189076515989587621}
   - component: {fileID: 5785087856397484637}
   - component: {fileID: 2720868678405414166}
@@ -1763,7 +1758,7 @@ Transform:
   - {fileID: 936522581839625339}
   m_Father: {fileID: 7540743326042314200}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &3344203670231043850
+--- !u!114 &3512912330453459546
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1772,15 +1767,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 4544068122292998800}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a27bb777100ada4459dda04ca3779632, type: 3}
+  m_Script: {fileID: 11500000, guid: 7825d73edbaf4c528607f54c7c8177e4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   BeforeGrabbed:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 2596048974797699402}
-        m_TargetAssemblyTypeName: GUZ.HVR.Components.VobContainer.HVRVobContainerSocketInventory,
-          Assembly-CSharp
+        m_TargetAssemblyTypeName: GUZ.VR.Components.VobContainer.VRVobContainerSocketInventory,
+          UnZENity.VR
         m_MethodName: OnBeforeGrabbed
         m_Mode: 0
         m_Arguments:
@@ -1798,8 +1793,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 2596048974797699402}
-        m_TargetAssemblyTypeName: GUZ.HVR.Components.VobContainer.HVRVobContainerSocketInventory,
-          Assembly-CSharp
+        m_TargetAssemblyTypeName: GUZ.VR.Components.VobContainer.VRVobContainerSocketInventory,
+          UnZENity.VR
         m_MethodName: OnReleased
         m_Mode: 0
         m_Arguments:
@@ -1832,8 +1827,7 @@ MonoBehaviour:
   GrabbableMustBeHeld: 1
   GrabsFromHand: 0
   HoverActions: []
-  HandGrabActions:
-  - {fileID: 2189076515989587621}
+  HandGrabActions: []
   ParentDisablesGrab: 0
   ParentGrabbable: {fileID: 0}
   CanRemoveGrabbable: 1
@@ -1842,8 +1836,8 @@ MonoBehaviour:
   CanGrabStabbingGrabbable: 0
   AudioGrabbedOverride: {fileID: 0}
   AudioReleasedOverride: {fileID: 0}
-  AudioGrabbedFallback: {fileID: 8300000, guid: 9b424bd470d64e34f81ec06f2463c847, type: 3}
-  AudioReleasedFallback: {fileID: 8300000, guid: 9b424bd470d64e34f81ec06f2463c847, type: 3}
+  AudioGrabbedFallback: {fileID: 0}
+  AudioReleasedFallback: {fileID: 0}
   SocketFilters: []
   FilterCondition: 0
   DistanceSource: {fileID: 0}
@@ -2741,7 +2735,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6069090707613005741}
-  - component: {fileID: 8744246182119920438}
+  - component: {fileID: 460912401819730574}
   - component: {fileID: 4619596859461174703}
   - component: {fileID: 158729719686616005}
   - component: {fileID: 7916741380795831998}
@@ -2769,7 +2763,7 @@ Transform:
   - {fileID: 2653470416703661977}
   m_Father: {fileID: 7540743326042314200}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &8744246182119920438
+--- !u!114 &460912401819730574
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2778,15 +2772,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 6719234714038604469}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a27bb777100ada4459dda04ca3779632, type: 3}
+  m_Script: {fileID: 11500000, guid: 7825d73edbaf4c528607f54c7c8177e4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   BeforeGrabbed:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 2596048974797699402}
-        m_TargetAssemblyTypeName: GUZ.HVR.Components.VobContainer.HVRVobContainerSocketInventory,
-          Assembly-CSharp
+        m_TargetAssemblyTypeName: GUZ.VR.Components.VobContainer.VRVobContainerSocketInventory,
+          UnZENity.VR
         m_MethodName: OnBeforeGrabbed
         m_Mode: 0
         m_Arguments:
@@ -2804,8 +2798,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 2596048974797699402}
-        m_TargetAssemblyTypeName: GUZ.HVR.Components.VobContainer.HVRVobContainerSocketInventory,
-          Assembly-CSharp
+        m_TargetAssemblyTypeName: GUZ.VR.Components.VobContainer.VRVobContainerSocketInventory,
+          UnZENity.VR
         m_MethodName: OnReleased
         m_Mode: 0
         m_Arguments:
@@ -2838,8 +2832,7 @@ MonoBehaviour:
   GrabbableMustBeHeld: 1
   GrabsFromHand: 0
   HoverActions: []
-  HandGrabActions:
-  - {fileID: 4619596859461174703}
+  HandGrabActions: []
   ParentDisablesGrab: 0
   ParentGrabbable: {fileID: 0}
   CanRemoveGrabbable: 1
@@ -2848,8 +2841,8 @@ MonoBehaviour:
   CanGrabStabbingGrabbable: 0
   AudioGrabbedOverride: {fileID: 0}
   AudioReleasedOverride: {fileID: 0}
-  AudioGrabbedFallback: {fileID: 8300000, guid: 9b424bd470d64e34f81ec06f2463c847, type: 3}
-  AudioReleasedFallback: {fileID: 8300000, guid: 9b424bd470d64e34f81ec06f2463c847, type: 3}
+  AudioGrabbedFallback: {fileID: 0}
+  AudioReleasedFallback: {fileID: 0}
   SocketFilters: []
   FilterCondition: 0
   DistanceSource: {fileID: 0}
@@ -2936,7 +2929,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5778714796877724987}
-  - component: {fileID: 1718324186881852430}
+  - component: {fileID: 4831163821002425351}
   - component: {fileID: 3499083072961611723}
   - component: {fileID: 4704764476294233102}
   - component: {fileID: 598568339332800422}
@@ -2964,7 +2957,7 @@ Transform:
   - {fileID: 5624809007546949181}
   m_Father: {fileID: 7540743326042314200}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1718324186881852430
+--- !u!114 &4831163821002425351
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2973,15 +2966,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 6822371266024915418}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a27bb777100ada4459dda04ca3779632, type: 3}
+  m_Script: {fileID: 11500000, guid: 7825d73edbaf4c528607f54c7c8177e4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   BeforeGrabbed:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 2596048974797699402}
-        m_TargetAssemblyTypeName: GUZ.HVR.Components.VobContainer.HVRVobContainerSocketInventory,
-          Assembly-CSharp
+        m_TargetAssemblyTypeName: GUZ.VR.Components.VobContainer.VRVobContainerSocketInventory,
+          UnZENity.VR
         m_MethodName: OnBeforeGrabbed
         m_Mode: 0
         m_Arguments:
@@ -2999,8 +2992,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 2596048974797699402}
-        m_TargetAssemblyTypeName: GUZ.HVR.Components.VobContainer.HVRVobContainerSocketInventory,
-          Assembly-CSharp
+        m_TargetAssemblyTypeName: GUZ.VR.Components.VobContainer.VRVobContainerSocketInventory,
+          UnZENity.VR
         m_MethodName: OnReleased
         m_Mode: 0
         m_Arguments:
@@ -3033,8 +3026,7 @@ MonoBehaviour:
   GrabbableMustBeHeld: 1
   GrabsFromHand: 0
   HoverActions: []
-  HandGrabActions:
-  - {fileID: 3499083072961611723}
+  HandGrabActions: []
   ParentDisablesGrab: 0
   ParentGrabbable: {fileID: 0}
   CanRemoveGrabbable: 1
@@ -3043,8 +3035,8 @@ MonoBehaviour:
   CanGrabStabbingGrabbable: 0
   AudioGrabbedOverride: {fileID: 0}
   AudioReleasedOverride: {fileID: 0}
-  AudioGrabbedFallback: {fileID: 8300000, guid: 9b424bd470d64e34f81ec06f2463c847, type: 3}
-  AudioReleasedFallback: {fileID: 8300000, guid: 9b424bd470d64e34f81ec06f2463c847, type: 3}
+  AudioGrabbedFallback: {fileID: 0}
+  AudioReleasedFallback: {fileID: 0}
   SocketFilters: []
   FilterCondition: 0
   DistanceSource: {fileID: 0}
@@ -3214,7 +3206,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3489356742452201482}
-  - component: {fileID: 5451276034633494523}
+  - component: {fileID: 215847821362296566}
   - component: {fileID: 3832435678064389958}
   - component: {fileID: 5927022531090099218}
   - component: {fileID: 1469796680986704926}
@@ -3242,7 +3234,7 @@ Transform:
   - {fileID: 8928722814182905806}
   m_Father: {fileID: 7540743326042314200}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &5451276034633494523
+--- !u!114 &215847821362296566
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -3251,15 +3243,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 7330976607743722592}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a27bb777100ada4459dda04ca3779632, type: 3}
+  m_Script: {fileID: 11500000, guid: 7825d73edbaf4c528607f54c7c8177e4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   BeforeGrabbed:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 2596048974797699402}
-        m_TargetAssemblyTypeName: GUZ.HVR.Components.VobContainer.HVRVobContainerSocketInventory,
-          Assembly-CSharp
+        m_TargetAssemblyTypeName: GUZ.VR.Components.VobContainer.VRVobContainerSocketInventory,
+          UnZENity.VR
         m_MethodName: OnBeforeGrabbed
         m_Mode: 0
         m_Arguments:
@@ -3277,8 +3269,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 2596048974797699402}
-        m_TargetAssemblyTypeName: GUZ.HVR.Components.VobContainer.HVRVobContainerSocketInventory,
-          Assembly-CSharp
+        m_TargetAssemblyTypeName: GUZ.VR.Components.VobContainer.VRVobContainerSocketInventory,
+          UnZENity.VR
         m_MethodName: OnReleased
         m_Mode: 0
         m_Arguments:
@@ -3311,8 +3303,7 @@ MonoBehaviour:
   GrabbableMustBeHeld: 1
   GrabsFromHand: 0
   HoverActions: []
-  HandGrabActions:
-  - {fileID: 3832435678064389958}
+  HandGrabActions: []
   ParentDisablesGrab: 0
   ParentGrabbable: {fileID: 0}
   CanRemoveGrabbable: 1
@@ -3321,8 +3312,8 @@ MonoBehaviour:
   CanGrabStabbingGrabbable: 0
   AudioGrabbedOverride: {fileID: 0}
   AudioReleasedOverride: {fileID: 0}
-  AudioGrabbedFallback: {fileID: 8300000, guid: 9b424bd470d64e34f81ec06f2463c847, type: 3}
-  AudioReleasedFallback: {fileID: 8300000, guid: 9b424bd470d64e34f81ec06f2463c847, type: 3}
+  AudioGrabbedFallback: {fileID: 0}
+  AudioReleasedFallback: {fileID: 0}
   SocketFilters: []
   FilterCondition: 0
   DistanceSource: {fileID: 0}
@@ -3409,7 +3400,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3661388838904415238}
-  - component: {fileID: 5288773767792992687}
+  - component: {fileID: 8347235457135870769}
   - component: {fileID: 3664050365174020685}
   - component: {fileID: 372745028345143667}
   - component: {fileID: 2809123207245500460}
@@ -3437,7 +3428,7 @@ Transform:
   - {fileID: 2938848674881804738}
   m_Father: {fileID: 7540743326042314200}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &5288773767792992687
+--- !u!114 &8347235457135870769
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -3446,15 +3437,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 8017589019207168410}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a27bb777100ada4459dda04ca3779632, type: 3}
+  m_Script: {fileID: 11500000, guid: 7825d73edbaf4c528607f54c7c8177e4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   BeforeGrabbed:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 2596048974797699402}
-        m_TargetAssemblyTypeName: GUZ.HVR.Components.VobContainer.HVRVobContainerSocketInventory,
-          Assembly-CSharp
+        m_TargetAssemblyTypeName: GUZ.VR.Components.VobContainer.VRVobContainerSocketInventory,
+          UnZENity.VR
         m_MethodName: OnBeforeGrabbed
         m_Mode: 0
         m_Arguments:
@@ -3472,8 +3463,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 2596048974797699402}
-        m_TargetAssemblyTypeName: GUZ.HVR.Components.VobContainer.HVRVobContainerSocketInventory,
-          Assembly-CSharp
+        m_TargetAssemblyTypeName: GUZ.VR.Components.VobContainer.VRVobContainerSocketInventory,
+          UnZENity.VR
         m_MethodName: OnReleased
         m_Mode: 0
         m_Arguments:
@@ -3506,8 +3497,7 @@ MonoBehaviour:
   GrabbableMustBeHeld: 1
   GrabsFromHand: 0
   HoverActions: []
-  HandGrabActions:
-  - {fileID: 3664050365174020685}
+  HandGrabActions: []
   ParentDisablesGrab: 0
   ParentGrabbable: {fileID: 0}
   CanRemoveGrabbable: 1
@@ -3516,8 +3506,8 @@ MonoBehaviour:
   CanGrabStabbingGrabbable: 0
   AudioGrabbedOverride: {fileID: 0}
   AudioReleasedOverride: {fileID: 0}
-  AudioGrabbedFallback: {fileID: 8300000, guid: 9b424bd470d64e34f81ec06f2463c847, type: 3}
-  AudioReleasedFallback: {fileID: 8300000, guid: 9b424bd470d64e34f81ec06f2463c847, type: 3}
+  AudioGrabbedFallback: {fileID: 0}
+  AudioReleasedFallback: {fileID: 0}
   SocketFilters: []
   FilterCondition: 0
   DistanceSource: {fileID: 0}
@@ -3604,7 +3594,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2218209229064205942}
-  - component: {fileID: 2830219026482579767}
+  - component: {fileID: 9212084663057130141}
   - component: {fileID: 4995802076893022111}
   - component: {fileID: 3576335141605442734}
   - component: {fileID: 1273249311594439381}
@@ -3632,7 +3622,7 @@ Transform:
   - {fileID: 8965928230805813852}
   m_Father: {fileID: 7540743326042314200}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2830219026482579767
+--- !u!114 &9212084663057130141
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -3641,15 +3631,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 8321360292962761766}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a27bb777100ada4459dda04ca3779632, type: 3}
+  m_Script: {fileID: 11500000, guid: 7825d73edbaf4c528607f54c7c8177e4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   BeforeGrabbed:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 2596048974797699402}
-        m_TargetAssemblyTypeName: GUZ.HVR.Components.VobContainer.HVRVobContainerSocketInventory,
-          Assembly-CSharp
+        m_TargetAssemblyTypeName: GUZ.VR.Components.VobContainer.VRVobContainerSocketInventory,
+          UnZENity.VR
         m_MethodName: OnBeforeGrabbed
         m_Mode: 0
         m_Arguments:
@@ -3667,8 +3657,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 2596048974797699402}
-        m_TargetAssemblyTypeName: GUZ.HVR.Components.VobContainer.HVRVobContainerSocketInventory,
-          Assembly-CSharp
+        m_TargetAssemblyTypeName: GUZ.VR.Components.VobContainer.VRVobContainerSocketInventory,
+          UnZENity.VR
         m_MethodName: OnReleased
         m_Mode: 0
         m_Arguments:
@@ -3701,8 +3691,7 @@ MonoBehaviour:
   GrabbableMustBeHeld: 1
   GrabsFromHand: 0
   HoverActions: []
-  HandGrabActions:
-  - {fileID: 4995802076893022111}
+  HandGrabActions: []
   ParentDisablesGrab: 0
   ParentGrabbable: {fileID: 0}
   CanRemoveGrabbable: 1
@@ -3711,8 +3700,8 @@ MonoBehaviour:
   CanGrabStabbingGrabbable: 0
   AudioGrabbedOverride: {fileID: 0}
   AudioReleasedOverride: {fileID: 0}
-  AudioGrabbedFallback: {fileID: 8300000, guid: 9b424bd470d64e34f81ec06f2463c847, type: 3}
-  AudioReleasedFallback: {fileID: 8300000, guid: 9b424bd470d64e34f81ec06f2463c847, type: 3}
+  AudioGrabbedFallback: {fileID: 0}
+  AudioReleasedFallback: {fileID: 0}
   SocketFilters: []
   FilterCondition: 0
   DistanceSource: {fileID: 0}
@@ -3913,7 +3902,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1792529791934886110}
-  - component: {fileID: 9199396035969713569}
+  - component: {fileID: 434496938754058533}
   - component: {fileID: 5954953237649274721}
   - component: {fileID: 7577847198649703145}
   - component: {fileID: 3895740475241616462}
@@ -3941,7 +3930,7 @@ Transform:
   - {fileID: 993347091411130939}
   m_Father: {fileID: 7540743326042314200}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &9199396035969713569
+--- !u!114 &434496938754058533
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -3950,15 +3939,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 8739208446635805306}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a27bb777100ada4459dda04ca3779632, type: 3}
+  m_Script: {fileID: 11500000, guid: 7825d73edbaf4c528607f54c7c8177e4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   BeforeGrabbed:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 2596048974797699402}
-        m_TargetAssemblyTypeName: GUZ.HVR.Components.VobContainer.HVRVobContainerSocketInventory,
-          Assembly-CSharp
+        m_TargetAssemblyTypeName: GUZ.VR.Components.VobContainer.VRVobContainerSocketInventory,
+          UnZENity.VR
         m_MethodName: OnBeforeGrabbed
         m_Mode: 0
         m_Arguments:
@@ -3976,8 +3965,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 2596048974797699402}
-        m_TargetAssemblyTypeName: GUZ.HVR.Components.VobContainer.HVRVobContainerSocketInventory,
-          Assembly-CSharp
+        m_TargetAssemblyTypeName: GUZ.VR.Components.VobContainer.VRVobContainerSocketInventory,
+          UnZENity.VR
         m_MethodName: OnReleased
         m_Mode: 0
         m_Arguments:
@@ -4010,8 +3999,7 @@ MonoBehaviour:
   GrabbableMustBeHeld: 1
   GrabsFromHand: 0
   HoverActions: []
-  HandGrabActions:
-  - {fileID: 5954953237649274721}
+  HandGrabActions: []
   ParentDisablesGrab: 0
   ParentGrabbable: {fileID: 0}
   CanRemoveGrabbable: 1
@@ -4020,8 +4008,8 @@ MonoBehaviour:
   CanGrabStabbingGrabbable: 0
   AudioGrabbedOverride: {fileID: 0}
   AudioReleasedOverride: {fileID: 0}
-  AudioGrabbedFallback: {fileID: 8300000, guid: 9b424bd470d64e34f81ec06f2463c847, type: 3}
-  AudioReleasedFallback: {fileID: 8300000, guid: 9b424bd470d64e34f81ec06f2463c847, type: 3}
+  AudioGrabbedFallback: {fileID: 0}
+  AudioReleasedFallback: {fileID: 0}
   SocketFilters: []
   FilterCondition: 0
   DistanceSource: {fileID: 0}

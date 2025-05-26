@@ -12,7 +12,13 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
 
         public override void Start()
         {
-            PrefabProps.AnimationSystem.PlayAnimation(_animName);
+            var animFound = PrefabProps.AnimationSystem.PlayAnimation(_animName);
+
+            if (!animFound)
+            {
+                IsFinishedFlag = true;
+                return;
+            }
             AnimationEndEventTime = PrefabProps.AnimationSystem.GetAnimationDuration(_animName);
         }
     }

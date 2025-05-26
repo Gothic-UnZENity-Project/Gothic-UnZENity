@@ -45,7 +45,7 @@ namespace GUZ.Core.Npc
             }
 
             // else
-            var npcContainer = GetComponentInParent<NpcLoader>().Npc.GetUserData2();
+            var npcContainer = GetComponentInParent<NpcLoader>().Npc.GetUserData();
             npcContainer.PrefabProps = this;
             _focusName = npcContainer.Instance.GetName(NpcNameSlot.Slot0);
         }

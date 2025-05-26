@@ -12,17 +12,18 @@ namespace GUZ.Core.Npc
         [NonSerialized]
         public NpcContainer NpcData;
 
+        public NpcInstance NpcInstance => NpcData.Instance;
+        public ZenKit.Vobs.Npc Vob => NpcData.Vob;
+        public GameObject Go => NpcData.Go;
         public NpcProperties Properties => NpcData.Props;
         public NpcPrefabProperties PrefabProps => NpcData.PrefabProps;
-        public NpcInstance NpcInstance => NpcData.Instance;
-        public GameObject Go => NpcData.Go;
 
         protected virtual void Awake()
         {
             var lazyComp = GetComponentInParent<NpcLoader>();
 
             // As we lazy load NPCs, the NpcInstance is always set inside NpcLoader before we initialize this prefab!
-            NpcData = lazyComp.Npc.GetUserData2();
+            NpcData = lazyComp.Npc.GetUserData();
         }
     }
 }

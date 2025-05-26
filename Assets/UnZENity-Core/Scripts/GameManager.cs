@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Globalization;
 using GUZ.Core.Animations;
 using GUZ.Core.Caches;
 using GUZ.Core.Config;
@@ -27,7 +28,6 @@ namespace GUZ.Core
         private FileLoggingHandler _fileLoggingHandler;
         private FrameSkipper _frameSkipper;
         private BarrierManager _barrierManager;
-        private MusicManager _gameMusicManager;
 
         public ConfigManager Config { get; private set; }
 
@@ -42,6 +42,8 @@ namespace GUZ.Core
         public GameTime Time { get; private set; }
         
         public VideoManager Video { get; private set; }
+        
+        public MusicManager Music { get; private set; }
 
         public RoutineManager Routines { get; private set; }
 
@@ -67,6 +69,10 @@ namespace GUZ.Core
             base.Awake();
 
             GameContext.IsLab = false;
+            
+            // We need to set culture to this, otherwise e.g. polish numbers aren't parsed correct.
+            CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;
+            CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.InvariantCulture;
 
             Config = new ConfigManager();
             Config.LoadRootJson();
@@ -100,7 +106,7 @@ namespace GUZ.Core
             Time = new GameTime(DeveloperConfig, this);
             Video = new VideoManager(DeveloperConfig);
             Sky = new SkyManager(DeveloperConfig, Time);
-            _gameMusicManager = new MusicManager(DeveloperConfig);
+            Music = new MusicManager(DeveloperConfig);
             Story = new StoryManager(DeveloperConfig);
             Routines = new RoutineManager(DeveloperConfig);
         }
@@ -152,7 +158,7 @@ namespace GUZ.Core
             Logger.Log($"Initializing Gothic installation at: {gothicRootPath}", LogCat.Loading);
             ResourceLoader.Init(gothicRootPath);
 
-            _gameMusicManager.Init();
+            Music.Init();
             StaticCache.Init(DeveloperConfig);
             Textures.Init();
             Vobs.Init(this);
@@ -163,7 +169,7 @@ namespace GUZ.Core
             GlobalEventDispatcher.LevelChangeTriggered.AddListener((world, spawn) =>
             {
                 Player.LastLevelChangeTriggerVobName = spawn;
-                LoadWorld(world, -1, SceneManager.GetActiveScene().name);
+                LoadWorld(world, SaveGameManager.SlotId.WorldChangeOnly, SceneManager.GetActiveScene().name);
             });
 
             watch.Log("Phase2 (mostly ZenKit) initialized in");
@@ -185,7 +191,7 @@ namespace GUZ.Core
         /// saveGameId = -1 -> Change World
         /// </summary>
         /// <param name="saveGameId">-1-15</param>
-        public void LoadWorld(string worldName, int saveGameId, string sceneToUnload = null)
+        public void LoadWorld(string worldName, SaveGameManager.SlotId saveGameId, string sceneToUnload = null)
         {
             // We need to add .zen as early as possible as all related data needs the file ending.
             worldName += worldName.EndsWithIgnoreCase(".zen") ? "" : ".zen";
@@ -233,6 +239,7 @@ namespace GUZ.Core
         private void Update()
         {
             NpcMeshCulling.Update();
+            Loading.Update();
         }
 
         private void FixedUpdate()
@@ -270,7 +277,7 @@ namespace GUZ.Core
             Lights = null;
             Time = null;
             Sky = null;
-            _gameMusicManager = null;
+            Music = null;
             Routines = null;
         }
 

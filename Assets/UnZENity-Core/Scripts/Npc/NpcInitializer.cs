@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using GUZ.Core.Caches;
 using GUZ.Core.Creator.Meshes;
@@ -7,6 +6,8 @@ using GUZ.Core.Data.Container;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
+using GUZ.Core.Properties;
+using GUZ.Core.UI.Menus.LoadingBars;
 using GUZ.Core.Util;
 using GUZ.Core.Vm;
 using GUZ.Core.Vob.WayNet;
@@ -44,7 +45,7 @@ namespace GUZ.Core.Npc
             foreach (var vobNpc in saveGameNpcs)
             {
                 // Update the progress bar and check if we need to wait for the next frame now (As some conditions skip -continue- end of loop and would skip check)
-                loading.AddProgress();
+                loading.Tick();
                 await FrameSkipper.TrySkipToNextFrame();
 
                 var npcContainer = AllocZkInstance(vobNpc);
@@ -104,7 +105,7 @@ namespace GUZ.Core.Npc
             npcInstance.UserData = userDataObject;
 
             // IMPORTANT!: NpcInstance.UserData stores a weak pointer. i.e. if we do not store the local variable it would get removed.
-            MultiTypeCache.NpcCache2.Add(userDataObject);
+            MultiTypeCache.NpcCache.Add(userDataObject);
 
             return userDataObject;
         }
@@ -128,12 +129,12 @@ namespace GUZ.Core.Npc
         /// </summary>
         private async Task NewAddLazyLoading(LoadingManager loading)
         {
-            loading.SetPhase(LoadingManager.LoadingProgressType.Npc, _tmpWldInsertNpcData.Count);
+            loading.SetPhase(nameof(WorldLoadingBarHandler.ProgressType.Npc), _tmpWldInsertNpcData.Count);
 
             foreach ((NpcContainer npc, string spawnPoint) element in _tmpWldInsertNpcData)
             {
                 // Update the progress bar and check if we need to wait for the next frame now (As some conditions skip -continue- end of loop and would skip check)
-                loading.AddProgress();
+                loading.Tick();
                 await FrameSkipper.TrySkipToNextFrame();
 
                 var go = InitLazyLoadNpc(element.npc);
@@ -161,7 +162,7 @@ namespace GUZ.Core.Npc
             }
 
             // Full loading of NPCs is done.
-            loading.AddProgress(LoadingManager.LoadingProgressType.VOB, 1f);
+            loading.FinalizePhase();
         }
 
         /// <summary>
@@ -199,17 +200,32 @@ namespace GUZ.Core.Npc
                 npc.Props.CurrentWayPoint = (WayPoint)spawnPoint;
             go.transform.SetPositionAndRotation(spawnPoint.Position, spawnPoint.Rotation);
 
+            // Prepare some variables, which need to be calculated from save game.
+            // We simply say: Restart whole logic for NPCs  .
+            // FIXME - It's a hack for now, as the normal Vob.*Routine/*State variables aren't handled as of now.
+            npc.Props.CurrentLoopState = NpcProperties.LoopState.None;
+            npc.Vob.CurrentStateValid = false;
+            npc.Vob.NextStateValid = false;
+            
             GameGlobals.NpcMeshCulling.AddCullingEntry(go);
         }
 
+        // Just some number to find a monster easier when debugging in Unity Inspector.
+        private int _monsterIndex;
+        
         /// <summary>
         /// InitZkInstance and create a GameObject for the NPC to be loaded later.
         /// </summary>
         public GameObject InitLazyLoadNpc(NpcContainer npc)
         {
             InitZkInstance(npc);
-            var go = new GameObject($"{npc.Instance.GetName(NpcNameSlot.Slot0)} ({npc.Instance.Id})");
+            var go = new GameObject();
             go.SetParent(RootGo);
+
+            if (npc.Instance.Id > 0)
+                go.name = $"{npc.Instance.GetName(NpcNameSlot.Slot0)} ({npc.Instance.Id})";
+            else
+                go.name = $"{npc.Instance.GetName(NpcNameSlot.Slot0)} ({_monsterIndex++})";
 
             var loader = go.AddComponent<NpcLoader>();
             loader.Npc = npc.Instance;
@@ -229,14 +245,9 @@ namespace GUZ.Core.Npc
 
         public void InitNpc(NpcInstance npcInstance, GameObject lazyLoadGo)
         {
-            var npcData = npcInstance.GetUserData2();
+            var npcData = npcInstance.GetUserData();
             var newNpc = ResourceLoader.TryGetPrefabObject(PrefabType.Npc, parent: lazyLoadGo)!;
             var props = npcData.Props;
-
-            npcData.Props.Dialogs = GameData.Dialogs.Instances
-                .Where(dialog => dialog.Npc == npcInstance.Index)
-                .OrderByDescending(dialog => dialog.Important)
-                .ToList();
 
             // We set the root of Prefab as the new Root object. LazyLoading Root-GO isn't needed for anything, but it's name anymore.
             newNpc.name = "Root";
@@ -288,7 +299,7 @@ namespace GUZ.Core.Npc
         /// <summary>
         /// Check if NPC/Monster will spawn inside another and do a circulated free V3 check around the area.
         /// </summary>
-        private Vector3 GetFreeAreaAtSpawnPoint(Vector3 positionToScan)
+        public Vector3 GetFreeAreaAtSpawnPoint(Vector3 positionToScan)
         {
             var isPositionFound = false;
             var testRadius = 1f; // ~2x size of normal bounding box of an NPC.

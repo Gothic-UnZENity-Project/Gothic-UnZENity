@@ -23,9 +23,9 @@ namespace GUZ.Core.Manager.Scenes
 
                 if (GameGlobals.Config.Dev.LoadFromSaveSlot)
                 {
-                    var saveId = GameGlobals.Config.Dev.SaveSlotToLoad;
+                    var saveId = (SaveGameManager.SlotId)GameGlobals.Config.Dev.SaveSlotToLoad;
                     var save = GameGlobals.SaveGame.GetSaveGame(saveId);
-                    GameManager.I.LoadWorld(save.Metadata.World, GameGlobals.Config.Dev.SaveSlotToLoad, Constants.SceneMainMenu);
+                    GameManager.I.LoadWorld(save.Metadata.World, saveId, Constants.SceneMainMenu);
                 }
                 else
                 {
@@ -39,6 +39,7 @@ namespace GUZ.Core.Manager.Scenes
             _mainMenuImageBackground.GetComponent<MeshRenderer>().material = GameGlobals.Textures.MainMenuImageBackgroundMaterial;
 
             GameContext.InteractionAdapter.TeleportPlayerTo(Vector3.zero);
+            GameContext.InteractionAdapter.DisableMenus();
 
             GlobalEventDispatcher.MainMenuSceneLoaded.Invoke();
         }

@@ -2968,11 +2968,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _vrCameraTransform: {fileID: 8391885030032322550}
   _spectatorCamera: {fileID: 5753945146512928740}
-  SmoothingLvl: 2
-  NoneRotationSmoothing: 0
-  LowRotationSmoothing: 0.02
-  MediumRotationSmoothing: 0.08
-  HighRotationSmoothing: 0.15
 --- !u!20 &5753945146512928740
 Camera:
   m_ObjectHideFlags: 0
@@ -5327,9 +5322,9 @@ MonoBehaviour:
   MoveSpeed: 1.5
   SprintAcceleration: 20
   RunSpeed: 3.5
-  Gravity: 5
-  MaxFallSpeed: 5
-  JumpVelocity: 2
+  Gravity: 10
+  MaxFallSpeed: 20
+  JumpVelocity: 3
   DoubleClickThreshold: 0.25
   RotationType: 0
   SmoothTurnSpeed: 250
@@ -5562,7 +5557,6 @@ MonoBehaviour:
   ColliderRootMotion: {fileID: 0}
   AiHandler: {fileID: 0}
   Animation: {fileID: 0}
-  AnimationHandler: {fileID: 0}
   AnimationSystem: {fileID: 0}
   AnimationHeadHandler: {fileID: 0}
 --- !u!4 &8391885031051259193 stripped
@@ -6839,6 +6833,14 @@ PrefabInstance:
       propertyPath: _isHero
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 1276042354778526045, guid: 323b5eef6ff0c014ca5dadf66503a4fe, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 4300127462305303291, guid: 323b5eef6ff0c014ca5dadf66503a4fe, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 100
+      objectReference: {fileID: 0}
     - target: {fileID: 7339275886835513150, guid: 323b5eef6ff0c014ca5dadf66503a4fe, type: 3}
       propertyPath: m_Name
       value: Menu-Subtitles
@@ -6857,7 +6859,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7369722077890996068, guid: 323b5eef6ff0c014ca5dadf66503a4fe, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 7369722077890996068, guid: 323b5eef6ff0c014ca5dadf66503a4fe, type: 3}
       propertyPath: m_LocalRotation.w
@@ -6886,6 +6888,10 @@ PrefabInstance:
     - target: {fileID: 7369722077890996068, guid: 323b5eef6ff0c014ca5dadf66503a4fe, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9138485363306559031, guid: 323b5eef6ff0c014ca5dadf66503a4fe, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 100
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects:

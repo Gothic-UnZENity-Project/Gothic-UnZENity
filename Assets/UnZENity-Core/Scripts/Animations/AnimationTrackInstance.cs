@@ -194,7 +194,6 @@ namespace GUZ.Core.Animations
 
                 if (animationEventFrame <= CurrentKeyFrameIndex)
                 {
-                    Logger.LogEditor($"{_animationEventsToExecuteThisUpdate} - Executing event: at frame {CurrentKeyFrameIndex}", LogCat.Animation);
                     _animationEventsToExecuteThisUpdate++;
                 }
                 // We passed the events which need to be played this frame.
@@ -212,7 +211,6 @@ namespace GUZ.Core.Animations
 
                 if (pfxEventFrame <= CurrentKeyFrameIndex)
                 {
-                    Logger.Log($"{_pfxEventsToExecuteThisUpdate} - Executing event: at frame {CurrentKeyFrameIndex}", LogCat.Animation);
                     _pfxEventsToExecuteThisUpdate++;
                 }
                 // We passed the events which need to be played this frame.
@@ -230,7 +228,6 @@ namespace GUZ.Core.Animations
 
                 if (sfxEventFrame <= CurrentKeyFrameIndex)
                 {
-                    Logger.LogEditor($"{_sfxEventsToExecuteThisUpdate} - Executing event: at frame {CurrentKeyFrameIndex}", LogCat.Animation);
                     _sfxEventsToExecuteThisUpdate++;
                 }
                 else
@@ -247,7 +244,6 @@ namespace GUZ.Core.Animations
 
                 if (morphEventFrame <= CurrentKeyFrameIndex)
                 {
-                    Logger.LogEditor($"{_morphEventsToExecuteThisUpdate} - Executing event: at frame {CurrentKeyFrameIndex}", LogCat.Animation);
                     _morphEventsToExecuteThisUpdate++;
                 }
                 else

@@ -19,7 +19,7 @@ namespace GUZ.VR.Components
 
         private void Awake()
         {
-            _npcData = GetComponentInParent<NpcLoader>().Npc.GetUserData2();
+            _npcData = GetComponentInParent<NpcLoader>().Npc.GetUserData();
         }
 
         public void OnGrabbed(HVRGrabberBase grabber, HVRGrabbable grabbable)

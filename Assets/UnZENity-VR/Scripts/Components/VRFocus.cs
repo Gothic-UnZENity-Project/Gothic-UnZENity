@@ -54,7 +54,7 @@ namespace GUZ.VR.Components
             var npcLoader = GetComponentInParent<NpcLoader>();
             if (npcLoader != null)
             {
-                _nameCanvas.GetComponentInChildren<TMP_Text>().text = npcLoader.Npc.GetUserData2().PrefabProps.GetFocusName();
+                _nameCanvas.GetComponentInChildren<TMP_Text>().text = npcLoader.Npc.GetUserData().PrefabProps.GetFocusName();
                 return;
             }
         }

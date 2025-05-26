@@ -12,7 +12,7 @@ namespace GUZ.Core.Extensions
         /// </summary>
         public static void Log(this Stopwatch stopwatch, string message)
         {
-            Logger.LogEditor($"[StopWatch] {message} [{stopwatch.Elapsed.TotalMilliseconds / 1000}s]", LogCat.Misc);
+            Logger.Log($"[StopWatch] {message} [{stopwatch.Elapsed.TotalMilliseconds / 1000}s]", LogCat.Misc);
         }
 
         /// <summary>

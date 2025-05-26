@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
+using GUZ.Core.UI.Menus.LoadingBars;
 using GUZ.Core.Util;
 using MyBox;
 using UnityEngine;
@@ -30,12 +31,25 @@ namespace GUZ.Core.Caches.StaticCache
             _debugSpeedUpLoading = GameGlobals.Config.Dev.SpeedUpLoading;
         }
 
-        public async Task CalculateWorldChunks(IWorld world, List<Bounds> stationaryLightBounds)
+        public async Task CalculateWorldChunks(IWorld world, List<Bounds> stationaryLightBounds, int worldIndex)
         {
-            _stationaryLightBounds = stationaryLightBounds;
+            var cachedBspTree = (CachedBspTree)world.BspTree.Cache();
+            
+            var elementAmount = CalculateElementAmount(cachedBspTree);
+            GameGlobals.Loading.SetPhase($"{nameof(PreCachingLoadingBarHandler.ProgressTypesPerWorld.CalculateWorldChunks)}_{worldIndex}", elementAmount);
 
+            _stationaryLightBounds = stationaryLightBounds;
             // Hint: We need to cache BspTree, otherwise looping through it will take ages.
-            await BuildBspTree(world.Mesh, (CachedBspTree)world.BspTree.Cache());
+            await BuildBspTree(world.Mesh, cachedBspTree);
+            
+            GameGlobals.Loading.FinalizePhase();
+
+        }
+
+        private int CalculateElementAmount(CachedBspTree cachedBspTree)
+        {
+            // There are 2 calculations: LeafNode loop and Merging via Lights. But the second one is not yet known. Let's simply assume its the same size (worst case).
+            return cachedBspTree.LeafNodeIndices.Count * 2;
         }
 
         private async Task BuildBspTree(IMesh worldMesh, CachedBspTree bspTree)
@@ -62,6 +76,7 @@ namespace GUZ.Core.Caches.StaticCache
                 {
                     await FrameSkipper.TrySkipToNextFrame();
                 }
+                GameGlobals.Loading.Tick();
 
                 var currentNodePolygonIds = new List<int>();
 
@@ -131,6 +146,7 @@ namespace GUZ.Core.Caches.StaticCache
                 {
                     await FrameSkipper.TrySkipToNextFrame();
                 }
+                GameGlobals.Loading.Tick();
 
                 var node = bspTree.GetNode(nodeData.Key);
                 var polygonIds = nodeData.Value;

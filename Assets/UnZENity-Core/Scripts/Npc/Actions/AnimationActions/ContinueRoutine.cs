@@ -16,6 +16,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
 
             var routine = Props.RoutineCurrent;
 
+            // FIXME - Please align logic with StartState.cs handling. (i.e. no call of StartRoutine() directly. Instead handling via ClearState() above.
             ai.StartRoutine(routine.Action, routine.Waypoint);
 
             IsFinishedFlag = true;

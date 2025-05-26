@@ -21,7 +21,6 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
         {
             var currentWaypoint = Props.CurrentWayPoint ?? WayNetHelper.FindNearestWayPoint(PrefabProps.Bip01.position);
             var destinationWaypoint = (WayPoint)WayNetHelper.GetWayNetPoint(Destination);
-
             
             /*
              * Two situations, when this action can be skipped:
@@ -70,6 +69,8 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
 
             if (_route.Count != 0)
             {
+                // We need to reset this flag now. Otherwise, we will skip all movement elements...
+                IsDestReached = false;
                 return;
             }
 

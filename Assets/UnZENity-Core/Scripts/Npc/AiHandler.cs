@@ -1,5 +1,4 @@
-﻿using GUZ.Core.Creator;
-using GUZ.Core.Data.ZkEvents;
+﻿using GUZ.Core.Data.ZkEvents;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
@@ -8,6 +7,7 @@ using GUZ.Core.Npc.Actions.AnimationActions;
 using GUZ.Core.Properties;
 using GUZ.Core.Util;
 using GUZ.Core.Vm;
+using MyBox;
 using UnityEngine;
 using ZenKit;
 using ZenKit.Daedalus;
@@ -35,6 +35,7 @@ namespace GUZ.Core.Npc
         private void Update()
         {
             ExecuteActivePerceptions();
+            ExecuteStates();
 
             Properties.CurrentAction.Tick();
 
@@ -62,24 +63,24 @@ namespace GUZ.Core.Npc
                 DaedalusSymbol loopSymbol;
                 switch (Properties.CurrentLoopState)
                 {
-                    // None means, the NPC is newly created and didn't execute any Routine as of now.
+                    // None means, the NPC is newly created and didn't execute any Routine as of now OR a State was changed via Daedalus scripts.
                     case NpcProperties.LoopState.None:
-                        RestartCurrentRoutine();
+                        StartNextRoutine();
                         break;
                     case NpcProperties.LoopState.Start:
-                        if (Properties.StateStart == 0)
+                        if (Vob.CurrentStateIndex == 0)
                         {
                             return;
                         }
 
-                        loopSymbol = Vm.GetSymbolByIndex(Properties.StateStart)!;
+                        loopSymbol = Vm.GetSymbolByIndex(Vob.CurrentStateIndex)!;
                         switch (loopSymbol.ReturnType)
                         {
                             case DaedalusDataType.Int:
-                                Vm.Call<int>(Properties.StateStart);
+                                Vm.Call<int>(Vob.CurrentStateIndex);
                                 break;
                             default:
-                                Vm.Call(Properties.StateStart);
+                                Vm.Call(Vob.CurrentStateIndex);
                                 break;
                         }
 
@@ -87,7 +88,7 @@ namespace GUZ.Core.Npc
                         Properties.CurrentLoopState = NpcProperties.LoopState.Loop;
                         break;
                     case NpcProperties.LoopState.Loop:
-                        if (Properties.StateLoop == 0 && Properties.StateStart != 0)
+                        if (Properties.StateLoop == 0 && Vob.CurrentStateIndex != 0)
                         {
                             Properties.CurrentLoopState = NpcProperties.LoopState.Start;
                             return;
@@ -134,7 +135,7 @@ namespace GUZ.Core.Npc
                         Properties.CurrentLoopState = NpcProperties.LoopState.Start;
 
                         // If we're inside another ZS_*_ loop via Ai_StartState(), we will exit it now. If not, we will simply restart current ZS_* routine.
-                        RestartCurrentRoutine();
+                        StartNextRoutine();
 
                         break;
                 }
@@ -166,10 +167,11 @@ namespace GUZ.Core.Npc
                 GameGlobals.NpcAi.ExecutePerception(VmGothicEnums.PerceptionType.AssessPlayer, Properties, NpcInstance,null, (NpcInstance)GameData.GothicVm.GlobalHero);
             }
 
-            if(Properties.EnemyNpc != null)
-            {
-                GameGlobals.NpcAi.ExecutePerception(VmGothicEnums.PerceptionType.AssessEnemy, Properties, NpcInstance,null, Properties.EnemyNpc);
-            }
+            // FIXME - Throws a lot of errors and warnings when NPCs are nearby monsters (e.g. Bridge guard next to OC)
+            // if(Properties.EnemyNpc != null)
+            // {
+            //     GameGlobals.NpcAi.ExecutePerception(VmGothicEnums.PerceptionType.AssessEnemy, Properties, NpcInstance,null, Properties.EnemyNpc);
+            // }
 
 
             // FIXME - We need to add other active perceptions here:
@@ -180,29 +182,53 @@ namespace GUZ.Core.Npc
             Properties.CurrentPerceptionTime = 0f;
         }
 
+        private void ExecuteStates()
+        {
+            if (Properties.RefuseTalkTimer > 0f)
+                Properties.RefuseTalkTimer -= Time.deltaTime;
+        }
+
         /// <summary>
         /// Restart means:
         /// 1. Either restart currently looping one or
         /// 2. Start the new one after Ai_ExchangeRoutine() got called and ZS_*END of previous one is done
         /// </summary>
-        public void RestartCurrentRoutine()
+        public void StartNextRoutine()
         {
-            var currentRoutine = Properties.RoutineCurrent;
-            if (currentRoutine != null)
+            Properties.StateTime = 0.0f;
+            Properties.ItemAnimationState = -1;
+
+            // We have set some "next" state before. Use it instead of going back to daily routine first.
+            if (Vob.NextStateValid)
             {
-                StartRoutine(currentRoutine.Action, currentRoutine.Waypoint);
+                // Use NextState only once. Next time daily routine will be called.
+                Vob.NextStateValid = false;
+
+                var currentRoutine = Vob.NextStateIndex;
+                StartRoutine(currentRoutine);
             }
             else
             {
-                // If we don't have a routine, we're about a monster.
-                StartRoutine(NpcInstance.StartAiState);
+                var currentRoutine = Properties.RoutineCurrent;
+                if (currentRoutine != null)
+                {
+                    StartRoutine(currentRoutine.Action, currentRoutine.Waypoint);
+                }
+                else
+                {
+                    // If we don't have a routine, we're a monster.
+                    StartRoutine(NpcInstance.StartAiState);
+                }
             }
         }
 
         public void StartRoutine(int action, string wayPointName)
         {
             // We need to set WayPoint within Daedalus instance as it calls _self.wp_ during routine loops.
-            NpcInstance.Wp = wayPointName;
+            // If e.g. AssessSc()+B_CheckForImportantInfo() changes state to ZS_TALK(), we have no WP set. Therefore keep original one.
+            if (wayPointName.NotNullOrEmpty())
+                NpcInstance.Wp = wayPointName;
+            
             StartRoutine(action);
         }
 
@@ -216,11 +242,14 @@ namespace GUZ.Core.Npc
             //     ClearState(false);
             // }
 
-            var didRoutineChange = Properties.StateStart != action;
+            var didRoutineChange = Vob.CurrentStateIndex != action;
 
-            Properties.StateStart = action;
+            Vob.LastAiState = Vob.CurrentStateIndex;
+            Vob.CurrentStateIndex = action;
+            Vob.CurrentStateValid = true;
 
             var routineSymbol = Vm.GetSymbolByIndex(action)!;
+            Vob.CurrentStateName = routineSymbol.Name;
 
             var symbolLoop = Vm.GetSymbolByName($"{routineSymbol.Name}_Loop");
             if (symbolLoop != null)
@@ -249,24 +278,23 @@ namespace GUZ.Core.Npc
         }
 
         /// <summary>
-        /// Clear ZS functions. If stopCurrentState=true, then stop current animation and don't execute with ZS_*_End()
+        /// Clear ZS functions. If callEndFunction=true, then ZS_*_End() animations will play before moving to new animation.
         /// </summary>
-        public void ClearState(bool stopCurrentStateImmediately)
+        public void ClearState(bool callEndFunction)
         {
-            // Whenever we change routine, we reset some data to "start" from scratch as if the NPC got spawned.
-            Properties.AnimationQueue.Clear();
-            Properties.CurrentAction = new None(new AnimationAction(), NpcData);
-            Properties.StateTime = 0.0f;
-            Properties.ItemAnimationState = -1;
-
-            if (stopCurrentStateImmediately)
+            if (callEndFunction)
             {
-                Properties.CurrentLoopState = NpcProperties.LoopState.None;
-                AnimationCreator.StopAnimation(Go);
+                Properties.CurrentLoopState = NpcProperties.LoopState.End; // Next frame/after current animations are done, the End logic will be executed.
             }
             else
             {
-                Properties.CurrentLoopState = NpcProperties.LoopState.End; // Next frame, the End logic will be executed.
+                // Whenever we change routine, we reset some data to "start" from scratch as if the NPC got spawned.
+                Vob.CurrentStateValid = false;
+                Properties.AnimationQueue.Clear();
+                Properties.CurrentAction = new None(new AnimationAction(), NpcData);
+                Properties.CurrentLoopState = NpcProperties.LoopState.None; // i.e. call StartNextState() next frame
+
+                PrefabProps.AnimationSystem.StopAllAnimations();
             }
         }
 
@@ -304,7 +332,8 @@ namespace GUZ.Core.Npc
             var currentRoutine = Properties.RoutineCurrent;
             if (currentRoutine != null)
             {
-                gameObject.transform.position = WayNetHelper.GetWayNetPoint(currentRoutine.Waypoint).Position;
+                var wpPos = WayNetHelper.GetWayNetPoint(currentRoutine.Waypoint).Position;
+                gameObject.transform.position = GameGlobals.Npcs.GetFreeAreaAtSpawnPoint(wpPos);
             }
 
             // Animation state handling
@@ -360,7 +389,7 @@ namespace GUZ.Core.Npc
             else
             {
                 //if we don't have a routine means it's about a monster
-                StartRoutine(Properties.StateStart);
+                StartRoutine(Vob.CurrentStateIndex);
             }
         }
 

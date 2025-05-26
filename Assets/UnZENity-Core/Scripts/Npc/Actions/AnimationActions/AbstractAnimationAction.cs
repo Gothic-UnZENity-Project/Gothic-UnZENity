@@ -23,6 +23,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
         protected readonly NpcInstance NpcInstance;
         protected readonly GameObject NpcGo;
         protected readonly NpcProperties Props;
+        protected readonly ZenKit.Vobs.Npc Vob;
         protected readonly NpcPrefabProperties PrefabProps;
 
         protected float ActionTime;
@@ -37,6 +38,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             NpcInstance = npcData.Instance;
             NpcGo = npcData.Go;
             Props = npcData.Props;
+            Vob = npcData.Vob;
             PrefabProps = npcData.PrefabProps;
         }
 
@@ -148,11 +150,6 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             var item = slotGo!.transform.GetChild(0);
 
             Object.Destroy(item.gameObject);
-        }
-
-        public void AnimationBlendOutEventCallback(SerializableEventBlendOutSignal eventData)
-        {
-            AnimationCreator.StartBlendOutAnimation(eventData.CurrentAnimName, eventData.BlendOutTime, NpcGo);
         }
 
         /// <summary>

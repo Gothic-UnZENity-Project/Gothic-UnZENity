@@ -31,7 +31,10 @@ namespace GUZ.Core.Manager
                 // Don't worry. I assume this even makes no sense at all, as also the "END" dialog would always trigger a return true.
                 Logger.LogError("Npc_CheckInfo isn't implemented for important=0.", LogCat.Dialog);
             }
-            return TryGetImportant(npc.GetUserData2().Props.Dialogs, out _);
+
+            GameGlobals.Npcs.SetDialogs(npc.GetUserData());
+            
+            return TryGetImportant(npc.GetUserData(), out _);
         }
 
         /// <summary>
@@ -42,6 +45,9 @@ namespace GUZ.Core.Manager
         {
             if (initialDialogStarting)
             {
+                // Optimization: We expect, that AmbientInfos are assigned before Ai_ProcessInfos() is called.
+                GameGlobals.Npcs.SetDialogs(npcContainer);
+
                 GameContext.DialogAdapter.StartDialogInitially();
             }
 
@@ -57,7 +63,7 @@ namespace GUZ.Core.Manager
                 GameContext.DialogAdapter.ShowDialog(npcContainer.Go);
             }
             // There is at least one important entry, the NPC wants to talk to the hero about.
-            else if (initialDialogStarting && TryGetImportant(npcContainer.Props.Dialogs, out var infoInstance))
+            else if (initialDialogStarting && TryGetImportant(npcContainer, out var infoInstance))
             {
                 GameData.Dialogs.CurrentDialog.Instance = infoInstance;
                 CallMainInformation(npcContainer, infoInstance);
@@ -74,12 +80,19 @@ namespace GUZ.Core.Manager
                         continue;
                     }
 
+                    
+                    // TODO - Should be outsourced to some VmManager.Call<int> function which sets and resets values.
+                    var oldSelf = GameData.GothicVm.GlobalSelf;
+                    GameData.GothicVm.GlobalSelf = npcContainer.Instance;
+                    var conditionResult = GameData.GothicVm.Call<int>(dialog.Condition);
+                    GameData.GothicVm.GlobalSelf = oldSelf;
+
                     // Dialog condition is false
-                    if (dialog.Condition == 0 || GameData.GothicVm.Call<int>(dialog.Condition) <= 0)
+                    if (conditionResult == 0)
                     {
                         continue;
                     }
-
+                    
                     // We can now add the dialog
                     selectableDialogs.Add(dialog);
                 }
@@ -93,9 +106,9 @@ namespace GUZ.Core.Manager
         /// <summary>
         /// If something is important, then call it automatically.
         /// </summary>
-        private static bool TryGetImportant(List<InfoInstance> dialogs, out InfoInstance item)
+        private static bool TryGetImportant(NpcContainer npcContainer, out InfoInstance item)
         {
-            foreach (var dialog in dialogs)
+            foreach (var dialog in npcContainer.Props.Dialogs)
             {
                 // Dialog is not important.
                 if (dialog.Important != 1)
@@ -110,7 +123,18 @@ namespace GUZ.Core.Manager
                 }
 
                 // No dialog condition exists or dialog condition() is false.
-                if (dialog.Condition == 0 || GameData.GothicVm.Call<int>(dialog.Condition) == 0)
+                if (dialog.Condition == 0)
+                {
+                    continue;
+                }
+                
+                // TODO - Should be outsourced to some VmManager.Call<int> function which sets and resets values.
+                var oldSelf = GameData.GothicVm.GlobalSelf;
+                GameData.GothicVm.GlobalSelf = npcContainer.Instance;
+                var conditionResult = GameData.GothicVm.Call<int>(dialog.Condition);
+                GameData.GothicVm.GlobalSelf = oldSelf;
+
+                if (conditionResult == 0)
                 {
                     continue;
                 }
@@ -132,9 +156,9 @@ namespace GUZ.Core.Manager
 
             var npcTalkingTo = isHero ? target : self;
 
-            npcTalkingTo.GetUserData2().Props.AnimationQueue.Enqueue(new Output(
+            npcTalkingTo.GetUserData().Props.AnimationQueue.Enqueue(new Output(
                 new AnimationAction(int0: speakerId, string0: outputName),
-                npcTalkingTo.GetUserData2()));
+                npcTalkingTo.GetUserData()));
         }
 
         /// <summary>
@@ -196,14 +220,14 @@ namespace GUZ.Core.Manager
         {
             var props = GetProperties(npc);
 
-            props.AnimationQueue.Enqueue(new StartProcessInfos(new AnimationAction(bool0: true), npc.GetUserData2()));
+            props.AnimationQueue.Enqueue(new StartProcessInfos(new AnimationAction(bool0: true), npc.GetUserData()));
         }
 
         public static void ExtAiStopProcessInfos(NpcInstance npc)
         {
             var props = GetProperties(npc);
 
-            props.AnimationQueue.Enqueue(new StopProcessInfos(new AnimationAction(), npc.GetUserData2()));
+            props.AnimationQueue.Enqueue(new StopProcessInfos(new AnimationAction(), npc.GetUserData()));
         }
 
         public static void MainSelectionClicked(NpcContainer npcContainer, InfoInstance infoInstance)
@@ -299,17 +323,17 @@ namespace GUZ.Core.Manager
 
         private static GameObject GetGo(NpcInstance npc)
         {
-            return npc.GetUserData2().Go;
+            return npc.GetUserData().Go;
         }
 
         private static NpcContainer GetNpcContainer(NpcInstance npc)
         {
-            return npc.GetUserData2();
+            return npc.GetUserData();
         }
 
         private static NpcProperties GetProperties(NpcInstance npc)
         {
-            return npc.GetUserData2().Props;
+            return npc.GetUserData().Props;
         }
     }
 }

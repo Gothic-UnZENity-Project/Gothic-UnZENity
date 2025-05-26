@@ -6,7 +6,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
 {
     public class LookAtNpc : AbstractAnimationAction
     {
-        private Transform _otherHead => Action.Instance0.GetUserData2().PrefabProps.Head.transform;
+        private Transform _otherHead => Action.Instance0.GetUserData().PrefabProps.Head.transform;
 
 
         public LookAtNpc(AnimationAction action, NpcContainer npcContainer) : base(action, npcContainer)

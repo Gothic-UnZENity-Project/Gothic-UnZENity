@@ -16,8 +16,9 @@ namespace GUZ.VR.Components.HVROverrides
         private const string _tutorialText =
 @"Move -> WASD
 Rotate Camera -> Hold Mouse right click
-Jump (Hexabody) -> Space
-Crouch (Hexabody) -> Z/X
+Jump -> Space
+Crouch -> Z/X
+Run -> Shift
 Menu -> Escape
 Quest log -> L
 Status -> B";

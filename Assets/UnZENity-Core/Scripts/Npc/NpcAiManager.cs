@@ -18,12 +18,12 @@ namespace GUZ.Core.Npc
     {
         public void ExtNpcPerceptionEnable(NpcInstance npc, VmGothicEnums.PerceptionType perception, int function)
         {
-            npc.GetUserData2().Props.Perceptions[perception] = function;
+            npc.GetUserData().Props.Perceptions[perception] = function;
         }
 
         public void ExtNpcPerceptionDisable(NpcInstance npc, VmGothicEnums.PerceptionType perception)
         {
-            npc.GetUserData2().Props.Perceptions[perception] = -1;
+            npc.GetUserData().Props.Perceptions[perception] = -1;
         }
 
         /// <summary>
@@ -67,31 +67,31 @@ namespace GUZ.Core.Npc
 
         public void ExtNpcSetPerceptionTime(NpcInstance npc, float time)
         {
-            npc.GetUserData2().Props.PerceptionTime = time;
+            npc.GetUserData().Props.PerceptionTime = time;
         }
 
         public void ExtAiSetWalkMode(NpcInstance npc, VmGothicEnums.WalkMode walkMode)
         {
-            npc.GetUserData2().Props.WalkMode = walkMode;
+            npc.GetUserData().Props.WalkMode = walkMode;
         }
 
         public void ExtAiGoToWp(NpcInstance npc, string wayPointName)
         {
-            npc.GetUserData2().Props.AnimationQueue.Enqueue(new GoToWp(
+            npc.GetUserData().Props.AnimationQueue.Enqueue(new GoToWp(
                 new AnimationAction(wayPointName),
-                npc.GetUserData2()));
+                npc.GetUserData()));
         }
 
         public void ExtAiAlignToWp(NpcInstance npc)
         {
-            npc.GetUserData2().Props.AnimationQueue.Enqueue(new AlignToWp(new AnimationAction(), npc.GetUserData2()));
+            npc.GetUserData().Props.AnimationQueue.Enqueue(new AlignToWp(new AnimationAction(), npc.GetUserData()));
         }
 
         public void ExtAiGoToFp(NpcInstance npc, string freePointName)
         {
-            npc.GetUserData2().Props.AnimationQueue.Enqueue(new GoToFp(
+            npc.GetUserData().Props.AnimationQueue.Enqueue(new GoToFp(
                 new AnimationAction(freePointName),
-                npc.GetUserData2()));
+                npc.GetUserData()));
         }
 
         /// <summary>
@@ -99,8 +99,8 @@ namespace GUZ.Core.Npc
         /// </summary>
         public bool ExtNpcCanSeeNpc(NpcInstance self, NpcInstance other, bool freeLOS)
         {
-            var selfContainer = self.GetUserData2();
-            var otherContainer = other.GetUserData2();
+            var selfContainer = self.GetUserData();
+            var otherContainer = other.GetUserData();
 
             if (selfContainer == null || otherContainer == null)
             {
@@ -126,12 +126,12 @@ namespace GUZ.Core.Npc
 
         public void ExtNpcClearAiQueue(NpcInstance npc)
         {
-            npc.GetUserData2().Props.AnimationQueue.Clear();
+            npc.GetUserData().Props.AnimationQueue.Clear();
         }
 
         public void ExtAiGoToNextFp(NpcInstance npc, string fpNamePart)
         {
-            var npcContainer = npc.GetUserData2();
+            var npcContainer = npc.GetUserData();
             npcContainer.Props.AnimationQueue.Enqueue(new GoToNextFp(
                 new AnimationAction(fpNamePart),
                 npcContainer));
@@ -139,7 +139,7 @@ namespace GUZ.Core.Npc
 
         public void ExtAiWait(NpcInstance npc, float seconds)
         {
-            var npcContainer = npc.GetUserData2();
+            var npcContainer = npc.GetUserData();
             npcContainer.Props.AnimationQueue.Enqueue(new Wait(
                 new AnimationAction(float0: seconds),
                 npcContainer));
@@ -152,31 +152,34 @@ namespace GUZ.Core.Npc
                 return;
             }
 
-            self.GetUserData2().Props.AnimationQueue.Enqueue(new GoToNpc(
+            self.GetUserData().Props.AnimationQueue.Enqueue(new GoToNpc(
                 new AnimationAction(instance0: other),
-                self.GetUserData2()));
+                self.GetUserData()));
         }
 
         public void ExtAiPlayAni(NpcInstance npc, string name)
         {
-            npc.GetUserData2().Props.AnimationQueue.Enqueue(new PlayAni(new AnimationAction(name), npc.GetUserData2()));
+            npc.GetUserData().Props.AnimationQueue.Enqueue(new PlayAni(new AnimationAction(name), npc.GetUserData()));
         }
 
         public void ExtAiStartState(NpcInstance npc, int action, bool stopCurrentState, string wayPointName)
         {
-            npc.GetUserData2().Props.AnimationQueue.Enqueue(new StartState(
-                new AnimationAction(int0: action, bool0: stopCurrentState, string0: wayPointName),
-                npc.GetUserData2()));
+            var other = (NpcInstance)GameData.GothicVm.GlobalOther;
+            var victim = (NpcInstance)GameData.GothicVm.GlobalOther;
+            
+            npc.GetUserData().Props.AnimationQueue.Enqueue(new StartState(
+                new AnimationAction(int0: action, bool0: stopCurrentState, string0: wayPointName, instance0: other, instance1: victim),
+                npc.GetUserData()));
         }
 
         public void ExtAiLookAt(NpcInstance npc, string wayPointName)
         {
-            npc.GetUserData2().Props.AnimationQueue.Enqueue(new LookAt(new AnimationAction(wayPointName), npc.GetUserData2()));
+            npc.GetUserData().Props.AnimationQueue.Enqueue(new LookAt(new AnimationAction(wayPointName), npc.GetUserData()));
         }
 
         public void ExtAiAlignToFp(NpcInstance npc)
         {
-            npc.GetUserData2().Props.AnimationQueue.Enqueue(new AlignToFp(new AnimationAction(), npc.GetUserData2()));
+            npc.GetUserData().Props.AnimationQueue.Enqueue(new AlignToFp(new AnimationAction(), npc.GetUserData()));
         }
 
         public void ExtAiLookAtNpc(NpcInstance npc, NpcInstance other)
@@ -186,28 +189,28 @@ namespace GUZ.Core.Npc
                 return;
             }
 
-            npc.GetUserData2().Props.AnimationQueue.Enqueue(new LookAtNpc(
+            npc.GetUserData().Props.AnimationQueue.Enqueue(new LookAtNpc(
                 new AnimationAction(instance0: other),
-                npc.GetUserData2()));
+                npc.GetUserData()));
         }
 
         public void ExtAiStopLookAt(NpcInstance npc)
         {
-            npc.GetUserData2().Props.AnimationQueue.Enqueue(new StopLookAtNpc(
+            npc.GetUserData().Props.AnimationQueue.Enqueue(new StopLookAtNpc(
                 new AnimationAction(),
-                npc.GetUserData2()));
+                npc.GetUserData()));
         }
 
         public void ExtAiContinueRoutine(NpcInstance npc)
         {
-            npc.GetUserData2().Props.AnimationQueue.Enqueue(new ContinueRoutine(new AnimationAction(), npc.GetUserData2()));
+            npc.GetUserData().Props.AnimationQueue.Enqueue(new ContinueRoutine(new AnimationAction(), npc.GetUserData()));
         }
 
         public void ExtAiUseMob(NpcInstance npc, string target, int state)
         {
-            npc.GetUserData2().Props.AnimationQueue.Enqueue(new UseMob(
+            npc.GetUserData().Props.AnimationQueue.Enqueue(new UseMob(
                 new AnimationAction(target, state),
-                npc.GetUserData2()));
+                npc.GetUserData()));
         }
 
         public void ExtAiStandUp(NpcInstance npc)
@@ -215,7 +218,7 @@ namespace GUZ.Core.Npc
             // FIXME - Implement remaining tasks from G1 documentation:
             // * Ist der Nsc in einem Animatinsstate, wird die passende Rücktransition abgespielt.
             // * Benutzt der NSC gerade ein MOBSI, poppt er ins stehen.
-            npc.GetUserData2().Props.AnimationQueue.Enqueue(new StandUp(new AnimationAction(), npc.GetUserData2()));
+            npc.GetUserData().Props.AnimationQueue.Enqueue(new StandUp(new AnimationAction(), npc.GetUserData()));
         }
 
         public void ExtAiTurnToNpc(NpcInstance npc, NpcInstance other)
@@ -225,19 +228,19 @@ namespace GUZ.Core.Npc
                 return;
             }
 
-            npc.GetUserData2().Props.AnimationQueue.Enqueue(new TurnToNpc(
+            npc.GetUserData().Props.AnimationQueue.Enqueue(new TurnToNpc(
                 new AnimationAction(instance0: other),
-                npc.GetUserData2()));
+                npc.GetUserData()));
         }
 
         public void ExtAiPlayAniBs(NpcInstance npc, string name, int bodyState)
         {
-            npc.GetUserData2().Props.AnimationQueue.Enqueue(new PlayAniBs(new AnimationAction(name, bodyState), npc.GetUserData2()));
+            npc.GetUserData().Props.AnimationQueue.Enqueue(new PlayAniBs(new AnimationAction(name, bodyState), npc.GetUserData()));
         }
 
         public void ExtAiUnequipArmor(NpcInstance npc)
         {
-            npc.GetUserData2().Props.BodyData.Armor = 0;
+            npc.GetUserData().Props.BodyData.Armor = 0;
         }
 
         /// <summary>
@@ -246,17 +249,17 @@ namespace GUZ.Core.Npc
         public int ExtNpcGetStateTime(NpcInstance npc)
         {
             // If there is no active running state, we immediately assume the current routine is running since the start of all beings.
-            if (!npc.GetUserData2().Props.IsStateTimeActive)
+            if (!npc.GetUserData().Props.IsStateTimeActive)
             {
                 return int.MaxValue;
             }
 
-            return (int)npc.GetUserData2().Props.StateTime;
+            return (int)npc.GetUserData().Props.StateTime;
         }
 
         public void ExtNpcSetStateTime(NpcInstance npc, int seconds)
         {
-            npc.GetUserData2().Props.StateTime = seconds;
+            npc.GetUserData().Props.StateTime = seconds;
         }
 
         /// <summary>
@@ -269,19 +272,19 @@ namespace GUZ.Core.Npc
         /// </summary>
         public void ExtAiUseItemToState(NpcInstance npc, int itemId, int animationState)
         {
-            npc.GetUserData2().Props.AnimationQueue.Enqueue(new UseItemToState(
+            npc.GetUserData().Props.AnimationQueue.Enqueue(new UseItemToState(
                 new AnimationAction(int0: itemId, int1: animationState),
-                npc.GetUserData2()));
+                npc.GetUserData()));
         }
 
         public bool ExtNpcWasInState(NpcInstance npc, uint action)
         {
-            return npc.GetUserData2().Props.PrevStateStart == action;
+            return npc.GetUserData().Vob.LastAiState == action;
         }
 
         public VmGothicEnums.BodyState ExtGetBodyState(NpcInstance npc)
         {
-            return npc.GetUserData2().Props.BodyState;
+            return npc.GetUserData().Props.BodyState;
         }
 
         /// <summary>
@@ -294,7 +297,7 @@ namespace GUZ.Core.Npc
                 return int.MaxValue;
             }
 
-            var npc1Pos = npc1.GetUserData2().Go.transform.position;
+            var npc1Pos = npc1.GetUserData().Go.transform.position;
 
             Vector3 npc2Pos;
             // If hero
@@ -304,7 +307,7 @@ namespace GUZ.Core.Npc
             }
             else
             {
-                var go = npc2.GetUserData2().Go;
+                var go = npc2.GetUserData().Go;
 
                 // e.g. Triggered at Grd_214_Torwache_NODUSTY_Condition as Dusty is not yet spawned.
                 // Hint: Could be optimized/overcome if we copy pos+rot between GO and ZenKitVob each frame.
@@ -319,7 +322,7 @@ namespace GUZ.Core.Npc
 
         public void ExtAiDrawWeapon(NpcInstance npc)
         {
-            npc.GetUserData2().Props.AnimationQueue.Enqueue(new DrawWeapon(new AnimationAction(), npc.GetUserData2()));
+            npc.GetUserData().Props.AnimationQueue.Enqueue(new DrawWeapon(new AnimationAction(), npc.GetUserData()));
         }
 
         public bool ExtNpcIsDead(NpcInstance npcInstance)
@@ -331,7 +334,7 @@ namespace GUZ.Core.Npc
 
         public bool ExtNpcIsInState(NpcInstance npc, int state)
         {
-            return npc.GetUserData2().Props.StateStart == state;
+            return npc.GetUserData().Vob.CurrentStateIndex == state;
         }
 
         public bool ExtNpcIsPlayer(NpcInstance npc)
@@ -341,7 +344,7 @@ namespace GUZ.Core.Npc
 
         public ItemInstance ExtGetEquippedArmor(NpcInstance npc)
         {
-            var armor = npc.GetUserData2().Props.EquippedItems
+            var armor = npc.GetUserData().Props.EquippedItems
                 .FirstOrDefault(i => i.MainFlag == (int)VmGothicEnums.ItemFlags.ItemKatArmor);
 
             return armor;
@@ -354,7 +357,7 @@ namespace GUZ.Core.Npc
 
         public bool ExtNpcIsInFightMode(NpcInstance npc, VmGothicEnums.FightMode fightMode)
         {
-            return npc.GetUserData2().Vob.FightMode == (int)fightMode;
+            return npc.GetUserData().Vob.FightMode == (int)fightMode;
         }
 
         public bool ExtNpcOwnedByNpc(ItemInstance item, NpcInstance npc)
@@ -369,8 +372,8 @@ namespace GUZ.Core.Npc
 
         public VmGothicEnums.Attitude ExtGetAttitude(NpcInstance self, NpcInstance other)
         {
-            var npc1 = self.GetUserData2();
-            var npc2 = other.GetUserData2();
+            var npc1 = self.GetUserData();
+            var npc2 = other.GetUserData();
             if (npc1 == null || npc2 == null)
             {
                 return VmGothicEnums.Attitude.Neutral;
@@ -381,37 +384,37 @@ namespace GUZ.Core.Npc
 
         public void ExtSetAttitude(NpcInstance npc, VmGothicEnums.Attitude value)
         {
-            npc.GetUserData2().Props.Attitude = value;
+            npc.GetUserData().Props.Attitude = value;
         }
         
         public void ExtSetTempAttitude(NpcInstance npc, VmGothicEnums.Attitude value)
         {
-            npc.GetUserData2().Props.TempAttitude = value;
+            npc.GetUserData().Props.TempAttitude = value;
         }
 
-        public bool Npc_GetTarget(NpcInstance npc)
+        public bool ExtGetTarget(NpcInstance npc)
         {
-            return npc.GetUserData2().Props.TargetNpc != null;
+            return npc.GetUserData().Props.TargetNpc != null;
         }
 
-        public void Npc_SetTarget(NpcInstance npc, NpcInstance target)
+        public void ExtSetTarget(NpcInstance npc, NpcInstance target)
         {
-            npc.GetUserData2().Props.TargetNpc = target;
+            npc.GetUserData().Props.TargetNpc = target;
         }
 
         public void Npc_SendPassivePerc(NpcInstance npc,VmGothicEnums.PerceptionType perc, NpcInstance victim, NpcInstance other)
         {
-            GameGlobals.NpcAi.ExecutePerception(perc, npc.GetUserData2().Props, npc, victim, other);
+            GameGlobals.NpcAi.ExecutePerception(perc, npc.GetUserData().Props, npc, victim, other);
         }
 
-        public void Npc_SetTrueGuild(NpcInstance npc, int guild)
+        public void ExtSetTrueGuild(NpcInstance npc, int guild)
         {
-            npc.GetUserData2().Props.TrueGuild = (VmGothicEnums.Guild) guild;
+            npc.GetUserData().Props.TrueGuild = (VmGothicEnums.Guild) guild;
         }
 
-        public int Npc_GetTrueGuild(NpcInstance npc)
+        public int ExtGetTrueGuild(NpcInstance npc)
         {
-            var npcUserData = npc.GetUserData2();
+            var npcUserData = npc.GetUserData();
             var npcGuild  = npcUserData.Props.TrueGuild;
 
             return npcGuild == 0 ? // No True Guild
@@ -421,13 +424,13 @@ namespace GUZ.Core.Npc
 
         public void UpdateEnemyNpc(NpcInstance self)
         {
-            var selfNpc = self.GetUserData2();
+            var selfNpc = self.GetUserData();
             var selfPosition = selfNpc.Go.transform.position; // Cache position
 
             NpcContainer closestEnemy = null;
             var closestSqrDist = float.MaxValue;
 
-            foreach (var candidate in MultiTypeCache.NpcCache2)
+            foreach (var candidate in MultiTypeCache.NpcCache)
             {
                 // Fast-fail checks in order of cheapest first
                 if (candidate.Props == null || candidate.Go == null)
@@ -460,6 +463,16 @@ namespace GUZ.Core.Npc
             }
 
             selfNpc.Props.EnemyNpc = closestEnemy?.Instance;
+        }
+
+        public void ExtSetRefuseTalk(NpcInstance self, int refuseSeconds)
+        {
+            self.GetUserData().Props.RefuseTalkTimer = refuseSeconds;
+        }
+
+        public bool ExtRefuseTalk(NpcInstance self)
+        {
+            return self.GetUserData().Props.RefuseTalkTimer > 0f;
         }
     }
 }

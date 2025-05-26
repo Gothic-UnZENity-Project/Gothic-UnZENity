@@ -95,9 +95,9 @@ namespace GUZ.Core.Editor.Tools
             var stationaryLightCache = new StationaryLightCacheCreator();
             var worldChunkCache = new WorldChunkCacheCreator();
 
-            await stationaryLightCache.CalculateStationaryLights(world.RootObjects).AwaitAndLog();
+            await stationaryLightCache.CalculateStationaryLights(world.RootObjects, 0).AwaitAndLog();
             Logger.LogEditor("DONE - Loading stationary light data", LogCat.PreCaching);
-            await worldChunkCache.CalculateWorldChunks(world, stationaryLightCache.StationaryLightBounds).AwaitAndLog();
+            await worldChunkCache.CalculateWorldChunks(world, stationaryLightCache.StationaryLightBounds, 0).AwaitAndLog();
             Logger.LogEditor("DONE - Calculating world chunks", LogCat.PreCaching);
 
 

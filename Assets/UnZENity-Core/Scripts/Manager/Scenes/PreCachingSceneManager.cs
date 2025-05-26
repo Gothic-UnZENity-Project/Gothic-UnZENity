@@ -5,17 +5,18 @@ using GUZ.Core.Caches;
 using GUZ.Core.Caches.StaticCache;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
+using GUZ.Core.UI.Menus.LoadingBars;
 using GUZ.Core.Util;
 using UnityEngine;
 using ZenKit;
-using Debug = UnityEngine.Debug;
 using Logger = GUZ.Core.Util.Logger;
 
 namespace GUZ.Core.Manager.Scenes
 {
     public class PreCachingSceneManager : MonoBehaviour, ISceneManager
     {
-        [SerializeField] private GameObject _loadingArea;
+        [SerializeField]
+        private PreCachingLoadingBarHandler _loadingBarHandler;
 
         private static readonly string[] _gothic1Worlds =
         {
@@ -37,15 +38,12 @@ namespace GUZ.Core.Manager.Scenes
 
         public void Init()
         {
-            GameGlobals.Loading.InitLoading(_loadingArea);
-            GameContext.InteractionAdapter.TeleportPlayerTo(_loadingArea.transform.position);
+            GameContext.InteractionAdapter.TeleportPlayerTo(_loadingBarHandler.transform.position);
 
 #pragma warning disable CS4014 // Do not wait. We want to update player movement (VR) and camera view (progress bar)
             CreateCaches();
 #pragma warning restore CS4014
         }
-
-
 
         /// <summary>
         /// 1. Fetch all existing worlds
@@ -62,8 +60,9 @@ namespace GUZ.Core.Manager.Scenes
             try
             {
                 var worldsToLoad = GameContext.GameVersionAdapter.Version == GameVersion.Gothic1 ? _gothic1Worlds : _gothic2Worlds;
-
-                // DEBUG - Remove this IF to enforce recreation of cache.
+                
+                // Sleeper temple music (similar to installation music)
+                GameGlobals.Music.Play("KAT_DAY_STD");
                 if (!GameGlobals.Config.Dev.AlwaysRecreateCache && GameGlobals.StaticCache.DoCacheFilesExist(worldsToLoad))
                 {
                     var metadata = await GameGlobals.StaticCache.ReadMetadata();
@@ -74,6 +73,10 @@ namespace GUZ.Core.Manager.Scenes
                         return;
                     }
                 }
+                
+                GameContext.InteractionAdapter.DisableMenus();
+                _loadingBarHandler.LevelCount = worldsToLoad.Length;
+                GameGlobals.Loading.InitLoading(_loadingBarHandler);
 
                 var watch = Stopwatch.StartNew();
                 var overallWatch = Stopwatch.StartNew();
@@ -83,26 +86,28 @@ namespace GUZ.Core.Manager.Scenes
 
                 GameGlobals.StaticCache.InitCacheFolder();
 
-                foreach (var worldName in worldsToLoad)
+                for (var worldIndex = 0; worldIndex < worldsToLoad.Length; worldIndex++)
                 {
+                    var worldName = worldsToLoad[worldIndex];
+                        
                     Logger.Log($"### PreCaching meshes for world: {worldName}", LogCat.PreCaching);
                     var world = ResourceLoader.TryGetWorld(worldName, GameContext.GameVersionAdapter.Version)!;
                     var stationaryLightCache = new StationaryLightCacheCreator();
                     var worldChunkCache = new WorldChunkCacheCreator();
 
-                    await vobBoundsCache.CalculateVobBounds(world.RootObjects);
+                    await vobBoundsCache.CalculateVobBounds(world.RootObjects, worldIndex);
                     watch.LogAndRestart($"{worldName}: VobBounds calculated.");
 
-                    await textureArrayCache.CalculateTextureArrayInformation(world.Mesh);
+                    await textureArrayCache.CalculateTextureArrayInformation(world.Mesh, worldIndex);
                     watch.LogAndRestart($"{worldName}: WorldMesh TextureArray calculated.");
 
-                    await textureArrayCache.CalculateTextureArrayInformation(world.RootObjects);
+                    await textureArrayCache.CalculateTextureArrayInformation(world.RootObjects, worldIndex);
                     watch.LogAndRestart($"{worldName}: World VOBs TextureArray calculated.");
 
-                    await stationaryLightCache.CalculateStationaryLights(world.RootObjects);
+                    await stationaryLightCache.CalculateStationaryLights(world.RootObjects, worldIndex);
                     watch.LogAndRestart($"{worldName}: Stationary lights calculated.");
 
-                    await worldChunkCache.CalculateWorldChunks(world, stationaryLightCache.StationaryLightBounds);
+                    await worldChunkCache.CalculateWorldChunks(world, stationaryLightCache.StationaryLightBounds, worldIndex);
                     watch.LogAndRestart($"{worldName}: World chunks calculated.");
 
                     await GameGlobals.StaticCache.SaveWorldCache(worldName, worldChunkCache.MergedChunksByLights, stationaryLightCache.StationaryLightInfos);
@@ -142,6 +147,13 @@ namespace GUZ.Core.Manager.Scenes
             {
                 Logger.LogError(e.ToString(), LogCat.PreCaching);
                 throw;
+            }
+            finally
+            {
+                GameGlobals.Loading.StopLoading();
+
+                // We need to grant the player always the option to quit the game via menu if something fails.
+                GameContext.InteractionAdapter.EnableMenus();
             }
         }
     }

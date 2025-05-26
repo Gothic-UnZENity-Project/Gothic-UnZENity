@@ -1,5 +1,4 @@
 using System.Linq;
-using GUZ.Core.Creator;
 using GUZ.Core.Creator.Sounds;
 using GUZ.Core.Data.Container;
 using GUZ.Core.Extensions;
@@ -30,9 +29,6 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             // Hero
             if (_isHeroSpeaking)
             {
-                // If NPC talked before, we stop it immediately (As some audio samples are shorter than the actual animation)
-                AnimationCreator.StopAnimation(NpcGo);
-
                 GameGlobals.Npcs.GetHeroGameObject().GetComponent<AudioSource>().PlayOneShot(audioClip);
 
                 PrintDialog();
@@ -45,7 +41,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
 
                 _randomDialogAnimationName = $"T_DIALOGGESTURE_{randomId:00}";
                 PrefabProps.AnimationSystem.PlayAnimation(_randomDialogAnimationName);
-                AnimationCreator.PlayHeadMorphAnimation(NpcContainer, HeadMorph.HeadMorphType.Viseme);
+                PrefabProps.AnimationSystem.PlayHeadAnimation(HeadMorph.HeadMorphType.Viseme);
 
                 PrefabProps.NpcSound.PlayOneShot(audioClip);
 
@@ -117,10 +113,9 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
                 else
                 {
                     PrefabProps.AnimationSystem.StopAnimation(_randomDialogAnimationName);
-                    AnimationCreator.StopHeadMorphAnimation(NpcContainer, HeadMorph.HeadMorphType.Viseme);
+                    PrefabProps.AnimationSystem.StopHeadAnimation(HeadMorph.HeadMorphType.Viseme);
                     PrefabProps.NpcSubtitles.HideSubtitles();
                 }
-
 
                 return true;
             }

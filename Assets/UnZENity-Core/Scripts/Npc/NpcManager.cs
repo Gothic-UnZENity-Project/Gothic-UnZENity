@@ -16,7 +16,6 @@ using UnityEngine;
 using ZenKit;
 using ZenKit.Daedalus;
 using Logger = GUZ.Core.Util.Logger;
-using Vector3 = System.Numerics.Vector3;
 
 namespace GUZ.Core.Npc
 {
@@ -28,6 +27,7 @@ namespace GUZ.Core.Npc
         // Supporter class where the whole Init() logic is outsourced for better readability.
         private NpcInitializer _initializer = new ();
         private Queue<NpcLoader> _objectsToInitQueue = new();
+        private Queue<NpcContainer> _objectToReEnableQueue = new();
 
         private static DaedalusVm _vm => GameData.GothicVm;
 
@@ -37,6 +37,7 @@ namespace GUZ.Core.Npc
         public void Init(ICoroutineManager coroutineManager)
         {
             coroutineManager.StartCoroutine(InitNpcCoroutine());
+            coroutineManager.StartCoroutine(ReEnableNpcCoroutine());
         }
 
         private IEnumerator InitNpcCoroutine()
@@ -50,7 +51,6 @@ namespace GUZ.Core.Npc
                 else
                 {
                     var npcElement = _objectsToInitQueue.Dequeue();
-
                     var npcId = npcElement.Npc.Id;
                     var monsterId = npcElement.Npc.GetAiVar(Constants.DaedalusConst.AIVMMRealId);
 
@@ -63,7 +63,8 @@ namespace GUZ.Core.Npc
 
                     // Do not load Monsters we don't want to have via Debug flags.
                     if (npcId == 0 && monsterId != 0 && GameGlobals.Config.Dev.SpawnMonsterInstances.Value.Any() &&
-                        !GameGlobals.Config.Dev.SpawnMonsterInstances.Value.Contains((DeveloperConfigEnums.MonsterId)monsterId))
+                        !GameGlobals.Config.Dev.SpawnMonsterInstances.Value.Contains(
+                            (DeveloperConfigEnums.MonsterId)monsterId))
                     {
                         continue;
                     }
@@ -74,6 +75,28 @@ namespace GUZ.Core.Npc
                     {
                         continue;
                     }
+                }
+
+                yield return FrameSkipper.TrySkipToNextFrameCoroutine();
+            }
+        }
+
+        /// <summary>
+        /// Reset one-by-one. Otherwise NPCs will spawn over another if starting from the same WayPoint.
+        /// </summary>
+        private IEnumerator ReEnableNpcCoroutine()
+        {
+            while (true)
+            {
+                if (_objectToReEnableQueue.IsEmpty())
+                {
+                    yield return null;
+                }
+                else
+                {
+                    var npcData = _objectToReEnableQueue.Dequeue();
+                    // If we walked to an NPC in our game, the NPC will be re-enabled and Routines get reset.
+                    npcData.PrefabProps?.AiHandler?.ReEnableNpc();
                     yield return FrameSkipper.TrySkipToNextFrameCoroutine();
                 }
             }
@@ -82,6 +105,11 @@ namespace GUZ.Core.Npc
         public void SetRootGo(GameObject rootGo)
         {
             _initializer.RootGo = rootGo;
+        }
+
+        public Vector3 GetFreeAreaAtSpawnPoint(Vector3 positionToScan)
+        {
+            return _initializer.GetFreeAreaAtSpawnPoint(positionToScan);
         }
 
         public async Task CreateWorldNpcs(LoadingManager loading)
@@ -116,19 +144,19 @@ namespace GUZ.Core.Npc
 
         public void ExtNpcSetTalentValue(NpcInstance npc, VmGothicEnums.Talent talent, int level)
         {
-            var props = npc.GetUserData2().Props;
+            var props = npc.GetUserData().Props;
             props.Talents[talent] = level;
         }
 
         public void ExtMdlSetVisual(NpcInstance npc, string visual)
         {
-            var props = npc.GetUserData2().Props;
+            var props = npc.GetUserData().Props;
             props.MdsNameBase = visual;
         }
 
         public void ExtSetVisualBody(VmGothicExternals.ExtSetVisualBodyData data)
         {
-            var props = data.Npc.GetUserData2().Props;
+            var props = data.Npc.GetUserData().Props;
 
             props.BodyData = data;
 
@@ -146,14 +174,14 @@ namespace GUZ.Core.Npc
 
         public NpcInstance ExtHlpGetNpc(int instanceId)
         {
-            return MultiTypeCache.NpcCache2
+            return MultiTypeCache.NpcCache
                 .FirstOrDefault(i => i.Instance.Index == instanceId)?
                 .Instance;
         }
 
         public void ExtNpcChangeAttribute(NpcInstance npc, int attributeId, int value)
         {
-            var vob = npc.GetUserData2().Vob;
+            var vob = npc.GetUserData().Vob;
 
             vob.Attributes[attributeId] = value;
         }
@@ -167,13 +195,13 @@ namespace GUZ.Core.Npc
                 return;
             }
 
-            if (npc.GetUserData2() == null)
+            if (npc.GetUserData() == null)
             {
                 Logger.LogError($"NPC is not set for {nameof(ExtCreateInvItems)}. Is it an error on Daedalus or our end?", LogCat.Npc);
                 return;
             }
 
-            var props = npc.GetUserData2().Props;
+            var props = npc.GetUserData().Props;
             if (props == null)
             {
                 Logger.LogError($"NPC not found with index {npc.Index}", LogCat.Npc);
@@ -185,12 +213,12 @@ namespace GUZ.Core.Npc
 
         public NpcContainer GetHeroContainer()
         {
-            return ((NpcInstance)GameData.GothicVm.GlobalHero).GetUserData2();
+            return ((NpcInstance)GameData.GothicVm.GlobalHero).GetUserData();
         }
 
         public GameObject GetHeroGameObject()
         {
-            return ((NpcInstance)GameData.GothicVm.GlobalHero).GetUserData2().Go;
+            return ((NpcInstance)GameData.GothicVm.GlobalHero).GetUserData().Go;
         }
 
         /// <summary>
@@ -205,7 +233,7 @@ namespace GUZ.Core.Npc
             {
                 // We assume, that this call is only made when the cache got cleared before as we loaded another world.
                 // Therefore, we re-add it now.
-                MultiTypeCache.NpcCache2.Add(((NpcInstance)GameData.GothicVm.GlobalHero).GetUserData2());
+                MultiTypeCache.NpcCache.Add(((NpcInstance)GameData.GothicVm.GlobalHero).GetUserData());
 
                 return;
             }
@@ -241,27 +269,27 @@ namespace GUZ.Core.Npc
 
             heroInstance.UserData = npcData;
 
-            MultiTypeCache.NpcCache2.Add(npcData);
+            MultiTypeCache.NpcCache.Add(npcData);
             _vm.InitInstance(heroInstance);
 
             _vm.GlobalHero = heroInstance;
         }
 
-        public void ExtMdlSetModelScale(NpcInstance npc, Vector3 scale)
+        public void ExtMdlSetModelScale(NpcInstance npc, System.Numerics.Vector3 scale)
         {
             // FIXME - Set this value on actual GameObject later.
-            npc.GetUserData2().Vob.ModelScale = scale;
+            npc.GetUserData().Vob.ModelScale = scale;
         }
 
         public void ExtSetModelFatness(NpcInstance npc, float fatness)
         {
             // FIXME - Set this value on actual GameObject later.
-            npc.GetUserData2().Vob.ModelFatness = fatness;
+            npc.GetUserData().Vob.ModelFatness = fatness;
         }
 
         public void ExtEquipItem(NpcInstance npc, int itemId)
         {
-            var props = npc.GetUserData2().Props;
+            var props = npc.GetUserData().Props;
             var itemData = VmInstanceManager.TryGetItemData(itemId);
 
             props.EquippedItems.Add(itemData);
@@ -269,12 +297,12 @@ namespace GUZ.Core.Npc
 
         public void ExtApplyOverlayMds(NpcInstance npc, string overlayName)
         {
-            npc.GetUserData2().Props.MdsNameOverlay = overlayName;
+            npc.GetUserData().Props.MdsNameOverlay = overlayName;
         }
 
         public void ExtNpcSetToFistMode(NpcInstance npc)
         {
-            var npcProperties = npc.GetUserData2().Props;
+            var npcProperties = npc.GetUserData().Props;
 
             npcProperties.WeaponState = VmGothicEnums.WeaponState.Fist;
 
@@ -285,7 +313,7 @@ namespace GUZ.Core.Npc
                 return;
             }
 
-            var slotGo = npc.GetUserData2().Go.FindChildRecursively(npcProperties.UsedItemSlot);
+            var slotGo = npc.GetUserData().Go.FindChildRecursively(npcProperties.UsedItemSlot);
             var item = slotGo!.transform.GetChild(0);
 
             Object.Destroy(item.gameObject);
@@ -307,7 +335,7 @@ namespace GUZ.Core.Npc
 
         public void ExtTaMin(NpcInstance npc, int startH, int startM, int stopH, int stopM, int action, string waypoint)
         {
-            var props = npc.GetUserData2().Props;
+            var props = npc.GetUserData().Props;
 
             RoutineData routine = new()
             {
@@ -337,7 +365,7 @@ namespace GUZ.Core.Npc
                 return;
             }
 
-            npc.GetUserData2().Props.Routines.Clear();
+            npc.GetUserData().Props.Routines.Clear();
 
             // We always need to set "self" before executing any Daedalus function.
             GameData.GothicVm.GlobalSelf = npc;
@@ -351,7 +379,7 @@ namespace GUZ.Core.Npc
         /// </summary>
         private bool CalculateCurrentRoutine(NpcInstance npc)
         {
-            var npcProps = npc.GetUserData2().Props;
+            var npcProps = npc.GetUserData().Props;
             var currentTime = GameGlobals.Time.GetCurrentDateTime();
             var normalizedNow = currentTime.Hour % 24 * 60 + currentTime.Minute;
             RoutineData newRoutine = null;
@@ -418,18 +446,23 @@ namespace GUZ.Core.Npc
 
             return true;
         }
+        
+        public void ReEnableNpc(NpcContainer npcData)
+        {
+            _objectToReEnableQueue.Enqueue(npcData);
+        }
 
         public string ExtNpcGetNextWp(NpcInstance npc)
         {
-            var pos = npc.GetUserData2().Go.transform.position;
+            var pos = npc.GetUserData().Go.transform.position;
 
             return WayNetHelper.FindNearestWayPoint(pos, true).Name;
         }
 
         public bool ExtWldIsFpAvailable(NpcInstance npc, string fpNamePart)
         {
-            var props = npc.GetUserData2().Props;
-            var npcGo = npc.GetUserData2().Go;
+            var props = npc.GetUserData().Props;
+            var npcGo = npc.GetUserData().Go;
             var freePoints =
                 WayNetHelper.FindFreePointsWithName(npcGo.transform.position, fpNamePart, _fpLookupDistance);
 
@@ -453,16 +486,16 @@ namespace GUZ.Core.Npc
 
         public string ExtGetNearestWayPoint(NpcInstance npc)
         {
-            var pos = npc.GetUserData2().Go.transform.position;
+            var pos = npc.GetUserData().Go.transform.position;
 
             return WayNetHelper.FindNearestWayPoint(pos).Name;
         }
 
         public bool ExtIsNextFpAvailable(NpcInstance npc, string fpNamePart)
         {
-            var props = npc.GetUserData2().Props;
-            var pos = npc.GetUserData2().Go.transform.position;
-            var fp = WayNetHelper.FindNearestFreePoint(pos, fpNamePart);
+            var props = npc.GetUserData().Props;
+            var pos = npc.GetUserData().Go.transform.position;
+            var fp = WayNetHelper.FindNearestFreePoint(pos, fpNamePart, null);
 
             if (fp == null)
             {
@@ -481,6 +514,21 @@ namespace GUZ.Core.Npc
             }
 
             return true;
+        }
+
+        public void ExtNpcSetTalentSkill(NpcInstance npc, VmGothicEnums.Talent talent, int level)
+        {
+            // FIXME - TBD.
+            // FIXME - In OpenGothic it adds MDS overlays based on skill level.
+        }
+
+        public void SetDialogs(NpcContainer npcContainer)
+        {
+            var npcIndex = npcContainer.Instance.Index;
+            npcContainer.Props.Dialogs = GameData.Dialogs.Instances
+                .Where(dialog => dialog.Npc == npcIndex)
+                .OrderByDescending(dialog => dialog.Important)
+                .ToList();
         }
     }
 }

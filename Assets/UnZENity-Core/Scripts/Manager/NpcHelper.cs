@@ -11,6 +11,7 @@ using GUZ.Core.Vm;
 using JetBrains.Annotations;
 using UnityEngine;
 using ZenKit.Daedalus;
+using ZenKit.Vobs;
 using Logger = GUZ.Core.Util.Logger;
 
 namespace GUZ.Core.Manager
@@ -50,7 +51,7 @@ namespace GUZ.Core.Manager
         public static bool ExtIsMobAvailable(NpcInstance npcInstance, string vobName)
         {
             var npc = GetNpc(npcInstance);
-            var vob = VobHelper.GetFreeInteractableWithin10M(npc.transform.position, vobName);
+            var vob = VobHelper.GetFreeInteractableWithin10M(npc.transform.position, vobName).vob;
 
             return vob != null;
         }
@@ -59,30 +60,30 @@ namespace GUZ.Core.Manager
         {
             var npcGo = GetNpc(npcInstance);
 
-            var prefabProps = npcInstance.GetUserData2().PrefabProps;
+            var prefabProps = npcInstance.GetUserData().PrefabProps;
 
-            VobProperties vob;
+            IInteractiveObject vob;
 
             if (prefabProps.CurrentInteractable != null)
             {
-                vob = prefabProps.CurrentInteractable.GetComponent<VobProperties>();
+                try
+                {
+                    // Check current gameobject and children as well
+                    vob = prefabProps.CurrentInteractable.GetComponentInChildren<VobInteractiveProperties>().InteractiveProperties;
+                }
+                catch (Exception)
+                {
+                    Logger.LogError($"Wld_GetMobState() returned an exception for {npcGo.name}", LogCat.Npc);
+                    return -1;
+                }
             }
             else
-            {
-                vob = VobHelper.GetFreeInteractableWithin10M(npcGo.transform.position, scheme);
-            }
+                vob = VobHelper.GetFreeInteractableWithin10M(npcGo.transform.position, scheme).vob;
 
-            if (vob == null || vob.VisualScheme != scheme)
-            {
+            if (vob == null)
                 return -1;
-            }
 
-            if (vob is VobInteractiveProperties interactiveVob)
-            {
-                return Math.Max(0, interactiveVob.InteractiveProperties.State);
-            }
-
-            return -1;
+            return Math.Max(0, vob.State);
         }
 
         public static ItemInstance ExtNpcGetEquippedMeleeWeapon(NpcInstance npc)
@@ -133,10 +134,11 @@ namespace GUZ.Core.Manager
             bool detectPlayer)
         {
             var npc = GetProperties(npcInstance);
-            var npcPos = npcInstance.GetUserData2().Go.transform.position;
+            var npcPos = npcInstance.GetUserData().Go.transform.position;
+            var npcVob = npcInstance.GetUserData().Vob;
 
             // FIXME - add range check based on perceiveAll's range (npc.sense_range)
-            var foundNpc = MultiTypeCache.NpcCache2
+            var foundNpc = MultiTypeCache.NpcCache
                 .Where(i => i.Props != null) // ignore empty (safe check)
                 .Where(i => i.Go != null) // ignore empty (safe check)
                 .Where(i => i.Instance.Index != npcInstance.Index) // ignore self
@@ -145,8 +147,8 @@ namespace GUZ.Core.Manager
                             GameData.GothicVm.GlobalHero!.Index) // if we don't detect player, then skip it
                 .Where(i => specificNpcIndex < 0 ||
                             specificNpcIndex == i.Instance.Index) // Specific NPC is found right now?
-                .Where(i => aiState < 0 || npc.State == i.Props.State)
-                .Where(i => i.Instance.Guild == guild) // check guild
+                .Where(i => aiState < 0 || npcVob.CurrentStateIndex == i.Vob.CurrentStateIndex)
+                .Where(i => guild < 0 || i.Instance.Guild == guild) // check guild
                 .OrderBy(i => Vector3.Distance(i.Go.transform.position, npcPos)) // get nearest
                 .FirstOrDefault();
 
@@ -188,7 +190,8 @@ namespace GUZ.Core.Manager
                 return int.MaxValue;
             }
 
-            return (int)Vector3.Distance(npcPos, waypoint.Position);
+            // *100 as Gothic metrics are in cm, not m.
+            return (int)(Vector3.Distance(npcPos, waypoint.Position) * 100);
         }
 
         public static void ExtNpcClearInventory(NpcInstance npc)
@@ -235,25 +238,25 @@ namespace GUZ.Core.Manager
         [CanBeNull]
         private static GameObject GetNpc([CanBeNull] NpcInstance npc)
         {
-            return npc.GetUserData2().Go;
+            return npc.GetUserData().Go;
         }
 
         private static NpcContainer GetContainer(NpcInstance npc)
         {
-            return npc.GetUserData2();
+            return npc.GetUserData();
         }
 
         private static NpcProperties GetProperties([CanBeNull] NpcInstance npc)
         {
-            return npc?.GetUserData2().Props;
+            return npc?.GetUserData().Props;
         }
 
         // FIXME - CanSense is not separating between smell, hear, and see as of now. Please add functionality.
         public static bool CanSenseNpc(NpcInstance self, NpcInstance other, bool freeLOS)
         {
             var senseRange = (self.SensesRange / 100); // daedalus values are in cm, we need them in m
-            var range = Vector3.Distance(other.GetUserData2().Go.transform.position,
-                self.GetUserData2().Go.transform.position);
+            var range = Vector3.Distance(other.GetUserData().Go.transform.position,
+                self.GetUserData().Go.transform.position);
             if (range > senseRange)
             {
                 return false;

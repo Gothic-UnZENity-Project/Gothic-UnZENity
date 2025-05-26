@@ -5,11 +5,11 @@ using UnityEngine;
 
 namespace GUZ.Core.Npc.Actions.AnimationActions
 {
-    public class GoToFp : AbstractWalkAnimationAction
+    public class GoToFp : AbstractWalkAnimationAction2
     {
         private FreePoint _fp;
 
-        private string Destination => Action.String0;
+        private string _destination => Action.String0;
 
         private FreePoint _freePoint;
 
@@ -19,10 +19,8 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
 
         public override void Start()
         {
-            base.Start();
-
             var npcPos = NpcGo.transform.position;
-            _fp = WayNetHelper.FindNearestFreePoint(npcPos, Destination);
+            _fp = WayNetHelper.FindNearestFreePoint(npcPos, _destination, Props.CurrentFreePoint);
 
             if (_fp == null)
             {
@@ -32,13 +30,8 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
 
             _fp.IsLocked = true;
             Props.CurrentFreePoint = _fp;
-        }
-
-        protected override void AnimationEnd()
-        {
-            base.AnimationEnd();
-
-            IsFinishedFlag = false;
+            
+            base.Start();
         }
 
         protected override Vector3 GetWalkDestination()
@@ -48,11 +41,8 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
 
         protected override void OnDestinationReached()
         {
-            Props.CurrentFreePoint = _fp;
-
-            AnimationEnd();
-
-            State = WalkState.Done;
+            base.OnDestinationReached();
+            
             IsFinishedFlag = true;
         }
     }

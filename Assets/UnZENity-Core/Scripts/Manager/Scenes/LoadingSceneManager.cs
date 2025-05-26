@@ -1,16 +1,18 @@
+using GUZ.Core.UI.Menus.LoadingBars;
 using UnityEngine;
 
 namespace GUZ.Core.Manager.Scenes
 {
     public class LoadingSceneManager : MonoBehaviour, ISceneManager
     {
-        [SerializeField] private GameObject _loadingArea;
+        [SerializeField]
+        private AbstractLoadingBarHandler _loadingBarHandler;
         
         public void Init()
         {
-            GameGlobals.Loading.InitLoading(_loadingArea);
+            GameGlobals.Loading.InitLoading(_loadingBarHandler);
 
-            GameContext.InteractionAdapter.TeleportPlayerTo(_loadingArea.transform.position);
+            GameContext.InteractionAdapter.TeleportPlayerTo(_loadingBarHandler.transform.position);
             
             GlobalEventDispatcher.LoadingSceneLoaded.Invoke();
 

@@ -13,7 +13,7 @@ namespace GUZ.Core.Animations
 {
     public class AnimationManager
     {
-        private const float _movementThreshold = 0.4f; // If magnitude of first and last frame positions is higher than this, we have a movement animation.
+        private const float _movementThreshold = 0.3f; // If magnitude of first and last frame positions is higher than this, we have a movement animation.
 
         [ItemCanBeNull]
         private Dictionary<string, AnimationTrack> _tracks = new();
@@ -196,17 +196,20 @@ namespace GUZ.Core.Animations
             var unityLastSamplePos = lastSample.Position.ToUnityVector();
             var firstSampleMovePos = new Vector3(unityFirstSamplePos.x, 0, unityFirstSamplePos.z);
             var lastSampleMovePos = new Vector3(unityLastSamplePos.x, 0, unityLastSamplePos.z);
-            var movement = lastSampleMovePos - firstSampleMovePos;
+            var movementCheck = lastSampleMovePos - firstSampleMovePos;
 
-            if (movement.sqrMagnitude < _movementThreshold)
+            if (movementCheck.sqrMagnitude < _movementThreshold)
             {
                 return;
             }
 
             track.IsMoving = true;
-
+            
+            // For the actual movement, we also include y-axis (for climbing ladders/jumping later; not yet tested though').
+            var movement = unityLastSamplePos - unityFirstSamplePos;
+            
             // TODO - We can also check if we do a "movement" calculation based on each frame. Then animations might "wiggle" during walk instead of walking on a rubber band.
-            track.MovementSpeed = movement * (modelAnim.FrameCount / modelAnim.Fps);
+            track.MovementSpeed = movement / track.Duration;
         }
 
         /// <summary>

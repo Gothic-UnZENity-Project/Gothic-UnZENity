@@ -2,18 +2,22 @@ using System;
 using System.IO;
 using GUZ.Core.Caches;
 using GUZ.Core.Extensions;
+using GUZ.Core.Manager;
 using GUZ.Core.UI.Menus.Adapter.Menu;
+using GUZ.Core.Util;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using ZenKit;
 using ZenKit.Daedalus;
+using Logger = GUZ.Core.Util.Logger;
 
 namespace GUZ.Core.UI.Menus
 {
     public class SaveMenu : AbstractMenu
     {
+        private bool _isInitialized;
         private GameObject[] SaveSlots = new GameObject[16];
 
         private GameObject Thumbnail;
@@ -30,10 +34,31 @@ namespace GUZ.Core.UI.Menus
 
         private string _saveLoadStatus;
 
+        /// <summary>
+        /// Pre-fill the Load Game entries with names and textures (if existing)
+        /// </summary>
+        private void Start()
+        {
+            Thumbnail.GetComponent<MeshRenderer>().material =
+                GameGlobals.Textures.GetEmptyMaterial(MaterialExtension.BlendMode.Opaque);
+        }
+
+        private void OnEnable()
+        {
+            // InitializeMenu() is called after first OnEnable().
+            if (!_isInitialized)
+                return;
+            
+            FillSaveGameEntries();
+        }
+        
         public override void InitializeMenu(AbstractMenuInstance menuInstance)
         {
             base.InitializeMenu(menuInstance);
             Setup();
+
+            _isInitialized = true;
+            FillSaveGameEntries();
         }
 
         private void Setup()
@@ -110,20 +135,6 @@ namespace GUZ.Core.UI.Menus
             return (MenuItemCache[menuItemName].item.Flags & MenuItemFlag.Disabled) == 0;
         }
 
-        /// <summary>
-        /// Pre-fill the Load Game entries with names and textures (if existing)
-        /// </summary>
-        private void Start()
-        {
-            Thumbnail.GetComponent<MeshRenderer>().material =
-                GameGlobals.Textures.GetEmptyMaterial(MaterialExtension.BlendMode.Opaque);
-        }
-
-        private void OnEnable()
-        {
-            FillSaveGameEntries();
-        }
-
         private void FillSaveGameEntries()
         {
             var gothicDir = GameContext.GameVersionAdapter.RootPath;
@@ -142,7 +153,7 @@ namespace GUZ.Core.UI.Menus
                 var folderSaveId = int.Parse(saveGameFolderName.Remove(0, "savegame".Length));
 
                 // Load metadata
-                var save = GameGlobals.SaveGame.GetSaveGame(folderSaveId);
+                var save = GameGlobals.SaveGame.GetSaveGame((SaveGameManager.SlotId)folderSaveId);
                 _saves[folderSaveId] = save;
 
                 // Set metadata to slot
@@ -195,7 +206,8 @@ namespace GUZ.Core.UI.Menus
 
             if (!int.TryParse(numberPart, out int id))
             {
-                id = -2;
+                Logger.LogError($"Save Game Not Found for {inputName}. Using New game instead.", LogCat.Loading);
+                id = (int)SaveGameManager.SlotId.NewGame;
             }
             if (_isLoading)
             {
@@ -207,11 +219,11 @@ namespace GUZ.Core.UI.Menus
                 }
 
                 // Can be triggered from Scene:mainMenu or Scene:AnyWorld, therefore removing active scene.
-                GameManager.I.LoadWorld(save.Metadata.World, id, SceneManager.GetActiveScene().name);
+                GameManager.I.LoadWorld(save.Metadata.World, (SaveGameManager.SlotId)id, SceneManager.GetActiveScene().name);
             }
             else
             {
-                GameGlobals.SaveGame.SaveCurrentGame(id, $"UnZENity - {DateTime.Now}");
+                GameGlobals.SaveGame.SaveCurrentGame((SaveGameManager.SlotId)id, $"UnZENity - {DateTime.Now}");
                 FillSaveGameEntries();
             }
         }

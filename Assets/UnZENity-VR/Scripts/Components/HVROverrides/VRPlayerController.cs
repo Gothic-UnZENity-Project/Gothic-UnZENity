@@ -11,7 +11,7 @@ namespace GUZ.VR.Components.HVROverrides
 {
     public class VRPlayerController : HVRPlayerController
     {
-        private VRPlayerInputs _guzInputs => (VRPlayerInputs)Inputs;
+        public VRPlayerInputs VrInputs => (VRPlayerInputs)Inputs;
 
         [Separator("GUZ - Settings")]
         public MenuHandler MenuHandler;
@@ -30,7 +30,7 @@ namespace GUZ.VR.Components.HVROverrides
         {
             base.Update();
 
-            if (_guzInputs.IsMenuActivated && IsGameScene())
+            if (VrInputs.IsMenuActivated && IsGameScene())
             {
                 GameData.InGameAndAlive = true;
                 MenuHandler.ToggleVisibility();
@@ -64,7 +64,7 @@ namespace GUZ.VR.Components.HVROverrides
             CameraRig.SetSitStandMode((HVRSitStand)sitStandSetting);
 
             DirectionStyle = (PlayerDirectionMode)GameGlobals.Config.Gothic.GetInt(VRConstants.IniNames.MoveDirection, (int)PlayerDirectionMode.Camera);
-            RotationType = (RotationType)GameGlobals.Config.Gothic.GetInt(VRConstants.IniNames.RotationType, (int)RotationType.Smooth);
+            RotationType = (RotationType)GameGlobals.Config.Gothic.GetInt(VRConstants.IniNames.RotationType, (int)RotationType.Snap);
 
             var snapSetting = GameGlobals.Config.Gothic.GetInt(VRConstants.IniNames.SnapRotationAmount, VRConstants.SnapRotationDefaultValue);
             // e.g., 20° = 5° + 3*5°

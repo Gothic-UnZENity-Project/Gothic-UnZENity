@@ -441,49 +441,56 @@ namespace GUZ.Core.Manager.Culling
 
         public void StartTrackVobPositionUpdates(GameObject go)
         {
-            CancelStopTrackVobPositionUpdates(go);
+            // Meshes are always 1...n levels below initially created VobLoader GO. Therefore, we need to fetch its parent for track updates.
+            var rootGo = go.GetComponentInParent<VobLoader>().gameObject;
+            
+            CancelStopTrackVobPositionUpdates(rootGo);
 
             // Entry is already in list
-            if (_pausedVobs.ContainsKey(go))
+            if (_pausedVobs.ContainsKey(rootGo))
             {
                 return;
             }
 
             // Check Small list
-            var index = _vobObjectsSmall.IndexOf(go);
+            var index = _vobObjectsSmall.IndexOf(rootGo);
             var vobType = VobList.Small;
+            
             // Check Medium list
             if (index == -1)
             {
-                index = _vobObjectsMedium.IndexOf(go);
+                index = _vobObjectsMedium.IndexOf(rootGo);
                 vobType = VobList.Medium;
             }
 
             // Check Large list
             if (index == -1)
             {
-                index = _vobObjectsLarge.IndexOf(go);
+                index = _vobObjectsLarge.IndexOf(rootGo);
                 vobType = VobList.Large;
             }
 
-            _pausedVobs.Add(go, new Tuple<VobList, int>(vobType, index));
+            if (index == -1)
+                Logger.LogError($"Couldn't find object in Culling list {rootGo.name}. Culling updates will break.", LogCat.Vob);
+
+            _pausedVobs.Add(rootGo, new Tuple<VobList, int>(vobType, index));
         }
 
         /// <summary>
         /// If we execute Start() and Stop() during a short time frame, we need to cancel all the "stop" features.
         /// e.g. If we start grabbing it while it's still in release-stop mode, we cancel delay Coroutine and loop itself.
         /// </summary>
-        private void CancelStopTrackVobPositionUpdates(GameObject go)
+        private void CancelStopTrackVobPositionUpdates(GameObject rootGo)
         {
-            if (_pausedVobsToReenableCoroutine.ContainsKey(go))
+            if (_pausedVobsToReenableCoroutine.ContainsKey(rootGo))
             {
-                _coroutineManager.StopCoroutine(_pausedVobsToReenableCoroutine[go]);
-                _pausedVobsToReenableCoroutine.Remove(go);
+                _coroutineManager.StopCoroutine(_pausedVobsToReenableCoroutine[rootGo]);
+                _pausedVobsToReenableCoroutine.Remove(rootGo);
             }
 
-            if (_pausedVobsToReenable.ContainsKey(go))
+            if (_pausedVobsToReenable.ContainsKey(rootGo))
             {
-                _pausedVobsToReenable.Remove(go);
+                _pausedVobsToReenable.Remove(rootGo);
             }
         }
         
@@ -493,26 +500,29 @@ namespace GUZ.Core.Manager.Culling
         /// </summary>
         public void StopTrackVobPositionUpdates(GameObject go)
         {
-            if (_pausedVobsToReenableCoroutine.ContainsKey(go))
+            // Meshes are always 1...n levels below initially created VobLoader GO. Therefore, we need to fetch its parent for track updates.
+            var rootGo = go.GetComponentInParent<VobLoader>().gameObject;
+            
+            if (_pausedVobsToReenableCoroutine.ContainsKey(rootGo))
             {
                 return;
             }
 
-            _pausedVobsToReenableCoroutine.Add(go,
-                _coroutineManager.StartCoroutine(StopTrackVobPositionUpdatesDelayed(go)));
+            _pausedVobsToReenableCoroutine.Add(rootGo,
+                _coroutineManager.StartCoroutine(StopTrackVobPositionUpdatesDelayed(rootGo)));
         }
 
         /// <summary>
         /// When we release an item from our hands, we need to wait a few frames before the velocity of the object is != 0.
         /// Therefore, we put the object into the list delayed.
         /// </summary>
-        private IEnumerator StopTrackVobPositionUpdatesDelayed(GameObject go)
+        private IEnumerator StopTrackVobPositionUpdatesDelayed(GameObject rootGo)
         {
             yield return new WaitForSeconds(1f);
-            _pausedVobsToReenableCoroutine.Remove(go);
-            if (!_pausedVobsToReenable.ContainsKey(go))
+            _pausedVobsToReenableCoroutine.Remove(rootGo);
+            if (!_pausedVobsToReenable.ContainsKey(rootGo))
             {
-                _pausedVobsToReenable.Add(go, go.GetComponent<Rigidbody>());
+                _pausedVobsToReenable.Add(rootGo, rootGo.GetComponentInChildren<Rigidbody>());
             }
         }
 

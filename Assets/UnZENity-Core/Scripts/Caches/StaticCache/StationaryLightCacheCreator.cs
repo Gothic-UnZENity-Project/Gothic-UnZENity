@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using GUZ.Core.Extensions;
 using GUZ.Core.Manager;
+using GUZ.Core.UI.Menus.LoadingBars;
 using GUZ.Core.Util;
 using MyBox;
 using UnityEngine;
@@ -27,7 +28,27 @@ namespace GUZ.Core.Caches.StaticCache
             _debugSpeedUpLoading = GameGlobals.Config.Dev.SpeedUpLoading;
         }
 
-        public async Task CalculateStationaryLights(List<IVirtualObject> vobs, Vector3 parentWorldPosition = default)
+        public async Task CalculateStationaryLights(List<IVirtualObject> vobs, int worldIndex)
+        {
+            var elementAmount = CalculateElementAmount(vobs);
+            GameGlobals.Loading.SetPhase($"{nameof(PreCachingLoadingBarHandler.ProgressTypesPerWorld.CalculateStationaryLights)}_{worldIndex}", elementAmount);
+
+            await CalculateStationaryLights(vobs);
+            GameGlobals.Loading.FinalizePhase();
+        }
+        
+        private int CalculateElementAmount(List<IVirtualObject> vobs)
+        {
+            var count = 0;
+            foreach (var vob in vobs)
+            {
+                count++; // We count each element as we update potentially with each FrameSkipper call, which is unaffected if it's a light or sth. else.
+                count += CalculateElementAmount(vob.Children);
+            }
+            return count;
+        }
+
+        private async Task CalculateStationaryLights(List<IVirtualObject> vobs, Vector3 parentWorldPosition = default)
         {
             foreach (var vob in vobs)
             {
@@ -35,6 +56,7 @@ namespace GUZ.Core.Caches.StaticCache
                 {
                     await FrameSkipper.TrySkipToNextFrame();
                 }
+                GameGlobals.Loading.Tick();
 
                 var vobWorldPosition = CalculateWorldPosition(parentWorldPosition, vob.Position.ToUnityVector());
 

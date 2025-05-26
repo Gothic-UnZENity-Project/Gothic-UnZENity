@@ -16,7 +16,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
         {
             base.Start();
 
-            _destinationTransform = Action.Instance0.GetUserData2().Go.transform;
+            _destinationTransform = Action.Instance0.GetUserData().Go.transform;
         }
 
         protected override Vector3 GetWalkDestination()
@@ -34,6 +34,8 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
 
         protected override void OnDestinationReached()
         {
+            base.OnDestinationReached();
+
             AnimationEnd();
 
             State = WalkState.Done;

@@ -2,6 +2,7 @@
 using System.Linq;
 using GUZ.Core;
 using GUZ.Core.Adapter;
+using GUZ.Core.Config;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.UI.Menus.Adapter.Menu;
@@ -27,7 +28,12 @@ namespace GUZ.VR.Adapter
         public VRInteractionAdapter()
         {
             GlobalEventDispatcher.LoadingSceneLoaded.AddListener(OnLoadingSceneLoaded);
-            GlobalEventDispatcher.GothicInisInitialized.AddListener(() => _playerController.SetNormalControls());
+            GlobalEventDispatcher.GothicInisInitialized.AddListener(() =>
+            {
+                SetRenderDistance(GameGlobals.Config.Gothic.IniVisualRange);
+                _playerController.SetNormalControls();
+            });
+            GlobalEventDispatcher.PlayerPrefUpdated.AddListener(PlayerPrefsUpdated);
         }
 
         public string GetContextName()
@@ -69,6 +75,20 @@ namespace GUZ.VR.Adapter
             _playerController.SetNormalControls(true);
 
             return _playerController.gameObject;
+        }
+        
+        private void PlayerPrefsUpdated(string key, object value)
+        {
+            if (key == GothicIniConfig.IniKeyVisualRange)
+            {
+                SetRenderDistance(int.Parse((string)value));
+            }
+        }
+
+        private void SetRenderDistance(int value)
+        {
+            // Starting with value=0 (20%) and ending with value=14 (300%)
+            _playerController.Camera.GetComponent<Camera>().farClipPlane = GothicIniConfig.IniVisualRangeFactor * (value + 1);
         }
 
         public GameObject GetCurrentPlayerController()
@@ -156,6 +176,16 @@ namespace GUZ.VR.Adapter
             }
             
             chapterPrefab.GetComponent<VRIntroduceChapter>().DisplayIntroduction(chapter, text, texture, wav, time);
+        }
+
+        public void DisableMenus()
+        {
+            _playerController.VrInputs.IsMenuButtonEnabled = false;
+        }
+
+        public void EnableMenus()
+        {
+            _playerController.VrInputs.IsMenuButtonEnabled = true;
         }
     }
 }
