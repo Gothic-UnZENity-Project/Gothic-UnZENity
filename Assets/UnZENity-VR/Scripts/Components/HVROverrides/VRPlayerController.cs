@@ -64,7 +64,7 @@ namespace GUZ.VR.Components.HVROverrides
             CameraRig.SetSitStandMode((HVRSitStand)sitStandSetting);
 
             DirectionStyle = (PlayerDirectionMode)GameGlobals.Config.Gothic.GetInt(VRConstants.IniNames.MoveDirection, (int)PlayerDirectionMode.Camera);
-            RotationType = (RotationType)GameGlobals.Config.Gothic.GetInt(VRConstants.IniNames.RotationType, (int)RotationType.Smooth);
+            RotationType = (RotationType)GameGlobals.Config.Gothic.GetInt(VRConstants.IniNames.RotationType, (int)RotationType.Snap);
 
             var snapSetting = GameGlobals.Config.Gothic.GetInt(VRConstants.IniNames.SnapRotationAmount, VRConstants.SnapRotationDefaultValue);
             // e.g., 20° = 5° + 3*5°
