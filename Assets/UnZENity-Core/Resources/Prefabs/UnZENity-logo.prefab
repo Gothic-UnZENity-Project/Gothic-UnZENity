@@ -189,6 +189,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _tutorialHandler: {fileID: 0}
+  _minBrightness: 0.3
+  _maxBrightness: 2
+  _pulsationSpeed: 1
+  _targetImage: {fileID: 874192176810593886}
 --- !u!223 &286764796098686676
 Canvas:
   m_ObjectHideFlags: 0
