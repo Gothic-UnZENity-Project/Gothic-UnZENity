@@ -190,8 +190,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _tutorialHandler: {fileID: 0}
   _minBrightness: 0.3
-  _maxBrightness: 2
-  _pulsationSpeed: 1
+  _maxBrightness: 1.3
+  _pulsationSpeed: 0.75
   _targetImage: {fileID: 874192176810593886}
 --- !u!223 &286764796098686676
 Canvas:
