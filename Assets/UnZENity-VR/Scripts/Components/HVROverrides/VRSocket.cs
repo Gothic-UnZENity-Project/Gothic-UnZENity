@@ -1,3 +1,4 @@
+#if GUZ_HVR_INSTALLED
 using GUZ.Core.Vob;
 using HurricaneVR.Framework.Core;
 using HurricaneVR.Framework.Core.Grabbers;
@@ -57,3 +58,4 @@ namespace GUZ.VR.Components.HVROverrides
         }
     }
 }
+#endif
