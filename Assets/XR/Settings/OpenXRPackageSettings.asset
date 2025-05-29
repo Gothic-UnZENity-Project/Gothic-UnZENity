@@ -180,6 +180,7 @@ MonoBehaviour:
   company: PICO
   priority: 0
   required: 0
+  _isExtensionEnable: 0
 --- !u!114 &-4668190980932963055
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -313,6 +314,7 @@ MonoBehaviour:
   company: PICO
   priority: 0
   required: 0
+  _isExtensionEnable: 0
 --- !u!114 &-3767426411331881515
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -333,6 +335,7 @@ MonoBehaviour:
   company: PICO
   priority: 0
   required: 0
+  _isExtensionEnable: 0
 --- !u!114 &-3685463609108704427
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -474,6 +477,7 @@ MonoBehaviour:
   company: PICO
   priority: 0
   required: 0
+  _isExtensionEnable: 0
 --- !u!114 &-982139025811801679
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -544,8 +548,7 @@ MonoBehaviour:
   version: 1.0.0
   featureIdInternal: com.unity.openxr.pico.features
   openxrExtensionStrings: XR_EXT_local_floor XR_FB_triangle_mesh XR_FB_composition_layer_alpha_blend
-    XR_KHR_composition_layer_color_scale_bias XR_KHR_composition_layer_cylinder XR_KHR_composition_layer_equirect
-    XR_KHR_composition_layer_cube
+    XR_KHR_composition_layer_color_scale_bias XR_KHR_composition_layer_cylinderXR_KHR_composition_layer_equirectXR_KHR_composition_layer_cube
   company: PICO
   priority: 0
   required: 0
@@ -791,7 +794,6 @@ MonoBehaviour:
   m_Name: Android
   m_EditorClassIdentifier: 
   features:
-  - {fileID: 1334689538305467106}
   - {fileID: 6812285598239836352}
   - {fileID: -3983660480734472317}
   - {fileID: -332764730267102851}
@@ -812,13 +814,9 @@ MonoBehaviour:
   - {fileID: 7051114072204557114}
   - {fileID: -3767426411331881515}
   - {fileID: 346038476301611093}
-  - {fileID: -4603854506387641800}
   - {fileID: 9219605285230895480}
   - {fileID: 238323431353500125}
   - {fileID: 2499955303954065424}
-  - {fileID: -6141741419973945741}
-  - {fileID: -2805028502496846468}
-  - {fileID: -7532106903231179020}
   - {fileID: 8833097018418957246}
   m_renderMode: 1
   m_depthSubmissionMode: 0
@@ -878,12 +876,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_enabled: 0
   nameUi: OpenXR Passthrough
-  version: 1.0.0
+  version: 0.0.1
   featureIdInternal: com.pico.openxr.feature.passthrough
   openxrExtensionStrings: XR_FB_passthrough
   company: PICO
   priority: 0
   required: 0
+  _isExtensionEnable: 0
 --- !u!114 &7309567207302404866
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1043,10 +1042,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_enabled: 0
   nameUi: PICO Support
-  version: 1.4.1
+  version: 1.0.0
   featureIdInternal: com.unity.openxr.feature.pico
   openxrExtensionStrings: 
   company: PICO
   priority: 0
   required: 0
-  isPicoSupport: 0
+  isCameraSubsystem: 0
