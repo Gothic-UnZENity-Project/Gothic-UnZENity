@@ -6,7 +6,7 @@ on:
       - published
 
 env:
-  HVRversion: 'v2.9.2'
+  HVRversion: 'v2.9.3.a'
 
 jobs:
   #########
@@ -15,7 +15,7 @@ jobs:
 
   buildForAllPlatforms:
     name: Build Gothic-UnZENity for ${{ matrix.targetDevice }}
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: true
       matrix:

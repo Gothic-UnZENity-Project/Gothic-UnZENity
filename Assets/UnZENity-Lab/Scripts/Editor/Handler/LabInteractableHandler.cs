@@ -1,7 +1,5 @@
 using System.Collections;
 using GUZ.Core;
-using HurricaneVR.Framework.Core;
-using HurricaneVR.Framework.Core.Sockets;
 using UnityEngine;
 
 namespace GUZ.Lab.Handler
@@ -51,11 +49,6 @@ namespace GUZ.Lab.Handler
 
             // Wait 1 frame for Sockets to become active.
             yield return null;
-
-            var socketContainer = chest1.GetComponentInChildren<HVRSocketContainer>(true);
-            var grabbable = item1.GetComponentInChildren<HVRGrabbable>(true);
-            if (socketContainer.TryFindAvailableSocket(grabbable, out var socket))
-                socket.TryGrab(grabbable, true, true);
         }
 
         private void InitOCMobFire()
