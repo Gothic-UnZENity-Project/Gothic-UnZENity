@@ -16,27 +16,27 @@ MonoBehaviour:
   m_TableCollectionNameGuidString: 688e24f0a7340a649aca39be8009e223
   m_Entries:
   - m_Id: 62335082496
-    m_Key: '{LEFT_SHOULDER}'
+    m_Key: vr.controls.slots.left_shoulder
     m_Metadata:
       m_Items: []
   - m_Id: 3119672320000
-    m_Key: '{RIGHT_SHOULDER}'
+    m_Key: vr.controls.slots.right_shoulder
     m_Metadata:
       m_Items: []
   - m_Id: 410458179100672
-    m_Key: '{LEFT_CHEST}'
+    m_Key: vr.controls.slots.left_chest
     m_Metadata:
       m_Items: []
   - m_Id: 411327083700224
-    m_Key: '{RIGHT_CHEST}'
+    m_Key: vr.controls.slots.right_chest
     m_Metadata:
       m_Items: []
   - m_Id: 411567790612480
-    m_Key: '{LEFT_HIP}'
+    m_Key: vr.controls.slots.left_hip
     m_Metadata:
       m_Items: []
   - m_Id: 411568419758080
-    m_Key: '{RIGHT_HIP}'
+    m_Key: vr.controls.slots.right_hip
     m_Metadata:
       m_Items: []
   - m_Id: 431600692486144
