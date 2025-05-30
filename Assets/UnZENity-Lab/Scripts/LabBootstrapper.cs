@@ -12,6 +12,7 @@ using GUZ.Core.Npc;
 using GUZ.Core.Vm;
 using GUZ.Core.World;
 using GUZ.Lab.Handler;
+using GUZ.Manager;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using ZenKit;
@@ -49,6 +50,7 @@ namespace GUZ.Lab
         private GameTime _gameTime;
 
         public ConfigManager Config => _configManager;
+        public LocalizationManager Localization => null;
         public SaveGameManager SaveGame => _save;
         public LoadingManager Loading => null;
         public StaticCacheManager StaticCache => null;

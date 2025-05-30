@@ -39,6 +39,82 @@ MonoBehaviour:
     m_Key: '{RIGHT_HIP}'
     m_Metadata:
       m_Items: []
+  - m_Id: 431600692486144
+    m_Key: menuitem.vr_accessibility
+    m_Metadata:
+      m_Items: []
+  - m_Id: 431605876645888
+    m_Key: menuitem.vr_accessibility.headline
+    m_Metadata:
+      m_Items: []
+  - m_Id: 431625069780992
+    m_Key: menuitem.sitStand.label
+    m_Metadata:
+      m_Items: []
+  - m_Id: 431627489894400
+    m_Key: menuitem.sitStand.description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 431628714631168
+    m_Key: menuitem.sitStand.value
+    m_Metadata:
+      m_Items: []
+  - m_Id: 431629377331200
+    m_Key: menuitem.moveDirection.label
+    m_Metadata:
+      m_Items: []
+  - m_Id: 431630484627456
+    m_Key: menuitem.moveDirection.description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 431631105384448
+    m_Key: menuitem.moveDirection.value
+    m_Metadata:
+      m_Items: []
+  - m_Id: 431631675809792
+    m_Key: menuitem.rotationType.label
+    m_Metadata:
+      m_Items: []
+  - m_Id: 431632300761088
+    m_Key: menuitem.rotationType.description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 431632934100992
+    m_Key: menuitem.rotationType.value
+    m_Metadata:
+      m_Items: []
+  - m_Id: 431903147941888
+    m_Key: menuitem.smoothRotation.label
+    m_Metadata:
+      m_Items: []
+  - m_Id: 431904846635008
+    m_Key: menuitem.smoothRotation.description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 431905500946432
+    m_Key: menuitem.snapRotation.label
+    m_Metadata:
+      m_Items: []
+  - m_Id: 431906042011648
+    m_Key: menuitem.snapRotation.description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 431906666962944
+    m_Key: menuitem.snapRotation.value
+    m_Metadata:
+      m_Items: []
+  - m_Id: 431907228999680
+    m_Key: menuitem.smooth.label
+    m_Metadata:
+      m_Items: []
+  - m_Id: 431907841368064
+    m_Key: menuitem.smooth.description
+    m_Metadata:
+      m_Items: []
+  - m_Id: 432028503105536
+    m_Key: menuitem.smooth.value
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

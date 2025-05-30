@@ -12,6 +12,7 @@ using GUZ.Core.Manager.Vobs;
 using GUZ.Core.Npc;
 using GUZ.Core.Util;
 using GUZ.Core.World;
+using GUZ.Manager;
 using MyBox;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -30,6 +31,7 @@ namespace GUZ.Core
         private BarrierManager _barrierManager;
 
         public ConfigManager Config { get; private set; }
+        public LocalizationManager Localization { get; private set; }
 
         public SaveGameManager SaveGame { get; private set; }
 
@@ -88,6 +90,7 @@ namespace GUZ.Core
 
             MultiTypeCache.Init();
 
+            Localization = new LocalizationManager();
             SaveGame = new SaveGameManager();
             Textures = GetComponent<TextureManager>();
             Font = GetComponent<FontManager>();

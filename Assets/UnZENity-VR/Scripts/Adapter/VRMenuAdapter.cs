@@ -1,8 +1,9 @@
 #if GUZ_HVR_INSTALLED
+using GUZ.Core;
 using GUZ.Core.Adapter;
+using GUZ.Core.Globals;
 using GUZ.Core.UI.Menus.Adapter.Menu;
 using GUZ.Core.UI.Menus.Adapter.MenuItem;
-using GUZ.VR.Manager;
 using HurricaneVR.Framework.Core.Player;
 using ZenKit.Daedalus;
 using Constants = GUZ.Core.Globals.Constants;
@@ -62,7 +63,7 @@ namespace GUZ.VR.Adapter
             controlsMenuParent.ReplaceItemAt(controlsItemIndex, vrControlsMenuItem);
 
             // Add some setting
-            vrControlsMenuItem.SetText(0, VRMenuLocalization.GetText("menuitem.vr_accessibility"));
+            vrControlsMenuItem.SetText(0, GameGlobals.Localization.GetText("menuitem.vr_accessibility"));
             vrControlsMenuItem.SetOnSelAction(0, MenuItemSelectAction.StartMenu);
             vrControlsMenuItem.SetOnSelActionS(0, "MENU_UNZENITY_OPT_VR_ACCESSIBILITY");
             vrControlsMenuItem.MenuInstance = vrControlsMenu;
@@ -74,7 +75,7 @@ namespace GUZ.VR.Adapter
         {
             var gameHeadline = gameMenu.FindMenuItem("MENUITEM_GAME_HEADLINE", out _);
             var vrHeadline = new MutableMenuItemInstance("MENUITEM_UNZENITY_OPT_VR_ACCESSIBILITY_HEADLINE", gameHeadline);
-            vrHeadline.SetText(0, VRMenuLocalization.GetText("menuitem.vr_accessibility.headline"));
+            vrHeadline.SetText(0, GameGlobals.Localization.GetText("menuitem.vr_accessibility.headline"));
             
             return vrHeadline;
         }
@@ -86,8 +87,8 @@ namespace GUZ.VR.Adapter
             
             sitStandLabel.PosY = posY;
             
-            sitStandLabel.SetText(0, VRMenuLocalization.GetText("menuitem.sitStand.label"));
-            sitStandLabel.SetText(1, VRMenuLocalization.GetText("menuitem.sitStand.description"));
+            sitStandLabel.SetText(0, GameGlobals.Localization.GetText("menuitem.sitStand.label"));
+            sitStandLabel.SetText(1, GameGlobals.Localization.GetText("menuitem.sitStand.description"));
             
             return sitStandLabel;
         }
@@ -100,7 +101,7 @@ namespace GUZ.VR.Adapter
             sitStandSetting.PosY = posY;
             sitStandSetting.SetUserFloat(3, (int)HVRSitStand.PlayerHeight); // Default value if no INI value exists.
 
-            sitStandSetting.SetText(0, VRMenuLocalization.GetText("menuitem.sitStand.value"));
+            sitStandSetting.SetText(0, GameGlobals.Localization.GetText("menuitem.sitStand.value"));
             sitStandSetting.OnChgSetOption = VRConstants.IniNames.SitStand;
             sitStandSetting.OnChgSetOptionSection = VRConstants.IniSectionAccessibility;
             
@@ -114,8 +115,8 @@ namespace GUZ.VR.Adapter
             
             moveDirectionLabel.PosY = posY;
             
-            moveDirectionLabel.SetText(0, VRMenuLocalization.GetText("menuitem.moveDirection.label"));
-            moveDirectionLabel.SetText(1, VRMenuLocalization.GetText("menuitem.moveDirection.description"));
+            moveDirectionLabel.SetText(0, GameGlobals.Localization.GetText("menuitem.moveDirection.label"));
+            moveDirectionLabel.SetText(1, GameGlobals.Localization.GetText("menuitem.moveDirection.description"));
             
             return moveDirectionLabel;
         }
@@ -127,7 +128,7 @@ namespace GUZ.VR.Adapter
 
             moveDirectionSetting.PosY = posY;
 
-            moveDirectionSetting.SetText(0, VRMenuLocalization.GetText("menuitem.moveDirection.value"));
+            moveDirectionSetting.SetText(0, GameGlobals.Localization.GetText("menuitem.moveDirection.value"));
             moveDirectionSetting.OnChgSetOption = VRConstants.IniNames.MoveDirection;
             moveDirectionSetting.OnChgSetOptionSection = VRConstants.IniSectionAccessibility;
             
@@ -141,8 +142,8 @@ namespace GUZ.VR.Adapter
             
             rotationTypeLabel.PosY = posY;
             
-            rotationTypeLabel.SetText(0, VRMenuLocalization.GetText("menuitem.rotationType.label"));
-            rotationTypeLabel.SetText(1, VRMenuLocalization.GetText("menuitem.rotationType.description"));
+            rotationTypeLabel.SetText(0, GameGlobals.Localization.GetText("menuitem.rotationType.label"));
+            rotationTypeLabel.SetText(1, GameGlobals.Localization.GetText("menuitem.rotationType.description"));
             
             return rotationTypeLabel;
         }
@@ -155,7 +156,7 @@ namespace GUZ.VR.Adapter
             rotationTypeSetting.PosY = posY;
             rotationTypeSetting.SetUserFloat(3, (int)RotationType.Snap); // Default value if no INI value exists.
 
-            rotationTypeSetting.SetText(0, VRMenuLocalization.GetText("menuitem.rotationType.value"));
+            rotationTypeSetting.SetText(0, GameGlobals.Localization.GetText("menuitem.rotationType.value"));
             rotationTypeSetting.OnChgSetOption = VRConstants.IniNames.RotationType;
             rotationTypeSetting.OnChgSetOptionSection = VRConstants.IniSectionAccessibility;
             
@@ -169,8 +170,8 @@ namespace GUZ.VR.Adapter
             
             smoothRotationLabel.PosY = posY;
             
-            smoothRotationLabel.SetText(0, VRMenuLocalization.GetText("menuitem.smoothRotation.label"));
-            smoothRotationLabel.SetText(1, VRMenuLocalization.GetText("menuitem.smoothRotation.description"));
+            smoothRotationLabel.SetText(0, GameGlobals.Localization.GetText("menuitem.smoothRotation.label"));
+            smoothRotationLabel.SetText(1, GameGlobals.Localization.GetText("menuitem.smoothRotation.description"));
             
             return smoothRotationLabel;
         }
@@ -197,8 +198,8 @@ namespace GUZ.VR.Adapter
             
             smoothRotationLabel.PosY = posY;
             
-            smoothRotationLabel.SetText(0, VRMenuLocalization.GetText("menuitem.snapRotation.label"));
-            smoothRotationLabel.SetText(1, VRMenuLocalization.GetText("menuitem.snapRotation.description"));
+            smoothRotationLabel.SetText(0, GameGlobals.Localization.GetText("menuitem.snapRotation.label"));
+            smoothRotationLabel.SetText(1, GameGlobals.Localization.GetText("menuitem.snapRotation.description"));
             
             return smoothRotationLabel;
         }
@@ -211,7 +212,7 @@ namespace GUZ.VR.Adapter
             snapRotationSetting.PosY = posY;
             snapRotationSetting.SetUserFloat(3, VRConstants.SnapRotationDefaultValue); // Default value if no INI value exists.
 
-            snapRotationSetting.SetText(0, VRMenuLocalization.GetText("menuitem.snapRotation.value"));
+            snapRotationSetting.SetText(0, GameGlobals.Localization.GetText("menuitem.snapRotation.value"));
             snapRotationSetting.OnChgSetOption = VRConstants.IniNames.SnapRotationAmount;
             snapRotationSetting.OnChgSetOptionSection = VRConstants.IniSectionAccessibility;
             
@@ -225,8 +226,8 @@ namespace GUZ.VR.Adapter
             
             smoothingLabel.PosY = posY;
             
-            smoothingLabel.SetText(0, VRMenuLocalization.GetText("menuitem.smooth.label"));
-            smoothingLabel.SetText(1, VRMenuLocalization.GetText("menuitem.smooth.description"));
+            smoothingLabel.SetText(0, GameGlobals.Localization.GetText("menuitem.smooth.label"));
+            smoothingLabel.SetText(1, GameGlobals.Localization.GetText("menuitem.smooth.description"));
             
             return smoothingLabel;
         }
@@ -238,7 +239,7 @@ namespace GUZ.VR.Adapter
 
             smoothingSetting.PosY = posY;
 
-            smoothingSetting.SetText(0, VRMenuLocalization.GetText("menuitem.smooth.value"));
+            smoothingSetting.SetText(0, GameGlobals.Localization.GetText("menuitem.smooth.value"));
             smoothingSetting.OnChgSetOption = VRConstants.IniNames.SmoothSpectator;
             smoothingSetting.OnChgSetOptionSection = VRConstants.IniSectionAccessibility;
             

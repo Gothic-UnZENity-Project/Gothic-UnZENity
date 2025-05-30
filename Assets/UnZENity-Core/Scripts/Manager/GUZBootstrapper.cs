@@ -6,6 +6,7 @@ using GUZ.Core.Caches;
 using GUZ.Core.Globals;
 using GUZ.Core.Util;
 using GUZ.Core.Vm;
+using UnityEngine.Localization.Settings;
 using ZenKit;
 using ZenKit.Daedalus;
 using static GUZ.Core.Globals.Constants;
@@ -48,42 +49,29 @@ namespace GUZ.Core.Manager
             // cs, pl
             if (CheckEncoding(StringEncoding.CentralEurope, "MOBNAME_CRATE", "Bedna", "Skrzynia"))
             {
-                Logger.Log($"Selecting StringEncoding={StringEncoding.CentralEurope}", LogCat.Loading);
-                StringEncodingController.SetEncoding(StringEncoding.CentralEurope);
-                
-                GameData.Encoding = Encoding.GetEncoding((int)StringEncoding.CentralEurope);
- 
                 if (CheckEncoding(StringEncoding.CentralEurope, "MOBNAME_CRATE", "Bedna"))
-                    GameData.Language = "cs";
+                    GameGlobals.Localization.SetLanguage("cs", StringEncoding.CentralEurope);
                 else
-                    GameData.Language = "pl";
+                    GameGlobals.Localization.SetLanguage("pl", StringEncoding.CentralEurope);
             }
             // ru
             else if (CheckEncoding(StringEncoding.EastEurope, "MOBNAME_CRATE", "Коробка"))
             {
-                Logger.Log($"Selecting StringEncoding={StringEncoding.EastEurope}", LogCat.Loading);
-                StringEncodingController.SetEncoding(StringEncoding.EastEurope);
-
-                GameData.Encoding = Encoding.GetEncoding((int)StringEncoding.EastEurope);
-                GameData.Language = "ru";
+                GameGlobals.Localization.SetLanguage("ru", StringEncoding.EastEurope);
             }
             // de, en (2x), es, fr, it
             else if (CheckEncoding(StringEncoding.WestEurope, "MOBNAME_CRATE", "Kiste", "Crate", "Box", "Caja", "Boite", "Cassa"))
             {
-                Logger.Log($"Selecting StringEncoding={StringEncoding.WestEurope}", LogCat.Loading);
-                StringEncodingController.SetEncoding(StringEncoding.WestEurope);
-                GameData.Encoding = Encoding.GetEncoding((int)StringEncoding.WestEurope);
-
                 if (CheckEncoding(StringEncoding.WestEurope, "MOBNAME_CRATE", "Kiste"))
-                    GameData.Language = "de";
+                    GameGlobals.Localization.SetLanguage("de", StringEncoding.WestEurope);
                 else if (CheckEncoding(StringEncoding.WestEurope, "MOBNAME_CRATE", "Crate"))
-                    GameData.Language = "en";
+                    GameGlobals.Localization.SetLanguage("en", StringEncoding.WestEurope);
                 else if (CheckEncoding(StringEncoding.WestEurope, "MOBNAME_CRATE", "Caja"))
-                    GameData.Language = "es";
+                    GameGlobals.Localization.SetLanguage("es", StringEncoding.WestEurope);
                 else if (CheckEncoding(StringEncoding.WestEurope, "MOBNAME_CRATE", "Boite"))
-                    GameData.Language = "fr";
+                    GameGlobals.Localization.SetLanguage("fr", StringEncoding.WestEurope);
                 else
-                    GameData.Language = "it";
+                    GameGlobals.Localization.SetLanguage("it", StringEncoding.WestEurope);
             }
             // Nothing found
             // TODO - Potentially re-enable error label on screen to say: We couldn't identify your language.
@@ -93,6 +81,8 @@ namespace GUZ.Core.Manager
             {
                 throw new CultureNotFoundException("Language couldn't be identified based on current Gothic installation.");
             }
+            
+            
         }
 
         private static bool CheckEncoding(StringEncoding encoding, string daedalusConstantToCheck,
