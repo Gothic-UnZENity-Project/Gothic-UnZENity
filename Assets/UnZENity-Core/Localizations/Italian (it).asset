@@ -10,16 +10,21 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1bb1838fe8befb0429646b938e757ff3, type: 3}
-  m_Name: English (en)
+  m_Name: Italian (it)
   m_EditorClassIdentifier: 
   m_Identifier:
-    m_Code: en
+    m_Code: it
   m_Metadata:
-    m_Items: []
-  m_LocaleName: English (en)
+    m_Items:
+    - rid: 4729178343645380676
+  m_LocaleName: Italian (it)
   m_CustomFormatCultureCode: 
   m_UseCustomFormatter: 0
-  m_SortOrder: 0
+  m_SortOrder: 5
   references:
     version: 2
-    RefIds: []
+    RefIds:
+    - rid: 4729178343645380676
+      type: {class: FallbackLocale, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_Locale: {fileID: 11400000, guid: 5853e6a69ef9f7c47a3b551aeed043fc, type: 2}

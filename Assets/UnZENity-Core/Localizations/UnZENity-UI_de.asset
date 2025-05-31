@@ -170,6 +170,10 @@ MonoBehaviour:
     m_Localized: "Menu ausw\xE4hlen"
     m_Metadata:
       m_Items: []
+  - m_Id: 431630484627456
+    m_Localized: _
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

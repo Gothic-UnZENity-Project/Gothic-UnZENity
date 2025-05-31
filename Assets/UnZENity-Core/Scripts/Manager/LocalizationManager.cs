@@ -26,7 +26,10 @@ namespace GUZ.Manager
             var locale = LocalizationSettings.AvailableLocales.GetLocale(language);
 
             if (!locale)
+            {
+                Logger.LogWarning($"Language Language={language} not found. Using en as fallback.", LogCat.Loading);
                 locale = LocalizationSettings.ProjectLocale; // Fallback: en
+            }
             
             LocalizationSettings.SelectedLocale = locale;
         }
