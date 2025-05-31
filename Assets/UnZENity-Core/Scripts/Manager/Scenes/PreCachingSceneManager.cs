@@ -38,6 +38,8 @@ namespace GUZ.Core.Manager.Scenes
 
         public void Init()
         {
+            GameContext.InteractionAdapter.DisableMenus();
+            GameContext.InteractionAdapter.InitUIInteraction();
             GameContext.InteractionAdapter.TeleportPlayerTo(_loadingBarHandler.transform.position);
 
 #pragma warning disable CS4014 // Do not wait. We want to update player movement (VR) and camera view (progress bar)

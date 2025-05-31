@@ -1,5 +1,4 @@
 using System;
-using GUZ.Core.UI.Menus.Adapter.Menu;
 
 namespace GUZ.Core.UI.Menus.Settings
 {

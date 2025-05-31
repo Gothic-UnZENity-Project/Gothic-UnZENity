@@ -33,5 +33,10 @@ namespace GUZ.Core.Editor
         {
             EditorApplication.ExecuteMenuItem("Window/Package Manager");
         }
+        [MenuItem("UnZENity/Unity/Localization Tables", priority = 910)]
+        public static void ShowLocalizationTablesWindow()
+        {
+            EditorApplication.ExecuteMenuItem("Window/Asset Management/Localization Tables");
+        }
     }
 }
