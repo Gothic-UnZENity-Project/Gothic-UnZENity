@@ -142,7 +142,7 @@ namespace GUZ.Lab
             // TODO - Broken. Fix before use.
             // NpcHelper.CacheHero();
 
-            GuzBootstrapper.BootGothicUnZeNity();
+            Bootstrapper.BootGothicUnZeNity();
 
             LabNpcAnimationHandler.Bootstrap();
             LabMusicHandler.Bootstrap();

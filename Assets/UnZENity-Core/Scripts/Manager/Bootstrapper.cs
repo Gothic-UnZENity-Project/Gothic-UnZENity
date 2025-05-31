@@ -1,20 +1,16 @@
 using System;
 using System.Globalization;
 using System.Linq;
-using System.Text;
 using GUZ.Core.Caches;
 using GUZ.Core.Globals;
-using GUZ.Core.Util;
 using GUZ.Core.Vm;
-using UnityEngine.Localization.Settings;
 using ZenKit;
 using ZenKit.Daedalus;
 using static GUZ.Core.Globals.Constants;
-using Logger = GUZ.Core.Util.Logger;
 
 namespace GUZ.Core.Manager
 {
-    public class GuzBootstrapper
+    public class Bootstrapper
     {
         public static void OnApplicationQuit()
         {

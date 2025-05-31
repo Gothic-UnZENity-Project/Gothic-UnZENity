@@ -167,7 +167,7 @@ namespace GUZ.Core
             Vobs.Init(this);
             Npcs.Init(this);
 
-            GuzBootstrapper.BootGothicUnZeNity();
+            Bootstrapper.BootGothicUnZeNity();
             
             GlobalEventDispatcher.LevelChangeTriggered.AddListener((world, spawn) =>
             {
@@ -286,7 +286,7 @@ namespace GUZ.Core
 
         private void OnApplicationQuit()
         {
-            GuzBootstrapper.OnApplicationQuit();
+            Bootstrapper.OnApplicationQuit();
         }
     }
 }
