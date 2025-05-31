@@ -1,11 +1,10 @@
-using System;
 using GUZ.Core.Globals;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace GUZ.Core.UI.Menus
 {
-    public class PreCachingTutorialHandler : MonoBehaviour
+    public class TutorialHandler : MonoBehaviour
     {
         [SerializeField]
         private Image[] _backgroundImages;
