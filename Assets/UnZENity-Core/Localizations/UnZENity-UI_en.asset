@@ -118,6 +118,62 @@ MonoBehaviour:
     m_Localized: Speed of Smooth Rotation
     m_Metadata:
       m_Items: []
+  - m_Id: 790913176952832
+    m_Localized: VR Hero Slots
+    m_Metadata:
+      m_Items: []
+  - m_Id: 792354008457216
+    m_Localized: Quest 2 Controls
+    m_Metadata:
+      m_Items: []
+  - m_Id: 791237371486208
+    m_Localized: Jump
+    m_Metadata:
+      m_Items: []
+  - m_Id: 791235605684224
+    m_Localized: _
+    m_Metadata:
+      m_Items: []
+  - m_Id: 791237967077376
+    m_Localized: Crouch
+    m_Metadata:
+      m_Items: []
+  - m_Id: 791239724490752
+    m_Localized: Pull/Dialog
+    m_Metadata:
+      m_Items: []
+  - m_Id: 791240353636352
+    m_Localized: Menu Select
+    m_Metadata:
+      m_Items: []
+  - m_Id: 791234347393024
+    m_Localized: Rotate/Teleport
+    m_Metadata:
+      m_Items: []
+  - m_Id: 791233751801856
+    m_Localized: Walk
+    m_Metadata:
+      m_Items: []
+  - m_Id: 791234976538624
+    m_Localized: _
+    m_Metadata:
+      m_Items: []
+  - m_Id: 791236801060864
+    m_Localized: Menu
+    m_Metadata:
+      m_Items: []
+  - m_Id: 791236171915264
+    m_Localized: _
+    m_Metadata:
+      m_Items: []
+  - m_Id: 791238533308416
+    m_Localized: Pull/Dialog
+    m_Metadata:
+      m_Items: []
+  - m_Id: 791239070179328
+    m_Localized: Menu Select
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []
