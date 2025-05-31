@@ -540,7 +540,7 @@ namespace GUZ.Core.Manager.Culling
                 {
                     var key = _pausedVobsToReenable.Keys.ElementAt(i);
                     var rigidBody = _pausedVobsToReenable[key];
-                    if (rigidBody.velocity != Vector3.zero)
+                    if (rigidBody.linearVelocity != Vector3.zero)
                     {
                         continue;
                     }

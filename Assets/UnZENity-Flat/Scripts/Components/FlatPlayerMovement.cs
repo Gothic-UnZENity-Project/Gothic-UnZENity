@@ -43,9 +43,9 @@ namespace GUZ.Flat.Components
         
         private void ExecuteJump()
         {
-            if (IsPressed(Key.Space) && Mathf.Abs(_rigidbody.velocity.y) < _maxGroundedVelocity)
+            if (IsPressed(Key.Space) && Mathf.Abs(_rigidbody.linearVelocity.y) < _maxGroundedVelocity)
             {
-                _rigidbody.velocity += Vector3.up * _jumpHeight;
+                _rigidbody.linearVelocity += Vector3.up * _jumpHeight;
             }
         }
         
