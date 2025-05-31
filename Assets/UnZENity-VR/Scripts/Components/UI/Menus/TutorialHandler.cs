@@ -1,8 +1,11 @@
+#if GUZ_HVR_INSTALLED
+using GUZ.Core;
 using GUZ.Core.Globals;
+using HurricaneVR.Framework.ControllerInput;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace GUZ.Core.UI.Menus
+namespace GUZ.VR.UI.Menus
 {
     public class TutorialHandler : MonoBehaviour
     {
@@ -25,3 +28,4 @@ namespace GUZ.Core.UI.Menus
         }
     }
 }
+#endif
