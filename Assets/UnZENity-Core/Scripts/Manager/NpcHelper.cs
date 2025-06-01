@@ -170,6 +170,12 @@ namespace GUZ.Core.Manager
 
         public static int ExtNpcHasItems(NpcInstance npc, uint itemId)
         {
+            // 3861 = beer
+            // 4052 = ore (?)
+            if (npc.Id == 0 && itemId == 3861)
+            {
+                return 1;
+            }
             if (GetProperties(npc).Items.TryGetValue(itemId, out var amount))
             {
                 return amount;
