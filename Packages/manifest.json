@@ -2,6 +2,7 @@
   "dependencies": {
     "com.domybest.mybox": "https://github.com/Deadcows/MyBox.git",
     "com.hurricanevrextensions.simulator": "https://github.com/Gothic-UnZENity-Project/hvr-simulator.git",
+    "com.unity.ai.inference": "2.2.1",
     "com.unity.collab-proxy": "2.8.2",
     "com.unity.feature.development": "1.0.2",
     "com.unity.ide.rider": "3.0.36",
