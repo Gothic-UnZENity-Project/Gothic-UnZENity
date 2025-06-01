@@ -1,19 +1,16 @@
 using System;
 using System.Globalization;
 using System.Linq;
-using System.Text;
 using GUZ.Core.Caches;
 using GUZ.Core.Globals;
-using GUZ.Core.Util;
 using GUZ.Core.Vm;
 using ZenKit;
 using ZenKit.Daedalus;
 using static GUZ.Core.Globals.Constants;
-using Logger = GUZ.Core.Util.Logger;
 
 namespace GUZ.Core.Manager
 {
-    public class GuzBootstrapper
+    public class Bootstrapper
     {
         public static void OnApplicationQuit()
         {
@@ -43,56 +40,38 @@ namespace GUZ.Core.Manager
         /// We check for expected values with different StringEncoding values. As they're always converted to UTF-8,
         /// we can easily check them for a match.
         /// </summary>
-        public static void SetLanguage()
+        private static void SetLanguage()
         {
-            // cs, pl
-            if (CheckEncoding(StringEncoding.CentralEurope, "MOBNAME_CRATE", "Bedna", "Skrzynia"))
-            {
-                Logger.Log($"Selecting StringEncoding={StringEncoding.CentralEurope}", LogCat.Loading);
-                StringEncodingController.SetEncoding(StringEncoding.CentralEurope);
-                
-                GameData.Encoding = Encoding.GetEncoding((int)StringEncoding.CentralEurope);
- 
-                if (CheckEncoding(StringEncoding.CentralEurope, "MOBNAME_CRATE", "Bedna"))
-                    GameData.Language = "cs";
-                else
-                    GameData.Language = "pl";
-            }
+            // cs
+            if (CheckEncoding(StringEncoding.CentralEurope, "MOBNAME_CRATE", "Bedna"))
+                GameGlobals.Localization.SetLanguage("cs", StringEncoding.CentralEurope);
+            // pl
+            else if (CheckEncoding(StringEncoding.CentralEurope, "MOBNAME_CRATE", "Skrzynia"))
+                GameGlobals.Localization.SetLanguage("pl", StringEncoding.CentralEurope);
             // ru
-            else if (CheckEncoding(StringEncoding.EastEurope, "MOBNAME_CRATE", "Коробка"))
-            {
-                Logger.Log($"Selecting StringEncoding={StringEncoding.EastEurope}", LogCat.Loading);
-                StringEncodingController.SetEncoding(StringEncoding.EastEurope);
-
-                GameData.Encoding = Encoding.GetEncoding((int)StringEncoding.EastEurope);
-                GameData.Language = "ru";
-            }
-            // de, en (2x), es, fr, it
-            else if (CheckEncoding(StringEncoding.WestEurope, "MOBNAME_CRATE", "Kiste", "Crate", "Box", "Caja", "Boite", "Cassa"))
-            {
-                Logger.Log($"Selecting StringEncoding={StringEncoding.WestEurope}", LogCat.Loading);
-                StringEncodingController.SetEncoding(StringEncoding.WestEurope);
-                GameData.Encoding = Encoding.GetEncoding((int)StringEncoding.WestEurope);
-
-                if (CheckEncoding(StringEncoding.WestEurope, "MOBNAME_CRATE", "Kiste"))
-                    GameData.Language = "de";
-                else if (CheckEncoding(StringEncoding.WestEurope, "MOBNAME_CRATE", "Crate"))
-                    GameData.Language = "en";
-                else if (CheckEncoding(StringEncoding.WestEurope, "MOBNAME_CRATE", "Caja"))
-                    GameData.Language = "es";
-                else if (CheckEncoding(StringEncoding.WestEurope, "MOBNAME_CRATE", "Boite"))
-                    GameData.Language = "fr";
-                else
-                    GameData.Language = "it";
-            }
+            else if (CheckEncoding(StringEncoding.CentralEurope, "MOBNAME_CRATE", "Коробка"))
+                GameGlobals.Localization.SetLanguage("ru", StringEncoding.EastEurope);
+            // de
+            else if (CheckEncoding(StringEncoding.CentralEurope, "MOBNAME_CRATE", "Kiste"))
+                GameGlobals.Localization.SetLanguage("de", StringEncoding.WestEurope);
+            // en - 2x as G1 vs G2 use a different value for it
+            else if (CheckEncoding(StringEncoding.CentralEurope, "MOBNAME_CRATE", "Crate", "Box"))
+                GameGlobals.Localization.SetLanguage("en", StringEncoding.WestEurope);
+            // es
+            else if (CheckEncoding(StringEncoding.CentralEurope, "MOBNAME_CRATE", "Caja"))
+                GameGlobals.Localization.SetLanguage("es", StringEncoding.WestEurope);
+            // fr
+            else if (CheckEncoding(StringEncoding.EastEurope, "MOBNAME_CRATE", "Boite"))
+                GameGlobals.Localization.SetLanguage("fr", StringEncoding.WestEurope);
+            // it
+            else if (CheckEncoding(StringEncoding.CentralEurope, "MOBNAME_CRATE", "Cassa"))
+                GameGlobals.Localization.SetLanguage("it", StringEncoding.WestEurope);
             // Nothing found
             // TODO - Potentially re-enable error label on screen to say: We couldn't identify your language.
             // TODO - It also might make sense to manually overwrite/define language/Encoding via GameConfiguration.json - but only if needed in the future.
             // TODO - Add values for Gothic 2
             else
-            {
                 throw new CultureNotFoundException("Language couldn't be identified based on current Gothic installation.");
-            }
         }
 
         private static bool CheckEncoding(StringEncoding encoding, string daedalusConstantToCheck,
@@ -100,7 +79,7 @@ namespace GUZ.Core.Manager
         {
             StringEncodingController.SetEncoding(encoding);
 
-            var l10nSymbol = GameData.GothicVm.GetSymbolByName(daedalusConstantToCheck);
+            var l10nSymbol = GameData.GothicVm.GetSymbolByName(daedalusConstantToCheck)!;
             var l10nString = l10nSymbol.GetString(0);
 
             return valuesToCheck.Contains(l10nString);
@@ -131,8 +110,8 @@ namespace GUZ.Core.Manager
 
         private static void LoadSubtitles()
         {
-            string cutsceneSuffix = GameContext.GameVersionAdapter.CutsceneFileSuffix;
-            string cutscenePath =
+            var cutsceneSuffix = GameContext.GameVersionAdapter.CutsceneFileSuffix;
+            var cutscenePath =
                 $"{GameContext.GameVersionAdapter.RootPath}/_work/DATA/scripts/content/CUTSCENE/OU.{cutsceneSuffix}";
             GameData.Dialogs.CutsceneLibrary = new(cutscenePath);
         }

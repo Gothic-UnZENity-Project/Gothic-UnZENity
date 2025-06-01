@@ -5,12 +5,14 @@ using GUZ.Core.Manager.Culling;
 using GUZ.Core.Manager.Vobs;
 using GUZ.Core.Npc;
 using GUZ.Core.World;
+using GUZ.Manager;
 
 namespace GUZ.Core
 {
     public interface IGlobalDataProvider
     {
         public ConfigManager Config { get; }
+        public LocalizationManager Localization { get; }
         public SaveGameManager SaveGame { get; }
         public LoadingManager Loading { get; }
         public StaticCacheManager StaticCache { get; }
