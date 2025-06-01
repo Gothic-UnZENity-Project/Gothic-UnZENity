@@ -51,10 +51,10 @@ jobs:
         include:
           - targetPlatform: StandaloneWindows64
             targetDevice: Windows64
-          - targetPlatform: Android
-            targetDevice: Pico
-          - targetPlatform: Android
-            targetDevice: Quest
+#          - targetPlatform: Android
+#            targetDevice: Pico
+#          - targetPlatform: Android
+#            targetDevice: Quest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -96,6 +96,19 @@ jobs:
           targetPlatform: ${{ matrix.targetPlatform }}
           allowDirtyBuild: true
           buildMethod: GUZ.VR.Editor.VRBuilderActions.Perform${{ matrix.targetDevice }}Build
+
+      # Add this step after the build step and before the zip step
+      - name: List build artifacts
+        run: |
+          echo "Listing build directories:"
+          ls -la
+          echo "Listing inside Builds directory (if exists):"
+          if [ -d "Builds" ]; then
+            ls -la Builds/
+          else
+            echo "Builds directory does not exist!"
+          fi
+
 
       - uses: actions/upload-artifact@v4
         with:
