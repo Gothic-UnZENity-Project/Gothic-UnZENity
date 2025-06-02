@@ -106,7 +106,7 @@ jobs:
           if [ -d "Builds" ]; then
             ls -la Builds/
           elif [ -d "build" ]; then
-            ls -la build/
+            ls -la build/StandaloneWindows64/
           else
             echo "Builds directory does not exist!"
           fi
