@@ -105,6 +105,8 @@ jobs:
           echo "Listing inside Builds directory (if exists):"
           if [ -d "Builds" ]; then
             ls -la Builds/
+          elif [ -d "build" ]; then
+            ls -la build/
           else
             echo "Builds directory does not exist!"
           fi
