@@ -7,7 +7,6 @@ using GUZ.Core.UI.Menus.Adapter.Menu;
 using GUZ.Core.UI.Menus.Adapter.MenuItem;
 using GUZ.Core.Util;
 using MyBox;
-using PlasticPipe.PlasticProtocol.Messages;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
