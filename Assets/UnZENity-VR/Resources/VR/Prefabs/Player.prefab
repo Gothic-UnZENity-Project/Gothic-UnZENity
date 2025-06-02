@@ -40,12 +40,13 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 252563623857412721}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b546c3417ea7ca34abe1c7ec7847be5c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  items: []
+  _syncInterval: 5
+  _maxBackpackSlots: 20
   grabbables: []
   MeshChild: {fileID: 0}
   socketContainer: {fileID: 0}
