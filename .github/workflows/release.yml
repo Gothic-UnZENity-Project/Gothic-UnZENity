@@ -27,6 +27,13 @@ jobs:
           - targetPlatform: Android
             targetDevice: Quest
     steps:
+      - name: Free Disk Space (Ubuntu)
+        uses: jlumbroso/free-disk-space@main
+        with:
+          # this might remove tools that are actually needed,
+          # if set to "true" but frees about 6 GB
+          tool-cache: false
+    
       # Checkout
       - name: Checkout repository
         uses: actions/checkout@v4
