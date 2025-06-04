@@ -7,7 +7,7 @@
       "dependencies": {
         "com.unity.ugui": "1.0.0"
       },
-      "hash": "2a1457028cf2fce25852740b6a34274fa8aea10a"
+      "hash": "cbff7090303fac1067f69654ede33d11e2ccd0c1"
     },
     "com.hurricanevrextensions.simulator": {
       "version": "https://github.com/Gothic-UnZENity-Project/hvr-simulator.git",
@@ -171,7 +171,7 @@
     },
     "com.unity.nuget.newtonsoft-json": {
       "version": "3.2.1",
-      "depth": 1,
+      "depth": 0,
       "source": "registry",
       "dependencies": {},
       "url": "https://packages.unity.com"
@@ -372,7 +372,7 @@
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "b458bbf54ae7ad2c4adb0a25c15b9aca9106960f"
+      "hash": "4e84d235381c65cd9aafcff8476cd23e38c5f13d"
     },
     "com.unity.modules.accessibility": {
       "version": "1.0.0",

@@ -98,5 +98,11 @@ Assets/HurricaneVR/
 # Do not commit local development settings
 Assets/StreamingAssets/GameSettings.dev.json
 Assets/StreamingAssets/GameSettings.dev.json.meta
+Assets/StreamingAssets/SpeechToText/*.onnx
+Assets/StreamingAssets/SpeechToText/*.onnx.meta
+Assets/StreamingAssets/SpeechToText/*.json
+Assets/StreamingAssets/SpeechToText/*.json.meta
+
+
 Assets/UnZENity-Core/Resources/DeveloperConfigs/Local/*
 !Assets/UnZENity-Core/Resources/DeveloperConfigs/Local/.gitkeep

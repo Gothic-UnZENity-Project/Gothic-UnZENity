@@ -1,9 +1,8 @@
-using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace GUZ.VR.Components
+namespace GUZ.VR.Components.SpeechToText
 {
     public class SpeechToTextHandler : MonoBehaviour
     {
@@ -132,7 +131,7 @@ namespace GUZ.VR.Components
 
         private void Update()
         {
-            if (_whisper && !_whisper.IsTranscribing)
+            if (_whisper != null && !_whisper.IsTranscribing)
             {
                 Debug.Log(_whisper.OutputString);
                 _whisper = null;
