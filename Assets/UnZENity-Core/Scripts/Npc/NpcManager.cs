@@ -287,6 +287,22 @@ namespace GUZ.Core.Npc
             npc.GetUserData().Vob.ModelFatness = fatness;
         }
 
+        public void ExtNpcRemoveInvItems(NpcInstance npc, int itemId, int count)
+        {
+            var props = npc.GetUserData().Props;
+
+            props.Items.TryGetValue((uint)itemId, out int npcCount);
+
+            if ((npcCount - count) <= 0)
+            {
+                props.Items.Remove((uint)itemId);
+            }
+            else
+            {
+                props.Items[(uint)itemId] = npcCount - count;
+            }
+        }
+
         public void ExtEquipItem(NpcInstance npc, int itemId)
         {
             var props = npc.GetUserData().Props;

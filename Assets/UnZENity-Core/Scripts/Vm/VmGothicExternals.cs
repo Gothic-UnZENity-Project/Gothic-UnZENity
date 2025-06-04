@@ -4,6 +4,7 @@ using System.Linq;
 using GUZ.Core.Caches;
 using GUZ.Core.Creator;
 using GUZ.Core.Data.Container;
+using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
 using GUZ.Core.Util;
@@ -116,7 +117,7 @@ namespace GUZ.Core.Vm
             // PxVm.pxVmRegisterExternal(vmPtr, "Npc_GetInvItem", Npc_GetInvItem);
             // PxVm.pxVmRegisterExternal(vmPtr, "Npc_GetInvItemBySlot", Npc_GetInvItemBySlot);
             // PxVm.pxVmRegisterExternal(vmPtr, "Npc_RemoveInvItem", Npc_RemoveInvItem);
-            // PxVm.pxVmRegisterExternal(vmPtr, "Npc_RemoveInvItems", Npc_RemoveInvItems);
+            vm.RegisterExternal<NpcInstance, int, int>("Npc_RemoveInvItems", Npc_RemoveInvItems);
             vm.RegisterExternal<NpcInstance, int>("EquipItem", EquipItem);
             vm.RegisterExternal<int, NpcInstance, NpcInstance>("Npc_GetDistToNpc", Npc_GetDistToNpc);
             vm.RegisterExternal<int, NpcInstance>("Npc_HasEquippedArmor", Npc_HasEquippedArmor);
@@ -709,25 +710,25 @@ namespace GUZ.Core.Vm
 
         public static void Npc_GetInvItem(IntPtr vmPtr)
         {
-            // NpcCreator.ExtGetInvItem();
+            //var result = GameGlobals.Npcs.ExtGetInvItem();
         }
 
 
         public static void Npc_GetInvItemBySlot(IntPtr vmPtr)
         {
-            // NpcCreator.ExtGetInvItemBySlot();
+            //var result = GameGlobals.Npcs.ExtGetInvItemBySlot();
         }
 
 
-        public static void Npc_RemoveInvItem(IntPtr vmPtr)
+        public static void Npc_RemoveInvItem(NpcInstance npc, IntPtr vmPtr)
         {
-            // NpcCreator.ExtRemoveInvItem();
+            //var result = GameGlobals.Npcs.ExtRemoveInvItem();
         }
 
 
-        public static void Npc_RemoveInvItems(IntPtr vmPtr)
+        public static void Npc_RemoveInvItems(NpcInstance npc, int itemId, int count)
         {
-            // NpcCreator.ExtRemoveInvItems();
+            GameGlobals.Npcs.ExtNpcRemoveInvItems(npc, itemId, count);
         }
 
 

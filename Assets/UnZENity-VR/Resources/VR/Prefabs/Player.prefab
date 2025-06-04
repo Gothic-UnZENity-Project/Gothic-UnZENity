@@ -47,9 +47,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _syncInterval: 5
   _maxBackpackSlots: 20
-  grabbables: []
+  Grabbables: []
+  HeroInstanceItems: []
   MeshChild: {fileID: 0}
-  socketContainer: {fileID: 0}
+  SocketContainer: {fileID: 0}
 --- !u!1 &427936599919638798
 GameObject:
   m_ObjectHideFlags: 0
@@ -3304,10 +3305,34 @@ MonoBehaviour:
       m_Calls: []
   HandGrabbed:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 73085000710289061}
+        m_TargetAssemblyTypeName: GUZ.BackPackManager, UnZENity.VR
+        m_MethodName: OnEnable
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   HandReleased:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 73085000710289061}
+        m_TargetAssemblyTypeName: GUZ.BackPackManager, UnZENity.VR
+        m_MethodName: OnDisable
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   HandFullReleased:
     m_PersistentCalls:
       m_Calls: []
