@@ -22,7 +22,8 @@ namespace GUZ.Core.UI.Menus
         protected AbstractMenuInstance MenuInstance;
         [SerializeField] protected GameObject Canvas;
         [SerializeField] protected GameObject Background;
-
+        [SerializeField] protected TMP_Text Comment;
+        
         protected Dictionary<string, (AbstractMenuItemInstance item, GameObject go)> MenuItemCache = new();
 
         // Pixel ratio of whole menu (Canvas) is based on background picture pixel and virtual pixels named inside Daedalus.
@@ -216,6 +217,12 @@ namespace GUZ.Core.UI.Menus
                 SetText(textComp, item);
             }
 
+            var eventTrigger = itemGo.GetComponent<EventTrigger>();
+            if (eventTrigger != null && item.GetText(1).NotNullOrEmpty())
+            {
+                SetComment(eventTrigger, item.GetText(1));
+            }
+            
             //item disabled (grayed out and not interactable)
             if (!IsMenuItemActive(item.Name))
             {
@@ -223,7 +230,6 @@ namespace GUZ.Core.UI.Menus
                 {
                     textComp.color = Constants.TextDisabledColor;
                     var button = itemGo.GetComponent<Button>();
-                    var eventTrigger = itemGo.GetComponent<EventTrigger>();
                     if (button != null)
                     {
                         button.enabled = false;
@@ -288,6 +294,12 @@ namespace GUZ.Core.UI.Menus
             }
 
             textComp.text = text0;
+        }
+
+        private void SetComment(EventTrigger eventTrigger, string comment)
+        {
+            eventTrigger.triggers.First(i => i.eventID == EventTriggerType.PointerEnter).callback.AddListener(_ => { Comment.text = comment; });
+            eventTrigger.triggers.First(i => i.eventID == EventTriggerType.PointerExit).callback.AddListener(_ => { Comment.text = string.Empty; });
         }
 
         private void SetSliderValues(GameObject go, AbstractMenuItemInstance item)

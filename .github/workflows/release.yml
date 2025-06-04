@@ -76,9 +76,11 @@ jobs:
           allowDirtyBuild: true
           buildMethod: GUZ.VR.Editor.VRBuilderActions.Perform${{ matrix.targetDevice }}Build
 
-      # Zip
+      # Zip into workspace folder (overcoming permission errors)
       - name: zip
-        run: cd Builds/${{ matrix.targetDevice }} && zip -r ${{ matrix.targetDevice }}.zip *
+        run: |
+          cd Builds/${{ matrix.targetDevice }}
+          zip -r ../../${{ matrix.targetDevice }}.zip *
         
       # Release
       - name: Upload Release Asset
@@ -88,6 +90,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ github.event.release.upload_url }}
-          asset_path: Builds/${{ matrix.targetDevice }}/${{ matrix.targetDevice }}.zip
-          asset_name: Gohic-UnZENity-${{ matrix.targetDevice }}.zip
+          asset_path: ${{ matrix.targetDevice }}.zip
+          asset_name: Gothic-UnZENity-${{ matrix.targetDevice }}.zip
           asset_content_type: application/zip
