@@ -22,6 +22,7 @@ namespace GUZ
 {
     public class BackPackManager : MonoBehaviour
     {
+        [SerializeField] private float _syncInterval = 0.2f;
         [SerializeField] private int _maxBackpackSlots = 20;
 
         // Static lists for debugging
@@ -78,61 +79,66 @@ namespace GUZ
             // Only run periodic updates if backpack is active
             if (_isBackpackActive)
             {
-
-                // Check if hero inventory has changed
-                bool heroInventoryChanged = CheckHeroInventoryChanged();
-
-                // Track items before update
-                var previousItems = new Dictionary<int, int>(ItemsId);
-
-                // Update current contents
-                UpdateBackpackContents();
-
-                // Check for removed items
-                CheckForRemovedItems(previousItems);
-
-                // If hero inventory changed, sync from hero to backpack
-                if (heroInventoryChanged)
+                // Periodic sync between hero inventory and backpack
+                if (Time.time - _lastSyncTime > _syncInterval)
                 {
-                    SyncHeroInventoryToBackpack();
-                }
-                else
-                {
-                    // Otherwise sync from backpack to hero
-                    SyncBackpackToHeroInventory();
-                }
+                    _lastSyncTime = Time.time;
+                    
+                    // Check if hero inventory has changed
+                    bool heroInventoryChanged = CheckHeroInventoryChanged();
+                    
+                    // Track items before update
+                    var previousItems = new Dictionary<int, int>(ItemsId);
 
-                var props = _heroInstance.GetUserData()?.Props;
-                if (props != null)
-                {
-                    HeroInstanceItems = props.Items.Select(item => item.Key.ToString()).ToList();
+                    // Update current contents
+                    UpdateBackpackContents();
+
+                    // Check for removed items
+                    CheckForRemovedItems(previousItems);
+
+                    // If hero inventory changed, sync from hero to backpack
+                    if (heroInventoryChanged)
+                    {
+                        SyncHeroInventoryToBackpack();
+                    }
+                    else
+                    {
+                        // Otherwise sync from backpack to hero
+                        SyncBackpackToHeroInventory();
+                    }
+
+                    var props = _heroInstance.GetUserData()?.Props;
+                    if (props != null)
+                    {
+                        HeroInstanceItems = props.Items.Select(item => item.Key.ToString()).ToList();
+                    }
                 }
             }
         }
-
+        
         /// <summary>
         /// Checks if hero inventory has changed since last update
         /// </summary>
         private bool CheckHeroInventoryChanged()
         {
             if (_heroInstance == null) return false;
-
+            
             var props = _heroInstance.GetUserData()?.Props;
             if (props == null) return false;
-
+            
             // Convert current hero inventory to a comparable format
             var currentHeroItems = new Dictionary<uint, int>();
             foreach (var item in props.Items)
             {
                 currentHeroItems[item.Key] = item.Value;
             }
-
+            
             // Compare with previous hero inventory
             if (HeroInstanceItems.Count != currentHeroItems.Count)
             {
                 return true;
             }
-
+            
             // Check if any item counts have changed
             foreach (var item in currentHeroItems)
             {
@@ -141,7 +147,7 @@ namespace GUZ
                     return true;
                 }
             }
-
+            
             return false;
         }
 
@@ -294,7 +300,7 @@ namespace GUZ
 
             // Get current backpack items
             UpdateBackpackContents();
-
+            
             // First, remove items from backpack that are not in hero inventory
             RemoveItemsNotInHeroInventory(props);
 
@@ -327,11 +333,11 @@ namespace GUZ
                     }
                 }
             }
-
+            
             // Wait a moment and restore audio
             StartCoroutine(PostSpawnContent(grabAudio, releaseAudio));
         }
-
+        
         /// <summary>
         /// Removes items from backpack that are not in hero inventory or have too many copies
         /// </summary>
@@ -339,12 +345,12 @@ namespace GUZ
         {
             // Create a copy of ItemsId to avoid modification during iteration
             var backpackItems = new Dictionary<int, int>(ItemsId);
-
+            
             foreach (var backpackItem in backpackItems)
             {
                 int itemID = backpackItem.Key;
                 int backpackAmount = backpackItem.Value;
-
+                
                 // Check if item exists in hero inventory
                 if (!props.Items.TryGetValue((uint)itemID, out int heroAmount))
                 {
@@ -414,22 +420,22 @@ namespace GUZ
                 // Update item count in hero inventory
                 props.Items[(uint)item.Key] = item.Value;
             }
-
+            
             // Check for items in hero inventory that are not in backpack
             // and should be removed from hero inventory
             List<uint> itemsToRemove = new List<uint>();
-
+            
             foreach (var heroItem in props.Items)
             {
                 uint itemID = heroItem.Key;
-
+                
                 // If item is not in backpack, mark for removal
                 if (!ItemsId.ContainsKey((int)itemID))
                 {
                     itemsToRemove.Add(itemID);
                 }
             }
-
+            
             // Remove items from hero inventory
             foreach (var itemID in itemsToRemove)
             {
