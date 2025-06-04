@@ -157,6 +157,14 @@ namespace GUZ.VR.Components.UI
             }
         }
 
+        public void DialogSelected(int index)
+        {
+            if (index < 0 || _dialogItems.Count < index)
+                return;
+            
+            _dialogItems[index].GetComponent<Button>().onClick.Invoke();
+        }
+        
         private void OnDialogClicked(NpcInstance instance, InfoInstance infoInstance)
         {
             DialogManager.MainSelectionClicked(instance.GetUserData(), infoInstance);

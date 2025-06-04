@@ -147,7 +147,7 @@ GameObject:
   - component: {fileID: 6786673884862264300}
   - component: {fileID: 616600389321167911}
   m_Layer: 5
-  m_Name: AudioRecording
+  m_Name: SpeechToText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -186,8 +186,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 61172a6e8ca946219be89984eb7e31c8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  RecordingImage: {fileID: 3482695007531508842}
-  AiWaitingImage: {fileID: 2991514440209210127}
+  _vrDialog: {fileID: 7973002185771047475}
+  _recordingImage: {fileID: 3482695007531508842}
+  _aiWaitingImage: {fileID: 2991514440209210127}
   MicrophoneDeviceName: Mikrofonarray (Senary Audio)
 --- !u!1 &2782839599571649433
 GameObject:

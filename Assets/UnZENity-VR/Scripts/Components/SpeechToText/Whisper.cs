@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -60,6 +61,74 @@ namespace GUZ.VR.Components.SpeechToText
         // Maximum size of audioClip (30s at 16kHz)
         private const int _maxSamples = 30 * 16000;
 
+
+        private bool _isFirstRun = true;
+        public void Initialize()
+        {
+            // Already setup
+            if (!_isFirstRun)
+                return;
+
+            _isFirstRun = false;
+            try
+            {
+                var decoder1FilePath = $"{GetRootPath()}/decoder_model.onnx";
+                var decoder2FilePath = $"{GetRootPath()}/decoder_with_past_model.onnx";
+                var encoderFilePath = $"{GetRootPath()}/encoder_model.onnx";
+                var logmelFilePath = $"{GetRootPath()}/logmel_spectrogram.onnx";
+                var vocabFilePath = $"{GetRootPath()}/vocab.json";
+
+                if (!File.Exists(decoder1FilePath) || !File.Exists(decoder2FilePath) || !File.Exists(encoderFilePath) ||
+                    !File.Exists(logmelFilePath) || !File.Exists(vocabFilePath))
+                {
+                    Logger.Log("Whisper can't be initialized, as no LLM is found.", LogCat.VR);
+                    return;
+                }
+
+                var audioDecoder1 = ModelLoader.Load(decoder1FilePath);
+                var audioDecoder2 = ModelLoader.Load(decoder2FilePath);
+                var audioEncoder = ModelLoader.Load(encoderFilePath);
+                var logMelSpectro = ModelLoader.Load(logmelFilePath);
+                vocabText = File.ReadAllText(vocabFilePath);
+
+                if (audioDecoder1 == null || audioDecoder2 == null || audioEncoder == null || logMelSpectro == null ||
+                    vocabText.IsNullOrEmpty())
+                {
+                    Logger.Log("Whisper can't be initialized, as LLM couldn't be initialized..", LogCat.VR);
+                    return;
+                }
+
+                _decoder1 = new Worker(audioDecoder1, BackendType.GPUCompute);
+                _decoder2 = new Worker(audioDecoder2, BackendType.GPUCompute);
+
+                var graph = new FunctionalGraph();
+                var input = graph.AddInput(DataType.Float, new DynamicTensorShape(1, 1, 51865));
+                var amax = Functional.ArgMax(input, -1, false);
+                var selectTokenModel = graph.Compile(amax);
+                _argmax = new Worker(selectTokenModel, BackendType.GPUCompute);
+
+                _encoder = new Worker(audioEncoder, BackendType.GPUCompute);
+                _spectrogram = new Worker(logMelSpectro, BackendType.GPUCompute);
+
+                _outputTokens = new NativeArray<int>(_maxTokens, Allocator.Persistent);
+
+                _outputTokens[0] = _startOfTranscript;
+                _outputTokens[1] = GetLanguageToken();
+                _outputTokens[2] = _transcribe; //TRANSLATE;//
+                //outputTokens[3] = NO_TIME_STAMPS;// START_TIME;//
+                tokenCount = 3;
+
+                SetupWhiteSpaceShifts();
+                GetTokens();
+            }
+            catch (Exception e)
+            {
+                Logger.LogError($"Whisper can't be initialized: {e}", LogCat.VR);
+                return;
+            }
+            
+            IsInitialized = true;
+        }
         
         public async void StartExec(AudioClip audioClip)
         {
@@ -67,43 +136,6 @@ namespace GUZ.VR.Components.SpeechToText
 
             IsTranscribing = false;
             OutputString = string.Empty;
-            
-            SetupWhiteSpaceShifts();
-            GetTokens();
-
-            var audioDecoder1 = ModelLoader.Load($"{GetRootPath()}/decoder_model.onnx");
-            var audioDecoder2 = ModelLoader.Load($"{GetRootPath()}/decoder_with_past_model.onnx");
-            var audioEncoder = ModelLoader.Load($"{GetRootPath()}/encoder_model.onnx");
-            var logMelSpectro = ModelLoader.Load($"{GetRootPath()}/logmel_spectrogram.onnx");
-            vocabText = File.ReadAllText($"{GetRootPath()}/vocab.json");
-
-            if (audioDecoder1 == null || audioDecoder2 == null || audioEncoder == null || logMelSpectro == null || vocabText.IsNullOrEmpty())
-            {
-                Logger.Log("Whisper can't be initialized, as no LLM is found.", LogCat.VR);
-                IsInitialized = false;
-                return;
-            }
-            IsInitialized = true;
-            
-            _decoder1 = new Worker(audioDecoder1, BackendType.GPUCompute);
-            _decoder2 = new Worker(audioDecoder2, BackendType.GPUCompute);
-
-            var graph = new FunctionalGraph();
-            var input = graph.AddInput(DataType.Float, new DynamicTensorShape(1, 1, 51865));
-            var amax = Functional.ArgMax(input, -1, false);
-            var selectTokenModel = graph.Compile(amax);
-            _argmax = new Worker(selectTokenModel, BackendType.GPUCompute);
-
-            _encoder = new Worker(audioEncoder, BackendType.GPUCompute);
-            _spectrogram = new Worker(logMelSpectro, BackendType.GPUCompute);
-
-            _outputTokens = new NativeArray<int>(_maxTokens, Allocator.Persistent);
-
-            _outputTokens[0] = _startOfTranscript;
-            _outputTokens[1] = GetLanguageToken();
-            _outputTokens[2] = _transcribe; //TRANSLATE;//
-            //outputTokens[3] = NO_TIME_STAMPS;// START_TIME;//
-            tokenCount = 3;
             
             LoadAudio();
             EncodeAudio();

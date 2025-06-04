@@ -1,8 +1,10 @@
+using System.Linq;
 using GUZ.Core;
+using GUZ.Core.Globals;
 using GUZ.Core.Util;
 using GUZ.VR.Adapter;
 using GUZ.VR.Components.HVROverrides;
-using TMPro;
+using GUZ.VR.Components.UI;
 using UnityEngine;
 using Logger = GUZ.Core.Util.Logger;
 
@@ -10,8 +12,12 @@ namespace GUZ.VR.Components.SpeechToText
 {
     public class SpeechToTextHandler : MonoBehaviour
     {
-        public GameObject RecordingImage;
-        public GameObject AiWaitingImage;
+        [SerializeField]
+        private VRDialog _vrDialog;
+        [SerializeField]
+        private GameObject _recordingImage;
+        [SerializeField]
+        private GameObject _aiWaitingImage;
         
         // Name of the microphone device to use (empty for default)
         public string MicrophoneDeviceName = "Mikrofonarray (Senary Audio)";
@@ -36,14 +42,17 @@ namespace GUZ.VR.Components.SpeechToText
 
         private void Start()
         {
+            _whisper = new();
+            _whisper.Initialize();
+            
             if (!_whisper.IsInitialized)
             {
                 Logger.Log("Disabling SpeechToText feature as Whisper isn't initialized.", LogCat.VR);
                 return;
             }
             
-            RecordingImage.SetActive(false);
-            AiWaitingImage.SetActive(false);
+            _recordingImage.SetActive(false);
+            _aiWaitingImage.SetActive(false);
             
             _playerInputs = ((VRInteractionAdapter)GameContext.InteractionAdapter).GetVRPlayerInputs();
             
@@ -84,14 +93,22 @@ namespace GUZ.VR.Components.SpeechToText
             
             if (!_whisper.IsTranscribing)
             {
-                RecordingImage.SetActive(false);
-                AiWaitingImage.SetActive(false);
+                _state = State.Idle;
+                _recordingImage.SetActive(false);
+                _aiWaitingImage.SetActive(false);
 
-                // Fetch spoken text
-                // Fetch possible options
-                // Compare text with options via TextMatcher()
-                // Auto-select option which is matching > 0.6f score.
-                Debug.Log(_whisper.OutputString);
+                var spokenText = _whisper.OutputString;
+                var dialogOptions = GameData.Dialogs.CurrentDialog.Options.Select(i => i.Text).ToArray();
+                var result = new TextMatcher(dialogOptions).FindBestMatch(spokenText);
+
+                if (result == null || result.Score < 0.6f)
+                {
+                    Logger.Log("No matching text found for spoken text or score is too low.", LogCat.VR);
+                    return;
+                }
+                
+                _vrDialog.DialogSelected(result.Index);
+                
             }
         }
 
@@ -100,8 +117,8 @@ namespace GUZ.VR.Components.SpeechToText
             Logger.Log("Starting recording.", LogCat.VR);
             _recordedClip = Microphone.Start(MicrophoneDeviceName, false, _maxRecordingLength, _recordingSampleRate);
             
-            RecordingImage.SetActive(true);
-            AiWaitingImage.SetActive(false);
+            _recordingImage.SetActive(true);
+            _aiWaitingImage.SetActive(false);
 
             _state = State.Recording;
         }
@@ -110,8 +127,8 @@ namespace GUZ.VR.Components.SpeechToText
         {
             Logger.Log("Stopping recording and executing local LLM...", LogCat.VR);
 
-            RecordingImage.SetActive(false);
-            AiWaitingImage.SetActive(true);
+            _recordingImage.SetActive(false);
+            _aiWaitingImage.SetActive(true);
             
             var recordingPosition = Microphone.GetPosition(MicrophoneDeviceName);
             Microphone.End(MicrophoneDeviceName);
