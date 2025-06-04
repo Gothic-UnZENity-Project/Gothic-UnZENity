@@ -96,6 +96,16 @@ namespace GUZ.VR.Adapter
             return _playerController.gameObject;
         }
 
+        public VRPlayerController GetVRPlayerController()
+        {
+            return _playerController;
+        }
+
+        public VRPlayerInputs GetVRPlayerInputs()
+        {
+            return _playerController.VrInputs;
+        }
+
         public void CreateVRDeviceSimulator()
         {
             if (!GameGlobals.Config.Dev.EnableVRDeviceSimulator)

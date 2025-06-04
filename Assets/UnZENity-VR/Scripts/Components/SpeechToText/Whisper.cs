@@ -3,6 +3,7 @@ using System.IO;
 using System.Text;
 using GUZ.Core.Globals;
 using GUZ.Core.Util;
+using MyBox;
 using Newtonsoft.Json;
 using Unity.Collections;
 using Unity.InferenceEngine;
@@ -13,6 +14,7 @@ namespace GUZ.VR.Components.SpeechToText
 {
     public class Whisper
     {
+        public bool IsInitialized;
         public bool IsTranscribing;
         public string OutputString;
 
@@ -48,16 +50,17 @@ namespace GUZ.VR.Components.SpeechToText
         private string[] tokens;
 
         private int tokenCount = 0;
-        private NativeArray<int> outputTokens;
+        private NativeArray<int> _outputTokens;
 
         // Used for special character decoding
-        private int[] whiteSpaceCharacters = new int[256];
+        private int[] _whiteSpaceCharacters = new int[256];
 
-        private Tensor<float> encodedAudio;
+        private Tensor<float> _encodedAudio;
         
         // Maximum size of audioClip (30s at 16kHz)
-        private const int maxSamples = 30 * 16000;
+        private const int _maxSamples = 30 * 16000;
 
+        
         public async void StartExec(AudioClip audioClip)
         {
             _audioClip = audioClip;
@@ -74,10 +77,18 @@ namespace GUZ.VR.Components.SpeechToText
             var logMelSpectro = ModelLoader.Load($"{GetRootPath()}/logmel_spectrogram.onnx");
             vocabText = File.ReadAllText($"{GetRootPath()}/vocab.json");
 
+            if (audioDecoder1 == null || audioDecoder2 == null || audioEncoder == null || logMelSpectro == null || vocabText.IsNullOrEmpty())
+            {
+                Logger.Log("Whisper can't be initialized, as no LLM is found.", LogCat.VR);
+                IsInitialized = false;
+                return;
+            }
+            IsInitialized = true;
+            
             _decoder1 = new Worker(audioDecoder1, BackendType.GPUCompute);
             _decoder2 = new Worker(audioDecoder2, BackendType.GPUCompute);
 
-            FunctionalGraph graph = new FunctionalGraph();
+            var graph = new FunctionalGraph();
             var input = graph.AddInput(DataType.Float, new DynamicTensorShape(1, 1, 51865));
             var amax = Functional.ArgMax(input, -1, false);
             var selectTokenModel = graph.Compile(amax);
@@ -86,11 +97,11 @@ namespace GUZ.VR.Components.SpeechToText
             _encoder = new Worker(audioEncoder, BackendType.GPUCompute);
             _spectrogram = new Worker(logMelSpectro, BackendType.GPUCompute);
 
-            outputTokens = new NativeArray<int>(_maxTokens, Allocator.Persistent);
+            _outputTokens = new NativeArray<int>(_maxTokens, Allocator.Persistent);
 
-            outputTokens[0] = _startOfTranscript;
-            outputTokens[1] = GetLanguageToken();
-            outputTokens[2] = _transcribe; //TRANSLATE;//
+            _outputTokens[0] = _startOfTranscript;
+            _outputTokens[1] = GetLanguageToken();
+            _outputTokens[2] = _transcribe; //TRANSLATE;//
             //outputTokens[3] = NO_TIME_STAMPS;// START_TIME;//
             tokenCount = 3;
             
@@ -101,14 +112,14 @@ namespace GUZ.VR.Components.SpeechToText
             tokensTensor = new Tensor<int>(new TensorShape(1, _maxTokens));
             ComputeTensorData.Pin(tokensTensor);
             tokensTensor.Reshape(new TensorShape(1, tokenCount));
-            tokensTensor.dataOnBackend.Upload<int>(outputTokens, tokenCount);
+            tokensTensor.dataOnBackend.Upload<int>(_outputTokens, tokenCount);
 
             lastToken = new NativeArray<int>(1, Allocator.Persistent); lastToken[0] = _noTimeStamps;
             lastTokenTensor = new Tensor<int>(new TensorShape(1, 1), new[] { _noTimeStamps });
 
             while (true)
             {
-                if (!IsTranscribing || tokenCount >= (outputTokens.Length - 1))
+                if (!IsTranscribing || tokenCount >= (_outputTokens.Length - 1))
                     return;
                 m_Awaitable = InferenceStep();
                 await m_Awaitable;
@@ -177,8 +188,8 @@ namespace GUZ.VR.Components.SpeechToText
         void LoadAudio()
         {
             numSamples = _audioClip.samples;
-            var data = new float[maxSamples];
-            numSamples = maxSamples;
+            var data = new float[_maxSamples];
+            numSamples = _maxSamples;
             _audioClip.GetData(data, 0);
             audioInput = new Tensor<float>(new TensorShape(1, numSamples), data);
         }
@@ -188,12 +199,12 @@ namespace GUZ.VR.Components.SpeechToText
             _spectrogram.Schedule(audioInput);
             var logmel = _spectrogram.PeekOutput() as Tensor<float>;
             _encoder.Schedule(logmel);
-            encodedAudio = _encoder.PeekOutput() as Tensor<float>;
+            _encodedAudio = _encoder.PeekOutput() as Tensor<float>;
         }
         async Awaitable InferenceStep()
         {
             _decoder1.SetInput("input_ids", tokensTensor);
-            _decoder1.SetInput("encoder_hidden_states", encodedAudio);
+            _decoder1.SetInput("encoder_hidden_states", _encodedAudio);
             _decoder1.Schedule();
 
             var past_key_values_0_decoder_key = _decoder1.PeekOutput("present.0.decoder.key") as Tensor<float>;
@@ -240,11 +251,11 @@ namespace GUZ.VR.Components.SpeechToText
             using var t_Token = await _argmax.PeekOutput().ReadbackAndCloneAsync() as Tensor<int>;
             int index = t_Token[0];
 
-            outputTokens[tokenCount] = lastToken[0];
+            _outputTokens[tokenCount] = lastToken[0];
             lastToken[0] = index;
             tokenCount++;
             tokensTensor.Reshape(new TensorShape(1, tokenCount));
-            tokensTensor.dataOnBackend.Upload(outputTokens, tokenCount);
+            tokensTensor.dataOnBackend.Upload(_outputTokens, tokenCount);
             lastTokenTensor.dataOnBackend.Upload(lastToken, 1);
 
             if (index == _endOfText)
@@ -280,7 +291,7 @@ namespace GUZ.VR.Components.SpeechToText
             string outText = "";
             foreach (char letter in text)
             {
-                outText += ((int)letter <= 256) ? letter : (char)whiteSpaceCharacters[(int)(letter - 256)];
+                outText += ((int)letter <= 256) ? letter : (char)_whiteSpaceCharacters[(int)(letter - 256)];
             }
             return outText;
         }
@@ -289,7 +300,7 @@ namespace GUZ.VR.Components.SpeechToText
         {
             for (int i = 0, n = 0; i < 256; i++)
             {
-                if (IsWhiteSpace((char)i)) whiteSpaceCharacters[n++] = i;
+                if (IsWhiteSpace((char)i)) _whiteSpaceCharacters[n++] = i;
             }
         }
 
