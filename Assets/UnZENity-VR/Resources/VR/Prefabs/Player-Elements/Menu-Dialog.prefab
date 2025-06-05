@@ -186,11 +186,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 61172a6e8ca946219be89984eb7e31c8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DebugAudio: {fileID: 8300000, guid: 323c7b780d93c2a4095c799e131fd23a, type: 3}
   _vrDialog: {fileID: 7973002185771047475}
   _recordingImage: {fileID: 3482695007531508842}
   _aiWaitingImage: {fileID: 2991514440209210127}
-  MicrophoneDeviceName: Mikrofonarray (Senary Audio)
 --- !u!1 &2782839599571649433
 GameObject:
   m_ObjectHideFlags: 0
