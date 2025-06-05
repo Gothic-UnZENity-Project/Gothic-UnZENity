@@ -98,8 +98,8 @@ namespace GUZ.VR.Components.SpeechToText
                 _aiWaitingImage.SetActive(false);
 
                 var spokenText = _whisper.OutputString;
-                var dialogOptions = GameData.Dialogs.CurrentDialog.Options.Select(i => i.Text).ToArray();
-                var result = new TextMatcher(dialogOptions).FindBestMatch(spokenText);
+                var dialogOptions = _vrDialog.CurrentDialogOptionTexts;
+                var result = new TextMatcher(dialogOptions.ToArray()).FindBestMatch(spokenText);
 
                 if (result == null || result.Score < 0.6f)
                 {
