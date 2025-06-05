@@ -28,7 +28,7 @@ namespace GUZ.VR.Components.SpeechToText
                 });
             }
         
-            return results.OrderByDescending(r => r.Score).First();
+            return results.OrderByDescending(r => r.Score).FirstOrDefault();
         }
     
         private float GetSimilarityScore(string input, string target)
