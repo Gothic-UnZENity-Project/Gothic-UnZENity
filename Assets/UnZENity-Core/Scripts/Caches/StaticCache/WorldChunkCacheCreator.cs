@@ -8,6 +8,7 @@ using GUZ.Core.Util;
 using MyBox;
 using UnityEngine;
 using ZenKit;
+using Logger = GUZ.Core.Util.Logger;
 using TextureFormat = ZenKit.TextureFormat;
 
 namespace GUZ.Core.Caches.StaticCache
@@ -22,6 +23,15 @@ namespace GUZ.Core.Caches.StaticCache
 
         public Dictionary<TextureCache.TextureArrayTypes, List<WorldChunk>> MergedChunksByLights;
 
+        /// <summary>
+        /// G1.OrcTempel.zen has no dynamic lights. Therefore, all ~40k polygons will be placed in one chunk and Unity complains:
+        /// 1. Detected one or more triangles where the distance between any 2 vertices is greater than 500 units. The resulting Triangle Mesh can impact simulation and query stability. It is recommended to tessellate meshes that have large triangles.
+        /// 2. Part of the world will simply not being rendered.
+        ///
+        /// Quick fix: Simply having a max polygon amount per chunk. 10k proved to only slice the temple into 4 elements. No other G1 world was affected.
+        /// </summary>
+        private const int _maxAmountOfPolygonsPerChunk = 10000;
+        
         private List<Bounds> _stationaryLightBounds;
         private bool _debugSpeedUpLoading;
 
@@ -208,32 +218,38 @@ namespace GUZ.Core.Caches.StaticCache
 
                 // Close node run
                 {
-                    if (currentWaterChunkLightsCount > Constants.MaxLightsPerWorldChunk)
+                    if (currentWaterChunkLightsCount > Constants.MaxLightsPerWorldChunk || currentWaterChunkPolygons.PolygonIds.Count > _maxAmountOfPolygonsPerChunk)
                     {
+                        if (currentWaterChunkPolygons.PolygonIds.Count > _maxAmountOfPolygonsPerChunk)
+                            Logger.Log($"Polygon threshold of {_maxAmountOfPolygonsPerChunk} reached. Slicing Water chunk for world {mesh.Name} now.", LogCat.PreCaching);
+                        
                         if (currentWaterChunkPolygons.PolygonIds.NotNullOrEmpty())
-                        {
                             finalPolygonsWater.Add(currentWaterChunkPolygons);
-                        }
+
                         currentWaterChunkPolygons = new WorldChunk();
                         currentWaterChunkLightsCount = 0;
                         currentWaterAlreadyAffectingLightIndices = new();
                     }
-                    if (currentOpaqueChunkLightsCount > Constants.MaxLightsPerWorldChunk)
+                    if (currentOpaqueChunkLightsCount > Constants.MaxLightsPerWorldChunk || currentOpaqueChunkPolygons.PolygonIds.Count > _maxAmountOfPolygonsPerChunk)
                     {
+                        if (currentOpaqueChunkPolygons.PolygonIds.Count > _maxAmountOfPolygonsPerChunk)
+                            Logger.Log($"Polygon threshold of {_maxAmountOfPolygonsPerChunk} reached. Slicing Opaque chunk for world {mesh.Name} now.", LogCat.PreCaching);
+
                         if (currentOpaqueChunkPolygons.PolygonIds.NotNullOrEmpty())
-                        {
                             finalPolygonsOpaque.Add(currentOpaqueChunkPolygons);
-                        }
+                        
                         currentOpaqueChunkPolygons = new WorldChunk();
                         currentOpaqueChunkLightsCount = 0;
                         currentOpaqueAlreadyAffectingLightIndices = new();
                     }
-                    if (currentTransparentChunkLightsCount > Constants.MaxLightsPerWorldChunk)
+                    if (currentTransparentChunkLightsCount > Constants.MaxLightsPerWorldChunk || currentTransparentChunkPolygons.PolygonIds.Count > _maxAmountOfPolygonsPerChunk)
                     {
+                        if (currentWaterChunkPolygons.PolygonIds.Count > _maxAmountOfPolygonsPerChunk)
+                            Logger.Log($"Polygon threshold of {_maxAmountOfPolygonsPerChunk} reached. Slicing Transparent chunk for world {mesh.Name} now.", LogCat.PreCaching);
+
                         if (currentTransparentChunkPolygons.PolygonIds.NotNullOrEmpty())
-                        {
                             finalPolygonsTransparent.Add(currentTransparentChunkPolygons);
-                        }
+                        
                         currentTransparentChunkPolygons = new WorldChunk();
                         currentTransparentChunkLightsCount = 0;
                         currentTransparentAlreadyAffectingLightIndices = new();
