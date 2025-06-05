@@ -194,6 +194,26 @@ MonoBehaviour:
     m_Localized: VR Immersion
     m_Metadata:
       m_Items: []
+  - m_Id: 2692152860991488
+    m_Localized: VR Immersion
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2692199996579840
+    m_Localized: VR IMMERSION SETTINGS
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2692428107997184
+    m_Localized: Microphone
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2692483179208704
+    m_Localized: Used for SpeechToText during dialogs if selected
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2692692542087168
+    m_Localized: None
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []
