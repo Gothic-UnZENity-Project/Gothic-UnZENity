@@ -19,9 +19,6 @@ namespace GUZ.VR.Components.SpeechToText
         [SerializeField]
         private GameObject _aiWaitingImage;
         
-        // Name of the microphone device to use (empty for default)
-        public string MicrophoneDeviceName = "Mikrofonarray (Senary Audio)";
-
         private const int _maxRecordingLength = 30;
         private const int _recordingSampleRate = 16000;
 
@@ -30,11 +27,14 @@ namespace GUZ.VR.Components.SpeechToText
         // Unity's Microphone API will always store output in an AudioClip.
         private AudioClip _recordedClip;
 
+        private int _microphoneIndex => GameGlobals.Config.Gothic.GetInt(VRConstants.IniNames.Microphone);
+        
         private Whisper _whisper = new();
         private State _state;
 
         private enum State
         {
+            Uninitialized,
             Idle,
             Recording,
             AiWaiting
@@ -42,37 +42,38 @@ namespace GUZ.VR.Components.SpeechToText
 
         private void Start()
         {
+            _recordingImage.SetActive(false);
+            _aiWaitingImage.SetActive(false);
+
+            // Check if we have any microphones connected
+            if (_microphoneIndex == 0 || Microphone.devices.Length <= 0)
+            {
+                Logger.Log("No microphone selected and/or detected!", LogCat.VR);
+                _state = State.Uninitialized;
+                gameObject.SetActive(false);
+                return;
+            }
+            
             _whisper = new();
             _whisper.Initialize();
             
             if (!_whisper.IsInitialized)
             {
                 Logger.Log("Disabling SpeechToText feature as Whisper isn't initialized.", LogCat.VR);
+                _state = State.Uninitialized;
+                gameObject.SetActive(false);
                 return;
             }
-            
-            _recordingImage.SetActive(false);
-            _aiWaitingImage.SetActive(false);
             
             _playerInputs = ((VRInteractionAdapter)GameContext.InteractionAdapter).GetVRPlayerInputs();
-            
-            // Check if we have any microphones connected
-            if (Microphone.devices.Length <= 0)
-            {
-                Logger.LogError("No microphone detected!", LogCat.VR);
-                return;
-            }
-
-            // If no specific device name was set, use the first available
-            if (string.IsNullOrEmpty(MicrophoneDeviceName) && Microphone.devices.Length > 0)
-            {
-                MicrophoneDeviceName = Microphone.devices[0];
-                Logger.Log($"Using microphone: {MicrophoneDeviceName}", LogCat.VR);
-            }
+            _state = State.Idle;
         }
 
         private void Update()
         {
+            if (_state == State.Uninitialized)
+                return;
+            
             CheckRecordingState();
             CheckAiWaitingState();
         }
@@ -115,7 +116,7 @@ namespace GUZ.VR.Components.SpeechToText
         private void StartRecording()
         {
             Logger.Log("Starting recording.", LogCat.VR);
-            _recordedClip = Microphone.Start(MicrophoneDeviceName, false, _maxRecordingLength, _recordingSampleRate);
+            _recordedClip = Microphone.Start(GetMicrophoneDeviceName(), false, _maxRecordingLength, _recordingSampleRate);
             
             _recordingImage.SetActive(true);
             _aiWaitingImage.SetActive(false);
@@ -130,8 +131,8 @@ namespace GUZ.VR.Components.SpeechToText
             _recordingImage.SetActive(false);
             _aiWaitingImage.SetActive(true);
             
-            var recordingPosition = Microphone.GetPosition(MicrophoneDeviceName);
-            Microphone.End(MicrophoneDeviceName);
+            var recordingPosition = Microphone.GetPosition(GetMicrophoneDeviceName());
+            Microphone.End(GetMicrophoneDeviceName());
 
             if (recordingPosition == 0)
             {
@@ -140,14 +141,22 @@ namespace GUZ.VR.Components.SpeechToText
             }
 
             _state = State.AiWaiting;
-
+         
             _whisper.StartExec(_recordedClip);
+        }
+
+        private string GetMicrophoneDeviceName()
+        {
+            if (_microphoneIndex < Microphone.devices.Length)
+                return string.Empty;
+            else
+                return Microphone.devices[_microphoneIndex];
         }
 
         private void OnDestroy()
         {
             if (_state == State.Recording)
-                Microphone.End(MicrophoneDeviceName);
+                Microphone.End(GetMicrophoneDeviceName());
         }
     }
 }
