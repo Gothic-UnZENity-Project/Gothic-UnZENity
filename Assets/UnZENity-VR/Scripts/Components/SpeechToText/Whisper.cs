@@ -72,10 +72,12 @@ namespace GUZ.VR.Components.SpeechToText
             _isFirstRun = false;
             try
             {
-                var decoder1FilePath = $"{GetRootPath()}/decoder_model.onnx";
-                var decoder2FilePath = $"{GetRootPath()}/decoder_with_past_model.onnx";
-                var encoderFilePath = $"{GetRootPath()}/encoder_model.onnx";
-                var logmelFilePath = $"{GetRootPath()}/logmel_spectrogram.onnx";
+                // .onnx models need to be serialized. Prepared via Editor and stored as .sentis
+                // @see: https://docs.unity3d.com/Packages/com.unity.ai.inference@2.2/manual/serialize-a-model.html
+                var decoder1FilePath = $"{GetRootPath()}/decoder_model.sentis";
+                var decoder2FilePath = $"{GetRootPath()}/decoder_with_past_model.sentis";
+                var encoderFilePath = $"{GetRootPath()}/encoder_model.sentis";
+                var logmelFilePath = $"{GetRootPath()}/logmel_spectrogram.sentis";
                 var vocabFilePath = $"{GetRootPath()}/vocab.json";
 
                 if (!File.Exists(decoder1FilePath) || !File.Exists(decoder2FilePath) || !File.Exists(encoderFilePath) ||
