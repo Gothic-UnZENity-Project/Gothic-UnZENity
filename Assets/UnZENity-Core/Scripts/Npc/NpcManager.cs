@@ -25,7 +25,7 @@ namespace GUZ.Core.Npc
     public class NpcManager
     {
         // Supporter class where the whole Init() logic is outsourced for better readability.
-        private NpcInitializer _initializer = new ();
+        private NpcInitializer _initializer = new();
         private Queue<NpcLoader> _objectsToInitQueue = new();
         private Queue<NpcContainer> _objectToReEnableQueue = new();
 
@@ -33,7 +33,7 @@ namespace GUZ.Core.Npc
 
         private const float _fpLookupDistance = 7f; // meter
 
-        
+
         public void Init(ICoroutineManager coroutineManager)
         {
             coroutineManager.StartCoroutine(InitNpcCoroutine());
@@ -116,7 +116,7 @@ namespace GUZ.Core.Npc
         {
             if (GameGlobals.SaveGame.IsNewGame)
                 await _initializer.InitNpcsNewGame(loading);
-             else
+            else
                 await _initializer.InitNpcsSaveGame(loading);
         }
 
@@ -195,6 +195,10 @@ namespace GUZ.Core.Npc
                 return;
             }
 
+            // for some reason when npc is regarding player instance npc is null
+            // TODO figure out why
+            npc ??= GetHeroContainer().Instance;
+
             if (npc.GetUserData() == null)
             {
                 Logger.LogError($"NPC is not set for {nameof(ExtCreateInvItems)}. Is it an error on Daedalus or our end?", LogCat.Npc);
@@ -207,8 +211,8 @@ namespace GUZ.Core.Npc
                 Logger.LogError($"NPC not found with index {npc.Index}", LogCat.Npc);
                 return;
             }
-            props.Items.TryAdd(itemId, amount);
-            props.Items[itemId] += amount;
+                var currentAmount = props.Items.TryGetValue(itemId, out var current) ? current : 0;
+                props.Items[itemId] = currentAmount + amount;
         }
 
         public NpcContainer GetHeroContainer()
@@ -431,7 +435,7 @@ namespace GUZ.Core.Npc
             if (changed)
             {
                 var routineIndex = npcProps.Routines.IndexOf(newRoutine);
-                var prevRoutineIndex = routineIndex == 0 ? npcProps.Routines.Count - 1 : routineIndex - 1;;
+                var prevRoutineIndex = routineIndex == 0 ? npcProps.Routines.Count - 1 : routineIndex - 1; ;
                 npcProps.RoutinePrevious = npcProps.Routines[prevRoutineIndex];
             }
             npcProps.RoutineCurrent = newRoutine;
@@ -462,7 +466,7 @@ namespace GUZ.Core.Npc
 
             return true;
         }
-        
+
         public void ReEnableNpc(NpcContainer npcData)
         {
             _objectToReEnableQueue.Enqueue(npcData);

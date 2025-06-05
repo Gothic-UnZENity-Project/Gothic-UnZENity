@@ -220,9 +220,6 @@ namespace GUZ
         private void OnBackpackActivated()
         {
             Debug.Log("Backpack activated!");
-
-            SyncHeroInventoryToBackpack();
-            UpdateBackpackContents();
         }
 
         public bool HasItem(int itemID, int amount = 1)
