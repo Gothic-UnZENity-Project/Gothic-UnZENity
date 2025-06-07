@@ -20,6 +20,28 @@ MonoBehaviour:
   company: Unity
   priority: 0
   required: 0
+--- !u!114 &-8437668057113760636
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f6a75d1f5ff90154ea2a8e58222a1f59, type: 3}
+  m_Name: FoveatedRenderingFeature Android
+  m_EditorClassIdentifier: 
+  m_enabled: 0
+  nameUi: Foveated Rendering
+  version: 1
+  featureIdInternal: com.unity.openxr.feature.foveatedrendering
+  openxrExtensionStrings: XR_UNITY_foveation XR_FB_foveation XR_FB_foveation_configuration
+    XR_FB_swapchain_update_state XR_FB_foveation_vulkan XR_META_foveation_eye_tracked
+    XR_META_vulkan_swapchain_create_info
+  company: Unity
+  priority: 0
+  required: 0
 --- !u!114 &-7532106903231179020
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -41,6 +63,26 @@ MonoBehaviour:
   priority: 0
   required: 0
   LOD: 0
+--- !u!114 &-6984416854560344012
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2b7365b139f7aec43b23d26b7a48b5a6, type: 3}
+  m_Name: MetaQuestTouchPlusControllerProfile Standalone
+  m_EditorClassIdentifier: 
+  m_enabled: 0
+  nameUi: Meta Quest Touch Plus Controller Profile
+  version: 0.0.1
+  featureIdInternal: com.unity.openxr.feature.input.metaquestplus
+  openxrExtensionStrings: XR_META_touch_controller_plus
+  company: Unity
+  priority: 0
+  required: 0
 --- !u!114 &-6983206759578489098
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -114,12 +156,21 @@ MonoBehaviour:
   - visibleName: Quest Pro
     manifestName: cambria
     enabled: 1
+  - visibleName: Quest 3
+    manifestName: eureka
+    enabled: 1
+  - visibleName: Quest 3S
+    manifestName: quest3s
+    enabled: 1
   forceRemoveInternetPermission: 0
   symmetricProjection: 0
+  foveatedRenderingApi: 0
   systemSplashScreen: {fileID: 0}
   optimizeBufferDiscards: 1
   lateLatchingMode: 0
   lateLatchingDebug: 0
+  optimizeMultiviewRenderRegions: 0
+  spacewarpMotionVectorTextureFormat: 0
 --- !u!114 &-6141741419973945741
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -277,11 +328,13 @@ MonoBehaviour:
   - {fileID: 4411126945711766364}
   - {fileID: 1721832157923820321}
   - {fileID: -2339963429861367255}
+  - {fileID: -154773189973989970}
   - {fileID: -982139025811801679}
   - {fileID: -3685463609108704427}
   - {fileID: -4255994353313375552}
   - {fileID: 5889720667432712239}
   - {fileID: -8576660342126492698}
+  - {fileID: -6984416854560344012}
   - {fileID: 8240000724715485025}
   - {fileID: 1199619411332202580}
   - {fileID: 3885231403024992868}
@@ -290,10 +343,16 @@ MonoBehaviour:
   - {fileID: -5918777525122221150}
   - {fileID: 9141403861734928017}
   - {fileID: -2882969898565922028}
+  - {fileID: 542972648467693830}
   m_renderMode: 1
+  m_autoColorSubmissionMode: 1
+  m_colorSubmissionModes:
+    m_List: 00000000
   m_depthSubmissionMode: 0
+  m_spacewarpMotionVectorTextureFormat: 0
   m_optimizeBufferDiscards: 0
   m_symmetricProjection: 0
+  m_foveatedRenderingApi: 0
 --- !u!114 &-4255994353313375552
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -568,6 +627,28 @@ MonoBehaviour:
   extensionStrings:
   - XR_KHR_binding_modification
   - XR_EXT_dpad_binding
+--- !u!114 &-154773189973989970
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f6a75d1f5ff90154ea2a8e58222a1f59, type: 3}
+  m_Name: FoveatedRenderingFeature Standalone
+  m_EditorClassIdentifier: 
+  m_enabled: 0
+  nameUi: Foveated Rendering
+  version: 1
+  featureIdInternal: com.unity.openxr.feature.foveatedrendering
+  openxrExtensionStrings: XR_UNITY_foveation XR_FB_foveation XR_FB_foveation_configuration
+    XR_FB_swapchain_update_state XR_FB_foveation_vulkan XR_META_foveation_eye_tracked
+    XR_META_vulkan_swapchain_create_info
+  company: Unity
+  priority: 0
+  required: 0
 --- !u!114 &-33245487252874841
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -664,6 +745,26 @@ MonoBehaviour:
   featureIdInternal: com.unity.openxr.feature.input.PICO4touch
   openxrExtensionStrings: XR_BD_controller_interaction
   company: PICO
+  priority: 0
+  required: 0
+--- !u!114 &542972648467693830
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b213d3e3c7f3109449eb46a4c8ee42f0, type: 3}
+  m_Name: XrPerformanceSettingsFeature Standalone
+  m_EditorClassIdentifier: 
+  m_enabled: 0
+  nameUi: XR Performance Settings
+  version: 1.0.0
+  featureIdInternal: com.unity.openxr.feature.extension.performance_settings
+  openxrExtensionStrings: XR_EXT_performance_settings
+  company: Unity
   priority: 0
   required: 0
 --- !u!114 &910716572149604478
@@ -872,39 +973,67 @@ MonoBehaviour:
   m_Name: Android
   m_EditorClassIdentifier: 
   features:
-  - {fileID: -487194911015516636}
   - {fileID: 6812285598239836352}
-  - {fileID: -3983660480734472317}
   - {fileID: -332764730267102851}
   - {fileID: -5488929639875217153}
-  - {fileID: -5260979099608039121}
+  - {fileID: -8437668057113760636}
   - {fileID: 7502399206523955346}
   - {fileID: -4492370360389853125}
   - {fileID: 2468544611163588782}
-  - {fileID: -1679318782920628736}
   - {fileID: -6576655989248887122}
+  - {fileID: 6275863902502948486}
   - {fileID: -4668190980932963055}
   - {fileID: 4795903825331342340}
   - {fileID: 7676596943919126455}
   - {fileID: -6727251305726153197}
   - {fileID: -1905148229662643244}
-  - {fileID: -33245487252874841}
-  - {fileID: 7309567207302404866}
+  - {fileID: -1679318782920628736}
+  - {fileID: -3983660480734472317}
+  - {fileID: -5260979099608039121}
   - {fileID: 7051114072204557114}
   - {fileID: -3767426411331881515}
-  - {fileID: 346038476301611093}
-  - {fileID: 6366202906930279542}
-  - {fileID: 9219605285230895480}
-  - {fileID: 238323431353500125}
+  - {fileID: 7309567207302404866}
+  - {fileID: 1334689538305467106}
   - {fileID: 2499955303954065424}
-  - {fileID: 232897763754518705}
-  - {fileID: 910716572149604478}
-  - {fileID: -6983206759578489098}
+  - {fileID: -33245487252874841}
+  - {fileID: -6141741419973945741}
+  - {fileID: -2805028502496846468}
+  - {fileID: -7532106903231179020}
+  - {fileID: 9219605285230895480}
+  - {fileID: 346038476301611093}
+  - {fileID: -4603854506387641800}
+  - {fileID: 238323431353500125}
   - {fileID: 8833097018418957246}
+  - {fileID: 5640648557821392000}
   m_renderMode: 1
+  m_autoColorSubmissionMode: 1
+  m_colorSubmissionModes:
+    m_List: 00000000
   m_depthSubmissionMode: 0
+  m_spacewarpMotionVectorTextureFormat: 0
   m_optimizeBufferDiscards: 0
   m_symmetricProjection: 0
+  m_foveatedRenderingApi: 0
+--- !u!114 &5640648557821392000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b213d3e3c7f3109449eb46a4c8ee42f0, type: 3}
+  m_Name: XrPerformanceSettingsFeature Android
+  m_EditorClassIdentifier: 
+  m_enabled: 0
+  nameUi: XR Performance Settings
+  version: 1.0.0
+  featureIdInternal: com.unity.openxr.feature.extension.performance_settings
+  openxrExtensionStrings: XR_EXT_performance_settings
+  company: Unity
+  priority: 0
+  required: 0
 --- !u!114 &5889720667432712239
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -922,6 +1051,26 @@ MonoBehaviour:
   version: 0.0.1
   featureIdInternal: com.unity.openxr.feature.input.htcvive
   openxrExtensionStrings: 
+  company: Unity
+  priority: 0
+  required: 0
+--- !u!114 &6275863902502948486
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2b7365b139f7aec43b23d26b7a48b5a6, type: 3}
+  m_Name: MetaQuestTouchPlusControllerProfile Android
+  m_EditorClassIdentifier: 
+  m_enabled: 0
+  nameUi: Meta Quest Touch Plus Controller Profile
+  version: 0.0.1
+  featureIdInternal: com.unity.openxr.feature.input.metaquestplus
+  openxrExtensionStrings: XR_META_touch_controller_plus
   company: Unity
   priority: 0
   required: 0

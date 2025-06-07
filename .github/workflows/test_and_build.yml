@@ -8,7 +8,7 @@ on:
       - labeled
   
 env:
-  HVRversion: 'v2.9.3.a'
+  HVRversion: 'v2.9.3.a-Unity-6'
 
 jobs:
   #########
