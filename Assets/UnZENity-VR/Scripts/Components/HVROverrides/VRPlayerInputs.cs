@@ -12,6 +12,11 @@ namespace GUZ.VR.Components.HVROverrides
         public bool IsMenuActivated;
         public HVRButtonState MenuState;
         public bool IsMenuButtonEnabled = true;
+        
+        public bool IsSpeakingActivated;
+        public HVRButtonState SpeakingState;
+        public bool IsSpeakButtonEnabled = true;
+
 
         protected override void UpdateInput()
         {
@@ -23,9 +28,12 @@ namespace GUZ.VR.Components.HVROverrides
             }
 
             IsMenuActivated = GetMenuActivated();
-
             ResetState(ref MenuState);
             SetState(ref MenuState, IsMenuActivated);
+
+            IsSpeakingActivated = GetSpeakingActivated();
+            ResetState(ref SpeakingState);
+            SetState(ref SpeakingState, IsSpeakingActivated);
         }
 
         private bool GetMenuActivated()
@@ -48,6 +56,19 @@ namespace GUZ.VR.Components.HVROverrides
             else
             {
                 return HVRController.GetButtonState(HVRHandSide.Left, HVRButtons.Secondary).JustActivated;
+            }
+        }
+        
+        private bool GetSpeakingActivated()
+        {
+            if (UseWASD)
+            {
+                return Keyboard.current[Key.T].isPressed;
+            }
+            else
+            {
+                return HVRController.GetButtonState(HVRHandSide.Left, HVRButtons.Grip).Active
+                       && HVRController.GetButtonState(HVRHandSide.Right, HVRButtons.Grip).Active;
             }
         }
 

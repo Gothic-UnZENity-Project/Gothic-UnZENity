@@ -4,7 +4,7 @@ using GUZ.Core.UI.Menus;
 
 namespace GUZ.VR.Components.UI.Menus.Settings
 {
-    public class VRSettingsMenu : AbstractMenu
+    public class VRSettingsImmersionMenu : AbstractMenu
     {
         protected override void Undefined(string itemName, string commandName)
         {

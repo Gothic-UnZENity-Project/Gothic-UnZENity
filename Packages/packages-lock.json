@@ -7,14 +7,14 @@
       "dependencies": {
         "com.unity.ugui": "1.0.0"
       },
-      "hash": "2a1457028cf2fce25852740b6a34274fa8aea10a"
+      "hash": "cbff7090303fac1067f69654ede33d11e2ccd0c1"
     },
     "com.hurricanevrextensions.simulator": {
       "version": "https://github.com/Gothic-UnZENity-Project/hvr-simulator.git",
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "d9c94caeb702b7f3a61f7c81d1ee24ff315ed3cc"
+      "hash": "fe7f4ea38207b2a046842b5c3b86f8d1c221810b"
     },
     "com.unity.addressables": {
       "version": "2.5.0",
@@ -29,6 +29,17 @@
         "com.unity.modules.unitywebrequest": "1.0.0",
         "com.unity.scriptablebuildpipeline": "2.4.0",
         "com.unity.modules.unitywebrequestassetbundle": "1.0.0"
+      },
+      "url": "https://packages.unity.com"
+    },
+    "com.unity.ai.inference": {
+      "version": "2.2.1",
+      "depth": 0,
+      "source": "registry",
+      "dependencies": {
+        "com.unity.burst": "1.8.17",
+        "com.unity.collections": "2.4.3",
+        "com.unity.modules.imageconversion": "1.0.0"
       },
       "url": "https://packages.unity.com"
     },
@@ -160,7 +171,7 @@
     },
     "com.unity.nuget.newtonsoft-json": {
       "version": "3.2.1",
-      "depth": 1,
+      "depth": 0,
       "source": "registry",
       "dependencies": {},
       "url": "https://packages.unity.com"
@@ -361,7 +372,7 @@
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "b458bbf54ae7ad2c4adb0a25c15b9aca9106960f"
+      "hash": "4e84d235381c65cd9aafcff8476cd23e38c5f13d"
     },
     "com.unity.modules.accessibility": {
       "version": "1.0.0",

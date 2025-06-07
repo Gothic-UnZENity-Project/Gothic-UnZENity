@@ -1,10 +1,13 @@
 #if GUZ_HVR_INSTALLED
+using System.Collections.Generic;
+using System.Linq;
 using GUZ.Core;
 using GUZ.Core.Adapter;
 using GUZ.Core.Globals;
 using GUZ.Core.UI.Menus.Adapter.Menu;
 using GUZ.Core.UI.Menus.Adapter.MenuItem;
 using HurricaneVR.Framework.Core.Player;
+using UnityEngine;
 using ZenKit.Daedalus;
 using Constants = GUZ.Core.Globals.Constants;
 
@@ -41,34 +44,37 @@ namespace GUZ.VR.Adapter
             vrAccessibilityMenu.Items.Add(CreateSmoothSpectatorLabel(gameMenu, menuStartY + menuDY * 5));
             vrAccessibilityMenu.Items.Add(CreateSmoothSpectatorChoicebox(gameMenu, menuStartY + menuDY * 5));
 
-            vrAccessibilityMenu.Items.Add(CreateBackButton(mainMenu));
+            vrAccessibilityMenu.Items.Add(CreateAccessibilityBackButton(mainMenu));
+            
 
-
-            // TODO
-            // var vrImmersionMenu = "";
             // FIXME - Add - Setting: ItemCollisionWhileDragged
+            var vrImmersionMenu = CreateImmersionMenu(mainMenu);
+            vrImmersionMenu.Items.Add(CreateImmersionHeadline(gameMenu));
+            vrImmersionMenu.Items.Add(CreateMicrophoneLabel(gameMenu, menuStartY + menuDY * 0));
+            vrImmersionMenu.Items.Add(CreateMicrophoneChoice(gameMenu, menuStartY + menuDY * 0));
+            vrImmersionMenu.Items.Add(CreateImmersionBackButton(mainMenu));
         }
 
         private MutableMenuInstance CreateAccessibilityMenu(AbstractMenuInstance mainMenu)
         {
-            // Find OPT_CONTROLS menu item to overwrite
-            var controlsMenuParent = mainMenu.FindMenuRecursive("MENU_OPT_CONTROLS")!.Parent;
+            // Find MENU_OPT_AUDIO menu item to overwrite
+            var controlsMenuParent = mainMenu.FindMenuRecursive("MENU_OPT_AUDIO")!.Parent;
             var controlsMenuItem = controlsMenuParent.FindMenuItem("MENUITEM_OPT_CONTROLS", out var controlsItemIndex);
             
             // Create empty menu
-            var vrControlsMenu = new MutableMenuInstance("MENU_UNZENITY_OPT_VR_ACCESSIBILITY", controlsMenuParent);
+            var vrAccessibilityMenu = new MutableMenuInstance("MENU_UNZENITY_OPT_VR_ACCESSIBILITY", controlsMenuParent);
             
             // Create menu item and replace it where >Keyboard< settings are normally
-            var vrControlsMenuItem = new MutableMenuItemInstance("MENUITEM_UNZENITY_OPT_VR_ACCESSIBILITY", controlsMenuItem);
-            controlsMenuParent.ReplaceItemAt(controlsItemIndex, vrControlsMenuItem);
+            var vrAccessibilityMenuItem = new MutableMenuItemInstance("MENUITEM_UNZENITY_OPT_VR_ACCESSIBILITY", controlsMenuItem);
+            controlsMenuParent.ReplaceItemAt(controlsItemIndex, vrAccessibilityMenuItem);
 
             // Add some setting
-            vrControlsMenuItem.SetText(0, GameGlobals.Localization.GetText("menuitem.vr_accessibility"));
-            vrControlsMenuItem.SetOnSelAction(0, MenuItemSelectAction.StartMenu);
-            vrControlsMenuItem.SetOnSelActionS(0, "MENU_UNZENITY_OPT_VR_ACCESSIBILITY");
-            vrControlsMenuItem.MenuInstance = vrControlsMenu;
+            vrAccessibilityMenuItem.SetText(0, GameGlobals.Localization.GetText("menuitem.vr_accessibility"));
+            vrAccessibilityMenuItem.SetOnSelAction(0, MenuItemSelectAction.StartMenu);
+            vrAccessibilityMenuItem.SetOnSelActionS(0, "MENU_UNZENITY_OPT_VR_ACCESSIBILITY");
+            vrAccessibilityMenuItem.MenuInstance = vrAccessibilityMenu;
 
-            return vrControlsMenu;
+            return vrAccessibilityMenu;
         }
 
         private MutableMenuItemInstance CreateAccessibilityHeadline(AbstractMenuInstance gameMenu)
@@ -246,11 +252,94 @@ namespace GUZ.VR.Adapter
             return smoothingSetting;
         }
 
-        private MutableMenuItemInstance CreateBackButton(AbstractMenuInstance mainMenu)
+        private MutableMenuItemInstance CreateAccessibilityBackButton(AbstractMenuInstance mainMenu)
         {
             var someOptionsMenu = mainMenu.FindMenuRecursive("MENU_OPT_GRAPHICS")!;
             var backButtonReference = someOptionsMenu.FindMenuItem("MENUITEM_GRA_BACK", out _)!;
             var backButton = new MutableMenuItemInstance("MENU_UNZENITY_OPT_VR_ACCESSIBILITY_BACK", backButtonReference);
+            
+            backButton.SetText(0, backButtonReference.GetText(0)); // Text: BACK
+            backButton.SetOnSelAction(0, MenuItemSelectAction.Back);
+
+            return backButton;
+        }
+        
+        
+        
+        private MutableMenuInstance CreateImmersionMenu(AbstractMenuInstance mainMenu)
+        {
+            // Find MENU_OPT_AUDIO --> PERF menu item to overwrite
+            var controlsMenuParent = mainMenu.FindMenuRecursive("MENU_OPT_AUDIO")!.Parent;
+            var perfItemMenu = controlsMenuParent.FindMenuItem("MENUITEM_PERF", out var perfItemIndex);
+            
+            // Create empty menu
+            var vrImmersionMenu = new MutableMenuInstance("MENU_UNZENITY_OPT_VR_IMMERSION", controlsMenuParent);
+            
+            // Create menu item and replace it where >Keyboard< settings are normally
+            var vrImmersionMenuItem = new MutableMenuItemInstance("MENUITEM_UNZENITY_OPT_VR_IMMERSION", perfItemMenu);
+            controlsMenuParent.ReplaceItemAt(perfItemIndex, vrImmersionMenuItem);
+
+            // Add some setting
+            vrImmersionMenuItem.SetText(0, GameGlobals.Localization.GetText("menuitem.vr_immersion"));
+            vrImmersionMenuItem.SetOnSelAction(0, MenuItemSelectAction.StartMenu);
+            vrImmersionMenuItem.SetOnSelActionS(0, "MENU_UNZENITY_OPT_VR_IMMERSION");
+            vrImmersionMenuItem.MenuInstance = vrImmersionMenu;
+
+            return vrImmersionMenu;
+        }
+        
+        private MutableMenuItemInstance CreateImmersionHeadline(AbstractMenuInstance gameMenu)
+        {
+            var gameHeadline = gameMenu.FindMenuItem("MENUITEM_GAME_HEADLINE", out _);
+            var vrHeadline = new MutableMenuItemInstance("MENUITEM_UNZENITY_OPT_VR_IMMERSION_HEADLINE", gameHeadline);
+            vrHeadline.SetText(0, GameGlobals.Localization.GetText("menuitem.vr_immersion.headline"));
+            
+            return vrHeadline;
+        }
+        
+        private AbstractMenuItemInstance CreateMicrophoneLabel(AbstractMenuInstance gameMenu, int posY)
+        {
+            var subtitlesLabel = gameMenu.FindMenuItem("MENUITEM_GAME_SUB_TITLES", out _);
+            var microphoneLabel= new MutableMenuItemInstance("MENUITEM_UNZENITY_OPT_VR_IMMERSION_MICROPHONE", subtitlesLabel);
+            
+            microphoneLabel.PosY = posY;
+            
+            microphoneLabel.SetText(0, GameGlobals.Localization.GetText("menuitem.microphone.label"));
+            microphoneLabel.SetText(1, GameGlobals.Localization.GetText("menuitem.microphone.description"));
+            
+            return microphoneLabel;
+        }
+        
+        private AbstractMenuItemInstance CreateMicrophoneChoice(AbstractMenuInstance gameMenu, int posY)
+        {
+            var subtitlesChoice = gameMenu.FindMenuItem("MENUITEM_GAME_SUB_TITLES_CHOICE", out _);
+            var microphoneSetting = new MutableMenuItemInstance("MENUITEM_UNZENITY_OPT_VR_IMMERSION_MICROPHONE_CHOICE", subtitlesChoice);
+
+            microphoneSetting.PosY = posY;
+            microphoneSetting.SetUserFloat(3, 0); // Default value if no INI value exists.
+
+            microphoneSetting.SetText(0, GetMicrophoneList());
+            microphoneSetting.OnChgSetOption = VRConstants.IniNames.Microphone;
+            microphoneSetting.OnChgSetOptionSection = VRConstants.IniSectionImmersion;
+            
+            return microphoneSetting;
+        }
+
+        private string GetMicrophoneList()
+        {
+            var result = new List<string>();
+            result.Add(GameGlobals.Localization.GetText("menuitem.microphone.none_value"));
+            result.AddRange(Microphone.devices);
+            result = result.Select(i => i.Length > 15 ? i.Substring(0, 12) + "..." : i).ToList();
+
+            return string.Join("|", result);
+        }
+        
+        private MutableMenuItemInstance CreateImmersionBackButton(AbstractMenuInstance mainMenu)
+        {
+            var someOptionsMenu = mainMenu.FindMenuRecursive("MENU_OPT_GRAPHICS")!;
+            var backButtonReference = someOptionsMenu.FindMenuItem("MENUITEM_GRA_BACK", out _)!;
+            var backButton = new MutableMenuItemInstance("MENU_UNZENITY_OPT_VR_IMMERSION_BACK", backButtonReference);
             
             backButton.SetText(0, backButtonReference.GetText(0)); // Text: BACK
             backButton.SetOnSelAction(0, MenuItemSelectAction.Back);
