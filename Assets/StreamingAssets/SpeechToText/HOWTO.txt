@@ -1,6 +1,12 @@
-HINT: If you do not! want GenAI features, ignore the steps below. If you don't place the local LLM on your system, it is deactivated and can't be used.
+## Disable SpeechToText:
+-> If you do not! want GenAI features, ignore the steps below. If you don't place the local LLM on your system, it is deactivated and can't be used.
 
-To use the Speech To Text feature:
+
+## Enable SpeechToText:
+
+-> For latest instructions to activate it in game, please check the UnZENity wiki at: https://github.com/Gothic-UnZENity-Project/Gothic-UnZENity/wiki
+
+In general:
 1. Go to UnZENity release page and select the one with .sentis files stored: https://github.com/Gothic-UnZENity-Project/Gothic-UnZENity/releases
 2. Download:
   1. vocab.json
@@ -10,4 +16,8 @@ To use the Speech To Text feature:
   5. logmel_spectogram.sentis
 3. Place it in here
 
-For instructions in game, please check the UnZENity wiki at: https://github.com/Gothic-UnZENity-Project/Gothic-UnZENity/wiki
+
+WARNING:
+There are two known pitfalls:
+1. SpeechToText is transformed on GPU. (e.g.) Quest2 is known to cause stutter when recording voice and transforming your input. It's best experienced with PCVR due to the dedicated GPU.
+2. Unity's Microphone API can cause some delays when recording starts or ends. This is unrelated to GPU/CPU limitations and may vary based on device and Microphone driver.
