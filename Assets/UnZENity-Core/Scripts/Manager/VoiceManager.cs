@@ -16,7 +16,7 @@ using Logger = GUZ.Core.Util.Logger;
 
 namespace GUZ.Core.UnZENity_Core.Scripts.Manager
 {
-    public class VoiceManager
+    public class VoiceManager : IDisposable
     {
         public bool IsEnabled => Whisper.IsInitialized;
         public WhisperManager Whisper;
@@ -45,11 +45,17 @@ namespace GUZ.Core.UnZENity_Core.Scripts.Manager
             Whisper.Init();
         }
         
+        public void Dispose()
+        {
+            Whisper?.Dispose();
+            Whisper = null;
+        }
+        
         
         /// <summary>
         /// Implementation used from: https://huggingface.co/unity/inference-engine-whisper-tiny
         /// </summary>
-        public class WhisperManager
+        public class WhisperManager : IDisposable
         {
             public bool IsInitialized;
             public bool IsTranscribing;
@@ -217,7 +223,7 @@ namespace GUZ.Core.UnZENity_Core.Scripts.Manager
             }
 
             /// <summary>
-            /// Dispose data after execution. Otherwise we get errors about GPU memory leaks.
+            /// Dispose data after execution. Otherwise, we get errors about GPU memory leaks.
             /// </summary>
             private void StopExec()
             {
@@ -225,8 +231,8 @@ namespace GUZ.Core.UnZENity_Core.Scripts.Manager
 
                 _lastToken.Dispose();
                 _lastTokenTensor.Dispose();
-                _tokensTensor.Dispose();
                 _pinnedTensorData.Dispose();
+                _tokensTensor.Dispose();
                 _audioInput.Dispose();
             }
 
@@ -286,7 +292,7 @@ namespace GUZ.Core.UnZENity_Core.Scripts.Manager
             private ComputeTensorData _pinnedTensorData;
             private Tensor<float> _audioInput;
 
-            void LoadAudio()
+            private void LoadAudio()
             {
                 _numSamples = _audioClip.samples;
                 var data = new float[_maxSamples];
@@ -295,7 +301,7 @@ namespace GUZ.Core.UnZENity_Core.Scripts.Manager
                 _audioInput = new Tensor<float>(new TensorShape(1, _numSamples), data);
             }
 
-            void EncodeAudio()
+            private void EncodeAudio()
             {
                 _spectrogram.Schedule(_audioInput);
                 var logmel = _spectrogram.PeekOutput() as Tensor<float>;
@@ -303,7 +309,7 @@ namespace GUZ.Core.UnZENity_Core.Scripts.Manager
                 _encodedAudio = _encoder.PeekOutput() as Tensor<float>;
             }
             
-            async Task InferenceStep()
+            private async Task InferenceStep()
             {
                 if (_runtime > _forcedTimeout)
                 {
@@ -334,6 +340,8 @@ namespace GUZ.Core.UnZENity_Core.Scripts.Manager
                 var past_key_values_2_encoder_value = _decoder1.PeekOutput("present.2.encoder.value") as Tensor<float>;
                 var past_key_values_3_encoder_key = _decoder1.PeekOutput("present.3.encoder.key") as Tensor<float>;
                 var past_key_values_3_encoder_value = _decoder1.PeekOutput("present.3.encoder.value") as Tensor<float>;
+
+                await Task.Yield();
 
                 _decoder2.SetInput("input_ids", _lastTokenTensor);
                 _decoder2.SetInput("past_key_values.0.decoder.key", past_key_values_0_decoder_key);
@@ -380,7 +388,7 @@ namespace GUZ.Core.UnZENity_Core.Scripts.Manager
 
             // Tokenizer
             private string _vocabText;
-            void GetTokens()
+            private void GetTokens()
             {
                 var vocab = JsonConvert.DeserializeObject<Dictionary<string, int>>(_vocabText);
                 _tokens = new string[vocab.Count];
@@ -390,13 +398,13 @@ namespace GUZ.Core.UnZENity_Core.Scripts.Manager
                 }
             }
 
-            string GetUnicodeText(string text)
+            private string GetUnicodeText(string text)
             {
                 var bytes = Encoding.GetEncoding("ISO-8859-1").GetBytes(ShiftCharacterDown(text));
                 return Encoding.UTF8.GetString(bytes);
             }
 
-            string ShiftCharacterDown(string text)
+            private string ShiftCharacterDown(string text)
             {
                 string outText = "";
                 foreach (char letter in text)
@@ -406,7 +414,7 @@ namespace GUZ.Core.UnZENity_Core.Scripts.Manager
                 return outText;
             }
 
-            void SetupWhiteSpaceShifts()
+            private void SetupWhiteSpaceShifts()
             {
                 for (int i = 0, n = 0; i < 256; i++)
                 {
@@ -414,21 +422,31 @@ namespace GUZ.Core.UnZENity_Core.Scripts.Manager
                 }
             }
 
-            bool IsWhiteSpace(char c)
+            private bool IsWhiteSpace(char c)
             {
                 return !(('!' <= c && c <= '~') || ('�' <= c && c <= '�') || ('�' <= c && c <= '�'));
             }
-
-            private void OnDestroy()
+            
+            public void Dispose()
             {
-                _decoder1.Dispose();
-                _decoder2.Dispose();
-                _encoder.Dispose();
-                _spectrogram.Dispose();
-                _argmax.Dispose();
-                _audioInput.Dispose();
-                _lastTokenTensor.Dispose();
-                _tokensTensor.Dispose();
+                // Dispose workers
+                _decoder1?.Dispose();
+                _decoder2?.Dispose();
+                _encoder?.Dispose();
+                _spectrogram?.Dispose();
+                _argmax?.Dispose();
+                
+                if (_outputTokens.IsCreated)
+                    _outputTokens.Dispose();
+                
+                _encodedAudio?.Dispose();
+                
+                _decoder1 = null;
+                _decoder2 = null;
+                _encoder = null;
+                _spectrogram = null;
+                _argmax = null;
+                _encodedAudio = null;
             }
         }
     }

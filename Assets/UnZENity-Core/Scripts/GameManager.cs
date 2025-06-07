@@ -291,6 +291,8 @@ namespace GUZ.Core
         private void OnApplicationQuit()
         {
             Bootstrapper.OnApplicationQuit();
+            
+            Voice?.Dispose();
         }
     }
 }
