@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using GUZ.Core.Extensions;
@@ -340,8 +339,6 @@ namespace GUZ.Core.UnZENity_Core.Scripts.Manager
                 var past_key_values_2_encoder_value = _decoder1.PeekOutput("present.2.encoder.value") as Tensor<float>;
                 var past_key_values_3_encoder_key = _decoder1.PeekOutput("present.3.encoder.key") as Tensor<float>;
                 var past_key_values_3_encoder_value = _decoder1.PeekOutput("present.3.encoder.value") as Tensor<float>;
-
-                await Task.Yield();
 
                 _decoder2.SetInput("input_ids", _lastTokenTensor);
                 _decoder2.SetInput("past_key_values.0.decoder.key", past_key_values_0_decoder_key);
