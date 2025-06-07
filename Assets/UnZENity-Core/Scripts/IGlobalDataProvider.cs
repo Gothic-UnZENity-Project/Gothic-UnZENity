@@ -4,6 +4,7 @@ using GUZ.Core.Manager;
 using GUZ.Core.Manager.Culling;
 using GUZ.Core.Manager.Vobs;
 using GUZ.Core.Npc;
+using GUZ.Core.UnZENity_Core.Scripts.Manager;
 using GUZ.Core.World;
 using GUZ.Manager;
 
@@ -34,5 +35,6 @@ namespace GUZ.Core
         public VobMeshCullingManager VobMeshCulling { get; }
         public NpcMeshCullingManager NpcMeshCulling { get; }
         public VobSoundCullingManager SoundCulling { get; }
+        public VoiceManager Voice { get; }
     }
 }

@@ -1,4 +1,5 @@
 using GUZ.Core;
+using GUZ.Core.UnZENity_Core.Scripts.Manager;
 using GUZ.Core.Util;
 using GUZ.VR.Adapter;
 using GUZ.VR.Components.HVROverrides;
@@ -25,9 +26,10 @@ namespace GUZ.VR.Components.SpeechToText
         // Unity's Microphone API will always store output in an AudioClip.
         private AudioClip _recordedClip;
 
+        private VoiceManager.WhisperManager _whisper => GameGlobals.Voice.Whisper;
+
         private int _microphoneIndex => GameGlobals.Config.Gothic.GetInt(VRConstants.IniNames.Microphone);
         
-        private Whisper _whisper = new();
         private State _state;
 
         private enum State
@@ -52,10 +54,7 @@ namespace GUZ.VR.Components.SpeechToText
                 return;
             }
             
-            _whisper = new();
-            _whisper.Initialize();
-            
-            if (!_whisper.IsInitialized)
+            if (!GameGlobals.Voice.IsEnabled)
             {
                 Logger.Log("Disabling SpeechToText feature as Whisper isn't initialized.", LogCat.VR);
                 _state = State.Uninitialized;

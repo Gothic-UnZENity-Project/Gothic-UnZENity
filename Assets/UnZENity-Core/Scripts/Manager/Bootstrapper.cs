@@ -21,7 +21,7 @@ namespace GUZ.Core.Manager
             MorphMeshCache.Dispose();
         }
 
-        public static void BootGothicUnZeNity()
+        public static void Boot()
         {
             LoadVMs();
             SetLanguage();

@@ -10,6 +10,7 @@ using GUZ.Core.Manager.Culling;
 using GUZ.Core.Manager.Scenes;
 using GUZ.Core.Manager.Vobs;
 using GUZ.Core.Npc;
+using GUZ.Core.UnZENity_Core.Scripts.Manager;
 using GUZ.Core.Util;
 using GUZ.Core.World;
 using GUZ.Manager;
@@ -64,7 +65,8 @@ namespace GUZ.Core
         public VobMeshCullingManager VobMeshCulling { get; private set; }
         public NpcMeshCullingManager NpcMeshCulling { get; private set; }
         public VobSoundCullingManager SoundCulling { get; private set; }
-        
+        public VoiceManager Voice { get; private set; }
+
 
         protected override void Awake()
         {
@@ -112,6 +114,7 @@ namespace GUZ.Core
             Music = new MusicManager(DeveloperConfig);
             Story = new StoryManager(DeveloperConfig);
             Routines = new RoutineManager(DeveloperConfig);
+            Voice = new VoiceManager();
         }
 
         private void Start()
@@ -167,8 +170,9 @@ namespace GUZ.Core
             Vobs.Init(this);
             Npcs.Init(this);
 
-            Bootstrapper.BootGothicUnZeNity();
-            
+            Bootstrapper.Boot();
+            Voice.Init(); // Init after language set.
+
             GlobalEventDispatcher.LevelChangeTriggered.AddListener((world, spawn) =>
             {
                 Player.LastLevelChangeTriggerVobName = spawn;
