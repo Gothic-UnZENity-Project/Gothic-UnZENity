@@ -1,6 +1,4 @@
-using System.Linq;
 using GUZ.Core;
-using GUZ.Core.Globals;
 using GUZ.Core.Util;
 using GUZ.VR.Adapter;
 using GUZ.VR.Components.HVROverrides;
@@ -104,18 +102,22 @@ namespace GUZ.VR.Components.SpeechToText
 
                 if (result == null || result.Score < 0.6f)
                 {
-                    Logger.Log("No matching text found for spoken text or score is too low.", LogCat.VR);
+                    Logger.Log($"No matching dialog option found for voice recording >{spokenText}< found. " +
+                               $"Most probable Selection was >{result?.Sentence}< with score >{result?.Score}<.", LogCat.VR);
                     return;
                 }
+
+                Logger.Log($"Dialog option found. Spoken: >{spokenText}<. " +
+                            $"Selection: >{result.Sentence}< with score (>{result.Score}<).", LogCat.VR);
                 
                 _vrDialog.DialogSelected(result.Index);
-                
             }
         }
 
         private void StartRecording()
         {
             Logger.Log("Starting recording.", LogCat.VR);
+            _recordedClip = null; // Reset
             _recordedClip = Microphone.Start(GetMicrophoneDeviceName(), false, _maxRecordingLength, _recordingSampleRate);
             
             _recordingImage.SetActive(true);
@@ -137,20 +139,23 @@ namespace GUZ.VR.Components.SpeechToText
             if (recordingPosition == 0)
             {
                 Logger.LogWarning("No audio from Microphone stream received. Skipping local LLM execution.", LogCat.VR);
+                _state = State.Idle;
                 return;
             }
 
             _state = State.AiWaiting;
-         
+            
+#pragma warning disable CS4014 // Do not wait. We want to let Whisper work in the background
             _whisper.StartExec(_recordedClip);
+#pragma warning restore CS4014
         }
 
         private string GetMicrophoneDeviceName()
         {
-            if (_microphoneIndex < Microphone.devices.Length)
+            if (_microphoneIndex - 1 > Microphone.devices.Length)
                 return string.Empty;
             else
-                return Microphone.devices[_microphoneIndex];
+                return Microphone.devices[_microphoneIndex - 1];
         }
 
         private void OnDestroy()
