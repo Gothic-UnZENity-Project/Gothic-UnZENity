@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using GUZ.Core.Extensions;
@@ -22,7 +23,17 @@ namespace GUZ.Core.UnZENity_Core.Scripts.Manager
 
         public void Init()
         {
-
+            // Check if we have any microphones connected
+            if (Microphone.devices.Length <= 0)
+            {
+                Logger.Log("No microphone detected! Disable feature.", LogCat.Audio);
+                return;
+            }
+            else
+            {
+                Logger.Log($"Unity detected the following microphones: {string.Join(";", Microphone.devices)}", LogCat.Audio);
+            }
+            
 #pragma warning disable CS4014 // Whisper might take some seconds to initialize. Do not wait.
             InitializeWhisper();
 #pragma warning restore CS4014
@@ -91,14 +102,8 @@ namespace GUZ.Core.UnZENity_Core.Scripts.Manager
 
             private float _runtime;
 
-            private bool _isFirstRun = true;
             public void Init()
             {
-                // Already setup
-                if (!_isFirstRun)
-                    return;
-
-                _isFirstRun = false;
                 try
                 {
                     // .onnx models need to be serialized. Prepared via Editor and stored as .sentis
@@ -227,6 +232,7 @@ namespace GUZ.Core.UnZENity_Core.Scripts.Manager
 
             private int GetLanguageToken()
             {
+                Logger.Log($"Trying to set Whisper language to {GameData.Language}", LogCat.Audio);
                 switch (GameData.Language)
                 {
                     case "cs":

@@ -1,3 +1,4 @@
+using System.Linq;
 using GUZ.Core;
 using GUZ.Core.UnZENity_Core.Scripts.Manager;
 using GUZ.Core.Util;
@@ -44,19 +45,10 @@ namespace GUZ.VR.Components.SpeechToText
         {
             _recordingImage.SetActive(false);
             _aiWaitingImage.SetActive(false);
-
-            // Check if we have any microphones connected
-            if (_microphoneIndex == 0 || Microphone.devices.Length <= 0)
-            {
-                Logger.Log("No microphone selected and/or detected!", LogCat.VR);
-                _state = State.Uninitialized;
-                gameObject.SetActive(false);
-                return;
-            }
             
             if (!GameGlobals.Voice.IsEnabled)
             {
-                Logger.Log("Disabling SpeechToText feature as Whisper isn't initialized.", LogCat.VR);
+                Logger.Log("Disabling SpeechToText feature as Manager is Disabled (e.g. because of Microphone or Whisper).", LogCat.Audio);
                 _state = State.Uninitialized;
                 gameObject.SetActive(false);
                 return;
@@ -102,12 +94,12 @@ namespace GUZ.VR.Components.SpeechToText
                 if (result == null || result.Score < 0.6f)
                 {
                     Logger.Log($"No matching dialog option found for voice recording >{spokenText}< found. " +
-                               $"Most probable Selection was >{result?.Sentence}< with score >{result?.Score}<.", LogCat.VR);
+                               $"Most probable Selection was >{result?.Sentence}< with score >{result?.Score}<.", LogCat.Audio);
                     return;
                 }
 
                 Logger.Log($"Dialog option found. Spoken: >{spokenText}<. " +
-                            $"Selection: >{result.Sentence}< with score (>{result.Score}<).", LogCat.VR);
+                            $"Selection: >{result.Sentence}< with score (>{result.Score}<).", LogCat.Audio);
                 
                 _vrDialog.DialogSelected(result.Index);
             }
@@ -115,7 +107,7 @@ namespace GUZ.VR.Components.SpeechToText
 
         private void StartRecording()
         {
-            Logger.Log("Starting recording.", LogCat.VR);
+            Logger.Log("Starting recording.", LogCat.Audio);
             _recordedClip = null; // Reset
             _recordedClip = Microphone.Start(GetMicrophoneDeviceName(), false, _maxRecordingLength, _recordingSampleRate);
             
@@ -127,7 +119,7 @@ namespace GUZ.VR.Components.SpeechToText
 
         private void StopAndProcessRecording()
         {
-            Logger.Log("Stopping recording and executing local LLM...", LogCat.VR);
+            Logger.Log("Stopping recording and executing local LLM...", LogCat.Audio);
 
             _recordingImage.SetActive(false);
             _aiWaitingImage.SetActive(true);
@@ -137,7 +129,7 @@ namespace GUZ.VR.Components.SpeechToText
 
             if (recordingPosition == 0)
             {
-                Logger.LogWarning("No audio from Microphone stream received. Skipping local LLM execution.", LogCat.VR);
+                Logger.LogWarning("No audio from Microphone stream received. Skipping local LLM execution.", LogCat.Audio);
                 _state = State.Idle;
                 return;
             }
