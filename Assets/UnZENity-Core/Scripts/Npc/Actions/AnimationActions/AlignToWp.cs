@@ -23,7 +23,6 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             {
                 Logger.LogError(e.ToString(), LogCat.Ai);
                 return Quaternion.identity;
-                ;
             }
         }
     }
