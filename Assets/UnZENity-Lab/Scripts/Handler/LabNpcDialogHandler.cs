@@ -33,6 +33,8 @@ namespace GUZ.Lab.Handler
         /// </summary>
         private IEnumerator IdleAnimations()
         {
+            yield break;
+            
             var npcRoot = NpcSlotGo.transform.GetChild(0).GetChild(0).gameObject;
             var animSystem = npcRoot.GetComponent<AnimationSystem>();
             var animHeadHandler = npcRoot.GetComponent<NpcHeadAnimationHandler>();
