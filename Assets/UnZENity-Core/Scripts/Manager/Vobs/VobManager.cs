@@ -280,6 +280,8 @@ namespace GUZ.Core.Manager.Vobs
                 loading.Tick();
                 await FrameSkipper.TrySkipToNextFrame();
 
+                PreLoadVob(vob);
+                
                 switch (vob.Type)
                 {
                     // A LevelCompo contains no data. Simply check its children.
@@ -308,6 +310,16 @@ namespace GUZ.Core.Manager.Vobs
                     // We assume that all VOBs with meshes are lazy loaded only.
                     AddToMobInteractableList(vob, go);
                 }
+            }
+        }
+
+        private void PreLoadVob(IVirtualObject vob)
+        {
+            if (vob is IInteractiveObject interactiveVob)
+            {
+                // G1 is neither storing, nor retrieving value.
+                // FIXME - We still should reset this value to 1 before saving and do not change it in a save game.
+                interactiveVob.State = 0;
             }
         }
 
