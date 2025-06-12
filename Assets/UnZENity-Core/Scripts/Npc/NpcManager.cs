@@ -70,11 +70,6 @@ namespace GUZ.Core.Npc
                     }
 
                     _initializer.InitNpc(npcElement.Npc, npcElement.gameObject);
-                    if (npcId != 0 && GameGlobals.Config.Dev.SpawnNpcInstances.Value.Any() &&
-                        !GameGlobals.Config.Dev.SpawnNpcInstances.Value.Contains(npcElement.Npc.Id))
-                    {
-                        continue;
-                    }
                 }
 
                 yield return FrameSkipper.TrySkipToNextFrameCoroutine();
