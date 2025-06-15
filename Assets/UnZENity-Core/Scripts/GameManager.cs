@@ -200,7 +200,7 @@ namespace GUZ.Core
             worldName += worldName.EndsWithIgnoreCase(".zen") ? "" : ".zen";
 
             // Pre-load ZenKit save game data now. Can be reused by LoadingSceneManager later.
-            if (saveGameId == 0)
+            if (saveGameId == SaveGameManager.SlotId.NewGame)
             {
                 SaveGame.LoadNewGame();
             }
