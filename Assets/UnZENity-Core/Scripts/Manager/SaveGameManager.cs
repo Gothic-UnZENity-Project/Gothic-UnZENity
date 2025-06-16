@@ -86,6 +86,8 @@ namespace GUZ.Core.Manager
 
         public void LoadNewGame()
         {
+            GlobalEventDispatcher.LoadGameStart.Invoke();
+
             SaveGameId = 0;
             Save = new SaveGame(GameContext.GameVersionAdapter.Version);
             IsFirstWorldLoadingFromSaveGame = true;
@@ -97,6 +99,8 @@ namespace GUZ.Core.Manager
         /// </summary>
         public void LoadSavedGame(SlotId saveGameId)
         {
+            GlobalEventDispatcher.LoadGameStart.Invoke();
+
             LoadSavedGame(saveGameId, GetSaveGame(saveGameId));
         }
 
