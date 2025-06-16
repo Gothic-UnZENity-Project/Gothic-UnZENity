@@ -38,6 +38,12 @@ namespace GUZ.Core.Npc
         {
             coroutineManager.StartCoroutine(InitNpcCoroutine());
             coroutineManager.StartCoroutine(ReEnableNpcCoroutine());
+            
+            GlobalEventDispatcher.LoadGameStart.AddListener(() =>
+            {
+                _objectsToInitQueue.Clear();
+                _objectToReEnableQueue.Clear();
+            });
         }
 
         private IEnumerator InitNpcCoroutine()
