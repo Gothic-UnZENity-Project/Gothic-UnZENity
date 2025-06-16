@@ -10,9 +10,9 @@ using static GUZ.Core.Globals.Constants;
 
 namespace GUZ.Core.Manager
 {
-    public class Bootstrapper
+    public static class Bootstrapper
     {
-        public Bootstrapper()
+        static Bootstrapper()
         {
             GlobalEventDispatcher.LoadGameStart.AddListener(LoadGothicVm);
         }
