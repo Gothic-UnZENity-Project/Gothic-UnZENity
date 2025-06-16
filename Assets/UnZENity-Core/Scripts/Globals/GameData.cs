@@ -35,11 +35,6 @@ namespace GUZ.Core.Globals
         // [IInteractiveObject] => VisualScheme (aka vob.Visual.Name.SubString("_");
         public static readonly Dictionary<string, List<(IInteractiveObject Vob, GameObject Go)>> VobsInteractable = new();
 
-        /// <summary>
-        /// Store and update global NPC information about dialog options already listened to.
-        /// </summary>
-        public static HashSet<int> KnownDialogInfos = new();
-        
         public static class Dialogs
         {
             public static List<InfoInstance> Instances = new();
