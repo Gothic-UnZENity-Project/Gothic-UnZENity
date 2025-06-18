@@ -25,7 +25,7 @@ namespace GUZ.Core.Data.Container
     /// - int VoicePitch
     /// - int BodyMass
     /// - int DailyRoutine		- NPC routine. Need to be stored into INpc.CurrentRoutine before saving a game.
-    /// - int StartAiState		- Monster's routine.  Need to be stored into INpc.CurrentRoutine before saving a game. (Hint: In G1, NPC 888 also uses this state instead of a routine)
+    /// - int StartAiState		- Monster's routine. Need to be stored into INpc.CurrentRoutine before saving a game. (Hint: In G1, NPC 888 also uses this state instead of a routine)
     /// - string SpawnPoint
     /// - int SpawnDelay
     /// - int Senses

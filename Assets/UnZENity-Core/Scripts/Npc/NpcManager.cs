@@ -380,6 +380,8 @@ namespace GUZ.Core.Npc
             GameData.GothicVm.GlobalSelf = npc;
             GameData.GothicVm.Call(routineIndex);
 
+            npc.GetUserData().Vob.HasRoutine = npc.GetUserData().Props.Routines.NotNullOrEmpty();
+            
             CalculateCurrentRoutine(npc);
         }
 

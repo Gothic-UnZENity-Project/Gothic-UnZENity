@@ -255,6 +255,7 @@ namespace GUZ.Core.Npc
             Vob.LastAiState = Vob.CurrentStateIndex;
             Vob.CurrentStateIndex = action;
             Vob.CurrentStateValid = true;
+            Vob.CurrentStateIsRoutine = false;
 
             var routineSymbol = Vm.GetSymbolByIndex(action)!;
             Vob.CurrentStateName = routineSymbol.Name;
@@ -262,6 +263,8 @@ namespace GUZ.Core.Npc
             var symbolLoop = Vm.GetSymbolByName($"{routineSymbol.Name}_Loop");
             if (symbolLoop != null)
             {
+                // If we have a _Loop entry, we can safely assume, we are in a routine and not just a monster AiState.
+                Vob.CurrentStateIsRoutine = true;
                 Properties.StateLoop = symbolLoop.Index;
             }
 
