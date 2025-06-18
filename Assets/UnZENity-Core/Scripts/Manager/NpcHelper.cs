@@ -210,7 +210,7 @@ namespace GUZ.Core.Manager
 
         public static int ExtNpcGetTalentValue(NpcInstance npc, int skillId)
         {
-            return GetProperties(npc).Talents[(VmGothicEnums.Talent)skillId];
+            return GetContainer(npc).Vob.GetTalent(skillId).Value;
         }
 
         public static VmGothicEnums.Attitude GetPersonAttitude(NpcContainer self, NpcContainer other)

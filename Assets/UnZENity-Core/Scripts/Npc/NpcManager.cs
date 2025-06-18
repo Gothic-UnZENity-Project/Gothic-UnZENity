@@ -15,6 +15,7 @@ using MyBox;
 using UnityEngine;
 using ZenKit;
 using ZenKit.Daedalus;
+using ZenKit.Vobs;
 using Logger = GUZ.Core.Util.Logger;
 
 namespace GUZ.Core.Npc
@@ -145,8 +146,15 @@ namespace GUZ.Core.Npc
 
         public void ExtNpcSetTalentValue(NpcInstance npc, VmGothicEnums.Talent talent, int level)
         {
-            var props = npc.GetUserData().Props;
-            props.Talents[talent] = level;
+            var vob = npc.GetUserData()!.Vob;
+
+            // TODO - Test if Skill and Type is really the same value.
+            vob.SetTalent((int)talent, new Talent
+            {
+                Skill = (int)talent,
+                Value = level,
+                Type =  (int)talent
+            });
         }
 
         public void ExtMdlSetVisual(NpcInstance npc, string visual)
