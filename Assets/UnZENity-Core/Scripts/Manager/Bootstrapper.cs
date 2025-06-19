@@ -10,8 +10,13 @@ using static GUZ.Core.Globals.Constants;
 
 namespace GUZ.Core.Manager
 {
-    public class Bootstrapper
+    public static class Bootstrapper
     {
+        static Bootstrapper()
+        {
+            GlobalEventDispatcher.LoadGameStart.AddListener(LoadGothicVm);
+        }
+        
         public static void OnApplicationQuit()
         {
             GameData.Dispose();
@@ -23,7 +28,8 @@ namespace GUZ.Core.Manager
 
         public static void Boot()
         {
-            LoadVMs();
+            LoadGothicVm();
+            LoadMiscVMs();
             SetLanguage();
             LoadDialogs();
             LoadSubtitles();
@@ -85,12 +91,15 @@ namespace GUZ.Core.Manager
             return valuesToCheck.Contains(l10nString);
         }
 
-        private static void LoadVMs()
+        public static void LoadGothicVm()
         {
             GameData.GothicVm = ResourceLoader.TryGetDaedalusVm("GOTHIC");
             VmGothicExternals.RegisterExternals();
             NpcHelper.Init();
-
+        }
+        
+        private static void LoadMiscVMs()
+        {
             GameData.MenuVm = ResourceLoader.TryGetDaedalusVm("MENU");
             GameData.SfxVm = ResourceLoader.TryGetDaedalusVm("SFX");
             GameData.PfxVm = ResourceLoader.TryGetDaedalusVm("PARTICLEFX");

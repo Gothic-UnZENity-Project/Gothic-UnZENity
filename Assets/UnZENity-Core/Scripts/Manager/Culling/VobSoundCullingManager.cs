@@ -1,6 +1,8 @@
 using GUZ.Core.Config;
 using GUZ.Core.Extensions;
+using GUZ.Core.Util;
 using UnityEngine;
+using Logger = GUZ.Core.Util.Logger;
 
 namespace GUZ.Core.Manager.Culling
 {
@@ -13,6 +15,12 @@ namespace GUZ.Core.Manager.Culling
 
         public override void AddCullingEntry(GameObject go)
         {
+            if (IsFinalized)
+            {
+                Logger.LogWarning($"CullingGroup for Sounds closed already. Can't add >{go.name}<", LogCat.Audio);
+                return;
+            }
+            
             Objects.Add(go);
             var sphere = new BoundingSphere(go.transform.position, go.GetComponent<AudioSource>().maxDistance);
             TempSpheres.Add(sphere);

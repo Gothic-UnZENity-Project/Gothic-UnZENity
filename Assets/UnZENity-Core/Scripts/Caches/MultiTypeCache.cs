@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using GUZ.Core.Animations;
 using GUZ.Core.Data.Container;
+using GUZ.Core.Extensions;
 using TMPro;
 using UnityEngine;
 using Container_NpcContainer = GUZ.Core.Data.Container.NpcContainer;
@@ -47,7 +48,7 @@ namespace GUZ.Core.Caches
         {
             GlobalEventDispatcher.LoadingSceneLoaded.AddListener(delegate
             {
-                NpcCache.Clear();
+                NpcCache.ClearAndReleaseMemory();
             });
         }
 

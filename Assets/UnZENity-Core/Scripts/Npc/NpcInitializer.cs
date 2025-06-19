@@ -161,6 +161,8 @@ namespace GUZ.Core.Npc
                 GameGlobals.NpcMeshCulling.AddCullingEntry(go);
             }
 
+            _tmpWldInsertNpcData.ClearAndReleaseMemory();
+            
             // Full loading of NPCs is done.
             loading.FinalizePhase();
         }

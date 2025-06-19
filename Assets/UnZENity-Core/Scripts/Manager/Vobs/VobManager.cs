@@ -280,6 +280,8 @@ namespace GUZ.Core.Manager.Vobs
                 loading.Tick();
                 await FrameSkipper.TrySkipToNextFrame();
 
+                PreLoadVob(vob);
+                
                 switch (vob.Type)
                 {
                     // A LevelCompo contains no data. Simply check its children.
@@ -309,6 +311,10 @@ namespace GUZ.Core.Manager.Vobs
                     AddToMobInteractableList(vob, go);
                 }
             }
+        }
+
+        private void PreLoadVob(IVirtualObject vob)
+        {
         }
 
         /// <summary>

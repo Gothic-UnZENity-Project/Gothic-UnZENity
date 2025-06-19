@@ -86,6 +86,8 @@ namespace GUZ.Core.Manager
 
         public void LoadNewGame()
         {
+            GlobalEventDispatcher.LoadGameStart.Invoke();
+
             SaveGameId = 0;
             Save = new SaveGame(GameContext.GameVersionAdapter.Version);
             IsFirstWorldLoadingFromSaveGame = true;
@@ -97,6 +99,8 @@ namespace GUZ.Core.Manager
         /// </summary>
         public void LoadSavedGame(SlotId saveGameId)
         {
+            GlobalEventDispatcher.LoadGameStart.Invoke();
+
             LoadSavedGame(saveGameId, GetSaveGame(saveGameId));
         }
 
@@ -263,6 +267,9 @@ namespace GUZ.Core.Manager
         /// 2. Drop LevelCompo and move all VOBs one level up
         /// 3. The SaveTree is nearly flat (except some sub-elements from special VOBs.)
         /// 4. Save it
+        ///
+        /// HINT: Whenever G1 saves a game, the VOB tree gets reversed. I.e. you need to save1 + load1 + save2 in G1 to get the same result twice.
+        ///       It also means, that the order of VOBs is irrelevant for the game itself.
         /// </summary>
         private void PrepareWorldDataForSaving2(ZenKit.World world, List<IVirtualObject> vobs)
         {
@@ -274,8 +281,6 @@ namespace GUZ.Core.Manager
                 ? vobs.SelectMany(vob => vob.Children).ToList()
                 : vobs;
 
-            // all Spots and Items are in reverse order in G1 save game.
-            allVobs.Reverse();
             world.RootObjects = allVobs;
 
             // G1 stores all elements below LevelCompo. But we need to be careful as its children might have additional children.
