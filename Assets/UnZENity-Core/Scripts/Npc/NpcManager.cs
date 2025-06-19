@@ -144,17 +144,52 @@ namespace GUZ.Core.Npc
             _initializer.ExtWldInsertNpc(npcInstanceIndex, spawnPoint);
         }
 
+        // FIXME - I think they are overwritten when an NPC is loaded from a SaveGame, as we Initialize them again...
         public void ExtNpcSetTalentValue(NpcInstance npc, VmGothicEnums.Talent talent, int level)
         {
+            InitTalents(npc);
             var vob = npc.GetUserData()!.Vob;
 
-            // TODO - Test if Skill and Type is really the same value.
             vob.SetTalent((int)talent, new Talent
             {
-                Skill = (int)talent,
-                Value = level,
-                Type =  (int)talent
+                Type =  (int)talent,
+                Skill = 0,
+                Value = level
             });
+        }
+        
+        // FIXME - In OpenGothic it adds MDS overlays based on skill level.
+        public void ExtNpcSetTalentSkill(NpcInstance npc, VmGothicEnums.Talent talent, int skillValue)
+        {
+            InitTalents(npc);
+            var vob = npc.GetUserData()!.Vob;
+
+            vob.SetTalent((int)talent, new Talent
+            {
+                Type =  (int)talent,
+                Skill = skillValue,
+                Value = 0
+            });
+        }
+
+        /// <summary>
+        /// Initialize for the first time if not yet done.
+        /// </summary>
+        private void InitTalents(NpcInstance npc)
+        {
+            if (npc.GetUserData()!.Vob.TalentCount != 0)
+                return;
+
+            var vob = npc.GetUserData()!.Vob;
+            for (var i = 0; i < Constants.Daedalus.TalentsMax; i++)
+            {
+                vob.AddTalent(new Talent()
+                {
+                    Type = i,
+                    Value = 0,
+                    Skill = 0
+                });
+            }
         }
 
         public void ExtMdlSetVisual(NpcInstance npc, string visual)
@@ -525,12 +560,6 @@ namespace GUZ.Core.Npc
             }
 
             return true;
-        }
-
-        public void ExtNpcSetTalentSkill(NpcInstance npc, VmGothicEnums.Talent talent, int level)
-        {
-            // FIXME - TBD.
-            // FIXME - In OpenGothic it adds MDS overlays based on skill level.
         }
 
         public void SetDialogs(NpcContainer npcContainer)
