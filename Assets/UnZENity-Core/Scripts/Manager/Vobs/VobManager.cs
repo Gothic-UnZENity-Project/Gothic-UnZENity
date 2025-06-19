@@ -315,12 +315,6 @@ namespace GUZ.Core.Manager.Vobs
 
         private void PreLoadVob(IVirtualObject vob)
         {
-            if (vob is IInteractiveObject interactiveVob)
-            {
-                // G1 is neither storing, nor retrieving value.
-                // FIXME - We still should reset this value to 1 before saving and do not change it in a save game.
-                interactiveVob.State = 0;
-            }
         }
 
         /// <summary>
