@@ -18,7 +18,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
     {
         private const string _mobTransitionAnimationString = "T_{0}{1}{2}_2_{3}";
         private const string _mobLoopAnimationString = "S_{0}_S{1}";
-        private GameObject _mobGo;
+        private VobContainer _mobContainer;
         private GameObject _slotGo;
         private Vector3 _destination;
 
@@ -39,7 +39,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             // NPC is already interacting with a Mob, we therefore assume it's a change of state (e.g. -1 to stop Mob usage)
             if (Props.BodyState == VmGothicEnums.BodyState.BsMobinteract)
             {
-                _mobGo = PrefabProps.CurrentInteractable;
+                _mobContainer = PrefabProps.CurrentInteractable;
                 _slotGo = PrefabProps.CurrentInteractableSlot;
 
                 StartMobUseAnimation();
@@ -47,16 +47,16 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             }
 
             // Else: We have a new animation where we seek the Mob before walking towards and executing action.
-            var go = GetNearestMob();
-            _mobGo = go;
+            var container = GetNearestMob();
+            _mobContainer = container;
 
-            if (go == null)
+            if (container!.Go == null)
             {
                 IsFinishedFlag = true;
                 return;
             }
             
-            if (go.GetComponent<VobLoader>().IsLoaded)
+            if (container.Go.GetComponent<VobLoader>().IsLoaded)
                 StartNow();
             else
                 StartDelayed();
@@ -80,7 +80,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             _slotGo = slot;
             _destination = _slotGo.transform.position;
 
-            PrefabProps.CurrentInteractable = _mobGo;
+            PrefabProps.CurrentInteractable = _mobContainer;
             PrefabProps.CurrentInteractableSlot = _slotGo;
 
             SetBodyState();
@@ -88,7 +88,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
 
         private void SetBodyState()
         {
-            var mobsiScheme = _mobGo.GetComponentInChildren<VobProperties>().VisualScheme;
+            var mobsiScheme = _mobContainer.Go.GetComponentInChildren<VobProperties>().VisualScheme;
 
             if (Constants.Daedalus.MobSit.Contains(mobsiScheme))
                 Props.BodyState = VmGothicEnums.BodyState.BsSit;
@@ -114,7 +114,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
         {
             if (_isMobFoundButNotYetInitialized)
             {
-                if (!_mobGo.GetComponent<VobLoader>().IsLoaded)
+                if (!_mobContainer.Go.GetComponent<VobLoader>().IsLoaded)
                 {
                     return;
                 }
@@ -161,7 +161,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             // Loop Mobsi animation until the same UseMob with -1 is called.
             else
             {
-                var mobVisualName = _mobGo.GetComponentInChildren<VobProperties>().VisualScheme;
+                var mobVisualName = _mobContainer.Go.GetComponentInChildren<VobProperties>().VisualScheme;
                 var animName = string.Format(_mobLoopAnimationString, mobVisualName, _desiredState);
                 PrefabProps.AnimationSystem.PlayAnimation(animName);
             }
@@ -170,20 +170,20 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
         }
 
         [CanBeNull]
-        private GameObject GetNearestMob()
+        private VobContainer GetNearestMob()
         {
             var pos = NpcGo.transform.position;
-            return VobHelper.GetFreeInteractableWithin10M(pos, Action.String0).go;
+            return VobHelper.GetFreeInteractableWithin10M(pos, Action.String0);
         }
 
         [CanBeNull]
         private GameObject GetNearestMobSlot()
         {
-            if (_mobGo == null)
+            if (_mobContainer == null)
                 return null;
 
             var pos = NpcGo.transform.position;
-            var slot = VobHelper.GetNearestSlot(_mobGo, pos);
+            var slot = VobHelper.GetNearestSlot(_mobContainer.Go, pos);
 
             return slot;
         }
@@ -198,7 +198,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
         private void StartMobUseAnimation()
         {
             // Place item for Mobsi usage in hand - if needed. Will be "spawned" via animation >EventType.ItemInsert< later.
-            var itemName = ((InteractiveObject)_mobGo.GetComponentInChildren<VobProperties>().Properties).Item;
+            var itemName = ((InteractiveObject)_mobContainer.Go.GetComponentInChildren<VobProperties>().Properties).Item;
             if (itemName.NotNullOrEmpty())
             {
                 var item = VmInstanceManager.TryGetItemData(itemName);
@@ -270,7 +270,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
                 };
             }
 
-            var mobVisualName = _mobGo.GetComponentInChildren<VobProperties>().VisualScheme;
+            var mobVisualName = _mobContainer.Go.GetComponentInChildren<VobProperties>().VisualScheme;
             var slotPositionName = GetSlotPositionTag(_slotGo.name);
             var animName = string.Format(_mobTransitionAnimationString, mobVisualName, slotPositionName, from, to);
 

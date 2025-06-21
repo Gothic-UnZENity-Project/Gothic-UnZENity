@@ -6,6 +6,7 @@ using GUZ.Core.Data.Container;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Properties;
+using GUZ.Core.Properties.Vobs;
 using GUZ.Core.Util;
 using GUZ.Core.Vm;
 using JetBrains.Annotations;
@@ -51,9 +52,9 @@ namespace GUZ.Core.Manager
         public static bool ExtIsMobAvailable(NpcInstance npcInstance, string vobName)
         {
             var npc = GetNpc(npcInstance);
-            var vob = VobHelper.GetFreeInteractableWithin10M(npc.transform.position, vobName).vob;
+            var container = VobHelper.GetFreeInteractableWithin10M(npc.transform.position, vobName);
 
-            return vob != null;
+            return container != null;
         }
 
         public static int ExtWldGetMobState(NpcInstance npcInstance, string scheme)
@@ -62,14 +63,14 @@ namespace GUZ.Core.Manager
 
             var prefabProps = npcInstance.GetUserData().PrefabProps;
 
-            IInteractiveObject vob;
+            InteractiveProperties props;
 
             if (prefabProps.CurrentInteractable != null)
             {
                 try
                 {
                     // Check current gameobject and children as well
-                    vob = prefabProps.CurrentInteractable.GetComponentInChildren<VobInteractiveProperties>().InteractiveProperties;
+                    props = prefabProps.CurrentInteractable.PropsAs<InteractiveProperties>();
                 }
                 catch (Exception)
                 {
@@ -78,12 +79,12 @@ namespace GUZ.Core.Manager
                 }
             }
             else
-                vob = VobHelper.GetFreeInteractableWithin10M(npcGo.transform.position, scheme).vob;
+                props = VobHelper.GetFreeInteractableWithin10M(npcGo.transform.position, scheme)?.PropsAs<InteractiveProperties>();
 
-            if (vob == null)
+            if (props == null)
                 return -1;
 
-            return Math.Max(0, vob.State);
+            return Math.Max(0, props.State);
         }
 
         public static ItemInstance ExtNpcGetEquippedMeleeWeapon(NpcInstance npc)

@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using GUZ.Core.Creator.Sounds;
+using GUZ.Core.Data.Container;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Properties;
@@ -18,10 +19,10 @@ namespace GUZ.Core.Manager
         private const string _noSoundName = "nosound.wav";
 
         [CanBeNull]
-        public static (IInteractiveObject vob, GameObject go) GetFreeInteractableWithin10M(Vector3 position, string visualScheme)
+        public static VobContainer GetFreeInteractableWithin10M(Vector3 position, string visualScheme)
         {
             if (!GameData.VobsInteractable.TryGetValue(visualScheme.ToUpper(), out var vobs))
-                return default;
+                return null;
             
             return vobs
                 .Where(pair => Vector3.Distance(pair.Vob.Position.ToUnityVector(), position) < _lookupDistance)

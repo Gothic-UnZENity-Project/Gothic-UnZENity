@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using GUZ.Core.Caches;
 using GUZ.Core.Config;
 using GUZ.Core.Creator.Meshes;
 using GUZ.Core.Creator.Sounds;
@@ -48,7 +49,7 @@ namespace GUZ.Core.Manager.Vobs
         ///                       and Lights could be sub-VOBs inside fire, we need to find the index from WorldPosition calculated at
         ///                       caching times. Same calculation! (ZenKit.IVirtualVob.Position + ZK.parentPos
         /// </summary>
-        public void InitVob(IVirtualObject vob, GameObject parent, Vector3 parentWorldPosition)
+        public GameObject InitVob(IVirtualObject vob, GameObject parent, Vector3 parentWorldPosition, bool isRootVob)
         {
             var worldPosition = parentWorldPosition + vob.Position.ToUnityVector();
             GameObject go = null;
@@ -177,7 +178,7 @@ namespace GUZ.Core.Manager.Vobs
                     // For SaveGame comparison, we load our fallback Prefab and set VobProperties.
                     // Remove it from here once we properly implement and handle it.
                     CreateEmptyDefaultVob(vob, parent);
-                    return;
+                    return null;
                 case VirtualObjectType.zCVobScreenFX:
                 case VirtualObjectType.zCTriggerWorldStart:
                 case VirtualObjectType.oCCSTrigger:
@@ -201,25 +202,25 @@ namespace GUZ.Core.Manager.Vobs
                     // For SaveGame comparison, we load our fallback Prefab and set VobProperties.
                     // Remove it from here once we properly implement and handle it.
                     CreateEmptyDefaultVob(vob, parent);
-                    return;
+                    return null;
                 case VirtualObjectType.zCVobLevelCompo:
                     // Nothing to do.
-                    return;
+                    return null;
                 default:
                     Logger.LogError($"VobType={vob.Type} not yet handled. And we didn't know we need to do so. ;-)", LogCat.Vob);
-                    return;
+                    return null;
             }
 
             // Do not check children if the current VOB can't be created.
             if (!go)
-            {
-                return;
-            }
-
+                return null;
+            
             foreach (var childVob in vob.Children)
             {
-                InitVob(childVob, go, worldPosition);
+                InitVob(childVob, go, worldPosition, false);
             }
+
+            return go;
         }
 
         public void SetPosAndRot(GameObject go, IVirtualObject vob)
@@ -363,7 +364,7 @@ namespace GUZ.Core.Manager.Vobs
                 vob.Position = default;
 
                 // Call normal mesh and Prefab loading logic
-                InitVob(vob, parent, worldPosition);
+                InitVob(vob, parent, worldPosition, false);
             }
         }
 

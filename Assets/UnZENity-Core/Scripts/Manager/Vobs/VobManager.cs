@@ -3,8 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using GUZ.Core.Caches;
 using GUZ.Core.Config;
+using GUZ.Core.Creator.Meshes.Builder;
 using GUZ.Core.Creator.Sounds;
+using GUZ.Core.Data.Container;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.UI.Menus.LoadingBars;
@@ -83,9 +86,9 @@ namespace GUZ.Core.Manager.Vobs
         /// <summary>
         /// Some VOBs are initialized eagerly (e.g. when there is no performance benefit in doing so later or its needed directly).
         /// </summary>
-        public void InitVobNow(IVirtualObject vob, GameObject parent)
+        public GameObject InitVobNow(IVirtualObject vob, GameObject parent)
         {
-            _initializer.InitVob(vob, parent, default);
+            return _initializer.InitVob(vob, parent, default, true);
         }
         
         /// <summary>
@@ -174,7 +177,7 @@ namespace GUZ.Core.Manager.Vobs
 
                     // We assume that each loaded VOB is centered at parent=0,0,0.
                     // Should work smoothly until we start lazy loading sub-vobs ;-)
-                    _initializer.InitVob(item.Vob, item.gameObject, default);
+                    _initializer.InitVob(item.Vob, item.gameObject, default, true);
 
                     yield return FrameSkipper.TrySkipToNextFrameCoroutine();
                 }
@@ -271,8 +274,7 @@ namespace GUZ.Core.Manager.Vobs
             }
         }
 
-        private async Task CreateWorldVobs(DeveloperConfig config, LoadingManager loading,
-            List<IVirtualObject> vobs)
+        private async Task CreateWorldVobs(DeveloperConfig config, LoadingManager loading, List<IVirtualObject> vobs)
         {
             foreach (var vob in vobs)
             {
@@ -299,16 +301,19 @@ namespace GUZ.Core.Manager.Vobs
                     continue;
                 }
 
+                var vobContainer = new VobContainer(vob);
+                MultiTypeCache.VobCache.Add(vobContainer);
+
                 if (_vobTypesNonLazyLoading.Contains(vob.Type))
                 {
-                    CreateVobNow(vob);
+                    vobContainer.Go = CreateVobNow(vob);
                 }
                 else
                 {
-                    var go = CreateVobLazily(vob);
+                    vobContainer.Go = CreateVobLazily(vob);
 
                     // We assume that all VOBs with meshes are lazy loaded only.
-                    AddToMobInteractableList(vob, go);
+                    AddToMobInteractableList(vobContainer);
                 }
             }
         }
@@ -320,9 +325,9 @@ namespace GUZ.Core.Manager.Vobs
         /// <summary>
         /// Eager loading a VOB simply means we call the Init() method immediately.
         /// </summary>
-        private void CreateVobNow(IVirtualObject vob)
+        private GameObject CreateVobNow(IVirtualObject vob)
         {
-            InitVobNow(vob, GetRootGameObjectOfType(vob.Type));
+            return InitVobNow(vob, GetRootGameObjectOfType(vob.Type));
         }
 
         public GameObject CreateItem(Item item)
@@ -334,7 +339,7 @@ namespace GUZ.Core.Manager.Vobs
             var loader = go.GetComponent<VobLoader>();
             loader.IsLoaded = true;
 
-            _initializer.InitVob(loader.Vob, loader.gameObject, default);
+            _initializer.InitVob(loader.Vob, loader.gameObject, default, true);
 
             return go;
         }
@@ -382,12 +387,12 @@ namespace GUZ.Core.Manager.Vobs
             return go;
         }
 
-        private static void AddToMobInteractableList(IVirtualObject vob, GameObject go)
+        private static void AddToMobInteractableList(VobContainer container)
         {
-            if (go == null)
+            if (container.Go == null)
                 return;
 
-            switch (vob.Type)
+            switch (container.Vob.Type)
             {
                 // case VirtualObjectType.oCMOB: // FIXME - Needed? e.g. IMovableObject
                 case VirtualObjectType.oCMobFire:
@@ -397,13 +402,13 @@ namespace GUZ.Core.Manager.Vobs
                 case VirtualObjectType.oCMobContainer:
                 case VirtualObjectType.oCMobSwitch:
                 case VirtualObjectType.oCMobWheel:
-                    var visualScheme = vob.Visual?.Name.Split('_').First().ToUpper(); // e.g. BED_1_OC.ASC => BED);
+                    var visualScheme = container.Vob.Visual?.Name.Split('_').First().ToUpper(); // e.g. BED_1_OC.ASC => BED);
 
                     if (visualScheme.IsNullOrEmpty())
                         return;
                     
                     GameData.VobsInteractable.TryAdd(visualScheme, new());
-                    GameData.VobsInteractable[visualScheme!].Add(((IInteractiveObject)vob, go));
+                    GameData.VobsInteractable[visualScheme!].Add(container);
                     break;
             }
         }

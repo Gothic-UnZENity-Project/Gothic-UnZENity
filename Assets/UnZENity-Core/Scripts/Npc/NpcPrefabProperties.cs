@@ -1,5 +1,6 @@
 using System;
 using GUZ.Core.Animations;
+using GUZ.Core.Data.Container;
 using GUZ.Core.Extensions;
 using GUZ.Core.Npc;
 using GUZ.Core.Properties;
@@ -30,7 +31,7 @@ namespace GUZ.Core.Npc
         public HeadMorph HeadMorph;
 
         [NonSerialized]
-        public GameObject CurrentInteractable; // e.g. PSI_CAULDRON
+        public VobContainer CurrentInteractable; // e.g. PSI_CAULDRON
         [NonSerialized]
         public GameObject CurrentInteractableSlot; // e.g. ZS_0
 

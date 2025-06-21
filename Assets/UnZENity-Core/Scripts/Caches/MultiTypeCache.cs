@@ -22,6 +22,10 @@ namespace GUZ.Core.Caches
         ///       Otherwise, UserData's WeakReference pointer gets cleared.
         /// </summary>
         public static readonly List<NpcContainer> NpcCache = new();
+        
+        public static readonly List<VobContainer> VobCache = new();
+        
+        
         /// <summary>
         /// This dictionary caches the sprite assets for fonts.
         /// </summary>
@@ -41,6 +45,7 @@ namespace GUZ.Core.Caches
             GlobalEventDispatcher.LoadingSceneLoaded.AddListener(delegate
             {
                 NpcCache.ClearAndReleaseMemory();
+                VobCache.ClearAndReleaseMemory();
             });
         }
 
@@ -49,6 +54,8 @@ namespace GUZ.Core.Caches
             FontCache.Clear();
             Meshes.Clear();
             AudioClips.Clear();
+            NpcCache.Clear();
+            VobCache.Clear();
         }
     }
 }
