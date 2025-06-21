@@ -22,14 +22,6 @@ namespace GUZ.Core.Caches
         ///       Otherwise, UserData's WeakReference pointer gets cleared.
         /// </summary>
         public static readonly List<NpcContainer> NpcCache = new();
-
-
-        /// <summary>
-        /// Already created AnimationData (Clips + RootMotions) can be reused.
-        /// </summary>
-        public static readonly Dictionary<string, AnimationContainer> AnimationDataCache = new();
-        public static readonly Dictionary<string, AnimationTrack> AnimationTrackCache = new();
-
         /// <summary>
         /// This dictionary caches the sprite assets for fonts.
         /// </summary>
@@ -54,8 +46,6 @@ namespace GUZ.Core.Caches
 
         public static void Dispose()
         {
-            AnimationDataCache.Clear();
-            AnimationTrackCache.Clear();
             FontCache.Clear();
             Meshes.Clear();
             AudioClips.Clear();
