@@ -311,10 +311,10 @@ namespace GUZ.Core.Manager.Culling
                 return null;
             }
 
-            var vob = loaderComp.Vob;
+            var container = loaderComp.Container;
 
             var totalBounds = new Bounds();
-            AddLocalBounds(vob, ref totalBounds);
+            AddLocalBounds(container.Vob, ref totalBounds);
 
             return totalBounds == default ? null : totalBounds;
         }

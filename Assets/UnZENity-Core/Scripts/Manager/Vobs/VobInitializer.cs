@@ -32,13 +32,7 @@ namespace GUZ.Core.Manager.Vobs
     {
         private const string _noSoundName = "nosound.wav";
 
-        private DeveloperConfig _config;
-
-
-        public VobInitializer()
-        {
-            _config = GameGlobals.Config.Dev;
-        }
+        private DeveloperConfig _config = GameGlobals.Config.Dev;
 
 
         /// <summary>
@@ -49,7 +43,7 @@ namespace GUZ.Core.Manager.Vobs
         ///                       and Lights could be sub-VOBs inside fire, we need to find the index from WorldPosition calculated at
         ///                       caching times. Same calculation! (ZenKit.IVirtualVob.Position + ZK.parentPos
         /// </summary>
-        public GameObject InitVob(IVirtualObject vob, GameObject parent, Vector3 parentWorldPosition, bool isRootVob)
+        public void InitVob(IVirtualObject vob, GameObject parent, Vector3 parentWorldPosition, bool isRootVob)
         {
             var worldPosition = parentWorldPosition + vob.Position.ToUnityVector();
             GameObject go = null;
@@ -178,7 +172,7 @@ namespace GUZ.Core.Manager.Vobs
                     // For SaveGame comparison, we load our fallback Prefab and set VobProperties.
                     // Remove it from here once we properly implement and handle it.
                     CreateEmptyDefaultVob(vob, parent);
-                    return null;
+                    return;
                 case VirtualObjectType.zCVobScreenFX:
                 case VirtualObjectType.zCTriggerWorldStart:
                 case VirtualObjectType.oCCSTrigger:
@@ -202,40 +196,28 @@ namespace GUZ.Core.Manager.Vobs
                     // For SaveGame comparison, we load our fallback Prefab and set VobProperties.
                     // Remove it from here once we properly implement and handle it.
                     CreateEmptyDefaultVob(vob, parent);
-                    return null;
+                    return;
                 case VirtualObjectType.zCVobLevelCompo:
                     // Nothing to do.
-                    return null;
+                    return;
                 default:
                     Logger.LogError($"VobType={vob.Type} not yet handled. And we didn't know we need to do so. ;-)", LogCat.Vob);
-                    return null;
+                    return;
             }
 
             // Do not check children if the current VOB can't be created.
             if (!go)
-                return null;
+                return;
             
             foreach (var childVob in vob.Children)
             {
                 InitVob(childVob, go, worldPosition, false);
             }
-
-            return go;
-        }
-
-        public void SetPosAndRot(GameObject go, IVirtualObject vob)
-        {
-            SetPosAndRot(go, vob.Position.ToUnityVector(), vob.Rotation.ToUnityQuaternion());
         }
 
         public void SetPosAndRot(GameObject obj, System.Numerics.Vector3 position, Matrix3x3 rotation)
         {
             obj.transform.SetLocalPositionAndRotation(position.ToUnityVector(), rotation.ToUnityQuaternion());
-        }
-
-        public void SetPosAndRot(GameObject obj, Vector3 position, Quaternion rotation)
-        {
-            obj.transform.SetLocalPositionAndRotation(position, rotation);
         }
 
         private GameObject GetPrefab(IVirtualObject vob)
@@ -328,7 +310,6 @@ namespace GUZ.Core.Manager.Vobs
             var go = GetPrefab(vob);
 
             go.SetParent(parent);
-            SetPosAndRot(go, vob);
 
             return go;
         }
@@ -382,7 +363,6 @@ namespace GUZ.Core.Manager.Vobs
 
             // TODO - We need to be careful. It might be, that a light is in a sub-GO structure, where we need the parent pos+rot. If it's the case, we will get a warning as Index==-1 below.
             go.SetParent(parent, true, true);
-            SetPosAndRot(go, vob);
 
             var lightComp = go.GetComponent<StationaryLight>();
             lightComp.Color = new Color(vob.Color.R / 255f, vob.Color.G / 255f, vob.Color.B / 255f, vob.Color.A / 255f);
@@ -419,7 +399,6 @@ namespace GUZ.Core.Manager.Vobs
 
             // TODO - We need to implement animations for this vob type
             var go = CreateDefaultMesh(vob, parent);
-            SetPosAndRot(go, vob);
 
             return go;
         }
@@ -661,7 +640,6 @@ namespace GUZ.Core.Manager.Vobs
             vobObj.GetComponent<VobSpotProperties>().Fp = freePointData;
             GameData.FreePoints.TryAdd(fpName, freePointData);
 
-            SetPosAndRot(vobObj, vob.Position, vob.Rotation);
             return vobObj;
         }
 
@@ -851,7 +829,6 @@ namespace GUZ.Core.Manager.Vobs
         {
             var go = GameObject.CreatePrimitive(PrimitiveType.Cube);
             go.name = $"{vob.Name} - Empty DEBUG object. Check with Spacer if buggy.";
-            SetPosAndRot(go, vob.Position, vob.Rotation);
             return go;
         }
     }

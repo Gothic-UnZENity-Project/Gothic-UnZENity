@@ -260,22 +260,23 @@ namespace GUZ.VR.Components.VobContainer
                     }
                 };
 
-                var go = GameGlobals.Vobs.CreateItem(zkVob);
+                var vobContainer = GameGlobals.Vobs.CreateItem(zkVob);
 
                 // Wait 1 frame to ensure our mesh bounds can be calculated by HVR Socket.
                 yield return null;
                 
-                PlaceObjectIntoContainer(go);
+                PlaceObjectIntoContainer(vobContainer);
             }
         }
 
-        private void PlaceObjectIntoContainer(GameObject itemGo)
+        private void PlaceObjectIntoContainer(Core.Data.Container.VobContainer vobContainer)
         {
-            var grabbable = itemGo.GetComponentInChildren<HVRGrabbable>(true);
+            var grabbable = vobContainer.Go.GetComponentInChildren<HVRGrabbable>(true);
             if (_socketContainer.TryFindAvailableSocket(grabbable, out var socket))
             {
                 socket.TryGrab(grabbable, true, true);
-                itemGo.transform.localPosition = Vector3.zero; // We need to reset position as the element won't be placed inside it's parent in the chest.
+                // We need to reset position as the element won't be placed inside it's parent in the chest.
+                vobContainer.Go.transform.localPosition = Vector3.zero;
             }
         }
         
