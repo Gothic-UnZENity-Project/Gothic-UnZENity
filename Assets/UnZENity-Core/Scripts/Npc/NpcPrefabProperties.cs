@@ -9,7 +9,7 @@ using ZenKit.Daedalus;
 
 namespace GUZ.Core.Npc
 {
-    public class NpcPrefabProperties : VobProperties
+    public class NpcPrefabProperties : MonoBehaviour
     {
         // Hero has different behaviour. e.g. no AIHandler attached and we therefore set the data from above (CacheHero())
         [SerializeField]
@@ -51,7 +51,7 @@ namespace GUZ.Core.Npc
             _focusName = npcContainer.Instance.GetName(NpcNameSlot.Slot0);
         }
 
-        public override string GetFocusName()
+        public string GetFocusName()
         {
             return _focusName;
         }

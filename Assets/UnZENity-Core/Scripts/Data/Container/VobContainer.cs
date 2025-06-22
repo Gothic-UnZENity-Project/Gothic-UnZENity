@@ -22,17 +22,28 @@ namespace GUZ.Core.Data.Container
             
             switch (vob.Type)
             {
+                case VirtualObjectType.oCMobLadder:
+                    Props = new LadderProperties(vob);
+                    break;
                 case VirtualObjectType.oCItem:
                     Props = new VobItemProperties2(vob);
                     break;
                 case VirtualObjectType.oCMobFire:
                 case VirtualObjectType.oCMobInter:
+                    Props = new InteractiveProperties(vob);
+                    break;
                 case VirtualObjectType.oCMobBed:
+                    Props = new BedProperties(vob);
+                    break;
                 case VirtualObjectType.oCMobDoor:
+                    Props = new BedProperties(vob);
+                    break;
                 case VirtualObjectType.oCMobContainer:
                 case VirtualObjectType.oCMobSwitch:
+                    Props = new SwitchProperties(vob);
+                    break;
                 case VirtualObjectType.oCMobWheel:
-                    Props = new InteractiveProperties(vob);
+                    Props = new WheelProperties(vob);
                     break;
                 default:
                     Props = new VobProperties2(vob);

@@ -2,7 +2,7 @@ using ZenKit.Vobs;
 
 namespace GUZ.Core.Properties.Vobs
 {
-    public class InteractiveProperties : VobProperties2
+    public class InteractiveProperties : MovableProperties
     {
         /// <summary>
         /// Runtime state of an Interactable. e.g., Wheel is opened.
