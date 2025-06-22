@@ -10,7 +10,7 @@ namespace GUZ.Core.Data.Container
         public IVirtualObject Vob;
 
         /// <summary>
-        /// Unity Properties which are needed at runtime, but aren't handled within ZenKit's VOB data (e.g. non-save relevant).
+        /// Unity Properties which are needed at runtime, but aren't handled within ZenKit's VOB data (e.g., non-save relevant).
         /// </summary>
         public readonly VobProperties2 Props;
         public GameObject Go;
@@ -22,6 +22,9 @@ namespace GUZ.Core.Data.Container
             
             switch (vob.Type)
             {
+                case VirtualObjectType.oCItem:
+                    Props = new VobItemProperties2(vob);
+                    break;
                 case VirtualObjectType.oCMobFire:
                 case VirtualObjectType.oCMobInter:
                 case VirtualObjectType.oCMobBed:
@@ -29,10 +32,10 @@ namespace GUZ.Core.Data.Container
                 case VirtualObjectType.oCMobContainer:
                 case VirtualObjectType.oCMobSwitch:
                 case VirtualObjectType.oCMobWheel:
-                    Props = new InteractiveProperties();
+                    Props = new InteractiveProperties(vob);
                     break;
                 default:
-                    Props = new VobProperties2();
+                    Props = new VobProperties2(vob);
                     break;
             }
         }

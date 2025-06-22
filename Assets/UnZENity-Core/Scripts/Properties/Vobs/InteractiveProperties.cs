@@ -1,11 +1,17 @@
+using ZenKit.Vobs;
+
 namespace GUZ.Core.Properties.Vobs
 {
     public class InteractiveProperties : VobProperties2
     {
         /// <summary>
-        /// Runtime state of an Interactable. e.g. Wheel is opened.
+        /// Runtime state of an Interactable. e.g., Wheel is opened.
         /// This property isn't stored in G1 Save Games and will always start with 0 when VOB is initialized.
         /// </summary>
-        public int State;
+        public int State = 0;
+
+        
+        public InteractiveProperties(IVirtualObject vob) : base(vob)
+        { }
     }
 }

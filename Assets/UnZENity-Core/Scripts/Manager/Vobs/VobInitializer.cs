@@ -292,10 +292,6 @@ namespace GUZ.Core.Manager.Vobs
                     break;
             }
 
-            // Fill Property data into prefab here
-            // Can also be outsourced to a proper method if it becomes a lot.
-            go!.GetComponent<VobProperties>().SetData(vob);
-
             return go;
         }
 
@@ -403,29 +399,21 @@ namespace GUZ.Core.Manager.Vobs
             return go;
         }
 
-        private GameObject CreateItem(Item vob, GameObject parent)
+        private GameObject CreateItem(IItem vob, GameObject parent)
         {
             string itemName;
 
             if (!string.IsNullOrEmpty(vob.Instance))
-            {
                 itemName = vob.Instance;
-            }
             else if (!string.IsNullOrEmpty(vob.Name))
-            {
                 itemName = vob.Name;
-            }
             else
-            {
                 throw new Exception("Vob Item -> no usable name found.");
-            }
 
             var item = VmInstanceManager.TryGetItemData(itemName);
 
             if (item == null)
-            {
                 return null;
-            }
 
             var prefabInstance = GetPrefab(vob);
             var vobObj = CreateItemMesh(item, prefabInstance, parent);
@@ -438,8 +426,6 @@ namespace GUZ.Core.Manager.Vobs
                     $"We need to use >PxVobItem.instance< to do it right!", LogCat.Vob);
                 return null;
             }
-
-            vobObj.GetComponent<VobItemProperties>().SetData(vob, item);
 
             return vobObj;
         }

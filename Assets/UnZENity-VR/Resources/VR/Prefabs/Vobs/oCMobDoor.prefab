@@ -99,7 +99,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b3d4d12525e40a7ac803add610db925, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _properties: {fileID: 2607151182155886275}
   _nameCanvas: {fileID: 8911497835147767188}
 --- !u!114 &258546060515477993
 MonoBehaviour:
@@ -359,6 +358,7 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
   m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1
@@ -522,7 +522,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _rootGO: {fileID: 6503575194566409312}
-  _properties: {fileID: 2607151182155886275}
   _audioSource: {fileID: 4670513280573296585}
 --- !u!135 &827370569709809547
 SphereCollider:
@@ -690,7 +689,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2022050282646122291}
-  - component: {fileID: 2607151182155886275}
   - component: {fileID: 383653129316940499}
   m_Layer: 0
   m_Name: oCMobDoor
@@ -717,19 +715,6 @@ Transform:
   - {fileID: 8018092039133297413}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2607151182155886275
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6503575194566409312}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aa8549f9b79448e4b3ebd6901ded3136, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  <VisualScheme>k__BackingField: 
 --- !u!114 &383653129316940499
 MonoBehaviour:
   m_ObjectHideFlags: 0
