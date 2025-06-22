@@ -1,7 +1,7 @@
 using System.Collections;
+using GUZ.Core.Data.Container;
 using GUZ.Core.Util;
 using UnityEngine;
-using UnityEngine.Serialization;
 using ZenKit.Vobs;
 using Logger = GUZ.Core.Util.Logger;
 using Random = UnityEngine.Random;
@@ -10,13 +10,21 @@ namespace GUZ.Core.Vob
 {
     public class SoundHandler : MonoBehaviour
     {
-        [FormerlySerializedAs("audioSource")] public AudioSource AudioSource;
-        [FormerlySerializedAs("properties")] public VobSoundProperties Properties;
+        [SerializeField] private AudioSource _audioSource;
+        
+        private VobContainer _vobContainer;
 
-        // We need to avoid to start the Coroutine twice.
+        // We need to avoid starting the Coroutine twice.
         private bool _isCoroutineRunning;
 
 
+        private void Start()
+        {
+            _vobContainer = GetComponentInParent<VobLoader>().Container;
+            
+            PrepareSoundHandling();
+        }
+        
         private void OnEnable()
         {
             StartCoroutine();
@@ -35,7 +43,7 @@ namespace GUZ.Core.Vob
         /// </summary>
         public void PrepareSoundHandling()
         {
-            if (Properties.SoundData == null)
+            if (_vobContainer?.Vob == null)
             {
                 Logger.LogError("VobSoundProperties.soundData not set. Can't register random sound play!", LogCat.Audio);
                 return;
@@ -50,7 +58,7 @@ namespace GUZ.Core.Vob
         private void StartCoroutine()
         {
             // Either it's not yet initialized (no clip) or it's no random loop
-            if (AudioSource.clip == null || Properties.SoundData.Mode != SoundMode.Random)
+            if (_audioSource.clip == null || _vobContainer.VobAs<ISound>().Mode != SoundMode.Random)
             {
                 return;
             }
@@ -68,12 +76,12 @@ namespace GUZ.Core.Vob
         {
             while (true)
             {
-                var nextRandomPlayTime = Properties.SoundData.RandomDelay
-                                         + Random.Range(0.0f, Properties.SoundData.RandomDelayVar);
+                var nextRandomPlayTime = _vobContainer.VobAs<ISound>().RandomDelay
+                                         + Random.Range(0.0f, _vobContainer.VobAs<ISound>().RandomDelayVar);
                 yield return new WaitForSeconds(nextRandomPlayTime);
 
-                AudioSource.Play();
-                yield return new WaitForSeconds(AudioSource.clip.length);
+                _audioSource.Play();
+                yield return new WaitForSeconds(_audioSource.clip.length);
             }
         }
     }

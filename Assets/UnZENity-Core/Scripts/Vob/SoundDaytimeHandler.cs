@@ -1,9 +1,9 @@
 using System;
 using System.Collections;
+using GUZ.Core.Data.Container;
 using GUZ.Core.Util;
 using GUZ.Core.World;
 using UnityEngine;
-using UnityEngine.Serialization;
 using ZenKit.Vobs;
 using Logger = GUZ.Core.Util.Logger;
 using Random = UnityEngine.Random;
@@ -12,16 +12,23 @@ namespace GUZ.Core.Vob
 {
     public class SoundDaytimeHandler : MonoBehaviour
     {
-        [FormerlySerializedAs("audioSource1")] public AudioSource AudioSource1;
-        [FormerlySerializedAs("audioSource2")] public AudioSource AudioSource2;
-        [FormerlySerializedAs("properties")] public VobSoundDaytimeProperties Properties;
+        [SerializeField] private AudioSource _audioSource1;
+        [SerializeField] private AudioSource _audioSource2;
+
+        private VobContainer _vobContainer;
 
         private DateTime _startSound1 = GameTime.MinTime;
         private DateTime _endSound1 = GameTime.MaxTime;
 
-        // We need to avoid to start the Coroutine twice.
+        // We need to avoid starting the Coroutine twice.
         private bool _isCoroutineRunning;
         private AudioSource _activeAudio;
+
+
+        private void Start()
+        {
+            _vobContainer = GetComponentInParent<VobLoader>().Container;
+        }
 
         private void OnEnable()
         {
@@ -40,8 +47,8 @@ namespace GUZ.Core.Vob
 
         public void PrepareSoundHandling()
         {
-            var startTime = Properties.SoundDaytimeData.StartTime;
-            var endTime = Properties.SoundDaytimeData.EndTime;
+            var startTime = _vobContainer.VobAs<ISoundDaytime>().StartTime;
+            var endTime = _vobContainer.VobAs<ISoundDaytime>().EndTime;
             if (startTime != (int)startTime || endTime != (int)endTime)
             {
                 Logger.LogError(
@@ -54,10 +61,10 @@ namespace GUZ.Core.Vob
             _endSound1 = new DateTime(1, 1, 1, (int)endTime, 0, 0);
 
             // Reset sounds
-            AudioSource1.enabled = false;
-            AudioSource2.enabled = false;
-            AudioSource1.Stop();
-            AudioSource2.Stop();
+            _audioSource1.enabled = false;
+            _audioSource2.enabled = false;
+            _audioSource1.Stop();
+            _audioSource2.Stop();
 
             // Set active sound initially
             HourEventCallback(GameGlobals.Time.GetCurrentDateTime());
@@ -71,7 +78,7 @@ namespace GUZ.Core.Vob
         private void StartCoroutineInternal()
         {
             // Either it's not yet initialized (no clip) or it's no random loop
-            if (AudioSource1.clip == null || Properties.SoundDaytimeData.Mode != SoundMode.Random)
+            if (_audioSource1.clip == null || _vobContainer.VobAs<ISoundDaytime>().Mode != SoundMode.Random)
             {
                 return;
             }
@@ -100,43 +107,43 @@ namespace GUZ.Core.Vob
         private void SwitchToSound1()
         {
             // No need to change anything.
-            if (AudioSource1.isActiveAndEnabled)
+            if (_audioSource1.isActiveAndEnabled)
             {
                 return;
             }
 
             // disable
-            AudioSource2.enabled = false;
-            AudioSource2.Stop();
+            _audioSource2.enabled = false;
+            _audioSource2.Stop();
 
             // enable
-            AudioSource1.enabled = true;
-            _activeAudio = AudioSource1;
+            _audioSource1.enabled = true;
+            _activeAudio = _audioSource1;
         }
 
         private void SwitchToSound2()
         {
             // No need to change anything.
-            if (AudioSource2.isActiveAndEnabled)
+            if (_audioSource2.isActiveAndEnabled)
             {
                 return;
             }
 
             // disable
-            AudioSource1.enabled = false;
-            AudioSource1.Stop();
+            _audioSource1.enabled = false;
+            _audioSource1.Stop();
 
             // enable
-            AudioSource2.enabled = true;
-            _activeAudio = AudioSource2;
+            _audioSource2.enabled = true;
+            _activeAudio = _audioSource2;
         }
 
         private IEnumerator ReplayRandomSound()
         {
             while (true)
             {
-                var nextRandomPlayTime = Properties.SoundDaytimeData.RandomDelay
-                                         + Random.Range(0.0f, Properties.SoundDaytimeData.RandomDelayVar);
+                var nextRandomPlayTime = _vobContainer.VobAs<ISoundDaytime>().RandomDelay
+                                         + Random.Range(0.0f, _vobContainer.VobAs<ISoundDaytime>().RandomDelayVar);
                 yield return new WaitForSeconds(nextRandomPlayTime);
 
                 _activeAudio.Play();

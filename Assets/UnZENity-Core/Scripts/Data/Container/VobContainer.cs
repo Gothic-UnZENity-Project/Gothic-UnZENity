@@ -22,6 +22,16 @@ namespace GUZ.Core.Data.Container
             
             switch (vob.Type)
             {
+                case VirtualObjectType.zCVobSound:
+                    Props = new SoundProperties(vob);
+                    break;
+                case VirtualObjectType.zCVobSoundDaytime:
+                    Props = new SoundDayTimeProperties(vob);
+                    break;
+                case VirtualObjectType.oCZoneMusic:
+                case VirtualObjectType.oCZoneMusicDefault:
+                    Props = new MusicProperties(vob);
+                    break;
                 case VirtualObjectType.oCMobLadder:
                     Props = new LadderProperties(vob);
                     break;

@@ -493,8 +493,7 @@ namespace GUZ.Core.Manager.Vobs
             PrepareAudioSource(source, vob);
             source.clip = GetSoundClip(vob.SoundName);
 
-            go.GetComponent<VobSoundProperties>().SoundData = vob;
-            go.GetComponent<SoundHandler>().PrepareSoundHandling();
+            // go.GetComponent<SoundHandler>().PrepareSoundHandling();
 
             return go;
         }
@@ -524,7 +523,6 @@ namespace GUZ.Core.Manager.Vobs
             PrepareAudioSource(sources[1], vob);
             sources[1].clip = GetSoundClip(vob.SoundNameDaytime);
 
-            go.GetComponent<VobSoundDaytimeProperties>().SoundDaytimeData = vob;
             go.GetComponent<SoundDaytimeHandler>().PrepareSoundHandling();
 
             return go;
@@ -590,8 +588,6 @@ namespace GUZ.Core.Manager.Vobs
 
             go.transform.position = (min + max) / 2f;
             go.transform.localScale = max - min;
-
-            go.GetComponent<VobMusicProperties>().MusicData = vob;
 
             return go;
         }

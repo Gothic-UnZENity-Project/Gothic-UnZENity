@@ -21,6 +21,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
         private VobContainer _mobContainer;
         private GameObject _slotGo;
         private Vector3 _destination;
+        private string _mobsiScheme;
 
         private string _schemeName => Action.String0;
         private int _desiredState => Action.Int0;
@@ -41,6 +42,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             {
                 _mobContainer = PrefabProps.CurrentInteractable;
                 _slotGo = PrefabProps.CurrentInteractableSlot;
+                _mobsiScheme = _mobContainer.Props.GetVisualScheme();
 
                 StartMobUseAnimation();
                 return;
@@ -49,6 +51,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             // Else: We have a new animation where we seek the Mob before walking towards and executing action.
             var container = GetNearestMob();
             _mobContainer = container;
+            _mobsiScheme = _mobContainer?.Props.GetVisualScheme();
 
             if (container!.Go == null)
             {
@@ -88,15 +91,13 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
 
         private void SetBodyState()
         {
-            var mobsiScheme = _mobContainer.Go.GetComponentInChildren<VobProperties>().VisualScheme;
-
-            if (Constants.Daedalus.MobSit.Contains(mobsiScheme))
+            if (Constants.Daedalus.MobSit.Contains(_mobsiScheme))
                 Props.BodyState = VmGothicEnums.BodyState.BsSit;
-            else if (Constants.Daedalus.MobLie.Contains(mobsiScheme))
+            else if (Constants.Daedalus.MobLie.Contains(_mobsiScheme))
                 Props.BodyState = VmGothicEnums.BodyState.BsLie;
-            else if (Constants.Daedalus.MobClimb.Contains(mobsiScheme))
+            else if (Constants.Daedalus.MobClimb.Contains(_mobsiScheme))
                 Props.BodyState = VmGothicEnums.BodyState.BsClimb;
-            else if (Constants.Daedalus.MobNotInterruptable.Contains(mobsiScheme))
+            else if (Constants.Daedalus.MobNotInterruptable.Contains(_mobsiScheme))
                 Props.BodyState = VmGothicEnums.BodyState.BsMobinteract;
             else
                 Props.BodyState = VmGothicEnums.BodyState.BsMobinteractInterrupt;
@@ -161,8 +162,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             // Loop Mobsi animation until the same UseMob with -1 is called.
             else
             {
-                var mobVisualName = _mobContainer.Go.GetComponentInChildren<VobProperties>().VisualScheme;
-                var animName = string.Format(_mobLoopAnimationString, mobVisualName, _desiredState);
+                var animName = string.Format(_mobLoopAnimationString, _mobsiScheme, _desiredState);
                 PrefabProps.AnimationSystem.PlayAnimation(animName);
             }
 
@@ -198,7 +198,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
         private void StartMobUseAnimation()
         {
             // Place item for Mobsi usage in hand - if needed. Will be "spawned" via animation >EventType.ItemInsert< later.
-            var itemName = ((InteractiveObject)_mobContainer.Go.GetComponentInChildren<VobProperties>().Properties).Item;
+            var itemName = _mobContainer.VobAs<IInteractiveObject>().Item;
             if (itemName.NotNullOrEmpty())
             {
                 var item = VmInstanceManager.TryGetItemData(itemName);
@@ -270,9 +270,8 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
                 };
             }
 
-            var mobVisualName = _mobContainer.Go.GetComponentInChildren<VobProperties>().VisualScheme;
             var slotPositionName = GetSlotPositionTag(_slotGo.name);
-            var animName = string.Format(_mobTransitionAnimationString, mobVisualName, slotPositionName, from, to);
+            var animName = string.Format(_mobTransitionAnimationString, _mobsiScheme, slotPositionName, from, to);
 
             _currentMobAnimation = animName;
             PrefabProps.AnimationSystem.PlayAnimation(animName);
