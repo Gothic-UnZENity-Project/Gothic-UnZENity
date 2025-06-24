@@ -4,12 +4,16 @@ namespace GUZ.VR
     {
         public static class IniNames
         {
+            // Accessibility
             public const string SitStand = "sitStand";
             public const string MoveDirection = "moveDirection";
             public const string RotationType = "rotationType";
             public const string SnapRotationAmount = "snapRotationAmount";
             public const string SmoothRotationSpeed = "smoothRotationSpeed";
             public const string SmoothSpectator = "smoothSpectator";
+            
+            // Immersion
+            public const string Microphone = "microphone";
         }
         
         public const string IniSectionAccessibility = "UNZENITY_VR_ACCESSIBILITY"; // [UNZENITY_VR_ACCESSIBILITY]

@@ -9,6 +9,7 @@ using GUZ.Core.Manager;
 using GUZ.Core.Manager.Culling;
 using GUZ.Core.Manager.Vobs;
 using GUZ.Core.Npc;
+using GUZ.Core.UnZENity_Core.Scripts.Manager;
 using GUZ.Core.Vm;
 using GUZ.Core.World;
 using GUZ.Lab.Handler;
@@ -71,6 +72,7 @@ namespace GUZ.Lab
         public VobSoundCullingManager SoundCulling => null;
         public StoryManager Story => _story;
         public VideoManager Video => _videoManager;
+        public VoiceManager Voice => null;
 
 
         private void Awake()
@@ -142,7 +144,7 @@ namespace GUZ.Lab
             // TODO - Broken. Fix before use.
             // NpcHelper.CacheHero();
 
-            Bootstrapper.BootGothicUnZeNity();
+            Bootstrapper.Boot();
 
             LabNpcAnimationHandler.Bootstrap();
             LabMusicHandler.Bootstrap();
