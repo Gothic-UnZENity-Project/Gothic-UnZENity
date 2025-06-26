@@ -24,29 +24,16 @@ namespace GUZ.Core.Vob
         private bool _isCoroutineRunning;
         private AudioSource _activeAudio;
 
-
         private void Start()
         {
             _vobContainer = GetComponentInParent<VobLoader>().Container;
-        }
 
-        private void OnEnable()
-        {
+            // Set active sound initially
             HourEventCallback(GameGlobals.Time.GetCurrentDateTime());
 
-            StartCoroutineInternal();
-            GlobalEventDispatcher.GameTimeHourChangeCallback.AddListener(HourEventCallback);
-        }
-
-        private void OnDisable()
-        {
-            // Coroutines are stopped when GameObject gets disabled. But we need to restart during OnEnable() manually.
-            _isCoroutineRunning = false;
-            GlobalEventDispatcher.GameTimeHourChangeCallback.RemoveListener(HourEventCallback);
-        }
-
-        public void PrepareSoundHandling()
-        {
+            if (gameObject.activeSelf)
+                StartCoroutineInternal();
+            
             var startTime = _vobContainer.VobAs<ISoundDaytime>().StartTime;
             var endTime = _vobContainer.VobAs<ISoundDaytime>().EndTime;
             if (startTime != (int)startTime || endTime != (int)endTime)
@@ -59,20 +46,28 @@ namespace GUZ.Core.Vob
 
             _startSound1 = new DateTime(1, 1, 1, (int)startTime, 0, 0);
             _endSound1 = new DateTime(1, 1, 1, (int)endTime, 0, 0);
+        }
+
+        private void OnEnable()
+        {
+            HourEventCallback(GameGlobals.Time.GetCurrentDateTime());
+
+            GlobalEventDispatcher.GameTimeHourChangeCallback.AddListener(HourEventCallback);
 
             // Reset sounds
             _audioSource1.enabled = false;
             _audioSource2.enabled = false;
             _audioSource1.Stop();
             _audioSource2.Stop();
+            
+            StartCoroutineInternal();
+        }
 
-            // Set active sound initially
-            HourEventCallback(GameGlobals.Time.GetCurrentDateTime());
-
-            if (gameObject.activeSelf)
-            {
-                StartCoroutineInternal();
-            }
+        private void OnDisable()
+        {
+            // Coroutines are stopped when GameObject gets disabled. But we need to restart during OnEnable() manually.
+            _isCoroutineRunning = false;
+            GlobalEventDispatcher.GameTimeHourChangeCallback.RemoveListener(HourEventCallback);
         }
 
         private void StartCoroutineInternal()

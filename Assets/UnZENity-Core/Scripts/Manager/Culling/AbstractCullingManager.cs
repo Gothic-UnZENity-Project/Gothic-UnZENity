@@ -17,7 +17,6 @@ namespace GUZ.Core.Manager.Culling
 
         protected bool IsFinalized;
 
-        public abstract void AddCullingEntry(GameObject go);
         protected abstract void VisibilityChanged(CullingGroupEvent evt);
 
 

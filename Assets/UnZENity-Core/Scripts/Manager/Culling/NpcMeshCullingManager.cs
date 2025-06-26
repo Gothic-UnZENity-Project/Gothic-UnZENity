@@ -30,7 +30,7 @@ namespace GUZ.Core.Manager.Culling
             _visibleNpcs.ClearAndReleaseMemory();
         }
 
-        public override void AddCullingEntry(GameObject go)
+        public void AddCullingEntry(GameObject go)
         {
             if (IsFinalized)
             {

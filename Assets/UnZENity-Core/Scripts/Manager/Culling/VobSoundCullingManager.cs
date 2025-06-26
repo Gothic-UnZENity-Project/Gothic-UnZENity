@@ -1,7 +1,9 @@
 using GUZ.Core.Config;
+using GUZ.Core.Data.Container;
 using GUZ.Core.Extensions;
 using GUZ.Core.Util;
 using UnityEngine;
+using ZenKit.Vobs;
 using Logger = GUZ.Core.Util.Logger;
 
 namespace GUZ.Core.Manager.Culling
@@ -13,16 +15,16 @@ namespace GUZ.Core.Manager.Culling
             // NOP
         }
 
-        public override void AddCullingEntry(GameObject go)
+        public void AddCullingEntry(VobContainer container)
         {
             if (IsFinalized)
             {
-                Logger.LogWarning($"CullingGroup for Sounds closed already. Can't add >{go.name}<", LogCat.Audio);
+                Logger.LogWarning($"CullingGroup for Sounds closed already. Can't add >{container.Go.name}<", LogCat.Audio);
                 return;
             }
             
-            Objects.Add(go);
-            var sphere = new BoundingSphere(go.transform.position, go.GetComponent<AudioSource>().maxDistance);
+            Objects.Add(container.Go);
+            var sphere = new BoundingSphere(container.Go.transform.position, container.VobAs<ISound>().Radius / 100f); // Gothic's values are in cm, Unity's in m.
             TempSpheres.Add(sphere);
         }
 
@@ -33,8 +35,12 @@ namespace GUZ.Core.Manager.Culling
         {
             // A higher distance level means "inaudible" as we only leverage: 0 -> in-range; 1 -> out-of-range.
             var inAudibleRange = evt.currentDistance == 0;
-
-            Objects[evt.index].SetActive(inAudibleRange);
+            var go = Objects[evt.index];
+            
+            go.SetActive(inAudibleRange);
+            
+            if (inAudibleRange)
+                GameGlobals.Vobs.InitVob(go);
         }
 
         /// <summary>

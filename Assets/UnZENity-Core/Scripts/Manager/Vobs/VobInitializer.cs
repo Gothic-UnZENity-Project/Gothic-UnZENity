@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using GUZ.Core.Caches;
 using GUZ.Core.Config;
 using GUZ.Core.Creator.Meshes;
 using GUZ.Core.Creator.Sounds;
@@ -60,7 +59,6 @@ namespace GUZ.Core.Manager.Vobs
                     if (_config.EnableGameSounds)
                     {
                         go = CreateSound((Sound)vob, parent);
-                        GameGlobals.SoundCulling.AddCullingEntry(go);
                     }
 
                     break;
@@ -68,7 +66,6 @@ namespace GUZ.Core.Manager.Vobs
                     if (_config.EnableGameSounds)
                     {
                         go = CreateSoundDaytime((SoundDaytime)vob, parent);
-                        GameGlobals.SoundCulling.AddCullingEntry(go);
                     }
 
                     break;
@@ -220,7 +217,7 @@ namespace GUZ.Core.Manager.Vobs
             obj.transform.SetLocalPositionAndRotation(position.ToUnityVector(), rotation.ToUnityQuaternion());
         }
 
-        private GameObject GetPrefab(IVirtualObject vob)
+        private GameObject GetPrefab(IVirtualObject vob, GameObject parent = null)
         {
             GameObject go;
             var name = vob.Name;
@@ -228,27 +225,27 @@ namespace GUZ.Core.Manager.Vobs
             switch (vob.Type)
             {
                 case VirtualObjectType.oCItem:
-                    go = ResourceLoader.TryGetPrefabObject(PrefabType.VobItem, name: name);
+                    go = ResourceLoader.TryGetPrefabObject(PrefabType.VobItem, name: name, parent: parent);
                     break;
                 case VirtualObjectType.zCVobSpot:
                 case VirtualObjectType.zCVobStartpoint:
-                    go = ResourceLoader.TryGetPrefabObject(PrefabType.VobSpot, name: name);
+                    go = ResourceLoader.TryGetPrefabObject(PrefabType.VobSpot, name: name, parent: parent);
                     break;
                 case VirtualObjectType.zCVobSound:
-                    go = ResourceLoader.TryGetPrefabObject(PrefabType.VobSound);
+                    go = ResourceLoader.TryGetPrefabObject(PrefabType.VobSound, name: name, parent: parent);
                     break;
                 case VirtualObjectType.zCVobSoundDaytime:
-                    go = ResourceLoader.TryGetPrefabObject(PrefabType.VobSoundDaytime, name: name);
+                    go = ResourceLoader.TryGetPrefabObject(PrefabType.VobSoundDaytime, name: name, parent: parent);
                     break;
                 case VirtualObjectType.oCZoneMusic:
                 case VirtualObjectType.oCZoneMusicDefault:
-                    go = ResourceLoader.TryGetPrefabObject(PrefabType.VobMusic, name: name);
+                    go = ResourceLoader.TryGetPrefabObject(PrefabType.VobMusic, name: name, parent: parent);
                     break;
                 case VirtualObjectType.oCMOB:
-                    go = ResourceLoader.TryGetPrefabObject(PrefabType.Vob, name: name);
+                    go = ResourceLoader.TryGetPrefabObject(PrefabType.Vob, name: name, parent: parent);
                     break;
                 case VirtualObjectType.oCMobFire:
-                    go = ResourceLoader.TryGetPrefabObject(PrefabType.VobFire, name: name);
+                    go = ResourceLoader.TryGetPrefabObject(PrefabType.VobFire, name: name, parent: parent);
                     break;
                 case VirtualObjectType.oCMobInter:
                     if (vob.Name.ContainsIgnoreCase("bench") ||
@@ -264,31 +261,31 @@ namespace GUZ.Core.Manager.Vobs
                     }
                     break;
                 case VirtualObjectType.oCMobBed:
-                    go = ResourceLoader.TryGetPrefabObject(PrefabType.VobBed, name: name);
+                    go = ResourceLoader.TryGetPrefabObject(PrefabType.VobBed, name: name, parent: parent);
                     break;
                 case VirtualObjectType.oCMobWheel:
-                    go = ResourceLoader.TryGetPrefabObject(PrefabType.VobWheel, name: name);
+                    go = ResourceLoader.TryGetPrefabObject(PrefabType.VobWheel, name: name, parent: parent);
                     break;
                 case VirtualObjectType.oCMobSwitch:
-                    go = ResourceLoader.TryGetPrefabObject(PrefabType.VobSwitch, name: name);
+                    go = ResourceLoader.TryGetPrefabObject(PrefabType.VobSwitch, name: name, parent: parent);
                     break;
                 case VirtualObjectType.oCMobDoor:
-                    go = ResourceLoader.TryGetPrefabObject(PrefabType.VobDoor, name: name);
+                    go = ResourceLoader.TryGetPrefabObject(PrefabType.VobDoor, name: name, parent: parent);
                     break;
                 case VirtualObjectType.oCMobContainer:
-                    go = ResourceLoader.TryGetPrefabObject(PrefabType.VobContainer, name: name);
+                    go = ResourceLoader.TryGetPrefabObject(PrefabType.VobContainer, name: name, parent: parent);
                     break;
                 case VirtualObjectType.oCMobLadder:
-                    go = ResourceLoader.TryGetPrefabObject(PrefabType.VobLadder, name: name);
+                    go = ResourceLoader.TryGetPrefabObject(PrefabType.VobLadder, name: name, parent: parent);
                     break;
                 case VirtualObjectType.zCVobAnimate:
-                    go = ResourceLoader.TryGetPrefabObject(PrefabType.VobAnimate, name: name);
+                    go = ResourceLoader.TryGetPrefabObject(PrefabType.VobAnimate, name: name, parent: parent);
                     break;
                 case VirtualObjectType.zCVobLight:
-                    go = ResourceLoader.TryGetPrefabObject(PrefabType.VobLight, name: name);
+                    go = ResourceLoader.TryGetPrefabObject(PrefabType.VobLight, name: name, parent: parent);
                     break;
                 default:
-                    go = ResourceLoader.TryGetPrefabObject(PrefabType.Vob, name: name);
+                    go = ResourceLoader.TryGetPrefabObject(PrefabType.Vob, name: name, parent: parent);
                     break;
             }
 
@@ -477,23 +474,17 @@ namespace GUZ.Core.Manager.Vobs
         [CanBeNull]
         private GameObject CreateSound(Sound vob, GameObject parent)
         {
-            var go = GetPrefab(vob);
+            var go = GetPrefab(vob, parent);
             go.name = $"{vob.SoundName}";
-            go.SetParent(parent);
 
             // This value is always true when a new game/world is loaded. (Compared with G1 save game.)
             vob.ShowVisual = false;
             vob.IsAllowedToRun = true;
 
-            // We don't want to have sound when we boot the game async for 30 seconds in non-spatial blend mode.
-            go.SetActive(false);
-
             var source = go.GetComponent<AudioSource>();
 
-            PrepareAudioSource(source, vob);
-            source.clip = GetSoundClip(vob.SoundName);
-
-            // go.GetComponent<SoundHandler>().PrepareSoundHandling();
+            go.GetComponent<SoundHandler>().Init(vob);
+            PrepareAudioSource(source, vob, vob.SoundName);
 
             return go;
         }
@@ -507,28 +498,18 @@ namespace GUZ.Core.Manager.Vobs
         [CanBeNull]
         private GameObject CreateSoundDaytime(SoundDaytime vob, GameObject parent)
         {
-            var go = GetPrefab(vob);
+            var go = GetPrefab(vob, parent);
             go.name = $"{vob.SoundName}-{vob.SoundNameDaytime}";
-            go.SetParent(parent);
-
-            // We don't want to have sound when we boot the game async for 30 seconds in non-spatial blend mode.
-            go.SetActive(false);
-            go.SetParent(parent);
-
+            
             var sources = go.GetComponents<AudioSource>();
 
-            PrepareAudioSource(sources[0], vob);
-            sources[0].clip = GetSoundClip(vob.SoundName);
-
-            PrepareAudioSource(sources[1], vob);
-            sources[1].clip = GetSoundClip(vob.SoundNameDaytime);
-
-            go.GetComponent<SoundDaytimeHandler>().PrepareSoundHandling();
+            PrepareAudioSource(sources[0], vob, vob.SoundName);
+            PrepareAudioSource(sources[1], vob, vob.SoundNameDaytime);
 
             return go;
         }
 
-        private void PrepareAudioSource(AudioSource source, Sound soundData)
+        private void PrepareAudioSource(AudioSource source, Sound soundData, string soundName)
         {
             source.maxDistance = soundData.Radius / 100f; // Gothic's values are in cm, Unity's in m.
             source.volume = soundData.Volume / 100f; // Gothic's volume is 0...100, Unity's is 0...1.
@@ -537,6 +518,8 @@ namespace GUZ.Core.Manager.Vobs
             source.playOnAwake = soundData.InitiallyPlaying && soundData.Mode != SoundMode.Random;
             source.loop = soundData.Mode == SoundMode.Loop;
             source.spatialBlend = soundData.Ambient3d ? 1f : 0f;
+            
+            source.clip = GetSoundClip(soundName);
         }
 
         public AudioClip GetSoundClip(string soundName)

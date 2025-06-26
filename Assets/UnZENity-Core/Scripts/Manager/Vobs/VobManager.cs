@@ -5,7 +5,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using GUZ.Core.Caches;
 using GUZ.Core.Config;
-using GUZ.Core.Creator.Meshes.Builder;
 using GUZ.Core.Creator.Sounds;
 using GUZ.Core.Data.Container;
 using GUZ.Core.Extensions;
@@ -355,7 +354,7 @@ namespace GUZ.Core.Manager.Vobs
         }
         
         /// <summary>
-        /// When we Lazy Load a VOB, we add a component which stores initialization data.
+        /// When we Lazy Load a VOB, we add their culling information to load them later.
         /// Once Culling fetches the object, we will read this data and call InitVob() later.
         /// </summary>
         private void CreateVobLazily(VobContainer container)
@@ -366,22 +365,25 @@ namespace GUZ.Core.Manager.Vobs
                 case VisualType.Decal:
                     // Skip object
                     if (!GameGlobals.Config.Dev.EnableDecalVisuals)
-                    {
                         return;
-                    }
                     break;
                 case VisualType.ParticleEffect:
                     // Skip object
                     if (!GameGlobals.Config.Dev.EnableParticleEffects)
-                    {
                         return;
-                    }
                     break;
             }
-
+            
             // Non-static lights aren't handled so far.
             if (container.Vob.Type == VirtualObjectType.zCVobLight && !((ILight)container.Vob).LightStatic)
             {
+                return;
+            }
+
+            if (container.Vob.Type == VirtualObjectType.zCVobSound ||
+                container.Vob.Type == VirtualObjectType.zCVobSoundDaytime)
+            {
+                GameGlobals.SoundCulling.AddCullingEntry(container);
                 return;
             }
 
