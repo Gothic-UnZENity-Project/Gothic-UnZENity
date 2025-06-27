@@ -485,6 +485,8 @@ namespace GUZ.Core.Manager.Vobs
 
             go.GetComponent<SoundHandler>().Init(vob);
             PrepareAudioSource(source, vob, vob.SoundName);
+            
+            GameGlobals.SoundCulling.AddCullingEntry(go, vob);
 
             return go;
         }
@@ -505,6 +507,8 @@ namespace GUZ.Core.Manager.Vobs
 
             PrepareAudioSource(sources[0], vob, vob.SoundName);
             PrepareAudioSource(sources[1], vob, vob.SoundNameDaytime);
+
+            GameGlobals.SoundCulling.AddCullingEntry(go, vob);
 
             return go;
         }

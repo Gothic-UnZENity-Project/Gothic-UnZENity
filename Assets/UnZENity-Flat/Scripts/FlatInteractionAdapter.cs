@@ -24,9 +24,9 @@ namespace GUZ.Flat
             return Application.targetFrameRate;
         }
 
-        public GameObject CreatePlayerController(Scene scene, Vector3 position = default, Quaternion rotation = default)
+        public GameObject CreatePlayerController(Scene scene)
         {
-            var go = ResourceLoader.TryGetPrefabObject(PrefabType.Player, position, rotation);
+            var go = ResourceLoader.TryGetPrefabObject(PrefabType.Player);
 
             go.name = "Player - Flat";
 

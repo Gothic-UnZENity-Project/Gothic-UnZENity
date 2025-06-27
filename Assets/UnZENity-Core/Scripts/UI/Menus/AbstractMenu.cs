@@ -116,8 +116,7 @@ namespace GUZ.Core.UI.Menus
 
             if (item.MenuItemType == MenuItemType.ListBox)
             {
-                itemGo = ResourceLoader.TryGetPrefabObject(PrefabType.UiEmpty, name: item.Name,
-                    position: Vector3.zero, parent: Canvas)!;
+                itemGo = ResourceLoader.TryGetPrefabObject(PrefabType.UiEmpty, name: item.Name, parent: Canvas)!;
             }
             else if (item.Flags.HasFlag(MenuItemFlag.Selectable))
             {

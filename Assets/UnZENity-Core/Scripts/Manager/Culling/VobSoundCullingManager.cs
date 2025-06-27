@@ -2,6 +2,7 @@ using GUZ.Core.Config;
 using GUZ.Core.Data.Container;
 using GUZ.Core.Extensions;
 using GUZ.Core.Util;
+using NUnit.Framework;
 using UnityEngine;
 using ZenKit.Vobs;
 using Logger = GUZ.Core.Util.Logger;
@@ -22,12 +23,32 @@ namespace GUZ.Core.Manager.Culling
                 Logger.LogWarning($"CullingGroup for Sounds closed already. Can't add >{container.Go.name}<", LogCat.Audio);
                 return;
             }
+
+            AddCullingEntryInternal(container.Go, container.VobAs<ISound>());
+        }
+        
+        public void AddCullingEntry(GameObject go, ISound vob)
+        {
+            // Logic:
+            // 1. If !IsFinalized, we add all entries to the list based on rootVob position (e.g., a soundVob directly below levelCompo)
+            // 2. If IsFinalized, then added entries are subVobs (e.g., Cauldron->Sound) and we enlarge the cullingArray now.
+            if (!IsFinalized)
+                return;
             
-            Objects.Add(container.Go);
-            var sphere = new BoundingSphere(container.Go.transform.position, container.VobAs<ISound>().Radius / 100f); // Gothic's values are in cm, Unity's in m.
+            AddCullingEntryInternal(go, vob);
+            
+            // Each time we add an entry, we need to recreate the array for the CullingGroup.
+            CullingGroup.SetBoundingSpheres(TempSpheres.ToArray());
+        }
+        
+        private void AddCullingEntryInternal(GameObject go, ISound vob)
+        {
+            Objects.Add(go);
+            // FIXME - First call of VisibilityChanged() always provides visible=false? Is the pos+radius correct?
+            var sphere = new BoundingSphere(go.transform.position, vob.Radius / 100f); // Gothic's values are in cm, Unity's in m.
             TempSpheres.Add(sphere);
         }
-
+        
         /// <summary>
         /// We only check for distance band 0 - visible, and 0 - invisible (or to be more precise here: audible/inaudible)
         /// </summary>
@@ -57,9 +78,6 @@ namespace GUZ.Core.Manager.Culling
             CullingGroup.SetBoundingDistances(new[] { 0f });
             CullingGroup.SetBoundingSpheres(TempSpheres.ToArray());
             CullingGroup.onStateChanged = VisibilityChanged;
-
-            // Cleanup
-            TempSpheres.ClearAndReleaseMemory();
         }
     }
 }
