@@ -122,8 +122,6 @@ namespace GUZ.Core.Manager.Vobs
                     go = CreateDefaultMesh(vob, parent);
                     break;
                 case VirtualObjectType.oCMobDoor:
-                    FixVobChildren(vob);
-
                     go = CreateDefaultMesh(vob, parent);
                     break;
                 case VirtualObjectType.oCMobSwitch:
@@ -155,8 +153,6 @@ namespace GUZ.Core.Manager.Vobs
                     {
                         break;
                     }
-
-                    FixVobChildren(vob);
 
                     // For SaveGame comparison, we load our fallback Prefab and set VobProperties.
                     // Remove it from here once we properly implement and handle it.
@@ -721,63 +717,6 @@ namespace GUZ.Core.Manager.Vobs
 
             Logger.LogWarning($">{meshName}<'s has no mdl/mrm.", LogCat.Vob);
             return null;
-        }
-
-        /// <summary>
-        /// 1. Children VOBs are ordered in reverse order withing G1 save games. Correct our ones to match.
-        /// 2. Some Child Items have 0 amount, which is incorrect. Grant them at least 1 element like G1 is doing as well.
-        /// 3. Also load missing data from Daedalus as some properties aren't set within Spacer.
-        /// </summary>
-        private static void FixVobChildren(IVirtualObject vob)
-        {
-            if (!GameGlobals.SaveGame.IsWorldLoadedForTheFirstTime)
-            {
-                return;
-            }
-
-            // 1.
-            // e.g. G1.PFX_MILTEN01 has two children. In Spacer and here, they're ordered correctly. But a G1 save reverses their order.
-            // We need to reverse them as well to better align.
-            {
-                // A simple List.Reverse() didn't work unfortunately
-                var children = vob.Children;
-
-                while (vob.Children.Any())
-                {
-                    vob.RemoveChild(0);
-                }
-
-                // Re-add children in reversed order
-                while (children.Any())
-                {
-                    vob.AddChild(children.Last());
-                    children.RemoveAt(children.Count - 1);
-                }
-            }
-
-            // 2./3. Now fix some properties
-            {
-                var items = vob.Children;
-
-                foreach (var obj in items)
-                {
-                    if (obj is Item item)
-                    {
-                        item.Amount = item.Amount == 0 ? 1 : item.Amount;
-                        item.SleepMode = (int)VmGothicEnums.VobSleepMode.Awake; // G1 Saves have this value as default.
-
-                        // Load Item Instance from Daedalus
-                        // Apply remaining information (Flags)
-                        var vmItem = VmInstanceManager.TryGetItemData(item.Name);
-
-                        // Flags aren't stored inside objects from Spacer, we therefore set them now if not yet done.
-                        if (item.Flags == 0 && vmItem != null)
-                        {
-                            item.Flags = vmItem.Flags | vmItem.MainFlag;
-                        }
-                    }
-                }
-            }
         }
 
         private GameObject CreateDecal(IVirtualObject vob, GameObject parent)

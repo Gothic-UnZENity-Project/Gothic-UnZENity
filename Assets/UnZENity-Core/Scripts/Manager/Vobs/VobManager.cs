@@ -250,6 +250,38 @@ namespace GUZ.Core.Manager.Vobs
 
                 _vobTypeParentGOs[type] = newGo;
             }
+            
+            PreLoadVobs(vobs);
+        }
+
+        private void PreLoadVobs(List<IVirtualObject> vobs)
+        {
+            foreach (var vob in vobs)
+            {
+                PreLoadVob(vob);
+                PreLoadVobs(vob.Children);
+            }
+        }
+        
+        /// <summary>
+        /// Some elements change when the game loads them for the first time. We change these values here.
+        /// </summary>
+        private void PreLoadVob(IVirtualObject vob)
+        {
+            if (!GameGlobals.SaveGame.IsWorldEnteredFirstTime)
+                return;
+
+            switch (vob.Type)
+            {
+                case VirtualObjectType.zCVobSound:
+                    vob.ShowVisual = false; // Always 0 in G1 save games.
+                    break;
+                case VirtualObjectType.zCVobLight:
+                    vob.ShowVisual = true; // Always 1 in G1 save games.
+                    break;
+            }
+
+            vob.PresetName = string.Empty; // Never set in any G1 save game.
         }
 
         /// <summary>
@@ -280,8 +312,6 @@ namespace GUZ.Core.Manager.Vobs
                 // It's simpler to have both of them in here.
                 loading.Tick();
                 await FrameSkipper.TrySkipToNextFrame();
-
-                PreLoadVob(vob);
                 
                 switch (vob.Type)
                 {
@@ -329,22 +359,6 @@ namespace GUZ.Core.Manager.Vobs
             container.Go.SetParent(GetRootGameObjectOfType(container.Vob.Type));
 
             return container;
-        }
-
-        /// <summary>
-        /// Some elements change when the game loads them for the first time. We change these values here.
-        /// </summary>
-        private void PreLoadVob(IVirtualObject vob)
-        {
-            if (!GameGlobals.SaveGame.IsWorldEnteredFirstTime)
-                return;
-
-            switch (vob.Type)
-            {
-                case VirtualObjectType.zCVobSound:
-                    vob.ShowVisual = false; // Always 0 in G1 save games.
-                    break;
-            }
         }
 
         /// <summary>
