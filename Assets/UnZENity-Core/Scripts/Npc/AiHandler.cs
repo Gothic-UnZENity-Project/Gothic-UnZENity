@@ -198,32 +198,31 @@ namespace GUZ.Core.Npc
             Properties.StateTime = 0.0f;
             Properties.ItemAnimationState = -1;
 
-            // An NPC is culled in from a SaveGame load.
-            if (Vob.CurrentStateIsRoutine)
+            // If we start from scratch (game loaded) or we are at the end of a routine, try to restart.
+            if (Vob.CurrentStateValid)
             {
                 StartRoutine(GameData.GothicVm.GetSymbolByName(Vob.CurrentStateName)!.Index, Vob.ScriptWaypoint);
             }
             // We have set some "next" state before. Use it instead of going back to daily routine first.
             else if (Vob.NextStateValid)
             {
-                // Use NextState only once. Next time daily routine will be called.
-                Vob.NextStateValid = false;
+                StartRoutine(Vob.NextStateIndex);
 
-                var currentRoutine = Vob.NextStateIndex;
-                StartRoutine(currentRoutine);
+                // As we use NextStateIndex as new "current" one, we clear it now safely.
+                Vob.NextStateIndex = -1;
+                Vob.NextStateValid = false;
+                Vob.NextStateIsRoutine = false;
+                Vob.NextStateName = string.Empty;
             }
+            // If we have nothing prepared, start daily Routine.
             else
             {
                 var currentRoutine = Properties.RoutineCurrent;
                 if (currentRoutine != null)
-                {
                     StartRoutine(currentRoutine.Action, currentRoutine.Waypoint);
-                }
                 else
-                {
                     // If we don't have a routine, we're a monster.
                     StartRoutine(NpcInstance.StartAiState);
-                }
             }
         }
 
