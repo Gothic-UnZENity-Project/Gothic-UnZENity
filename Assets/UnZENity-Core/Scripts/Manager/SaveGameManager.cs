@@ -38,8 +38,10 @@ namespace GUZ.Core.Manager
         public SlotId SaveGameId;
         public bool IsNewGame => SaveGameId == SlotId.NewGame;
         public bool IsLoadedGame => !IsNewGame;
-        public bool IsFirstWorldLoadingFromSaveGame; // Check if we load save game right now!
+        public bool IsWorldEnteredFirstTime;
 
+        public bool IsFirstWorldLoadingFromSaveGame; // Check if we load save game right now!
+        
         /// <summary>
         /// Values can be:
         /// - true - When we start a new game and load first world | when we visit another world for the first time
@@ -152,11 +154,13 @@ namespace GUZ.Core.Manager
             {
                 worldToUse = saveGameWorld;
                 IsWorldLoadedForTheFirstTime = false;
+                IsWorldEnteredFirstTime = false;
             }
             else
             {
                 // If there is no save game used or world not saved, we visit it for the first time.
                 worldToUse = originalWorld;
+                IsWorldEnteredFirstTime = true;
             }
 
             // 3. Store this world into runtime data as it's now loaded and cached during gameplay. (To save later when needed.)
@@ -178,7 +182,7 @@ namespace GUZ.Core.Manager
                 WayNet = (CachedWayNet)worldToUse.WayNet.Cache()
             };
         }
-
+        
         /// <summary>
         /// Load a Save Game.
         /// 

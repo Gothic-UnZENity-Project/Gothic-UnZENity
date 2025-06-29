@@ -331,8 +331,20 @@ namespace GUZ.Core.Manager.Vobs
             return container;
         }
 
+        /// <summary>
+        /// Some elements change when the game loads them for the first time. We change these values here.
+        /// </summary>
         private void PreLoadVob(IVirtualObject vob)
         {
+            if (!GameGlobals.SaveGame.IsWorldEnteredFirstTime)
+                return;
+
+            switch (vob.Type)
+            {
+                case VirtualObjectType.zCVobSound:
+                    vob.ShowVisual = false; // Always 0 in G1 save games.
+                    break;
+            }
         }
 
         /// <summary>
