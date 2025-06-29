@@ -395,7 +395,14 @@ namespace GUZ.Core.Npc
 
             props.Routines.Add(routine);
         }
+        
+        public void ExchangeRoutine(NpcInstance npc, string routineName)
+        {
+            var routine = GameData.GothicVm.GetSymbolByName(routineName);
 
+            ExchangeRoutine(npc, routine == null ? 0: routine.Index);
+        }
+        
         public void ExchangeRoutine(NpcInstance npc, int routineIndex)
         {
             // Monsters

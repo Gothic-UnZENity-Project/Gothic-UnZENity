@@ -198,13 +198,8 @@ namespace GUZ.Core.Npc
             Properties.StateTime = 0.0f;
             Properties.ItemAnimationState = -1;
 
-            // If we start from scratch (game loaded) or we are at the end of a routine, try to restart.
-            if (Vob.CurrentStateValid)
-            {
-                StartRoutine(GameData.GothicVm.GetSymbolByName(Vob.CurrentStateName)!.Index, Vob.ScriptWaypoint);
-            }
-            // We have set some "next" state before. Use it instead of going back to daily routine first.
-            else if (Vob.NextStateValid)
+            // We have set some "next" state. Use it instead of going back to daily routine first.
+            if (Vob.NextStateValid)
             {
                 StartRoutine(Vob.NextStateIndex);
 

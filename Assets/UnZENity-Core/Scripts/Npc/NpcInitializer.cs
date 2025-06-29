@@ -241,8 +241,14 @@ namespace GUZ.Core.Npc
             // Lookups like Npc_SetTalentValue() will work now as NpcInstance.UserData() points to our object which stores the information.
             Vm.InitInstance(npc.Instance);
 
-            // We need to load routines to set the SpawnPoint correctly later.
-            GameGlobals.Npcs.ExchangeRoutine(npc.Instance, npc.Instance.DailyRoutine);
+            // NpcInstance is the initialized Daedalus Instance which contains initial data.
+            // Vob.Npc contains runtime information. If no runtime information is set (new game started / world entered for the first time), we use the initial data.
+            if (npc.Vob.CurrentRoutine.IsNullOrEmpty())
+            {
+                npc.Vob.CurrentRoutine = GameData.GothicVm.GetSymbolByIndex(npc.Instance.DailyRoutine)!.Name;
+            }
+            
+            GameGlobals.Npcs.ExchangeRoutine(npc.Instance, npc.Vob.CurrentRoutine);
         }
 
         public void InitNpc(NpcInstance npcInstance, GameObject lazyLoadGo)
