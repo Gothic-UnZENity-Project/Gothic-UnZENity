@@ -5,6 +5,7 @@ using GUZ.Core.Globals;
 using GUZ.Core.Manager;
 using GUZ.Core.Npc;
 using GUZ.Core.Properties;
+using GUZ.Core.Vob;
 using HurricaneVR.Framework.Core;
 using HurricaneVR.Framework.Core.Grabbers;
 using TMPro;
@@ -43,11 +44,11 @@ namespace GUZ.VR.Components
                 return;
             }
 
-            var vobProperties = GetComponentInParent<VobProperties>();
+            var vobContainer = GetComponentInParent<VobLoader>()?.Container;
 
-            if (vobProperties != null)
+            if (vobContainer != null)
             {
-                _nameCanvas.GetComponentInChildren<TMP_Text>().text = vobProperties.GetFocusName();
+                _nameCanvas.GetComponentInChildren<TMP_Text>().text = vobContainer.Props.GetFocusName();
                 return;
             }
 

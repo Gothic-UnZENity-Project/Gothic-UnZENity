@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 2022050282646122291}
   - component: {fileID: 979775649206373454}
-  - component: {fileID: 3433063768256137835}
   - component: {fileID: 3033854020954280693}
   - component: {fileID: 5364814225565843694}
   m_Layer: 0
@@ -28,13 +27,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6503575194566409312}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.69465834, y: 0, z: 0, w: 0.71933985}
-  m_LocalPosition: {x: -328.3223, y: 27.197954, z: -177.9182}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 88, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &979775649206373454
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -47,22 +46,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 230a66888d6b490faca41b9b6a2895de, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  AudioSource1: {fileID: 3033854020954280693}
-  AudioSource2: {fileID: 5364814225565843694}
-  Properties: {fileID: 3433063768256137835}
---- !u!114 &3433063768256137835
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6503575194566409312}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 513c433f9b1848e3b13f8ff67a37fe18, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  <VisualScheme>k__BackingField: 
+  _audioSource1: {fileID: 3033854020954280693}
+  _audioSource2: {fileID: 5364814225565843694}
 --- !u!82 &3033854020954280693
 AudioSource:
   m_ObjectHideFlags: 0
@@ -74,6 +59,7 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 6160132109742411210, guid: 118dcb5485ad4894fb619aab7e1f8708, type: 2}
   m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
   m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1
@@ -170,6 +156,7 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 6160132109742411210, guid: 118dcb5485ad4894fb619aab7e1f8708, type: 2}
   m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
   m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1

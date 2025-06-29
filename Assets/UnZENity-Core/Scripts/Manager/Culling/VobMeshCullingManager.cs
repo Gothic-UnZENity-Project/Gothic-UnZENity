@@ -76,7 +76,7 @@ namespace GUZ.Core.Manager.Culling
                 return;
             }
 
-            GlobalEventDispatcher.LoadingSceneLoaded.AddListener(PreWorldCreate);
+            GlobalEventDispatcher.LoadGameStart.AddListener(PreWorldCreate);
             GlobalEventDispatcher.WorldSceneLoaded.AddListener(PostWorldCreate);
 
             // Unity demands CullingGroups to be created in Awake() or Start() earliest.
@@ -311,10 +311,10 @@ namespace GUZ.Core.Manager.Culling
                 return null;
             }
 
-            var vob = loaderComp.Vob;
+            var container = loaderComp.Container;
 
             var totalBounds = new Bounds();
-            AddLocalBounds(vob, ref totalBounds);
+            AddLocalBounds(container.Vob, ref totalBounds);
 
             return totalBounds == default ? null : totalBounds;
         }

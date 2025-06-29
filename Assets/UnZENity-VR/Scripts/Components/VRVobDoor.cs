@@ -5,6 +5,7 @@ using GUZ.Core;
 using GUZ.Core.Extensions;
 using GUZ.Core.Manager;
 using GUZ.Core.Properties;
+using GUZ.Core.Vob;
 using HurricaneVR.Framework.Components;
 using UnityEngine;
 using ZenKit.Vobs;
@@ -18,15 +19,15 @@ namespace GUZ.VR.Components
         
         private void Start()
         {
-            var props = GetComponent<VobDoorProperties>().DoorProperties;
-            PrepareSounds(props);
+            var vobDoor = GetComponentInParent<VobLoader>().Container.VobAs<IDoor>();
+            PrepareSounds(vobDoor);
         }
         
         /// <summary>
         /// Add opening and closing sound to the containers HVR settings.
         /// The logic about when to play them is provided by HVR itself.
         /// </summary>
-        private void PrepareSounds(Door props)
+        private void PrepareSounds(IDoor props)
         {
             if (props == null)
             {

@@ -23,6 +23,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             Vob.NextStateIndex = _action;
             Vob.NextStateName = GameData.GothicVm.GetSymbolByIndex(_action)!.Name;
             Vob.NextStateValid = true;
+            Vob.NextStateIsRoutine = true; // TODO - We need to check if this is correct or if we need to have it more dynamic.
             
             ai.ClearState(_callEndFunction);
 

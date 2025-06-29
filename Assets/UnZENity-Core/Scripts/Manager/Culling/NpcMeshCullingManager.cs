@@ -1,9 +1,10 @@
 using System.Collections.Generic;
 using GUZ.Core.Config;
-using GUZ.Core.Creator;
 using GUZ.Core.Extensions;
 using GUZ.Core.Npc;
+using GUZ.Core.Util;
 using UnityEngine;
+using Logger = GUZ.Core.Util.Logger;
 
 namespace GUZ.Core.Manager.Culling
 {
@@ -29,11 +30,17 @@ namespace GUZ.Core.Manager.Culling
             _visibleNpcs.ClearAndReleaseMemory();
         }
 
-        public override void AddCullingEntry(GameObject go)
+        public void AddCullingEntry(GameObject go)
         {
+            if (CurrentState != State.Loading)
+            {
+                Logger.LogWarning($"CullingGroup for Sounds closed already. Can't add >{go.name}<", LogCat.Mesh);
+                return;
+            }
+            
             Objects.Add(go);
 
-            // Normally NPC spheres are ~1 meter in radius. But we need to fake the volume, so that Culling always thinks
+            // Normally NPC spheres are ~1 meters in radius. But we need to fake the volume, so that Culling always thinks
             // we're "inside" the NPC and Frustum+Occlusion Culling isn't triggered.
             // (@see VobSoundCullingManager where we also use it exactly that way, and it works.)
             var sphere = new BoundingSphere(go.transform.position, _featureCullingDistance);

@@ -443,7 +443,7 @@ namespace GUZ.Core.Animations
             }
 
             // Pos change is applied with rotated value.
-            PrefabProps.Go.transform.localPosition += PrefabProps.Go.transform.rotation * finalMovement;
+            Go.transform.localPosition += Go.transform.rotation * finalMovement;
         }
 
         private void ApplyFinalRotation()

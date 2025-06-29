@@ -1,7 +1,6 @@
 using System.Collections;
 using GUZ.Core.Util;
 using UnityEngine;
-using UnityEngine.Serialization;
 using ZenKit.Vobs;
 using Logger = GUZ.Core.Util.Logger;
 using Random = UnityEngine.Random;
@@ -10,13 +9,29 @@ namespace GUZ.Core.Vob
 {
     public class SoundHandler : MonoBehaviour
     {
-        [FormerlySerializedAs("audioSource")] public AudioSource AudioSource;
-        [FormerlySerializedAs("properties")] public VobSoundProperties Properties;
+        [SerializeField] private AudioSource _audioSource;
+        
+        private ISound _vob;
 
-        // We need to avoid to start the Coroutine twice.
+        // We need to avoid starting the Coroutine twice.
         private bool _isCoroutineRunning;
 
+        /// <summary>
+        /// Sounds are in LevelCompo and also as sub-VOBs inside Fire.
+        /// We therefore set Vob data directly instead of relying on GetCompInParent(VobLoader) which might deliver IFire instead of ISound.
+        /// </summary>
+        public void Init(ISound vob)
+        {
+            _vob = vob;
+            if (_vob == null)
+            {
+                Logger.LogError("VobSoundProperties.soundData not set. Can't register random sound play!", LogCat.Audio);
+                return;
+            }
 
+            StartCoroutine();
+        }
+        
         private void OnEnable()
         {
             StartCoroutine();
@@ -28,29 +43,10 @@ namespace GUZ.Core.Vob
             _isCoroutineRunning = false;
         }
 
-        /// <summary>
-        /// This will be called during VobCreation time. OnEnable() is too early on to check, if we really need the Coroutine
-        /// as properties.soundData will be set at a later state (it's expected to be before calling this method tbh).
-        /// Now we can check starting the Coroutine.
-        /// </summary>
-        public void PrepareSoundHandling()
-        {
-            if (Properties.SoundData == null)
-            {
-                Logger.LogError("VobSoundProperties.soundData not set. Can't register random sound play!", LogCat.Audio);
-                return;
-            }
-
-            if (gameObject.activeSelf)
-            {
-                StartCoroutine();
-            }
-        }
-
         private void StartCoroutine()
         {
             // Either it's not yet initialized (no clip) or it's no random loop
-            if (AudioSource.clip == null || Properties.SoundData.Mode != SoundMode.Random)
+            if (_audioSource.clip == null || _vob.Mode != SoundMode.Random)
             {
                 return;
             }
@@ -68,12 +64,12 @@ namespace GUZ.Core.Vob
         {
             while (true)
             {
-                var nextRandomPlayTime = Properties.SoundData.RandomDelay
-                                         + Random.Range(0.0f, Properties.SoundData.RandomDelayVar);
+                var nextRandomPlayTime = _vob.RandomDelay
+                                         + Random.Range(0.0f, _vob.RandomDelayVar);
                 yield return new WaitForSeconds(nextRandomPlayTime);
 
-                AudioSource.Play();
-                yield return new WaitForSeconds(AudioSource.clip.length);
+                _audioSource.Play();
+                yield return new WaitForSeconds(_audioSource.clip.length);
             }
         }
     }

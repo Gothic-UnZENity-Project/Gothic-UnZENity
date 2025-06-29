@@ -1,10 +1,21 @@
 using System.Collections.Generic;
+using GUZ.Core.Extensions;
 using UnityEngine;
 
 namespace GUZ.Core.Manager.Culling
 {
     public abstract class AbstractCullingManager
     {
+
+        protected enum State
+        {
+            None,
+            Loading,
+            WorldLoaded
+        }
+
+        protected State CurrentState;
+        
         // Stored for resetting after world switch
         protected CullingGroup CullingGroup;
 
@@ -14,14 +25,12 @@ namespace GUZ.Core.Manager.Culling
         // Temporary spheres during async world loading calls.
         protected List<BoundingSphere> TempSpheres = new();
 
-
-        public abstract void AddCullingEntry(GameObject go);
         protected abstract void VisibilityChanged(CullingGroupEvent evt);
 
 
         public virtual void Init()
         {
-            GlobalEventDispatcher.LoadingSceneLoaded.AddListener(PreWorldCreate);
+            GlobalEventDispatcher.LoadGameStart.AddListener(PreWorldCreate);
             GlobalEventDispatcher.WorldSceneLoaded.AddListener(PostWorldCreate);
 
             // Unity demands CullingGroups to be created in Awake() or Start() earliest.
@@ -30,9 +39,12 @@ namespace GUZ.Core.Manager.Culling
 
         protected virtual void PreWorldCreate()
         {
+            Objects.ClearAndReleaseMemory();
+            TempSpheres.ClearAndReleaseMemory();
             CullingGroup.Dispose();
             CullingGroup = new CullingGroup();
-            Objects.Clear();
+
+            CurrentState = State.Loading;
         }
 
         /// <summary>
@@ -45,6 +57,8 @@ namespace GUZ.Core.Manager.Culling
             var mainCamera = Camera.main!;
             CullingGroup.targetCamera = mainCamera;
             CullingGroup.SetDistanceReferencePoint(mainCamera.transform);
+
+            CurrentState = State.WorldLoaded;
         }
 
         public virtual void Destroy()

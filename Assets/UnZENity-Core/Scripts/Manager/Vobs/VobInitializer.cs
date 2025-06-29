@@ -31,13 +31,7 @@ namespace GUZ.Core.Manager.Vobs
     {
         private const string _noSoundName = "nosound.wav";
 
-        private DeveloperConfig _config;
-
-
-        public VobInitializer()
-        {
-            _config = GameGlobals.Config.Dev;
-        }
+        private DeveloperConfig _config = GameGlobals.Config.Dev;
 
 
         /// <summary>
@@ -48,7 +42,7 @@ namespace GUZ.Core.Manager.Vobs
         ///                       and Lights could be sub-VOBs inside fire, we need to find the index from WorldPosition calculated at
         ///                       caching times. Same calculation! (ZenKit.IVirtualVob.Position + ZK.parentPos
         /// </summary>
-        public void InitVob(IVirtualObject vob, GameObject parent, Vector3 parentWorldPosition)
+        public void InitVob(IVirtualObject vob, GameObject parent, Vector3 parentWorldPosition, bool isRootVob)
         {
             var worldPosition = parentWorldPosition + vob.Position.ToUnityVector();
             GameObject go = null;
@@ -65,7 +59,6 @@ namespace GUZ.Core.Manager.Vobs
                     if (_config.EnableGameSounds)
                     {
                         go = CreateSound((Sound)vob, parent);
-                        GameGlobals.SoundCulling.AddCullingEntry(go);
                     }
 
                     break;
@@ -73,7 +66,6 @@ namespace GUZ.Core.Manager.Vobs
                     if (_config.EnableGameSounds)
                     {
                         go = CreateSoundDaytime((SoundDaytime)vob, parent);
-                        GameGlobals.SoundCulling.AddCullingEntry(go);
                     }
 
                     break;
@@ -130,8 +122,6 @@ namespace GUZ.Core.Manager.Vobs
                     go = CreateDefaultMesh(vob, parent);
                     break;
                 case VirtualObjectType.oCMobDoor:
-                    FixVobChildren(vob);
-
                     go = CreateDefaultMesh(vob, parent);
                     break;
                 case VirtualObjectType.oCMobSwitch:
@@ -163,8 +153,6 @@ namespace GUZ.Core.Manager.Vobs
                     {
                         break;
                     }
-
-                    FixVobChildren(vob);
 
                     // For SaveGame comparison, we load our fallback Prefab and set VobProperties.
                     // Remove it from here once we properly implement and handle it.
@@ -212,19 +200,12 @@ namespace GUZ.Core.Manager.Vobs
 
             // Do not check children if the current VOB can't be created.
             if (!go)
-            {
                 return;
-            }
-
+            
             foreach (var childVob in vob.Children)
             {
-                InitVob(childVob, go, worldPosition);
+                InitVob(childVob, go, worldPosition, false);
             }
-        }
-
-        public void SetPosAndRot(GameObject go, IVirtualObject vob)
-        {
-            SetPosAndRot(go, vob.Position.ToUnityVector(), vob.Rotation.ToUnityQuaternion());
         }
 
         public void SetPosAndRot(GameObject obj, System.Numerics.Vector3 position, Matrix3x3 rotation)
@@ -232,12 +213,7 @@ namespace GUZ.Core.Manager.Vobs
             obj.transform.SetLocalPositionAndRotation(position.ToUnityVector(), rotation.ToUnityQuaternion());
         }
 
-        public void SetPosAndRot(GameObject obj, Vector3 position, Quaternion rotation)
-        {
-            obj.transform.SetLocalPositionAndRotation(position, rotation);
-        }
-
-        private GameObject GetPrefab(IVirtualObject vob)
+        private GameObject GetPrefab(IVirtualObject vob, GameObject parent = null)
         {
             GameObject go;
             var name = vob.Name;
@@ -245,27 +221,27 @@ namespace GUZ.Core.Manager.Vobs
             switch (vob.Type)
             {
                 case VirtualObjectType.oCItem:
-                    go = ResourceLoader.TryGetPrefabObject(PrefabType.VobItem, name: name);
+                    go = ResourceLoader.TryGetPrefabObject(PrefabType.VobItem, name: name, parent: parent);
                     break;
                 case VirtualObjectType.zCVobSpot:
                 case VirtualObjectType.zCVobStartpoint:
-                    go = ResourceLoader.TryGetPrefabObject(PrefabType.VobSpot, name: name);
+                    go = ResourceLoader.TryGetPrefabObject(PrefabType.VobSpot, name: name, parent: parent);
                     break;
                 case VirtualObjectType.zCVobSound:
-                    go = ResourceLoader.TryGetPrefabObject(PrefabType.VobSound);
+                    go = ResourceLoader.TryGetPrefabObject(PrefabType.VobSound, name: name, parent: parent);
                     break;
                 case VirtualObjectType.zCVobSoundDaytime:
-                    go = ResourceLoader.TryGetPrefabObject(PrefabType.VobSoundDaytime, name: name);
+                    go = ResourceLoader.TryGetPrefabObject(PrefabType.VobSoundDaytime, name: name, parent: parent);
                     break;
                 case VirtualObjectType.oCZoneMusic:
                 case VirtualObjectType.oCZoneMusicDefault:
-                    go = ResourceLoader.TryGetPrefabObject(PrefabType.VobMusic, name: name);
+                    go = ResourceLoader.TryGetPrefabObject(PrefabType.VobMusic, name: name, parent: parent);
                     break;
                 case VirtualObjectType.oCMOB:
-                    go = ResourceLoader.TryGetPrefabObject(PrefabType.Vob, name: name);
+                    go = ResourceLoader.TryGetPrefabObject(PrefabType.Vob, name: name, parent: parent);
                     break;
                 case VirtualObjectType.oCMobFire:
-                    go = ResourceLoader.TryGetPrefabObject(PrefabType.VobFire, name: name);
+                    go = ResourceLoader.TryGetPrefabObject(PrefabType.VobFire, name: name, parent: parent);
                     break;
                 case VirtualObjectType.oCMobInter:
                     if (vob.Name.ContainsIgnoreCase("bench") ||
@@ -281,37 +257,33 @@ namespace GUZ.Core.Manager.Vobs
                     }
                     break;
                 case VirtualObjectType.oCMobBed:
-                    go = ResourceLoader.TryGetPrefabObject(PrefabType.VobBed, name: name);
+                    go = ResourceLoader.TryGetPrefabObject(PrefabType.VobBed, name: name, parent: parent);
                     break;
                 case VirtualObjectType.oCMobWheel:
-                    go = ResourceLoader.TryGetPrefabObject(PrefabType.VobWheel, name: name);
+                    go = ResourceLoader.TryGetPrefabObject(PrefabType.VobWheel, name: name, parent: parent);
                     break;
                 case VirtualObjectType.oCMobSwitch:
-                    go = ResourceLoader.TryGetPrefabObject(PrefabType.VobSwitch, name: name);
+                    go = ResourceLoader.TryGetPrefabObject(PrefabType.VobSwitch, name: name, parent: parent);
                     break;
                 case VirtualObjectType.oCMobDoor:
-                    go = ResourceLoader.TryGetPrefabObject(PrefabType.VobDoor, name: name);
+                    go = ResourceLoader.TryGetPrefabObject(PrefabType.VobDoor, name: name, parent: parent);
                     break;
                 case VirtualObjectType.oCMobContainer:
-                    go = ResourceLoader.TryGetPrefabObject(PrefabType.VobContainer, name: name);
+                    go = ResourceLoader.TryGetPrefabObject(PrefabType.VobContainer, name: name, parent: parent);
                     break;
                 case VirtualObjectType.oCMobLadder:
-                    go = ResourceLoader.TryGetPrefabObject(PrefabType.VobLadder, name: name);
+                    go = ResourceLoader.TryGetPrefabObject(PrefabType.VobLadder, name: name, parent: parent);
                     break;
                 case VirtualObjectType.zCVobAnimate:
-                    go = ResourceLoader.TryGetPrefabObject(PrefabType.VobAnimate, name: name);
+                    go = ResourceLoader.TryGetPrefabObject(PrefabType.VobAnimate, name: name, parent: parent);
                     break;
                 case VirtualObjectType.zCVobLight:
-                    go = ResourceLoader.TryGetPrefabObject(PrefabType.VobLight, name: name);
+                    go = ResourceLoader.TryGetPrefabObject(PrefabType.VobLight, name: name, parent: parent);
                     break;
                 default:
-                    go = ResourceLoader.TryGetPrefabObject(PrefabType.Vob, name: name);
+                    go = ResourceLoader.TryGetPrefabObject(PrefabType.Vob, name: name, parent: parent);
                     break;
             }
-
-            // Fill Property data into prefab here
-            // Can also be outsourced to a proper method if it becomes a lot.
-            go!.GetComponent<VobProperties>().SetData(vob);
 
             return go;
         }
@@ -327,7 +299,6 @@ namespace GUZ.Core.Manager.Vobs
             var go = GetPrefab(vob);
 
             go.SetParent(parent);
-            SetPosAndRot(go, vob);
 
             return go;
         }
@@ -363,7 +334,7 @@ namespace GUZ.Core.Manager.Vobs
                 vob.Position = default;
 
                 // Call normal mesh and Prefab loading logic
-                InitVob(vob, parent, worldPosition);
+                InitVob(vob, parent, worldPosition, false);
             }
         }
 
@@ -381,7 +352,6 @@ namespace GUZ.Core.Manager.Vobs
 
             // TODO - We need to be careful. It might be, that a light is in a sub-GO structure, where we need the parent pos+rot. If it's the case, we will get a warning as Index==-1 below.
             go.SetParent(parent, true, true);
-            SetPosAndRot(go, vob);
 
             var lightComp = go.GetComponent<StationaryLight>();
             lightComp.Color = new Color(vob.Color.R / 255f, vob.Color.G / 255f, vob.Color.B / 255f, vob.Color.A / 255f);
@@ -418,34 +388,25 @@ namespace GUZ.Core.Manager.Vobs
 
             // TODO - We need to implement animations for this vob type
             var go = CreateDefaultMesh(vob, parent);
-            SetPosAndRot(go, vob);
 
             return go;
         }
 
-        private GameObject CreateItem(Item vob, GameObject parent)
+        private GameObject CreateItem(IItem vob, GameObject parent)
         {
             string itemName;
 
             if (!string.IsNullOrEmpty(vob.Instance))
-            {
                 itemName = vob.Instance;
-            }
             else if (!string.IsNullOrEmpty(vob.Name))
-            {
                 itemName = vob.Name;
-            }
             else
-            {
                 throw new Exception("Vob Item -> no usable name found.");
-            }
 
             var item = VmInstanceManager.TryGetItemData(itemName);
 
             if (item == null)
-            {
                 return null;
-            }
 
             var prefabInstance = GetPrefab(vob);
             var vobObj = CreateItemMesh(item, prefabInstance, parent);
@@ -458,8 +419,6 @@ namespace GUZ.Core.Manager.Vobs
                     $"We need to use >PxVobItem.instance< to do it right!", LogCat.Vob);
                 return null;
             }
-
-            vobObj.GetComponent<VobItemProperties>().SetData(vob, item);
 
             return vobObj;
         }
@@ -511,24 +470,19 @@ namespace GUZ.Core.Manager.Vobs
         [CanBeNull]
         private GameObject CreateSound(Sound vob, GameObject parent)
         {
-            var go = GetPrefab(vob);
+            var go = GetPrefab(vob, parent);
             go.name = $"{vob.SoundName}";
-            go.SetParent(parent);
 
             // This value is always true when a new game/world is loaded. (Compared with G1 save game.)
             vob.ShowVisual = false;
             vob.IsAllowedToRun = true;
 
-            // We don't want to have sound when we boot the game async for 30 seconds in non-spatial blend mode.
-            go.SetActive(false);
-
             var source = go.GetComponent<AudioSource>();
 
-            PrepareAudioSource(source, vob);
-            source.clip = GetSoundClip(vob.SoundName);
-
-            go.GetComponent<VobSoundProperties>().SoundData = vob;
-            go.GetComponent<SoundHandler>().PrepareSoundHandling();
+            go.GetComponent<SoundHandler>().Init(vob);
+            PrepareAudioSource(source, vob, vob.SoundName);
+            
+            GameGlobals.SoundCulling.AddCullingEntry(go, vob);
 
             return go;
         }
@@ -542,29 +496,20 @@ namespace GUZ.Core.Manager.Vobs
         [CanBeNull]
         private GameObject CreateSoundDaytime(SoundDaytime vob, GameObject parent)
         {
-            var go = GetPrefab(vob);
+            var go = GetPrefab(vob, parent);
             go.name = $"{vob.SoundName}-{vob.SoundNameDaytime}";
-            go.SetParent(parent);
-
-            // We don't want to have sound when we boot the game async for 30 seconds in non-spatial blend mode.
-            go.SetActive(false);
-            go.SetParent(parent);
-
+            
             var sources = go.GetComponents<AudioSource>();
 
-            PrepareAudioSource(sources[0], vob);
-            sources[0].clip = GetSoundClip(vob.SoundName);
+            PrepareAudioSource(sources[0], vob, vob.SoundName);
+            PrepareAudioSource(sources[1], vob, vob.SoundNameDaytime);
 
-            PrepareAudioSource(sources[1], vob);
-            sources[1].clip = GetSoundClip(vob.SoundNameDaytime);
-
-            go.GetComponent<VobSoundDaytimeProperties>().SoundDaytimeData = vob;
-            go.GetComponent<SoundDaytimeHandler>().PrepareSoundHandling();
+            GameGlobals.SoundCulling.AddCullingEntry(go, vob);
 
             return go;
         }
 
-        private void PrepareAudioSource(AudioSource source, Sound soundData)
+        private void PrepareAudioSource(AudioSource source, Sound soundData, string soundName)
         {
             source.maxDistance = soundData.Radius / 100f; // Gothic's values are in cm, Unity's in m.
             source.volume = soundData.Volume / 100f; // Gothic's volume is 0...100, Unity's is 0...1.
@@ -573,6 +518,8 @@ namespace GUZ.Core.Manager.Vobs
             source.playOnAwake = soundData.InitiallyPlaying && soundData.Mode != SoundMode.Random;
             source.loop = soundData.Mode == SoundMode.Loop;
             source.spatialBlend = soundData.Ambient3d ? 1f : 0f;
+            
+            source.clip = GetSoundClip(soundName);
         }
 
         public AudioClip GetSoundClip(string soundName)
@@ -625,8 +572,6 @@ namespace GUZ.Core.Manager.Vobs
             go.transform.position = (min + max) / 2f;
             go.transform.localScale = max - min;
 
-            go.GetComponent<VobMusicProperties>().MusicData = vob;
-
             return go;
         }
 
@@ -660,7 +605,6 @@ namespace GUZ.Core.Manager.Vobs
             vobObj.GetComponent<VobSpotProperties>().Fp = freePointData;
             GameData.FreePoints.TryAdd(fpName, freePointData);
 
-            SetPosAndRot(vobObj, vob.Position, vob.Rotation);
             return vobObj;
         }
 
@@ -775,63 +719,6 @@ namespace GUZ.Core.Manager.Vobs
             return null;
         }
 
-        /// <summary>
-        /// 1. Children VOBs are ordered in reverse order withing G1 save games. Correct our ones to match.
-        /// 2. Some Child Items have 0 amount, which is incorrect. Grant them at least 1 element like G1 is doing as well.
-        /// 3. Also load missing data from Daedalus as some properties aren't set within Spacer.
-        /// </summary>
-        private static void FixVobChildren(IVirtualObject vob)
-        {
-            if (!GameGlobals.SaveGame.IsWorldLoadedForTheFirstTime)
-            {
-                return;
-            }
-
-            // 1.
-            // e.g. G1.PFX_MILTEN01 has two children. In Spacer and here, they're ordered correctly. But a G1 save reverses their order.
-            // We need to reverse them as well to better align.
-            {
-                // A simple List.Reverse() didn't work unfortunately
-                var children = vob.Children;
-
-                while (vob.Children.Any())
-                {
-                    vob.RemoveChild(0);
-                }
-
-                // Re-add children in reversed order
-                while (children.Any())
-                {
-                    vob.AddChild(children.Last());
-                    children.RemoveAt(children.Count - 1);
-                }
-            }
-
-            // 2./3. Now fix some properties
-            {
-                var items = vob.Children;
-
-                foreach (var obj in items)
-                {
-                    if (obj is Item item)
-                    {
-                        item.Amount = item.Amount == 0 ? 1 : item.Amount;
-                        item.SleepMode = (int)VmGothicEnums.VobSleepMode.Awake; // G1 Saves have this value as default.
-
-                        // Load Item Instance from Daedalus
-                        // Apply remaining information (Flags)
-                        var vmItem = VmInstanceManager.TryGetItemData(item.Name);
-
-                        // Flags aren't stored inside objects from Spacer, we therefore set them now if not yet done.
-                        if (item.Flags == 0 && vmItem != null)
-                        {
-                            item.Flags = vmItem.Flags | vmItem.MainFlag;
-                        }
-                    }
-                }
-            }
-        }
-
         private GameObject CreateDecal(IVirtualObject vob, GameObject parent)
         {
             return MeshFactory.CreateVobDecal(vob, (VisualDecal)vob.Visual,
@@ -850,7 +737,6 @@ namespace GUZ.Core.Manager.Vobs
         {
             var go = GameObject.CreatePrimitive(PrimitiveType.Cube);
             go.name = $"{vob.Name} - Empty DEBUG object. Check with Spacer if buggy.";
-            SetPosAndRot(go, vob.Position, vob.Rotation);
             return go;
         }
     }

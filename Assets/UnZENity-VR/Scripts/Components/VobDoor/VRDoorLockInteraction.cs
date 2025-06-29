@@ -1,19 +1,20 @@
 ﻿#if GUZ_HVR_INSTALLED
 using GUZ.Core.Creator.Sounds;
 using GUZ.Core.Globals;
-using GUZ.Core.Properties;
+using GUZ.Core.Vob;
 using GUZ.VR.Components.VobItem;
 using GUZ.VR.Manager;
 using GUZ.VR.Properties.VobItem;
 using UnityEngine;
+using ZenKit.Vobs;
 
 namespace GUZ.VR.Components.VobDoor
 {
     public class VRDoorLockInteraction : MonoBehaviour
     {
         [SerializeField] private GameObject _rootGO;
-        [SerializeField] private VobDoorProperties _properties;
         [SerializeField] private AudioSource _audioSource;
+        private IDoor _vobDoor;
 
         private const string _lockInteractionColliderName = "LockPickInteraction";
 
@@ -27,6 +28,12 @@ namespace GUZ.VR.Components.VobDoor
             StepFailure,
             Unlocked
         }
+
+
+        private void Start()
+        {
+            _vobDoor = GetComponentInParent<VobLoader>().Container.VobAs<IDoor>();
+        }
         
         private void OnTriggerEnter(Collider other)
         {
@@ -37,10 +44,8 @@ namespace GUZ.VR.Components.VobDoor
 
             // FIXME - For lab only. Remove once Interface of Door (IDoor) exists: https://github.com/GothicKit/ZenKitCS/pull/12
             // Mark all doors as locked in lab
-            if (_properties.DoorProperties != null && !_properties.DoorProperties.IsLocked)
-            {
+            if (!_vobDoor.IsLocked)
                 return;
-            }
 
             _combinationPos = 0;
             PlaySound(Constants.Daedalus.DoorLockSoundName);

@@ -38,8 +38,10 @@ namespace GUZ.Core.Manager
         public SlotId SaveGameId;
         public bool IsNewGame => SaveGameId == SlotId.NewGame;
         public bool IsLoadedGame => !IsNewGame;
-        public bool IsFirstWorldLoadingFromSaveGame; // Check if we load save game right now!
+        public bool IsWorldEnteredFirstTime;
 
+        public bool IsFirstWorldLoadingFromSaveGame; // Check if we load save game right now!
+        
         /// <summary>
         /// Values can be:
         /// - true - When we start a new game and load first world | when we visit another world for the first time
@@ -86,6 +88,8 @@ namespace GUZ.Core.Manager
 
         public void LoadNewGame()
         {
+            GlobalEventDispatcher.LoadGameStart.Invoke();
+
             SaveGameId = 0;
             Save = new SaveGame(GameContext.GameVersionAdapter.Version);
             IsFirstWorldLoadingFromSaveGame = true;
@@ -97,6 +101,8 @@ namespace GUZ.Core.Manager
         /// </summary>
         public void LoadSavedGame(SlotId saveGameId)
         {
+            GlobalEventDispatcher.LoadGameStart.Invoke();
+
             LoadSavedGame(saveGameId, GetSaveGame(saveGameId));
         }
 
@@ -148,11 +154,13 @@ namespace GUZ.Core.Manager
             {
                 worldToUse = saveGameWorld;
                 IsWorldLoadedForTheFirstTime = false;
+                IsWorldEnteredFirstTime = false;
             }
             else
             {
                 // If there is no save game used or world not saved, we visit it for the first time.
                 worldToUse = originalWorld;
+                IsWorldEnteredFirstTime = true;
             }
 
             // 3. Store this world into runtime data as it's now loaded and cached during gameplay. (To save later when needed.)
@@ -174,7 +182,13 @@ namespace GUZ.Core.Manager
                 WayNet = (CachedWayNet)worldToUse.WayNet.Cache()
             };
         }
-
+        
+        /// <summary>
+        /// Load a Save Game.
+        /// 
+        /// Hint: If you want to compare an original Gothic save and an UnZENity save, use zen2zen and convert a save file
+        ///       to ascii for comparison: https://github.com/GothicKit/ZenKit/blob/main/examples/zen2zen.cc
+        /// </summary>
         [CanBeNull]
         public SaveGame GetSaveGame(SlotId folderSaveId)
         {
@@ -200,6 +214,9 @@ namespace GUZ.Core.Manager
         /// 3. Save world-by-world into the save game itself
         ///
         /// Hint: Needs to be called after EndOfFrame to ensure we can do a screenshot as thumbnail.
+        /// Hint: If you want to compare an original Gothic save and an UnZENity save, use zen2zen and convert a save file
+        ///       to ascii for comparison: https://github.com/GothicKit/ZenKit/blob/main/examples/zen2zen.cc
+        /// 
         /// </summary>
         public void SaveCurrentGame(SlotId saveGameId, string title)
         {
@@ -263,6 +280,9 @@ namespace GUZ.Core.Manager
         /// 2. Drop LevelCompo and move all VOBs one level up
         /// 3. The SaveTree is nearly flat (except some sub-elements from special VOBs.)
         /// 4. Save it
+        ///
+        /// HINT: Whenever G1 saves a game, the VOB tree gets reversed. I.e. you need to save1 + load1 + save2 in G1 to get the same result twice.
+        ///       It also means, that the order of VOBs is irrelevant for the game itself.
         /// </summary>
         private void PrepareWorldDataForSaving2(ZenKit.World world, List<IVirtualObject> vobs)
         {
@@ -274,8 +294,6 @@ namespace GUZ.Core.Manager
                 ? vobs.SelectMany(vob => vob.Children).ToList()
                 : vobs;
 
-            // all Spots and Items are in reverse order in G1 save game.
-            allVobs.Reverse();
             world.RootObjects = allVobs;
 
             // G1 stores all elements below LevelCompo. But we need to be careful as its children might have additional children.

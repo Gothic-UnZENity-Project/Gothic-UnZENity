@@ -11,6 +11,7 @@ using GUZ.Core.Npc.Actions.AnimationActions;
 using GUZ.Core.Properties;
 using GUZ.Core.Util;
 using UnityEngine;
+using ZenKit;
 using ZenKit.Daedalus;
 using Logger = GUZ.Core.Util.Logger;
 
@@ -75,7 +76,7 @@ namespace GUZ.Core.Manager
                 foreach (var dialog in npcContainer.Props.Dialogs)
                 {
                     // Dialog is non-permanent and already been told
-                    if (dialog.Permanent == 0 && GameData.KnownDialogInfos.Contains(dialog.Index))
+                    if (dialog.Permanent == 0 && GetInfoState(dialog.Index).Told)
                     {
                         continue;
                     }
@@ -117,7 +118,7 @@ namespace GUZ.Core.Manager
                 }
 
                 // Important dialog has already been told.
-                if (dialog.Permanent != 1 && GameData.KnownDialogInfos.Contains(dialog.Index))
+                if (dialog.Permanent != 1 && GetInfoState(dialog.Index).Told)
                 {
                     continue;
                 }
@@ -311,14 +312,71 @@ namespace GUZ.Core.Manager
             }
         }
 
-        public static bool ExtNpcKnowsInfo(NpcInstance npc, int infoInstance)
+        public static bool ExtNpcKnowsInfo(NpcInstance npc, int informationIndex)
         {
-            return GameData.KnownDialogInfos.Contains(infoInstance);
+            var infoInstanceName = GameData.GothicVm.GetSymbolByIndex(informationIndex)!.Name;
+            var state = GameGlobals.SaveGame.Save.State;
+            SaveInfoState foundInfo = default;
+            
+            for (var i = 0; i < state.InfoStateCount; i++)
+            {
+                if (state.GetInfoState(i).Name == infoInstanceName)
+                {
+                    foundInfo = state.GetInfoState(i);
+                    break;
+                }
+            }
+            
+            // New entry - Add it now
+            if (foundInfo.Name == null)
+            {
+                foundInfo = new()
+                {
+                    Name = infoInstanceName,
+                    Told = false
+                };
+                GameGlobals.SaveGame.Save.State.AddInfoState(foundInfo);
+            }
+
+            return foundInfo.Told;
         }
 
-        public static void AddNpcInfoTold(int informationIndex)
+        private static SaveInfoState GetInfoState(int informationIndex)
         {
-            GameData.KnownDialogInfos.Add(informationIndex);
+            var infoInstanceName = GameData.GothicVm.GetSymbolByIndex(informationIndex)!.Name;
+            var state = GameGlobals.SaveGame.Save.State;
+
+            for (var i = 0; i < state.InfoStateCount; i++)
+            {
+                if (state.GetInfoState(i).Name == infoInstanceName)
+                {
+                    return state.GetInfoState(i);
+                }
+            }
+
+            // We safely assume, that if an entry doesn't exist in list, it's simply not yet told.
+            return default;
+        }
+
+        private static void AddNpcInfoTold(int informationIndex)
+        {
+            var infoInstanceName = GameData.GothicVm.GetSymbolByIndex(informationIndex)!.Name;
+            var state = GameGlobals.SaveGame.Save.State;
+            
+            for (var i = 0; i < state.InfoStateCount; i++)
+            {
+                if (state.GetInfoState(i).Name == infoInstanceName)
+                {
+                    state.SetInfoState(i, new SaveInfoState
+                    {
+                        Name = infoInstanceName,
+                        Told = true
+                    });
+                    return;
+                }
+            }
+            
+            Logger.LogWarning($"Couldn't find NpcInfoTold entry for {infoInstanceName}", LogCat.Dialog);
         }
 
         private static GameObject GetGo(NpcInstance npc)
