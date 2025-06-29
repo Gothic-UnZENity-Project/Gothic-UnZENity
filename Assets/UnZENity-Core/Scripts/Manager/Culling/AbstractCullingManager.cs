@@ -6,6 +6,16 @@ namespace GUZ.Core.Manager.Culling
 {
     public abstract class AbstractCullingManager
     {
+
+        protected enum State
+        {
+            None,
+            Loading,
+            WorldLoaded
+        }
+
+        protected State CurrentState;
+        
         // Stored for resetting after world switch
         protected CullingGroup CullingGroup;
 
@@ -14,8 +24,6 @@ namespace GUZ.Core.Manager.Culling
 
         // Temporary spheres during async world loading calls.
         protected List<BoundingSphere> TempSpheres = new();
-
-        protected bool IsFinalized;
 
         protected abstract void VisibilityChanged(CullingGroupEvent evt);
 
@@ -36,7 +44,7 @@ namespace GUZ.Core.Manager.Culling
             CullingGroup.Dispose();
             CullingGroup = new CullingGroup();
 
-            IsFinalized = false;
+            CurrentState = State.Loading;
         }
 
         /// <summary>
@@ -50,7 +58,7 @@ namespace GUZ.Core.Manager.Culling
             CullingGroup.targetCamera = mainCamera;
             CullingGroup.SetDistanceReferencePoint(mainCamera.transform);
 
-            IsFinalized = true;
+            CurrentState = State.WorldLoaded;
         }
 
         public virtual void Destroy()

@@ -18,35 +18,38 @@ namespace GUZ.Core.Manager.Culling
 
         public void AddCullingEntry(VobContainer container)
         {
-            if (IsFinalized)
+            if (CurrentState != State.Loading)
             {
                 Logger.LogWarning($"CullingGroup for Sounds closed already. Can't add >{container.Go.name}<", LogCat.Audio);
                 return;
             }
 
-            AddCullingEntryInternal(container.Go, container.VobAs<ISound>());
+            AddCullingEntry(container.Go, container.VobAs<ISound>());
         }
         
         public void AddCullingEntry(GameObject go, ISound vob)
         {
-            // Logic:
-            // 1. If !IsFinalized, we add all entries to the list based on rootVob position (e.g., a soundVob directly below levelCompo)
-            // 2. If IsFinalized, then added entries are subVobs (e.g., Cauldron->Sound) and we enlarge the cullingArray now.
-            if (!IsFinalized)
-                return;
-            
             AddCullingEntryInternal(go, vob);
-            
-            // Each time we add an entry, we need to recreate the array for the CullingGroup.
-            CullingGroup.SetBoundingSpheres(TempSpheres.ToArray());
         }
-        
+
+        /// <summary>
+        ///Logic:
+        /// 1. If In World loading state, we add all entries to the list based on rootVob position (e.g., a soundVob directly below levelCompo)
+        /// 2. If After Loading, then added entries are subVobs (e.g., Cauldron->Sound) and we enlarge the cullingArray now.
+        /// </summary>
         private void AddCullingEntryInternal(GameObject go, ISound vob)
         {
             Objects.Add(go);
+            
             // FIXME - First call of VisibilityChanged() always provides visible=false? Is the pos+radius correct?
             var sphere = new BoundingSphere(go.transform.position, vob.Radius / 100f); // Gothic's values are in cm, Unity's in m.
             TempSpheres.Add(sphere);
+
+            if (CurrentState == State.WorldLoaded)
+            {
+                // Each time we add an entry, we need to recreate the array for the CullingGroup.
+                CullingGroup.SetBoundingSpheres(TempSpheres.ToArray());
+            }
         }
         
         /// <summary>

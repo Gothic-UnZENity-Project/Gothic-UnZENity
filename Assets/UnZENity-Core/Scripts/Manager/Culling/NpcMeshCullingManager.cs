@@ -32,7 +32,7 @@ namespace GUZ.Core.Manager.Culling
 
         public void AddCullingEntry(GameObject go)
         {
-            if (IsFinalized)
+            if (CurrentState != State.Loading)
             {
                 Logger.LogWarning($"CullingGroup for Sounds closed already. Can't add >{go.name}<", LogCat.Mesh);
                 return;
@@ -40,7 +40,7 @@ namespace GUZ.Core.Manager.Culling
             
             Objects.Add(go);
 
-            // Normally NPC spheres are ~1 meter in radius. But we need to fake the volume, so that Culling always thinks
+            // Normally NPC spheres are ~1 meters in radius. But we need to fake the volume, so that Culling always thinks
             // we're "inside" the NPC and Frustum+Occlusion Culling isn't triggered.
             // (@see VobSoundCullingManager where we also use it exactly that way, and it works.)
             var sphere = new BoundingSphere(go.transform.position, _featureCullingDistance);
