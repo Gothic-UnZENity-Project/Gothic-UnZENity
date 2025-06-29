@@ -179,6 +179,12 @@ namespace GUZ.Core.Manager
             };
         }
 
+        /// <summary>
+        /// Load a Save Game.
+        /// 
+        /// Hint: If you want to compare an original Gothic save and an UnZENity save, use zen2zen and convert a save file
+        ///       to ascii for comparison: https://github.com/GothicKit/ZenKit/blob/main/examples/zen2zen.cc
+        /// </summary>
         [CanBeNull]
         public SaveGame GetSaveGame(SlotId folderSaveId)
         {
@@ -204,6 +210,9 @@ namespace GUZ.Core.Manager
         /// 3. Save world-by-world into the save game itself
         ///
         /// Hint: Needs to be called after EndOfFrame to ensure we can do a screenshot as thumbnail.
+        /// Hint: If you want to compare an original Gothic save and an UnZENity save, use zen2zen and convert a save file
+        ///       to ascii for comparison: https://github.com/GothicKit/ZenKit/blob/main/examples/zen2zen.cc
+        /// 
         /// </summary>
         public void SaveCurrentGame(SlotId saveGameId, string title)
         {
