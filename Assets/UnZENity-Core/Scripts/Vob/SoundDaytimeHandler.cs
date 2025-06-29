@@ -72,6 +72,9 @@ namespace GUZ.Core.Vob
 
         private void StartCoroutineInternal()
         {
+            if (_audioSource1 == null)
+                Logger.LogError($"Object {gameObject.name} has no audio source 1! Fix it!", LogCat.Audio);
+            
             // Either it's not yet initialized (no clip) or it's no random loop
             if (_audioSource1.clip == null || _vobContainer.VobAs<ISoundDaytime>().Mode != SoundMode.Random)
             {
