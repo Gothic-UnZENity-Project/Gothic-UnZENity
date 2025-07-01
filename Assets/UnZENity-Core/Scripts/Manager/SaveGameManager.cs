@@ -228,10 +228,18 @@ namespace GUZ.Core.Manager
 
             foreach (var worldData in _worlds)
             {
-                var world = worldData.Value.OriginalWorld;
+                var world = worldData.Value;
                 // FIXME - We need to create a new combined world first.
-                PrepareWorldDataForSaving2(world, worldData.Value.Vobs);
-                saveGame.Save(GetSaveGamePath(saveGameId), world, worldData.Key.TrimEndIgnoreCase(".ZEN").ToUpper());
+                
+                // World not yet saved
+                if (world.SaveGameWorld == null)
+                {
+                    // We simply load the world an additional time to have a Pointer to save later.
+                    world.SaveGameWorld = ResourceLoader.TryGetWorld(worldData.Key)!;
+                }
+                
+                PrepareWorldDataForSaving2(world.SaveGameWorld, worldData.Value.Vobs);
+                saveGame.Save(GetSaveGamePath(saveGameId), world.SaveGameWorld, worldData.Key.TrimEndIgnoreCase(".ZEN").ToUpper());
             }
         }
 
@@ -290,9 +298,13 @@ namespace GUZ.Core.Manager
 
             // If the root elements are LevelCompos, then we save a new game.
             // Let's use its children as the levelCompo isn't saved in G1.
-            allVobs = vobs.First().Type == VirtualObjectType.zCVobLevelCompo
-                ? vobs.SelectMany(vob => vob.Children).ToList()
-                : vobs;
+            foreach (var vob in vobs)
+            {
+                if (vob.Type == VirtualObjectType.zCVobLevelCompo)
+                    allVobs.AddRange(vob.Children);
+                else
+                    allVobs.Add(vob);
+            }
 
             world.RootObjects = allVobs;
 
