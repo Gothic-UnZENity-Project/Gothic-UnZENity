@@ -23,7 +23,7 @@ namespace GUZ.Core.Manager.Culling
         protected readonly List<GameObject> Objects = new();
 
         // Temporary spheres during async world loading calls.
-        protected List<BoundingSphere> TempSpheres = new();
+        protected List<BoundingSphere> Spheres = new();
 
         protected abstract void VisibilityChanged(CullingGroupEvent evt);
 
@@ -40,7 +40,7 @@ namespace GUZ.Core.Manager.Culling
         protected virtual void PreWorldCreate()
         {
             Objects.ClearAndReleaseMemory();
-            TempSpheres.ClearAndReleaseMemory();
+            Spheres.ClearAndReleaseMemory();
             CullingGroup.Dispose();
             CullingGroup = new CullingGroup();
 
@@ -55,8 +55,8 @@ namespace GUZ.Core.Manager.Culling
         {
             // Set main camera as reference point
             var mainCamera = Camera.main!;
-            CullingGroup.targetCamera = mainCamera;
-            CullingGroup.SetDistanceReferencePoint(mainCamera.transform);
+            CullingGroup.targetCamera = mainCamera; // Needed for FrustumCulling and OcclusionCulling to work.
+            CullingGroup.SetDistanceReferencePoint(mainCamera.transform); // Needed for BoundingDistances to work.
 
             CurrentState = State.WorldLoaded;
         }

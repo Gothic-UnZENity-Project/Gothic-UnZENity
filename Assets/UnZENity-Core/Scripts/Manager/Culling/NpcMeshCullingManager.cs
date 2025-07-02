@@ -44,7 +44,7 @@ namespace GUZ.Core.Manager.Culling
             // we're "inside" the NPC and Frustum+Occlusion Culling isn't triggered.
             // (@see VobSoundCullingManager where we also use it exactly that way, and it works.)
             var sphere = new BoundingSphere(go.transform.position, _featureCullingDistance);
-            TempSpheres.Add(sphere);
+            Spheres.Add(sphere);
         }
 
         /// <summary>
@@ -58,7 +58,7 @@ namespace GUZ.Core.Manager.Culling
 
                 // For performance reasons, we initially used a List during creation.
                 // Now we move to an array which is copied by reference to CullingGroup and can be updated later via Update().
-                _spheres = TempSpheres.ToArray();
+                _spheres = Spheres.ToArray();
                 CullingGroup.SetBoundingSpheres(_spheres);
 
                 // As we "faked" the volume of NPCs, we will plainly disable them whenever we are out of their volume (aka range).
@@ -73,7 +73,7 @@ namespace GUZ.Core.Manager.Culling
             }
 
             // Cleanup
-            TempSpheres.ClearAndReleaseMemory();
+            Spheres.ClearAndReleaseMemory();
         }
 
         protected override void VisibilityChanged(CullingGroupEvent evt)

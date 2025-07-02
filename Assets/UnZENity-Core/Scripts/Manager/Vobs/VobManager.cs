@@ -31,7 +31,6 @@ namespace GUZ.Core.Manager.Vobs
         private VobInitializer _initializer = new ();
 
         private Dictionary<VirtualObjectType, GameObject> _vobTypeParentGOs = new();
-        private List<GameObject> _cullingVobObjects = new();
         private Queue<VobLoader> _objectsToInitQueue = new();
 
         // Important: All of them are not culled!
@@ -185,13 +184,21 @@ namespace GUZ.Core.Manager.Vobs
             }
         }
 
-        public void CreateItemMesh(int itemId, string spawnPoint)
+        public void CreateItem(int itemId, string spawnPoint)
         {
             var item = VmInstanceManager.TryGetItemData(itemId);
+            var wp = WayNetHelper.GetWayNetPoint(spawnPoint)!;
 
-            var position = WayNetHelper.GetWayNetPoint(spawnPoint).Position;
+            var vob = new Item
+            {
+                Name = item.Name,
+                Position = wp.Position.ToZkVector(),
+                Rotation = wp.Rotation.ToMatrix3x3(),
+                Visual = new VisualMesh()
+            };
 
-            _initializer.CreateItemMesh(item, GetRootGameObjectOfType(VirtualObjectType.oCItem), position);
+            var container = CreateContainerWithLoader(vob);
+            GameGlobals.VobMeshCulling.AddCullingEntry(container);
         }
 
         /// <summary>
@@ -237,8 +244,6 @@ namespace GUZ.Core.Manager.Vobs
         private void PreCreateWorldVobs(List<IVirtualObject> vobs, GameObject rootGo, LoadingManager loading)
         {
             loading.SetPhase(nameof(WorldLoadingBarHandler.ProgressType.VOB), GetTotalVobCount(vobs));
-
-            _cullingVobObjects.Clear();
 
             // We reset the GO dictionary.
             _vobTypeParentGOs = new();
@@ -297,8 +302,6 @@ namespace GUZ.Core.Manager.Vobs
 
         private void PostCreateWorldVobs()
         {
-            GameGlobals.VobMeshCulling.PrepareVobCulling(_cullingVobObjects);
-
             // DEBUG - If we want to load all VOBs at once, we need to initialize all LazyLoad objects now.
             if (!GameGlobals.Config.Dev.EnableVOBMeshCulling)
             {
@@ -404,7 +407,7 @@ namespace GUZ.Core.Manager.Vobs
             if (config.Dev.EnableVOBs && (activeTypes.IsEmpty() || activeTypes.Contains(VirtualObjectType.oCItem)))
             {
                 // FIXME - Add item normally like a VOB via VOBManager and add it to Culling!
-                GameGlobals.Vobs.CreateItemMesh(itemInstance, spawnpoint);
+                GameGlobals.Vobs.CreateItem(itemInstance, spawnpoint);
             }
         }
 
@@ -461,7 +464,7 @@ namespace GUZ.Core.Manager.Vobs
                 return;
             }
 
-            _cullingVobObjects.Add(container.Go);
+            GameGlobals.VobMeshCulling.AddCullingEntry(container);
         }
 
         private static void AddToMobInteractableList(VobContainer container)

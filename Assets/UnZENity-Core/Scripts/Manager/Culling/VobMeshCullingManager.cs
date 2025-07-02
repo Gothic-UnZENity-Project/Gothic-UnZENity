@@ -3,7 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using GUZ.Core.Config;
+using GUZ.Core.Data.Container;
 using GUZ.Core.Debugging;
+using GUZ.Core.Extensions;
 using GUZ.Core.Util;
 using GUZ.Core.Vm;
 using GUZ.Core.Vob;
@@ -17,25 +19,29 @@ namespace GUZ.Core.Manager.Culling
 {
     /// <summary>
     /// CullingGroups are a way for objects inside a scene to be handled by frustum culling and occlusion culling.
-    /// With this set up, VOBs are handled by camera's view and culling behaviour, so that the StateChanged() event disables/enables VOB GameObjects.
+    /// With this set up, VOBs are handled by camera's view and culling behavior, so that the StateChanged() event disables/enables VOB GameObjects.
     /// @see https://docs.unity3d.com/Manual/CullingGroupAPI.html
+    ///
+    /// Special treatment:
+    /// 1. Multiple types of Sphere sizes for improved culling of small entries
+    /// 2. tracking of culling "pause" when item is in hand (etc.)
     /// </summary>
-    public class VobMeshCullingManager
+    public class VobMeshCullingManager : AbstractCullingManager
     {
         // Stored for resetting after world switch
-        private CullingGroup _vobCullingGroupSmall;
-        private CullingGroup _vobCullingGroupMedium;
-        private CullingGroup _vobCullingGroupLarge;
+        private CullingGroup _cullingGroupSmall => CullingGroup;
+        private CullingGroup _cullingGroupMedium;
+        private CullingGroup _cullingGroupLarge;
 
         // Stored for later index mapping SphereIndex => GOIndex
-        private readonly List<GameObject> _vobObjectsSmall = new();
-        private readonly List<GameObject> _vobObjectsMedium = new();
-        private readonly List<GameObject> _vobObjectsLarge = new();
+        private List<GameObject> _objectsSmall => Objects;
+        private readonly List<GameObject> _objectsMedium = new();
+        private readonly List<GameObject> _objectsLarge = new();
 
         // Stored for later position updates for moved Vobs
-        private BoundingSphere[] _vobSpheresSmall;
-        private BoundingSphere[] _vobSpheresMedium;
-        private BoundingSphere[] _vobSpheresLarge;
+        private List<BoundingSphere> _spheresSmall => Spheres;
+        private List<BoundingSphere> _spheresMedium = new();
+        private List<BoundingSphere> _spheresLarge = new();
 
         // Do not trigger FC or OC while in that range of an object.
         private const float _gracePeriodCullingDistance = 5f;
@@ -69,20 +75,17 @@ namespace GUZ.Core.Manager.Culling
             _featureLargeCullingGroup = config.LargeVOBMeshCullingGroup;
         }
 
-        public void Init()
+
+        public override void Init()
         {
             if (!_featureEnableCulling)
-            {
                 return;
-            }
-
-            GlobalEventDispatcher.LoadGameStart.AddListener(PreWorldCreate);
-            GlobalEventDispatcher.WorldSceneLoaded.AddListener(PostWorldCreate);
+            
+            base.Init();
 
             // Unity demands CullingGroups to be created in Awake() or Start() earliest.
-            _vobCullingGroupSmall = new CullingGroup();
-            _vobCullingGroupMedium = new CullingGroup();
-            _vobCullingGroupLarge = new CullingGroup();
+            _cullingGroupMedium = new CullingGroup();
+            _cullingGroupLarge = new CullingGroup();
 
             _coroutineManager.StartCoroutine(StopVobTrackingBasedOnVelocity());
         }
@@ -98,79 +101,83 @@ namespace GUZ.Core.Manager.Culling
             }
 
             Gizmos.color = new Color(.9f, 0, 0);
-            if (_vobSpheresSmall != null)
+            if (_spheresSmall != null)
             {
-                for (var i = 0; i < _vobSpheresSmall.Length; i++)
+                for (var i = 0; i < _spheresSmall.Count; i++)
                 {
-                    if (_vobObjectsSmall[i].TryGetComponent(out VobCullingGizmo gizmoComp) && gizmoComp.ActivateGizmo)
+                    if (_objectsSmall[i].TryGetComponent(out VobCullingGizmo gizmoComp) && gizmoComp.ActivateGizmo)
                     {
-                        Gizmos.DrawWireSphere(_vobSpheresSmall[i].position, _vobSpheresSmall[i].radius);
+                        Gizmos.DrawWireSphere(_spheresSmall[i].position, _spheresSmall[i].radius);
                     }
                 }
             }
 
             Gizmos.color = new Color(.5f, 0, 0);
-            if (_vobSpheresMedium != null)
+            if (_spheresMedium != null)
             {
-                for (var i = 0; i < _vobSpheresMedium.Length; i++)
+                for (var i = 0; i < _spheresMedium.Count; i++)
                 {
-                    if (_vobObjectsMedium[i].TryGetComponent(out VobCullingGizmo gizmoComp) && gizmoComp.ActivateGizmo)
+                    if (_objectsMedium[i].TryGetComponent(out VobCullingGizmo gizmoComp) && gizmoComp.ActivateGizmo)
                     {
-                        Gizmos.DrawWireSphere(_vobSpheresMedium[i].position, _vobSpheresMedium[i].radius);
+                        Gizmos.DrawWireSphere(_spheresMedium[i].position, _spheresMedium[i].radius);
                     }
                 }
 
             }
 
             Gizmos.color = new Color(.2f, 0, 0);
-            if (_vobSpheresLarge != null)
+            if (_spheresLarge != null)
             {
-                for (var i = 0; i < _vobSpheresLarge.Length; i++)
+                for (var i = 0; i < _spheresLarge.Count; i++)
                 {
-                    if (_vobObjectsLarge[i].TryGetComponent(out VobCullingGizmo gizmoComp) && gizmoComp.ActivateGizmo)
+                    if (_objectsLarge[i].TryGetComponent(out VobCullingGizmo gizmoComp) && gizmoComp.ActivateGizmo)
                     {
-                        Gizmos.DrawWireSphere(_vobSpheresLarge[i].position, _vobSpheresLarge[i].radius);
+                        Gizmos.DrawWireSphere(_spheresLarge[i].position, _spheresLarge[i].radius);
                     }
                 }
             }
         }
 
-        private void PreWorldCreate()
+        protected override void PreWorldCreate()
         {
-            _vobCullingGroupSmall.Dispose();
-            _vobCullingGroupMedium.Dispose();
-            _vobCullingGroupLarge.Dispose();
+            base.PreWorldCreate();
+            
+            Logger.LogWarningEditor("FIXME - As the VOBs aren't loaded yet, we need to fetch the LocalBounds from mesh cache " +
+                                    "which needs to be created before the game starts. " +
+                                    "Currently, each VOB is of >small< size aka Bounds.default", LogCat.Vob);
+            
+            _objectsMedium.ClearAndReleaseMemory();
+            _objectsLarge.ClearAndReleaseMemory();
 
-            _vobCullingGroupSmall = new CullingGroup();
-            _vobCullingGroupMedium = new CullingGroup();
-            _vobCullingGroupLarge = new CullingGroup();
-
-            _vobObjectsSmall.Clear();
-            _vobObjectsMedium.Clear();
-            _vobObjectsLarge.Clear();
-
-            _vobSpheresSmall = null;
-            _vobSpheresMedium = null;
-            _vobSpheresLarge = null;
+            _spheresMedium.ClearAndReleaseMemory();
+            _spheresLarge.ClearAndReleaseMemory();
+            
+            _cullingGroupMedium.Dispose();
+            _cullingGroupLarge.Dispose();
+            _cullingGroupMedium = new CullingGroup();
+            _cullingGroupLarge = new CullingGroup();
 
             _pausedVobs.Clear();
             _pausedVobsToReenable.Clear();
             _pausedVobsToReenableCoroutine.Clear();
         }
 
-        private void VobSmallChanged(CullingGroupEvent evt)
+        /// <summary>
+        /// aka VobSmallChanged()
+        /// </summary>
+        protected override void VisibilityChanged(CullingGroupEvent evt)
         {
-            VobChanged(evt, _vobObjectsSmall, VobList.Small);
+            VobChanged(evt, _objectsSmall, VobList.Small);
         }
 
         private void VobMediumChanged(CullingGroupEvent evt)
         {
-            VobChanged(evt, _vobObjectsMedium, VobList.Medium);
+            VobChanged(evt, _objectsMedium, VobList.Medium);
         }
 
         private void VobLargeChanged(CullingGroupEvent evt)
         {
-            VobChanged(evt, _vobObjectsLarge, VobList.Large);
+            VobChanged(evt, _objectsLarge, VobList.Large);
         }
 
         /// <summary>
@@ -211,76 +218,51 @@ namespace GUZ.Core.Manager.Culling
             }
         }
 
-        /// <summary>
-        /// Fill CullingGroups with GOs based on size (radius), position, and object size (small/medium/large)
-        /// </summary>
-        public void PrepareVobCulling(List<GameObject> objects)
+        public void AddCullingEntry(VobContainer container)
         {
-            if (!_featureEnableCulling)
+            if (container.Go == null)
+                return;
+            
+            // FIXME - Particles (like leaves in the forest) will be handled like big vobs, but could potentially
+            //         being handled as small ones as leaves shouldn't be visible from 100 of meters away.
+            var bounds = GetLocalBounds(container);
+            if (!bounds.HasValue)
             {
+                // e.g. ITMICELLO which has no mesh and therefore no cached Bounds.
+                // Logger.LogError($"Couldn't find mesh for >{obj}< to be used for CullingGroup. Skipping...");
                 return;
             }
 
-            // FIXME - As the VOBs aren't loaded yet, we need to fetch the LocalBounds from a cache which needs to be created before the game starts.
+            var sphere = GetSphere(container.Go, bounds.Value);
+            var size = sphere.radius * 2;
 
-            var smallDim = _featureSmallCullingGroup.MaximumObjectSize;
-            var mediumDim = _featureMediumCullingGroup.MaximumObjectSize;
-            var spheresSmall = new List<BoundingSphere>();
-            var spheresMedium = new List<BoundingSphere>();
-            var spheresLarge = new List<BoundingSphere>();
-
-            foreach (var obj in objects)
+            if (size <= _featureSmallCullingGroup.MaximumObjectSize)
             {
-                if (!obj)
-                {
-                    continue;
-                }
-
-                // FIXME - Particles (like leaves in the forest) will be handled like big vobs, but could potentially
-                // FIXME - be handled as small ones as leaves shouldn't be visible from 100 of meters away.
-                var bounds = GetLocalBounds(obj);
-                if (!bounds.HasValue)
-                {
-                    // e.g. ITMICELLO which has no mesh and therefore no cached Bounds.
-                    // Logger.LogError($"Couldn't find mesh for >{obj}< to be used for CullingGroup. Skipping...");
-                    continue;
-                }
-
-                var sphere = GetSphere(obj, bounds.Value);
-                var size = sphere.radius * 2;
-
-                if (size <= smallDim)
-                {
-                    _vobObjectsSmall.Add(obj);
-                    spheresSmall.Add(sphere);
-                }
-                else if (size <= mediumDim)
-                {
-                    _vobObjectsMedium.Add(obj);
-                    spheresMedium.Add(sphere);
-                }
-                else
-                {
-                    _vobObjectsLarge.Add(obj);
-                    spheresLarge.Add(sphere);
-                }
+                _objectsSmall.Add(container.Go);
+                _spheresSmall.Add(sphere);
+                
+                // Each time we add an entry, we need to recreate the array for the CullingGroup.
+                if (CurrentState == State.WorldLoaded)
+                    _cullingGroupSmall.SetBoundingSpheres(_spheresSmall.ToArray());
             }
+            else if (size <= _featureMediumCullingGroup.MaximumObjectSize)
+            {
+                _objectsMedium.Add(container.Go);
+                _spheresMedium.Add(sphere);
+                
+                // Each time we add an entry, we need to recreate the array for the CullingGroup.
+                if (CurrentState == State.WorldLoaded)
+                    _cullingGroupMedium.SetBoundingSpheres(_spheresMedium.ToArray());
+            }
+            else
+            {
+                _objectsLarge.Add(container.Go);
+                _spheresLarge.Add(sphere);
 
-            _vobCullingGroupSmall.onStateChanged = VobSmallChanged;
-            _vobCullingGroupMedium.onStateChanged = VobMediumChanged;
-            _vobCullingGroupLarge.onStateChanged = VobLargeChanged;
-
-            _vobCullingGroupSmall.SetBoundingDistances(new[] { _gracePeriodCullingDistance, _featureSmallCullingGroup.CullingDistance });
-            _vobCullingGroupMedium.SetBoundingDistances(new[] { _gracePeriodCullingDistance, _featureMediumCullingGroup.CullingDistance });
-            _vobCullingGroupLarge.SetBoundingDistances(new[] { _gracePeriodCullingDistance, _featureLargeCullingGroup.CullingDistance });
-
-            _vobSpheresSmall = spheresSmall.ToArray();
-            _vobSpheresMedium = spheresMedium.ToArray();
-            _vobSpheresLarge = spheresLarge.ToArray();
-
-            _vobCullingGroupSmall.SetBoundingSpheres(_vobSpheresSmall);
-            _vobCullingGroupMedium.SetBoundingSpheres(_vobSpheresMedium);
-            _vobCullingGroupLarge.SetBoundingSpheres(_vobSpheresLarge);
+                // Each time we add an entry, we need to recreate the array for the CullingGroup.
+                if (CurrentState == State.WorldLoaded)
+                    _cullingGroupLarge.SetBoundingSpheres(_spheresLarge.ToArray());
+            }
         }
 
         private BoundingSphere GetSphere(GameObject go, Bounds bounds)
@@ -297,22 +279,12 @@ namespace GUZ.Core.Manager.Culling
 
         /// <summary>
         /// Fetch Mesh Bounds which are in local space. We will later "move" the bbox to the current world space.
-        ///
+        /// 
         /// TODO If performance allows it, we could also look dynamically for all the existing meshes inside GO
         /// TODO and look for maximum value for largest mesh. But it should be fine for now.
         /// </summary>
-        private Bounds? GetLocalBounds(GameObject go)
+        private Bounds? GetLocalBounds(VobContainer container)
         {
-            go.TryGetComponent(out VobLoader loaderComp);
-
-            if (loaderComp == null)
-            {
-                Logger.LogError($"Couldn't find VobLoader for >{go}< to be used for CullingGroup. Skipping...", LogCat.Mesh);
-                return null;
-            }
-
-            var container = loaderComp.Container;
-
             var totalBounds = new Bounds();
             AddLocalBounds(container.Vob, ref totalBounds);
 
@@ -410,8 +382,6 @@ namespace GUZ.Core.Manager.Culling
                 return default;
             }
 
-            // FIXME - More magic needed. For objects with Mesh, we can store it. But for e.g. Lights, we need to fetch it from the actual
-            // FIXME - VOB.data.radius etc. --> aka more IF-options on how to calculate local bounds
             if (GameGlobals.StaticCache.LoadedVobsBounds.TryGetValue(meshName, out var bounds))
             {
                 return bounds;
@@ -419,7 +389,7 @@ namespace GUZ.Core.Manager.Culling
             else
             {
                 // We can carefully disable this log as some elements aren't cached.
-                // e.g. when there is no texture like for OC_DECORATE_V4.3DS
+                // e.g., when there is no texture like for OC_DECORATE_V4.3DS
                 Logger.LogError($"Couldn't find mesh bounds information from StaticCache for >{meshName}<.", LogCat.Mesh);
                 return default;
             }
@@ -429,14 +399,28 @@ namespace GUZ.Core.Manager.Culling
         /// Set main camera once world is loaded fully.
         /// Doesn't work at loading time as we change scenes etc.
         /// </summary>
-        private void PostWorldCreate()
+        protected override void PostWorldCreate()
         {
-            foreach (var group in new[] { _vobCullingGroupSmall, _vobCullingGroupMedium, _vobCullingGroupLarge })
-            {
-                var mainCamera = Camera.main!;
-                group.targetCamera = mainCamera; // Needed for FrustumCulling and OcclusionCulling to work.
-                group.SetDistanceReferencePoint(mainCamera.transform); // Needed for BoundingDistances to work.
-            }
+            base.PostWorldCreate();
+            
+            var mainCamera = Camera.main!;
+
+            _cullingGroupMedium.targetCamera = mainCamera;
+            _cullingGroupLarge.targetCamera = mainCamera;
+
+            _cullingGroupMedium.SetDistanceReferencePoint(mainCamera.transform);
+            _cullingGroupLarge.SetDistanceReferencePoint(mainCamera.transform);
+
+            _cullingGroupMedium.onStateChanged = VobMediumChanged;
+            _cullingGroupLarge.onStateChanged = VobLargeChanged;
+            
+            _cullingGroupSmall.SetBoundingDistances(new[] { _gracePeriodCullingDistance, _featureSmallCullingGroup.CullingDistance });
+            _cullingGroupMedium.SetBoundingDistances(new[] { _gracePeriodCullingDistance, _featureMediumCullingGroup.CullingDistance });
+            _cullingGroupLarge.SetBoundingDistances(new[] { _gracePeriodCullingDistance, _featureLargeCullingGroup.CullingDistance });
+
+            _cullingGroupSmall.SetBoundingSpheres(_spheresSmall.ToArray());
+            _cullingGroupMedium.SetBoundingSpheres(_spheresMedium.ToArray());
+            _cullingGroupLarge.SetBoundingSpheres(_spheresLarge.ToArray());
         }
 
         public void StartTrackVobPositionUpdates(GameObject go)
@@ -453,20 +437,20 @@ namespace GUZ.Core.Manager.Culling
             }
 
             // Check Small list
-            var index = _vobObjectsSmall.IndexOf(rootGo);
+            var index = _objectsSmall.IndexOf(rootGo);
             var vobType = VobList.Small;
             
             // Check Medium list
             if (index == -1)
             {
-                index = _vobObjectsMedium.IndexOf(rootGo);
+                index = _objectsMedium.IndexOf(rootGo);
                 vobType = VobList.Medium;
             }
 
             // Check Large list
             if (index == -1)
             {
-                index = _vobObjectsLarge.IndexOf(rootGo);
+                index = _objectsLarge.IndexOf(rootGo);
                 vobType = VobList.Large;
             }
 
@@ -565,25 +549,23 @@ namespace GUZ.Core.Manager.Culling
             // We need to find the GO's correlated Sphere in the right VobArray.
             var sphereList = vobType switch
             {
-                VobList.Small => _vobSpheresSmall,
-                VobList.Medium => _vobSpheresMedium,
-                VobList.Large => _vobSpheresLarge,
+                VobList.Small => _spheresSmall,
+                VobList.Medium => _spheresMedium,
+                VobList.Large => _spheresLarge,
                 _ => throw new ArgumentOutOfRangeException()
             };
 
-            sphereList[index].position = go.transform.position;
+            sphereList[index] = new BoundingSphere(go.transform.position, sphereList[index].radius);
         }
 
         public void Destroy()
         {
             if (!_featureEnableCulling)
-            {
                 return;
-            }
 
-            _vobCullingGroupSmall.Dispose();
-            _vobCullingGroupMedium.Dispose();
-            _vobCullingGroupLarge.Dispose();
+            _cullingGroupSmall.Dispose();
+            _cullingGroupMedium.Dispose();
+            _cullingGroupLarge.Dispose();
         }
     }
 }
