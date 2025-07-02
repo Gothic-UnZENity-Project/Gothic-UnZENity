@@ -6,9 +6,9 @@ namespace GUZ.Core.Extensions
     {
         /// <summary>
         /// Transform Vector3 to Unity Vector3.
-        /// cmScale - Gothic positions are in cm, but Unity in m. (factor 100). Most of the time we just transform it directly.
+        /// transformScale - Gothic positions are in cm, but Unity in m. (factor 100). Most of the time we just transform it directly.
         /// </summary>
-        public static System.Numerics.Vector3 ToZkVector(this Vector3 vector3)
+        public static System.Numerics.Vector3 ToZkVector(this Vector3 vector3, bool transformScale = true)
         {
             var vector = new System.Numerics.Vector3
             {
@@ -17,7 +17,10 @@ namespace GUZ.Core.Extensions
                 Z = vector3.z
             };
 
-            return vector;
+            if (transformScale)
+                return vector * 100;
+            else
+                return vector;
         }
     }
 }

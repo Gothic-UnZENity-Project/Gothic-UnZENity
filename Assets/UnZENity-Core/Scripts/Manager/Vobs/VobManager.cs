@@ -184,23 +184,6 @@ namespace GUZ.Core.Manager.Vobs
             }
         }
 
-        public void CreateItem(int itemId, string spawnPoint)
-        {
-            var item = VmInstanceManager.TryGetItemData(itemId);
-            var wp = WayNetHelper.GetWayNetPoint(spawnPoint)!;
-
-            var vob = new Item
-            {
-                Name = item.Name,
-                Position = wp.Position.ToZkVector(),
-                Rotation = wp.Rotation.ToMatrix3x3(),
-                Visual = new VisualMesh()
-            };
-
-            var container = CreateContainerWithLoader(vob);
-            GameGlobals.VobMeshCulling.AddCullingEntry(container);
-        }
-
         /// <summary>
         /// Create item with mesh only. No special handling like grabbing etc.
         /// e.g. used for NPCs drinking beer mesh in their hand.
@@ -395,20 +378,32 @@ namespace GUZ.Core.Manager.Vobs
                 .OrderBy(pair => Vector3.Distance(pair.Vob.Position.ToUnityVector(), position))
                 .FirstOrDefault();
         }
-        public void ExtWldInsertItem(int itemInstance, string spawnpoint)
+        public void ExtWldInsertItem(int itemInstance, string spawnPoint)
         {
-            if (string.IsNullOrEmpty(spawnpoint) || itemInstance <= 0)
-            {
+            if (string.IsNullOrEmpty(spawnPoint) || itemInstance <= 0)
                 return;
-            }
 
             var config = GameGlobals.Config;
             var activeTypes = config.Dev.SpawnVOBTypes.Value;
-            if (config.Dev.EnableVOBs && (activeTypes.IsEmpty() || activeTypes.Contains(VirtualObjectType.oCItem)))
+            if (!config.Dev.EnableVOBs || (!activeTypes.IsEmpty() && activeTypes.Contains(VirtualObjectType.oCItem)))
+                return;
+
+            var item = VmInstanceManager.TryGetItemData(itemInstance);
+            var instanceName = GameData.GothicVm.GetSymbolByIndex(item.Index)!.Name;
+            var wp = WayNetHelper.GetWayNetPoint(spawnPoint)!;
+
+            var vob = new Item
             {
-                // FIXME - Add item normally like a VOB via VOBManager and add it to Culling!
-                GameGlobals.Vobs.CreateItem(itemInstance, spawnpoint);
-            }
+                Name = instanceName,
+                Position = wp.Position.ToZkVector(),
+                Rotation = wp.Rotation.ToMatrix3x3(),
+                Visual = new VisualMesh(),
+                Instance = instanceName
+            };
+
+            var container = CreateContainerWithLoader(vob);
+            GameGlobals.VobMeshCulling.AddCullingEntry(container);
+            GameGlobals.SaveGame.CurrentWorldData.Vobs.Add(container.Vob);
         }
 
         [CanBeNull]
