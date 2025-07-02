@@ -228,18 +228,18 @@ namespace GUZ.Core.Manager
 
             foreach (var worldData in _worlds)
             {
-                var world = worldData.Value;
+                var worldContainer = worldData.Value;
                 // FIXME - We need to create a new combined world first.
                 
                 // World not yet saved
-                if (world.SaveGameWorld == null)
+                if (worldContainer.SaveGameWorld == null)
                 {
                     // We simply load the world an additional time to have a Pointer to save later.
-                    world.SaveGameWorld = ResourceLoader.TryGetWorld(worldData.Key)!;
+                    worldContainer.SaveGameWorld = ResourceLoader.TryGetWorld(worldData.Key)!;
                 }
                 
-                PrepareWorldDataForSaving2(world.SaveGameWorld, worldData.Value.Vobs);
-                saveGame.Save(GetSaveGamePath(saveGameId), world.SaveGameWorld, worldData.Key.TrimEndIgnoreCase(".ZEN").ToUpper());
+                PrepareWorldDataForSaving(worldData.Key == CurrentWorldName, worldContainer);
+                saveGame.Save(GetSaveGamePath(saveGameId), worldContainer.SaveGameWorld, worldData.Key.TrimEndIgnoreCase(".ZEN").ToUpper());
             }
         }
 
@@ -292,13 +292,13 @@ namespace GUZ.Core.Manager
         /// HINT: Whenever G1 saves a game, the VOB tree gets reversed. I.e. you need to save1 + load1 + save2 in G1 to get the same result twice.
         ///       It also means, that the order of VOBs is irrelevant for the game itself.
         /// </summary>
-        private void PrepareWorldDataForSaving2(ZenKit.World world, List<IVirtualObject> vobs)
+        private void PrepareWorldDataForSaving(bool isCurrentWorld, WorldContainer container)
         {
             List<IVirtualObject> allVobs = new();
 
             // If the root elements are LevelCompos, then we save a new game.
             // Let's use its children as the levelCompo isn't saved in G1.
-            foreach (var vob in vobs)
+            foreach (var vob in container.Vobs)
             {
                 if (vob.Type == VirtualObjectType.zCVobLevelCompo)
                     allVobs.AddRange(vob.Children);
@@ -306,15 +306,14 @@ namespace GUZ.Core.Manager
                     allVobs.Add(vob);
             }
 
-            world.RootObjects = allVobs;
+            // We need to set Hero at the beginning of the list like in a G1 save game.
+            if (isCurrentWorld)
+            {
+                var heroVob = ((NpcInstance)GameData.GothicVm.GlobalHero).GetUserData()!.Vob;
+                allVobs.Add(heroVob);
+            }
 
-            // G1 stores all elements below LevelCompo. But we need to be careful as its children might have additional children.
-            // If we simply add all children into the WorldVobs and into SaveGame, we store them duplicated.
-            // Therefore, we only add children of LevelCompo once!
-            // if (isChildBelowLevelCompo)
-            // {
-            //     GameData.WorldVobs.Add(vob);
-            // }
+            container.SaveGameWorld.RootObjects = allVobs;
         }
 
         /// <summary>

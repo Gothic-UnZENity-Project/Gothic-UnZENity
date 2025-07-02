@@ -275,7 +275,7 @@ namespace GUZ.Core.Npc
         {
             if (GameData.GothicVm.GlobalHero != null)
             {
-                // We assume, that this call is only made when the cache got cleared before as we loaded another world.
+                // We assume that this call is only made when the cache got cleared before as we loaded another world.
                 // Therefore, we re-add it now.
                 MultiTypeCache.NpcCache.Add(((NpcInstance)GameData.GothicVm.GlobalHero).GetUserData());
 
