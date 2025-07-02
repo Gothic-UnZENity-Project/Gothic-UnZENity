@@ -173,7 +173,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
         private VobContainer GetNearestMob()
         {
             var pos = NpcGo.transform.position;
-            return VobHelper.GetFreeInteractableWithin10M(pos, Action.String0);
+            return GameGlobals.Vobs.GetFreeInteractableWithin10M(pos, Action.String0);
         }
 
         [CanBeNull]
@@ -183,7 +183,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
                 return null;
 
             var pos = NpcGo.transform.position;
-            var slot = VobHelper.GetNearestSlot(_mobContainer.Go, pos);
+            var slot = GameGlobals.Vobs.GetNearestSlot(_mobContainer.Go, pos);
 
             return slot;
         }

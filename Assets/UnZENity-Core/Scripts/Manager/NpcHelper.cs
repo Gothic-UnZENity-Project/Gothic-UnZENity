@@ -52,7 +52,7 @@ namespace GUZ.Core.Manager
         public static bool ExtIsMobAvailable(NpcInstance npcInstance, string vobName)
         {
             var npc = GetNpc(npcInstance);
-            var container = VobHelper.GetFreeInteractableWithin10M(npc.transform.position, vobName);
+            var container = GameGlobals.Vobs.GetFreeInteractableWithin10M(npc.transform.position, vobName);
 
             return container != null;
         }
@@ -79,7 +79,7 @@ namespace GUZ.Core.Manager
                 }
             }
             else
-                props = VobHelper.GetFreeInteractableWithin10M(npcGo.transform.position, scheme)?.PropsAs<InteractiveProperties>();
+                props = GameGlobals.Vobs.GetFreeInteractableWithin10M(npcGo.transform.position, scheme)?.PropsAs<InteractiveProperties>();
 
             if (props == null)
                 return -1;

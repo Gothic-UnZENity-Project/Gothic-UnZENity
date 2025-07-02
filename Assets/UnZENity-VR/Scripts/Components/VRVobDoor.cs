@@ -56,8 +56,8 @@ namespace GUZ.VR.Components
                 var openSoundEffect = mds.Animations.First(i => i.Name.EqualsIgnoreCase("t_S0_2_S1")).SoundEffects.First().Name;
                 var closeSoundEffect = mds.Animations.First(i => i.Name.EqualsIgnoreCase("t_S1_2_S0")).SoundEffects.First().Name;
 
-                _doorOpenedClips.Add(mdsName.ToLower(), VobHelper.GetSoundClip(openSoundEffect));
-                _doorClosedClips.Add(mdsName.ToLower(), VobHelper.GetSoundClip(closeSoundEffect));
+                _doorOpenedClips.Add(mdsName.ToLower(), GameGlobals.Vobs.GetSoundClip(openSoundEffect));
+                _doorClosedClips.Add(mdsName.ToLower(), GameGlobals.Vobs.GetSoundClip(closeSoundEffect));
             }
 
             var hvrDoor = GetComponentInChildren<HVRPhysicsDoor>();

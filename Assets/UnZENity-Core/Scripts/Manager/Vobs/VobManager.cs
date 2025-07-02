@@ -13,6 +13,7 @@ using GUZ.Core.UI.Menus.LoadingBars;
 using GUZ.Core.Util;
 using GUZ.Core.Vm;
 using GUZ.Core.Vob;
+using JetBrains.Annotations;
 using MyBox;
 using UnityEngine;
 using ZenKit.Vobs;
@@ -24,6 +25,7 @@ namespace GUZ.Core.Manager.Vobs
     public class VobManager
     {
         private const string _noSoundName = "nosound.wav";
+        private const float _interactableLookupDistance = 10f; // meter
 
         // Supporter class where the whole Init() logic is outsourced for better readability.
         private VobInitializer _initializer = new ();
@@ -377,6 +379,52 @@ namespace GUZ.Core.Manager.Vobs
             CreateVobNow(container);
 
             return container;
+        }
+        
+        [CanBeNull]
+        public VobContainer GetFreeInteractableWithin10M(Vector3 position, string visualScheme)
+        {
+            if (!GameData.VobsInteractable.TryGetValue(visualScheme.ToUpper(), out var vobs))
+                return null;
+            
+            return vobs
+                .Where(pair => Vector3.Distance(pair.Vob.Position.ToUnityVector(), position) < _interactableLookupDistance)
+                .OrderBy(pair => Vector3.Distance(pair.Vob.Position.ToUnityVector(), position))
+                .FirstOrDefault();
+        }
+        public void ExtWldInsertItem(int itemInstance, string spawnpoint)
+        {
+            if (string.IsNullOrEmpty(spawnpoint) || itemInstance <= 0)
+            {
+                return;
+            }
+
+            var config = GameGlobals.Config;
+            var activeTypes = config.Dev.SpawnVOBTypes.Value;
+            if (config.Dev.EnableVOBs && (activeTypes.IsEmpty() || activeTypes.Contains(VirtualObjectType.oCItem)))
+            {
+                // FIXME - Add item normally like a VOB via VOBManager and add it to Culling!
+                GameGlobals.Vobs.CreateItemMesh(itemInstance, spawnpoint);
+            }
+        }
+
+        [CanBeNull]
+        public GameObject GetNearestSlot(GameObject go, Vector3 position)
+        {
+            var goTransform = go.transform;
+
+            if (goTransform.childCount == 0)
+            {
+                return null;
+            }
+
+            // We need to move into next elements starting from VobLoader root.
+            var zm = go.transform.GetChild(0).GetChild(0);
+
+            return zm.gameObject.GetAllDirectChildren()
+                .Where(i => i.name.ContainsIgnoreCase("ZS"))
+                .OrderBy(i => Vector3.Distance(i.transform.position, position))
+                .FirstOrDefault();
         }
         
         /// <summary>
