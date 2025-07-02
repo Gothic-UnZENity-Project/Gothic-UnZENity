@@ -309,10 +309,21 @@ namespace GUZ.Core.Manager
             // We need to set Hero at the beginning of the list like in a G1 save game.
             if (isCurrentWorld)
             {
-                var heroVob = ((NpcInstance)GameData.GothicVm.GlobalHero).GetUserData()!.Vob;
-                allVobs.Add(heroVob);
+                var heroContainer = ((NpcInstance)GameData.GothicVm.GlobalHero).GetUserData()!;
+                heroContainer.Vob.Position = heroContainer.Go.transform.position.ToZkVector();
+                heroContainer.Vob.Rotation = heroContainer.Go.transform.rotation.ToZkMatrix();
+                
+                allVobs.Add(heroContainer.Vob);
             }
 
+            GameGlobals.NpcMeshCulling.UpdateVobPositionOfVisibleNpcs();
+            var visibleNpcs = GameGlobals.NpcMeshCulling.GetVisibleNpcs();
+
+            foreach (var visibleNpc in visibleNpcs)
+            {
+                allVobs.Add(visibleNpc.Vob);
+            }
+            
             container.SaveGameWorld.RootObjects = allVobs;
         }
 

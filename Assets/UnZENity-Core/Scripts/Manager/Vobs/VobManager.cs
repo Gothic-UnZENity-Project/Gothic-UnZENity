@@ -396,7 +396,7 @@ namespace GUZ.Core.Manager.Vobs
             {
                 Name = instanceName,
                 Position = wp.Position.ToZkVector(),
-                Rotation = wp.Rotation.ToMatrix3x3(),
+                Rotation = wp.Rotation.ToZkMatrix(),
                 Visual = new VisualMesh(),
                 Instance = instanceName
             };

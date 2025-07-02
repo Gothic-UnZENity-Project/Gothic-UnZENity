@@ -1,5 +1,7 @@
 using System.Collections.Generic;
+using System.Linq;
 using GUZ.Core.Config;
+using GUZ.Core.Data.Container;
 using GUZ.Core.Extensions;
 using GUZ.Core.Npc;
 using GUZ.Core.Util;
@@ -151,6 +153,22 @@ namespace GUZ.Core.Manager.Culling
             }
         }
 
+        public void UpdateVobPositionOfVisibleNpcs()
+        {
+            foreach (var npc in _visibleNpcs.Values)
+            {
+                var container = npc.GetComponent<NpcLoader>().Container;
+
+                container.Vob.Position = container.PrefabProps.Bip01.position.ToZkVector();
+                container.Vob.Rotation = container.PrefabProps.Bip01.rotation.ToZkMatrix();
+            }
+        }
+
+        public List<NpcContainer> GetVisibleNpcs()
+        {
+            return _visibleNpcs.Values.Select(i => i.GetComponent<NpcLoader>().Container).ToList();
+        }
+        
         private void UpdatePosition(int sphereKey, Vector3 position)
         {
             _spheres[sphereKey].position = position;
