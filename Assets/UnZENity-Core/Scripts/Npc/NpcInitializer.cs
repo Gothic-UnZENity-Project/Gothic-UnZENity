@@ -16,6 +16,7 @@ using MyBox;
 using UnityEngine;
 using ZenKit;
 using ZenKit.Daedalus;
+using ZenKit.Vobs;
 using Logger = GUZ.Core.Util.Logger;
 using Object = UnityEngine.Object;
 using WayPoint = GUZ.Core.Vob.WayNet.WayPoint;
@@ -84,7 +85,7 @@ namespace GUZ.Core.Npc
             var symbol = GameData.GothicVm.GetSymbolByName(vobNpc.Name);
             var userDataObject = AllocZkInstance(symbol.Index);
             userDataObject.Vob = vobNpc;
-
+            
             return userDataObject;
         }
 
@@ -98,7 +99,12 @@ namespace GUZ.Core.Npc
                 Instance = npcInstance,
                 Props = new(),
                 Vob = new()
+                {
+                    Ai = new AiHuman(),
+                    EventManager = new EventManager()
+                }
             };
+            
 
             // We reference our object as user data to retrieve it whenever a Daedalus External provides an NpcInstance as input.
             // With this, we can always switch between our UnZENity data and ZenKit data.
