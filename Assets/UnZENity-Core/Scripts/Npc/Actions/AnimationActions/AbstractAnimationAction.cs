@@ -84,7 +84,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
         /// </summary>
         public virtual void AnimationSfxEventCallback(SerializableEventSoundEffect sfxData)
         {
-            var clip = VobHelper.GetSoundClip(sfxData.Name);
+            var clip = GameGlobals.Vobs.GetSoundClip(sfxData.Name);
             PrefabProps.NpcSound.clip = clip;
             PrefabProps.NpcSound.maxDistance = sfxData.Range.ToMeter();
             PrefabProps.NpcSound.Play();

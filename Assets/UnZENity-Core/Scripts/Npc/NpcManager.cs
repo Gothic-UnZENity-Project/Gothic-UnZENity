@@ -15,6 +15,7 @@ using MyBox;
 using UnityEngine;
 using ZenKit;
 using ZenKit.Daedalus;
+using ZenKit.Vobs;
 using Logger = GUZ.Core.Util.Logger;
 
 namespace GUZ.Core.Npc
@@ -38,6 +39,12 @@ namespace GUZ.Core.Npc
         {
             coroutineManager.StartCoroutine(InitNpcCoroutine());
             coroutineManager.StartCoroutine(ReEnableNpcCoroutine());
+            
+            GlobalEventDispatcher.LoadGameStart.AddListener(() =>
+            {
+                _objectsToInitQueue.Clear();
+                _objectToReEnableQueue.Clear();
+            });
         }
 
         private IEnumerator InitNpcCoroutine()
@@ -70,11 +77,6 @@ namespace GUZ.Core.Npc
                     }
 
                     _initializer.InitNpc(npcElement.Npc, npcElement.gameObject);
-                    if (npcId != 0 && GameGlobals.Config.Dev.SpawnNpcInstances.Value.Any() &&
-                        !GameGlobals.Config.Dev.SpawnNpcInstances.Value.Contains(npcElement.Npc.Id))
-                    {
-                        continue;
-                    }
                 }
 
                 yield return FrameSkipper.TrySkipToNextFrameCoroutine();
@@ -142,10 +144,52 @@ namespace GUZ.Core.Npc
             _initializer.ExtWldInsertNpc(npcInstanceIndex, spawnPoint);
         }
 
+        // FIXME - I think they are overwritten when an NPC is loaded from a SaveGame, as we Initialize them again...
         public void ExtNpcSetTalentValue(NpcInstance npc, VmGothicEnums.Talent talent, int level)
         {
-            var props = npc.GetUserData().Props;
-            props.Talents[talent] = level;
+            InitTalents(npc);
+            var vob = npc.GetUserData()!.Vob;
+
+            vob.SetTalent((int)talent, new Talent
+            {
+                Type =  (int)talent,
+                Skill = 0,
+                Value = level
+            });
+        }
+        
+        // FIXME - In OpenGothic it adds MDS overlays based on skill level.
+        public void ExtNpcSetTalentSkill(NpcInstance npc, VmGothicEnums.Talent talent, int skillValue)
+        {
+            InitTalents(npc);
+            var vob = npc.GetUserData()!.Vob;
+
+            vob.SetTalent((int)talent, new Talent
+            {
+                Type =  (int)talent,
+                Skill = skillValue,
+                Value = 0
+            });
+        }
+
+        /// <summary>
+        /// Initialize for the first time if not yet done.
+        /// </summary>
+        private void InitTalents(NpcInstance npc)
+        {
+            if (npc.GetUserData()!.Vob.TalentCount != 0)
+                return;
+
+            var vob = npc.GetUserData()!.Vob;
+            for (var i = 0; i < Constants.Daedalus.TalentsMax; i++)
+            {
+                vob.AddTalent(new Talent()
+                {
+                    Type = i,
+                    Value = 0,
+                    Skill = 0
+                });
+            }
         }
 
         public void ExtMdlSetVisual(NpcInstance npc, string visual)
@@ -231,7 +275,7 @@ namespace GUZ.Core.Npc
         {
             if (GameData.GothicVm.GlobalHero != null)
             {
-                // We assume, that this call is only made when the cache got cleared before as we loaded another world.
+                // We assume that this call is only made when the cache got cleared before as we loaded another world.
                 // Therefore, we re-add it now.
                 MultiTypeCache.NpcCache.Add(((NpcInstance)GameData.GothicVm.GlobalHero).GetUserData());
 
@@ -250,9 +294,13 @@ namespace GUZ.Core.Npc
 
             var heroInstance = GameData.GothicVm.AllocInstance<NpcInstance>(GameGlobals.Config.Gothic.PlayerInstanceName);
 
-            var vobNpc = new ZenKit.Vobs.Npc();
-            vobNpc.Name = GameGlobals.Config.Gothic.PlayerInstanceName;
-            vobNpc.Player = true;
+            var vobNpc = new ZenKit.Vobs.Npc
+            {
+                Name = GameGlobals.Config.Gothic.PlayerInstanceName,
+                Player = true,
+                Ai = new AiHuman(),
+                EventManager = new EventManager()
+            };
 
             var npcData = new NpcContainer
             {
@@ -351,7 +399,14 @@ namespace GUZ.Core.Npc
 
             props.Routines.Add(routine);
         }
+        
+        public void ExchangeRoutine(NpcInstance npc, string routineName)
+        {
+            var routine = GameData.GothicVm.GetSymbolByName(routineName);
 
+            ExchangeRoutine(npc, routine == null ? 0: routine.Index);
+        }
+        
         public void ExchangeRoutine(NpcInstance npc, int routineIndex)
         {
             // Monsters
@@ -371,6 +426,8 @@ namespace GUZ.Core.Npc
             GameData.GothicVm.GlobalSelf = npc;
             GameData.GothicVm.Call(routineIndex);
 
+            npc.GetUserData().Vob.HasRoutine = npc.GetUserData().Props.Routines.NotNullOrEmpty();
+            
             CalculateCurrentRoutine(npc);
         }
 
@@ -514,12 +571,6 @@ namespace GUZ.Core.Npc
             }
 
             return true;
-        }
-
-        public void ExtNpcSetTalentSkill(NpcInstance npc, VmGothicEnums.Talent talent, int level)
-        {
-            // FIXME - TBD.
-            // FIXME - In OpenGothic it adds MDS overlays based on skill level.
         }
 
         public void SetDialogs(NpcContainer npcContainer)

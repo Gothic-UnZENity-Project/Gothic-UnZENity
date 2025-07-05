@@ -7,7 +7,7 @@ using UnityEngine;
 namespace GUZ.VR.Components.VobContainer
 {
     /// <summary>
-    /// Handle Socket-events for a whole Container (e.g. chest) and its corresponding sockets (rings where we put items into).
+    /// Handle Socket-events for a whole Container (e.g., chest) and its corresponding sockets (rings where we put items into).
     /// </summary>
     public class VRVobContainerSocketInventory : MonoBehaviour
     {

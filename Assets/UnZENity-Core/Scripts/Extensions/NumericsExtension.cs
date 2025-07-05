@@ -29,11 +29,9 @@ namespace GUZ.Core.Extensions
             };
 
             if (cmScale)
-            {
                 return vector / 100;
-            }
-
-            return vector;
+            else
+                return vector;
         }
 
         public static System.Numerics.Vector3 ToNumericsVector(this Vector3 vector3)

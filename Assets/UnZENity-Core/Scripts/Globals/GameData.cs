@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Text;
 using GUZ.Core.Data;
+using GUZ.Core.Data.Container;
 using GUZ.Core.Npc.Routines;
 using GUZ.Core.Properties;
 using GUZ.Core.Vob.WayNet;
@@ -33,13 +34,8 @@ namespace GUZ.Core.Globals
         public static Dictionary<string, DijkstraWaypoint> DijkstraWaypoints = new();
         
         // [IInteractiveObject] => VisualScheme (aka vob.Visual.Name.SubString("_");
-        public static readonly Dictionary<string, List<(IInteractiveObject Vob, GameObject Go)>> VobsInteractable = new();
+        public static readonly Dictionary<string, List<VobContainer>> VobsInteractable = new();
 
-        /// <summary>
-        /// Store and update global NPC information about dialog options already listened to.
-        /// </summary>
-        public static HashSet<int> KnownDialogInfos = new();
-        
         public static class Dialogs
         {
             public static List<InfoInstance> Instances = new();

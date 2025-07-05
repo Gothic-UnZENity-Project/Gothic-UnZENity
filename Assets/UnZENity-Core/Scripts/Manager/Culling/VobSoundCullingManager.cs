@@ -1,6 +1,11 @@
 using GUZ.Core.Config;
+using GUZ.Core.Data.Container;
 using GUZ.Core.Extensions;
+using GUZ.Core.Util;
+using NUnit.Framework;
 using UnityEngine;
+using ZenKit.Vobs;
+using Logger = GUZ.Core.Util.Logger;
 
 namespace GUZ.Core.Manager.Culling
 {
@@ -11,13 +16,36 @@ namespace GUZ.Core.Manager.Culling
             // NOP
         }
 
-        public override void AddCullingEntry(GameObject go)
+        public void AddCullingEntry(VobContainer container)
         {
-            Objects.Add(go);
-            var sphere = new BoundingSphere(go.transform.position, go.GetComponent<AudioSource>().maxDistance);
-            TempSpheres.Add(sphere);
+            AddCullingEntry(container.Go, container.VobAs<ISound>());
+        }
+        
+        public void AddCullingEntry(GameObject go, ISound vob)
+        {
+            AddCullingEntryInternal(go, vob);
         }
 
+        /// <summary>
+        ///Logic:
+        /// 1. If In World loading state, we add all entries to the list based on rootVob position (e.g., a soundVob directly below levelCompo)
+        /// 2. If After Loading, then added entries are subVobs (e.g., Cauldron->Sound) and we enlarge the cullingArray now.
+        /// </summary>
+        private void AddCullingEntryInternal(GameObject go, ISound vob)
+        {
+            Objects.Add(go);
+            
+            // FIXME - First call of VisibilityChanged() always provides visible=false? Is the pos+radius correct?
+            var sphere = new BoundingSphere(go.transform.position, vob.Radius / 100f); // Gothic's values are in cm, Unity's in m.
+            Spheres.Add(sphere);
+
+            if (CurrentState == State.WorldLoaded)
+            {
+                // Each time we add an entry, we need to recreate the array for the CullingGroup.
+                CullingGroup.SetBoundingSpheres(Spheres.ToArray());
+            }
+        }
+        
         /// <summary>
         /// We only check for distance band 0 - visible, and 0 - invisible (or to be more precise here: audible/inaudible)
         /// </summary>
@@ -25,8 +53,12 @@ namespace GUZ.Core.Manager.Culling
         {
             // A higher distance level means "inaudible" as we only leverage: 0 -> in-range; 1 -> out-of-range.
             var inAudibleRange = evt.currentDistance == 0;
-
-            Objects[evt.index].SetActive(inAudibleRange);
+            var go = Objects[evt.index];
+            
+            go.SetActive(inAudibleRange);
+            
+            if (inAudibleRange)
+                GameGlobals.Vobs.InitVob(go);
         }
 
         /// <summary>
@@ -41,11 +73,8 @@ namespace GUZ.Core.Manager.Culling
             // Hint: As there are non-spatial sounds (always same volume wherever we are),
             // we need to disable the sounds at exactly the spot we are.
             CullingGroup.SetBoundingDistances(new[] { 0f });
-            CullingGroup.SetBoundingSpheres(TempSpheres.ToArray());
+            CullingGroup.SetBoundingSpheres(Spheres.ToArray());
             CullingGroup.onStateChanged = VisibilityChanged;
-
-            // Cleanup
-            TempSpheres.ClearAndReleaseMemory();
         }
     }
 }

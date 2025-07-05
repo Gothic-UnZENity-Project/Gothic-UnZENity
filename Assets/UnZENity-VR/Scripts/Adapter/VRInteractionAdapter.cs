@@ -61,9 +61,9 @@ namespace GUZ.VR.Adapter
             return xrRefreshRate;
         }
 
-        public GameObject CreatePlayerController(Scene scene, Vector3 position = default, Quaternion rotation = default)
+        public GameObject CreatePlayerController(Scene scene)
         {
-            var go = ResourceLoader.TryGetPrefabObject(PrefabType.Player, position, rotation);
+            var go = ResourceLoader.TryGetPrefabObject(PrefabType.Player);
             _playerController = go.GetComponentInChildren<VRPlayerController>();
 
             go.name = "Player - VR";

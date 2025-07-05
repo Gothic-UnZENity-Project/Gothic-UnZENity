@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using DirectMusic;
+using GUZ.Core.Caches;
 using GUZ.Core.Config;
 using GUZ.Core.Globals;
 using GUZ.Core.Util;
@@ -135,23 +136,23 @@ namespace GUZ.Core.Manager
         private void OnWorldLoaded()
         {
             _musicZones.Clear();
-
-            var zones = Object.FindObjectsOfType<VobMusicProperties>();
+            
+            var zones = MultiTypeCache.VobCache.Where(i => i.Vob is IZoneMusic); // IZoneMusic | IZoneMusicDefault
             var playerPosition = GameObject.FindWithTag(Constants.PlayerTag).transform.position;
 
             foreach (var zone in zones)
             {
                 // We always set default music as fallback.
-                if (zone.MusicData.GetType() == typeof(ZoneMusicDefault))
+                if (zone.Vob.GetType() == typeof(ZoneMusicDefault))
                 {
-                    AddMusicZone(zone.gameObject);
+                    AddMusicZone(zone.Go);
                     continue;
                 }
 
                 // If it's a normal music, we check if we're standing inside.
-                if (zone.GetComponent<BoxCollider>().bounds.Contains(playerPosition))
+                if (zone.Go.GetComponentInChildren<BoxCollider>().bounds.Contains(playerPosition))
                 {
-                    AddMusicZone(zone.gameObject);
+                    AddMusicZone(zone.Go);
                 }
             }
 
@@ -162,9 +163,7 @@ namespace GUZ.Core.Manager
         {
             // If a collider triggers multiple times or we added the zone manually: Skip as duplicate
             if (_musicZones.Contains(newMusicZoneGo))
-            {
                 return;
-            }
 
             _musicZones.Add(newMusicZoneGo);
         }
@@ -192,14 +191,12 @@ namespace GUZ.Core.Manager
         public void Play(SegmentTags tags)
         {
             var zoneName = _musicZones
-                .OrderBy(i => i.GetComponent<VobMusicProperties>().MusicData.Priority)
-                .LastOrDefault()?
-                .GetComponent<VobMusicProperties>().MusicData.Name;
+                .OrderByDescending(i => i.GetComponentInParent<VobLoader>().Container.VobAs<IZoneMusic>().Priority)
+                .FirstOrDefault()?
+                .GetComponentInParent<VobLoader>().Container.VobAs<IZoneMusic>().Name;
 
             if (zoneName == null)
-            {
                 return;
-            }
             
             var isDay = (tags & SegmentTags.Ngt) == 0;
             var result = zoneName.Substring(zoneName.IndexOf("_") + 1);

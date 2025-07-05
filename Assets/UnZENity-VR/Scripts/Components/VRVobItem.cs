@@ -14,7 +14,7 @@ namespace GUZ.VR.Components
 {
     public class VRVobItem : MonoBehaviour
     {
-        [SerializeField] private VRVobItemProperties _properties;
+        [SerializeField] private VRVobItemProperties _vrProperties;
         [SerializeField] private MeshCollider _meshCollider;
 
         // We pre-allocate enough entries to fetch at least one entry which is not ourselves.
@@ -45,10 +45,8 @@ namespace GUZ.VR.Components
         public void OnGrabbed(HVRGrabberBase grabber, HVRGrabbable grabbable)
         {
             // OnGrabbed is normally called multiple times. Even after an object is already socketed. If so, then let's stop Grab behaviour.
-            if (_properties.IsSocketed)
-            {
+            if (_vrProperties.IsSocketed)
                 return;
-            }
 
             // In Gothic, Items have no physics when lying around. We need to activate physics for HVR to properly move items into our hands.
             transform.GetComponent<Rigidbody>().isKinematic = false;
@@ -125,9 +123,7 @@ namespace GUZ.VR.Components
             foreach (var overlapCollider in overlapColliders)
             {
                 if (overlapCollider == mainMeshCollider)
-                {
                     continue;
-                }
 
                 // Yellow indicates touch points between colliders. With this you can check if they collide at the right spot.
                 Gizmos.color = Color.yellow;
@@ -142,9 +138,7 @@ namespace GUZ.VR.Components
         private IEnumerator ReEnableCollisionRoutine()
         {
             while (IsColliderOverlapping())
-            {
                 yield return new WaitForFixedUpdate();
-            }
 
             // Re-enable collisions
             gameObject.layer = Constants.GrabbableLayer;
@@ -247,7 +241,7 @@ namespace GUZ.VR.Components
         }
 
         /// <summary>
-        /// Reset everything (e.g. when GO is culled out.)
+        /// Reset everything (e.g., when GO is culled out.)
         /// </summary>
         private void OnDisable()
         {

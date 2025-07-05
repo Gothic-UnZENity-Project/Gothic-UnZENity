@@ -85,8 +85,6 @@ namespace GUZ.Lab.Handler
             var itemGo = MeshFactory.CreateVob(item.Visual, mrm, default, default, true,
                 rootGo: itemPrefab, parent: ItemSpawnSlot, useTextureArray: false);
 
-            itemGo.GetComponent<VobItemProperties>().SetData(null, item);
-
             return gameObject;
         }
     }

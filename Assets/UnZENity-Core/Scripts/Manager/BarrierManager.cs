@@ -112,7 +112,7 @@ namespace GUZ.Core.Manager
 
             if (_showThunder && _featureEnableSounds)
             {
-                var sound = VobHelper.GetSoundClip("MFX_BARRIERE_AMBIENT");
+                var sound = GameGlobals.Vobs.GetSoundClip("MFX_BARRIERE_AMBIENT");
 
                 for (var i = 0; i < 4; i++)
                 {

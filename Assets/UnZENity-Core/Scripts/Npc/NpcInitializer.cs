@@ -16,6 +16,7 @@ using MyBox;
 using UnityEngine;
 using ZenKit;
 using ZenKit.Daedalus;
+using ZenKit.Vobs;
 using Logger = GUZ.Core.Util.Logger;
 using Object = UnityEngine.Object;
 using WayPoint = GUZ.Core.Vob.WayNet.WayPoint;
@@ -84,7 +85,7 @@ namespace GUZ.Core.Npc
             var symbol = GameData.GothicVm.GetSymbolByName(vobNpc.Name);
             var userDataObject = AllocZkInstance(symbol.Index);
             userDataObject.Vob = vobNpc;
-
+            
             return userDataObject;
         }
 
@@ -98,7 +99,12 @@ namespace GUZ.Core.Npc
                 Instance = npcInstance,
                 Props = new(),
                 Vob = new()
+                {
+                    Ai = new AiHuman(),
+                    EventManager = new EventManager()
+                }
             };
+            
 
             // We reference our object as user data to retrieve it whenever a Daedalus External provides an NpcInstance as input.
             // With this, we can always switch between our UnZENity data and ZenKit data.
@@ -161,6 +167,8 @@ namespace GUZ.Core.Npc
                 GameGlobals.NpcMeshCulling.AddCullingEntry(go);
             }
 
+            _tmpWldInsertNpcData.ClearAndReleaseMemory();
+            
             // Full loading of NPCs is done.
             loading.FinalizePhase();
         }
@@ -239,8 +247,14 @@ namespace GUZ.Core.Npc
             // Lookups like Npc_SetTalentValue() will work now as NpcInstance.UserData() points to our object which stores the information.
             Vm.InitInstance(npc.Instance);
 
-            // We need to load routines to set the SpawnPoint correctly later.
-            GameGlobals.Npcs.ExchangeRoutine(npc.Instance, npc.Instance.DailyRoutine);
+            // NpcInstance is the initialized Daedalus Instance which contains initial data.
+            // Vob.Npc contains runtime information. If no runtime information is set (new game started / world entered for the first time), we use the initial data.
+            if (npc.Vob.CurrentRoutine.IsNullOrEmpty())
+            {
+                npc.Vob.CurrentRoutine = GameData.GothicVm.GetSymbolByIndex(npc.Instance.DailyRoutine)!.Name;
+            }
+            
+            GameGlobals.Npcs.ExchangeRoutine(npc.Instance, npc.Vob.CurrentRoutine);
         }
 
         public void InitNpc(NpcInstance npcInstance, GameObject lazyLoadGo)

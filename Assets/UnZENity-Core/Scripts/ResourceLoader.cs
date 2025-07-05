@@ -238,14 +238,13 @@ namespace GUZ.Core
         }
 
         [CanBeNull]
-        public static GameObject TryGetPrefabObject(PrefabType key, Vector3 position = default, Quaternion rotation = default, string name = null, GameObject parent = null)
+        public static GameObject TryGetPrefabObject(PrefabType key, string name = null, GameObject parent = null)
         {
-            var go = Object.Instantiate(TryGetPrefab(key), position, rotation, parent?.transform);
-
+            // worldPositionStays=false - initialize the object at 0,0,0. If needed, we will later set positions.
+            var go = Object.Instantiate(TryGetPrefab(key), parent?.transform, worldPositionStays: false);
+                
             if (name != null)
-            {
                 go.name = name;
-            }
 
             return go;
         }

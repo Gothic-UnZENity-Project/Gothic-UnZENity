@@ -1,10 +1,21 @@
 using System.Collections.Generic;
+using GUZ.Core.Extensions;
 using UnityEngine;
 
 namespace GUZ.Core.Manager.Culling
 {
     public abstract class AbstractCullingManager
     {
+
+        protected enum State
+        {
+            None,
+            Loading,
+            WorldLoaded
+        }
+
+        protected State CurrentState;
+        
         // Stored for resetting after world switch
         protected CullingGroup CullingGroup;
 
@@ -12,16 +23,14 @@ namespace GUZ.Core.Manager.Culling
         protected readonly List<GameObject> Objects = new();
 
         // Temporary spheres during async world loading calls.
-        protected List<BoundingSphere> TempSpheres = new();
+        protected List<BoundingSphere> Spheres = new();
 
-
-        public abstract void AddCullingEntry(GameObject go);
         protected abstract void VisibilityChanged(CullingGroupEvent evt);
 
 
         public virtual void Init()
         {
-            GlobalEventDispatcher.LoadingSceneLoaded.AddListener(PreWorldCreate);
+            GlobalEventDispatcher.LoadGameStart.AddListener(PreWorldCreate);
             GlobalEventDispatcher.WorldSceneLoaded.AddListener(PostWorldCreate);
 
             // Unity demands CullingGroups to be created in Awake() or Start() earliest.
@@ -30,9 +39,12 @@ namespace GUZ.Core.Manager.Culling
 
         protected virtual void PreWorldCreate()
         {
+            Objects.ClearAndReleaseMemory();
+            Spheres.ClearAndReleaseMemory();
             CullingGroup.Dispose();
             CullingGroup = new CullingGroup();
-            Objects.Clear();
+
+            CurrentState = State.Loading;
         }
 
         /// <summary>
@@ -43,8 +55,10 @@ namespace GUZ.Core.Manager.Culling
         {
             // Set main camera as reference point
             var mainCamera = Camera.main!;
-            CullingGroup.targetCamera = mainCamera;
-            CullingGroup.SetDistanceReferencePoint(mainCamera.transform);
+            CullingGroup.targetCamera = mainCamera; // Needed for FrustumCulling and OcclusionCulling to work.
+            CullingGroup.SetDistanceReferencePoint(mainCamera.transform); // Needed for BoundingDistances to work.
+
+            CurrentState = State.WorldLoaded;
         }
 
         public virtual void Destroy()

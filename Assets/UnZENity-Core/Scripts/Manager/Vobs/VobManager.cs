@@ -3,14 +3,17 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using GUZ.Core.Caches;
 using GUZ.Core.Config;
 using GUZ.Core.Creator.Sounds;
+using GUZ.Core.Data.Container;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.UI.Menus.LoadingBars;
 using GUZ.Core.Util;
 using GUZ.Core.Vm;
 using GUZ.Core.Vob;
+using JetBrains.Annotations;
 using MyBox;
 using UnityEngine;
 using ZenKit.Vobs;
@@ -22,12 +25,12 @@ namespace GUZ.Core.Manager.Vobs
     public class VobManager
     {
         private const string _noSoundName = "nosound.wav";
+        private const float _interactableLookupDistance = 10f; // meter
 
         // Supporter class where the whole Init() logic is outsourced for better readability.
         private VobInitializer _initializer = new ();
 
         private Dictionary<VirtualObjectType, GameObject> _vobTypeParentGOs = new();
-        private List<GameObject> _cullingVobObjects = new();
         private Queue<VobLoader> _objectsToInitQueue = new();
 
         // Important: All of them are not culled!
@@ -83,9 +86,9 @@ namespace GUZ.Core.Manager.Vobs
         /// <summary>
         /// Some VOBs are initialized eagerly (e.g. when there is no performance benefit in doing so later or its needed directly).
         /// </summary>
-        public void InitVobNow(IVirtualObject vob, GameObject parent)
+        public void InitVobNow(VobContainer container)
         {
-            _initializer.InitVob(vob, parent, default);
+            _initializer.InitVob(container.Vob, container.Go, default, true);
         }
         
         /// <summary>
@@ -174,20 +177,11 @@ namespace GUZ.Core.Manager.Vobs
 
                     // We assume that each loaded VOB is centered at parent=0,0,0.
                     // Should work smoothly until we start lazy loading sub-vobs ;-)
-                    _initializer.InitVob(item.Vob, item.gameObject, default);
+                    _initializer.InitVob(item.Container.Vob, item.gameObject, default, true);
 
                     yield return FrameSkipper.TrySkipToNextFrameCoroutine();
                 }
             }
-        }
-
-        public void CreateItemMesh(int itemId, string spawnPoint)
-        {
-            var item = VmInstanceManager.TryGetItemData(itemId);
-
-            var position = WayNetHelper.GetWayNetPoint(spawnPoint).Position;
-
-            _initializer.CreateItemMesh(item, GetRootGameObjectOfType(VirtualObjectType.oCItem), position);
         }
 
         /// <summary>
@@ -234,8 +228,6 @@ namespace GUZ.Core.Manager.Vobs
         {
             loading.SetPhase(nameof(WorldLoadingBarHandler.ProgressType.VOB), GetTotalVobCount(vobs));
 
-            _cullingVobObjects.Clear();
-
             // We reset the GO dictionary.
             _vobTypeParentGOs = new();
 
@@ -248,6 +240,38 @@ namespace GUZ.Core.Manager.Vobs
 
                 _vobTypeParentGOs[type] = newGo;
             }
+            
+            PreLoadVobs(vobs);
+        }
+
+        private void PreLoadVobs(List<IVirtualObject> vobs)
+        {
+            foreach (var vob in vobs)
+            {
+                PreLoadVob(vob);
+                PreLoadVobs(vob.Children);
+            }
+        }
+        
+        /// <summary>
+        /// Some elements change when the game loads them for the first time. We change these values here.
+        /// </summary>
+        private void PreLoadVob(IVirtualObject vob)
+        {
+            if (!GameGlobals.SaveGame.IsWorldEnteredFirstTime)
+                return;
+
+            switch (vob.Type)
+            {
+                case VirtualObjectType.zCVobSound:
+                    vob.ShowVisual = false; // Always 0 in G1 save games.
+                    break;
+                case VirtualObjectType.zCVobLight:
+                    vob.ShowVisual = true; // Always 1 in G1 save games.
+                    break;
+            }
+
+            vob.PresetName = string.Empty; // Never set in any G1 save game.
         }
 
         /// <summary>
@@ -261,8 +285,6 @@ namespace GUZ.Core.Manager.Vobs
 
         private void PostCreateWorldVobs()
         {
-            GameGlobals.VobMeshCulling.PrepareVobCulling(_cullingVobObjects);
-
             // DEBUG - If we want to load all VOBs at once, we need to initialize all LazyLoad objects now.
             if (!GameGlobals.Config.Dev.EnableVOBMeshCulling)
             {
@@ -271,15 +293,14 @@ namespace GUZ.Core.Manager.Vobs
             }
         }
 
-        private async Task CreateWorldVobs(DeveloperConfig config, LoadingManager loading,
-            List<IVirtualObject> vobs)
+        private async Task CreateWorldVobs(DeveloperConfig config, LoadingManager loading, List<IVirtualObject> vobs)
         {
             foreach (var vob in vobs)
             {
                 // It's simpler to have both of them in here.
                 loading.Tick();
                 await FrameSkipper.TrySkipToNextFrame();
-
+                
                 switch (vob.Type)
                 {
                     // A LevelCompo contains no data. Simply check its children.
@@ -297,91 +318,156 @@ namespace GUZ.Core.Manager.Vobs
                     continue;
                 }
 
+                var container = CreateContainerWithLoader(vob);
+
                 if (_vobTypesNonLazyLoading.Contains(vob.Type))
                 {
-                    CreateVobNow(vob);
+                    CreateVobNow(container);
                 }
                 else
                 {
-                    var go = CreateVobLazily(vob);
+                    CreateVobLazily(container);
 
                     // We assume that all VOBs with meshes are lazy loaded only.
-                    AddToMobInteractableList(vob, go);
+                    AddToMobInteractableList(container);
                 }
             }
+        }
+
+        private VobContainer CreateContainerWithLoader(IVirtualObject vob)
+        {
+            var container = new VobContainer(vob);
+            MultiTypeCache.VobCache.Add(container);
+
+            container.Go = new GameObject($"{container.Vob.GetVisualName()} (Loader)");
+            var loader = container.Go.AddComponent<VobLoader>();
+            loader.Container = container;
+
+            _initializer.SetPosAndRot(container.Go, container.Vob.Position, container.Vob.Rotation);
+            container.Go.SetParent(GetRootGameObjectOfType(container.Vob.Type));
+
+            return container;
         }
 
         /// <summary>
         /// Eager loading a VOB simply means we call the Init() method immediately.
         /// </summary>
-        private void CreateVobNow(IVirtualObject vob)
+        private void CreateVobNow(VobContainer container)
         {
-            InitVobNow(vob, GetRootGameObjectOfType(vob.Type));
+            container.Go.GetComponent<VobLoader>().IsLoaded = true;
+            InitVobNow(container);
         }
 
-        public GameObject CreateItem(Item item)
+        public VobContainer CreateItem(Item item)
         {
-            // We need to call the LazyLoad creation to have VobLoader.component added (as normal Items in the world)
-            var go = CreateVobLazily(item);
+            var container = CreateContainerWithLoader(item);
+            
+            CreateVobNow(container);
 
-            // We initialize the object directly, though.
-            var loader = go.GetComponent<VobLoader>();
-            loader.IsLoaded = true;
-
-            _initializer.InitVob(loader.Vob, loader.gameObject, default);
-
-            return go;
+            return container;
         }
         
-        /// <summary>
-        /// When we Lazy Load a VOB, we add a component which stores initialization data.
-        /// Once Culling fetches the object, we will read this data and call InitVob() later.
-        /// </summary>
-        private GameObject CreateVobLazily(IVirtualObject vob)
+        [CanBeNull]
+        public VobContainer GetFreeInteractableWithin10M(Vector3 position, string visualScheme)
         {
-            // Skip disabled features.
-            switch (vob.Visual!.Type)
-            {
-                case VisualType.Decal:
-                    // Skip object
-                    if (!GameGlobals.Config.Dev.EnableDecalVisuals)
-                    {
-                        return null;
-                    }
-                    break;
-                case VisualType.ParticleEffect:
-                    // Skip object
-                    if (!GameGlobals.Config.Dev.EnableParticleEffects)
-                    {
-                        return null;
-                    }
-                    break;
-            }
+            if (!GameData.VobsInteractable.TryGetValue(visualScheme.ToUpper(), out var vobs))
+                return null;
+            
+            return vobs
+                .Where(pair => Vector3.Distance(pair.Vob.Position.ToUnityVector(), position) < _interactableLookupDistance)
+                .OrderBy(pair => Vector3.Distance(pair.Vob.Position.ToUnityVector(), position))
+                .FirstOrDefault();
+        }
+        public void ExtWldInsertItem(int itemInstance, string spawnPoint)
+        {
+            if (string.IsNullOrEmpty(spawnPoint) || itemInstance <= 0)
+                return;
 
-            // Non-static lights aren't handled so far.
-            if (vob.Type == VirtualObjectType.zCVobLight && !((ILight)vob).LightStatic)
+            var config = GameGlobals.Config;
+            var activeTypes = config.Dev.SpawnVOBTypes.Value;
+            if (!config.Dev.EnableVOBs || (!activeTypes.IsEmpty() && activeTypes.Contains(VirtualObjectType.oCItem)))
+                return;
+
+            var item = VmInstanceManager.TryGetItemData(itemInstance);
+            var instanceName = GameData.GothicVm.GetSymbolByIndex(item.Index)!.Name;
+            var wp = WayNetHelper.GetWayNetPoint(spawnPoint)!;
+
+            var vob = new Item
+            {
+                Name = instanceName,
+                Position = wp.Position.ToZkVector(),
+                Rotation = wp.Rotation.ToZkMatrix(),
+                Visual = new VisualMesh(),
+                Instance = instanceName
+            };
+
+            var container = CreateContainerWithLoader(vob);
+            GameGlobals.VobMeshCulling.AddCullingEntry(container);
+            GameGlobals.SaveGame.CurrentWorldData.Vobs.Add(container.Vob);
+        }
+
+        [CanBeNull]
+        public GameObject GetNearestSlot(GameObject go, Vector3 position)
+        {
+            var goTransform = go.transform;
+
+            if (goTransform.childCount == 0)
             {
                 return null;
             }
 
-            var go = new GameObject(vob.GetVisualName());
-            var loader = go.AddComponent<VobLoader>();
-            loader.Vob = vob;
+            // We need to move into next elements starting from VobLoader root.
+            var zm = go.transform.GetChild(0).GetChild(0);
 
-            _initializer.SetPosAndRot(go, vob.Position, vob.Rotation);
-            go.SetParent(GetRootGameObjectOfType(vob.Type));
+            return zm.gameObject.GetAllDirectChildren()
+                .Where(i => i.name.ContainsIgnoreCase("ZS"))
+                .OrderBy(i => Vector3.Distance(i.transform.position, position))
+                .FirstOrDefault();
+        }
+        
+        /// <summary>
+        /// When we Lazy Load a VOB, we add their culling information to load them later.
+        /// Once Culling fetches the object, we will read this data and call InitVob() later.
+        /// </summary>
+        private void CreateVobLazily(VobContainer container)
+        {
+            // Skip disabled features.
+            switch (container.Vob.Visual!.Type)
+            {
+                case VisualType.Decal:
+                    // Skip object
+                    if (!GameGlobals.Config.Dev.EnableDecalVisuals)
+                        return;
+                    break;
+                case VisualType.ParticleEffect:
+                    // Skip object
+                    if (!GameGlobals.Config.Dev.EnableParticleEffects)
+                        return;
+                    break;
+            }
+            
+            // Non-static lights aren't handled so far.
+            if (container.Vob.Type == VirtualObjectType.zCVobLight && !((ILight)container.Vob).LightStatic)
+            {
+                return;
+            }
 
-            _cullingVobObjects.Add(go);
+            if (container.Vob.Type == VirtualObjectType.zCVobSound ||
+                container.Vob.Type == VirtualObjectType.zCVobSoundDaytime)
+            {
+                GameGlobals.SoundCulling.AddCullingEntry(container);
+                return;
+            }
 
-            return go;
+            GameGlobals.VobMeshCulling.AddCullingEntry(container);
         }
 
-        private static void AddToMobInteractableList(IVirtualObject vob, GameObject go)
+        private static void AddToMobInteractableList(VobContainer container)
         {
-            if (go == null)
+            if (container.Go == null)
                 return;
 
-            switch (vob.Type)
+            switch (container.Vob.Type)
             {
                 // case VirtualObjectType.oCMOB: // FIXME - Needed? e.g. IMovableObject
                 case VirtualObjectType.oCMobFire:
@@ -391,13 +477,13 @@ namespace GUZ.Core.Manager.Vobs
                 case VirtualObjectType.oCMobContainer:
                 case VirtualObjectType.oCMobSwitch:
                 case VirtualObjectType.oCMobWheel:
-                    var visualScheme = vob.Visual?.Name.Split('_').First().ToUpper(); // e.g. BED_1_OC.ASC => BED);
+                    var visualScheme = container.Vob.Visual?.Name.Split('_').First().ToUpper(); // e.g. BED_1_OC.ASC => BED);
 
                     if (visualScheme.IsNullOrEmpty())
                         return;
                     
                     GameData.VobsInteractable.TryAdd(visualScheme, new());
-                    GameData.VobsInteractable[visualScheme!].Add(((IInteractiveObject)vob, go));
+                    GameData.VobsInteractable[visualScheme!].Add(container);
                     break;
             }
         }

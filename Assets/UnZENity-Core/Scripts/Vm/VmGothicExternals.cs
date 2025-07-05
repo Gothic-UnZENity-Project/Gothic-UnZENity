@@ -988,7 +988,7 @@ namespace GUZ.Core.Vm
 
         public static void Wld_InsertItem(int itemInstance, string spawnpoint)
         {
-            VobHelper.ExtWldInsertItem(itemInstance, spawnpoint);
+            GameGlobals.Vobs.ExtWldInsertItem(itemInstance, spawnpoint);
         }
 
         public static void Wld_ExchangeGuildAttitudes(string name)
