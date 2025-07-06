@@ -11,14 +11,24 @@ For developers:
 - Becoming a maintainer
 
 ## For gamers
-We currently have no Discord server, therefore feel free to reach out to #JaXt0r on Discord for questions.
+[![Discord](https://img.shields.io/badge/Discord-%235865F2.svg?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/nvnaWwEu5Y)
+
+Simple as that: Download the game and join our [Discord Server](https://discord.gg/nvnaWwEu5Y) to get in touch
+with the developers and the UnZENity community.
 
 ## For developers
-We're mainly building Gothic-UnZENity by leveraging C# classes and build core Unity magic.
-Less 2D/3D designs are needed (as we load _everything_ from original assets at runtime).
+[![Discord](https://img.shields.io/badge/Discord-%235865F2.svg?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/nvnaWwEu5Y)
+
 To all coders and VR developers: Welcome, you're at the right spot.
 
+We're mainly building Gothic-UnZENity by leveraging C# classes and building core Unity magic.
+(Nearly no 2D/3D designs are needed as we load _everything_ from original assets at runtime).
+
+If you want to build Gothic-UnZENity together, then you're encouraged to join our active developer base. Feel free to grab a ticket you'd like to drive and reach out to us on our [Discord](https://discord.gg/nvnaWwEu5Y) Server for further questions.
+
 ### We Develop with GitHub
+> You'll find our current feature development status at the [Projects](https://github.com/Gothic-UnZENity-Project/Gothic-UnZENity/projects?query=is%3Aopen) page.
+
 We use GitHub to host code, to track issues and feature requests, as well as accept pull requests.
 
 ### All Code Changes Happen Through Pull Requests
@@ -51,8 +61,3 @@ To assist consistent development styles, we:
 
 ### License
 By contributing, you agree that your contributions will be licensed under its GPL-3.0 License.
-
-### Becoming a maintainer
-> You'll find our current feature development status at the [Projects](https://github.com/Gothic-UnZENity-Project/Gothic-UnZENity/projects?query=is%3Aopen) page.
-
-If you want to build Gothic-UnZENity together, then you're encouraged to join our active developer base. Feel free to grab a ticket you'd like to drive and reach out to us on our [Discord](https://discord.gg/nvnaWwEu5Y) Server for further questions.

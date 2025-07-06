@@ -15,7 +15,8 @@ Community rebuild of classical Gothic 1 and 2 in Unity engine. Currently focusin
 
 ## Usage
 > [!NOTE]
-> For instructions on playing the game or adding contributions, please check our [Wiki](https://github.com/Gothic-UnZENity-Project/Gothic-UnZENity/wiki).
+> For instructions on playing the game, check our [Wiki](https://github.com/Gothic-UnZENity-Project/Gothic-UnZENity/wiki).  
+> Hints on contributing as a developer are highlighted at [Contributing.md](./CONTRIBUTING.md)
 
 > [!TIP]
 > 🤫 Shortcut to the installation instructions is [here](https://github.com/Gothic-UnZENity-Project/Gothic-UnZENity/wiki/Player%27s-Guide#setup). You can thank me later. 😉
