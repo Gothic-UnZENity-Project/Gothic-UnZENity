@@ -193,9 +193,9 @@ namespace GUZ.Core.UI.Menus
 
                 if (!item.AlphaMode.IsNullOrEmpty())
                 {
-                    backPic.ToFadeMode();
+                    backPic.ToTransparentMode();
                     var color = backPic.GetColor("_BaseColor");
-                    float alpha = item.Alpha / 255f;
+                    var alpha = item.Alpha / 255f;
                     backPic.SetColor("_BaseColor", new Color(color.r, color.g, color.b, alpha));
                 }
 

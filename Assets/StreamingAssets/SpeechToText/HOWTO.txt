@@ -1,0 +1,28 @@
+## Disable SpeechToText:
+-> If you do not! want GenAI features, ignore the steps below. If you don't place the local LLM on your system, it is deactivated and can't be used.
+
+
+## Enable SpeechToText:
+
+-> For latest instructions to activate it in game, please check the UnZENity wiki at: https://github.com/Gothic-UnZENity-Project/Gothic-UnZENity/wiki
+
+In general:
+1. Go to UnZENity release page and select the one with .sentis files stored: https://github.com/Gothic-UnZENity-Project/Gothic-UnZENity/releases
+2. Download SpeechToText.zip with the following files:
+  1. vocab.json
+  2. decoder_model.sentis
+  3. decoder_with_past_model.sentis
+  4. encoder_model.sentis
+  5. logmel_spectogram.sentis
+3. Place it in here
+
+
+WARNING:
+There are two known pitfalls:
+1. SpeechToText is transformed on GPU. (e.g.) Quest2 is known to cause stutter when recording voice and transforming your input. It's best experienced with PCVR due to the dedicated GPU.
+2. Unity's Microphone API can cause some delays when recording starts or ends. This is unrelated to GPU/CPU limitations and may vary based on device and Microphone driver.
+
+
+Links:
+* Models: https://huggingface.co/unity/inference-engine-whisper-tiny
+* License: https://choosealicense.com/licenses/apache-2.0/

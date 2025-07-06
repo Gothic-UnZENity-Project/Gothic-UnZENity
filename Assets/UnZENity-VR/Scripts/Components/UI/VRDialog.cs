@@ -1,4 +1,5 @@
 ﻿#if GUZ_HVR_INSTALLED
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,9 +23,12 @@ namespace GUZ.VR.Components.UI
         [SerializeField] private List<GameObject> _dialogItems;
         [SerializeField] private UIEvents _uiEventsHandler;
 
+        [NonSerialized]
+        public List<string> CurrentDialogOptionTexts;
+        
         private float _dialogItemHeight;
         private int _dialogItemsInUse;
-        
+
         private void Awake()
         {
             // When prefab is loaded for the first time, we store the size of a dialog item.
@@ -100,6 +104,7 @@ namespace GUZ.VR.Components.UI
                 dialogItem.FindChildRecursively("Label").GetComponent<TMP_Text>().text = dialogOption.Text;
             }
 
+            CurrentDialogOptionTexts = dialogOptions.Select(i => i.Text).ToList();
             _dialogItemsInUse = dialogOptions.Count;
         }
 
@@ -118,6 +123,7 @@ namespace GUZ.VR.Components.UI
                 dialogItem.FindChildRecursively("Label").GetComponent<TMP_Text>().text = dialogOption.Description;
             }
             
+            CurrentDialogOptionTexts = dialogOptions.Select(i => i.Description).ToList();
             _dialogItemsInUse = dialogOptions.Count;
         }
         
@@ -157,6 +163,14 @@ namespace GUZ.VR.Components.UI
             }
         }
 
+        public void DialogSelected(int index)
+        {
+            if (index < 0 || _dialogItems.Count < index)
+                return;
+            
+            _dialogItems[index].GetComponent<Button>().onClick.Invoke();
+        }
+        
         private void OnDialogClicked(NpcInstance instance, InfoInstance infoInstance)
         {
             DialogManager.MainSelectionClicked(instance.GetUserData(), infoInstance);

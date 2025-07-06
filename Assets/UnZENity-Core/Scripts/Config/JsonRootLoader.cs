@@ -10,6 +10,10 @@ namespace GUZ.Core.Config
     {
         private const string _settingsFileName = "GameSettings.json";
         private const string _settingsFileNameDev = "GameSettings.dev.json";
+
+        private const string _speechToTextFolder = "SpeechToText";
+        private const string _speechToTextHowto = "HOWTO.txt";
+        
         private const string _defaultSteamGothic1Folder = @"C:\Program Files (x86)\Steam\steamapps\common\Gothic\";
         private const string _defaultSteamGothic2Folder = @"C:\Program Files (x86)\Steam\steamapps\common\Gothic II\";
 
@@ -56,39 +60,62 @@ namespace GUZ.Core.Config
         private static void PrepareAndroidFolders()
         {
             if (Application.platform != RuntimePlatform.Android)
-            {
                 return;
-            }
 
             // If directory exists and GameSettings.json is placed, we assume everything is created already.
             if (File.Exists($"{Application.persistentDataPath}/{_settingsFileName}"))
-            {
                 return;
-            }
 
+            
             // Create folder(s)
             Directory.CreateDirectory($"{Application.persistentDataPath}/Gothic1");
             Directory.CreateDirectory($"{Application.persistentDataPath}/Gothic2");
 
             // Copy GameSettings.json into app's shared folder
-            var gameSettingsPath = Path.Combine($"{Application.streamingAssetsPath}/{_settingsFileName}");
+            {
+                var gameSettingsPath = Path.Combine($"{Application.streamingAssetsPath}/{_settingsFileName}");
 
-            var www = UnityWebRequest.Get(gameSettingsPath);
-            www.SendWebRequest();
+                var www = UnityWebRequest.Get(gameSettingsPath);
+                www.SendWebRequest();
 
-            // Wait until async download is done
-            while (!www.isDone)
-            { }
+                // Wait until async download is done
+                while (!www.isDone)
+                { }
 
-            var result = www.downloadHandler.text;
-            File.WriteAllText($"{Application.persistentDataPath}/{_settingsFileName}", result);
+                var result = www.downloadHandler.text;
+                File.WriteAllText($"{Application.persistentDataPath}/{_settingsFileName}", result);
+            }
 
             // If existing, copy GameSettings.dev.json into writable shared storage folder of our app.
-            var gameSettingsDevPath = Path.Combine($"{Application.streamingAssetsPath}/{_settingsFileNameDev}");
-            if (File.Exists(gameSettingsDevPath))
             {
-                var devresult = File.ReadAllText(gameSettingsPath);
-                File.WriteAllText($"{Application.persistentDataPath}/{_settingsFileNameDev}", devresult);
+                var gameSettingsPath = Path.Combine($"{Application.streamingAssetsPath}/{_settingsFileName}");
+
+                var gameSettingsDevPath = Path.Combine($"{Application.streamingAssetsPath}/{_settingsFileNameDev}");
+                if (File.Exists(gameSettingsDevPath))
+                {
+                    var devresult = File.ReadAllText(gameSettingsPath);
+                    File.WriteAllText($"{Application.persistentDataPath}/{_settingsFileNameDev}", devresult);
+                }
+            }
+
+            // Copy SpeechToText folder with README information
+            {
+                var speechToTextFolder = Path.Combine($"{Application.streamingAssetsPath}/{_speechToTextFolder}");
+                var howtoFile = Path.Combine($"{speechToTextFolder}/{_speechToTextHowto}");
+                var destFolder = Path.Combine($"{Application.persistentDataPath}/{_speechToTextFolder}");
+                var destHowtoFile = Path.Combine($"{destFolder}/{_speechToTextHowto}");
+
+                Directory.CreateDirectory(destFolder);
+                
+                var www = UnityWebRequest.Get(howtoFile);
+                www.SendWebRequest();
+
+                // Wait until async download is done
+                while (!www.isDone)
+                { }
+
+                var result = www.downloadHandler.text;
+                File.WriteAllText(destHowtoFile, result);
             }
         }
 
