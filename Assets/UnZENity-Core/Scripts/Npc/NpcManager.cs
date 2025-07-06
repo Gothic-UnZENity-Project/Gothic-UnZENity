@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using GUZ.Core.Caches;
 using GUZ.Core.Config;
+using GUZ.Core.Data;
 using GUZ.Core.Data.Container;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
@@ -230,7 +231,7 @@ namespace GUZ.Core.Npc
             vob.Attributes[attributeId] = value;
         }
 
-        public void ExtCreateInvItems(NpcInstance npc, uint itemId, int amount)
+        public void ExtCreateInvItems(NpcInstance npc, int itemId, int amount)
         {
             // We also initialize NPCs inside Daedalus when we load a save game. It's needed as some data isn't stored on save games.
             // But e.g. inventory items will be skipped as they are stored inside save game VOBs.
@@ -245,14 +246,31 @@ namespace GUZ.Core.Npc
                 return;
             }
 
-            var props = npc.GetUserData().Props;
-            if (props == null)
+            var itemInstanceName = GameData.GothicVm.GetSymbolByIndex(itemId)!.Name;
+            var vob = npc.GetUserData()!.Vob;
+
+            IItem item = null;
+            for (var i = 0; i < vob.ItemCount; i++)
             {
-                Logger.LogError($"NPC not found with index {npc.Index}", LogCat.Npc);
-                return;
+                if (vob.GetItem(i).Instance == itemInstanceName)
+                {
+                    item = vob.GetItem(i);
+                    break;
+                }
             }
-            props.Items.TryAdd(itemId, amount);
-            props.Items[itemId] += amount;
+
+            if (item == null)
+            {
+                vob.AddItem(new Item()
+                {
+                    Instance = itemInstanceName,
+                    Amount = amount
+                });
+            }
+            else
+            {
+                item.Amount += amount;
+            }
         }
 
         public NpcContainer GetHeroContainer()
@@ -294,12 +312,10 @@ namespace GUZ.Core.Npc
 
             var heroInstance = GameData.GothicVm.AllocInstance<NpcInstance>(GameGlobals.Config.Gothic.PlayerInstanceName);
 
-            var vobNpc = new ZenKit.Vobs.Npc
+            var vobNpc = new NpcVob(-1)
             {
                 Name = GameGlobals.Config.Gothic.PlayerInstanceName,
-                Player = true,
-                Ai = new AiHuman(),
-                EventManager = new EventManager()
+                Player = true
             };
 
             var npcData = new NpcContainer
@@ -580,6 +596,25 @@ namespace GUZ.Core.Npc
                 .Where(dialog => dialog.Npc == npcIndex)
                 .OrderByDescending(dialog => dialog.Important)
                 .ToList();
+        }
+
+        public int ExtNpcHasItems(NpcInstance npc, int itemId)
+        {
+            var npcVob = npc.GetUserData()!.Vob;
+            var itemInstanceName = GameData.GothicVm.GetSymbolByIndex(itemId)!.Name;
+            
+            for (var i = 0; i < npcVob.ItemCount; i++)
+            {
+                if (npcVob.GetItem(i).Name == itemInstanceName)
+                    return npcVob.GetItem(i).Amount;
+            }
+            
+            return 0;
+        }
+        
+        public void ExtNpcClearInventory(NpcInstance npc)
+        {
+            npc.GetUserData()!.Vob.ClearItems();
         }
     }
 }

@@ -169,16 +169,6 @@ namespace GUZ.Core.Manager
             return foundNpc.Instance != null;
         }
 
-        public static int ExtNpcHasItems(NpcInstance npc, uint itemId)
-        {
-            if (GetProperties(npc).Items.TryGetValue(itemId, out var amount))
-            {
-                return amount;
-            }
-
-            return 0;
-        }
-
         public static int ExtNpcGetDistToWp(NpcInstance npc, string waypointName)
         {
             var npcGo = GetNpc(npc);
@@ -193,12 +183,6 @@ namespace GUZ.Core.Manager
 
             // *100 as Gothic metrics are in cm, not m.
             return (int)(Vector3.Distance(npcPos, waypoint.Position) * 100);
-        }
-
-        public static void ExtNpcClearInventory(NpcInstance npc)
-        {
-            var props = GetProperties(npc);
-            props.Items.Clear();
         }
 
         public static int ExtNpcGetTalentSkill(NpcInstance npc, int skillId)

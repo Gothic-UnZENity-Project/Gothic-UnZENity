@@ -28,7 +28,6 @@ namespace GUZ.Core.Properties
         public VmGothicEnums.WeaponState WeaponState;
 
         public List<ItemInstance> EquippedItems = new();
-        public Dictionary<uint, int> Items = new(); // itemId => amount
         public string UsedItemSlot;
         public bool HasItemEquipped;
         public int CurrentItem = -1;

@@ -208,6 +208,17 @@ namespace GUZ.Core.Globals
         // e.g. for NPCs to check if they reached a FreePoint already. Value is based on best guess/testing.
         public const float NpcDestinationReachedThreshold = 0.6f;
         public const float NpcRotationSpeed = 500f;
+        
+
+        public const string SlotRightHand	= "ZS_RIGHTHAND";
+        public const string SlotLeftHand	= "ZS_LEFTHAND";
+        public const string SlotSword		= "ZS_SWORD";
+        public const string SlotLongsword	= "ZS_LONGSWORD";
+        public const string SlotBow			= "ZS_BOW";
+        public const string SlotCrossbow	= "ZS_CROSSBOW";
+        public const string SlotHelmet		= "ZS_HELMET";
+        public const string SlotTorso		= "ZS_TORSO";
+
 
         public const string DaedalusHeroInstanceName = "PC_HERO"; // TODO - can be read from .ini file.
 

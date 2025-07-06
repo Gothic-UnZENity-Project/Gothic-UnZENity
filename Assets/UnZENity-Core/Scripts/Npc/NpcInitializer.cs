@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using GUZ.Core.Caches;
 using GUZ.Core.Creator.Meshes;
+using GUZ.Core.Data;
 using GUZ.Core.Data.Container;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
@@ -89,23 +90,18 @@ namespace GUZ.Core.Npc
             return userDataObject;
         }
 
-        private NpcContainer AllocZkInstance(int npcInstanceIndex)
+        private NpcContainer AllocZkInstance(int npcIndex)
         {
-            var npcSymbol = Vm.GetSymbolByIndex(npcInstanceIndex)!;
+            var npcSymbol = Vm.GetSymbolByIndex(npcIndex)!;
             var npcInstance = Vm.AllocInstance<NpcInstance>(npcSymbol);
 
             var userDataObject = new NpcContainer
             {
                 Instance = npcInstance,
                 Props = new(),
-                Vob = new()
-                {
-                    Ai = new AiHuman(),
-                    EventManager = new EventManager()
-                }
+                Vob = new NpcVob(npcIndex)
             };
             
-
             // We reference our object as user data to retrieve it whenever a Daedalus External provides an NpcInstance as input.
             // With this, we can always switch between our UnZENity data and ZenKit data.
             npcInstance.UserData = userDataObject;
@@ -252,6 +248,11 @@ namespace GUZ.Core.Npc
             if (npc.Vob.CurrentRoutine.IsNullOrEmpty())
             {
                 npc.Vob.CurrentRoutine = GameData.GothicVm.GetSymbolByIndex(npc.Instance.DailyRoutine)!.Name;
+            }
+
+            if (npc.Vob is NpcVob npcVob)
+            {
+                npcVob.CopyInstanceData(npc.Instance);
             }
             
             GameGlobals.Npcs.ExchangeRoutine(npc.Instance, npc.Vob.CurrentRoutine);
