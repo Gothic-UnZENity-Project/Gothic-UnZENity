@@ -600,13 +600,13 @@ namespace GUZ.Core.Vm
 
         public static void CreateInvItem(NpcInstance npc, int itemId)
         {
-            GameGlobals.Npcs.ExtCreateInvItems(npc, (uint)itemId, 1);
+            GameGlobals.Npcs.ExtCreateInvItems(npc, itemId, 1);
         }
 
 
         public static void CreateInvItems(NpcInstance npc, int itemId, int amount)
         {
-            GameGlobals.Npcs.ExtCreateInvItems(npc, (uint)itemId, amount);
+            GameGlobals.Npcs.ExtCreateInvItems(npc, itemId, amount);
         }
 
 
@@ -658,7 +658,7 @@ namespace GUZ.Core.Vm
 
         public static int Npc_HasItems(NpcInstance npc, int itemId)
         {
-            var count = NpcHelper.ExtNpcHasItems(npc, (uint)itemId);
+            var count = GameGlobals.Npcs.ExtNpcHasItems(npc, itemId);
             return count;
         }
 
@@ -794,7 +794,7 @@ namespace GUZ.Core.Vm
 
         public static void Npc_ClearInventory(NpcInstance npc)
         {
-            NpcHelper.ExtNpcClearInventory(npc);
+            GameGlobals.Npcs.ExtNpcClearInventory(npc);
         }
 
         public static string Npc_GetNextWp(NpcInstance npc)
@@ -988,7 +988,7 @@ namespace GUZ.Core.Vm
 
         public static void Wld_InsertItem(int itemInstance, string spawnpoint)
         {
-            VobHelper.ExtWldInsertItem(itemInstance, spawnpoint);
+            GameGlobals.Vobs.ExtWldInsertItem(itemInstance, spawnpoint);
         }
 
         public static void Wld_ExchangeGuildAttitudes(string name)

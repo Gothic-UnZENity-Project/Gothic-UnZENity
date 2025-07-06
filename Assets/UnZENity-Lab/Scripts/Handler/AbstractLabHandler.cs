@@ -34,8 +34,6 @@ namespace GUZ.Lab.Handler
             var itemGo = MeshFactory.CreateVob(item.Visual, mrm, position, default, true,
                 rootGo: itemPrefab, parent: parentGo, useTextureArray: false);
 
-            itemGo.GetComponentInChildren<VobItemProperties>().SetData(null, item);
-
             return itemGo;
         }
     }

@@ -62,14 +62,15 @@ namespace GUZ.Core.Globals
             public static string[] MobLie => GameData.GothicVm.GetSymbolByName("MOB_LIE").GetString(0).Split(',');
             public static string[] MobClimb => GameData.GothicVm.GetSymbolByName("MOB_CLIMB").GetString(0).Split(',');
             public static string[] MobNotInterruptable => GameData.GothicVm.GetSymbolByName("MOB_NOTINTERRUPTABLE").GetString(0).Split(',');
-            
+
+            // TODO - Gothic2 has a different amount of talents
+            public static int TalentsMax = GameData.GothicVm.GetSymbolByName("NPC_TALENT_MAX").GetInt(0);
             public static List<string> TalentTitles
             {
                 get
                 {
                     var talents = GameData.GothicVm.GetSymbolByName("TXT_TALENTS");;
-                    var talentCount = GameData.GothicVm.GetSymbolByName("NPC_TALENT_MAX").GetInt(0);
-                    return Enumerable.Range(0, talentCount).Select(i => talents.GetString((ushort)i)).ToList();
+                    return Enumerable.Range(0, TalentsMax).Select(i => talents.GetString((ushort)i)).ToList();
                 }
             }
 
@@ -78,7 +79,7 @@ namespace GUZ.Core.Globals
                 get
                 {
                     var talentSkills = GameData.GothicVm.GetSymbolByName("TXT_TALENTS_SKILLS");;
-                    var talentCount = GameData.GothicVm.GetSymbolByName("NPC_TALENT_MAX").GetInt(0);
+                    var talentCount = TalentsMax;
                     return Enumerable.Range(0, talentCount).Select(i => talentSkills.GetString((ushort)i)).ToList();
                 }
             }
@@ -207,6 +208,17 @@ namespace GUZ.Core.Globals
         // e.g. for NPCs to check if they reached a FreePoint already. Value is based on best guess/testing.
         public const float NpcDestinationReachedThreshold = 0.6f;
         public const float NpcRotationSpeed = 500f;
+        
+
+        public const string SlotRightHand	= "ZS_RIGHTHAND";
+        public const string SlotLeftHand	= "ZS_LEFTHAND";
+        public const string SlotSword		= "ZS_SWORD";
+        public const string SlotLongsword	= "ZS_LONGSWORD";
+        public const string SlotBow			= "ZS_BOW";
+        public const string SlotCrossbow	= "ZS_CROSSBOW";
+        public const string SlotHelmet		= "ZS_HELMET";
+        public const string SlotTorso		= "ZS_TORSO";
+
 
         public const string DaedalusHeroInstanceName = "PC_HERO"; // TODO - can be read from .ini file.
 

@@ -375,7 +375,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0333c47fdf6b4631be18b7d69729f0c4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _properties: {fileID: 6221555039147954839}
+  _vrProperties: {fileID: 6221555039147954839}
   _meshCollider: {fileID: 3848800049239021948}
 --- !u!114 &8461469363836242350
 MonoBehaviour:

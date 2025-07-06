@@ -1,9 +1,12 @@
 using System.Collections.Generic;
+using System.Linq;
 using GUZ.Core.Config;
-using GUZ.Core.Creator;
+using GUZ.Core.Data.Container;
 using GUZ.Core.Extensions;
 using GUZ.Core.Npc;
+using GUZ.Core.Util;
 using UnityEngine;
+using Logger = GUZ.Core.Util.Logger;
 
 namespace GUZ.Core.Manager.Culling
 {
@@ -29,15 +32,21 @@ namespace GUZ.Core.Manager.Culling
             _visibleNpcs.ClearAndReleaseMemory();
         }
 
-        public override void AddCullingEntry(GameObject go)
+        public void AddCullingEntry(GameObject go)
         {
+            if (CurrentState != State.Loading)
+            {
+                Logger.LogWarning($"CullingGroup for Sounds closed already. Can't add >{go.name}<", LogCat.Mesh);
+                return;
+            }
+            
             Objects.Add(go);
 
-            // Normally NPC spheres are ~1 meter in radius. But we need to fake the volume, so that Culling always thinks
+            // Normally NPC spheres are ~1 meters in radius. But we need to fake the volume, so that Culling always thinks
             // we're "inside" the NPC and Frustum+Occlusion Culling isn't triggered.
             // (@see VobSoundCullingManager where we also use it exactly that way, and it works.)
             var sphere = new BoundingSphere(go.transform.position, _featureCullingDistance);
-            TempSpheres.Add(sphere);
+            Spheres.Add(sphere);
         }
 
         /// <summary>
@@ -51,7 +60,7 @@ namespace GUZ.Core.Manager.Culling
 
                 // For performance reasons, we initially used a List during creation.
                 // Now we move to an array which is copied by reference to CullingGroup and can be updated later via Update().
-                _spheres = TempSpheres.ToArray();
+                _spheres = Spheres.ToArray();
                 CullingGroup.SetBoundingSpheres(_spheres);
 
                 // As we "faked" the volume of NPCs, we will plainly disable them whenever we are out of their volume (aka range).
@@ -66,7 +75,7 @@ namespace GUZ.Core.Manager.Culling
             }
 
             // Cleanup
-            TempSpheres.ClearAndReleaseMemory();
+            Spheres.ClearAndReleaseMemory();
         }
 
         protected override void VisibilityChanged(CullingGroupEvent evt)
@@ -144,6 +153,22 @@ namespace GUZ.Core.Manager.Culling
             }
         }
 
+        public void UpdateVobPositionOfVisibleNpcs()
+        {
+            foreach (var npc in _visibleNpcs.Values)
+            {
+                var container = npc.GetComponent<NpcLoader>().Container;
+
+                container.Vob.Position = container.PrefabProps.Bip01.position.ToZkVector();
+                container.Vob.Rotation = container.PrefabProps.Bip01.rotation.ToZkMatrix();
+            }
+        }
+
+        public List<NpcContainer> GetVisibleNpcs()
+        {
+            return _visibleNpcs.Values.Select(i => i.GetComponent<NpcLoader>().Container).ToList();
+        }
+        
         private void UpdatePosition(int sphereKey, Vector3 position)
         {
             _spheres[sphereKey].position = position;

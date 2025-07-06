@@ -1,8 +1,8 @@
-﻿using GUZ.Core.Properties;
+﻿using UnityEngine;
 
 namespace GUZ.VR.Properties
 {
-    public class VRVobItemProperties : VobItemProperties
+    public class VRVobItemProperties : MonoBehaviour
     {
         public bool IsSocketed;
     }

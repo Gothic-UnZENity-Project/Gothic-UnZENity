@@ -84,24 +84,6 @@ namespace GUZ.Core.Extensions
 
             return unityMatrix.rotation;
         }
-        // Create back conversion from UnityQuaternion to Matrix3x3
-        public static Matrix3x3 ToMatrix3x3(this Quaternion quaternion)
-        {
-            var unityMatrix = Matrix4x4.Rotate(quaternion);
-
-            return new Matrix3x3(
-                m11: unityMatrix.m00,
-                m12: unityMatrix.m01,
-                m13: unityMatrix.m02,
-
-                m21: unityMatrix.m10,
-                m22: unityMatrix.m11,
-                m23: unityMatrix.m12,
-
-                m31: unityMatrix.m20,
-                m32: unityMatrix.m21,
-                m33: unityMatrix.m22);
-        }
 
         public static Matrix4x4 ToUnityMatrix(this System.Numerics.Matrix4x4 matrix)
         {

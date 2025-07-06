@@ -1,5 +1,6 @@
 using System;
 using GUZ.Core.Animations;
+using GUZ.Core.Data.Container;
 using GUZ.Core.Extensions;
 using GUZ.Core.Npc;
 using GUZ.Core.Properties;
@@ -8,7 +9,7 @@ using ZenKit.Daedalus;
 
 namespace GUZ.Core.Npc
 {
-    public class NpcPrefabProperties : VobProperties
+    public class NpcPrefabProperties : MonoBehaviour
     {
         // Hero has different behaviour. e.g. no AIHandler attached and we therefore set the data from above (CacheHero())
         [SerializeField]
@@ -30,7 +31,7 @@ namespace GUZ.Core.Npc
         public HeadMorph HeadMorph;
 
         [NonSerialized]
-        public GameObject CurrentInteractable; // e.g. PSI_CAULDRON
+        public VobContainer CurrentInteractable; // e.g. PSI_CAULDRON
         [NonSerialized]
         public GameObject CurrentInteractableSlot; // e.g. ZS_0
 
@@ -50,7 +51,7 @@ namespace GUZ.Core.Npc
             _focusName = npcContainer.Instance.GetName(NpcNameSlot.Slot0);
         }
 
-        public override string GetFocusName()
+        public string GetFocusName()
         {
             return _focusName;
         }
