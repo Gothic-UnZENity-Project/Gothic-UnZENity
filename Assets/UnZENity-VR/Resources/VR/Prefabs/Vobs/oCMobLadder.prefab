@@ -321,7 +321,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2022050282646122291}
-  - component: {fileID: 5723926721288504602}
   - component: {fileID: 252428407596682482}
   m_Layer: 0
   m_Name: oCMobLadder
@@ -346,19 +345,6 @@ Transform:
   - {fileID: 5485219827508946200}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &5723926721288504602
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6503575194566409312}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fcee438f16834e5f8768391122403ab5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  <VisualScheme>k__BackingField: 
 --- !u!114 &252428407596682482
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -371,7 +357,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b3d4d12525e40a7ac803add610db925, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _properties: {fileID: 5723926721288504602}
   _nameCanvas: {fileID: 2393729959941540289}
 --- !u!1 &9166467133469941564
 GameObject:

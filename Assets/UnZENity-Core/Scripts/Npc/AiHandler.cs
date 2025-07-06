@@ -198,27 +198,26 @@ namespace GUZ.Core.Npc
             Properties.StateTime = 0.0f;
             Properties.ItemAnimationState = -1;
 
-            // We have set some "next" state before. Use it instead of going back to daily routine first.
+            // We have set some "next" state. Use it instead of going back to daily routine first.
             if (Vob.NextStateValid)
             {
-                // Use NextState only once. Next time daily routine will be called.
-                Vob.NextStateValid = false;
+                StartRoutine(Vob.NextStateIndex);
 
-                var currentRoutine = Vob.NextStateIndex;
-                StartRoutine(currentRoutine);
+                // As we use NextStateIndex as new "current" one, we clear it now safely.
+                Vob.NextStateIndex = -1;
+                Vob.NextStateValid = false;
+                Vob.NextStateIsRoutine = false;
+                Vob.NextStateName = string.Empty;
             }
+            // If we have nothing prepared, start daily Routine.
             else
             {
                 var currentRoutine = Properties.RoutineCurrent;
                 if (currentRoutine != null)
-                {
                     StartRoutine(currentRoutine.Action, currentRoutine.Waypoint);
-                }
                 else
-                {
                     // If we don't have a routine, we're a monster.
                     StartRoutine(NpcInstance.StartAiState);
-                }
             }
         }
 
@@ -227,7 +226,10 @@ namespace GUZ.Core.Npc
             // We need to set WayPoint within Daedalus instance as it calls _self.wp_ during routine loops.
             // If e.g. AssessSc()+B_CheckForImportantInfo() changes state to ZS_TALK(), we have no WP set. Therefore keep original one.
             if (wayPointName.NotNullOrEmpty())
-                NpcInstance.Wp = wayPointName;
+            {
+                NpcInstance.Wp = wayPointName; // For execution of self.wp during Routine calls.
+                Vob.ScriptWaypoint = wayPointName; // for SaveGame use.
+            }
             
             StartRoutine(action);
         }
@@ -247,6 +249,7 @@ namespace GUZ.Core.Npc
             Vob.LastAiState = Vob.CurrentStateIndex;
             Vob.CurrentStateIndex = action;
             Vob.CurrentStateValid = true;
+            Vob.CurrentStateIsRoutine = false;
 
             var routineSymbol = Vm.GetSymbolByIndex(action)!;
             Vob.CurrentStateName = routineSymbol.Name;
@@ -254,6 +257,8 @@ namespace GUZ.Core.Npc
             var symbolLoop = Vm.GetSymbolByName($"{routineSymbol.Name}_Loop");
             if (symbolLoop != null)
             {
+                // If we have a _Loop entry, we can safely assume, we are in a routine and not just a monster AiState.
+                Vob.CurrentStateIsRoutine = true;
                 Properties.StateLoop = symbolLoop.Index;
             }
 

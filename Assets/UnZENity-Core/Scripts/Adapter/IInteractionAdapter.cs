@@ -7,7 +7,7 @@ namespace GUZ.Core.Adapter
     {
         string GetContextName();
         float GetFrameRate();
-        GameObject CreatePlayerController(Scene scene, Vector3 position = default, Quaternion rotation = default);
+        GameObject CreatePlayerController(Scene scene);
         GameObject GetCurrentPlayerController();
         void CreateVRDeviceSimulator();
         void LockPlayerInPlace();

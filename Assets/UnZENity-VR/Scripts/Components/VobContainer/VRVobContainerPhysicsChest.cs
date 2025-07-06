@@ -11,6 +11,7 @@ using GUZ.Core.Globals;
 using GUZ.Core.Properties;
 using GUZ.Core.Util;
 using GUZ.Core.Vm;
+using GUZ.Core.Vob;
 using HurricaneVR.Framework.Components;
 using HurricaneVR.Framework.Core;
 using HurricaneVR.Framework.Core.Sockets;
@@ -35,9 +36,9 @@ namespace GUZ.VR.Components.VobContainer
 
         [Separator("GUZ - Settings")]
         [SerializeField] private GameObject _rootGo;
-        [SerializeField] private VobContainerProperties _containerProperties;
         [SerializeField] private HVRSocketContainer _socketContainer;
         [SerializeField] private BoxCollider _collectorCollider;
+        private IContainer _vobContainer;
 
         // Flags to ensure we always call On*() once, everytime open/close status changes.
         private bool _openingForTheFirstTime = true;
@@ -58,6 +59,8 @@ namespace GUZ.VR.Components.VobContainer
             base.Start();
             
             _socketContainer.gameObject.SetActive(false);
+            
+            _vobContainer =  _rootGo.GetComponentInParent<VobLoader>().Container.VobAs<IContainer>();
         }
         
         protected override void Update()
@@ -179,7 +182,7 @@ namespace GUZ.VR.Components.VobContainer
         
         private IEnumerator InitializeContent()
         {
-            var contents = _containerProperties.ContainerProperties?.Contents;
+            var contents = _vobContainer.Contents;
 
             if (string.IsNullOrEmpty(contents))
             {
@@ -260,22 +263,23 @@ namespace GUZ.VR.Components.VobContainer
                     }
                 };
 
-                var go = GameGlobals.Vobs.CreateItem(zkVob);
+                var vobContainer = GameGlobals.Vobs.CreateItem(zkVob);
 
                 // Wait 1 frame to ensure our mesh bounds can be calculated by HVR Socket.
                 yield return null;
                 
-                PlaceObjectIntoContainer(go);
+                PlaceObjectIntoContainer(vobContainer);
             }
         }
 
-        private void PlaceObjectIntoContainer(GameObject itemGo)
+        private void PlaceObjectIntoContainer(Core.Data.Container.VobContainer vobContainer)
         {
-            var grabbable = itemGo.GetComponentInChildren<HVRGrabbable>(true);
+            var grabbable = vobContainer.Go.GetComponentInChildren<HVRGrabbable>(true);
             if (_socketContainer.TryFindAvailableSocket(grabbable, out var socket))
             {
                 socket.TryGrab(grabbable, true, true);
-                itemGo.transform.localPosition = Vector3.zero; // We need to reset position as the element won't be placed inside it's parent in the chest.
+                // We need to reset position as the element won't be placed inside it's parent in the chest.
+                vobContainer.Go.transform.localPosition = Vector3.zero;
             }
         }
         
@@ -300,7 +304,6 @@ namespace GUZ.VR.Components.VobContainer
         private GameObject TempCreateItem(ItemInstance itemInstance)
         {
             var go = ResourceLoader.TryGetPrefabObject(PrefabType.VobItem);
-            go.GetComponent<VobItemProperties>().SetData(null, itemInstance);
             
             var mrm = ResourceLoader.TryGetMultiResolutionMesh(itemInstance.Visual);
             return MeshFactory.CreateVob(itemInstance.Name, mrm, default, default, true, rootGo: go, useTextureArray: false);
