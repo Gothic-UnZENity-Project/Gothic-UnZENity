@@ -60,7 +60,7 @@ namespace GUZ.Core.Npc
                 {
                     var npcElement = _objectsToInitQueue.Dequeue();
                     var npcId = npcElement.Npc.Id;
-                    var monsterId = npcElement.Npc.GetAiVar(Constants.DaedalusConst.AIVMMRealId);
+                    var monsterId = npcElement.Npc.GetAiVar(DaedalusConst.AIVMMRealId);
 
                     // Do not load NPCs we don't want to have via Debug flags.
                     if (npcId != 0 && GameGlobals.Config.Dev.SpawnNpcInstances.Value.Any() &&
