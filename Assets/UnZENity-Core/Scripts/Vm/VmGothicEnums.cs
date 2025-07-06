@@ -188,6 +188,44 @@ namespace GUZ.Core.Vm
             ItemRing = 1 << 11 // use like ring
         }
 
+        public enum InvCats
+        {
+            InvWeapon = 1,
+            InvArmor  = 2,
+            InvRune   = 3,
+            InvMagic  = 4,
+            InvFood	  = 5,
+            InvPotion = 6,
+            InvDoc    = 7,
+            InvMisc   = 8,
+            InvCatMax = 9
+        }
+
+        public static InvCats ToInventoryCategory(this ItemFlags mainFlag)
+        {
+            switch (mainFlag) {
+                case ItemFlags.ItemKatNf:
+                case ItemFlags.ItemKatFf:
+                case ItemFlags.ItemKatMun:
+                    return InvCats.InvWeapon;
+                case ItemFlags.ItemKatArmor:
+                    return InvCats.InvArmor;
+                case ItemFlags.ItemKatFood:
+                    return InvCats.InvFood;
+                case ItemFlags.ItemKatDocs:
+                    return InvCats.InvDoc;
+                case ItemFlags.ItemKatPotions:
+                    return InvCats.InvPotion;
+                case ItemFlags.ItemKatRune:
+                    return InvCats.InvRune;
+                case ItemFlags.ItemKatMagic:
+                    return InvCats.InvMagic;
+                // None and others
+                default:
+                    return InvCats.InvMisc;
+            }
+        }
+
         public enum WeaponState
         {
             NoWeapon,

@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Codice.Client.BaseCommands.Merge.ApplyMergeOperations;
 using GUZ.Core.Caches;
 using GUZ.Core.Config;
 using GUZ.Core.Data;
 using GUZ.Core.Data.Container;
+using GUZ.Core.Data.Vobs;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
@@ -231,14 +233,12 @@ namespace GUZ.Core.Npc
             vob.Attributes[attributeId] = value;
         }
 
-        public void ExtCreateInvItems(NpcInstance npc, int itemId, int amount)
+        public void ExtCreateInvItems(NpcInstance npc, int itemIndex, int amount)
         {
             // We also initialize NPCs inside Daedalus when we load a save game. It's needed as some data isn't stored on save games.
-            // But e.g. inventory items will be skipped as they are stored inside save game VOBs.
+            // But e.g., inventory items will be skipped as they are stored inside save game VOBs.
             if (!GameGlobals.SaveGame.IsWorldLoadedForTheFirstTime)
-            {
                 return;
-            }
 
             if (npc.GetUserData() == null)
             {
@@ -246,31 +246,30 @@ namespace GUZ.Core.Npc
                 return;
             }
 
-            var itemInstanceName = GameData.GothicVm.GetSymbolByIndex(itemId)!.Name;
+            var itemInstance = GameData.GothicVm.GetSymbolByIndex(itemIndex)!;
             var vob = npc.GetUserData()!.Vob;
 
-            IItem item = null;
-            for (var i = 0; i < vob.ItemCount; i++)
+            
+            var mainFlag = (VmGothicEnums.ItemFlags)VmInstanceManager.TryGetItemData(itemIndex).MainFlag;
+            var inventoryCat = mainFlag.ToInventoryCategory();
+            
+            var items = GameGlobals.Vobs.UnpackItems(vob.GetPacked((int)inventoryCat));
+            var itemFound = false;
+            
+            for (var i = 0; i < items.Count; i++)
             {
-                if (vob.GetItem(i).Instance == itemInstanceName)
+                if (items[i].Name == itemInstance.Name)
                 {
-                    item = vob.GetItem(i);
+                    items[i] = new ContentItem(items[i], amount);
+                    itemFound = true;
                     break;
                 }
             }
 
-            if (item == null)
-            {
-                vob.AddItem(new Item()
-                {
-                    Instance = itemInstanceName,
-                    Amount = amount
-                });
-            }
-            else
-            {
-                item.Amount += amount;
-            }
+            if (!itemFound)
+                items.Add(new ContentItem(itemInstance.Name, amount));
+
+            vob.SetPacked((int)inventoryCat, GameGlobals.Vobs.PackItems(items));
         }
 
         public NpcContainer GetHeroContainer()
@@ -355,7 +354,7 @@ namespace GUZ.Core.Npc
         {
             var props = npc.GetUserData().Props;
             var itemData = VmInstanceManager.TryGetItemData(itemId);
-
+            
             props.EquippedItems.Add(itemData);
         }
 

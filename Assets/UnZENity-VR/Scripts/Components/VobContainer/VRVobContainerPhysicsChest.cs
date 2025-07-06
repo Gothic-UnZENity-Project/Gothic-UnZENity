@@ -47,6 +47,7 @@ namespace GUZ.VR.Components.VobContainer
         
         
         [Serializable]
+        [Obsolete("Moved to GUZ.Core.Data.Vobs.ContentItem")]
         public struct ContentItem
         {
             public string Name;
