@@ -48,7 +48,7 @@ namespace GUZ.Core.Data.Adapter.Vobs
             AddSlot().Name = Constants.SlotHelmet;
             AddSlot().Name = Constants.SlotTorso;
 
-            for (var i = 0; i < Constants.Daedalus.TalentsMax; i++)
+            for (var i = 0; i < DaedalusConst.TalentsMax; i++)
             {
                 AddTalent(new Talent
                 {

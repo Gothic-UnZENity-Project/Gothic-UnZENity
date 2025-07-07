@@ -6,7 +6,7 @@ using GUZ.Core.Globals;
 using GUZ.Core.Vm;
 using ZenKit;
 using ZenKit.Daedalus;
-using static GUZ.Core.Globals.Constants;
+using static GUZ.Core.Globals.DaedalusConst;
 
 namespace GUZ.Core.Manager
 {

@@ -107,7 +107,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
         /// </summary>
         private void HandleRotation(Transform npcTransform)
         {
-            var turnSpeed = GameData.cGuildValue.GetTurnSpeed((int)Guild.GIL_HUMAN);
+            var turnSpeed = GameData.cGuildValue.GetTurnSpeed((int)DaedalusConst.Guild.GIL_HUMAN);
             var currentRotation =
                 Quaternion.RotateTowards(npcTransform.rotation, _finalRotation, Time.deltaTime * turnSpeed);
 
