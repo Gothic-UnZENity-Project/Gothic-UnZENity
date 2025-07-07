@@ -47,6 +47,14 @@ namespace GUZ.Core.Data.Adapter.Vobs
             AddSlot().Name = Constants.SlotCrossbow;
             AddSlot().Name = Constants.SlotHelmet;
             AddSlot().Name = Constants.SlotTorso;
+
+            for (var i = 0; i < Constants.Daedalus.TalentsMax; i++)
+            {
+                AddTalent(new Talent
+                {
+                    Type = i
+                });
+            }
         }
 
         /// <summary>
@@ -63,6 +71,7 @@ namespace GUZ.Core.Data.Adapter.Vobs
             XpNextLevel = instance.ExpNext;
             Guild = instance.Guild;
             GuildTrue = instance.Guild;
+            FightTactic = instance.FightTactic;
         }
         
         public string GetOverlay(int i)
