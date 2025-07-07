@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
+using GUZ.Core.Data.Adapter.Vobs;
 using GUZ.Core.Data.Container;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
@@ -15,7 +15,6 @@ using Logger = GUZ.Core.Util.Logger;
 using Mesh = ZenKit.Mesh;
 using Texture = ZenKit.Texture;
 using TextureFormat = ZenKit.TextureFormat;
-using Vector3 = System.Numerics.Vector3;
 
 namespace GUZ.Core.Manager
 {
@@ -178,11 +177,11 @@ namespace GUZ.Core.Manager
                 Npcs = worldToUse.Npcs, // (if it's a new world, it's simply null)
 
                 // Contained inside both: normal .zen file and also saveGame.
-                Vobs = worldToUse!.RootObjects,
+                Vobs = WrapVobs(worldToUse!.RootObjects, IsWorldEnteredFirstTime),
                 WayNet = (CachedWayNet)worldToUse.WayNet.Cache()
             };
         }
-        
+
         /// <summary>
         /// Load a Save Game.
         /// 
@@ -324,7 +323,46 @@ namespace GUZ.Core.Manager
                 allVobs.Add(visibleNpc.Vob);
             }
             
-            container.SaveGameWorld.RootObjects = allVobs;
+            container.SaveGameWorld.RootObjects = UnwrapVobs(allVobs);
+        }
+
+        /// <summary>
+        /// Wrap VOB types with our Adapter grants us more flexibility in using it at runtime (e.g., fetching setter and altering logic).
+        /// </summary>
+        private List<IVirtualObject> WrapVobs(List<IVirtualObject> vobs, bool isWorldEnteredFirstTime)
+        {
+            var wrappedVobs = new List<IVirtualObject>();
+
+            foreach (var vob in vobs)
+            {
+                
+                wrappedVobs.Add(vob.Type switch
+                {
+                    VirtualObjectType.oCNpc => new NpcAdapter(vob),
+                    _ => vob
+                });
+            }
+
+            return wrappedVobs;
+        }
+        
+        /// <summary>
+        /// Before saving the VOBs in a SaveGame, we need to unwrap our Adapters. Otherwise we get a Cast Exception from ZK C++ side.
+        /// </summary>
+        private List<IVirtualObject> UnwrapVobs(List<IVirtualObject> vobs)
+        {
+            var unwrappedVobs = new List<IVirtualObject>();
+
+            foreach (var vob in vobs)
+            {
+                unwrappedVobs.Add(vob.Type switch
+                {
+                    VirtualObjectType.oCNpc => ((NpcAdapter)vob).GetVob(),
+                    _ => vob
+                });
+            }
+
+            return unwrappedVobs;
         }
 
         private string GetSaveGamePath(SlotId folderSaveId)

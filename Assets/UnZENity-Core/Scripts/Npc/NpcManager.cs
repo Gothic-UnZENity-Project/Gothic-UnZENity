@@ -6,6 +6,7 @@ using Codice.Client.BaseCommands.Merge.ApplyMergeOperations;
 using GUZ.Core.Caches;
 using GUZ.Core.Config;
 using GUZ.Core.Data;
+using GUZ.Core.Data.Adapter.Vobs;
 using GUZ.Core.Data.Container;
 using GUZ.Core.Data.Vobs;
 using GUZ.Core.Extensions;
@@ -299,7 +300,6 @@ namespace GUZ.Core.Npc
                 return;
             }
 
-
             // Initial setup
             var playerGo = GameObject.FindWithTag(Constants.PlayerTag);
 
@@ -310,10 +310,12 @@ namespace GUZ.Core.Npc
             }
 
             var heroInstance = GameData.GothicVm.AllocInstance<NpcInstance>(GameGlobals.Config.Gothic.PlayerInstanceName);
+            var heroDaedalusInstance = GameData.GothicVm.GetSymbolByName(GameGlobals.Config.Gothic.PlayerInstanceName)!;
 
-            var vobNpc = new NpcVob(-1)
+            var vobNpc = new NpcAdapter(heroDaedalusInstance.Index)
             {
                 Name = GameGlobals.Config.Gothic.PlayerInstanceName,
+                NpcInstance = GameGlobals.Config.Gothic.PlayerInstanceName,
                 Player = true
             };
 
@@ -334,6 +336,7 @@ namespace GUZ.Core.Npc
 
             MultiTypeCache.NpcCache.Add(npcData);
             _vm.InitInstance(heroInstance);
+            vobNpc.CopyFromInstanceData(heroInstance);
 
             _vm.GlobalHero = heroInstance;
         }

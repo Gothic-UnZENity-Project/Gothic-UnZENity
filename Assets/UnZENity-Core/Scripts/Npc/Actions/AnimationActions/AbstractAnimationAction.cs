@@ -23,7 +23,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
         protected readonly NpcInstance NpcInstance;
         protected readonly GameObject NpcGo;
         protected readonly NpcProperties Props;
-        protected readonly ZenKit.Vobs.Npc Vob;
+        protected readonly ZenKit.Vobs.INpc Vob;
         protected readonly NpcPrefabProperties PrefabProps;
 
         protected float ActionTime;
