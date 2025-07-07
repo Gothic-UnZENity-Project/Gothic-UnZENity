@@ -285,13 +285,11 @@ namespace GUZ.Core.Npc
                 playerGo = GameObject.FindWithTag(Constants.MainCameraTag);
             }
 
-            var heroInstance = GameData.GothicVm.AllocInstance<NpcInstance>(GameGlobals.Config.Gothic.PlayerInstanceName);
-            var heroDaedalusInstance = GameData.GothicVm.GetSymbolByName(GameGlobals.Config.Gothic.PlayerInstanceName)!;
+            var heroInstance = GameData.GothicVm.AllocInstance<NpcInstance>(GameGlobals.Config.GothicGame.Player);
+            var heroDaedalusInstance = GameData.GothicVm.GetSymbolByName(GameGlobals.Config.GothicGame.Player)!;
 
             var vobNpc = new NpcAdapter(heroDaedalusInstance.Index)
             {
-                Name = GameGlobals.Config.Gothic.PlayerInstanceName,
-                NpcInstance = GameGlobals.Config.Gothic.PlayerInstanceName,
                 Player = true
             };
 
