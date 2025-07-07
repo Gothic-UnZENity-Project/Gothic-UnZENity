@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Numerics;
 using GUZ.Core.Globals;
@@ -72,6 +73,13 @@ namespace GUZ.Core.Data.Adapter.Vobs
             Guild = instance.Guild;
             GuildTrue = instance.Guild;
             FightTactic = instance.FightTactic;
+
+            
+            
+            for (var i = 0; i < Enum.GetNames(typeof(NpcAttribute)).Length; i++)
+            {
+                SetAttribute(i, instance.GetAttribute((NpcAttribute)i));
+            }
         }
         
         public string GetOverlay(int i)
