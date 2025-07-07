@@ -163,7 +163,6 @@ namespace GUZ.Core.Globals
         
         // FIXME - load from INI file!
         public static string SelectedWorld { get; set; } = "world.zen";
-        public static string SelectedWaypoint { get; set; } = "START";
 
         // We need to set the scale so that collision and NPC animation is starting at the right spot.
         public static Vector3 VobZsScale = new(0.1f, 0.1f, 0.1f);
