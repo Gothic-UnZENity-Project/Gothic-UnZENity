@@ -2,10 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Codice.Client.BaseCommands.Merge.ApplyMergeOperations;
 using GUZ.Core.Caches;
 using GUZ.Core.Config;
-using GUZ.Core.Data;
 using GUZ.Core.Data.Adapter.Vobs;
 using GUZ.Core.Data.Container;
 using GUZ.Core.Data.Vobs;
