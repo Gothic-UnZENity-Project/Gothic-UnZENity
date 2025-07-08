@@ -29,12 +29,8 @@ namespace GUZ.Core.Data.Adapter.Vobs
 
         private void InitNew(int npcIndex)
         {
-            // != Hero
-            if (npcIndex >= 0)
-            {
-                Name = GameData.GothicVm.GetSymbolByIndex(npcIndex)!.Name;
-                NpcInstance = Name;
-            }
+            Name = GameData.GothicVm.GetSymbolByIndex(npcIndex)!.Name;
+            NpcInstance = Name;
     
             Ai = new AiHuman();
             EventManager = new EventManager();
@@ -73,8 +69,11 @@ namespace GUZ.Core.Data.Adapter.Vobs
             Guild = instance.Guild;
             GuildTrue = instance.Guild;
             FightTactic = instance.FightTactic;
-
             
+            for (var i = 0; i < Enum.GetNames(typeof(DamageType)).Length; i++)
+            {
+                SetProtection(i, instance.GetProtection((DamageType)i));
+            }
             
             for (var i = 0; i < Enum.GetNames(typeof(NpcAttribute)).Length; i++)
             {
