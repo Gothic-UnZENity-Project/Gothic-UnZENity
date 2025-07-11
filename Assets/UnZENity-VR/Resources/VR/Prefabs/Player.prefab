@@ -9,7 +9,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4931888112518750926}
-  - component: {fileID: 1765646773537834621}
   m_Layer: 0
   m_Name: BackPack
   m_TagString: Untagged
@@ -33,18 +32,6 @@ Transform:
   - {fileID: 300578049224616702}
   m_Father: {fileID: 8391885031977683603}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1765646773537834621
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 252563623857412721}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0e87e25baf014b28a5aaa89ab1e7c31f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &427936599919638798
 GameObject:
   m_ObjectHideFlags: 0
@@ -3174,6 +3161,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: -2445633797789926738, guid: 6cb8512e2712dc24ab93173e96e1a2bf, type: 3}
       insertIndex: -1
       addedObject: {fileID: 465243242916403510}
+    - targetCorrespondingSourceObject: {fileID: -2445633797789926738, guid: 6cb8512e2712dc24ab93173e96e1a2bf, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4482438051807585254}
   m_SourcePrefab: {fileID: 100100000, guid: 6cb8512e2712dc24ab93173e96e1a2bf, type: 3}
 --- !u!4 &300578049224616702 stripped
 Transform:
@@ -3289,7 +3279,7 @@ MonoBehaviour:
   Grabbed:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1765646773537834621}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: GUZ.VR.Components.VRBackpack, UnZENity.VR
         m_MethodName: OnGrabbed
         m_Mode: 0
@@ -3304,7 +3294,7 @@ MonoBehaviour:
   Released:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1765646773537834621}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: GUZ.VR.Components.VRBackpack, UnZENity.VR
         m_MethodName: OnReleased
         m_Mode: 0
@@ -3440,7 +3430,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Socket: {fileID: 8240698000325697902}
   ReturnTime: 0
-  PlaySocketedSFX: 1
+  PlaySocketedSFX: 0
+--- !u!114 &4482438051807585254
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6750397064425240507}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0e87e25baf014b28a5aaa89ab1e7c31f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &8461230000596305563 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8560556203703700366, guid: 6cb8512e2712dc24ab93173e96e1a2bf, type: 3}

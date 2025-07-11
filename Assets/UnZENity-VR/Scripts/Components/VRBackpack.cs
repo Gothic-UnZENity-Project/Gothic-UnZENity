@@ -5,11 +5,13 @@ using GUZ.Core.Creator.Sounds;
 using GUZ.Core.Globals;
 using HurricaneVR.Framework.Core;
 using HurricaneVR.Framework.Core.Grabbers;
+using HurricaneVR.Framework.Core.Sockets;
 using HurricaneVR.Framework.Core.Utils;
 using UnityEngine;
 
 namespace GUZ.VR.Components
 {
+    [RequireComponent(typeof(HVRSocketable))]
     public class VRBackpack : MonoBehaviour
     {
         private AudioClip _openClip;
@@ -24,16 +26,21 @@ namespace GUZ.VR.Components
         {
             _openClip = SoundCreator.ToAudioClip(SfxConst.InvOpen.File);
             _closeClip = SoundCreator.ToAudioClip(SfxConst.InvClose.File);
+            
+            var socketable = GetComponent<HVRSocketable>();
+
+            socketable.UnsocketedClip = _openClip;
+            socketable.SocketedClip = _closeClip;
         }
 
         public void OnGrabbed(HVRGrabberBase grabber, HVRGrabbable grabbable)
         {
-            SFXPlayer.Instance?.PlaySFX(grabbable.HandGrabbedClip, grabbable.transform.position);
+            // SFXPlayer.Instance?.PlaySFX(_openClip, grabbable.transform.position);
         }
 
         public void OnReleased(HVRGrabberBase grabber, HVRGrabbable grabbable)
         {
-            SFXPlayer.Instance?.PlaySFX(grabbable.HandGrabbedClip, grabbable.transform.position);
+            // SFXPlayer.Instance?.PlaySFX(_closeClip, grabbable.transform.position);
         }
     }
 }
