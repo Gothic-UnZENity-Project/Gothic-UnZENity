@@ -32,16 +32,6 @@ namespace GUZ.VR.Components
             socketable.UnsocketedClip = _openClip;
             socketable.SocketedClip = _closeClip;
         }
-
-        public void OnGrabbed(HVRGrabberBase grabber, HVRGrabbable grabbable)
-        {
-            // SFXPlayer.Instance?.PlaySFX(_openClip, grabbable.transform.position);
-        }
-
-        public void OnReleased(HVRGrabberBase grabber, HVRGrabbable grabbable)
-        {
-            // SFXPlayer.Instance?.PlaySFX(_closeClip, grabbable.transform.position);
-        }
     }
 }
 #endif

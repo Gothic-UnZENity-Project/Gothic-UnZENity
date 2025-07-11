@@ -7,6 +7,5 @@ namespace GUZ.Core.Globals
     {
         public static SoundEffectInstance InvOpen => VmInstanceManager.TryGetSfxData("INV_OPEN");
         public static SoundEffectInstance InvClose => VmInstanceManager.TryGetSfxData("INV_CLOSE");
-
     }
 }
