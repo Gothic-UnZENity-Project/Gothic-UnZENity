@@ -1,4 +1,4 @@
-using System.Linq;
+#if GUZ_HVR_INSTALLED
 using GUZ.Core;
 using GUZ.Core.Manager;
 using GUZ.Core.UnZENity_Core.Scripts.Manager;
@@ -158,3 +158,4 @@ namespace GUZ.VR.Components.SpeechToText
         }
     }
 }
+#endif
