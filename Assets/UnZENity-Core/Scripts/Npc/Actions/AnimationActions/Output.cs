@@ -3,6 +3,7 @@ using GUZ.Core.Creator.Sounds;
 using GUZ.Core.Data.Container;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
+using GUZ.Core.Manager;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -23,7 +24,19 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
 
         public override void Start()
         {
-            AudioClip audioClip = SoundCreator.ToAudioClip(OutputName);
+            if (DialogManager.SkipNextOutput)
+            {
+                DialogManager.SkipNextOutput = false;
+                
+                // If - for any reason - the first dialog entry after selecting dialog entry, then we don't skip it.
+                if (_isHeroSpeaking)
+                {
+                    IsFinishedFlag = true;
+                    return;
+                }
+            }
+            
+            var audioClip = SoundCreator.ToAudioClip(OutputName);
             _audioPlaySeconds = audioClip.length;
 
             // Hero
