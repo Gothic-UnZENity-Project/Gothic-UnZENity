@@ -14,9 +14,6 @@ namespace GUZ.VR.Components
     [RequireComponent(typeof(HVRSocketable))]
     public class VRBackpack : MonoBehaviour
     {
-        private AudioClip _openClip;
-        private AudioClip _closeClip;
-
         private void Start()
         {
             GlobalEventDispatcher.ZenKitBootstrapped.AddListener(Init);
@@ -24,13 +21,10 @@ namespace GUZ.VR.Components
 
         private void Init()
         {
-            _openClip = SoundCreator.ToAudioClip(SfxConst.InvOpen.File);
-            _closeClip = SoundCreator.ToAudioClip(SfxConst.InvClose.File);
-            
             var socketable = GetComponent<HVRSocketable>();
 
-            socketable.UnsocketedClip = _openClip;
-            socketable.SocketedClip = _closeClip;
+            socketable.UnsocketedClip = SoundCreator.ToAudioClip(SfxConst.InvOpen.File);
+            socketable.SocketedClip = SoundCreator.ToAudioClip(SfxConst.InvClose.File);
         }
     }
 }
