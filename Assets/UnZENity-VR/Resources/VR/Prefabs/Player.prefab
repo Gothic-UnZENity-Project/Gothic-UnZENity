@@ -912,6 +912,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -1525,6 +1528,7 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
   m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
@@ -1711,6 +1715,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -2498,7 +2505,7 @@ Camera:
   m_GameObject: {fileID: 6975952116000528584}
   m_Enabled: 1
   serializedVersion: 2
-  m_ClearFlags: 2
+  m_ClearFlags: 4
   m_BackGroundColor: {r: 0.7169812, g: 0.4836241, b: 0.4836241, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
@@ -3154,6 +3161,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: -2445633797789926738, guid: 6cb8512e2712dc24ab93173e96e1a2bf, type: 3}
       insertIndex: -1
       addedObject: {fileID: 465243242916403510}
+    - targetCorrespondingSourceObject: {fileID: -2445633797789926738, guid: 6cb8512e2712dc24ab93173e96e1a2bf, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4482438051807585254}
   m_SourcePrefab: {fileID: 100100000, guid: 6cb8512e2712dc24ab93173e96e1a2bf, type: 3}
 --- !u!4 &300578049224616702 stripped
 Transform:
@@ -3396,7 +3406,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Socket: {fileID: 8240698000325697902}
   ReturnTime: 0
-  PlaySocketedSFX: 1
+  PlaySocketedSFX: 0
+--- !u!114 &4482438051807585254
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6750397064425240507}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0e87e25baf014b28a5aaa89ab1e7c31f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &8461230000596305563 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8560556203703700366, guid: 6cb8512e2712dc24ab93173e96e1a2bf, type: 3}
@@ -5544,6 +5566,13 @@ MonoBehaviour:
     JustDeactivated: 0
     Value: 0
   IsMenuButtonEnabled: 1
+  IsSpeakingActivated: 0
+  SpeakingState:
+    Active: 0
+    JustActivated: 0
+    JustDeactivated: 0
+    Value: 0
+  IsSpeakButtonEnabled: 1
 --- !u!82 &2100257876914915749
 AudioSource:
   m_ObjectHideFlags: 0
@@ -5555,6 +5584,7 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
   m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1
