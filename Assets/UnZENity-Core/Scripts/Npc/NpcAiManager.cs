@@ -382,14 +382,22 @@ namespace GUZ.Core.Npc
             return NpcHelper.GetPersonAttitude(npc1, npc2);
         }
 
+        /// <summary>
+        /// HINT: These values are only used when checking the attitude towards the player
+        /// HINT: for attitudes between NPC we directly use the guild attitude
+        /// </summary>
         public void ExtSetAttitude(NpcInstance npc, VmGothicEnums.Attitude value)
         {
-            npc.GetUserData().Props.Attitude = value;
+            npc.GetUserData().Vob.Attitude = (int)value;
         }
         
+        /// <summary>
+        /// HINT: These values are only used when checking the attitude towards the player
+        /// HINT: for attitudes between NPC we directly use the guild attitude
+        /// </summary>
         public void ExtSetTempAttitude(NpcInstance npc, VmGothicEnums.Attitude value)
         {
-            npc.GetUserData().Props.TempAttitude = value;
+            npc.GetUserData().Vob.AttitudeTemp = (int)value;
         }
 
         public bool ExtGetTarget(NpcInstance npc)

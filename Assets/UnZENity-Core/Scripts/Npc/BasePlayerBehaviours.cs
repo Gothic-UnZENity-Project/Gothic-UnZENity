@@ -13,7 +13,7 @@ namespace GUZ.Core.Npc
         public NpcContainer NpcData;
 
         public NpcInstance NpcInstance => NpcData.Instance;
-        public ZenKit.Vobs.Npc Vob => NpcData.Vob;
+        public ZenKit.Vobs.INpc Vob => NpcData.Vob;
         public GameObject Go => NpcData.Go;
         public NpcProperties Properties => NpcData.Props;
         public NpcPrefabProperties PrefabProps => NpcData.PrefabProps;

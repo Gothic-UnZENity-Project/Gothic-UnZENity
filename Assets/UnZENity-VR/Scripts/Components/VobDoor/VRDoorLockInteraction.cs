@@ -48,7 +48,7 @@ namespace GUZ.VR.Components.VobDoor
                 return;
 
             _combinationPos = 0;
-            PlaySound(Constants.Daedalus.DoorLockSoundName);
+            PlaySound(DaedalusConst.DoorLockSoundName);
 
             var lockPickProperties = other.gameObject.GetComponentInParent<VRVobLockPickProperties>();
             lockPickProperties.IsInsideLock = true;
@@ -75,7 +75,7 @@ namespace GUZ.VR.Components.VobDoor
                 return;
             }
 
-            PlaySound(Constants.Daedalus.DoorLockSoundName);
+            PlaySound(DaedalusConst.DoorLockSoundName);
             
             var lockPickProperties = other.gameObject.GetComponentInParent<VRVobLockPickProperties>();
             lockPickProperties.IsInsideLock = false;
@@ -102,12 +102,12 @@ namespace GUZ.VR.Components.VobDoor
                     // Reactivate rotation
                     _rootGO.GetComponentInChildren<ConfigurableJoint>().axis = Vector3.up;
 
-                    PlaySound(Constants.Daedalus.PickLockUnlockSoundName, Constants.Daedalus.DoorUnlockSoundName);
+                    PlaySound(DaedalusConst.PickLockUnlockSoundName, DaedalusConst.DoorUnlockSoundName);
 
                     return DoorLockStatus.Unlocked;
                 }
 
-                PlaySound(Constants.Daedalus.PickLockSuccessSoundName);
+                PlaySound(DaedalusConst.PickLockSuccessSoundName);
                 return DoorLockStatus.StepSuccess;
             }
             else
@@ -115,11 +115,11 @@ namespace GUZ.VR.Components.VobDoor
                 // TODO - Pseudo breaking for testings only
                 if (Random.value > 0.5f)
                 {
-                    PlaySound(Constants.Daedalus.PickLockFailureSoundName);
+                    PlaySound(DaedalusConst.PickLockFailureSoundName);
                 }
                 else
                 {
-                    PlaySound(Constants.Daedalus.PickLockBrokenSoundName);
+                    PlaySound(DaedalusConst.PickLockBrokenSoundName);
                 }
 
                 _combinationPos = 0;

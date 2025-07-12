@@ -49,14 +49,9 @@ namespace GUZ.Core.Manager.Scenes
             var world = GameGlobals.Config.Dev.PreselectWorldToSpawn;
 
             if (world == DeveloperConfigEnums.WorldToSpawn.None)
-            {
-                // FIXME - Read default from INI file
-                return Constants.SelectedWorld;
-            }
+                return GameGlobals.Config.GothicGame.World;
             else
-            {
                 return DeveloperConfigEnums.WorldMappings[world];
-            }
         }
     }
 }

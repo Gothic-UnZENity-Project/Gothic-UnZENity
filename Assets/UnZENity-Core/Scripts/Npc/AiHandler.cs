@@ -383,7 +383,7 @@ namespace GUZ.Core.Npc
             // FIXME - We need to properly set this value for Gothic2 as well.
             if (GameGlobals.Config.Dev.GameVersion == GameVersion.Gothic1)
             {
-                NpcInstance.SetAiVar(Constants.DaedalusConst.AIVItemStatusKey, Constants.DaedalusConst.TAITNone);
+                NpcInstance.SetAiVar(DaedalusConst.AIVItemStatusKey, DaedalusConst.TAITNone);
             }
 
             // Start over
