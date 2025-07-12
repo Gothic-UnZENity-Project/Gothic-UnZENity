@@ -13,7 +13,6 @@ namespace GUZ.Core.Properties
         
         // Misc
         public List<InfoInstance> Dialogs = new();
-        public VmGothicEnums.WalkMode WalkMode;
 
         // Routines
         public List<RoutineData> Routines = new();

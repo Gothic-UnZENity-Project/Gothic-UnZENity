@@ -65,33 +65,34 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
 
         private string GetRotateModeAnimationString()
         {
-            string walkmode;
-            switch (Props.WalkMode)
+            var walkMode = (VmGothicEnums.WalkMode)Vob.AiHuman.WalkMode;
+            string walkModeString;
+            switch (walkMode)
             {
                 case VmGothicEnums.WalkMode.Walk:
-                    walkmode = "RUN"; // FIXME: We need to implement aniAlias feature, then change it back to t_WalkTurnL
+                    walkModeString = "RUN"; // FIXME: We need to implement aniAlias feature, then change it back to t_WalkTurnL
                     break;
                 case VmGothicEnums.WalkMode.Run:
-                    walkmode = "Run";
+                    walkModeString = "Run";
                     break;
                 case VmGothicEnums.WalkMode.Sneak:
-                    walkmode = "Sneak";
+                    walkModeString = "Sneak";
                     break;
                 case VmGothicEnums.WalkMode.Water:
-                    walkmode = "Water";
+                    walkModeString = "Water";
                     break;
                 case VmGothicEnums.WalkMode.Swim:
-                    walkmode = "Swim";
+                    walkModeString = "Swim";
                     break;
                 case VmGothicEnums.WalkMode.Dive:
-                    walkmode = "Dive";
+                    walkModeString = "Dive";
                     break;
                 default:
-                    Logger.LogWarning($"Animation of type {Props.WalkMode} not yet implemented.", LogCat.Ai);
+                    Logger.LogWarning($"Animation of type {walkMode} not yet implemented.", LogCat.Ai);
                     return "";
             }
 
-            return $"T_{walkmode}TURN{(_isRotateLeft ? 'L' : 'R')}";
+            return $"T_{walkModeString}TURN{(_isRotateLeft ? 'L' : 'R')}";
         }
 
         public override void Tick()

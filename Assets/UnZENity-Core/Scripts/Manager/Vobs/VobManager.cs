@@ -312,7 +312,7 @@ namespace GUZ.Core.Manager.Vobs
                         await CreateWorldVobs(config, loading, vob.Children);
                         continue;
                     case VirtualObjectType.oCNpc:
-                        GameGlobals.Npcs.CreateVobNpc((ZenKit.Vobs.Npc)vob);
+                        GameGlobals.Npcs.CreateVobNpc((INpc)vob);
                         continue;
                 }
 

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using GUZ.Core.Caches;
+using GUZ.Core.Data.Adapter.Vobs;
 using UnityEngine;
 using ZenKit;
 using ZenKit.Vobs;
@@ -23,7 +24,7 @@ namespace GUZ.Core.Data.Container
         // VOB related objects
         // We need to store it as we need the pointer to it for load+save of un-cached vobs.
         public List<IVirtualObject> Vobs;
-        public List<ZenKit.Vobs.Npc> Npcs;
+        public List<NpcAdapter> Npcs;
 
         // Cached objects - For performance reasons we only allow them cached. Otherwise every loop and getter will load them again.
         public CachedWayNet WayNet;

@@ -120,7 +120,7 @@ namespace GUZ.Core.Npc
         {
             if (GameGlobals.SaveGame.IsNewGame)
                 await _initializer.InitNpcsNewGame(loading);
-             else
+            else
                 await _initializer.InitNpcsSaveGame(loading);
         }
 
@@ -128,7 +128,7 @@ namespace GUZ.Core.Npc
         /// World Vobs from a SaveGame contains NPCs if they're close to our hero during save time.
         /// We will create them here as a "normal" lazy loaded NPC.
         /// </summary>
-        public void CreateVobNpc(ZenKit.Vobs.Npc vobNpc)
+        public void CreateVobNpc(INpc vobNpc)
         {
             if (vobNpc.Name.EqualsIgnoreCase(Constants.DaedalusHeroInstanceName))
             {

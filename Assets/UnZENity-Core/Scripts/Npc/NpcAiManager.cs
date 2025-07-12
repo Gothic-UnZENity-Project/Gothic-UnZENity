@@ -72,24 +72,24 @@ namespace GUZ.Core.Npc
 
         public void ExtAiSetWalkMode(NpcInstance npc, VmGothicEnums.WalkMode walkMode)
         {
-            npc.GetUserData().Props.WalkMode = walkMode;
+            npc.GetUserData()!.Vob.AiHuman.WalkMode = (int)walkMode;
         }
 
         public void ExtAiGoToWp(NpcInstance npc, string wayPointName)
         {
-            npc.GetUserData().Props.AnimationQueue.Enqueue(new GoToWp(
+            npc.GetUserData()!.Props.AnimationQueue.Enqueue(new GoToWp(
                 new AnimationAction(wayPointName),
                 npc.GetUserData()));
         }
 
         public void ExtAiAlignToWp(NpcInstance npc)
         {
-            npc.GetUserData().Props.AnimationQueue.Enqueue(new AlignToWp(new AnimationAction(), npc.GetUserData()));
+            npc.GetUserData()!.Props.AnimationQueue.Enqueue(new AlignToWp(new AnimationAction(), npc.GetUserData()));
         }
 
         public void ExtAiGoToFp(NpcInstance npc, string freePointName)
         {
-            npc.GetUserData().Props.AnimationQueue.Enqueue(new GoToFp(
+            npc.GetUserData()!.Props.AnimationQueue.Enqueue(new GoToFp(
                 new AnimationAction(freePointName),
                 npc.GetUserData()));
         }

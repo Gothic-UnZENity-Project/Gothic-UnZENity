@@ -546,33 +546,34 @@ namespace GUZ.Core.Animations
 
         private string GetIdleAnimationName()
         {
-            string walkMode;
-            switch (Properties.WalkMode)
+            var walkMode = (VmGothicEnums.WalkMode)Vob.AiHuman.WalkMode;
+            string walkModeString;
+            switch (walkMode)
             {
                 case VmGothicEnums.WalkMode.Walk:
-                    walkMode = "WALK";
+                    walkModeString = "WALK";
                     break;
                 case VmGothicEnums.WalkMode.Run:
-                    walkMode = "RUN";
+                    walkModeString = "RUN";
                     break;
                 case VmGothicEnums.WalkMode.Sneak:
-                    walkMode = "SNEAK";
+                    walkModeString = "SNEAK";
                     break;
                 case VmGothicEnums.WalkMode.Water:
-                    walkMode = "WATER";
+                    walkModeString = "WATER";
                     break;
                 case VmGothicEnums.WalkMode.Swim:
-                    walkMode = "SWIM";
+                    walkModeString = "SWIM";
                     break;
                 case VmGothicEnums.WalkMode.Dive:
-                    walkMode = "DIVE";
+                    walkModeString = "DIVE";
                     break;
                 default:
-                    Logger.LogWarning($"Animation of type {Properties.WalkMode} not yet implemented.", LogCat.Animation);
+                    Logger.LogWarning($"Animation of type {walkMode} not yet implemented.", LogCat.Animation);
                     return "";
             }
 
-            return $"S_{walkMode}";
+            return $"S_{walkModeString}";
         }
 
         private void InsertItem(string slot1, string slot2)

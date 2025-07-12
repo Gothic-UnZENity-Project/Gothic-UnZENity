@@ -58,14 +58,15 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
 
         private string GetWalkModeAnimationString()
         {
-            switch (Props.WalkMode)
+            var walkMode = (VmGothicEnums.WalkMode)Vob.AiHuman.WalkMode;
+            switch (walkMode)
             {
                 case VmGothicEnums.WalkMode.Walk:
                     return "S_WALKL";
                 case VmGothicEnums.WalkMode.Run:
                     return "S_RUNL";
                 default:
-                    Logger.LogWarning($"Animation of type {Props.WalkMode} not yet implemented.", LogCat.Ai);
+                    Logger.LogWarning($"Animation of type {walkMode} not yet implemented.", LogCat.Ai);
                     return "";
             }
         }
