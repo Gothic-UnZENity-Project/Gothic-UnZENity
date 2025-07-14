@@ -1,10 +1,14 @@
 #if GUZ_HVR_INSTALLED
 using GUZ.Core;
+using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.UI.Menus;
 using HurricaneVR.Framework.Core.Player;
 using MyBox;
+using UnityEngine;
 using UnityEngine.SceneManagement;
+using ZenKit.Daedalus;
+using ZenKit.Vobs;
 using Constants = GUZ.Core.Globals.Constants;
 
 namespace GUZ.VR.Components.HVROverrides
@@ -16,11 +20,18 @@ namespace GUZ.VR.Components.HVROverrides
         [Separator("GUZ - Settings")]
         public MenuHandler MenuHandler;
 
+        private INpc _playerVob;
+        private IAiHuman _playerAi;
 
         protected override void Start()
         {
             base.Start();
             GlobalEventDispatcher.PlayerPrefUpdated.AddListener(OnPlayerPrefsUpdated);
+            GlobalEventDispatcher.WorldSceneLoaded.AddListener(() =>
+            {
+                _playerVob = ((NpcInstance)GameData.GothicVm.GlobalHero).GetUserData()!.Vob;
+                _playerAi = (IAiHuman)_playerVob.Ai;
+            });
 
             // Enabled later via button press or other events
             MenuHandler.gameObject.SetActive(false);
@@ -123,6 +134,78 @@ namespace GUZ.VR.Components.HVROverrides
                 _ => true
             };
         }
+
+        protected override void FixedUpdate()
+        {
+            base.FixedUpdate();
+            
+            /*
+             * 1. Check if we have water around us.
+             * 2. Check if we need to "walk" as we are knee deep in water.
+             * 3. Check if we need to swim as w are chest deep in water.
+             */
+            
+			if (_playerVob == null)
+				return;
+
+            // FIXME - As we have different sizes of people in VR, we should use the size based on real heights.
+            var kneeDeepHeight = GameData.cGuildValue.GetWaterDepthKnee((int)DaedalusConst.Guild.GIL_HUMAN).ToMeter();
+            var chestDeepHeight =  GameData.cGuildValue.GetWaterDepthChest((int)DaedalusConst.Guild.GIL_HUMAN).ToMeter();
+            var chestDeepHeightWithBuffer = chestDeepHeight + 2; // Do raycast a little bit longer than it needs to be, to ensure it's working.
+
+            RaycastHit hit;
+
+            var hitsAll = Physics.RaycastAll(transform.position, Vector3.up, kneeDeepHeight);
+            var hits = Physics.RaycastAll(transform.position, Vector3.up, kneeDeepHeight, 1 << Constants.WaterLayer);
+            foreach (var raycastHit in hits)
+            { 
+                Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.up) * raycastHit.distance, Color.yellow, 2f, false); 
+            }
+            
+            // Water between our feet and our head found!
+            if (Physics.Raycast(transform.position, Vector3.up, out hit, chestDeepHeightWithBuffer, 1 << Constants.WaterLayer))
+            {
+                if (hit.distance < kneeDeepHeight)
+                    _playerAi.WaterLevel = 0;
+                else if (hit.distance < chestDeepHeight)
+                    _playerAi.WaterLevel = 1;
+                else
+                    _playerAi.WaterLevel = 2;
+            }
+        }
+
+
+        // protected override void HandleHorizontalMovement()
+        // {
+        //     if (_playerAi.WalkMode == (int)VmGothicEnums.WalkMode.Swim)
+        //     {
+        //         
+        //     }
+        //     else if (_playerAi.WalkMode == (int)VmGothicEnums.WalkMode.Dive)
+        //     {
+        //         
+        //     }
+        //     else
+        //     {
+        //         base.HandleHorizontalMovement();
+        //     }
+        // }
+        //
+        // protected override void HandleVerticalMovement()
+        // {
+        //     if (_playerAi.WalkMode == (int)VmGothicEnums.WalkMode.Swim)
+        //     {
+        //         
+        //     }
+        //     else if (_playerAi.WalkMode == (int)VmGothicEnums.WalkMode.Dive)
+        //     {
+        //         
+        //     }
+        //     else
+        //     {
+        //         base.HandleVerticalMovement();
+        //     }
+        // }
     }
 }
 #endif

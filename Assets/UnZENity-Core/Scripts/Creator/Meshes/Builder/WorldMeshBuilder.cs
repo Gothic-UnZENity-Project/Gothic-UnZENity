@@ -75,7 +75,8 @@ namespace GUZ.Core.Creator.Meshes.Builder
                 var chunkGo = new GameObject
                 {
                     name = $"{type}-Entry-{loopIndex++}",
-                    isStatic = true
+                    isStatic = true,
+                    layer = type == TextureCache.TextureArrayTypes.Water ? Constants.WaterLayer : Constants.DefaultLayer,
                 };
                 chunkGo.SetParent(chunkTypeRoot);
 
@@ -118,7 +119,7 @@ namespace GUZ.Core.Creator.Meshes.Builder
 
                 PrepareMeshFilter(meshFilter, chunkData, type);
                 PrepareMeshRenderer(meshRenderer, type);
-                PrepareMeshCollider(chunkGo, meshFilter.sharedMesh, type);
+                PrepareMeshCollider(chunkGo, meshFilter.sharedMesh);
 
 
 #if UNITY_EDITOR
@@ -209,20 +210,6 @@ namespace GUZ.Core.Creator.Meshes.Builder
                 // No TextureArray is only needed for Occlusion Culling in Editor mode and other dev tools. A dev texture is sufficient.
                 material.mainTexture = Constants.TextureUnZENityLogoInverse;
             }
-        }
-
-        /// <summary>
-        /// Check if Collider needs to be added.
-        /// </summary>
-        private void PrepareMeshCollider(GameObject obj, Mesh mesh, TextureCache.TextureArrayTypes textureArrayType)
-        {
-            if (textureArrayType == TextureCache.TextureArrayTypes.Water)
-            {
-                // Do not add colliders
-                return;
-            }
-
-            PrepareMeshCollider(obj, mesh);
         }
 
         private Material GetDefaultMaterial(TextureCache.TextureArrayTypes textureArrayType)

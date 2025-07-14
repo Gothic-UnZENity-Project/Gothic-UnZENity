@@ -122,9 +122,9 @@ namespace GUZ.Core.Extensions
         /// <summary>
         /// ZenKit delivers values mostly in cm. Convenient method to move to Meter.
         /// </summary>
-        public static int ToMeter(this int cmValue)
+        public static float ToMeter(this int cmValue)
         {
-            return cmValue / 100;
+            return (float)cmValue / 100;
         }
 
         /// <summary>
