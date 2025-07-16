@@ -3,6 +3,7 @@ using System.Collections;
 using GUZ.Core;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
+using GUZ.Core.Vm;
 using GUZ.VR.Components.HVROverrides;
 using UnityEngine;
 using ZenKit.Daedalus;
@@ -10,11 +11,12 @@ using ZenKit.Vobs;
 
 namespace GUZ.VR.Components
 {
-    [RequireComponent(typeof(VRPlayerController))]
+    [RequireComponent(typeof(VRPlayerController), typeof(VRPlayerInputs))]
     public class VRSwimDive : MonoBehaviour
     {
-        [SerializeField]
-        private VRPlayerController _playerController;
+        [SerializeField] private VRPlayerController _playerController;
+        [SerializeField] private VRPlayerInputs _playerInputs;
+        
         private INpc _playerVob;
         private IAiHuman _playerAi;
 
@@ -22,6 +24,8 @@ namespace GUZ.VR.Components
         private float _initialMoveSpeed;
         private float _initialRunSpeed;
         private float _initialFallSpeed;
+
+        private VmGothicEnums.WalkMode _mode = VmGothicEnums.WalkMode.Walk;
         
         private void Start()
         {
@@ -35,6 +39,19 @@ namespace GUZ.VR.Components
             _initialMoveSpeed = _playerController.MoveSpeed;
             _initialRunSpeed = _playerController.RunSpeed;
             _initialFallSpeed = _playerController.MaxFallSpeed;
+        }
+
+        private void Update()
+        {
+            if (_playerAi == null)
+                return;
+
+            if (_mode == VmGothicEnums.WalkMode.Swim && _playerInputs.IsBothGripsActivated)
+            {
+                StopCoroutine(_waterBobbingCoroutine);
+                StartCoroutine(StartDive());
+            }
+            
         }
 
         private void FixedUpdate()
@@ -106,6 +123,7 @@ namespace GUZ.VR.Components
                     _playerController.MaxFallSpeed = _initialFallSpeed;
                     break;
                 case ZenGineConst.WaterLevel.Chest:
+                    _mode = VmGothicEnums.WalkMode.Swim;
                     _playerController.Gravity = 0f;
                     _playerController.MaxFallSpeed = 0f;
                     _waterBobbingCoroutine = StartCoroutine(WaterBobbing());
@@ -115,20 +133,33 @@ namespace GUZ.VR.Components
             }
         }
 
-    private Coroutine _waterBobbingCoroutine;
-    private const float _waterBobAmplitude = 0.001f;
-    private const float _waterBobFrequency = 2.5f;
+        private Coroutine _waterBobbingCoroutine;
+        private const float _waterBobAmplitude = 0.001f;
+        private const float _waterBobFrequency = 2.5f;
 
-    private IEnumerator WaterBobbing()
-    {
-        var time = 0f;
-        while (true)
+        private IEnumerator WaterBobbing()
         {
-            time += Time.deltaTime;
-            var offset = Mathf.Sin(time * _waterBobFrequency) * _waterBobAmplitude;
-            _playerController.CharacterController.Move(Vector3.down * offset);
-            yield return null;
+            var time = 0f;
+            while (true)
+            {
+                time += Time.deltaTime;
+                var offset = Mathf.Sin(time * _waterBobFrequency) * _waterBobAmplitude;
+                _playerController.CharacterController.Move(Vector3.down * offset);
+                yield return null;
+            }
         }
-    }
+        
+        private const float _diveStartGravityDownTime = 0.75f;
+        
+        private IEnumerator StartDive()
+        {
+            _mode = VmGothicEnums.WalkMode.Dive;
+            
+            _playerController.Gravity = _initialGravity / 2;
+            _playerController.MaxFallSpeed = _initialFallSpeed / 2;
+            yield return new WaitForSeconds(_diveStartGravityDownTime);
+            _playerController.Gravity = 0;
+            _playerController.MaxFallSpeed = 0;
+        }
     }
 }

@@ -5427,13 +5427,18 @@ MonoBehaviour:
     JustDeactivated: 0
     Value: 0
   IsMenuButtonEnabled: 1
-  IsSpeakingActivated: 0
-  SpeakingState:
+  BothGripsActivatedState:
     Active: 0
     JustActivated: 0
     JustDeactivated: 0
     Value: 0
-  IsSpeakButtonEnabled: 1
+  IsBothGripsActivated: 0
+  IsBothGripsActive: 0
+  BothGripsActiveState:
+    Active: 0
+    JustActivated: 0
+    JustDeactivated: 0
+    Value: 0
 --- !u!82 &2100257876914915749
 AudioSource:
   m_ObjectHideFlags: 0
@@ -5564,6 +5569,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _playerController: {fileID: 8604294565651286147}
+  _playerInputs: {fileID: 6717938044841316945}
 --- !u!4 &8391885031051259193 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7486009837755879101, guid: a0de35f4e16efb54ba0281586c17416f, type: 3}
