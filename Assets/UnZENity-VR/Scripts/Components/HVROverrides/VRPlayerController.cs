@@ -1,15 +1,11 @@
 #if GUZ_HVR_INSTALLED
-using System;
 using GUZ.Core;
-using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.UI.Menus;
 using HurricaneVR.Framework.Core.Player;
 using MyBox;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using ZenKit.Daedalus;
-using ZenKit.Vobs;
 using Constants = GUZ.Core.Globals.Constants;
 
 namespace GUZ.VR.Components.HVROverrides
@@ -21,31 +17,16 @@ namespace GUZ.VR.Components.HVROverrides
         [Separator("GUZ - Settings")]
         public MenuHandler MenuHandler;
 
-        private INpc _playerVob;
-        private IAiHuman _playerAi;
-
-        private float _initialGravity;
-        private float _initialMoveSpeed;
-        private float _initialRunSpeed;
-        private float _initialFallSpeed;
+        [SerializeField]
+        private VRSwimDive _swimDive;
 
         protected override void Start()
         {
             base.Start();
             GlobalEventDispatcher.PlayerPrefUpdated.AddListener(OnPlayerPrefsUpdated);
-            GlobalEventDispatcher.WorldSceneLoaded.AddListener(() =>
-            {
-                _playerVob = ((NpcInstance)GameData.GothicVm.GlobalHero).GetUserData()!.Vob;
-                _playerAi = (IAiHuman)_playerVob.Ai;
-            });
 
             // Enabled later via button press or other events
             MenuHandler.gameObject.SetActive(false);
-
-            _initialGravity = Gravity;
-            _initialMoveSpeed = MoveSpeed;
-            _initialRunSpeed = RunSpeed;
-            _initialFallSpeed = MaxFallSpeed;
         }
 
         protected override void Update()
@@ -145,80 +126,6 @@ namespace GUZ.VR.Components.HVROverrides
                 _ => true
             };
         }
-
-        protected override void FixedUpdate()
-        {
-            base.FixedUpdate();
-            
-            /*
-             * 1. Check if we have water around us.
-             * 2. Check if we need to "walk" as we are knee deep in water.
-             * 3. Check if we need to swim as w are chest deep in water.
-             */
-            
-			if (_playerVob == null)
-				return;
-
-            // FIXME - As we have different sizes of people in VR, we should use the size based on real heights.
-            var kneeDeepHeight = GameData.cGuildValue.GetWaterDepthKnee((int)DaedalusConst.Guild.GIL_HUMAN).ToMeter();
-            var chestDeepHeight =  GameData.cGuildValue.GetWaterDepthChest((int)DaedalusConst.Guild.GIL_HUMAN).ToMeter();
-            var chestDeepHeightWithBuffer = chestDeepHeight + 2; // Do raycast a little bit longer than it needs to be, to ensure it's working.
-
-            RaycastHit hit;
-
-            var hitsAll = Physics.RaycastAll(transform.position, Vector3.up, kneeDeepHeight);
-            var hits = Physics.RaycastAll(transform.position, Vector3.up, kneeDeepHeight, 1 << Constants.WaterLayer);
-            foreach (var raycastHit in hits)
-            { 
-                Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.up) * raycastHit.distance, Color.yellow, 2f, false); 
-            }
-            
-            // Water between our feet and our head found!
-            if (Physics.Raycast(transform.position, Vector3.up, out hit, chestDeepHeightWithBuffer, 1 << Constants.WaterLayer))
-            {
-                var previousWaterLevel = _playerAi.WaterLevel;
-                if (hit.distance < kneeDeepHeight)
-                    _playerAi.WaterLevel = (int)ZenGineConst.WaterLevel.Normal;
-                else if (hit.distance < chestDeepHeight)
-                    _playerAi.WaterLevel = (int)ZenGineConst.WaterLevel.Knee;
-                else
-                    _playerAi.WaterLevel = (int)ZenGineConst.WaterLevel.Chest;
-
-                if (previousWaterLevel != _playerAi.WaterLevel)
-                    ChangeWaterBehavior();
-            }
-            // else
-            // FIXME - We need to add a possiblity to reset water IF the hero is teleported away from water or falling through a waterfall, ...
-            //         so that the water level is reset and we can walk again normally.
-        }
-
-        private void ChangeWaterBehavior()
-        {
-            switch ((ZenGineConst.WaterLevel)_playerAi.WaterLevel)
-            {
-                case ZenGineConst.WaterLevel.Normal:
-                    Gravity = _initialGravity;
-                    MoveSpeed = _initialMoveSpeed;
-                    RunSpeed = _initialRunSpeed;
-                    CanSprint = true;
-                    MaxFallSpeed = _initialFallSpeed;
-                    break;
-                case ZenGineConst.WaterLevel.Knee:
-                    Gravity = _initialGravity;
-                    MoveSpeed = _initialMoveSpeed / 2;
-                    RunSpeed = _initialMoveSpeed / 2; // No running, but it might be, that we run into deep water, then we need to slow it down like walking.
-                    CanSprint = false;
-                    MaxFallSpeed = _initialFallSpeed;
-                    break;
-                case ZenGineConst.WaterLevel.Chest:
-                    Gravity = 0f;
-                    MaxFallSpeed = 0f;
-                    break;
-                default:
-                    throw new Exception($"Unknown value {_playerAi.WaterLevel} for water.");
-            }
-        }
-
 
         // protected override void HandleHorizontalMovement()
         // {
