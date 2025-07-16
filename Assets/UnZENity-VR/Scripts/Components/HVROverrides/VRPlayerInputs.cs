@@ -12,11 +12,15 @@ namespace GUZ.VR.Components.HVROverrides
         public bool IsMenuActivated;
         public HVRButtonState MenuState;
         public bool IsMenuButtonEnabled = true;
-        
-        public bool IsSpeakingActivated;
-        public HVRButtonState SpeakingState;
-        public bool IsSpeakButtonEnabled = true;
 
+        // Just Pressed
+        public HVRButtonState BothGripsActivatedState;
+        public bool IsBothGripsActivated;
+        
+        // Pressed
+        public bool IsBothGripsActive;
+        public HVRButtonState BothGripsActiveState;
+        
 
         protected override void UpdateInput()
         {
@@ -31,9 +35,16 @@ namespace GUZ.VR.Components.HVROverrides
             ResetState(ref MenuState);
             SetState(ref MenuState, IsMenuActivated);
 
-            IsSpeakingActivated = GetSpeakingActivated();
-            ResetState(ref SpeakingState);
-            SetState(ref SpeakingState, IsSpeakingActivated);
+            // Just Pressed
+            IsBothGripsActivated = GetBothGripsActivated();
+            ResetState(ref BothGripsActivatedState);
+            SetState(ref BothGripsActivatedState, IsBothGripsActivated);
+            
+            
+            // Pressed
+            IsBothGripsActive = GetBothGripsActive();
+            ResetState(ref BothGripsActiveState);
+            SetState(ref BothGripsActiveState, IsBothGripsActive);
         }
 
         private bool GetMenuActivated()
@@ -59,7 +70,20 @@ namespace GUZ.VR.Components.HVROverrides
             }
         }
         
-        private bool GetSpeakingActivated()
+        private bool GetBothGripsActivated()
+        {
+            if (UseWASD)
+            {
+                return Keyboard.current[Key.T].wasPressedThisFrame;
+            }
+            else
+            {
+                return HVRController.GetButtonState(HVRHandSide.Left, HVRButtons.Grip).JustActivated
+                       && HVRController.GetButtonState(HVRHandSide.Right, HVRButtons.Grip).JustActivated;
+            }
+        }
+        
+        private bool GetBothGripsActive()
         {
             if (UseWASD)
             {
