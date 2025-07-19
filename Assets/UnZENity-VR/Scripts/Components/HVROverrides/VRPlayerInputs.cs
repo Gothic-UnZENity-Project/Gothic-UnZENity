@@ -78,8 +78,11 @@ namespace GUZ.VR.Components.HVROverrides
             }
             else
             {
-                return HVRController.GetButtonState(HVRHandSide.Left, HVRButtons.Grip).JustActivated
-                       && HVRController.GetButtonState(HVRHandSide.Right, HVRButtons.Grip).JustActivated;
+                var leftButtonState = HVRController.GetButtonState(HVRHandSide.Left, HVRButtons.Grip);
+                var rightButtonState = HVRController.GetButtonState(HVRHandSide.Right, HVRButtons.Grip);
+                
+                return leftButtonState.JustActivated && leftButtonState.Active ||
+                       rightButtonState.JustActivated && rightButtonState.Active;
             }
         }
         

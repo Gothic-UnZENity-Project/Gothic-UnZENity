@@ -51,9 +51,12 @@ namespace GUZ.VR.Components
                 StopCoroutine(_waterBobbingCoroutine);
                 StartCoroutine(StartDive());
             }
-            
+            else if (_mode == VmGothicEnums.WalkMode.Dive)
+            {
+                HandleDive();
+            }
         }
-
+        
         private void FixedUpdate()
         {
             /*
@@ -160,6 +163,34 @@ namespace GUZ.VR.Components
             yield return new WaitForSeconds(_diveStartGravityDownTime);
             _playerController.Gravity = 0;
             _playerController.MaxFallSpeed = 0;
+        }
+        
+        
+        private Vector3 _currentVelocity;
+        private const float _handMovementMultiplier = 0.5f;
+        private const float _velocityFadeRate = 0.95f;
+
+        private void HandleDive()
+        {
+            // Use force to pull yourself.
+            if (_playerInputs.IsBothGripsActive)
+            {
+                // Calculate hand movement direction and force
+                var leftHandVelocity = _playerInputs.LeftController.Velocity;
+                var rightHandVelocity = _playerInputs.RightController.Velocity;
+                var combinedVelocity = (leftHandVelocity + rightHandVelocity) * _handMovementMultiplier;
+
+                // Apply opposite force for swimming
+                _currentVelocity = Vector3.Lerp(_currentVelocity, -combinedVelocity, Time.deltaTime);
+
+                // Move the character
+                _playerController.CharacterController.Move(_currentVelocity * Time.deltaTime);
+            }
+            // Fade out movement
+            else
+            {
+                _currentVelocity *= _velocityFadeRate;
+            }
         }
     }
 }
