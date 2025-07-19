@@ -4195,6 +4195,26 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1768816159600773060, guid: a0de35f4e16efb54ba0281586c17416f, type: 3}
+      propertyPath: m_TrackingStateInput.m_Action.m_Name
+      value: Tracking State Input
+      objectReference: {fileID: 0}
+    - target: {fileID: 1768816159600773060, guid: a0de35f4e16efb54ba0281586c17416f, type: 3}
+      propertyPath: m_TrackingStateInput.m_Action.m_SingletonActionBindings.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1768816159600773060, guid: a0de35f4e16efb54ba0281586c17416f, type: 3}
+      propertyPath: m_TrackingStateInput.m_Action.m_SingletonActionBindings.Array.data[0].m_Id
+      value: da4f71a4-1002-4b09-914c-f5d5161f4ef4
+      objectReference: {fileID: 0}
+    - target: {fileID: 1768816159600773060, guid: a0de35f4e16efb54ba0281586c17416f, type: 3}
+      propertyPath: m_TrackingStateInput.m_Action.m_SingletonActionBindings.Array.data[0].m_Path
+      value: <XRController>{LeftHand}/trackingState
+      objectReference: {fileID: 0}
+    - target: {fileID: 1768816159600773060, guid: a0de35f4e16efb54ba0281586c17416f, type: 3}
+      propertyPath: m_TrackingStateInput.m_Action.m_SingletonActionBindings.Array.data[0].m_Action
+      value: Tracking State Input
+      objectReference: {fileID: 0}
     - target: {fileID: 1836962620672649032, guid: a0de35f4e16efb54ba0281586c17416f, type: 3}
       propertyPath: Tags.Tags
       value: 
@@ -4222,6 +4242,26 @@ PrefabInstance:
     - target: {fileID: 2029280173168032702, guid: a0de35f4e16efb54ba0281586c17416f, type: 3}
       propertyPath: m_Color.r
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2108173412997487960, guid: a0de35f4e16efb54ba0281586c17416f, type: 3}
+      propertyPath: m_TrackingStateInput.m_Action.m_Name
+      value: Tracking State Input
+      objectReference: {fileID: 0}
+    - target: {fileID: 2108173412997487960, guid: a0de35f4e16efb54ba0281586c17416f, type: 3}
+      propertyPath: m_TrackingStateInput.m_Action.m_SingletonActionBindings.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2108173412997487960, guid: a0de35f4e16efb54ba0281586c17416f, type: 3}
+      propertyPath: m_TrackingStateInput.m_Action.m_SingletonActionBindings.Array.data[0].m_Id
+      value: 5557cdfb-6173-48cc-a97a-5dd36e969440
+      objectReference: {fileID: 0}
+    - target: {fileID: 2108173412997487960, guid: a0de35f4e16efb54ba0281586c17416f, type: 3}
+      propertyPath: m_TrackingStateInput.m_Action.m_SingletonActionBindings.Array.data[0].m_Path
+      value: <XRController>{RightHand}/trackingState
+      objectReference: {fileID: 0}
+    - target: {fileID: 2108173412997487960, guid: a0de35f4e16efb54ba0281586c17416f, type: 3}
+      propertyPath: m_TrackingStateInput.m_Action.m_SingletonActionBindings.Array.data[0].m_Action
+      value: Tracking State Input
       objectReference: {fileID: 0}
     - target: {fileID: 2731411465106096458, guid: a0de35f4e16efb54ba0281586c17416f, type: 3}
       propertyPath: Tags.Tags
