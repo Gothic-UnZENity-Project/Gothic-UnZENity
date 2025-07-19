@@ -5610,6 +5610,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _playerController: {fileID: 8604294565651286147}
   _playerInputs: {fileID: 6717938044841316945}
+  _handMovementMultiplier: 5
+  _velocityFadeRate: 0.25
 --- !u!4 &8391885031051259193 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7486009837755879101, guid: a0de35f4e16efb54ba0281586c17416f, type: 3}

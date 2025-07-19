@@ -167,8 +167,8 @@ namespace GUZ.VR.Components
         
         
         private Vector3 _currentVelocity;
-        private const float _handMovementMultiplier = 0.5f;
-        private const float _velocityFadeRate = 0.95f;
+        [SerializeField] private float _handMovementMultiplier = 5f;
+        [SerializeField] private float _velocityFadeRate = 0.25f; // 0.95==5% less velocity with each second
 
         private void HandleDive()
         {
@@ -180,8 +180,11 @@ namespace GUZ.VR.Components
                 var rightHandVelocity = _playerInputs.RightController.Velocity;
                 var combinedVelocity = (leftHandVelocity + rightHandVelocity) * _handMovementMultiplier;
 
+                // Transform velocity to world space based on player rotation
+                var rotatedVelocity = transform.TransformDirection(combinedVelocity);
+
                 // Apply opposite force for swimming
-                _currentVelocity = Vector3.Lerp(_currentVelocity, -combinedVelocity, Time.deltaTime);
+                _currentVelocity = Vector3.Lerp(_currentVelocity, -rotatedVelocity, Time.deltaTime);
 
                 // Move the character
                 _playerController.CharacterController.Move(_currentVelocity * Time.deltaTime);
@@ -189,7 +192,8 @@ namespace GUZ.VR.Components
             // Fade out movement
             else
             {
-                _currentVelocity *= _velocityFadeRate;
+                _currentVelocity *= Mathf.Pow(_velocityFadeRate, Time.deltaTime);
+                _playerController.CharacterController.Move(_currentVelocity * Time.deltaTime);
             }
         }
     }
