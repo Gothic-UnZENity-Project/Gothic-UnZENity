@@ -131,20 +131,19 @@ namespace GUZ.Core.Manager.Vobs
             }
             else
             {
-                var sfxData = VmInstanceManager.TryGetSfxData(soundName);
+                var sfxContainer = VmInstanceManager.TryGetSfxData(soundName);
 
-                if (sfxData == null)
-                {
+                if (sfxContainer == null)
                     return null;
-                }
 
-                if (sfxData.File.EqualsIgnoreCase(_noSoundName))
-                {
-                    //instead of decoding nosound.wav which might be decoded incorrectly, just return null
+                // Instead of decoding nosound.wav which might be decoded incorrectly, just return null.
+                if (sfxContainer.GetFirstSound().File.EqualsIgnoreCase(_noSoundName))
                     return null;
-                }
 
-                clip = SoundCreator.ToAudioClip(sfxData.File);
+                if (sfxContainer.Count > 1)
+                    Logger.LogWarning($"Multiple random elements exist for >{sfxContainer.GetFirstSound().File}< but only first is selected.", LogCat.Audio);
+
+                clip = sfxContainer.GetFirstClip();
             }
 
             return clip;

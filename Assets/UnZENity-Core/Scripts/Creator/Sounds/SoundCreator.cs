@@ -26,15 +26,11 @@ namespace GUZ.Core.Creator.Sounds
             fileName = Path.GetFileNameWithoutExtension(fileName);
 
             if (MultiTypeCache.AudioClips.TryGetValue(fileName, out AudioClip cachedClip))
-            {
                 return cachedClip;
-            }
 
             var soundData = ResourceLoader.TryGetSound(fileName);
             if (soundData == null)
-            {
                 return null;
-            }
 
             var audioClip = AudioClip.Create(fileName, soundData.Sound.Length / soundData.Channels, soundData.Channels,
                 soundData.SampleRate, false);

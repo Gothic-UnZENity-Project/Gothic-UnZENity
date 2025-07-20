@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using GUZ.Core.Creator.Sounds;
 using GUZ.Core.Data.Container;
 using GUZ.Core.Util;
 using JetBrains.Annotations;
@@ -17,6 +18,11 @@ namespace GUZ.Core.Extensions
 {
     public static class ZenKitExtension
     {
+        public static AudioClip ToAudioClip(this SoundEffectInstance sfxInstance)
+        {
+            return SoundCreator.ToAudioClip(sfxInstance.File);
+        }
+        
         /// <summary>
         /// A visual name is either extracted from Visual.Name or Name of VOB itself.
         /// </summary>

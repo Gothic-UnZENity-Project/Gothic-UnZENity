@@ -1,10 +1,14 @@
 using System;
 using System.Collections;
+using System.Linq;
 using GUZ.Core;
+using GUZ.Core.Creator.Sounds;
+using GUZ.Core.Data.Container;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Vm;
 using GUZ.VR.Components.HVROverrides;
+using HurricaneVR.Framework.Core.Utils;
 using UnityEngine;
 using ZenKit.Daedalus;
 using ZenKit.Vobs;
@@ -19,7 +23,8 @@ namespace GUZ.VR.Components
         
         private INpc _playerVob;
         private IAiHuman _playerAi;
-
+        private SfxContainer _sfxDiveContainer;
+            
         private float _initialGravity;
         private float _initialMoveSpeed;
         private float _initialRunSpeed;
@@ -29,6 +34,14 @@ namespace GUZ.VR.Components
         
         private void Start()
         {
+			GlobalEventDispatcher.ZenKitBootstrapped.AddListener(() =>
+            {
+                var mds = ResourceLoader.TryGetModelScript("Humans")!;
+                var anim = mds.Animations.First(i => i.Name.EqualsIgnoreCase("s_DiveF"));
+                var diveSfxName = anim.SoundEffects.First().Name;
+                _sfxDiveContainer = VmInstanceManager.TryGetSfxData(diveSfxName)!;
+            });
+
             GlobalEventDispatcher.WorldSceneLoaded.AddListener(() =>
             {
                 _playerVob = ((NpcInstance)GameData.GothicVm.GlobalHero).GetUserData()!.Vob;
@@ -46,15 +59,10 @@ namespace GUZ.VR.Components
             if (_playerAi == null)
                 return;
 
-            if (_mode == VmGothicEnums.WalkMode.Swim && _playerInputs.IsBothGripsActivated)
-            {
-                StopCoroutine(_waterBobbingCoroutine);
-                StartCoroutine(StartDive());
-            }
+            if (_mode == VmGothicEnums.WalkMode.Swim)
+                HandleSwim();
             else if (_mode == VmGothicEnums.WalkMode.Dive)
-            {
                 HandleDive();
-            }
         }
         
         private void FixedUpdate()
@@ -165,16 +173,60 @@ namespace GUZ.VR.Components
             _playerController.MaxFallSpeed = 0;
         }
         
+        [SerializeField] private float _swimStartDiveVerticalVelocity = 5f;
+        [SerializeField] private float _swimHandMovementMultiplier = 7.5f;
+        [SerializeField] private float _swimVelocityFadeRate = 0.25f; // e.g., 0.25==75% less velocity with each second
+        
+        private void HandleSwim()
+        {
+            // Use force to pull yourself.
+            if (_playerInputs.IsBothGripsActive)
+            {
+                // Calculate hand movement direction and force
+                var leftHandVelocity = _playerInputs.LeftController.Velocity;
+                var rightHandVelocity = _playerInputs.RightController.Velocity;
+                var combinedVelocity = (leftHandVelocity + rightHandVelocity) * _swimHandMovementMultiplier;
+                
+                // Transform velocity to world space based on player rotation
+                var rotatedVelocity = transform.TransformDirection(combinedVelocity);
+                
+                // Apply opposite force for swimming - Only horizontal!
+                _currentVelocity = Vector3.Lerp(_currentVelocity, -rotatedVelocity, Time.deltaTime);
+            }
+            // Fade out movement
+            else
+            {
+                _currentVelocity *= Mathf.Pow(_velocityFadeRate, Time.deltaTime);
+            }
+
+            // Move the character - Horizontal only
+            var rotatedHorizontalVelocity = new Vector3(_currentVelocity.x, 0, _currentVelocity.z);
+            _playerController.CharacterController.Move(rotatedHorizontalVelocity * Time.deltaTime);
+
+            if (_currentVelocity.y > _swimStartDiveVerticalVelocity)
+            {
+                StopCoroutine(_waterBobbingCoroutine);
+                StartCoroutine(StartDive());
+            }
+        }
         
         private Vector3 _currentVelocity;
         [SerializeField] private float _handMovementMultiplier = 5f;
-        [SerializeField] private float _velocityFadeRate = 0.25f; // 0.95==5% less velocity with each second
-
+        [SerializeField] private float _velocityFadeRate = 0.25f; // 0.25==75% less velocity with each second
+        private bool _isDivingForceStarted; // If we lift the grips, we set it to false again to re-enable sounds later.
+        
         private void HandleDive()
         {
             // Use force to pull yourself.
             if (_playerInputs.IsBothGripsActive)
             {
+                if (!_isDivingForceStarted)
+                {
+                    // Play a random dive sound via HVRs SFXPlayer.
+                    SFXPlayer.Instance.PlaySFX(_sfxDiveContainer.GetRandomClip(), Camera.main!.transform.position);
+                    _isDivingForceStarted = true;
+                }
+                
                 // Calculate hand movement direction and force
                 var leftHandVelocity = _playerInputs.LeftController.Velocity;
                 var rightHandVelocity = _playerInputs.RightController.Velocity;
@@ -183,18 +235,18 @@ namespace GUZ.VR.Components
                 // Transform velocity to world space based on player rotation
                 var rotatedVelocity = transform.TransformDirection(combinedVelocity);
 
-                // Apply opposite force for swimming
+                // Apply opposite force for diving
                 _currentVelocity = Vector3.Lerp(_currentVelocity, -rotatedVelocity, Time.deltaTime);
-
-                // Move the character
-                _playerController.CharacterController.Move(_currentVelocity * Time.deltaTime);
             }
             // Fade out movement
             else
             {
                 _currentVelocity *= Mathf.Pow(_velocityFadeRate, Time.deltaTime);
-                _playerController.CharacterController.Move(_currentVelocity * Time.deltaTime);
+                _isDivingForceStarted = false;
             }
+
+            // Move the character
+            _playerController.CharacterController.Move(_currentVelocity * Time.deltaTime);
         }
     }
 }
