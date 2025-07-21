@@ -31,16 +31,16 @@ namespace GUZ.Core.Data.Container
             {
                 // e.g., BreathBubbles_A2
                 var nextKey = $"{preparedKey}_A{randomIndex}";
-                var nextSound = GameData.SfxVm.InitInstance<SoundEffectInstance>(preparedKey);
+                var nextSound = GameData.SfxVm.InitInstance<SoundEffectInstance>(nextKey);
 
-                if (nextSound != null)
+                if (nextSound == null)
                 {
-                    sounds.Add(nextSound);
-                    randomIndex++;
+                    break;
                 }
                 else
                 {
-                    break;
+                    sounds.Add(nextSound);
+                    randomIndex++;
                 }
             } while (true);
             
