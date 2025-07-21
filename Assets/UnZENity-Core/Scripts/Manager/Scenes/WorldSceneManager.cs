@@ -144,7 +144,7 @@ namespace GUZ.Core.Manager.Scenes
             }
             catch(Exception ex)
             {
-                Logger.LogError(ex.ToString(), LogCat.Loading);;
+                Logger.LogError(ex.ToString(), LogCat.Loading);
             }
             finally
             {

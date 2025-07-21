@@ -2,6 +2,7 @@ using System.Collections;
 using GUZ.Core;
 using GUZ.Core.Animations;
 using GUZ.Core.Caches;
+using GUZ.Core.Data.Adapter.Vobs;
 using GUZ.Core.Data.Container;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
@@ -145,7 +146,7 @@ namespace GUZ.Lab.Handler
                 {
                     WalkMode = VmGothicEnums.WalkMode.Walk
                 },
-                Vob = new()
+                Vob = new NpcAdapter(npcSymbol.Index)
             };
 
             _bloodwynInstance.UserData = npcData;

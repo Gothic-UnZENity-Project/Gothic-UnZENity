@@ -1,5 +1,6 @@
-using System.Linq;
+#if GUZ_HVR_INSTALLED
 using GUZ.Core;
+using GUZ.Core.Manager;
 using GUZ.Core.UnZENity_Core.Scripts.Manager;
 using GUZ.Core.Util;
 using GUZ.VR.Adapter;
@@ -101,6 +102,7 @@ namespace GUZ.VR.Components.SpeechToText
                 Logger.Log($"Dialog option found. Spoken: >{spokenText}<. " +
                             $"Selection: >{result.Sentence}< with score (>{result.Score}<).", LogCat.Audio);
                 
+                DialogManager.SkipNextOutput = true;
                 _vrDialog.DialogSelected(result.Index);
             }
         }
@@ -156,3 +158,4 @@ namespace GUZ.VR.Components.SpeechToText
         }
     }
 }
+#endif

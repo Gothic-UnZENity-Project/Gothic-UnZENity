@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using GUZ.Core.Caches;
 using GUZ.Core.Creator.Meshes;
 using GUZ.Core.Data;
+using GUZ.Core.Data.Adapter.Vobs;
 using GUZ.Core.Data.Container;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
@@ -99,7 +100,7 @@ namespace GUZ.Core.Npc
             {
                 Instance = npcInstance,
                 Props = new(),
-                Vob = new NpcVob(npcIndex)
+                Vob = new NpcAdapter(npcIndex)
             };
             
             // We reference our object as user data to retrieve it whenever a Daedalus External provides an NpcInstance as input.
@@ -242,6 +243,7 @@ namespace GUZ.Core.Npc
             // As we have our back reference between NpcInstance and NpcData, we can now initialize the object on ZenKit side.
             // Lookups like Npc_SetTalentValue() will work now as NpcInstance.UserData() points to our object which stores the information.
             Vm.InitInstance(npc.Instance);
+            ((NpcAdapter)npc.Vob).CopyFromInstanceData(npc.Instance);
 
             // NpcInstance is the initialized Daedalus Instance which contains initial data.
             // Vob.Npc contains runtime information. If no runtime information is set (new game started / world entered for the first time), we use the initial data.
@@ -250,10 +252,6 @@ namespace GUZ.Core.Npc
                 npc.Vob.CurrentRoutine = GameData.GothicVm.GetSymbolByIndex(npc.Instance.DailyRoutine)!.Name;
             }
 
-            if (npc.Vob is NpcVob npcVob)
-            {
-                npcVob.CopyInstanceData(npc.Instance);
-            }
             
             GameGlobals.Npcs.ExchangeRoutine(npc.Instance, npc.Vob.CurrentRoutine);
         }
