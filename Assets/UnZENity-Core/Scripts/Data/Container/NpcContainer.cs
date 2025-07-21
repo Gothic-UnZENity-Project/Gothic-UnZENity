@@ -154,7 +154,7 @@ namespace GUZ.Core.Data.Container
     {
         // ZenKit data
         public NpcInstance Instance;
-        public ZenKit.Vobs.Npc Vob;
+        public ZenKit.Vobs.INpc Vob;
 
         // Unity Data
         public GameObject Go;

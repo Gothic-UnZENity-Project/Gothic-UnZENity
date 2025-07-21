@@ -31,16 +31,6 @@ namespace GUZ.Core.Config
         // SKY_OUTDOOR
         public string IniSkyDayColor(int index) => _config.GetValueOrDefault($"zDayColor{index}", "0 0 0");
         
-        [NotNull]
-        public string PlayerInstanceName
-        {
-            get
-            {
-                var  playerInstanceName = _config.GetValueOrDefault("playerInstanceName", "PC_HERO");
-                return playerInstanceName.IsNullOrEmpty() ? "PC_HERO" : playerInstanceName;
-            }
-        }
-
         
         public GothicIniConfig(Dictionary<string, string> config, string iniFilePath)
         {

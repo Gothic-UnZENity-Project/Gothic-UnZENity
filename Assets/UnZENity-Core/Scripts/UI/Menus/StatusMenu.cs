@@ -63,8 +63,8 @@ namespace GUZ.Core.UI.Menus
                 MenuItemCache[key].go.GetComponentInChildren<TMP_Text>().text = $"{i}";
             });
 
-            var talentTitles = Constants.Daedalus.TalentTitles;
-            var talentSkills = Constants.Daedalus.TalentSkills;
+            var talentTitles = DaedalusConst.TalentTitles;
+            var talentSkills = DaedalusConst.TalentSkills;
 
             Enumerable.Range(0, 12).ForEach(i =>
             {

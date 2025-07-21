@@ -7,6 +7,7 @@ using GUZ.Core.Caches;
 using GUZ.Core.Config;
 using GUZ.Core.Creator.Sounds;
 using GUZ.Core.Data.Container;
+using GUZ.Core.Data.Vobs;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.UI.Menus.LoadingBars;
@@ -26,6 +27,9 @@ namespace GUZ.Core.Manager.Vobs
     {
         private const string _noSoundName = "nosound.wav";
         private const float _interactableLookupDistance = 10f; // meter
+        
+        private readonly char[] _itemNameSeparators = { ';', ',' };
+        private readonly char[] _itemCountSeparators = { ':', '.' };
 
         // Supporter class where the whole Init() logic is outsourced for better readability.
         private VobInitializer _initializer = new ();
@@ -462,7 +466,7 @@ namespace GUZ.Core.Manager.Vobs
             GameGlobals.VobMeshCulling.AddCullingEntry(container);
         }
 
-        private static void AddToMobInteractableList(VobContainer container)
+        private void AddToMobInteractableList(VobContainer container)
         {
             if (container.Go == null)
                 return;
@@ -478,7 +482,7 @@ namespace GUZ.Core.Manager.Vobs
                 case VirtualObjectType.oCMobSwitch:
                 case VirtualObjectType.oCMobWheel:
                     var visualScheme = container.Vob.Visual?.Name.Split('_').First().ToUpper(); // e.g. BED_1_OC.ASC => BED);
-
+                    
                     if (visualScheme.IsNullOrEmpty())
                         return;
                     
@@ -486,6 +490,38 @@ namespace GUZ.Core.Manager.Vobs
                     GameData.VobsInteractable[visualScheme!].Add(container);
                     break;
             }
+        }
+        
+        public List<ContentItem> UnpackItems(string contents)
+        {
+            List<ContentItem> result = new();
+
+            if (contents.IsNullOrEmpty())
+                return new();
+            
+            var items = contents.Split(_itemNameSeparators);
+        
+            foreach (var item in items)
+            {
+                var count = 1;
+                var nameCountSplit = item.Split(_itemCountSeparators);
+        
+                if (nameCountSplit.Length != 1)
+                    count = int.Parse(nameCountSplit[1]);
+        
+                result.Add(new ContentItem
+                {
+                    Name = nameCountSplit[0],
+                    Amount = count
+                });
+            }
+
+            return result;
+        }
+
+        public string PackItems(List<ContentItem> items)
+        {
+            return string.Join(';', items.Select(i => $"{i.Name}:{i.Amount}"));
         }
     }
 }

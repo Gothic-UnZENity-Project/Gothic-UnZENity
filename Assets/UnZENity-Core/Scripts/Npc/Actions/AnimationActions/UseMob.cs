@@ -91,13 +91,13 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
 
         private void SetBodyState()
         {
-            if (Constants.Daedalus.MobSit.Contains(_mobsiScheme))
+            if (DaedalusConst.MobSit.Contains(_mobsiScheme))
                 Props.BodyState = VmGothicEnums.BodyState.BsSit;
-            else if (Constants.Daedalus.MobLie.Contains(_mobsiScheme))
+            else if (DaedalusConst.MobLie.Contains(_mobsiScheme))
                 Props.BodyState = VmGothicEnums.BodyState.BsLie;
-            else if (Constants.Daedalus.MobClimb.Contains(_mobsiScheme))
+            else if (DaedalusConst.MobClimb.Contains(_mobsiScheme))
                 Props.BodyState = VmGothicEnums.BodyState.BsClimb;
-            else if (Constants.Daedalus.MobNotInterruptable.Contains(_mobsiScheme))
+            else if (DaedalusConst.MobNotInterruptable.Contains(_mobsiScheme))
                 Props.BodyState = VmGothicEnums.BodyState.BsMobinteract;
             else
                 Props.BodyState = VmGothicEnums.BodyState.BsMobinteractInterrupt;
