@@ -138,6 +138,7 @@ namespace GUZ.Core.Vm
             vm.RegisterExternal<int, NpcInstance>("Npc_IsDead", Npc_IsDead);
             vm.RegisterExternal<int, NpcInstance, int>("Npc_IsInState", Npc_IsInState);
             vm.RegisterExternal<NpcInstance>("Npc_SetToFistMode", Npc_SetToFistMode);
+            vm.RegisterExternal<NpcInstance, int>("Npc_SetToFightMode", Npc_SetToFightMode);
             vm.RegisterExternal<int, NpcInstance, int>("Npc_IsInFightMode", Npc_IsInFightMode);
             vm.RegisterExternal<int, NpcInstance>("Npc_IsPlayer", Npc_IsPlayer);
             vm.RegisterExternal<int, ItemInstance, NpcInstance>("Npc_OwnedByNpc", Npc_OwnedByNpc);
@@ -836,6 +837,11 @@ namespace GUZ.Core.Vm
         public static void Npc_SetToFistMode(NpcInstance npc)
         {
             GameGlobals.Npcs.ExtNpcSetToFistMode(npc);
+        }
+
+        public static void Npc_SetToFightMode(NpcInstance npc, int itemIndex)
+        {
+            GameGlobals.Npcs.ExtNpcSetToFightMode(npc, itemIndex);
         }
 
         public static int Npc_IsInFightMode(NpcInstance npc, int fightMode)

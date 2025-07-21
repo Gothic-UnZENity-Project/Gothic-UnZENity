@@ -356,6 +356,13 @@ namespace GUZ.Core.Npc
 
             Object.Destroy(item.gameObject);
         }
+        
+        public void ExtNpcSetToFightMode(NpcInstance npc, int itemIndex)
+        {
+            npc.GetUserData()!.Vob.FightMode = (int)VmGothicEnums.WeaponState.W1H;
+
+            // FIXME - Spawn Item as well!
+        }
 
         public void ExtNpcExchangeRoutine(NpcInstance npcInstance, string routineName)
         {
