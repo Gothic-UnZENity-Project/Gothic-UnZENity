@@ -179,6 +179,8 @@ namespace GUZ.Core.Vm
             vm.RegisterExternal<string>("Wld_ExchangeGuildAttitudes", Wld_ExchangeGuildAttitudes);
             vm.RegisterExternal<int, int, int>("Wld_SetGuildAttitude", Wld_SetGuildAttitude);
             vm.RegisterExternal<int, int, string, int>("Wld_SetObjectRoutine", Wld_SetObjectRoutine);
+            vm.RegisterExternal<int, int, string, int>("Wld_SetMobRoutine", Wld_SetMobRoutine);
+            vm.RegisterExternal<string, int>("Wld_AssignRoomToGuild", Wld_AssignRoomToGuild);
 
             // Misc
             vm.RegisterExternal<int, int>("Perc_SetRange", Perc_SetRange);
@@ -1024,6 +1026,23 @@ namespace GUZ.Core.Vm
             // FIXME - Do more with these ObjectRoutines.
             GameGlobals.Vobs.ObjectRoutines.TryAdd(name, new());
             GameGlobals.Vobs.ObjectRoutines[name].Add((hour, minute, status));
+        }
+
+        public static void Wld_SetMobRoutine(int hour, int minute, string name, int status)
+        {
+            // FIXME - Do more with these MobRoutines.
+            GameGlobals.Npcs.MobRoutines.TryAdd(name, new());
+            GameGlobals.Npcs.MobRoutines[name].Add((hour, minute, status));
+        }
+
+        private static bool _debugWld_AssignRoomToGuildExecuted;
+        public static void Wld_AssignRoomToGuild(string room, int guild)
+        {
+            if (!_debugWld_AssignRoomToGuildExecuted)
+            {
+                Logger.LogWarningEditor($"Method >Wld_AssignRoomToGuild< not yet implemented in DaedalusVM.", LogCat.ZenKit);
+                _debugWld_AssignRoomToGuildExecuted = true;
+            }
         }
 
         public static int Wld_GetGuildAttitude(int guild1, int guild2)

@@ -96,6 +96,8 @@ namespace GUZ.Core.Util
                     LogError(messageString, LogCat.Audio);
                     break;
                 case DirectMusic.LogLevel.Warning:
+                    if (message.EndsWith("bytes remaining")) // Spammy
+                        break;
                     LogWarningEditor(messageString, LogCat.Audio);
                     break;
                 case DirectMusic.LogLevel.Info:

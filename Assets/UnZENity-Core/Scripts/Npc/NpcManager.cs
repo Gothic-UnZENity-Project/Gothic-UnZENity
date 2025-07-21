@@ -27,6 +27,9 @@ namespace GUZ.Core.Npc
     /// </summary>
     public class NpcManager
     {
+        public Dictionary<string, List<(int hour, int minute, int status)>> MobRoutines = new();
+
+        
         // Supporter class where the whole Init() logic is outsourced for better readability.
         private NpcInitializer _initializer = new ();
         private Queue<NpcLoader> _objectsToInitQueue = new();
@@ -118,6 +121,9 @@ namespace GUZ.Core.Npc
 
         public async Task CreateWorldNpcs(LoadingManager loading)
         {
+            MobRoutines.ClearAndReleaseMemory();
+            MobRoutines = new();
+            
             if (GameGlobals.SaveGame.IsNewGame)
                 await _initializer.InitNpcsNewGame(loading);
              else
