@@ -7,7 +7,9 @@ using GUZ.Core.Data.Container;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Vm;
+using GUZ.VR.Adapter;
 using GUZ.VR.Components.HVROverrides;
+using HurricaneVR.Framework.Core.HandPoser;
 using HurricaneVR.Framework.Core.Utils;
 using UnityEngine;
 using ZenKit.Daedalus;
@@ -24,6 +26,8 @@ namespace GUZ.VR.Components
         private INpc _playerVob;
         private IAiHuman _playerAi;
         private SfxContainer _sfxDiveContainer;
+        private HVRHandAnimator _leftHandAnimator;
+        private HVRHandAnimator _rightHandAnimator;
             
         private float _initialGravity;
         private float _initialMoveSpeed;
@@ -34,6 +38,10 @@ namespace GUZ.VR.Components
         
         private void Start()
         {
+            var vrPlayer = ((VRInteractionAdapter)GameContext.InteractionAdapter).GetVRPlayerController();
+            _leftHandAnimator = vrPlayer.LeftHand.HandAnimator;
+            _rightHandAnimator = vrPlayer.RightHand.HandAnimator;
+            
 			GlobalEventDispatcher.ZenKitBootstrapped.AddListener(() =>
             {
                 var mds = ResourceLoader.TryGetModelScript("Humans")!;
@@ -125,6 +133,8 @@ namespace GUZ.VR.Components
                     _playerController.RunSpeed = _initialRunSpeed;
                     _playerController.CanSprint = true;
                     _playerController.MaxFallSpeed = _initialFallSpeed;
+                    _leftHandAnimator.enabled = true;
+                    _rightHandAnimator.enabled = true;
                     break;
                 case ZenGineConst.WaterLevel.Knee:
                     _playerController.Gravity = _initialGravity;
@@ -132,12 +142,16 @@ namespace GUZ.VR.Components
                     _playerController.RunSpeed = _initialMoveSpeed / 2; // No running, but it might be, that we run into deep water, then we need to slow it down like walking.
                     _playerController.CanSprint = false;
                     _playerController.MaxFallSpeed = _initialFallSpeed;
+                    _leftHandAnimator.enabled = true;
+                    _rightHandAnimator.enabled = true;
                     break;
                 case ZenGineConst.WaterLevel.Chest:
                     _mode = VmGothicEnums.WalkMode.Swim;
                     _playerController.Gravity = 0f;
                     _playerController.MaxFallSpeed = 0f;
                     _waterBobbingCoroutine = StartCoroutine(WaterBobbing());
+                    _leftHandAnimator.enabled = false;
+                    _rightHandAnimator.enabled = false;
                     break;
                 default:
                     throw new Exception($"Unknown value {_playerAi.WaterLevel} for water.");
