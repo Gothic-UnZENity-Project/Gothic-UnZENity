@@ -25,6 +25,8 @@ namespace GUZ.Core.Manager.Vobs
 {
     public class VobManager
     {
+        public Dictionary<string, List<(int hour, int minute, int status)>> ObjectRoutines = new();
+        
         private const string _noSoundName = "nosound.wav";
         private const float _interactableLookupDistance = 10f; // meter
         
@@ -234,6 +236,9 @@ namespace GUZ.Core.Manager.Vobs
 
             // We reset the GO dictionary.
             _vobTypeParentGOs = new();
+
+            ObjectRoutines.ClearAndReleaseMemory();
+            ObjectRoutines = new();
 
             // Create root VOB GOs.
             var allTypes = (VirtualObjectType[])Enum.GetValues(typeof(VirtualObjectType));

@@ -178,7 +178,7 @@ namespace GUZ.Core.Vm
             vm.RegisterExternal<int, string>("Wld_InsertItem", Wld_InsertItem);
             vm.RegisterExternal<string>("Wld_ExchangeGuildAttitudes", Wld_ExchangeGuildAttitudes);
             vm.RegisterExternal<int, int, int>("Wld_SetGuildAttitude", Wld_SetGuildAttitude);
-            vm.RegisterExternal<int, int, int>("Wld_GetGuildAttitude", Wld_GetGuildAttitude);
+            vm.RegisterExternal<int, int, string, int>("Wld_SetObjectRoutine", Wld_SetObjectRoutine);
 
             // Misc
             vm.RegisterExternal<int, int>("Perc_SetRange", Perc_SetRange);
@@ -1017,6 +1017,13 @@ namespace GUZ.Core.Vm
                 return;
 
             GameData.GuildAttitudes[guild1 * GameData.GuildCount + guild2] = attitude;
+        }
+
+        public static void Wld_SetObjectRoutine(int hour, int minute, string name, int status)
+        {
+            // FIXME - Do more with these ObjectRoutines.
+            GameGlobals.Vobs.ObjectRoutines.TryAdd(name, new());
+            GameGlobals.Vobs.ObjectRoutines[name].Add((hour, minute, status));
         }
 
         public static int Wld_GetGuildAttitude(int guild1, int guild2)
