@@ -344,14 +344,12 @@ namespace GUZ.Core.Npc
         {
             var npcProperties = npc.GetUserData().Props;
 
-            npcProperties.WeaponState = VmGothicEnums.WeaponState.Fist;
+            npc.GetUserData()!.Vob.FightMode = (int)VmGothicEnums.WeaponState.Fist;
 
             // if npc has item in hand remove it and set weapon to fist
             // Some animations need to force remove items, some not.
             if (npcProperties.UsedItemSlot.IsNullOrEmpty())
-            {
                 return;
-            }
 
             var slotGo = npc.GetUserData().Go.FindChildRecursively(npcProperties.UsedItemSlot);
             var item = slotGo!.transform.GetChild(0);

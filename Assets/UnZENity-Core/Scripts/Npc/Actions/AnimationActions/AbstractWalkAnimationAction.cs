@@ -81,9 +81,11 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
 
         private string GetWalkModeAnimationString()
         {
-            var weaponState = Props.WeaponState == VmGothicEnums.WeaponState.NoWeapon
+            // The name of the currently active weapon == prefix of animation.
+            var weaponState = Vob.FightMode == (int)VmGothicEnums.WeaponState.NoWeapon
                 ? ""
-                : Props.WeaponState.ToString();
+                : ((VmGothicEnums.WeaponState)Vob.FightMode).ToString().ToUpper();
+
             switch (Props.WalkMode)
             {
                 case VmGothicEnums.WalkMode.Walk:

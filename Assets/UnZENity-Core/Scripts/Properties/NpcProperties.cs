@@ -25,8 +25,6 @@ namespace GUZ.Core.Properties
         public FreePoint CurrentFreePoint;
 
         // NPC items/talents/...
-        public VmGothicEnums.WeaponState WeaponState;
-
         public List<ItemInstance> EquippedItems = new();
         public string UsedItemSlot;
         public bool HasItemEquipped;
