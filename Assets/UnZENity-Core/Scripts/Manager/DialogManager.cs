@@ -20,6 +20,11 @@ namespace GUZ.Core.Manager
     public static class DialogManager
     {
         /// <summary>
+        /// TextToSpeech toggle. So that the hero isn't repeating what we said already.
+        /// </summary>
+        public static bool SkipNextOutput;
+        
+        /// <summary>
         /// Check if NPC has at least one dialog which isn't told and Hero should know about.
         /// important
         ///     - TRUE - check if there's one important dialog untold.
