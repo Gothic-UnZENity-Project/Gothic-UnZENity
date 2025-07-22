@@ -47,36 +47,41 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             // By default, every Daedalus animation starts without using physics. But they can always overwrite it (e.g.) for walking.
             PhysicsHelper.DisablePhysicsForNpc(PrefabProps);
         }
-
-        public string GetWalkModeAnimationString()
+        
+        protected string GetWalkModeAnimationString()
         {
-            string walkmode;
+            // The name of the currently active weapon == prefix of animation.
+            var weaponState = Vob.FightMode == (int)VmGothicEnums.WeaponState.NoWeapon
+                ? ""
+                : ((VmGothicEnums.WeaponState)Vob.FightMode).ToString().ToUpper();
+            
+            string walkMode;
             switch (Props.WalkMode)
             {
                 case VmGothicEnums.WalkMode.Walk:
-                    walkmode = "WALK";
+                    walkMode = "WALK";
                     break;
                 case VmGothicEnums.WalkMode.Run:
-                    walkmode = "RUN";
+                    walkMode = "RUN";
                     break;
                 case VmGothicEnums.WalkMode.Sneak:
-                    walkmode = "SNEAK";
+                    walkMode = "SNEAK";
                     break;
                 case VmGothicEnums.WalkMode.Water:
-                    walkmode = "WATER";
+                    walkMode = "WATER";
                     break;
                 case VmGothicEnums.WalkMode.Swim:
-                    walkmode = "SWIM";
+                    walkMode = "SWIM";
                     break;
                 case VmGothicEnums.WalkMode.Dive:
-                    walkmode = "DIVE";
+                    walkMode = "DIVE";
                     break;
                 default:
-                    Logger.LogWarning($"Animation of type {Props.WalkMode} not yet implemented.", LogCat.Ai);
+                    Logger.LogWarning($"Animation of type {Props.WalkMode} not yet implemented.", LogCat.Animation);
                     return "";
             }
 
-            return $"S_{walkmode}";
+            return $"S_{weaponState}{walkMode}";
         }
 
         /// <summary>

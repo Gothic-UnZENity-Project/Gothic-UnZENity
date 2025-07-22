@@ -397,13 +397,9 @@ namespace GUZ.Core.Animations
 
                     // The first animation for a bone will define the start point of the rotation. Starting with Q.Identity is wrong and causes hickups.
                     if (i == 0)
-                    {
                         finalRotation = rotation;
-                    }
                     else
-                    {
                         finalRotation = Quaternion.Slerp(finalRotation, rotation, trackInstanceBoneWeight);
-                    }
                 }
 
                 // If we under blended the current object, we need to apply positions from the mesh itself.
@@ -428,16 +424,12 @@ namespace GUZ.Core.Animations
                 var trackInstance = _trackInstances[i];
 
                 if (!trackInstance.Track.IsMoving)
-                {
                     continue;
-                }
 
                 // Stop, if we have no Root bone
                 var boneIndex = trackInstance.GetBoneIndex(Constants.Animations.RootBoneName);
                 if (boneIndex == -1)
-                {
                     continue;
-                }
 
                 finalMovement += trackInstance.Track.MovementSpeed * trackInstance.BoneBlendWeights[boneIndex] * Time.deltaTime;
             }
@@ -501,9 +493,7 @@ namespace GUZ.Core.Animations
         {
             var sfxEvents = trackInstance.GetPendingSoundEffects();
             if (sfxEvents == null)
-            {
                 return;
-            }
 
             foreach (var sfx in sfxEvents)
             {
@@ -518,9 +508,7 @@ namespace GUZ.Core.Animations
         {
             var pfxEvents = trackInstance.GetPendingParticleEffects();
             if (pfxEvents == null)
-            {
                 return;
-            }
 
             foreach (var pfx in pfxEvents)
             {
@@ -532,9 +520,7 @@ namespace GUZ.Core.Animations
         {
             var morphEvents = trackInstance.GetPendingMorphAnimations();
             if (morphEvents == null)
-            {
                 return;
-            }
 
             foreach (var morph in morphEvents)
             {
@@ -546,6 +532,11 @@ namespace GUZ.Core.Animations
 
         private string GetIdleAnimationName()
         {
+            // The name of the currently active weapon == prefix of animation.
+            var weaponState = Vob.FightMode == (int)VmGothicEnums.WeaponState.NoWeapon
+                ? ""
+                : ((VmGothicEnums.WeaponState)Vob.FightMode).ToString().ToUpper();
+            
             string walkMode;
             switch (Properties.WalkMode)
             {
@@ -572,7 +563,7 @@ namespace GUZ.Core.Animations
                     return "";
             }
 
-            return $"S_{walkMode}";
+            return $"S_{weaponState}{walkMode}";
         }
 
         private void InsertItem(string slot1, string slot2)
