@@ -1,4 +1,5 @@
-﻿using GUZ.Core.Data.ZkEvents;
+﻿using System.Collections.Generic;
+using GUZ.Core.Data.ZkEvents;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
@@ -17,8 +18,13 @@ namespace GUZ.Core.Npc
 {
     public class AiHandler : BasePlayerBehaviour, IAnimationCallbacks
     {
+#if UNITY_EDITOR
+        public List<(string name, AnimationAction properties)> AiActionHistory = new();
+#endif
+        
         private static DaedalusVm Vm => GameData.GothicVm;
         private const int _daedalusLoopContinue = 0; // Id taken from a Daedalus constant.
+        private const int _daedalusLoopEnd = 1;
 
         private void Start()
         {
@@ -69,22 +75,9 @@ namespace GUZ.Core.Npc
                         break;
                     case NpcProperties.LoopState.Start:
                         if (Vob.CurrentStateIndex == 0)
-                        {
                             return;
-                        }
 
-                        loopSymbol = Vm.GetSymbolByIndex(Vob.CurrentStateIndex)!;
-                        switch (loopSymbol.ReturnType)
-                        {
-                            case DaedalusDataType.Int:
-                                Vm.Call<int>(Vob.CurrentStateIndex);
-                                break;
-                            default:
-                                Vm.Call(Vob.CurrentStateIndex);
-                                break;
-                        }
-
-
+                        CallAiFunction(Vob.CurrentStateIndex);
                         Properties.CurrentLoopState = NpcProperties.LoopState.Loop;
                         break;
                     case NpcProperties.LoopState.Loop:
@@ -94,38 +87,16 @@ namespace GUZ.Core.Npc
                             return;
                         }
 
-                        loopSymbol = Vm.GetSymbolByIndex(Properties.StateLoop)!;
-                        switch (loopSymbol.ReturnType)
-                        {
-                            case DaedalusDataType.Int:
-                                var loopResponse = Vm.Call<int>(loopSymbol.Index);
-                                // Some ZS_*_Loop return !=0 when they want to quit.
-                                if (loopResponse != _daedalusLoopContinue)
-                                {
-                                    Properties.CurrentLoopState = NpcProperties.LoopState.End;
-                                }
-                                break;
-                            default:
-                                Vm.Call(loopSymbol.Index);
-                                break;
-                        }
-
+                        var loopResponse = CallAiFunction(Properties.StateLoop);
+                        
+                        // Some ZS_*_Loop return !=0 when they want to quit.
+                        if (loopResponse != _daedalusLoopContinue)
+                            Properties.CurrentLoopState = NpcProperties.LoopState.End;
+                        
                         break;
-
                     case NpcProperties.LoopState.End:
                         if (Properties.StateEnd != 0)
-                        {
-                            loopSymbol = Vm.GetSymbolByIndex(Properties.StateEnd)!;
-                            switch (loopSymbol.ReturnType)
-                            {
-                                case DaedalusDataType.Int:
-                                    Vm.Call<int>(Properties.StateEnd);
-                                    break;
-                                default:
-                                    Vm.Call(Properties.StateEnd);
-                                    break;
-                            }
-                        }
+                            CallAiFunction(Properties.StateEnd);
 
                         // We filled the AnimationQueue with the ZS_*_End() animations once. END isn't looping.
                         Properties.CurrentLoopState = NpcProperties.LoopState.AfterEnd;
@@ -148,6 +119,35 @@ namespace GUZ.Core.Npc
             }
         }
 
+        private int CallAiFunction(int symbolIndex)
+        {
+            var returnContinue = _daedalusLoopContinue;
+            
+            var loopSymbol = Vm.GetSymbolByIndex(symbolIndex)!;
+            switch (loopSymbol.ReturnType)
+            {
+                case DaedalusDataType.Int:
+                    returnContinue = Vm.Call<int>(symbolIndex);
+                    break;
+                default:
+                    Vm.Call(symbolIndex);
+                    break;
+            }
+            
+#if UNITY_EDITOR
+            // Limit size to 50 elements
+            if (AiActionHistory.Count >= 50)
+                AiActionHistory.RemoveRange(0, AiActionHistory.Count - 50);
+
+            foreach (var action in Properties.AnimationQueue)
+            {
+                AiActionHistory.Add((action.GetType().Name, action.Action));
+            }
+#endif
+            
+            return returnContinue;
+        }
+
         /// <summary>
         /// Execute perceptions if it's about time.
         /// </summary>
@@ -168,10 +168,10 @@ namespace GUZ.Core.Npc
             }
 
             // FIXME - Throws a lot of errors and warnings when NPCs are nearby monsters (e.g. Bridge guard next to OC)
-            // if(Properties.EnemyNpc != null)
-            // {
-            //     GameGlobals.NpcAi.ExecutePerception(VmGothicEnums.PerceptionType.AssessEnemy, Properties, NpcInstance,null, Properties.EnemyNpc);
-            // }
+            if(Properties.EnemyNpc != null)
+            {
+                GameGlobals.NpcAi.ExecutePerception(VmGothicEnums.PerceptionType.AssessEnemy, Properties, NpcInstance,null, Properties.EnemyNpc);
+            }
 
 
             // FIXME - We need to add other active perceptions here:

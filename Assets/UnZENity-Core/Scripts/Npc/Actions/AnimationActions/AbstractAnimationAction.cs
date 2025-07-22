@@ -18,7 +18,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
 {
     public abstract class AbstractAnimationAction
     {
-        protected readonly AnimationAction Action;
+        public readonly AnimationAction Action;
         protected readonly NpcContainer NpcContainer;
         protected readonly NpcInstance NpcInstance;
         protected readonly GameObject NpcGo;
