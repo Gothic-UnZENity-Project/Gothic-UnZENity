@@ -111,9 +111,7 @@ namespace GUZ.Core.Animations
             Logger.LogEditor($"Playing animation: {newTrack.Name}, alias: {newTrack.AliasName}", LogCat.Animation);
 
             if (IsAlreadyPlaying(newTrack))
-            {
                 return true;
-            }
 
             var newTrackInstance = new AnimationTrackInstance(newTrack);
             var newTrackLayer = newTrackInstance.Track.Layer;
@@ -157,10 +155,8 @@ namespace GUZ.Core.Animations
         {
             for (var i = 0; i < _trackInstances.Count; i++)
             {
-                if (newTrack.Name == _trackInstances[i].Track.Name)
-                {
+                if (newTrack.IsSameAnimation(_trackInstances[i].Track))
                     return true;
-                }
             }
 
             return false;

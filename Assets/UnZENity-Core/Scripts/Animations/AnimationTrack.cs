@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using GUZ.Core.Extensions;
 using UnityEngine;
 using ZenKit;
 using Animation = UnityEngine.Animation;
@@ -73,6 +74,14 @@ namespace GUZ.Core.Animations
 
             position = keyFrame.Position;
             rotation = keyFrame.Rotation;
+        }
+
+        public bool IsSameAnimation(AnimationTrack otherTrack)
+        {
+            var nameOfSelf = TrackType == Type.Animation ? _animation.Name : _animationAlias.Name;
+            var nameOfOther = otherTrack.TrackType == Type.Animation ? otherTrack.Name : otherTrack.AliasName;
+            
+            return nameOfSelf.EqualsIgnoreCase(nameOfOther);
         }
     }
 }
