@@ -318,8 +318,10 @@ namespace GUZ.Core.Animations
                         if (instance.Track.NextAni.NotNullOrEmpty())
                         {
                             PlayAnimation(instance.Track.NextAni);
-                            BlendInOtherTrackBones(instance);
                         }
+                        
+                        // FIXME - We need to re-enable layer1 idle animation when done with movement (e.g., Molerat MoveToNextFp()). Otherwise they stuck in place.
+                        BlendInOtherTrackBones(instance);
                         break;
                     case AnimationState.Stop:
                         PreStopAnimation(instance);
