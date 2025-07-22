@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.Linq;
 using UberLogger;
+using UnityEngine;
 using ZenKit;
 
 namespace GUZ.Core.Util
@@ -16,18 +17,21 @@ namespace GUZ.Core.Util
     public static class Logger
     {
         [StackTraceIgnore]
+        [HideInCallstack]
         public static void Log(string message, LogCat cat)
         {
             UberDebug.LogChannel(cat.ToString(), message);
         }
 
         [StackTraceIgnore]
+        [HideInCallstack]
         public static void LogWarning(string message, LogCat cat)
         {
             UberDebug.LogWarningChannel(cat.ToString(), message);
         }
 
         [StackTraceIgnore]
+        [HideInCallstack]
         public static void LogError(string message, LogCat cat)
         {
             UberDebug.LogErrorChannel(cat.ToString(), message);
@@ -35,6 +39,7 @@ namespace GUZ.Core.Util
 
 
         [StackTraceIgnore]
+        [HideInCallstack]
         [Conditional("UNITY_EDITOR")]
         public static void LogEditor(string message, LogCat cat)
         {
@@ -42,6 +47,7 @@ namespace GUZ.Core.Util
         }
 
         [StackTraceIgnore]
+        [HideInCallstack]
         [Conditional("UNITY_EDITOR")]
         public static void LogWarningEditor(string message, LogCat cat)
         {
@@ -49,6 +55,7 @@ namespace GUZ.Core.Util
         }
 
         [StackTraceIgnore]
+        [HideInCallstack]
         [Conditional("UNITY_EDITOR")]
         public static void LogErrorEditor(string message, LogCat cat)
         {
