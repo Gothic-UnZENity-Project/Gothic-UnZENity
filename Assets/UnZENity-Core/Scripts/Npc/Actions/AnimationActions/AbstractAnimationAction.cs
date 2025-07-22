@@ -59,22 +59,22 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             switch (Props.WalkMode)
             {
                 case VmGothicEnums.WalkMode.Walk:
-                    walkMode = "WALK";
+                    walkMode = "WALKL";
                     break;
                 case VmGothicEnums.WalkMode.Run:
-                    walkMode = "RUN";
+                    walkMode = "RUNL";
                     break;
                 case VmGothicEnums.WalkMode.Sneak:
-                    walkMode = "SNEAK";
+                    walkMode = "SNEAKL";
                     break;
                 case VmGothicEnums.WalkMode.Water:
-                    walkMode = "WATER";
+                    walkMode = "WATERL";
                     break;
                 case VmGothicEnums.WalkMode.Swim:
-                    walkMode = "SWIM";
+                    walkMode = "SWIML";
                     break;
                 case VmGothicEnums.WalkMode.Dive:
-                    walkMode = "DIVE";
+                    walkMode = "DIVEL";
                     break;
                 default:
                     Logger.LogWarning($"Animation of type {Props.WalkMode} not yet implemented.", LogCat.Animation);
