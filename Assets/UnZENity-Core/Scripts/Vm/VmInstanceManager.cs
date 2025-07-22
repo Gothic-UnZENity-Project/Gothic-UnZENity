@@ -10,6 +10,7 @@ namespace GUZ.Core.Vm
     public static class VmInstanceManager
     {
         private static readonly Dictionary<string, ItemInstance> _itemDataCache = new();
+        private static readonly Dictionary<string, FightAiInstance> _fightAiDataCache = new();
         private static readonly Dictionary<int, SvmInstance> _svmDataCache = new();
         private static readonly Dictionary<string, SoundEffectInstance> _sfxDataCache = new();
         private static readonly Dictionary<string, ParticleEffectInstance> _pfxDataCache = new();
@@ -58,6 +59,28 @@ namespace GUZ.Core.Vm
             return newData;
         }
 
+        public static FightAiInstance TryGetFightAiData(string nameTemplate, int instanceId)
+        {
+            var preparedKey = GetPreparedKey(string.Format(nameTemplate, instanceId));
+            
+            if (_fightAiDataCache.TryGetValue(preparedKey, out var data))
+                return data;
+
+            FightAiInstance newData = null;
+            try
+            {
+                newData = GameData.FightVm.InitInstance<FightAiInstance>(preparedKey);
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+
+            _fightAiDataCache[preparedKey] = newData;
+
+            return newData;
+        }
+        
         /// <summary>
         /// Hint: Instances only need to be initialized once in ZenKit.
         /// </summary>

@@ -129,6 +129,14 @@ namespace GUZ.Core.Npc
             npc.GetUserData().Props.AnimationQueue.Clear();
         }
 
+        public void ExtAttack(NpcInstance npc)
+        {
+            var npcContainer = npc.GetUserData()!;
+            npcContainer.Props.AnimationQueue.Enqueue(new Attack(
+                new AnimationAction(),
+                npcContainer));
+        }
+
         public void ExtAiGoToNextFp(NpcInstance npc, string fpNamePart)
         {
             var npcContainer = npc.GetUserData();

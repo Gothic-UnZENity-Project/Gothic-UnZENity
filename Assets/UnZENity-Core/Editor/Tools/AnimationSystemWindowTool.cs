@@ -25,6 +25,7 @@ namespace GUZ.Core.Editor.Tools
         private AiHandler _targetAiHandler;
         private bool _isAiHandlerFoldedOut;
 
+        private GUILayoutOption _ultraSmall = GUILayout.Width(20);
         private GUILayoutOption _small = GUILayout.Width(50);
         private GUILayoutOption _medium = GUILayout.Width(75);
         private GUILayoutOption _wide = GUILayout.Width(100);
@@ -201,12 +202,12 @@ namespace GUZ.Core.Editor.Tools
                 
             // _targetAiHandler.AiActionHistory
             EditorGUILayout.BeginHorizontal();
-            EditorGUILayout.LabelField("#", GUILayout.Width(10));
+            EditorGUILayout.LabelField("#", _ultraSmall);
             EditorGUILayout.LabelField("AiAction", _wide);
-            EditorGUILayout.LabelField("String", _medium);
             EditorGUILayout.LabelField("Int0", _small);
             EditorGUILayout.LabelField("Int1", _small);
             EditorGUILayout.LabelField("Bool", _small);
+            EditorGUILayout.LabelField("String", _ultraWide);
             EditorGUILayout.EndHorizontal();
 
             for (var i = _targetAiHandler.AiActionHistory.Count-1; i >= 0; i--)
@@ -214,12 +215,12 @@ namespace GUZ.Core.Editor.Tools
                 (string name, AnimationAction action) entry = _targetAiHandler.AiActionHistory[i];
 
                 EditorGUILayout.BeginHorizontal();
-                EditorGUILayout.LabelField(i.ToString(), GUILayout.Width(10));
+                EditorGUILayout.LabelField(i.ToString(), _ultraSmall);
                 EditorGUILayout.LabelField(entry.name, _wide);
-                EditorGUILayout.LabelField(entry.action.String0, _medium);
                 EditorGUILayout.LabelField(entry.action.Int0.ToString(), _small);
                 EditorGUILayout.LabelField(entry.action.Int1.ToString(), _small);
                 EditorGUILayout.LabelField(entry.action.Bool0.ToString(), _small);
+                EditorGUILayout.LabelField(entry.action.String0, _ultraWide);
                 EditorGUILayout.EndHorizontal();
             }
 

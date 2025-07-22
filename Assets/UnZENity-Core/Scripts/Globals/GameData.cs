@@ -22,6 +22,7 @@ namespace GUZ.Core.Globals
         public static Encoding Encoding;
         public static string Language;
         public static DaedalusVm GothicVm;
+        public static DaedalusVm FightVm;
         public static DaedalusVm MenuVm;
         public static DaedalusVm SfxVm; // Sound FX
         public static DaedalusVm PfxVm; // Particle FX

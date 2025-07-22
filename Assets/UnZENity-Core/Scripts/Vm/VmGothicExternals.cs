@@ -32,6 +32,7 @@ namespace GUZ.Core.Vm
             vm.RegisterExternalDefault(DefaultExternal);
 
             // AI
+            vm.RegisterExternal<NpcInstance>("Ai_Attack", Ai_Attack);
             vm.RegisterExternal<NpcInstance>("AI_StandUp", AI_StandUp);
             vm.RegisterExternal<NpcInstance>("AI_StandUpQuick", AI_StandUpQuick);
             vm.RegisterExternal<NpcInstance, int>("AI_SetWalkMode", AI_SetWalkMode);
@@ -221,6 +222,11 @@ namespace GUZ.Core.Vm
 
         #region AI
 
+        public static void Ai_Attack(NpcInstance npc)
+        {
+            GameGlobals.NpcAi.ExtAttack(npc);
+        }
+        
         public static void AI_StandUp(NpcInstance npc)
         {
             GameGlobals.NpcAi.ExtAiStandUp(npc);

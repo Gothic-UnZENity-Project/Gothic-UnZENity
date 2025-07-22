@@ -45,8 +45,8 @@ namespace GUZ.Core.Globals
                 return Enumerable.Range(0, talentCount).Select(i => talentSkills.GetString((ushort)i)).ToList();
             }
         }
-        
-                public enum Guild
+
+        public enum Guild
         {
             GIL_NONE = 0, // (keine)
             GIL_HUMAN = 1, // Special Guild -> To set Constants for ALL Human Guilds --> wird verwendet in Species.d

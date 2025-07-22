@@ -100,6 +100,7 @@ namespace GUZ.Core.Manager
         
         private static void LoadMiscVMs()
         {
+            GameData.FightVm = ResourceLoader.TryGetDaedalusVm("FIGHT");
             GameData.MenuVm = ResourceLoader.TryGetDaedalusVm("MENU");
             GameData.SfxVm = ResourceLoader.TryGetDaedalusVm("SFX");
             GameData.PfxVm = ResourceLoader.TryGetDaedalusVm("PARTICLEFX");
