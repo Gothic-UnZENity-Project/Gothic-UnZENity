@@ -116,7 +116,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             if (Quaternion.Angle(npcTransform.rotation, _finalRotation) < 1f && IsFinishedFlag != true)
             {
                 PrefabProps.AnimationSystem.StopAnimation(GetRotateModeAnimationString());
-                PrefabProps.AnimationSystem.PlayAnimation(GetWalkModeAnimationString());
+                PrefabProps.AnimationSystem.PlayAnimation(GameGlobals.Animations.GetAnimationName(VmGothicEnums.AnimationType.Move, Vob));
 
                 IsFinishedFlag = true;
             }

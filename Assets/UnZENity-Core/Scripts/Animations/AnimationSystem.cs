@@ -164,7 +164,7 @@ namespace GUZ.Core.Animations
 
         public bool PlayIdleAnimation()
         {
-            return PlayAnimation(GetIdleAnimationName());
+            return PlayAnimation(GameGlobals.Animations.GetAnimationName(VmGothicEnums.AnimationType.Idle, Vob));
         }
 
         public float GetAnimationDuration(string animationName)
@@ -546,42 +546,6 @@ namespace GUZ.Core.Animations
 
                 PrefabProps.HeadMorph.StartAnimation(Properties.BodyData.Head, type);
             }
-        }
-
-        private string GetIdleAnimationName()
-        {
-            // The name of the currently active weapon == prefix of animation.
-            var weaponState = Vob.FightMode == (int)VmGothicEnums.WeaponState.NoWeapon
-                ? ""
-                : ((VmGothicEnums.WeaponState)Vob.FightMode).ToString().ToUpper();
-            
-            string walkMode;
-            switch ((VmGothicEnums.WalkMode)Vob.AiHuman.WalkMode)
-            {
-                case VmGothicEnums.WalkMode.Walk:
-                    walkMode = "WALK";
-                    break;
-                case VmGothicEnums.WalkMode.Run:
-                    walkMode = "RUN";
-                    break;
-                case VmGothicEnums.WalkMode.Sneak:
-                    walkMode = "SNEAK";
-                    break;
-                case VmGothicEnums.WalkMode.Water:
-                    walkMode = "WATER";
-                    break;
-                case VmGothicEnums.WalkMode.Swim:
-                    walkMode = "SWIM";
-                    break;
-                case VmGothicEnums.WalkMode.Dive:
-                    walkMode = "DIVE";
-                    break;
-                default:
-                    Logger.LogWarning($"Animation of type {(VmGothicEnums.WalkMode)Vob.AiHuman.WalkMode} not yet implemented.", LogCat.Animation);
-                    return "";
-            }
-
-            return $"S_{weaponState}{walkMode}";
         }
 
         private void InsertItem(string slot1, string slot2)

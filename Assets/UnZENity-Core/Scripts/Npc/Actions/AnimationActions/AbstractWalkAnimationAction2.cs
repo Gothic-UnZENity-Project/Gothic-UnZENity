@@ -60,7 +60,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
         {
             PhysicsHelper.EnablePhysicsForNpc(PrefabProps);
 
-            var animName = GetWalkModeAnimationString();
+            var animName = GameGlobals.Animations.GetAnimationName(VmGothicEnums.AnimationType.Move, Vob);
             PrefabProps.AnimationSystem.PlayAnimation(animName);
         }
 
@@ -68,7 +68,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
         {
             PhysicsHelper.EnablePhysicsForNpc(PrefabProps);
 
-            var animName = GetWalkModeAnimationString();
+            var animName = GameGlobals.Animations.GetAnimationName(VmGothicEnums.AnimationType.Move, Vob);
             PrefabProps.AnimationSystem.StopAnimation(animName);
         }
 

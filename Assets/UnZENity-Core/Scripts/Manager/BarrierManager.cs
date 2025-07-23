@@ -1,9 +1,7 @@
 using GUZ.Core.Config;
 using GUZ.Core.Creator.Meshes;
 using GUZ.Core.Extensions;
-using GUZ.Core.Util;
 using UnityEngine;
-using Logger = GUZ.Core.Util.Logger;
 using Random = UnityEngine.Random;
 
 namespace GUZ.Core.Manager

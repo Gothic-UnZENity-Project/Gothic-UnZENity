@@ -49,43 +49,6 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             // By default, every Daedalus animation starts without using physics. But they can always overwrite it (e.g.) for walking.
             PhysicsHelper.DisablePhysicsForNpc(PrefabProps);
         }
-        
-        protected string GetWalkModeAnimationString()
-        {
-            // The name of the currently active weapon == prefix of animation.
-            var weaponState = Vob.FightMode == (int)VmGothicEnums.WeaponState.NoWeapon
-                ? ""
-                : ((VmGothicEnums.WeaponState)Vob.FightMode).ToString().ToUpper();
-            
-            var walkMode = (VmGothicEnums.WalkMode)Vob.AiHuman.WalkMode;
-            string walkModeString;
-            switch (walkMode)
-            {
-                case VmGothicEnums.WalkMode.Walk:
-                    walkModeString = "WALKL";
-                    break;
-                case VmGothicEnums.WalkMode.Run:
-                    walkModeString = "RUNL";
-                    break;
-                case VmGothicEnums.WalkMode.Sneak:
-                    walkModeString = "SNEAKL";
-                    break;
-                case VmGothicEnums.WalkMode.Water:
-                    walkModeString = "WATERL";
-                    break;
-                case VmGothicEnums.WalkMode.Swim:
-                    walkModeString = "SWIML";
-                    break;
-                case VmGothicEnums.WalkMode.Dive:
-                    walkModeString = "DIVEL";
-                    break;
-                default:
-                    Logger.LogWarning($"Animation of type {walkMode} not yet implemented.", LogCat.Animation);
-                    return "";
-            }
-
-            return $"S_{weaponState}{walkMode}";
-        }
 
         /// <summary>
         /// We just set the audio by default.
