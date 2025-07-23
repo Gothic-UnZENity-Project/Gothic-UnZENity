@@ -1,4 +1,5 @@
 ﻿using System;
+using GUZ.Core.Data.Adapter.Vobs;
 using GUZ.Core.Data.Container;
 using GUZ.Core.Extensions;
 using GUZ.Core.Properties;
@@ -13,7 +14,7 @@ namespace GUZ.Core.Npc
         public NpcContainer NpcData;
 
         public NpcInstance NpcInstance => NpcData.Instance;
-        public ZenKit.Vobs.INpc Vob => NpcData.Vob;
+        public NpcAdapter Vob => NpcData.Vob;
         public GameObject Go => NpcData.Go;
         public NpcProperties Properties => NpcData.Props;
         public NpcPrefabProperties PrefabProps => NpcData.PrefabProps;

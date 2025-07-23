@@ -71,9 +71,9 @@ namespace GUZ.VR.Components.SpeechToText
 
         private void CheckRecordingState()
         {
-            if (_playerInputs.IsSpeakingActivated && _state == State.Idle)
+            if (_playerInputs.IsBothGripsActive && _state == State.Idle)
                 StartRecording();
-            else if (!_playerInputs.IsSpeakingActivated && _state == State.Recording)
+            else if (!_playerInputs.IsBothGripsActive && _state == State.Recording)
                 StopAndProcessRecording();
         }
 

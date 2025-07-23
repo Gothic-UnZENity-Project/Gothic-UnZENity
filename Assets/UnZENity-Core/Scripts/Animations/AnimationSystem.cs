@@ -556,7 +556,7 @@ namespace GUZ.Core.Animations
                 : ((VmGothicEnums.WeaponState)Vob.FightMode).ToString().ToUpper();
             
             string walkMode;
-            switch (Properties.WalkMode)
+            switch ((VmGothicEnums.WalkMode)Vob.AiHuman.WalkMode)
             {
                 case VmGothicEnums.WalkMode.Walk:
                     walkMode = "WALK";
@@ -577,7 +577,7 @@ namespace GUZ.Core.Animations
                     walkMode = "DIVE";
                     break;
                 default:
-                    Logger.LogWarning($"Animation of type {Properties.WalkMode} not yet implemented.", LogCat.Animation);
+                    Logger.LogWarning($"Animation of type {(VmGothicEnums.WalkMode)Vob.AiHuman.WalkMode} not yet implemented.", LogCat.Animation);
                     return "";
             }
 

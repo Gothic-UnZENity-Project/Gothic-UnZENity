@@ -142,10 +142,7 @@ namespace GUZ.Lab.Handler
             var npcData = new NpcContainer
             {
                 Instance = _bloodwynInstance,
-                Props = new()
-                {
-                    WalkMode = VmGothicEnums.WalkMode.Walk
-                },
+                Props = new(),
                 Vob = new NpcAdapter(npcSymbol.Index)
             };
 

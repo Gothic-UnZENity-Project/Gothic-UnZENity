@@ -81,19 +81,19 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
 
         private string GetWalkModeAnimationString()
         {
-            // The name of the currently active weapon == prefix of animation.
-            var weaponState = Vob.FightMode == (int)VmGothicEnums.WeaponState.NoWeapon
+            var fightMode = (VmGothicEnums.WeaponState)Vob.FightMode;
+            var weaponState = fightMode == VmGothicEnums.WeaponState.NoWeapon
                 ? ""
-                : ((VmGothicEnums.WeaponState)Vob.FightMode).ToString().ToUpper();
-
-            switch (Props.WalkMode)
+                : fightMode.ToString();
+            var walkMode = (VmGothicEnums.WalkMode)Vob.AiHuman.WalkMode;
+            switch (walkMode)
             {
                 case VmGothicEnums.WalkMode.Walk:
                     return $"S_{weaponState}WALKL";
                 case VmGothicEnums.WalkMode.Run:
                     return $"S_{weaponState}RUNL";
                 default:
-                    Logger.LogWarning($"Animation of type {Props.WalkMode} not yet implemented.", LogCat.Ai);
+                    Logger.LogWarning($"Animation of type {walkMode} not yet implemented.", LogCat.Ai);
                     return "";
             }
         }

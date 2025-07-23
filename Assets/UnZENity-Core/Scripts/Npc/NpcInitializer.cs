@@ -56,7 +56,7 @@ namespace GUZ.Core.Npc
             }
         }
 
-        public void InitNpcVobSaveGame(ZenKit.Vobs.Npc vobNpc)
+        public void InitNpcVobSaveGame(INpc vobNpc)
         {
             var npcContainer = AllocZkInstance(vobNpc);
             SaveGameAddLazyLoadingNearby(npcContainer, vobNpc);
@@ -82,11 +82,11 @@ namespace GUZ.Core.Npc
             _tmpWldInsertNpcData.Add((userDataObject, spawnPoint));
         }
 
-        private NpcContainer AllocZkInstance(ZenKit.Vobs.Npc vobNpc)
+        private NpcContainer AllocZkInstance(INpc vobNpc)
         {
-            var symbol = GameData.GothicVm.GetSymbolByName(vobNpc.Name);
+            var symbol = GameData.GothicVm.GetSymbolByName(vobNpc.Name)!;
             var userDataObject = AllocZkInstance(symbol.Index);
-            userDataObject.Vob = vobNpc;
+            userDataObject.Vob = (NpcAdapter)vobNpc;
             
             return userDataObject;
         }
@@ -173,7 +173,7 @@ namespace GUZ.Core.Npc
         /// <summary>
         /// Initialize an NPC which is close to our hero in a save game.
         /// </summary>
-        private void SaveGameAddLazyLoadingNearby(NpcContainer npc, ZenKit.Vobs.Npc npcVob)
+        private void SaveGameAddLazyLoadingNearby(NpcContainer npc, INpc npcVob)
         {
             var go = InitLazyLoadNpc(npc);
 

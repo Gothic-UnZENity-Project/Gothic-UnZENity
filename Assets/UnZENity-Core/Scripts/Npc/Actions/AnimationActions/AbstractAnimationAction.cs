@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using GUZ.Core.Creator;
+using GUZ.Core.Data.Adapter.Vobs;
 using GUZ.Core.Data.Container;
 using GUZ.Core.Data.ZkEvents;
 using GUZ.Core.Extensions;
@@ -19,11 +20,12 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
     public abstract class AbstractAnimationAction
     {
         public readonly AnimationAction Action;
+
         protected readonly NpcContainer NpcContainer;
         protected readonly NpcInstance NpcInstance;
         protected readonly GameObject NpcGo;
         protected readonly NpcProperties Props;
-        protected readonly ZenKit.Vobs.INpc Vob;
+        protected readonly NpcAdapter Vob;
         protected readonly NpcPrefabProperties PrefabProps;
 
         protected float ActionTime;
@@ -55,29 +57,30 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
                 ? ""
                 : ((VmGothicEnums.WeaponState)Vob.FightMode).ToString().ToUpper();
             
-            string walkMode;
-            switch (Props.WalkMode)
+            var walkMode = (VmGothicEnums.WalkMode)Vob.AiHuman.WalkMode;
+            string walkModeString;
+            switch (walkMode)
             {
                 case VmGothicEnums.WalkMode.Walk:
-                    walkMode = "WALKL";
+                    walkModeString = "WALKL";
                     break;
                 case VmGothicEnums.WalkMode.Run:
-                    walkMode = "RUNL";
+                    walkModeString = "RUNL";
                     break;
                 case VmGothicEnums.WalkMode.Sneak:
-                    walkMode = "SNEAKL";
+                    walkModeString = "SNEAKL";
                     break;
                 case VmGothicEnums.WalkMode.Water:
-                    walkMode = "WATERL";
+                    walkModeString = "WATERL";
                     break;
                 case VmGothicEnums.WalkMode.Swim:
-                    walkMode = "SWIML";
+                    walkModeString = "SWIML";
                     break;
                 case VmGothicEnums.WalkMode.Dive:
-                    walkMode = "DIVEL";
+                    walkModeString = "DIVEL";
                     break;
                 default:
-                    Logger.LogWarning($"Animation of type {Props.WalkMode} not yet implemented.", LogCat.Animation);
+                    Logger.LogWarning($"Animation of type {walkMode} not yet implemented.", LogCat.Animation);
                     return "";
             }
 

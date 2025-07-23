@@ -226,6 +226,9 @@ namespace GUZ.Core.Vm
             }
         }
 
+        /// <summary>
+        /// Used for INpc.FightMode
+        /// </summary>
         public enum WeaponState
         {
             NoWeapon,

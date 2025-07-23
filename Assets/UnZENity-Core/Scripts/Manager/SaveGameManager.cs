@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using GUZ.Core.Data.Adapter.Vobs;
 using GUZ.Core.Data.Container;
 using GUZ.Core.Extensions;
@@ -174,10 +175,10 @@ namespace GUZ.Core.Manager
                 BspTree = (CachedBspTree)originalWorld.BspTree.Cache(),
 
                 // Only existing in SaveGame world
-                Npcs = worldToUse.Npcs, // (if it's a new world, it's simply null)
+                Npcs = WrapVobs(worldToUse.Npcs), // (if it's a new world, it's simply null)
 
                 // Contained inside both: normal .zen file and also saveGame.
-                Vobs = WrapVobs(worldToUse!.RootObjects, IsWorldEnteredFirstTime),
+                Vobs = WrapVobs(worldToUse!.RootObjects),
                 WayNet = (CachedWayNet)worldToUse.WayNet.Cache()
             };
         }
@@ -326,10 +327,15 @@ namespace GUZ.Core.Manager
             container.SaveGameWorld.RootObjects = UnwrapVobs(allVobs);
         }
 
+        private List<NpcAdapter> WrapVobs(List<ZenKit.Vobs.Npc> npcs)
+        {
+            return npcs.Select(i => new NpcAdapter(i)).ToList();
+        }
+        
         /// <summary>
         /// Wrap VOB types with our Adapter grants us more flexibility in using it at runtime (e.g., fetching setter and altering logic).
         /// </summary>
-        private List<IVirtualObject> WrapVobs(List<IVirtualObject> vobs, bool isWorldEnteredFirstTime)
+        private List<IVirtualObject> WrapVobs(List<IVirtualObject> vobs)
         {
             var wrappedVobs = new List<IVirtualObject>();
 

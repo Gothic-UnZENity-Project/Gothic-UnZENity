@@ -4210,6 +4210,26 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1768816159600773060, guid: a0de35f4e16efb54ba0281586c17416f, type: 3}
+      propertyPath: m_TrackingStateInput.m_Action.m_Name
+      value: Tracking State Input
+      objectReference: {fileID: 0}
+    - target: {fileID: 1768816159600773060, guid: a0de35f4e16efb54ba0281586c17416f, type: 3}
+      propertyPath: m_TrackingStateInput.m_Action.m_SingletonActionBindings.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1768816159600773060, guid: a0de35f4e16efb54ba0281586c17416f, type: 3}
+      propertyPath: m_TrackingStateInput.m_Action.m_SingletonActionBindings.Array.data[0].m_Id
+      value: da4f71a4-1002-4b09-914c-f5d5161f4ef4
+      objectReference: {fileID: 0}
+    - target: {fileID: 1768816159600773060, guid: a0de35f4e16efb54ba0281586c17416f, type: 3}
+      propertyPath: m_TrackingStateInput.m_Action.m_SingletonActionBindings.Array.data[0].m_Path
+      value: <XRController>{LeftHand}/trackingState
+      objectReference: {fileID: 0}
+    - target: {fileID: 1768816159600773060, guid: a0de35f4e16efb54ba0281586c17416f, type: 3}
+      propertyPath: m_TrackingStateInput.m_Action.m_SingletonActionBindings.Array.data[0].m_Action
+      value: Tracking State Input
+      objectReference: {fileID: 0}
     - target: {fileID: 1836962620672649032, guid: a0de35f4e16efb54ba0281586c17416f, type: 3}
       propertyPath: Tags.Tags
       value: 
@@ -4237,6 +4257,26 @@ PrefabInstance:
     - target: {fileID: 2029280173168032702, guid: a0de35f4e16efb54ba0281586c17416f, type: 3}
       propertyPath: m_Color.r
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2108173412997487960, guid: a0de35f4e16efb54ba0281586c17416f, type: 3}
+      propertyPath: m_TrackingStateInput.m_Action.m_Name
+      value: Tracking State Input
+      objectReference: {fileID: 0}
+    - target: {fileID: 2108173412997487960, guid: a0de35f4e16efb54ba0281586c17416f, type: 3}
+      propertyPath: m_TrackingStateInput.m_Action.m_SingletonActionBindings.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2108173412997487960, guid: a0de35f4e16efb54ba0281586c17416f, type: 3}
+      propertyPath: m_TrackingStateInput.m_Action.m_SingletonActionBindings.Array.data[0].m_Id
+      value: 5557cdfb-6173-48cc-a97a-5dd36e969440
+      objectReference: {fileID: 0}
+    - target: {fileID: 2108173412997487960, guid: a0de35f4e16efb54ba0281586c17416f, type: 3}
+      propertyPath: m_TrackingStateInput.m_Action.m_SingletonActionBindings.Array.data[0].m_Path
+      value: <XRController>{RightHand}/trackingState
+      objectReference: {fileID: 0}
+    - target: {fileID: 2108173412997487960, guid: a0de35f4e16efb54ba0281586c17416f, type: 3}
+      propertyPath: m_TrackingStateInput.m_Action.m_SingletonActionBindings.Array.data[0].m_Action
+      value: Tracking State Input
       objectReference: {fileID: 0}
     - target: {fileID: 2731411465106096458, guid: a0de35f4e16efb54ba0281586c17416f, type: 3}
       propertyPath: Tags.Tags
@@ -5043,6 +5083,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 7486009837194656689, guid: a0de35f4e16efb54ba0281586c17416f, type: 3}
       insertIndex: -1
       addedObject: {fileID: 5917644691237604107}
+    - targetCorrespondingSourceObject: {fileID: 7486009837194656689, guid: a0de35f4e16efb54ba0281586c17416f, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6892357422210628630}
     - targetCorrespondingSourceObject: {fileID: 7486009837306776691, guid: a0de35f4e16efb54ba0281586c17416f, type: 3}
       insertIndex: -1
       addedObject: {fileID: 3492203693687528955}
@@ -5364,6 +5407,7 @@ MonoBehaviour:
   IsGrounded: 0
   _actualVelocity: 0
   MenuHandler: {fileID: 4465833774847289275}
+  _swimDive: {fileID: 0}
 --- !u!114 &6717938044841316945
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5438,13 +5482,18 @@ MonoBehaviour:
     JustDeactivated: 0
     Value: 0
   IsMenuButtonEnabled: 1
-  IsSpeakingActivated: 0
-  SpeakingState:
+  BothGripsActivatedState:
     Active: 0
     JustActivated: 0
     JustDeactivated: 0
     Value: 0
-  IsSpeakButtonEnabled: 1
+  IsBothGripsActivated: 0
+  IsBothGripsActive: 0
+  BothGripsActiveState:
+    Active: 0
+    JustActivated: 0
+    JustDeactivated: 0
+    Value: 0
 --- !u!82 &2100257876914915749
 AudioSource:
   m_ObjectHideFlags: 0
@@ -5562,6 +5611,22 @@ MonoBehaviour:
   Animation: {fileID: 0}
   AnimationSystem: {fileID: 0}
   AnimationHeadHandler: {fileID: 0}
+--- !u!114 &6892357422210628630
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8391885030387849269}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4722222ff5b643658bd19ac210dbf94b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _playerController: {fileID: 8604294565651286147}
+  _playerInputs: {fileID: 6717938044841316945}
+  _handMovementMultiplier: 5
+  _velocityFadeRate: 0.25
 --- !u!4 &8391885031051259193 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7486009837755879101, guid: a0de35f4e16efb54ba0281586c17416f, type: 3}

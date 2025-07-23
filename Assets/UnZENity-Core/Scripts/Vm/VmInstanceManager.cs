@@ -13,7 +13,7 @@ namespace GUZ.Core.Vm
         private static readonly Dictionary<string, ItemInstance> _itemDataCache = new();
         private static readonly Dictionary<string, FightAiContainer> _fightAiDataCache = new();
         private static readonly Dictionary<int, SvmInstance> _svmDataCache = new();
-        private static readonly Dictionary<string, SoundEffectInstance> _sfxDataCache = new();
+        private static readonly Dictionary<string, SfxContainer> _sfxDataCache = new();
         private static readonly Dictionary<string, ParticleEffectInstance> _pfxDataCache = new();
 
         /// <summary>
@@ -110,9 +110,11 @@ namespace GUZ.Core.Vm
 
         /// <summary>
         /// Hint: Instances only need to be initialized once in ZenKit and don't need to be deleted during runtime.
+        /// Hint: As there is a potential for multiple instances per key
+        ///       (e.g., BreathBubbles, BreathBubbles_A1, BreathBubbles_A2), we need to retrieve a container holding all of them.
         /// </summary>
         [CanBeNull]
-        public static SoundEffectInstance TryGetSfxData(string key)
+        public static SfxContainer TryGetSfxData(string key)
         {
             var preparedKey = GetPreparedKey(key);
             if (_sfxDataCache.TryGetValue(preparedKey, out var data))
@@ -120,10 +122,10 @@ namespace GUZ.Core.Vm
                 return data;
             }
 
-            SoundEffectInstance newData = null;
+            SfxContainer newData = null;
             try
             {
-                newData = GameData.SfxVm.InitInstance<SoundEffectInstance>(preparedKey);
+                newData = new SfxContainer(preparedKey);
             }
             catch (Exception)
             {

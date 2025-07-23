@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Numerics;
 using GUZ.Core.Globals;
+using GUZ.Core.Vm;
 using ZenKit.Daedalus;
 using ZenKit.Vobs;
 
@@ -25,14 +26,26 @@ namespace GUZ.Core.Data.Adapter.Vobs
         /// Wrap existing object
         /// </summary>
         public NpcAdapter(IVirtualObject vob) : base(vob)
-        { }
+        {
+            if (vob.Ai == null)
+            {
+                vob.Ai = new AiHuman
+                {
+                    WalkMode = (int)VmGothicEnums.WalkMode.Walk
+                };
+            }
+            
+        }
 
         private void InitNew(int npcIndex)
         {
             Name = GameData.GothicVm.GetSymbolByIndex(npcIndex)!.Name;
             NpcInstance = Name;
-    
-            Ai = new AiHuman();
+
+            Ai = new AiHuman
+            {
+                WalkMode = (int)VmGothicEnums.WalkMode.Walk
+            };
             EventManager = new EventManager();
             ModelScale = Vector3.One;
             
@@ -80,6 +93,8 @@ namespace GUZ.Core.Data.Adapter.Vobs
                 SetAttribute(i, instance.GetAttribute((NpcAttribute)i));
             }
         }
+        
+        public AiHuman AiHuman =>  (AiHuman)Ai;
         
         public string GetOverlay(int i)
         {

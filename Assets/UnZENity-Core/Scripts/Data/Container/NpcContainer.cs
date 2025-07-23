@@ -1,4 +1,5 @@
-﻿using GUZ.Core.Npc;
+﻿using GUZ.Core.Data.Adapter.Vobs;
+using GUZ.Core.Npc;
 using GUZ.Core.Properties;
 using UnityEngine;
 using ZenKit.Daedalus;
@@ -154,7 +155,7 @@ namespace GUZ.Core.Data.Container
     {
         // ZenKit data
         public NpcInstance Instance;
-        public ZenKit.Vobs.INpc Vob;
+        public NpcAdapter Vob;
 
         // Unity Data
         public GameObject Go;
