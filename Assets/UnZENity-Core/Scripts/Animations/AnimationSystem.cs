@@ -295,6 +295,26 @@ namespace GUZ.Core.Animations
             lowerLayerTrack.BlendOutBones(bonesToSkip.ToArray(), 0f);
         }
 
+        /// <summary>
+        /// We need to ensure that we always have at least an idle animation running. Otherwise, e.g., a Wait(2) might cause an NPC after walking to not breathe.
+        /// </summary>
+        private void CheckAndSetIdleAnimation()
+        {
+            var hasLayer1AnimationRunning = false;
+            foreach (var trackInstance in _trackInstances)
+            {
+                if (trackInstance.Track.Layer == 1 &&
+                    trackInstance.State is AnimationState.BlendIn or AnimationState.Play)
+                {
+                    hasLayer1AnimationRunning = true;
+                    break;
+                }
+            }
+
+            if (!hasLayer1AnimationRunning)
+                PlayIdleAnimation();
+        }
+
         private void Update()
         {
             if (_trackInstances.Count == 0)
@@ -320,8 +340,8 @@ namespace GUZ.Core.Animations
                             PlayAnimation(instance.Track.NextAni);
                         }
                         
-                        // FIXME - We need to re-enable layer1 idle animation when done with movement (e.g., Molerat MoveToNextFp()). Otherwise they stuck in place.
                         BlendInOtherTrackBones(instance);
+                        CheckAndSetIdleAnimation();
                         break;
                     case AnimationState.Stop:
                         PreStopAnimation(instance);
