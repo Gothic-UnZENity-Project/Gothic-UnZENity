@@ -35,10 +35,12 @@ namespace GUZ.Core.Data.Container
                 try
                 {
                     var nextSound = GameData.SfxVm.InitInstance<SoundEffectInstance>(nextKey);
+                    
+                    // Hint: We also add nosound.wav entries. In G1, e.g., MOL_Ambient_A4 which is randomly picked, sometimes do not yell a sound - intended.
                     sounds.Add(nextSound);
                     randomIndex++;
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     // Ignore
                     break;

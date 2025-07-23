@@ -29,8 +29,6 @@ namespace GUZ.Core.Manager.Vobs
     /// </summary>
     public class VobInitializer
     {
-        private const string _noSoundName = "nosound.wav";
-
         private DeveloperConfig _config = GameGlobals.Config.Dev;
 
 
@@ -526,7 +524,7 @@ namespace GUZ.Core.Manager.Vobs
         {
             AudioClip clip;
 
-            if (soundName.EqualsIgnoreCase(_noSoundName))
+            if (soundName.EqualsIgnoreCase(SfxConst.NoSoundName))
             {
                 //instead of decoding nosound.wav which might be decoded incorrectly, just return null
                 return null;
