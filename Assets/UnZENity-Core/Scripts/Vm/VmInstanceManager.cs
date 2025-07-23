@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using GUZ.Core.Data.Container;
 using GUZ.Core.Globals;
 using JetBrains.Annotations;
 using ZenKit.Daedalus;
@@ -10,7 +11,7 @@ namespace GUZ.Core.Vm
     public static class VmInstanceManager
     {
         private static readonly Dictionary<string, ItemInstance> _itemDataCache = new();
-        private static readonly Dictionary<string, FightAiInstance> _fightAiDataCache = new();
+        private static readonly Dictionary<string, FightAiContainer> _fightAiDataCache = new();
         private static readonly Dictionary<int, SvmInstance> _svmDataCache = new();
         private static readonly Dictionary<string, SoundEffectInstance> _sfxDataCache = new();
         private static readonly Dictionary<string, ParticleEffectInstance> _pfxDataCache = new();
@@ -59,17 +60,17 @@ namespace GUZ.Core.Vm
             return newData;
         }
 
-        public static FightAiInstance TryGetFightAiData(string nameTemplate, int instanceId)
+        public static FightAiContainer TryGetFightAiData(string nameTemplate, int instanceId)
         {
             var preparedKey = GetPreparedKey(string.Format(nameTemplate, instanceId));
             
             if (_fightAiDataCache.TryGetValue(preparedKey, out var data))
                 return data;
 
-            FightAiInstance newData = null;
+            FightAiContainer newData = null;
             try
             {
-                newData = GameData.FightVm.InitInstance<FightAiInstance>(preparedKey);
+                newData = new FightAiContainer(GameData.FightVm.InitInstance<FightAiInstance>(preparedKey));
             }
             catch (Exception)
             {

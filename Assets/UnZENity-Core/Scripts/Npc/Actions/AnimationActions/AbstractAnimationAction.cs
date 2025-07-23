@@ -27,7 +27,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
         protected readonly NpcPrefabProperties PrefabProps;
 
         protected float ActionTime;
-        protected float AnimationEndEventTime;
+        protected float ActionEndEventTime;
 
         protected bool IsFinishedFlag;
 
@@ -165,7 +165,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
         {
             ActionTime += Time.deltaTime;
 
-            if (AnimationEndEventTime != 0.0f && ActionTime >= AnimationEndEventTime)
+            if (ActionEndEventTime != 0.0f && ActionTime >= ActionEndEventTime)
             {
                 AnimationEnd();
             }

@@ -4,7 +4,6 @@ using GUZ.Core.Globals;
 using GUZ.Core.Util;
 using GUZ.Core.Vm;
 using ZenKit.Daedalus;
-using Random = UnityEngine.Random;
 
 namespace GUZ.Core.Npc.Actions.AnimationActions
 {
@@ -20,7 +19,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
         public override void Start()
         {
             var aiFunctionTemplate = FindAiFunctionTemplate();
-            _move = FindAttackAction(aiFunctionTemplate);
+            _move = VmInstanceManager.TryGetFightAiData(aiFunctionTemplate, Vob.FightTactic).GetRandomMove();
             StartAttackAction();
         }
 
@@ -42,27 +41,13 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             }
         }
 
-        private FightAiMove FindAttackAction(string nameTemplate)
-        {
-            var fightAi = VmInstanceManager.TryGetFightAiData(nameTemplate, Vob.FightTactic);
-            int moveCount;
-            for (moveCount = 0; moveCount < FightConst.FightAiMoveMax; moveCount++)
-            {
-                // Load all move entries in list until the value is 0 aka unset.
-                if (fightAi.GetMove(moveCount) == FightAiMove.Nop)
-                    break;
-            }
-            
-            return fightAi.GetMove(Random.Range(0, moveCount-1));
-        }
-
         private void StartAttackAction()
         {
             switch (_move)
             {
                 case FightAiMove.Wait:
                     // We reuse this flag and close the attack action after 200ms.
-                    AnimationEndEventTime = 0.2f;
+                    ActionEndEventTime = 0.2f;
                     // FIXME - Call idle animation while waiting.
                     break;
                 case FightAiMove.Run:
@@ -70,6 +55,8 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
                 case FightAiMove.JumpBack:
                 case FightAiMove.Turn:
                 case FightAiMove.Strafe:
+                    
+                    break;
                 case FightAiMove.Attack:
                 case FightAiMove.AttackSide:
                 case FightAiMove.AttackFront:
