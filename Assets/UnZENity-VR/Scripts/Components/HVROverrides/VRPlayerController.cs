@@ -4,6 +4,7 @@ using GUZ.Core.Globals;
 using GUZ.Core.UI.Menus;
 using HurricaneVR.Framework.Core.Player;
 using MyBox;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 using Constants = GUZ.Core.Globals.Constants;
 
@@ -16,6 +17,8 @@ namespace GUZ.VR.Components.HVROverrides
         [Separator("GUZ - Settings")]
         public MenuHandler MenuHandler;
 
+        [SerializeField]
+        private VRSwimDive _swimDive;
 
         protected override void Start()
         {
@@ -123,6 +126,38 @@ namespace GUZ.VR.Components.HVROverrides
                 _ => true
             };
         }
+
+        // protected override void HandleHorizontalMovement()
+        // {
+        //     if (_playerAi.WalkMode == (int)VmGothicEnums.WalkMode.Swim)
+        //     {
+        //         
+        //     }
+        //     else if (_playerAi.WalkMode == (int)VmGothicEnums.WalkMode.Dive)
+        //     {
+        //         
+        //     }
+        //     else
+        //     {
+        //         base.HandleHorizontalMovement();
+        //     }
+        // }
+        //
+        // protected override void HandleVerticalMovement()
+        // {
+        //     if (_playerAi.WalkMode == (int)VmGothicEnums.WalkMode.Swim)
+        //     {
+        //         
+        //     }
+        //     else if (_playerAi.WalkMode == (int)VmGothicEnums.WalkMode.Dive)
+        //     {
+        //         
+        //     }
+        //     else
+        //     {
+        //         base.HandleVerticalMovement();
+        //     }
+        // }
     }
 }
 #endif

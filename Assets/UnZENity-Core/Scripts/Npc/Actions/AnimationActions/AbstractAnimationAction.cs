@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using GUZ.Core.Creator;
+using GUZ.Core.Data.Adapter.Vobs;
 using GUZ.Core.Data.Container;
 using GUZ.Core.Data.ZkEvents;
 using GUZ.Core.Extensions;
@@ -23,7 +24,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
         protected readonly NpcInstance NpcInstance;
         protected readonly GameObject NpcGo;
         protected readonly NpcProperties Props;
-        protected readonly ZenKit.Vobs.INpc Vob;
+        protected readonly NpcAdapter Vob;
         protected readonly NpcPrefabProperties PrefabProps;
 
         protected float ActionTime;
@@ -50,33 +51,34 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
 
         public string GetWalkModeAnimationString()
         {
-            string walkmode;
-            switch (Props.WalkMode)
+            var walkMode = (VmGothicEnums.WalkMode)Vob.AiHuman.WalkMode;
+            string walkModeString;
+            switch (walkMode)
             {
                 case VmGothicEnums.WalkMode.Walk:
-                    walkmode = "WALK";
+                    walkModeString = "WALK";
                     break;
                 case VmGothicEnums.WalkMode.Run:
-                    walkmode = "RUN";
+                    walkModeString = "RUN";
                     break;
                 case VmGothicEnums.WalkMode.Sneak:
-                    walkmode = "SNEAK";
+                    walkModeString = "SNEAK";
                     break;
                 case VmGothicEnums.WalkMode.Water:
-                    walkmode = "WATER";
+                    walkModeString = "WATER";
                     break;
                 case VmGothicEnums.WalkMode.Swim:
-                    walkmode = "SWIM";
+                    walkModeString = "SWIM";
                     break;
                 case VmGothicEnums.WalkMode.Dive:
-                    walkmode = "DIVE";
+                    walkModeString = "DIVE";
                     break;
                 default:
-                    Logger.LogWarning($"Animation of type {Props.WalkMode} not yet implemented.", LogCat.Ai);
+                    Logger.LogWarning($"Animation of type {walkMode} not yet implemented.", LogCat.Ai);
                     return "";
             }
 
-            return $"S_{walkmode}";
+            return $"S_{walkModeString}";
         }
 
         /// <summary>

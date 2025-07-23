@@ -46,7 +46,7 @@ namespace GUZ.Core.Globals
             }
         }
         
-                public enum Guild
+        public enum Guild
         {
             GIL_NONE = 0, // (keine)
             GIL_HUMAN = 1, // Special Guild -> To set Constants for ALL Human Guilds --> wird verwendet in Species.d

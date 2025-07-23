@@ -92,18 +92,13 @@ namespace GUZ.VR.Components.VobItem
                 return false;
             }
 
-            var sfxInstance = VmInstanceManager.TryGetSfxData(sfx.Name);
-            if (sfxInstance == null)
-            {
+            var sfxContainer = VmInstanceManager.TryGetSfxData(sfx.Name);
+            if (sfxContainer == null)
                 return false;
-            }
 
-            var fileName = sfxInstance.File;
-            clip = SoundCreator.ToAudioClip(fileName);
+            clip = sfxContainer.GetRandomClip();
             if (clip == null)
-            {
                 return false;
-            }
 
             return true;
         }
