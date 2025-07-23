@@ -543,7 +543,7 @@ namespace GUZ.Core.Manager.Vobs
                     return null;
 
                 // Instead of decoding nosound.wav which might be decoded incorrectly, just return null.
-                if (sfxContainer.GetFirstSound().File.EqualsIgnoreCase(_noSoundName))
+                if (sfxContainer.GetFirstSound().File.EqualsIgnoreCase(SfxConst.NoSoundName))
                     return null;
 
                 if (sfxContainer.Count > 1)
