@@ -515,7 +515,7 @@ namespace GUZ.Core.Animations
 
             foreach (var sfx in sfxEvents)
             {
-                var clip = GameGlobals.Vobs.GetSoundClip(sfx.Name);
+                var clip = GameGlobals.Vobs.GetRandomSoundClip(sfx.Name);
                 PrefabProps.NpcSound.clip = clip;
                 PrefabProps.NpcSound.maxDistance = sfx.Range.ToMeter();
                 PrefabProps.NpcSound.Play();

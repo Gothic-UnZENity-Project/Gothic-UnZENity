@@ -27,7 +27,6 @@ namespace GUZ.Core.Manager.Vobs
     {
         public Dictionary<string, List<(int hour, int minute, int status)>> ObjectRoutines = new();
         
-        private const string _noSoundName = "nosound.wav";
         private const float _interactableLookupDistance = 10f; // meter
         
         private readonly char[] _itemNameSeparators = { ';', ',' };
@@ -116,11 +115,15 @@ namespace GUZ.Core.Manager.Vobs
             _objectsToInitQueue.Enqueue(go.GetComponent<VobLoader>());
         }
 
-        public AudioClip GetSoundClip(string soundName)
+        /// <summary>
+        /// Hint: If you want to fetch sounds randomly, do not cache them on e.g., MonoBehavior, but fetch them each time you want to run it.
+        ///       The AudioClips itself are cached by this method automatically. No performance penalty when re-running this method.
+        /// </summary>
+        public AudioClip GetRandomSoundClip(string soundName)
         {
             AudioClip clip;
 
-            if (soundName.EqualsIgnoreCase(_noSoundName))
+            if (soundName.EqualsIgnoreCase(SfxConst.NoSoundName))
             {
                 //instead of decoding nosound.wav which might be decoded incorrectly, just return null
                 return null;
@@ -139,13 +142,10 @@ namespace GUZ.Core.Manager.Vobs
                     return null;
 
                 // Instead of decoding nosound.wav which might be decoded incorrectly, just return null.
-                if (sfxContainer.GetFirstSound().File.EqualsIgnoreCase(_noSoundName))
+                if (sfxContainer.GetFirstSound().File.EqualsIgnoreCase(SfxConst.NoSoundName))
                     return null;
 
-                if (sfxContainer.Count > 1)
-                    Logger.LogWarning($"Multiple random elements exist for >{sfxContainer.GetFirstSound().File}< but only first is selected.", LogCat.Audio);
-
-                clip = sfxContainer.GetFirstClip();
+                clip = sfxContainer.GetRandomClip();
             }
 
             return clip;
