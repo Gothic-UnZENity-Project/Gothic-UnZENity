@@ -35,8 +35,8 @@ namespace GUZ.Core.Animations
         // Caching bone Transforms makes it faster to apply them to animations later.
         private string[] _boneNames;
         private Transform[] _bones;
-        private Vector3[] _meshBonePos;
-        private Quaternion[] _meshBoneRot;
+        private Vector3[] _initialMeshBonePos;
+        private Quaternion[] _initialMeshBoneRot;
         private List<AnimationTrackInstance> _trackInstances = new();
         private bool _isSittingInverted;
 
@@ -59,8 +59,8 @@ namespace GUZ.Core.Animations
 
             _boneNames = bones.Keys.ToArray();
             _bones = bones.Values.ToArray();
-            _meshBonePos = _bones.Select(i => i.transform.localPosition).ToArray();
-            _meshBoneRot = _bones.Select(i => i.transform.localRotation).ToArray();
+            _initialMeshBonePos = _bones.Select(i => i.transform.localPosition).ToArray();
+            _initialMeshBoneRot = _bones.Select(i => i.transform.localRotation).ToArray();
         }
 
         public void DisableObject()
@@ -68,7 +68,7 @@ namespace GUZ.Core.Animations
             // If an NPC is culled out, the old positions are still set. We need to reset them to ensure we have an idle NPC starting.
             for (var i = 0; i < _bones.Length; i++)
             {
-                _bones[i].SetLocalPositionAndRotation(_meshBonePos[i], _meshBoneRot[i]);
+                _bones[i].SetLocalPositionAndRotation(_initialMeshBonePos[i], _initialMeshBoneRot[i]);
             }
 
             _trackInstances.Clear();
@@ -425,8 +425,8 @@ namespace GUZ.Core.Animations
                 // This should be a rare case where we won't have a sum of 1.0. Just a safety treatment.
                 if (boneWeightSum < 1f)
                 {
-                    finalPosition += _meshBonePos[boneIndex] * (1 - boneWeightSum);
-                    finalRotation = Quaternion.Slerp(finalRotation, _meshBoneRot[boneIndex], 1 - boneWeightSum);
+                    finalPosition += _initialMeshBonePos[boneIndex] * (1 - boneWeightSum);
+                    finalRotation = Quaternion.Slerp(finalRotation, _initialMeshBoneRot[boneIndex], 1 - boneWeightSum);
                 }
 
                 bone.localPosition = finalPosition;

@@ -38,11 +38,13 @@ namespace GUZ.Core.UnZENity_Core.Scripts.Manager
 #pragma warning restore CS4014
         }
 
+#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
         private async Task InitializeWhisper()
         {
             Whisper = new();
             Whisper.Init();
         }
+#pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
         
         public void Dispose()
         {
