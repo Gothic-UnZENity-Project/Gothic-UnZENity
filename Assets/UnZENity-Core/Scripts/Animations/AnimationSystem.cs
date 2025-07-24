@@ -578,8 +578,7 @@ namespace GUZ.Core.Animations
 
         public void StopAllAnimations()
         {
-            // FIXME - Implement
-            Logger.LogWarning("StopAllAnimations not yet implemented.", LogCat.Animation);
+            DisableObject();
         }
 
         public void PlayHeadAnimation(HeadMorph.HeadMorphType viseme)

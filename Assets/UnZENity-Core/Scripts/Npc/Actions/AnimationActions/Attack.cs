@@ -48,15 +48,12 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
                 case FightAiMove.Wait:
                     // We reuse this flag and close the attack action after 200ms.
                     ActionEndEventTime = 0.2f;
-                    // FIXME - Call idle animation while waiting.
                     break;
                 case FightAiMove.Run:
                 case FightAiMove.RunBack:
                 case FightAiMove.JumpBack:
                 case FightAiMove.Turn:
                 case FightAiMove.Strafe:
-                    
-                    break;
                 case FightAiMove.Attack:
                 case FightAiMove.AttackSide:
                 case FightAiMove.AttackFront:
@@ -73,11 +70,8 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
                     break;
                 case FightAiMove.Nop:
                 default:
-                    if (_move == FightAiMove.Nop)
-                    {
-                        Logger.LogError("No action for Ai_Attack() selected. Missing path in logic!", LogCat.Ai);
-                        IsFinishedFlag = true;
-                    }
+                    Logger.LogError("No action for Ai_Attack() selected. Missing path in logic!", LogCat.Ai);
+                    IsFinishedFlag = true;
                     break;
             }
         }
