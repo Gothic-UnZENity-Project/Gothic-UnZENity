@@ -30,12 +30,23 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
 
         private string FindAiFunctionTemplate()
         {
+            var distance = GetDistance();
+            var attackRange = GetAttackRange();
+            var isInWeaponRange = distance <= attackRange;
+            var isInGotoRange = !isInWeaponRange && distance <= attackRange * 3;
+            var isInFKRange = !isInWeaponRange && !isInGotoRange; 
+
             switch ((VmGothicEnums.WeaponState)Vob.FightMode)
             {
                 case VmGothicEnums.WeaponState.Fist:
                 case VmGothicEnums.WeaponState.W1H:
                 case VmGothicEnums.WeaponState.W2H:
-                    return FightConst.AttackActions.MyWFocus;
+                    if (isInWeaponRange)
+                        return FightConst.AttackActions.MyWFocus;
+                    else if (isInGotoRange)
+                        return FightConst.AttackActions.MyGFocus;
+                    else
+                        return FightConst.AttackActions.MyFkFocus;
                 case VmGothicEnums.WeaponState.NoWeapon:
                 case VmGothicEnums.WeaponState.Bow:
                 case VmGothicEnums.WeaponState.CBow:
@@ -45,6 +56,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             }
         }
 
+        // FIXME - In the future, we need to handle more information than just playing the attack animations. But fine for the first iteration.
         private void StartAttackAction()
         {
             switch (_move)
@@ -54,26 +66,20 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
                     GameGlobals.NpcAi.ExtAiWait(NpcInstance, 0.2f);
                     break;
                 case FightAiMove.Attack:
-                    if (IsInFightRange())
-                    {
-                        // TODO - In the future, we need to handle more information than just playing the attack animation. But fine for the first iteration.
-                        GameGlobals.NpcAi.ExtAiPlayAni(NpcInstance, GetAnimName(VmGothicEnums.AnimationType.Attack));
-                    }
-                    else
-                    {
-                        // FIXME - DEBUG. Need to handle differently.
-                    }
+                    GameGlobals.NpcAi.ExtAiPlayAni(NpcInstance, GetAnimName(VmGothicEnums.AnimationType.Attack));
                     break;
-                case FightAiMove.Run:
-                case FightAiMove.RunBack:
-                case FightAiMove.JumpBack:
-                case FightAiMove.Turn:
                 case FightAiMove.Strafe:
                     if (Random.Range(0, 2) == 0)
                         GameGlobals.NpcAi.ExtAiPlayAni(NpcInstance, GetAnimName(VmGothicEnums.AnimationType.MoveL));
                     else
                         GameGlobals.NpcAi.ExtAiPlayAni(NpcInstance, GetAnimName(VmGothicEnums.AnimationType.MoveR));
                     break;
+                case FightAiMove.Run:
+                    GameGlobals.NpcAi.ExtAiPlayAni(NpcInstance, GetAnimName(VmGothicEnums.AnimationType.Move));
+                    break;
+                case FightAiMove.RunBack:
+                case FightAiMove.JumpBack:
+                case FightAiMove.Turn:
                 case FightAiMove.AttackSide:
                 case FightAiMove.AttackFront:
                 case FightAiMove.AttackTriple:
@@ -97,18 +103,18 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             IsFinishedFlag = true;
         }
 
-        /// <summary>
-        /// Fight range is calculated by base range + weapon attack range.
-        /// </summary>
-        private bool IsInFightRange()
+        private float GetDistance()
         {
-            var dist = Vector3.Distance(NpcGo.transform.position, _enemy.GetUserData()!.Go.transform.position);
-            var attackRange = GameData.GuildValues.GetFightRangeBase(Vob.GuildTrue) +
-                              GameData.GuildValues.GetFightRangeFist(Vob.GuildTrue);
-            
+            return Vector3.Distance(NpcGo.transform.position, _enemy.GetUserData()!.Go.transform.position);
+        }
+
+        /// Fight range is calculated by base range + weapon attack range.
+        private float GetAttackRange()
+        {
+            var baseRange = GameData.GuildValues.GetFightRangeBase(Vob.GuildTrue);
             // FIXME - Currently we assume Fist only. We need to set range for weapons properly as well. (e.g., Orcs)
-            
-            return dist < (attackRange / 100f); // m -> cm
+            var weaponRange = GameData.GuildValues.GetFightRangeFist(Vob.GuildTrue);
+            return (baseRange + weaponRange) / 100f; // m -> cm
         }
 
         /// <summary>
