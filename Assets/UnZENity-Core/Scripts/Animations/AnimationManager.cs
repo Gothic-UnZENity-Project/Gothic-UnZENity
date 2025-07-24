@@ -248,20 +248,23 @@ namespace GUZ.Core.Animations
             var fightMode = (VmGothicEnums.WeaponState)vob.FightMode;
             
             var weaponStateString = fightMode == VmGothicEnums.WeaponState.NoWeapon ? "" : fightMode.ToString().ToUpper();
-            var walkMode = (VmGothicEnums.WalkMode)vob.AiHuman.WalkMode;
+            var walkModeString = GetWalkModeString((VmGothicEnums.WalkMode)vob.AiHuman.WalkMode);
 
 
             switch (type)
             {
                 case VmGothicEnums.AnimationType.Idle:
-                    return GetIdleAnimationName(weaponStateString, walkMode);
-                    break;
+                    return GetIdleAnimationName(weaponStateString, walkModeString);
                 case VmGothicEnums.AnimationType.Move:
-                    return GetMoveAnimationName(weaponStateString, walkMode);
+                    return $"{GetIdleAnimationName(weaponStateString, walkModeString)}L";
+                case VmGothicEnums.AnimationType.Attack:
+                    return $"s_{weaponStateString}Attack";
+                case VmGothicEnums.AnimationType.MoveL:
+                    return $"t_{weaponStateString}{walkModeString}StrafeL";
+                case VmGothicEnums.AnimationType.MoveR:
+                    return $"t_{weaponStateString}{walkModeString}StrafeR";
                 case VmGothicEnums.AnimationType.NoAnim:
                 case VmGothicEnums.AnimationType.MoveBack:
-                case VmGothicEnums.AnimationType.MoveL:
-                case VmGothicEnums.AnimationType.MoveR:
                 case VmGothicEnums.AnimationType.RotL:
                 case VmGothicEnums.AnimationType.RotR:
                 case VmGothicEnums.AnimationType.WhirlL:
@@ -288,7 +291,6 @@ namespace GUZ.Core.Animations
                 case VmGothicEnums.AnimationType.InteractOut:
                 case VmGothicEnums.AnimationType.InteractToStand:
                 case VmGothicEnums.AnimationType.InteractFromStand:
-                case VmGothicEnums.AnimationType.Attack:
                 case VmGothicEnums.AnimationType.AttackL:
                 case VmGothicEnums.AnimationType.AttackR:
                 case VmGothicEnums.AnimationType.AttackBlock:
@@ -306,9 +308,9 @@ namespace GUZ.Core.Animations
         }
 
 
-        private string GetIdleAnimationName(string weaponStateString, VmGothicEnums.WalkMode walkMode)
+        private string GetWalkModeString(VmGothicEnums.WalkMode walkMode)
         {
-            var walkModeString = walkMode switch
+            return walkMode switch
             {
                 VmGothicEnums.WalkMode.Walk => "WALK",
                 VmGothicEnums.WalkMode.Run => "RUN",
@@ -318,12 +320,14 @@ namespace GUZ.Core.Animations
                 VmGothicEnums.WalkMode.Dive => "DIVE",
                 _ => throw new ArgumentOutOfRangeException(nameof(walkMode), walkMode, null)
             };
-
-            return $"S_{weaponStateString}{walkModeString}";
         }
-        private string GetMoveAnimationName(string weaponStateString, VmGothicEnums.WalkMode walkMode)
+
+        /// <summary>
+        /// Will be reused. Therefore, it's a separate method.
+        /// </summary>
+        private string GetIdleAnimationName(string weaponStateString, string walkModeString)
         {
-            return $"{GetIdleAnimationName(weaponStateString, walkMode)}L";
+            return $"S_{weaponStateString}{walkModeString}";
         }
     }
 }

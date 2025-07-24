@@ -5,6 +5,7 @@ using GUZ.Core.Globals;
 using GUZ.Core.Util;
 using GUZ.Core.Vm;
 using ZenKit.Daedalus;
+using Random = UnityEngine.Random;
 using Vector3 = UnityEngine.Vector3;
 
 namespace GUZ.Core.Npc.Actions.AnimationActions
@@ -50,16 +51,17 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             {
                 case FightAiMove.Wait:
                     // We reuse this flag and close the attack action after 200ms.
-                    ActionEndEventTime = 0.2f;
+                    GameGlobals.NpcAi.ExtAiWait(NpcInstance, 0.2f);
                     break;
                 case FightAiMove.Attack:
                     if (IsInFightRange())
                     {
-                        
+                        // TODO - In the future, we need to handle more information than just playing the attack animation. But fine for the first iteration.
+                        GameGlobals.NpcAi.ExtAiPlayAni(NpcInstance, GetAnimName(VmGothicEnums.AnimationType.Attack));
                     }
                     else
                     {
-                        
+                        // FIXME - DEBUG. Need to handle differently.
                     }
                     break;
                 case FightAiMove.Run:
@@ -67,6 +69,11 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
                 case FightAiMove.JumpBack:
                 case FightAiMove.Turn:
                 case FightAiMove.Strafe:
+                    if (Random.Range(0, 2) == 0)
+                        GameGlobals.NpcAi.ExtAiPlayAni(NpcInstance, GetAnimName(VmGothicEnums.AnimationType.MoveL));
+                    else
+                        GameGlobals.NpcAi.ExtAiPlayAni(NpcInstance, GetAnimName(VmGothicEnums.AnimationType.MoveR));
+                    break;
                 case FightAiMove.AttackSide:
                 case FightAiMove.AttackFront:
                 case FightAiMove.AttackTriple:
@@ -86,6 +93,8 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
                     IsFinishedFlag = true;
                     break;
             }
+            
+            IsFinishedFlag = true;
         }
 
         /// <summary>
@@ -100,6 +109,14 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             // FIXME - Currently we assume Fist only. We need to set range for weapons properly as well. (e.g., Orcs)
             
             return dist < (attackRange / 100f); // m -> cm
+        }
+
+        /// <summary>
+        /// Short cut method
+        /// </summary>
+        private string GetAnimName(VmGothicEnums.AnimationType type)
+        {
+            return GameGlobals.Animations.GetAnimationName(type, Vob);
         }
 
         public override void Tick()
