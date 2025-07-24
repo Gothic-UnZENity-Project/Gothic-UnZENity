@@ -153,40 +153,40 @@ namespace GUZ.Core.Manager
                 return;
             }
 
-            GameData.cGuildValue = GameData.GothicVm.InitInstance<GuildValuesInstance>(id);
+            GameData.GuildValues = GameData.GothicVm.InitInstance<GuildValuesInstance>(id);
             for (var i = 0; i < (int)Guild.GIL_PUBLIC; ++i)
             {
-                GameData.cGuildValue.SetWaterDepthKnee(i, GameData.cGuildValue.GetWaterDepthKnee((int)Guild.GIL_HUMAN));
-                GameData.cGuildValue.SetWaterDepthChest(i, GameData.cGuildValue.GetWaterDepthChest((int)Guild.GIL_HUMAN));
-                GameData.cGuildValue.SetJumpUpHeight(i, GameData.cGuildValue.GetJumpUpHeight((int)Guild.GIL_HUMAN));
-                GameData.cGuildValue.SetSwimTime(i, GameData.cGuildValue.GetSwimTime((int)Guild.GIL_HUMAN));
-                GameData.cGuildValue.SetDiveTime(i, GameData.cGuildValue.GetDiveTime((int)Guild.GIL_HUMAN));
-                GameData.cGuildValue.SetStepHeight(i, GameData.cGuildValue.GetStepHeight((int)Guild.GIL_HUMAN));
-                GameData.cGuildValue.SetJumpLowHeight(i, GameData.cGuildValue.GetJumpLowHeight((int)Guild.GIL_HUMAN));
-                GameData.cGuildValue.SetJumpMidHeight(i, GameData.cGuildValue.GetJumpMidHeight((int)Guild.GIL_HUMAN));
-                GameData.cGuildValue.SetSlideAngle(i, GameData.cGuildValue.GetSlideAngle((int)Guild.GIL_HUMAN));
-                GameData.cGuildValue.SetSlideAngle2(i, GameData.cGuildValue.GetSlideAngle2((int)Guild.GIL_HUMAN));
-                GameData.cGuildValue.SetDisableAutoRoll(i, GameData.cGuildValue.GetDisableAutoRoll((int)Guild.GIL_HUMAN));
-                GameData.cGuildValue.SetSurfaceAlign(i, GameData.cGuildValue.GetSurfaceAlign((int)Guild.GIL_HUMAN));
-                GameData.cGuildValue.SetClimbHeadingAngle(i, GameData.cGuildValue.GetClimbHeadingAngle((int)Guild.GIL_HUMAN));
-                GameData.cGuildValue.SetClimbHorizAngle(i, GameData.cGuildValue.GetClimbHorizAngle((int)Guild.GIL_HUMAN));
-                GameData.cGuildValue.SetClimbGroundAngle(i, GameData.cGuildValue.GetClimbGroundAngle((int)Guild.GIL_HUMAN));
-                GameData.cGuildValue.SetFightRangeBase(i, GameData.cGuildValue.GetFightRangeBase((int)Guild.GIL_HUMAN));
-                GameData.cGuildValue.SetFightRangeFist(i, GameData.cGuildValue.GetFightRangeFist((int)Guild.GIL_HUMAN));
-                GameData.cGuildValue.SetFightRangeG(i, GameData.cGuildValue.GetFightRangeG((int)Guild.GIL_HUMAN));
-                GameData.cGuildValue.SetFightRange1Hs(i, GameData.cGuildValue.GetFightRange1Hs((int)Guild.GIL_HUMAN));
-                GameData.cGuildValue.SetFightRange1Ha(i, GameData.cGuildValue.GetFightRange1Ha((int)Guild.GIL_HUMAN));
-                GameData.cGuildValue.SetFightRange2Hs(i, GameData.cGuildValue.GetFightRange2Hs((int)Guild.GIL_HUMAN));
-                GameData.cGuildValue.SetFightRange2Ha(i, GameData.cGuildValue.GetFightRange2Ha((int)Guild.GIL_HUMAN));
-                GameData.cGuildValue.SetFallDownHeight(i, GameData.cGuildValue.GetFallDownHeight((int)Guild.GIL_HUMAN));
-                GameData.cGuildValue.SetFallDownDamage(i, GameData.cGuildValue.GetFallDownDamage((int)Guild.GIL_HUMAN));
-                GameData.cGuildValue.SetBloodDisabled(i, GameData.cGuildValue.GetBloodDisabled((int)Guild.GIL_HUMAN));
-                GameData.cGuildValue.SetBloodMaxDistance(i, GameData.cGuildValue.GetBloodMaxDistance((int)Guild.GIL_HUMAN));
-                GameData.cGuildValue.SetBloodAmount(i, GameData.cGuildValue.GetBloodAmount((int)Guild.GIL_HUMAN));
-                GameData.cGuildValue.SetBloodFlow(i, GameData.cGuildValue.GetBloodFlow((int)Guild.GIL_HUMAN));
-                GameData.cGuildValue.SetTurnSpeed(i, GameData.cGuildValue.GetTurnSpeed((int)Guild.GIL_HUMAN));
-                GameData.cGuildValue.SetBloodEmitter(i, GameData.cGuildValue.GetBloodEmitter((int)Guild.GIL_HUMAN));
-                GameData.cGuildValue.SetBloodTexture(i, GameData.cGuildValue.GetBloodTexture((int)Guild.GIL_HUMAN,0)); //TODO: PR FIX to zenkitcs, getter should have only 1 param not 2
+                GameData.GuildValues.SetWaterDepthKnee(i, GameData.GuildValues.GetWaterDepthKnee((int)Guild.GIL_HUMAN));
+                GameData.GuildValues.SetWaterDepthChest(i, GameData.GuildValues.GetWaterDepthChest((int)Guild.GIL_HUMAN));
+                GameData.GuildValues.SetJumpUpHeight(i, GameData.GuildValues.GetJumpUpHeight((int)Guild.GIL_HUMAN));
+                GameData.GuildValues.SetSwimTime(i, GameData.GuildValues.GetSwimTime((int)Guild.GIL_HUMAN));
+                GameData.GuildValues.SetDiveTime(i, GameData.GuildValues.GetDiveTime((int)Guild.GIL_HUMAN));
+                GameData.GuildValues.SetStepHeight(i, GameData.GuildValues.GetStepHeight((int)Guild.GIL_HUMAN));
+                GameData.GuildValues.SetJumpLowHeight(i, GameData.GuildValues.GetJumpLowHeight((int)Guild.GIL_HUMAN));
+                GameData.GuildValues.SetJumpMidHeight(i, GameData.GuildValues.GetJumpMidHeight((int)Guild.GIL_HUMAN));
+                GameData.GuildValues.SetSlideAngle(i, GameData.GuildValues.GetSlideAngle((int)Guild.GIL_HUMAN));
+                GameData.GuildValues.SetSlideAngle2(i, GameData.GuildValues.GetSlideAngle2((int)Guild.GIL_HUMAN));
+                GameData.GuildValues.SetDisableAutoRoll(i, GameData.GuildValues.GetDisableAutoRoll((int)Guild.GIL_HUMAN));
+                GameData.GuildValues.SetSurfaceAlign(i, GameData.GuildValues.GetSurfaceAlign((int)Guild.GIL_HUMAN));
+                GameData.GuildValues.SetClimbHeadingAngle(i, GameData.GuildValues.GetClimbHeadingAngle((int)Guild.GIL_HUMAN));
+                GameData.GuildValues.SetClimbHorizAngle(i, GameData.GuildValues.GetClimbHorizAngle((int)Guild.GIL_HUMAN));
+                GameData.GuildValues.SetClimbGroundAngle(i, GameData.GuildValues.GetClimbGroundAngle((int)Guild.GIL_HUMAN));
+                GameData.GuildValues.SetFightRangeBase(i, GameData.GuildValues.GetFightRangeBase((int)Guild.GIL_HUMAN));
+                GameData.GuildValues.SetFightRangeFist(i, GameData.GuildValues.GetFightRangeFist((int)Guild.GIL_HUMAN));
+                GameData.GuildValues.SetFightRangeG(i, GameData.GuildValues.GetFightRangeG((int)Guild.GIL_HUMAN));
+                GameData.GuildValues.SetFightRange1Hs(i, GameData.GuildValues.GetFightRange1Hs((int)Guild.GIL_HUMAN));
+                GameData.GuildValues.SetFightRange1Ha(i, GameData.GuildValues.GetFightRange1Ha((int)Guild.GIL_HUMAN));
+                GameData.GuildValues.SetFightRange2Hs(i, GameData.GuildValues.GetFightRange2Hs((int)Guild.GIL_HUMAN));
+                GameData.GuildValues.SetFightRange2Ha(i, GameData.GuildValues.GetFightRange2Ha((int)Guild.GIL_HUMAN));
+                GameData.GuildValues.SetFallDownHeight(i, GameData.GuildValues.GetFallDownHeight((int)Guild.GIL_HUMAN));
+                GameData.GuildValues.SetFallDownDamage(i, GameData.GuildValues.GetFallDownDamage((int)Guild.GIL_HUMAN));
+                GameData.GuildValues.SetBloodDisabled(i, GameData.GuildValues.GetBloodDisabled((int)Guild.GIL_HUMAN));
+                GameData.GuildValues.SetBloodMaxDistance(i, GameData.GuildValues.GetBloodMaxDistance((int)Guild.GIL_HUMAN));
+                GameData.GuildValues.SetBloodAmount(i, GameData.GuildValues.GetBloodAmount((int)Guild.GIL_HUMAN));
+                GameData.GuildValues.SetBloodFlow(i, GameData.GuildValues.GetBloodFlow((int)Guild.GIL_HUMAN));
+                GameData.GuildValues.SetTurnSpeed(i, GameData.GuildValues.GetTurnSpeed((int)Guild.GIL_HUMAN));
+                GameData.GuildValues.SetBloodEmitter(i, GameData.GuildValues.GetBloodEmitter((int)Guild.GIL_HUMAN));
+                GameData.GuildValues.SetBloodTexture(i, GameData.GuildValues.GetBloodTexture((int)Guild.GIL_HUMAN,0)); //TODO: PR FIX to zenkitcs, getter should have only 1 param not 2
             }
         }
     }

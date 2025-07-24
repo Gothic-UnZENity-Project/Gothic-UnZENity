@@ -85,8 +85,8 @@ namespace GUZ.VR.Components
 				return;
 
             // FIXME - As we have different sizes of people in VR, we should use the size based on real heights.
-            var kneeDeepHeight = GameData.cGuildValue.GetWaterDepthKnee((int)DaedalusConst.Guild.GIL_HUMAN).ToMeter();
-            var chestDeepHeight =  GameData.cGuildValue.GetWaterDepthChest((int)DaedalusConst.Guild.GIL_HUMAN).ToMeter();
+            var kneeDeepHeight = GameData.GuildValues.GetWaterDepthKnee((int)DaedalusConst.Guild.GIL_HUMAN).ToMeter();
+            var chestDeepHeight =  GameData.GuildValues.GetWaterDepthChest((int)DaedalusConst.Guild.GIL_HUMAN).ToMeter();
             var chestDeepHeightWithBuffer = chestDeepHeight + 2; // Do raycast a little bit longer than it needs to be, to ensure it's working.
 
             RaycastHit hit;
