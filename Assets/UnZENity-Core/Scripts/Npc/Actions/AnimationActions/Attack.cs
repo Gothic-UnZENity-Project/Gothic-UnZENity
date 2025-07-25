@@ -79,9 +79,11 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
                 case FightAiMove.Run:
                     GameGlobals.NpcAi.ExtAiPlayAni(NpcInstance, GetAnimName(VmGothicEnums.AnimationType.Move));
                     break;
+                case FightAiMove.Turn:
+                    GameGlobals.NpcAi.ExtAiTurnToNpc(NpcInstance, _enemy);
+                    break;
                 case FightAiMove.RunBack:
                 case FightAiMove.JumpBack:
-                case FightAiMove.Turn:
                 case FightAiMove.AttackSide:
                 case FightAiMove.AttackFront:
                 case FightAiMove.AttackTriple:
