@@ -219,7 +219,14 @@ namespace GUZ.Core.Manager.Vobs
             switch (vob.Type)
             {
                 case VirtualObjectType.oCItem:
-                    go = ResourceLoader.TryGetPrefabObject(PrefabType.VobItem, name: name, parent: parent);
+                    var item = VmInstanceManager.TryGetItemData(((IItem)vob).Instance)!;
+                    var mainFlag = (VmGothicEnums.ItemFlags)item.MainFlag;
+                    
+                    if (mainFlag is VmGothicEnums.ItemFlags.ItemKatNf or VmGothicEnums.ItemFlags.ItemKatFf)
+                        go = ResourceLoader.TryGetPrefabObject(PrefabType.VobItemWeapon, name: name, parent: parent);
+                    else
+                        go = ResourceLoader.TryGetPrefabObject(PrefabType.VobItem, name: name, parent: parent);
+
                     break;
                 case VirtualObjectType.zCVobSpot:
                 case VirtualObjectType.zCVobStartpoint:

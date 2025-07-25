@@ -36,6 +36,7 @@ namespace GUZ.Core
 
         VobItem,
         VobItemLockPick,
+        VobItemWeapon,
         
         Player,
         XRDeviceSimulator,
@@ -80,6 +81,7 @@ namespace GUZ.Core
 
                 PrefabType.VobItem => "Prefabs/Vobs/oCItem",
                 PrefabType.VobItemLockPick => "Prefabs/Vobs/oCItem/LockPick",
+                PrefabType.VobItemWeapon => "Prefabs/Vobs/oCItem/Weapon",
                 
                 PrefabType.Player => "Prefabs/Player",
                 PrefabType.XRDeviceSimulator => "Prefabs/VRPlayer/XR Device Simulator",
