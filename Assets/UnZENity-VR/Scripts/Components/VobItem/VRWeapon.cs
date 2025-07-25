@@ -2,6 +2,9 @@ using System.Collections.Generic;
 using System.Linq;
 using GUZ.Core;
 using GUZ.Core.Data.Container;
+using GUZ.Core.Globals;
+using GUZ.Core.Manager;
+using GUZ.Core.Npc;
 using GUZ.Core.Vm;
 using GUZ.VR.Components.HVROverrides;
 using UnityEngine;
@@ -31,6 +34,7 @@ namespace GUZ.VR.Components.VobItem
         
         private Queue<float> _velocityHistory = new();
         private float _velocityCheckTimer;
+        private bool _isAttacking;
         
         
         
@@ -44,10 +48,31 @@ namespace GUZ.VR.Components.VobItem
             UpdateVelocityHistory();
             CheckAttackState();
         }
+
+        // Add this method to your VRWeapon class
+        private void OnCollisionEnter(Collision collision)
+        {
+            if (!_isAttacking)
+                return;
+            
+            var npcLoader = collision.gameObject.GetComponentInParent<NpcLoader>();
+
+            if (npcLoader == null)
+                return;
+
+            npcLoader.Container.PrefabProps.AiHandler.enabled = false; // HACK: Stop AI logic.
+            PhysicsHelper.DisablePhysicsForNpc(npcLoader.Container.PrefabProps);
+            npcLoader.Container.PrefabProps.AnimationSystem.PlayAnimation("t_Dead");
+        }
     
         private void UpdateVelocityHistory()
         {
             _velocityCheckTimer += Time.deltaTime;
+
+            // Attacking is active until our timeout is reached.
+            // FIXME - Add better logic which is active for a few frames.
+            if (_velocityCheckTimer > 0f)
+                _isAttacking = false;
 
             if (_velocityCheckTimer < _velocityCheckDuration / _velocitySampleCount)
                 return;
@@ -83,6 +108,7 @@ namespace GUZ.VR.Components.VobItem
                 _audioSource.PlayOneShot(_swingSwordSound.GetRandomClip());
                 _velocityHistory.Clear(); // Reset to have the sound being played in x frames again only.
                 _velocityCheckTimer = _velocityCooldownAfterExecution;
+                _isAttacking = true;
             }
         }
     
