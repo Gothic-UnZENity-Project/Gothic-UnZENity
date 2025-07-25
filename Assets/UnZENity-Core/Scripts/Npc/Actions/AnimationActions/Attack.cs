@@ -30,23 +30,25 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
 
         private string FindAiFunctionTemplate()
         {
+            var isInFocus = GameGlobals.NpcAi.ExtNpcCanSeeNpc(NpcInstance, _enemy, false, 30f); // 60° is also assumed by Open Gothic.
             var distance = GetDistance();
             var attackRange = GetAttackRange();
-            var isInWeaponRange = distance <= attackRange;
-            var isInGotoRange = !isInWeaponRange && distance <= attackRange * 3;
-            var isInFKRange = !isInWeaponRange && !isInGotoRange; 
+            var isInWRange = distance <= attackRange; // W-Range == Weapon range
+            var isInGRange = !isInWRange && distance <= attackRange * 3; // G-Range == Goto range
+            var isInFKRange = !isInWRange && !isInGRange; // FK-Range == Fernkampf range; Yes, in G1 it's assumed that nothing is farther away than 30 m, but I don't expect any AI_Attack() call to be at this range.
+            var isRunning = false; // FIXME - We need to handle this for >MyGRunTo<
 
             switch ((VmGothicEnums.WeaponState)Vob.FightMode)
             {
                 case VmGothicEnums.WeaponState.Fist:
                 case VmGothicEnums.WeaponState.W1H:
                 case VmGothicEnums.WeaponState.W2H:
-                    if (isInWeaponRange)
-                        return FightConst.AttackActions.MyWFocus;
-                    else if (isInGotoRange)
-                        return FightConst.AttackActions.MyGFocus;
+                    if (isInWRange)
+                        return isInFocus ? FightConst.AttackActions.MyWFocus : FightConst.AttackActions.MyWNoFocus;
+                    if (isInGRange)
+                        return isInFocus ? FightConst.AttackActions.MyGFocus : FightConst.AttackActions.MyGFkNoFocus;
                     else
-                        return FightConst.AttackActions.MyFkFocus;
+                        return isInFocus ? FightConst.AttackActions.MyFkFocus : FightConst.AttackActions.MyGFkNoFocus;
                 case VmGothicEnums.WeaponState.NoWeapon:
                 case VmGothicEnums.WeaponState.Bow:
                 case VmGothicEnums.WeaponState.CBow:
