@@ -3,11 +3,13 @@
 #endif
 
 using UberLogger;
+using UnityEngine;
 
 //Helper functions to make logging easier
 public static class UberDebug
 {
     [StackTraceIgnore]
+    [HideInCallstack]
     static public void Log(UnityEngine.Object context, string message, params object[] par)
     {
         #if ENABLE_UBERLOGGING
@@ -16,6 +18,7 @@ public static class UberDebug
     }
 
     [StackTraceIgnore]
+    [HideInCallstack]
     static public void Log(string message, params object[] par)
     {
         #if ENABLE_UBERLOGGING
@@ -24,6 +27,7 @@ public static class UberDebug
     }
 
     [StackTraceIgnore]
+    [HideInCallstack]
     static public void LogChannel(UnityEngine.Object context, string channel, string message, params object[] par)
     {
         #if ENABLE_UBERLOGGING
@@ -32,6 +36,7 @@ public static class UberDebug
     }
 
     [StackTraceIgnore]
+    [HideInCallstack]
     static public void LogChannel(string channel, string message, params object[] par)
     {
         #if ENABLE_UBERLOGGING
@@ -41,6 +46,7 @@ public static class UberDebug
 
 
     [StackTraceIgnore]
+    [HideInCallstack]
     static public void LogWarning(UnityEngine.Object context, object message, params object[] par)
     {
         #if (ENABLE_UBERLOGGING || ENABLE_UBERLOGGING_WARNINGS)
@@ -49,6 +55,7 @@ public static class UberDebug
     }
 
     [StackTraceIgnore]
+    [HideInCallstack]
     static public void LogWarning(object message, params object[] par)
     {
         #if (ENABLE_UBERLOGGING || ENABLE_UBERLOGGING_WARNINGS)
@@ -57,6 +64,7 @@ public static class UberDebug
     }
 
     [StackTraceIgnore]
+    [HideInCallstack]
     static public void LogWarningChannel(UnityEngine.Object context, string channel, string message, params object[] par)
     {
         #if (ENABLE_UBERLOGGING || ENABLE_UBERLOGGING_WARNINGS)
@@ -65,6 +73,7 @@ public static class UberDebug
     }
 
     [StackTraceIgnore]
+    [HideInCallstack]
     static public void LogWarningChannel(string channel, string message, params object[] par)
     {
         #if (ENABLE_UBERLOGGING || ENABLE_UBERLOGGING_WARNINGS)
@@ -73,6 +82,7 @@ public static class UberDebug
     }
 
     [StackTraceIgnore]
+    [HideInCallstack]
     static public void LogError(UnityEngine.Object context, object message, params object[] par)
     {
         #if (ENABLE_UBERLOGGING || ENABLE_UBERLOGGING_ERRORS)
@@ -81,6 +91,7 @@ public static class UberDebug
     }
 
     [StackTraceIgnore]
+    [HideInCallstack]
     static public void LogError(object message, params object[] par)
     {
         #if (ENABLE_UBERLOGGING || ENABLE_UBERLOGGING_ERRORS)
@@ -89,6 +100,7 @@ public static class UberDebug
     }
 
     [StackTraceIgnore]
+    [HideInCallstack]
     static public void LogErrorChannel(UnityEngine.Object context, string channel, string message, params object[] par)
     {
         #if (ENABLE_UBERLOGGING || ENABLE_UBERLOGGING_ERRORS)
@@ -97,6 +109,7 @@ public static class UberDebug
     }
 
     [StackTraceIgnore]
+    [HideInCallstack]
     static public void LogErrorChannel(string channel, string message, params object[] par)
     {
         #if (ENABLE_UBERLOGGING || ENABLE_UBERLOGGING_ERRORS)

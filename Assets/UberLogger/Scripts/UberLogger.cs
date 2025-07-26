@@ -269,6 +269,7 @@ namespace UberLogger
         /// Registered Unity error handler
         /// </summary>
         [StackTraceIgnore]
+        [HideInCallstack]
         static void UnityLogHandler(string logString, string stackTrace, UnityEngine.LogType logType)
         {
             UnityLogInternal(logString, stackTrace, logType);
@@ -429,6 +430,7 @@ namespace UberLogger
         /// Returns false if the stack frame contains any methods flagged as LogUnityOnly
         /// </summary>
         [StackTraceIgnore]
+        [HideInCallstack]
         static bool GetCallstack(ref List<LogStackFrame> callstack, out LogStackFrame originatingSourceLocation)
         {
             callstack.Clear();
@@ -514,7 +516,8 @@ namespace UberLogger
         /// <summary>
         /// The core entry point of all logging coming from Unity. Takes a log request, creates the call stack and pumps it to all the backends
         /// </summary>
-        [StackTraceIgnore()]
+        [StackTraceIgnore]
+        [HideInCallstack]
         static void UnityLogInternal(string unityMessage, string unityCallStack, UnityEngine.LogType logType)
         {
             //Make sure only one thread can do this at a time.
@@ -586,7 +589,8 @@ namespace UberLogger
         /// The core entry point of all logging coming from client code.
         /// Takes a log request, creates the call stack and pumps it to all the backends
         /// </summary>
-        [StackTraceIgnore()]
+        [StackTraceIgnore]
+        [HideInCallstack]
         static public void Log(string channel, UnityEngine.Object source, LogSeverity severity, object message, params object[] par)
         {
             lock(Loggers)
@@ -640,7 +644,8 @@ namespace UberLogger
         /// <summary>
         /// Forwards an UberLogger log to Unity so it's visible in the built-in console
         /// </summary>
-        [LogUnityOnly()]
+        [LogUnityOnly]
+        [HideInCallstack]
         static void ForwardToUnity(UnityEngine.Object source, LogSeverity severity, object message, params object[] par)
         {
 			object showObject = null;

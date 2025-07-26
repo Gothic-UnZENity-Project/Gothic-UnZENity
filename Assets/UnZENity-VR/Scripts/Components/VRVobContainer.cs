@@ -63,8 +63,8 @@ namespace GUZ.VR.Components
                 var openSoundEffect = mds.Animations.First(i => i.Name.EqualsIgnoreCase("t_S0_2_S1")).SoundEffects.First().Name;
                 var closeSoundEffect = mds.Animations.First(i => i.Name.EqualsIgnoreCase("t_S1_2_S0")).SoundEffects.First().Name;
 
-                _containerOpenedClips.Add(mdsName.ToLower(), GameGlobals.Vobs.GetSoundClip(openSoundEffect));
-                _containerClosedClips.Add(mdsName.ToLower(), GameGlobals.Vobs.GetSoundClip(closeSoundEffect));
+                _containerOpenedClips.Add(mdsName.ToLower(), GameGlobals.Vobs.GetRandomSoundClip(openSoundEffect));
+                _containerClosedClips.Add(mdsName.ToLower(), GameGlobals.Vobs.GetRandomSoundClip(closeSoundEffect));
             }
 
             // We leverage the same "door" script for containers (As it's also just an object to be rotated.

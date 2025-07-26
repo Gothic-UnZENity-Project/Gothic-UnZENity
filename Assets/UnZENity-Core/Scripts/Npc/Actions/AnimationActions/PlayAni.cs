@@ -19,7 +19,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
                 IsFinishedFlag = true;
                 return;
             }
-            AnimationEndEventTime = PrefabProps.AnimationSystem.GetAnimationDuration(_animName);
+            ActionEndEventTime = PrefabProps.AnimationSystem.GetAnimationDuration(_animName);
         }
     }
 }

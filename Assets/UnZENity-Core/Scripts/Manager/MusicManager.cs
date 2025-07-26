@@ -12,7 +12,6 @@ using ZenKit;
 using ZenKit.Daedalus;
 using ZenKit.Vobs;
 using Logger = GUZ.Core.Util.Logger;
-using Object = UnityEngine.Object;
 
 namespace GUZ.Core.Manager
 {

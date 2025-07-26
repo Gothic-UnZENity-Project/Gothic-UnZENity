@@ -32,6 +32,7 @@ namespace GUZ.Core.Vm
             vm.RegisterExternalDefault(DefaultExternal);
 
             // AI
+            vm.RegisterExternal<NpcInstance>("Ai_Attack", Ai_Attack);
             vm.RegisterExternal<NpcInstance>("AI_StandUp", AI_StandUp);
             vm.RegisterExternal<NpcInstance>("AI_StandUpQuick", AI_StandUpQuick);
             vm.RegisterExternal<NpcInstance, int>("AI_SetWalkMode", AI_SetWalkMode);
@@ -138,6 +139,7 @@ namespace GUZ.Core.Vm
             vm.RegisterExternal<int, NpcInstance>("Npc_IsDead", Npc_IsDead);
             vm.RegisterExternal<int, NpcInstance, int>("Npc_IsInState", Npc_IsInState);
             vm.RegisterExternal<NpcInstance>("Npc_SetToFistMode", Npc_SetToFistMode);
+            vm.RegisterExternal<NpcInstance, int>("Npc_SetToFightMode", Npc_SetToFightMode);
             vm.RegisterExternal<int, NpcInstance, int>("Npc_IsInFightMode", Npc_IsInFightMode);
             vm.RegisterExternal<int, NpcInstance>("Npc_IsPlayer", Npc_IsPlayer);
             vm.RegisterExternal<int, ItemInstance, NpcInstance>("Npc_OwnedByNpc", Npc_OwnedByNpc);
@@ -177,6 +179,9 @@ namespace GUZ.Core.Vm
             vm.RegisterExternal<int, string>("Wld_InsertItem", Wld_InsertItem);
             vm.RegisterExternal<string>("Wld_ExchangeGuildAttitudes", Wld_ExchangeGuildAttitudes);
             vm.RegisterExternal<int, int, int>("Wld_SetGuildAttitude", Wld_SetGuildAttitude);
+            vm.RegisterExternal<int, int, string, int>("Wld_SetObjectRoutine", Wld_SetObjectRoutine);
+            vm.RegisterExternal<int, int, string, int>("Wld_SetMobRoutine", Wld_SetMobRoutine);
+            vm.RegisterExternal<string, int>("Wld_AssignRoomToGuild", Wld_AssignRoomToGuild);
             vm.RegisterExternal<int, int, int>("Wld_GetGuildAttitude", Wld_GetGuildAttitude);
 
             // Misc
@@ -218,6 +223,11 @@ namespace GUZ.Core.Vm
 
         #region AI
 
+        public static void Ai_Attack(NpcInstance npc)
+        {
+            GameGlobals.NpcAi.ExtAttack(npc);
+        }
+        
         public static void AI_StandUp(NpcInstance npc)
         {
             GameGlobals.NpcAi.ExtAiStandUp(npc);
@@ -838,6 +848,11 @@ namespace GUZ.Core.Vm
             GameGlobals.Npcs.ExtNpcSetToFistMode(npc);
         }
 
+        public static void Npc_SetToFightMode(NpcInstance npc, int itemIndex)
+        {
+            GameGlobals.Npcs.ExtNpcSetToFightMode(npc, itemIndex);
+        }
+
         public static int Npc_IsInFightMode(NpcInstance npc, int fightMode)
         {
             return Convert.ToInt32(GameGlobals.NpcAi.ExtNpcIsInFightMode(npc, (VmGothicEnums.FightMode)fightMode));
@@ -1011,6 +1026,30 @@ namespace GUZ.Core.Vm
                 return;
 
             GameData.GuildAttitudes[guild1 * GameData.GuildCount + guild2] = attitude;
+        }
+
+        public static void Wld_SetObjectRoutine(int hour, int minute, string name, int status)
+        {
+            // FIXME - Do more with these ObjectRoutines.
+            GameGlobals.Vobs.ObjectRoutines.TryAdd(name, new());
+            GameGlobals.Vobs.ObjectRoutines[name].Add((hour, minute, status));
+        }
+
+        public static void Wld_SetMobRoutine(int hour, int minute, string name, int status)
+        {
+            // FIXME - Do more with these MobRoutines.
+            GameGlobals.Npcs.MobRoutines.TryAdd(name, new());
+            GameGlobals.Npcs.MobRoutines[name].Add((hour, minute, status));
+        }
+
+        private static bool _debugWld_AssignRoomToGuildExecuted;
+        public static void Wld_AssignRoomToGuild(string room, int guild)
+        {
+            if (!_debugWld_AssignRoomToGuildExecuted)
+            {
+                Logger.LogWarningEditor($"Method >Wld_AssignRoomToGuild< not yet implemented in DaedalusVM.", LogCat.ZenKit);
+                _debugWld_AssignRoomToGuildExecuted = true;
+            }
         }
 
         public static int Wld_GetGuildAttitude(int guild1, int guild2)

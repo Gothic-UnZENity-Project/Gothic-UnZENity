@@ -22,6 +22,7 @@ namespace GUZ.Core.Globals
         public static Encoding Encoding;
         public static string Language;
         public static DaedalusVm GothicVm;
+        public static DaedalusVm FightVm;
         public static DaedalusVm MenuVm;
         public static DaedalusVm SfxVm; // Sound FX
         public static DaedalusVm PfxVm; // Particle FX
@@ -64,7 +65,7 @@ namespace GUZ.Core.Globals
         public static int GuildCount;
         public static int[] GuildAttitudes;
 
-        public static GuildValuesInstance cGuildValue;
+        public static GuildValuesInstance GuildValues;
 
         // FIXME Find a better place for the NPC routines. E.g. on the NPCs itself? But we e.g. need to have a static NPCObject List to do so.
         public static Dictionary<int, List<RoutineData>> NpcRoutines = new();

@@ -1,9 +1,12 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using GUZ.Core.Data.Adapter.Vobs;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Util;
+using GUZ.Core.Vm;
 using JetBrains.Annotations;
 using UnityEngine;
 using ZenKit;
@@ -237,6 +240,94 @@ namespace GUZ.Core.Animations
             }
 
             return lowerKey.Replace(extension, "");
+        }
+        
+        public string GetAnimationName(VmGothicEnums.AnimationType type, NpcAdapter vob)
+        {
+            // The name of the currently active weapon == prefix of animation.
+            var fightMode = (VmGothicEnums.WeaponState)vob.FightMode;
+            
+            var weaponStateString = fightMode == VmGothicEnums.WeaponState.NoWeapon ? "" : fightMode.ToString().ToUpper();
+            var walkModeString = GetWalkModeString((VmGothicEnums.WalkMode)vob.AiHuman.WalkMode);
+
+
+            switch (type)
+            {
+                case VmGothicEnums.AnimationType.Idle:
+                    return GetIdleAnimationName(weaponStateString, walkModeString);
+                case VmGothicEnums.AnimationType.Move:
+                    return $"{GetIdleAnimationName(weaponStateString, walkModeString)}L";
+                case VmGothicEnums.AnimationType.Attack:
+                    return $"s_{weaponStateString}Attack";
+                case VmGothicEnums.AnimationType.MoveL:
+                    return $"t_{weaponStateString}{walkModeString}StrafeL";
+                case VmGothicEnums.AnimationType.MoveR:
+                    return $"t_{weaponStateString}{walkModeString}StrafeR";
+                case VmGothicEnums.AnimationType.NoAnim:
+                case VmGothicEnums.AnimationType.MoveBack:
+                case VmGothicEnums.AnimationType.RotL:
+                case VmGothicEnums.AnimationType.RotR:
+                case VmGothicEnums.AnimationType.WhirlL:
+                case VmGothicEnums.AnimationType.WhirlR:
+                case VmGothicEnums.AnimationType.Fall:
+                case VmGothicEnums.AnimationType.FallDeep:
+                case VmGothicEnums.AnimationType.FallDeepA:
+                case VmGothicEnums.AnimationType.FallDeepB:
+                case VmGothicEnums.AnimationType.Jump:
+                case VmGothicEnums.AnimationType.JumpUpLow:
+                case VmGothicEnums.AnimationType.JumpUpMid:
+                case VmGothicEnums.AnimationType.JumpUp:
+                case VmGothicEnums.AnimationType.JumpHang:
+                case VmGothicEnums.AnimationType.Fallen:
+                case VmGothicEnums.AnimationType.FallenA:
+                case VmGothicEnums.AnimationType.FallenB:
+                case VmGothicEnums.AnimationType.SlideA:
+                case VmGothicEnums.AnimationType.SlideB:
+                case VmGothicEnums.AnimationType.DeadA:
+                case VmGothicEnums.AnimationType.DeadB:
+                case VmGothicEnums.AnimationType.UnconsciousA:
+                case VmGothicEnums.AnimationType.UnconsciousB:
+                case VmGothicEnums.AnimationType.InteractIn:
+                case VmGothicEnums.AnimationType.InteractOut:
+                case VmGothicEnums.AnimationType.InteractToStand:
+                case VmGothicEnums.AnimationType.InteractFromStand:
+                case VmGothicEnums.AnimationType.AttackL:
+                case VmGothicEnums.AnimationType.AttackR:
+                case VmGothicEnums.AnimationType.AttackBlock:
+                case VmGothicEnums.AnimationType.AttackFinish:
+                case VmGothicEnums.AnimationType.StumbleA:
+                case VmGothicEnums.AnimationType.StumbleB:
+                case VmGothicEnums.AnimationType.AimBow:
+                case VmGothicEnums.AnimationType.PointAt:
+                case VmGothicEnums.AnimationType.ItmGet:
+                case VmGothicEnums.AnimationType.ItmDrop:
+                case VmGothicEnums.AnimationType.MagNoMana:
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(type), type, null);
+            }
+        }
+
+
+        private string GetWalkModeString(VmGothicEnums.WalkMode walkMode)
+        {
+            return walkMode switch
+            {
+                VmGothicEnums.WalkMode.Walk => "WALK",
+                VmGothicEnums.WalkMode.Run => "RUN",
+                VmGothicEnums.WalkMode.Sneak => "SNEAK",
+                VmGothicEnums.WalkMode.Water => "WATER",
+                VmGothicEnums.WalkMode.Swim => "SWIM",
+                VmGothicEnums.WalkMode.Dive => "DIVE",
+                _ => throw new ArgumentOutOfRangeException(nameof(walkMode), walkMode, null)
+            };
+        }
+
+        /// <summary>
+        /// Will be reused. Therefore, it's a separate method.
+        /// </summary>
+        private string GetIdleAnimationName(string weaponStateString, string walkModeString)
+        {
+            return $"S_{weaponStateString}{walkModeString}";
         }
     }
 }

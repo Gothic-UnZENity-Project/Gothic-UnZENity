@@ -27,6 +27,9 @@ namespace GUZ.Core.Npc
     /// </summary>
     public class NpcManager
     {
+        public Dictionary<string, List<(int hour, int minute, int status)>> MobRoutines = new();
+
+        
         // Supporter class where the whole Init() logic is outsourced for better readability.
         private NpcInitializer _initializer = new ();
         private Queue<NpcLoader> _objectsToInitQueue = new();
@@ -118,6 +121,9 @@ namespace GUZ.Core.Npc
 
         public async Task CreateWorldNpcs(LoadingManager loading)
         {
+            MobRoutines.ClearAndReleaseMemory();
+            MobRoutines = new();
+            
             if (GameGlobals.SaveGame.IsNewGame)
                 await _initializer.InitNpcsNewGame(loading);
             else
@@ -344,19 +350,24 @@ namespace GUZ.Core.Npc
         {
             var npcProperties = npc.GetUserData().Props;
 
-            npcProperties.WeaponState = VmGothicEnums.WeaponState.Fist;
+            npc.GetUserData()!.Vob.FightMode = (int)VmGothicEnums.WeaponState.Fist;
 
             // if npc has item in hand remove it and set weapon to fist
             // Some animations need to force remove items, some not.
             if (npcProperties.UsedItemSlot.IsNullOrEmpty())
-            {
                 return;
-            }
 
             var slotGo = npc.GetUserData().Go.FindChildRecursively(npcProperties.UsedItemSlot);
             var item = slotGo!.transform.GetChild(0);
 
             Object.Destroy(item.gameObject);
+        }
+        
+        public void ExtNpcSetToFightMode(NpcInstance npc, int itemIndex)
+        {
+            npc.GetUserData()!.Vob.FightMode = (int)VmGothicEnums.WeaponState.W1H;
+
+            // FIXME - Spawn Item as well!
         }
 
         public void ExtNpcExchangeRoutine(NpcInstance npcInstance, string routineName)

@@ -56,26 +56,11 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
                 HandleRotation();
         }
 
-        private string GetWalkModeAnimationString()
-        {
-            var walkMode = (VmGothicEnums.WalkMode)Vob.AiHuman.WalkMode;
-            switch (walkMode)
-            {
-                case VmGothicEnums.WalkMode.Walk:
-                    return "S_WALKL";
-                case VmGothicEnums.WalkMode.Run:
-                    return "S_RUNL";
-                default:
-                    Logger.LogWarning($"Animation of type {walkMode} not yet implemented.", LogCat.Ai);
-                    return "";
-            }
-        }
-
         protected virtual void StartWalk()
         {
             PhysicsHelper.EnablePhysicsForNpc(PrefabProps);
 
-            var animName = GetWalkModeAnimationString();
+            var animName = GameGlobals.Animations.GetAnimationName(VmGothicEnums.AnimationType.Move, Vob);
             PrefabProps.AnimationSystem.PlayAnimation(animName);
         }
 
@@ -83,7 +68,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
         {
             PhysicsHelper.EnablePhysicsForNpc(PrefabProps);
 
-            var animName = GetWalkModeAnimationString();
+            var animName = GameGlobals.Animations.GetAnimationName(VmGothicEnums.AnimationType.Move, Vob);
             PrefabProps.AnimationSystem.StopAnimation(animName);
         }
 

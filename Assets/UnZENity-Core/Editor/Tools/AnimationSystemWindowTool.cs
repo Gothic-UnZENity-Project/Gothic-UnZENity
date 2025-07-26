@@ -4,6 +4,7 @@ using System.Linq;
 using GUZ.Core.Animations;
 using GUZ.Core.Globals;
 using GUZ.Core.Npc;
+using GUZ.Core.Npc.Actions;
 using UnityEditor;
 using UnityEngine;
 using AnimationState = GUZ.Core.Animations.AnimationState;
@@ -17,20 +18,25 @@ namespace GUZ.Core.Editor.Tools
 
         private int _selectedAnimationSystemIndex;
         private AnimationSystem _targetAnimationSystem;
+
         private float _timeScale = 1f;
         private bool _isTimeScaleFoldedOut;
 
-        private GUILayoutOption _buttonSmall = GUILayout.Width(50);
-        private GUILayoutOption _buttonMedium = GUILayout.Width(75);
-        private GUILayoutOption _buttonWide = GUILayout.Width(100);
-        private GUILayoutOption _buttonUltraWide = GUILayout.Width(200);
+        private AiHandler _targetAiHandler;
+        private bool _isAiHandlerFoldedOut;
+
+        private GUILayoutOption _ultraSmall = GUILayout.Width(20);
+        private GUILayoutOption _small = GUILayout.Width(50);
+        private GUILayoutOption _medium = GUILayout.Width(75);
+        private GUILayoutOption _wide = GUILayout.Width(100);
+        private GUILayoutOption _ultraWide = GUILayout.Width(200);
 
 
 
         [MenuItem("UnZENity/Debug/Animation System Window", priority = 100)]
         public static void ShowWindow()
         {
-            var titleContent = new GUIContent("Animation System", Constants.TextureUnZENityLogoTransparent);
+            var titleContent = new GUIContent("Animation System", Constants.TextureUnZENityLogoInverseTransparent);
 
             var window = GetWindow<AnimationSystemWindowTool>();
             window.titleContent = titleContent;
@@ -49,6 +55,7 @@ namespace GUZ.Core.Editor.Tools
 
             _scrollPosition = EditorGUILayout.BeginScrollView(_scrollPosition);
 
+            DrawAiActionInfo();
             DrawBreakpointInfo();
             DrawAnimationInfo();
             DrawBoneStates();
@@ -75,6 +82,7 @@ namespace GUZ.Core.Editor.Tools
             {
                 var oldSelectedAnimationSystem = _targetAnimationSystem;
                 _targetAnimationSystem = _animationSystems.Values.ElementAt(_selectedAnimationSystemIndex);
+                _targetAiHandler = _targetAnimationSystem != null ? _targetAnimationSystem.GetComponent<AiHandler>() : null;
 
                 if (oldSelectedAnimationSystem != _targetAnimationSystem && oldSelectedAnimationSystem != null)
                 {
@@ -90,7 +98,7 @@ namespace GUZ.Core.Editor.Tools
 
             EditorGUILayout.BeginHorizontal();
             // Re-Collect AnimationSystems
-            if (GUILayout.Button("(Re)collect Animation Systems", _buttonUltraWide))
+            if (GUILayout.Button("(Re)collect Animation Systems", _ultraWide))
             {
                 var emptyElement = new[] { new { name = "<<Choose NPC>>", animComp = (AnimationSystem)null } };
 
@@ -103,7 +111,7 @@ namespace GUZ.Core.Editor.Tools
             }
             GUI.backgroundColor = origBack;
 
-            if (GUILayout.Button("Select in Inspector", _buttonUltraWide))
+            if (GUILayout.Button("Select in Inspector", _ultraWide))
             {
                 if (_targetAnimationSystem != null)
                 {
@@ -123,15 +131,15 @@ namespace GUZ.Core.Editor.Tools
                 EditorGUILayout.BeginHorizontal();
                 GUILayout.FlexibleSpace(); // This pushes content to the center
 
-                if (GUILayout.Button("|<", _buttonSmall))
+                if (GUILayout.Button("|<", _small))
                 {
                     _timeScale = 0f;
                 }
-                if (GUILayout.Button("<<", _buttonSmall))
+                if (GUILayout.Button("<<", _small))
                 {
                     _timeScale -= 0.1f;
                 }
-                if (GUILayout.Button("<", _buttonSmall))
+                if (GUILayout.Button("<", _small))
                 {
                     _timeScale -= 0.01f;
                 }
@@ -140,21 +148,21 @@ namespace GUZ.Core.Editor.Tools
 
                 // Green == We have the normal 1f timeScale active (Helps finding issues if it's not reset to 1 after use)
                 GUI.backgroundColor = !Mathf.Approximately(Time.timeScale, 1f) ? Color.grey : Color.green;
-                if (GUILayout.Button("1", _buttonSmall))
+                if (GUILayout.Button("1", _small))
                 {
                     _timeScale = 1f;
                 }
                 GUI.backgroundColor = origBack;
 
-                if (GUILayout.Button(">", _buttonSmall))
+                if (GUILayout.Button(">", _small))
                 {
                     _timeScale += 0.01f;
                 }
-                if (GUILayout.Button(">>", _buttonSmall))
+                if (GUILayout.Button(">>", _small))
                 {
                     _timeScale += 0.1f;
                 }
-                if (GUILayout.Button(">|", _buttonSmall))
+                if (GUILayout.Button(">|", _small))
                 {
                     _timeScale = 2f;
                 }
@@ -184,6 +192,41 @@ namespace GUZ.Core.Editor.Tools
             Time.timeScale = _timeScale;
         }
 
+
+        private void DrawAiActionInfo()
+        {
+            // TimeScale controls in a foldout
+            _isAiHandlerFoldedOut = EditorGUILayout.Foldout(_isAiHandlerFoldedOut, "AiHandler History", true);
+            if (!_isAiHandlerFoldedOut)
+                return;
+                
+            // _targetAiHandler.AiActionHistory
+            EditorGUILayout.BeginHorizontal();
+            EditorGUILayout.LabelField("#", _ultraSmall);
+            EditorGUILayout.LabelField("AiAction", _wide);
+            EditorGUILayout.LabelField("Int0", _small);
+            EditorGUILayout.LabelField("Int1", _small);
+            EditorGUILayout.LabelField("Bool", _small);
+            EditorGUILayout.LabelField("String", _ultraWide);
+            EditorGUILayout.EndHorizontal();
+
+            for (var i = _targetAiHandler.AiActionHistory.Count-1; i >= 0; i--)
+            {
+                (string name, AnimationAction action) entry = _targetAiHandler.AiActionHistory[i];
+
+                EditorGUILayout.BeginHorizontal();
+                EditorGUILayout.LabelField(i.ToString(), _ultraSmall);
+                EditorGUILayout.LabelField(entry.name, _wide);
+                EditorGUILayout.LabelField(entry.action.Int0.ToString(), _small);
+                EditorGUILayout.LabelField(entry.action.Int1.ToString(), _small);
+                EditorGUILayout.LabelField(entry.action.Bool0.ToString(), _small);
+                EditorGUILayout.LabelField(entry.action.String0, _ultraWide);
+                EditorGUILayout.EndHorizontal();
+            }
+
+            DrawDivider();
+        }
+        
         private void DrawBreakpointInfo()
         {
             var origBackgroundColor = GUI.backgroundColor;
@@ -193,13 +236,13 @@ namespace GUZ.Core.Editor.Tools
 
             GUILayout.BeginHorizontal();
             GUI.backgroundColor = _targetAnimationSystem.DebugPauseAtPlayAnimation ? Color.green : origBackgroundColor;
-            if (GUILayout.Button("PlayAnimation", _buttonWide))
+            if (GUILayout.Button("PlayAnimation", _wide))
             {
                 _targetAnimationSystem.DebugPauseAtPlayAnimation = !_targetAnimationSystem.DebugPauseAtPlayAnimation;
             }
 
             GUI.backgroundColor = _targetAnimationSystem.DebugPauseAtStopAnimation ? Color.green : origBackgroundColor;
-            if (GUILayout.Button("StopAnimation", _buttonWide))
+            if (GUILayout.Button("StopAnimation", _wide))
             {
                 _targetAnimationSystem.DebugPauseAtStopAnimation = !_targetAnimationSystem.DebugPauseAtStopAnimation;
             }

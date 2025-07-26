@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using GUZ.Core.Extensions;
 using GUZ.Core.Util;
 using JetBrains.Annotations;
 using MyBox;
@@ -61,7 +62,11 @@ namespace GUZ.Core.Animations
             CurrentKeyFrameTime = 0f;
             NextKeyframeTime = track.FrameTime;
 
-            IsLooping = track.Name == track.NextAni;
+            // Looping if this == next. If an alias is used, we expect the same alias being selected. Looks promising so far. 
+            if (track.TrackType == AnimationTrack.Type.Animation)
+                IsLooping = track.Name.EqualsIgnoreCase(track.NextAni);
+            else
+                IsLooping = track.AliasName.EqualsIgnoreCase(track.NextAni);
 
             BoneStates = new AnimationState[Track.BoneCount];
             BoneBlendWeights = new float[Track.BoneCount];
