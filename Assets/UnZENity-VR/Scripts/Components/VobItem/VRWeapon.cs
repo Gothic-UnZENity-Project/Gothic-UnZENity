@@ -1,8 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using GUZ.Core;
-using GUZ.Core.Data.Container;
-using GUZ.Core.Globals;
+using GUZ.Core.Data.Adapter;
 using GUZ.Core.Manager;
 using GUZ.Core.Npc;
 using GUZ.Core.Vm;
@@ -25,7 +24,7 @@ namespace GUZ.VR.Components.VobItem
         [SerializeField] private Rigidbody _rigidBody;
         [SerializeField] private AudioSource _audioSource;
         
-        private SfxContainer _swingSwordSound;
+        private SfxAdapter _swingSwordSound;
         
         [SerializeField] private float _attackVelocityThreshold = 2.5f;
         [SerializeField] private float _velocityCheckDuration = 0.5f;

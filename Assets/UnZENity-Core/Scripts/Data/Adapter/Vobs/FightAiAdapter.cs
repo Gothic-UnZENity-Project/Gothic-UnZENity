@@ -3,12 +3,12 @@ using GUZ.Core.Globals;
 using MyBox;
 using ZenKit.Daedalus;
 
-namespace GUZ.Core.Data.Container
+namespace GUZ.Core.Data.Adapter
 {
     /// <summary>
     /// Pre-Cache FightAiMoves for better debug capabilities. Otherwise, it needs to be fetched at each AI_Attack() call.
     /// </summary>
-    public class FightAiContainer
+    public class FightAiAdapter
     {
         private readonly FightAiInstance _fightAiInstance;
 
@@ -16,13 +16,16 @@ namespace GUZ.Core.Data.Container
         public readonly FightAiMove[] Moves;
         public FightAiMove GetRandomMove() => Moves.GetRandom();
         
-        public FightAiContainer(FightAiInstance fightAiInstance)
+        public FightAiAdapter(FightAiInstance fightAiInstance)
         {
             _fightAiInstance = fightAiInstance;
 
             CalculateAttackMoves(out MoveCount, out Moves);
         }
 
+        /// <summary>
+        /// Caching of Moves so that we don't need to recalculate them with each usage.
+        /// </summary>
         private void CalculateAttackMoves(out int moveCount, out FightAiMove[] moves)
         {
             var tempMoves = new List<FightAiMove>();
