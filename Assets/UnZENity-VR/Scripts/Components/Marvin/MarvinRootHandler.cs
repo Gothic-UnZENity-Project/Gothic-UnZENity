@@ -34,7 +34,7 @@ namespace GUZ.VR.Components.Marvin
 
         private void ResetTabs()
         {
-            _tabLogs.SetActive(false);
+            // _tabLogs.SetActive(false);
             _tabMarvin.SetActive(false);
             _tabMarvinSelected.SetActive(false);
         }
