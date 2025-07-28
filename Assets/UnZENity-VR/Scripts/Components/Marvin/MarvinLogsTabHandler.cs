@@ -31,6 +31,9 @@ namespace GUZ.VR.Components.Marvin
         private bool _isLoggingActive;
         private List<LogInfo> _logItems = new();
 
+        private bool _isSeverityFiltered;
+        private LogSeverity _severityFilter;
+
         private bool _isCategoryFiltered;
         private LogCat _categoryFilter;
         private bool _didCategoryFilterChange;
@@ -77,7 +80,7 @@ namespace GUZ.VR.Components.Marvin
             if (_didCategoryFilterChange)
             {
                 _didCategoryFilterChange = false;
-                UpdateLogItemFilter();
+                LogItemFilterUpdated();
             }
         }
 
@@ -87,18 +90,21 @@ namespace GUZ.VR.Components.Marvin
 
             if (_isLoggingActive)
             {
-                UpdateLogItemFilter();
+                LogItemFilterUpdated();
                 _activateLoggingButton.GetComponentInChildren<TMP_Text>().text = "De-activate";
             }
             else
             {
-                // Remove all existing log items
-                foreach (Transform child in _logContentContainer)
-                    Destroy(child.gameObject);
-                
                 _activateLoggingButton.GetComponentInChildren<TMP_Text>().text = "Activate";
+                // HINT: We do not clear the list of log items. But basically "stop" them from being updated.
             }
-            
+        }
+
+        public void OnSeverityLoggingClick(int severityIndex)
+        {
+            _isSeverityFiltered = true;
+            _severityFilter = (LogSeverity)severityIndex;
+            LogItemFilterUpdated();
         }
 
         private void FillCategories()
@@ -133,11 +139,12 @@ namespace GUZ.VR.Components.Marvin
             if (Enum.TryParse<LogCat>(category, out var result))
             {
                 _categoryFilter = result;
-                _isCategoryFiltered = true;            
+                _isCategoryFiltered = true;
             }
             else
             {
                 _isCategoryFiltered = false;
+                _isSeverityFiltered = false; // We also reset it as it's sufficient for now to reset all when "Everything" is clicked.
             }
         }
 
@@ -161,6 +168,8 @@ namespace GUZ.VR.Components.Marvin
         private bool ShouldPrintLogEntry(LogInfo logInfo)
         {
             if (!_isLoggingActive)
+                return false;
+            if (_isSeverityFiltered && logInfo.Severity != _severityFilter)
                 return false;
             if (_isCategoryFiltered && !logInfo.Channel.EqualsIgnoreCase(_categoryFilter.ToString()))
                 return false;
@@ -224,7 +233,7 @@ namespace GUZ.VR.Components.Marvin
             );
         }
         
-        private void UpdateLogItemFilter()
+        private void LogItemFilterUpdated()
         {
             // Remove all existing log items
             foreach (Transform child in _logContentContainer)
@@ -237,7 +246,7 @@ namespace GUZ.VR.Components.Marvin
             // Re-add filtered items
             foreach (var logInfo in _logItems)
             {
-                if (!_isCategoryFiltered || logInfo.Channel.EqualsIgnoreCase(_categoryFilter.ToString()))
+                if (ShouldPrintLogEntry(logInfo))
                     AddTextItem(logInfo);
             }
         }
