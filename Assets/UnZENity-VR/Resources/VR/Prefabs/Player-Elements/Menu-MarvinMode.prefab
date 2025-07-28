@@ -3149,8 +3149,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -91.49949, y: 91.50008}
-  m_SizeDelta: {x: 180, y: 300}
+  m_AnchoredPosition: {x: -258.49973, y: 166.50005}
+  m_SizeDelta: {x: 500, y: 350}
   m_Pivot: {x: 0, y: 1}
 --- !u!1 &1049225141302476234
 GameObject:
@@ -3272,8 +3272,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 8051734979749574345}
   m_HandleRect: {fileID: 4018893674250774794}
   m_Direction: 0
-  m_Value: 0
-  m_Size: 1
+  m_Value: 0.9999973
+  m_Size: 0.96599954
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -3871,8 +3871,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 5765794732357410970}
   m_HandleRect: {fileID: 641175790257618719}
   m_Direction: 2
-  m_Value: 1.0000005
-  m_Size: 0.6099997
+  m_Value: 0.9999964
+  m_Size: 0.9514283
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -5320,8 +5320,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 200, y: 200}
+  m_AnchoredPosition: {x: 125, y: 0}
+  m_SizeDelta: {x: 500, y: 350}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &702770843467865704
 CanvasRenderer:
@@ -5956,7 +5956,6 @@ GameObject:
   m_Component:
   - component: {fileID: 7704518393691518655}
   - component: {fileID: 5884682838452541498}
-  - component: {fileID: 6189175423956817596}
   m_Layer: 5
   m_Name: Logs
   m_TagString: Untagged
@@ -5999,30 +5998,10 @@ MonoBehaviour:
   _scrollRect: {fileID: 3333066934831603977}
   _contentContainer: {fileID: 3998887005326581797}
   _fontAsset: {fileID: 11400000, guid: 2e498d1c8094910479dc3e1b768306a4, type: 2}
---- !u!114 &6189175423956817596
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8552558665105819649}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a0e07a4dd7148412e9649a25c8abcb11, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Skin: {fileID: 11400000, guid: 7018997e7c4ba41d8aa5a2338b82d57f, type: 2}
-  SmallErrorIcon: {fileID: 2800000, guid: f5e296e323cd64d619488c517c4692af, type: 3}
-  SmallWarningIcon: {fileID: 2800000, guid: ecc8f3c040a254019afd50c8bc285b48, type: 3}
-  SmallMessageIcon: {fileID: 2800000, guid: fa976bac27b1e440eb0d8bd71c1caac3, type: 3}
-  GUIColour: {r: 1, g: 1, b: 1, a: 0.5}
-  FontSize: 0
-  SizerLineColour: {r: 0.16470589, g: 0.16470589, b: 0.16470589, a: 1}
-  SizerStartHeightRatio: 0.75
-  ButtonTexture: {fileID: 2800000, guid: 2ae9477f7f0774b808aef406d3bf2d3c, type: 3}
-  ErrorButtonTexture: {fileID: 2800000, guid: f752d027f2368431c924c0306e747c4b, type: 3}
-  ButtonPosition: {x: 0, y: 0}
-  ButtonSize: {x: 32, y: 32}
+  _messageIcon: {fileID: 2800000, guid: 18e664ee53df66f4bb97a7c818d03ada, type: 3}
+  _warningIcon: {fileID: 2800000, guid: 18e664ee53df66f4bb97a7c818d03ada, type: 3}
+  _errorIcon: {fileID: 2800000, guid: 80943585235899843b762b5358f1de33, type: 3}
+  Error: {fileID: 0}
 --- !u!1 &8919245610741062530
 GameObject:
   m_ObjectHideFlags: 0
