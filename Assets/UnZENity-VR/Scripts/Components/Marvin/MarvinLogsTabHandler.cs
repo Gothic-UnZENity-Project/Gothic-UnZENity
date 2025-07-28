@@ -1,6 +1,8 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using GUZ.Core;
+using GUZ.Core.Extensions;
 using GUZ.Core.Util;
 using TMPro;
 using UberLogger;
@@ -15,6 +17,8 @@ namespace GUZ.VR.Components.Marvin
 {
     public class MarvinLogsTabHandler : MonoBehaviour, ILogger
     {
+        [SerializeField] private Button _activateLoggingButton;
+        
         [SerializeField] private RectTransform _categoriesRoot;
         
         [SerializeField] private ScrollRect _logsRoot;
@@ -23,6 +27,13 @@ namespace GUZ.VR.Components.Marvin
         [SerializeField] private Texture2D _messageIcon;
         [SerializeField] private Texture2D _warningIcon;
         [SerializeField] private Texture2D _errorIcon;
+
+        private bool _isLoggingActive;
+        private List<LogInfo> _logItems = new();
+
+        private bool _isCategoryFiltered;
+        private LogCat _categoryFilter;
+        private bool _didCategoryFilterChange;
         
         private const int _logLineHeight = 15;
         private int _logCount;
@@ -61,9 +72,38 @@ namespace GUZ.VR.Components.Marvin
         }
 #endif
 
+        private void Update()
+        {
+            if (_didCategoryFilterChange)
+            {
+                _didCategoryFilterChange = false;
+                UpdateLogItemFilter();
+            }
+        }
+
+        public void OnToggleLoggingClick()
+        {
+            _isLoggingActive = !_isLoggingActive;
+
+            if (_isLoggingActive)
+            {
+                UpdateLogItemFilter();
+                _activateLoggingButton.GetComponentInChildren<TMP_Text>().text = "De-activate";
+            }
+            else
+            {
+                // Remove all existing log items
+                foreach (Transform child in _logContentContainer)
+                    Destroy(child.gameObject);
+                
+                _activateLoggingButton.GetComponentInChildren<TMP_Text>().text = "Activate";
+            }
+            
+        }
+
         private void FillCategories()
         {
-            var defaultCategories = new[] { "Nothing", "Everything", "-No Channel-" };
+            var defaultCategories = new[] { "Everything" };
             
             var catIndex = 0;
             foreach (var category in defaultCategories.Concat(Enum.GetNames(typeof(LogCat))))
@@ -73,25 +113,65 @@ namespace GUZ.VR.Components.Marvin
                 categoryTransform.localPosition = new Vector2(0, -(_logLineHeight / 2f) - _logLineHeight * catIndex);
                 categoryTransform.sizeDelta = new Vector2(_categoriesRoot.rect.width - 25f, _logLineHeight);
                 
+                var buttonComp = categoryGo.GetComponentInChildren<Button>();
+                buttonComp.onClick.AddListener(() => OnCategoryClick(category));
+                
                 var textComp =  categoryGo.GetComponentInChildren<TMP_Text>();
                 textComp.text = category;
                 catIndex++;
 
                 // One empty line to separate "special" categories from others.
-                if (category == "-No Channel-")
+                if (category == "Everything")
                     catIndex++;
             }
         }
+        
+        private void OnCategoryClick(string category)
+        {
+            _didCategoryFilterChange = true;
+            
+            if (Enum.TryParse<LogCat>(category, out var result))
+            {
+                _categoryFilter = result;
+                _isCategoryFiltered = true;            
+            }
+            else
+            {
+                _isCategoryFiltered = false;
+            }
+        }
 
+        /// <summary>
+        /// We always track log elements, but we create GameObjects only if the logging feature is active.
+        /// As storing 500 lines of text is no problem, but creating and constantly changing text fields in UI.
+        /// </summary>
         public void Log(LogInfo logInfo)
         {
-            AddTextItem(logInfo);
+            _logItems.Add(logInfo);
+            
+            // Remove the oldest entry if we're "full"
+            if (_logItems.Count > 500)
+                _logItems.RemoveAt(0);
+ 
+            // Only add element if it matches the current filter.
+            if (ShouldPrintLogEntry(logInfo))
+                AddTextItem(logInfo);
+        }
+
+        private bool ShouldPrintLogEntry(LogInfo logInfo)
+        {
+            if (!_isLoggingActive)
+                return false;
+            if (_isCategoryFiltered && !logInfo.Channel.EqualsIgnoreCase(_categoryFilter.ToString()))
+                return false;
+
+            return true;
         }
         
         private void AddTextItem(LogInfo logInfo)
         {
             var itemGo = ResourceLoader.TryGetPrefabObject(PrefabType.UiDebugLogLine, name: "LogItem", parent: _logContentContainer.gameObject);
-            var itemTransform = itemGo.GetComponent<RectTransform>();
+            var itemTransform = itemGo!.GetComponent<RectTransform>();
             itemTransform.localScale = Vector3.one; // 0 when instantiating.
             itemTransform.anchorMin = new Vector2(0, 1);
             itemTransform.anchorMax = new Vector2(0, 1);
@@ -127,13 +207,6 @@ namespace GUZ.VR.Components.Marvin
             _logCount++;
         }
 
-        /// <summary>
-        /// Format the message as follows:
-        ///     [channel] 0.000 : message  <-- Both channel and time shown
-        ///     0.000 : message            <-- Time shown, channel hidden
-        ///     [channel] : message        <-- Channel shown, time hidden
-        ///     message                    <-- Both channel and time hidden
-        /// </summary>
         private string FormatLogText(LogInfo log)
         {
             var showChannel = !string.IsNullOrEmpty(log.Channel);
@@ -149,6 +222,24 @@ namespace GUZ.VR.Components.Marvin
                 prefixMessageSeparator,
                 log.Message
             );
+        }
+        
+        private void UpdateLogItemFilter()
+        {
+            // Remove all existing log items
+            foreach (Transform child in _logContentContainer)
+                Destroy(child.gameObject);
+
+            // Reset counters and size
+            _logCount = 0;
+            _logContentContainer.sizeDelta = new Vector2(_logContentContainer.sizeDelta.x, 0);
+
+            // Re-add filtered items
+            foreach (var logInfo in _logItems)
+            {
+                if (!_isCategoryFiltered || logInfo.Channel.EqualsIgnoreCase(_categoryFilter.ToString()))
+                    AddTextItem(logInfo);
+            }
         }
     }
 }
