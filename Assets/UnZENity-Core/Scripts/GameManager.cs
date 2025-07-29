@@ -40,6 +40,7 @@ namespace GUZ.Core
         public StaticCacheManager StaticCache { get; private set; }
 
         public PlayerManager Player { get; private set; }
+        public MarvinManager Marvin { get; private set;  }
         public SkyManager Sky { get; private set; }
 
         public GameTime Time { get; private set; }
@@ -108,6 +109,7 @@ namespace GUZ.Core
             _barrierManager = new BarrierManager(DeveloperConfig);
             Lights = new StationaryLightsManager();
             Player = new PlayerManager(DeveloperConfig);
+            Marvin = new MarvinManager();
             Time = new GameTime(DeveloperConfig, this);
             Video = new VideoManager(DeveloperConfig);
             Sky = new SkyManager(DeveloperConfig, Time);

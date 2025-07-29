@@ -3,6 +3,7 @@ using System.Linq;
 using GUZ.Core;
 using GUZ.Core.Data.Adapter;
 using GUZ.Core.Manager;
+using GUZ.Core.Marvin;
 using GUZ.Core.Npc;
 using GUZ.Core.Vm;
 using GUZ.VR.Components.HVROverrides;
@@ -17,7 +18,7 @@ namespace GUZ.VR.Components.VobItem
     /// 2. Vibrate hand which holds item only
     /// 
     /// </summary>
-    public class VRWeapon : MonoBehaviour
+    public class VRWeapon : MonoBehaviour, IMarvinPropertyCollector
     {
         private const string _swingSwordSfxName = "Whoosh";
         
@@ -117,5 +118,46 @@ namespace GUZ.VR.Components.VobItem
             return sum / _velocityHistory.Count;
         }
 
+        public IEnumerable<object> CollectProperties()
+        {
+            return new List<object>
+            {
+                new MarvinProperty<float>(
+                    "Attack Velocity Threshold",
+                    () => _attackVelocityThreshold,
+                    value => _attackVelocityThreshold = value,
+                    0f, 10f),
+                    
+                new MarvinProperty<float>(
+                    "Velocity Check Duration",
+                    () => _velocityCheckDuration,
+                    value => _velocityCheckDuration = value,
+                    0.1f, 2f),
+                    
+                new MarvinProperty<int>(
+                    "Velocity Sample Count",
+                    () => _velocitySampleCount,
+                    value => _velocitySampleCount = value,
+                    1, 20),
+                    
+                new MarvinProperty<float>(
+                    "Vibration Amplitude",
+                    () => amplitude,
+                    value => amplitude = value,
+                    0f, 1f),
+                    
+                new MarvinProperty<float>(
+                    "Vibration Duration", 
+                    () => duration,
+                    value => duration = value,
+                    0.1f, 2f),
+                    
+                new MarvinProperty<float>(
+                    "Vibration Frequency",
+                    () => frequency,
+                    value => frequency = value,
+                    1f, 100f)
+            };
+        }
     }
 }

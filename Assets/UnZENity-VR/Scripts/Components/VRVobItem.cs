@@ -44,6 +44,12 @@ namespace GUZ.VR.Components
 
         public void OnGrabbed(HVRGrabberBase grabber, HVRGrabbable grabbable)
         {
+            if (GameGlobals.Marvin.IsMarvinSelectionMode)
+            {
+                GameGlobals.Marvin.MarvinSelectionGO = grabbable.gameObject;
+                return;
+            }
+            
             // OnGrabbed is normally called multiple times. Even after an object is already socketed. If so, then let's stop Grab behaviour.
             if (_vrProperties.IsSocketed)
                 return;

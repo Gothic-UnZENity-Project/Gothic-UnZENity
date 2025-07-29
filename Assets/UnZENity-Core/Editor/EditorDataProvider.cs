@@ -21,6 +21,7 @@ namespace GUZ.Core.Editor
         public LoadingManager Loading { get; }
         public StaticCacheManager StaticCache { get; set; }
         public PlayerManager Player { get; }
+        public MarvinManager Marvin { get; }
         public SkyManager Sky { get; }
         public GameTime Time { get; }
         public VideoManager Video { get; }
