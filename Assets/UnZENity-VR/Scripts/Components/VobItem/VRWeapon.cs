@@ -132,11 +132,6 @@ namespace GUZ.VR.Components.VobItem
                     value => _attackVelocityThreshold = value,
                     0f, 10f),
                     
-                new MarvinProperty<bool>(
-                    "Something",
-                    () => _debugSomething,
-                    value => _debugSomething = value),
-                
                 new MarvinProperty<float>(
                     "Velocity Check Duration",
                     () => _velocityCheckDuration,
