@@ -7603,46 +7603,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 7378289447247358827}
     m_Modifications:
-    - target: {fileID: 807802682596861610, guid: 8348fe5825a421c42be0dad392e03669, type: 3}
-      propertyPath: m_AnchorMax.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 807802682596861610, guid: 8348fe5825a421c42be0dad392e03669, type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 807802682596861610, guid: 8348fe5825a421c42be0dad392e03669, type: 3}
-      propertyPath: m_AnchorMin.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 807802682718333374, guid: 8348fe5825a421c42be0dad392e03669, type: 3}
-      propertyPath: m_AnchorMax.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 807802682718333374, guid: 8348fe5825a421c42be0dad392e03669, type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 807802683987001345, guid: 8348fe5825a421c42be0dad392e03669, type: 3}
-      propertyPath: m_AnchorMax.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 807802683987001345, guid: 8348fe5825a421c42be0dad392e03669, type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 807802684252027344, guid: 8348fe5825a421c42be0dad392e03669, type: 3}
-      propertyPath: m_AnchorMax.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 807802684252027344, guid: 8348fe5825a421c42be0dad392e03669, type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 807802684252027344, guid: 8348fe5825a421c42be0dad392e03669, type: 3}
-      propertyPath: m_AnchorMin.x
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 898575911347120498, guid: 8348fe5825a421c42be0dad392e03669, type: 3}
       propertyPath: m_Name
       value: Menu-MarvinMode

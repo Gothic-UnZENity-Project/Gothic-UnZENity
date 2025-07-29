@@ -4,7 +4,7 @@ namespace GUZ.Core.Manager
 {
     public class MarvinManager
     {
-        public bool IsMarvinSelectionMode = true;
+        public bool IsMarvinSelectionMode;
         public GameObject MarvinSelectionGO;
     }
 }

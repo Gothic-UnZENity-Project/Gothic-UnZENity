@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using GUZ.Core;
+using GUZ.Core.Extensions;
 using GUZ.Core.Marvin;
 using GUZ.Core.Util;
 using TMPro;
@@ -15,10 +16,11 @@ namespace GUZ.VR.Components.Marvin
         [SerializeField] private RectTransform _contentTransform;
         
         private const int _propertyHeight = 15;
-        private const int _propertyLabelWidth = 50;
+        private const int _propertyMarginBottom = 10;
+        private const int _propertyLabelWidth = 250;
         private List<object> _marvinProperties;
         private int _propertyCount;
-
+        
         
         private void Update()
         {
@@ -26,6 +28,12 @@ namespace GUZ.VR.Components.Marvin
                 return;
 
             FillMarvinSelection();
+        }
+
+        public void OnMarvinSelectionClick()
+        {
+            GameGlobals.Marvin.IsMarvinSelectionMode = true;
+            GameGlobals.Marvin.MarvinSelectionGO = null;
         }
 
         private void FillMarvinSelection()
@@ -54,66 +62,90 @@ namespace GUZ.VR.Components.Marvin
         private void CreateFields()
         {
             _objectTextComp.text = GameGlobals.Marvin.MarvinSelectionGO.name;
-            
             _propertyCount = 0;
+
+            if (_contentTransform.childCount != 0)
+                Destroy(_contentTransform.GetChild(0).gameObject);
+
+            var rootMargin = new GameObject("Margin");
+            rootMargin.SetParent(_contentTransform.gameObject);
+            rootMargin.transform.localPosition = new Vector2(_propertyLabelWidth / 2f + 10, 0); // 50% of text move to right + 10pix margin left.
+            float y = 0;
+            
             foreach (var property in _marvinProperties)
             {
+                var newElement = new GameObject();
+                newElement.SetParent(rootMargin);
+
+                y = -(_propertyHeight / 2f) - _propertyHeight * _propertyCount - _propertyMarginBottom * _propertyCount;
+                
                 switch (property)
                 {
                     case MarvinPropertyHeader header:
-                        CreateHeader(header);
+                        newElement.name = header.Name;
+                        var headerGo = CreateField(header, newElement, y);
+                        headerGo.GetComponentInChildren<TMP_Text>().fontStyle = FontStyles.Underline | FontStyles.UpperCase;
                         break;
                     case MarvinProperty<bool> boolProperty:
-                        CreateField(boolProperty);
+                        newElement.name = boolProperty.Name;
+                        CreateField(boolProperty, newElement, y);
                         break;
                     case MarvinProperty<int> intProperty:
-                        CreateField(intProperty);
+                        newElement.name = intProperty.Name;
+                        CreateField(intProperty, newElement, y);
                         break;
                     case MarvinProperty<float> floatProperty:
-                        CreateField(floatProperty);
+                        newElement.name = floatProperty.Name;
+                        CreateField(floatProperty, newElement, y);
                         break;
                     default:
                         Logger.LogWarning($"Unhandled MarvinSelection property type: {property.GetType()}", LogCat.Debug);
                         break;
                 }
+                _propertyCount++;
             }
+            
+            _contentTransform.sizeDelta = new Vector2(y, _contentTransform.sizeDelta.y);
         }
 
-        private void CreateHeader(MarvinPropertyHeader header)
+        private GameObject CreateField(MarvinPropertyHeader header, GameObject rootGo, float y)
         {
-            // Add additional free line above.
-            _propertyCount++;
-            
-            var headerGo = ResourceLoader.TryGetPrefabObject(PrefabType.UiDebugText, name: header.Name, parent: _contentTransform.gameObject);
+            var headerGo = ResourceLoader.TryGetPrefabObject(PrefabType.UiDebugText, parent: rootGo);
             headerGo.GetComponentInChildren<TMP_Text>().text = header.Name;
             
             var headerTransform = headerGo!.GetComponent<RectTransform>();
-            headerTransform.localPosition = new Vector2(0, -(_propertyHeight / 2f) - _propertyHeight * _propertyCount);
+            headerTransform.anchorMin = new Vector2(0, 1);
+            headerTransform.anchorMax = new Vector2(0, 1);
+            headerTransform.localPosition = new Vector2(0, y);
             headerTransform.sizeDelta = new Vector2(_propertyLabelWidth, _propertyHeight);
 
-            _propertyCount++;
+            return headerGo;
         }
 
-        private GameObject CreateField(MarvinProperty<bool> boolProperty)
+        private GameObject CreateField(MarvinProperty<bool> boolProperty, GameObject rootGo, float y)
         {
-            var toggleGo = ResourceLoader.TryGetPrefabObject(PrefabType.UiDebugToggle, name: boolProperty.Name, parent: _contentTransform.gameObject);
-            toggleGo.GetComponentInChildren<TMP_Text>().text = boolProperty.Name;
+            var labelGo = CreateField(new MarvinPropertyHeader(boolProperty.Name), rootGo, y);
+
+            var toggleGo = ResourceLoader.TryGetPrefabObject(PrefabType.UiDebugToggle, parent: rootGo);
             
             var toggleTransform = toggleGo!.GetComponent<RectTransform>();
-            toggleTransform.localPosition = new Vector2(0, -(_propertyHeight / 2f) - _propertyHeight * _propertyCount);
+            toggleTransform.anchorMin = new Vector2(0, 1);
+            toggleTransform.anchorMax = new Vector2(0, 1);
+            toggleTransform.localPosition = new Vector2(labelGo.GetComponent<RectTransform>().sizeDelta.x, y);
             toggleTransform.sizeDelta = new Vector2(_propertyLabelWidth, _propertyHeight);
 
             var toggleComp = toggleGo.GetComponentInChildren<Toggle>();
             toggleComp.isOn = boolProperty.Getter();
             toggleComp.onValueChanged.AddListener(value => boolProperty.Setter(value));
             
-            _propertyCount++;
             return toggleGo;
         }
         
-        private GameObject CreateField(MarvinProperty<int> intProperty)
+        private GameObject CreateField(MarvinProperty<int> intProperty, GameObject rootGo, float y)
         {
-            var sliderGo = CreateField(new MarvinProperty<float>(intProperty.Name, () => (float)intProperty.Getter(), value => intProperty.Setter((int)value), intProperty.MinValue, intProperty.MaxValue));
+            var marvinLabel = new MarvinProperty<float>(intProperty.Name, () => (float)intProperty.Getter(),
+                value => intProperty.Setter((int)value), intProperty.MinValue, intProperty.MaxValue);
+            var sliderGo = CreateField(marvinLabel, rootGo, y);
 
             // The only difference to float handling!
             sliderGo.GetComponentInChildren<Slider>().wholeNumbers = true;
@@ -121,24 +153,36 @@ namespace GUZ.VR.Components.Marvin
             return sliderGo;
         }
 
-        private GameObject CreateField(MarvinProperty<float> floatProperty)
+        private GameObject CreateField(MarvinProperty<float> floatProperty, GameObject rootGo, float y)
         {
-            var sliderGo = ResourceLoader.TryGetPrefabObject(PrefabType.UiDebugSlider, name: floatProperty.Name, parent: _contentTransform.gameObject);
-            sliderGo.GetComponentInChildren<TMP_Text>().text = floatProperty.Name;
+            var labelGo = CreateField(new MarvinPropertyHeader(floatProperty.Name), rootGo, y);
+            var labelWidth = labelGo.GetComponent<RectTransform>().sizeDelta.x;
+            
+            var sliderGo = ResourceLoader.TryGetPrefabObject(PrefabType.UiDebugSlider, parent: rootGo);
 
             var sliderTransform = sliderGo!.GetComponent<RectTransform>();
-            sliderTransform.localPosition = new Vector2(0, -(_propertyHeight / 2f) - _propertyHeight * _propertyCount);
+            sliderTransform.anchorMin = new Vector2(0, 1);
+            sliderTransform.anchorMax = new Vector2(0, 1);
+            sliderTransform.localPosition = new Vector2(labelWidth, y);
             sliderTransform.sizeDelta = new Vector2(_propertyLabelWidth, _propertyHeight);
-            
+
             var sliderComp = sliderGo.GetComponentInChildren<Slider>();
             sliderComp.minValue = floatProperty.MinValue;
             sliderComp.maxValue = floatProperty.MaxValue;
 
             sliderComp.wholeNumbers = false;
-            sliderComp.value = floatProperty.Getter();
-            sliderComp.onValueChanged.AddListener(value => floatProperty.Setter(value));
             
-            _propertyCount++;
+            var valueGo = CreateField(new MarvinPropertyHeader(string.Empty), rootGo, y);
+            // Align right of Slider
+            valueGo.transform.localPosition = new Vector2(labelWidth + _propertyLabelWidth + _propertyMarginBottom, y);
+
+            sliderComp.onValueChanged.AddListener(value =>
+            {
+                floatProperty.Setter(value);
+                valueGo.GetComponentInChildren<TMP_Text>().text = value.ToString();
+            });
+            sliderComp.value = floatProperty.Getter();
+            
             return sliderGo;
         }
     }
