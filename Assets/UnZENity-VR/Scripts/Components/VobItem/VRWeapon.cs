@@ -21,6 +21,8 @@ namespace GUZ.VR.Components.VobItem
     public class VRWeapon : MonoBehaviour, IMarvinPropertyCollector
     {
         private const string _swingSwordSfxName = "Whoosh";
+
+        [SerializeField] private bool _debugSomething;
         
         [SerializeField] private Rigidbody _rigidBody;
         [SerializeField] private AudioSource _audioSource;
@@ -122,12 +124,19 @@ namespace GUZ.VR.Components.VobItem
         {
             return new List<object>
             {
+                new MarvinPropertyHeader("VRWeapon"),
+                
                 new MarvinProperty<float>(
                     "Attack Velocity Threshold",
                     () => _attackVelocityThreshold,
                     value => _attackVelocityThreshold = value,
                     0f, 10f),
                     
+                new MarvinProperty<bool>(
+                    "Something",
+                    () => _debugSomething,
+                    value => _debugSomething = value),
+                
                 new MarvinProperty<float>(
                     "Velocity Check Duration",
                     () => _velocityCheckDuration,

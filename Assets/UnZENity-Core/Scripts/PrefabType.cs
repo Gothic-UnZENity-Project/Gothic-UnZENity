@@ -12,8 +12,11 @@ namespace GUZ.Core
         UiTexture,
         UiThumbnail,
         
-        UiDebugButton,
+        UiDebugText,
         UiDebugLogLine,
+        UiDebugButton,
+        UiDebugToggle,
+        UiDebugSlider,
 
         WayPoint,
         Vob,
@@ -60,8 +63,11 @@ namespace GUZ.Core
                 PrefabType.UiTexture => "Prefabs/UI/Texture",
                 PrefabType.UiThumbnail => "Prefabs/UI/Thumbnail",
                 
-                PrefabType.UiDebugButton => "Prefabs/UI/Debug/Button",
+                PrefabType.UiDebugText => "Prefabs/UI/Debug/Text",
                 PrefabType.UiDebugLogLine => "Prefabs/UI/Debug/LogLine",
+                PrefabType.UiDebugButton => "Prefabs/UI/Debug/Button",
+                PrefabType.UiDebugToggle => "Prefabs/UI/Debug/Toggle",
+                PrefabType.UiDebugSlider => "Prefabs/UI/Debug/Slider",
 
                 PrefabType.WayPoint => "Prefabs/WayPoint",
                 PrefabType.Vob => "Prefabs/Vobs/Vob",
