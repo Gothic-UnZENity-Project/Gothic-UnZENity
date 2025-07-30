@@ -10,7 +10,7 @@ using Logger = GUZ.Core.Util.Logger;
 
 namespace GUZ.VR.Components.Marvin
 {
-    public class MarvinSelectionTabHandler : MonoBehaviour
+    public class MarvinInspectorTabHandler : MonoBehaviour
     {
         [SerializeField] private TMP_Text _objectTextComp;
         [SerializeField] private RectTransform _contentTransform;

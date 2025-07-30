@@ -7607,10 +7607,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Menu-MarvinMode
       objectReference: {fileID: 0}
-    - target: {fileID: 898575911347120498, guid: 8348fe5825a421c42be0dad392e03669, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 898575911347120524, guid: 8348fe5825a421c42be0dad392e03669, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5

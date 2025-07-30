@@ -1,13 +1,17 @@
+using GUZ.Core.UI;
 using UnityEngine;
 
 namespace GUZ.VR.Components.Marvin
 {
     public class MarvinRootHandler : MonoBehaviour
     {
+        [SerializeField] ToggleButton _toggleButtonLogs;
+        [SerializeField] ToggleButton _toggleButtonMarvin;
+        [SerializeField] ToggleButton _toggleButtonInspector;
+        
         [SerializeField] private GameObject _tabLogs;
         [SerializeField] private GameObject _tabMarvin;
-        [SerializeField] private GameObject _tabMarvinSelected;
-
+        [SerializeField] private GameObject _tabInspector;
 
         private void Start()
         {
@@ -18,25 +22,32 @@ namespace GUZ.VR.Components.Marvin
         {
             ResetTabs();
             _tabLogs.SetActive(true);
+            _toggleButtonLogs.SetActive();
         }
 
         public void OnMarvinTabClicked()
         {
             ResetTabs();
             _tabMarvin.SetActive(true);
+            _toggleButtonMarvin.SetActive();
         }
 
-        public void OnTabMarvinSelectedClicked()
+        public void OnTabInspectorClicked()
         {
             ResetTabs();
-            _tabMarvinSelected.SetActive(true);
+            _tabInspector.SetActive(true);
+            _toggleButtonInspector.SetActive();
         }
 
         private void ResetTabs()
         {
             _tabLogs.SetActive(false);
             _tabMarvin.SetActive(false);
-            // _tabMarvinSelected.SetActive(false);
+            _tabInspector.SetActive(false);
+            
+            _toggleButtonLogs.SetInactive();
+            _toggleButtonMarvin.SetInactive();
+            _toggleButtonInspector.SetInactive();
         }
     }
 }
