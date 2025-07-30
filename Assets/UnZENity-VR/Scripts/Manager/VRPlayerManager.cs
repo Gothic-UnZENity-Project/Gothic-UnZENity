@@ -1,4 +1,7 @@
 ﻿#if GUZ_HVR_INSTALLED
+using GUZ.Core;
+using GUZ.VR.Adapter;
+using GUZ.VR.Components.HVROverrides;
 using HurricaneVR.Framework.Core;
 using HurricaneVR.Framework.Core.Grabbers;
 using UnityEngine;
@@ -10,6 +13,9 @@ namespace GUZ.VR.Manager
     /// </summary>
     public static class VRPlayerManager
     {
+        public static VRInteractionAdapter VRInteractionAdapter => (VRInteractionAdapter)GameContext.InteractionAdapter;
+        public static VRPlayerInputs VRPlayerInputs => VRInteractionAdapter.GetVRPlayerInputs();
+        
         public static GameObject GrabbedItemLeft;
         public static GameObject GrabbedObjectRight;
 

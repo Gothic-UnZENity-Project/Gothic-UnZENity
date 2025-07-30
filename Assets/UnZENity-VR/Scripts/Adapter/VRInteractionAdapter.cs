@@ -9,6 +9,7 @@ using GUZ.Core.UI.Menus.Adapter.Menu;
 using GUZ.Core.UI.Menus.Adapter.MenuItem;
 using GUZ.VR.Components;
 using GUZ.VR.Components.HVROverrides;
+using GUZ.VR.Components.Marvin;
 using HurricaneVR.Framework.Core.UI;
 using HurricaneVRExtensions.Simulator;
 using UnityEngine;
@@ -73,6 +74,9 @@ namespace GUZ.VR.Adapter
             SceneManager.MoveGameObjectToScene(go, scene);
 
             _playerController.SetNormalControls(true);
+
+            if (GameGlobals.Config.Dev.ActivateMarvinMode)
+                go.GetComponentInChildren<MarvinRootHandler>(true).gameObject.SetActive(true);
 
             return _playerController.gameObject;
         }
