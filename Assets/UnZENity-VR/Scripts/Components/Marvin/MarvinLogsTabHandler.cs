@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using GUZ.Core;
 using GUZ.Core.Extensions;
+using GUZ.Core.UI;
 using GUZ.Core.Util;
+using MyBox;
 using TMPro;
 using UberLogger;
 using UnityEditor;
@@ -17,16 +19,17 @@ namespace GUZ.VR.Components.Marvin
 {
     public class MarvinLogsTabHandler : MonoBehaviour, ILogger
     {
-        [SerializeField] private Button _activateLoggingButton;
-        
-        [SerializeField] private RectTransform _categoriesRoot;
-        
         [SerializeField] private ScrollRect _logsRoot;
         [SerializeField] private RectTransform _logContentContainer;
+        
+        [SerializeField] private Button _activateLoggingButton;
+        [SerializeField] private ToggleButton[] _severityFilterButtons;
+        [SerializeField] private RectTransform _categoriesRoot;
         
         [SerializeField] private Texture2D _messageIcon;
         [SerializeField] private Texture2D _warningIcon;
         [SerializeField] private Texture2D _errorIcon;
+        
 
         private bool _isLoggingActive;
         private List<LogInfo> _logItems = new();
@@ -37,14 +40,16 @@ namespace GUZ.VR.Components.Marvin
         private bool _isCategoryFiltered;
         private LogCat _categoryFilter;
         private bool _didCategoryFilterChange;
-        
+
+        private const int _categoryFilterMarginTop = 10;
         private const int _logLineHeight = 15;
         private int _logCount;
         
         private void Start()
         {
             Logger.AddLogger(this);
-            
+            _severityFilterButtons.ForEach(i => i.SetActive());
+
             // TODO - Really needed?
             _logsRoot.normalizedPosition = new Vector2(0, 0);
 
@@ -102,6 +107,9 @@ namespace GUZ.VR.Components.Marvin
 
         public void OnSeverityLoggingClick(int severityIndex)
         {
+            _severityFilterButtons.ForEach(i => i.SetInactive());
+            _severityFilterButtons[severityIndex].SetActive();
+            
             _isSeverityFiltered = true;
             _severityFilter = (LogSeverity)severityIndex;
             LogItemFilterUpdated();
@@ -116,7 +124,7 @@ namespace GUZ.VR.Components.Marvin
             {
                 var categoryGo = ResourceLoader.TryGetPrefabObject(PrefabType.UiDebugButton, name: category, parent: _categoriesRoot.gameObject);
                 var categoryTransform = categoryGo!.GetComponent<RectTransform>();
-                categoryTransform.localPosition = new Vector2(0, -(_logLineHeight / 2f) - _logLineHeight * catIndex);
+                categoryTransform.localPosition = new Vector2(0, -_categoryFilterMarginTop - (_logLineHeight / 2f) - _logLineHeight * catIndex);
                 categoryTransform.sizeDelta = new Vector2(_categoriesRoot.rect.width - 25f, _logLineHeight);
                 
                 var buttonComp = categoryGo.GetComponentInChildren<Button>();
@@ -141,10 +149,14 @@ namespace GUZ.VR.Components.Marvin
                 _categoryFilter = result;
                 _isCategoryFiltered = true;
             }
+            // Special type: "Everything"
             else
             {
                 _isCategoryFiltered = false;
-                _isSeverityFiltered = false; // We also reset it as it's sufficient for now to reset all when "Everything" is clicked.
+                
+                // We also reset it as it's sufficient for now to reset all when "Everything" is clicked.
+                _isSeverityFiltered = false;
+                _severityFilterButtons.ForEach(i => i.SetActive());
             }
         }
 
