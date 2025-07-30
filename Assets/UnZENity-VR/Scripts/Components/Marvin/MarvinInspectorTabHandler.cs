@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using GUZ.Core;
 using GUZ.Core.Extensions;
 using GUZ.Core.Marvin;
+using GUZ.Core.UI;
 using GUZ.Core.Util;
 using TMPro;
 using UnityEngine;
@@ -14,7 +15,8 @@ namespace GUZ.VR.Components.Marvin
     {
         [SerializeField] private TMP_Text _objectTextComp;
         [SerializeField] private RectTransform _contentTransform;
-        
+        [SerializeField] private ToggleButton _selectionButton;
+   
         private const int _propertyHeight = 15;
         private const int _propertyMarginBottom = 10;
         private const int _propertyLabelWidth = 250;
@@ -34,6 +36,8 @@ namespace GUZ.VR.Components.Marvin
         {
             GameGlobals.Marvin.IsMarvinSelectionMode = true;
             GameGlobals.Marvin.MarvinSelectionGO = null;
+
+            _selectionButton.SetActive();
         }
 
         private void FillMarvinSelection()
@@ -46,6 +50,7 @@ namespace GUZ.VR.Components.Marvin
 
             // Reset first. If we have errors below to ensure normal gameplay is reactivated.
             GameGlobals.Marvin.IsMarvinSelectionMode = false;
+            _selectionButton.SetInactive();
 
             var propertyCollectors = go.GetComponentsInChildren<IMarvinPropertyCollector>();
             _marvinProperties = new();
