@@ -24,6 +24,7 @@ namespace GUZ.VR.Components.Marvin
         
         [SerializeField] private Button _activateLoggingButton;
         [SerializeField] private ToggleButton[] _severityFilterButtons;
+        
         [SerializeField] private RectTransform _categoriesRoot;
         
         [SerializeField] private Texture2D _messageIcon;
@@ -37,6 +38,7 @@ namespace GUZ.VR.Components.Marvin
         private bool _isSeverityFiltered;
         private LogSeverity _severityFilter;
 
+        private List<ToggleButton> _categoryFilterButtons = new();
         private bool _isCategoryFiltered;
         private LogCat _categoryFilter;
         private bool _didCategoryFilterChange;
@@ -122,38 +124,47 @@ namespace GUZ.VR.Components.Marvin
             var catIndex = 0;
             foreach (var category in defaultCategories.Concat(Enum.GetNames(typeof(LogCat))))
             {
-                var categoryGo = ResourceLoader.TryGetPrefabObject(PrefabType.UiDebugButton, name: category, parent: _categoriesRoot.gameObject);
+                var categoryGo = ResourceLoader.TryGetPrefabObject(PrefabType.UiDebugToggleButton, name: category, parent: _categoriesRoot.gameObject);
                 var categoryTransform = categoryGo!.GetComponent<RectTransform>();
                 categoryTransform.localPosition = new Vector2(0, -_categoryFilterMarginTop - (_logLineHeight / 2f) - _logLineHeight * catIndex);
                 categoryTransform.sizeDelta = new Vector2(_categoriesRoot.rect.width - 25f, _logLineHeight);
                 
-                var buttonComp = categoryGo.GetComponentInChildren<Button>();
+                var buttonComp = categoryGo.GetComponentInChildren<ToggleButton>();
                 buttonComp.onClick.AddListener(() => OnCategoryClick(category));
                 
                 var textComp =  categoryGo.GetComponentInChildren<TMP_Text>();
                 textComp.text = category;
-                catIndex++;
 
-                // One empty line to separate "special" categories from others.
+                _categoryFilterButtons.Add(buttonComp);
+                catIndex++;
+                
                 if (category == "Everything")
+                {
+                    buttonComp.SetActive();
+                    
+                    // One empty line to separate "special" categories from others.
                     catIndex++;
+                }
             }
         }
         
         private void OnCategoryClick(string category)
         {
             _didCategoryFilterChange = true;
+            _categoryFilterButtons.ForEach(i => i.SetInactive());
             
-            if (Enum.TryParse<LogCat>(category, out var result))
+            if (Enum.TryParse<LogCat>(category, out var categoryResult))
             {
-                _categoryFilter = result;
+                _categoryFilter = categoryResult;
                 _isCategoryFiltered = true;
+                _categoryFilterButtons[(int)categoryResult + 1].SetActive(); // +1 as the first index is "Everything" 
             }
             // Special type: "Everything"
             else
             {
                 _isCategoryFiltered = false;
-                
+                _categoryFilterButtons[0].SetActive(); // 0 == Everything 
+
                 // We also reset it as it's sufficient for now to reset all when "Everything" is clicked.
                 _isSeverityFiltered = false;
                 _severityFilterButtons.ForEach(i => i.SetActive());

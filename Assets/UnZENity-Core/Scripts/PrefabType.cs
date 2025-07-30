@@ -15,6 +15,7 @@ namespace GUZ.Core
         UiDebugText,
         UiDebugLogLine,
         UiDebugButton,
+        UiDebugToggleButton,
         UiDebugToggle,
         UiDebugSlider,
 
@@ -66,6 +67,7 @@ namespace GUZ.Core
                 PrefabType.UiDebugText => "Prefabs/UI/Debug/Text",
                 PrefabType.UiDebugLogLine => "Prefabs/UI/Debug/LogLine",
                 PrefabType.UiDebugButton => "Prefabs/UI/Debug/Button",
+                PrefabType.UiDebugToggleButton => "Prefabs/UI/Debug/ToggleButton",
                 PrefabType.UiDebugToggle => "Prefabs/UI/Debug/Toggle",
                 PrefabType.UiDebugSlider => "Prefabs/UI/Debug/Slider",
 
