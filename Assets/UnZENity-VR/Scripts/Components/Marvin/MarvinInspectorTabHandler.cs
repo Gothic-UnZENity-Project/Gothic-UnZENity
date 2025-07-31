@@ -74,7 +74,8 @@ namespace GUZ.VR.Components.Marvin
 
             var rootMargin = new GameObject("Margin");
             rootMargin.SetParent(_contentTransform.gameObject);
-            rootMargin.transform.localPosition = new Vector2(_propertyLabelWidth / 2f + 10, 0); // 50% of text move to right + 10pix margin left.
+            // left: 50% of text move to right + one empty entry. top: one empty entry space.
+            rootMargin.transform.localPosition = new Vector2(_propertyLabelWidth / 2f + _propertyHeight, -_propertyHeight);
             float y = 0;
             
             foreach (var property in _marvinProperties)
@@ -110,7 +111,7 @@ namespace GUZ.VR.Components.Marvin
                 _propertyCount++;
             }
             
-            _contentTransform.sizeDelta = new Vector2(y, _contentTransform.sizeDelta.y);
+            _contentTransform.sizeDelta = new Vector2(_contentTransform.sizeDelta.x, Mathf.Abs(y));
         }
 
         private GameObject CreateField(MarvinPropertyHeader header, GameObject rootGo, float y)

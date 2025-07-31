@@ -59,13 +59,18 @@ namespace GUZ.Core.Config
         public GameVersion GameVersion = GameVersion.Gothic1;
         
         public GameContext.Controls GameControls = GameContext.Controls.VR;
+
+        [Separator("Debug")]
         [ConditionalField(fieldToCheck: nameof(GameControls), compareValues: GameContext.Controls.VR)]
         public bool EnableVRDeviceSimulator;
 
+        [Tooltip("Show Marvin Mode menu next to left hand in VR.")]
+        public bool ActivateMarvinMode;
 
+        
         /**
          * ##########
-         * Logging & Marvin Mode
+         * Logging
          * ##########
          */
 
@@ -83,11 +88,7 @@ namespace GUZ.Core.Config
 
         [OverrideLabel("DirectMusic Log Level")]
         public DirectMusic.LogLevel DirectMusicLogLevel = DirectMusic.LogLevel.Warning;
-
-        [Separator("Debug")]
-        [Tooltip("Show Marvin Mode menu next to left hand in VR.")]
-        public bool ActivateMarvinMode;
-
+        
 
         /**
          * ##########
