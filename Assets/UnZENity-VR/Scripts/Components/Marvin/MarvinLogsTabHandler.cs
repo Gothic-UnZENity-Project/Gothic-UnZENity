@@ -49,6 +49,10 @@ namespace GUZ.VR.Components.Marvin
         
         private void Start()
         {
+            // TODO - For now, we can only enable MarvinMode via DevConfig. Once it can be activated at runtime via gesture, we should remove this line.
+            if (!GameGlobals.Config.Dev.ActivateMarvinMode)
+                return;
+            
             Logger.AddLogger(this);
             _severityFilterButtons.ForEach(i => i.SetActive());
 
