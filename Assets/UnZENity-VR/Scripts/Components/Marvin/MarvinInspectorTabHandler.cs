@@ -161,9 +161,11 @@ namespace GUZ.VR.Components.Marvin
 
         private GameObject CreateField(MarvinProperty<float> floatProperty, GameObject rootGo, float y)
         {
-            var labelGo = CreateField(new MarvinPropertyHeader(floatProperty.Name), rootGo, y);
+            // Label + (InitialValue -> Remove trailing zeroes but show up to 3 fraction elements)
+            var labelGo = CreateField(new MarvinPropertyHeader($"{floatProperty.Name} ({floatProperty.Getter():0.###})"), rootGo, y);
             var labelWidth = labelGo.GetComponent<RectTransform>().sizeDelta.x;
             
+            // Slider
             var sliderGo = ResourceLoader.TryGetPrefabObject(PrefabType.UiDebugSlider, parent: rootGo);
 
             var sliderTransform = sliderGo!.GetComponent<RectTransform>();
@@ -178,6 +180,7 @@ namespace GUZ.VR.Components.Marvin
 
             sliderComp.wholeNumbers = false;
             
+            // Current Slider value
             var valueGo = CreateField(new MarvinPropertyHeader(string.Empty), rootGo, y);
             // Align right of Slider
             valueGo.transform.localPosition = new Vector2(labelWidth + _propertyLabelWidth + _propertyMarginBottom, y);
@@ -185,7 +188,7 @@ namespace GUZ.VR.Components.Marvin
             sliderComp.onValueChanged.AddListener(value =>
             {
                 floatProperty.Setter(value);
-                valueGo.GetComponentInChildren<TMP_Text>().text = value.ToString();
+                valueGo.GetComponentInChildren<TMP_Text>().text = value.ToString("F3");
             });
             sliderComp.value = floatProperty.Getter();
             

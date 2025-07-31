@@ -124,40 +124,53 @@ namespace GUZ.VR.Components.VobItem
         {
             return new List<object>
             {
-                new MarvinPropertyHeader("VRWeapon"),
-                
+                new MarvinPropertyHeader("VRWeapon - RigidBody"),
                 new MarvinProperty<float>(
-                    "Attack Velocity Threshold",
+                    "Mass",
+                    () => _rigidBody.mass,
+                    value => _rigidBody.mass = value,
+                    0f, 50f),
+                new MarvinProperty<float>(
+                    "Linear Damping",
+                    () => _rigidBody.linearDamping,
+                    value => _rigidBody.linearDamping = value,
+                    0f, 2f),
+                new MarvinProperty<float>(
+                    "Angular Damping",
+                    () => _rigidBody.angularDamping,
+                    value => _rigidBody.angularDamping = value,
+                    0f, 2f),
+                
+                new MarvinPropertyHeader("VRWeapon - Fight - Velocity"),
+                new MarvinProperty<float>(
+                    "Threshold",
                     () => _attackVelocityThreshold,
                     value => _attackVelocityThreshold = value,
                     0f, 10f),
-                    
                 new MarvinProperty<float>(
-                    "Velocity Check Duration",
+                    "Check Duration",
                     () => _velocityCheckDuration,
                     value => _velocityCheckDuration = value,
                     0.1f, 2f),
-                    
                 new MarvinProperty<int>(
-                    "Velocity Sample Count",
+                    "Sample Count",
                     () => _velocitySampleCount,
                     value => _velocitySampleCount = value,
                     1, 20),
                     
+                new MarvinPropertyHeader("VRWeapon - Fight - Vibration"),
                 new MarvinProperty<float>(
-                    "Vibration Amplitude",
+                    "Amplitude",
                     () => amplitude,
                     value => amplitude = value,
                     0f, 1f),
-                    
                 new MarvinProperty<float>(
-                    "Vibration Duration", 
+                    "Duration", 
                     () => duration,
                     value => duration = value,
                     0.1f, 2f),
-                    
                 new MarvinProperty<float>(
-                    "Vibration Frequency",
+                    "Frequency",
                     () => frequency,
                     value => frequency = value,
                     1f, 100f)
