@@ -74,7 +74,7 @@ namespace GUZ.Core.Config
          * ##########
          */
 
-        [Foldout("Logging and Marvin Mode", true)]
+        [Foldout("Logging", true)]
         [Separator("Logging")]
         [OverrideLabel("ZenKit Log Level")]
         public LogLevel ZenKitLogLevel = LogLevel.Warning;
