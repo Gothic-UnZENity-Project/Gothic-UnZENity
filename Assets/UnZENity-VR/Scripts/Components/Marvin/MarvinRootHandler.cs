@@ -1,3 +1,4 @@
+using GUZ.Core;
 using GUZ.Core.UI;
 using UnityEngine;
 
@@ -16,6 +17,9 @@ namespace GUZ.VR.Components.Marvin
         private void Start()
         {
             ResetTabs();
+
+            if (!GameGlobals.Config.Dev.ActivateMarvinMode)
+                gameObject.SetActive(false);
         }
 
         public void OnLogsTabClicked()
