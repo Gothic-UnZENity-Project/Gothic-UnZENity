@@ -4,6 +4,7 @@ using GUZ.Core.Extensions;
 using GUZ.Core.Marvin;
 using GUZ.Core.UI;
 using GUZ.Core.Util;
+using GUZ.VR.Manager;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -15,11 +16,12 @@ namespace GUZ.VR.Components.Marvin
     {
         [SerializeField] private TMP_Text _objectTextComp;
         [SerializeField] private RectTransform _contentTransform;
-        [SerializeField] private ToggleButton _selectionButton;
-   
+        [SerializeField] private ToggleButton _chooseVobButton;
+        [SerializeField] private ToggleButton _selectHeroButton;
+
         private const int _propertyHeight = 15;
         private const int _propertyMarginBottom = 10;
-        private const int _propertyLabelWidth = 250;
+        private const int _propertyLabelWidth = 300;
         private List<object> _marvinProperties;
         private int _propertyCount;
         
@@ -32,12 +34,28 @@ namespace GUZ.VR.Components.Marvin
             FillMarvinSelection();
         }
 
-        public void OnMarvinSelectionClick()
+        /// <summary>
+        /// Next Hand grab will be selecting the VOB to inspect.
+        /// </summary>
+        public void OnChooseVobClick()
         {
             GameGlobals.Marvin.IsMarvinSelectionMode = true;
             GameGlobals.Marvin.MarvinSelectionGO = null;
 
-            _selectionButton.SetActive();
+            _chooseVobButton.SetActive();
+            _selectHeroButton.SetInactive();
+        }
+
+        /// <summary>
+        /// Immediately "select" Hero
+        /// </summary>
+        public void OnSelectHeroClick()
+        {
+            GameGlobals.Marvin.IsMarvinSelectionMode = true;
+            GameGlobals.Marvin.MarvinSelectionGO = VRPlayerManager.VRInteractionAdapter.GetCurrentPlayerController();
+
+            _selectHeroButton.SetActive();
+            _chooseVobButton.SetInactive();
         }
 
         private void FillMarvinSelection()
@@ -50,11 +68,16 @@ namespace GUZ.VR.Components.Marvin
 
             // Reset first. If we have errors below to ensure normal gameplay is reactivated.
             GameGlobals.Marvin.IsMarvinSelectionMode = false;
-            _selectionButton.SetInactive();
+            _chooseVobButton.SetInactive();
 
             var propertyCollectors = go.GetComponentsInChildren<IMarvinPropertyCollector>();
             _marvinProperties = new();
-            
+
+            if (propertyCollectors.IsEmpty())
+            {
+                _marvinProperties.Add(new MarvinPropertyHeader("No property found!"));
+            }
+
             foreach (var collector in propertyCollectors)
             {
                 var properties = collector.CollectProperties();
@@ -188,7 +211,7 @@ namespace GUZ.VR.Components.Marvin
             sliderComp.onValueChanged.AddListener(value =>
             {
                 floatProperty.Setter(value);
-                valueGo.GetComponentInChildren<TMP_Text>().text = value.ToString("F3");
+                valueGo.GetComponentInChildren<TMP_Text>().text = value.ToString("0.###");
             });
             sliderComp.value = floatProperty.Getter();
             

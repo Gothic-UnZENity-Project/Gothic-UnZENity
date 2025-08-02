@@ -1,10 +1,12 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using GUZ.Core;
 using GUZ.Core.Data.Adapter;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
+using GUZ.Core.Marvin;
 using GUZ.Core.Vm;
 using GUZ.VR.Adapter;
 using GUZ.VR.Components.HVROverrides;
@@ -17,7 +19,7 @@ using ZenKit.Vobs;
 namespace GUZ.VR.Components
 {
     [RequireComponent(typeof(VRPlayerController), typeof(VRPlayerInputs))]
-    public class VRSwimDive : MonoBehaviour
+    public class VRSwimDive : MonoBehaviour, IMarvinPropertyCollector
     {
         [SerializeField] private VRPlayerController _playerController;
         [SerializeField] private VRPlayerInputs _playerInputs;
@@ -34,7 +36,24 @@ namespace GUZ.VR.Components
         private float _initialFallSpeed;
 
         private VmGothicEnums.WalkMode _mode = VmGothicEnums.WalkMode.Walk;
-        
+
+        // Water Bobbing
+        private Coroutine _waterBobbingCoroutine;
+        [SerializeField] private float _waterBobAmplitude = 0.001f;
+        [SerializeField] private float _waterBobFrequency = 2.5f;
+
+        // Swim movement
+        [SerializeField] private float _swimStartDiveVerticalVelocity = 5f;
+        [SerializeField] private float _swimHandMovementMultiplier = 7.5f;
+        [SerializeField] private float _swimVelocityFadeRate = 0.25f; // e.g., 0.25==75% less velocity with each second
+
+        // Dive movement
+        private Vector3 _currentVelocity;
+        [SerializeField] private float _diveHandMovementMultiplier = 5f;
+        [SerializeField] private float _diveVelocityFadeRate = 0.25f; // 0.25==75% less velocity with each second
+        private bool _isDivingForceStarted; // If we lift the grips, we set it to false again to re-enable sounds later.
+
+
         private void Start()
         {
             var vrPlayer = ((VRInteractionAdapter)GameContext.InteractionAdapter).GetVRPlayerController();
@@ -157,10 +176,6 @@ namespace GUZ.VR.Components
             }
         }
 
-        private Coroutine _waterBobbingCoroutine;
-        private const float _waterBobAmplitude = 0.001f;
-        private const float _waterBobFrequency = 2.5f;
-
         private IEnumerator WaterBobbing()
         {
             var time = 0f;
@@ -186,10 +201,6 @@ namespace GUZ.VR.Components
             _playerController.MaxFallSpeed = 0;
         }
         
-        [SerializeField] private float _swimStartDiveVerticalVelocity = 5f;
-        [SerializeField] private float _swimHandMovementMultiplier = 7.5f;
-        [SerializeField] private float _swimVelocityFadeRate = 0.25f; // e.g., 0.25==75% less velocity with each second
-        
         private void HandleSwim()
         {
             // Use force to pull yourself.
@@ -209,7 +220,7 @@ namespace GUZ.VR.Components
             // Fade out movement
             else
             {
-                _currentVelocity *= Mathf.Pow(_velocityFadeRate, Time.deltaTime);
+                _currentVelocity *= Mathf.Pow(_diveVelocityFadeRate, Time.deltaTime);
             }
 
             // Move the character - Horizontal only
@@ -222,12 +233,7 @@ namespace GUZ.VR.Components
                 StartCoroutine(StartDive());
             }
         }
-        
-        private Vector3 _currentVelocity;
-        [SerializeField] private float _handMovementMultiplier = 5f;
-        [SerializeField] private float _velocityFadeRate = 0.25f; // 0.25==75% less velocity with each second
-        private bool _isDivingForceStarted; // If we lift the grips, we set it to false again to re-enable sounds later.
-        
+
         private void HandleDive()
         {
             // Use force to pull yourself.
@@ -243,7 +249,7 @@ namespace GUZ.VR.Components
                 // Calculate hand movement direction and force
                 var leftHandVelocity = _playerInputs.LeftController.Velocity;
                 var rightHandVelocity = _playerInputs.RightController.Velocity;
-                var combinedVelocity = (leftHandVelocity + rightHandVelocity) * _handMovementMultiplier;
+                var combinedVelocity = (leftHandVelocity + rightHandVelocity) * _diveHandMovementMultiplier;
 
                 // Transform velocity to world space based on player rotation
                 var rotatedVelocity = transform.TransformDirection(combinedVelocity);
@@ -254,12 +260,59 @@ namespace GUZ.VR.Components
             // Fade out movement
             else
             {
-                _currentVelocity *= Mathf.Pow(_velocityFadeRate, Time.deltaTime);
+                _currentVelocity *= Mathf.Pow(_diveVelocityFadeRate, Time.deltaTime);
                 _isDivingForceStarted = false;
             }
 
             // Move the character
             _playerController.CharacterController.Move(_currentVelocity * Time.deltaTime);
+        }
+
+        public IEnumerable<object> CollectProperties()
+        {
+            return new List<object>
+            {
+                new MarvinPropertyHeader("VRSwimDive - Water bobbing"),
+                new MarvinProperty<float>(
+                    "Amplitude",
+                    () => _waterBobAmplitude,
+                    value => _waterBobAmplitude = value,
+                    0f, 0.01f),
+                new MarvinProperty<float>(
+                    "Frequency",
+                    () => _waterBobFrequency,
+                    value => _waterBobFrequency = value,
+                    0f, 5f),
+
+                new MarvinPropertyHeader("VRSwimDive - Swimming"),
+                new MarvinProperty<float>(
+                    "Force Dive - Vertical Velocity",
+                    () => _swimStartDiveVerticalVelocity,
+                    value => _swimStartDiveVerticalVelocity = value,
+                    0f, 10f),
+                new MarvinProperty<float>(
+                    "Hand Movement Multiplier",
+                    () => _swimHandMovementMultiplier,
+                    value => _swimHandMovementMultiplier = value,
+                    0f, 10f),
+                new MarvinProperty<float>(
+                    "Velocity Fade Rate",
+                    () => _swimVelocityFadeRate,
+                    value => _swimVelocityFadeRate = value,
+                    0f, 1f),
+
+                new MarvinPropertyHeader("VRSwimDive - Diving"),
+                new MarvinProperty<float>(
+                    "Hand Movement Multiplier",
+                    () => _diveHandMovementMultiplier,
+                    value => _diveHandMovementMultiplier = value,
+                    0f, 10f),
+                new MarvinProperty<float>(
+                    "Velocity Fade Rate",
+                    () => _diveVelocityFadeRate,
+                    value => _diveVelocityFadeRate = value,
+                    0f, 1f),
+            };
         }
     }
 }
