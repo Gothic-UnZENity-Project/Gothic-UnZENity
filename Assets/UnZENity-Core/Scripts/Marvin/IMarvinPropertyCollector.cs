@@ -4,6 +4,6 @@ namespace GUZ.Core.Marvin
 {
     public interface IMarvinPropertyCollector
     {
-        IEnumerable<object> CollectProperties();
+        IEnumerable<object> CollectMarvinInspectorProperties();
     }
 }

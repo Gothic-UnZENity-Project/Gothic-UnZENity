@@ -26,7 +26,11 @@ namespace GUZ.VR.Components
         
         private INpc _playerVob;
         private IAiHuman _playerAi;
+        private SfxAdapter _sfxSwimAdapter;
         private SfxAdapter _sfxDiveAdapter;
+        private SfxAdapter _sfxSwim2DiveAdapter;
+        private SfxAdapter _sfxSwim2HangAdapter; // Normally when pulling out of water only, but we also use when dive -> swim.
+        
         private HVRHandAnimator _leftHandAnimator;
         private HVRHandAnimator _rightHandAnimator;
             
@@ -43,10 +47,11 @@ namespace GUZ.VR.Components
         [SerializeField] private float _waterBobFrequency = 2.5f;
 
         // Swim movement
-        [SerializeField] private float _swimStartDiveVerticalVelocity = 5f;
+        [SerializeField] private float _swimStartDiveVerticalVelocity = -5f;
         [SerializeField] private float _swimHandMovementMultiplier = 7.5f;
         [SerializeField] private float _swimVelocityFadeRate = 0.25f; // e.g., 0.25==75% less velocity with each second
-
+        private bool _isSwimmingForceStarted; // If we lift the grips, we set it to false again to re-enable sounds later.
+        
         // Dive movement
         private Vector3 _currentVelocity;
         [SerializeField] private float _diveHandMovementMultiplier = 5f;
@@ -63,9 +68,23 @@ namespace GUZ.VR.Components
 			GlobalEventDispatcher.ZenKitBootstrapped.AddListener(() =>
             {
                 var mds = ResourceLoader.TryGetModelScript("Humans")!;
-                var anim = mds.Animations.First(i => i.Name.EqualsIgnoreCase("s_DiveF"));
-                var diveSfxName = anim.SoundEffects.First().Name;
+                
+                // FIXME - In G1, there are different sounds for SwimBack, Sideways, and Forward
+                var swimAnim = mds.Animations.First(i => i.Name.EqualsIgnoreCase("s_SwimF"));
+                var swimSfxName = swimAnim.SoundEffects.First().Name;
+                _sfxSwimAdapter = VmInstanceManager.TryGetSfxData(swimSfxName)!;
+                
+                var diveAnim = mds.Animations.First(i => i.Name.EqualsIgnoreCase("s_DiveF"));
+                var diveSfxName = diveAnim.SoundEffects.First().Name;
                 _sfxDiveAdapter = VmInstanceManager.TryGetSfxData(diveSfxName)!;
+
+                var swim2DiveAnim = mds.Animations.First(i => i.Name.EqualsIgnoreCase("t_Swim_2_Dive"));
+                var swim2DiveSfxName = swim2DiveAnim.SoundEffects.First().Name;
+                _sfxSwim2DiveAdapter = VmInstanceManager.TryGetSfxData(swim2DiveSfxName)!;
+                
+                var swim2HangAnim = mds.Animations.First(i => i.Name.EqualsIgnoreCase("t_Swim_2_Hang"));
+                var swim2HangSfxName = swim2HangAnim.SoundEffects.First().Name;
+                _sfxSwim2HangAdapter = VmInstanceManager.TryGetSfxData(swim2HangSfxName);
             });
 
             GlobalEventDispatcher.WorldSceneLoaded.AddListener(() =>
@@ -164,12 +183,18 @@ namespace GUZ.VR.Components
                     _rightHandAnimator.enabled = true;
                     break;
                 case ZenGineConst.WaterLevel.Chest:
+                    // Dive -> Swim
+                    if (_mode == VmGothicEnums.WalkMode.Dive)
+                        SFXPlayer.Instance.PlaySFX(_sfxSwim2HangAdapter.GetRandomClip(), Camera.main!.transform.position);
+                        
                     _mode = VmGothicEnums.WalkMode.Swim;
                     _playerController.Gravity = 0f;
                     _playerController.MaxFallSpeed = 0f;
-                    _waterBobbingCoroutine = StartCoroutine(WaterBobbing());
                     _leftHandAnimator.enabled = false;
                     _rightHandAnimator.enabled = false;
+                    
+                    if (_waterBobbingCoroutine == null)
+                        _waterBobbingCoroutine = StartCoroutine(WaterBobbing());
                     break;
                 default:
                     throw new Exception($"Unknown value {_playerAi.WaterLevel} for water.");
@@ -199,10 +224,17 @@ namespace GUZ.VR.Components
             yield return new WaitForSeconds(_diveStartGravityDownTime);
             _playerController.Gravity = 0;
             _playerController.MaxFallSpeed = 0;
+            
+            SFXPlayer.Instance.PlaySFX(_sfxSwim2DiveAdapter.GetRandomClip(), Camera.main!.transform.position);
         }
         
         private void HandleSwim()
         {
+            if (_playerInputs.BothGripsActiveState.JustActivated)
+            {
+                _isSwimmingForceStarted = true;
+            }
+            
             // Use force to pull yourself.
             if (_playerInputs.IsBothGripsActive)
             {
@@ -220,7 +252,15 @@ namespace GUZ.VR.Components
             // Fade out movement
             else
             {
-                _currentVelocity *= Mathf.Pow(_diveVelocityFadeRate, Time.deltaTime);
+                _currentVelocity *= Mathf.Pow(_swimVelocityFadeRate, Time.deltaTime);
+                _isSwimmingForceStarted = false;
+            }
+            
+            if (_isSwimmingForceStarted && _currentVelocity.magnitude > 1f)
+            {
+                // Play a random swim sound via HVRs SFXPlayer.
+                SFXPlayer.Instance.PlaySFX(_sfxSwimAdapter.GetRandomClip(), Camera.main!.transform.position);
+                _isSwimmingForceStarted = true;
             }
 
             // Move the character - Horizontal only
@@ -229,23 +269,20 @@ namespace GUZ.VR.Components
 
             if (_currentVelocity.y > _swimStartDiveVerticalVelocity)
             {
-                StopCoroutine(_waterBobbingCoroutine);
                 StartCoroutine(StartDive());
             }
         }
 
         private void HandleDive()
         {
+            if (_playerInputs.BothGripsActiveState.JustActivated)
+            {
+                _isDivingForceStarted = true;
+            }
+            
             // Use force to pull yourself.
             if (_playerInputs.IsBothGripsActive)
             {
-                if (!_isDivingForceStarted)
-                {
-                    // Play a random dive sound via HVRs SFXPlayer.
-                    SFXPlayer.Instance.PlaySFX(_sfxDiveAdapter.GetRandomClip(), Camera.main!.transform.position);
-                    _isDivingForceStarted = true;
-                }
-                
                 // Calculate hand movement direction and force
                 var leftHandVelocity = _playerInputs.LeftController.Velocity;
                 var rightHandVelocity = _playerInputs.RightController.Velocity;
@@ -263,12 +300,19 @@ namespace GUZ.VR.Components
                 _currentVelocity *= Mathf.Pow(_diveVelocityFadeRate, Time.deltaTime);
                 _isDivingForceStarted = false;
             }
+            
+            if (_isDivingForceStarted && _currentVelocity.magnitude > 1f)
+            {
+                // Play a random dive sound via HVRs SFXPlayer.
+                SFXPlayer.Instance.PlaySFX(_sfxDiveAdapter.GetRandomClip(), Camera.main!.transform.position);
+                _isDivingForceStarted = true;
+            }
 
             // Move the character
             _playerController.CharacterController.Move(_currentVelocity * Time.deltaTime);
         }
 
-        public IEnumerable<object> CollectProperties()
+        public IEnumerable<object> CollectMarvinInspectorProperties()
         {
             return new List<object>
             {
@@ -289,7 +333,7 @@ namespace GUZ.VR.Components
                     "Force Dive - Vertical Velocity",
                     () => _swimStartDiveVerticalVelocity,
                     value => _swimStartDiveVerticalVelocity = value,
-                    0f, 10f),
+                    -10f, 0f),
                 new MarvinProperty<float>(
                     "Hand Movement Multiplier",
                     () => _swimHandMovementMultiplier,

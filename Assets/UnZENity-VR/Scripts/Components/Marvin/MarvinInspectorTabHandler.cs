@@ -80,7 +80,7 @@ namespace GUZ.VR.Components.Marvin
 
             foreach (var collector in propertyCollectors)
             {
-                var properties = collector.CollectProperties();
+                var properties = collector.CollectMarvinInspectorProperties();
                 _marvinProperties.AddRange(properties);
             }
 

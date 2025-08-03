@@ -120,7 +120,7 @@ namespace GUZ.VR.Components.VobItem
             return sum / _velocityHistory.Count;
         }
 
-        public IEnumerable<object> CollectProperties()
+        public IEnumerable<object> CollectMarvinInspectorProperties()
         {
             return new List<object>
             {
