@@ -3,6 +3,7 @@ using System.Linq;
 using GUZ.Core;
 using GUZ.Core.Data.Adapter;
 using GUZ.Core.Manager;
+using GUZ.Core.Marvin;
 using GUZ.Core.Npc;
 using GUZ.Core.Vm;
 using GUZ.VR.Components.HVROverrides;
@@ -17,9 +18,11 @@ namespace GUZ.VR.Components.VobItem
     /// 2. Vibrate hand which holds item only
     /// 
     /// </summary>
-    public class VRWeapon : MonoBehaviour
+    public class VRWeapon : MonoBehaviour, IMarvinPropertyCollector
     {
         private const string _swingSwordSfxName = "Whoosh";
+
+        [SerializeField] private bool _debugSomething;
         
         [SerializeField] private Rigidbody _rigidBody;
         [SerializeField] private AudioSource _audioSource;
@@ -117,5 +120,61 @@ namespace GUZ.VR.Components.VobItem
             return sum / _velocityHistory.Count;
         }
 
+        public IEnumerable<object> CollectMarvinInspectorProperties()
+        {
+            return new List<object>
+            {
+                new MarvinPropertyHeader("VRWeapon - RigidBody"),
+                new MarvinProperty<float>(
+                    "Mass",
+                    () => _rigidBody.mass,
+                    value => _rigidBody.mass = value,
+                    0f, 50f),
+                new MarvinProperty<float>(
+                    "Linear Damping",
+                    () => _rigidBody.linearDamping,
+                    value => _rigidBody.linearDamping = value,
+                    0f, 2f),
+                new MarvinProperty<float>(
+                    "Angular Damping",
+                    () => _rigidBody.angularDamping,
+                    value => _rigidBody.angularDamping = value,
+                    0f, 2f),
+                
+                new MarvinPropertyHeader("VRWeapon - Fight - Velocity"),
+                new MarvinProperty<float>(
+                    "Threshold",
+                    () => _attackVelocityThreshold,
+                    value => _attackVelocityThreshold = value,
+                    0f, 10f),
+                new MarvinProperty<float>(
+                    "Check Duration",
+                    () => _velocityCheckDuration,
+                    value => _velocityCheckDuration = value,
+                    0.1f, 2f),
+                new MarvinProperty<int>(
+                    "Sample Count",
+                    () => _velocitySampleCount,
+                    value => _velocitySampleCount = value,
+                    1, 20),
+                    
+                new MarvinPropertyHeader("VRWeapon - Fight - Vibration"),
+                new MarvinProperty<float>(
+                    "Amplitude",
+                    () => amplitude,
+                    value => amplitude = value,
+                    0f, 1f),
+                new MarvinProperty<float>(
+                    "Duration", 
+                    () => duration,
+                    value => duration = value,
+                    0.1f, 2f),
+                new MarvinProperty<float>(
+                    "Frequency",
+                    () => frequency,
+                    value => frequency = value,
+                    1f, 100f)
+            };
+        }
     }
 }

@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System;
+using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 
@@ -301,6 +302,16 @@ namespace UberLogger
                 {
                     Loggers.Add(logger);
                 }
+            }
+        }
+
+        static public void RemoveLogger(string loggerFullClassName)
+        {
+            lock (Loggers)
+            {
+                var foundLogger = Loggers.FirstOrDefault(i => i.GetType().FullName == loggerFullClassName);
+                if (foundLogger != null)
+                    Loggers.Remove(foundLogger);
             }
         }
 

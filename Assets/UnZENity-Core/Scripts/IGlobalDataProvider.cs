@@ -19,6 +19,7 @@ namespace GUZ.Core
         public StaticCacheManager StaticCache { get; }
 
         public PlayerManager Player { get; }
+        public MarvinManager Marvin { get; }
         public SkyManager Sky { get; }
         public GameTime Time { get; }
         public VideoManager Video { get; }

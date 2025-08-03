@@ -24,7 +24,6 @@ namespace GUZ.Core.Config
 
 
 
-
     [CreateAssetMenu(fileName = "NewDeveloperConfiguration", menuName = "UnZENity/ScriptableObjects/DeveloperConfiguration", order = 1)]
     public class DeveloperConfig : ScriptableObject
     {
@@ -60,10 +59,15 @@ namespace GUZ.Core.Config
         public GameVersion GameVersion = GameVersion.Gothic1;
         
         public GameContext.Controls GameControls = GameContext.Controls.VR;
+
+        [Separator("Debug")]
         [ConditionalField(fieldToCheck: nameof(GameControls), compareValues: GameContext.Controls.VR)]
         public bool EnableVRDeviceSimulator;
 
+        [Tooltip("Show Marvin Mode menu next to left hand in VR.")]
+        public bool ActivateMarvinMode;
 
+        
         /**
          * ##########
          * Logging
@@ -71,6 +75,7 @@ namespace GUZ.Core.Config
          */
 
         [Foldout("Logging", true)]
+        [Separator("Logging")]
         [OverrideLabel("ZenKit Log Level")]
         public LogLevel ZenKitLogLevel = LogLevel.Warning;
 
@@ -83,7 +88,7 @@ namespace GUZ.Core.Config
 
         [OverrideLabel("DirectMusic Log Level")]
         public DirectMusic.LogLevel DirectMusicLogLevel = DirectMusic.LogLevel.Warning;
-
+        
 
         /**
          * ##########

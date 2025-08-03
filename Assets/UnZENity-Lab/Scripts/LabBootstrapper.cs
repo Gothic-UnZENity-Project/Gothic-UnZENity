@@ -56,6 +56,7 @@ namespace GUZ.Lab
         public LoadingManager Loading => null;
         public StaticCacheManager StaticCache => null;
         public PlayerManager Player => null;
+        public MarvinManager Marvin => null;
         public SkyManager Sky => _skyManager;
         public GameTime Time => _gameTime;
         public MusicManager Music => Music;

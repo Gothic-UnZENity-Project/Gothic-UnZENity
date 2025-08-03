@@ -219,7 +219,9 @@ namespace GUZ.Core.Manager.Vobs
             switch (vob.Type)
             {
                 case VirtualObjectType.oCItem:
-                    var item = VmInstanceManager.TryGetItemData(((IItem)vob).Instance)!;
+                    var vobItem = (IItem)vob;
+                    var itemName = vobItem.Instance.NotNullOrEmpty() ? vobItem.Instance : vobItem.Name;
+                    var item = VmInstanceManager.TryGetItemData(itemName)!;
                     var mainFlag = (VmGothicEnums.ItemFlags)item.MainFlag;
                     
                     if (mainFlag is VmGothicEnums.ItemFlags.ItemKatNf or VmGothicEnums.ItemFlags.ItemKatFf)
