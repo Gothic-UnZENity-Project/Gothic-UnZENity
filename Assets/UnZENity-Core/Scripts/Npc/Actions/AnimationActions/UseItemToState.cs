@@ -53,7 +53,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
                         Props.HasItemEquipped = false;
                         Props.CurrentItem = -1;
                     }
-                    AnimationEndEventTime = PrefabProps.AnimationSystem.GetAnimationDuration(animationName);
+                    ActionEndEventTime = PrefabProps.AnimationSystem.GetAnimationDuration(animationName);
                     return; // Let animation end event continue the transition
                 }
 

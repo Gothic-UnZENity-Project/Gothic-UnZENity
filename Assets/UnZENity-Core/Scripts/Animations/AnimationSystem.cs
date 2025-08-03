@@ -35,8 +35,8 @@ namespace GUZ.Core.Animations
         // Caching bone Transforms makes it faster to apply them to animations later.
         private string[] _boneNames;
         private Transform[] _bones;
-        private Vector3[] _meshBonePos;
-        private Quaternion[] _meshBoneRot;
+        private Vector3[] _initialMeshBonePos;
+        private Quaternion[] _initialMeshBoneRot;
         private List<AnimationTrackInstance> _trackInstances = new();
         private bool _isSittingInverted;
 
@@ -59,8 +59,8 @@ namespace GUZ.Core.Animations
 
             _boneNames = bones.Keys.ToArray();
             _bones = bones.Values.ToArray();
-            _meshBonePos = _bones.Select(i => i.transform.localPosition).ToArray();
-            _meshBoneRot = _bones.Select(i => i.transform.localRotation).ToArray();
+            _initialMeshBonePos = _bones.Select(i => i.transform.localPosition).ToArray();
+            _initialMeshBoneRot = _bones.Select(i => i.transform.localRotation).ToArray();
         }
 
         public void DisableObject()
@@ -68,7 +68,7 @@ namespace GUZ.Core.Animations
             // If an NPC is culled out, the old positions are still set. We need to reset them to ensure we have an idle NPC starting.
             for (var i = 0; i < _bones.Length; i++)
             {
-                _bones[i].SetLocalPositionAndRotation(_meshBonePos[i], _meshBoneRot[i]);
+                _bones[i].SetLocalPositionAndRotation(_initialMeshBonePos[i], _initialMeshBoneRot[i]);
             }
 
             _trackInstances.Clear();
@@ -108,12 +108,10 @@ namespace GUZ.Core.Animations
 
             // FIXME - Now we need to handle animation flags: M - Move and R - Rotate.
             //         Then S_ROTATEL will work properly and stop once rotated enough.
-            Logger.LogEditor($"Playing animation: {animationName}", LogCat.Animation);
+            Logger.LogEditor($"Playing animation: {newTrack.Name}, alias: {newTrack.AliasName}", LogCat.Animation);
 
             if (IsAlreadyPlaying(newTrack))
-            {
                 return true;
-            }
 
             var newTrackInstance = new AnimationTrackInstance(newTrack);
             var newTrackLayer = newTrackInstance.Track.Layer;
@@ -157,10 +155,8 @@ namespace GUZ.Core.Animations
         {
             for (var i = 0; i < _trackInstances.Count; i++)
             {
-                if (newTrack.Name == _trackInstances[i].Track.Name)
-                {
+                if (newTrack.IsSameAnimation(_trackInstances[i].Track))
                     return true;
-                }
             }
 
             return false;
@@ -168,7 +164,7 @@ namespace GUZ.Core.Animations
 
         public bool PlayIdleAnimation()
         {
-            return PlayAnimation(GetIdleAnimationName());
+            return PlayAnimation(GameGlobals.Animations.GetAnimationName(VmGothicEnums.AnimationType.Idle, Vob));
         }
 
         public float GetAnimationDuration(string animationName)
@@ -299,6 +295,26 @@ namespace GUZ.Core.Animations
             lowerLayerTrack.BlendOutBones(bonesToSkip.ToArray(), 0f);
         }
 
+        /// <summary>
+        /// We need to ensure that we always have at least an idle animation running. Otherwise, e.g., a Wait(2) might cause an NPC after walking to not breathe.
+        /// </summary>
+        private void CheckAndSetIdleAnimation()
+        {
+            var hasLayer1AnimationRunning = false;
+            foreach (var trackInstance in _trackInstances)
+            {
+                if (trackInstance.Track.Layer == 1 &&
+                    trackInstance.State is AnimationState.BlendIn or AnimationState.Play)
+                {
+                    hasLayer1AnimationRunning = true;
+                    break;
+                }
+            }
+
+            if (!hasLayer1AnimationRunning)
+                PlayIdleAnimation();
+        }
+
         private void Update()
         {
             if (_trackInstances.Count == 0)
@@ -322,8 +338,10 @@ namespace GUZ.Core.Animations
                         if (instance.Track.NextAni.NotNullOrEmpty())
                         {
                             PlayAnimation(instance.Track.NextAni);
-                            BlendInOtherTrackBones(instance);
                         }
+                        
+                        BlendInOtherTrackBones(instance);
+                        CheckAndSetIdleAnimation();
                         break;
                     case AnimationState.Stop:
                         PreStopAnimation(instance);
@@ -397,13 +415,9 @@ namespace GUZ.Core.Animations
 
                     // The first animation for a bone will define the start point of the rotation. Starting with Q.Identity is wrong and causes hickups.
                     if (i == 0)
-                    {
                         finalRotation = rotation;
-                    }
                     else
-                    {
                         finalRotation = Quaternion.Slerp(finalRotation, rotation, trackInstanceBoneWeight);
-                    }
                 }
 
                 // If we under blended the current object, we need to apply positions from the mesh itself.
@@ -411,8 +425,8 @@ namespace GUZ.Core.Animations
                 // This should be a rare case where we won't have a sum of 1.0. Just a safety treatment.
                 if (boneWeightSum < 1f)
                 {
-                    finalPosition += _meshBonePos[boneIndex] * (1 - boneWeightSum);
-                    finalRotation = Quaternion.Slerp(finalRotation, _meshBoneRot[boneIndex], 1 - boneWeightSum);
+                    finalPosition += _initialMeshBonePos[boneIndex] * (1 - boneWeightSum);
+                    finalRotation = Quaternion.Slerp(finalRotation, _initialMeshBoneRot[boneIndex], 1 - boneWeightSum);
                 }
 
                 bone.localPosition = finalPosition;
@@ -428,16 +442,12 @@ namespace GUZ.Core.Animations
                 var trackInstance = _trackInstances[i];
 
                 if (!trackInstance.Track.IsMoving)
-                {
                     continue;
-                }
 
                 // Stop, if we have no Root bone
                 var boneIndex = trackInstance.GetBoneIndex(Constants.Animations.RootBoneName);
                 if (boneIndex == -1)
-                {
                     continue;
-                }
 
                 finalMovement += trackInstance.Track.MovementSpeed * trackInstance.BoneBlendWeights[boneIndex] * Time.deltaTime;
             }
@@ -501,13 +511,11 @@ namespace GUZ.Core.Animations
         {
             var sfxEvents = trackInstance.GetPendingSoundEffects();
             if (sfxEvents == null)
-            {
                 return;
-            }
 
             foreach (var sfx in sfxEvents)
             {
-                var clip = GameGlobals.Vobs.GetSoundClip(sfx.Name);
+                var clip = GameGlobals.Vobs.GetRandomSoundClip(sfx.Name);
                 PrefabProps.NpcSound.clip = clip;
                 PrefabProps.NpcSound.maxDistance = sfx.Range.ToMeter();
                 PrefabProps.NpcSound.Play();
@@ -518,9 +526,7 @@ namespace GUZ.Core.Animations
         {
             var pfxEvents = trackInstance.GetPendingParticleEffects();
             if (pfxEvents == null)
-            {
                 return;
-            }
 
             foreach (var pfx in pfxEvents)
             {
@@ -532,9 +538,7 @@ namespace GUZ.Core.Animations
         {
             var morphEvents = trackInstance.GetPendingMorphAnimations();
             if (morphEvents == null)
-            {
                 return;
-            }
 
             foreach (var morph in morphEvents)
             {
@@ -542,38 +546,6 @@ namespace GUZ.Core.Animations
 
                 PrefabProps.HeadMorph.StartAnimation(Properties.BodyData.Head, type);
             }
-        }
-
-        private string GetIdleAnimationName()
-        {
-            var walkMode = (VmGothicEnums.WalkMode)Vob.AiHuman.WalkMode;
-            string walkModeString;
-            switch (walkMode)
-            {
-                case VmGothicEnums.WalkMode.Walk:
-                    walkModeString = "WALK";
-                    break;
-                case VmGothicEnums.WalkMode.Run:
-                    walkModeString = "RUN";
-                    break;
-                case VmGothicEnums.WalkMode.Sneak:
-                    walkModeString = "SNEAK";
-                    break;
-                case VmGothicEnums.WalkMode.Water:
-                    walkModeString = "WATER";
-                    break;
-                case VmGothicEnums.WalkMode.Swim:
-                    walkModeString = "SWIM";
-                    break;
-                case VmGothicEnums.WalkMode.Dive:
-                    walkModeString = "DIVE";
-                    break;
-                default:
-                    Logger.LogWarning($"Animation of type {walkMode} not yet implemented.", LogCat.Animation);
-                    return "";
-            }
-
-            return $"S_{walkModeString}";
         }
 
         private void InsertItem(string slot1, string slot2)
@@ -606,8 +578,7 @@ namespace GUZ.Core.Animations
 
         public void StopAllAnimations()
         {
-            // FIXME - Implement
-            Logger.LogWarning("StopAllAnimations not yet implemented.", LogCat.Animation);
+            DisableObject();
         }
 
         public void PlayHeadAnimation(HeadMorph.HeadMorphType viseme)

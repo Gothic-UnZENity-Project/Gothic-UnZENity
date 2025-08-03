@@ -81,9 +81,10 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
 
         private string GetWalkModeAnimationString()
         {
-            var weaponState = Props.WeaponState == VmGothicEnums.WeaponState.NoWeapon
+            var fightMode = (VmGothicEnums.WeaponState)Vob.FightMode;
+            var weaponState = fightMode == VmGothicEnums.WeaponState.NoWeapon
                 ? ""
-                : Props.WeaponState.ToString();
+                : fightMode.ToString();
             var walkMode = (VmGothicEnums.WalkMode)Vob.AiHuman.WalkMode;
             switch (walkMode)
             {

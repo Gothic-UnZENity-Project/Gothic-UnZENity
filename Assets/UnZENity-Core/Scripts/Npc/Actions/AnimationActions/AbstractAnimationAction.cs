@@ -19,7 +19,8 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
 {
     public abstract class AbstractAnimationAction
     {
-        protected readonly AnimationAction Action;
+        public readonly AnimationAction Action;
+
         protected readonly NpcContainer NpcContainer;
         protected readonly NpcInstance NpcInstance;
         protected readonly GameObject NpcGo;
@@ -28,7 +29,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
         protected readonly NpcPrefabProperties PrefabProps;
 
         protected float ActionTime;
-        protected float AnimationEndEventTime;
+        protected float ActionEndEventTime;
 
         protected bool IsFinishedFlag;
 
@@ -49,44 +50,12 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             PhysicsHelper.DisablePhysicsForNpc(PrefabProps);
         }
 
-        public string GetWalkModeAnimationString()
-        {
-            var walkMode = (VmGothicEnums.WalkMode)Vob.AiHuman.WalkMode;
-            string walkModeString;
-            switch (walkMode)
-            {
-                case VmGothicEnums.WalkMode.Walk:
-                    walkModeString = "WALK";
-                    break;
-                case VmGothicEnums.WalkMode.Run:
-                    walkModeString = "RUN";
-                    break;
-                case VmGothicEnums.WalkMode.Sneak:
-                    walkModeString = "SNEAK";
-                    break;
-                case VmGothicEnums.WalkMode.Water:
-                    walkModeString = "WATER";
-                    break;
-                case VmGothicEnums.WalkMode.Swim:
-                    walkModeString = "SWIM";
-                    break;
-                case VmGothicEnums.WalkMode.Dive:
-                    walkModeString = "DIVE";
-                    break;
-                default:
-                    Logger.LogWarning($"Animation of type {walkMode} not yet implemented.", LogCat.Ai);
-                    return "";
-            }
-
-            return $"S_{walkModeString}";
-        }
-
         /// <summary>
         /// We just set the audio by default.
         /// </summary>
         public virtual void AnimationSfxEventCallback(SerializableEventSoundEffect sfxData)
         {
-            var clip = GameGlobals.Vobs.GetSoundClip(sfxData.Name);
+            var clip = GameGlobals.Vobs.GetRandomSoundClip(sfxData.Name);
             PrefabProps.NpcSound.clip = clip;
             PrefabProps.NpcSound.maxDistance = sfxData.Range.ToMeter();
             PrefabProps.NpcSound.Play();
@@ -162,7 +131,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
         {
             ActionTime += Time.deltaTime;
 
-            if (AnimationEndEventTime != 0.0f && ActionTime >= AnimationEndEventTime)
+            if (ActionEndEventTime != 0.0f && ActionTime >= ActionEndEventTime)
             {
                 AnimationEnd();
             }

@@ -48,6 +48,61 @@ namespace GUZ.Core.Vm
             AssessEnterRoom = 31,
             AssessUseMob = 32
         }
+        
+        public enum AnimationType
+        {
+            NoAnim,
+            Idle,
+            Move,
+
+            MoveBack,
+            MoveL,
+            MoveR,
+            RotL,
+            RotR,
+            WhirlL,
+            WhirlR,
+            Fall,
+            FallDeep,
+            FallDeepA,
+            FallDeepB,
+
+            Jump,
+            JumpUpLow,
+            JumpUpMid,
+            JumpUp,
+            JumpHang,
+            Fallen,
+            FallenA,
+            FallenB,
+            SlideA,
+            SlideB,
+
+            DeadA,
+            DeadB,
+            UnconsciousA,
+            UnconsciousB,
+
+            InteractIn,
+            InteractOut,
+            InteractToStand,
+            InteractFromStand,
+
+            Attack,
+            AttackL,
+            AttackR,
+            AttackBlock,
+            AttackFinish,
+            StumbleA,
+            StumbleB,
+            AimBow,
+            PointAt,
+
+            ItmGet,
+            ItmDrop,
+
+            MagNoMana
+        };
 
         public enum Attitude
         {
@@ -226,6 +281,9 @@ namespace GUZ.Core.Vm
             }
         }
 
+        /// <summary>
+        /// Used for INpc.FightMode
+        /// </summary>
         public enum WeaponState
         {
             NoWeapon,

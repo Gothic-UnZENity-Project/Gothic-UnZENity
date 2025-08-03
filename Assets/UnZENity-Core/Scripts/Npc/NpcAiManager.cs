@@ -96,8 +96,10 @@ namespace GUZ.Core.Npc
 
         /// <summary>
         /// freeLOS - Free Line Of Sight == ignoreFOV
+        /// fov = 50 - OpenGothic assumes 100 fov for NPCs
+        /// fov = 30 - We reuse this for Focus angle during AI_Attack()
         /// </summary>
-        public bool ExtNpcCanSeeNpc(NpcInstance self, NpcInstance other, bool freeLOS)
+        public bool ExtNpcCanSeeNpc(NpcInstance self, NpcInstance other, bool freeLOS, float fov = 50f)
         {
             var selfContainer = self.GetUserData();
             var otherContainer = other.GetUserData();
@@ -119,7 +121,7 @@ namespace GUZ.Core.Npc
 
             var directionToTarget = (otherHeadBone.position - selfHeadBone.position).normalized;
             var angleToTarget = Vector3.Angle(selfHeadBone.forward, directionToTarget);
-            var inFov = angleToTarget <= 50.0f; // OpenGothic assumes 100 fov for NPCs
+            var inFov = angleToTarget <= fov;
 
             return inSightRange && !hasLineOfSightCollisions && (freeLOS || inFov);
         }
@@ -127,6 +129,14 @@ namespace GUZ.Core.Npc
         public void ExtNpcClearAiQueue(NpcInstance npc)
         {
             npc.GetUserData().Props.AnimationQueue.Clear();
+        }
+
+        public void ExtAttack(NpcInstance npc)
+        {
+            var npcContainer = npc.GetUserData()!;
+            npcContainer.Props.AnimationQueue.Enqueue(new Attack(
+                new AnimationAction(),
+                npcContainer));
         }
 
         public void ExtAiGoToNextFp(NpcInstance npc, string fpNamePart)

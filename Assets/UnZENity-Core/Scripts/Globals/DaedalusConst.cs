@@ -45,7 +45,7 @@ namespace GUZ.Core.Globals
                 return Enumerable.Range(0, talentCount).Select(i => talentSkills.GetString((ushort)i)).ToList();
             }
         }
-        
+
         public enum Guild
         {
             GIL_NONE = 0, // (keine)

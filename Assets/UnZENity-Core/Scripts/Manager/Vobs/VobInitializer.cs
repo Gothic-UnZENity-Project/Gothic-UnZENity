@@ -29,8 +29,6 @@ namespace GUZ.Core.Manager.Vobs
     /// </summary>
     public class VobInitializer
     {
-        private const string _noSoundName = "nosound.wav";
-
         private DeveloperConfig _config = GameGlobals.Config.Dev;
 
 
@@ -221,7 +219,14 @@ namespace GUZ.Core.Manager.Vobs
             switch (vob.Type)
             {
                 case VirtualObjectType.oCItem:
-                    go = ResourceLoader.TryGetPrefabObject(PrefabType.VobItem, name: name, parent: parent);
+                    var item = VmInstanceManager.TryGetItemData(((IItem)vob).Instance)!;
+                    var mainFlag = (VmGothicEnums.ItemFlags)item.MainFlag;
+                    
+                    if (mainFlag is VmGothicEnums.ItemFlags.ItemKatNf or VmGothicEnums.ItemFlags.ItemKatFf)
+                        go = ResourceLoader.TryGetPrefabObject(PrefabType.VobItemWeapon, name: name, parent: parent);
+                    else
+                        go = ResourceLoader.TryGetPrefabObject(PrefabType.VobItem, name: name, parent: parent);
+
                     break;
                 case VirtualObjectType.zCVobSpot:
                 case VirtualObjectType.zCVobStartpoint:
@@ -526,7 +531,7 @@ namespace GUZ.Core.Manager.Vobs
         {
             AudioClip clip;
 
-            if (soundName.EqualsIgnoreCase(_noSoundName))
+            if (soundName.EqualsIgnoreCase(SfxConst.NoSoundName))
             {
                 //instead of decoding nosound.wav which might be decoded incorrectly, just return null
                 return null;
@@ -545,7 +550,7 @@ namespace GUZ.Core.Manager.Vobs
                     return null;
 
                 // Instead of decoding nosound.wav which might be decoded incorrectly, just return null.
-                if (sfxContainer.GetFirstSound().File.EqualsIgnoreCase(_noSoundName))
+                if (sfxContainer.GetFirstSound().File.EqualsIgnoreCase(SfxConst.NoSoundName))
                     return null;
 
                 if (sfxContainer.Count > 1)

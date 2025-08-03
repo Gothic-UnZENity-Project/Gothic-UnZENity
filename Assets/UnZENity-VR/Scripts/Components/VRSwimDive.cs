@@ -2,8 +2,7 @@ using System;
 using System.Collections;
 using System.Linq;
 using GUZ.Core;
-using GUZ.Core.Creator.Sounds;
-using GUZ.Core.Data.Container;
+using GUZ.Core.Data.Adapter;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Vm;
@@ -25,7 +24,7 @@ namespace GUZ.VR.Components
         
         private INpc _playerVob;
         private IAiHuman _playerAi;
-        private SfxContainer _sfxDiveContainer;
+        private SfxAdapter _sfxDiveAdapter;
         private HVRHandAnimator _leftHandAnimator;
         private HVRHandAnimator _rightHandAnimator;
             
@@ -47,7 +46,7 @@ namespace GUZ.VR.Components
                 var mds = ResourceLoader.TryGetModelScript("Humans")!;
                 var anim = mds.Animations.First(i => i.Name.EqualsIgnoreCase("s_DiveF"));
                 var diveSfxName = anim.SoundEffects.First().Name;
-                _sfxDiveContainer = VmInstanceManager.TryGetSfxData(diveSfxName)!;
+                _sfxDiveAdapter = VmInstanceManager.TryGetSfxData(diveSfxName)!;
             });
 
             GlobalEventDispatcher.WorldSceneLoaded.AddListener(() =>
@@ -85,8 +84,8 @@ namespace GUZ.VR.Components
 				return;
 
             // FIXME - As we have different sizes of people in VR, we should use the size based on real heights.
-            var kneeDeepHeight = GameData.cGuildValue.GetWaterDepthKnee((int)DaedalusConst.Guild.GIL_HUMAN).ToMeter();
-            var chestDeepHeight =  GameData.cGuildValue.GetWaterDepthChest((int)DaedalusConst.Guild.GIL_HUMAN).ToMeter();
+            var kneeDeepHeight = GameData.GuildValues.GetWaterDepthKnee((int)DaedalusConst.Guild.GIL_HUMAN).ToMeter();
+            var chestDeepHeight =  GameData.GuildValues.GetWaterDepthChest((int)DaedalusConst.Guild.GIL_HUMAN).ToMeter();
             var chestDeepHeightWithBuffer = chestDeepHeight + 2; // Do raycast a little bit longer than it needs to be, to ensure it's working.
 
             RaycastHit hit;
@@ -237,7 +236,7 @@ namespace GUZ.VR.Components
                 if (!_isDivingForceStarted)
                 {
                     // Play a random dive sound via HVRs SFXPlayer.
-                    SFXPlayer.Instance.PlaySFX(_sfxDiveContainer.GetRandomClip(), Camera.main!.transform.position);
+                    SFXPlayer.Instance.PlaySFX(_sfxDiveAdapter.GetRandomClip(), Camera.main!.transform.position);
                     _isDivingForceStarted = true;
                 }
                 
