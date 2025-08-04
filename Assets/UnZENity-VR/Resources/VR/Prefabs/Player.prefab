@@ -5633,11 +5633,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _playerController: {fileID: 8604294565651286147}
   _playerInputs: {fileID: 6717938044841316945}
-  _swimStartDiveVerticalVelocity: 5
-  _swimHandMovementMultiplier: 7.5
+  _waterBobAmplitude: 0.001
+  _waterBobFrequency: 2.5
+  _swimStartDiveVerticalVelocity: -5
+  _swimHandMovementMultiplier: 5
   _swimVelocityFadeRate: 0.25
-  _handMovementMultiplier: 5
-  _velocityFadeRate: 0.25
+  _diveHandMovementMultiplier: 2.5
+  _diveVelocityFadeRate: 0.25
 --- !u!4 &8391885031051259193 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7486009837755879101, guid: a0de35f4e16efb54ba0281586c17416f, type: 3}
@@ -7725,11 +7727,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5582560689641485545, guid: 8348fe5825a421c42be0dad392e03669, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -366.49936
+      value: -366.4992
       objectReference: {fileID: 0}
     - target: {fileID: 5582560689641485545, guid: 8348fe5825a421c42be0dad392e03669, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 165.85042
+      value: 166.49992
       objectReference: {fileID: 0}
     - target: {fileID: 5603077536188825030, guid: 8348fe5825a421c42be0dad392e03669, type: 3}
       propertyPath: m_AnchorMax.x
@@ -7745,11 +7747,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6272730690859954775, guid: 8348fe5825a421c42be0dad392e03669, type: 3}
       propertyPath: m_Size
-      value: 0.95142823
+      value: 0.9514283
       objectReference: {fileID: 0}
     - target: {fileID: 6272730690859954775, guid: 8348fe5825a421c42be0dad392e03669, type: 3}
       propertyPath: m_Value
-      value: 1.0382131
+      value: 1.000009
       objectReference: {fileID: 0}
     - target: {fileID: 8278234239060405203, guid: 8348fe5825a421c42be0dad392e03669, type: 3}
       propertyPath: m_AnchorMax.x
