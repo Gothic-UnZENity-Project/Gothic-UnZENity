@@ -249,10 +249,10 @@ namespace GUZ.VR.Components
                 var combinedVelocity = (leftHandVelocity + rightHandVelocity) * _swimHandMovementMultiplier;
                 
                 // Transform velocity to world space based on player rotation
-                var rotatedVelocity = transform.TransformDirection(combinedVelocity);
+                // var rotatedVelocity = Camera.main!.transform.TransformDirection(combinedVelocity);
                 
                 // Apply opposite force for swimming - Only horizontal!
-                _currentVelocity = Vector3.Lerp(_currentVelocity, -rotatedVelocity, Time.deltaTime);
+                _currentVelocity = Vector3.Lerp(_currentVelocity, -combinedVelocity, Time.deltaTime);
             }
             // Fade out movement
             else
@@ -295,10 +295,10 @@ namespace GUZ.VR.Components
                 var combinedVelocity = (leftHandVelocity + rightHandVelocity) * _diveHandMovementMultiplier;
 
                 // Transform velocity to world space based on player rotation
-                var rotatedVelocity = transform.TransformDirection(combinedVelocity);
+                // var rotatedVelocity = Camera.main!.transform.TransformDirection(combinedVelocity);
 
                 // Apply opposite force for diving
-                _currentVelocity = Vector3.Lerp(_currentVelocity, -rotatedVelocity, Time.deltaTime);
+                _currentVelocity = Vector3.Lerp(_currentVelocity, -combinedVelocity, Time.deltaTime);
             }
             // Fade out movement
             else
