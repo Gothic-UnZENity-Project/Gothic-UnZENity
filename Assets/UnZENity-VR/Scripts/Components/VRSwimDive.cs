@@ -176,6 +176,7 @@ namespace GUZ.VR.Components
                 case ZenGineConst.WaterLevel.Knee:
                     // FIXME - Or is it "WalkMode.Water"?
                     _mode = VmGothicEnums.WalkMode.Walk;
+                    Shader.SetGlobalInt(Constants.ShaderPropertyWaterEffectToggle, 0);
 
                     _playerController.Gravity = _initialGravity;
                     _playerController.MoveSpeed = _initialMoveSpeed / 2;
@@ -189,7 +190,8 @@ namespace GUZ.VR.Components
                     // Dive -> Swim
                     if (_mode == VmGothicEnums.WalkMode.Dive)
                         SFXPlayer.Instance.PlaySFX(_sfxSwim2HangAdapter.GetRandomClip(), Camera.main!.transform.position);
-                        
+
+                    Shader.SetGlobalInt(Constants.ShaderPropertyWaterEffectToggle, 0);
                     _mode = VmGothicEnums.WalkMode.Swim;
                     _playerController.Gravity = 0f;
                     _playerController.MaxFallSpeed = 0f;
@@ -218,6 +220,7 @@ namespace GUZ.VR.Components
         
         private void StartDive()
         {
+            Shader.SetGlobalInt(Constants.ShaderPropertyWaterEffectToggle, 1);
             _mode = VmGothicEnums.WalkMode.Dive;
 
             // Reset velocity so that dive down is smoothed. Otherwise, we are on the ground already. ;-)
