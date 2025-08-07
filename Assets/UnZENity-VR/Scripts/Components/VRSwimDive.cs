@@ -61,6 +61,8 @@ namespace GUZ.VR.Components
 
         private void Start()
         {
+            Shader.SetGlobalInt(Constants.ShaderPropertyWaterEffectToggle, 0);
+
             var vrPlayer = ((VRInteractionAdapter)GameContext.InteractionAdapter).GetVRPlayerController();
             _leftHandAnimator = vrPlayer.LeftHand.HandAnimator;
             _rightHandAnimator = vrPlayer.RightHand.HandAnimator;
@@ -232,7 +234,35 @@ namespace GUZ.VR.Components
             
             SFXPlayer.Instance.PlaySFX(_sfxSwim2DiveAdapter.GetRandomClip(), Camera.main!.transform.position);
         }
-        
+
+        /// <summary>
+        /// Tested:
+        /// Test 1. No translation
+        /// var combinedVelocity = (leftHandVelocity + rightHandVelocity) * _swimHandMovementMultiplier;
+        /// _currentVelocity = Vector3.Lerp(_currentVelocity, -combinedVelocity, Time.deltaTime);
+        ///
+        /// [🆗] Moving physical head
+        /// [🛑] Rotating player with Thumbstick
+        ///
+        ///
+        /// Test 2. Translation with PlayerController (where Thumbstick rotation is applied)
+        /// var combinedVelocity = (leftHandVelocity + rightHandVelocity) * _swimHandMovementMultiplier;
+        /// var rotatedVelocity = _playerController.transform.TransformDirection(combinedVelocity);
+        /// _currentVelocity = Vector3.Lerp(_currentVelocity, -rotatedVelocity, Time.deltaTime);
+        ///
+        /// [🛑] Moving physical head
+        /// [🆗] Rotating player with Thumbstick
+        ///
+        ///
+        // Test 3. Translation with Camera.main!
+        /// var combinedVelocity = (leftHandVelocity + rightHandVelocity) * _swimHandMovementMultiplier;
+        /// var rotatedVelocity = Camera.main!.transform.TransformDirection(combinedVelocity);
+        /// _currentVelocity = Vector3.Lerp(_currentVelocity, -rotatedVelocity, Time.deltaTime);
+        ///
+        /// [🛑] Moving physical head
+        /// [🆗] Rotating player with Thumbstick
+        /// </summary>
+
         private void HandleSwim()
         {
             if (_playerInputs.BothGripsActiveState.JustActivated)
