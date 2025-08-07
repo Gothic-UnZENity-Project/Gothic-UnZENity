@@ -20,14 +20,10 @@ namespace GUZ.VR.Components.VobItem
     /// </summary>
     public class VRWeapon : MonoBehaviour, IMarvinPropertyCollector
     {
-        private const string _swingSwordSfxName = "Whoosh";
-
         [SerializeField] private bool _debugSomething;
         
         [SerializeField] private Rigidbody _rigidBody;
         [SerializeField] private AudioSource _audioSource;
-        
-        private SfxAdapter _swingSwordSound;
         
         [SerializeField] private float _attackVelocityThreshold = 2.5f;
         [SerializeField] private float _velocityCheckDuration = 0.5f;
@@ -38,12 +34,6 @@ namespace GUZ.VR.Components.VobItem
         private float _velocityCheckTimer;
         private bool _isAttacking;
         
-        
-        
-        private void Start()
-        {
-            _swingSwordSound = VmInstanceManager.TryGetSfxData(_swingSwordSfxName);
-        }
         
         void Update()
         {
@@ -107,7 +97,6 @@ namespace GUZ.VR.Components.VobItem
                 GameContext.InteractionAdapter.GetCurrentPlayerController().GetComponent<VRPlayerController>().LeftHand.Controller.Vibrate(amplitude, duration, frequency);
                 GameContext.InteractionAdapter.GetCurrentPlayerController().GetComponent<VRPlayerController>().RightHand.Controller.Vibrate(amplitude, duration, frequency);
 
-                _audioSource.PlayOneShot(_swingSwordSound.GetRandomClip());
                 _velocityHistory.Clear(); // Reset to have the sound being played in x frames again only.
                 _velocityCheckTimer = _velocityCooldownAfterExecution;
                 _isAttacking = true;

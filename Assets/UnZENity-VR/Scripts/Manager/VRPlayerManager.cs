@@ -4,6 +4,7 @@ using GUZ.VR.Adapter;
 using GUZ.VR.Components.HVROverrides;
 using HurricaneVR.Framework.Core;
 using HurricaneVR.Framework.Core.Grabbers;
+using HurricaneVR.Framework.Shared;
 using UnityEngine;
 
 namespace GUZ.VR.Manager
@@ -49,6 +50,14 @@ namespace GUZ.VR.Manager
             {
                 GrabbedObjectRight = null;
             }
+        }
+
+        public static HVRController GetHand(HVRHandSide side)
+        {
+            if (side == HVRHandSide.Left)
+                return GameContext.InteractionAdapter.GetCurrentPlayerController().GetComponent<VRPlayerController>().LeftHand.Controller;
+            else
+                return GameContext.InteractionAdapter.GetCurrentPlayerController().GetComponent<VRPlayerController>().RightHand.Controller;
         }
     }
 }

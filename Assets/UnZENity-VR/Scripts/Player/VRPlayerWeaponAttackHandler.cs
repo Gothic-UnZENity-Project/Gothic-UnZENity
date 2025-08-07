@@ -1,22 +1,39 @@
 #if GUZ_HVR_INSTALLED
+using System.Collections.Generic;
+using System.Linq;
+using GUZ.Core.Data.Adapter;
+using GUZ.Core.Vm;
+using GUZ.VR.Manager;
+using HurricaneVR.Framework.Core.Utils;
+using HurricaneVR.Framework.Shared;
 using UnityEngine;
 
 namespace GUZ.VR.Components.VobItem
 {
-    public class VRPlayerWeaponTimeHandler
+    public class VRPlayerWeaponAttackHandler
     {
-        private readonly Rigidbody _weaponRigidBody;
+        private const string _swingSwordSfxName = "Whoosh";
+        private SfxAdapter _swingSwordSound;
 
-        private readonly float _attackVlocityThreshold;
+        
+        private readonly Rigidbody _weaponRigidBody;
+        private readonly HVRHandSide _handSide;
+
+        private readonly float _attackVelocityThreshold;
         private readonly float _velocityDropPercentage;
         
         private readonly float _attackWindowTime;
         private readonly float _comboWindowTime;
         private readonly float _cooldownWindowTime;
         
+        // Velocity sampling properties
+        private readonly float _velocityCheckDuration;
+        private readonly int _velocitySampleCount;
+        private readonly Queue<float> _velocityHistory = new();
+        private float _velocityCheckTimer;
         
         // Current state properties
-        private float _currentWeaponVelocity => _weaponRigidBody.linearVelocity.magnitude;
+        private float _currentWeaponVelocity => GetAverageVelocity();
         private float _currentStateTime;
         private TimeWindow _currentWindow;
         
@@ -42,33 +59,63 @@ namespace GUZ.VR.Components.VobItem
         public System.Action OnCooldownStarted;
 
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="rigidBody"></param>
-        /// <param name="attackVlocityThreshold"></param>
-        /// <param name="velocityDropPercentage">e.g., 10% drop</param>
-        /// <param name="attackWindowTime"></param>
-        /// <param name="comboWindowTime"></param>
-        /// <param name="cooldownWindowTime"></param>
-        public VRPlayerWeaponTimeHandler(Rigidbody rigidBody, float attackVlocityThreshold = 5.0f,
-            float velocityDropPercentage = 0.1f, float attackWindowTime = 1.0f, float comboWindowTime = 0.5f,
-            float cooldownWindowTime = 2.0f)
+        public VRPlayerWeaponAttackHandler(Rigidbody rigidBody, HVRHandSide handSide, float attackVelocityThreshold,
+            float velocityDropPercentage, float attackWindowTime, float comboWindowTime,
+            float cooldownWindowTime, float velocityCheckDuration, int velocitySampleCount)
         {
             _weaponRigidBody = rigidBody;
-            _attackVlocityThreshold =  attackVlocityThreshold;
+            _handSide = handSide;
+            
+            _attackVelocityThreshold =  attackVelocityThreshold;
             _velocityDropPercentage = velocityDropPercentage;
         
             _attackWindowTime = attackWindowTime;
             _comboWindowTime = comboWindowTime;
             _cooldownWindowTime = cooldownWindowTime;
+
+            _velocityCheckDuration = velocityCheckDuration;
+            _velocitySampleCount = velocitySampleCount;
         
+            _swingSwordSound = VmInstanceManager.TryGetSfxData(_swingSwordSfxName);
+            
             InitializeState();
         }
         
         public void FixedUpdate()
         {
+            UpdateVelocityHistory();
             UpdateStateMachine();
+        }
+        
+        private void UpdateVelocityHistory()
+        {
+            if (_weaponRigidBody == null)
+                return;
+                
+            _velocityCheckTimer += Time.fixedDeltaTime;
+
+            if (_velocityCheckTimer < _velocityCheckDuration / _velocitySampleCount)
+                return;
+
+            var currentVelocity = _weaponRigidBody.linearVelocity.magnitude;
+            _velocityHistory.Enqueue(currentVelocity);
+            
+            // Keep only the required number of samples
+            if (_velocityHistory.Count > _velocitySampleCount)
+            {
+                _velocityHistory.Dequeue();
+            }
+            
+            _velocityCheckTimer = 0f;
+        }
+        
+        private float GetAverageVelocity()
+        {
+            if (_velocityHistory.Count == 0)
+                return 0f;
+                
+            var sum = _velocityHistory.Sum();
+            return sum / _velocityHistory.Count;
         }
         
         private void InitializeState()
@@ -77,7 +124,7 @@ namespace GUZ.VR.Components.VobItem
             _currentStateTime = 0f;
             _hasDroppedBelowThreshold = false;
             _hasReturnedToThreshold = false;
-            _velocityDropThreshold = _attackVlocityThreshold * (1f - _velocityDropPercentage);
+            _velocityDropThreshold = _attackVelocityThreshold * (1f - _velocityDropPercentage);
         }
         
         private void UpdateStateMachine()
@@ -111,7 +158,7 @@ namespace GUZ.VR.Components.VobItem
         
         private void HandleInitialWindow()
         {
-            if (_currentWeaponVelocity >= _attackVlocityThreshold)
+            if (_currentWeaponVelocity >= _attackVelocityThreshold)
                 StartAttackWindow();
         }
         
@@ -121,7 +168,7 @@ namespace GUZ.VR.Components.VobItem
             if (_currentWeaponVelocity < _velocityDropThreshold && !_hasDroppedBelowThreshold)
                 _hasDroppedBelowThreshold = true;
             
-            if (_hasDroppedBelowThreshold && _currentWeaponVelocity >= _attackVlocityThreshold && !_hasReturnedToThreshold)
+            if (_hasDroppedBelowThreshold && _currentWeaponVelocity >= _attackVelocityThreshold && !_hasReturnedToThreshold)
             {
                 _hasReturnedToThreshold = true;
                 // Combo failed - velocity dropped and returned during attack window
@@ -151,12 +198,12 @@ namespace GUZ.VR.Components.VobItem
         private void HandleComboWindow()
         {
             // Check for combo conditions
-            var comboConditionMet = _currentWeaponVelocity < _attackVlocityThreshold;
+            var comboConditionMet = _currentWeaponVelocity < _attackVelocityThreshold;
             
             if (!_hasDroppedBelowThreshold && _currentWeaponVelocity < _velocityDropThreshold)
                 _hasDroppedBelowThreshold = true;
             
-            if (_hasDroppedBelowThreshold && _currentWeaponVelocity >= _attackVlocityThreshold && !_hasReturnedToThreshold)
+            if (_hasDroppedBelowThreshold && _currentWeaponVelocity >= _attackVelocityThreshold && !_hasReturnedToThreshold)
             {
                 _hasReturnedToThreshold = true;
                 comboConditionMet = true;
@@ -165,7 +212,7 @@ namespace GUZ.VR.Components.VobItem
             if (comboConditionMet)
             {
                 ExecuteCombo();
-                StartSecondAttackWindow();
+                StartAttackWindow();
                 return;
             }
             
@@ -196,6 +243,8 @@ namespace GUZ.VR.Components.VobItem
             // Trigger attack
             OnAttackTriggered?.Invoke();
             
+            SFXPlayer.Instance.PlaySFX(_swingSwordSound.GetRandomClip(), _weaponRigidBody.position);
+            
             Debug.Log("Attack Window Started");
         }
         
@@ -207,12 +256,20 @@ namespace GUZ.VR.Components.VobItem
             Debug.Log("Combo Failed During Attack Window");
         }
         
+
+        // FIXME - DEBUG values. Need to be adjustable via MarvinMode Inspector...
+        private float _amplitude = 0.2f;
+        private float _duration = 0.5f;
+        private float _frequency = 50f;
+
         private void StartComboWindow()
         {
             _currentWindow = TimeWindow.ComboWindow;
             _currentStateTime = _comboWindowTime;
-            _hasDroppedBelowThreshold = _currentWeaponVelocity <= _attackVlocityThreshold;
+            _hasDroppedBelowThreshold = _currentWeaponVelocity <= _attackVelocityThreshold;
             _hasReturnedToThreshold = false;
+            
+            VRPlayerManager.GetHand(_handSide).Vibrate(_amplitude, _duration, _frequency);
             
             Debug.Log("Combo Window Started");
         }
@@ -221,16 +278,6 @@ namespace GUZ.VR.Components.VobItem
         {
             OnComboTriggered?.Invoke();
             Debug.Log("Combo Executed!");
-        }
-        
-        private void StartSecondAttackWindow()
-        {
-            _currentWindow = TimeWindow.AttackWindow;
-            _currentStateTime = _attackWindowTime;
-            _hasDroppedBelowThreshold = false;
-            _hasReturnedToThreshold = false;
-            
-            Debug.Log("Second Attack Window Started");
         }
         
         private void StartCooldownWindow()
@@ -266,7 +313,7 @@ namespace GUZ.VR.Components.VobItem
         
         public float GetVelocityThreshold()
         {
-            return _attackVlocityThreshold;
+            return _attackVelocityThreshold;
         }
         
         public float GetVelocityDropThreshold()
