@@ -111,8 +111,6 @@ namespace GUZ.VR.Components.VobItem
             if (_velocityHistory.Count > _velocitySampleCount)
             {
                 _velocityHistory.Dequeue();
-
-                Debug.Log("Current Velocity: " + GetAverageVelocity());
             }
             
             _velocityCheckTimer = 0f;
@@ -251,16 +249,12 @@ namespace GUZ.VR.Components.VobItem
             OnAttackTriggered?.Invoke();
             
             SFXPlayer.Instance.PlaySFX(_swingSwordSound.GetRandomClip(), _weaponWeaponRigidbody.position);
-            
-            Debug.Log("Attack Window Started");
         }
         
         private void TransitionToAttackWindowComboFailed()
         {
             _currentWindow = TimeWindow.AttackWindowComboFailed;
             // Keep the remaining time from attack window
-            
-            Debug.Log("Combo Failed During Attack Window");
         }
         
 
@@ -277,14 +271,11 @@ namespace GUZ.VR.Components.VobItem
             _hasReturnedToThreshold = false;
             
             VRPlayerManager.GetHand(_handSide).Vibrate(_amplitude, _duration, _frequency);
-            
-            Debug.Log("Combo Window Started");
         }
         
         private void ExecuteCombo()
         {
             OnComboTriggered?.Invoke();
-            Debug.Log("Combo Executed!");
         }
         
         private void StartCooldownWindow()
@@ -293,7 +284,6 @@ namespace GUZ.VR.Components.VobItem
             _currentStateTime = _cooldownWindowTime;
             
             OnCooldownStarted?.Invoke();
-            Debug.Log("Cooldown Window Started");
         }
         
         // Public methods for external systems
