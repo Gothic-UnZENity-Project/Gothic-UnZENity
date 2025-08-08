@@ -131,7 +131,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6503575194566409312}
   serializedVersion: 4
-  m_Mass: 1
+  m_Mass: 2.5
   m_Drag: 0
   m_AngularDrag: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -376,6 +376,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _vrProperties: {fileID: 6221555039147954839}
+  _rigidbody: {fileID: 1778516865459391894}
   _meshCollider: {fileID: 3848800049239021948}
 --- !u!114 &8461469363836242350
 MonoBehaviour:

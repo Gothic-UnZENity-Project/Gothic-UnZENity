@@ -1,6 +1,10 @@
 using System;
 using GUZ.Core.Properties.Vobs;
+using GUZ.Core.Vm;
+using GUZ.Core.Vob;
+using JetBrains.Annotations;
 using UnityEngine;
+using ZenKit.Daedalus;
 using ZenKit.Vobs;
 
 namespace GUZ.Core.Data.Container
@@ -75,6 +79,27 @@ namespace GUZ.Core.Data.Container
         public T PropsAs<T>() where T : VobProperties2
         {
             return (T)Props;
+        }
+
+        /// <summary>
+        /// Shorthand function.
+        /// </summary>
+        [CanBeNull]
+        public ItemInstance GetItemInstance()
+        {
+            if (Vob.Type != VirtualObjectType.oCItem)
+                return null;
+            
+            var vobItem = VobAs<IItem>();
+            string itemName;
+            if (!string.IsNullOrEmpty(vobItem.Instance))
+                itemName = vobItem.Instance;
+            else if (!string.IsNullOrEmpty(vobItem.Name))
+                itemName = vobItem.Name;
+            else
+                throw new Exception("Vob Item -> no usable name found.");
+
+            return VmInstanceManager.TryGetItemData(itemName);
         }
     }
 }

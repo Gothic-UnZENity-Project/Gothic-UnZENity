@@ -108,6 +108,9 @@ namespace GUZ.Core.Globals
         public const string SceneLoading = "Loading";
         public const string SceneLab = "Lab";
 
+        // Water settings
+        public static readonly int ShaderPropertyWaterEffectToggle = Shader.PropertyToID("_UnderwaterEffect");
+        
 
         // Hint: We will never be able to cache lights as their radius is always dynamic.
         public static readonly VirtualObjectType[] StaticCacheVobTypes =
