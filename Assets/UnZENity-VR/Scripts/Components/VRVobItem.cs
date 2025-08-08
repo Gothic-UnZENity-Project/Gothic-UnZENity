@@ -1,8 +1,10 @@
 ﻿#if GUZ_HVR_INSTALLED
 using System.Collections;
+using System.Collections.Generic;
 using GUZ.Core;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
+using GUZ.Core.Marvin;
 using GUZ.VR.Manager;
 using GUZ.VR.Properties;
 using HurricaneVR.Framework.Core;
@@ -12,9 +14,10 @@ using UnityEngine.Animations;
 
 namespace GUZ.VR.Components
 {
-    public class VRVobItem : MonoBehaviour
+    public class VRVobItem : MonoBehaviour, IMarvinPropertyCollector
     {
         [SerializeField] private VRVobItemProperties _vrProperties;
+        [SerializeField] private Rigidbody _rigidbody;
         [SerializeField] private MeshCollider _meshCollider;
 
         // We pre-allocate enough entries to fetch at least one entry which is not ourselves.
@@ -252,6 +255,29 @@ namespace GUZ.VR.Components
         private void OnDisable()
         {
             DynamicMaterialManager.ResetAllDynamicValues(gameObject);
+        }
+
+        public IEnumerable<object> CollectMarvinInspectorProperties()
+        {
+            return new List<object>
+            {
+                new MarvinPropertyHeader("VRWeapon - RigidBody"),
+                new MarvinProperty<float>(
+                    "Mass",
+                    () => _rigidbody.mass,
+                    value => _rigidbody.mass = value,
+                    0f, 50f),
+                new MarvinProperty<float>(
+                    "Linear Damping",
+                    () => _rigidbody.linearDamping,
+                    value => _rigidbody.linearDamping = value,
+                    0f, 2f),
+                new MarvinProperty<float>(
+                    "Angular Damping",
+                    () => _rigidbody.angularDamping,
+                    value => _rigidbody.angularDamping = value,
+                    0f, 2f),
+            };
         }
     }
 }
