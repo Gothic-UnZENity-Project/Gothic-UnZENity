@@ -5767,11 +5767,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 99f0a46232384db0a4a79f2b55bacf2e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _weaponVelocityThreshold: 5
+  _weaponVelocityThreshold: 2
   _weaponVelocityDropPercentage: 0.1
   _weaponAttackWindowTime: 1
-  _weaponComboWindowTime: 0.5
+  _weaponComboWindowTime: 0.75
   _weaponCooldownWindowTime: 2
+  _velocityCheckDuration: 0.5
+  _velocitySampleCount: 5
 --- !u!4 &8391885031051259193 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7486009837755879101, guid: a0de35f4e16efb54ba0281586c17416f, type: 3}

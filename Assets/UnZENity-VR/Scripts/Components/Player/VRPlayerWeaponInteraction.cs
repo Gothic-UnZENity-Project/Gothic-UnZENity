@@ -18,12 +18,12 @@ namespace GUZ.VR.Components.Player
         
         // if something in hand. Activate VRWeaponFighting
         [Header("Weapon Velocity Settings")]
-        [SerializeField] private float _weaponVelocityThreshold = 5.0f;
+        [SerializeField] private float _weaponVelocityThreshold = 2.0f;
         [SerializeField] private float _weaponVelocityDropPercentage = 0.1f; // 10% drop
         
         [Header("Weapon Attack Window Timing")]
         [SerializeField] private float _weaponAttackWindowTime = 1.0f;
-        [SerializeField] private float _weaponComboWindowTime = 0.5f;
+        [SerializeField] private float _weaponComboWindowTime = 0.75f;
         [SerializeField] private float _weaponCooldownWindowTime = 2.0f;
         
         [SerializeField] private float _velocityCheckDuration = 0.5f;

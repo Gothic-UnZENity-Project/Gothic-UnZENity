@@ -104,6 +104,8 @@ namespace GUZ.VR.Components.VobItem
             if (_velocityHistory.Count > _velocitySampleCount)
             {
                 _velocityHistory.Dequeue();
+
+                Debug.Log("Current Velocity: " + GetAverageVelocity());
             }
             
             _velocityCheckTimer = 0f;
@@ -198,18 +200,16 @@ namespace GUZ.VR.Components.VobItem
         private void HandleComboWindow()
         {
             // Check for combo conditions
-            var comboConditionMet = _currentWeaponVelocity < _attackVelocityThreshold;
-            
+
+            // Check #1 - When we enter the ComboWindow or we're inside already, we need to have the sword at least dropping below threshold once.
+            // Basically fighter changes velocity direction to do a left-right swing.
             if (!_hasDroppedBelowThreshold && _currentWeaponVelocity < _velocityDropThreshold)
                 _hasDroppedBelowThreshold = true;
-            
-            if (_hasDroppedBelowThreshold && _currentWeaponVelocity >= _attackVelocityThreshold && !_hasReturnedToThreshold)
-            {
+
+            if (_hasDroppedBelowThreshold && _currentWeaponVelocity >= _attackVelocityThreshold)
                 _hasReturnedToThreshold = true;
-                comboConditionMet = true;
-            }
-            
-            if (comboConditionMet)
+
+            if (_hasReturnedToThreshold)
             {
                 ExecuteCombo();
                 StartAttackWindow();
@@ -266,7 +266,7 @@ namespace GUZ.VR.Components.VobItem
         {
             _currentWindow = TimeWindow.ComboWindow;
             _currentStateTime = _comboWindowTime;
-            _hasDroppedBelowThreshold = _currentWeaponVelocity <= _attackVelocityThreshold;
+            _hasDroppedBelowThreshold = false;
             _hasReturnedToThreshold = false;
             
             VRPlayerManager.GetHand(_handSide).Vibrate(_amplitude, _duration, _frequency);
