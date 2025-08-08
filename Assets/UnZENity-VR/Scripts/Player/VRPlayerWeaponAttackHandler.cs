@@ -15,8 +15,9 @@ namespace GUZ.VR.Components.VobItem
         private const string _swingSwordSfxName = "Whoosh";
         private SfxAdapter _swingSwordSound;
 
-        
-        private readonly Rigidbody _weaponRigidBody;
+
+        private readonly CharacterController _characterController;
+        private readonly Rigidbody _weaponWeaponRigidbody;
         private readonly HVRHandSide _handSide;
 
         private readonly float _attackVelocityThreshold;
@@ -59,11 +60,13 @@ namespace GUZ.VR.Components.VobItem
         public System.Action OnCooldownStarted;
 
 
-        public VRPlayerWeaponAttackHandler(Rigidbody rigidBody, HVRHandSide handSide, float attackVelocityThreshold,
+        public VRPlayerWeaponAttackHandler(Rigidbody weaponRigidbody, HVRHandSide handSide, float attackVelocityThreshold,
             float velocityDropPercentage, float attackWindowTime, float comboWindowTime,
             float cooldownWindowTime, float velocityCheckDuration, int velocitySampleCount)
         {
-            _weaponRigidBody = rigidBody;
+            _characterController = VRPlayerManager.VRInteractionAdapter.GetVRPlayerController().CharacterController;
+
+            _weaponWeaponRigidbody = weaponRigidbody;
             _handSide = handSide;
             
             _attackVelocityThreshold =  attackVelocityThreshold;
@@ -86,18 +89,22 @@ namespace GUZ.VR.Components.VobItem
             UpdateVelocityHistory();
             UpdateStateMachine();
         }
-        
+
+        /// <summary>
+        /// Logic goes like this:
+        /// To ignore some Controller tracking issues for a frame, we need to have a few samples of velocity before calculating the average.
+        /// We also don't use every frame (a tracking issue could last for x-frames) but instead only a sample at each x-milliseconds.
+        /// </summary>
         private void UpdateVelocityHistory()
         {
-            if (_weaponRigidBody == null)
-                return;
-                
             _velocityCheckTimer += Time.fixedDeltaTime;
 
             if (_velocityCheckTimer < _velocityCheckDuration / _velocitySampleCount)
                 return;
 
-            var currentVelocity = _weaponRigidBody.linearVelocity.magnitude;
+            // We need to subtract the current players movement. Otherwise a run will count as a swing.
+            // TODO - Maybe we should subtract the V3 velocity instead of magnitude to countermeasure player movement?
+            var currentVelocity = _weaponWeaponRigidbody.linearVelocity.magnitude - _characterController.velocity.magnitude;
             _velocityHistory.Enqueue(currentVelocity);
             
             // Keep only the required number of samples
@@ -115,7 +122,7 @@ namespace GUZ.VR.Components.VobItem
         {
             if (_velocityHistory.Count == 0)
                 return 0f;
-                
+
             var sum = _velocityHistory.Sum();
             return sum / _velocityHistory.Count;
         }
@@ -243,7 +250,7 @@ namespace GUZ.VR.Components.VobItem
             // Trigger attack
             OnAttackTriggered?.Invoke();
             
-            SFXPlayer.Instance.PlaySFX(_swingSwordSound.GetRandomClip(), _weaponRigidBody.position);
+            SFXPlayer.Instance.PlaySFX(_swingSwordSound.GetRandomClip(), _weaponWeaponRigidbody.position);
             
             Debug.Log("Attack Window Started");
         }
