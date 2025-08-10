@@ -4925,7 +4925,7 @@ PrefabInstance:
     - target: {fileID: 7046593663569347308, guid: a0de35f4e16efb54ba0281586c17416f, type: 3}
       propertyPath: SocketContainer
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 3783590665317900374}
     - target: {fileID: 7046593663569347309, guid: a0de35f4e16efb54ba0281586c17416f, type: 3}
       propertyPath: 'ValidGrabbables.Array.data[0]'
       value: 
