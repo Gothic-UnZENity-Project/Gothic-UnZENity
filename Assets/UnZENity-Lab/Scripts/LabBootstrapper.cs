@@ -37,6 +37,7 @@ namespace GUZ.Lab
         public LabLockHandler LabLockHandler;
 
         private ConfigManager _configManager;
+        private LocalizationManager _localizationManager;
         private MusicManager _gameMusicManager;
         private VideoManager _videoManager;
         private RoutineManager _npcRoutineManager;
@@ -51,7 +52,7 @@ namespace GUZ.Lab
         private GameTime _gameTime;
 
         public ConfigManager Config => _configManager;
-        public LocalizationManager Localization => null;
+        public LocalizationManager Localization => _localizationManager;
         public SaveGameManager SaveGame => _save;
         public LoadingManager Loading => null;
         public StaticCacheManager StaticCache => null;
@@ -109,6 +110,7 @@ namespace GUZ.Lab
 
             Logger.Set(Config.Dev.ZenKitLogLevel, Core.Util.Logger.OnZenKitLogMessage);
             DirectMusic.Logger.Set(Config.Dev.DirectMusicLogLevel, Core.Util.Logger.OnDirectMusicLogMessage);
+            _localizationManager = new LocalizationManager();
             _save = new SaveGameManager();
             _story = new StoryManager(Config.Dev);
             _textureManager = GetComponent<TextureManager>();
