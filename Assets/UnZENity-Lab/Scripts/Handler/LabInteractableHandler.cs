@@ -16,13 +16,15 @@ namespace GUZ.Lab.Handler
 
         public override void Bootstrap()
         {
-            InitOCMobDoor();
-            StartCoroutine(InitOCMobContainer());
-            InitOCMobFire();
-            InitOCMobBed();
-            InitOCMobSwitch();
-            InitOCMobInter();
-            InitOCMobWheel();
+            
+            // FIXME - Need to initialize them via VobLoader.LoadNow(IVob) instead of loading mesh. Otherwise we get exceptions in child Start() calls.
+            // InitOCMobDoor();
+            // StartCoroutine(InitOCMobContainer());
+            // InitOCMobFire();
+            // InitOCMobBed();
+            // InitOCMobSwitch();
+            // InitOCMobInter();
+            // InitOCMobWheel();
         }
 
 

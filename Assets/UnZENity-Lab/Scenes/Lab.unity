@@ -3797,17 +3797,6 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 781630661673262082, guid: fcac0c3f142ea3742a0565751dec41de, type: 3}
   m_PrefabInstance: {fileID: 703050134}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &703050136 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 3462299961317466252, guid: fcac0c3f142ea3742a0565751dec41de, type: 3}
-  m_PrefabInstance: {fileID: 703050134}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &740090229
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -10053,8 +10042,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1791413020}
   - component: {fileID: 1791413021}
-  - component: {fileID: 1791413022}
-  - component: {fileID: 1791413023}
   m_Layer: 0
   m_Name: NpcDialogTool
   m_TagString: Untagged
@@ -10092,39 +10079,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   NpcSlotGo: {fileID: 576832278}
---- !u!114 &1791413022
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1791413019}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 61172a6e8ca946219be89984eb7e31c8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  RecordButton: {fileID: 703050136}
-  AudioSource: {fileID: 1458389299}
-  SpeechText: {fileID: 0}
-  MicrophoneDeviceName: 
-  MaxRecordingLength: 30
-  RecordingSampleRate: 16000
---- !u!114 &1791413023
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1791413019}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e4723a7260034c2a9784de913d10bf5e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  IsTranscribing: 0
-  OutputString: 
-  vocabAsset: {fileID: 4900000, guid: 5696a72d0fb8ccc40bdc8fb708fa2bd4, type: 3}
 --- !u!1 &1797836660
 GameObject:
   m_ObjectHideFlags: 0
