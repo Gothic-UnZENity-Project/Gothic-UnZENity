@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4931888112518750926}
   m_Layer: 0
-  m_Name: BackPack
+  m_Name: BackPack-Root
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3120,7 +3120,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -2445633797789926738, guid: 6cb8512e2712dc24ab93173e96e1a2bf, type: 3}
       propertyPath: m_Name
-      value: Mesh
+      value: BackPack
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 6cb8512e2712dc24ab93173e96e1a2bf, type: 3}
       propertyPath: m_Name
@@ -4929,11 +4929,19 @@ PrefabInstance:
     - target: {fileID: 7046593663569347309, guid: a0de35f4e16efb54ba0281586c17416f, type: 3}
       propertyPath: 'ValidGrabbables.Array.data[0]'
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 413413380710375777}
     - target: {fileID: 7130925584206303482, guid: a0de35f4e16efb54ba0281586c17416f, type: 3}
       propertyPath: Tags.Tags
       value: 
       objectReference: {fileID: 11400000, guid: 836908d62a0d2e8489d7e21e7f774964, type: 2}
+    - target: {fileID: 7346735694297075059, guid: a0de35f4e16efb54ba0281586c17416f, type: 3}
+      propertyPath: Tags.Tags
+      value: 
+      objectReference: {fileID: 11400000, guid: 836908d62a0d2e8489d7e21e7f774964, type: 2}
+    - target: {fileID: 7346735694297075059, guid: a0de35f4e16efb54ba0281586c17416f, type: 3}
+      propertyPath: Tags._data
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7361793842687818554, guid: a0de35f4e16efb54ba0281586c17416f, type: 3}
       propertyPath: SFXGrab
       value: 
@@ -7958,6 +7966,10 @@ PrefabInstance:
     - target: {fileID: 898575911347120524, guid: 8348fe5825a421c42be0dad392e03669, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2162288150533917344, guid: 8348fe5825a421c42be0dad392e03669, type: 3}
+      propertyPath: m_Size
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2162288150533917344, guid: 8348fe5825a421c42be0dad392e03669, type: 3}
       propertyPath: m_Value
