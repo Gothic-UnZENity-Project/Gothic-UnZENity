@@ -63,8 +63,6 @@ namespace GUZ.Core.Manager.Scenes
             {
                 var worldsToLoad = GameContext.GameVersionAdapter.Version == GameVersion.Gothic1 ? _gothic1Worlds : _gothic2Worlds;
                 
-                // Sleeper temple music (similar to installation music)
-                GameGlobals.Music.Play("KAT_DAY_STD");
                 if (!GameGlobals.Config.Dev.AlwaysRecreateCache && GameGlobals.StaticCache.DoCacheFilesExist(worldsToLoad))
                 {
                     var metadata = await GameGlobals.StaticCache.ReadMetadata();
@@ -75,6 +73,13 @@ namespace GUZ.Core.Manager.Scenes
                         return;
                     }
                 }
+                
+                //
+                // Now we (re)create whole cache.
+                //
+                
+                // Sleeper temple music (similar to installation music)
+                GameGlobals.Music.Play("KAT_DAY_STD");
                 
                 GameContext.InteractionAdapter.DisableMenus();
                 _loadingBarHandler.LevelCount = worldsToLoad.Length;

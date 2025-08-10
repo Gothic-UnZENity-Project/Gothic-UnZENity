@@ -1,15 +1,20 @@
+using System;
 using System.Collections;
 using System.Globalization;
+using System.Threading.Tasks;
 using GUZ.Core;
 using GUZ.Core.Animations;
 using GUZ.Core.Caches;
 using GUZ.Core.Config;
+using GUZ.Core.Creator.Meshes;
+using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
 using GUZ.Core.Manager.Culling;
 using GUZ.Core.Manager.Vobs;
 using GUZ.Core.Npc;
 using GUZ.Core.UnZENity_Core.Scripts.Manager;
+using GUZ.Core.Util;
 using GUZ.Core.Vm;
 using GUZ.Core.World;
 using GUZ.Lab.Handler;
@@ -17,7 +22,7 @@ using GUZ.Manager;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using ZenKit;
-using Logger = ZenKit.Logger;
+using Logger = GUZ.Core.Util.Logger;
 
 namespace GUZ.Lab
 {
@@ -42,6 +47,7 @@ namespace GUZ.Lab
         private VideoManager _videoManager;
         private RoutineManager _npcRoutineManager;
         private SaveGameManager _save;
+        private StaticCacheManager _staticCacheManager;
         private TextureManager _textureManager;
         private FontManager _fontManager;
         private StoryManager _story;
@@ -50,14 +56,15 @@ namespace GUZ.Lab
         private AnimationManager _animationManager;
         private SkyManager _skyManager;
         private GameTime _gameTime;
+        private MarvinManager _marvinManager;
 
         public ConfigManager Config => _configManager;
         public LocalizationManager Localization => _localizationManager;
         public SaveGameManager SaveGame => _save;
         public LoadingManager Loading => null;
-        public StaticCacheManager StaticCache => null;
+        public StaticCacheManager StaticCache => _staticCacheManager;
         public PlayerManager Player => null;
-        public MarvinManager Marvin => null;
+        public MarvinManager Marvin => _marvinManager;
         public SkyManager Sky => _skyManager;
         public GameTime Time => _gameTime;
         public MusicManager Music => Music;
@@ -85,18 +92,21 @@ namespace GUZ.Lab
             CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;
             CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.InvariantCulture;
             
-            StartCoroutine(BootLab());
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+            BootLab();
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
         }
 
         /// <summary>
         /// It's easiest to wait for Start() to initialize all the MonoBehaviours first.
         /// </summary>
-        private IEnumerator BootLab()
+        private async Task BootLab()
         {
-            yield return new WaitForSeconds(0.5f);
+            // We need to wait for e.g., 0.5 seconds to ensure, that Unity properly set up all MonoBehavior components and their properties.
+            await Task.Delay(500);
 
             InitManager();
-            InitLab();
+            await InitLab().AwaitAndLog();
         }
 
         private void InitManager()
@@ -108,10 +118,11 @@ namespace GUZ.Lab
             _configManager.SetDeveloperConfig(DeveloperConfig);
             _configManager.LoadGothicInis(GameVersion.Gothic1);
 
-            Logger.Set(Config.Dev.ZenKitLogLevel, Core.Util.Logger.OnZenKitLogMessage);
+            ZenKit.Logger.Set(Config.Dev.ZenKitLogLevel, Core.Util.Logger.OnZenKitLogMessage);
             DirectMusic.Logger.Set(Config.Dev.DirectMusicLogLevel, Core.Util.Logger.OnDirectMusicLogMessage);
             _localizationManager = new LocalizationManager();
             _save = new SaveGameManager();
+            _staticCacheManager = new StaticCacheManager();
             _story = new StoryManager(Config.Dev);
             _textureManager = GetComponent<TextureManager>();
             _fontManager = GetComponent<FontManager>();
@@ -123,6 +134,7 @@ namespace GUZ.Lab
             _animationManager = new AnimationManager();
             _gameTime = new GameTime(Config.Dev, this);
             _skyManager = new SkyManager(Config.Dev, _gameTime);
+            _marvinManager = new MarvinManager();
 
             ResourceLoader.Init(Config.Root.Gothic1Path);
 
@@ -131,6 +143,7 @@ namespace GUZ.Lab
 
             _gameMusicManager.Init();
             _npcRoutineManager.Init();
+            _staticCacheManager.Init(_configManager.Dev);
             _textureManager.Init();
             _npcManager.Init(this);
             _vobManager.Init(this);
@@ -140,7 +153,7 @@ namespace GUZ.Lab
             _save.LoadNewGame();
         }
 
-        private void InitLab()
+        private async Task InitLab()
         {
             GameContext.InteractionAdapter.CreatePlayerController(SceneManager.GetActiveScene());
             GameContext.InteractionAdapter.CreateVRDeviceSimulator();
@@ -148,6 +161,14 @@ namespace GUZ.Lab
             // NpcHelper.CacheHero();
 
             Bootstrapper.Boot();
+
+            if (!_staticCacheManager.DoGlobalCacheFilesExist())
+            {
+                Logger.LogErrorEditor("Please load game once to create global cache first!", LogCat.Debug);
+                throw new SystemException("Please load game once to create global cache first!");
+            }
+            await _staticCacheManager.LoadGlobalCache().AwaitAndLog();
+            await MeshFactory.CreateTextureArray().AwaitAndLog();
 
             LabNpcAnimationHandler.Bootstrap();
             LabMusicHandler.Bootstrap();

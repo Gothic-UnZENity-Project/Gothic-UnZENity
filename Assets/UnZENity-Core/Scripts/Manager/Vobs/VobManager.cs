@@ -77,6 +77,9 @@ namespace GUZ.Core.Manager.Vobs
 
         public GameObject GetRootGameObjectOfType(VirtualObjectType type)
         {
+            if (_vobTypeParentGOs.IsEmpty())
+                return null; // e.g., within Lab or as fallback on errors.
+            
             if (_vobTypeParentGOs.TryGetValue(type, out var parentGo))
             {
                 return parentGo;
@@ -366,7 +369,7 @@ namespace GUZ.Core.Manager.Vobs
             InitVobNow(container);
         }
 
-        public VobContainer CreateItem(Item item)
+        public VobContainer CreateItem(IItem item)
         {
             var container = CreateContainerWithLoader(item);
             
