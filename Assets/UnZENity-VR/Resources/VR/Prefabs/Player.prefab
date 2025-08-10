@@ -4410,6 +4410,14 @@ PrefabInstance:
       propertyPath: Released.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
+    - target: {fileID: 3221307547711810629, guid: a0de35f4e16efb54ba0281586c17416f, type: 3}
+      propertyPath: Tags.Tags
+      value: 
+      objectReference: {fileID: 11400000, guid: 836908d62a0d2e8489d7e21e7f774964, type: 2}
+    - target: {fileID: 3221307547711810629, guid: a0de35f4e16efb54ba0281586c17416f, type: 3}
+      propertyPath: Tags._data
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3242523465998059869, guid: a0de35f4e16efb54ba0281586c17416f, type: 3}
       propertyPath: Tags.Tags
       value: 
@@ -4817,6 +4825,14 @@ PrefabInstance:
     - target: {fileID: 6763307381933974065, guid: a0de35f4e16efb54ba0281586c17416f, type: 3}
       propertyPath: m_Color.r
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6806039723258408487, guid: a0de35f4e16efb54ba0281586c17416f, type: 3}
+      propertyPath: Tags.Tags
+      value: 
+      objectReference: {fileID: 11400000, guid: 836908d62a0d2e8489d7e21e7f774964, type: 2}
+    - target: {fileID: 6806039723258408487, guid: a0de35f4e16efb54ba0281586c17416f, type: 3}
+      propertyPath: Tags._data
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7046593663569347308, guid: a0de35f4e16efb54ba0281586c17416f, type: 3}
       propertyPath: SocketContainer
