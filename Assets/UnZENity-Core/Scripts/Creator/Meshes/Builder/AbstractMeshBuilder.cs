@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using GUZ.Core.Caches;
+using GUZ.Core.Creator.Meshes.Builder.Algorithms;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Util;
@@ -25,6 +26,7 @@ namespace GUZ.Core.Creator.Meshes.Builder
         protected GameObject ParentGo;
         protected bool HasMeshCollider = true;
         protected bool UseTextureArray;
+        protected bool CreateSegmentedCollider;
 
         protected IMultiResolutionMesh Mrm;
         protected IModelHierarchy Mdh;
@@ -168,6 +170,11 @@ namespace GUZ.Core.Creator.Meshes.Builder
             UseTextureArray = use;
         }
 
+        public void SetCreateSegmentedCollider(bool createSegmentedCollider)
+        {
+            CreateSegmentedCollider = createSegmentedCollider;
+        }
+
         #endregion
 
 
@@ -184,7 +191,14 @@ namespace GUZ.Core.Creator.Meshes.Builder
 
             if (HasMeshCollider)
             {
-                PrepareMeshCollider(RootGo, meshFilter.sharedMesh, Mrm.Materials);
+                if (CreateSegmentedCollider)
+                {
+                    PrepareCustomCollider(RootGo, meshFilter.sharedMesh);
+                }
+                else
+                {
+                    PrepareMeshCollider(RootGo, meshFilter.sharedMesh, Mrm.Materials);
+                }
             }
 
             SetPosAndRot(RootGo, RootPosition, RootRotation);
@@ -618,6 +632,17 @@ namespace GUZ.Core.Creator.Meshes.Builder
             {
                 PrepareMeshCollider(obj, mesh);
             }
+        }
+        
+        protected void PrepareCustomCollider(GameObject rootGo, Mesh mesh)
+        {
+            // Use width-based segmentation for weapons
+            SegmentationColliderGenerator.GenerateWeaponColliders(
+                rootGo,
+                mesh
+                // widthThreshold: 0.4f,      // 40% width change triggers new segment
+                // minVerticesPerSegment: 15   // Minimum vertices to create a segment
+            );
         }
 
         private void CreateMorphMeshBegin(IMultiResolutionMesh mrm, Mesh mesh)

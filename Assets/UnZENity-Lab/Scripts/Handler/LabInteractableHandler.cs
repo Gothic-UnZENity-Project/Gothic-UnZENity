@@ -23,6 +23,7 @@ namespace GUZ.Lab.Handler
         public override void Bootstrap()
         {
             InitWeapons1H();
+            InitWeapons2H();
             // FIXME - Need to initialize them via VobLoader.LoadNow(IVob) instead of loading mesh. Otherwise we get exceptions in child Start() calls.
             // InitOCMobDoor();
             // StartCoroutine(InitOCMobContainer());
@@ -37,21 +38,62 @@ namespace GUZ.Lab.Handler
         {
             var itemNames = GameData.GothicVm.GetInstanceSymbols("C_Item").Select(i => i.Name).ToList();
 
+            // var itemNames = new []{
+            //     "ITMW_1H_CLUB_01",
+            //     "ITMW_1H_SLEDGEHAMMER_01",
+            //     "ITMW_1H_SWORD_SHORT_05"
+            // };
+            
             var items = itemNames.ToDictionary(itemName => itemName, VmInstanceManager.TryGetItemData)
                     .Where(i => i.Value.MainFlag == (int)VmGothicEnums.ItemFlags.ItemKatNf)
                     .Where(i => (i.Value.Flags & ((int)VmGothicEnums.ItemFlags.ItemSwd | (int)VmGothicEnums.ItemFlags.ItemAxe)) != 0);
-
             
-            var vobContainer = GameGlobals.Vobs.CreateItem(new Item()
+            var zPosition = 0f;
+            foreach (var item in items)
             {
-                Name = items.First().Key,
-                Position = Vector3.one.ToZkVector(),
-                Rotation = Quaternion.identity.ToZkMatrix(),
-                Visual = new VisualMesh(),
-                Instance = items.First().Key
-            });
+                var vobContainer = GameGlobals.Vobs.CreateItem(new Item()
+                {
+                    Name = item.Key,
+                    Position = new Vector3(0f, 1f, zPosition).ToZkVector(),
+                    Rotation = Quaternion.Euler(new Vector3(0, 0, -90)).ToZkMatrix(), // Quaternion.identity.ToZkMatrix(), 
+                    Visual = new VisualMesh(),
+                    Instance = item.Key
+                });
+
+                vobContainer.Go.SetParent(Weapons1HGO);
+                zPosition -= 0.5f;
+            }
+        }
+        
+        private void InitWeapons2H()
+        {
+            var itemNames = GameData.GothicVm.GetInstanceSymbols("C_Item").Select(i => i.Name).ToList();
+
+            // var itemNames = new []{
+            //     "ITMW_1H_CLUB_01",
+            //     "ITMW_1H_SLEDGEHAMMER_01",
+            //     "ITMW_1H_SWORD_SHORT_05"
+            // };
             
-            vobContainer.Go.SetParent(Weapons1HGO);
+            var items = itemNames.ToDictionary(itemName => itemName, VmInstanceManager.TryGetItemData)
+                .Where(i => i.Value.MainFlag == (int)VmGothicEnums.ItemFlags.ItemKatNf)
+                .Where(i => (i.Value.Flags & ((int)VmGothicEnums.ItemFlags.Item2HdSwd | (int)VmGothicEnums.ItemFlags.Item2HdAxe)) != 0);
+            
+            var zPosition = 0f;
+            foreach (var item in items)
+            {
+                var vobContainer = GameGlobals.Vobs.CreateItem(new Item()
+                {
+                    Name = item.Key,
+                    Position = new Vector3(2f, 1f, zPosition).ToZkVector(),
+                    Rotation = Quaternion.Euler(new Vector3(0, 0, -90)).ToZkMatrix(), // Quaternion.identity.ToZkMatrix(), 
+                    Visual = new VisualMesh(),
+                    Instance = item.Key
+                });
+
+                vobContainer.Go.SetParent(Weapons1HGO);
+                zPosition -= 0.5f;
+            }
         }
 
         private void InitOCMobDoor()

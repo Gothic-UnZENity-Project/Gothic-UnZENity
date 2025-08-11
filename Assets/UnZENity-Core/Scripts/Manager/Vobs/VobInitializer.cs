@@ -436,13 +436,13 @@ namespace GUZ.Core.Manager.Vobs
 
             if (mrm != null)
             {
-                return MeshFactory.CreateVob(item.Visual, mrm, parent: parent, rootGo: go);
+                return MeshFactory.CreateVob(item.Visual, mrm, parent: parent, rootGo: go, createSegmentedCollider: true);
             }
 
             // shortbow (itrw_bow_l_01) has no mrm, but has mmb
             var mmb = ResourceLoader.TryGetMorphMesh(item.Visual);
 
-            return MeshFactory.CreateVob(item.Visual, mmb, parent: parent, rootGo: go);
+            return MeshFactory.CreateVob(item.Visual, mmb, parent: parent, rootGo: go, createSegmentedCollider: true);
         }
 
         public GameObject CreateItemMesh(ItemInstance item, GameObject parentGo, Vector3 position)
