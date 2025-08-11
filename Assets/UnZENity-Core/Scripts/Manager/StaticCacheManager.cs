@@ -184,6 +184,11 @@ namespace GUZ.Core.Manager
                 }
             }
 
+            return DoGlobalCacheFilesExist();
+        }
+
+        public bool DoGlobalCacheFilesExist()
+        {
             // Global files
             return File.Exists(BuildFilePathName(_fileNameGlobalMetadata)) &&
                    File.Exists(BuildFilePathName(_fileNameGlobalTextureArrayData)) &&

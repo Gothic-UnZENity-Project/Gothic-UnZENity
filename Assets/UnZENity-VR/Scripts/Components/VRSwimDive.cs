@@ -48,19 +48,21 @@ namespace GUZ.VR.Components
 
         // Swim movement
         [SerializeField] private float _swimStartDiveVerticalVelocity = -5f;
-        [SerializeField] private float _swimHandMovementMultiplier = 7.5f;
+        [SerializeField] private float _swimHandMovementMultiplier = 5f;
         [SerializeField] private float _swimVelocityFadeRate = 0.25f; // e.g., 0.25==75% less velocity with each second
         private bool _isSwimmingForceStarted; // If we lift the grips, we set it to false again to re-enable sounds later.
         
         // Dive movement
         private Vector3 _currentVelocity;
-        [SerializeField] private float _diveHandMovementMultiplier = 5f;
+        [SerializeField] private float _diveHandMovementMultiplier = 2.5f;
         [SerializeField] private float _diveVelocityFadeRate = 0.25f; // 0.25==75% less velocity with each second
         private bool _isDivingForceStarted; // If we lift the grips, we set it to false again to re-enable sounds later.
 
 
         private void Start()
         {
+            Shader.SetGlobalInt(Constants.ShaderPropertyWaterEffectToggle, 0);
+
             var vrPlayer = ((VRInteractionAdapter)GameContext.InteractionAdapter).GetVRPlayerController();
             _leftHandAnimator = vrPlayer.LeftHand.HandAnimator;
             _rightHandAnimator = vrPlayer.RightHand.HandAnimator;
@@ -174,6 +176,10 @@ namespace GUZ.VR.Components
                     _rightHandAnimator.enabled = true;
                     break;
                 case ZenGineConst.WaterLevel.Knee:
+                    // FIXME - Or is it "WalkMode.Water"?
+                    _mode = VmGothicEnums.WalkMode.Walk;
+                    Shader.SetGlobalInt(Constants.ShaderPropertyWaterEffectToggle, 0);
+
                     _playerController.Gravity = _initialGravity;
                     _playerController.MoveSpeed = _initialMoveSpeed / 2;
                     _playerController.RunSpeed = _initialMoveSpeed / 2; // No running, but it might be, that we run into deep water, then we need to slow it down like walking.
@@ -186,7 +192,8 @@ namespace GUZ.VR.Components
                     // Dive -> Swim
                     if (_mode == VmGothicEnums.WalkMode.Dive)
                         SFXPlayer.Instance.PlaySFX(_sfxSwim2HangAdapter.GetRandomClip(), Camera.main!.transform.position);
-                        
+
+                    Shader.SetGlobalInt(Constants.ShaderPropertyWaterEffectToggle, 0);
                     _mode = VmGothicEnums.WalkMode.Swim;
                     _playerController.Gravity = 0f;
                     _playerController.MaxFallSpeed = 0f;
@@ -213,21 +220,49 @@ namespace GUZ.VR.Components
             }
         }
         
-        private const float _diveStartGravityDownTime = 0.75f;
-        
-        private IEnumerator StartDive()
+        private void StartDive()
         {
+            Shader.SetGlobalInt(Constants.ShaderPropertyWaterEffectToggle, 1);
             _mode = VmGothicEnums.WalkMode.Dive;
+
+            // Reset velocity so that dive down is smoothed. Otherwise, we are on the ground already. ;-)
+            // (After "forcing" diving by moving hands down.)
+            _currentVelocity = Vector3.zero;
             
-            _playerController.Gravity = _initialGravity / 2;
-            _playerController.MaxFallSpeed = _initialFallSpeed / 2;
-            yield return new WaitForSeconds(_diveStartGravityDownTime);
             _playerController.Gravity = 0;
             _playerController.MaxFallSpeed = 0;
             
             SFXPlayer.Instance.PlaySFX(_sfxSwim2DiveAdapter.GetRandomClip(), Camera.main!.transform.position);
         }
-        
+
+        /// <summary>
+        /// Tested:
+        /// Test 1. No translation
+        /// var combinedVelocity = (leftHandVelocity + rightHandVelocity) * _swimHandMovementMultiplier;
+        /// _currentVelocity = Vector3.Lerp(_currentVelocity, -combinedVelocity, Time.deltaTime);
+        ///
+        /// [🆗] Moving physical head
+        /// [🛑] Rotating player with Thumbstick
+        ///
+        ///
+        /// Test 2. Translation with PlayerController (where Thumbstick rotation is applied)
+        /// var combinedVelocity = (leftHandVelocity + rightHandVelocity) * _swimHandMovementMultiplier;
+        /// var rotatedVelocity = _playerController.transform.TransformDirection(combinedVelocity);
+        /// _currentVelocity = Vector3.Lerp(_currentVelocity, -rotatedVelocity, Time.deltaTime);
+        ///
+        /// [🛑] Moving physical head
+        /// [🆗] Rotating player with Thumbstick
+        ///
+        ///
+        // Test 3. Translation with Camera.main!
+        /// var combinedVelocity = (leftHandVelocity + rightHandVelocity) * _swimHandMovementMultiplier;
+        /// var rotatedVelocity = Camera.main!.transform.TransformDirection(combinedVelocity);
+        /// _currentVelocity = Vector3.Lerp(_currentVelocity, -rotatedVelocity, Time.deltaTime);
+        ///
+        /// [🛑] Moving physical head
+        /// [🆗] Rotating player with Thumbstick
+        /// </summary>
+
         private void HandleSwim()
         {
             if (_playerInputs.BothGripsActiveState.JustActivated)
@@ -244,10 +279,10 @@ namespace GUZ.VR.Components
                 var combinedVelocity = (leftHandVelocity + rightHandVelocity) * _swimHandMovementMultiplier;
                 
                 // Transform velocity to world space based on player rotation
-                var rotatedVelocity = transform.TransformDirection(combinedVelocity);
+                // var rotatedVelocity = Camera.main!.transform.TransformDirection(combinedVelocity);
                 
                 // Apply opposite force for swimming - Only horizontal!
-                _currentVelocity = Vector3.Lerp(_currentVelocity, -rotatedVelocity, Time.deltaTime);
+                _currentVelocity = Vector3.Lerp(_currentVelocity, -combinedVelocity, Time.deltaTime);
             }
             // Fade out movement
             else
@@ -260,16 +295,17 @@ namespace GUZ.VR.Components
             {
                 // Play a random swim sound via HVRs SFXPlayer.
                 SFXPlayer.Instance.PlaySFX(_sfxSwimAdapter.GetRandomClip(), Camera.main!.transform.position);
-                _isSwimmingForceStarted = true;
+                _isSwimmingForceStarted = false;
             }
 
             // Move the character - Horizontal only
             var rotatedHorizontalVelocity = new Vector3(_currentVelocity.x, 0, _currentVelocity.z);
             _playerController.CharacterController.Move(rotatedHorizontalVelocity * Time.deltaTime);
 
-            if (_currentVelocity.y > _swimStartDiveVerticalVelocity)
+            // We seek -y aka "down"
+            if (_currentVelocity.y < _swimStartDiveVerticalVelocity)
             {
-                StartCoroutine(StartDive());
+                StartDive();
             }
         }
 
@@ -289,10 +325,10 @@ namespace GUZ.VR.Components
                 var combinedVelocity = (leftHandVelocity + rightHandVelocity) * _diveHandMovementMultiplier;
 
                 // Transform velocity to world space based on player rotation
-                var rotatedVelocity = transform.TransformDirection(combinedVelocity);
+                // var rotatedVelocity = Camera.main!.transform.TransformDirection(combinedVelocity);
 
                 // Apply opposite force for diving
-                _currentVelocity = Vector3.Lerp(_currentVelocity, -rotatedVelocity, Time.deltaTime);
+                _currentVelocity = Vector3.Lerp(_currentVelocity, -combinedVelocity, Time.deltaTime);
             }
             // Fade out movement
             else
@@ -305,7 +341,7 @@ namespace GUZ.VR.Components
             {
                 // Play a random dive sound via HVRs SFXPlayer.
                 SFXPlayer.Instance.PlaySFX(_sfxDiveAdapter.GetRandomClip(), Camera.main!.transform.position);
-                _isDivingForceStarted = true;
+                _isDivingForceStarted = false;
             }
 
             // Move the character

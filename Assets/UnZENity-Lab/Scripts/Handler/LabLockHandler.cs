@@ -12,10 +12,12 @@ namespace GUZ.Lab.Handler
 
         public override void Bootstrap()
         {
-            SpawnInteractable("DOOR_WOODEN", PrefabType.VobDoor, _doorSlot);
-            SpawnItem("ItKeLockpick", _lockPickSlot, new(0, -0.5f, 0), PrefabType.VobItemLockPick);
+            // FIXME - Need to initialize them via VobLoader.LoadNow(IVob) instead of loading mesh. Otherwise we get exceptions in child Start() calls.
 
-            StartCoroutine(ExecAfter1Frame());
+            // SpawnInteractable("DOOR_WOODEN", PrefabType.VobDoor, _doorSlot);
+            // SpawnItem("ItKeLockpick", _lockPickSlot, new(0, -0.5f, 0), PrefabType.VobItemLockPick);
+            //
+            // StartCoroutine(ExecAfter1Frame());
         }
 
         private IEnumerator ExecAfter1Frame()

@@ -1,11 +1,17 @@
 using System.Collections;
+using System.Linq;
 using GUZ.Core;
+using GUZ.Core.Extensions;
+using GUZ.Core.Globals;
+using GUZ.Core.Vm;
 using UnityEngine;
+using ZenKit.Vobs;
 
 namespace GUZ.Lab.Handler
 {
     public class LabInteractableHandler : AbstractLabHandler
     {
+        public GameObject Weapons1HGO;
         public GameObject ContainersGO;
         public GameObject DoorsGO;
         public GameObject FiresGO;
@@ -16,15 +22,37 @@ namespace GUZ.Lab.Handler
 
         public override void Bootstrap()
         {
-            InitOCMobDoor();
-            StartCoroutine(InitOCMobContainer());
-            InitOCMobFire();
-            InitOCMobBed();
-            InitOCMobSwitch();
-            InitOCMobInter();
-            InitOCMobWheel();
+            InitWeapons1H();
+            // FIXME - Need to initialize them via VobLoader.LoadNow(IVob) instead of loading mesh. Otherwise we get exceptions in child Start() calls.
+            // InitOCMobDoor();
+            // StartCoroutine(InitOCMobContainer());
+            // InitOCMobFire();
+            // InitOCMobBed();
+            // InitOCMobSwitch();
+            // InitOCMobInter();
+            // InitOCMobWheel();
         }
 
+        private void InitWeapons1H()
+        {
+            var itemNames = GameData.GothicVm.GetInstanceSymbols("C_Item").Select(i => i.Name).ToList();
+
+            var items = itemNames.ToDictionary(itemName => itemName, VmInstanceManager.TryGetItemData)
+                    .Where(i => i.Value.MainFlag == (int)VmGothicEnums.ItemFlags.ItemKatNf)
+                    .Where(i => (i.Value.Flags & ((int)VmGothicEnums.ItemFlags.ItemSwd | (int)VmGothicEnums.ItemFlags.ItemAxe)) != 0);
+
+            
+            var vobContainer = GameGlobals.Vobs.CreateItem(new Item()
+            {
+                Name = items.First().Key,
+                Position = Vector3.one.ToZkVector(),
+                Rotation = Quaternion.identity.ToZkMatrix(),
+                Visual = new VisualMesh(),
+                Instance = items.First().Key
+            });
+            
+            vobContainer.Go.SetParent(Weapons1HGO);
+        }
 
         private void InitOCMobDoor()
         {

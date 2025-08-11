@@ -1,8 +1,10 @@
 ﻿#if GUZ_HVR_INSTALLED
 using System.Collections;
+using System.Collections.Generic;
 using GUZ.Core;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
+using GUZ.Core.Marvin;
 using GUZ.VR.Manager;
 using GUZ.VR.Properties;
 using HurricaneVR.Framework.Core;
@@ -12,9 +14,10 @@ using UnityEngine.Animations;
 
 namespace GUZ.VR.Components
 {
-    public class VRVobItem : MonoBehaviour
+    public class VRVobItem : MonoBehaviour, IMarvinPropertyCollector
     {
         [SerializeField] private VRVobItemProperties _vrProperties;
+        [SerializeField] private Rigidbody _rigidbody;
         [SerializeField] private MeshCollider _meshCollider;
 
         // We pre-allocate enough entries to fetch at least one entry which is not ourselves.
@@ -49,6 +52,10 @@ namespace GUZ.VR.Components
                 GameGlobals.Marvin.MarvinSelectionGO = grabbable.gameObject;
                 return;
             }
+
+            // If we sock an object on our hips etc.
+            if (grabber is HVRSocket)
+                _vrProperties.IsSocketed = true;
             
             // OnGrabbed is normally called multiple times. Even after an object is already socketed. If so, then let's stop Grab behaviour.
             if (_vrProperties.IsSocketed)
@@ -64,12 +71,8 @@ namespace GUZ.VR.Components
             DynamicMaterialManager.SetDynamicValue(gameObject, Constants.ShaderPropertyTransparency, Constants.ShaderPropertyTransparencyValue);
 
             // If we want Item collisions, we just temporarily deactivate them until the item is free of collisions.
-            // FIXME - Fetch Collision dragging from Ini settings
-            // if (PlayerPrefsManager.ItemCollisionWhileDragged)
-            // {
-            //     StartCoroutine(ReEnableCollisionRoutine());
-            // }
-
+            StartCoroutine(ReEnableCollisionRoutine());
+            
             GameGlobals.VobMeshCulling?.StartTrackVobPositionUpdates(gameObject);
             VRPlayerManager.SetGrab(grabber, grabbable);
         }
@@ -85,6 +88,10 @@ namespace GUZ.VR.Components
 
             GameGlobals.VobMeshCulling?.StartTrackVobPositionUpdates(gameObject);
             VRPlayerManager.UnsetGrab(grabber, grabbable);
+            
+            // If we sock an object on our hips etc.
+            if (grabber is HVRSocket)
+                _vrProperties.IsSocketed = false;
         }
 
         /// <summary>
@@ -139,12 +146,15 @@ namespace GUZ.VR.Components
 
         /// <summary>
         /// Check every n-th frame if the object has no collisions any longer. Then re-enable collisions.
+        ///
+        /// FIXME - If we want to have our sword always as a ghost, we need to properly implement it:
+        ///         (1) a Setting in Immersion menu,
+        ///         (2) properly set collision matrix as othwise hip holsters aren't detected because they're layer:default.
         /// </summary>
-        /// <returns></returns>
         private IEnumerator ReEnableCollisionRoutine()
         {
-            while (IsColliderOverlapping())
-                yield return new WaitForFixedUpdate();
+            // while (IsColliderOverlapping())
+            yield return new WaitForSeconds(1f);
 
             // Re-enable collisions
             gameObject.layer = Constants.GrabbableLayer;
@@ -154,6 +164,8 @@ namespace GUZ.VR.Components
         }
 
         /// <summary>
+        /// FIXME - Isn't working so far. It also collects ZoneMusic.
+        ///         We need to properly design Layers to have the collider matrix work fine.
         /// Physics.OverlapCapsule() check if the item is free of collisions and therefore its collisions can be re-activated again.
         /// </summary>
         private bool IsColliderOverlapping()
@@ -252,6 +264,29 @@ namespace GUZ.VR.Components
         private void OnDisable()
         {
             DynamicMaterialManager.ResetAllDynamicValues(gameObject);
+        }
+
+        public IEnumerable<object> CollectMarvinInspectorProperties()
+        {
+            return new List<object>
+            {
+                new MarvinPropertyHeader("VRWeapon - RigidBody"),
+                new MarvinProperty<float>(
+                    "Mass",
+                    () => _rigidbody.mass,
+                    value => _rigidbody.mass = value,
+                    0f, 50f),
+                new MarvinProperty<float>(
+                    "Linear Damping",
+                    () => _rigidbody.linearDamping,
+                    value => _rigidbody.linearDamping = value,
+                    0f, 2f),
+                new MarvinProperty<float>(
+                    "Angular Damping",
+                    () => _rigidbody.angularDamping,
+                    value => _rigidbody.angularDamping = value,
+                    0f, 2f),
+            };
         }
     }
 }

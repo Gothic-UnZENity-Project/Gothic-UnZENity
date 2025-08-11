@@ -46,7 +46,6 @@ namespace GUZ.Core
         VobItemWeapon,
         
         Player,
-        XRDeviceSimulator,
         StoryIntroduceChapter
     }
 
@@ -98,7 +97,6 @@ namespace GUZ.Core
                 PrefabType.VobItemWeapon => "Prefabs/Vobs/oCItem/Weapon",
                 
                 PrefabType.Player => "Prefabs/Player",
-                PrefabType.XRDeviceSimulator => "Prefabs/VRPlayer/XR Device Simulator",
                 PrefabType.StoryIntroduceChapter => "Prefabs/Story/IntroduceChapter",
                 _ => throw new Exception($"Enum value {type} not yet defined.")
             };
