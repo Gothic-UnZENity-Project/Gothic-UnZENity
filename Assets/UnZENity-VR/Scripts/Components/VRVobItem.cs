@@ -45,6 +45,11 @@ namespace GUZ.VR.Components
             }
         }
 
+        private void Start()
+        {
+            GetComponent<HVRGrabbable>().SetupColliders();
+        }
+
         public void OnGrabbed(HVRGrabberBase grabber, HVRGrabbable grabbable)
         {
             if (GameGlobals.Marvin.IsMarvinSelectionMode)

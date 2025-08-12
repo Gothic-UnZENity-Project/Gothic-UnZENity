@@ -465,18 +465,14 @@ namespace GUZ.Core.Creator.Meshes.Builder.Algorithms
             for (int i = 0; i < segments.Count; i++)
             {
                 var segment = segments[i];
-                
-                // Create a child object for organization
-                var segmentObj = new GameObject($"Collider_{i}_{segment.suggestedType}");
-                segmentObj.transform.SetParent(weaponObj.transform, false);
-                
+
                 if (segment.suggestedType == ColliderType.Capsule)
                 {
-                    CreateCapsuleCollider(segmentObj, segment, orientation.mainAxis);
+                    CreateCapsuleCollider(weaponObj, segment, orientation.mainAxis);
                 }
                 else
                 {
-                    CreateBoxCollider(segmentObj, segment);
+                    CreateBoxCollider(weaponObj, segment);
                 }
                 
                 Debug.Log($"Segment {i}: {segment.suggestedType}, Width: {segment.averageWidth:F3}, Height: {segment.maxHeight - segment.minHeight:F3}, Vertices: {segment.vertices.Count}");
