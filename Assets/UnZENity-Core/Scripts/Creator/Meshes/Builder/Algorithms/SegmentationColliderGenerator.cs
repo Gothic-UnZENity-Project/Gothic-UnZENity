@@ -33,7 +33,7 @@ namespace GUZ.Core.Creator.Meshes.Builder.Algorithms
         /// Automatically detects weapon orientation and segments from handle to tip
         /// </summary>
         public static void GenerateWeaponColliders(GameObject weaponObj, Mesh mesh,
-            float widthThreshold = 0.4f, int minVerticesPerSegment = 3, int samples = 50)
+            float widthThreshold = 0.4f, int minVerticesPerSegment = 3, int samples = 50, float segmentDistance = 0.05f)
         {
             if (mesh == null || mesh.vertices.Length == 0)
                 return;
@@ -49,7 +49,7 @@ namespace GUZ.Core.Creator.Meshes.Builder.Algorithms
             var widthProfile = CreateWidthProfile(weaponObj, vertices, triangles, bounds, weaponOrientation, samples);
             
             // Step 3: Segment based on significant width changes
-            var segments = CreateWidthBasedSegments(vertices, triangles, widthProfile, weaponOrientation, widthThreshold, minVerticesPerSegment);
+            var segments = CreateWidthBasedSegments(weaponObj, vertices, triangles, widthProfile, weaponOrientation, widthThreshold, minVerticesPerSegment, segmentDistance);
             
             // Step 4: Create appropriate colliders for each segment
             CreateCollidersFromSegments(weaponObj, segments, weaponOrientation);
@@ -123,7 +123,8 @@ namespace GUZ.Core.Creator.Meshes.Builder.Algorithms
             {
                 float currentPos = orientation.minValue + (i * step);
                 float nextPos = orientation.minValue + ((i + 1) * step);
-                
+
+// DEBUG output
 // Create box collider at current position
 // var colliderObj = new GameObject($"SliceCollider_{i}");
 // colliderObj.transform.SetParent(go.transform, false);
@@ -146,9 +147,6 @@ namespace GUZ.Core.Creator.Meshes.Builder.Algorithms
                 float width = CalculateSliceWidthFromPoints(intersectionPoints, orientation.mainAxis);
                 profile.Add(width);
             }
-            
-            // Smooth the profile to reduce noise
-            SmoothProfile(profile);
             
             return profile;
         }
@@ -281,38 +279,7 @@ namespace GUZ.Core.Creator.Meshes.Builder.Algorithms
             
             return 0f;
         }
-        
-        private static void SmoothProfile(List<float> profile, int smoothingPasses = 1)
-        {
-            for (int pass = 0; pass < smoothingPasses; pass++)
-            {
-                var smoothed = new List<float>(profile.Count);
-                
-                for (int i = 0; i < profile.Count; i++)
-                {
-                    float sum = profile[i];
-                    int count = 1;
-                    
-                    // Add neighboring values
-                    if (i > 0 && profile[i - 1] > 0)
-                    {
-                        sum += profile[i - 1];
-                        count++;
-                    }
-                    if (i < profile.Count - 1 && profile[i + 1] > 0)
-                    {
-                        sum += profile[i + 1];
-                        count++;
-                    }
-                    
-                    smoothed.Add(sum / count);
-                }
-                
-                profile.Clear();
-                profile.AddRange(smoothed);
-            }
-        }
-        
+
         private static float CalculateSliceWidth(List<Vector3> sliceVertices, int mainAxis)
         {
             if (sliceVertices.Count == 0) return 0f;
@@ -347,8 +314,8 @@ namespace GUZ.Core.Creator.Meshes.Builder.Algorithms
             return Mathf.Max(width1, width2);
         }
         
-        private static List<WidthSegment> CreateWidthBasedSegments(Vector3[] vertices, int[] triangles, List<float> widthProfile, 
-            WeaponOrientation orientation, float threshold, int minVerticesPerSegment)
+        private static List<WidthSegment> CreateWidthBasedSegments(GameObject go, Vector3[] vertices, int[] triangles, List<float> widthProfile,
+            WeaponOrientation orientation, float threshold, int minVerticesPerSegment, float segmentDistance)
         {
             var segments = new List<WidthSegment>();
             
@@ -382,7 +349,15 @@ namespace GUZ.Core.Creator.Meshes.Builder.Algorithms
                 {
                     float boundary = orientation.minValue + ((float)i / widthProfile.Count) * orientation.length;
                     segmentBoundaries.Add(boundary);
-                    
+
+// DEBUG output
+// Create box collider at current position
+// var colliderObj = new GameObject($"SliceCollider_{i}");
+// colliderObj.transform.SetParent(go.transform, false);
+// var boxCollider = colliderObj.AddComponent<BoxCollider>();
+// boxCollider.center = new Vector3(boundary, 0, 0);
+// boxCollider.size = new Vector3(0f, 0.1f, 0.1f);
+
                     Debug.Log($"Found width change at position {boundary:F3}: {previousWidth:F3} -> {currentWidth:F3} (ratio: {changeRatio:F3})");
                 }
             }
@@ -390,7 +365,7 @@ namespace GUZ.Core.Creator.Meshes.Builder.Algorithms
             segmentBoundaries.Add(orientation.maxValue);
             
             // Ensure minimum distance between boundaries
-            var filteredBoundaries = FilterCloseSegments(segmentBoundaries, orientation.length * 0.1f);
+            var filteredBoundaries = FilterCloseSegments(segmentBoundaries, orientation.length * segmentDistance);
             
             // Create segments based on boundaries
             for (int i = 0; i < filteredBoundaries.Count - 1; i++)
