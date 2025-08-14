@@ -1,5 +1,6 @@
 #if GUZ_HVR_INSTALLED
 using System.Collections.Generic;
+using GUZ.Core.Data.Container;
 using GUZ.Core.Marvin;
 using GUZ.Core.Vm;
 using GUZ.Core.Vob;
@@ -32,12 +33,15 @@ namespace GUZ.VR.Components.Player
         private VRPlayerWeaponAttackHandler _leftHandPlayerWeaponFightHandler;
         private VRPlayerWeaponAttackHandler _rightHandPlayerWeaponFightHandler;
 
+        private VobContainer _leftHandWeapon;
+        private VobContainer _rightHandWeapon;
+
         
         public void OnGrabbed(HVRGrabberBase hand, HVRGrabbable item)
         {
             var vobItem = item.GetComponentInParent<VobLoader>();
             var vobContainer = vobItem?.Container;
-            
+
             // We grab something that is not handled as VobItem.
             if (vobContainer == null || vobContainer.Vob.Type != VirtualObjectType.oCItem)
                 return;
@@ -45,19 +49,73 @@ namespace GUZ.VR.Components.Player
             // Currently we handle melee weapons only.
             if (vobContainer.GetItemInstance()!.MainFlag != (int)VmGothicEnums.ItemFlags.ItemKatNf)
                 return;
-            
+
+            var rigidBody = vobContainer.Go.GetComponentInChildren<Rigidbody>();
+            // Logger.LogWarning("Grabbed - " + ((HVRHandGrabber)hand).HandSide, LogCat.VR);
             if (((HVRHandGrabber)hand).HandSide == HVRHandSide.Left)
-                _leftHandPlayerWeaponFightHandler = new VRPlayerWeaponAttackHandler(vobContainer.Go.GetComponentInChildren<Rigidbody>(), HVRHandSide.Left, _weaponVelocityThreshold, _weaponVelocityDropPercentage, _weaponAttackWindowTime, _weaponComboWindowTime, _weaponCooldownWindowTime, _velocityCheckDuration, _velocitySampleCount);
+            {
+                _leftHandWeapon = vobContainer;
+
+                // Check if we already have a weaponFightHandler for this weapon active.
+                if (_rightHandWeapon == _leftHandWeapon)
+                {
+                    // Only add information that we hold weapons in two hands now.
+                    _rightHandPlayerWeaponFightHandler.AddLeftHand();
+                    _leftHandPlayerWeaponFightHandler = _rightHandPlayerWeaponFightHandler;
+                }
+                else
+                {
+                    // Item is in first hand.
+                    _leftHandPlayerWeaponFightHandler = new VRPlayerWeaponAttackHandler(rigidBody, HVRHandSide.Left, _weaponVelocityThreshold, _weaponVelocityDropPercentage, _weaponAttackWindowTime, _weaponComboWindowTime, _weaponCooldownWindowTime, _velocityCheckDuration, _velocitySampleCount);
+                }
+            }
             else
-                _rightHandPlayerWeaponFightHandler = new VRPlayerWeaponAttackHandler(vobContainer.Go.GetComponentInChildren<Rigidbody>(), HVRHandSide.Right, _weaponVelocityThreshold, _weaponVelocityDropPercentage, _weaponAttackWindowTime, _weaponComboWindowTime, _weaponCooldownWindowTime, _velocityCheckDuration, _velocitySampleCount);
+            {
+                _rightHandWeapon = vobContainer;
+
+                // Check if we already have a weaponFightHandler for this weapon active.
+                if (_leftHandWeapon == _rightHandWeapon)
+                {
+                    // Only add information that we hold weapons in two hands now.
+                    _leftHandPlayerWeaponFightHandler.AddRightHand();
+                    _rightHandPlayerWeaponFightHandler = _leftHandPlayerWeaponFightHandler;
+                }
+                else
+                {
+                    _rightHandPlayerWeaponFightHandler = new VRPlayerWeaponAttackHandler(rigidBody, HVRHandSide.Right, _weaponVelocityThreshold, _weaponVelocityDropPercentage, _weaponAttackWindowTime, _weaponComboWindowTime, _weaponCooldownWindowTime, _velocityCheckDuration, _velocitySampleCount);
+                }
+            }
         }
 
         public void OnReleased(HVRGrabberBase hand, HVRGrabbable item)
         {
+            // Logger.LogWarning("Released - " + ((HVRHandGrabber)hand).HandSide, LogCat.VR);
             if (((HVRHandGrabber)hand).HandSide == HVRHandSide.Left)
+            {
+                _leftHandPlayerWeaponFightHandler?.RemoveLeftHand();
+                _leftHandWeapon = null;
+
+                // If we grabbed the item twice before, we simply change the hand which is the "owning" hand of attack movement.
+                if (_rightHandWeapon == _leftHandWeapon)
+                {
+                    _rightHandPlayerWeaponFightHandler = _leftHandPlayerWeaponFightHandler;
+                }
+
                 _leftHandPlayerWeaponFightHandler = null;
+            }
             else
+            {
+                _rightHandPlayerWeaponFightHandler?.RemoveRightHand();
+                _rightHandWeapon = null;
+
+                // If we grabbed the item twice before, we simply change the hand which is the "owning" hand of attack movement.
+                if (_leftHandWeapon == _rightHandWeapon)
+                {
+                    _leftHandPlayerWeaponFightHandler = _rightHandPlayerWeaponFightHandler;
+                }
+
                 _rightHandPlayerWeaponFightHandler = null;
+            }
         }
         
         private void FixedUpdate()

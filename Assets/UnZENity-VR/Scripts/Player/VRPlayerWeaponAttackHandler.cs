@@ -18,7 +18,8 @@ namespace GUZ.VR.Components.VobItem
 
         private readonly CharacterController _characterController;
         private readonly Rigidbody _weaponWeaponRigidbody;
-        private readonly HVRHandSide _handSide;
+        private bool _isLeftHand;
+        private bool _isRightHand;
 
         private readonly float _attackVelocityThreshold;
         private readonly float _velocityDropPercentage;
@@ -67,7 +68,10 @@ namespace GUZ.VR.Components.VobItem
             _characterController = VRPlayerManager.VRInteractionAdapter.GetVRPlayerController().CharacterController;
 
             _weaponWeaponRigidbody = weaponRigidbody;
-            _handSide = handSide;
+
+            // Initial hand setup
+            _isLeftHand = handSide == HVRHandSide.Left;
+            _isRightHand = !_isLeftHand;
             
             _attackVelocityThreshold =  attackVelocityThreshold;
             _velocityDropPercentage = velocityDropPercentage;
@@ -88,6 +92,26 @@ namespace GUZ.VR.Components.VobItem
         {
             UpdateVelocityHistory();
             UpdateStateMachine();
+        }
+
+        public void AddLeftHand()
+        {
+            _isLeftHand = true;
+        }
+
+        public void AddRightHand()
+        {
+            _isRightHand = true;
+        }
+
+        public void RemoveLeftHand()
+        {
+            _isLeftHand = false;
+        }
+
+        public void RemoveRightHand()
+        {
+            _isRightHand = false;
         }
 
         /// <summary>
@@ -269,8 +293,15 @@ namespace GUZ.VR.Components.VobItem
             _currentStateTime = _comboWindowTime;
             _hasDroppedBelowThreshold = false;
             _hasReturnedToThreshold = false;
-            
-            VRPlayerManager.GetHand(_handSide).Vibrate(_amplitude, _duration, _frequency);
+
+            if (_isLeftHand)
+            {
+                VRPlayerManager.GetHand(HVRHandSide.Left).Vibrate(_amplitude, _duration, _frequency);
+            }
+            if (_isRightHand)
+            {
+                VRPlayerManager.GetHand(HVRHandSide.Right).Vibrate(_amplitude, _duration, _frequency);
+            }
         }
         
         private void ExecuteCombo()
