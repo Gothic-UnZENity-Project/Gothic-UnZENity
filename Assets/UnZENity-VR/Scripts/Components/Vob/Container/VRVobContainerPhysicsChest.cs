@@ -21,7 +21,7 @@ using ZenKit.Daedalus;
 using ZenKit.Vobs;
 using Logger = GUZ.Core.Util.Logger;
 
-namespace GUZ.VR.Components.VobContainer
+namespace GUZ.VR.Components.Vob.Container
 {
     public class VRVobContainerPhysicsChest : HVRPhysicsDoor
     {
