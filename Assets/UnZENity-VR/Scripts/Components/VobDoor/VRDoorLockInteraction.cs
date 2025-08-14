@@ -1,12 +1,14 @@
 ﻿#if GUZ_HVR_INSTALLED
 using GUZ.Core.Creator.Sounds;
 using GUZ.Core.Globals;
+using GUZ.Core.Util;
 using GUZ.Core.Vob;
 using GUZ.VR.Components.VobItem;
 using GUZ.VR.Manager;
 using GUZ.VR.Properties.VobItem;
 using UnityEngine;
 using ZenKit.Vobs;
+using Logger = GUZ.Core.Util.Logger;
 
 namespace GUZ.VR.Components.VobDoor
 {
@@ -64,7 +66,7 @@ namespace GUZ.VR.Components.VobDoor
             }
             else
             {
-                Debug.LogError($"VRDoorLockInteraction: No hand found for grabbed object >{other.gameObject.name}<.", other.gameObject);
+                Logger.LogError($"VRDoorLockInteraction: No hand found for grabbed object >{other.gameObject.name}<.", LogCat.VR);
             }
         }
         
@@ -88,7 +90,7 @@ namespace GUZ.VR.Components.VobDoor
             var currentChar = _combination[_combinationPos];
             var isCorrect = (isLeft && currentChar == 'L') || (!isLeft && currentChar == 'R');
 
-            Debug.Log($"IsCorrect={isCorrect}, CombinationChar={currentChar}");
+            Logger.Log($"IsCorrect={isCorrect}, CombinationChar={currentChar}", LogCat.VR);
             
             if (isCorrect)
             {

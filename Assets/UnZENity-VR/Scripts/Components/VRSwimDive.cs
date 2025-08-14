@@ -130,13 +130,6 @@ namespace GUZ.VR.Components
 
             RaycastHit hit;
 
-            var hitsAll = Physics.RaycastAll(transform.position, Vector3.up, kneeDeepHeight);
-            var hits = Physics.RaycastAll(transform.position, Vector3.up, kneeDeepHeight, 1 << Constants.WaterLayer);
-            foreach (var raycastHit in hits)
-            { 
-                Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.up) * raycastHit.distance, Color.yellow, 2f, false); 
-            }
-            
             // Water between our feet and our head found!
             if (Physics.Raycast(transform.position, Vector3.up, out hit, chestDeepHeightWithBuffer, 1 << Constants.WaterLayer))
             {

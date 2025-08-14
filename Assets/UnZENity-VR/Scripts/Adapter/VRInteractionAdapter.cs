@@ -5,8 +5,7 @@ using GUZ.Core.Adapter;
 using GUZ.Core.Config;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
-using GUZ.Core.UI.Menus.Adapter.Menu;
-using GUZ.Core.UI.Menus.Adapter.MenuItem;
+using GUZ.Core.Util;
 using GUZ.VR.Components;
 using GUZ.VR.Components.HVROverrides;
 using GUZ.VR.Components.Marvin;
@@ -16,7 +15,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.XR;
 using UnityEngine.XR.Management;
-using ZenKit.Daedalus;
+using Logger = GUZ.Core.Util.Logger;
 
 namespace GUZ.VR.Adapter
 {
@@ -134,7 +133,7 @@ namespace GUZ.VR.Adapter
 
             if (!currentScene.IsValid())
             {
-                Debug.LogError("No valid scene for XRDeviceSimulator found. Skipping setup.");
+                Logger.LogError("No valid scene for XRDeviceSimulator found. Skipping setup.", LogCat.VR);
                 return;
             }
 

@@ -7,7 +7,6 @@ using GUZ.Core.Data.Container;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Npc;
-using GUZ.Core.Vm;
 using GUZ.Lab.Mocks;
 using UnityEngine;
 using ZenKit.Daedalus;

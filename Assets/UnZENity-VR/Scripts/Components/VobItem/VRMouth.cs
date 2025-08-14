@@ -2,16 +2,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using GUZ.Core;
-using GUZ.Core.Creator.Sounds;
 using GUZ.Core.Extensions;
-using GUZ.Core.Properties;
 using GUZ.Core.Properties.Vobs;
+using GUZ.Core.Util;
 using GUZ.Core.Vm;
 using GUZ.Core.Vob;
 using JetBrains.Annotations;
 using UnityEngine;
 using ZenKit;
 using ZenKit.Daedalus;
+using Logger = GUZ.Core.Util.Logger;
 
 namespace GUZ.VR.Components.VobItem
 {
@@ -38,14 +38,14 @@ namespace GUZ.VR.Components.VobItem
             if (!TryGetItemToEat(go, out var item))
                 return;
 
-            Debug.Log($"Eating item: {go.name}");
+            Logger.Log($"Eating item: {go.name}", LogCat.VR);
 
             // Defines after which time period the object will be destroyed in hand.
             var destroyTime = 1f;
             if (TryExtractSfx(item, out var clip))
                 destroyTime = clip.length;
             else
-                Debug.LogWarning("No SFX for eating/drinking item found. Removing item anyways after 1 second.");
+                Logger.LogWarning("No SFX for eating/drinking item found. Removing item anyways after 1 second.", LogCat.VR);
 
             // Can be set now already. It's sufficient to use this children instead of root.
             _objectsInDestroyGracePeriod.Add(go);
