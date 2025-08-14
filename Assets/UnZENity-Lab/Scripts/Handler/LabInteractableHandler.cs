@@ -21,7 +21,6 @@ namespace GUZ.Lab.Handler
         public GameObject FoodGO;
         public GameObject DocsGO;
         public GameObject PotionsGO;
-        public GameObject LightsGO;
         public GameObject RunesGO;
         public GameObject MagicGO;
         public GameObject MiscGO;
@@ -38,7 +37,6 @@ namespace GUZ.Lab.Handler
         {
             var itemNames = GameData.GothicVm.GetInstanceSymbols("C_Item").Select(i => i.Name).ToList();
             var allItems = itemNames.ToDictionary(itemName => itemName, VmInstanceManager.TryGetItemData);
-
 
             var meleeWeapons = allItems.Where(i => i.Value.MainFlag == (int)VmGothicEnums.ItemFlags.ItemKatNf)
                 .ToDictionary(i => i.Key, i => i.Value);
@@ -60,14 +58,12 @@ namespace GUZ.Lab.Handler
                 .ToDictionary(i => i.Key, i => i.Value);
             var potions = allItems.Where(i => i.Value.MainFlag == (int)VmGothicEnums.ItemFlags.ItemKatPotions)
                 .ToDictionary(i => i.Key, i => i.Value);
-            var lights = allItems.Where(i => i.Value.MainFlag == (int)VmGothicEnums.ItemFlags.ItemKatLight)
-                .ToDictionary(i => i.Key, i => i.Value);
             var runes = allItems.Where(i => i.Value.MainFlag == (int)VmGothicEnums.ItemFlags.ItemKatRune)
                 .ToDictionary(i => i.Key, i => i.Value);
             var magic = allItems.Where(i => i.Value.MainFlag == (int)VmGothicEnums.ItemFlags.ItemKatMagic)
                 .ToDictionary(i => i.Key, i => i.Value);
             var misc = allItems.Except(meleeWeapons).Except(rangedWeapons).Except(munition).Except(armor).Except(food)
-                .Except(docs).Except(potions).Except(lights).Except(runes).Except(magic).ToDictionary(i => i.Key, i => i.Value);
+                .Except(docs).Except(potions).Except(runes).Except(magic).ToDictionary(i => i.Key, i => i.Value);
             
             InitItemType(oneHandedWeapons, Weapons1HGO, -90f);
             InitItemType(twoHandedWeapons, Weapons2HGO, -90f);
@@ -77,7 +73,6 @@ namespace GUZ.Lab.Handler
             InitItemType(food, FoodGO);
             InitItemType(docs, DocsGO);
             InitItemType(potions,  PotionsGO);
-            InitItemType(lights, LightsGO);
             InitItemType(runes, RunesGO);
             InitItemType(magic, MagicGO);
             InitItemType(misc, MiscGO);
@@ -91,8 +86,6 @@ namespace GUZ.Lab.Handler
             // InitOCMobInter();
             // InitOCMobWheel();
         }
-
-#region Items
 
         private void InitItemType(Dictionary<string, ItemInstance> items, GameObject parentGO, float zRotation = 0f)
         {
@@ -117,8 +110,6 @@ namespace GUZ.Lab.Handler
             vobContainer.Go.SetParent(parent);
             zPosition -= 0.5f;
         }
-        
-#endregion
 
         private void InitOCMobDoor()
         {
