@@ -124,9 +124,9 @@ namespace GUZ.Core.Manager
             for (var i = 0; i < lights.Count; i++)
             {
                 lightPositionsAndAttenuation[i] = new Vector4(
-                    lights[i].Position.x, lights[i].Position.y, lights[i].Position.z,
-                    1f / (lights[i].Range * lights[i].Range));
-                lightColors[i] = lights[i].LinearColor;
+                    lights[i].P.x, lights[i].P.y, lights[i].P.z,
+                    1f / (lights[i].R * lights[i].R));
+                lightColors[i] = lights[i].Col;
             }
 
             // Unity exception: Zero sized arrays aren't allowed for Shader values.

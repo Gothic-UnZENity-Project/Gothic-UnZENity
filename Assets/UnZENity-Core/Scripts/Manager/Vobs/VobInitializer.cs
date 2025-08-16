@@ -374,7 +374,7 @@ namespace GUZ.Core.Manager.Vobs
             // Hint: The StationaryLights array should be ~512 elements max. If loading is slow,
             // we could also simply remove elements which are set to LightGOs already.
             lightComp.Index = GameGlobals.StaticCache.LoadedStationaryLights.StationaryLights.FirstIndex(i =>
-                i.Position == worldPosition);
+                i.P == worldPosition);
 
             if (lightComp.Index == -1)
             {
