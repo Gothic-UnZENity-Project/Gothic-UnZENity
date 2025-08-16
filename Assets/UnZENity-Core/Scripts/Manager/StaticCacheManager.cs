@@ -25,6 +25,7 @@ namespace GUZ.Core.Manager
 
         private const string _fileNameGlobalMetadata = "metadata.json";
         private const string _fileNameGlobalVobBounds = "vob-bounds.json";
+        private const string _fileNameGlobalVobItemCollider ="vob-item-collider.json"; 
         private const string _fileNameGlobalTextureArrayData = "texture-arrays.json";
 
         private const string _fileNameWorldChunks = "world-chunks.json";
@@ -39,6 +40,8 @@ namespace GUZ.Core.Manager
         public bool IsGlobalCacheLoaded { get; private set; }
 
         public Dictionary<string, Bounds> LoadedVobsBounds { get; private set; }
+        public Dictionary<string, List<VobItemColliderCacheCreator.ColliderData>> LoadedVobItemColliders { get; private set; }
+
 
         // During Mesh creation, we need to get the index of a TextureArray entry. For efficient lookup, we store the index here.
         public Dictionary<string, (int Index, TextureInfo Data)> LoadedTextureInfoOpaque { get; private set; }
@@ -102,6 +105,25 @@ namespace GUZ.Core.Manager
 
             public string MeshName;
             public Bounds Bounds;
+        }
+        
+        [Serializable]
+        public class VobItemColliderContainer
+        {
+            public List<VobColliderEntry> ColliderEntries;
+        }
+        
+        [Serializable]
+        public class VobColliderEntry
+        {
+            public VobColliderEntry(string meshName, List<VobItemColliderCacheCreator.ColliderData> colliderData)
+            {
+                MeshName = meshName;
+                ColliderData = colliderData;
+            }
+
+            public string MeshName;
+            public List<VobItemColliderCacheCreator.ColliderData> ColliderData;
         }
 
         [Serializable]
@@ -192,7 +214,9 @@ namespace GUZ.Core.Manager
             // Global files
             return File.Exists(BuildFilePathName(_fileNameGlobalMetadata)) &&
                    File.Exists(BuildFilePathName(_fileNameGlobalTextureArrayData)) &&
-                   File.Exists(BuildFilePathName(_fileNameGlobalVobBounds));
+                   File.Exists(BuildFilePathName(_fileNameGlobalVobBounds)) &&
+                   File.Exists(BuildFilePathName(_fileNameGlobalVobItemCollider))
+                   ;
         }
 
         /// <summary>
@@ -221,6 +245,7 @@ namespace GUZ.Core.Manager
         }
 
         public async Task SaveGlobalCache(Dictionary<string, Bounds> vobBounds,
+            Dictionary<string, List<VobItemColliderCacheCreator.ColliderData>> itemCollider,
             Dictionary<string, TextureInfo> textureArrayInformation)
         {
             try
@@ -237,6 +262,12 @@ namespace GUZ.Core.Manager
                     BoundsEntries = vobBounds.Select(i => new VobBoundsEntry(i.Key, i.Value)).ToList()
                 };
                 await SaveCacheFile(vobBoundsContainer, BuildFilePathName(_fileNameGlobalVobBounds));
+
+                var vobItemCollider = new VobItemColliderContainer()
+                {
+                    ColliderEntries = itemCollider.Select(i => new VobColliderEntry(i.Key, i.Value)).ToList()
+                };
+                await SaveCacheFile(vobItemCollider, BuildFilePathName(_fileNameGlobalVobItemCollider));
 
                 var textureArrayContainer = new TextureArrayContainer
                 {
@@ -317,12 +348,15 @@ namespace GUZ.Core.Manager
             IsGlobalCacheLoaded = true;
             
             var vobBoundsString = await ReadData(BuildFilePathName(_fileNameGlobalVobBounds));
+            var vobItemColliderString = await ReadData(BuildFilePathName(_fileNameGlobalVobItemCollider));
             var textureArrayString = await ReadData(BuildFilePathName(_fileNameGlobalTextureArrayData));
 
             var vobBoundsContainer = await ParseJson<VobBoundsContainer>(vobBoundsString);
+            var vobItemsColliderContainer = await ParseJson<VobItemColliderContainer>(vobItemColliderString);
             var textureArrayContainer = await ParseJson<TextureArrayContainer>(textureArrayString);
-
+            
             LoadedVobsBounds = vobBoundsContainer.BoundsEntries.ToDictionary(i => i.MeshName, i => i.Bounds);
+            LoadedVobItemColliders = vobItemsColliderContainer.ColliderEntries.ToDictionary(i => i.MeshName, i => i.ColliderData);
 
             var loopIndex = 0;
             LoadedTextureInfoOpaque = textureArrayContainer.TexturesOpaque

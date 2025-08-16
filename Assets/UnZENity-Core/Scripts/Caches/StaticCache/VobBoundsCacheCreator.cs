@@ -117,13 +117,9 @@ namespace GUZ.Core.Caches.StaticCache
                 var item = VmInstanceManager.TryGetItemData(obj.Name);
 
                 if (item == null)
-                {
                     continue;
-                }
 
-                Bounds boundingBox;
-
-                boundingBox = CalculateBoundingBox(VisualType.MultiResolutionMesh, item.Visual);
+                var boundingBox = CalculateBoundingBox(VisualType.MultiResolutionMesh, item.Visual);
 
                 // 99% of items are of mesh type MRM. For all the others, let's try other options.
                 if (boundingBox == default)

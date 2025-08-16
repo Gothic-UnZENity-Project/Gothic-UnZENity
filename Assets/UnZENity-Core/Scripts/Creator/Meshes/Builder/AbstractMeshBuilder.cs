@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using GUZ.Core.Caches;
-using GUZ.Core.Creator.Meshes.Builder.Algorithms;
+using GUZ.Core.Caches.StaticCache;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Util;
@@ -26,7 +26,7 @@ namespace GUZ.Core.Creator.Meshes.Builder
         protected GameObject ParentGo;
         protected bool HasMeshCollider = true;
         protected bool UseTextureArray;
-        protected bool CreateSegmentedCollider;
+        protected bool UseColliderCache;
 
         protected IMultiResolutionMesh Mrm;
         protected IModelHierarchy Mdh;
@@ -170,9 +170,9 @@ namespace GUZ.Core.Creator.Meshes.Builder
             UseTextureArray = use;
         }
 
-        public void SetCreateSegmentedCollider(bool createSegmentedCollider)
+        public void SetUseColliderCache(bool useColliderCache)
         {
-            CreateSegmentedCollider = createSegmentedCollider;
+            UseColliderCache = useColliderCache;
         }
 
         #endregion
@@ -191,9 +191,9 @@ namespace GUZ.Core.Creator.Meshes.Builder
 
             if (HasMeshCollider)
             {
-                if (CreateSegmentedCollider)
+                if (UseColliderCache)
                 {
-                    PrepareCustomCollider(RootGo, meshFilter.sharedMesh);
+                    PrepareCachedCollider(RootGo, meshFilter.sharedMesh);
                 }
                 else
                 {
@@ -634,15 +634,35 @@ namespace GUZ.Core.Creator.Meshes.Builder
             }
         }
         
-        protected void PrepareCustomCollider(GameObject rootGo, Mesh mesh)
+        protected void PrepareCachedCollider(GameObject rootGo, Mesh mesh)
         {
-            // Use width-based segmentation for weapons
-            SegmentationColliderGenerator.GenerateWeaponColliders(
-                rootGo,
-                mesh
-                // widthThreshold: 0.4f,      // 40% width change triggers new segment
-                // minVerticesPerSegment: 15   // Minimum vertices to create a segment
-            );
+            if (!GameGlobals.StaticCache.LoadedVobItemColliders.TryGetValue(MeshName, out var colliders))
+            {
+                Logger.LogError($"Can't find Collider data for {MeshName}. Skipping...", LogCat.Mesh);
+                return;
+            }
+
+            foreach (var coll in colliders)
+            {
+                if (coll.Type == VobItemColliderCacheCreator.ColliderType.Box)
+                {
+                    var boxCollider = rootGo.AddComponent<BoxCollider>();
+                    boxCollider.center = coll.BoxCapsuleCenter;
+                    boxCollider.size = coll.BoxSize;
+                }
+                else if (coll.Type == VobItemColliderCacheCreator.ColliderType.Capsule)
+                {
+                    var capsuleCollider = rootGo.AddComponent<CapsuleCollider>();
+                    capsuleCollider.center = coll.BoxCapsuleCenter;
+                    capsuleCollider.direction = coll.CapsuleDirection;
+                    capsuleCollider.height = coll.CapsuleHeight;
+                    capsuleCollider.radius = coll.CapsuleRadius;
+                }
+                else
+                {
+                    Logger.LogError($"Capsule cache type {coll.Type} not yet handled", LogCat.Mesh);
+                }
+            }
         }
 
         private void CreateMorphMeshBegin(IMultiResolutionMesh mrm, Mesh mesh)

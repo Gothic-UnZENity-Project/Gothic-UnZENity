@@ -89,6 +89,7 @@ namespace GUZ.Core.Manager.Scenes
                 var overallWatch = Stopwatch.StartNew();
 
                 var vobBoundsCache = new VobBoundsCacheCreator();
+                var vobColliderCache = new VobItemColliderCacheCreator();
                 var textureArrayCache = new TextureArrayCacheCreator();
 
                 GameGlobals.StaticCache.InitCacheFolder();
@@ -140,7 +141,10 @@ namespace GUZ.Core.Manager.Scenes
                 await vobBoundsCache.CalculateVobItemBounds();
                 watch.LogAndRestart("VobBounds for oCItems calculated.");
 
-                await GameGlobals.StaticCache.SaveGlobalCache(vobBoundsCache.Bounds, textureArrayCache.TextureArrayInformation);
+                await vobColliderCache.CalculateVobItemColliderCache(vobBoundsCache.Bounds);
+                watch.LogAndRestart("Collider for oCItems calculated.");
+
+                await GameGlobals.StaticCache.SaveGlobalCache(vobBoundsCache.Bounds, vobColliderCache.ItemCollider, textureArrayCache.TextureArrayInformation);
                 watch.LogAndRestart("Saved GlobalCache files.");
                 overallWatch.Log("Overall PreCaching done.");
 

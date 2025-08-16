@@ -75,7 +75,7 @@ namespace GUZ.Core.Creator.Meshes
 
         public static GameObject CreateVob(string objectName, IMultiResolutionMesh mrm,
             Vector3 position = default, Quaternion rotation = default, bool withCollider = true,
-            GameObject parent = null, GameObject rootGo = null, bool useTextureArray = true, bool createSegmentedCollider = false)
+            GameObject parent = null, GameObject rootGo = null, bool useTextureArray = true, bool useColliderCache = false)
         {
             if (!HasTextures(mrm))
             {
@@ -89,7 +89,7 @@ namespace GUZ.Core.Creator.Meshes
             vobBuilder.SetMeshName(objectName);
             vobBuilder.SetMrm(mrm);
             vobBuilder.SetUseTextureArray(useTextureArray);
-            vobBuilder.SetCreateSegmentedCollider(createSegmentedCollider);
+            vobBuilder.SetUseColliderCache(useColliderCache);
 
             if (!withCollider)
             {
@@ -122,7 +122,7 @@ namespace GUZ.Core.Creator.Meshes
         public static GameObject CreateVob(string objectName, IMorphMesh mmb,
             Vector3 position = default, Quaternion rotation = default,
             GameObject parent = null, GameObject rootGo = null, bool useTextureArray = false,
-            bool createSegmentedCollider = true)
+            bool useColliderCache = false)
         {
             var vobBuilder = new VobMeshBuilder();
             vobBuilder.SetRootPosAndRot(position, rotation);
@@ -131,7 +131,7 @@ namespace GUZ.Core.Creator.Meshes
             vobBuilder.SetMeshName(objectName);
             vobBuilder.SetMmb(mmb);
             vobBuilder.SetUseTextureArray(useTextureArray);
-            vobBuilder.SetCreateSegmentedCollider(createSegmentedCollider);
+            vobBuilder.SetUseColliderCache(useColliderCache);
 
             return vobBuilder.Build();
         }

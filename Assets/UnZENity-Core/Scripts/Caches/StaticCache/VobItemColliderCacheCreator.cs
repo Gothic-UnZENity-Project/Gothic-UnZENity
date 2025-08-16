@@ -1,26 +1,31 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using GUZ.Core.Extensions;
+using GUZ.Core.Globals;
+using GUZ.Core.UI.Menus.LoadingBars;
+using GUZ.Core.Util;
+using GUZ.Core.Vm;
 using UnityEngine;
+using Logger = GUZ.Core.Util.Logger;
 
-namespace GUZ.Core.Creator.Meshes.Builder.Algorithms
+namespace GUZ.Core.Caches.StaticCache
 {
-    public static class SegmentationColliderGenerator
+    public class VobItemColliderCacheCreator
     {
-        [System.Serializable]
-        public class WidthSegment
+        public Dictionary<string, List<ColliderData>> ItemCollider { get; } = new();
+        
+        [Serializable]
+        public struct ColliderData
         {
-            public float minHeight, maxHeight;  // Height bounds along the weapon's main axis
-            public float averageWidth;          // Average width at this height
-            public List<Vector3> vertices;      // Vertices in this segment
-            public Vector3 center;             // Center point
-            public Vector3 size;               // Bounding box size
-            public ColliderType suggestedType; // Suggested collider type
-            
-            public WidthSegment()
-            {
-                vertices = new List<Vector3>();
-            }
-        }
+            public ColliderType Type;
+            public Vector3 BoxCapsuleCenter;
+            public Vector3 BoxSize;
+            public int CapsuleDirection;
+            public float CapsuleHeight;
+            public float CapsuleRadius;
+        };
         
         public enum ColliderType
         {
@@ -28,45 +33,114 @@ namespace GUZ.Core.Creator.Meshes.Builder.Algorithms
             Capsule
         }
         
+        private class WidthSegment
+        {
+            public float MinHeight, MaxHeight;      // Height bounds along the weapon's main axis
+            public float AverageWidth;              // Average width at this height
+            public List<Vector3> Vertices = new();  // Vertices in this segment
+            public Vector3 Center;                  // Center point
+            public Vector3 Size;                    // Bounding box size
+            public ColliderType SuggestedType;      // Suggested collider type
+        }
+        
+        
+        public async Task CalculateVobItemColliderCache(Dictionary<string, Bounds> cachedVobBounds)
+        {
+            var allItems = GameData.GothicVm.GetInstanceSymbols("C_Item");
+            
+            GameGlobals.Loading.SetPhase(nameof(PreCachingLoadingBarHandler.ProgressTypesGlobal.CalculateVobItemCollider), allItems.Count);
+            
+            foreach (var obj in allItems)
+            {
+                await FrameSkipper.TrySkipToNextFrame();
+                GameGlobals.Loading.Tick();
+
+                var item = VmInstanceManager.TryGetItemData(obj.Name);
+                if (item == null)
+                    continue;
+
+                // Already calculated
+                if (ItemCollider.ContainsKey(item.Visual))
+                    continue;
+                
+                ItemCollider.Add(item.Visual, new());
+                
+                GenerateItemColliders(item.Visual, cachedVobBounds);
+            }
+        }
+
         /// <summary>
-        /// Generate colliders based on width variations along the weapon's main axis
+        /// Generate colliders based on width variations along the items' main axis
         /// Automatically detects weapon orientation and segments from handle to tip
         /// </summary>
-        public static void GenerateWeaponColliders(GameObject weaponObj, Mesh mesh,
-            float widthThreshold = 0.4f, int minVerticesPerSegment = 3, int samples = 50, float segmentDistance = 0.05f)
+        public void GenerateItemColliders(string visualName, Dictionary<string, Bounds> cachedVobBounds, float widthThreshold = 0.4f, int minVerticesPerSegment = 3,
+            int samples = 50, float segmentDistance = 0.05f)
         {
-            if (mesh == null || mesh.vertices.Length == 0)
+            var mrm = ResourceLoader.TryGetMultiResolutionMesh(visualName)?.Cache();
+            if (mrm == null)
                 return;
-        
-            var vertices = mesh.vertices;
-            var triangles = mesh.triangles;
-            var bounds = mesh.bounds;
-    
+
+            var bounds = cachedVobBounds[visualName];
+            if (bounds == default)
+                return;
+
+            // Extract vertices and triangles similar to PrepareMeshFilter
+            var calculatedVertices = mrm.Positions;
+            
+            var triangleCount = mrm.SubMeshes.Sum(i => i.Triangles.Count);
+            var vertexCount = triangleCount * 3;
+            
+            var vertices = new Vector3[vertexCount];
+            var triangles = new int[vertexCount];
+            var index = 0;
+
+            foreach (var subMesh in mrm.SubMeshes)
+            {
+                for (var i = 0; i < subMesh.Triangles.Count; i++)
+                {
+                    // One triangle is made of 3 elements for Unity. We therefore need to prepare 3 elements within one loop.
+                    var wedge2Index = subMesh.Wedges[subMesh.Triangles[i].Wedge2].Index;
+                    var wedge1Index = subMesh.Wedges[subMesh.Triangles[i].Wedge1].Index;
+                    var wedge0Index = subMesh.Wedges[subMesh.Triangles[i].Wedge0].Index;
+
+                    vertices[index] = calculatedVertices[wedge2Index].ToUnityVector();
+                    triangles[index] = index++;
+                    vertices[index] = calculatedVertices[wedge1Index].ToUnityVector();
+                    triangles[index] = index++;
+                    vertices[index] = calculatedVertices[wedge0Index].ToUnityVector();
+                    triangles[index] = index++;
+                }
+            }
+
+            if (vertices.Length == 0 || triangles.Length == 0)
+                return;
+            
+            Logger.LogEditor($"Calculating Colliders for {visualName}", LogCat.PreCaching);
+            
             // Step 1: Determine the weapon's main axis and orientation
             var weaponOrientation = DetermineWeaponOrientation(vertices, bounds);
 
             // Step 2: Create width profile along the main axis using triangles
-            var widthProfile = CreateWidthProfile(weaponObj, vertices, triangles, bounds, weaponOrientation, samples);
-            
+            var widthProfile = CreateWidthProfile(vertices, triangles, bounds, weaponOrientation, samples);
+
             // Step 3: Segment based on significant width changes
-            var segments = CreateWidthBasedSegments(weaponObj, vertices, triangles, widthProfile, weaponOrientation, widthThreshold, minVerticesPerSegment, segmentDistance);
-            
+            var segments = CreateWidthBasedSegments(vertices, triangles, widthProfile, weaponOrientation, widthThreshold, minVerticesPerSegment, segmentDistance);
+
             // Step 4: Create appropriate colliders for each segment
-            CreateCollidersFromSegments(weaponObj, segments, weaponOrientation);
-            
-            Debug.Log($"Created {segments.Count} colliders for {weaponObj.name} using {weaponOrientation.mainAxis} axis (bounds: {bounds.size})");
+            CreateCollidersFromSegments(visualName, segments, weaponOrientation);
+
+            Logger.LogEditor($"Created {segments.Count} colliders for {visualName} using {weaponOrientation.mainAxis} axis (bounds: {bounds.size})", LogCat.PreCaching);
         }
         
         private struct WeaponOrientation
         {
             public int mainAxis;           // 0=X, 1=Y, 2=Z
-            public Vector3 axisDirection;  // Direction vector along main axis
             public float minValue;         // Minimum value along main axis
             public float maxValue;         // Maximum value along main axis
             public float length;           // Length along main axis
         }
         
-        private static WeaponOrientation DetermineWeaponOrientation(Vector3[] vertices, Bounds bounds)
+        private WeaponOrientation DetermineWeaponOrientation(Vector3[] vertices, Bounds bounds)
         {
             var orientation = new WeaponOrientation();
             var size = bounds.size;
@@ -75,7 +149,6 @@ namespace GUZ.Core.Creator.Meshes.Builder.Algorithms
             if (size.x >= size.y && size.x >= size.z)
             {
                 orientation.mainAxis = 0; // X-axis
-                orientation.axisDirection = Vector3.right;
                 orientation.minValue = bounds.min.x;
                 orientation.maxValue = bounds.max.x;
                 orientation.length = size.x;
@@ -83,7 +156,6 @@ namespace GUZ.Core.Creator.Meshes.Builder.Algorithms
             else if (size.y >= size.x && size.y >= size.z)
             {
                 orientation.mainAxis = 1; // Y-axis
-                orientation.axisDirection = Vector3.up;
                 orientation.minValue = bounds.min.y;
                 orientation.maxValue = bounds.max.y;
                 orientation.length = size.y;
@@ -91,72 +163,61 @@ namespace GUZ.Core.Creator.Meshes.Builder.Algorithms
             else
             {
                 orientation.mainAxis = 2; // Z-axis
-                orientation.axisDirection = Vector3.forward;
                 orientation.minValue = bounds.min.z;
                 orientation.maxValue = bounds.max.z;
                 orientation.length = size.z;
             }
             
             // Additional validation: For weapons, length should be significantly longer than width
-            float maxWidth = orientation.mainAxis == 0 ? Mathf.Max(size.y, size.z) : 
+            var maxWidth = orientation.mainAxis == 0 ? Mathf.Max(size.y, size.z) : 
                             orientation.mainAxis == 1 ? Mathf.Max(size.x, size.z) : 
                                                         Mathf.Max(size.x, size.y);
             
-            float aspectRatio = orientation.length / maxWidth;
+            var aspectRatio = orientation.length / maxWidth;
             
             if (aspectRatio < 1.5f)
-            {
-                Debug.LogWarning($"Weapon aspect ratio is low ({aspectRatio:F2}). This might not be a typical weapon shape.");
-            }
-            
-            Debug.Log($"Weapon orientation: {orientation.mainAxis} axis, length: {orientation.length:F3}, aspect ratio: {aspectRatio:F2}");
+                Logger.LogWarning($"Weapon aspect ratio is low ({aspectRatio:F2}). This might not be a typical weapon shape.", LogCat.PreCaching);
+
+            Logger.LogEditor($"Weapon orientation: {orientation.mainAxis} axis, length: {orientation.length:F3}, aspect ratio: {aspectRatio:F2}", LogCat.PreCaching);
             
             return orientation;
         }
         
-        private static List<float> CreateWidthProfile(GameObject go, Vector3[] vertices, int[] triangles, Bounds bounds, WeaponOrientation orientation, int samples)
+        private List<float> CreateWidthProfile(Vector3[] vertices, int[] triangles, Bounds bounds, WeaponOrientation orientation, int samples)
         {
             var profile = new List<float>(samples);
-            float step = orientation.length / samples;
+            var step = orientation.length / samples;
             
-            for (int i = 0; i < samples; i++)
+            for (var i = 0; i < samples; i++)
             {
-                float currentPos = orientation.minValue + (i * step);
-                float nextPos = orientation.minValue + ((i + 1) * step);
+                var currentPos = orientation.minValue + (i * step);
+                var nextPos = orientation.minValue + ((i + 1) * step);
 
-// DEBUG output
-// Create box collider at current position
-// var colliderObj = new GameObject($"SliceCollider_{i}");
-// colliderObj.transform.SetParent(go.transform, false);
-// var boxCollider = colliderObj.AddComponent<BoxCollider>();
-// boxCollider.center = new Vector3(currentPos, 0, 0);
-// boxCollider.size = new Vector3(0f, 0.1f, 0.1f);
-                
                 // Find all triangles that intersect with this slice
                 var intersectionPoints = GetSliceTriangleIntersections(vertices, triangles, orientation.mainAxis, currentPos, nextPos);
                 
                 if (intersectionPoints.Count == 0)
                 {
                     // Use interpolated value from neighboring slices if no intersections found
-                    float interpolatedWidth = InterpolateWidth(profile, i);
+                    var interpolatedWidth = InterpolateWidth(profile, i);
                     profile.Add(interpolatedWidth);
                     continue;
                 }
                 
                 // Calculate width at this slice using intersection points
-                float width = CalculateSliceWidthFromPoints(intersectionPoints, orientation.mainAxis);
+                var width = CalculateSliceWidthFromPoints(intersectionPoints, orientation.mainAxis);
                 profile.Add(width);
             }
             
             return profile;
         }
 
-        private static List<Vector3> GetSliceTriangleIntersections(Vector3[] vertices, int[] triangles, int mainAxis, float sliceStart, float sliceEnd)
+        private List<Vector3> GetSliceTriangleIntersections(Vector3[] vertices, int[] triangles, int mainAxis, float sliceStart, float sliceEnd)
         {
             var intersectionPoints = new List<Vector3>();
             
             // Process triangles in groups of 3
-            for (int i = 0; i < triangles.Length; i += 3)
+            for (var i = 0; i < triangles.Length; i += 3)
             {
                 var v1 = vertices[triangles[i]];
                 var v2 = vertices[triangles[i + 1]];
@@ -171,14 +232,14 @@ namespace GUZ.Core.Creator.Meshes.Builder.Algorithms
             return intersectionPoints;
         }
 
-        private static List<Vector3> GetTriangleSliceIntersection(List<Vector3> triangle, int mainAxis, float sliceStart, float sliceEnd)
+        private List<Vector3> GetTriangleSliceIntersection(List<Vector3> triangle, int mainAxis, float sliceStart, float sliceEnd)
         {
             var intersectionPoints = new List<Vector3>();
             
             // Add vertices that fall within the slice
             foreach (var vertex in triangle)
             {
-                float axisValue = GetAxisValue(vertex, mainAxis);
+                var axisValue = GetAxisValue(vertex, mainAxis);
                 if (axisValue >= sliceStart && axisValue < sliceEnd)
                 {
                     intersectionPoints.Add(vertex);
@@ -186,13 +247,13 @@ namespace GUZ.Core.Creator.Meshes.Builder.Algorithms
             }
             
             // Find edge intersections with slice boundaries
-            for (int i = 0; i < triangle.Count; i++)
+            for (var i = 0; i < triangle.Count; i++)
             {
                 var v1 = triangle[i];
                 var v2 = triangle[(i + 1) % triangle.Count];
                 
-                float v1Axis = GetAxisValue(v1, mainAxis);
-                float v2Axis = GetAxisValue(v2, mainAxis);
+                var v1Axis = GetAxisValue(v1, mainAxis);
+                var v2Axis = GetAxisValue(v2, mainAxis);
                 
                 // Check intersection with slice start
                 var startIntersection = GetLineSliceIntersection(v1, v2, v1Axis, v2Axis, sliceStart);
@@ -208,7 +269,7 @@ namespace GUZ.Core.Creator.Meshes.Builder.Algorithms
             return intersectionPoints;
         }
 
-        private static Vector3? GetLineSliceIntersection(Vector3 v1, Vector3 v2, float v1Axis, float v2Axis, float slicePosition)
+        private Vector3? GetLineSliceIntersection(Vector3 v1, Vector3 v2, float v1Axis, float v2Axis, float slicePosition)
         {
             // Check if the edge crosses the slice plane
             if ((v1Axis <= slicePosition && v2Axis >= slicePosition) || 
@@ -217,14 +278,14 @@ namespace GUZ.Core.Creator.Meshes.Builder.Algorithms
                 if (Mathf.Abs(v2Axis - v1Axis) < 0.001f) return null; // Avoid division by zero
                 
                 // Linear interpolation to find intersection point
-                float t = (slicePosition - v1Axis) / (v2Axis - v1Axis);
+                var t = (slicePosition - v1Axis) / (v2Axis - v1Axis);
                 return Vector3.Lerp(v1, v2, t);
             }
             
             return null;
         }
 
-        private static float CalculateSliceWidthFromPoints(List<Vector3> points, int mainAxis)
+        private float CalculateSliceWidthFromPoints(List<Vector3> points, int mainAxis)
         {
             if (points.Count == 0) return 0f;
             
@@ -255,23 +316,23 @@ namespace GUZ.Core.Creator.Meshes.Builder.Algorithms
                 }
             }
             
-            float width1 = perpValues1.Count > 0 ? perpValues1.Max() - perpValues1.Min() : 0f;
-            float width2 = perpValues2.Count > 0 ? perpValues2.Max() - perpValues2.Min() : 0f;
+            var width1 = perpValues1.Count > 0 ? perpValues1.Max() - perpValues1.Min() : 0f;
+            var width2 = perpValues2.Count > 0 ? perpValues2.Max() - perpValues2.Min() : 0f;
             
             return Mathf.Max(width1, width2);
         }
         
-        private static float GetAxisValue(Vector3 vertex, int axis)
+        private float GetAxisValue(Vector3 vertex, int axis)
         {
             return axis == 0 ? vertex.x : (axis == 1 ? vertex.y : vertex.z);
         }
         
-        private static float InterpolateWidth(List<float> profile, int index)
+        private float InterpolateWidth(List<float> profile, int index)
         {
             if (profile.Count == 0) return 0f;
             
             // Find the last valid width value
-            for (int i = index - 1; i >= 0; i--)
+            for (var i = index - 1; i >= 0; i--)
             {
                 if (profile[i] > 0f)
                     return profile[i];
@@ -280,7 +341,7 @@ namespace GUZ.Core.Creator.Meshes.Builder.Algorithms
             return 0f;
         }
 
-        private static float CalculateSliceWidth(List<Vector3> sliceVertices, int mainAxis)
+        private float CalculateSliceWidth(List<Vector3> sliceVertices, int mainAxis)
         {
             if (sliceVertices.Count == 0) return 0f;
             
@@ -307,14 +368,14 @@ namespace GUZ.Core.Creator.Meshes.Builder.Algorithms
                 }
             }
             
-            float width1 = perpValues1.Count > 0 ? perpValues1.Max() - perpValues1.Min() : 0f;
-            float width2 = perpValues2.Count > 0 ? perpValues2.Max() - perpValues2.Min() : 0f;
+            var width1 = perpValues1.Count > 0 ? perpValues1.Max() - perpValues1.Min() : 0f;
+            var width2 = perpValues2.Count > 0 ? perpValues2.Max() - perpValues2.Min() : 0f;
             
             // Return the maximum width (considering the weapon could be rotated around the main axis)
             return Mathf.Max(width1, width2);
         }
         
-        private static List<WidthSegment> CreateWidthBasedSegments(GameObject go, Vector3[] vertices, int[] triangles, List<float> widthProfile,
+        private List<WidthSegment> CreateWidthBasedSegments(Vector3[] vertices, int[] triangles, List<float> widthProfile,
             WeaponOrientation orientation, float threshold, int minVerticesPerSegment, float segmentDistance)
         {
             var segments = new List<WidthSegment>();
@@ -322,18 +383,18 @@ namespace GUZ.Core.Creator.Meshes.Builder.Algorithms
             // Find significant width changes
             var segmentBoundaries = new List<float> { orientation.minValue };
             
-            for (int i = 1; i < widthProfile.Count - 1; i++)
+            for (var i = 1; i < widthProfile.Count - 1; i++)
             {
-                float currentWidth = widthProfile[i];
-                float previousWidth = widthProfile[i - 1];
-                float nextWidth = widthProfile[i + 1];
+                var currentWidth = widthProfile[i];
+                var previousWidth = widthProfile[i - 1];
+                var nextWidth = widthProfile[i + 1];
                 
                 if (previousWidth <= 0 || currentWidth <= 0) continue;
                 
                 // Check for significant width change (shrinking or expanding)
-                bool significantChange = false;
+                var significantChange = false;
                 
-                float changeRatio = Mathf.Abs(currentWidth - previousWidth) / previousWidth;
+                var changeRatio = Mathf.Abs(currentWidth - previousWidth) / previousWidth;
                 if (changeRatio > threshold)
                 {
                     significantChange = true;
@@ -347,18 +408,10 @@ namespace GUZ.Core.Creator.Meshes.Builder.Algorithms
                 
                 if (significantChange)
                 {
-                    float boundary = orientation.minValue + ((float)i / widthProfile.Count) * orientation.length;
+                    var boundary = orientation.minValue + ((float)i / widthProfile.Count) * orientation.length;
                     segmentBoundaries.Add(boundary);
 
-// DEBUG output
-// Create box collider at current position
-// var colliderObj = new GameObject($"SliceCollider_{i}");
-// colliderObj.transform.SetParent(go.transform, false);
-// var boxCollider = colliderObj.AddComponent<BoxCollider>();
-// boxCollider.center = new Vector3(boundary, 0, 0);
-// boxCollider.size = new Vector3(0f, 0.1f, 0.1f);
-
-                    Debug.Log($"Found width change at position {boundary:F3}: {previousWidth:F3} -> {currentWidth:F3} (ratio: {changeRatio:F3})");
+                    Logger.LogEditor($"Found width change at position {boundary:F3}: {previousWidth:F3} -> {currentWidth:F3} (ratio: {changeRatio:F3})", LogCat.PreCaching);
                 }
             }
             
@@ -368,33 +421,33 @@ namespace GUZ.Core.Creator.Meshes.Builder.Algorithms
             var filteredBoundaries = FilterCloseSegments(segmentBoundaries, orientation.length * segmentDistance);
             
             // Create segments based on boundaries
-            for (int i = 0; i < filteredBoundaries.Count - 1; i++)
+            for (var i = 0; i < filteredBoundaries.Count - 1; i++)
             {
                 var segment = new WidthSegment
                 {
-                    minHeight = filteredBoundaries[i],
-                    maxHeight = filteredBoundaries[i + 1]
+                    MinHeight = filteredBoundaries[i],
+                    MaxHeight = filteredBoundaries[i + 1]
                 };
     
                 // Assign vertices to this segment using triangle-based approach
                 var segmentPoints = GetSliceTriangleIntersections(vertices, triangles, orientation.mainAxis, 
-                    segment.minHeight, segment.maxHeight);
+                    segment.MinHeight, segment.MaxHeight);
     
                 // Also include original vertices that fall within the segment
                 foreach (var vertex in vertices)
                 {
-                    float axisValue = GetAxisValue(vertex, orientation.mainAxis);
-                    if (axisValue >= segment.minHeight && axisValue < segment.maxHeight)
+                    var axisValue = GetAxisValue(vertex, orientation.mainAxis);
+                    if (axisValue >= segment.MinHeight && axisValue < segment.MaxHeight)
                     {
                         segmentPoints.Add(vertex);
                     }
                 }
     
                 // Remove duplicates and assign to segment
-                segment.vertices = segmentPoints.Distinct().ToList();
+                segment.Vertices = segmentPoints.Distinct().ToList();
     
                 // Only keep segments with enough points (lower threshold since we have more points now)
-                if (segment.vertices.Count >= minVerticesPerSegment / 3) // Reduced threshold
+                if (segment.Vertices.Count >= minVerticesPerSegment / 3) // Reduced threshold
                 {
                     CalculateSegmentProperties(segment, orientation.mainAxis);
                     segments.Add(segment);
@@ -404,13 +457,13 @@ namespace GUZ.Core.Creator.Meshes.Builder.Algorithms
             return segments;
         }
         
-        private static List<float> FilterCloseSegments(List<float> boundaries, float minDistance)
+        private List<float> FilterCloseSegments(List<float> boundaries, float minDistance)
         {
             if (boundaries.Count <= 2) return boundaries;
             
             var filtered = new List<float> { boundaries[0] };
             
-            for (int i = 1; i < boundaries.Count - 1; i++)
+            for (var i = 1; i < boundaries.Count - 1; i++)
             {
                 if (boundaries[i] - filtered[filtered.Count - 1] >= minDistance)
                 {
@@ -422,34 +475,35 @@ namespace GUZ.Core.Creator.Meshes.Builder.Algorithms
             return filtered;
         }
         
-        private static void CalculateSegmentProperties(WidthSegment segment, int mainAxis)
+        private void CalculateSegmentProperties(WidthSegment segment, int mainAxis)
         {
-            if (segment.vertices.Count == 0) return;
+            if (segment.Vertices.Count == 0)
+                return;
             
-            var segmentBounds = CalculateBounds(segment.vertices);
-            segment.center = segmentBounds.center;
-            segment.size = segmentBounds.size;
+            var segmentBounds = CalculateBounds(segment.Vertices);
+            segment.Center = segmentBounds.center;
+            segment.Size = segmentBounds.size;
             
             // Calculate average width
-            segment.averageWidth = CalculateSliceWidth(segment.vertices, mainAxis);
+            segment.AverageWidth = CalculateSliceWidth(segment.Vertices, mainAxis);
             
             // Determine collider type based on shape
-            float height = GetAxisSize(segment.size, mainAxis);
-            float maxWidth = GetMaxPerpendicularSize(segment.size, mainAxis);
+            var height = GetAxisSize(segment.Size, mainAxis);
+            var maxWidth = GetMaxPerpendicularSize(segment.Size, mainAxis);
             
             // Use capsule for long, thin segments (blade), box for wider segments (guard, pommel)
-            float aspectRatio = height / (maxWidth + 0.001f); // Avoid division by zero
-            segment.suggestedType = aspectRatio > 2.0f ? ColliderType.Capsule : ColliderType.Box;
+            var aspectRatio = height / (maxWidth + 0.001f); // Avoid division by zero
+            segment.SuggestedType = aspectRatio > 2.0f ? ColliderType.Capsule : ColliderType.Box;
             
-            Debug.Log($"Segment properties: Height={height:F3}, Width={maxWidth:F3}, AspectRatio={aspectRatio:F2}, Type={segment.suggestedType}");
+            Logger.LogEditor($"Segment properties: Height={height:F3}, Width={maxWidth:F3}, AspectRatio={aspectRatio:F2}, Type={segment.SuggestedType}", LogCat.PreCaching);
         }
         
-        private static float GetAxisSize(Vector3 size, int axis)
+        private float GetAxisSize(Vector3 size, int axis)
         {
             return axis == 0 ? size.x : (axis == 1 ? size.y : size.z);
         }
         
-        private static float GetMaxPerpendicularSize(Vector3 size, int mainAxis)
+        private float GetMaxPerpendicularSize(Vector3 size, int mainAxis)
         {
             switch (mainAxis)
             {
@@ -460,51 +514,52 @@ namespace GUZ.Core.Creator.Meshes.Builder.Algorithms
             }
         }
         
-        private static void CreateCollidersFromSegments(GameObject weaponObj, List<WidthSegment> segments, WeaponOrientation orientation)
+        private void CreateCollidersFromSegments(string cacheKey, List<WidthSegment> segments, WeaponOrientation orientation)
         {
-            for (int i = 0; i < segments.Count; i++)
+            for (var i = 0; i < segments.Count; i++)
             {
                 var segment = segments[i];
 
-                if (segment.suggestedType == ColliderType.Capsule)
-                {
-                    CreateCapsuleCollider(weaponObj, segment, orientation.mainAxis);
-                }
+                if (segment.SuggestedType == ColliderType.Capsule)
+                    CreateCapsuleCollider(cacheKey, segment, orientation.mainAxis);
                 else
-                {
-                    CreateBoxCollider(weaponObj, segment);
-                }
+                    CreateBoxCollider(cacheKey, segment);
                 
-                Debug.Log($"Segment {i}: {segment.suggestedType}, Width: {segment.averageWidth:F3}, Height: {segment.maxHeight - segment.minHeight:F3}, Vertices: {segment.vertices.Count}");
+                Logger.Log($"Segment {i}: {segment.SuggestedType}, Width: {segment.AverageWidth:F3}, Height: {segment.MaxHeight - segment.MinHeight:F3}, Vertices: {segment.Vertices.Count}", LogCat.PreCaching);
             }
         }
         
-        private static void CreateBoxCollider(GameObject obj, WidthSegment segment)
+        private void CreateBoxCollider(string cacheKey, WidthSegment segment)
         {
-            var boxCollider = obj.AddComponent<BoxCollider>();
-            boxCollider.center = segment.center;
-            boxCollider.size = segment.size;
+            ItemCollider[cacheKey].Add(new()
+            {
+                Type = ColliderType.Box,
+                BoxCapsuleCenter = segment.Center,
+                BoxSize = segment.Size
+            });
         }
         
-        private static void CreateCapsuleCollider(GameObject obj, WidthSegment segment, int mainAxis)
+        private void CreateCapsuleCollider(string cacheKey, WidthSegment segment, int mainAxis)
         {
-            var capsuleCollider = obj.AddComponent<CapsuleCollider>();
-            
-            // Set the capsule direction to match the weapon's main axis
-            capsuleCollider.direction = mainAxis;
-            capsuleCollider.center = segment.center;
-            
             // Set dimensions based on the main axis
-            float height = GetAxisSize(segment.size, mainAxis);
-            float radius = GetMaxPerpendicularSize(segment.size, mainAxis) * 0.5f;
+            var height = GetAxisSize(segment.Size, mainAxis);
+            var radius = GetMaxPerpendicularSize(segment.Size, mainAxis) * 0.5f;
             
-            capsuleCollider.height = height;
-            capsuleCollider.radius = radius;
+            ItemCollider[cacheKey].Add(new()
+            {
+                Type = ColliderType.Capsule,
+                BoxCapsuleCenter = segment.Center,
+                // Set the capsule direction to match the items main axis
+                CapsuleDirection = mainAxis,
+                CapsuleHeight = height,
+                CapsuleRadius = radius
+            });
         }
         
-        private static Bounds CalculateBounds(List<Vector3> vertices)
+        private Bounds CalculateBounds(List<Vector3> vertices)
         {
-            if (vertices.Count == 0) return new Bounds();
+            if (vertices.Count == 0)
+                return new Bounds();
             
             var min = vertices[0];
             var max = vertices[0];

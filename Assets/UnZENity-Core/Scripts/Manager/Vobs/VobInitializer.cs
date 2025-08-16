@@ -436,13 +436,13 @@ namespace GUZ.Core.Manager.Vobs
 
             if (mrm != null)
             {
-                return MeshFactory.CreateVob(item.Visual, mrm, parent: parent, rootGo: go, createSegmentedCollider: true);
+                return MeshFactory.CreateVob(item.Visual, mrm, parent: parent, rootGo: go, useColliderCache: true);
             }
 
             // shortbow (itrw_bow_l_01) has no mrm, but has mmb
             var mmb = ResourceLoader.TryGetMorphMesh(item.Visual);
 
-            return MeshFactory.CreateVob(item.Visual, mmb, parent: parent, rootGo: go, createSegmentedCollider: true);
+            return MeshFactory.CreateVob(item.Visual, mmb, parent: parent, rootGo: go, useColliderCache: true);
         }
 
         public GameObject CreateItemMesh(ItemInstance item, GameObject parentGo, Vector3 position)
@@ -456,7 +456,7 @@ namespace GUZ.Core.Manager.Vobs
             // shortbow (itrw_bow_l_01) has no mrm, but has mmb
             var mmb = ResourceLoader.TryGetMorphMesh(item.Visual);
 
-            return MeshFactory.CreateVob(item.Visual, mmb, position, default, parentGo);
+            return MeshFactory.CreateVob(item.Visual, mmb, position, default, parentGo, useColliderCache: true);
         }
 
 
