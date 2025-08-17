@@ -644,23 +644,23 @@ namespace GUZ.Core.Creator.Meshes.Builder
 
             foreach (var coll in colliders)
             {
-                if (coll.Type == VobItemColliderCacheCreator.ColliderType.Box)
+                if (coll.T == VobItemColliderCacheCreator.T.B)
                 {
                     var boxCollider = rootGo.AddComponent<BoxCollider>();
-                    boxCollider.center = coll.BoxCapsuleCenter;
-                    boxCollider.size = coll.BoxSize;
+                    boxCollider.center = coll.C;
+                    boxCollider.size = coll.S;
                 }
-                else if (coll.Type == VobItemColliderCacheCreator.ColliderType.Capsule)
+                else if (coll.T == VobItemColliderCacheCreator.T.C)
                 {
                     var capsuleCollider = rootGo.AddComponent<CapsuleCollider>();
-                    capsuleCollider.center = coll.BoxCapsuleCenter;
-                    capsuleCollider.direction = coll.CapsuleDirection;
-                    capsuleCollider.height = coll.CapsuleHeight;
-                    capsuleCollider.radius = coll.CapsuleRadius;
+                    capsuleCollider.center = coll.C;
+                    capsuleCollider.direction = coll.D;
+                    capsuleCollider.height = coll.H;
+                    capsuleCollider.radius = coll.R;
                 }
                 else
                 {
-                    Logger.LogError($"Capsule cache type {coll.Type} not yet handled", LogCat.Mesh);
+                    Logger.LogError($"Capsule cache type {coll.T} not yet handled", LogCat.Mesh);
                 }
             }
         }

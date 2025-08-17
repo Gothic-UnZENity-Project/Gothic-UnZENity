@@ -14,23 +14,23 @@ namespace GUZ.Core.Caches.StaticCache
 {
     public class VobItemColliderCacheCreator
     {
-        public Dictionary<string, List<ColliderData>> ItemCollider { get; } = new();
+        public Dictionary<string, List<Data>> ItemCollider { get; } = new();
         
         [Serializable]
-        public struct ColliderData
+        public struct Data // ColliderData
         {
-            public ColliderType Type;
-            public Vector3 BoxCapsuleCenter;
-            public Vector3 BoxSize;
-            public int CapsuleDirection;
-            public float CapsuleHeight;
-            public float CapsuleRadius;
+            public T T; // Type
+            public Vector3 C; // BoxCapsuleCenter
+            public Vector3 S; // BoxSize
+            public int D; // CapsuleDirection
+            public float H; // CapsuleHeight
+            public float R; // CapsuleRadius
         };
         
-        public enum ColliderType
+        public enum T // ColliderType
         {
-            Box,
-            Capsule
+            B, // Box
+            C // Capsule
         }
         
         private class WidthSegment
@@ -40,7 +40,7 @@ namespace GUZ.Core.Caches.StaticCache
             public List<Vector3> Vertices = new();  // Vertices in this segment
             public Vector3 Center;                  // Center point
             public Vector3 Size;                    // Bounding box size
-            public ColliderType SuggestedType;      // Suggested collider type
+            public T SuggestedType;      // Suggested collider type
         }
         
         
@@ -493,7 +493,7 @@ namespace GUZ.Core.Caches.StaticCache
             
             // Use capsule for long, thin segments (blade), box for wider segments (guard, pommel)
             var aspectRatio = height / (maxWidth + 0.001f); // Avoid division by zero
-            segment.SuggestedType = aspectRatio > 2.0f ? ColliderType.Capsule : ColliderType.Box;
+            segment.SuggestedType = aspectRatio > 2.0f ? T.C : T.B;
             
             Logger.LogEditor($"Segment properties: Height={height:F3}, Width={maxWidth:F3}, AspectRatio={aspectRatio:F2}, Type={segment.SuggestedType}", LogCat.PreCaching);
         }
@@ -520,7 +520,7 @@ namespace GUZ.Core.Caches.StaticCache
             {
                 var segment = segments[i];
 
-                if (segment.SuggestedType == ColliderType.Capsule)
+                if (segment.SuggestedType == T.C)
                     CreateCapsuleCollider(cacheKey, segment, orientation.mainAxis);
                 else
                     CreateBoxCollider(cacheKey, segment);
@@ -533,9 +533,9 @@ namespace GUZ.Core.Caches.StaticCache
         {
             ItemCollider[cacheKey].Add(new()
             {
-                Type = ColliderType.Box,
-                BoxCapsuleCenter = segment.Center,
-                BoxSize = segment.Size
+                T = T.B,
+                C = segment.Center,
+                S = segment.Size
             });
         }
         
@@ -547,12 +547,12 @@ namespace GUZ.Core.Caches.StaticCache
             
             ItemCollider[cacheKey].Add(new()
             {
-                Type = ColliderType.Capsule,
-                BoxCapsuleCenter = segment.Center,
+                T = T.C,
+                C = segment.Center,
                 // Set the capsule direction to match the items main axis
-                CapsuleDirection = mainAxis,
-                CapsuleHeight = height,
-                CapsuleRadius = radius
+                D = mainAxis,
+                H = height,
+                R = radius
             });
         }
         

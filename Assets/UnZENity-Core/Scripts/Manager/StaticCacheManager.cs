@@ -39,7 +39,7 @@ namespace GUZ.Core.Manager
         public bool IsGlobalCacheLoaded { get; private set; }
 
         public Dictionary<string, Bounds> LoadedVobsBounds { get; private set; }
-        public Dictionary<string, List<VobItemColliderCacheCreator.ColliderData>> LoadedVobItemColliders { get; private set; }
+        public Dictionary<string, List<VobItemColliderCacheCreator.Data>> LoadedVobItemColliders { get; private set; }
 
 
         // During Mesh creation, we need to get the index of a TextureArray entry. For efficient lookup, we store the index here.
@@ -115,14 +115,14 @@ namespace GUZ.Core.Manager
         [Serializable]
         public class VobColliderEntry
         {
-            public VobColliderEntry(string meshName, List<VobItemColliderCacheCreator.ColliderData> colliderData)
+            public VobColliderEntry(string meshName, List<VobItemColliderCacheCreator.Data> colliderData)
             {
                 Mesh = meshName;
                 Colls = colliderData;
             }
 
             public string Mesh; // MeshName
-            public List<VobItemColliderCacheCreator.ColliderData> Colls; // Colliders
+            public List<VobItemColliderCacheCreator.Data> Colls; // Colliders
         }
 
         [Serializable]
@@ -244,7 +244,7 @@ namespace GUZ.Core.Manager
         }
 
         public async Task SaveGlobalCache(Dictionary<string, Bounds> vobBounds,
-            Dictionary<string, List<VobItemColliderCacheCreator.ColliderData>> itemCollider,
+            Dictionary<string, List<VobItemColliderCacheCreator.Data>> itemCollider,
             Dictionary<string, TextureInfo> textureArrayInformation)
         {
             try
