@@ -26,7 +26,7 @@ namespace GUZ.VR.Components.HVROverrides
             GlobalEventDispatcher.PlayerPrefUpdated.AddListener(OnPlayerPrefsUpdated);
 
             // Enabled later via button press or other events
-            MenuHandler.gameObject.SetActive(false);
+            MenuHandler?.gameObject.SetActive(false);
         }
 
         protected override void Update()
