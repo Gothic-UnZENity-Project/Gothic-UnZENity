@@ -17,9 +17,6 @@ namespace GUZ.VR.Components.HVROverrides
         [Separator("GUZ - Settings")]
         public MenuHandler MenuHandler;
 
-        [SerializeField]
-        private VRSwimDive _swimDive;
-
         protected override void Start()
         {
             base.Start();
