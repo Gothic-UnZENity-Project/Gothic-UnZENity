@@ -36,6 +36,8 @@ namespace GUZ.VR.Components.Player
         private VobContainer _leftHandWeapon;
         private VobContainer _rightHandWeapon;
 
+        private const int _twoHandedFlags = (int)VmGothicEnums.ItemFlags.Item2HdAxe | (int)VmGothicEnums.ItemFlags.Item2HdSwd;
+
         
         public void OnGrabbed(HVRGrabberBase hand, HVRGrabbable item)
         {
@@ -85,6 +87,8 @@ namespace GUZ.VR.Components.Player
                     _rightHandPlayerWeaponFightHandler = new VRPlayerWeaponAttackHandler(rigidBody, HVRHandSide.Right, _weaponVelocityThreshold, _weaponVelocityDropPercentage, _weaponAttackWindowTime, _weaponComboWindowTime, _weaponCooldownWindowTime, _velocityCheckDuration, _velocitySampleCount);
                 }
             }
+            
+            AlterWeaponWeights();
         }
 
         public void OnReleased(HVRGrabberBase hand, HVRGrabbable item)
@@ -115,6 +119,35 @@ namespace GUZ.VR.Components.Player
                 }
 
                 _rightHandPlayerWeaponFightHandler = null;
+            }
+
+            AlterWeaponWeights();
+        }
+
+        /// <summary>
+        /// Set mass of weapons based on 1HD / 2HD types and amount of hands holding it.
+        ///
+        /// FIXME - Mass values (2/25) are hard coded. We need to make them dynamic inside INI.
+        /// </summary>
+        private void AlterWeaponWeights()
+        {
+            // We have one weapon in both hands
+            if (_leftHandWeapon != null && _leftHandWeapon == _rightHandWeapon)
+            {
+                _leftHandWeapon.Go.GetComponentInChildren<Rigidbody>().mass = 2;
+                return;
+            }
+
+            if (_leftHandWeapon != null)
+            {
+                var is2HD = (_leftHandWeapon.GetItemInstance().Flags & _twoHandedFlags) != 0;
+                _leftHandWeapon.Go.GetComponentInChildren<Rigidbody>().mass = is2HD ? 25 : 2;
+            }
+
+            if (_rightHandWeapon != null)
+            {
+                var is2HD = (_rightHandWeapon.GetItemInstance().Flags & _twoHandedFlags) != 0;
+                _rightHandWeapon.Go.GetComponentInChildren<Rigidbody>().mass = is2HD ? 25 : 2;
             }
         }
         
