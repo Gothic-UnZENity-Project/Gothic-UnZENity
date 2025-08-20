@@ -3,6 +3,7 @@ using System.Linq;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 namespace GUZ.Core.Manager
 {
@@ -29,7 +30,8 @@ namespace GUZ.Core.Manager
         {
             { Constants.ShaderSingleMeshLitName, new (Constants.ShaderSingleMeshLitDynamic, Constants.ShaderTypeTransparent) },
             // Basically: Leave the default shader (no special logic inside code needed with this handling.
-            { Constants.ShaderWorldLitName, new (Constants.ShaderWorldLit, Constants.ShaderTypeDefault) }
+            { Constants.ShaderWorldLitName, new (Constants.ShaderWorldLit, Constants.ShaderTypeDefault) },
+            { Constants.ShaderLitAlphaToCoverageName, new (Constants.ShaderLitAlphaToCoverageDynamic, (int)RenderQueue.AlphaTest) }
         };
 
         // Some objects (like NPCs) have multiple meshes. We therefore add all self+children renderers/materials.

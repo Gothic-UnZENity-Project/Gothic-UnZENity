@@ -71,7 +71,11 @@ namespace GUZ.Core.Globals
 
         public static readonly string ShaderWorldLitName = "Lit/World";
         public static readonly Shader ShaderWorldLit = Shader.Find(ShaderWorldLitName);
-        public static readonly Shader ShaderLitAlphaToCoverage = Shader.Find("Lit/AlphaToCoverage");
+
+        public static readonly string ShaderLitAlphaToCoverageName = "Lit/AlphaToCoverage";
+        public static readonly Shader ShaderLitAlphaToCoverage = Shader.Find(ShaderLitAlphaToCoverageName);
+        public static readonly Shader ShaderLitAlphaToCoverageDynamic = Shader.Find("Lit/AlphaToCoverage-Dynamic");
+        
         public static readonly Shader ShaderWater = Shader.Find("Lit/Water");
         public static readonly Shader ShaderBarrier = Shader.Find("Unlit/Barrier");
         public static readonly Shader ShaderThunder = Shader.Find("Unlit/ThunderShader");
