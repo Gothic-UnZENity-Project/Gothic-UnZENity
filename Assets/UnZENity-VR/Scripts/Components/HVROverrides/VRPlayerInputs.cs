@@ -128,7 +128,7 @@ namespace GUZ.VR.Components.HVROverrides
             // If HVRSimulator is active
             if (UseWASD)
             {
-                return Keyboard.current[Key.LeftShift].isPressed;
+                return Keyboard.current[Key.LeftShift].wasPressedThisFrame;
             }
             else
             {
