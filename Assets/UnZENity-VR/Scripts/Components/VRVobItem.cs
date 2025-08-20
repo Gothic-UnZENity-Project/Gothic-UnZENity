@@ -285,12 +285,12 @@ namespace GUZ.VR.Components
                     "Linear Damping",
                     () => _rigidbody.linearDamping,
                     value => _rigidbody.linearDamping = value,
-                    0f, 2f),
+                    0f, 25f),
                 new MarvinProperty<float>(
                     "Angular Damping",
                     () => _rigidbody.angularDamping,
                     value => _rigidbody.angularDamping = value,
-                    0f, 2f),
+                    0f, 25f),
             };
         }
     }
