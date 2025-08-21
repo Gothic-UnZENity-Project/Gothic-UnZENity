@@ -16,6 +16,14 @@ namespace GUZ.VR.Components.Player
     public class VRPlayerWeaponInteraction : MonoBehaviour, IMarvinPropertyCollector
     {
         // FIXME - All of these values will be dynamic in the future. Based on skill level and weapon type.
+        [Header("Weapon weight")]
+        [SerializeField] private float _massOneHanded = 25f;
+        [SerializeField] private float _massTwoHanded = 2f;
+        [SerializeField] private float _linearDampingOneHanded = 5f;
+        [SerializeField] private float _linearDampingTwoHanded = 0f;
+        [SerializeField] private float _angularDampingOneHanded = 5f;
+        [SerializeField] private float _angularDampingTwoHanded = 0f;
+        
         
         // if something in hand. Activate VRWeaponFighting
         [Header("Weapon Velocity Settings")]
@@ -126,28 +134,35 @@ namespace GUZ.VR.Components.Player
 
         /// <summary>
         /// Set mass of weapons based on 1HD / 2HD types and amount of hands holding it.
-        ///
-        /// FIXME - Mass values (2/25) are hard coded. We need to make them dynamic inside INI.
         /// </summary>
         private void AlterWeaponWeights()
         {
+            var leftRigidbody = _leftHandWeapon?.Go.GetComponentInChildren<Rigidbody>();
+            var rightRigidbody = _rightHandWeapon.Go.GetComponentInChildren<Rigidbody>();
+            
             // We have one weapon in both hands
             if (_leftHandWeapon != null && _leftHandWeapon == _rightHandWeapon)
             {
-                _leftHandWeapon.Go.GetComponentInChildren<Rigidbody>().mass = 2;
+                leftRigidbody!.mass = _massOneHanded;
+                leftRigidbody.linearDamping = _linearDampingOneHanded;
+                leftRigidbody.angularDamping = _angularDampingOneHanded;
                 return;
             }
 
             if (_leftHandWeapon != null)
             {
                 var is2HD = (_leftHandWeapon.GetItemInstance().Flags & _twoHandedFlags) != 0;
-                _leftHandWeapon.Go.GetComponentInChildren<Rigidbody>().mass = is2HD ? 25 : 2;
+                leftRigidbody!.mass = is2HD ? _massTwoHanded : _massOneHanded;
+                leftRigidbody.linearDamping = is2HD ? _linearDampingTwoHanded : _linearDampingOneHanded;
+                leftRigidbody.angularDamping = is2HD ? _angularDampingTwoHanded : _angularDampingOneHanded;
             }
 
             if (_rightHandWeapon != null)
             {
                 var is2HD = (_rightHandWeapon.GetItemInstance().Flags & _twoHandedFlags) != 0;
-                _rightHandWeapon.Go.GetComponentInChildren<Rigidbody>().mass = is2HD ? 25 : 2;
+                rightRigidbody!.mass = is2HD ? _massTwoHanded : _massOneHanded;
+                rightRigidbody.linearDamping = is2HD ? _linearDampingTwoHanded : _linearDampingOneHanded;
+                rightRigidbody.angularDamping = is2HD ? _angularDampingTwoHanded : _angularDampingOneHanded;
             }
         }
         
@@ -161,6 +176,38 @@ namespace GUZ.VR.Components.Player
         {
             return new List<object>
             {
+                new MarvinPropertyHeader("VRWeapon - RigidBody settings"),
+                new MarvinProperty<float>(
+                    "Mass one handed",
+                    () => _massOneHanded,
+                    value => _massOneHanded = value,
+                    0f, 50f),
+                new MarvinProperty<float>(
+                    "Mass two handed",
+                    () => _massTwoHanded,
+                    value => _massTwoHanded = value,
+                    0f, 50f),
+                new MarvinProperty<float>(
+                    "Move damping one handed",
+                    () => _linearDampingOneHanded,
+                    value => _linearDampingOneHanded = value,
+                    0f, 25f),
+                new MarvinProperty<float>(
+                    "Move damping two handed",
+                    () => _linearDampingTwoHanded,
+                    value => _linearDampingTwoHanded = value,
+                    0f, 25f),
+                new MarvinProperty<float>(
+                    "Rotation damping one handed",
+                    () => _angularDampingOneHanded,
+                    value => _angularDampingOneHanded = value,
+                    0f, 25f),
+                new MarvinProperty<float>(
+                    "Rotation damping two handed",
+                    () => _angularDampingTwoHanded,
+                    value => _angularDampingTwoHanded = value,
+                    0f, 25f),
+                
                 new MarvinPropertyHeader("Weapon Attack - Velocity"),
                 new MarvinProperty<float>(
                     "Threshold",
