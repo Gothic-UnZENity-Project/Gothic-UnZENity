@@ -1,17 +1,37 @@
 #if GUZ_HVR_INSTALLED
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using GUZ.Core;
 using GUZ.Core.Data.Adapter;
+using GUZ.Core.Extensions;
+using GUZ.Core.Util;
 using GUZ.Core.Vm;
 using GUZ.VR.Manager;
 using HurricaneVR.Framework.Core.Utils;
 using HurricaneVR.Framework.Shared;
 using UnityEngine;
+using EventType = ZenKit.EventType;
+using Logger = GUZ.Core.Util.Logger;
 
 namespace GUZ.VR.Components.VobItem
 {
     public class VRPlayerWeaponAttackHandler
     {
+        /**
+         * Fight windows from animations:
+         * eventTag(0 "DEF_HIT_LIMB"   "ZS_RIGHTHAND") --> This animation will check the named limbs (colliders) for attacks later.
+         * eventTag(0 "DEF_OPT_FRAME"  "4          ...") --> START_FRAME...DEF_OPT_FRAME is range when an attack is recognized and collider checked each frame.
+         * eventTag(0 "DEF_WINDOW"     "   10   33 ...") --> Attack window for combo. In this case: DEF_WINDOW1...DEF_HIT_END (10-31), 33 would be window for combo, we ignore for now.
+         * eventTag(0 "DEF_HIT_END"    "      31   ...") --> End of attack itself.
+         * eventSFX(5 "WHOOSH" EMPTY_SLOT)
+         *
+         * Used animations:
+         * - s_1hAttack
+         * - s_2hAttack
+         */
+        
+        
         private const string _swingSwordSfxName = "Whoosh";
         private SfxAdapter _swingSwordSound;
 
@@ -55,15 +75,14 @@ namespace GUZ.VR.Components.VobItem
         }
         
         // Events for external systems
-        public System.Action OnAttackTriggered;
-        public System.Action OnComboTriggered;
-        public System.Action OnAttackMissed;
-        public System.Action OnCooldownStarted;
+        public Action OnAttackTriggered;
+        public Action OnComboTriggered;
+        public Action OnAttackMissed;
+        public Action OnCooldownStarted;
 
 
-        public VRPlayerWeaponAttackHandler(Rigidbody weaponRigidbody, HVRHandSide handSide, float attackVelocityThreshold,
-            float velocityDropPercentage, float attackWindowTime, float comboWindowTime,
-            float cooldownWindowTime, float velocityCheckDuration, int velocitySampleCount)
+        public VRPlayerWeaponAttackHandler(Rigidbody weaponRigidbody, bool is2HD, HVRHandSide handSide, float attackVelocityThreshold,
+            float velocityDropPercentage, float velocityCheckDuration, int velocitySampleCount)
         {
             _characterController = VRPlayerManager.VRInteractionAdapter.GetVRPlayerController().CharacterController;
 
@@ -75,10 +94,8 @@ namespace GUZ.VR.Components.VobItem
             
             _attackVelocityThreshold =  attackVelocityThreshold;
             _velocityDropPercentage = velocityDropPercentage;
-        
-            _attackWindowTime = attackWindowTime;
-            _comboWindowTime = comboWindowTime;
-            _cooldownWindowTime = cooldownWindowTime;
+
+            CalculateWindowTimes(is2HD);
 
             _velocityCheckDuration = velocityCheckDuration;
             _velocitySampleCount = velocitySampleCount;
@@ -87,7 +104,44 @@ namespace GUZ.VR.Components.VobItem
             
             InitializeState();
         }
-        
+
+        private void CalculateWindowTimes(bool is2Hd)
+        {
+            var attackAnimationName = $"s_{(is2Hd ? "2" : "1")}hAttack";
+
+            var mds = ResourceLoader.TryGetModelScript("Humans")!;
+            var attackAnim = mds.Animations.First(i => i.Name.EqualsIgnoreCase(attackAnimationName));
+            var eventLimb = attackAnim.EventTags.FirstOrDefault(i => i.Type == EventType.HitLimb);
+            var eventLastHitFrame = attackAnim.EventTags.FirstOrDefault(i => i.Type == EventType.OptimalFrame);
+            var eventHitWindow = attackAnim.EventTags.FirstOrDefault(i => i.Type == EventType.ComboWindow);
+            var eventHitEnd = attackAnim.EventTags.FirstOrDefault(i => i.Type == EventType.HitEnd);
+            var soundAttack = attackAnim.SoundEffects.FirstOrDefault();
+
+            // Limb --> Check if collider is ZS_RIGHTHAND. If not --> Error log
+            if (eventLimb == null || eventLastHitFrame == null || eventHitWindow == null || eventHitEnd == null)
+            {
+                Logger.LogError(
+                    $"Attack animation >{attackAnimationName}< has missing at least one of the required events. Skipping fight for it.",
+                    LogCat.VR);
+                return;
+            }
+
+            if (!eventLimb.Slots.Item1.EqualsIgnoreCase("ZS_RIGHTHAND"))
+                Logger.LogError($"Collider check for weapon attack is not ZS_RIGHTHAND. Others aren't handled so far. Current: {eventLimb.Slots.Item1}", LogCat.VR);
+
+            
+            // LastHitFrame --> Define _attackWindowTime
+            // HitWindow --> Define _comboWindowTime
+            // HitEnd --> _cooldownWindowTime -> basically Frames after HitWindow.
+            //
+            // _sfxSwimAdapter = VmInstanceManager.TryGetSfxData(swimSfxName)!;
+            //
+            //
+            // _attackWindowTime = attackWindowTime;
+            // _comboWindowTime = comboWindowTime;
+            // _cooldownWindowTime = cooldownWindowTime;            
+        }
+
         public void FixedUpdate()
         {
             UpdateVelocityHistory();

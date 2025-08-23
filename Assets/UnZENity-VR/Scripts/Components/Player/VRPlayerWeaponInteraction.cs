@@ -30,11 +30,7 @@ namespace GUZ.VR.Components.Player
         [SerializeField] private float _weaponVelocityThreshold = 2.0f;
         [SerializeField] private float _weaponVelocityDropPercentage = 0.1f; // 10% drop
         
-        [Header("Weapon Attack Window Timing")]
-        [SerializeField] private float _weaponAttackWindowTime = 1.0f;
-        [SerializeField] private float _weaponComboWindowTime = 0.75f;
-        [SerializeField] private float _weaponCooldownWindowTime = 2.0f;
-        
+        [Header("Weapon Attack Velocity Settings")]
         [SerializeField] private float _velocityCheckDuration = 0.5f;
         [SerializeField] private int _velocitySampleCount = 5;
 
@@ -76,7 +72,9 @@ namespace GUZ.VR.Components.Player
                 else
                 {
                     // Item is in first hand.
-                    _leftHandPlayerWeaponFightHandler = new VRPlayerWeaponAttackHandler(rigidBody, HVRHandSide.Left, _weaponVelocityThreshold, _weaponVelocityDropPercentage, _weaponAttackWindowTime, _weaponComboWindowTime, _weaponCooldownWindowTime, _velocityCheckDuration, _velocitySampleCount);
+                    _leftHandPlayerWeaponFightHandler = new VRPlayerWeaponAttackHandler(
+                        rigidBody, Is2HD(_leftHandWeapon), HVRHandSide.Left, _weaponVelocityThreshold,
+                        _weaponVelocityDropPercentage, _velocityCheckDuration, _velocitySampleCount);
                 }
             }
             else
@@ -92,11 +90,18 @@ namespace GUZ.VR.Components.Player
                 }
                 else
                 {
-                    _rightHandPlayerWeaponFightHandler = new VRPlayerWeaponAttackHandler(rigidBody, HVRHandSide.Right, _weaponVelocityThreshold, _weaponVelocityDropPercentage, _weaponAttackWindowTime, _weaponComboWindowTime, _weaponCooldownWindowTime, _velocityCheckDuration, _velocitySampleCount);
+                    _rightHandPlayerWeaponFightHandler = new VRPlayerWeaponAttackHandler(
+                        rigidBody, Is2HD(_rightHandWeapon), HVRHandSide.Right, _weaponVelocityThreshold,
+                        _weaponVelocityDropPercentage, _velocityCheckDuration, _velocitySampleCount);
                 }
             }
             
             AlterWeaponWeights();
+        }
+
+        private bool Is2HD(VobContainer weapon)
+        {
+            return (weapon.GetItemInstance().Flags & _twoHandedFlags) != 0;
         }
 
         public void OnReleased(HVRGrabberBase hand, HVRGrabbable item)
@@ -138,7 +143,7 @@ namespace GUZ.VR.Components.Player
         private void AlterWeaponWeights()
         {
             var leftRigidbody = _leftHandWeapon?.Go.GetComponentInChildren<Rigidbody>();
-            var rightRigidbody = _rightHandWeapon.Go.GetComponentInChildren<Rigidbody>();
+            var rightRigidbody = _rightHandWeapon?.Go.GetComponentInChildren<Rigidbody>();
             
             // We have one weapon in both hands
             if (_leftHandWeapon != null && _leftHandWeapon == _rightHandWeapon)
@@ -151,7 +156,7 @@ namespace GUZ.VR.Components.Player
 
             if (_leftHandWeapon != null)
             {
-                var is2HD = (_leftHandWeapon.GetItemInstance().Flags & _twoHandedFlags) != 0;
+                var is2HD = Is2HD(_leftHandWeapon);
                 leftRigidbody!.mass = is2HD ? _massTwoHanded : _massOneHanded;
                 leftRigidbody.linearDamping = is2HD ? _linearDampingTwoHanded : _linearDampingOneHanded;
                 leftRigidbody.angularDamping = is2HD ? _angularDampingTwoHanded : _angularDampingOneHanded;
@@ -159,7 +164,7 @@ namespace GUZ.VR.Components.Player
 
             if (_rightHandWeapon != null)
             {
-                var is2HD = (_rightHandWeapon.GetItemInstance().Flags & _twoHandedFlags) != 0;
+                var is2HD = Is2HD(_leftHandWeapon);
                 rightRigidbody!.mass = is2HD ? _massTwoHanded : _massOneHanded;
                 rightRigidbody.linearDamping = is2HD ? _linearDampingTwoHanded : _linearDampingOneHanded;
                 rightRigidbody.angularDamping = is2HD ? _angularDampingTwoHanded : _angularDampingOneHanded;
@@ -219,23 +224,6 @@ namespace GUZ.VR.Components.Player
                     () => _weaponVelocityDropPercentage,
                     value => _weaponVelocityDropPercentage = value,
                     0.05f, 0.5f),
-
-                new MarvinPropertyHeader("Weapon Attack - Timing Windows"),
-                new MarvinProperty<float>(
-                    "Attack Window Time",
-                    () => _weaponAttackWindowTime,
-                    value => _weaponAttackWindowTime = value,
-                    0f, 5f),
-                new MarvinProperty<float>(
-                    "Combo Window Time",
-                    () => _weaponComboWindowTime,
-                    value => _weaponComboWindowTime = value,
-                    0f, 2f),
-                new MarvinProperty<float>(
-                    "Cooldown Window Time",
-                    () => _weaponCooldownWindowTime,
-                    value => _weaponCooldownWindowTime = value,
-                    0f, 3f),
 
                 new MarvinPropertyHeader("Weapon Attack - Velocity Check Settings"),
                 new MarvinProperty<float>(
