@@ -11,6 +11,8 @@ using GUZ.VR.Manager;
 using HurricaneVR.Framework.Core.Utils;
 using HurricaneVR.Framework.Shared;
 using UnityEngine;
+using ZenKit;
+using Animation = UnityEngine.Animation;
 using EventType = ZenKit.EventType;
 using Logger = GUZ.Core.Util.Logger;
 
@@ -31,10 +33,7 @@ namespace GUZ.VR.Components.VobItem
          * - s_2hAttack
          */
         
-        
-        private const string _swingSwordSfxName = "Whoosh";
         private SfxAdapter _swingSwordSound;
-
 
         private readonly CharacterController _characterController;
         private readonly Rigidbody _weaponWeaponRigidbody;
@@ -44,10 +43,10 @@ namespace GUZ.VR.Components.VobItem
         private readonly float _attackVelocityThreshold;
         private readonly float _velocityDropPercentage;
         
-        private readonly float _attackWindowTime;
-        private readonly float _comboWindowTime;
-        private readonly float _cooldownWindowTime;
-        
+        private float _attackWindowTime;
+        private float _comboWindowStart;
+        private float _comboWindowTime;
+
         // Velocity sampling properties
         private readonly float _velocityCheckDuration;
         private readonly int _velocitySampleCount;
@@ -63,22 +62,29 @@ namespace GUZ.VR.Components.VobItem
         private bool _hasDroppedBelowThreshold;
         private bool _hasReturnedToThreshold;
         private float _velocityDropThreshold;
-        
+
+        /// <summary>
+        /// Assumptions:
+        /// 1. Attack window (collider hit check) always ends before the combo window starts.
+        /// --attack---|--
+        /// --------------|--combo---|
+        ///
+        /// 2. If we fail the combo window by doing e.g., "left-right" within the attack window, the combo is failed, and we need to wait.
+        /// --attack---|--
+        /// ------|fail--------------|
+        /// </summary>
         private enum TimeWindow
         {
             InitialWindow,
             AttackWindow,
             AttackWindowComboFailed,
-            AttackWindowComboWindow,
-            ComboWindow,
-            CooldownWindow
+            ComboWindow
         }
         
         // Events for external systems
         public Action OnAttackTriggered;
         public Action OnComboTriggered;
         public Action OnAttackMissed;
-        public Action OnCooldownStarted;
 
 
         public VRPlayerWeaponAttackHandler(Rigidbody weaponRigidbody, bool is2HD, HVRHandSide handSide, float attackVelocityThreshold,
@@ -95,51 +101,76 @@ namespace GUZ.VR.Components.VobItem
             _attackVelocityThreshold =  attackVelocityThreshold;
             _velocityDropPercentage = velocityDropPercentage;
 
-            CalculateWindowTimes(is2HD);
+            var attackAnimation = GetAttackAnimation(is2HD);
+            CalculateWindowTimes(attackAnimation);
+            CalculateAttackSound(attackAnimation);
 
             _velocityCheckDuration = velocityCheckDuration;
             _velocitySampleCount = velocitySampleCount;
-        
-            _swingSwordSound = VmInstanceManager.TryGetSfxData(_swingSwordSfxName);
-            
+
             InitializeState();
         }
 
-        private void CalculateWindowTimes(bool is2Hd)
+        private IAnimation GetAttackAnimation(bool is2Hd)
         {
-            var attackAnimationName = $"s_{(is2Hd ? "2" : "1")}hAttack";
+            // Left-Right attacks always have a useful combo setting. (The combo for 2H forward (s_2hAttack) is broken to use with combos.)
+            var attackAnimationName = $"s_{(is2Hd ? "2" : "1")}hAttackL";
 
+            // FIXME - Combo settings for hero with more skills are in overlay mds (e.g., HUMANS_1HST2.mds) Use for improved weapon handling.
             var mds = ResourceLoader.TryGetModelScript("Humans")!;
-            var attackAnim = mds.Animations.First(i => i.Name.EqualsIgnoreCase(attackAnimationName));
+            return mds.Animations.First(i => i.Name.EqualsIgnoreCase(attackAnimationName));
+
+        }
+
+        /// <summary>
+        /// After checking G1 animations (e.g., Humans.mds), we leverage the following data:
+        /// 1. We assume our event calculations always start at frame 1.
+        /// 2. DEF_OPT_FRAME is always from 1...x frame
+        /// 3. DEF_WINDOW is for combo window and always goes between "x...y" frame.
+        /// </summary>
+        private void CalculateWindowTimes(IAnimation attackAnim)
+        {
             var eventLimb = attackAnim.EventTags.FirstOrDefault(i => i.Type == EventType.HitLimb);
             var eventLastHitFrame = attackAnim.EventTags.FirstOrDefault(i => i.Type == EventType.OptimalFrame);
             var eventHitWindow = attackAnim.EventTags.FirstOrDefault(i => i.Type == EventType.ComboWindow);
-            var eventHitEnd = attackAnim.EventTags.FirstOrDefault(i => i.Type == EventType.HitEnd);
-            var soundAttack = attackAnim.SoundEffects.FirstOrDefault();
 
-            // Limb --> Check if collider is ZS_RIGHTHAND. If not --> Error log
-            if (eventLimb == null || eventLastHitFrame == null || eventHitWindow == null || eventHitEnd == null)
+            if (eventLimb == null || eventLastHitFrame == null || eventHitWindow == null)
             {
                 Logger.LogError(
-                    $"Attack animation >{attackAnimationName}< has missing at least one of the required events. Skipping fight for it.",
+                    $"Attack animation >{attackAnim.Name}< has missing at least one of the required events. Skipping fight for it.",
                     LogCat.VR);
                 return;
             }
 
+            // Limb --> Check if collider is ZS_RIGHTHAND. If not --> Error log
             if (!eventLimb.Slots.Item1.EqualsIgnoreCase("ZS_RIGHTHAND"))
-                Logger.LogError($"Collider check for weapon attack is not ZS_RIGHTHAND. Others aren't handled so far. Current: {eventLimb.Slots.Item1}", LogCat.VR);
+                Logger.LogError(
+                    $"Collider check for weapon attack is not ZS_RIGHTHAND. Others aren't handled so far. Current: {eventLimb.Slots.Item1}",
+                    LogCat.VR);
 
-            
+
             // LastHitFrame --> Define _attackWindowTime
+            _attackWindowTime = Int32.Parse(eventLastHitFrame.Slots.Item1) / attackAnim.Fps;
+
+
             // HitWindow --> Define _comboWindowTime
-            // HitEnd --> _cooldownWindowTime -> basically Frames after HitWindow.
-            //
-            // _sfxSwimAdapter = VmInstanceManager.TryGetSfxData(swimSfxName)!;
-            //
-            //
-            // _attackWindowTime = attackWindowTime;
-            // _comboWindowTime = comboWindowTime;
-            // _cooldownWindowTime = cooldownWindowTime;            
+            var hitWindows = eventHitWindow.Slots.Item1.Split();
+            if (hitWindows.Length < 2)
+            {
+                Logger.LogError(
+                    $"Animation >{attackAnim.Name}< need to provide at least two windows (start-end). Skipping...",
+                    LogCat.VR);
+                return;
+            }
+
+            _comboWindowStart = Int32.Parse(hitWindows[0]) / attackAnim.Fps;
+            _comboWindowTime = Int32.Parse(hitWindows[1]) - Int32.Parse(hitWindows[0]) / attackAnim.Fps;
+        }
+
+        private void CalculateAttackSound(IAnimation attackAnim)
+        {
+            var soundAttack = attackAnim.SoundEffects.FirstOrDefault();
+            _swingSwordSound = VmInstanceManager.TryGetSfxData(soundAttack.Name);
         }
 
         public void FixedUpdate()
@@ -227,16 +258,12 @@ namespace GUZ.VR.Components.VobItem
                     HandleAttackWindow();
                     break;
                 case TimeWindow.AttackWindowComboFailed:
-                    HandleAttackWindowComboFailed();
-                    break;
-                case TimeWindow.AttackWindowComboWindow:
-                    HandleAttackWindowComboWindow();
+                    // Simply wait until the whole "animation" is over and then start again.
+                    if (_currentStateTime < 0f)
+                        _currentWindow = TimeWindow.InitialWindow;
                     break;
                 case TimeWindow.ComboWindow:
                     HandleComboWindow();
-                    break;
-                case TimeWindow.CooldownWindow:
-                    HandleCooldownWindow();
                     break;
             }
         }
@@ -249,10 +276,17 @@ namespace GUZ.VR.Components.VobItem
         
         private void HandleAttackWindow()
         {
+            // Check if attack window time is up
+            if (_currentStateTime <= 0f)
+                StartComboWindow();
+        }
+
+        private void CheckIfComboWindowFailed()
+        {
             // Track velocity drops and returns
             if (_currentWeaponVelocity < _velocityDropThreshold && !_hasDroppedBelowThreshold)
                 _hasDroppedBelowThreshold = true;
-            
+
             if (_hasDroppedBelowThreshold && _currentWeaponVelocity >= _attackVelocityThreshold && !_hasReturnedToThreshold)
             {
                 _hasReturnedToThreshold = true;
@@ -260,10 +294,6 @@ namespace GUZ.VR.Components.VobItem
                 TransitionToAttackWindowComboFailed();
                 return;
             }
-            
-            // Check if attack window time is up
-            if (_currentStateTime <= 0f)
-                StartComboWindow();
         }
         
         private void HandleAttackWindowComboFailed()
@@ -271,13 +301,6 @@ namespace GUZ.VR.Components.VobItem
             // Wait for the remaining attack window time, then go to cooldown
             if (_currentStateTime <= 0f)
                 StartCooldownWindow();
-        }
-        
-        private void HandleAttackWindowComboWindow()
-        {
-            // This state represents the overlap period where we can still enter combo window
-            if (_currentStateTime <= 0f)
-                StartComboWindow();
         }
         
         private void HandleComboWindow()
@@ -363,19 +386,10 @@ namespace GUZ.VR.Components.VobItem
             OnComboTriggered?.Invoke();
         }
         
-        private void StartCooldownWindow()
-        {
-            _currentWindow = TimeWindow.CooldownWindow;
-            _currentStateTime = _cooldownWindowTime;
-            
-            OnCooldownStarted?.Invoke();
-        }
-        
         // Public methods for external systems
         public bool IsInAttackState()
         {
-            return _currentWindow == TimeWindow.AttackWindow || 
-                   _currentWindow == TimeWindow.AttackWindowComboWindow;
+            return _currentWindow == TimeWindow.AttackWindow;
         }
         
         public bool IsInComboState()
@@ -383,9 +397,9 @@ namespace GUZ.VR.Components.VobItem
             return _currentWindow == TimeWindow.ComboWindow;
         }
         
-        public bool IsInCooldown()
+        public bool IsFailedComboState()
         {
-            return _currentWindow == TimeWindow.CooldownWindow;
+            return _currentWindow == TimeWindow.AttackWindowComboFailed;
         }
         
         public float GetRemainingStateTime()
