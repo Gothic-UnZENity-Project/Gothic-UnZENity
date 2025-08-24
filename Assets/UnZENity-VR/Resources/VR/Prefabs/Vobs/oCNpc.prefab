@@ -56,7 +56,6 @@ MonoBehaviour:
   ColliderRootMotion: {fileID: 6115383017936816660}
   AiHandler: {fileID: 3046509075852218844}
   Animation: {fileID: 0}
-  AnimationHandler: {fileID: 0}
   AnimationSystem: {fileID: 0}
   AnimationHeadHandler: {fileID: 0}
 --- !u!114 &3046509075852218844
@@ -170,6 +169,7 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
   m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
@@ -268,7 +268,7 @@ GameObject:
   - component: {fileID: 8720130747125307888}
   - component: {fileID: 957202922675155714}
   - component: {fileID: 8095166574519349901}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: RootMotionCollider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -395,7 +395,7 @@ MonoBehaviour:
   HandGrabbedClip: {fileID: 0}
   SocketGrabPoints: []
   Rigidbody: {fileID: 0}
-  AutoApplyLayer: 1
+  AutoApplyLayer: 0
   RequireOverlapClearance: 0
   OverlapTimeout: 0.1
   FinalJointMaxAngle: 15

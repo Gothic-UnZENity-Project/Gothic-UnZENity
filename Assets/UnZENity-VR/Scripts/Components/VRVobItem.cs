@@ -39,7 +39,7 @@ namespace GUZ.VR.Components
             // Pre-fill calculation data before being used every frame.
             if (_ignoreLayerCollisionCheck == 0)
             {
-                _ignoreLayerCollisionCheck = Constants.VobItemNoCollision | Constants.HandLayer;
+                _ignoreLayerCollisionCheck = Constants.VobItemNoWorldCollision | Constants.HandLayer;
             }
         }
 
@@ -68,7 +68,7 @@ namespace GUZ.VR.Components
             transform.GetComponent<Rigidbody>().isKinematic = false;
 
             // Stop collisions while being dragged around (at least shortly; otherwise e.g. items might stick inside chests when pulled out).
-            gameObject.layer = Constants.VobItemNoCollision;
+            gameObject.layer = Constants.VobItemNoWorldCollision;
 
             // At least until object isn't colliding with anything any longer, the object will be a ghost (i.e. no collision + transparency activated)
             DynamicMaterialManager.SetDynamicValue(gameObject, Constants.ShaderPropertyTransparency, Constants.ShaderPropertyTransparencyValue);
@@ -134,7 +134,7 @@ namespace GUZ.VR.Components
                 overlapData.OverlapPoint0,
                 overlapData.OverlapPoint1,
                 overlapData.OverlapRadius,
-                Constants.VobItemNoCollision | Constants.HandLayer);
+                Constants.VobItemNoWorldCollision | Constants.HandLayer);
 
             foreach (var overlapCollider in overlapColliders)
             {
@@ -181,7 +181,7 @@ namespace GUZ.VR.Components
                 overlapData.OverlapPoint1,
                 overlapData.OverlapRadius,
                 _overlapColliders,
-                Constants.VobItemNoCollision | Constants.HandLayer);
+                Constants.VobItemNoWorldCollision | Constants.HandLayer);
 
             return colliderCount > 0;
         }

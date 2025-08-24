@@ -2222,7 +2222,7 @@ GameObject:
   - component: {fileID: 7136319683539270999}
   - component: {fileID: 6573836035492029965}
   - component: {fileID: 6797639264981372780}
-  m_Layer: 6
+  m_Layer: 11
   m_Name: BIP01 CHEST_.*_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}

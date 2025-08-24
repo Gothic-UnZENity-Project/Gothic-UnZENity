@@ -19,9 +19,9 @@ namespace GUZ.VR.Components.Player
         [Header("Weapon weight")]
         [SerializeField] private float _mass2HOneHanded = 15f;
         [SerializeField] private float _mass1HAnyHand2HTwoHanded = 2f;
-        [SerializeField] private float _linearDamping2HOneHanded = 5f;
+        [SerializeField] private float _linearDamping2HOneHanded = 0f;
         [SerializeField] private float _linearDamping1HAnyHand2HTwoHanded = 0f;
-        [SerializeField] private float _angularDamping2HOneHanded = 5f;
+        [SerializeField] private float _angularDamping2HOneHanded = 0f;
         [SerializeField] private float _angularDamping1HAnyHand2HTwoHanded = 0f;
         
         

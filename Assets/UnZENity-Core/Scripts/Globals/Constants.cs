@@ -153,9 +153,12 @@ namespace GUZ.Core.Globals
         public static LayerMask HandLayer = LayerMask.NameToLayer("Hand"); // Layer 21 (suggested by HVR)
 
         // Custom layers
-        public static LayerMask VobRotatableLayer = LayerMask.NameToLayer("VobRotatable"); // No collision with world (e.g. for chest lid and door)
-        public static LayerMask VobItemNoCollision = LayerMask.NameToLayer("VobItemNoCollision"); // No collision with world (e.g. while item is in our hands)
+        public static LayerMask VobItem = LayerMask.NameToLayer("VobItem");
+        public static LayerMask VobItemNoWorldCollision = LayerMask.NameToLayer("VobItemNoWorldCollision"); // No collision with world (e.g. while item is in our hands)
+        public static LayerMask VobNpcOrMonster = LayerMask.NameToLayer("VobNpcOrMonster");
+        public static LayerMask VobMovableLayer = LayerMask.NameToLayer("VobMovable"); // No collision with world (e.g. for chest lid and door)
 
+        
         /*
          * ### Tags
          */
