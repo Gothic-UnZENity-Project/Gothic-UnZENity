@@ -59,15 +59,7 @@ namespace GUZ.VR.Components.HVROverrides
                 return Keyboard.current[Key.Escape].wasPressedThisFrame;
             }
 
-            if (HVRInputManager.Instance.LeftController.ControllerType == HVRControllerType.Knuckles)
-            {
-                return HVRController.GetButtonState(HVRHandSide.Left, HVRButtons.TrackPadButton).JustActivated ||
-                       HVRController.GetButtonState(HVRHandSide.Right, HVRButtons.TrackPadButton).JustActivated;
-            }
-            else
-            {
-                return HVRController.GetButtonState(HVRHandSide.Left, HVRButtons.Secondary).JustActivated;
-            }
+            return HVRController.GetButtonState(HVRHandSide.Left, HVRButtons.Secondary).JustActivated;
         }
         
         private bool GetBothGripsActivated()
