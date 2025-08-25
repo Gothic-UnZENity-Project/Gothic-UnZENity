@@ -99,7 +99,7 @@ GameObject:
   - component: {fileID: -6808202407213995710}
   - component: {fileID: 8543334853728962911}
   - component: {fileID: 8461469363836242350}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: oCItem
   m_TagString: GUZVob
   m_Icon: {fileID: 0}
@@ -217,7 +217,7 @@ MonoBehaviour:
   HandGrabbedClip: {fileID: 0}
   SocketGrabPoints: []
   Rigidbody: {fileID: 0}
-  AutoApplyLayer: 1
+  AutoApplyLayer: 0
   RequireOverlapClearance: 0
   OverlapTimeout: 0.1
   FinalJointMaxAngle: 15

@@ -519,7 +519,7 @@ PrefabInstance:
       objectReference: {fileID: 6929123780788603430}
     - target: {fileID: 1685099869530008038, guid: c43ac1b5fbd2fc24ea40fb28bae6be3e, type: 3}
       propertyPath: RaycastLayermask.m_Bits
-      value: 9438208
+      value: 9438272
       objectReference: {fileID: 0}
     - target: {fileID: 1685099869530008038, guid: c43ac1b5fbd2fc24ea40fb28bae6be3e, type: 3}
       propertyPath: Grabbed.m_PersistentCalls.m_Calls.Array.size
@@ -783,7 +783,7 @@ PrefabInstance:
       objectReference: {fileID: 6929123780788603430}
     - target: {fileID: 7204430235297583144, guid: c43ac1b5fbd2fc24ea40fb28bae6be3e, type: 3}
       propertyPath: RaycastLayermask.m_Bits
-      value: 5243904
+      value: 5243968
       objectReference: {fileID: 0}
     - target: {fileID: 7204430235297583144, guid: c43ac1b5fbd2fc24ea40fb28bae6be3e, type: 3}
       propertyPath: Grabbed.m_PersistentCalls.m_Calls.Array.size

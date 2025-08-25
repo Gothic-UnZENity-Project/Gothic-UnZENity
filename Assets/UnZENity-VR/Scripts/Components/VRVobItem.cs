@@ -82,7 +82,7 @@ namespace GUZ.VR.Components
 
         public void OnReleased(HVRGrabberBase grabber, HVRGrabbable grabbable)
         {
-            gameObject.layer = Constants.GrabbableLayer; // Back to HVR default
+            gameObject.layer = Constants.VobItem; // Back to default
 
             GameGlobals.VobMeshCulling?.StopTrackVobPositionUpdates(gameObject);
 
@@ -160,7 +160,7 @@ namespace GUZ.VR.Components
             yield return new WaitForSeconds(1f);
 
             // Re-enable collisions
-            gameObject.layer = Constants.GrabbableLayer;
+            gameObject.layer = Constants.VobItem;
 
             // Disable "ghostification" of object.
             DynamicMaterialManager.ResetDynamicValue(gameObject, Constants.ShaderPropertyTransparency, Constants.ShaderPropertyTransparencyDefault);

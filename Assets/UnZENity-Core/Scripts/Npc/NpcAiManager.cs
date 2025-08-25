@@ -116,7 +116,7 @@ namespace GUZ.Core.Npc
             var distanceToNpc = Vector3.Distance(selfContainer.Go.transform.position, otherHeadBone.position);
             var inSightRange = distanceToNpc <= self.SensesRange;
 
-            var layersToIgnore = Constants.HandLayer | Constants.GrabbableLayer;
+            var layersToIgnore = Constants.HandLayer | Constants.GrabbableLayer | Constants.VobItem | Constants.VobItemNoWorldCollision;
             var hasLineOfSightCollisions = Physics.Linecast(selfHeadBone.position, otherHeadBone.position, layersToIgnore);
 
             var directionToTarget = (otherHeadBone.position - selfHeadBone.position).normalized;
