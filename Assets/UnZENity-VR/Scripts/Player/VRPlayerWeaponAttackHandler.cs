@@ -5,6 +5,7 @@ using System.Linq;
 using GUZ.Core;
 using GUZ.Core.Data.Adapter;
 using GUZ.Core.Extensions;
+using GUZ.Core.Globals;
 using GUZ.Core.Util;
 using GUZ.Core.Vm;
 using GUZ.VR.Manager;
@@ -38,6 +39,7 @@ namespace GUZ.VR.Components.VobItem
 
         private readonly CharacterController _characterController;
         private readonly Rigidbody _weaponWeaponRigidbody;
+        private readonly Collider[] _weaponColliders;
         private bool _isLeftHand;
         private bool _isRightHand;
 
@@ -95,6 +97,7 @@ namespace GUZ.VR.Components.VobItem
             _characterController = VRPlayerManager.VRInteractionAdapter.GetVRPlayerController().CharacterController;
 
             _weaponWeaponRigidbody = weaponRigidbody;
+            _weaponColliders = _weaponWeaponRigidbody.GetComponentsInChildren<Collider>();
 
             // Initial hand setup
             _isLeftHand = handSide == HVRHandSide.Left;
@@ -289,9 +292,122 @@ namespace GUZ.VR.Components.VobItem
             if (CheckIfComboWindowFailed())
                 return;
 
+            CheckHitCollider();
+
             if (_overallFlowTime >= _attackWindowTime)
                 _currentWindow = TimeWindow.WaitingForCombo;
         }
+
+        private void CheckHitCollider()
+        {
+            var overlappingColliders = new List<Collider>();
+
+            foreach (var weaponCollider in _weaponColliders)
+            {
+                // Handle different collider types
+                switch (weaponCollider)
+                {
+                    case BoxCollider boxCollider:
+                        overlappingColliders.AddRange(CheckBoxColliderOverlap(boxCollider));
+                        break;
+                    case CapsuleCollider capsuleCollider:
+                        overlappingColliders.AddRange(CheckCapsuleColliderOverlap(capsuleCollider));
+                        break;
+                    default:
+                        Logger.LogError($"Unsupported collider type for weapon hit detection: {weaponCollider.GetType().Name}", LogCat.VR);
+                        continue;
+                }
+
+                // Process hits if any overlaps found
+                if (overlappingColliders.Count > 0)
+                {
+                    ProcessWeaponHits(overlappingColliders);
+                }
+            }
+        }
+
+        private Collider[] CheckBoxColliderOverlap(BoxCollider boxCollider)
+        {
+            CalculateBoxColliderOverlap(boxCollider, out var center, out var size, out var rotation);;
+
+            var colliders = Physics.OverlapBox(center, size / 2, rotation, Constants.VobNpcOrMonster);
+
+            if (colliders.Length > 0)
+            {
+                Debug.DrawLine(center, size / 2, Color.green, 1f, false);
+            }
+
+            return colliders;
+        }
+
+        public void CalculateBoxColliderOverlap(BoxCollider boxCollider, out Vector3 center, out Vector3 size,
+            out Quaternion rotation)
+        {
+            var bounds = boxCollider.bounds;
+            center = bounds.center;
+            size = bounds.size;
+            rotation = boxCollider.transform.rotation;
+        }
+
+        private Collider[] CheckCapsuleColliderOverlap(CapsuleCollider capsuleCollider)
+        {
+            CalculateCapsuleOverlap(capsuleCollider, out var point0, out var point1, out var radius);
+
+            var colliders = Physics.OverlapCapsule(point0, point1, radius, Constants.VobNpcOrMonster);
+
+            if (colliders.Length > 0)
+            {
+                Debug.DrawLine(point0, point1, Color.red, 1f, false);
+            }
+
+            return colliders;
+        }
+
+        public void CalculateCapsuleOverlap(CapsuleCollider capsuleCollider, out Vector3 point0, out Vector3 point1,
+            out float radius)
+        {
+            // Calculate capsule radius
+            var bounds = capsuleCollider.bounds;
+            var center = bounds.center;
+            radius = capsuleCollider.radius * Mathf.Max(capsuleCollider.transform.lossyScale.x, capsuleCollider.transform.lossyScale.z);
+
+            // Calculate capsule endpoints
+            var height = capsuleCollider.height * capsuleCollider.transform.lossyScale.y;
+            var direction = capsuleCollider.direction switch
+            {
+                0 => capsuleCollider.transform.right,
+                1 => capsuleCollider.transform.up,
+                2 => capsuleCollider.transform.forward,
+                _ => throw new ArgumentOutOfRangeException()
+            };
+
+            var halfHeight = (height / 2) - radius;
+            point0 = center + direction * halfHeight;
+            point1 = center - direction * halfHeight;
+        }
+
+        private void ProcessWeaponHits(List<Collider> hitColliders)
+        {
+            foreach (var hitCollider in hitColliders)
+            {
+                Logger.Log($"Weapon hit detected on: {hitCollider.gameObject.name}", LogCat.VR);
+
+                // Here you can add your hit processing logic, such as:
+                // - Damage calculation
+                // - Hit effects
+                // - Sound effects
+                // - Haptic feedback
+                // - etc.
+
+                // Example: Get the hit target component and process damage
+                // var npcComponent = hitCollider.GetComponentInParent<INpc>();
+                // if (npcComponent != null)
+                // {
+                //     npcComponent.TakeDamage(calculateDamage());
+                // }
+            }
+        }
+
 
         private void HandleWaitingForComboWindow()
         {

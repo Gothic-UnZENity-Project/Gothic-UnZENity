@@ -1,4 +1,5 @@
 #if GUZ_HVR_INSTALLED
+using System;
 using System.Collections.Generic;
 using GUZ.Core.Data.Container;
 using GUZ.Core.Marvin;
@@ -97,6 +98,33 @@ namespace GUZ.VR.Components.Player
             }
             
             AlterWeaponWeights();
+        }
+
+        private void OnDrawGizmos()
+        {
+            if (_rightHandPlayerWeaponFightHandler == null)
+                return;
+
+            foreach (var weaponCollider in _rightHandWeapon.Go.GetComponentsInChildren<Collider>())
+            {
+                switch (weaponCollider)
+                {
+                    case BoxCollider boxCollider:
+                        _rightHandPlayerWeaponFightHandler.CalculateBoxColliderOverlap(boxCollider, out var point, out var size, out var rotation);
+
+                        Gizmos.color = Color.blue;
+                        Gizmos.DrawCube(point, rotation * size);
+                        
+                        break;
+                    case CapsuleCollider capsuleCollider:
+                        _rightHandPlayerWeaponFightHandler.CalculateCapsuleOverlap(capsuleCollider, out var point0, out var point1, out var radius);
+                        Gizmos.color = Color.red;
+                        Gizmos.DrawWireSphere(point0, radius);
+                        Gizmos.DrawWireSphere(point1, radius);
+
+                        break;
+                }
+            }
         }
 
         private bool Is2HD(VobContainer weapon)
