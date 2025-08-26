@@ -6,6 +6,7 @@ using GUZ.Core;
 using GUZ.Core.Data.Adapter;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
+using GUZ.Core.Npc;
 using GUZ.Core.Util;
 using GUZ.Core.Vm;
 using GUZ.VR.Manager;
@@ -55,6 +56,7 @@ namespace GUZ.VR.Components.VobItem
         private readonly int _velocitySampleCount;
         private readonly Queue<float> _velocityHistory = new();
         private float _velocityCheckTimer;
+        private List<Collider> _alreadyHitCollidersForThisAttack = new();
         
         // Current state properties
         private float _currentWeaponVelocity => GetAverageVelocity();
@@ -317,25 +319,16 @@ namespace GUZ.VR.Components.VobItem
                         Logger.LogError($"Unsupported collider type for weapon hit detection: {weaponCollider.GetType().Name}", LogCat.VR);
                         continue;
                 }
-
-                // Process hits if any overlaps found
-                if (overlappingColliders.Count > 0)
-                {
-                    ProcessWeaponHits(overlappingColliders);
-                }
             }
+
+            ProcessWeaponHits(overlappingColliders);
         }
 
         private Collider[] CheckBoxColliderOverlap(BoxCollider boxCollider)
         {
             CalculateBoxColliderOverlap(boxCollider, out var center, out var size, out var rotation);;
 
-            var colliders = Physics.OverlapBox(center, size / 2, rotation, Constants.VobNpcOrMonster);
-
-            if (colliders.Length > 0)
-            {
-                Debug.DrawLine(center, size / 2, Color.green, 1f, false);
-            }
+            var colliders = Physics.OverlapBox(center, size / 2, rotation, 1 << Constants.VobNpcOrMonster);
 
             return colliders;
         }
@@ -353,12 +346,7 @@ namespace GUZ.VR.Components.VobItem
         {
             CalculateCapsuleOverlap(capsuleCollider, out var point0, out var point1, out var radius);
 
-            var colliders = Physics.OverlapCapsule(point0, point1, radius, Constants.VobNpcOrMonster);
-
-            if (colliders.Length > 0)
-            {
-                Debug.DrawLine(point0, point1, Color.red, 1f, false);
-            }
+            var colliders = Physics.OverlapCapsule(point0, point1, radius, 1 << Constants.VobNpcOrMonster);
 
             return colliders;
         }
@@ -390,6 +378,14 @@ namespace GUZ.VR.Components.VobItem
         {
             foreach (var hitCollider in hitColliders)
             {
+                if (_alreadyHitCollidersForThisAttack.Contains(hitCollider))
+                    continue;
+                else
+                    _alreadyHitCollidersForThisAttack.Add(hitCollider);
+
+                var npcContainer = hitCollider.GetComponentInParent<NpcLoader>().Container;
+                
+
                 Logger.Log($"Weapon hit detected on: {hitCollider.gameObject.name}", LogCat.VR);
 
                 // Here you can add your hit processing logic, such as:
@@ -477,6 +473,7 @@ namespace GUZ.VR.Components.VobItem
             // Restart failure checks.
             _hasDroppedBelowThreshold = false;
             _hasReturnedToThreshold = false;
+            _alreadyHitCollidersForThisAttack.Clear();
 
             // If no sound is set, ignore playing it and mark it as "played".
             _soundPlayed = _swingSwordSound == null;

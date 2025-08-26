@@ -181,6 +181,7 @@ namespace GUZ.VR.Components
                 overlapData.OverlapPoint1,
                 overlapData.OverlapRadius,
                 _overlapColliders,
+                // FIXME - It could be, that we need to do 1 << Constants.VobItemNoWorldCollision | 1 << Constants.HandLayer. Check with other Physics.*() calls.
                 Constants.VobItemNoWorldCollision | Constants.HandLayer);
 
             return colliderCount > 0;
