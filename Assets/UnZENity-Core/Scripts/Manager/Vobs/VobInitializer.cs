@@ -374,7 +374,7 @@ namespace GUZ.Core.Manager.Vobs
             // Hint: The StationaryLights array should be ~512 elements max. If loading is slow,
             // we could also simply remove elements which are set to LightGOs already.
             lightComp.Index = GameGlobals.StaticCache.LoadedStationaryLights.StationaryLights.FirstIndex(i =>
-                i.Position == worldPosition);
+                i.P == worldPosition);
 
             if (lightComp.Index == -1)
             {
@@ -436,13 +436,13 @@ namespace GUZ.Core.Manager.Vobs
 
             if (mrm != null)
             {
-                return MeshFactory.CreateVob(item.Visual, mrm, parent: parent, rootGo: go);
+                return MeshFactory.CreateVob(item.Visual, mrm, parent: parent, rootGo: go, useColliderCache: true);
             }
 
             // shortbow (itrw_bow_l_01) has no mrm, but has mmb
             var mmb = ResourceLoader.TryGetMorphMesh(item.Visual);
 
-            return MeshFactory.CreateVob(item.Visual, mmb, parent: parent, rootGo: go);
+            return MeshFactory.CreateVob(item.Visual, mmb, parent: parent, rootGo: go, useColliderCache: true);
         }
 
         public GameObject CreateItemMesh(ItemInstance item, GameObject parentGo, Vector3 position)
@@ -456,7 +456,7 @@ namespace GUZ.Core.Manager.Vobs
             // shortbow (itrw_bow_l_01) has no mrm, but has mmb
             var mmb = ResourceLoader.TryGetMorphMesh(item.Visual);
 
-            return MeshFactory.CreateVob(item.Visual, mmb, position, default, parentGo);
+            return MeshFactory.CreateVob(item.Visual, mmb, position, default, parentGo, useColliderCache: true);
         }
 
 

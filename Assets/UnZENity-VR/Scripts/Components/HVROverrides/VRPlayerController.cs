@@ -17,16 +17,13 @@ namespace GUZ.VR.Components.HVROverrides
         [Separator("GUZ - Settings")]
         public MenuHandler MenuHandler;
 
-        [SerializeField]
-        private VRSwimDive _swimDive;
-
         protected override void Start()
         {
             base.Start();
             GlobalEventDispatcher.PlayerPrefUpdated.AddListener(OnPlayerPrefsUpdated);
 
             // Enabled later via button press or other events
-            MenuHandler.gameObject.SetActive(false);
+            MenuHandler?.gameObject.SetActive(false);
         }
 
         protected override void Update()

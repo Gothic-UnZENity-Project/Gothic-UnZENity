@@ -15,12 +15,12 @@ TagManager:
   - 
   - Water
   - UI
-  - VobRotatable
-  - VobItemNoCollision
+  - VobItem
+  - VobItemNoWorldCollision
   - Player
   - DynamicPose
-  - 
-  - 
+  - VobNpcOrMonster
+  - VobMovable
   - 
   - 
   - 

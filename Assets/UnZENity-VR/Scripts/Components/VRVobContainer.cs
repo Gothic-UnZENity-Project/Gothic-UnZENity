@@ -6,11 +6,13 @@ using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
 using GUZ.Core.Properties;
+using GUZ.Core.Util;
 using GUZ.Core.Vob;
 using HurricaneVR.Framework.Components;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using ZenKit.Vobs;
+using Logger = GUZ.Core.Util.Logger;
 
 namespace GUZ.VR.Components
 {
@@ -28,7 +30,7 @@ namespace GUZ.VR.Components
             {
                 if (SceneManager.GetActiveScene().name != Constants.SceneLab)
                 {
-                    Debug.LogError("oCMobContainer properties not set for GameObject.");
+                    Logger.LogError("oCMobContainer properties not set for GameObject.", LogCat.VR);
                     return;
                 }
             }
@@ -56,7 +58,7 @@ namespace GUZ.VR.Components
 
                 if (mds == null)
                 {
-                    Debug.LogError($"ModelScript >{mdsName}< for oCMobContainer not found.");
+                    Logger.LogError($"ModelScript >{mdsName}< for oCMobContainer not found.", LogCat.VR);
                     return;
                 }
 

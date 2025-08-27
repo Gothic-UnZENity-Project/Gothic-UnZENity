@@ -38,14 +38,11 @@ namespace GUZ.VR.Components
         {
             _nameCanvas.SetActive(false);
 
-            // Is not set inside Lab
+            // Do not set inside Lab
             if (GameContext.IsLab)
-            {
                 return;
-            }
 
             var vobContainer = GetComponentInParent<VobLoader>()?.Container;
-
             if (vobContainer != null)
             {
                 _nameCanvas.GetComponentInChildren<TMP_Text>().text = vobContainer.Props.GetFocusName();

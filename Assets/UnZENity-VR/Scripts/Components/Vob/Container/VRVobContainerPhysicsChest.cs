@@ -21,7 +21,7 @@ using ZenKit.Daedalus;
 using ZenKit.Vobs;
 using Logger = GUZ.Core.Util.Logger;
 
-namespace GUZ.VR.Components.VobContainer
+namespace GUZ.VR.Components.Vob.Container
 {
     public class VRVobContainerPhysicsChest : HVRPhysicsDoor
     {
@@ -121,12 +121,12 @@ namespace GUZ.VR.Components.VobContainer
             MeshFilter usedMesh;
             if (meshFilters.IsEmpty())
             {
-                Debug.LogError($"No suitable mesh found for HVR Socket size calculation in {_rootGo.name}. Skipping...", _rootGo);
+                Logger.LogError($"No suitable mesh found for HVR Socket size calculation in {_rootGo.name}. Skipping...", LogCat.VR);
                 return;
             }
             else if (meshFilters.Length >= 2)
             {
-                Debug.LogWarning($"More than one feasible MeshFilter for HVR Socket size calculation found in {_rootGo.name}. Leveraging first (1)ZM_* or (2)BIP01 one.", _rootGo);
+                Logger.LogWarning($"More than one feasible MeshFilter for HVR Socket size calculation found in {_rootGo.name}. Leveraging first (1)ZM_* or (2)BIP01 one.", LogCat.VR);
 
                 // Based on mesh check of all containers in G1, the highest priority for the right mesh is a ZM_* GO if existing.
                 var zmMesh = meshFilters.FirstOrDefault(i => i.gameObject.name.StartsWithIgnoreCase("ZM_"));

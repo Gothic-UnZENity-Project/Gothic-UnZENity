@@ -1,7 +1,9 @@
 #if GUZ_HVR_INSTALLED
+using GUZ.Core.Util;
 using GUZ.VR.Components.VobDoor;
 using GUZ.VR.Properties.VobItem;
 using UnityEngine;
+using Logger = GUZ.Core.Util.Logger;
 
 namespace GUZ.VR.Components.VobItem
 {
@@ -58,7 +60,7 @@ namespace GUZ.VR.Components.VobItem
         /// </summary>
         private void CalculateRotation()
         {
-            Debug.Log($"InitialRotZ={_initialZRotation}, CurrentRotZ={_properties.HoldingHand.rotation.eulerAngles.z}");
+            Logger.Log($"InitialRotZ={_initialZRotation}, CurrentRotZ={_properties.HoldingHand.rotation.eulerAngles.z}", LogCat.VR);
 
             var rotationDiff = Mathf.DeltaAngle(_initialZRotation,
                 _properties.HoldingHand.rotation.eulerAngles.z);

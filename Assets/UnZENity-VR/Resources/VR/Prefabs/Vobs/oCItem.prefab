@@ -94,13 +94,12 @@ GameObject:
   m_Component:
   - component: {fileID: 2022050282646122291}
   - component: {fileID: 1778516865459391894}
-  - component: {fileID: 3848800049239021948}
   - component: {fileID: 6221555039147954839}
   - component: {fileID: 6759220176799969513}
   - component: {fileID: -6808202407213995710}
   - component: {fileID: 8543334853728962911}
   - component: {fileID: 8461469363836242350}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: oCItem
   m_TagString: GUZVob
   m_Icon: {fileID: 0}
@@ -150,28 +149,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 1
---- !u!64 &3848800049239021948
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6503575194566409312}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 1
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 0}
 --- !u!114 &6221555039147954839
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -240,7 +217,7 @@ MonoBehaviour:
   HandGrabbedClip: {fileID: 0}
   SocketGrabPoints: []
   Rigidbody: {fileID: 0}
-  AutoApplyLayer: 1
+  AutoApplyLayer: 0
   RequireOverlapClearance: 0
   OverlapTimeout: 0.1
   FinalJointMaxAngle: 15
@@ -377,7 +354,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _vrProperties: {fileID: 6221555039147954839}
   _rigidbody: {fileID: 1778516865459391894}
-  _meshCollider: {fileID: 3848800049239021948}
+  _meshCollider: {fileID: 0}
 --- !u!114 &8461469363836242350
 MonoBehaviour:
   m_ObjectHideFlags: 0

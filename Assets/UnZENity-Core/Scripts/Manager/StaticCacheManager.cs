@@ -14,7 +14,6 @@ using GUZ.Core.Util;
 using MyBox;
 using UnityEngine;
 using CompressionLevel = System.IO.Compression.CompressionLevel;
-using Debug = UnityEngine.Debug;
 using Logger = GUZ.Core.Util.Logger;
 
 namespace GUZ.Core.Manager
@@ -25,6 +24,7 @@ namespace GUZ.Core.Manager
 
         private const string _fileNameGlobalMetadata = "metadata.json";
         private const string _fileNameGlobalVobBounds = "vob-bounds.json";
+        private const string _fileNameGlobalVobItemCollider ="vob-item-collider.json"; 
         private const string _fileNameGlobalTextureArrayData = "texture-arrays.json";
 
         private const string _fileNameWorldChunks = "world-chunks.json";
@@ -39,6 +39,8 @@ namespace GUZ.Core.Manager
         public bool IsGlobalCacheLoaded { get; private set; }
 
         public Dictionary<string, Bounds> LoadedVobsBounds { get; private set; }
+        public Dictionary<string, List<VobItemColliderCacheCreator.Data>> LoadedVobItemColliders { get; private set; }
+
 
         // During Mesh creation, we need to get the index of a TextureArray entry. For efficient lookup, we store the index here.
         public Dictionary<string, (int Index, TextureInfo Data)> LoadedTextureInfoOpaque { get; private set; }
@@ -54,28 +56,28 @@ namespace GUZ.Core.Manager
         {
             public TextureInfo(TextureCache.TextureArrayTypes textureArrayType, int maxDimension, int animFrameCount)
             {
-                TextureArrayType = textureArrayType;
-                MaxDimension = maxDimension;
-                AnimFrameCount = animFrameCount;
+                T = textureArrayType;
+                MaxDim = maxDimension;
+                AnimFrameC = animFrameCount;
             }
 
-            public TextureCache.TextureArrayTypes TextureArrayType;
-            public int MaxDimension;
-            public int AnimFrameCount;
+            public TextureCache.TextureArrayTypes T; // TextureArrayType
+            public int MaxDim; // MaxDimension
+            public int AnimFrameC; // AnimFrameCount
         }
 
         public struct StationaryLightInfo
         {
             public StationaryLightInfo(Vector3 position, float range, Color linearColor)
             {
-                Position = position;
-                Range = range;
-                LinearColor = linearColor;
+                P = position;
+                R = range;
+                C = linearColor;
             }
 
-            public Vector3 Position;
-            public float Range;
-            public Color LinearColor;
+            public Vector3 P; // Position
+            public float R; // Range
+            public Color C; // LinearColor
         }
 
         [Serializable]
@@ -96,12 +98,31 @@ namespace GUZ.Core.Manager
         {
             public VobBoundsEntry(string meshName, Bounds bounds)
             {
-                MeshName = meshName;
+                Mesh = meshName;
                 Bounds = bounds;
             }
 
-            public string MeshName;
+            public string Mesh; // MeshName
             public Bounds Bounds;
+        }
+        
+        [Serializable]
+        public class VobItemColliderContainer
+        {
+            public List<VobColliderEntry> ColliderEntries;
+        }
+        
+        [Serializable]
+        public class VobColliderEntry
+        {
+            public VobColliderEntry(string meshName, List<VobItemColliderCacheCreator.Data> colliderData)
+            {
+                Mesh = meshName;
+                Colls = colliderData;
+            }
+
+            public string Mesh; // MeshName
+            public List<VobItemColliderCacheCreator.Data> Colls; // Colliders
         }
 
         [Serializable]
@@ -117,14 +138,14 @@ namespace GUZ.Core.Manager
         {
             public TextureArrayEntry(string textureName, int maxDimension, int animationFrameCount)
             {
-                TextureName = textureName;
-                MaxDimension = maxDimension;
-                AnimationFrameCount = animationFrameCount;
+                Tex = textureName;
+                MaxDim = maxDimension;
+                AnimFrameC = animationFrameCount;
             }
 
-            public string TextureName;
-            public int MaxDimension;
-            public int AnimationFrameCount;
+            public string Tex; // TextureName
+            public int MaxDim; // MaxDimension
+            public int AnimFrameC; // AnimationFrameCount
         }
 
         [Serializable]
@@ -146,14 +167,14 @@ namespace GUZ.Core.Manager
         {
             public StationaryLightEntry(Vector3 position, float range, Color linearColor)
             {
-                Position = position;
-                Range = range;
-                LinearColor = linearColor;
+                P = position;
+                R = range;
+                Col = linearColor;
             }
 
-            public Vector3 Position;
-            public float Range;
-            public Color LinearColor;
+            public Vector3 P; // Position
+            public float R; // Range
+            public Color Col; // LinearColor
         }
 
         [Serializable]
@@ -192,7 +213,9 @@ namespace GUZ.Core.Manager
             // Global files
             return File.Exists(BuildFilePathName(_fileNameGlobalMetadata)) &&
                    File.Exists(BuildFilePathName(_fileNameGlobalTextureArrayData)) &&
-                   File.Exists(BuildFilePathName(_fileNameGlobalVobBounds));
+                   File.Exists(BuildFilePathName(_fileNameGlobalVobBounds)) &&
+                   File.Exists(BuildFilePathName(_fileNameGlobalVobItemCollider))
+                   ;
         }
 
         /// <summary>
@@ -221,6 +244,7 @@ namespace GUZ.Core.Manager
         }
 
         public async Task SaveGlobalCache(Dictionary<string, Bounds> vobBounds,
+            Dictionary<string, List<VobItemColliderCacheCreator.Data>> itemCollider,
             Dictionary<string, TextureInfo> textureArrayInformation)
         {
             try
@@ -238,17 +262,23 @@ namespace GUZ.Core.Manager
                 };
                 await SaveCacheFile(vobBoundsContainer, BuildFilePathName(_fileNameGlobalVobBounds));
 
+                var vobItemCollider = new VobItemColliderContainer()
+                {
+                    ColliderEntries = itemCollider.Select(i => new VobColliderEntry(i.Key, i.Value)).ToList()
+                };
+                await SaveCacheFile(vobItemCollider, BuildFilePathName(_fileNameGlobalVobItemCollider));
+
                 var textureArrayContainer = new TextureArrayContainer
                 {
                     TexturesOpaque = textureArrayInformation
-                        .Where(i => i.Value.TextureArrayType == TextureCache.TextureArrayTypes.Opaque)
-                        .Select(i => new TextureArrayEntry(i.Key, i.Value.MaxDimension, i.Value.AnimFrameCount)).ToList(),
+                        .Where(i => i.Value.T == TextureCache.TextureArrayTypes.Opaque)
+                        .Select(i => new TextureArrayEntry(i.Key, i.Value.MaxDim, i.Value.AnimFrameC)).ToList(),
                     TexturesTransparent = textureArrayInformation
-                        .Where(i => i.Value.TextureArrayType == TextureCache.TextureArrayTypes.Transparent)
-                        .Select(i => new TextureArrayEntry(i.Key, i.Value.MaxDimension, i.Value.AnimFrameCount)).ToList(),
+                        .Where(i => i.Value.T == TextureCache.TextureArrayTypes.Transparent)
+                        .Select(i => new TextureArrayEntry(i.Key, i.Value.MaxDim, i.Value.AnimFrameC)).ToList(),
                     TexturesWater = textureArrayInformation
-                        .Where(i => i.Value.TextureArrayType == TextureCache.TextureArrayTypes.Water)
-                        .Select(i => new TextureArrayEntry(i.Key, i.Value.MaxDimension, i.Value.AnimFrameCount)).ToList(),
+                        .Where(i => i.Value.T == TextureCache.TextureArrayTypes.Water)
+                        .Select(i => new TextureArrayEntry(i.Key, i.Value.MaxDim, i.Value.AnimFrameC)).ToList(),
                 };
                 await SaveCacheFile(textureArrayContainer, BuildFilePathName(_fileNameGlobalTextureArrayData));
             }
@@ -275,7 +305,7 @@ namespace GUZ.Core.Manager
 
                 var stationaryLightData = new StationaryLightContainer()
                 {
-                    StationaryLights = stationaryLightInfos.Select(i => new StationaryLightEntry(i.Position, i.Range, i.LinearColor)).ToList()
+                    StationaryLights = stationaryLightInfos.Select(i => new StationaryLightEntry(i.P, i.R, i.C)).ToList()
                 };
 
                 await SaveCacheFile(worldChunkData, BuildFilePathName(_fileNameWorldChunks, worldName));
@@ -317,24 +347,27 @@ namespace GUZ.Core.Manager
             IsGlobalCacheLoaded = true;
             
             var vobBoundsString = await ReadData(BuildFilePathName(_fileNameGlobalVobBounds));
+            var vobItemColliderString = await ReadData(BuildFilePathName(_fileNameGlobalVobItemCollider));
             var textureArrayString = await ReadData(BuildFilePathName(_fileNameGlobalTextureArrayData));
 
             var vobBoundsContainer = await ParseJson<VobBoundsContainer>(vobBoundsString);
+            var vobItemsColliderContainer = await ParseJson<VobItemColliderContainer>(vobItemColliderString);
             var textureArrayContainer = await ParseJson<TextureArrayContainer>(textureArrayString);
-
-            LoadedVobsBounds = vobBoundsContainer.BoundsEntries.ToDictionary(i => i.MeshName, i => i.Bounds);
+            
+            LoadedVobsBounds = vobBoundsContainer.BoundsEntries.ToDictionary(i => i.Mesh, i => i.Bounds);
+            LoadedVobItemColliders = vobItemsColliderContainer.ColliderEntries.ToDictionary(i => i.Mesh, i => i.Colls);
 
             var loopIndex = 0;
             LoadedTextureInfoOpaque = textureArrayContainer.TexturesOpaque
-                .ToDictionary(i => i.TextureName, i => (index: loopIndex++, data: new TextureInfo(TextureCache.TextureArrayTypes.Opaque, i.MaxDimension, i.AnimationFrameCount)));
+                .ToDictionary(i => i.Tex, i => (index: loopIndex++, data: new TextureInfo(TextureCache.TextureArrayTypes.Opaque, i.MaxDim, i.AnimFrameC)));
 
             loopIndex = 0;
             LoadedTextureInfoTransparent = textureArrayContainer.TexturesTransparent
-                .ToDictionary(i => i.TextureName, i => (index: loopIndex++, data: new TextureInfo(TextureCache.TextureArrayTypes.Transparent, i.MaxDimension, i.AnimationFrameCount)));
+                .ToDictionary(i => i.Tex, i => (index: loopIndex++, data: new TextureInfo(TextureCache.TextureArrayTypes.Transparent, i.MaxDim, i.AnimFrameC)));
 
             loopIndex = 0;
             LoadedTextureInfoWater = textureArrayContainer.TexturesWater
-                .ToDictionary(i => i.TextureName, i => (index: loopIndex++, data: new TextureInfo(TextureCache.TextureArrayTypes.Water, i.MaxDimension, i.AnimationFrameCount)));
+                .ToDictionary(i => i.Tex, i => (index: loopIndex++, data: new TextureInfo(TextureCache.TextureArrayTypes.Water, i.MaxDim, i.AnimFrameC)));
         }
 
         public async Task LoadWorldCache(string worldName)

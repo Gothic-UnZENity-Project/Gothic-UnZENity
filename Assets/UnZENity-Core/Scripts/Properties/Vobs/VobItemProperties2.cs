@@ -27,11 +27,12 @@ namespace GUZ.Core.Properties.Vobs
         public override string GetFocusName()
         {
             var vobItem = VobAs<IItem>();
-
+            var itemVmData = VmInstanceManager.TryGetItemData(vobItem.Name);
+            
             if (vobItem?.Amount > 1)
-                return $"{vobItem.Name} ({vobItem.Amount})";
+                return $"{itemVmData?.Name} ({vobItem.Amount})";
             else
-                return vobItem?.Name;
+                return itemVmData?.Name;
         }
     }
 }

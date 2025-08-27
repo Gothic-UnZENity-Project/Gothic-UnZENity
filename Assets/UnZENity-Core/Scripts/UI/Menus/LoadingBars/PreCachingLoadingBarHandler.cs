@@ -21,7 +21,8 @@ namespace GUZ.Core.UI.Menus.LoadingBars
         public enum ProgressTypesGlobal
         {
             CalculateItemTextureArrayInformation,
-            CalculateVobItemBounds
+            CalculateVobItemBounds,
+            CalculateVobItemCollider
         }
         
         public override List<string> GetProgressTypes()

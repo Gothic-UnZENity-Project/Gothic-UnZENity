@@ -1,8 +1,9 @@
 ﻿using GUZ.Core;
 using GUZ.Core.Creator.Meshes;
-using GUZ.Core.Properties;
+using GUZ.Core.Util;
 using GUZ.Core.Vm;
 using UnityEngine;
+using Logger = GUZ.Core.Util.Logger;
 
 namespace GUZ.Lab.Handler
 {
@@ -18,7 +19,7 @@ namespace GUZ.Lab.Handler
 
             if (mdl == null)
             {
-                Debug.LogError("LabInteractableHandler: Element has no .mdl file: " + mdlName);
+                Logger.LogError("LabInteractableHandler: Element has no .mdl file: " + mdlName, LogCat.Debug);
                 return null;
             }
 

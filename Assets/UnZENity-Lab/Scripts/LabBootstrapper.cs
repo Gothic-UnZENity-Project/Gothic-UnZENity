@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Globalization;
 using System.Threading.Tasks;
 using GUZ.Core;
@@ -118,8 +117,8 @@ namespace GUZ.Lab
             _configManager.SetDeveloperConfig(DeveloperConfig);
             _configManager.LoadGothicInis(GameVersion.Gothic1);
 
-            ZenKit.Logger.Set(Config.Dev.ZenKitLogLevel, Core.Util.Logger.OnZenKitLogMessage);
-            DirectMusic.Logger.Set(Config.Dev.DirectMusicLogLevel, Core.Util.Logger.OnDirectMusicLogMessage);
+            ZenKit.Logger.Set(Config.Dev.ZenKitLogLevel, Logger.OnZenKitLogMessage);
+            DirectMusic.Logger.Set(Config.Dev.DirectMusicLogLevel, Logger.OnDirectMusicLogMessage);
             _localizationManager = new LocalizationManager();
             _save = new SaveGameManager();
             _staticCacheManager = new StaticCacheManager();

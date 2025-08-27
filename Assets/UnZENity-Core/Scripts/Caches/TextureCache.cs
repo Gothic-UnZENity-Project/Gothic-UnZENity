@@ -189,7 +189,7 @@ namespace GUZ.Core.Caches
 
                 maxMipLevel = texture!.MipmapCount - 1;
                 textureScale = new Vector2((float)texture.Width / ReferenceTextureSize, (float)texture.Height / ReferenceTextureSize);
-                animFrameCount = GameGlobals.StaticCache.LoadedTextureInfoOpaque[materialData.Texture].Data.AnimFrameCount;
+                animFrameCount = GameGlobals.StaticCache.LoadedTextureInfoOpaque[materialData.Texture].Data.AnimFrameC;
             }
             else if (GameGlobals.StaticCache.LoadedTextureInfoTransparent.ContainsKey(materialData.Texture))
             {
@@ -198,7 +198,7 @@ namespace GUZ.Core.Caches
 
                 maxMipLevel = texture!.MipmapCount - 1;
                 textureScale = new Vector2((float)texture.Width / ReferenceTextureSize, (float)texture.Height / ReferenceTextureSize);
-                animFrameCount = GameGlobals.StaticCache.LoadedTextureInfoTransparent[materialData.Texture].Data.AnimFrameCount;
+                animFrameCount = GameGlobals.StaticCache.LoadedTextureInfoTransparent[materialData.Texture].Data.AnimFrameC;
             }
             else if (GameGlobals.StaticCache.LoadedTextureInfoWater.ContainsKey(materialData.Texture))
             {
@@ -207,7 +207,7 @@ namespace GUZ.Core.Caches
 
                 maxMipLevel = texture!.MipmapCount - 1;
                 textureScale = new Vector2((float)texture.Width / ReferenceTextureSize, (float)texture.Height / ReferenceTextureSize);
-                animFrameCount = GameGlobals.StaticCache.LoadedTextureInfoWater[materialData.Texture].Data.AnimFrameCount;
+                animFrameCount = GameGlobals.StaticCache.LoadedTextureInfoWater[materialData.Texture].Data.AnimFrameC;
             }
             else
             {

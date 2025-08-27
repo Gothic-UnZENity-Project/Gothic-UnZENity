@@ -71,7 +71,11 @@ namespace GUZ.Core.Globals
 
         public static readonly string ShaderWorldLitName = "Lit/World";
         public static readonly Shader ShaderWorldLit = Shader.Find(ShaderWorldLitName);
-        public static readonly Shader ShaderLitAlphaToCoverage = Shader.Find("Lit/AlphaToCoverage");
+
+        public static readonly string ShaderLitAlphaToCoverageName = "Lit/AlphaToCoverage";
+        public static readonly Shader ShaderLitAlphaToCoverage = Shader.Find(ShaderLitAlphaToCoverageName);
+        public static readonly Shader ShaderLitAlphaToCoverageDynamic = Shader.Find("Lit/AlphaToCoverage-Dynamic");
+        
         public static readonly Shader ShaderWater = Shader.Find("Lit/Water");
         public static readonly Shader ShaderBarrier = Shader.Find("Unlit/Barrier");
         public static readonly Shader ShaderThunder = Shader.Find("Unlit/ThunderShader");
@@ -149,9 +153,12 @@ namespace GUZ.Core.Globals
         public static LayerMask HandLayer = LayerMask.NameToLayer("Hand"); // Layer 21 (suggested by HVR)
 
         // Custom layers
-        public static LayerMask VobRotatableLayer = LayerMask.NameToLayer("VobRotatable"); // No collision with world (e.g. for chest lid and door)
-        public static LayerMask VobItemNoCollision = LayerMask.NameToLayer("VobItemNoCollision"); // No collision with world (e.g. while item is in our hands)
+        public static LayerMask VobItem = LayerMask.NameToLayer("VobItem");
+        public static LayerMask VobItemNoWorldCollision = LayerMask.NameToLayer("VobItemNoWorldCollision"); // No collision with world (e.g. while item is in our hands)
+        public static LayerMask VobNpcOrMonster = LayerMask.NameToLayer("VobNpcOrMonster");
+        public static LayerMask VobMovableLayer = LayerMask.NameToLayer("VobMovable"); // No collision with world (e.g. for chest lid and door)
 
+        
         /*
          * ### Tags
          */
@@ -185,7 +192,7 @@ namespace GUZ.Core.Globals
         public const string DaedalusHeroInstanceName = "PC_HERO"; // TODO - can be read from .ini file.
 
         // Alter this value to enforce game to recreate cache during next start.
-        public const string StaticCacheVersion = "3";
+        public const string StaticCacheVersion = "4";
 
         /// <summary>
         /// Used during pre-caching to calculate world chunks to merge.

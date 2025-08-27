@@ -1,10 +1,12 @@
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using GUZ.Core;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Vm;
 using UnityEngine;
+using ZenKit.Daedalus;
 using ZenKit.Vobs;
 
 namespace GUZ.Lab.Handler
@@ -12,6 +14,17 @@ namespace GUZ.Lab.Handler
     public class LabInteractableHandler : AbstractLabHandler
     {
         public GameObject Weapons1HGO;
+        public GameObject Weapons2HGO;
+        public GameObject RangedWeaponsGO;
+        public GameObject MunitionGO;
+        public GameObject ArmorGO;
+        public GameObject FoodGO;
+        public GameObject DocsGO;
+        public GameObject PotionsGO;
+        public GameObject RunesGO;
+        public GameObject MagicGO;
+        public GameObject MiscGO;
+        
         public GameObject ContainersGO;
         public GameObject DoorsGO;
         public GameObject FiresGO;
@@ -22,7 +35,48 @@ namespace GUZ.Lab.Handler
 
         public override void Bootstrap()
         {
-            InitWeapons1H();
+            var itemNames = GameData.GothicVm.GetInstanceSymbols("C_Item").Select(i => i.Name).ToList();
+            var allItems = itemNames.ToDictionary(itemName => itemName, VmInstanceManager.TryGetItemData);
+
+            var meleeWeapons = allItems.Where(i => i.Value.MainFlag == (int)VmGothicEnums.ItemFlags.ItemKatNf)
+                .ToDictionary(i => i.Key, i => i.Value);
+            var oneHandedWeapons = meleeWeapons
+                .Where(i => (i.Value.Flags & ((int)VmGothicEnums.ItemFlags.ItemSwd | (int)VmGothicEnums.ItemFlags.ItemAxe)) != 0)
+                .ToDictionary(i => i.Key, i => i.Value);
+            var twoHandedWeapons = meleeWeapons.Except(oneHandedWeapons)
+                .ToDictionary(i => i.Key, i => i.Value);
+            
+            var rangedWeapons = allItems.Where(i => i.Value.MainFlag == (int)VmGothicEnums.ItemFlags.ItemKatFf)
+                .ToDictionary(i => i.Key, i => i.Value);
+            var munition = allItems.Where(i => i.Value.MainFlag == (int)VmGothicEnums.ItemFlags.ItemKatMun)
+                .ToDictionary(i => i.Key, i => i.Value);
+            var armor = allItems.Where(i => i.Value.MainFlag == (int)VmGothicEnums.ItemFlags.ItemKatArmor)
+                .ToDictionary(i => i.Key, i => i.Value);
+            var food = allItems.Where(i => i.Value.MainFlag == (int)VmGothicEnums.ItemFlags.ItemKatFood)
+                .ToDictionary(i => i.Key, i => i.Value);
+            var docs = allItems.Where(i => i.Value.MainFlag == (int)VmGothicEnums.ItemFlags.ItemKatDocs)
+                .ToDictionary(i => i.Key, i => i.Value);
+            var potions = allItems.Where(i => i.Value.MainFlag == (int)VmGothicEnums.ItemFlags.ItemKatPotions)
+                .ToDictionary(i => i.Key, i => i.Value);
+            var runes = allItems.Where(i => i.Value.MainFlag == (int)VmGothicEnums.ItemFlags.ItemKatRune)
+                .ToDictionary(i => i.Key, i => i.Value);
+            var magic = allItems.Where(i => i.Value.MainFlag == (int)VmGothicEnums.ItemFlags.ItemKatMagic)
+                .ToDictionary(i => i.Key, i => i.Value);
+            var misc = allItems.Except(meleeWeapons).Except(rangedWeapons).Except(munition).Except(armor).Except(food)
+                .Except(docs).Except(potions).Except(runes).Except(magic).ToDictionary(i => i.Key, i => i.Value);
+            
+            InitItemType(oneHandedWeapons, Weapons1HGO, -90f);
+            InitItemType(twoHandedWeapons, Weapons2HGO, -90f);
+            InitItemType(rangedWeapons, RangedWeaponsGO, -90f);
+            InitItemType(munition, MunitionGO);
+            InitItemType(armor, ArmorGO);
+            InitItemType(food, FoodGO);
+            InitItemType(docs, DocsGO);
+            InitItemType(potions,  PotionsGO);
+            InitItemType(runes, RunesGO);
+            InitItemType(magic, MagicGO);
+            InitItemType(misc, MiscGO);
+            
             // FIXME - Need to initialize them via VobLoader.LoadNow(IVob) instead of loading mesh. Otherwise we get exceptions in child Start() calls.
             // InitOCMobDoor();
             // StartCoroutine(InitOCMobContainer());
@@ -33,25 +87,28 @@ namespace GUZ.Lab.Handler
             // InitOCMobWheel();
         }
 
-        private void InitWeapons1H()
+        private void InitItemType(Dictionary<string, ItemInstance> items, GameObject parentGO, float zRotation = 0f)
         {
-            var itemNames = GameData.GothicVm.GetInstanceSymbols("C_Item").Select(i => i.Name).ToList();
+            var zPosition = 0f;
+            foreach (var item in items)
+            {
+                CreateItem(item.Key, ref zPosition, zRotation, parentGO);
+            }
+        }
 
-            var items = itemNames.ToDictionary(itemName => itemName, VmInstanceManager.TryGetItemData)
-                    .Where(i => i.Value.MainFlag == (int)VmGothicEnums.ItemFlags.ItemKatNf)
-                    .Where(i => (i.Value.Flags & ((int)VmGothicEnums.ItemFlags.ItemSwd | (int)VmGothicEnums.ItemFlags.ItemAxe)) != 0);
-
-            
+        private void CreateItem(string instanceName, ref float zPosition, float zRotation, GameObject parent)
+        {
             var vobContainer = GameGlobals.Vobs.CreateItem(new Item()
             {
-                Name = items.First().Key,
-                Position = Vector3.one.ToZkVector(),
-                Rotation = Quaternion.identity.ToZkMatrix(),
+                Name = instanceName,
+                Position = new Vector3(0f, 1.5f, zPosition).ToZkVector(),
+                Rotation = Quaternion.Euler(new Vector3(0, 0, zRotation)).ToZkMatrix(), // Quaternion.identity.ToZkMatrix(), 
                 Visual = new VisualMesh(),
-                Instance = items.First().Key
+                Instance = instanceName
             });
-            
-            vobContainer.Go.SetParent(Weapons1HGO);
+
+            vobContainer.Go.SetParent(parent);
+            zPosition -= 0.5f;
         }
 
         private void InitOCMobDoor()

@@ -1,10 +1,8 @@
 ﻿#if GUZ_HVR_INSTALLED
 using System.Collections;
-using System.Collections.Generic;
 using GUZ.Core;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
-using GUZ.Core.Marvin;
 using GUZ.VR.Manager;
 using GUZ.VR.Properties;
 using HurricaneVR.Framework.Core;
@@ -14,7 +12,7 @@ using UnityEngine.Animations;
 
 namespace GUZ.VR.Components
 {
-    public class VRVobItem : MonoBehaviour, IMarvinPropertyCollector
+    public class VRVobItem : MonoBehaviour
     {
         [SerializeField] private VRVobItemProperties _vrProperties;
         [SerializeField] private Rigidbody _rigidbody;
@@ -41,8 +39,13 @@ namespace GUZ.VR.Components
             // Pre-fill calculation data before being used every frame.
             if (_ignoreLayerCollisionCheck == 0)
             {
-                _ignoreLayerCollisionCheck = Constants.VobItemNoCollision | Constants.HandLayer;
+                _ignoreLayerCollisionCheck = Constants.VobItemNoWorldCollision | Constants.HandLayer;
             }
+        }
+
+        private void Start()
+        {
+            GetComponent<HVRGrabbable>().SetupColliders();
         }
 
         public void OnGrabbed(HVRGrabberBase grabber, HVRGrabbable grabbable)
@@ -65,7 +68,7 @@ namespace GUZ.VR.Components
             transform.GetComponent<Rigidbody>().isKinematic = false;
 
             // Stop collisions while being dragged around (at least shortly; otherwise e.g. items might stick inside chests when pulled out).
-            gameObject.layer = Constants.VobItemNoCollision;
+            gameObject.layer = Constants.VobItemNoWorldCollision;
 
             // At least until object isn't colliding with anything any longer, the object will be a ghost (i.e. no collision + transparency activated)
             DynamicMaterialManager.SetDynamicValue(gameObject, Constants.ShaderPropertyTransparency, Constants.ShaderPropertyTransparencyValue);
@@ -79,7 +82,7 @@ namespace GUZ.VR.Components
 
         public void OnReleased(HVRGrabberBase grabber, HVRGrabbable grabbable)
         {
-            gameObject.layer = Constants.GrabbableLayer; // Back to HVR default
+            gameObject.layer = Constants.VobItem; // Back to default
 
             GameGlobals.VobMeshCulling?.StopTrackVobPositionUpdates(gameObject);
 
@@ -131,7 +134,7 @@ namespace GUZ.VR.Components
                 overlapData.OverlapPoint0,
                 overlapData.OverlapPoint1,
                 overlapData.OverlapRadius,
-                Constants.VobItemNoCollision | Constants.HandLayer);
+                Constants.VobItemNoWorldCollision | Constants.HandLayer);
 
             foreach (var overlapCollider in overlapColliders)
             {
@@ -157,7 +160,7 @@ namespace GUZ.VR.Components
             yield return new WaitForSeconds(1f);
 
             // Re-enable collisions
-            gameObject.layer = Constants.GrabbableLayer;
+            gameObject.layer = Constants.VobItem;
 
             // Disable "ghostification" of object.
             DynamicMaterialManager.ResetDynamicValue(gameObject, Constants.ShaderPropertyTransparency, Constants.ShaderPropertyTransparencyDefault);
@@ -178,7 +181,8 @@ namespace GUZ.VR.Components
                 overlapData.OverlapPoint1,
                 overlapData.OverlapRadius,
                 _overlapColliders,
-                Constants.VobItemNoCollision | Constants.HandLayer);
+                // FIXME - It could be, that we need to do 1 << Constants.VobItemNoWorldCollision | 1 << Constants.HandLayer. Check with other Physics.*() calls.
+                Constants.VobItemNoWorldCollision | Constants.HandLayer);
 
             return colliderCount > 0;
         }
@@ -264,29 +268,6 @@ namespace GUZ.VR.Components
         private void OnDisable()
         {
             DynamicMaterialManager.ResetAllDynamicValues(gameObject);
-        }
-
-        public IEnumerable<object> CollectMarvinInspectorProperties()
-        {
-            return new List<object>
-            {
-                new MarvinPropertyHeader("VRWeapon - RigidBody"),
-                new MarvinProperty<float>(
-                    "Mass",
-                    () => _rigidbody.mass,
-                    value => _rigidbody.mass = value,
-                    0f, 50f),
-                new MarvinProperty<float>(
-                    "Linear Damping",
-                    () => _rigidbody.linearDamping,
-                    value => _rigidbody.linearDamping = value,
-                    0f, 2f),
-                new MarvinProperty<float>(
-                    "Angular Damping",
-                    () => _rigidbody.angularDamping,
-                    value => _rigidbody.angularDamping = value,
-                    0f, 2f),
-            };
         }
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using GUZ.Core.Caches;
+using GUZ.Core.Caches.StaticCache;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Util;
@@ -25,6 +26,7 @@ namespace GUZ.Core.Creator.Meshes.Builder
         protected GameObject ParentGo;
         protected bool HasMeshCollider = true;
         protected bool UseTextureArray;
+        protected bool UseColliderCache;
 
         protected IMultiResolutionMesh Mrm;
         protected IModelHierarchy Mdh;
@@ -168,6 +170,11 @@ namespace GUZ.Core.Creator.Meshes.Builder
             UseTextureArray = use;
         }
 
+        public void SetUseColliderCache(bool useColliderCache)
+        {
+            UseColliderCache = useColliderCache;
+        }
+
         #endregion
 
 
@@ -184,7 +191,14 @@ namespace GUZ.Core.Creator.Meshes.Builder
 
             if (HasMeshCollider)
             {
-                PrepareMeshCollider(RootGo, meshFilter.sharedMesh, Mrm.Materials);
+                if (UseColliderCache)
+                {
+                    PrepareCachedCollider(RootGo, meshFilter.sharedMesh);
+                }
+                else
+                {
+                    PrepareMeshCollider(RootGo, meshFilter.sharedMesh, Mrm.Materials);
+                }
             }
 
             SetPosAndRot(RootGo, RootPosition, RootRotation);
@@ -617,6 +631,37 @@ namespace GUZ.Core.Creator.Meshes.Builder
             if (!anythingDisableCollission && !anythingWater)
             {
                 PrepareMeshCollider(obj, mesh);
+            }
+        }
+        
+        protected void PrepareCachedCollider(GameObject rootGo, Mesh mesh)
+        {
+            if (!GameGlobals.StaticCache.LoadedVobItemColliders.TryGetValue(MeshName, out var colliders))
+            {
+                Logger.LogError($"Can't find Collider data for {MeshName}. Skipping...", LogCat.Mesh);
+                return;
+            }
+
+            foreach (var coll in colliders)
+            {
+                if (coll.T == VobItemColliderCacheCreator.T.B)
+                {
+                    var boxCollider = rootGo.AddComponent<BoxCollider>();
+                    boxCollider.center = coll.C;
+                    boxCollider.size = coll.S;
+                }
+                else if (coll.T == VobItemColliderCacheCreator.T.C)
+                {
+                    var capsuleCollider = rootGo.AddComponent<CapsuleCollider>();
+                    capsuleCollider.center = coll.C;
+                    capsuleCollider.direction = coll.D;
+                    capsuleCollider.height = coll.H;
+                    capsuleCollider.radius = coll.R;
+                }
+                else
+                {
+                    Logger.LogError($"Capsule cache type {coll.T} not yet handled", LogCat.Mesh);
+                }
             }
         }
 

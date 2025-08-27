@@ -4,7 +4,7 @@ using HurricaneVR.Framework.Core;
 using HurricaneVR.Framework.Core.Grabbers;
 using UnityEngine;
 
-namespace GUZ.VR.Components.VobContainer
+namespace GUZ.VR.Components.Vob.Container
 {
     /// <summary>
     /// Handle Socket-events for a whole Container (e.g., chest) and its corresponding sockets (rings where we put items into).
