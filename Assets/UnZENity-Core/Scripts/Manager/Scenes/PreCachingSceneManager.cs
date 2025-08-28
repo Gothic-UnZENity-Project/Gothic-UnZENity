@@ -7,6 +7,7 @@ using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.UI.Menus.LoadingBars;
 using GUZ.Core.Util;
+using Reflex.Attributes;
 using UnityEngine;
 using ZenKit;
 using Logger = GUZ.Core.Util.Logger;
@@ -35,7 +36,10 @@ namespace GUZ.Core.Manager.Scenes
             "DragonIsland.zen"
         };
 
+        
+        [Inject] private readonly MusicService _musicService;
 
+        
         public void Init()
         {
             GameContext.InteractionAdapter.DisableMenus();
@@ -79,7 +83,7 @@ namespace GUZ.Core.Manager.Scenes
                 //
                 
                 // Sleeper temple music (similar to installation music)
-                GameGlobals.Music.Play("KAT_DAY_STD");
+                _musicService.Play("KAT_DAY_STD");
                 
                 GameContext.InteractionAdapter.DisableMenus();
                 _loadingBarHandler.LevelCount = worldsToLoad.Length;

@@ -15,6 +15,7 @@ using GUZ.Core.Util;
 using GUZ.Core.World;
 using GUZ.Manager;
 using MyBox;
+using Reflex.Attributes;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using ZenKit;
@@ -47,8 +48,6 @@ namespace GUZ.Core
         
         public VideoManager Video { get; private set; }
         
-        public MusicManager Music { get; private set; }
-
         public RoutineManager Routines { get; private set; }
 
         public TextureManager Textures { get; private set; }
@@ -68,6 +67,8 @@ namespace GUZ.Core
         public VobSoundCullingManager SoundCulling { get; private set; }
         public VoiceManager Voice { get; private set; }
 
+
+        [Inject] private readonly MusicService _musicService;
 
         protected override void Awake()
         {
@@ -113,7 +114,6 @@ namespace GUZ.Core
             Time = new GameTime(DeveloperConfig, this);
             Video = new VideoManager(DeveloperConfig);
             Sky = new SkyManager(DeveloperConfig, Time);
-            Music = new MusicManager(DeveloperConfig);
             Story = new StoryManager(DeveloperConfig);
             Routines = new RoutineManager(DeveloperConfig);
             Voice = new VoiceManager();
@@ -166,7 +166,7 @@ namespace GUZ.Core
             Logger.Log($"Initializing Gothic installation at: {gothicRootPath}", LogCat.Loading);
             ResourceLoader.Init(gothicRootPath);
 
-            Music.Init();
+            _musicService.Init();
             StaticCache.Init(DeveloperConfig);
             Textures.Init();
             Vobs.Init(this);
@@ -286,7 +286,6 @@ namespace GUZ.Core
             Lights = null;
             Time = null;
             Sky = null;
-            Music = null;
             Routines = null;
         }
 

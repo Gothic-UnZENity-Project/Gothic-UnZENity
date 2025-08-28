@@ -18,6 +18,7 @@ using GUZ.Core.Vm;
 using GUZ.Core.World;
 using GUZ.Lab.Handler;
 using GUZ.Manager;
+using Reflex.Attributes;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using ZenKit;
@@ -42,7 +43,6 @@ namespace GUZ.Lab
 
         private ConfigManager _configManager;
         private LocalizationManager _localizationManager;
-        private MusicManager _gameMusicManager;
         private VideoManager _videoManager;
         private RoutineManager _npcRoutineManager;
         private SaveGameManager _save;
@@ -66,7 +66,7 @@ namespace GUZ.Lab
         public MarvinManager Marvin => _marvinManager;
         public SkyManager Sky => _skyManager;
         public GameTime Time => _gameTime;
-        public MusicManager Music => Music;
+        public MusicService Music => Music;
         public RoutineManager Routines => _npcRoutineManager;
         public TextureManager Textures => _textureManager;
         public FontManager Font => _fontManager;
@@ -82,6 +82,8 @@ namespace GUZ.Lab
         public VideoManager Video => _videoManager;
         public VoiceManager Voice => null;
 
+        
+        [Inject] private readonly MusicService _musicService;
 
         private void Awake()
         {
@@ -126,7 +128,6 @@ namespace GUZ.Lab
             _textureManager = GetComponent<TextureManager>();
             _fontManager = GetComponent<FontManager>();
             _npcRoutineManager = new RoutineManager(Config.Dev);
-            _gameMusicManager = new MusicManager(Config.Dev);
             _videoManager = new VideoManager(Config.Dev);
             _npcManager = new NpcManager();
             _vobManager = new VobManager();
@@ -140,7 +141,7 @@ namespace GUZ.Lab
             GameContext.SetControlContext(Config.Dev.GameControls);
             GameContext.SetGameVersionContext(Config.Dev.GameVersion);
 
-            _gameMusicManager.Init();
+            _musicService.Init();
             _npcRoutineManager.Init();
             _staticCacheManager.Init(_configManager.Dev);
             _textureManager.Init();
@@ -171,7 +172,6 @@ namespace GUZ.Lab
 
             LabNpcAnimationHandler.Bootstrap();
             LabMusicHandler.Bootstrap();
-            LabMusicHandler.MusicManager = _gameMusicManager;
             LabSoundHandler.Bootstrap();
             LabVideoHandler.Bootstrap();
             NpcDialogHandler.Bootstrap();

@@ -7,6 +7,7 @@ using GUZ.Core.Config;
 using GUZ.Core.Globals;
 using GUZ.Core.Util;
 using GUZ.Core.Vob;
+using Reflex.Attributes;
 using UnityEngine;
 using ZenKit;
 using ZenKit.Daedalus;
@@ -15,7 +16,7 @@ using Logger = GUZ.Core.Util.Logger;
 
 namespace GUZ.Core.Manager
 {
-    public class MusicManager
+    public class MusicService
     {
         [Flags]
         public enum SegmentTags : byte
@@ -51,12 +52,7 @@ namespace GUZ.Core.Manager
         private const int _bufferSize = 2048;
         private const int _frequencyRate = 44100;
 
-
-        public MusicManager(DeveloperConfig config)
-        {
-            
-        }
-
+        
         public void Init()
         {
             _dxPerformance = Performance.Create(_frequencyRate);

@@ -24,7 +24,6 @@ namespace GUZ.Core
         public static SkyManager Sky => Instance.Sky;
         public static GameTime Time => Instance.Time;
         public static VideoManager Video => Instance.Video;
-        public static MusicManager Music => Instance.Music;
         public static RoutineManager Routines => Instance.Routines;
         public static TextureManager Textures => Instance.Textures;
         public static StoryManager Story => Instance.Story;
