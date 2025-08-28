@@ -77,7 +77,6 @@ namespace GUZ.Lab
         public AnimationManager Animations => _animationManager;
         public VobMeshCullingManager VobMeshCulling => null;
         public NpcMeshCullingManager NpcMeshCulling => null;
-        public VobSoundCullingManager SoundCulling => null;
         public StoryManager Story => _story;
         public VideoManager Video => _videoManager;
         public VoiceManager Voice => null;

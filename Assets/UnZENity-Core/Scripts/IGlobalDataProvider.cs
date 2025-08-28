@@ -34,7 +34,6 @@ namespace GUZ.Core
         public AnimationManager Animations { get; }
         public VobMeshCullingManager VobMeshCulling { get; }
         public NpcMeshCullingManager NpcMeshCulling { get; }
-        public VobSoundCullingManager SoundCulling { get; }
         public VoiceManager Voice { get; }
     }
 }

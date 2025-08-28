@@ -7,9 +7,11 @@ using GUZ.Core.Creator;
 using GUZ.Core.Creator.Meshes;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
+using GUZ.Core.Manager.Vobs;
 using GUZ.Core.Util;
 using GUZ.Core.Vob.WayNet;
 using MyBox;
+using Reflex.Attributes;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Logger = GUZ.Core.Util.Logger;
@@ -18,6 +20,8 @@ namespace GUZ.Core.Manager.Scenes
 {
     public class WorldSceneManager : MonoBehaviour, ISceneManager
     {
+        [Inject] private readonly VobManager _vobManager;
+        
         public void Init()
         {
 #pragma warning disable CS4014 // Do not wait. We want to update player movement (VR) and camera view (progress bar)
@@ -94,7 +98,7 @@ namespace GUZ.Core.Manager.Scenes
                     // If we load a SaveGame, then nearby NPCs are stored as VOB and will be created as GOs inside NpcManager. We need to prepare it before.
                     GameGlobals.Npcs.SetRootGo(npcRoot);
 
-                    await GameGlobals.Vobs.CreateWorldVobsAsync(config.Dev, GameGlobals.Loading, GameGlobals.SaveGame.CurrentWorldData.Vobs, vobRoot)
+                    await _vobManager.CreateWorldVobsAsync(config.Dev, GameGlobals.Loading, GameGlobals.SaveGame.CurrentWorldData.Vobs, vobRoot)
                         .AwaitAndLog();
                     watch.LogAndRestart("VOBs created");
                 }

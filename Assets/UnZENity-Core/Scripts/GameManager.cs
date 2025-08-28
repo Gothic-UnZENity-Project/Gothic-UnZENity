@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Globalization;
+using System.Runtime.InteropServices;
 using GUZ.Core.Animations;
 using GUZ.Core.Caches;
 using GUZ.Core.Config;
@@ -10,6 +11,7 @@ using GUZ.Core.Manager.Culling;
 using GUZ.Core.Manager.Scenes;
 using GUZ.Core.Manager.Vobs;
 using GUZ.Core.Npc;
+using GUZ.Core.Services.Culling;
 using GUZ.Core.UnZENity_Core.Scripts.Manager;
 using GUZ.Core.Util;
 using GUZ.Core.World;
@@ -64,11 +66,14 @@ namespace GUZ.Core
         public AnimationManager Animations { get; private set; }
         public VobMeshCullingManager VobMeshCulling { get; private set; }
         public NpcMeshCullingManager NpcMeshCulling { get; private set; }
-        public VobSoundCullingManager SoundCulling { get; private set; }
         public VoiceManager Voice { get; private set; }
-
-
+        
         [Inject] private readonly MusicService _musicService;
+        [Inject] private readonly VobSoundCullingService _vobSoundCullingService;
+
+        
+        [Inject] private readonly VobManager _vobManager;
+        [Inject] private readonly ConfigManager _configManager;
 
         protected override void Awake()
         {
@@ -80,7 +85,7 @@ namespace GUZ.Core
             CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;
             CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.InvariantCulture;
 
-            Config = new ConfigManager();
+            Config = _configManager;
             Config.LoadRootJson();
             Config.SetDeveloperConfig(DeveloperConfig);
 
@@ -100,13 +105,12 @@ namespace GUZ.Core
             Font = GetComponent<FontManager>();
             Loading = new LoadingManager();
             StaticCache = new StaticCacheManager();
-            Vobs = new VobManager();
+            Vobs = _vobManager;
             Npcs = new NpcManager();
             NpcAi = new NpcAiManager();
             Animations = new AnimationManager();
             VobMeshCulling = new VobMeshCullingManager(DeveloperConfig, this);
             NpcMeshCulling = new NpcMeshCullingManager(DeveloperConfig);
-            SoundCulling = new VobSoundCullingManager(DeveloperConfig);
             _barrierManager = new BarrierManager(DeveloperConfig);
             Lights = new StationaryLightsManager();
             Player = new PlayerManager(DeveloperConfig);
@@ -144,7 +148,7 @@ namespace GUZ.Core
             Lights.Init();
             VobMeshCulling.Init();
             NpcMeshCulling.Init();
-            SoundCulling.Init();
+            _vobSoundCullingService.Init();
             Time.Init();
             Player.Init();
             Routines.Init();
@@ -275,13 +279,12 @@ namespace GUZ.Core
         {
             VobMeshCulling.Destroy();
             NpcMeshCulling.Destroy();
-            SoundCulling.Destroy();
+            _vobSoundCullingService.Destroy();
             _fileLoggingHandler.Destroy();
 
             Loading = null;
             VobMeshCulling = null;
             NpcMeshCulling = null;
-            SoundCulling = null;
             _barrierManager = null;
             Lights = null;
             Time = null;

@@ -7,12 +7,14 @@ using GUZ.Core.Creator.Sounds;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Properties;
+using GUZ.Core.Services.Culling;
 using GUZ.Core.Util;
 using GUZ.Core.Vm;
 using GUZ.Core.Vob;
 using GUZ.Core.Vob.WayNet;
 using JetBrains.Annotations;
 using MyBox;
+using Reflex.Attributes;
 using UnityEngine;
 using ZenKit.Daedalus;
 using ZenKit.Util;
@@ -29,7 +31,8 @@ namespace GUZ.Core.Manager.Vobs
     /// </summary>
     public class VobInitializer
     {
-        private DeveloperConfig _config = GameGlobals.Config.Dev;
+        [Inject] private readonly ConfigManager _configManager;
+        [Inject] private readonly VobSoundCullingService _vobSoundCullingService;
 
 
         /// <summary>
@@ -54,14 +57,14 @@ namespace GUZ.Core.Manager.Vobs
                     go = CreateMobContainer((Container)vob, parent);
                     break;
                 case VirtualObjectType.zCVobSound:
-                    if (_config.EnableGameSounds)
+                    if (_configManager.Dev.EnableGameSounds)
                     {
                         go = CreateSound((Sound)vob, parent);
                     }
 
                     break;
                 case VirtualObjectType.zCVobSoundDaytime:
-                    if (_config.EnableGameSounds)
+                    if (_configManager.Dev.EnableGameSounds)
                     {
                         go = CreateSoundDaytime((SoundDaytime)vob, parent);
                     }
@@ -73,7 +76,7 @@ namespace GUZ.Core.Manager.Vobs
                     break;
                 case VirtualObjectType.zCVobSpot:
                 case VirtualObjectType.zCVobStartpoint:
-                    go = CreateSpot(vob, parent, _config.ShowFreePoints);
+                    go = CreateSpot(vob, parent, _configManager.Dev.ShowFreePoints);
                     break;
                 case VirtualObjectType.oCTriggerChangeLevel:
                     go = CreateTriggerChangeLevel((TriggerChangeLevel)vob, parent);
@@ -88,14 +91,14 @@ namespace GUZ.Core.Manager.Vobs
                     switch (vob.Visual!.Type)
                     {
                         case VisualType.Decal:
-                            if (_config.EnableDecalVisuals)
+                            if (_configManager.Dev.EnableDecalVisuals)
                             {
                                 go = CreateDecal(vob, parent);
                             }
 
                             break;
                         case VisualType.ParticleEffect:
-                            if (_config.EnableParticleEffects)
+                            if (_configManager.Dev.EnableParticleEffects)
                             {
                                 go = CreatePfx(vob, parent);
                             }
@@ -489,7 +492,7 @@ namespace GUZ.Core.Manager.Vobs
             go.GetComponent<SoundHandler>().Init(vob);
             PrepareAudioSource(source, vob, vob.SoundName);
             
-            GameGlobals.SoundCulling.AddCullingEntry(go, vob);
+            _vobSoundCullingService.AddCullingEntry(go, vob);
 
             return go;
         }
@@ -511,7 +514,7 @@ namespace GUZ.Core.Manager.Vobs
             PrepareAudioSource(sources[0], vob, vob.SoundName);
             PrepareAudioSource(sources[1], vob, vob.SoundNameDaytime);
 
-            GameGlobals.SoundCulling.AddCullingEntry(go, vob);
+            _vobSoundCullingService.AddCullingEntry(go, vob);
 
             return go;
         }

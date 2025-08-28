@@ -35,7 +35,6 @@ namespace GUZ.Core
         public static AnimationManager Animations => Instance.Animations;
         public static VobMeshCullingManager VobMeshCulling => Instance.VobMeshCulling;
         public static NpcMeshCullingManager NpcMeshCulling => Instance.NpcMeshCulling;
-        public static VobSoundCullingManager SoundCulling => Instance.SoundCulling;
         public static VoiceManager Voice => Instance.Voice;
     }
 }

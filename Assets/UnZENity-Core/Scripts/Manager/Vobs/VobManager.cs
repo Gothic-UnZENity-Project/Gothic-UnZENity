@@ -10,12 +10,14 @@ using GUZ.Core.Data.Container;
 using GUZ.Core.Data.Vobs;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
+using GUZ.Core.Services.Culling;
 using GUZ.Core.UI.Menus.LoadingBars;
 using GUZ.Core.Util;
 using GUZ.Core.Vm;
 using GUZ.Core.Vob;
 using JetBrains.Annotations;
 using MyBox;
+using Reflex.Attributes;
 using UnityEngine;
 using ZenKit.Vobs;
 using Logger = GUZ.Core.Util.Logger;
@@ -25,6 +27,10 @@ namespace GUZ.Core.Manager.Vobs
 {
     public class VobManager
     {
+        [Inject] private readonly VobSoundCullingService _vobSoundCullingService;
+        // Supporter class where the whole Init() logic is outsourced for better readability.
+        [Inject] private readonly VobInitializer _initializer;
+        
         public Dictionary<string, List<(int hour, int minute, int status)>> ObjectRoutines = new();
         
         private const float _interactableLookupDistance = 10f; // meter
@@ -32,8 +38,6 @@ namespace GUZ.Core.Manager.Vobs
         private readonly char[] _itemNameSeparators = { ';', ',' };
         private readonly char[] _itemCountSeparators = { ':', '.' };
 
-        // Supporter class where the whole Init() logic is outsourced for better readability.
-        private VobInitializer _initializer = new ();
 
         private Dictionary<VirtualObjectType, GameObject> _vobTypeParentGOs = new();
         private Queue<VobLoader> _objectsToInitQueue = new();
@@ -55,6 +59,11 @@ namespace GUZ.Core.Manager.Vobs
             VirtualObjectType.zCVobLevelCompo
         };
 
+        public VobManager()
+        {
+            int a = 2;
+        }
+        
         public void Init(ICoroutineManager coroutineManager)
         {
             coroutineManager.StartCoroutine(InitVobCoroutine());
@@ -466,7 +475,7 @@ namespace GUZ.Core.Manager.Vobs
             if (container.Vob.Type == VirtualObjectType.zCVobSound ||
                 container.Vob.Type == VirtualObjectType.zCVobSoundDaytime)
             {
-                GameGlobals.SoundCulling.AddCullingEntry(container);
+                _vobSoundCullingService.AddCullingEntry(container);
                 return;
             }
 

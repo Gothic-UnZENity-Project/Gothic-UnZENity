@@ -1,26 +1,14 @@
 using GUZ.Core.Config;
-using GUZ.Core.Data.Container;
-using GUZ.Core.Extensions;
-using GUZ.Core.Util;
-using NUnit.Framework;
+using Reflex.Attributes;
 using UnityEngine;
 using ZenKit.Vobs;
-using Logger = GUZ.Core.Util.Logger;
 
-namespace GUZ.Core.Manager.Culling
+namespace GUZ.Core.Domain.Culling
 {
-    public class VobSoundCullingManager_deprecated : AbstractCullingManager
+    public class VobSoundCullingDomain : AbstractCullingDomain
     {
-        public VobSoundCullingManager_deprecated(DeveloperConfig config)
-        {
-            // NOP
-        }
+        [Inject] private readonly DeveloperConfig _config;
 
-        public void AddCullingEntry(VobContainer container)
-        {
-            AddCullingEntry(container.Go, container.VobAs<ISound>());
-        }
-        
         public void AddCullingEntry(GameObject go, ISound vob)
         {
             AddCullingEntryInternal(go, vob);
@@ -65,7 +53,7 @@ namespace GUZ.Core.Manager.Culling
         /// Set main camera once world is loaded fully.
         /// Doesn't work at loading time as we change scenes etc.
         /// </summary>
-        protected override void PostWorldCreate()
+        public override void PostWorldCreate()
         {
             base.PostWorldCreate();
 
