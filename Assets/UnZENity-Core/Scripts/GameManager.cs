@@ -1,13 +1,12 @@
 using System.Diagnostics;
 using System.Globalization;
-using System.Runtime.InteropServices;
 using GUZ.Core.Animations;
 using GUZ.Core.Caches;
 using GUZ.Core.Config;
+using GUZ.Core.Domain.Culling;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
-using GUZ.Core.Manager.Culling;
 using GUZ.Core.Manager.Scenes;
 using GUZ.Core.Manager.Vobs;
 using GUZ.Core.Npc;
@@ -21,6 +20,7 @@ using Reflex.Attributes;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using ZenKit;
+// deprecated
 using Logger = GUZ.Core.Util.Logger;
 
 namespace GUZ.Core
@@ -64,14 +64,21 @@ namespace GUZ.Core
         public NpcManager Npcs { get; private set; }
         public NpcAiManager NpcAi { get; private set; }
         public AnimationManager Animations { get; private set; }
-        public VobMeshCullingManager VobMeshCulling { get; private set; }
-        public NpcMeshCullingManager NpcMeshCulling { get; private set; }
+        public VobMeshCullingService VobMeshCulling { get; private set; }
+        public NpcMeshCullingService NpcMeshCulling { get; private set; }
         public VoiceManager Voice { get; private set; }
-        
-        [Inject] private readonly MusicService _musicService;
-        [Inject] private readonly VobSoundCullingService _vobSoundCullingService;
 
-        
+        [Inject] private readonly UnityMonoService _unityMonoService;
+        [Inject] private readonly MusicService _musicService;
+
+        [Inject] private readonly NpcMeshCullingService _npcMeshCullingService;
+        [Inject] private readonly VobMeshCullingService _vobMeshCullingService;
+        [Inject] private readonly VobSoundCullingService _vobSoundCullingService;
+        [Inject] private readonly NpcMeshCullingDomain _npcMeshCullingDomain;
+        [Inject] private readonly VobMeshCullingDomain _vobMeshCullingDomain;
+        [Inject] private readonly VobSoundCullingDomain _vobSoundCullingDomain;
+
+
         [Inject] private readonly VobManager _vobManager;
         [Inject] private readonly ConfigManager _configManager;
 
@@ -84,6 +91,9 @@ namespace GUZ.Core
             // We need to set culture to this, otherwise e.g. polish numbers aren't parsed correct.
             CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;
             CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.InvariantCulture;
+
+            // Simply set "any" MonoBehaviour (like this) as object to use within game logic.
+            _unityMonoService.SetMonoBehaviour(this);
 
             Config = _configManager;
             Config.LoadRootJson();
@@ -109,8 +119,8 @@ namespace GUZ.Core
             Npcs = new NpcManager();
             NpcAi = new NpcAiManager();
             Animations = new AnimationManager();
-            VobMeshCulling = new VobMeshCullingManager(DeveloperConfig, this);
-            NpcMeshCulling = new NpcMeshCullingManager(DeveloperConfig);
+            VobMeshCulling = _vobMeshCullingService;
+            NpcMeshCulling = _npcMeshCullingService;
             _barrierManager = new BarrierManager(DeveloperConfig);
             Lights = new StationaryLightsManager();
             Player = new PlayerManager(DeveloperConfig);
@@ -277,9 +287,6 @@ namespace GUZ.Core
 
         public void OnDestroy()
         {
-            VobMeshCulling.Destroy();
-            NpcMeshCulling.Destroy();
-            _vobSoundCullingService.Destroy();
             _fileLoggingHandler.Destroy();
 
             Loading = null;
@@ -295,6 +302,10 @@ namespace GUZ.Core
         private void OnApplicationQuit()
         {
             Bootstrapper.OnApplicationQuit();
+
+            _npcMeshCullingDomain.OnApplicationQuit();
+            _vobMeshCullingDomain.OnApplicationQuit();
+            _vobSoundCullingDomain.OnApplicationQuit();
             
             Voice?.Dispose();
         }

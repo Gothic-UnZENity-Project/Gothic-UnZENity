@@ -1,0 +1,36 @@
+using GUZ.Core.Data.Container;
+using GUZ.Core.Domain.Culling;
+using UnityEngine;
+
+namespace GUZ.Core.Services.Culling
+{
+    public class VobMeshCullingService : AbstractCullingService
+    {
+        private VobMeshCullingDomain _vobDomain => Domain as VobMeshCullingDomain;
+
+        public VobMeshCullingService(VobMeshCullingDomain vobDomain)
+        {
+            Domain = vobDomain;
+        }
+
+        public void OnDrawGizmos()
+        {
+            _vobDomain.OnDrawGizmos();
+        }
+
+        public void AddCullingEntry(VobContainer container)
+        {
+            _vobDomain.AddCullingEntry(container);
+        }
+
+        public void StartTrackVobPositionUpdates(GameObject go)
+        {
+            _vobDomain.StartTrackVobPositionUpdates(go);
+        }
+
+        public void StopTrackVobPositionUpdates(GameObject go)
+        {
+            _vobDomain.StopTrackVobPositionUpdates(go);
+        }
+    }
+}

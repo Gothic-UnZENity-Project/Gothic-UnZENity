@@ -7,8 +7,6 @@ namespace GUZ.Core.Domain.Culling
 {
     public class VobSoundCullingDomain : AbstractCullingDomain
     {
-        [Inject] private readonly DeveloperConfig _config;
-
         public void AddCullingEntry(GameObject go, ISound vob)
         {
             AddCullingEntryInternal(go, vob);

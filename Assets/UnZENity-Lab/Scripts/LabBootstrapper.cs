@@ -12,6 +12,7 @@ using GUZ.Core.Manager;
 using GUZ.Core.Manager.Culling;
 using GUZ.Core.Manager.Vobs;
 using GUZ.Core.Npc;
+using GUZ.Core.Services.Culling;
 using GUZ.Core.UnZENity_Core.Scripts.Manager;
 using GUZ.Core.Util;
 using GUZ.Core.Vm;
@@ -75,8 +76,8 @@ namespace GUZ.Lab
         public NpcManager Npcs => _npcManager;
         public NpcAiManager NpcAi => null;
         public AnimationManager Animations => _animationManager;
-        public VobMeshCullingManager VobMeshCulling => null;
-        public NpcMeshCullingManager NpcMeshCulling => null;
+        public VobMeshCullingService VobMeshCulling => null;
+        public NpcMeshCullingService NpcMeshCulling => null;
         public StoryManager Story => _story;
         public VideoManager Video => _videoManager;
         public VoiceManager Voice => null;

@@ -1,4 +1,5 @@
 using GUZ.Core.Config;
+using GUZ.Core.Domain.Culling;
 using GUZ.Core.Manager;
 using GUZ.Core.Manager.Vobs;
 using GUZ.Core.Services.Culling;
@@ -11,8 +12,15 @@ namespace GUZ.Core
     {
         public void InstallBindings(ContainerBuilder containerBuilder)
         {
+            containerBuilder.AddSingleton(typeof(UnityMonoService));
+
             containerBuilder.AddSingleton(typeof(MusicService));
+            containerBuilder.AddSingleton(typeof(NpcMeshCullingService));
+            containerBuilder.AddSingleton(typeof(VobMeshCullingService));
             containerBuilder.AddSingleton(typeof(VobSoundCullingService));
+            containerBuilder.AddSingleton(typeof(NpcMeshCullingDomain));
+            containerBuilder.AddSingleton(typeof(VobMeshCullingDomain));
+            containerBuilder.AddSingleton(typeof(VobSoundCullingDomain));
             
             // FIXME - Need to be migrated to a Service!
             containerBuilder.AddSingleton(typeof(ConfigManager));

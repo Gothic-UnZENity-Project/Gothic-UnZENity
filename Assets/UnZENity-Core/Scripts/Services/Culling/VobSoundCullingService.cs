@@ -1,6 +1,5 @@
 using GUZ.Core.Data.Container;
 using GUZ.Core.Domain.Culling;
-using Reflex.Attributes;
 using UnityEngine;
 using ZenKit.Vobs;
 
@@ -8,12 +7,11 @@ namespace GUZ.Core.Services.Culling
 {
     public class VobSoundCullingService : AbstractCullingService
     {
-        private VobSoundCullingDomain _soundDomain = new();
+        private VobSoundCullingDomain _soundDomain => Domain as VobSoundCullingDomain;
 
-
-        public VobSoundCullingService()
+        public VobSoundCullingService(VobSoundCullingDomain soundDomain)
         {
-            Domain = _soundDomain;
+            Domain = soundDomain;
         }
         
         public void AddCullingEntry(VobContainer container)

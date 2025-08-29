@@ -1,11 +1,16 @@
 using System.Collections.Generic;
+using GUZ.Core.Config;
 using GUZ.Core.Extensions;
+using Reflex.Attributes;
 using UnityEngine;
 
 namespace GUZ.Core.Domain.Culling
 {
     public abstract class AbstractCullingDomain
     {
+        [Inject] protected readonly ConfigManager ConfigService;
+
+
         protected enum State
         {
             None,
@@ -29,9 +34,6 @@ namespace GUZ.Core.Domain.Culling
 
         public virtual void Init()
         {
-            GlobalEventDispatcher.LoadGameStart.AddListener(PreWorldCreate);
-            GlobalEventDispatcher.WorldSceneLoaded.AddListener(PostWorldCreate);
-
             // Unity demands CullingGroups to be created in Awake() or Start() earliest.
             CullingGroup = new CullingGroup();
         }
@@ -60,7 +62,7 @@ namespace GUZ.Core.Domain.Culling
             CurrentState = State.WorldLoaded;
         }
 
-        public virtual void Destroy()
+        public virtual void OnApplicationQuit()
         {
             CullingGroup.Dispose();
         }

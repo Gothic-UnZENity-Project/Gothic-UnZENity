@@ -12,9 +12,8 @@ namespace GUZ.Core.Services.Culling
             RegisterEventHandlers();
         }
 
-        public virtual void Destroy()
+        ~AbstractCullingService()
         {
-            Domain.Destroy();
             UnregisterEventHandlers();
         }
 
