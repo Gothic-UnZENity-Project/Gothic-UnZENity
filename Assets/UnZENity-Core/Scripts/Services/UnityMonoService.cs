@@ -9,7 +9,7 @@ namespace GUZ.Core.Manager
     /// The thing is: We can use MonoBehaviour as starting point for DI, but we can not inject a MonoBehaviour
     /// (of course, we could simply say GameObject.Find() but let's stick with DI logic for this special case)
     /// </summary>
-    public class UnityMonoService : MonoBehaviour
+    public class UnityMonoService
     {
         private MonoBehaviour _instance;
 

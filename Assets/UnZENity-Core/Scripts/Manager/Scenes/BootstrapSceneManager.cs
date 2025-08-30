@@ -27,9 +27,12 @@ namespace GUZ.Core.Manager.Scenes
                 SceneManager.UnloadSceneAsync(nextScene);
                 yield return null;
             }
-            
-            // Load Player scene
-            GameManager.I.LoadScene(Constants.ScenePlayer);
+
+            // basically Flat or VR
+            var playerContextName = GameContext.InteractionAdapter.GetContextName();
+
+            // Load Player scene by full path name. Otherwise, it will not be found as Flat and VR module have same Player.unity scene name in use.
+            GameManager.I.LoadScene($"UnZENity-{playerContextName}/Scenes/{playerContextName}/{Constants.ScenePlayer}");
         }
     }
 }

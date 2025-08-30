@@ -195,7 +195,7 @@ namespace GUZ.Core
                 LoadWorld(world, SaveGameManager.SlotId.WorldChangeOnly, SceneManager.GetActiveScene().name);
             });
 
-            watch.Log("Phase2 (mostly ZenKit) initialized in");
+            watch.Log("Phase2 done. (mostly ZenKit initialized)");
         }
 
         public void LoadScene(string sceneName, string unloadScene = null)

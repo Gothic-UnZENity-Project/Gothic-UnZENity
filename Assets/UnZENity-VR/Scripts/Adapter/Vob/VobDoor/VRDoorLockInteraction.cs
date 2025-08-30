@@ -4,7 +4,8 @@ using GUZ.Core.Globals;
 using GUZ.Core.Util;
 using GUZ.Core.Vob;
 using GUZ.VR.Adapter.Vob.VobItem;
-using GUZ.VR.Manager;
+using GUZ.VR.Services;
+using Reflex.Attributes;
 using UnityEngine;
 using ZenKit.Vobs;
 using Logger = GUZ.Core.Util.Logger;
@@ -13,6 +14,8 @@ namespace GUZ.VR.Adapter.Vob.VobDoor
 {
     public class VRDoorLockInteraction : MonoBehaviour
     {
+        [Inject] private readonly VRPlayerService _vrPlayerService;
+
         [SerializeField] private GameObject _rootGO;
         [SerializeField] private AudioSource _audioSource;
         private IDoor _vobDoor;
@@ -55,13 +58,13 @@ namespace GUZ.VR.Adapter.Vob.VobDoor
             lockPickProperties.IsInsideLock = true;
             lockPickProperties.ActiveDoorLock = this;
 
-            if (VRPlayerManager.GrabbedItemLeft?.GetComponentInChildren<VRLockPickInteraction>().gameObject == other.gameObject)
+            if (_vrPlayerService.GrabbedItemLeft?.GetComponentInChildren<VRLockPickInteraction>().gameObject == other.gameObject)
             {
-                lockPickProperties.HoldingHand = VRPlayerManager.GrabbedItemLeft!.transform;
+                lockPickProperties.HoldingHand = _vrPlayerService.GrabbedItemLeft!.transform;
             }
-            else if (VRPlayerManager.GrabbedObjectRight?.GetComponentInChildren<VRLockPickInteraction>().gameObject == other.gameObject)
+            else if (_vrPlayerService.GrabbedObjectRight?.GetComponentInChildren<VRLockPickInteraction>().gameObject == other.gameObject)
             {
-                lockPickProperties.HoldingHand = VRPlayerManager.GrabbedObjectRight!.transform;
+                lockPickProperties.HoldingHand = _vrPlayerService.GrabbedObjectRight!.transform;
             }
             else
             {

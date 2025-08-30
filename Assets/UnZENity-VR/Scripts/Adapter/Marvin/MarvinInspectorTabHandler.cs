@@ -4,7 +4,8 @@ using GUZ.Core.Adapter.UI;
 using GUZ.Core.Extensions;
 using GUZ.Core.Model.Marvin;
 using GUZ.Core.Util;
-using GUZ.VR.Manager;
+using GUZ.VR.Services;
+using Reflex.Attributes;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -14,6 +15,8 @@ namespace GUZ.VR.Adapter.Marvin
 {
     public class MarvinInspectorTabHandler : MonoBehaviour
     {
+        [Inject] private readonly VRPlayerService _vrPlayerService;
+
         [SerializeField] private TMP_Text _objectTextComp;
         [SerializeField] private RectTransform _contentTransform;
         [SerializeField] private ToggleButton _chooseVobButton;
@@ -52,7 +55,7 @@ namespace GUZ.VR.Adapter.Marvin
         public void OnSelectHeroClick()
         {
             GameGlobals.Marvin.IsMarvinSelectionMode = true;
-            GameGlobals.Marvin.MarvinSelectionGO = VRPlayerManager.VRInteractionAdapter.GetCurrentPlayerController();
+            GameGlobals.Marvin.MarvinSelectionGO = _vrPlayerService.VRInteractionAdapter.GetCurrentPlayerController();
 
             _selectHeroButton.SetActive();
             _chooseVobButton.SetInactive();

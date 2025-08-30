@@ -1,13 +1,13 @@
 #if GUZ_HVR_INSTALLED
 using System.Collections.Generic;
-using GUZ.Core.Data.Container;
 using GUZ.Core.Model.Marvin;
 using GUZ.Core.Vm;
 using GUZ.Core.Vob;
-using GUZ.VR.Domain.Player;
+using GUZ.VR.Model.Vob;
+using GUZ.VR.Services;
 using HurricaneVR.Framework.Core;
 using HurricaneVR.Framework.Core.Grabbers;
-using HurricaneVR.Framework.Shared;
+using Reflex.Attributes;
 using UnityEngine;
 using ZenKit.Vobs;
 
@@ -15,6 +15,9 @@ namespace GUZ.VR.Adapter.Player
 {
     public class VRPlayerWeaponInteraction : MonoBehaviour, IMarvinPropertyCollector
     {
+        [Inject] private readonly VRWeaponService _weaponService;
+
+
         // FIXME - All of these values will be dynamic in the future. Based on skill level and weapon type.
         [Header("Weapon weight")]
         [SerializeField] private float _mass2HOneHanded = 15f;
@@ -34,21 +37,29 @@ namespace GUZ.VR.Adapter.Player
         [SerializeField] private float _velocityCheckDuration = 0.5f;
         [SerializeField] private int _velocitySampleCount = 5;
 
-        private VRPlayerWeaponAttackHandler _leftHandPlayerWeaponFightHandler;
-        private VRPlayerWeaponAttackHandler _rightHandPlayerWeaponFightHandler;
 
-        private VobContainer _leftHandWeapon;
-        private VobContainer _rightHandWeapon;
-
-        private const int _twoHandedFlags = (int)VmGothicEnums.ItemFlags.Item2HdAxe | (int)VmGothicEnums.ItemFlags.Item2HdSwd;
-
-        
         public void OnGrabbed(HVRGrabberBase hand, HVRGrabbable item)
         {
             var vobItem = item.GetComponentInParent<VobLoader>();
             var vobContainer = vobItem?.Container;
 
-            // We grab something that is not handled as VobItem.
+            // We grab something not handled as VobItem.
+            if (vobContainer == null || vobContainer.Vob.Type != VirtualObjectType.oCItem)
+                return;
+
+            // We currently handle melee weapons only.
+            if (vobContainer.GetItemInstance()!.MainFlag != (int)VmGothicEnums.ItemFlags.ItemKatNf)
+                return;
+
+            _weaponService.OnGrabbed(((HVRHandGrabber)hand).HandSide, vobContainer, GetWeaponPhysicsConfig());
+        }
+
+        public void OnReleased(HVRGrabberBase hand, HVRGrabbable item)
+        {
+            var vobItem = item.GetComponentInParent<VobLoader>();
+            var vobContainer = vobItem?.Container;
+
+            // We grab something not handled as VobItem.
             if (vobContainer == null || vobContainer.Vob.Type != VirtualObjectType.oCItem)
                 return;
 
@@ -56,47 +67,28 @@ namespace GUZ.VR.Adapter.Player
             if (vobContainer.GetItemInstance()!.MainFlag != (int)VmGothicEnums.ItemFlags.ItemKatNf)
                 return;
 
-            var rigidBody = vobContainer.Go.GetComponentInChildren<Rigidbody>();
-            // Logger.LogWarning("Grabbed - " + ((HVRHandGrabber)hand).HandSide, LogCat.VR);
-            if (((HVRHandGrabber)hand).HandSide == HVRHandSide.Left)
-            {
-                _leftHandWeapon = vobContainer;
+            _weaponService.OnReleased(((HVRHandGrabber)hand).HandSide, GetWeaponPhysicsConfig());
+        }
 
-                // Check if we already have a weaponFightHandler for this weapon active.
-                if (_rightHandWeapon == _leftHandWeapon)
-                {
-                    // Only add information that we hold weapons in two hands now.
-                    _rightHandPlayerWeaponFightHandler.AddLeftHand();
-                    _leftHandPlayerWeaponFightHandler = _rightHandPlayerWeaponFightHandler;
-                }
-                else
-                {
-                    // Item is in first hand.
-                    _leftHandPlayerWeaponFightHandler = new VRPlayerWeaponAttackHandler(
-                        rigidBody, Is2HD(_leftHandWeapon), HVRHandSide.Left, _weaponVelocityThreshold,
-                        _weaponVelocityDropPercentage, _velocityCheckDuration, _velocitySampleCount);
-                }
-            }
-            else
+        /// <summary>
+        /// As we can change the values in Editor mode, we need to create them every time we need it.
+        /// TODO - Can be optimized by caching this struct when not in Editor mode for marginal performance impact.
+        /// </summary>
+        private WeaponPhysicsConfig GetWeaponPhysicsConfig()
+        {
+            return new WeaponPhysicsConfig
             {
-                _rightHandWeapon = vobContainer;
-
-                // Check if we already have a weaponFightHandler for this weapon active.
-                if (_leftHandWeapon == _rightHandWeapon)
-                {
-                    // Only add information that we hold weapons in two hands now.
-                    _leftHandPlayerWeaponFightHandler.AddRightHand();
-                    _rightHandPlayerWeaponFightHandler = _leftHandPlayerWeaponFightHandler;
-                }
-                else
-                {
-                    _rightHandPlayerWeaponFightHandler = new VRPlayerWeaponAttackHandler(
-                        rigidBody, Is2HD(_rightHandWeapon), HVRHandSide.Right, _weaponVelocityThreshold,
-                        _weaponVelocityDropPercentage, _velocityCheckDuration, _velocitySampleCount);
-                }
-            }
-            
-            AlterWeaponWeights();
+                Mass2HOneHanded = _mass2HOneHanded,
+                Mass1HAnyHand2HTwoHanded = _mass1HAnyHand2HTwoHanded,
+                LinearDamping2HOneHanded = _linearDamping2HOneHanded,
+                LinearDamping1HAnyHand2HTwoHanded = _linearDamping1HAnyHand2HTwoHanded,
+                AngularDamping2HOneHanded = _angularDamping2HOneHanded,
+                AngularDamping1HAnyHand2HTwoHanded = _angularDamping1HAnyHand2HTwoHanded,
+                WeaponVelocityThreshold = _weaponVelocityThreshold,
+                WeaponVelocityDropPercentage = _weaponVelocityDropPercentage,
+                VelocityCheckDuration = _velocityCheckDuration,
+                VelocitySampleCount = _velocitySampleCount
+            };
         }
 
         private void OnDrawGizmos()
@@ -126,85 +118,7 @@ namespace GUZ.VR.Adapter.Player
             //     }
             // }
         }
-
-        private bool Is2HD(VobContainer weapon)
-        {
-            return (weapon.GetItemInstance().Flags & _twoHandedFlags) != 0;
-        }
-
-        public void OnReleased(HVRGrabberBase hand, HVRGrabbable item)
-        {
-            // Logger.LogWarning("Released - " + ((HVRHandGrabber)hand).HandSide, LogCat.VR);
-            if (((HVRHandGrabber)hand).HandSide == HVRHandSide.Left)
-            {
-                _leftHandPlayerWeaponFightHandler?.RemoveLeftHand();
-                _leftHandWeapon = null;
-
-                // If we grabbed the item twice before, we simply change the hand which is the "owning" hand of attack movement.
-                if (_rightHandWeapon == _leftHandWeapon)
-                {
-                    _rightHandPlayerWeaponFightHandler = _leftHandPlayerWeaponFightHandler;
-                }
-
-                _leftHandPlayerWeaponFightHandler = null;
-            }
-            else
-            {
-                _rightHandPlayerWeaponFightHandler?.RemoveRightHand();
-                _rightHandWeapon = null;
-
-                // If we grabbed the item twice before, we simply change the hand which is the "owning" hand of attack movement.
-                if (_leftHandWeapon == _rightHandWeapon)
-                {
-                    _leftHandPlayerWeaponFightHandler = _rightHandPlayerWeaponFightHandler;
-                }
-
-                _rightHandPlayerWeaponFightHandler = null;
-            }
-
-            AlterWeaponWeights();
-        }
-
-        /// <summary>
-        /// Set mass of weapons based on 1HD / 2HD types and amount of hands holding it.
-        /// </summary>
-        private void AlterWeaponWeights()
-        {
-            var leftRigidbody = _leftHandWeapon?.Go.GetComponentInChildren<Rigidbody>();
-            var rightRigidbody = _rightHandWeapon?.Go.GetComponentInChildren<Rigidbody>();
-            
-            // We have one weapon in both hands
-            if (_leftHandWeapon != null && _leftHandWeapon == _rightHandWeapon)
-            {
-                leftRigidbody!.mass = _mass1HAnyHand2HTwoHanded;
-                leftRigidbody.linearDamping = _linearDamping1HAnyHand2HTwoHanded;
-                leftRigidbody.angularDamping = _angularDamping1HAnyHand2HTwoHanded;
-                return;
-            }
-
-            if (_leftHandWeapon != null)
-            {
-                var is2HD = Is2HD(_leftHandWeapon);
-                leftRigidbody!.mass = is2HD ? _mass2HOneHanded : _mass1HAnyHand2HTwoHanded;
-                leftRigidbody.linearDamping = is2HD ? _linearDamping2HOneHanded : _linearDamping1HAnyHand2HTwoHanded;
-                leftRigidbody.angularDamping = is2HD ? _angularDamping2HOneHanded : _angularDamping1HAnyHand2HTwoHanded;
-            }
-
-            if (_rightHandWeapon != null)
-            {
-                var is2HD = Is2HD(_rightHandWeapon);
-                rightRigidbody!.mass = is2HD ? _mass2HOneHanded : _mass1HAnyHand2HTwoHanded;
-                rightRigidbody.linearDamping = is2HD ? _linearDamping2HOneHanded : _linearDamping1HAnyHand2HTwoHanded;
-                rightRigidbody.angularDamping = is2HD ? _angularDamping2HOneHanded : _angularDamping1HAnyHand2HTwoHanded;
-            }
-        }
         
-        private void FixedUpdate()
-        {
-            _leftHandPlayerWeaponFightHandler?.FixedUpdate();
-            _rightHandPlayerWeaponFightHandler?.FixedUpdate();
-        }
-
         public IEnumerable<object> CollectMarvinInspectorProperties()
         {
             return new List<object>

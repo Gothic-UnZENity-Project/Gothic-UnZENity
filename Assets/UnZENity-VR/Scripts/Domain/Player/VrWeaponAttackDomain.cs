@@ -4,14 +4,17 @@ using System.Collections.Generic;
 using System.Linq;
 using GUZ.Core;
 using GUZ.Core.Data.Adapter;
+using GUZ.Core.Data.Container;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Npc;
 using GUZ.Core.Util;
 using GUZ.Core.Vm;
-using GUZ.VR.Manager;
+using GUZ.VR.Model.Vob;
+using GUZ.VR.Services;
 using HurricaneVR.Framework.Core.Utils;
 using HurricaneVR.Framework.Shared;
+using Reflex.Attributes;
 using UnityEngine;
 using ZenKit;
 using EventType = ZenKit.EventType;
@@ -19,8 +22,15 @@ using Logger = GUZ.Core.Util.Logger;
 
 namespace GUZ.VR.Domain.Player
 {
-    public class VRPlayerWeaponAttackHandler
+    public class VrWeaponAttackDomain
     {
+        [Inject] private readonly VRPlayerService _vrPlayerService;
+
+        private CharacterController _characterController => _vrPlayerService.VRInteractionAdapter.GetVRPlayerController().CharacterController;
+
+        private const int _twoHandedFlags = (int)VmGothicEnums.ItemFlags.Item2HdAxe | (int)VmGothicEnums.ItemFlags.Item2HdSwd;
+
+
         /**
          * Fight windows from animations:
          * eventTag(0 "DEF_HIT_LIMB"   "ZS_RIGHTHAND") --> This animation will check the named limbs (colliders) for attacks later.
@@ -33,27 +43,28 @@ namespace GUZ.VR.Domain.Player
          * - s_1hAttack
          * - s_2hAttack
          */
-        
+
         private bool _soundPlayed;
         private SfxAdapter _swingSwordSound;
         private float _soundPlayTime;
 
-        private readonly CharacterController _characterController;
-        private readonly Rigidbody _weaponWeaponRigidbody;
-        private readonly Collider[] _weaponColliders;
-        private bool _isLeftHand;
-        private bool _isRightHand;
+        private VobContainer _weaponVobContainer;
+        private Rigidbody _weaponRigidbody;
+        private Collider[] _weaponColliders;
 
-        private readonly float _attackVelocityThreshold;
-        private readonly float _velocityDropPercentage;
+        private bool _handlesLeftHand;
+        private bool _handlesRightHand;
+
+        private float _attackVelocityThreshold;
+        private float _velocityDropPercentage;
         
         private float _attackWindowTime;
         private float _comboWindowStart;
         private float _comboWindowTime;
 
         // Velocity sampling properties
-        private readonly float _velocityCheckDuration;
-        private readonly int _velocitySampleCount;
+        private float _velocityCheckDuration;
+        private int _velocitySampleCount;
         private readonly Queue<float> _velocityHistory = new();
         private float _velocityCheckTimer;
         private List<Collider> _alreadyHitCollidersForThisAttack = new();
@@ -93,40 +104,146 @@ namespace GUZ.VR.Domain.Player
         public Action OnAttackMissed;
 
 
-        public VRPlayerWeaponAttackHandler(Rigidbody weaponRigidbody, bool is2HD, HVRHandSide handSide, float attackVelocityThreshold,
-            float velocityDropPercentage, float velocityCheckDuration, int velocitySampleCount)
+        /// <summary>
+        /// TRUE, when:
+        ///   1. No weapon used by this handler so far
+        ///   2. Same weapon is grabbed by another hand
+        /// FALSE, when:
+        ///   1. Already handling one weapon, but another one is provided.
+        /// </summary>
+        public bool TryHandle(VobContainer vobContainer, WeaponPhysicsConfig weaponConfig, HVRHandSide handSide)
         {
-            _characterController = VRPlayerManager.VRInteractionAdapter.GetVRPlayerController().CharacterController;
+            if (!CanHandle(vobContainer))
+                return false;
 
-            _weaponWeaponRigidbody = weaponRigidbody;
-            _weaponColliders = _weaponWeaponRigidbody.GetComponentsInChildren<Collider>();
 
-            // Initial hand setup
-            _isLeftHand = handSide == HVRHandSide.Left;
-            _isRightHand = !_isLeftHand;
-            
-            _attackVelocityThreshold =  attackVelocityThreshold;
-            _velocityDropPercentage = velocityDropPercentage;
+            // First time grabbing this weapon.
+            if (_weaponVobContainer == null)
+            {
+                _weaponVobContainer = vobContainer;
+                _weaponRigidbody = vobContainer.Go.GetComponentInChildren<Rigidbody>();
+                _weaponColliders = _weaponRigidbody.GetComponentsInChildren<Collider>();
 
-            var attackAnimation = GetAttackAnimation(is2HD);
-            CalculateWindowTimes(attackAnimation);
-            CalculateAttackSound(attackAnimation);
+                _attackVelocityThreshold =  weaponConfig.WeaponVelocityThreshold;
+                _velocityDropPercentage = weaponConfig.WeaponVelocityDropPercentage;
+                var attackAnimation = GetAttackAnimation();
+                CalculateWindowTimes(attackAnimation);
+                CalculateAttackSound(attackAnimation);
 
-            _velocityCheckDuration = velocityCheckDuration;
-            _velocitySampleCount = velocitySampleCount;
+                _velocityCheckDuration = weaponConfig.VelocityCheckDuration;
+                _velocitySampleCount = weaponConfig.VelocitySampleCount;
 
-            _velocityDropThreshold = _attackVelocityThreshold * (1f - _velocityDropPercentage);
+                _velocityDropThreshold = _attackVelocityThreshold * (1f - _velocityDropPercentage);
+            }
+
+            if (handSide == HVRHandSide.Left)
+                _handlesLeftHand = true;
+            else if (handSide == HVRHandSide.Right)
+                _handlesRightHand = true;
+
+            AlterWeaponWeights(weaponConfig);
+
+            return true;
         }
 
-        private IAnimation GetAttackAnimation(bool is2Hd)
+        private bool CanHandle(VobContainer newWeapon)
+        {
+            // No weapon handled so far. Free for the first one.
+            if (_weaponVobContainer == null)
+                return true;
+
+            // The same weapon is trying to be grabbed by another hand.
+            if (_weaponVobContainer == newWeapon)
+                return true;
+
+            // else
+            return false;
+        }
+
+        public bool TryUnHandle(WeaponPhysicsConfig weaponConfig, HVRHandSide handSide)
+        {
+            if (!CanUnHandle(handSide))
+                return false;
+
+
+            if (handSide == HVRHandSide.Left)
+                _handlesLeftHand = false;
+            else if (handSide == HVRHandSide.Right)
+                _handlesRightHand = false;
+
+            // Alter weight now, before we potentially unset VobContainer and Rigidbody.
+            AlterWeaponWeights(weaponConfig);
+
+            if (!_handlesRightHand && !_handlesLeftHand)
+                FullStopHandling();
+
+            return true;
+        }
+
+        /// <summary>
+        /// Unhandle means: Do we released item in hand which we handled?
+        /// Hint: We can only have one item in a hand at a time. Therefore, we don't need to check for the rigidbody itself.
+        /// </summary>
+        private bool CanUnHandle(HVRHandSide releasedHandSide)
+        {
+            if (releasedHandSide == HVRHandSide.Left)
+                return _handlesLeftHand;
+            else
+                return _handlesRightHand;
+        }
+
+        private void FullStopHandling()
+        {
+            _weaponVobContainer = null;
+            _weaponRigidbody = null;
+            _weaponColliders = null;
+            _handlesLeftHand = false;
+            _handlesRightHand = false;
+        }
+
+        /// <summary>
+        /// Set the mass of weapons based on 1HD / 2HD types and the amount of hands holding it.
+        /// </summary>
+        private void AlterWeaponWeights(WeaponPhysicsConfig weaponConfig)
+        {
+            // We have one weapon in both hands
+            if (_handlesLeftHand && _handlesRightHand)
+            {
+                _weaponRigidbody!.mass = weaponConfig.Mass1HAnyHand2HTwoHanded;
+                _weaponRigidbody.linearDamping = weaponConfig.LinearDamping1HAnyHand2HTwoHanded;
+                _weaponRigidbody.angularDamping = weaponConfig.AngularDamping1HAnyHand2HTwoHanded;
+            }
+            // We have the weapon in only one hand!
+            else if (_handlesLeftHand ^ _handlesRightHand)
+            {
+                var is2HD = Is2HD();
+                _weaponRigidbody!.mass = is2HD ? weaponConfig.Mass2HOneHanded : weaponConfig.Mass1HAnyHand2HTwoHanded;
+                _weaponRigidbody.linearDamping = is2HD ? weaponConfig.LinearDamping2HOneHanded : weaponConfig.LinearDamping1HAnyHand2HTwoHanded;
+                _weaponRigidbody.angularDamping = is2HD ? weaponConfig.AngularDamping2HOneHanded : weaponConfig.AngularDamping1HAnyHand2HTwoHanded;
+            }
+            // We don't have the weapon in any hand. Then reset it's weight values for world physics (e.g., gravity).
+            else
+            {
+                _weaponRigidbody!.mass = weaponConfig.Mass1HAnyHand2HTwoHanded;
+                _weaponRigidbody.linearDamping = weaponConfig.LinearDamping1HAnyHand2HTwoHanded;
+                _weaponRigidbody.angularDamping = weaponConfig.AngularDamping1HAnyHand2HTwoHanded;
+            }
+        }
+
+        private IAnimation GetAttackAnimation()
         {
             // Left-Right attacks always have a useful combo setting. (The combo for 2H forward (s_2hAttack) is broken to use with combos.)
-            var attackAnimationName = $"t_{(is2Hd ? "2" : "1")}hAttackL";
+            var attackAnimationName = $"t_{(Is2HD() ? "2" : "1")}hAttackL";
 
             // FIXME - Combo settings for hero with more skills are in overlay mds (e.g., HUMANS_1HST2.mds) Use for improved weapon handling.
             var mds = ResourceLoader.TryGetModelScript("Humans")!;
             return mds.Animations.First(i => i.Name.EqualsIgnoreCase(attackAnimationName));
 
+        }
+
+        private bool Is2HD()
+        {
+            return (_weaponVobContainer.GetItemInstance().Flags & _twoHandedFlags) != 0;
         }
 
         /// <summary>
@@ -187,28 +304,31 @@ namespace GUZ.VR.Domain.Player
 
         public void FixedUpdate()
         {
+            if (_weaponRigidbody == null)
+                return;
+
             UpdateVelocityHistory();
             UpdateStateMachine();
         }
 
         public void AddLeftHand()
         {
-            _isLeftHand = true;
+            _handlesLeftHand = true;
         }
 
         public void AddRightHand()
         {
-            _isRightHand = true;
+            _handlesRightHand = true;
         }
 
         public void RemoveLeftHand()
         {
-            _isLeftHand = false;
+            _handlesLeftHand = false;
         }
 
         public void RemoveRightHand()
         {
-            _isRightHand = false;
+            _handlesRightHand = false;
         }
 
         /// <summary>
@@ -225,7 +345,7 @@ namespace GUZ.VR.Domain.Player
 
             // We need to subtract the current players movement. Otherwise a run will count as a swing.
             // TODO - Maybe we should subtract the V3 velocity instead of magnitude to countermeasure player movement?
-            var currentVelocity = _weaponWeaponRigidbody.linearVelocity.magnitude - _characterController.velocity.magnitude;
+            var currentVelocity = _weaponRigidbody.linearVelocity.magnitude - _characterController.velocity.magnitude;
             _velocityHistory.Enqueue(currentVelocity);
             
             // Keep only the required number of samples
@@ -278,7 +398,7 @@ namespace GUZ.VR.Domain.Player
                 return;
 
             _soundPlayed = true;
-            SFXPlayer.Instance.PlaySFX(_swingSwordSound.GetRandomClip(), _weaponWeaponRigidbody.position);
+            SFXPlayer.Instance.PlaySFX(_swingSwordSound.GetRandomClip(), _weaponRigidbody.position);
         }
         
         private void HandleInitialWindow()
@@ -495,10 +615,10 @@ namespace GUZ.VR.Domain.Player
             _hasDroppedBelowThreshold = false;
             _hasReturnedToThreshold = false;
 
-            if (_isLeftHand)
-                VRPlayerManager.GetHand(HVRHandSide.Left).Vibrate(_amplitude, _duration, _frequency);
-            if (_isRightHand)
-                VRPlayerManager.GetHand(HVRHandSide.Right).Vibrate(_amplitude, _duration, _frequency);
+            if (_handlesLeftHand)
+                _vrPlayerService.GetHand(HVRHandSide.Left).Vibrate(_amplitude, _duration, _frequency);
+            if (_handlesRightHand)
+                _vrPlayerService.GetHand(HVRHandSide.Right).Vibrate(_amplitude, _duration, _frequency);
         }
         
         private void ExecuteCombo()

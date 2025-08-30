@@ -12,6 +12,8 @@ namespace GUZ.Tests.PlayMode
     public abstract class AbstractTest
     {
         protected Scene MainScene => SceneManager.GetActiveScene();
+
+        // FIXME - Needs to be VRPlayer or FlatPlayer.
         protected Scene GeneralScene => SceneManager.GetSceneByName(Constants.ScenePlayer);
         
         private readonly InputTestFixture _inputSimulator = new ();

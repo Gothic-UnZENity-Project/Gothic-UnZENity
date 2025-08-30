@@ -3,9 +3,10 @@ using System.Collections;
 using GUZ.Core;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
-using GUZ.VR.Manager;
+using GUZ.VR.Services;
 using HurricaneVR.Framework.Core;
 using HurricaneVR.Framework.Core.Grabbers;
+using Reflex.Attributes;
 using UnityEngine;
 using UnityEngine.Animations;
 
@@ -13,6 +14,8 @@ namespace GUZ.VR.Adapter.Vob
 {
     public class VRVobItem : MonoBehaviour
     {
+        [Inject] private readonly VRPlayerService _vrPlayerService;
+
         [SerializeField] private VRVobItemProperties _vrProperties;
         [SerializeField] private Rigidbody _rigidbody;
         [SerializeField] private MeshCollider _meshCollider;
@@ -76,7 +79,7 @@ namespace GUZ.VR.Adapter.Vob
             StartCoroutine(ReEnableCollisionRoutine());
             
             GameGlobals.VobMeshCulling?.StartTrackVobPositionUpdates(gameObject);
-            VRPlayerManager.SetGrab(grabber, grabbable);
+            _vrPlayerService.SetGrab(grabber, grabbable);
         }
 
         public void OnReleased(HVRGrabberBase grabber, HVRGrabbable grabbable)
@@ -89,7 +92,7 @@ namespace GUZ.VR.Adapter.Vob
             DynamicMaterialManager.ResetDynamicValue(gameObject, Constants.ShaderPropertyTransparency, Constants.ShaderPropertyTransparencyDefault);
 
             GameGlobals.VobMeshCulling?.StartTrackVobPositionUpdates(gameObject);
-            VRPlayerManager.UnsetGrab(grabber, grabbable);
+            _vrPlayerService.UnsetGrab(grabber, grabbable);
             
             // If we sock an object on our hips etc.
             if (grabber is HVRSocket)
