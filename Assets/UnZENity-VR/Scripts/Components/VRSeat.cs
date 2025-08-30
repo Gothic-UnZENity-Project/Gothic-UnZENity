@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using GUZ.Core;
 using GUZ.Core.Extensions;
-using GUZ.Core.Player.Camera;
 using HurricaneVR.Framework.Core;
 using HurricaneVR.Framework.Core.Grabbers;
 using HurricaneVR.Framework.Core.Player;
@@ -35,7 +34,6 @@ namespace GUZ.VR.Components
         private List<Transform> _snapPoints = new();
         private Transform _currentSnapPoint;
 
-        private CameraFade _cachedCameraFade;
         private bool _canPlayerSit = true;
 
         private void GetSnapPoints()
