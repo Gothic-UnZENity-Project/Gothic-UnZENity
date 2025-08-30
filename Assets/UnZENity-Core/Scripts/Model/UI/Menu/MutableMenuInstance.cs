@@ -1,9 +1,9 @@
 using System;
 using GUZ.Core.Globals;
-using GUZ.Core.UI.Menus.Adapter.MenuItem;
+using GUZ.Core.Model.UI.MenuItem;
 using JetBrains.Annotations;
 
-namespace GUZ.Core.UI.Menus.Adapter.Menu
+namespace GUZ.Core.Model.UI.Menu
 {
     public class MutableMenuInstance : AbstractMenuInstance
     {

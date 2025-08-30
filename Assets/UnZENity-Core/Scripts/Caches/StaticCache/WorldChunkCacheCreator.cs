@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using GUZ.Core.Adapter.UI.LoadingBars;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
-using GUZ.Core.UI.Menus.LoadingBars;
 using GUZ.Core.Util;
 using MyBox;
 using UnityEngine;

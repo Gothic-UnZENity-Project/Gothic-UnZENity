@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace GUZ.Core.UI.Menus.LoadingBars
+namespace GUZ.Core.Adapter.UI.LoadingBars
 {
     public class PreCachingLoadingBarHandler : AbstractLoadingBarHandler
     {

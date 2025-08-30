@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using GUZ.Core.Globals;
-using GUZ.Core.UI.Menus.Adapter.Menu;
+using GUZ.Core.Model.UI.Menu;
 using MyBox;
 using TMPro;
 

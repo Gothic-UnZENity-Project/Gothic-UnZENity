@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace GUZ.Core.UI.Menus
+namespace GUZ.Core.Adapter.UI
 {
     public class UnZenityLogoHandler : MonoBehaviour
     {

@@ -1,4 +1,4 @@
-using GUZ.Core.UI.Menus.Adapter.Menu;
+using GUZ.Core.Model.UI.Menu;
 
 namespace GUZ.Core._Adapter
 {

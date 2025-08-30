@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace GUZ.Core.UI.Menus.LoadingBars
+namespace GUZ.Core.Adapter.UI.LoadingBars
 {
     public abstract class AbstractLoadingBarHandler : MonoBehaviour
     {

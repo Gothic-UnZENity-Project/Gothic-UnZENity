@@ -1,12 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using GUZ.Core.Adapter.UI.LoadingBars;
 using GUZ.Core.Caches;
 using GUZ.Core.Caches.StaticCache;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
-using GUZ.Core.UI.Menus.LoadingBars;
 using GUZ.Core.Util;
 using JetBrains.Annotations;
 using UnityEditor;

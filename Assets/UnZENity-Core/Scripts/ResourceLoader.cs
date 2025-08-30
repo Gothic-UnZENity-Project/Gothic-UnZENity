@@ -53,7 +53,7 @@ namespace GUZ.Core
         );
 
         private static readonly Resource<IModel> _model = new(
-            s => new Model(_vfs, s).Cache()
+            s => new ZenKit.Model(_vfs, s).Cache()
         );
 
         private static readonly Resource<IModelMesh> _modelMesh = new(

@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using GUZ.Core.UI.Menus.Adapter.Menu;
+using GUZ.Core.Model.UI.Menu;
 using GUZ.Core.Util;
 using MyBox;
 using UnityEngine;

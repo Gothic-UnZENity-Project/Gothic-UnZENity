@@ -1,7 +1,7 @@
-using GUZ.Core.UI.Menus.Adapter.Menu;
+using GUZ.Core.Model.UI.Menu;
 using ZenKit.Daedalus;
 
-namespace GUZ.Core.UI.Menus.Adapter.MenuItem
+namespace GUZ.Core.Model.UI.MenuItem
 {
     public abstract class AbstractMenuItemInstance
     {

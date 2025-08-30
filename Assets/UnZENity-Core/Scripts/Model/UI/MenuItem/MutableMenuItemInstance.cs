@@ -2,7 +2,7 @@ using System;
 using GUZ.Core.Globals;
 using ZenKit.Daedalus;
 
-namespace GUZ.Core.UI.Menus.Adapter.MenuItem
+namespace GUZ.Core.Model.UI.MenuItem
 {
     public class MutableMenuItemInstance : AbstractMenuItemInstance
     {

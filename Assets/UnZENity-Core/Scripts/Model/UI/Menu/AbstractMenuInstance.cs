@@ -1,10 +1,9 @@
 using System.Collections.Generic;
-using System.Linq;
-using GUZ.Core.UI.Menus.Adapter.MenuItem;
+using GUZ.Core.Model.UI.MenuItem;
 using JetBrains.Annotations;
 using ZenKit.Daedalus;
 
-namespace GUZ.Core.UI.Menus.Adapter.Menu
+namespace GUZ.Core.Model.UI.Menu
 {
     public abstract class AbstractMenuInstance
     {

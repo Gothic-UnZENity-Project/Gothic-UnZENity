@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
-using GUZ.Core.UI.Menus.Adapter.Menu;
-using GUZ.Core.UI.Menus.Adapter.MenuItem;
+using GUZ.Core.Model.UI.Menu;
+using GUZ.Core.Model.UI.MenuItem;
 using GUZ.Core.Util;
 using MyBox;
 using TMPro;
@@ -88,32 +88,59 @@ namespace GUZ.Core.Adapter.UI.Menus
         private void CreateRootElements()
         {
             var backPic = GameGlobals.Textures.GetMaterial(MenuInstance.BackPic);
-            Background.GetComponentInChildren<MeshRenderer>().sharedMaterial = backPic;
-
-            // Set canvas size based on texture size of background
-            var canvasRect = Canvas.GetComponent<RectTransform>();
-            canvasRect.SetWidth(backPic.mainTexture.width);
-            canvasRect.SetHeight(backPic.mainTexture.height);
-
-            // Calculate pixelRatio for virtual positions of child elements.
-            var virtualPixelX = MenuInstance.DimX + 1;
-            var virtualPixelY = MenuInstance.DimY + 1;
-            var realPixelX = backPic.mainTexture.width;
-            var realPixelY = backPic.mainTexture.height;
-
-            PixelRatioX = (float)virtualPixelX / realPixelX; // for normal G1, should be 16 (=8192 / 512)
-            PixelRatioY = (float)virtualPixelY / realPixelY;
-
+            SetupBackground(backPic);
+            SetupCanvasSize(backPic);
+            ComputePixelRatios(backPic);
+            BuildAllMenuItems();
+        }
+        
+        private void BuildAllMenuItems()
+        {
             foreach (var item in MenuInstance.Items)
             {
                 CreateMenuItem(item);
             }
         }
-        
+
         private void CreateMenuItem(AbstractMenuItemInstance item)
         {
-            GameObject itemGo;
+            var itemGo = InstantiateItemGameObject(item);
+            itemGo.transform.localPosition = Vector3.zero;
+            MenuItemCache[item.Name] = (item, itemGo);
 
+            ConfigureRectTransform(itemGo, item, out var itemWidth, out var itemHeight);
+            AddBackPicIfAny(itemGo, item, itemWidth, itemHeight);
+            SetupTextIfAny(itemGo, item, itemWidth, itemHeight);
+            SetupCommentIfAny(itemGo, item);
+            ApplyDisabledStateIfNeeded(itemGo, item);
+        }
+
+        private void SetupBackground(Material backPic)
+        {
+            Background.GetComponentInChildren<MeshRenderer>().sharedMaterial = backPic;
+        }
+
+        private void SetupCanvasSize(Material backPic)
+        {
+            var canvasRect = Canvas.GetComponent<RectTransform>();
+            canvasRect.SetWidth(backPic.mainTexture.width);
+            canvasRect.SetHeight(backPic.mainTexture.height);
+        }
+
+        private void ComputePixelRatios(Material backPic)
+        {
+            var virtualPixelX = MenuInstance.DimX + 1;
+            var virtualPixelY = MenuInstance.DimY + 1;
+            var realPixelX = backPic.mainTexture.width;
+            var realPixelY = backPic.mainTexture.height;
+
+            PixelRatioX = (float)virtualPixelX / realPixelX;
+            PixelRatioY = (float)virtualPixelY / realPixelY;
+        }
+
+        private GameObject InstantiateItemGameObject(AbstractMenuItemInstance item)
+        {
+            GameObject itemGo;
             if (item.MenuItemType == MenuItemType.ListBox)
             {
                 itemGo = ResourceLoader.TryGetPrefabObject(PrefabType.UiEmpty, name: item.Name, parent: Canvas)!;
@@ -122,20 +149,17 @@ namespace GUZ.Core.Adapter.UI.Menus
             {
                 itemGo = ResourceLoader.TryGetPrefabObject(PrefabType.UiButton, name: item.Name, parent: Canvas)!;
                 var button = itemGo.GetComponentInChildren<Button>();
-
                 button.onClick.AddListener(() => HandleMenuItemClick(item));
             }
             else if (item.MenuItemType == MenuItemType.ChoiceBox)
             {
                 itemGo = ResourceLoader.TryGetPrefabObject(PrefabType.UiButton, name: item.Name, parent: Canvas)!;
                 var button = itemGo.GetComponentInChildren<Button>();
-
                 button.onClick.AddListener(() => HandleChoiceBoxClick(item, itemGo));
             }
             else if (item.MenuItemType == MenuItemType.Slider)
             {
                 itemGo = ResourceLoader.TryGetPrefabObject(PrefabType.UiSlider, name: item.Name, parent: Canvas)!;
-
                 SetSliderValues(itemGo, item);
             }
             else if (item.MenuItemType == MenuItemType.Text)
@@ -146,16 +170,15 @@ namespace GUZ.Core.Adapter.UI.Menus
             {
                 itemGo = ResourceLoader.TryGetPrefabObject(PrefabType.UiEmpty, name: item.Name, parent: Canvas)!;
             }
+            return itemGo;
+        }
 
-            itemGo.transform.localPosition = Vector3.zero;
-
-            MenuItemCache[item.Name] = (item, itemGo);
-
+        private void ConfigureRectTransform(GameObject itemGo, AbstractMenuItemInstance item, out float itemWidth, out float itemHeight)
+        {
             var rect = itemGo.GetComponent<RectTransform>();
             var halfMainWidth = (float)MenuInstance.DimX / 2;
             var halfMainHeight = (float)MenuInstance.DimY / 2;
 
-            float itemWidth;
             if (item.DimX > 0)
             {
                 // As we have anchor positions at the center (0.5), we need to move into a certain direction from the center
@@ -171,7 +194,6 @@ namespace GUZ.Core.Adapter.UI.Menus
             rect.SetPositionX((item.PosX - halfMainWidth + itemWidth / 2) / PixelRatioX);
             rect.SetWidth(itemWidth / PixelRatioX);
 
-            float itemHeight;
             if (item.DimY > 0)
             {
                 itemHeight = item.DimY;
@@ -184,65 +206,76 @@ namespace GUZ.Core.Adapter.UI.Menus
 
             rect.SetPositionY((halfMainHeight - item.PosY - itemHeight / 2) / PixelRatioY);
             rect.SetHeight(itemHeight / PixelRatioY);
+        }
 
-            if (item.BackPic.NotNullOrEmpty())
+        private void AddBackPicIfAny(GameObject itemGo, AbstractMenuItemInstance item, float itemWidth, float itemHeight)
+        {
+            if (!item.BackPic.NotNullOrEmpty()) return;
+
+            var backPicGo = ResourceLoader.TryGetPrefabObject(PrefabType.UiTexture, name: item.BackPic, parent: itemGo)!;
+            var backPic = GameGlobals.Textures.GetMaterial(item.BackPic);
+
+            if (!item.AlphaMode.IsNullOrEmpty())
             {
-                var backPicGo =
-                    ResourceLoader.TryGetPrefabObject(PrefabType.UiTexture, name: item.BackPic, parent: itemGo)!;
-                var backPic = GameGlobals.Textures.GetMaterial(item.BackPic);
-
-                if (!item.AlphaMode.IsNullOrEmpty())
-                {
-                    backPic.ToTransparentMode();
-                    var color = backPic.GetColor("_BaseColor");
-                    var alpha = item.Alpha / 255f;
-                    backPic.SetColor("_BaseColor", new Color(color.r, color.g, color.b, alpha));
-                }
-
-                backPicGo.transform.localPosition = Vector3.zero;
-                
-                var backPictRenderer = backPicGo.GetComponentInChildren<MeshRenderer>();
-                backPictRenderer.sharedMaterial = backPic;
-
-                // Apply scale and position (move slightly backwards) from normal background to this one.
-                backPictRenderer.transform.localScale =
-                    new Vector3(itemWidth / PixelRatioX / 10, 1, itemHeight / PixelRatioY / 10);
+                backPic.ToTransparentMode();
+                var color = backPic.GetColor("_BaseColor");
+                var alpha = item.Alpha / 255f;
+                backPic.SetColor("_BaseColor", new Color(color.r, color.g, color.b, alpha));
             }
+
+            backPicGo.transform.localPosition = Vector3.zero;
+            var backPictRenderer = backPicGo.GetComponentInChildren<MeshRenderer>();
+            backPictRenderer.sharedMaterial = backPic;
+
+            // Apply scale and position (move slightly backwards) from normal background to this one.
+            backPictRenderer.transform.localScale = new Vector3(itemWidth / PixelRatioX / 10, 1, itemHeight / PixelRatioY / 10);
+        }
+
+        private void SetupTextIfAny(GameObject itemGo, AbstractMenuItemInstance item, float itemWidth, float itemHeight)
+        {
+            var textComp = itemGo.GetComponentInChildren<TMP_Text>();
+            if (textComp == null) return;
+            SetTextDimensions(textComp, item, itemWidth, itemHeight);
+            SetText(textComp, item);
+        }
+
+        private void SetupCommentIfAny(GameObject itemGo, AbstractMenuItemInstance item)
+        {
+            var eventTrigger = itemGo.GetComponent<EventTrigger>();
+            if (eventTrigger == null) return;
+            var comment = item.GetText(1);
+            if (comment.NotNullOrEmpty())
+            {
+                SetComment(eventTrigger, comment);
+            }
+        }
+
+        /// <summary>
+        /// Item is disabled == grayed out and not interactable
+        /// </summary>
+        private void ApplyDisabledStateIfNeeded(GameObject itemGo, AbstractMenuItemInstance item)
+        {
+            if (IsMenuItemActive(item.Name))
+                return;
 
             var textComp = itemGo.GetComponentInChildren<TMP_Text>();
+            var eventTrigger = itemGo.GetComponent<EventTrigger>();
             if (textComp != null)
             {
-                SetTextDimensions(textComp, item, itemWidth, itemHeight);
-                SetText(textComp, item);
-            }
-
-            var eventTrigger = itemGo.GetComponent<EventTrigger>();
-            if (eventTrigger != null && item.GetText(1).NotNullOrEmpty())
-            {
-                SetComment(eventTrigger, item.GetText(1));
-            }
-            
-            //item disabled (grayed out and not interactable)
-            if (!IsMenuItemActive(item.Name))
-            {
-                if (textComp != null)
+                textComp.color = Constants.TextDisabledColor;
+                var button = itemGo.GetComponent<Button>();
+                if (button != null)
                 {
-                    textComp.color = Constants.TextDisabledColor;
-                    var button = itemGo.GetComponent<Button>();
-                    if (button != null)
-                    {
-                        button.enabled = false;
-                    }
-
-                    if (eventTrigger != null)
-                    {
-                        eventTrigger.enabled = false;
-                    }
+                    button.enabled = false;
                 }
-                else
+                if (eventTrigger != null)
                 {
-                    itemGo.SetActive(false);
+                    eventTrigger.enabled = false;
                 }
+            }
+            else
+            {
+                itemGo.SetActive(false);
             }
         }
 

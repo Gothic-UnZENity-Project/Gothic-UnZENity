@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using MyBox;
 
-namespace GUZ.Core.UI.Menus.LoadingBars
+namespace GUZ.Core.Adapter.UI.LoadingBars
 {
     public class WorldLoadingBarHandler : AbstractLoadingBarHandler
     {

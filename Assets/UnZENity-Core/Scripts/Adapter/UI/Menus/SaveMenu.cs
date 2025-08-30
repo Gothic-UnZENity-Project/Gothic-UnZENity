@@ -3,7 +3,7 @@ using System.IO;
 using GUZ.Core.Caches;
 using GUZ.Core.Extensions;
 using GUZ.Core.Manager;
-using GUZ.Core.UI.Menus.Adapter.Menu;
+using GUZ.Core.Model.UI.Menu;
 using GUZ.Core.Util;
 using TMPro;
 using UnityEngine;
@@ -117,17 +117,17 @@ namespace GUZ.Core.Adapter.UI.Menus
 
         protected override void ConsoleCommand(string itemName, string commandName)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         protected override void PlaySound(string itemName, string commandName)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         protected override void ExecuteCommand(string itemName, string commandName)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         protected override bool IsMenuItemActive(string menuItemName)

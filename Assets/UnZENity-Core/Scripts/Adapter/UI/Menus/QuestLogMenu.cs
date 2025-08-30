@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using GUZ.Core.Model.UI.Menu;
+using GUZ.Core.Model.UI.MenuItem;
 using GUZ.Core.UI;
-using GUZ.Core.UI.Menus.Adapter.Menu;
-using GUZ.Core.UI.Menus.Adapter.MenuItem;
 using GUZ.Core.Util;
 using MyBox;
 using TMPro;
