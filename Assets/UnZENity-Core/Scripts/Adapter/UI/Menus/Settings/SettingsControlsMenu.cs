@@ -1,8 +1,8 @@
 using System;
 
-namespace GUZ.Core.UI.Menus.Settings
+namespace GUZ.Core.Adapter.UI.Menus.Settings
 {
-    public class SettingsVideoMenu : AbstractMenu
+    public class SettingsControlsMenu : AbstractMenu
     {
         protected override void Undefined(string itemName, string commandName)
         {

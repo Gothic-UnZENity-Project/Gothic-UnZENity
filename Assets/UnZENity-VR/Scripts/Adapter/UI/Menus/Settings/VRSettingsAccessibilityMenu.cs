@@ -1,8 +1,8 @@
 #if GUZ_HVR_INSTALLED
 using System;
-using GUZ.Core.UI.Menus;
+using GUZ.Core.Adapter.UI.Menus;
 
-namespace GUZ.VR.Components.UI.Menus.Settings
+namespace GUZ.VR.Adapter.UI.Menus.Settings
 {
     public class VRSettingsAccessibilityMenu : AbstractMenu
     {

@@ -1,6 +1,6 @@
 using System;
 
-namespace GUZ.Core.UI.Menus.Settings
+namespace GUZ.Core.Adapter.UI.Menus.Settings
 {
     public class SettingsAudioMenu : AbstractMenu
     {

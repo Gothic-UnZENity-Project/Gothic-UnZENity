@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using GUZ.Core.UI;
 using GUZ.Core.UI.Menus.Adapter.Menu;
 using GUZ.Core.UI.Menus.Adapter.MenuItem;
 using GUZ.Core.Util;
@@ -12,7 +13,7 @@ using ZenKit;
 using ZenKit.Daedalus;
 using Logger = GUZ.Core.Util.Logger;
 
-namespace GUZ.Core.UI.Menus
+namespace GUZ.Core.Adapter.UI.Menus
 {
     /// <summary>
     /// The quest log contains of three major areas:

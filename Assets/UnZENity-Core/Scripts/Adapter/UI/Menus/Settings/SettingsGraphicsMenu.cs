@@ -1,8 +1,8 @@
 using System;
 
-namespace GUZ.Core.UI.Menus.Settings
+namespace GUZ.Core.Adapter.UI.Menus.Settings
 {
-    public class SettingsGameMenu : AbstractMenu
+    public class SettingsGraphicsMenu : AbstractMenu
     {
         protected override void Undefined(string itemName, string commandName)
         {

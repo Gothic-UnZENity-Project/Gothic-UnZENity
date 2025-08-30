@@ -1,8 +1,8 @@
 using System;
 
-namespace GUZ.Core.UI.Menus
+namespace GUZ.Core.Adapter.UI.Menus.Settings
 {
-    public class SettingsMenu : AbstractMenu
+    public class SettingsVideoMenu : AbstractMenu
     {
         protected override void Undefined(string itemName, string commandName)
         {
@@ -11,7 +11,7 @@ namespace GUZ.Core.UI.Menus
 
         protected override void StartMenu(string itemName, string commandName)
         {
-            MenuHandler.OpenMenu(commandName);
+            throw new NotImplementedException();
         }
 
         protected override void StartItem(string itemName, string commandName)

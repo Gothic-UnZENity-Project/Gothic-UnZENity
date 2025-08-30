@@ -4,13 +4,13 @@ using GUZ.Core.Globals;
 using UnityEngine.SceneManagement;
 using ZenKit.Daedalus;
 
-namespace GUZ.Core.UI.Menus
+namespace GUZ.Core.Adapter.UI.Menus
 {
     public class MainMenu : AbstractMenu
     {
         protected override void Undefined(string itemName, string commandName)
         {
-            return;
+            throw new NotImplementedException();
         }
 
         protected override void StartMenu(string itemName, string commandName)

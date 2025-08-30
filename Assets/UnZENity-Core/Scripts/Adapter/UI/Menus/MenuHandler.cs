@@ -5,7 +5,7 @@ using MyBox;
 using UnityEngine;
 using Logger = GUZ.Core.Util.Logger;
 
-namespace GUZ.Core.UI.Menus
+namespace GUZ.Core.Adapter.UI.Menus
 {
     public class MenuHandler : MonoBehaviour
     {

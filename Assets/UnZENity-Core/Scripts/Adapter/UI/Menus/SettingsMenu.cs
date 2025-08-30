@@ -1,19 +1,17 @@
 using System;
-using GUZ.Core.UI.Menus.Adapter.Menu;
-using UnityEngine;
 
-namespace GUZ.Core.UI.Menus
+namespace GUZ.Core.Adapter.UI.Menus
 {
-    public class LeaveGameMenu : AbstractMenu
+    public class SettingsMenu : AbstractMenu
     {
         protected override void Undefined(string itemName, string commandName)
         {
-            return;
+            throw new NotImplementedException();
         }
 
         protected override void StartMenu(string itemName, string commandName)
         {
-            throw new NotImplementedException();
+            MenuHandler.OpenMenu(commandName);
         }
 
         protected override void StartItem(string itemName, string commandName)
@@ -23,7 +21,7 @@ namespace GUZ.Core.UI.Menus
 
         protected override void Close(string itemName, string commandName)
         {
-            Application.Quit();
+            throw new NotImplementedException();
         }
 
         protected override void ConsoleCommand(string itemName, string commandName)

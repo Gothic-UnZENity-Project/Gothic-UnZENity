@@ -1,10 +1,9 @@
 #if GUZ_HVR_INSTALLED
 using GUZ.Core;
+using GUZ.Core.Adapter.UI.Menus;
 using GUZ.Core.Globals;
-using GUZ.Core.UI.Menus;
 using HurricaneVR.Framework.Core.Player;
 using MyBox;
-using UnityEngine;
 using UnityEngine.SceneManagement;
 using Constants = GUZ.Core.Globals.Constants;
 

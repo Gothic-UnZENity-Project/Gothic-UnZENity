@@ -5,7 +5,7 @@ using GUZ.Core.UI.Menus.Adapter.Menu;
 using MyBox;
 using TMPro;
 
-namespace GUZ.Core.UI.Menus
+namespace GUZ.Core.Adapter.UI.Menus
 {
     public class StatusMenu : AbstractMenu
     {

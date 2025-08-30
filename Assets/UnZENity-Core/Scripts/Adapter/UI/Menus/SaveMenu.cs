@@ -13,7 +13,7 @@ using ZenKit;
 using ZenKit.Daedalus;
 using Logger = GUZ.Core.Util.Logger;
 
-namespace GUZ.Core.UI.Menus
+namespace GUZ.Core.Adapter.UI.Menus
 {
     public class SaveMenu : AbstractMenu
     {

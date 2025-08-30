@@ -1,10 +1,8 @@
-#if GUZ_HVR_INSTALLED
 using System;
-using GUZ.Core.UI.Menus;
 
-namespace GUZ.VR.Components.UI.Menus.Settings
+namespace GUZ.Core.Adapter.UI.Menus.Settings
 {
-    public class VRSettingsImmersionMenu : AbstractMenu
+    public class SettingsGameMenu : AbstractMenu
     {
         protected override void Undefined(string itemName, string commandName)
         {
@@ -42,4 +40,3 @@ namespace GUZ.VR.Components.UI.Menus.Settings
         }
     }
 }
-#endif
