@@ -1,5 +1,6 @@
 using GUZ.Core;
 using GUZ.Core._Adapter;
+using GUZ.VR.Model.Context;
 using ZenKit;
 #if GUZ_HVR_INSTALLED
 using GUZ.VR.Adapter;

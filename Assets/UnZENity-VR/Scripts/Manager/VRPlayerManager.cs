@@ -1,7 +1,7 @@
 ﻿#if GUZ_HVR_INSTALLED
 using GUZ.Core;
 using GUZ.VR.Adapter;
-using GUZ.VR.Components.HVROverrides;
+using GUZ.VR.Adapter.HVROverrides;
 using HurricaneVR.Framework.Core;
 using HurricaneVR.Framework.Core.Grabbers;
 using HurricaneVR.Framework.Shared;
