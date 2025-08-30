@@ -16,7 +16,7 @@ namespace GUZ.Flat
                 return;
             }
 
-            GameContext.InteractionAdapter = new FlatInteractionAdapter();
+            GameContext.ContextInteractionService = null; // TBD
             GameContext.MenuAdapter = null; // TBD
             GameContext.DialogAdapter = null; // TBD
         }

@@ -61,7 +61,7 @@ namespace GUZ.VR.Adapter.Player
         /// </summary>
         private void GothicStart()
         {
-            var playerController = GameContext.InteractionAdapter.GetCurrentPlayerController().GetComponent<VRPlayerController>();
+            var playerController = GameContext.ContextInteractionService.GetCurrentPlayerController().GetComponent<VRPlayerController>();
             playerController.Teleporter.PositionUpdate.AddListener(SetTeleportPosition);
 
             SetSmoothness();

@@ -19,13 +19,13 @@ using Logger = GUZ.Core.Util.Logger;
 
 namespace GUZ.VR.Adapter
 {
-    public class VRInteractionAdapter : IInteractionAdapter
+    public class VRContextInteractionService : IContextInteractionService
     {
         private const string _contextName = "VR";
 
         private VRPlayerController _playerController;
 
-        public VRInteractionAdapter()
+        public VRContextInteractionService()
         {
             GlobalEventDispatcher.LoadingSceneLoaded.AddListener(OnLoadingSceneLoaded);
             GlobalEventDispatcher.GothicInisInitialized.AddListener(() =>

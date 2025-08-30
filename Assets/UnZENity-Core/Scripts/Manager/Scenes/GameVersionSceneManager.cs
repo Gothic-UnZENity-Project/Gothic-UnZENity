@@ -28,7 +28,7 @@ namespace GUZ.Core.Manager.Scenes
              */
 
             // Whatever comes next, we don't want the player to move around right now.
-            GameContext.InteractionAdapter.LockPlayerInPlace();
+            GameContext.ContextInteractionService.LockPlayerInPlace();
 
             var isG1Installed = GameGlobals.Config.CheckIfGothicInstallationExists(GameVersion.Gothic1);
             var isG2Installed = GameGlobals.Config.CheckIfGothicInstallationExists(GameVersion.Gothic2);

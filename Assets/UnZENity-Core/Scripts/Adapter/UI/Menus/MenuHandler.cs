@@ -35,7 +35,7 @@ namespace GUZ.Core.Adapter.UI.Menus
             
             InstantiateMenus();
 
-            GameContext.InteractionAdapter.InitUIInteraction();
+            GameContext.ContextInteractionService.InitUIInteraction();
             
             CloseAllMenus();
         }

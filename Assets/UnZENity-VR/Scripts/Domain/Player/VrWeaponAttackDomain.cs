@@ -26,7 +26,7 @@ namespace GUZ.VR.Domain.Player
     {
         [Inject] private readonly VRPlayerService _vrPlayerService;
 
-        private CharacterController _characterController => _vrPlayerService.VRInteractionAdapter.GetVRPlayerController().CharacterController;
+        private CharacterController _characterController => _vrPlayerService.VRContextInteractionService.GetVRPlayerController().CharacterController;
 
         private const int _twoHandedFlags = (int)VmGothicEnums.ItemFlags.Item2HdAxe | (int)VmGothicEnums.ItemFlags.Item2HdSwd;
 

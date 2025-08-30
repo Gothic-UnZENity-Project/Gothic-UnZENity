@@ -24,7 +24,7 @@ namespace GUZ.Core.Util
         /// </summary>
         public void Init()
         {
-            _targetFrameRate = GameContext.InteractionAdapter.GetFrameRate();
+            _targetFrameRate = GameContext.ContextInteractionService.GetFrameRate();
 
             if (_targetFrameRate <= 0)
             {

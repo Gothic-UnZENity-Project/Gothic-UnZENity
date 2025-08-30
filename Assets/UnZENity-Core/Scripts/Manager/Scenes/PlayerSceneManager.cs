@@ -8,11 +8,11 @@ namespace GUZ.Core.Manager.Scenes
     {
         public void Init()
         {
-            // TODO - Needed?
-            // SceneManager.MoveGameObjectToScene(InteractionManager, _generalScene);
+            GameManager.I.InitPhase1();
 
-            GameContext.InteractionAdapter.CreatePlayerController(SceneManager.GetSceneByName(Constants.ScenePlayer));
-            GameContext.InteractionAdapter.CreateVRDeviceSimulator();
+
+            GameContext.ContextInteractionService.CreatePlayerController(SceneManager.GetSceneByName(Constants.ScenePlayer));
+            GameContext.ContextInteractionService.CreateVRDeviceSimulator();
 
             GlobalEventDispatcher.PlayerSceneLoaded.Invoke();
 

@@ -77,7 +77,7 @@ namespace GUZ.Core
             // Lookup is done in following places:
             // 1. CONTEXT_NAME/Prefabs/... - overwrites lookup path below, used for specific prefabs, for current context (HVR, Flat, ...)
             // 2. Prefabs/... - Located inside core module (UnZENity-Core), if we don't need special handling.
-            var contextPrefixPath = $"{GameContext.InteractionAdapter.GetContextName()}/{s}";
+            var contextPrefixPath = $"{GameContext.ContextInteractionService.GetContextName()}/{s}";
             return new[] { contextPrefixPath, s }.Select(Resources.Load<GameObject>)
                 .FirstOrDefault(newPrefab => newPrefab != null);
         });

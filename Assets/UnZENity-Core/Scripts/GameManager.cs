@@ -12,6 +12,7 @@ using GUZ.Core.Manager.Vobs;
 using GUZ.Core.Npc;
 using GUZ.Core.Services;
 using GUZ.Core.Services.Culling;
+using GUZ.Core.UnZENity_Core.Scripts.Services.Context;
 using GUZ.Core.Util;
 using GUZ.Core.World;
 using GUZ.Manager;
@@ -68,6 +69,7 @@ namespace GUZ.Core
         public SpeechToTextService SpeechToText { get; private set; }
 
 
+        [Inject] private readonly ContextInteractionService _contextInteractionService;
         [Inject] private readonly UnityMonoService _unityMonoService;
         [Inject] private readonly MusicService _musicService;
         [Inject] private readonly SpeechToTextService _speechToTextService;
@@ -92,6 +94,7 @@ namespace GUZ.Core
             base.Awake();
 
             GameContext.IsLab = false;
+            GameContext.ContextInteractionService = _contextInteractionService;
             
             // We need to set culture to this, otherwise e.g. polish numbers aren't parsed correct.
             CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;
@@ -135,28 +138,27 @@ namespace GUZ.Core
             Story = new StoryManager(DeveloperConfig);
             Routines = new RoutineManager(DeveloperConfig);
             SpeechToText = _speechToTextService;
-        }
-
-        private void Start()
-        {
-            InitPhase1();
-        }
-
-        /// <summary>
-        /// Init when game starts and Controls are set already, but no Gothic game version is selected so far.
-        /// </summary>
-        private void InitPhase1()
-        {
-            // Call init function of BootstrapSceneManager directly as it kicks off cleaning up of further loaded scenes.
-            SceneManager.GetActiveScene().GetComponentInChildren<BootstrapSceneManager>()!.Init();
-
-            SceneManager.sceneLoaded += OnSceneLoaded;
-            SceneManager.sceneUnloaded += OnSceneUnloaded;
 
             ZenKit.Logger.Set(Config.Dev.ZenKitLogLevel, Logger.OnZenKitLogMessage);
             DirectMusic.Logger.Set(Config.Dev.DirectMusicLogLevel, Logger.OnDirectMusicLogMessage);
 
             _fileLoggingHandler.Init(Config.Root);
+        }
+
+        private void Start()
+        {
+            SceneManager.sceneLoaded += OnSceneLoaded;
+            SceneManager.sceneUnloaded += OnSceneUnloaded;
+
+            // Call init function of BootstrapSceneManager directly as it kicks off cleaning up of further loaded scenes.
+            SceneManager.GetActiveScene().GetComponentInChildren<BootstrapSceneManager>()!.Init();
+        }
+
+        /// <summary>
+        /// Init when game starts and Controls are set already, but no Gothic game version is selected so far.
+        /// </summary>
+        public void InitPhase1()
+        {
             _frameSkipper.Init();
             Loading.Init();
             Lights.Init();

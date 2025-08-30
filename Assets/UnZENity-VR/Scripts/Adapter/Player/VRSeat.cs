@@ -65,7 +65,7 @@ namespace GUZ.VR.Adapter.Player
             //get player object
             _canPlayerSit = false; // disable this function to cooldown
 
-            GameObject player = GameContext.InteractionAdapter.GetCurrentPlayerController();
+            GameObject player = GameContext.ContextInteractionService.GetCurrentPlayerController();
             
             _canvasFade = player.FindChildRecursively("GlobalCameraFade").GetComponent<HVRCanvasFade>();
 
@@ -90,7 +90,7 @@ namespace GUZ.VR.Adapter.Player
 
         private IEnumerator SitDown(GameObject player)
         {
-            GameContext.InteractionAdapter.LockPlayerInPlace();
+            GameContext.ContextInteractionService.LockPlayerInPlace();
             _currentSnapPoint = GetNearestSnapPoint(player.transform.position);
 
             // Fade in
@@ -114,7 +114,7 @@ namespace GUZ.VR.Adapter.Player
 
             // Move player
             player.transform.position += player.transform.TransformDirection(new Vector3(0, 0.5f, 1f));
-            GameContext.InteractionAdapter.UnlockPlayer();
+            GameContext.ContextInteractionService.UnlockPlayer();
 
             // Fade out
             _canvasFade.Fade(0f, _fadeSpeed);

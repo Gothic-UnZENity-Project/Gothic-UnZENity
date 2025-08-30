@@ -3,7 +3,7 @@ using UnityEngine.SceneManagement;
 
 namespace GUZ.Core._Adapter
 {
-    public interface IInteractionAdapter
+    public interface IContextInteractionService
     {
         string GetContextName();
         float GetFrameRate();

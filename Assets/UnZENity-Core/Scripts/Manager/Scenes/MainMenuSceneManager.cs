@@ -14,7 +14,7 @@ namespace GUZ.Core.Manager.Scenes
 
         public void Init()
         {
-            GameContext.InteractionAdapter.InitUIInteraction();
+            GameContext.ContextInteractionService.InitUIInteraction();
 
             if (!GameGlobals.Config.Dev.EnableMainMenu)
             {
@@ -38,8 +38,8 @@ namespace GUZ.Core.Manager.Scenes
             // We set the gothic background image in MainMenu with this material.
             _mainMenuImageBackground.GetComponent<MeshRenderer>().material = GameGlobals.Textures.MainMenuImageBackgroundMaterial;
 
-            GameContext.InteractionAdapter.TeleportPlayerTo(Vector3.zero);
-            GameContext.InteractionAdapter.DisableMenus();
+            GameContext.ContextInteractionService.TeleportPlayerTo(Vector3.zero);
+            GameContext.ContextInteractionService.DisableMenus();
 
             GlobalEventDispatcher.MainMenuSceneLoaded.Invoke();
         }

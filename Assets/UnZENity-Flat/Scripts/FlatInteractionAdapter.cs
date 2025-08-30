@@ -6,7 +6,7 @@ using UnityEngine.SceneManagement;
 
 namespace GUZ.Flat
 {
-    public class FlatInteractionAdapter : IInteractionAdapter
+    public class FlatContextInteractionService : IContextInteractionService
     {
         private GameObject _playerController;
 

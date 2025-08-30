@@ -57,12 +57,12 @@ namespace GUZ.VR
 #if UNITY_EDITOR
         private void OnDrawGizmos()
         {
-            _vobMeshCullingDomain.OnDrawGizmos();
+            _vobMeshCullingDomain?.OnDrawGizmos();
         }
 
         private void OnValidate()
         {
-            _skyManager.OnValidate();
+            _skyManager?.OnValidate();
         }
 #endif
     }

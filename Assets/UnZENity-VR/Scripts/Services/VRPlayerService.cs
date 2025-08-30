@@ -14,8 +14,8 @@ namespace GUZ.VR.Services
     /// </summary>
     public class VRPlayerService
     {
-        public VRInteractionAdapter VRInteractionAdapter => (VRInteractionAdapter)GameContext.InteractionAdapter;
-        public VRPlayerInputs VRPlayerInputs => VRInteractionAdapter.GetVRPlayerInputs();
+        public VRContextInteractionService VRContextInteractionService => GameContext.ContextInteractionService.GetImpl<VRContextInteractionService>();
+        public VRPlayerInputs VRPlayerInputs => VRContextInteractionService.GetVRPlayerInputs();
         
         public GameObject GrabbedItemLeft;
         public GameObject GrabbedObjectRight;
@@ -47,9 +47,9 @@ namespace GUZ.VR.Services
         public HVRController GetHand(HVRHandSide side)
         {
             if (side == HVRHandSide.Left)
-                return GameContext.InteractionAdapter.GetCurrentPlayerController().GetComponent<VRPlayerController>().LeftHand.Controller;
+                return GameContext.ContextInteractionService.GetCurrentPlayerController().GetComponent<VRPlayerController>().LeftHand.Controller;
             else
-                return GameContext.InteractionAdapter.GetCurrentPlayerController().GetComponent<VRPlayerController>().RightHand.Controller;
+                return GameContext.ContextInteractionService.GetCurrentPlayerController().GetComponent<VRPlayerController>().RightHand.Controller;
         }
     }
 }

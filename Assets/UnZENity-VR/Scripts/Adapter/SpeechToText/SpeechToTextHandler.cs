@@ -58,7 +58,7 @@ namespace GUZ.VR.Adapter.SpeechToText
                 return;
             }
             
-            _playerInputs = ((VRInteractionAdapter)GameContext.InteractionAdapter).GetVRPlayerInputs();
+            _playerInputs = GameContext.ContextInteractionService.GetImpl<VRContextInteractionService>().GetVRPlayerInputs();
             _state = State.Idle;
         }
 

@@ -1,0 +1,81 @@
+using GUZ.Core._Adapter;
+using UnityEngine;
+using UnityEngine.SceneManagement;
+
+namespace GUZ.Core.UnZENity_Core.Scripts.Services.Context
+{
+    public class ContextInteractionService : IContextInteractionService
+    {
+        private IContextInteractionService _impl;
+
+        public void SetImpl(IContextInteractionService proxy)
+        {
+            _impl = proxy;
+        }
+
+        public T GetImpl<T>() where T : IContextInteractionService
+        {
+            return (T)_impl;
+        }
+
+        public string GetContextName()
+        {
+            return _impl.GetContextName();
+        }
+
+        public float GetFrameRate()
+        {
+            return _impl.GetFrameRate();
+        }
+
+        public GameObject CreatePlayerController(Scene scene)
+        {
+            return _impl.CreatePlayerController(scene);
+        }
+
+        public GameObject GetCurrentPlayerController()
+        {
+            return _impl.GetCurrentPlayerController();
+        }
+
+        public void CreateVRDeviceSimulator()
+        {
+            _impl.CreateVRDeviceSimulator();
+        }
+
+        public void LockPlayerInPlace()
+        {
+            _impl.LockPlayerInPlace();
+        }
+
+        public void UnlockPlayer()
+        {
+            _impl.UnlockPlayer();
+        }
+
+        public void TeleportPlayerTo(Vector3 position, Quaternion rotation = default)
+        {
+            _impl.TeleportPlayerTo(position,rotation);
+        }
+
+        public void InitUIInteraction()
+        {
+            _impl.InitUIInteraction();
+        }
+
+        public void IntroduceChapter(string chapter, string text, string texture, string wav, int time)
+        {
+            _impl.IntroduceChapter(chapter, text, texture, wav, time);
+        }
+
+        public void DisableMenus()
+        {
+            _impl.DisableMenus();
+        }
+
+        public void EnableMenus()
+        {
+            _impl.EnableMenus();
+        }
+    }
+}

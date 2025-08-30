@@ -22,7 +22,6 @@ namespace GUZ.VR
 
 // We register VR only if we have HVR installed.
 #if GUZ_HVR_INSTALLED
-            GameContext.InteractionAdapter = new VRInteractionAdapter();
             GameContext.MenuAdapter = new VRMenuAdapter();
             GameContext.DialogAdapter = new VRDialogAdapter();
 #else

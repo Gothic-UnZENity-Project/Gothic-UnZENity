@@ -12,7 +12,7 @@ namespace GUZ.Core.Manager.Scenes
         {
             GameGlobals.Loading.InitLoading(_loadingBarHandler);
 
-            GameContext.InteractionAdapter.TeleportPlayerTo(_loadingBarHandler.transform.position);
+            GameContext.ContextInteractionService.TeleportPlayerTo(_loadingBarHandler.transform.position);
             
             GlobalEventDispatcher.LoadingSceneLoaded.Invoke();
 

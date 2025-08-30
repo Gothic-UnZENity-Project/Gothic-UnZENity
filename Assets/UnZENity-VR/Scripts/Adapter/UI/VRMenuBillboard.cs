@@ -25,7 +25,7 @@ namespace GUZ.VR.Adapter.UI
         {
             if (_playerTransform == null)
             {
-                _playerTransform = GameContext.InteractionAdapter.GetCurrentPlayerController().transform;
+                _playerTransform = GameContext.ContextInteractionService.GetCurrentPlayerController().transform;
                 _playerController = _playerTransform.GetComponent<VRPlayerController>();
             }
 

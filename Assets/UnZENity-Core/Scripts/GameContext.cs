@@ -1,11 +1,13 @@
 using System;
 using GUZ.Core._Adapter;
+using GUZ.Core.UnZENity_Core.Scripts.Services.Context;
 using ZenKit;
 #if GUZ_HVR_INSTALLED
 #endif
 
 namespace GUZ.Core
 {
+    [Obsolete("Move to separate Context*Service classes injected via DI.")]
     public static class GameContext
     {
         public static bool IsZenKitInitialized;
@@ -14,7 +16,7 @@ namespace GUZ.Core
 
         public static string GameLanguage;
 
-        public static IInteractionAdapter InteractionAdapter;
+        public static ContextInteractionService ContextInteractionService;
         public static IMenuAdapter MenuAdapter;
         public static IDialogAdapter DialogAdapter;
         public static IGameVersionAdapter GameVersionAdapter;
@@ -31,7 +33,7 @@ namespace GUZ.Core
         {
             GlobalEventDispatcher.RegisterControlAdapters.Invoke(controls);
             
-            if (InteractionAdapter == null)
+            if (ContextInteractionService == null)
             {
                 throw new ArgumentOutOfRangeException($"No control module registered for {controls}");
             }

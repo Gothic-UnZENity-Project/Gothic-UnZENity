@@ -62,7 +62,7 @@ namespace GUZ.VR.Adapter.Player
         {
             Shader.SetGlobalInt(Constants.ShaderPropertyWaterEffectToggle, 0);
 
-            var vrPlayer = ((VRInteractionAdapter)GameContext.InteractionAdapter).GetVRPlayerController();
+            var vrPlayer = GameContext.ContextInteractionService.GetImpl<VRContextInteractionService>().GetVRPlayerController();
             _leftHandAnimator = vrPlayer.LeftHand.HandAnimator;
             _rightHandAnimator = vrPlayer.RightHand.HandAnimator;
             

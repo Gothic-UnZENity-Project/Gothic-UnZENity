@@ -42,9 +42,9 @@ namespace GUZ.Core.Manager.Scenes
         
         public void Init()
         {
-            GameContext.InteractionAdapter.DisableMenus();
-            GameContext.InteractionAdapter.InitUIInteraction();
-            GameContext.InteractionAdapter.TeleportPlayerTo(_loadingBarHandler.transform.position);
+            GameContext.ContextInteractionService.DisableMenus();
+            GameContext.ContextInteractionService.InitUIInteraction();
+            GameContext.ContextInteractionService.TeleportPlayerTo(_loadingBarHandler.transform.position);
 
 #pragma warning disable CS4014 // Do not wait. We want to update player movement (VR) and camera view (progress bar)
             CreateCaches();
@@ -85,7 +85,7 @@ namespace GUZ.Core.Manager.Scenes
                 // Sleeper temple music (similar to installation music)
                 _musicService.Play("KAT_DAY_STD");
                 
-                GameContext.InteractionAdapter.DisableMenus();
+                GameContext.ContextInteractionService.DisableMenus();
                 _loadingBarHandler.LevelCount = worldsToLoad.Length;
                 GameGlobals.Loading.InitLoading(_loadingBarHandler);
 
@@ -168,7 +168,7 @@ namespace GUZ.Core.Manager.Scenes
                 GameGlobals.Loading.StopLoading();
 
                 // We need to grant the player always the option to quit the game via menu if something fails.
-                GameContext.InteractionAdapter.EnableMenus();
+                GameContext.ContextInteractionService.EnableMenus();
             }
         }
     }

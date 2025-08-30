@@ -55,7 +55,7 @@ namespace GUZ.VR.Adapter.Marvin
         public void OnSelectHeroClick()
         {
             GameGlobals.Marvin.IsMarvinSelectionMode = true;
-            GameGlobals.Marvin.MarvinSelectionGO = _vrPlayerService.VRInteractionAdapter.GetCurrentPlayerController();
+            GameGlobals.Marvin.MarvinSelectionGO = _vrPlayerService.VRContextInteractionService.GetCurrentPlayerController();
 
             _selectHeroButton.SetActive();
             _chooseVobButton.SetInactive();

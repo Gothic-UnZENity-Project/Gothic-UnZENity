@@ -93,7 +93,7 @@ namespace GUZ.Core.Manager
                 return;
             }
 
-            GameContext.InteractionAdapter.IntroduceChapter(
+            GameContext.ContextInteractionService.IntroduceChapter(
                 _chapterSwitchData.chapter,
                 _chapterSwitchData.text,
                 _chapterSwitchData.texture,

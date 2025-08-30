@@ -4,6 +4,7 @@ using GUZ.Core.Manager;
 using GUZ.Core.Manager.Vobs;
 using GUZ.Core.Services;
 using GUZ.Core.Services.Culling;
+using GUZ.Core.UnZENity_Core.Scripts.Services.Context;
 using Reflex.Core;
 using UnityEngine;
 
@@ -14,6 +15,7 @@ namespace GUZ.Core
         public void InstallBindings(ContainerBuilder containerBuilder)
         {
             containerBuilder.AddSingleton(typeof(UnityMonoService));
+            containerBuilder.AddSingleton(typeof(ContextInteractionService));
 
             containerBuilder.AddSingleton(typeof(MusicService));
             containerBuilder.AddSingleton(typeof(NpcMeshCullingService));

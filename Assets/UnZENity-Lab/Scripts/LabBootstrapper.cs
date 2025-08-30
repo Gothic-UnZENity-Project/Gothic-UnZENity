@@ -153,8 +153,8 @@ namespace GUZ.Lab
 
         private async Task InitLab()
         {
-            GameContext.InteractionAdapter.CreatePlayerController(SceneManager.GetActiveScene());
-            GameContext.InteractionAdapter.CreateVRDeviceSimulator();
+            GameContext.ContextInteractionService.CreatePlayerController(SceneManager.GetActiveScene());
+            GameContext.ContextInteractionService.CreateVRDeviceSimulator();
             // TODO - Broken. Fix before use.
             // NpcHelper.CacheHero();
 
@@ -178,7 +178,7 @@ namespace GUZ.Lab
             VobItemHandler.Bootstrap();
             LabLockHandler.Bootstrap();
 
-            GameContext.InteractionAdapter.InitUIInteraction(); // For (e.g.) QuestLog to enable hand pointer.
+            GameContext.ContextInteractionService.InitUIInteraction(); // For (e.g.) QuestLog to enable hand pointer.
             BootstrapPlayer();
         }
 
