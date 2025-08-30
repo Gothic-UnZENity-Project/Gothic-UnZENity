@@ -17,7 +17,6 @@ namespace GUZ.VR.Components
         //this will enable player to sit on benches/chairs etc
         private Vector3 _posOffset = new(0, -0.75f, 0.9f);
         private Vector3 _eulerOffset = new(0, 180, 0);
-        private const float _cameraFadeDuration = 0.15f;
         private const float _sittingCooldown = 0.5f;
         
         // Fade components

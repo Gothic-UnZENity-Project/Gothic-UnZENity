@@ -8,7 +8,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using Logger = GUZ.Core.Util.Logger;
 
-namespace GUZ.Core.UI
+namespace GUZ.Core.Adapter.UI
 {
     /// <summary>
     /// Alter font of Text based on G1 default/highlight fonts.

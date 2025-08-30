@@ -3,7 +3,7 @@ using UnityEngine.Audio;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
 
-namespace GUZ.Core.UI
+namespace GUZ.Core.Adapter.UI
 {
     public class AudioMixerHandler : MonoBehaviour
     {

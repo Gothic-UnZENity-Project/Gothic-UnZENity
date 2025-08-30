@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-namespace GUZ.Core.UI
+namespace GUZ.Core.Adapter.UI
 {
     /// <summary>
     /// Add a state to the button. Reflected in a consistent color as Pressed, also after UnitUI has another element in focus.
