@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using ZenKit;
 
-namespace GUZ.Core.Adapter
+namespace GUZ.Core._Adapter
 {
     /// <summary>
     /// We need to find a way to properly instantiate every module which wants to listen to GUZContext.Register() event.

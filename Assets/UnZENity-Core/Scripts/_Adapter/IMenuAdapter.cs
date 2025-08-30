@@ -1,6 +1,6 @@
 using GUZ.Core.UI.Menus.Adapter.Menu;
 
-namespace GUZ.Core.Adapter
+namespace GUZ.Core._Adapter
 {
     public interface IMenuAdapter
     {

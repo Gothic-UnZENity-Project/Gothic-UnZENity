@@ -1,7 +1,6 @@
 using System;
 using GUZ.Core;
-using GUZ.Core.Adapter;
-using GUZ.Core.UI.Menus.Adapter.Menu;
+using GUZ.Core._Adapter;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 

@@ -2,8 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using GUZ.Core;
-using GUZ.Core.Adapter;
-using GUZ.Core.Globals;
+using GUZ.Core._Adapter;
 using GUZ.Core.UI.Menus.Adapter.Menu;
 using GUZ.Core.UI.Menus.Adapter.MenuItem;
 using HurricaneVR.Framework.Core.Player;

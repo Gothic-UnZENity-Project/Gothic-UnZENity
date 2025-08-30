@@ -1,5 +1,5 @@
 using System;
-using GUZ.Core.Adapter;
+using GUZ.Core._Adapter;
 using ZenKit;
 #if GUZ_HVR_INSTALLED
 #endif

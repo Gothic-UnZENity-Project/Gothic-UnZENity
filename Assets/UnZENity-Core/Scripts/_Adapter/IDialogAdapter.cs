@@ -3,7 +3,7 @@ using GUZ.Core.Data;
 using UnityEngine;
 using ZenKit.Daedalus;
 
-namespace GUZ.Core.Adapter
+namespace GUZ.Core._Adapter
 {
     public interface IDialogAdapter
     {

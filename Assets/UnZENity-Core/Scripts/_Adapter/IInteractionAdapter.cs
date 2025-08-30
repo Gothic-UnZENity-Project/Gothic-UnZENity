@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace GUZ.Core.Adapter
+namespace GUZ.Core._Adapter
 {
     public interface IInteractionAdapter
     {
