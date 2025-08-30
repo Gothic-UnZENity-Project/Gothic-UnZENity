@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using GUZ.Core.Data.Container;
+using GUZ.Core.Services;
 using GUZ.Core.Util;
 using GUZ.Core.World;
 using UnityEngine;
@@ -17,8 +18,8 @@ namespace GUZ.Core.Vob
 
         private VobContainer _vobContainer;
 
-        private DateTime _startSound1 = GameTime.MinTime;
-        private DateTime _endSound1 = GameTime.MaxTime;
+        private DateTime _startSound1 = GameTimeService.MinTime;
+        private DateTime _endSound1 = GameTimeService.MaxTime;
 
         // We need to avoid starting the Coroutine twice.
         private bool _isCoroutineRunning;

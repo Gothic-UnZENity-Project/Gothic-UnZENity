@@ -1,10 +1,11 @@
 #if GUZ_HVR_INSTALLED
 using GUZ.Core;
 using GUZ.Core.Manager;
-using GUZ.Core.UnZENity_Core.Scripts.Manager;
+using GUZ.Core.Services;
 using GUZ.Core.Util;
 using GUZ.VR.Adapter.HVROverrides;
 using GUZ.VR.Adapter.UI;
+using Reflex.Attributes;
 using UnityEngine;
 using Logger = GUZ.Core.Util.Logger;
 
@@ -18,16 +19,19 @@ namespace GUZ.VR.Adapter.SpeechToText
         private GameObject _recordingImage;
         [SerializeField]
         private GameObject _aiWaitingImage;
-        
+
+
+        [Inject] private readonly SpeechToTextService _speechToTextService;
+
+
         private const int _maxRecordingLength = 30;
         private const int _recordingSampleRate = 16000;
 
         private VRPlayerInputs _playerInputs;
-        
+
         // Unity's Microphone API will always store output in an AudioClip.
         private AudioClip _recordedClip;
 
-        private VoiceManager.WhisperManager _whisper => GameGlobals.Voice.Whisper;
 
         private int _microphoneIndex => GameGlobals.Config.Gothic.GetInt(VRConstants.IniNames.Microphone);
         
@@ -46,7 +50,7 @@ namespace GUZ.VR.Adapter.SpeechToText
             _recordingImage.SetActive(false);
             _aiWaitingImage.SetActive(false);
             
-            if (!GameGlobals.Voice.IsEnabled)
+            if (!GameGlobals.SpeechToText.IsEnabled)
             {
                 Logger.Log("Disabling SpeechToText feature as Manager is Disabled (e.g. because of Microphone or Whisper).", LogCat.Audio);
                 _state = State.Uninitialized;
@@ -81,13 +85,13 @@ namespace GUZ.VR.Adapter.SpeechToText
             if (_state != State.AiWaiting)
                 return;
             
-            if (!_whisper.IsTranscribing)
+            if (!_speechToTextService.IsTranscribing())
             {
                 _state = State.Idle;
                 _recordingImage.SetActive(false);
                 _aiWaitingImage.SetActive(false);
 
-                var spokenText = _whisper.OutputString;
+                var spokenText = _speechToTextService.GetOutputString();
                 var dialogOptions = _vrDialog.CurrentDialogOptionTexts;
                 var result = new TextMatcher(dialogOptions.ToArray()).FindBestMatch(spokenText);
 
@@ -138,7 +142,7 @@ namespace GUZ.VR.Adapter.SpeechToText
             _state = State.AiWaiting;
             
 #pragma warning disable CS4014 // Do not wait. We want to let Whisper work in the background
-            _whisper.StartExec(_recordedClip);
+            _speechToTextService.StartExec(_recordedClip);
 #pragma warning restore CS4014
         }
 

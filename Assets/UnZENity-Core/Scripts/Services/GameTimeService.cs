@@ -1,19 +1,26 @@
 using System;
 using System.Collections;
 using GUZ.Core.Config;
+using GUZ.Core.Manager;
+using Reflex.Attributes;
 using UnityEngine;
 
-namespace GUZ.Core.World
+namespace GUZ.Core.Services
 {
-    public enum GameTimeInterval
+    public class GameTimeService
     {
-        EveryGameSecond,
-        EveryGameMinute,
-        EveryGameHour
-    }
+        public enum GameTimeInterval
+        {
+            EveryGameSecond,
+            EveryGameMinute,
+            EveryGameHour
+        }
 
-    public class GameTime
-    {
+
+        [Inject] private readonly ConfigManager _configManager;
+        [Inject] private readonly UnityMonoService _unityMonoService;
+
+
         public static readonly DateTime MinTime = new(1, 1, 1, 0, 0, 0);
         public static readonly DateTime MaxTime = new(9999, 12, 31, 23, 59, 59);
 
@@ -29,25 +36,13 @@ namespace GUZ.Core.World
         private DateTime _time = new(1, 1, 1, 15, 0, 0);
         private Coroutine _timeTickCoroutineHandler;
 
-        private readonly ICoroutineManager _coroutineManager;
-        private readonly int _featureStartHour;
-        private readonly int _featureStartMinute;
-        private readonly float _featureTimeMultiplier;
-
-        public GameTime(DeveloperConfig config, ICoroutineManager coroutineManager)
-        {
-            _coroutineManager = coroutineManager;
-            _featureStartHour = config.StartTimeHour;
-            _featureStartMinute = config.StartTimeMinute;
-            _featureTimeMultiplier = config.TimeSpeedMultiplier;
-        }
 
         public void Init()
         {
             // Set debug value for current Time.
-            _time = new DateTime(_time.Year, _time.Month, _time.Day, _featureStartHour, _featureStartMinute,
+            _time = new DateTime(_time.Year, _time.Month, _time.Day, _configManager.Dev.StartTimeHour, _configManager.Dev.StartTimeMinute,
                 _time.Second);
-            _minutesInHour = _featureStartMinute;
+            _minutesInHour = _configManager.Dev.StartTimeMinute;
 
             GlobalEventDispatcher.LoadingSceneLoaded.AddListener(PreWorldLoaded);
             GlobalEventDispatcher.WorldSceneLoaded.AddListener(PostWorldLoaded);
@@ -58,13 +53,13 @@ namespace GUZ.Core.World
             // Pause Coroutine until next world is loaded.
             if (_timeTickCoroutineHandler != null)
             {
-                _coroutineManager.StopCoroutine(_timeTickCoroutineHandler);
+                _unityMonoService.StopCoroutine(_timeTickCoroutineHandler);
             }
         }
 
         private void PostWorldLoaded()
         {
-            _timeTickCoroutineHandler = _coroutineManager.StartCoroutine(TimeTick());
+            _timeTickCoroutineHandler = _unityMonoService.StartCoroutine(TimeTick());
         }
 
         public DateTime GetCurrentDateTime()
@@ -85,7 +80,7 @@ namespace GUZ.Core.World
 
                 GlobalEventDispatcher.GameTimeSecondChangeCallback.Invoke(_time);
                 RaiseMinuteAndHourEvent();
-                yield return new WaitForSeconds(_oneIngameSecond / _featureTimeMultiplier);
+                yield return new WaitForSeconds(_oneIngameSecond / _configManager.Dev.TimeSpeedMultiplier);
             }
         }
 

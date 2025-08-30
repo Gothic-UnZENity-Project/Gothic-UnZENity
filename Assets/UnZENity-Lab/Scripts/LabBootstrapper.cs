@@ -9,11 +9,10 @@ using GUZ.Core.Creator.Meshes;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
-using GUZ.Core.Manager.Culling;
 using GUZ.Core.Manager.Vobs;
 using GUZ.Core.Npc;
+using GUZ.Core.Services;
 using GUZ.Core.Services.Culling;
-using GUZ.Core.UnZENity_Core.Scripts.Manager;
 using GUZ.Core.Util;
 using GUZ.Core.Vm;
 using GUZ.Core.World;
@@ -54,8 +53,6 @@ namespace GUZ.Lab
         private VobManager _vobManager;
         private NpcManager _npcManager;
         private AnimationManager _animationManager;
-        private SkyManager _skyManager;
-        private GameTime _gameTime;
         private MarvinManager _marvinManager;
 
         public ConfigManager Config => _configManager;
@@ -66,7 +63,7 @@ namespace GUZ.Lab
         public PlayerManager Player => null;
         public MarvinManager Marvin => _marvinManager;
         public SkyManager Sky => _skyManager;
-        public GameTime Time => _gameTime;
+        public GameTimeService Time => _gameTimeService;
         public MusicService Music => Music;
         public RoutineManager Routines => _npcRoutineManager;
         public TextureManager Textures => _textureManager;
@@ -80,10 +77,13 @@ namespace GUZ.Lab
         public NpcMeshCullingService NpcMeshCulling => null;
         public StoryManager Story => _story;
         public VideoManager Video => _videoManager;
-        public VoiceManager Voice => null;
+        public SpeechToTextService SpeechToText => null;
 
         
         [Inject] private readonly MusicService _musicService;
+        [Inject] private readonly SkyManager _skyManager;
+        [Inject] private readonly GameTimeService _gameTimeService;
+
 
         private void Awake()
         {
@@ -132,8 +132,6 @@ namespace GUZ.Lab
             _npcManager = new NpcManager();
             _vobManager = new VobManager();
             _animationManager = new AnimationManager();
-            _gameTime = new GameTime(Config.Dev, this);
-            _skyManager = new SkyManager(Config.Dev, _gameTime);
             _marvinManager = new MarvinManager();
 
             ResourceLoader.Init(Config.Root.Gothic1Path);

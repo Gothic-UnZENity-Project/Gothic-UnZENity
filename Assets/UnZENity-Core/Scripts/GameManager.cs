@@ -10,8 +10,8 @@ using GUZ.Core.Manager;
 using GUZ.Core.Manager.Scenes;
 using GUZ.Core.Manager.Vobs;
 using GUZ.Core.Npc;
+using GUZ.Core.Services;
 using GUZ.Core.Services.Culling;
-using GUZ.Core.UnZENity_Core.Scripts.Manager;
 using GUZ.Core.Util;
 using GUZ.Core.World;
 using GUZ.Manager;
@@ -32,7 +32,6 @@ namespace GUZ.Core
 
         private FileLoggingHandler _fileLoggingHandler;
         private FrameSkipper _frameSkipper;
-        private BarrierManager _barrierManager;
 
         public ConfigManager Config { get; private set; }
         public LocalizationManager Localization { get; private set; }
@@ -46,7 +45,7 @@ namespace GUZ.Core
         public MarvinManager Marvin { get; private set;  }
         public SkyManager Sky { get; private set; }
 
-        public GameTime Time { get; private set; }
+        public GameTimeService Time { get; private set; }
         
         public VideoManager Video { get; private set; }
         
@@ -66,10 +65,13 @@ namespace GUZ.Core
         public AnimationManager Animations { get; private set; }
         public VobMeshCullingService VobMeshCulling { get; private set; }
         public NpcMeshCullingService NpcMeshCulling { get; private set; }
-        public VoiceManager Voice { get; private set; }
+        public SpeechToTextService SpeechToText { get; private set; }
+
 
         [Inject] private readonly UnityMonoService _unityMonoService;
         [Inject] private readonly MusicService _musicService;
+        [Inject] private readonly SpeechToTextService _speechToTextService;
+        [Inject] private readonly GameTimeService _gameTimeService;
 
         [Inject] private readonly NpcMeshCullingService _npcMeshCullingService;
         [Inject] private readonly VobMeshCullingService _vobMeshCullingService;
@@ -78,6 +80,9 @@ namespace GUZ.Core
         [Inject] private readonly VobMeshCullingDomain _vobMeshCullingDomain;
         [Inject] private readonly VobSoundCullingDomain _vobSoundCullingDomain;
 
+        [Inject] private readonly SkyManager _skyManager;
+        [Inject] private readonly BarrierManager _barrierManager;
+        [Inject] private readonly LoadingManager _loadingManager;
 
         [Inject] private readonly VobManager _vobManager;
         [Inject] private readonly ConfigManager _configManager;
@@ -113,7 +118,7 @@ namespace GUZ.Core
             SaveGame = new SaveGameManager();
             Textures = GetComponent<TextureManager>();
             Font = GetComponent<FontManager>();
-            Loading = new LoadingManager();
+            Loading = _loadingManager;
             StaticCache = new StaticCacheManager();
             Vobs = _vobManager;
             Npcs = new NpcManager();
@@ -121,16 +126,15 @@ namespace GUZ.Core
             Animations = new AnimationManager();
             VobMeshCulling = _vobMeshCullingService;
             NpcMeshCulling = _npcMeshCullingService;
-            _barrierManager = new BarrierManager(DeveloperConfig);
             Lights = new StationaryLightsManager();
             Player = new PlayerManager(DeveloperConfig);
             Marvin = new MarvinManager();
-            Time = new GameTime(DeveloperConfig, this);
+            Time = _gameTimeService;
             Video = new VideoManager(DeveloperConfig);
-            Sky = new SkyManager(DeveloperConfig, Time);
+            Sky = _skyManager;
             Story = new StoryManager(DeveloperConfig);
             Routines = new RoutineManager(DeveloperConfig);
-            Voice = new VoiceManager();
+            SpeechToText = _speechToTextService;
         }
 
         private void Start()
@@ -187,7 +191,7 @@ namespace GUZ.Core
             Npcs.Init(this);
 
             Bootstrapper.Boot();
-            Voice.Init(); // Init after language set.
+            SpeechToText.Init(); // Init after language set.
 
             GlobalEventDispatcher.LevelChangeTriggered.AddListener((world, spawn) =>
             {
@@ -259,55 +263,15 @@ namespace GUZ.Core
             Logger.Log($"Scene unloaded: {scene.name}", LogCat.Loading);
         }
 
-        private void Update()
-        {
-            NpcMeshCulling.Update();
-            Loading.Update();
-        }
-
-        private void FixedUpdate()
-        {
-            _barrierManager.FixedUpdate();
-        }
-
-        private void LateUpdate()
-        {
-            Lights.LateUpdate();
-        }
-
-        private void OnValidate()
-        {
-            Sky?.OnValidate();
-        }
-
-        private void OnDrawGizmos()
-        {
-            VobMeshCulling?.OnDrawGizmos();
-        }
-
         public void OnDestroy()
         {
             _fileLoggingHandler.Destroy();
 
-            Loading = null;
             VobMeshCulling = null;
             NpcMeshCulling = null;
-            _barrierManager = null;
             Lights = null;
             Time = null;
-            Sky = null;
             Routines = null;
-        }
-
-        private void OnApplicationQuit()
-        {
-            Bootstrapper.OnApplicationQuit();
-
-            _npcMeshCullingDomain.OnApplicationQuit();
-            _vobMeshCullingDomain.OnApplicationQuit();
-            _vobSoundCullingDomain.OnApplicationQuit();
-            
-            Voice?.Dispose();
         }
     }
 }

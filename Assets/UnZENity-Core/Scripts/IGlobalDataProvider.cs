@@ -1,11 +1,10 @@
 using GUZ.Core.Animations;
 using GUZ.Core.Config;
 using GUZ.Core.Manager;
-using GUZ.Core.Manager.Culling;
 using GUZ.Core.Manager.Vobs;
 using GUZ.Core.Npc;
+using GUZ.Core.Services;
 using GUZ.Core.Services.Culling;
-using GUZ.Core.UnZENity_Core.Scripts.Manager;
 using GUZ.Core.World;
 using GUZ.Manager;
 
@@ -22,7 +21,7 @@ namespace GUZ.Core
         public PlayerManager Player { get; }
         public MarvinManager Marvin { get; }
         public SkyManager Sky { get; }
-        public GameTime Time { get; }
+        public GameTimeService Time { get; }
         public VideoManager Video { get; }
         public RoutineManager Routines { get; }
         public TextureManager Textures { get; }
@@ -35,6 +34,6 @@ namespace GUZ.Core
         public AnimationManager Animations { get; }
         public VobMeshCullingService VobMeshCulling { get; }
         public NpcMeshCullingService NpcMeshCulling { get; }
-        public VoiceManager Voice { get; }
+        public SpeechToTextService SpeechToText { get; }
     }
 }

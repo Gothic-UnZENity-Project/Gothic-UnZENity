@@ -1,11 +1,10 @@
 using GUZ.Core.Animations;
 using GUZ.Core.Config;
 using GUZ.Core.Manager;
-using GUZ.Core.Manager.Culling;
 using GUZ.Core.Manager.Vobs;
 using GUZ.Core.Npc;
+using GUZ.Core.Services;
 using GUZ.Core.Services.Culling;
-using GUZ.Core.UnZENity_Core.Scripts.Manager;
 using GUZ.Core.World;
 using GUZ.Manager;
 
@@ -23,7 +22,7 @@ namespace GUZ.Core
         public static PlayerManager Player => Instance.Player;
         public static MarvinManager Marvin => Instance.Marvin;
         public static SkyManager Sky => Instance.Sky;
-        public static GameTime Time => Instance.Time;
+        public static GameTimeService Time => Instance.Time;
         public static VideoManager Video => Instance.Video;
         public static RoutineManager Routines => Instance.Routines;
         public static TextureManager Textures => Instance.Textures;
@@ -36,6 +35,6 @@ namespace GUZ.Core
         public static AnimationManager Animations => Instance.Animations;
         public static VobMeshCullingService VobMeshCulling => Instance.VobMeshCulling;
         public static NpcMeshCullingService NpcMeshCulling => Instance.NpcMeshCulling;
-        public static VoiceManager Voice => Instance.Voice;
+        public static SpeechToTextService SpeechToText => Instance.SpeechToText;
     }
 }

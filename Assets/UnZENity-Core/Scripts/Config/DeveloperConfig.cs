@@ -1,4 +1,5 @@
 using System;
+using GUZ.Core.Services;
 using GUZ.Core.World;
 using MyBox;
 using UnityEngine;
@@ -232,7 +233,7 @@ namespace GUZ.Core.Config
 
         [Range(0, 1)]
         public float SunLightIntensity = 1;
-        public GameTimeInterval SunUpdateInterval = GameTimeInterval.EveryGameMinute;
+        public GameTimeService.GameTimeInterval SunUpdateInterval = GameTimeService.GameTimeInterval.EveryGameMinute;
         public Color AmbientLightColor = new(0.1f, 0.1f, 0.1f, 1);
 
 

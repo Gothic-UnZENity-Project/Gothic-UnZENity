@@ -6,8 +6,10 @@ using GUZ.Core.Config;
 using GUZ.Core.Creator.Sounds;
 using GUZ.Core.Data;
 using GUZ.Core.Extensions;
+using GUZ.Core.Services;
 using GUZ.Core.Util;
 using GUZ.Core.World;
+using Reflex.Attributes;
 using UnityEngine;
 using UnityEngine.Rendering;
 using Logger = GUZ.Core.Util.Logger;
@@ -18,18 +20,15 @@ namespace GUZ.Core.Manager
 {
     public class SkyManager
     {
+        [Inject] private ConfigManager _configManager;
+        [Inject] private GameTimeService _gameTimeService;
+
         private Vector3 _sunDirection;
-        private readonly Color _sunColor;
-        private readonly Color _ambientColor;
-        private readonly float _pointLightIntensity = 1f;
         private bool _isRaining;
-        private readonly GameTimeInterval _sunPerformanceSetting;
-        private readonly bool _gameSounds;
 
         private float _masterTime;
         private bool _noSky = true;
         private List<SkyState> _stateList = new();
-        private GameTime _gameTime;
 
         private static readonly int _sunDirectionShaderId = Shader.PropertyToID("_SunDirection");
         private static readonly int _sunColorShaderId = Shader.PropertyToID("_SunColor");
@@ -61,16 +60,6 @@ namespace GUZ.Core.Manager
         private static readonly int _domeColor1ShaderId = Shader.PropertyToID("_DomeColor1");
         private static readonly int _domeColor2ShaderId = Shader.PropertyToID("_DomeColor2");
 
-        public SkyManager(DeveloperConfig config, GameTime time)
-        {
-            _gameTime = time;
-
-            _sunColor = config.SunLightColor;
-            _ambientColor = config.AmbientLightColor;
-            _pointLightIntensity = config.SunLightIntensity;
-            _sunPerformanceSetting = config.SunUpdateInterval;
-            _gameSounds = config.EnableGameSounds;
-        }
 
         public void OnValidate()
         {
@@ -98,16 +87,16 @@ namespace GUZ.Core.Manager
         /// </summary>
         private void InitSky()
         {
-            RotateSun(_gameTime.GetCurrentDateTime());
-            switch (_sunPerformanceSetting)
+            RotateSun(_gameTimeService.GetCurrentDateTime());
+            switch (_configManager.Dev.SunUpdateInterval)
             {
-                case GameTimeInterval.EveryGameSecond:
+                case GameTimeService.GameTimeInterval.EveryGameSecond:
                     GlobalEventDispatcher.GameTimeSecondChangeCallback.AddListener(RotateSun);
                     break;
-                case GameTimeInterval.EveryGameMinute:
+                case GameTimeService.GameTimeInterval.EveryGameMinute:
                     GlobalEventDispatcher.GameTimeMinuteChangeCallback.AddListener(RotateSun);
                     break;
-                case GameTimeInterval.EveryGameHour:
+                case GameTimeService.GameTimeInterval.EveryGameHour:
                     GlobalEventDispatcher.GameTimeHourChangeCallback.AddListener(RotateSun);
                     break;
             }
@@ -135,7 +124,7 @@ namespace GUZ.Core.Manager
 
         private void UpdateStateTexAndFog()
         {
-            var currentDay = _gameTime.GetDay();
+            var currentDay = _gameTimeService.GetDay();
             var day = currentDay + 1;
 
             float[] colorValues;
@@ -171,7 +160,7 @@ namespace GUZ.Core.Manager
 
         private void Interpolate(DateTime _)
         {
-            _masterTime = _gameTime.GetSkyTime(); // Current time
+            _masterTime = _gameTimeService.GetSkyTime(); // Current time
 
             var (previousIndex, currentIndex) = FindNextStateIndex();
 
@@ -288,9 +277,9 @@ namespace GUZ.Core.Manager
         private void SetShaderProperties()
         {
             Shader.SetGlobalVector(_sunDirectionShaderId, _sunDirection);
-            Shader.SetGlobalColor(_sunColorShaderId, _sunColor);
-            Shader.SetGlobalColor(_ambientShaderId, _ambientColor);
-            Shader.SetGlobalFloat(_pointLightIntensityShaderId, _pointLightIntensity);
+            Shader.SetGlobalColor(_sunColorShaderId, _configManager.Dev.SunLightColor);
+            Shader.SetGlobalColor(_ambientShaderId, _configManager.Dev.AmbientLightColor);
+            Shader.SetGlobalFloat(_pointLightIntensityShaderId, _configManager.Dev.SunLightIntensity);
         }
 
         private void InitRainGo()
@@ -316,7 +305,7 @@ namespace GUZ.Core.Manager
         private void UpdateRainTime(DateTime _)
         {
             if (_masterTime > 0.02f || // This function is called every hour but is run only once a day at 12:00 pm
-                _gameTime.GetDay() == 1) // Dont update if it is the first day
+                _gameTimeService.GetDay() == 1) // Dont update if it is the first day
             {
                 return;
             }
@@ -370,7 +359,7 @@ namespace GUZ.Core.Manager
             var module = _rainParticleSystem.emission;
             module.rateOverTime = new ParticleSystem.MinMaxCurve(_maxParticleCount * _rainWeightAndVolume);
 
-            if (!_rainParticleSound.isPlaying && _gameSounds)
+            if (!_rainParticleSound.isPlaying && _configManager.Dev.EnableGameSounds)
             {
                 _rainParticleSound.Play();
             }

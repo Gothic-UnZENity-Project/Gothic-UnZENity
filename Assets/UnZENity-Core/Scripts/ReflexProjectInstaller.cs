@@ -2,6 +2,7 @@ using GUZ.Core.Config;
 using GUZ.Core.Domain.Culling;
 using GUZ.Core.Manager;
 using GUZ.Core.Manager.Vobs;
+using GUZ.Core.Services;
 using GUZ.Core.Services.Culling;
 using Reflex.Core;
 using UnityEngine;
@@ -21,11 +22,17 @@ namespace GUZ.Core
             containerBuilder.AddSingleton(typeof(NpcMeshCullingDomain));
             containerBuilder.AddSingleton(typeof(VobMeshCullingDomain));
             containerBuilder.AddSingleton(typeof(VobSoundCullingDomain));
+            containerBuilder.AddSingleton(typeof(SpeechToTextService));
+            containerBuilder.AddSingleton(typeof(GameTimeService));
             
             // FIXME - Need to be migrated to a Service!
             containerBuilder.AddSingleton(typeof(ConfigManager));
             containerBuilder.AddSingleton(typeof(VobManager));
             containerBuilder.AddSingleton(typeof(VobInitializer));
+            containerBuilder.AddSingleton(typeof(StationaryLightsManager));
+            containerBuilder.AddSingleton(typeof(SkyManager));
+            containerBuilder.AddSingleton(typeof(BarrierManager));
+            containerBuilder.AddSingleton(typeof(LoadingManager));
         }
     }
 }
