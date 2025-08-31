@@ -53,7 +53,7 @@ namespace GUZ.Core.Manager
                 // Optimization: We expect, that AmbientInfos are assigned before Ai_ProcessInfos() is called.
                 GameGlobals.Npcs.SetDialogs(npcContainer);
 
-                GameContext.DialogAdapter.StartDialogInitially();
+                GameContext.ContextDialogService.StartDialogInitially();
             }
 
             GameData.Dialogs.IsInDialog = true;
@@ -64,8 +64,8 @@ namespace GUZ.Core.Manager
             // We are already inside a sub-dialog
             if (GameData.Dialogs.CurrentDialog.Options.Any())
             {
-                GameContext.DialogAdapter.FillDialog(npcContainer.Instance, GameData.Dialogs.CurrentDialog.Options);
-                GameContext.DialogAdapter.ShowDialog(npcContainer.Go);
+                GameContext.ContextDialogService.FillDialog(npcContainer.Instance, GameData.Dialogs.CurrentDialog.Options);
+                GameContext.ContextDialogService.ShowDialog(npcContainer.Go);
             }
             // There is at least one important entry, the NPC wants to talk to the hero about.
             else if (initialDialogStarting && TryGetImportant(npcContainer, out var infoInstance))
@@ -103,8 +103,8 @@ namespace GUZ.Core.Manager
                 }
 
                 selectableDialogs = selectableDialogs.OrderBy(d => d.Nr).ToList();
-                GameContext.DialogAdapter.FillDialog(npcContainer.Instance, selectableDialogs);
-                GameContext.DialogAdapter.ShowDialog(npcContainer.Go);
+                GameContext.ContextDialogService.FillDialog(npcContainer.Instance, selectableDialogs);
+                GameContext.ContextDialogService.ShowDialog(npcContainer.Go);
             }
         }
 
@@ -266,7 +266,7 @@ namespace GUZ.Core.Manager
             // WIP: unlocking movement
             GameContext.ContextInteractionService.UnlockPlayer();
 
-            GameContext.DialogAdapter.EndDialog();
+            GameContext.ContextDialogService.EndDialog();
 
             // Hide subtitles from both dialog partners.
             GameGlobals.Npcs.GetHeroContainer().PrefabProps.NpcSubtitles.HideSubtitles();
@@ -292,7 +292,7 @@ namespace GUZ.Core.Manager
 
         private static void CallInformation(NpcContainer npcContainer, int information)
         {
-            GameContext.DialogAdapter.HideDialog();
+            GameContext.ContextDialogService.HideDialog();
 
             // We always need to set "self" before executing any Daedalus function.
             GameData.GothicVm.GlobalSelf = npcContainer.Instance;

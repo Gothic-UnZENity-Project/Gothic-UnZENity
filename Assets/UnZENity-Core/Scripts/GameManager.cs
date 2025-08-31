@@ -11,10 +11,9 @@ using GUZ.Core.Manager.Scenes;
 using GUZ.Core.Manager.Vobs;
 using GUZ.Core.Npc;
 using GUZ.Core.Services;
+using GUZ.Core.Services.Context;
 using GUZ.Core.Services.Culling;
-using GUZ.Core.UnZENity_Core.Scripts.Services.Context;
 using GUZ.Core.Util;
-using GUZ.Core.World;
 using GUZ.Manager;
 using MyBox;
 using Reflex.Attributes;
@@ -70,6 +69,9 @@ namespace GUZ.Core
 
 
         [Inject] private readonly ContextInteractionService _contextInteractionService;
+        [Inject] private readonly ContextMenuService _contextMenuService;
+        [Inject] private readonly ContextDialogService _contextDialogService;
+
         [Inject] private readonly UnityMonoService _unityMonoService;
         [Inject] private readonly MusicService _musicService;
         [Inject] private readonly SpeechToTextService _speechToTextService;
@@ -94,7 +96,11 @@ namespace GUZ.Core
             base.Awake();
 
             GameContext.IsLab = false;
+
+            // FIXME - Hack for now. Once we get rid of the GameContext global, we will remove these lines.
             GameContext.ContextInteractionService = _contextInteractionService;
+            GameContext.ContextMenuService = _contextMenuService;
+            GameContext.ContextDialogService = _contextDialogService;
             
             // We need to set culture to this, otherwise e.g. polish numbers aren't parsed correct.
             CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;
@@ -112,9 +118,6 @@ namespace GUZ.Core
 
             GameGlobals.Instance = this;
             
-            // Set Context as early as possible to ensure everything else boots based on the activated modules.
-            GameContext.SetControlContext(Config.Dev.GameControls);
-
             MultiTypeCache.Init();
 
             Localization = new LocalizationManager();

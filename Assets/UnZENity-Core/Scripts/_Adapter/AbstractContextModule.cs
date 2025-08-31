@@ -9,12 +9,10 @@ namespace GUZ.Core._Adapter
     /// </summary>
     public abstract class AbstractContextBootstrap : MonoBehaviour
     {
-        protected abstract void RegisterControlModule(GameContext.Controls controls);
         protected abstract void RegisterGameVersionModule(GameVersion version);
         
         private void Awake()
         {
-            GlobalEventDispatcher.RegisterControlAdapters.AddListener(RegisterControlModule);
             GlobalEventDispatcher.RegisterGameVersionAdapters.AddListener(RegisterGameVersionModule);
         }
     }

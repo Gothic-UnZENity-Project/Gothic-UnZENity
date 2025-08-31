@@ -1,11 +1,10 @@
 #if GUZ_HVR_INSTALLED
 using System.Linq;
 using GUZ.Core;
-using GUZ.Core._Adapter;
 using GUZ.Core.Config;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
-using GUZ.Core.Util;
+using GUZ.Core.Services.Context;
 using GUZ.VR.Adapter.HVROverrides;
 using GUZ.VR.Adapter.Marvin;
 using GUZ.VR.Adapter.Player;
@@ -15,9 +14,8 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.XR;
 using UnityEngine.XR.Management;
-using Logger = GUZ.Core.Util.Logger;
 
-namespace GUZ.VR.Adapter
+namespace GUZ.VR.Services.Context
 {
     public class VRContextInteractionService : IContextInteractionService
     {

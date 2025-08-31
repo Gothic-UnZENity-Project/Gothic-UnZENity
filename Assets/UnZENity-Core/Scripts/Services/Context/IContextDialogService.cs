@@ -3,9 +3,9 @@ using GUZ.Core.Data;
 using UnityEngine;
 using ZenKit.Daedalus;
 
-namespace GUZ.Core._Adapter
+namespace GUZ.Core.Services.Context
 {
-    public interface IDialogAdapter
+    public interface IContextDialogService
     {
         public void StartDialogInitially();
         public void EndDialog();

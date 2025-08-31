@@ -2,7 +2,7 @@ using GUZ.Core.Config;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace GUZ.Core._Adapter
+namespace GUZ.Core.Services.Context
 {
     public interface IContextInteractionService
     {

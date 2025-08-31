@@ -9,18 +9,6 @@ namespace GUZ.Flat
     /// </summary>
     public class FlatContextBootstrap : AbstractContextBootstrap
     {
-        protected override void RegisterControlModule(GameContext.Controls controls)
-        {
-            if (controls != GameContext.Controls.Flat)
-            {
-                return;
-            }
-
-            GameContext.ContextInteractionService = null; // TBD
-            GameContext.MenuAdapter = null; // TBD
-            GameContext.DialogAdapter = null; // TBD
-        }
-
         protected override void RegisterGameVersionModule(GameVersion version)
         {
             // NOP

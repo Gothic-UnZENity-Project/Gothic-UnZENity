@@ -1,8 +1,8 @@
 using GUZ.Core.Model.UI.Menu;
 
-namespace GUZ.Core._Adapter
+namespace GUZ.Core.Services.Context
 {
-    public interface IMenuAdapter
+    public interface IContextMenuService
     {
         void UpdateMainMenu(AbstractMenuInstance mainMenu);
     }

@@ -5,6 +5,7 @@ using GUZ.Core;
 using GUZ.Core._Adapter;
 using GUZ.Core.Model.UI.Menu;
 using GUZ.Core.Model.UI.MenuItem;
+using GUZ.Core.Services.Context;
 using HurricaneVR.Framework.Core.Player;
 using UnityEngine;
 using ZenKit.Daedalus;
@@ -12,7 +13,7 @@ using Constants = GUZ.Core.Globals.Constants;
 
 namespace GUZ.VR.Adapter
 {
-    public class VRMenuAdapter : IMenuAdapter
+    public class VRContextMenuService : IContextMenuService
     {
         /// <summary>
         /// Update menu entries based on VR needs.

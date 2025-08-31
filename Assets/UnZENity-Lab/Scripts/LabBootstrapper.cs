@@ -12,17 +12,15 @@ using GUZ.Core.Manager;
 using GUZ.Core.Manager.Vobs;
 using GUZ.Core.Npc;
 using GUZ.Core.Services;
+using GUZ.Core.Services.Context;
 using GUZ.Core.Services.Culling;
-using GUZ.Core.UnZENity_Core.Scripts.Services.Context;
 using GUZ.Core.Util;
 using GUZ.Core.Vm;
-using GUZ.Core.World;
 using GUZ.Lab.Handler;
 using GUZ.Manager;
-using GUZ.VR.Adapter;
+using GUZ.VR.Services.Context;
 using Reflex.Attributes;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using ZenKit;
 using Logger = GUZ.Core.Util.Logger;
 
@@ -142,7 +140,6 @@ namespace GUZ.Lab
             GameContext.ContextInteractionService = _contextInteractionService;
             _contextInteractionService.SetImpl(new VRContextInteractionService());
 
-            GameContext.SetControlContext(Config.Dev.GameControls);
             GameContext.SetGameVersionContext(Config.Dev.GameVersion);
 
             _musicService.Init();

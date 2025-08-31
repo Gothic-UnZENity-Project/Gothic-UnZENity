@@ -4,14 +4,15 @@ using System.Linq;
 using GUZ.Core._Adapter;
 using GUZ.Core.Data;
 using GUZ.Core.Globals;
+using GUZ.Core.Services.Context;
 using GUZ.VR.Adapter.UI;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using ZenKit.Daedalus;
 
-namespace GUZ.VR.Model.Context
+namespace GUZ.VR.Services.Context
 {
-    public class VRDialogAdapter : IDialogAdapter
+    public class VRContextDialogService : IContextDialogService
     {
         private VRDialog _dialogComponent;
 

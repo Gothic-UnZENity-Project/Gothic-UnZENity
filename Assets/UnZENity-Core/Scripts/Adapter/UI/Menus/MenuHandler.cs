@@ -31,7 +31,7 @@ namespace GUZ.Core.Adapter.UI.Menus
             // Initialize whole ZenKit Menu.dat hierarchy.
             MainMenuHierarchy = new MenuInstanceAdapter("MENU_MAIN", null);
 
-            GameContext.MenuAdapter.UpdateMainMenu(MainMenuHierarchy);
+            GameContext.ContextMenuService.UpdateMainMenu(MainMenuHierarchy);
             
             InstantiateMenus();
 

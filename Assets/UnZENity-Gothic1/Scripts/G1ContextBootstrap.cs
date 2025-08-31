@@ -9,11 +9,6 @@ namespace GUZ.G1
     /// </summary>
     public class G1ContextBootstrap : AbstractContextBootstrap
     {
-        protected override void RegisterControlModule(GameContext.Controls controls)
-        {
-            // NOP
-        }
-
         protected override void RegisterGameVersionModule(GameVersion version)
         {
             if (version != GameVersion.Gothic1)

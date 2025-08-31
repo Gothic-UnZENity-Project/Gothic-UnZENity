@@ -16,6 +16,7 @@ namespace GUZ.VR
             containerBuilder.AddSingleton(typeof(VRPlayerService));
             containerBuilder.AddSingleton(typeof(VRWeaponService));
 
+            // transient - multiple instances are needed at runtime (one for each hand).
             containerBuilder.AddTransient(typeof(VrWeaponAttackDomain));
         }
     }

@@ -1,9 +1,7 @@
-using GUZ.Core._Adapter;
 using GUZ.Core.Config;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
-namespace GUZ.Core.UnZENity_Core.Scripts.Services.Context
+namespace GUZ.Core.Services.Context
 {
     public class ContextInteractionService : IContextInteractionService
     {
