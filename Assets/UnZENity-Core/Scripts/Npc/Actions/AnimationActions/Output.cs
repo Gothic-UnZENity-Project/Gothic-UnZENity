@@ -1,9 +1,11 @@
 using System.Linq;
+using GUZ.Core.Config;
 using GUZ.Core.Creator.Sounds;
 using GUZ.Core.Data.Container;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
+using Reflex.Attributes;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -18,6 +20,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
 
         private string _randomDialogAnimationName;
 
+        [Inject] private readonly ConfigManager _configManager;
 
         public Output(AnimationAction action, NpcContainer npcContainer) : base(action, npcContainer)
         { }

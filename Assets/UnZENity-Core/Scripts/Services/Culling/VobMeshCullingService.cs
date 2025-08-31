@@ -1,5 +1,6 @@
 using GUZ.Core.Data.Container;
 using GUZ.Core.Domain.Culling;
+using GUZ.Core.Extensions;
 using UnityEngine;
 
 namespace GUZ.Core.Services.Culling
@@ -8,9 +9,9 @@ namespace GUZ.Core.Services.Culling
     {
         private VobMeshCullingDomain _vobDomain => Domain as VobMeshCullingDomain;
 
-        public VobMeshCullingService(VobMeshCullingDomain vobDomain)
+        public VobMeshCullingService()
         {
-            Domain = vobDomain;
+            Domain = new VobMeshCullingDomain().Inject();
         }
 
         public void OnDrawGizmos()

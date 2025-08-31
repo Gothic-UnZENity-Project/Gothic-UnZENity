@@ -17,11 +17,10 @@ namespace GUZ.VR
         [Inject] private readonly SkyManager _skyManager;
         [Inject] private readonly BarrierManager _barrierManager;
 
-        [Inject] private readonly NpcMeshCullingService _npcMeshCullingService;
         [Inject] private readonly LoadingManager _loadingManager;
-        [Inject] private readonly NpcMeshCullingDomain _npcMeshCullingDomain;
-        [Inject] private readonly VobMeshCullingDomain _vobMeshCullingDomain;
-        [Inject] private readonly VobSoundCullingDomain _vobSoundCullingDomain;
+        [Inject] private readonly NpcMeshCullingService _npcMeshCullingService;
+        [Inject] private readonly VobMeshCullingService _vobMeshCullingService;
+        [Inject] private readonly VobSoundCullingService _vobSoundCullingService;
 
         [Inject] private readonly SpeechToTextService _speechToTextService;
 
@@ -46,9 +45,9 @@ namespace GUZ.VR
         {
             Bootstrapper.OnApplicationQuit();
 
-            _npcMeshCullingDomain.OnApplicationQuit();
-            _vobMeshCullingDomain.OnApplicationQuit();
-            _vobSoundCullingDomain.OnApplicationQuit();
+            _npcMeshCullingService.OnApplicationQuit();
+            _vobMeshCullingService.OnApplicationQuit();
+            _vobSoundCullingService.OnApplicationQuit();
 
             _speechToTextService.Dispose();
         }
@@ -57,7 +56,7 @@ namespace GUZ.VR
 #if UNITY_EDITOR
         private void OnDrawGizmos()
         {
-            _vobMeshCullingDomain?.OnDrawGizmos();
+            _vobMeshCullingService?.OnDrawGizmos();
         }
 
         private void OnValidate()

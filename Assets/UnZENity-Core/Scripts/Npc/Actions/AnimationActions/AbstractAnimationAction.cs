@@ -33,7 +33,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
 
         protected bool IsFinishedFlag;
 
-        public AbstractAnimationAction(AnimationAction action, NpcContainer npcData)
+        protected AbstractAnimationAction(AnimationAction action, NpcContainer npcData)
         {
             Action = action;
             NpcContainer = npcData;
@@ -42,6 +42,9 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             Props = npcData.Props;
             Vob = npcData.Vob;
             PrefabProps = npcData.PrefabProps;
+
+            // As we will need a lot of different *Service interactions, we inject all of our elements now.
+            this.Inject();
         }
 
         public virtual void Start()

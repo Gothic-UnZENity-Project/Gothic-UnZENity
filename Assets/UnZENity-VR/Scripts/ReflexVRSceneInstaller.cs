@@ -1,4 +1,5 @@
 #if GUZ_HVR_INSTALLED
+using GUZ.Core.Extensions;
 using GUZ.VR.Domain.Player;
 using GUZ.VR.Services;
 using Reflex.Core;
@@ -13,11 +14,10 @@ namespace GUZ.VR
     {
         public void InstallBindings(ContainerBuilder containerBuilder)
         {
+            containerBuilder.OnContainerBuilt += (container) => BuiltInTypeExtension.DIContainer = container;
+
             containerBuilder.AddSingleton(typeof(VRPlayerService));
             containerBuilder.AddSingleton(typeof(VRWeaponService));
-
-            // transient - multiple instances are needed at runtime (one for each hand).
-            containerBuilder.AddTransient(typeof(VrWeaponAttackDomain));
         }
     }
 }

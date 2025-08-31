@@ -81,9 +81,6 @@ namespace GUZ.Core
         [Inject] private readonly NpcMeshCullingService _npcMeshCullingService;
         [Inject] private readonly VobMeshCullingService _vobMeshCullingService;
         [Inject] private readonly VobSoundCullingService _vobSoundCullingService;
-        [Inject] private readonly NpcMeshCullingDomain _npcMeshCullingDomain;
-        [Inject] private readonly VobMeshCullingDomain _vobMeshCullingDomain;
-        [Inject] private readonly VobSoundCullingDomain _vobSoundCullingDomain;
 
         [Inject] private readonly SkyManager _skyManager;
         [Inject] private readonly BarrierManager _barrierManager;

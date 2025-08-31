@@ -12,9 +12,10 @@ namespace GUZ.Core.Services.Culling
             RegisterEventHandlers();
         }
 
-        ~AbstractCullingService()
+        public void OnApplicationQuit()
         {
             UnregisterEventHandlers();
+            Domain.OnApplicationQuit();
         }
 
         protected virtual void RegisterEventHandlers()

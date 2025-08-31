@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using GUZ.Core.Data.Container;
 using GUZ.Core.Domain.Culling;
+using GUZ.Core.Extensions;
 using UnityEngine;
 
 namespace GUZ.Core.Services.Culling
@@ -10,9 +11,9 @@ namespace GUZ.Core.Services.Culling
         private NpcMeshCullingDomain _npcDomain => Domain as NpcMeshCullingDomain;
 
 
-        public NpcMeshCullingService(NpcMeshCullingDomain npcDomain)
+        public NpcMeshCullingService()
         {
-            Domain = npcDomain;
+            Domain = new NpcMeshCullingDomain().Inject();
         }
 
         public void AddCullingEntry(GameObject go)

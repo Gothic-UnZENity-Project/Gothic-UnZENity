@@ -1,5 +1,6 @@
 #if GUZ_HVR_INSTALLED
 using GUZ.Core.Data.Container;
+using GUZ.Core.Extensions;
 using GUZ.VR.Domain.Player;
 using GUZ.VR.Model.Vob;
 using HurricaneVR.Framework.Shared;
@@ -14,8 +15,8 @@ namespace GUZ.VR.Services
     /// </summary>
     public class VRWeaponService
     {
-        [Inject] private readonly VrWeaponAttackDomain _firstAttackDomain;
-        [Inject] private readonly VrWeaponAttackDomain _secondAttackDomain;
+        private readonly VrWeaponAttackDomain _firstAttackDomain = new VrWeaponAttackDomain().Inject();
+        private readonly VrWeaponAttackDomain _secondAttackDomain = new VrWeaponAttackDomain().Inject();
 
 
         public void OnGrabbed(HVRHandSide handSide, VobContainer vobContainer, WeaponPhysicsConfig weaponConfig)
