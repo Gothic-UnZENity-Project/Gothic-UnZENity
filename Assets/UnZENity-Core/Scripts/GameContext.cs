@@ -10,13 +10,8 @@ namespace GUZ.Core
     public static class GameContext
     {
         public static bool IsZenKitInitialized;
-        public static bool IsControlsInitialized;
-        public static bool IsGameVersionInitialized;
-
-        public static string GameLanguage;
 
         public static ContextInteractionService ContextInteractionService;
-        public static IContextMenuService ContextMenuService;
         public static IContextDialogService ContextDialogService;
         public static IContextGameVersionService ContextGameVersionService;
 
@@ -26,18 +21,6 @@ namespace GUZ.Core
         {
             VR,
             Flat
-        }
-
-        public static void SetGameVersionContext(GameVersion version)
-        {
-            GlobalEventDispatcher.RegisterGameVersionService.Invoke(version);
-            
-            if (ContextGameVersionService == null)
-            {
-                throw new ArgumentOutOfRangeException($"No version module registered for {version}");
-            }
-
-            IsGameVersionInitialized = true;
         }
     }
 }

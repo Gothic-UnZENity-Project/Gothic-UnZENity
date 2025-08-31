@@ -1,7 +1,9 @@
 using System.Collections.Generic;
 using GUZ.Core.Model.UI.Menu;
+using GUZ.Core.Services.Context;
 using GUZ.Core.Util;
 using MyBox;
+using Reflex.Attributes;
 using UnityEngine;
 using Logger = GUZ.Core.Util.Logger;
 
@@ -9,6 +11,8 @@ namespace GUZ.Core.Adapters.UI.Menus
 {
     public class MenuHandler : MonoBehaviour
     {
+        [Inject] private readonly ContextMenuService _contextMenuService;
+
         private Dictionary<string, GameObject> _menuList = new();
         private string _currentMenu;
         private Stack<string> _menuQueue = new();
@@ -31,7 +35,7 @@ namespace GUZ.Core.Adapters.UI.Menus
             // Initialize whole ZenKit Menu.dat hierarchy.
             MainMenuHierarchy = new MenuInstanceAdapter("MENU_MAIN", null);
 
-            GameContext.ContextMenuService.UpdateMainMenu(MainMenuHierarchy);
+            _contextMenuService.UpdateMainMenu(MainMenuHierarchy);
             
             InstantiateMenus();
 
