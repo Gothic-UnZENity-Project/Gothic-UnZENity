@@ -242,7 +242,9 @@ namespace GUZ.Core
         public static GameObject TryGetPrefabObject(PrefabType key, string name = null, GameObject parent = null)
         {
             // worldPositionStays=false - initialize the object at 0,0,0. If needed, we will later set positions.
-            var go = Object.Instantiate(TryGetPrefab(key), parent?.transform, worldPositionStays: false);
+
+            // HINT: For now, we call Inject() on any prefab. If we face performance issues with it, we can also selectively call it later. But most of Prefabs will need it anyway.
+            var go = Object.Instantiate(TryGetPrefab(key), parent?.transform, worldPositionStays: false).Inject();
                 
             if (name != null)
                 go.name = name;

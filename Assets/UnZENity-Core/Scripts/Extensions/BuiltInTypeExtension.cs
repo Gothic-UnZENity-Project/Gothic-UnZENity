@@ -16,7 +16,7 @@ namespace GUZ.Core.Extensions
 
 
         /// <summary>
-        /// Execute newly created C# object with DI injection.
+        /// Execute on newly created C# object to execute DI injection.
         /// Please use it only, when needed as it causes some CPU cycles when done.
         ///
         /// Checks for [Inject] properties and methods.
