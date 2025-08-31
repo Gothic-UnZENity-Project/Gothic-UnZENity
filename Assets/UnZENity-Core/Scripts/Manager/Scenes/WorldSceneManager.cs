@@ -8,6 +8,7 @@ using GUZ.Core.Creator.Meshes;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager.Vobs;
+using GUZ.Core.Services.Context;
 using GUZ.Core.Util;
 using GUZ.Core.Vob.WayNet;
 using MyBox;
@@ -21,6 +22,7 @@ namespace GUZ.Core.Manager.Scenes
     public class WorldSceneManager : MonoBehaviour, ISceneManager
     {
         [Inject] private readonly VobManager _vobManager;
+        [Inject] private readonly WayNetService _wayNetService;
         
         public void Init()
         {
@@ -86,7 +88,7 @@ namespace GUZ.Core.Manager.Scenes
                 }
 
                 // 3. WayNet
-                WayNetCreator.Create(config.Dev, GameGlobals.SaveGame.CurrentWorldData);
+                _wayNetService.Create(config.Dev, GameGlobals.SaveGame.CurrentWorldData);
                 watch.LogAndRestart("WayNet initialized");
 
 

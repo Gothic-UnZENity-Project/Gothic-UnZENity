@@ -13,9 +13,9 @@ using WayPoint = GUZ.Core.Vob.WayNet.WayPoint;
 
 namespace GUZ.Core.Creator
 {
-    public static class WayNetCreator
+    public class WayNetService
     {
-        public static void Create(DeveloperConfig config, WorldContainer world)
+        public void Create(DeveloperConfig config, WorldContainer world)
         {
             var waynetObj = new GameObject("WayNet");
 
@@ -25,7 +25,7 @@ namespace GUZ.Core.Creator
             CreateWaypointEdges(waynetObj, world, config.ShowWayEdges);
         }
 
-        private static void SetWayPointCache(IWayNet wayNet)
+        private void SetWayPointCache(IWayNet wayNet)
         {
             GameData.WayPoints.Clear();
 
@@ -40,14 +40,14 @@ namespace GUZ.Core.Creator
             }
         }
 
-        private static void CreateDijkstraWaypoints(IWayNet wayNet)
+        private void CreateDijkstraWaypoints(IWayNet wayNet)
         {
             CreateDijkstraWaypointEntries(wayNet);
             AttachWaypointPositionToDijkstraEntries();
             CalculateDijkstraNeighbourDistances();
         }
 
-        private static void CreateDijkstraWaypointEntries(IWayNet wayNet)
+        private void CreateDijkstraWaypointEntries(IWayNet wayNet)
         {
             Dictionary<string, DijkstraWaypoint> dijkstraWaypoints = new();
             var wayEdges = wayNet.Edges;
@@ -72,7 +72,7 @@ namespace GUZ.Core.Creator
             GameData.DijkstraWaypoints = dijkstraWaypoints;
         }
 
-        private static void AttachWaypointPositionToDijkstraEntries()
+        private void AttachWaypointPositionToDijkstraEntries()
         {
             foreach (var waypoint in GameData.DijkstraWaypoints)
             {
@@ -84,7 +84,7 @@ namespace GUZ.Core.Creator
         /// <summary>
         /// Needed for future calculations.
         /// </summary>
-        private static void CalculateDijkstraNeighbourDistances()
+        private void CalculateDijkstraNeighbourDistances()
         {
             foreach (var waypoint in GameData.DijkstraWaypoints.Values)
             {
@@ -101,7 +101,7 @@ namespace GUZ.Core.Creator
             }
         }
 
-        private static void CreateWaypoints(GameObject parent, WorldContainer world, bool debugDraw)
+        private void CreateWaypoints(GameObject parent, WorldContainer world, bool debugDraw)
         {
             var waypointsObj = new GameObject("WayPoints");
             waypointsObj.SetParent(parent);
@@ -125,7 +125,7 @@ namespace GUZ.Core.Creator
             }
         }
 
-        private static void CreateWaypointEdges(GameObject parent, WorldContainer world, bool debugDraw)
+        private void CreateWaypointEdges(GameObject parent, WorldContainer world, bool debugDraw)
         {
             var waypointEdgesObj = new GameObject("WayPointEdges");
             waypointEdgesObj.SetParent(parent);
@@ -135,9 +135,8 @@ namespace GUZ.Core.Creator
                 return;
             }
 
-            for (var i = 0; i < world.WayNet.Edges.Count; i++)
+            foreach (var edge in world.WayNet.Edges)
             {
-                var edge = world.WayNet.Edges[i];
                 var startPos = world.WayNet.Points[edge.A].Position.ToUnityVector();
                 var endPos = world.WayNet.Points[edge.B].Position.ToUnityVector();
                 var lineObj = new GameObject();

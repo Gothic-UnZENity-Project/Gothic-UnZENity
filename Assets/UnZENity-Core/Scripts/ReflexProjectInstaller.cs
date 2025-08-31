@@ -1,4 +1,5 @@
 using GUZ.Core.Config;
+using GUZ.Core.Creator;
 using GUZ.Core.Extensions;
 using GUZ.Core.Manager;
 using GUZ.Core.Manager.Vobs;
@@ -28,6 +29,9 @@ namespace GUZ.Core
             containerBuilder.AddSingleton(typeof(VobSoundCullingService));
             containerBuilder.AddSingleton(typeof(SpeechToTextService));
             containerBuilder.AddSingleton(typeof(GameTimeService));
+
+            // World
+            containerBuilder.AddSingleton(typeof(WayNetService));
 
             // FIXME - Need to be migrated to a Service!
             containerBuilder.AddSingleton(typeof(ConfigManager));
