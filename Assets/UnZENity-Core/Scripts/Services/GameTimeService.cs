@@ -1,7 +1,7 @@
 using System;
 using System.Collections;
-using GUZ.Core.Config;
 using GUZ.Core.Manager;
+using GUZ.Core.Services.Config;
 using Reflex.Attributes;
 using UnityEngine;
 
@@ -17,7 +17,7 @@ namespace GUZ.Core.Services
         }
 
 
-        [Inject] private readonly ConfigManager _configManager;
+        [Inject] private readonly ConfigService _configService;
         [Inject] private readonly UnityMonoService _unityMonoService;
 
 
@@ -40,9 +40,9 @@ namespace GUZ.Core.Services
         public void Init()
         {
             // Set debug value for current Time.
-            _time = new DateTime(_time.Year, _time.Month, _time.Day, _configManager.Dev.StartTimeHour, _configManager.Dev.StartTimeMinute,
+            _time = new DateTime(_time.Year, _time.Month, _time.Day, _configService.Dev.StartTimeHour, _configService.Dev.StartTimeMinute,
                 _time.Second);
-            _minutesInHour = _configManager.Dev.StartTimeMinute;
+            _minutesInHour = _configService.Dev.StartTimeMinute;
 
             GlobalEventDispatcher.LoadingSceneLoaded.AddListener(PreWorldLoaded);
             GlobalEventDispatcher.WorldSceneLoaded.AddListener(PostWorldLoaded);
@@ -80,7 +80,7 @@ namespace GUZ.Core.Services
 
                 GlobalEventDispatcher.GameTimeSecondChangeCallback.Invoke(_time);
                 RaiseMinuteAndHourEvent();
-                yield return new WaitForSeconds(_oneIngameSecond / _configManager.Dev.TimeSpeedMultiplier);
+                yield return new WaitForSeconds(_oneIngameSecond / _configService.Dev.TimeSpeedMultiplier);
             }
         }
 

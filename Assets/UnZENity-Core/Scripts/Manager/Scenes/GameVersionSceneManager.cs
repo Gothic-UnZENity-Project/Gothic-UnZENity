@@ -1,6 +1,8 @@
 using System;
 using GUZ.Core.Globals;
+using GUZ.Core.Services.Config;
 using GUZ.Core.Util;
+using Reflex.Attributes;
 using UnityEngine;
 using ZenKit;
 using Logger = GUZ.Core.Util.Logger;
@@ -9,6 +11,9 @@ namespace GUZ.Core.Manager.Scenes
 {
     public class GameVersionSceneManager : MonoBehaviour, ISceneManager
     {
+        [Inject] private readonly ConfigService _configService;
+
+
         [SerializeField] private GameObject _invalidInstallationDir;
 
 
@@ -30,23 +35,23 @@ namespace GUZ.Core.Manager.Scenes
             // Whatever comes next, we don't want the player to move around right now.
             GameContext.ContextInteractionService.LockPlayerInPlace();
 
-            var isG1Installed = GameGlobals.Config.CheckIfGothicInstallationExists(GameVersion.Gothic1);
-            var isG2Installed = GameGlobals.Config.CheckIfGothicInstallationExists(GameVersion.Gothic2);
+            var isG1Installed = _configService.CheckIfGothicInstallationExists(GameVersion.Gothic1);
+            var isG2Installed = _configService.CheckIfGothicInstallationExists(GameVersion.Gothic2);
 
-            if (GameGlobals.Config.Dev.PreselectGameVersion)
+            if (_configService.Dev.PreselectGameVersion)
             {
-                var isInstalled = GameGlobals.Config.Dev.GameVersion == GameVersion.Gothic1 ? isG1Installed : isG2Installed;
+                var isInstalled = _configService.Dev.GameVersion == GameVersion.Gothic1 ? isG1Installed : isG2Installed;
 
                 if (isInstalled)
                 {
-                    GameManager.I.InitPhase2(GameGlobals.Config.Dev.GameVersion);
+                    GameManager.I.InitPhase2(_configService.Dev.GameVersion);
                     GameManager.I.LoadScene(Constants.ScenePreCaching, Constants.SceneGameVersion);
                 }
                 else
                 {
                     // If the Gothic installation directory is not set, show an error message and exit.
                     _invalidInstallationDir.SetActive(true);
-                    throw new ArgumentException($"{GameGlobals.Config.Dev.GameVersion} installation couldn't be found inside >GameSettings.json< file.");
+                    throw new ArgumentException($"{_configService.Dev.GameVersion} installation couldn't be found inside >GameSettings.json< file.");
                 }
 
                 return;

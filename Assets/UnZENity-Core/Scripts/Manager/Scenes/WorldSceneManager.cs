@@ -8,6 +8,7 @@ using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager.Vobs;
 using GUZ.Core.Services;
+using GUZ.Core.Services.Config;
 using GUZ.Core.Util;
 using GUZ.Core.Vob.WayNet;
 using MyBox;
@@ -20,9 +21,11 @@ namespace GUZ.Core.Manager.Scenes
 {
     public class WorldSceneManager : MonoBehaviour, ISceneManager
     {
+        [Inject] private readonly ConfigService _configService;
         [Inject] private readonly VobManager _vobManager;
         [Inject] private readonly WayNetService _wayNetService;
         [Inject] private readonly MeshService _meshService;
+
 
         public void Init()
         {
@@ -45,7 +48,6 @@ namespace GUZ.Core.Manager.Scenes
             GameContext.ContextInteractionService.DisableMenus();
             
             var watch = Stopwatch.StartNew();
-            var config = GameGlobals.Config;
 
             var worldRoot = new GameObject("World");
             var vobRoot = new GameObject("VOBs");
@@ -76,7 +78,7 @@ namespace GUZ.Core.Manager.Scenes
                 watch.LogAndRestart("StaticCache - World loaded");
 
                 // 2. Load world based on cached Chunks
-                if (config.Dev.EnableWorldMesh)
+                if (_configService.Dev.EnableWorldMesh)
                 {
                     await _meshService.CreateWorld(
                         GameGlobals.StaticCache.LoadedWorldChunks,
@@ -88,19 +90,19 @@ namespace GUZ.Core.Manager.Scenes
                 }
 
                 // 3. WayNet
-                _wayNetService.Create(config.Dev, GameGlobals.SaveGame.CurrentWorldData);
+                _wayNetService.Create(_configService.Dev, GameGlobals.SaveGame.CurrentWorldData);
                 watch.LogAndRestart("WayNet initialized");
 
 
                 // 4. VOBs
                 // Build the world and vob meshes, populating the texture arrays.
                 // We need to start creating Vobs as we need to calculate world slicing based on amount of lights at a certain space afterward.
-                if (config.Dev.EnableVOBs)
+                if (_configService.Dev.EnableVOBs)
                 {
                     // If we load a SaveGame, then nearby NPCs are stored as VOB and will be created as GOs inside NpcManager. We need to prepare it before.
                     GameGlobals.Npcs.SetRootGo(npcRoot);
 
-                    await _vobManager.CreateWorldVobsAsync(config.Dev, GameGlobals.Loading, GameGlobals.SaveGame.CurrentWorldData.Vobs, vobRoot)
+                    await _vobManager.CreateWorldVobsAsync(_configService.Dev, GameGlobals.Loading, GameGlobals.SaveGame.CurrentWorldData.Vobs, vobRoot)
                         .AwaitAndLog();
                     watch.LogAndRestart("VOBs created");
                 }
@@ -108,7 +110,7 @@ namespace GUZ.Core.Manager.Scenes
                 // 5. NPCs
                 // If the world is visited for the first time, then we need to load Npcs via Wld_InsertNpc()
                 GameGlobals.Npcs.CacheHero();
-                if (config.Dev.EnableNpcs)
+                if (_configService.Dev.EnableNpcs)
                 {
                     // await NpcCreator.CreateAsync(config.Dev, GameGlobals.Loading).AwaitAndLog();
                     await GameGlobals.Npcs.CreateWorldNpcs(GameGlobals.Loading).AwaitAndLog();
@@ -169,7 +171,7 @@ namespace GUZ.Core.Manager.Scenes
         private void TeleportPlayerToStart()
         {
             // 1.
-            var debugSpawnAtWayPoint = GameGlobals.Config.Dev.SpawnAtWaypoint;
+            var debugSpawnAtWayPoint = _configService.Dev.SpawnAtWaypoint;
 
             // If we currently load world from a save game, we will use the stored hero position which was set during VOB loading.
             if (GameGlobals.SaveGame.IsFirstWorldLoadingFromSaveGame)

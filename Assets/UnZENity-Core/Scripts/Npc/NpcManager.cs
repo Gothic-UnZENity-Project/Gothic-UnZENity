@@ -3,17 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using GUZ.Core.Caches;
-using GUZ.Core.Config;
 using GUZ.Core.Data.Adapter.Vobs;
 using GUZ.Core.Data.Container;
 using GUZ.Core.Data.Vobs;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
+using GUZ.Core.Models.Config;
 using GUZ.Core.Npc.Routines;
+using GUZ.Core.Services.Config;
 using GUZ.Core.Util;
 using GUZ.Core.Vm;
-using GUZ.VR;
 using MyBox;
 using Reflex.Attributes;
 using UnityEngine;
@@ -31,9 +31,10 @@ namespace GUZ.Core.Npc
     {
         public Dictionary<string, List<(int hour, int minute, int status)>> MobRoutines = new();
 
+        [Inject] private readonly ConfigService _configService;
+        [Inject] private readonly UnityMonoService _unityMonoService;
         // Supporter class where the whole Init() logic is outsourced for better readability.
         [Inject] private readonly NpcInitializer _initializer;
-        [Inject] private readonly UnityMonoService _unityMonoService;
 
         private Queue<NpcLoader> _objectsToInitQueue = new();
         private Queue<NpcContainer> _objectToReEnableQueue = new();
@@ -70,15 +71,15 @@ namespace GUZ.Core.Npc
                     var monsterId = npcElement.Npc.GetAiVar(DaedalusConst.AIVMMRealId);
 
                     // Do not load NPCs we don't want to have via Debug flags.
-                    if (npcId != 0 && GameGlobals.Config.Dev.SpawnNpcInstances.Value.Any() &&
-                        !GameGlobals.Config.Dev.SpawnNpcInstances.Value.Contains(npcElement.Npc.Id))
+                    if (npcId != 0 && _configService.Dev.SpawnNpcInstances.Value.Any() &&
+                        !_configService.Dev.SpawnNpcInstances.Value.Contains(npcElement.Npc.Id))
                     {
                         continue;
                     }
 
                     // Do not load Monsters we don't want to have via Debug flags.
-                    if (npcId == 0 && monsterId != 0 && GameGlobals.Config.Dev.SpawnMonsterInstances.Value.Any() &&
-                        !GameGlobals.Config.Dev.SpawnMonsterInstances.Value.Contains(
+                    if (npcId == 0 && monsterId != 0 && _configService.Dev.SpawnMonsterInstances.Value.Any() &&
+                        !_configService.Dev.SpawnMonsterInstances.Value.Contains(
                             (DeveloperConfigEnums.MonsterId)monsterId))
                     {
                         continue;
@@ -294,8 +295,8 @@ namespace GUZ.Core.Npc
                 playerGo = GameObject.FindWithTag(Constants.MainCameraTag);
             }
 
-            var heroInstance = GameData.GothicVm.AllocInstance<NpcInstance>(GameGlobals.Config.GothicGame.Player);
-            var heroDaedalusInstance = GameData.GothicVm.GetSymbolByName(GameGlobals.Config.GothicGame.Player)!;
+            var heroInstance = GameData.GothicVm.AllocInstance<NpcInstance>(_configService.GothicGame.Player);
+            var heroDaedalusInstance = GameData.GothicVm.GetSymbolByName(_configService.GothicGame.Player)!;
 
             var vobNpc = new NpcAdapter(heroDaedalusInstance.Index)
             {

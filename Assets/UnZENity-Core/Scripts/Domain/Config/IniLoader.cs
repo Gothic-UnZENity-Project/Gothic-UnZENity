@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using GUZ.Core.Util;
-using UnityEngine;
 using Logger = GUZ.Core.Util.Logger;
 
-namespace GUZ.Core.Config
+namespace GUZ.Core.Domain.Config
 {
     public static class IniLoader
     {

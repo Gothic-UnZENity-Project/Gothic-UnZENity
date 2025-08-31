@@ -28,7 +28,7 @@ namespace GUZ.Core.Adapters.UI.Menus
             MenuHandler.ToggleVisibility();
             if (commandName == "NEW_GAME")
             {
-                GameManager.I.LoadWorld(GameGlobals.Config.GothicGame.World, 0, SceneManager.GetActiveScene().name);
+                GameManager.I.LoadWorld(ConfigService.GothicGame.World, 0, SceneManager.GetActiveScene().name);
             }
         }
 

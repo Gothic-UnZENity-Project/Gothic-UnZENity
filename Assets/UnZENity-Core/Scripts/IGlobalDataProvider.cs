@@ -1,4 +1,3 @@
-using GUZ.Core.Config;
 using GUZ.Core.Manager;
 using GUZ.Core.Manager.Vobs;
 using GUZ.Core.Npc;
@@ -10,7 +9,6 @@ namespace GUZ.Core
 {
     public interface IGlobalDataProvider
     {
-        public ConfigManager Config { get; }
         public LocalizationManager Localization { get; }
         public SaveGameManager SaveGame { get; }
         public LoadingManager Loading { get; }

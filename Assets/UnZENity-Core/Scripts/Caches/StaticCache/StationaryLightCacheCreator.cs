@@ -3,8 +3,10 @@ using System.Threading.Tasks;
 using GUZ.Core.Adapters.UI.LoadingBars;
 using GUZ.Core.Extensions;
 using GUZ.Core.Manager;
+using GUZ.Core.Services.Config;
 using GUZ.Core.Util;
 using MyBox;
+using Reflex.Attributes;
 using UnityEngine;
 using ZenKit;
 using ZenKit.Vobs;
@@ -15,6 +17,9 @@ namespace GUZ.Core.Caches.StaticCache
 {
     public class StationaryLightCacheCreator
     {
+        [Inject] private readonly ConfigService _configService;
+
+
         public List<StaticCacheManager.StationaryLightInfo> StationaryLightInfos = new();
 
         // Used for world chunk creation.
@@ -25,7 +30,7 @@ namespace GUZ.Core.Caches.StaticCache
 
         public StationaryLightCacheCreator()
         {
-            _debugSpeedUpLoading = GameGlobals.Config.Dev.SpeedUpLoading;
+            _debugSpeedUpLoading = _configService.Dev.SpeedUpLoading;
         }
 
         public async Task CalculateStationaryLights(List<IVirtualObject> vobs, int worldIndex)

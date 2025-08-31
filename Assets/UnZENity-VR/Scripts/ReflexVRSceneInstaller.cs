@@ -1,6 +1,5 @@
 #if GUZ_HVR_INSTALLED
-using GUZ.Core.Extensions;
-using GUZ.VR.Domain.Player;
+using GUZ.Core;
 using GUZ.VR.Services;
 using Reflex.Core;
 using UnityEngine;
@@ -14,7 +13,7 @@ namespace GUZ.VR
     {
         public void InstallBindings(ContainerBuilder containerBuilder)
         {
-            containerBuilder.OnContainerBuilt += (container) => BuiltInTypeExtension.DIContainer = container;
+            containerBuilder.OnContainerBuilt += (container) => ReflexProjectInstaller.DIContainer = container;
 
             containerBuilder.AddSingleton(typeof(VRPlayerService));
             containerBuilder.AddSingleton(typeof(VRWeaponService));

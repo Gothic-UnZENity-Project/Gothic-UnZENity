@@ -1,8 +1,6 @@
 ﻿using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using MyBox;
 
-namespace GUZ.Core.Config
+namespace GUZ.Core.Models.Config
 {
     public class GothicGameIniConfig
     {

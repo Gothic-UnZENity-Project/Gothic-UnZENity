@@ -23,7 +23,7 @@ namespace GUZ.Core.Domain.Meshes.Builder
 
             // Cache it f1or faster use during runtime
             npcContainer.PrefabProps.Head = headGo.transform;
-            npcContainer.PrefabProps.HeadMorph = headGo.AddComponent<HeadMorph>();
+            npcContainer.PrefabProps.HeadMorph = headGo.AddComponent<HeadMorph>().Inject();
             npcContainer.PrefabProps.HeadMorph.HeadName = npcContainer.Props.BodyData.Head;
             
             // Fix for G1: Damlurker

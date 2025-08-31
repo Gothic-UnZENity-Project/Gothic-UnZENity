@@ -4,9 +4,11 @@ using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
 using GUZ.Core.Npc;
+using GUZ.Core.Services.Config;
 using GUZ.Core.Vob;
 using HurricaneVR.Framework.Core;
 using HurricaneVR.Framework.Core.Grabbers;
+using Reflex.Attributes;
 using TMPro;
 using UnityEngine;
 
@@ -23,6 +25,9 @@ namespace GUZ.VR.Adapters
     /// </summary>
     public class VRFocus : MonoBehaviour
     {
+        [Inject] private readonly ConfigService _configService;
+
+
         private static Camera _mainCamera;
 
         private static bool _featureBrightenUp;
@@ -65,8 +70,8 @@ namespace GUZ.VR.Adapters
                 _mainCamera = Camera.main;
 
                 // Features also need to be fetched once only.
-                _featureBrightenUp = GameGlobals.Config.Dev.BrightenUpHoveredVOBs;
-                _featureShowName = GameGlobals.Config.Dev.ShowNamesOnHoveredVOBs;
+                _featureBrightenUp = _configService.Dev.BrightenUpHoveredVOBs;
+                _featureShowName = _configService.Dev.ShowNamesOnHoveredVOBs;
             }
 
             if (_featureBrightenUp)

@@ -5,12 +5,13 @@ using System.Linq;
 using System.Threading.Tasks;
 using GUZ.Core.Adapters.UI.LoadingBars;
 using GUZ.Core.Caches;
-using GUZ.Core.Config;
 using GUZ.Core.Creator.Sounds;
 using GUZ.Core.Data.Container;
 using GUZ.Core.Data.Vobs;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
+using GUZ.Core.Models.Config;
+using GUZ.Core.Services.Config;
 using GUZ.Core.Services.Culling;
 using GUZ.Core.Util;
 using GUZ.Core.Vm;
@@ -27,6 +28,7 @@ namespace GUZ.Core.Manager.Vobs
 {
     public class VobManager
     {
+        [Inject] private readonly ConfigService _configService;
         [Inject] private readonly VobSoundCullingService _vobSoundCullingService;
         // Supporter class where the whole Init() logic is outsourced for better readability.
         [Inject] private readonly VobInitializer _initializer;
@@ -307,7 +309,7 @@ namespace GUZ.Core.Manager.Vobs
         private void PostCreateWorldVobs()
         {
             // DEBUG - If we want to load all VOBs at once, we need to initialize all LazyLoad objects now.
-            if (!GameGlobals.Config.Dev.EnableVOBMeshCulling)
+            if (!_configService.Dev.EnableVOBMeshCulling)
             {
                 var lazyLoadVobs = Object.FindObjectsOfType<VobLoader>(true);
                 lazyLoadVobs.ForEach(i => GameGlobals.Vobs.InitVob(i.gameObject));
@@ -404,9 +406,8 @@ namespace GUZ.Core.Manager.Vobs
             if (string.IsNullOrEmpty(spawnPoint) || itemInstance <= 0)
                 return;
 
-            var config = GameGlobals.Config;
-            var activeTypes = config.Dev.SpawnVOBTypes.Value;
-            if (!config.Dev.EnableVOBs || (!activeTypes.IsEmpty() && activeTypes.Contains(VirtualObjectType.oCItem)))
+            var activeTypes = _configService.Dev.SpawnVOBTypes.Value;
+            if (!_configService.Dev.EnableVOBs || (!activeTypes.IsEmpty() && activeTypes.Contains(VirtualObjectType.oCItem)))
                 return;
 
             var item = VmInstanceManager.TryGetItemData(itemInstance);
@@ -457,12 +458,12 @@ namespace GUZ.Core.Manager.Vobs
             {
                 case VisualType.Decal:
                     // Skip object
-                    if (!GameGlobals.Config.Dev.EnableDecalVisuals)
+                    if (!_configService.Dev.EnableDecalVisuals)
                         return;
                     break;
                 case VisualType.ParticleEffect:
                     // Skip object
-                    if (!GameGlobals.Config.Dev.EnableParticleEffects)
+                    if (!_configService.Dev.EnableParticleEffects)
                         return;
                     break;
             }

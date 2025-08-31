@@ -1,4 +1,4 @@
-using GUZ.Core.Config;
+using GUZ.Core.Models.Config;
 using UnityEngine;
 
 namespace GUZ.Core.Services.Context

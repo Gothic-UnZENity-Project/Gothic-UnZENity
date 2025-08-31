@@ -1,6 +1,5 @@
-using GUZ.Core.Config;
+using GUZ.Core.Models.Config;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 namespace GUZ.Core.Services.Context
 {

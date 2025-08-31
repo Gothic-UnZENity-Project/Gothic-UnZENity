@@ -1,6 +1,6 @@
 using System.Collections.Generic;
-using GUZ.Core.Config;
 using GUZ.Core.Extensions;
+using GUZ.Core.Services.Config;
 using Reflex.Attributes;
 using UnityEngine;
 
@@ -8,7 +8,7 @@ namespace GUZ.Core.Domain.Culling
 {
     public abstract class AbstractCullingDomain
     {
-        [Inject] protected readonly ConfigManager ConfigService;
+        [Inject] protected readonly ConfigService ConfigService;
 
 
         protected enum State

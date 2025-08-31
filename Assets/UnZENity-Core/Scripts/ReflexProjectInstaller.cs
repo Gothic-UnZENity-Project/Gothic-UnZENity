@@ -1,14 +1,12 @@
-using GUZ.Core.Config;
 using GUZ.Core.Creator;
 using GUZ.Core.Domain.Animations;
-using GUZ.Core.Extensions;
 using GUZ.Core.Manager;
 using GUZ.Core.Manager.Vobs;
 using GUZ.Core.Npc;
 using GUZ.Core.Services;
+using GUZ.Core.Services.Config;
 using GUZ.Core.Services.Context;
 using GUZ.Core.Services.Culling;
-using GUZ.Core.Util;
 using Reflex.Core;
 using UnityEngine;
 
@@ -16,11 +14,15 @@ namespace GUZ.Core
 {
     public class ReflexProjectInstaller : MonoBehaviour, IInstaller
     {
+        public static Container DIContainer;
+
+
         public void InstallBindings(ContainerBuilder containerBuilder)
         {
-            containerBuilder.OnContainerBuilt += (container) => BuiltInTypeExtension.DIContainer = container;
+            containerBuilder.OnContainerBuilt += (container) => DIContainer = container;
 
             containerBuilder.AddSingleton(typeof(UnityMonoService));
+            containerBuilder.AddSingleton(typeof(ConfigService));
             containerBuilder.AddSingleton(typeof(ContextInteractionService));
             containerBuilder.AddSingleton(typeof(ContextMenuService));
             containerBuilder.AddSingleton(typeof(ContextDialogService));
@@ -39,7 +41,6 @@ namespace GUZ.Core
             containerBuilder.AddSingleton(typeof(WayNetService));
 
             // FIXME - Need to be migrated to a Service!
-            containerBuilder.AddSingleton(typeof(ConfigManager));
             containerBuilder.AddSingleton(typeof(VobManager));
             containerBuilder.AddSingleton(typeof(VobInitializer));
             containerBuilder.AddSingleton(typeof(NpcManager));

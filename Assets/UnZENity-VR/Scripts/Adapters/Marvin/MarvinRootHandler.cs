@@ -1,11 +1,15 @@
 using GUZ.Core;
 using GUZ.Core.Adapters.UI;
+using GUZ.Core.Services.Config;
+using Reflex.Attributes;
 using UnityEngine;
 
 namespace GUZ.VR.Adapters.Marvin
 {
     public class MarvinRootHandler : MonoBehaviour
     {
+        [Inject] private readonly ConfigService _configService;
+
         [SerializeField] ToggleButton _toggleButtonLogs;
         [SerializeField] ToggleButton _toggleButtonMarvin;
         [SerializeField] ToggleButton _toggleButtonInspector;
@@ -18,7 +22,7 @@ namespace GUZ.VR.Adapters.Marvin
         {
             ResetTabs();
 
-            if (!GameGlobals.Config.Dev.ActivateMarvinMode)
+            if (!_configService.Dev.ActivateMarvinMode)
                 gameObject.SetActive(false);
         }
 

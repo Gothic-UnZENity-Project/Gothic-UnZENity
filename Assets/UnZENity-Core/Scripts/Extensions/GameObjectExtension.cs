@@ -18,7 +18,7 @@ namespace GUZ.Core.Extensions
         /// </summary>
         public static GameObject Inject(this GameObject instance)
         {
-            GameObjectInjector.InjectRecursive(instance, BuiltInTypeExtension.DIContainer);
+            GameObjectInjector.InjectRecursive(instance, ReflexProjectInstaller.DIContainer);
             return instance;
         }
 

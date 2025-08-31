@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
-using JetBrains.Annotations;
-using MyBox;
+using GUZ.Core.Domain.Config;
 
-namespace GUZ.Core.Config
+namespace GUZ.Core.Models.Config
 {
     public class GothicIniConfig
     {

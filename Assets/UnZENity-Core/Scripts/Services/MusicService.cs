@@ -4,8 +4,10 @@ using System.Linq;
 using DirectMusic;
 using GUZ.Core.Caches;
 using GUZ.Core.Globals;
+using GUZ.Core.Services.Config;
 using GUZ.Core.Util;
 using GUZ.Core.Vob;
+using Reflex.Attributes;
 using UnityEngine;
 using ZenKit;
 using ZenKit.Daedalus;
@@ -26,6 +28,9 @@ namespace GUZ.Core.Manager
             Fgt = 1 << 1,
             Thr = 1 << 2
         }
+
+        [Inject] private readonly ConfigService _configService;
+
 
         private const string _backgroundMusicGOName = "BackgroundMusic";
 
@@ -105,14 +110,14 @@ namespace GUZ.Core.Manager
         private void SetMusicFromIni()
         {
             // If we disable the music component, we can't re-enable music again. It's better to mute it.
-            if (!GameGlobals.Config.Gothic.IniMusicEnabled)
+            if (!_configService.Gothic.IniMusicEnabled)
             {
                 _audioSourceComp.volume = 0f;
             }
             else
             {
                 // A music sound of 1f is way too loud. We therefore turn it down based on some experience.
-                _audioSourceComp.volume = GameGlobals.Config.Gothic.IniMusicVolume / 3;
+                _audioSourceComp.volume = _configService.Gothic.IniMusicVolume / 3;
             }
         }
 

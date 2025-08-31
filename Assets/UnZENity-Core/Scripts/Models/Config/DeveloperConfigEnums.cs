@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace GUZ.Core.Config
+namespace GUZ.Core.Models.Config
 {
     public class DeveloperConfigEnums
     {

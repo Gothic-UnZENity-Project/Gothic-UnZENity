@@ -1,6 +1,8 @@
 ﻿#if GUZ_HVR_INSTALLED
 using GUZ.Core;
 using GUZ.Core.Npc;
+using GUZ.Core.Services.Config;
+using Reflex.Attributes;
 using TMPro;
 using UnityEngine;
 using ZenKit.Daedalus;
@@ -14,9 +16,10 @@ namespace GUZ.VR.Adapters.UI
     /// </summary>
     public class VRSubtitles : BasePlayerBehaviour, INpcSubtitles
     {
+        [Inject] private readonly ConfigService _configService;
+
         // Hero has different behaviour for NpcInstance handling within Awake() function.
-        [SerializeField]
-        private bool _isHero;
+        [SerializeField] private bool _isHero;
 
         [SerializeField] private TMP_Text _dialogNpcNameText;
         [SerializeField] private TMP_Text _dialogText;
@@ -43,7 +46,7 @@ namespace GUZ.VR.Adapters.UI
 
         public void ShowSubtitles(string text)
         {
-            if (!GameGlobals.Config.Gothic.IniSubtitles)
+            if (!_configService.Gothic.IniSubtitles)
                 return;
 
             gameObject.SetActive(true);

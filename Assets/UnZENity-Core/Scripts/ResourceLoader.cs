@@ -257,26 +257,10 @@ namespace GUZ.Core
         /// 
         /// HINT: Please check if using PrefabType overload is better suited before using this function.
         /// </summary>
-        public static GameObject TryGetPrefabObject(string prefabPath, Vector3 position = default, Quaternion rotation = default, string name = null, GameObject parent = null)
-        {
-            var go = Object.Instantiate(TryGetPrefab(prefabPath), position, rotation, parent?.transform);
-
-            if (name != null)
-            {
-                go.name = name;
-            }
-
-            return go;
-        }
-        
-        /// <summary>
-        /// Alternative way to load a dynamically named prefab and cache it.
-        /// 
-        /// HINT: Please check if using PrefabType overload is better suited before using this function.
-        /// </summary>
         public static GameObject TryGetPrefabObject(string prefabPath, string name = null, GameObject parent = null, bool worldPositionStays = true)
         {
-            var go = Object.Instantiate(TryGetPrefab(prefabPath), parent?.transform, worldPositionStays);
+            // HINT: For now, we call Inject() on any prefab. If we face performance issues with it, we can also selectively call it later. But most of Prefabs will need it anyway.
+            var go = Object.Instantiate(TryGetPrefab(prefabPath), parent?.transform, worldPositionStays).Inject();
 
             if (name != null)
             {

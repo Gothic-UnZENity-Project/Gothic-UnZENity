@@ -4,8 +4,10 @@ using System.Threading.Tasks;
 using GUZ.Core.Adapters.UI.LoadingBars;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
+using GUZ.Core.Services.Config;
 using GUZ.Core.Util;
 using MyBox;
+using Reflex.Attributes;
 using UnityEngine;
 using ZenKit;
 using Logger = GUZ.Core.Util.Logger;
@@ -21,6 +23,9 @@ namespace GUZ.Core.Caches.StaticCache
             public List<int> PolygonIds = new();
         }
 
+        [Inject] private readonly ConfigService _configService;
+
+
         public Dictionary<TextureCache.TextureArrayTypes, List<WorldChunk>> MergedChunksByLights;
 
         /// <summary>
@@ -33,13 +38,7 @@ namespace GUZ.Core.Caches.StaticCache
         private const int _maxAmountOfPolygonsPerChunk = 10000;
         
         private List<Bounds> _stationaryLightBounds;
-        private bool _debugSpeedUpLoading;
 
-
-        public WorldChunkCacheCreator()
-        {
-            _debugSpeedUpLoading = GameGlobals.Config.Dev.SpeedUpLoading;
-        }
 
         public async Task CalculateWorldChunks(IWorld world, List<Bounds> stationaryLightBounds, int worldIndex)
         {
@@ -82,7 +81,7 @@ namespace GUZ.Core.Caches.StaticCache
             foreach (var nodeId in leafNodes)
             {
                 // Hint: If calculation still stutters in framerate, then set this check at polygon-loop level.
-                if (!_debugSpeedUpLoading)
+                if (!_configService.Dev.SpeedUpLoading)
                 {
                     await FrameSkipper.TrySkipToNextFrame();
                 }
@@ -152,7 +151,7 @@ namespace GUZ.Core.Caches.StaticCache
             foreach (var nodeData in leafNodesWithPolygons)
             {
                 // Hint: If calculation still stutters in framerate, then set this check at polygon-loop level.
-                if (!_debugSpeedUpLoading)
+                if (!_configService.Dev.SpeedUpLoading)
                 {
                     await FrameSkipper.TrySkipToNextFrame();
                 }

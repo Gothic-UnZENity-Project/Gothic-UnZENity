@@ -40,7 +40,7 @@ namespace GUZ.Tests.PlayMode
             yield return PrepareTest();
 
             // Assert
-            if (SceneManager.GetActiveScene().GetRootGameObjects().First().GetComponent<GameManager>().Config.Dev.name != "Production")
+            if (SceneManager.GetActiveScene().GetRootGameObjects().First().GetComponent<GameManager>().DeveloperConfig.name != "Production")
             {
                 // Unfortunately I couldn't figure out an easy way to check for active .Config setting without triggering .Start() of GameObject.
                 // Therefore let's check that we always have Production active.

@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using GUZ.Core.Config;
+using GUZ.Core.Models.Config;
 using GUZ.Core.Npc.Routines;
 
 namespace GUZ.Core.Manager

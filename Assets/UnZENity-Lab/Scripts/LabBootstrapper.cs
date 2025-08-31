@@ -3,13 +3,14 @@ using System.Globalization;
 using System.Threading.Tasks;
 using GUZ.Core;
 using GUZ.Core.Caches;
-using GUZ.Core.Config;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
 using GUZ.Core.Manager.Vobs;
+using GUZ.Core.Models.Config;
 using GUZ.Core.Npc;
 using GUZ.Core.Services;
+using GUZ.Core.Services.Config;
 using GUZ.Core.Services.Context;
 using GUZ.Core.Services.Culling;
 using GUZ.Core.Util;
@@ -38,7 +39,6 @@ namespace GUZ.Lab
         public LabNpcAnimationHandler LabNpcAnimationHandler;
         public LabLockHandler LabLockHandler;
 
-        private ConfigManager _configManager;
         private LocalizationManager _localizationManager;
         private VideoManager _videoManager;
         private RoutineManager _npcRoutineManager;
@@ -51,7 +51,6 @@ namespace GUZ.Lab
         private NpcManager _npcManager;
         private MarvinManager _marvinManager;
 
-        public ConfigManager Config => _configManager;
         public LocalizationManager Localization => _localizationManager;
         public SaveGameManager SaveGame => _save;
         public LoadingManager Loading => null;
@@ -74,7 +73,8 @@ namespace GUZ.Lab
         public VideoManager Video => _videoManager;
         public SpeechToTextService SpeechToText => null;
 
-        
+
+        [Inject] private readonly ConfigService _configService;
         [Inject] private readonly MusicService _musicService;
         [Inject] private readonly GameTimeService _gameTimeService;
         [Inject] private readonly ContextInteractionService _contextInteractionService;
@@ -111,26 +111,25 @@ namespace GUZ.Lab
         {
             GameGlobals.Instance = this;
 
-            _configManager = new ConfigManager();
-            _configManager.LoadRootJson();
-            _configManager.SetDeveloperConfig(DeveloperConfig);
-            _configManager.LoadGothicInis(GameVersion.Gothic1);
+            _configService.LoadRootJson();
+            _configService.SetDeveloperConfig(DeveloperConfig);
+            _configService.LoadGothicInis(GameVersion.Gothic1);
 
-            ZenKit.Logger.Set(Config.Dev.ZenKitLogLevel, Logger.OnZenKitLogMessage);
-            DirectMusic.Logger.Set(Config.Dev.DirectMusicLogLevel, Logger.OnDirectMusicLogMessage);
+            ZenKit.Logger.Set(_configService.Dev.ZenKitLogLevel, Logger.OnZenKitLogMessage);
+            DirectMusic.Logger.Set(_configService.Dev.DirectMusicLogLevel, Logger.OnDirectMusicLogMessage);
             _localizationManager = new LocalizationManager();
             _save = new SaveGameManager();
             _staticCacheManager = new StaticCacheManager();
-            _story = new StoryManager(Config.Dev);
+            _story = new StoryManager();
             _textureManager = GetComponent<TextureManager>();
             _fontManager = GetComponent<FontManager>();
-            _npcRoutineManager = new RoutineManager(Config.Dev);
-            _videoManager = new VideoManager(Config.Dev);
+            _npcRoutineManager = new RoutineManager(_configService.Dev);
+            _videoManager = new VideoManager();
             _npcManager = new NpcManager();
             _vobManager = new VobManager();
             _marvinManager = new MarvinManager();
 
-            ResourceLoader.Init(Config.Root.Gothic1Path);
+            ResourceLoader.Init(_configService.Root.Gothic1Path);
 
             // In lab, we can safely say: VR only!
             GameContext.ContextInteractionService = _contextInteractionService;
@@ -140,7 +139,7 @@ namespace GUZ.Lab
 
             _musicService.Init();
             _npcRoutineManager.Init();
-            _staticCacheManager.Init(_configManager.Dev);
+            _staticCacheManager.Init(_configService.Dev);
             _textureManager.Init();
             _npcManager.Init();
             _vobManager.Init();

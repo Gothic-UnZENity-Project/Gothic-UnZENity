@@ -4,8 +4,10 @@ using System.Linq;
 using GUZ.Core;
 using GUZ.Core.Adapters.UI;
 using GUZ.Core.Extensions;
+using GUZ.Core.Services.Config;
 using GUZ.Core.Util;
 using MyBox;
+using Reflex.Attributes;
 using TMPro;
 using UberLogger;
 using UnityEditor;
@@ -19,6 +21,9 @@ namespace GUZ.VR.Adapters.Marvin
 {
     public class MarvinLogsTabHandler : MonoBehaviour, ILogger
     {
+        [Inject] private readonly ConfigService _configService;
+
+
         [SerializeField] private ScrollRect _logsRoot;
         [SerializeField] private RectTransform _logContentContainer;
         
@@ -50,7 +55,7 @@ namespace GUZ.VR.Adapters.Marvin
         private void Start()
         {
             // TODO - For now, we can only enable MarvinMode via DevConfig. Once it can be activated at runtime via gesture, we should remove this line.
-            if (!GameGlobals.Config.Dev.ActivateMarvinMode)
+            if (!_configService.Dev.ActivateMarvinMode)
                 return;
             
             Logger.AddLogger(this);

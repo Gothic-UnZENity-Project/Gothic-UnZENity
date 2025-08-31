@@ -6,6 +6,7 @@ using GUZ.Core.Caches;
 using GUZ.Core.Caches.StaticCache;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
+using GUZ.Core.Services.Config;
 using GUZ.Core.Util;
 using Reflex.Attributes;
 using UnityEngine;
@@ -16,6 +17,9 @@ namespace GUZ.Core.Manager.Scenes
 {
     public class PreCachingSceneManager : MonoBehaviour, ISceneManager
     {
+        [Inject] private readonly ConfigService _configService;
+
+
         [SerializeField]
         private PreCachingLoadingBarHandler _loadingBarHandler;
 
@@ -67,7 +71,7 @@ namespace GUZ.Core.Manager.Scenes
             {
                 var worldsToLoad = GameContext.ContextGameVersionService.Version == GameVersion.Gothic1 ? _gothic1Worlds : _gothic2Worlds;
                 
-                if (!GameGlobals.Config.Dev.AlwaysRecreateCache && GameGlobals.StaticCache.DoCacheFilesExist(worldsToLoad))
+                if (!_configService.Dev.AlwaysRecreateCache && GameGlobals.StaticCache.DoCacheFilesExist(worldsToLoad))
                 {
                     var metadata = await GameGlobals.StaticCache.ReadMetadata();
                     if (metadata.Version == Constants.StaticCacheVersion)
@@ -104,8 +108,8 @@ namespace GUZ.Core.Manager.Scenes
                         
                     Logger.Log($"### PreCaching meshes for world: {worldName}", LogCat.PreCaching);
                     var world = ResourceLoader.TryGetWorld(worldName, GameContext.ContextGameVersionService.Version)!;
-                    var stationaryLightCache = new StationaryLightCacheCreator();
-                    var worldChunkCache = new WorldChunkCacheCreator();
+                    var stationaryLightCache = new StationaryLightCacheCreator().Inject();
+                    var worldChunkCache = new WorldChunkCacheCreator().Inject();
 
                     await vobBoundsCache.CalculateVobBounds(world.RootObjects, worldIndex);
                     watch.LogAndRestart($"{worldName}: VobBounds calculated.");

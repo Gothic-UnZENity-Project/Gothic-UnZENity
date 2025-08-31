@@ -1,10 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using GUZ.Core.Config;
 using GUZ.Core.Extensions;
 using GUZ.Core.Util;
-using UnityEngine;
 using Logger = GUZ.Core.Util.Logger;
 
 namespace GUZ.Core.Manager
@@ -15,11 +13,6 @@ namespace GUZ.Core.Manager
         public List<string> VideoFilePathsMp4 = new();
 
 
-        public VideoManager(DeveloperConfig config)
-        {
-            // NOP
-        }
-        
         public void InitVideos()
         {
             var videoFileFolder = $"{GameContext.ContextGameVersionService.RootPath}/_work/DATA/video/";

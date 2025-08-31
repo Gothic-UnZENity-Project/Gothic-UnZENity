@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Globalization;
 using System.Linq;
+using Codice.CM.Common;
 using GUZ.Core.Caches;
 using GUZ.Core.Creator;
 using GUZ.Core.Data.Container;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
+using GUZ.Core.Services.Config;
 using GUZ.Core.Util;
 using ZenKit;
 using ZenKit.Daedalus;
@@ -23,10 +25,13 @@ namespace GUZ.Core.Vm
         private static bool _enableZSpyLogs;
         private static int _zSpyChannel;
 
+        // FIXME - We should really change this .Resolve<> method and have proper DI via [Inject] as anywhere else.
+        private static ConfigService _configService => ReflexProjectInstaller.DIContainer.Resolve<ConfigService>();
+
         public static void RegisterExternals()
         {
-            _enableZSpyLogs = GameGlobals.Config.Dev.EnableZSpyLogs;
-            _zSpyChannel = GameGlobals.Config.Dev.ZSpyChannel;
+            _enableZSpyLogs = _configService.Dev.EnableZSpyLogs;
+            _zSpyChannel = _configService.Dev.ZSpyChannel;
 
             var vm = GameData.GothicVm;
             vm.RegisterExternalDefault(DefaultExternal);
@@ -529,7 +534,7 @@ namespace GUZ.Core.Vm
 
         public static void PrintDebug(string message)
         {
-            if (!GameGlobals.Config.Dev.EnableZSpyLogs)
+            if (!_configService.Dev.EnableZSpyLogs)
             {
                 return;
             }
@@ -540,7 +545,7 @@ namespace GUZ.Core.Vm
 
         public static void PrintDebugCh(int channel, string message)
         {
-            if (!GameGlobals.Config.Dev.EnableZSpyLogs)
+            if (!_configService.Dev.EnableZSpyLogs)
             {
                 return;
             }
@@ -551,7 +556,7 @@ namespace GUZ.Core.Vm
 
         public static void PrintDebugInst(string message)
         {
-            if (!GameGlobals.Config.Dev.EnableZSpyLogs)
+            if (!_configService.Dev.EnableZSpyLogs)
             {
                 return;
             }

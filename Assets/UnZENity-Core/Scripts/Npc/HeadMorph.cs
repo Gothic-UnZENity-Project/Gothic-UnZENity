@@ -1,7 +1,9 @@
 using System;
 using GUZ.Core.Extensions;
 using GUZ.Core.Morph;
+using GUZ.Core.Services.Config;
 using GUZ.Core.Util;
+using Reflex.Attributes;
 using UnityEngine;
 using Logger = GUZ.Core.Util.Logger;
 
@@ -23,6 +25,9 @@ namespace GUZ.Core.Npc
             Viseme
         }
 
+        [Inject] private readonly ConfigService _configService;
+
+
         public string HeadName;
 
 
@@ -30,10 +35,8 @@ namespace GUZ.Core.Npc
         {
             base.Start();
 
-            if (!GameGlobals.Config.Dev.EnableNpcEyeBlinking)
-            {
+            if (!_configService.Dev.EnableNpcEyeBlinking)
                 return;
-            }
 
             RandomAnimations.Add(new()
             {

@@ -1,7 +1,9 @@
 ﻿using System.IO;
+using GUZ.Core.Domain.Config;
+using GUZ.Core.Models.Config;
 using ZenKit;
 
-namespace GUZ.Core.Config
+namespace GUZ.Core.Services.Config
 {
     /// <summary>
     /// Combines three sources of configuration:
@@ -9,7 +11,7 @@ namespace GUZ.Core.Config
     /// 2. GameSettings.json from Gothic-UnZENity/StreamingAssets path for root configuration (e.g. log level)
     /// 3. DeveloperConfig ScriptableObject for developer settings
     /// </summary>
-    public class ConfigManager
+    public class ConfigService
     {
         public JsonRootConfig Root { get; private set; }
         public DeveloperConfig Dev { get; private set; }

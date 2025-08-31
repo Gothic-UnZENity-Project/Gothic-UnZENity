@@ -2,7 +2,9 @@
 using System.Linq;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
+using GUZ.Core.Services.Config;
 using GUZ.Core.Util;
+using Reflex.Attributes;
 using UnityEngine;
 using UnityEngine.Video;
 using Logger = GUZ.Core.Util.Logger;
@@ -11,14 +13,17 @@ namespace GUZ.Core.Manager.Scenes
 {
     public class LogoSceneManager : MonoBehaviour , ISceneManager
     {
+        [Inject] private readonly ConfigService _configService;
+
+
         [SerializeField] private VideoPlayer _videoPlayer;
 
         private Queue<string> _logoVideos = new();
 
         public void Init()
         {
-            Logger.Log($"INI: playLogoVideos = {GameGlobals.Config.Gothic.IniPlayLogoVideos}", LogCat.Loading);
-            if (GameGlobals.Config.Gothic.IniPlayLogoVideos)
+            Logger.Log($"INI: playLogoVideos = {_configService.Gothic.IniPlayLogoVideos}", LogCat.Loading);
+            if (_configService.Gothic.IniPlayLogoVideos)
             {
                 GameManager.I.LoadScene(Constants.SceneMainMenu, Constants.SceneLogo);
                 return;

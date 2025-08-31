@@ -12,9 +12,6 @@ namespace GUZ.Core.Extensions
 {
     public static class BuiltInTypeExtension
     {
-        public static Container DIContainer;
-
-
         /// <summary>
         /// Execute on newly created C# object to execute DI injection.
         /// Please use it only, when needed as it causes some CPU cycles when done.
@@ -23,7 +20,7 @@ namespace GUZ.Core.Extensions
         /// </summary>
         public static T Inject<T>(this T instance)
         {
-            AttributeInjector.Inject(instance, DIContainer);
+            AttributeInjector.Inject(instance, ReflexProjectInstaller.DIContainer);
             return instance;
         }
 

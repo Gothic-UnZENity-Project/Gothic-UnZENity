@@ -2,6 +2,7 @@
 using GUZ.Core;
 using GUZ.Core.Manager;
 using GUZ.Core.Services;
+using GUZ.Core.Services.Config;
 using GUZ.Core.Util;
 using GUZ.VR.Services.Context;
 using GUZ.VR.Adapters.HVROverrides;
@@ -14,15 +15,16 @@ namespace GUZ.VR.Adapters.SpeechToText
 {
     public class SpeechToTextHandler : MonoBehaviour
     {
+        [Inject] private readonly ConfigService _configService;
+        [Inject] private readonly SpeechToTextService _speechToTextService;
+
+
         [SerializeField]
         private VRDialog _vrDialog;
         [SerializeField]
         private GameObject _recordingImage;
         [SerializeField]
         private GameObject _aiWaitingImage;
-
-
-        [Inject] private readonly SpeechToTextService _speechToTextService;
 
 
         private const int _maxRecordingLength = 30;
@@ -34,7 +36,7 @@ namespace GUZ.VR.Adapters.SpeechToText
         private AudioClip _recordedClip;
 
 
-        private int _microphoneIndex => GameGlobals.Config.Gothic.GetInt(VRConstants.IniNames.Microphone);
+        private int _microphoneIndex => _configService.Gothic.GetInt(VRConstants.IniNames.Microphone);
         
         private State _state;
 

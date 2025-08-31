@@ -1,29 +1,14 @@
 using System;
 using GUZ.Core.Services;
-using GUZ.Core.World;
 using MyBox;
 using UnityEngine;
 using ZenKit;
 using ZenKit.Vobs;
-using static GUZ.Core.Config.DeveloperConfigEnums;
+using static GUZ.Core.Models.Config.DeveloperConfigEnums;
 
 
-namespace GUZ.Core.Config
+namespace GUZ.Core.Models.Config
 {
-    [Serializable]
-    public class MeshCullingGroup
-    {
-        [Range(1f, 100f)]
-        public float MaximumObjectSize;
-
-        [Range(1f, 1000f)]
-        public float CullingDistance;
-    }
-
-
-
-
-
     [CreateAssetMenu(fileName = "NewDeveloperConfiguration", menuName = "UnZENity/ScriptableObjects/DeveloperConfiguration", order = 1)]
     public class DeveloperConfig : ScriptableObject
     {

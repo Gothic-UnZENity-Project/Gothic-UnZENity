@@ -1,15 +1,17 @@
 #if GUZ_HVR_INSTALLED
 using System.Linq;
 using GUZ.Core;
-using GUZ.Core.Config;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
+using GUZ.Core.Models.Config;
+using GUZ.Core.Services.Config;
 using GUZ.Core.Services.Context;
 using GUZ.VR.Adapters.HVROverrides;
 using GUZ.VR.Adapters.Marvin;
 using GUZ.VR.Adapters.Player;
 using HurricaneVR.Framework.Core.UI;
 using HurricaneVRExtensions.Simulator;
+using Reflex.Attributes;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.XR;
@@ -19,6 +21,8 @@ namespace GUZ.VR.Services.Context
 {
     public class VRContextInteractionService : IContextInteractionService
     {
+        [Inject] private readonly ConfigService _configService;
+
         private const string _contextName = "VR";
 
         private VRPlayerController _playerController;
@@ -28,7 +32,7 @@ namespace GUZ.VR.Services.Context
             GlobalEventDispatcher.LoadingSceneLoaded.AddListener(OnLoadingSceneLoaded);
             GlobalEventDispatcher.GothicInisInitialized.AddListener(() =>
             {
-                SetRenderDistance(GameGlobals.Config.Gothic.IniVisualRange);
+                SetRenderDistance(_configService.Gothic.IniVisualRange);
                 _playerController.SetNormalControls();
             });
             GlobalEventDispatcher.PlayerPrefUpdated.AddListener(PlayerPrefsUpdated);
@@ -48,7 +52,7 @@ namespace GUZ.VR.Services.Context
         public float GetFrameRate()
         {
             // If we have no VR device attached to our computer, we will get an NPE for activeLoader.
-            if (GameGlobals.Config.Dev.EnableVRDeviceSimulator || XRGeneralSettings.Instance.Manager.activeLoader == null)
+            if (_configService.Dev.EnableVRDeviceSimulator || XRGeneralSettings.Instance.Manager.activeLoader == null)
             {
                 return 0;
             }

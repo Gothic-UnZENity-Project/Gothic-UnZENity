@@ -1,5 +1,7 @@
-using GUZ.Core.Config;
 using GUZ.Core.Globals;
+using GUZ.Core.Models.Config;
+using GUZ.Core.Services.Config;
+using Reflex.Attributes;
 using UnityEngine;
 
 namespace GUZ.Core.Manager.Scenes
@@ -9,21 +11,23 @@ namespace GUZ.Core.Manager.Scenes
     /// </summary>
     public class MainMenuSceneManager : MonoBehaviour, ISceneManager
     {
-        [SerializeField]
-        private GameObject _mainMenuImageBackground;
+        [Inject] private readonly ConfigService _configService;
+
+
+        [SerializeField] private GameObject _mainMenuImageBackground;
 
         public void Init()
         {
             GameContext.ContextInteractionService.InitUIInteraction();
 
-            if (!GameGlobals.Config.Dev.EnableMainMenu)
+            if (!_configService.Dev.EnableMainMenu)
             {
                 // We need to invoke this event, even when we skip MainMenu (for event listeners, main menu is 'loaded')
                 GlobalEventDispatcher.MainMenuSceneLoaded.Invoke();
 
-                if (GameGlobals.Config.Dev.LoadFromSaveSlot)
+                if (_configService.Dev.LoadFromSaveSlot)
                 {
-                    var saveId = (SaveGameManager.SlotId)GameGlobals.Config.Dev.SaveSlotToLoad;
+                    var saveId = (SaveGameManager.SlotId)_configService.Dev.SaveSlotToLoad;
                     var save = GameGlobals.SaveGame.GetSaveGame(saveId);
                     GameManager.I.LoadWorld(save.Metadata.World, saveId, Constants.SceneMainMenu);
                 }
@@ -46,10 +50,10 @@ namespace GUZ.Core.Manager.Scenes
 
         private string GetWorldNameToSpawn()
         {
-            var world = GameGlobals.Config.Dev.PreselectWorldToSpawn;
+            var world = _configService.Dev.PreselectWorldToSpawn;
 
             if (world == DeveloperConfigEnums.WorldToSpawn.None)
-                return GameGlobals.Config.GothicGame.World;
+                return _configService.GothicGame.World;
             else
                 return DeveloperConfigEnums.WorldMappings[world];
         }

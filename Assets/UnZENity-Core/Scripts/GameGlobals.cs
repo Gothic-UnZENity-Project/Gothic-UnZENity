@@ -1,4 +1,3 @@
-using GUZ.Core.Config;
 using GUZ.Core.Manager;
 using GUZ.Core.Manager.Vobs;
 using GUZ.Core.Npc;
@@ -12,7 +11,6 @@ namespace GUZ.Core
     {
         public static IGlobalDataProvider Instance;
 
-        public static ConfigManager Config => Instance.Config;
         public static LocalizationManager Localization => Instance.Localization;
         public static SaveGameManager SaveGame => Instance.SaveGame;
         public static LoadingManager Loading => Instance.Loading;

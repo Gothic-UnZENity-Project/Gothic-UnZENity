@@ -7,8 +7,10 @@ using GUZ.Core.Caches.StaticCache;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
+using GUZ.Core.Services.Config;
 using GUZ.Core.Util;
 using JetBrains.Annotations;
+using Reflex.Attributes;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -20,6 +22,9 @@ namespace GUZ.Core.Domain.Meshes.Builder
 {
     public class WorldMeshBuilder : AbstractMeshBuilder
     {
+        [Inject] private readonly ConfigService _configService;
+
+
         private StaticCacheManager.WorldChunkContainer _worldChunks;
         private IMesh _mesh;
         private bool _debugSpeedUpLoading;
@@ -47,7 +52,7 @@ namespace GUZ.Core.Domain.Meshes.Builder
 
         public async Task BuildAsync([CanBeNull] LoadingManager loading)
         {
-            _debugSpeedUpLoading = GameGlobals.Config.Dev.SpeedUpLoading;
+            _debugSpeedUpLoading = _configService.Dev.SpeedUpLoading;
 
             RootGo.isStatic = true;
 

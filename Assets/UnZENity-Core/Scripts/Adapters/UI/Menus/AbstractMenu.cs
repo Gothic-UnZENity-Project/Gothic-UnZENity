@@ -5,8 +5,10 @@ using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Model.UI.Menu;
 using GUZ.Core.Model.UI.MenuItem;
+using GUZ.Core.Services.Config;
 using GUZ.Core.Util;
 using MyBox;
+using Reflex.Attributes;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -18,6 +20,9 @@ namespace GUZ.Core.Adapters.UI.Menus
 {
     public abstract class AbstractMenu : MonoBehaviour
     {
+        [Inject] protected readonly ConfigService ConfigService;
+
+
         protected MenuHandler MenuHandler;
         protected AbstractMenuInstance MenuInstance;
         [SerializeField] protected GameObject Canvas;
@@ -320,7 +325,7 @@ namespace GUZ.Core.Adapters.UI.Menus
                 // We try to load setting from Ini file.
                 var entries = text0.Split("|");
                 var defaultIfNoIniExists = (int)item.GetUserFloat(3);
-                var entryIndex = GameGlobals.Config.Gothic.GetInt(item.OnChgSetOption, defaultIfNoIniExists);
+                var entryIndex = ConfigService.Gothic.GetInt(item.OnChgSetOption, defaultIfNoIniExists);
                 // We need to ensure that we're not out-of-bounds.
                 text0 = entryIndex >= entries.Length ? entries[0] : entries[entryIndex];
             }
@@ -346,7 +351,7 @@ namespace GUZ.Core.Adapters.UI.Menus
 
             var stepAmount = 1 / (item.GetUserFloat(0)); // -1 as we use elements from 0...15
             var defaultIfNoIniExists = item.GetUserFloat(3) != 0 ? item.GetUserFloat(3) : 1;
-            var currentIniValue = GameGlobals.Config.Gothic.GetFloat(item.OnChgSetOption, defaultIfNoIniExists);
+            var currentIniValue = ConfigService.Gothic.GetFloat(item.OnChgSetOption, defaultIfNoIniExists);
             
             // Convert INI value (0...1) to slider value (1...maxValue)
             var sliderValue = Mathf.Round(currentIniValue / stepAmount) + 1; // +1, as minValue == 1, not zero
@@ -411,12 +416,12 @@ namespace GUZ.Core.Adapters.UI.Menus
 
             if (currentIndex == -1 || nextIndex >= options.Length)
             {
-                GameGlobals.Config.Gothic.SetInt(optionSection, option, 0);
+                ConfigService.Gothic.SetInt(optionSection, option, 0);
                 textComp.text = options[0];
             }
             else
             {
-                GameGlobals.Config.Gothic.SetInt(optionSection, option, currentIndex+1);
+                ConfigService.Gothic.SetInt(optionSection, option, currentIndex+1);
                 textComp.text = options[currentIndex+1];
             }
         }
@@ -426,7 +431,7 @@ namespace GUZ.Core.Adapters.UI.Menus
             var iniValue = stepAmount * (value - 1); // -1 as we need to normalize back to 0...1
             iniValue = (float)Math.Round(iniValue, 9);
             
-            GameGlobals.Config.Gothic.SetFloat(item.OnChgSetOptionSection, item.OnChgSetOption, iniValue);
+            ConfigService.Gothic.SetFloat(item.OnChgSetOptionSection, item.OnChgSetOption, iniValue);
         }
         
         private void OnMenuItemClicked(MenuItemSelectAction action, string itemName, string commandName)

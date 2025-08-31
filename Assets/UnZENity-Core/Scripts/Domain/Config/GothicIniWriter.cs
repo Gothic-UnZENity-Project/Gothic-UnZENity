@@ -2,10 +2,9 @@ using System;
 using System.IO;
 using System.Linq;
 using GUZ.Core.Util;
-using Constants = GUZ.Core.Globals.Constants;
 using Logger = GUZ.Core.Util.Logger;
 
-namespace GUZ.Core.Config
+namespace GUZ.Core.Domain.Config
 {
     public class GothicIniWriter
     {

@@ -1,14 +1,15 @@
 using System.Diagnostics;
 using System.Globalization;
 using GUZ.Core.Caches;
-using GUZ.Core.Config;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
 using GUZ.Core.Manager.Scenes;
 using GUZ.Core.Manager.Vobs;
+using GUZ.Core.Models.Config;
 using GUZ.Core.Npc;
 using GUZ.Core.Services;
+using GUZ.Core.Services.Config;
 using GUZ.Core.Services.Context;
 using GUZ.Core.Services.Culling;
 using GUZ.Core.Util;
@@ -18,7 +19,6 @@ using Reflex.Attributes;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using ZenKit;
-// deprecated
 using Logger = GUZ.Core.Util.Logger;
 
 namespace GUZ.Core
@@ -31,7 +31,6 @@ namespace GUZ.Core
         private FileLoggingHandler _fileLoggingHandler;
         private FrameSkipper _frameSkipper;
 
-        public ConfigManager Config { get; private set; }
         public LocalizationManager Localization { get; private set; }
 
         public SaveGameManager SaveGame { get; private set; }
@@ -84,7 +83,7 @@ namespace GUZ.Core
         [Inject] private readonly LoadingManager _loadingManager;
 
         [Inject] private readonly VobManager _vobManager;
-        [Inject] private readonly ConfigManager _configManager;
+        [Inject] private readonly ConfigService _configService;
         [Inject] private readonly NpcManager _npcService;
 
         protected override void Awake()
@@ -104,9 +103,8 @@ namespace GUZ.Core
             // Simply set "any" MonoBehaviour (like this) as object to use within game logic.
             _unityMonoService.SetMonoBehaviour(this);
 
-            Config = _configManager;
-            Config.LoadRootJson();
-            Config.SetDeveloperConfig(DeveloperConfig);
+            _configService.LoadRootJson();
+            _configService.SetDeveloperConfig(DeveloperConfig);
 
             _fileLoggingHandler = new FileLoggingHandler();
             _frameSkipper = GetComponent<FrameSkipper>();
@@ -127,19 +125,19 @@ namespace GUZ.Core
             VobMeshCulling = _vobMeshCullingService;
             NpcMeshCulling = _npcMeshCullingService;
             Lights = new StationaryLightsManager();
-            Player = new PlayerManager(DeveloperConfig);
+            Player = new PlayerManager();
             Marvin = new MarvinManager();
             Time = _gameTimeService;
-            Video = new VideoManager(DeveloperConfig);
+            Video = new VideoManager();
             Sky = _skyManager;
-            Story = new StoryManager(DeveloperConfig);
+            Story = new StoryManager();
             Routines = new RoutineManager(DeveloperConfig);
             SpeechToText = _speechToTextService;
 
-            ZenKit.Logger.Set(Config.Dev.ZenKitLogLevel, Logger.OnZenKitLogMessage);
-            DirectMusic.Logger.Set(Config.Dev.DirectMusicLogLevel, Logger.OnDirectMusicLogMessage);
+            ZenKit.Logger.Set(_configService.Dev.ZenKitLogLevel, Logger.OnZenKitLogMessage);
+            DirectMusic.Logger.Set(_configService.Dev.DirectMusicLogLevel, Logger.OnDirectMusicLogMessage);
 
-            _fileLoggingHandler.Init(Config.Root);
+            _fileLoggingHandler.Init(_configService.Root);
         }
 
         private void Start()
@@ -156,7 +154,7 @@ namespace GUZ.Core
         /// </summary>
         public void InitPhase1()
         {
-            GlobalEventDispatcher.RegisterControlsService.Invoke(_configManager.Dev.GameControls);
+            GlobalEventDispatcher.RegisterControlsService.Invoke(_configService.Dev.GameControls);
 
             _frameSkipper.Init();
             Loading.Init();
@@ -179,7 +177,7 @@ namespace GUZ.Core
             GlobalEventDispatcher.RegisterGameVersionService.Invoke(version);
             GameContext.ContextGameVersionService = _contextGameVersionService;
 
-            Config.LoadGothicInis(version);
+            _configService.LoadGothicInis(version);
 
             var gothicRootPath = GameContext.ContextGameVersionService.RootPath;
 

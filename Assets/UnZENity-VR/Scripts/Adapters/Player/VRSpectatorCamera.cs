@@ -1,9 +1,11 @@
 #if GUZ_HVR_INSTALLED
 using System;
 using GUZ.Core;
-using GUZ.Core.Config;
+using GUZ.Core.Models.Config;
+using GUZ.Core.Services.Config;
 using GUZ.Core.Util;
 using GUZ.VR.Adapters.HVROverrides;
+using Reflex.Attributes;
 using UnityEngine;
 using Logger = GUZ.Core.Util.Logger;
 
@@ -11,6 +13,9 @@ namespace GUZ.VR.Adapters.Player
 {
     public class VRSpectatorCamera : MonoBehaviour
     {
+        [Inject] private readonly ConfigService _configService;
+
+
         public enum SmoothingLevel
         {
             None,
@@ -45,7 +50,7 @@ namespace GUZ.VR.Adapters.Player
 
             // If we have Device Simulator AND Spectator camera active, then the camera won't move at all in GameView.
             // And to be honest: We don't need the Spectator camera at that time.
-            if (GameGlobals.Config.Dev.EnableVRDeviceSimulator)
+            if (_configService.Dev.EnableVRDeviceSimulator)
             {
                 DisableSpectatorCamera();
                 return;
@@ -65,7 +70,7 @@ namespace GUZ.VR.Adapters.Player
             playerController.Teleporter.PositionUpdate.AddListener(SetTeleportPosition);
 
             SetSmoothness();
-            SetRenderDistance(GameGlobals.Config.Gothic.IniVisualRange);
+            SetRenderDistance(_configService.Gothic.IniVisualRange);
 
             if (_vrCameraTransform != null)
             {
@@ -121,7 +126,7 @@ namespace GUZ.VR.Adapters.Player
 
         private void SetSmoothness()
         {
-            var smoothSetting = GameGlobals.Config.Gothic.GetInt(VRConstants.IniNames.SmoothSpectator, (int)SmoothingLevel.None);
+            var smoothSetting = _configService.Gothic.GetInt(VRConstants.IniNames.SmoothSpectator, (int)SmoothingLevel.None);
             
             _selectedSmoothingValue = (SmoothingLevel)smoothSetting switch
             {

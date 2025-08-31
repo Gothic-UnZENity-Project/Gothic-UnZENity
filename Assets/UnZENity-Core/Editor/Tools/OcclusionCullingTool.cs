@@ -2,11 +2,12 @@ using System;
 using System.Threading.Tasks;
 using GUZ.Core.Caches;
 using GUZ.Core.Caches.StaticCache;
-using GUZ.Core.Config;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
+using GUZ.Core.Models.Config;
 using GUZ.Core.Services;
+using GUZ.Core.Services.Config;
 using GUZ.Core.Util;
 using GUZ.G1;
 using GUZ.G2.Services.Context;
@@ -64,14 +65,11 @@ namespace GUZ.Core.Editor.Tools
             }
 
             // Prepare configuration needed during execution.
-            var config = new ConfigManager();
+            var config = new ConfigService();
             config.LoadRootJson();
             ResourceLoader.Init(version == GameVersion.Gothic1 ? config.Root.Gothic1Path : config.Root.Gothic2Path);
 
             var editorDataProvider = new EditorDataProvider();
-            editorDataProvider.Config = new ConfigManager();
-            editorDataProvider.Config.SetDeveloperConfig(CreateInstance<DeveloperConfig>());
-            editorDataProvider.Config.Dev.SpeedUpLoading = true;
             editorDataProvider.StaticCache = new StaticCacheManager();
             GameGlobals.Instance = editorDataProvider;
 

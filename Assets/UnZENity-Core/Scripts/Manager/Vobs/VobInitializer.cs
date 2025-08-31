@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using GUZ.Core.Config;
 using GUZ.Core.Creator.Sounds;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Properties;
 using GUZ.Core.Services;
+using GUZ.Core.Services.Config;
 using GUZ.Core.Services.Culling;
 using GUZ.Core.Util;
 using GUZ.Core.Vm;
@@ -30,7 +30,8 @@ namespace GUZ.Core.Manager.Vobs
     /// </summary>
     public class VobInitializer
     {
-        [Inject] private readonly ConfigManager _configManager;
+        [Inject] private readonly ConfigService
+            _configService;
         [Inject] private readonly VobSoundCullingService _vobSoundCullingService;
         [Inject] private readonly MeshService _meshService;
 
@@ -57,14 +58,14 @@ namespace GUZ.Core.Manager.Vobs
                     go = CreateMobContainer((Container)vob, parent);
                     break;
                 case VirtualObjectType.zCVobSound:
-                    if (_configManager.Dev.EnableGameSounds)
+                    if (_configService.Dev.EnableGameSounds)
                     {
                         go = CreateSound((Sound)vob, parent);
                     }
 
                     break;
                 case VirtualObjectType.zCVobSoundDaytime:
-                    if (_configManager.Dev.EnableGameSounds)
+                    if (_configService.Dev.EnableGameSounds)
                     {
                         go = CreateSoundDaytime((SoundDaytime)vob, parent);
                     }
@@ -76,7 +77,7 @@ namespace GUZ.Core.Manager.Vobs
                     break;
                 case VirtualObjectType.zCVobSpot:
                 case VirtualObjectType.zCVobStartpoint:
-                    go = CreateSpot(vob, parent, _configManager.Dev.ShowFreePoints);
+                    go = CreateSpot(vob, parent, _configService.Dev.ShowFreePoints);
                     break;
                 case VirtualObjectType.oCTriggerChangeLevel:
                     go = CreateTriggerChangeLevel((TriggerChangeLevel)vob, parent);
@@ -91,14 +92,14 @@ namespace GUZ.Core.Manager.Vobs
                     switch (vob.Visual!.Type)
                     {
                         case VisualType.Decal:
-                            if (_configManager.Dev.EnableDecalVisuals)
+                            if (_configService.Dev.EnableDecalVisuals)
                             {
                                 go = CreateDecal(vob, parent);
                             }
 
                             break;
                         case VisualType.ParticleEffect:
-                            if (_configManager.Dev.EnableParticleEffects)
+                            if (_configService.Dev.EnableParticleEffects)
                             {
                                 go = CreatePfx(vob, parent);
                             }

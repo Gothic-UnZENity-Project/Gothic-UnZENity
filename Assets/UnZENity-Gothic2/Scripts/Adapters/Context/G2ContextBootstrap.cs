@@ -1,5 +1,6 @@
 ﻿using GUZ.Core;
 using GUZ.Core.Adapters.Context;
+using GUZ.Core.Extensions;
 using GUZ.Core.Services.Context;
 using GUZ.G2.Services.Context;
 using Reflex.Attributes;
@@ -25,7 +26,7 @@ namespace GUZ.G2.Adapters.Context
             if (version != GameVersion.Gothic2)
                 return;
 
-            _contextGameVersionService.SetImpl(new G2ContextService());
+            _contextGameVersionService.SetImpl(new G2ContextService().Inject());
         }
     }
 }

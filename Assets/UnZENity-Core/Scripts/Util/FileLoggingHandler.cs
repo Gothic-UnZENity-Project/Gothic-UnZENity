@@ -1,4 +1,4 @@
-using GUZ.Core.Config;
+using GUZ.Core.Models.Config;
 #if !UNITY_EDITOR
 using System;
 using System.IO;

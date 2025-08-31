@@ -1,5 +1,6 @@
 using GUZ.Core;
 using GUZ.Core.Adapters.Context;
+using GUZ.Core.Extensions;
 using GUZ.Core.Services.Context;
 using GUZ.VR.Services.Context;
 using Reflex.Attributes;
@@ -26,9 +27,9 @@ namespace GUZ.VR.Adapters.Context
             // We need to set our VR service now, as the Player.scene loading time (basically this Awake() call) is the first time,
             // when we can set our VR service. But the [Inject] resolves are done already at frame 0 at Bootstrap.scene.
             // Therefore, we need to set the VR service via new() and as proxy implementation.
-            _contextInteractionService.SetImpl(new VRContextInteractionService());
-            _contextMenuService.SetImpl(new VRContextMenuService());
-            _contextDialogService.SetImpl(new VRContextDialogService());
+            _contextInteractionService.SetImpl(new VRContextInteractionService().Inject());
+            _contextMenuService.SetImpl(new VRContextMenuService().Inject());
+            _contextDialogService.SetImpl(new VRContextDialogService().Inject());
 #else
             throw new System.ArgumentException(
                 "VR context is set, but compiler directive >GUZ_HVR_INSTALLED< isn't set. Did you set up Hurricane VR properly?");

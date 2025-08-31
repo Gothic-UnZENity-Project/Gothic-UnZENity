@@ -2,13 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using GUZ.Core.Caches;
-using GUZ.Core.Config;
 using GUZ.Core.Creator.Sounds;
 using GUZ.Core.Data;
 using GUZ.Core.Extensions;
 using GUZ.Core.Services;
+using GUZ.Core.Services.Config;
 using GUZ.Core.Util;
-using GUZ.Core.World;
 using Reflex.Attributes;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -20,7 +19,7 @@ namespace GUZ.Core.Manager
 {
     public class SkyManager
     {
-        [Inject] private ConfigManager _configManager;
+        [Inject] private ConfigService _configService;
         [Inject] private GameTimeService _gameTimeService;
 
         private Vector3 _sunDirection;
@@ -88,7 +87,7 @@ namespace GUZ.Core.Manager
         private void InitSky()
         {
             RotateSun(_gameTimeService.GetCurrentDateTime());
-            switch (_configManager.Dev.SunUpdateInterval)
+            switch (_configService.Dev.SunUpdateInterval)
             {
                 case GameTimeService.GameTimeInterval.EveryGameSecond:
                     GlobalEventDispatcher.GameTimeSecondChangeCallback.AddListener(RotateSun);
@@ -133,7 +132,7 @@ namespace GUZ.Core.Manager
             {
                 // hacky way to use the proper color for the current day until animTex is implemented
                 // % 2 is used as there are only 2 textures for the sky, consistent between G1 and G2
-                colorValues = GameGlobals.Config.Gothic.IniSkyDayColor(day % 2).Split(' ').Select(float.Parse).ToArray();
+                colorValues = _configService.Gothic.IniSkyDayColor(day % 2).Split(' ').Select(float.Parse).ToArray();
             }
             catch (Exception e)
             {
@@ -277,9 +276,9 @@ namespace GUZ.Core.Manager
         private void SetShaderProperties()
         {
             Shader.SetGlobalVector(_sunDirectionShaderId, _sunDirection);
-            Shader.SetGlobalColor(_sunColorShaderId, _configManager.Dev.SunLightColor);
-            Shader.SetGlobalColor(_ambientShaderId, _configManager.Dev.AmbientLightColor);
-            Shader.SetGlobalFloat(_pointLightIntensityShaderId, _configManager.Dev.SunLightIntensity);
+            Shader.SetGlobalColor(_sunColorShaderId, _configService.Dev.SunLightColor);
+            Shader.SetGlobalColor(_ambientShaderId, _configService.Dev.AmbientLightColor);
+            Shader.SetGlobalFloat(_pointLightIntensityShaderId, _configService.Dev.SunLightIntensity);
         }
 
         private void InitRainGo()
@@ -359,7 +358,7 @@ namespace GUZ.Core.Manager
             var module = _rainParticleSystem.emission;
             module.rateOverTime = new ParticleSystem.MinMaxCurve(_maxParticleCount * _rainWeightAndVolume);
 
-            if (!_rainParticleSound.isPlaying && _configManager.Dev.EnableGameSounds)
+            if (!_rainParticleSound.isPlaying && _configService.Dev.EnableGameSounds)
             {
                 _rainParticleSound.Play();
             }

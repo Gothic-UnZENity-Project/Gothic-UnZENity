@@ -6,9 +6,11 @@ using GUZ.Core.Manager;
 using GUZ.Core.Npc.Actions;
 using GUZ.Core.Npc.Actions.AnimationActions;
 using GUZ.Core.Properties;
+using GUZ.Core.Services.Config;
 using GUZ.Core.Util;
 using GUZ.Core.Vm;
 using MyBox;
+using Reflex.Attributes;
 using UnityEngine;
 using ZenKit;
 using ZenKit.Daedalus;
@@ -21,7 +23,10 @@ namespace GUZ.Core.Npc
 #if UNITY_EDITOR
         public List<(string name, AnimationAction properties)> AiActionHistory = new();
 #endif
-        
+
+        [Inject] private readonly ConfigService _configService;
+
+
         private static DaedalusVm Vm => GameData.GothicVm;
         private const int _daedalusLoopContinue = 0; // Id taken from a Daedalus constant.
         private const int _daedalusLoopEnd = 1;
@@ -381,7 +386,7 @@ namespace GUZ.Core.Npc
             // Reset "currently" used item
 
             // FIXME - We need to properly set this value for Gothic2 as well.
-            if (GameGlobals.Config.Dev.GameVersion == GameVersion.Gothic1)
+            if (_configService.Dev.GameVersion == GameVersion.Gothic1)
             {
                 NpcInstance.SetAiVar(DaedalusConst.AIVItemStatusKey, DaedalusConst.TAITNone);
             }

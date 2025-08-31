@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections;
-using GUZ.Core.Config;
 using GUZ.Core.Globals;
+using GUZ.Core.Models.Config;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Controls;

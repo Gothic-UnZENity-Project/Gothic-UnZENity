@@ -1,5 +1,4 @@
-﻿using GUZ.Core.Config;
-using GUZ.Core.Domain.Animations;
+﻿using GUZ.Core.Domain.Animations;
 using GUZ.Core.Manager;
 using GUZ.Core.Manager.Vobs;
 using GUZ.Core.Npc;
@@ -14,7 +13,6 @@ namespace GUZ.Core.Editor
     /// </summary>
     public class EditorDataProvider : IGlobalDataProvider
     {
-        public ConfigManager Config { get; set; }
         public LocalizationManager Localization { get; set; }
         public SaveGameManager SaveGame { get; }
         public LoadingManager Loading { get; }

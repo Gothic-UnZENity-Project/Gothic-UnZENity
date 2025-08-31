@@ -1,6 +1,6 @@
-using GUZ.Core.Config;
 using GUZ.Core.Extensions;
 using GUZ.Core.Services;
+using GUZ.Core.Services.Config;
 using Reflex.Attributes;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -9,7 +9,7 @@ namespace GUZ.Core.Manager
 {
     public class BarrierManager
     {
-        [Inject] private readonly ConfigManager _configManager;
+        [Inject] private readonly ConfigService _configService;
         [Inject] private readonly MeshService _meshService;
 
         private GameObject _barrier;
@@ -52,7 +52,7 @@ namespace GUZ.Core.Manager
 
         private void CreateBarrier()
         {
-            if (!_configManager.Dev.EnableBarrierVisual)
+            if (!_configService.Dev.EnableBarrierVisual)
             {
                 return;
             }
@@ -61,7 +61,7 @@ namespace GUZ.Core.Manager
             _barrier = _meshService.CreateBarrier("Barrier", barrierMesh)
                 .GetAllDirectChildren()[0];
 
-            if (!_configManager.Dev.EnableGameSounds)
+            if (!_configService.Dev.EnableGameSounds)
             {
                 return;
             }
@@ -107,7 +107,7 @@ namespace GUZ.Core.Manager
 
             UpdateFadeState();
 
-            if (_showThunder && _configManager.Dev.EnableGameSounds)
+            if (_showThunder && _configService.Dev.EnableGameSounds)
             {
                 var sound = GameGlobals.Vobs.GetRandomSoundClip("MFX_BARRIERE_AMBIENT");
 

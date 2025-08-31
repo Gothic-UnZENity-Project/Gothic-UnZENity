@@ -1,10 +1,11 @@
 ﻿using System;
 using System.IO;
+using GUZ.Core.Models.Config;
 using UnityEngine;
 using UnityEngine.Networking;
 using ZenKit;
 
-namespace GUZ.Core.Config
+namespace GUZ.Core.Domain.Config
 {
     public static class JsonRootLoader
     {

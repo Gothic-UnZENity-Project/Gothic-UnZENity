@@ -16,7 +16,7 @@ namespace GUZ.Core.Services
         public async Task CreateWorld(StaticCacheManager.WorldChunkContainer worldChunks, IMesh mesh,
             LoadingManager loading, GameObject rootGo, bool useTextureArray = true)
         {
-            var worldBuilder = new WorldMeshBuilder();
+            var worldBuilder = new WorldMeshBuilder().Inject();
             worldBuilder.SetGameObject(rootGo);
             worldBuilder.SetWorldData(worldChunks, mesh);
             worldBuilder.SetUseTextureArray(useTextureArray);

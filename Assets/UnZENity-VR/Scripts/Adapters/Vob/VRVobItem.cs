@@ -3,6 +3,7 @@ using System.Collections;
 using GUZ.Core;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
+using GUZ.Core.Services.Config;
 using GUZ.VR.Services;
 using HurricaneVR.Framework.Core;
 using HurricaneVR.Framework.Core.Grabbers;
@@ -15,6 +16,7 @@ namespace GUZ.VR.Adapters.Vob
     public class VRVobItem : MonoBehaviour
     {
         [Inject] private readonly VRPlayerService _vrPlayerService;
+        [Inject] private readonly ConfigService _configService;
 
         [SerializeField] private VRVobItemProperties _vrProperties;
         [SerializeField] private Rigidbody _rigidbody;
@@ -104,7 +106,7 @@ namespace GUZ.VR.Adapters.Vob
         /// </summary>
         private void OnDrawGizmos()
         {
-            if (!Application.isPlaying || !GameGlobals.Config.Dev.ShowCapsuleOverlapGizmos)
+            if (!Application.isPlaying || !_configService.Dev.ShowCapsuleOverlapGizmos)
             {
                 return;
             }

@@ -2,8 +2,10 @@
 using GUZ.Core;
 using GUZ.Core.Adapters.UI.Menus;
 using GUZ.Core.Globals;
+using GUZ.Core.Services.Config;
 using HurricaneVR.Framework.Core.Player;
 using MyBox;
+using Reflex.Attributes;
 using UnityEngine.SceneManagement;
 using Constants = GUZ.Core.Globals.Constants;
 
@@ -11,6 +13,9 @@ namespace GUZ.VR.Adapters.HVROverrides
 {
     public class VRPlayerController : HVRPlayerController
     {
+        [Inject] private readonly ConfigService _configService;
+
+
         public VRPlayerInputs VrInputs => (VRPlayerInputs)Inputs;
 
         [Separator("GUZ - Settings")]
@@ -59,17 +64,17 @@ namespace GUZ.VR.Adapters.HVROverrides
             }
 
             var sitStandSetting =
-                GameGlobals.Config.Gothic.GetInt(VRConstants.IniNames.SitStand, (int)HVRSitStand.PlayerHeight);
+                _configService.Gothic.GetInt(VRConstants.IniNames.SitStand, (int)HVRSitStand.PlayerHeight);
             CameraRig.SetSitStandMode((HVRSitStand)sitStandSetting);
 
-            DirectionStyle = (PlayerDirectionMode)GameGlobals.Config.Gothic.GetInt(VRConstants.IniNames.MoveDirection, (int)PlayerDirectionMode.Camera);
-            RotationType = (RotationType)GameGlobals.Config.Gothic.GetInt(VRConstants.IniNames.RotationType, (int)RotationType.Snap);
+            DirectionStyle = (PlayerDirectionMode)_configService.Gothic.GetInt(VRConstants.IniNames.MoveDirection, (int)PlayerDirectionMode.Camera);
+            RotationType = (RotationType)_configService.Gothic.GetInt(VRConstants.IniNames.RotationType, (int)RotationType.Snap);
 
-            var snapSetting = GameGlobals.Config.Gothic.GetInt(VRConstants.IniNames.SnapRotationAmount, VRConstants.SnapRotationDefaultValue);
+            var snapSetting = _configService.Gothic.GetInt(VRConstants.IniNames.SnapRotationAmount, VRConstants.SnapRotationDefaultValue);
             // e.g., 20° = 5° + 3*5°
             SnapAmount = VRConstants.SnapRotationAmountSettingTickAmount + VRConstants.SnapRotationAmountSettingTickAmount * snapSetting;
             
-            var smoothSetting = GameGlobals.Config.Gothic.GetFloat(VRConstants.IniNames.SmoothRotationSpeed, VRConstants.SmoothRotationDefaultValue);
+            var smoothSetting = _configService.Gothic.GetFloat(VRConstants.IniNames.SmoothRotationSpeed, VRConstants.SmoothRotationDefaultValue);
             // e.g., 50 = 5 + 90 * 0.5f
             SmoothTurnSpeed = VRConstants.SmoothRotationMinSpeed + VRConstants.SmoothRotationMaxAdditionalSpeed * smoothSetting;
         }
