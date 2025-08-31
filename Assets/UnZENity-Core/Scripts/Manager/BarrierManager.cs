@@ -1,6 +1,6 @@
 using GUZ.Core.Config;
-using GUZ.Core.Creator.Meshes;
 using GUZ.Core.Extensions;
+using GUZ.Core.Services;
 using Reflex.Attributes;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -10,6 +10,7 @@ namespace GUZ.Core.Manager
     public class BarrierManager
     {
         [Inject] private readonly ConfigManager _configManager;
+        [Inject] private readonly MeshService _meshService;
 
         private GameObject _barrier;
 
@@ -57,7 +58,7 @@ namespace GUZ.Core.Manager
             }
 
             var barrierMesh = ResourceLoader.TryGetMesh("MAGICFRONTIER_OUT.MSH");
-            _barrier = MeshFactory.CreateBarrier("Barrier", barrierMesh)
+            _barrier = _meshService.CreateBarrier("Barrier", barrierMesh)
                 .GetAllDirectChildren()[0];
 
             if (!_configManager.Dev.EnableGameSounds)
@@ -199,7 +200,7 @@ namespace GUZ.Core.Manager
             thunderStrip.transform.SetParent(_barrier.transform);
             thunderStrip.transform.localPosition = new Vector3(-50, 400, -56);
             thunderStrip.transform.localRotation = Quaternion.identity * Quaternion.Euler(0, i * 90, -90);
-            MeshFactory.CreatePolyStrip(thunderStrip, 11, Vector3.zero, new Vector3(0, 320, 100));
+            _meshService.CreatePolyStrip(thunderStrip, 11, Vector3.zero, new Vector3(0, 320, 100));
         }
     }
 }

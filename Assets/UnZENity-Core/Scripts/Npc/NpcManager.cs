@@ -13,7 +13,9 @@ using GUZ.Core.Manager;
 using GUZ.Core.Npc.Routines;
 using GUZ.Core.Util;
 using GUZ.Core.Vm;
+using GUZ.VR;
 using MyBox;
+using Reflex.Attributes;
 using UnityEngine;
 using ZenKit;
 using ZenKit.Daedalus;
@@ -29,9 +31,10 @@ namespace GUZ.Core.Npc
     {
         public Dictionary<string, List<(int hour, int minute, int status)>> MobRoutines = new();
 
-        
         // Supporter class where the whole Init() logic is outsourced for better readability.
-        private NpcInitializer _initializer = new ();
+        [Inject] private readonly NpcInitializer _initializer;
+        [Inject] private readonly UnityMonoService _unityMonoService;
+
         private Queue<NpcLoader> _objectsToInitQueue = new();
         private Queue<NpcContainer> _objectToReEnableQueue = new();
 
@@ -40,10 +43,10 @@ namespace GUZ.Core.Npc
         private const float _fpLookupDistance = 7f; // meter
 
         
-        public void Init(ICoroutineManager coroutineManager)
+        public void Init()
         {
-            coroutineManager.StartCoroutine(InitNpcCoroutine());
-            coroutineManager.StartCoroutine(ReEnableNpcCoroutine());
+            _unityMonoService.StartCoroutine(InitNpcCoroutine());
+            _unityMonoService.StartCoroutine(ReEnableNpcCoroutine());
             
             GlobalEventDispatcher.LoadGameStart.AddListener(() =>
             {

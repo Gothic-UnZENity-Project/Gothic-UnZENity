@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Globalization;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Util;
@@ -10,7 +9,7 @@ using UnityEngine.Rendering;
 using ZenKit.Vobs;
 using Logger = GUZ.Core.Util.Logger;
 
-namespace GUZ.Core.Creator.Meshes.Builder
+namespace GUZ.Core.Domain.Meshes.Builder
 {
     /// <summary>
     /// Please check description at worldofgothic for more details:

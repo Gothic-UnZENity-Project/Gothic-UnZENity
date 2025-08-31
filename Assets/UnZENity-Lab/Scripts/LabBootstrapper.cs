@@ -5,7 +5,6 @@ using GUZ.Core;
 using GUZ.Core.Animations;
 using GUZ.Core.Caches;
 using GUZ.Core.Config;
-using GUZ.Core.Creator.Meshes;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
@@ -18,7 +17,6 @@ using GUZ.Core.Util;
 using GUZ.Core.Vm;
 using GUZ.Lab.Handler;
 using GUZ.Manager;
-using GUZ.VR.Services.Context;
 using Reflex.Attributes;
 using UnityEngine;
 using ZenKit;
@@ -84,6 +82,7 @@ namespace GUZ.Lab
         [Inject] private readonly GameTimeService _gameTimeService;
         [Inject] private readonly ContextInteractionService _contextInteractionService;
         [Inject] private readonly ContextGameVersionService _contextGameVersionService;
+        [Inject] private readonly MeshService _meshService;
 
 
         private void Awake()
@@ -147,8 +146,8 @@ namespace GUZ.Lab
             _npcRoutineManager.Init();
             _staticCacheManager.Init(_configManager.Dev);
             _textureManager.Init();
-            _npcManager.Init(this);
-            _vobManager.Init(this);
+            _npcManager.Init();
+            _vobManager.Init();
 
             _videoManager.InitVideos();
             _save.LoadNewGame();
@@ -170,7 +169,7 @@ namespace GUZ.Lab
                 throw new SystemException("Please load game once to create global cache first!");
             }
             await _staticCacheManager.LoadGlobalCache().AwaitAndLog();
-            await MeshFactory.CreateTextureArray().AwaitAndLog();
+            await _meshService.CreateTextureArray().AwaitAndLog();
 
             LabNpcAnimationHandler.Bootstrap();
             LabMusicHandler.Bootstrap();

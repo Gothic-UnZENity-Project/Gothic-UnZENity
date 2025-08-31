@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using GUZ.Core;
 using GUZ.Core.Caches;
-using GUZ.Core.Creator.Meshes;
 using GUZ.Core.Data.Container;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
@@ -147,14 +146,14 @@ namespace GUZ.Lab.Handler
                 Armor = -1 // We set the armor via Mdm file manually
             };
 
-            MeshFactory.CreateNpc(newNpc.name, npcData.Mdm, npcData.MdhMds, body, root: newNpc);
+            MeshService.CreateNpc(newNpc.name, npcData.Mdm, npcData.MdhMds, body, root: newNpc);
 
             if (npcData.sword != null)
             {
                 var swordIndex = GameData.GothicVm.GetSymbolByName(npcData.sword)!.Index;
                 var sword = VmInstanceManager.TryGetItemData(swordIndex);
 
-                MeshFactory.CreateNpcWeapon(newNpc, sword, (VmGothicEnums.ItemFlags)sword.MainFlag,
+                MeshService.CreateNpcWeapon(newNpc, sword, (VmGothicEnums.ItemFlags)sword.MainFlag,
                     (VmGothicEnums.ItemFlags)sword.Flags);
             }
         }

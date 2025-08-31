@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using GUZ.Core.Adapters.UI.LoadingBars;
-using GUZ.Core.Creator.Meshes;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
+using GUZ.Core.Services;
 using GUZ.Core.Util;
 using GUZ.Core.Vm;
 using MyBox;
+using Reflex.Attributes;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
 using ZenKit;
@@ -21,6 +22,8 @@ namespace GUZ.Core.Caches.StaticCache
     public class VobBoundsCacheCreator
     {
         public Dictionary<string, Bounds> Bounds { get; } = new();
+
+        [Inject] private readonly MeshService _meshService;
 
 
         public async Task CalculateVobBounds(List<IVirtualObject> vobs, int worldIndex)
@@ -72,13 +75,13 @@ namespace GUZ.Core.Caches.StaticCache
                 {
                     case VisualType.Decal:
                         // FIXME - We can easily calculate bbox via position (0,0,0) + radius of decal.
-                        var go = MeshFactory.CreateVobDecal(vob, (VisualDecal)vob.Visual);
+                        var go = _meshService.CreateVobDecal(vob, (VisualDecal)vob.Visual);
                         boundingBox = CalculateBoundingBox(go);
                         Object.Destroy(go);
                         break;
                     case VisualType.ParticleEffect:
                         // FIXME - We can easily calculate bbox via position (0,0,0) + radius of emitting pfx.
-                        var go2 = MeshFactory.CreateVobPfx(vob, parent: null);
+                        var go2 = _meshService.CreateVobPfx(vob, parent: null);
                         boundingBox = CalculateBoundingBox(go2);
                         Object.Destroy(go2);
                         break;

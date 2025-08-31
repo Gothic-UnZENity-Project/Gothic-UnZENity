@@ -2,18 +2,19 @@
 using System.Threading.Tasks;
 using GUZ.Core.Adapters.UI.LoadingBars;
 using GUZ.Core.Caches;
-using GUZ.Core.Creator.Meshes;
 using GUZ.Core.Data.Adapter.Vobs;
 using GUZ.Core.Data.Container;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
 using GUZ.Core.Properties;
+using GUZ.Core.Services;
 using GUZ.Core.Util;
 using GUZ.Core.Vm;
 using GUZ.Core.Vob.WayNet;
 using JetBrains.Annotations;
 using MyBox;
+using Reflex.Attributes;
 using UnityEngine;
 using ZenKit;
 using ZenKit.Daedalus;
@@ -29,6 +30,9 @@ namespace GUZ.Core.Npc
     /// </summary>
     public class NpcInitializer
     {
+        [Inject] private readonly MeshService _meshService;
+
+
         public GameObject RootGo;
         private readonly List<(NpcContainer npc, string spawnPoint)> _tmpWldInsertNpcData = new();
 
@@ -272,7 +276,7 @@ namespace GUZ.Core.Npc
             var mdhName = string.IsNullOrEmpty(props.MdhNameOverlay)
                 ? props.MdhNameBase
                 : props.MdhNameOverlay;
-            MeshFactory.CreateNpc(newNpc.name, props.MdmName, mdhName, props.BodyData,
+            _meshService.CreateNpc(newNpc.name, props.MdmName, mdhName, props.BodyData,
                 finalSpawnPos, lazyRot, lazyLoadGo, newNpc);
 
             // We don't need specific locations of initial LazyLoading GO anymore.
@@ -280,7 +284,7 @@ namespace GUZ.Core.Npc
 
             foreach (var equippedItem in props.EquippedItems)
             {
-                MeshFactory.CreateNpcWeapon(newNpc, equippedItem, (VmGothicEnums.ItemFlags)equippedItem.MainFlag,
+                _meshService.CreateNpcWeapon(newNpc, equippedItem, (VmGothicEnums.ItemFlags)equippedItem.MainFlag,
                     (VmGothicEnums.ItemFlags)equippedItem.Flags);
             }
         }

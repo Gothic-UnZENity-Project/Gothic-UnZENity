@@ -8,7 +8,7 @@ using ZenKit;
 using Logger = GUZ.Core.Util.Logger;
 using Vector3 = System.Numerics.Vector3;
 
-namespace GUZ.Core.Creator.Meshes.Builder
+namespace GUZ.Core.Domain.Meshes.Builder
 {
     public class NpcMeshBuilder : AbstractMeshBuilder
     {

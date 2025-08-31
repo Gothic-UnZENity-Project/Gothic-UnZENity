@@ -18,7 +18,7 @@ using Matrix4x4 = System.Numerics.Matrix4x4;
 using Mesh = UnityEngine.Mesh;
 using Texture = UnityEngine.Texture;
 
-namespace GUZ.Core.Creator.Meshes.Builder
+namespace GUZ.Core.Domain.Meshes.Builder
 {
     public abstract class AbstractMeshBuilder
     {

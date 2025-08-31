@@ -4,15 +4,16 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using GUZ.Core;
-using GUZ.Core.Creator.Meshes;
 using GUZ.Core.Data.Container;
 using GUZ.Core.Extensions;
+using GUZ.Core.Services;
 using GUZ.Core.Util;
 using GUZ.Core.Vob;
 using HurricaneVR.Framework.Components;
 using HurricaneVR.Framework.Core;
 using HurricaneVR.Framework.Core.Sockets;
 using MyBox;
+using Reflex.Attributes;
 using UnityEngine;
 using ZenKit.Daedalus;
 using ZenKit.Vobs;
@@ -22,6 +23,9 @@ namespace GUZ.VR.Adapters.Vob.Container
 {
     public class VRVobContainerPhysicsChest : HVRPhysicsDoor
     {
+        [Inject] private readonly MeshService _meshService;
+
+
         private readonly char[] _itemNameSeparators = { ';', ',' };
         private readonly char[] _itemCountSeparators = { ':', '.' };
 
@@ -304,7 +308,7 @@ namespace GUZ.VR.Adapters.Vob.Container
             var go = ResourceLoader.TryGetPrefabObject(PrefabType.VobItem);
             
             var mrm = ResourceLoader.TryGetMultiResolutionMesh(itemInstance.Visual);
-            return MeshFactory.CreateVob(itemInstance.Name, mrm, default, default, true, rootGo: go, useTextureArray: false);
+            return _meshService.CreateVob(itemInstance.Name, mrm, default, default, true, rootGo: go, useTextureArray: false);
         }
     }
 }

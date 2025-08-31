@@ -3,9 +3,11 @@ using GUZ.Core.Creator;
 using GUZ.Core.Extensions;
 using GUZ.Core.Manager;
 using GUZ.Core.Manager.Vobs;
+using GUZ.Core.Npc;
 using GUZ.Core.Services;
 using GUZ.Core.Services.Context;
 using GUZ.Core.Services.Culling;
+using GUZ.Core.Util;
 using Reflex.Core;
 using UnityEngine;
 
@@ -29,6 +31,7 @@ namespace GUZ.Core
             containerBuilder.AddSingleton(typeof(VobSoundCullingService));
             containerBuilder.AddSingleton(typeof(SpeechToTextService));
             containerBuilder.AddSingleton(typeof(GameTimeService));
+            containerBuilder.AddSingleton(typeof(MeshService));
 
             // World
             containerBuilder.AddSingleton(typeof(WayNetService));
@@ -37,10 +40,13 @@ namespace GUZ.Core
             containerBuilder.AddSingleton(typeof(ConfigManager));
             containerBuilder.AddSingleton(typeof(VobManager));
             containerBuilder.AddSingleton(typeof(VobInitializer));
+            containerBuilder.AddSingleton(typeof(NpcManager));
+            containerBuilder.AddSingleton(typeof(NpcInitializer));
             containerBuilder.AddSingleton(typeof(StationaryLightsManager));
             containerBuilder.AddSingleton(typeof(SkyManager));
             containerBuilder.AddSingleton(typeof(BarrierManager));
             containerBuilder.AddSingleton(typeof(LoadingManager));
+            containerBuilder.AddSingleton(typeof(BarrierManager));
         }
     }
 }

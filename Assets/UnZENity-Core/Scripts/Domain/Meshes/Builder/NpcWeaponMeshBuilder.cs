@@ -5,7 +5,7 @@ using UnityEngine;
 using ZenKit.Daedalus;
 using Logger = GUZ.Core.Util.Logger;
 
-namespace GUZ.Core.Creator.Meshes.Builder
+namespace GUZ.Core.Domain.Meshes.Builder
 {
     public class NpcWeaponMeshBuilder : AbstractMeshBuilder
     {

@@ -3,13 +3,12 @@ using System.Threading.Tasks;
 using GUZ.Core.Caches;
 using GUZ.Core.Caches.StaticCache;
 using GUZ.Core.Config;
-using GUZ.Core.Creator.Meshes;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
+using GUZ.Core.Services;
 using GUZ.Core.Util;
 using GUZ.G1;
-using GUZ.G2;
 using GUZ.G2.Services.Context;
 using UnityEditor;
 using UnityEngine;
@@ -111,7 +110,7 @@ namespace GUZ.Core.Editor.Tools
                 WaterChunks = new()
             };
 
-            await MeshFactory.CreateWorld(worldChunkData, world.Mesh, null, null, useTextureArray: false).AwaitAndLog();
+            await new MeshService().CreateWorld(worldChunkData, world.Mesh, null, null, useTextureArray: false).AwaitAndLog();
             Logger.LogEditor("DONE - Loading world mesh", LogCat.PreCaching);
         }
 

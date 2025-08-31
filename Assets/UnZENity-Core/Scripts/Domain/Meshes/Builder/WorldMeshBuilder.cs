@@ -16,7 +16,7 @@ using ZenKit;
 using Mesh = UnityEngine.Mesh;
 using Material = UnityEngine.Material;
 
-namespace GUZ.Core.Creator.Meshes.Builder
+namespace GUZ.Core.Domain.Meshes.Builder
 {
     public class WorldMeshBuilder : AbstractMeshBuilder
     {

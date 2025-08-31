@@ -4,11 +4,10 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using GUZ.Core.Creator;
-using GUZ.Core.Creator.Meshes;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager.Vobs;
-using GUZ.Core.Services.Context;
+using GUZ.Core.Services;
 using GUZ.Core.Util;
 using GUZ.Core.Vob.WayNet;
 using MyBox;
@@ -23,7 +22,8 @@ namespace GUZ.Core.Manager.Scenes
     {
         [Inject] private readonly VobManager _vobManager;
         [Inject] private readonly WayNetService _wayNetService;
-        
+        [Inject] private readonly MeshService _meshService;
+
         public void Init()
         {
 #pragma warning disable CS4014 // Do not wait. We want to update player movement (VR) and camera view (progress bar)
@@ -66,7 +66,7 @@ namespace GUZ.Core.Manager.Scenes
                     await GameGlobals.StaticCache.LoadGlobalCache();
                     watch.LogAndRestart("StaticCache - Global loaded");
 
-                    await MeshFactory.CreateTextureArray();
+                    await _meshService.CreateTextureArray();
                     watch.LogAndRestart("Texture array created");
                 }
 
@@ -78,7 +78,7 @@ namespace GUZ.Core.Manager.Scenes
                 // 2. Load world based on cached Chunks
                 if (config.Dev.EnableWorldMesh)
                 {
-                    await MeshFactory.CreateWorld(
+                    await _meshService.CreateWorld(
                         GameGlobals.StaticCache.LoadedWorldChunks,
                         GameGlobals.SaveGame.CurrentWorldData.Mesh,
                         GameGlobals.Loading,

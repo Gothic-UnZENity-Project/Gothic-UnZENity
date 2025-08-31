@@ -1,6 +1,6 @@
 using System.Linq;
 using System.Threading.Tasks;
-using GUZ.Core.Creator.Meshes.Builder;
+using GUZ.Core.Domain.Meshes.Builder;
 using GUZ.Core.Extensions;
 using GUZ.Core.Manager;
 using GUZ.Core.Vm;
@@ -9,11 +9,11 @@ using ZenKit;
 using ZenKit.Daedalus;
 using ZenKit.Vobs;
 
-namespace GUZ.Core.Creator.Meshes
+namespace GUZ.Core.Services
 {
-    public static class MeshFactory
+    public class MeshService
     {
-        public static async Task CreateWorld(StaticCacheManager.WorldChunkContainer worldChunks, IMesh mesh,
+        public async Task CreateWorld(StaticCacheManager.WorldChunkContainer worldChunks, IMesh mesh,
             LoadingManager loading, GameObject rootGo, bool useTextureArray = true)
         {
             var worldBuilder = new WorldMeshBuilder();
@@ -24,7 +24,7 @@ namespace GUZ.Core.Creator.Meshes
             await worldBuilder.BuildAsync(loading);
         }
 
-        public static GameObject CreateNpc(string npcName, string mdmName, string mdhName, VmGothicExternals.ExtSetVisualBodyData bodyData,
+        public GameObject CreateNpc(string npcName, string mdmName, string mdhName, VmGothicExternals.ExtSetVisualBodyData bodyData,
             Vector3 position = default, Quaternion rotation = default,
             GameObject parent = null, GameObject root = null)
         {
@@ -50,7 +50,7 @@ namespace GUZ.Core.Creator.Meshes
             return npcGo;
         }
 
-        public static GameObject CreateNpcWeapon(GameObject npcGo, ItemInstance itemData,
+         public GameObject CreateNpcWeapon(GameObject npcGo, ItemInstance itemData,
             VmGothicEnums.ItemFlags mainFlag, VmGothicEnums.ItemFlags flags)
         {
             var npcWeaponBuilder = new NpcWeaponMeshBuilder();
@@ -73,7 +73,7 @@ namespace GUZ.Core.Creator.Meshes
             return npcWeaponBuilder.Build();
         }
 
-        public static GameObject CreateVob(string objectName, IMultiResolutionMesh mrm,
+         public GameObject CreateVob(string objectName, IMultiResolutionMesh mrm,
             Vector3 position = default, Quaternion rotation = default, bool withCollider = true,
             GameObject parent = null, GameObject rootGo = null, bool useTextureArray = true, bool useColliderCache = false)
         {
@@ -99,7 +99,7 @@ namespace GUZ.Core.Creator.Meshes
             return vobBuilder.Build();
         }
 
-        public static GameObject CreateVob(string objectName, IModel mdl,
+         public GameObject CreateVob(string objectName, IModel mdl,
             Vector3 position = default, Quaternion rotation = default,
             GameObject parent = null, GameObject rootGo = null, bool useTextureArray = true)
         {
@@ -119,7 +119,7 @@ namespace GUZ.Core.Creator.Meshes
             return vobBuilder.Build();
         }
 
-        public static GameObject CreateVob(string objectName, IMorphMesh mmb,
+         public GameObject CreateVob(string objectName, IMorphMesh mmb,
             Vector3 position = default, Quaternion rotation = default,
             GameObject parent = null, GameObject rootGo = null, bool useTextureArray = false,
             bool useColliderCache = false)
@@ -136,7 +136,7 @@ namespace GUZ.Core.Creator.Meshes
             return vobBuilder.Build();
         }
 
-        public static GameObject CreateVob(string objectName, IModelMesh mdm, IModelHierarchy mdh,
+         public GameObject CreateVob(string objectName, IModelMesh mdm, IModelHierarchy mdh,
             Vector3 position = default, Quaternion rotation = default,
             GameObject parent = null, GameObject rootGo = null, bool useTextureArray = true)
         {
@@ -176,7 +176,7 @@ namespace GUZ.Core.Creator.Meshes
             return !(noMeshTextures && noAttachmentTextures);
         }
 
-        public static GameObject CreateVobPfx(IVirtualObject vob, Vector3 position = default, Quaternion rotation = default, GameObject parent = null)
+         public GameObject CreateVobPfx(IVirtualObject vob, Vector3 position = default, Quaternion rotation = default, GameObject parent = null)
         {
             var vobPfxBuilder = new VobPfxMeshBuilder();
             vobPfxBuilder.SetGameObject(null, vob.Visual!.Name);
@@ -187,7 +187,7 @@ namespace GUZ.Core.Creator.Meshes
             return vobPfxBuilder.Build();
         }
 
-        public static GameObject CreateVobDecal(IVirtualObject vob, VisualDecal decal, Vector3 position = default, Quaternion rotation = default, GameObject parent = null)
+         public GameObject CreateVobDecal(IVirtualObject vob, VisualDecal decal, Vector3 position = default, Quaternion rotation = default, GameObject parent = null)
         {
             var vobDecalBuilder = new VobDecalMeshBuilder();
             vobDecalBuilder.SetGameObject(null, vob.Name);
@@ -198,12 +198,12 @@ namespace GUZ.Core.Creator.Meshes
             return vobDecalBuilder.Build();
         }
 
-        public static async Task CreateTextureArray()
+         public async Task CreateTextureArray()
         {
             await new TextureArrayBuilder().BuildAsync();
         }
 
-        public static GameObject CreateBarrier(string objectName, IMesh mesh)
+         public GameObject CreateBarrier(string objectName, IMesh mesh)
         {
             var barrierBuilder = new BarrierMeshBuilder();
             barrierBuilder.SetGameObject(null, objectName);
@@ -212,7 +212,7 @@ namespace GUZ.Core.Creator.Meshes
             return barrierBuilder.Build();
         }
 
-        public static GameObject CreatePolyStrip(GameObject go, int numberOfSegments, Vector3 startPoint,
+         public GameObject CreatePolyStrip(GameObject go, int numberOfSegments, Vector3 startPoint,
             Vector3 endPoint)
         {
             var polyStripBuilder = new PolyStripMeshBuilder();

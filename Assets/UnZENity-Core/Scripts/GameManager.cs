@@ -88,6 +88,7 @@ namespace GUZ.Core
 
         [Inject] private readonly VobManager _vobManager;
         [Inject] private readonly ConfigManager _configManager;
+        [Inject] private readonly NpcManager _npcService;
 
         protected override void Awake()
         {
@@ -124,7 +125,7 @@ namespace GUZ.Core
             Loading = _loadingManager;
             StaticCache = new StaticCacheManager();
             Vobs = _vobManager;
-            Npcs = new NpcManager();
+            Npcs = _npcService;
             NpcAi = new NpcAiManager();
             Animations = new AnimationManager();
             VobMeshCulling = _vobMeshCullingService;
@@ -193,8 +194,8 @@ namespace GUZ.Core
             _musicService.Init();
             StaticCache.Init(DeveloperConfig);
             Textures.Init();
-            Vobs.Init(this);
-            Npcs.Init(this);
+            Vobs.Init();
+            Npcs.Init();
 
             Bootstrapper.Boot();
             SpeechToText.Init(); // Init after language set.

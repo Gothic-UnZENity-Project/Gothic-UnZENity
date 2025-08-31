@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using GUZ.Core.Caches;
 using UnityEngine;
 
-namespace GUZ.Core.Creator.Meshes.Builder
+namespace GUZ.Core.Domain.Meshes.Builder
 {
     /// <summary>
     /// Create texture array for all meshes. Basically no MeshBuilder,

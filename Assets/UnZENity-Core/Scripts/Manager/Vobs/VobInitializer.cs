@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using GUZ.Core.Config;
-using GUZ.Core.Creator.Meshes;
 using GUZ.Core.Creator.Sounds;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Properties;
+using GUZ.Core.Services;
 using GUZ.Core.Services.Culling;
 using GUZ.Core.Util;
 using GUZ.Core.Vm;
@@ -33,6 +32,7 @@ namespace GUZ.Core.Manager.Vobs
     {
         [Inject] private readonly ConfigManager _configManager;
         [Inject] private readonly VobSoundCullingService _vobSoundCullingService;
+        [Inject] private readonly MeshService _meshService;
 
 
         /// <summary>
@@ -439,13 +439,13 @@ namespace GUZ.Core.Manager.Vobs
 
             if (mrm != null)
             {
-                return MeshFactory.CreateVob(item.Visual, mrm, parent: parent, rootGo: go, useColliderCache: true);
+                return _meshService.CreateVob(item.Visual, mrm, parent: parent, rootGo: go, useColliderCache: true);
             }
 
             // shortbow (itrw_bow_l_01) has no mrm, but has mmb
             var mmb = ResourceLoader.TryGetMorphMesh(item.Visual);
 
-            return MeshFactory.CreateVob(item.Visual, mmb, parent: parent, rootGo: go, useColliderCache: true);
+            return _meshService.CreateVob(item.Visual, mmb, parent: parent, rootGo: go, useColliderCache: true);
         }
 
         public GameObject CreateItemMesh(ItemInstance item, GameObject parentGo, Vector3 position)
@@ -453,13 +453,13 @@ namespace GUZ.Core.Manager.Vobs
             var mrm = ResourceLoader.TryGetMultiResolutionMesh(item.Visual);
             if (mrm != null)
             {
-                return MeshFactory.CreateVob(item.Visual, mrm, position, default, false, parentGo, useTextureArray: false);
+                return _meshService.CreateVob(item.Visual, mrm, position, default, false, parentGo, useTextureArray: false);
             }
 
             // shortbow (itrw_bow_l_01) has no mrm, but has mmb
             var mmb = ResourceLoader.TryGetMorphMesh(item.Visual);
 
-            return MeshFactory.CreateVob(item.Visual, mmb, position, default, parentGo, useColliderCache: true);
+            return _meshService.CreateVob(item.Visual, mmb, position, default, parentGo, useColliderCache: true);
         }
 
 
@@ -662,7 +662,7 @@ namespace GUZ.Core.Manager.Vobs
             var mdl = ResourceLoader.TryGetModel(meshName);
             if (mdl != null)
             {
-                var ret = MeshFactory.CreateVob(meshName, mdl, parent: parent, rootGo: go);
+                var ret = _meshService.CreateVob(meshName, mdl, parent: parent, rootGo: go);
 
                 // A few objects are broken and have no meshes. We need to destroy them immediately again.
                 if (ret == null)
@@ -678,7 +678,7 @@ namespace GUZ.Core.Manager.Vobs
             var mdm = ResourceLoader.TryGetModelMesh(meshName);
             if (mdh != null && mdm != null)
             {
-                var ret = MeshFactory.CreateVob(meshName, mdm, mdh, parent: parent, rootGo: go);
+                var ret = _meshService.CreateVob(meshName, mdm, mdh, parent: parent, rootGo: go);
 
                 // A few objects are broken and have no meshes. We need to destroy them immediately again.
                 if (ret == null)
@@ -693,7 +693,7 @@ namespace GUZ.Core.Manager.Vobs
             var mmb = ResourceLoader.TryGetMorphMesh(meshName);
             if (mmb != null)
             {
-                var ret = MeshFactory.CreateVob(meshName, mmb, parent: parent, rootGo: go);
+                var ret = _meshService.CreateVob(meshName, mmb, parent: parent, rootGo: go);
 
                 // this is a dynamic object
 
@@ -713,7 +713,7 @@ namespace GUZ.Core.Manager.Vobs
                 // If the object is a dynamic one, it will collide.
                 var withCollider = vob.CdDynamic;
 
-                var ret = MeshFactory.CreateVob(meshName, mrm, withCollider: withCollider, parent: parent, rootGo: go);
+                var ret = _meshService.CreateVob(meshName, mrm, withCollider: withCollider, parent: parent, rootGo: go);
 
                 // A few objects are broken and have no meshes. We need to destroy them immediately again.
                 if (ret == null)
@@ -730,13 +730,13 @@ namespace GUZ.Core.Manager.Vobs
 
         private GameObject CreateDecal(IVirtualObject vob, GameObject parent)
         {
-            return MeshFactory.CreateVobDecal(vob, (VisualDecal)vob.Visual,
+            return _meshService.CreateVobDecal(vob, (VisualDecal)vob.Visual,
                 vob.Position.ToUnityVector(), vob.Rotation.ToUnityQuaternion(), parent);
         }
 
         private GameObject CreatePfx(IVirtualObject vob, GameObject parent)
         {
-            return MeshFactory.CreateVobPfx(vob, vob.Position.ToUnityVector(), vob.Rotation.ToUnityQuaternion(), parent);
+            return _meshService.CreateVobPfx(vob, vob.Position.ToUnityVector(), vob.Rotation.ToUnityQuaternion(), parent);
         }
 
         /// <summary>

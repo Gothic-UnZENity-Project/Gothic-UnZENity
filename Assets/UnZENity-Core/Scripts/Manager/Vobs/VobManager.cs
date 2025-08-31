@@ -30,6 +30,7 @@ namespace GUZ.Core.Manager.Vobs
         [Inject] private readonly VobSoundCullingService _vobSoundCullingService;
         // Supporter class where the whole Init() logic is outsourced for better readability.
         [Inject] private readonly VobInitializer _initializer;
+        [Inject] private readonly UnityMonoService _unityMonoService;
         
         public Dictionary<string, List<(int hour, int minute, int status)>> ObjectRoutines = new();
         
@@ -64,9 +65,9 @@ namespace GUZ.Core.Manager.Vobs
             int a = 2;
         }
         
-        public void Init(ICoroutineManager coroutineManager)
+        public void Init()
         {
-            coroutineManager.StartCoroutine(InitVobCoroutine());
+            _unityMonoService.StartCoroutine(InitVobCoroutine());
         }
 
         /// <summary>
