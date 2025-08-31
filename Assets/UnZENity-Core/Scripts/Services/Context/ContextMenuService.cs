@@ -1,4 +1,3 @@
-using GUZ.Core._Adapter;
 using GUZ.Core.Model.UI.Menu;
 
 namespace GUZ.Core.Services.Context

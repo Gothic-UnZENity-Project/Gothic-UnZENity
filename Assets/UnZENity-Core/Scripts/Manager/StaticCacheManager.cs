@@ -187,7 +187,7 @@ namespace GUZ.Core.Manager
         public void Init(DeveloperConfig config)
         {
             _configIsCompressed = config.CompressStaticCacheFiles;
-            _cacheRootFolderPath = $"{Application.persistentDataPath}/Cache/{GameContext.GameVersionAdapter.Version}/";
+            _cacheRootFolderPath = $"{Application.persistentDataPath}/Cache/{GameContext.ContextGameVersionService.Version}/";
         }
 
         /// <summary>

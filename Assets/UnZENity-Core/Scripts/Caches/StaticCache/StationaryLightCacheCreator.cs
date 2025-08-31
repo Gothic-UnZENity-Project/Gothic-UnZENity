@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using GUZ.Core.Adapter.UI.LoadingBars;
+using GUZ.Core.Adapters.UI.LoadingBars;
 using GUZ.Core.Extensions;
 using GUZ.Core.Manager;
 using GUZ.Core.Util;
@@ -91,13 +91,13 @@ namespace GUZ.Core.Caches.StaticCache
                     }
 
                     // FIXME - For some reason, FIRETREE_LARGE.ZEN is broken in G2. Let's fix it properly later.)
-                    if (GameContext.GameVersionAdapter.Version == GameVersion.Gothic2 && fire.VobTree == "FIRETREE_LARGE.ZEN")
+                    if (GameContext.ContextGameVersionService.Version == GameVersion.Gothic2 && fire.VobTree == "FIRETREE_LARGE.ZEN")
                     {
                         Logger.LogError("For some reason, FIRETREE_LARGE.ZEN is broken in G2. Let's fix it properly for caching.", LogCat.PreCaching);
                         continue;
                     }
 
-                    var fireWorldVobs = ResourceLoader.TryGetWorld(fire.VobTree, GameContext.GameVersionAdapter.Version, true)!.RootObjects;
+                    var fireWorldVobs = ResourceLoader.TryGetWorld(fire.VobTree, GameContext.ContextGameVersionService.Version, true)!.RootObjects;
 
                     // As we loaded the child-VOBs for fire*.zen at this time, we iterate now.
                     await CalculateStationaryLights(fireWorldVobs, vobWorldPosition);

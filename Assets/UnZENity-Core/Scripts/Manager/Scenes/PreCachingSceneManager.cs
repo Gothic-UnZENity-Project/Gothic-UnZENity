@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
-using GUZ.Core.Adapter.UI.LoadingBars;
+using GUZ.Core.Adapters.UI.LoadingBars;
 using GUZ.Core.Caches;
 using GUZ.Core.Caches.StaticCache;
 using GUZ.Core.Extensions;
@@ -65,7 +65,7 @@ namespace GUZ.Core.Manager.Scenes
         {
             try
             {
-                var worldsToLoad = GameContext.GameVersionAdapter.Version == GameVersion.Gothic1 ? _gothic1Worlds : _gothic2Worlds;
+                var worldsToLoad = GameContext.ContextGameVersionService.Version == GameVersion.Gothic1 ? _gothic1Worlds : _gothic2Worlds;
                 
                 if (!GameGlobals.Config.Dev.AlwaysRecreateCache && GameGlobals.StaticCache.DoCacheFilesExist(worldsToLoad))
                 {
@@ -103,7 +103,7 @@ namespace GUZ.Core.Manager.Scenes
                     var worldName = worldsToLoad[worldIndex];
                         
                     Logger.Log($"### PreCaching meshes for world: {worldName}", LogCat.PreCaching);
-                    var world = ResourceLoader.TryGetWorld(worldName, GameContext.GameVersionAdapter.Version)!;
+                    var world = ResourceLoader.TryGetWorld(worldName, GameContext.ContextGameVersionService.Version)!;
                     var stationaryLightCache = new StationaryLightCacheCreator();
                     var worldChunkCache = new WorldChunkCacheCreator();
 

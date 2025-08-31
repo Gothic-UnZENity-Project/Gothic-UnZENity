@@ -1,11 +1,10 @@
 ﻿#if GUZ_HVR_INSTALLED
 using System.Collections.Generic;
 using System.Linq;
-using GUZ.Core._Adapter;
 using GUZ.Core.Data;
 using GUZ.Core.Globals;
 using GUZ.Core.Services.Context;
-using GUZ.VR.Adapter.UI;
+using GUZ.VR.Adapters.UI;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using ZenKit.Daedalus;

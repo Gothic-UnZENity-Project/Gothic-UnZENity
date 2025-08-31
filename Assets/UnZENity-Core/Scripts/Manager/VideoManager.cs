@@ -22,7 +22,7 @@ namespace GUZ.Core.Manager
         
         public void InitVideos()
         {
-            var videoFileFolder = $"{GameContext.GameVersionAdapter.RootPath}/_work/DATA/video/";
+            var videoFileFolder = $"{GameContext.ContextGameVersionService.RootPath}/_work/DATA/video/";
 
             if (!Directory.Exists(videoFileFolder))
             {

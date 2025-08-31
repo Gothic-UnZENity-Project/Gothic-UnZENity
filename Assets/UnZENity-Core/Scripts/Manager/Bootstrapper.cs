@@ -120,9 +120,9 @@ namespace GUZ.Core.Manager
 
         private static void LoadSubtitles()
         {
-            var cutsceneSuffix = GameContext.GameVersionAdapter.CutsceneFileSuffix;
+            var cutsceneSuffix = GameContext.ContextGameVersionService.CutsceneFileSuffix;
             var cutscenePath =
-                $"{GameContext.GameVersionAdapter.RootPath}/_work/DATA/scripts/content/CUTSCENE/OU.{cutsceneSuffix}";
+                $"{GameContext.ContextGameVersionService.RootPath}/_work/DATA/scripts/content/CUTSCENE/OU.{cutsceneSuffix}";
             GameData.Dialogs.CutsceneLibrary = new(cutscenePath);
         }
 

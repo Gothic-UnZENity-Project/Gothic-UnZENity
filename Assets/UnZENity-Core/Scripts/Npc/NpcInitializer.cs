@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using GUZ.Core.Adapter.UI.LoadingBars;
+using GUZ.Core.Adapters.UI.LoadingBars;
 using GUZ.Core.Caches;
 using GUZ.Core.Creator.Meshes;
 using GUZ.Core.Data.Adapter.Vobs;

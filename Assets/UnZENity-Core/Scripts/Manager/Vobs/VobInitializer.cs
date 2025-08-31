@@ -326,7 +326,7 @@ namespace GUZ.Core.Manager.Vobs
                 return null;
             }
 
-            var vobTree = ResourceLoader.TryGetWorld(vob.VobTree, GameContext.GameVersionAdapter.Version, true)!.RootObjects;
+            var vobTree = ResourceLoader.TryGetWorld(vob.VobTree, GameContext.ContextGameVersionService.Version, true)!.RootObjects;
 
             CreateFireVobs(vobTree, go.FindChildRecursively(vob.Slot) ?? go, worldPosition);
 

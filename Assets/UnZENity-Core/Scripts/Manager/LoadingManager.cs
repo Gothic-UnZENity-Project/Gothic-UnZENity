@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
-using GUZ.Core.Adapter.UI.LoadingBars;
+using GUZ.Core.Adapters.UI.LoadingBars;
 using GUZ.Core.Extensions;
 
 namespace GUZ.Core.Manager

@@ -328,7 +328,7 @@ namespace GUZ.Core.Manager.Culling
             // Fire VOBs children are inside a .zen file
             if (vob.Type == VirtualObjectType.oCMobFire)
             {
-                var fireWorld = ResourceLoader.TryGetWorld(((IFire)vob).VobTree, GameContext.GameVersionAdapter.Version, true);
+                var fireWorld = ResourceLoader.TryGetWorld(((IFire)vob).VobTree, GameContext.ContextGameVersionService.Version, true);
 
                 // e.g. "NC_FIREPLACE_STONE" has no VobTree. But could we potentially render it as mesh?
                 if (fireWorld == null)

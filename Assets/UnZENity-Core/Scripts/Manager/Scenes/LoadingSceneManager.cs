@@ -1,4 +1,4 @@
-using GUZ.Core.Adapter.UI.LoadingBars;
+using GUZ.Core.Adapters.UI.LoadingBars;
 using UnityEngine;
 
 namespace GUZ.Core.Manager.Scenes

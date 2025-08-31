@@ -10,6 +10,7 @@ using GUZ.Core.Manager;
 using GUZ.Core.Util;
 using GUZ.G1;
 using GUZ.G2;
+using GUZ.G2.Services.Context;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -81,7 +82,7 @@ namespace GUZ.Core.Editor.Tools
         private static async Task Execute(GameVersion version)
         {
             // Needed during Cache creation. (StationaryLightCache is calling worlds from Fire.zen and need to have this information.)
-            GameContext.GameVersionAdapter = version == GameVersion.Gothic1 ? new G1Adapter() : new G2Adapter();
+            GameContext.ContextGameVersionService = version == GameVersion.Gothic1 ? new G1ContextService() : new G2ContextService();
 
             var worldName = SceneManager.GetActiveScene().name;
             var world = ResourceLoader.TryGetWorld(worldName, version)!;

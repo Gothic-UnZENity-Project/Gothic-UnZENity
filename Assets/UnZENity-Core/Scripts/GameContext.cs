@@ -1,5 +1,4 @@
 using System;
-using GUZ.Core._Adapter;
 using GUZ.Core.Services.Context;
 using ZenKit;
 #if GUZ_HVR_INSTALLED
@@ -19,7 +18,7 @@ namespace GUZ.Core
         public static ContextInteractionService ContextInteractionService;
         public static IContextMenuService ContextMenuService;
         public static IContextDialogService ContextDialogService;
-        public static IGameVersionAdapter GameVersionAdapter;
+        public static IContextGameVersionService ContextGameVersionService;
 
         public static bool IsLab;
 
@@ -31,9 +30,9 @@ namespace GUZ.Core
 
         public static void SetGameVersionContext(GameVersion version)
         {
-            GlobalEventDispatcher.RegisterGameVersionAdapters.Invoke(version);
+            GlobalEventDispatcher.RegisterGameVersionService.Invoke(version);
             
-            if (GameVersionAdapter == null)
+            if (ContextGameVersionService == null)
             {
                 throw new ArgumentOutOfRangeException($"No version module registered for {version}");
             }

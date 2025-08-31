@@ -162,6 +162,8 @@ namespace GUZ.Core
         /// </summary>
         public void InitPhase1()
         {
+            GlobalEventDispatcher.RegisterControlsService.Invoke(_configManager.Dev.GameControls);
+
             _frameSkipper.Init();
             Loading.Init();
             Lights.Init();
@@ -180,10 +182,11 @@ namespace GUZ.Core
         {
             var watch = Stopwatch.StartNew();
 
-            Config.LoadGothicInis(version);
-            GameContext.SetGameVersionContext(version);
+            GlobalEventDispatcher.RegisterGameVersionService.Invoke(version);
 
-            var gothicRootPath = GameContext.GameVersionAdapter.RootPath;
+            Config.LoadGothicInis(version);
+
+            var gothicRootPath = GameContext.ContextGameVersionService.RootPath;
 
             // Otherwise, continue loading Gothic.
             Logger.Log($"Initializing Gothic installation at: {gothicRootPath}", LogCat.Loading);

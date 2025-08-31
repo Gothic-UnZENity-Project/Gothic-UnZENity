@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using GUZ.Core;
-using GUZ.Core._Adapter;
 using GUZ.Core.Model.UI.Menu;
 using GUZ.Core.Model.UI.MenuItem;
 using GUZ.Core.Services.Context;
@@ -11,7 +10,7 @@ using UnityEngine;
 using ZenKit.Daedalus;
 using Constants = GUZ.Core.Globals.Constants;
 
-namespace GUZ.VR.Adapter
+namespace GUZ.VR.Services.Context
 {
     public class VRContextMenuService : IContextMenuService
     {

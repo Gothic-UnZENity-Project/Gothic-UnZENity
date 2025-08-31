@@ -91,7 +91,7 @@ namespace GUZ.Core.Manager
             GlobalEventDispatcher.LoadGameStart.Invoke();
 
             SaveGameId = 0;
-            Save = new SaveGame(GameContext.GameVersionAdapter.Version);
+            Save = new SaveGame(GameContext.ContextGameVersionService.Version);
             IsFirstWorldLoadingFromSaveGame = true;
             _worlds.ClearAndReleaseMemory();
         }
@@ -193,7 +193,7 @@ namespace GUZ.Core.Manager
         public SaveGame GetSaveGame(SlotId folderSaveId)
         {
             // Load metadata
-            var save = new SaveGame(GameContext.GameVersionAdapter.Version);
+            var save = new SaveGame(GameContext.ContextGameVersionService.Version);
             var saveGamePath = GetSaveGamePath(folderSaveId);
 
             if (!Directory.Exists(saveGamePath))
@@ -220,7 +220,7 @@ namespace GUZ.Core.Manager
         /// </summary>
         public void SaveCurrentGame(SlotId saveGameId, string title)
         {
-            var saveGame = new SaveGame(GameContext.GameVersionAdapter.Version);
+            var saveGame = new SaveGame(GameContext.ContextGameVersionService.Version);
             saveGame.Metadata.Title = title;
             saveGame.Metadata.SaveDate = DateTime.Now.ToString();
             saveGame.Thumbnail = CreateThumbnail();
@@ -373,7 +373,7 @@ namespace GUZ.Core.Manager
 
         private string GetSaveGamePath(SlotId folderSaveId)
         {
-            var gothicDir = GameContext.GameVersionAdapter.RootPath;
+            var gothicDir = GameContext.ContextGameVersionService.RootPath;
             return Path.GetFullPath(Path.Join(gothicDir, $"Saves/savegame{(int)folderSaveId}"));
         }
     }

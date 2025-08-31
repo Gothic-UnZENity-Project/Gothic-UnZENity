@@ -13,7 +13,8 @@ namespace GUZ.Core
     {
         // We need to ensure, that other modules will register themselves based on current Control+GameMode setting.
         // Since we can't call them (e.g. Flat/VR) directly, we need to leverage this IoC pattern.
-        public static readonly UnityEvent<GameVersion> RegisterGameVersionAdapters = new();
+        public static readonly UnityEvent<GameContext.Controls> RegisterControlsService = new();
+        public static readonly UnityEvent<GameVersion> RegisterGameVersionService = new();
 
         // Events are named in order of execution during a normal game play.
         public static readonly UnityEvent PlayerSceneLoaded = new();

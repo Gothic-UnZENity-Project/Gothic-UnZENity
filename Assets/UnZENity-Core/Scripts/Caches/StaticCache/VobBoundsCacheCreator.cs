@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using GUZ.Core.Adapter.UI.LoadingBars;
+using GUZ.Core.Adapters.UI.LoadingBars;
 using GUZ.Core.Creator.Meshes;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
@@ -129,7 +129,7 @@ namespace GUZ.Core.Caches.StaticCache
                     // In G1 it is only ITLSTORCHBURNING.ZEN --> RootObjects[0].Visual=ITLS_TORCHBURNED_01.3DS
                     if (item.Visual.EndsWith(".ZEN"))
                     {
-                        var world = ResourceLoader.TryGetWorld(item.Visual, GameContext.GameVersionAdapter.Version);
+                        var world = ResourceLoader.TryGetWorld(item.Visual, GameContext.ContextGameVersionService.Version);
                         if (world!.RootObjects.Count != 1)
                         {
                             Logger.LogError(
