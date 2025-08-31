@@ -71,6 +71,7 @@ namespace GUZ.Core
         [Inject] private readonly ContextInteractionService _contextInteractionService;
         [Inject] private readonly ContextMenuService _contextMenuService;
         [Inject] private readonly ContextDialogService _contextDialogService;
+        [Inject] private readonly ContextGameVersionService _contextGameVersionService;
 
         [Inject] private readonly UnityMonoService _unityMonoService;
         [Inject] private readonly MusicService _musicService;
@@ -183,6 +184,7 @@ namespace GUZ.Core
             var watch = Stopwatch.StartNew();
 
             GlobalEventDispatcher.RegisterGameVersionService.Invoke(version);
+            GameContext.ContextGameVersionService = _contextGameVersionService;
 
             Config.LoadGothicInis(version);
 

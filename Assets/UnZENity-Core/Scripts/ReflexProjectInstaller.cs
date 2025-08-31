@@ -18,6 +18,7 @@ namespace GUZ.Core
             containerBuilder.AddSingleton(typeof(ContextInteractionService));
             containerBuilder.AddSingleton(typeof(ContextMenuService));
             containerBuilder.AddSingleton(typeof(ContextDialogService));
+            containerBuilder.AddSingleton(typeof(ContextGameVersionService));
 
             containerBuilder.AddSingleton(typeof(MusicService));
             containerBuilder.AddSingleton(typeof(NpcMeshCullingService));

@@ -83,6 +83,7 @@ namespace GUZ.Lab
         [Inject] private readonly MusicService _musicService;
         [Inject] private readonly GameTimeService _gameTimeService;
         [Inject] private readonly ContextInteractionService _contextInteractionService;
+        [Inject] private readonly ContextGameVersionService _contextGameVersionService;
 
 
         private void Awake()
@@ -138,9 +139,9 @@ namespace GUZ.Lab
 
             // In lab, we can safely say: VR only!
             GameContext.ContextInteractionService = _contextInteractionService;
-            _contextInteractionService.SetImpl(new VRContextInteractionService());
-
-            GameContext.SetGameVersionContext(Config.Dev.GameVersion);
+            GameContext.ContextGameVersionService = _contextGameVersionService;
+            GlobalEventDispatcher.RegisterControlsService.Invoke(DeveloperConfig.GameControls);
+            GlobalEventDispatcher.RegisterGameVersionService.Invoke(DeveloperConfig.GameVersion);
 
             _musicService.Init();
             _npcRoutineManager.Init();
@@ -155,6 +156,7 @@ namespace GUZ.Lab
 
         private async Task InitLab()
         {
+
             _contextInteractionService.SetupPlayerController(DeveloperConfig);
 
             // TODO - Broken. Fix before use.

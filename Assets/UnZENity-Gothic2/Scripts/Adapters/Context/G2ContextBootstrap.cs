@@ -1,6 +1,8 @@
 ﻿using GUZ.Core;
 using GUZ.Core.Adapters.Context;
+using GUZ.Core.Services.Context;
 using GUZ.G2.Services.Context;
+using Reflex.Attributes;
 using ZenKit;
 
 namespace GUZ.G2.Adapters.Context
@@ -10,6 +12,9 @@ namespace GUZ.G2.Adapters.Context
     /// </summary>
     public class G2ContextBootstrap : AbstractContextBootstrap
     {
+        [Inject] private readonly ContextGameVersionService _contextGameVersionService;
+
+
         protected override void RegisterControlModule(GameContext.Controls controls)
         {
             // NOP
@@ -20,7 +25,7 @@ namespace GUZ.G2.Adapters.Context
             if (version != GameVersion.Gothic2)
                 return;
 
-            GameContext.ContextGameVersionService = new G2ContextService();
+            _contextGameVersionService.SetImpl(new G2ContextService());
         }
     }
 }
