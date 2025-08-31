@@ -175,7 +175,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3866233120056885002}
   m_Layer: 7
-  m_Name: Player
+  m_Name: HVR - Player
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

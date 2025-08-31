@@ -1,4 +1,5 @@
 using GUZ.Core._Adapter;
+using GUZ.Core.Config;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -28,19 +29,14 @@ namespace GUZ.Core.UnZENity_Core.Scripts.Services.Context
             return _impl.GetFrameRate();
         }
 
-        public GameObject CreatePlayerController(Scene scene)
+        public void SetupPlayerController(DeveloperConfig developerConfig)
         {
-            return _impl.CreatePlayerController(scene);
+            _impl.SetupPlayerController(developerConfig);
         }
 
         public GameObject GetCurrentPlayerController()
         {
             return _impl.GetCurrentPlayerController();
-        }
-
-        public void CreateVRDeviceSimulator()
-        {
-            _impl.CreateVRDeviceSimulator();
         }
 
         public void LockPlayerInPlace()

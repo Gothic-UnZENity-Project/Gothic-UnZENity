@@ -1,18 +1,21 @@
-﻿using GUZ.Core.Globals;
+﻿using GUZ.Core.Config;
+using GUZ.Core.Globals;
+using GUZ.Core.UnZENity_Core.Scripts.Services.Context;
+using Reflex.Attributes;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 namespace GUZ.Core.Manager.Scenes
 {
     public class PlayerSceneManager : MonoBehaviour, ISceneManager
     {
+        [Inject] private readonly ConfigManager _configManager;
+        [Inject] private readonly ContextInteractionService _contextInteractionService;
+
         public void Init()
         {
             GameManager.I.InitPhase1();
 
-
-            GameContext.ContextInteractionService.CreatePlayerController(SceneManager.GetSceneByName(Constants.ScenePlayer));
-            GameContext.ContextInteractionService.CreateVRDeviceSimulator();
+            _contextInteractionService.SetupPlayerController(_configManager.Dev);
 
             GlobalEventDispatcher.PlayerSceneLoaded.Invoke();
 

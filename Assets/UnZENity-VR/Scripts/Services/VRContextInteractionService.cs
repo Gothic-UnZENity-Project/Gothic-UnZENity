@@ -61,23 +61,23 @@ namespace GUZ.VR.Adapter
             return xrRefreshRate;
         }
 
-        public GameObject CreatePlayerController(Scene scene)
+        public void SetupPlayerController(DeveloperConfig developerConfig)
         {
-            var go = ResourceLoader.TryGetPrefabObject(PrefabType.Player);
-            _playerController = go.GetComponentInChildren<VRPlayerController>();
+            // We call this method once at the very beginning of game start. We can safely assume we are in the Player.unity scene.
+            var activeScene = SceneManager.GetActiveScene();
 
-            go.name = "Player - VR";
-
-            // During normal gameplay, we need to move the VRPlayer to General scene. Otherwise, it will be created inside
-            // world scene and removed whenever we change the world.
-            SceneManager.MoveGameObjectToScene(go, scene);
-
+            // HVR Player
+            _playerController = activeScene.GetComponentInChildren<VRPlayerController>(true)!;
+            _playerController.transform.parent.parent.gameObject.SetActive(true);
             _playerController.SetNormalControls(true);
 
-            if (GameGlobals.Config.Dev.ActivateMarvinMode)
-                go.GetComponentInChildren<MarvinRootHandler>(true).gameObject.SetActive(true);
+            // XRDeviceSimulator
+            var simulatorGO = activeScene.GetComponentInChildren<HVRBodySimulator>(true)!;
+            simulatorGO.gameObject.SetActive(developerConfig.EnableVRDeviceSimulator);
 
-            return _playerController.gameObject;
+            // Marvin Mode
+            var marvinGO = activeScene.GetComponentInChildren<MarvinRootHandler>(true)!;
+            marvinGO.gameObject.SetActive(developerConfig.ActivateMarvinMode);
         }
         
         private void PlayerPrefsUpdated(string key, object value)
@@ -107,45 +107,6 @@ namespace GUZ.VR.Adapter
         public VRPlayerInputs GetVRPlayerInputs()
         {
             return _playerController.VrInputs;
-        }
-
-        public void CreateVRDeviceSimulator()
-        {
-            if (!GameGlobals.Config.Dev.EnableVRDeviceSimulator)
-            {
-                return;
-            }
-
-            // As we reference components from HVRPlayer inside HVRSimulator, we need to create the SimulatorGO on the same scene.
-            var playerScene = SceneManager.GetSceneByName(Constants.ScenePlayer);
-            var mainMenuScene = SceneManager.GetSceneByName(Constants.SceneMainMenu);
-            var labScene = SceneManager.GetSceneByName(Constants.SceneLab);
-
-            Scene currentScene = default;
-            foreach (var sceneToCheck in new[] { playerScene, mainMenuScene, labScene })
-            {
-                if (sceneToCheck.IsValid())
-                {
-                    currentScene = sceneToCheck;
-                    break;
-                }
-            }
-
-            if (!currentScene.IsValid())
-            {
-                Logger.LogError("No valid scene for XRDeviceSimulator found. Skipping setup.", LogCat.VR);
-                return;
-            }
-
-            var simulatorGo = new GameObject("HVR - XRDeviceSimulator");
-            // We assume, that this Component (VRPlayerController) is set 1-level inside the HVR root for a player rig.
-            var playerRig = currentScene.GetComponentInChildren<VRPlayerController>()!.transform.parent.gameObject;
-
-            simulatorGo.AddComponent<HVRBodySimulator>().Rig = playerRig;
-            simulatorGo.AddComponent<HVRHandsSimulator>().Rig = playerRig;
-            simulatorGo.AddComponent<VRSimulatorControlsGUI>();
-
-            SceneManager.MoveGameObjectToScene(simulatorGo, currentScene);
         }
 
         public void LockPlayerInPlace()

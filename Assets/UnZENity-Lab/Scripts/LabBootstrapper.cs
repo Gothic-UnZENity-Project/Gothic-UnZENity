@@ -13,11 +13,13 @@ using GUZ.Core.Manager.Vobs;
 using GUZ.Core.Npc;
 using GUZ.Core.Services;
 using GUZ.Core.Services.Culling;
+using GUZ.Core.UnZENity_Core.Scripts.Services.Context;
 using GUZ.Core.Util;
 using GUZ.Core.Vm;
 using GUZ.Core.World;
 using GUZ.Lab.Handler;
 using GUZ.Manager;
+using GUZ.VR.Adapter;
 using Reflex.Attributes;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -62,7 +64,7 @@ namespace GUZ.Lab
         public StaticCacheManager StaticCache => _staticCacheManager;
         public PlayerManager Player => null;
         public MarvinManager Marvin => _marvinManager;
-        public SkyManager Sky => _skyManager;
+        public SkyManager Sky => null;
         public GameTimeService Time => _gameTimeService;
         public MusicService Music => Music;
         public RoutineManager Routines => _npcRoutineManager;
@@ -81,8 +83,8 @@ namespace GUZ.Lab
 
         
         [Inject] private readonly MusicService _musicService;
-        [Inject] private readonly SkyManager _skyManager;
         [Inject] private readonly GameTimeService _gameTimeService;
+        [Inject] private readonly ContextInteractionService _contextInteractionService;
 
 
         private void Awake()
@@ -94,7 +96,7 @@ namespace GUZ.Lab
             CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.InvariantCulture;
             
 #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-            BootLab();
+            BootLab().AwaitAndLog();
 #pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
         }
 
@@ -136,6 +138,10 @@ namespace GUZ.Lab
 
             ResourceLoader.Init(Config.Root.Gothic1Path);
 
+            // In lab, we can safely say: VR only!
+            GameContext.ContextInteractionService = _contextInteractionService;
+            _contextInteractionService.SetImpl(new VRContextInteractionService());
+
             GameContext.SetControlContext(Config.Dev.GameControls);
             GameContext.SetGameVersionContext(Config.Dev.GameVersion);
 
@@ -145,7 +151,6 @@ namespace GUZ.Lab
             _textureManager.Init();
             _npcManager.Init(this);
             _vobManager.Init(this);
-            _skyManager.InitWorld();
 
             _videoManager.InitVideos();
             _save.LoadNewGame();
@@ -153,8 +158,8 @@ namespace GUZ.Lab
 
         private async Task InitLab()
         {
-            GameContext.ContextInteractionService.CreatePlayerController(SceneManager.GetActiveScene());
-            GameContext.ContextInteractionService.CreateVRDeviceSimulator();
+            _contextInteractionService.SetupPlayerController(DeveloperConfig);
+
             // TODO - Broken. Fix before use.
             // NpcHelper.CacheHero();
 

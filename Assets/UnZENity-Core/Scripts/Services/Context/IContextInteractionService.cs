@@ -1,3 +1,4 @@
+using GUZ.Core.Config;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -7,9 +8,8 @@ namespace GUZ.Core._Adapter
     {
         string GetContextName();
         float GetFrameRate();
-        GameObject CreatePlayerController(Scene scene);
+        void SetupPlayerController(DeveloperConfig developerConfig);
         GameObject GetCurrentPlayerController();
-        void CreateVRDeviceSimulator();
         void LockPlayerInPlace();
         void UnlockPlayer();
         void TeleportPlayerTo(Vector3 position, Quaternion rotation = default);

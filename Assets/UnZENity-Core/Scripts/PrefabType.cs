@@ -45,7 +45,6 @@ namespace GUZ.Core
         VobItemLockPick,
         VobItemWeapon,
         
-        Player,
         StoryIntroduceChapter
     }
 
@@ -96,7 +95,6 @@ namespace GUZ.Core
                 PrefabType.VobItemLockPick => "Prefabs/Vobs/oCItem/LockPick",
                 PrefabType.VobItemWeapon => "Prefabs/Vobs/oCItem/Weapon",
                 
-                PrefabType.Player => "Prefabs/Player",
                 PrefabType.StoryIntroduceChapter => "Prefabs/Story/IntroduceChapter",
                 _ => throw new Exception($"Enum value {type} not yet defined.")
             };
