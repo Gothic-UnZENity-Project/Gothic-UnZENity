@@ -2,7 +2,6 @@ using System;
 using System.Globalization;
 using System.Threading.Tasks;
 using GUZ.Core;
-using GUZ.Core.Animations;
 using GUZ.Core.Caches;
 using GUZ.Core.Config;
 using GUZ.Core.Extensions;
@@ -50,7 +49,6 @@ namespace GUZ.Lab
         private StoryManager _story;
         private VobManager _vobManager;
         private NpcManager _npcManager;
-        private AnimationManager _animationManager;
         private MarvinManager _marvinManager;
 
         public ConfigManager Config => _configManager;
@@ -70,7 +68,6 @@ namespace GUZ.Lab
         public VobManager Vobs => _vobManager;
         public NpcManager Npcs => _npcManager;
         public NpcAiManager NpcAi => null;
-        public AnimationManager Animations => _animationManager;
         public VobMeshCullingService VobMeshCulling => null;
         public NpcMeshCullingService NpcMeshCulling => null;
         public StoryManager Story => _story;
@@ -131,7 +128,6 @@ namespace GUZ.Lab
             _videoManager = new VideoManager(Config.Dev);
             _npcManager = new NpcManager();
             _vobManager = new VobManager();
-            _animationManager = new AnimationManager();
             _marvinManager = new MarvinManager();
 
             ResourceLoader.Init(Config.Root.Gothic1Path);

@@ -5,6 +5,7 @@ using System.Linq;
 using DirectMusic;
 using GUZ.Core.Creator.Sounds;
 using GUZ.Core.Data;
+using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Util;
 using JetBrains.Annotations;

@@ -1,9 +1,11 @@
 using System;
 using GUZ.Core.Data.Container;
+using GUZ.Core.Domain.Animations;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Util;
 using GUZ.Core.Vm;
+using Reflex.Attributes;
 using ZenKit.Daedalus;
 using Random = UnityEngine.Random;
 using Vector3 = UnityEngine.Vector3;
@@ -12,6 +14,9 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
 {
     public class Attack : AbstractAnimationAction
     {
+        [Inject] private readonly AnimationService _animationService;
+
+
         private NpcInstance _enemy => (NpcInstance)GameData.GothicVm.GlobalVictim;
         
         private FightAiMove _move;
@@ -126,7 +131,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
         /// </summary>
         private string GetAnimName(VmGothicEnums.AnimationType type)
         {
-            return GameGlobals.Animations.GetAnimationName(type, Vob);
+            return _animationService.GetAnimationName(type, Vob);
         }
 
         public override void Tick()

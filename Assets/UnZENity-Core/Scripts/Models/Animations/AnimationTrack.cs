@@ -1,11 +1,9 @@
-using System;
 using System.Collections.Generic;
 using GUZ.Core.Extensions;
 using UnityEngine;
 using ZenKit;
-using Animation = UnityEngine.Animation;
 
-namespace GUZ.Core.Animations
+namespace GUZ.Core.Models.Animations
 {
     public class AnimationTrack
     {

@@ -1,13 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using GUZ.Core.Animations;
+using GUZ.Core.Adapters;
 using GUZ.Core.Globals;
 using GUZ.Core.Npc;
 using GUZ.Core.Npc.Actions;
 using UnityEditor;
 using UnityEngine;
-using AnimationState = GUZ.Core.Animations.AnimationState;
 
 namespace GUZ.Core.Editor.Tools
 {
@@ -307,13 +306,13 @@ namespace GUZ.Core.Editor.Tools
 
                     switch (trackInstance.BoneStates[boneIndex])
                     {
-                        case AnimationState.None:
-                        case AnimationState.BlendIn:
-                        case AnimationState.Play:
+                        case Models.Animations.AnimationState.None:
+                        case Models.Animations.AnimationState.BlendIn:
+                        case Models.Animations.AnimationState.Play:
                             GUI.backgroundColor = Color.Lerp(Color.red, Color.green, trackInstance.BoneBlendWeights[boneIndex]);
                             break;
-                        case AnimationState.BlendOut:
-                        case AnimationState.Stop:
+                        case Models.Animations.AnimationState.BlendOut:
+                        case Models.Animations.AnimationState.Stop:
                             GUI.backgroundColor = Color.Lerp(Color.grey, Color.green, trackInstance.BoneBlendWeights[boneIndex]);
                             break;
                         default:

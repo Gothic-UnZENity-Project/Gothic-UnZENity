@@ -1,8 +1,10 @@
 using GUZ.Core.Data.Container;
+using GUZ.Core.Domain.Animations;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
 using GUZ.Core.Util;
 using GUZ.Core.Vm;
+using Reflex.Attributes;
 using UnityEngine;
 using Logger = GUZ.Core.Util.Logger;
 
@@ -10,6 +12,9 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
 {
     public abstract class AbstractWalkAnimationAction2 : AbstractAnimationAction
     {
+        [Inject] private readonly AnimationService _animationService;
+
+
         protected Transform NpcTransform => NpcGo.transform;
         protected bool IsDestReached;
 
@@ -60,7 +65,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
         {
             PhysicsHelper.EnablePhysicsForNpc(PrefabProps);
 
-            var animName = GameGlobals.Animations.GetAnimationName(VmGothicEnums.AnimationType.Move, Vob);
+            var animName = _animationService.GetAnimationName(VmGothicEnums.AnimationType.Move, Vob);
             PrefabProps.AnimationSystem.PlayAnimation(animName);
         }
 
@@ -68,7 +73,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
         {
             PhysicsHelper.EnablePhysicsForNpc(PrefabProps);
 
-            var animName = GameGlobals.Animations.GetAnimationName(VmGothicEnums.AnimationType.Move, Vob);
+            var animName = _animationService.GetAnimationName(VmGothicEnums.AnimationType.Move, Vob);
             PrefabProps.AnimationSystem.StopAnimation(animName);
         }
 

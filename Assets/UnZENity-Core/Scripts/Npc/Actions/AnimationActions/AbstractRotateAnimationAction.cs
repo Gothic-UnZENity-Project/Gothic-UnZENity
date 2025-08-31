@@ -1,15 +1,18 @@
 using GUZ.Core.Data.Container;
+using GUZ.Core.Domain.Animations;
 using GUZ.Core.Globals;
 using GUZ.Core.Util;
 using GUZ.Core.Vm;
+using Reflex.Attributes;
 using UnityEngine;
-using static GUZ.Core.Globals.Constants;
 using Logger = GUZ.Core.Util.Logger;
 
 namespace GUZ.Core.Npc.Actions.AnimationActions
 {
     public abstract class AbstractRotateAnimationAction : AbstractAnimationAction
     {
+        [Inject] private readonly AnimationService _animationService;
+
         // Can be used to rotate without animation.
         protected bool PlayAnimation = true;
 
@@ -116,7 +119,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             if (Quaternion.Angle(npcTransform.rotation, _finalRotation) < 1f && IsFinishedFlag != true)
             {
                 PrefabProps.AnimationSystem.StopAnimation(GetRotateModeAnimationString());
-                PrefabProps.AnimationSystem.PlayAnimation(GameGlobals.Animations.GetAnimationName(VmGothicEnums.AnimationType.Move, Vob));
+                PrefabProps.AnimationSystem.PlayAnimation(_animationService.GetAnimationName(VmGothicEnums.AnimationType.Move, Vob));
 
                 IsFinishedFlag = true;
             }

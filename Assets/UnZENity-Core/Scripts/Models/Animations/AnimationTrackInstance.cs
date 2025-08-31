@@ -1,14 +1,11 @@
 using System;
 using System.Collections.Generic;
 using GUZ.Core.Extensions;
-using GUZ.Core.Util;
 using JetBrains.Annotations;
-using MyBox;
 using UnityEngine;
 using ZenKit;
-using Logger = GUZ.Core.Util.Logger;
 
-namespace GUZ.Core.Animations
+namespace GUZ.Core.Models.Animations
 {
     /// <summary>
     /// Currently playing instance of a Track on a NPC.

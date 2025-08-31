@@ -1,9 +1,7 @@
 using System;
-using GUZ.Core.Animations;
+using GUZ.Core.Adapters;
 using GUZ.Core.Data.Container;
 using GUZ.Core.Extensions;
-using GUZ.Core.Npc;
-using GUZ.Core.Properties;
 using UnityEngine;
 using ZenKit.Daedalus;
 

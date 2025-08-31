@@ -1,19 +1,22 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using GUZ.Core.Domain.Animations;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
+using GUZ.Core.Models.Animations;
 using GUZ.Core.Npc;
 using GUZ.Core.Util;
 using GUZ.Core.Vm;
 using MyBox;
+using Reflex.Attributes;
 using UnityEngine;
 using ZenKit;
+using AnimationState = GUZ.Core.Models.Animations.AnimationState;
 using EventType = ZenKit.EventType;
 using Logger = GUZ.Core.Util.Logger;
-using Object = UnityEngine.Object;
 
-namespace GUZ.Core.Animations
+namespace GUZ.Core.Adapters
 {
     /// <summary>
     /// NPC component to handle animations. The Blending is using the official Gothic animation information:
@@ -29,6 +32,9 @@ namespace GUZ.Core.Animations
         public bool DebugPauseAtPlayAnimation;
         public bool DebugPauseAtStopAnimation;
 #endif
+
+        [Inject] private readonly AnimationService _animationService;
+
 
         public Transform RootBone;
 
@@ -98,7 +104,7 @@ namespace GUZ.Core.Animations
             }
 #endif
 
-            var newTrack = GameGlobals.Animations.GetTrack(animationName, Properties.MdsNameBase, Properties.MdsNameOverlay);
+            var newTrack = _animationService.GetTrack(animationName, Properties.MdsNameBase, Properties.MdsNameOverlay);
 
             if (newTrack == null)
             {
@@ -164,7 +170,7 @@ namespace GUZ.Core.Animations
 
         public bool PlayIdleAnimation()
         {
-            return PlayAnimation(GameGlobals.Animations.GetAnimationName(VmGothicEnums.AnimationType.Idle, Vob));
+            return PlayAnimation(_animationService.GetAnimationName(VmGothicEnums.AnimationType.Idle, Vob));
         }
 
         public float GetAnimationDuration(string animationName)
@@ -573,7 +579,7 @@ namespace GUZ.Core.Animations
             var slotGo = PrefabProps.Bip01.FindChildRecursively(Properties.UsedItemSlot);
             var item = slotGo!.GetChild(0);
 
-            Object.Destroy(item.gameObject);
+            Destroy(item.gameObject);
         }
 
         public void StopAllAnimations()

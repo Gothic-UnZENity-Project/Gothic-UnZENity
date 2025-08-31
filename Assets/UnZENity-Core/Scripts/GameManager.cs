@@ -1,9 +1,7 @@
 using System.Diagnostics;
 using System.Globalization;
-using GUZ.Core.Animations;
 using GUZ.Core.Caches;
 using GUZ.Core.Config;
-using GUZ.Core.Domain.Culling;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
@@ -62,7 +60,6 @@ namespace GUZ.Core
         public VobManager Vobs { get; private set; }
         public NpcManager Npcs { get; private set; }
         public NpcAiManager NpcAi { get; private set; }
-        public AnimationManager Animations { get; private set; }
         public VobMeshCullingService VobMeshCulling { get; private set; }
         public NpcMeshCullingService NpcMeshCulling { get; private set; }
         public SpeechToTextService SpeechToText { get; private set; }
@@ -127,7 +124,6 @@ namespace GUZ.Core
             Vobs = _vobManager;
             Npcs = _npcService;
             NpcAi = new NpcAiManager();
-            Animations = new AnimationManager();
             VobMeshCulling = _vobMeshCullingService;
             NpcMeshCulling = _npcMeshCullingService;
             Lights = new StationaryLightsManager();

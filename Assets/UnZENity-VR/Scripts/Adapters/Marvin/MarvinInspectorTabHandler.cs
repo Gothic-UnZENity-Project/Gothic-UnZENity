@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using GUZ.Core;
 using GUZ.Core.Adapters.UI;
 using GUZ.Core.Extensions;
-using GUZ.Core.Model.Marvin;
+using GUZ.Core.Models.Marvin;
 using GUZ.Core.Util;
 using GUZ.VR.Services;
 using Reflex.Attributes;

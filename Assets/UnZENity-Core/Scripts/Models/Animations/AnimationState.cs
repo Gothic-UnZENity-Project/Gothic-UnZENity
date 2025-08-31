@@ -1,4 +1,4 @@
-namespace GUZ.Core.Animations
+namespace GUZ.Core.Models.Animations
 {
     public enum AnimationState
     {

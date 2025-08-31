@@ -5,6 +5,7 @@ using System.Linq;
 using GUZ.Core.Data.Adapter.Vobs;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
+using GUZ.Core.Models.Animations;
 using GUZ.Core.Util;
 using GUZ.Core.Vm;
 using JetBrains.Annotations;
@@ -12,9 +13,9 @@ using UnityEngine;
 using ZenKit;
 using Logger = GUZ.Core.Util.Logger;
 
-namespace GUZ.Core.Animations
+namespace GUZ.Core.Domain.Animations
 {
-    public class AnimationManager
+    public class AnimationService
     {
         private const float _movementThreshold = 0.3f; // If magnitude of first and last frame positions is higher than this, we have a movement animation.
 

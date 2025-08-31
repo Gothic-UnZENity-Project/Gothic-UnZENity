@@ -1,5 +1,6 @@
 using GUZ.Core.Config;
 using GUZ.Core.Creator;
+using GUZ.Core.Domain.Animations;
 using GUZ.Core.Extensions;
 using GUZ.Core.Manager;
 using GUZ.Core.Manager.Vobs;
@@ -32,6 +33,7 @@ namespace GUZ.Core
             containerBuilder.AddSingleton(typeof(SpeechToTextService));
             containerBuilder.AddSingleton(typeof(GameTimeService));
             containerBuilder.AddSingleton(typeof(MeshService));
+            containerBuilder.AddSingleton(typeof(AnimationService));
 
             // World
             containerBuilder.AddSingleton(typeof(WayNetService));

@@ -1,11 +1,9 @@
-using GUZ.Core.Animations;
 using GUZ.Core.Config;
 using GUZ.Core.Manager;
 using GUZ.Core.Manager.Vobs;
 using GUZ.Core.Npc;
 using GUZ.Core.Services;
 using GUZ.Core.Services.Culling;
-using GUZ.Core.World;
 using GUZ.Manager;
 
 namespace GUZ.Core
@@ -31,7 +29,6 @@ namespace GUZ.Core
         public VobManager Vobs { get; }
         public NpcManager Npcs { get; }
         public NpcAiManager NpcAi { get; }
-        public AnimationManager Animations { get; }
         public VobMeshCullingService VobMeshCulling { get; }
         public NpcMeshCullingService NpcMeshCulling { get; }
         public SpeechToTextService SpeechToText { get; }

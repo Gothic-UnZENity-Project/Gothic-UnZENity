@@ -1,6 +1,6 @@
 using System.Collections;
 using GUZ.Core;
-using GUZ.Core.Animations;
+using GUZ.Core.Adapters;
 using GUZ.Core.Caches;
 using GUZ.Core.Data.Adapter.Vobs;
 using GUZ.Core.Data.Container;
