@@ -27,6 +27,7 @@ namespace GUZ.Core.Vm
 
         // FIXME - We should really change this .Resolve<> method and have proper DI via [Inject] as anywhere else.
         private static ConfigService _configService => ReflexProjectInstaller.DIContainer.Resolve<ConfigService>();
+        private static DialogService _dialogService => ReflexProjectInstaller.DIContainer.Resolve<DialogService>();
 
         public static void RegisterExternals()
         {
@@ -318,17 +319,17 @@ namespace GUZ.Core.Vm
 
         public static void AI_Output(NpcInstance self, NpcInstance target, string outputName)
         {
-            DialogManager.ExtAiOutput(self, target, outputName);
+            _dialogService.ExtAiOutput(self, target, outputName);
         }
 
         public static void AI_ProcessInfos(NpcInstance npc)
         {
-            DialogManager.ExtAiProcessInfos(npc);
+            _dialogService.ExtAiProcessInfos(npc);
         }
 
         public static void AI_StopProcessInfos(NpcInstance npc)
         {
-            DialogManager.ExtAiStopProcessInfos(npc);
+            _dialogService.ExtAiStopProcessInfos(npc);
         }
 
         public static void AI_LookAt(NpcInstance npc, string waypoint)
@@ -368,7 +369,7 @@ namespace GUZ.Core.Vm
 
         public static void AI_OutputSVM(NpcInstance npc, NpcInstance target, string svmname)
         {
-            DialogManager.ExtAiOutputSvm(npc, target, svmname);
+            _dialogService.ExtAiOutputSvm(npc, target, svmname);
         }
 
         #endregion
@@ -440,17 +441,17 @@ namespace GUZ.Core.Vm
 
         public static int InfoManager_HasFinished()
         {
-            return Convert.ToInt32(DialogManager.ExtInfoManagerHasFinished());
+            return Convert.ToInt32(_dialogService.ExtInfoManagerHasFinished());
         }
 
         public static void Info_ClearChoices(int info)
         {
-            DialogManager.ExtInfoClearChoices(info);
+            _dialogService.ExtInfoClearChoices(info);
         }
 
         public static void Info_AddChoice(int info, string text, int function)
         {
-            DialogManager.ExtInfoAddChoice(info, text, function);
+            _dialogService.ExtInfoAddChoice(info, text, function);
         }
 
         #endregion
@@ -829,13 +830,13 @@ namespace GUZ.Core.Vm
 
         public static int Npc_KnowsInfo(NpcInstance npc, int infoInstance)
         {
-            var res = DialogManager.ExtNpcKnowsInfo(npc, infoInstance);
+            var res = _dialogService.ExtNpcKnowsInfo(npc, infoInstance);
             return Convert.ToInt32(res);
         }
 
         public static int Npc_CheckInfo(NpcInstance npc, int important)
         {
-            return Convert.ToInt32(DialogManager.ExtCheckInfo(npc, Convert.ToBoolean(important)));
+            return Convert.ToInt32(_dialogService.ExtCheckInfo(npc, Convert.ToBoolean(important)));
         }
         
         public static int Npc_IsDead(NpcInstance npc)

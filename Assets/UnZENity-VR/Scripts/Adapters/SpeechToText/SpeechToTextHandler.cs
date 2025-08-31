@@ -17,6 +17,7 @@ namespace GUZ.VR.Adapters.SpeechToText
     {
         [Inject] private readonly ConfigService _configService;
         [Inject] private readonly SpeechToTextService _speechToTextService;
+        [Inject] private readonly DialogService _dialogService;
 
 
         [SerializeField]
@@ -108,7 +109,7 @@ namespace GUZ.VR.Adapters.SpeechToText
                 Logger.Log($"Dialog option found. Spoken: >{spokenText}<. " +
                             $"Selection: >{result.Sentence}< with score (>{result.Score}<).", LogCat.Audio);
                 
-                DialogManager.SkipNextOutput = true;
+                _dialogService.SkipNextOutput = true;
                 _vrDialog.DialogSelected(result.Index);
             }
         }

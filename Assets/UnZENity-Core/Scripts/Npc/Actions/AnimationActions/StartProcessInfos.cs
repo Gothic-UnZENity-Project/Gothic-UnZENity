@@ -2,6 +2,7 @@ using System.Linq;
 using GUZ.Core.Data.Container;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
+using Reflex.Attributes;
 
 namespace GUZ.Core.Npc.Actions.AnimationActions
 {
@@ -11,6 +12,8 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
     /// </summary>
     public class StartProcessInfos : AbstractAnimationAction
     {
+        [Inject] private readonly DialogService _dialogService;
+
         private bool _isDialogStarting => Action.Bool0;
         private int _dialogId => Action.Int0;
 
@@ -27,7 +30,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
 
             if (_isDialogStarting)
             {
-                DialogManager.StartDialog(NpcContainer, true);
+                _dialogService.StartDialog(NpcContainer, true);
 
                 return;
             }
@@ -47,7 +50,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
                 }
             }
 
-            DialogManager.StartDialog(NpcContainer, false);
+            _dialogService.StartDialog(NpcContainer, false);
         }
     }
 }

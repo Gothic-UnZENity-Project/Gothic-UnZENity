@@ -12,7 +12,6 @@ namespace GUZ.Core
         public static bool IsZenKitInitialized;
 
         public static ContextInteractionService ContextInteractionService;
-        public static IContextDialogService ContextDialogService;
         public static IContextGameVersionService ContextGameVersionService;
 
         public static bool IsLab;

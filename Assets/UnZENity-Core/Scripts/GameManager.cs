@@ -94,8 +94,7 @@ namespace GUZ.Core
 
             // FIXME - Hack for now. Once we get rid of the GameContext global, we will remove these lines.
             GameContext.ContextInteractionService = _contextInteractionService;
-            GameContext.ContextDialogService = _contextDialogService;
-            
+
             // We need to set culture to this, otherwise e.g. polish numbers aren't parsed correct.
             CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;
             CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.InvariantCulture;

@@ -12,6 +12,7 @@ namespace GUZ.Core.Adapters.UI.Menus
     public class MenuHandler : MonoBehaviour
     {
         [Inject] private readonly ContextMenuService _contextMenuService;
+        [Inject] private readonly ContextInteractionService _contextInteractionService;
 
         private Dictionary<string, GameObject> _menuList = new();
         private string _currentMenu;
@@ -39,7 +40,7 @@ namespace GUZ.Core.Adapters.UI.Menus
             
             InstantiateMenus();
 
-            GameContext.ContextInteractionService.InitUIInteraction();
+            _contextInteractionService.InitUIInteraction();
             
             CloseAllMenus();
         }
@@ -51,7 +52,7 @@ namespace GUZ.Core.Adapters.UI.Menus
             foreach (var menuName in menuInstanceNames)
             {
                 var go = ResourceLoader.TryGetPrefabObject($"Prefabs/UI/Menus/{menuName}", parent: this.gameObject, worldPositionStays: false);
-                
+
                 if (go == null)
                 {
                     Logger.LogError($"Could not find UI Menu prefab >{menuName}<", LogCat.Ui);

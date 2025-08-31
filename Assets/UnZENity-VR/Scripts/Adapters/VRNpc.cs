@@ -8,6 +8,7 @@ using GUZ.Core.Npc;
 using GUZ.Core.Vm;
 using HurricaneVR.Framework.Core;
 using HurricaneVR.Framework.Core.Grabbers;
+using Reflex.Attributes;
 using UnityEngine;
 using ZenKit.Daedalus;
 
@@ -15,6 +16,8 @@ namespace GUZ.VR.Adapters
 {
     public class VRNpc : MonoBehaviour
     {
+        [Inject] private readonly DialogService _dialogService;
+
         private NpcContainer _npcData;
 
         private void Awake()
@@ -26,7 +29,7 @@ namespace GUZ.VR.Adapters
         {
             if (GameData.Dialogs.IsInDialog)
             {
-                DialogManager.SkipCurrentDialogLine(_npcData.Props);
+                _dialogService.SkipCurrentDialogLine(_npcData.Props);
             }
             else
             {

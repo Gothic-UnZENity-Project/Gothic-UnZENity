@@ -13,6 +13,9 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
 {
     public class Output : AbstractAnimationAction
     {
+        [Inject] private readonly ConfigService _configService;
+        [Inject] private readonly DialogService _dialogService;
+
         protected virtual string OutputName => Action.String0;
 
         private bool _isHeroSpeaking => Action.Int0 == 0;
@@ -20,16 +23,15 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
 
         private string _randomDialogAnimationName;
 
-        [Inject] private readonly ConfigService _configService;
 
         public Output(AnimationAction action, NpcContainer npcContainer) : base(action, npcContainer)
         { }
 
         public override void Start()
         {
-            if (DialogManager.SkipNextOutput)
+            if (_dialogService.SkipNextOutput)
             {
-                DialogManager.SkipNextOutput = false;
+                _dialogService.SkipNextOutput = false;
                 
                 // If - for any reason - the first dialog entry after selecting dialog entry, then we don't skip it.
                 if (_isHeroSpeaking)

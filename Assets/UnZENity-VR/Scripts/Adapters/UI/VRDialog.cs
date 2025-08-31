@@ -9,6 +9,7 @@ using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
 using MyBox;
+using Reflex.Attributes;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -19,6 +20,8 @@ namespace GUZ.VR.Adapters.UI
 {
     public class VRDialog : MonoBehaviour
     {
+        [Inject] private readonly DialogService _dialogService;
+
         [SerializeField] private GameObject _dialogRoot;
         [SerializeField] private List<GameObject> _dialogItems;
         [SerializeField] private UIEvents _uiEventsHandler;
@@ -173,12 +176,12 @@ namespace GUZ.VR.Adapters.UI
         
         private void OnDialogClicked(NpcInstance instance, InfoInstance infoInstance)
         {
-            DialogManager.MainSelectionClicked(instance.GetUserData(), infoInstance);
+            _dialogService.MainSelectionClicked(instance.GetUserData(), infoInstance);
         }
 
         private void OnDialogClicked(NpcInstance instance, int informationId)
         {
-            DialogManager.SubSelectionClicked(instance.GetUserData(), informationId);
+            _dialogService.SubSelectionClicked(instance.GetUserData(), informationId);
         }
     }
 }

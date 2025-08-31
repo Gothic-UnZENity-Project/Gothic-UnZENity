@@ -36,6 +36,7 @@ namespace GUZ.Core
             containerBuilder.AddSingleton(typeof(GameTimeService));
             containerBuilder.AddSingleton(typeof(MeshService));
             containerBuilder.AddSingleton(typeof(AnimationService));
+            containerBuilder.AddSingleton(typeof(DialogService));
 
             // World
             containerBuilder.AddSingleton(typeof(WayNetService));
