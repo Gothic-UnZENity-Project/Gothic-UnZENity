@@ -2,6 +2,7 @@ using System;
 using GUZ.Core.Data.Container;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
+using GUZ.Core.Models.Vm;
 using GUZ.Core.Util;
 using GUZ.Core.Vm;
 using UnityEngine;

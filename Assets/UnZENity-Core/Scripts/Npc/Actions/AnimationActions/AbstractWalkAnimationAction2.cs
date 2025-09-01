@@ -2,6 +2,7 @@ using GUZ.Core.Data.Container;
 using GUZ.Core.Domain.Animations;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
+using GUZ.Core.Models.Vm;
 using GUZ.Core.Util;
 using GUZ.Core.Vm;
 using Reflex.Attributes;

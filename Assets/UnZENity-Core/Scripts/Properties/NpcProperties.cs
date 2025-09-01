@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using GUZ.Core.Models.Vm;
 using GUZ.Core.Npc.Actions.AnimationActions;
 using GUZ.Core.Npc.Routines;
 using GUZ.Core.Vm;
@@ -43,7 +44,7 @@ namespace GUZ.Core.Properties
         public string MdhNameBase => MdsNameBase;
         public string MdhNameOverlay => MdsNameOverlay;
 
-        public VmGothicExternals.ExtSetVisualBodyData BodyData;
+        public ExtSetVisualBodyData BodyData;
 
         // Perceptions
         public Dictionary<VmGothicEnums.PerceptionType, int> Perceptions = new();

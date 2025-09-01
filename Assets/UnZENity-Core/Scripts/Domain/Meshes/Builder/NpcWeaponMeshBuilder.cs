@@ -1,4 +1,5 @@
 using GUZ.Core.Extensions;
+using GUZ.Core.Models.Vm;
 using GUZ.Core.Util;
 using GUZ.Core.Vm;
 using UnityEngine;

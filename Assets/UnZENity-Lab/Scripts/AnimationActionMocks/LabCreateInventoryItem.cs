@@ -1,7 +1,7 @@
+using GUZ.Core;
 using GUZ.Core.Data.Container;
 using GUZ.Core.Globals;
 using GUZ.Core.Npc.Actions;
-using GUZ.Core.Vm;
 
 namespace GUZ.Lab.AnimationActionMocks
 {
@@ -15,7 +15,7 @@ namespace GUZ.Lab.AnimationActionMocks
         {
             var itemSymbol = GameData.GothicVm.GetSymbolByName(Action.String0);
 
-            VmGothicExternals.CreateInvItem(NpcInstance, itemSymbol!.Index);
+            GameGlobals.Npcs.ExtCreateInvItems(NpcInstance, itemSymbol!.Index, 1);
 
             base.Start();
         }

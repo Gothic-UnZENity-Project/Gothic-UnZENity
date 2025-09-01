@@ -7,6 +7,8 @@ using GUZ.Core.Services;
 using GUZ.Core.Services.Config;
 using GUZ.Core.Services.Context;
 using GUZ.Core.Services.Culling;
+using GUZ.Core.Services.Vm;
+using GUZ.Core.Vm;
 using Reflex.Core;
 using UnityEngine;
 
@@ -23,6 +25,7 @@ namespace GUZ.Core
 
             containerBuilder.AddSingleton(typeof(UnityMonoService));
             containerBuilder.AddSingleton(typeof(ConfigService));
+            containerBuilder.AddSingleton(typeof(VmService));
             containerBuilder.AddSingleton(typeof(ContextInteractionService));
             containerBuilder.AddSingleton(typeof(ContextMenuService));
             containerBuilder.AddSingleton(typeof(ContextDialogService));

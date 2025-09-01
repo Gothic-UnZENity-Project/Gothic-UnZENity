@@ -3,6 +3,7 @@ using System.Globalization;
 using System.Linq;
 using GUZ.Core.Caches;
 using GUZ.Core.Globals;
+using GUZ.Core.Services.Vm;
 using GUZ.Core.Vm;
 using ZenKit;
 using ZenKit.Daedalus;
@@ -94,7 +95,9 @@ namespace GUZ.Core.Manager
         public static void LoadGothicVm()
         {
             GameData.GothicVm = ResourceLoader.TryGetDaedalusVm("GOTHIC");
-            VmGothicExternals.RegisterExternals();
+
+            // FIXME - Shoould be loaded by [Inject] instead!
+            ReflexProjectInstaller.DIContainer.Resolve<VmService>().RegisterExternals();
             NpcHelper.Init();
         }
         

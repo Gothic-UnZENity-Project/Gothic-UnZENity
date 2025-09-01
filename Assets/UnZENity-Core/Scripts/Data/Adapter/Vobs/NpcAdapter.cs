@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Numerics;
 using GUZ.Core.Globals;
+using GUZ.Core.Models.Vm;
 using GUZ.Core.Vm;
 using ZenKit.Daedalus;
 using ZenKit.Vobs;

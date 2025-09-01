@@ -4,6 +4,7 @@ using GUZ.Core.Data.Container;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
+using GUZ.Core.Models.Vm;
 using GUZ.Core.Npc;
 using GUZ.Core.Vm;
 using HurricaneVR.Framework.Core;

@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using GUZ.Core.Domain.Meshes.Builder;
 using GUZ.Core.Extensions;
 using GUZ.Core.Manager;
+using GUZ.Core.Models.Vm;
 using GUZ.Core.Vm;
 using UnityEngine;
 using ZenKit;
@@ -24,7 +25,7 @@ namespace GUZ.Core.Services
             await worldBuilder.BuildAsync(loading);
         }
 
-        public GameObject CreateNpc(string npcName, string mdmName, string mdhName, VmGothicExternals.ExtSetVisualBodyData bodyData,
+        public GameObject CreateNpc(string npcName, string mdmName, string mdhName, ExtSetVisualBodyData bodyData,
             Vector3 position = default, Quaternion rotation = default,
             GameObject parent = null, GameObject root = null)
         {

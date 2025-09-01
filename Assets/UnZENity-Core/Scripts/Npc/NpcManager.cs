@@ -6,10 +6,12 @@ using GUZ.Core.Caches;
 using GUZ.Core.Data.Adapter.Vobs;
 using GUZ.Core.Data.Container;
 using GUZ.Core.Data.Vobs;
+using GUZ.Core.Domain.Vm;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
 using GUZ.Core.Models.Config;
+using GUZ.Core.Models.Vm;
 using GUZ.Core.Npc.Routines;
 using GUZ.Core.Services.Config;
 using GUZ.Core.Util;
@@ -188,7 +190,7 @@ namespace GUZ.Core.Npc
             props.MdsNameBase = visual;
         }
 
-        public void ExtSetVisualBody(VmGothicExternals.ExtSetVisualBodyData data)
+        public void ExtSetVisualBody(ExtSetVisualBodyData data)
         {
             var props = data.Npc.GetUserData().Props;
 

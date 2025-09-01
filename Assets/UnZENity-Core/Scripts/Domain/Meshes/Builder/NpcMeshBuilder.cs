@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using GUZ.Core.Caches;
+using GUZ.Core.Models.Vm;
 using GUZ.Core.Util;
 using GUZ.Core.Vm;
 using UnityEngine;
@@ -12,9 +13,9 @@ namespace GUZ.Core.Domain.Meshes.Builder
 {
     public class NpcMeshBuilder : AbstractMeshBuilder
     {
-        protected VmGothicExternals.ExtSetVisualBodyData BodyData;
+        protected ExtSetVisualBodyData BodyData;
 
-        public virtual void SetBodyData(VmGothicExternals.ExtSetVisualBodyData body)
+        public virtual void SetBodyData(ExtSetVisualBodyData body)
         {
             BodyData = body;
         }

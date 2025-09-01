@@ -7,6 +7,7 @@ using GUZ.Core.Data.Adapter;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Models.Marvin;
+using GUZ.Core.Models.Vm;
 using GUZ.Core.Vm;
 using GUZ.VR.Adapters.HVROverrides;
 using GUZ.VR.Services.Context;

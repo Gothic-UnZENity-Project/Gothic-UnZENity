@@ -1,38 +1,37 @@
-﻿using System;
-using System.Globalization;
+using System;
 using System.Linq;
-using Codice.CM.Common;
+using System.Numerics;
 using GUZ.Core.Caches;
-using GUZ.Core.Creator;
 using GUZ.Core.Data.Container;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
+using GUZ.Core.Models.Vm;
 using GUZ.Core.Services.Config;
 using GUZ.Core.Util;
+using Reflex.Attributes;
 using ZenKit;
 using ZenKit.Daedalus;
 using Logger = GUZ.Core.Util.Logger;
-using Random = UnityEngine.Random;
-using Vector3 = System.Numerics.Vector3;
 
-namespace GUZ.Core.Vm
+namespace GUZ.Core.Domain.Vm
 {
     /// <summary>
     /// Contains basic methods only available in Gothic Daedalus module.
     /// </summary>
-    public static class VmGothicExternals
+    public class VmExternalDomain
     {
-        private static bool _enableZSpyLogs;
-        private static int _zSpyChannel;
+        [Inject] private readonly ConfigService _configService;
+        [Inject] private readonly DialogService _dialogService;
 
-        // FIXME - We should really change this .Resolve<> method and have proper DI via [Inject] as anywhere else.
-        private static ConfigService _configService => ReflexProjectInstaller.DIContainer.Resolve<ConfigService>();
-        private static DialogService _dialogService => ReflexProjectInstaller.DIContainer.Resolve<DialogService>();
+        private bool _enableZSpyLogs;
+        private int _zSpyChannel;
 
-        public static void RegisterExternals()
+
+        public void RegisterExternals()
         {
             _enableZSpyLogs = _configService.Dev.EnableZSpyLogs;
             _zSpyChannel = _configService.Dev.ZSpyChannel;
+
 
             var vm = GameData.GothicVm;
             vm.RegisterExternalDefault(DefaultExternal);
@@ -201,7 +200,7 @@ namespace GUZ.Core.Vm
         }
 
 
-        public static void DefaultExternal(DaedalusVm vm, DaedalusSymbol sym)
+        public void DefaultExternal(DaedalusVm vm, DaedalusSymbol sym)
         {
             // FIXME: Once GUZ is fully released, we can safely throw an exception as it tells us: The game will not work until you implement this missing function.
             //throw new NotImplementedException("External >" + value + "< not registered but required by DaedalusVM.");
@@ -229,77 +228,77 @@ namespace GUZ.Core.Vm
 
         #region AI
 
-        public static void Ai_Attack(NpcInstance npc)
+        public void Ai_Attack(NpcInstance npc)
         {
             GameGlobals.NpcAi.ExtAttack(npc);
         }
-        
-        public static void AI_StandUp(NpcInstance npc)
+
+        public void AI_StandUp(NpcInstance npc)
         {
             GameGlobals.NpcAi.ExtAiStandUp(npc);
         }
 
-        public static void AI_StandUpQuick(NpcInstance npc)
+        public void AI_StandUpQuick(NpcInstance npc)
         {
             GameGlobals.NpcAi.ExtAiStandUp(npc);
         }
 
-        public static void AI_SetWalkMode(NpcInstance npc, int walkMode)
+        public void AI_SetWalkMode(NpcInstance npc, int walkMode)
         {
             GameGlobals.NpcAi.ExtAiSetWalkMode(npc, (VmGothicEnums.WalkMode)walkMode);
         }
 
-        public static void AI_AlignToFP(NpcInstance npc)
+        public void AI_AlignToFP(NpcInstance npc)
         {
             GameGlobals.NpcAi.ExtAiAlignToFp(npc);
         }
 
-        public static void AI_AlignToWP(NpcInstance npc)
+        public void AI_AlignToWP(NpcInstance npc)
         {
             GameGlobals.NpcAi.ExtAiAlignToWp(npc);
         }
 
-        public static void AI_GotoFP(NpcInstance npc, string freePointName)
+        public void AI_GotoFP(NpcInstance npc, string freePointName)
         {
             GameGlobals.NpcAi.ExtAiGoToFp(npc, freePointName);
         }
 
-        public static void AI_GotoWP(NpcInstance npc, string wayPointName)
+        public void AI_GotoWP(NpcInstance npc, string wayPointName)
         {
             GameGlobals.NpcAi.ExtAiGoToWp(npc, wayPointName);
         }
 
-        public static void AI_GotoNpc(NpcInstance self, NpcInstance other)
+        public void AI_GotoNpc(NpcInstance self, NpcInstance other)
         {
             GameGlobals.NpcAi.ExtAiGoToNpc(self, other);
         }
 
-        public static void AI_PlayAni(NpcInstance npc, string name)
+        public void AI_PlayAni(NpcInstance npc, string name)
         {
             GameGlobals.NpcAi.ExtAiPlayAni(npc, name);
         }
 
-        public static void AI_StartState(NpcInstance npc, int function, int stateBehaviour, string wayPointName)
+        public void AI_StartState(NpcInstance npc, int function, int stateBehaviour, string wayPointName)
         {
             GameGlobals.NpcAi.ExtAiStartState(npc, function, Convert.ToBoolean(stateBehaviour), wayPointName);
         }
 
-        public static void AI_UseItemToState(NpcInstance npc, int itemId, int expectedInventoryCount)
+        public void AI_UseItemToState(NpcInstance npc, int itemId, int expectedInventoryCount)
         {
             GameGlobals.NpcAi.ExtAiUseItemToState(npc, itemId, expectedInventoryCount);
         }
 
-        public static void AI_Wait(NpcInstance npc, float seconds)
+        public void AI_Wait(NpcInstance npc, float seconds)
         {
             GameGlobals.NpcAi.ExtAiWait(npc, seconds);
         }
 
-        public static void AI_WaitMs(NpcInstance npc, int miliseconds)
+        public void AI_WaitMs(NpcInstance npc, int miliseconds)
         {
             GameGlobals.NpcAi.ExtAiWait(npc, miliseconds / 1000f);
         }
 
-        public static int AI_UseMob(NpcInstance npc, string target, int state)
+        public int AI_UseMob(NpcInstance npc, string target, int state)
         {
             GameGlobals.NpcAi.ExtAiUseMob(npc, target, state);
 
@@ -307,67 +306,67 @@ namespace GUZ.Core.Vm
             return 0;
         }
 
-        public static void AI_GoToNextFP(NpcInstance npc, string fpNamePart)
+        public void AI_GoToNextFP(NpcInstance npc, string fpNamePart)
         {
             GameGlobals.NpcAi.ExtAiGoToNextFp(npc, fpNamePart);
         }
 
-        public static void AI_DrawWeapon(NpcInstance npc)
+        public void AI_DrawWeapon(NpcInstance npc)
         {
             GameGlobals.NpcAi.ExtAiDrawWeapon(npc);
         }
 
-        public static void AI_Output(NpcInstance self, NpcInstance target, string outputName)
+        public void AI_Output(NpcInstance self, NpcInstance target, string outputName)
         {
             _dialogService.ExtAiOutput(self, target, outputName);
         }
 
-        public static void AI_ProcessInfos(NpcInstance npc)
+        public void AI_ProcessInfos(NpcInstance npc)
         {
             _dialogService.ExtAiProcessInfos(npc);
         }
 
-        public static void AI_StopProcessInfos(NpcInstance npc)
+        public void AI_StopProcessInfos(NpcInstance npc)
         {
             _dialogService.ExtAiStopProcessInfos(npc);
         }
 
-        public static void AI_LookAt(NpcInstance npc, string waypoint)
+        public void AI_LookAt(NpcInstance npc, string waypoint)
         {
             GameGlobals.NpcAi.ExtAiLookAt(npc, waypoint);
         }
 
-        public static void AI_LookAtNPC(NpcInstance npc, NpcInstance target)
+        public void AI_LookAtNPC(NpcInstance npc, NpcInstance target)
         {
             GameGlobals.NpcAi.ExtAiLookAtNpc(npc, target);
         }
 
-        public static void AI_StopLookAt(NpcInstance npc)
+        public void AI_StopLookAt(NpcInstance npc)
         {
             GameGlobals.NpcAi.ExtAiStopLookAt(npc);
         }
 
-        public static void AI_ContinueRoutine(NpcInstance npc)
+        public void AI_ContinueRoutine(NpcInstance npc)
         {
             GameGlobals.NpcAi.ExtAiContinueRoutine(npc);
         }
 
-        public static void AI_TurnToNPC(NpcInstance npc, NpcInstance target)
+        public void AI_TurnToNPC(NpcInstance npc, NpcInstance target)
         {
             GameGlobals.NpcAi.ExtAiTurnToNpc(npc, target);
         }
 
-        public static void AI_PlayAniBS(NpcInstance npc, string name, int bodyState)
+        public void AI_PlayAniBS(NpcInstance npc, string name, int bodyState)
         {
             GameGlobals.NpcAi.ExtAiPlayAniBs(npc, name, bodyState);
         }
 
-        public static void AI_UnequipArmor(NpcInstance npc)
+        public void AI_UnequipArmor(NpcInstance npc)
         {
             GameGlobals.NpcAi.ExtAiUnequipArmor(npc);
         }
 
-        public static void AI_OutputSVM(NpcInstance npc, NpcInstance target, string svmname)
+        public void AI_OutputSVM(NpcInstance npc, NpcInstance target, string svmname)
         {
             _dialogService.ExtAiOutputSvm(npc, target, svmname);
         }
@@ -388,18 +387,18 @@ namespace GUZ.Core.Vm
 
         #region Helper
 
-        public static int Hlp_Random(int n0)
+        public int Hlp_Random(int n0)
         {
-            return Random.Range(0, n0 - 1);
+            return UnityEngine.Random.Range(0, n0 - 1);
         }
 
 
-        public static int Hlp_StrCmp(string s1, string s2)
+        public int Hlp_StrCmp(string s1, string s2)
         {
             return s1 == s2 ? 1 : 0;
         }
 
-        public static int Hlp_IsItem(ItemInstance item, int itemIndexToCheck)
+        public int Hlp_IsItem(ItemInstance item, int itemIndexToCheck)
         {
             if (item == null)
             {
@@ -410,22 +409,22 @@ namespace GUZ.Core.Vm
             return Convert.ToInt32(item.Index == itemIndexToCheck);
         }
 
-        public static int Hlp_IsValidItem(ItemInstance item)
+        public int Hlp_IsValidItem(ItemInstance item)
         {
             return Convert.ToInt32(item != null);
         }
 
-        public static int Hlp_IsValidNpc(NpcInstance npc)
+        public int Hlp_IsValidNpc(NpcInstance npc)
         {
             return Convert.ToInt32(npc != null);
         }
 
-        public static NpcInstance Hlp_GetNpc(int instanceId)
+        public NpcInstance Hlp_GetNpc(int instanceId)
         {
             return GameGlobals.Npcs.ExtHlpGetNpc(instanceId);
         }
 
-        public static int Hlp_GetInstanceID(DaedalusInstance instance)
+        public int Hlp_GetInstanceID(DaedalusInstance instance)
         {
             if (instance == null)
             {
@@ -439,17 +438,17 @@ namespace GUZ.Core.Vm
 
         #region Info
 
-        public static int InfoManager_HasFinished()
+        public int InfoManager_HasFinished()
         {
             return Convert.ToInt32(_dialogService.ExtInfoManagerHasFinished());
         }
 
-        public static void Info_ClearChoices(int info)
+        public void Info_ClearChoices(int info)
         {
             _dialogService.ExtInfoClearChoices(info);
         }
 
-        public static void Info_AddChoice(int info, string text, int function)
+        public void Info_AddChoice(int info, string text, int function)
         {
             _dialogService.ExtInfoAddChoice(info, text, function);
         }
@@ -458,17 +457,17 @@ namespace GUZ.Core.Vm
 
         #region Log
 
-        public static void Log_AddEntry(string topic, string entry)
+        public void Log_AddEntry(string topic, string entry)
         {
             GameGlobals.Story.ExtLogAddEntry(topic, entry);
         }
 
-        public static void Log_CreateTopic(string name, int section)
+        public void Log_CreateTopic(string name, int section)
         {
             GameGlobals.Story.ExtLogCreateTopic(name, (SaveTopicSection)section);
         }
 
-        public static void Log_SetTopicStatus(string name, int status)
+        public void Log_SetTopicStatus(string name, int status)
         {
             GameGlobals.Story.ExtLogSetTopicStatus(name, (SaveTopicStatus)status);
         }
@@ -477,30 +476,18 @@ namespace GUZ.Core.Vm
 
         #region Model
 
-        public static void Mdl_SetVisual(NpcInstance npc, string visual)
+        public void Mdl_SetVisual(NpcInstance npc, string visual)
         {
             GameGlobals.Npcs.ExtMdlSetVisual(npc, visual);
         }
 
 
-        public static void Mdl_ApplyOverlayMds(NpcInstance npc, string overlayName)
+        public void Mdl_ApplyOverlayMds(NpcInstance npc, string overlayName)
         {
             GameGlobals.Npcs.ExtApplyOverlayMds(npc, overlayName);
         }
 
-        public struct ExtSetVisualBodyData
-        {
-            public NpcInstance Npc;
-            public string Body;
-            public int BodyTexNr;
-            public int BodyTexColor;
-            public string Head;
-            public int HeadTexNr;
-            public int TeethTexNr;
-            public int Armor;
-        }
-
-        public static void Mdl_SetVisualBody(NpcInstance npc, string body, int bodyTexNr, int bodyTexColor, string head,
+        public void Mdl_SetVisualBody(NpcInstance npc, string body, int bodyTexNr, int bodyTexColor, string head,
             int headTexNr, int teethTexNr, int armor)
         {
             GameGlobals.Npcs.ExtSetVisualBody(new ExtSetVisualBodyData
@@ -518,13 +505,13 @@ namespace GUZ.Core.Vm
         }
 
 
-        public static void Mdl_SetModelScale(NpcInstance npc, float x, float y, float z)
+        public void Mdl_SetModelScale(NpcInstance npc, float x, float y, float z)
         {
             GameGlobals.Npcs.ExtMdlSetModelScale(npc, new Vector3(x, y, z));
         }
 
 
-        public static void Mdl_SetModelFatness(NpcInstance npc, float fatness)
+        public void Mdl_SetModelFatness(NpcInstance npc, float fatness)
         {
             GameGlobals.Npcs.ExtSetModelFatness(npc, fatness);
         }
@@ -533,7 +520,7 @@ namespace GUZ.Core.Vm
 
         #region Print
 
-        public static void PrintDebug(string message)
+        public void PrintDebug(string message)
         {
             if (!_configService.Dev.EnableZSpyLogs)
             {
@@ -544,7 +531,7 @@ namespace GUZ.Core.Vm
         }
 
 
-        public static void PrintDebugCh(int channel, string message)
+        public void PrintDebugCh(int channel, string message)
         {
             if (!_configService.Dev.EnableZSpyLogs)
             {
@@ -555,7 +542,7 @@ namespace GUZ.Core.Vm
         }
 
 
-        public static void PrintDebugInst(string message)
+        public void PrintDebugInst(string message)
         {
             if (!_configService.Dev.EnableZSpyLogs)
             {
@@ -566,7 +553,7 @@ namespace GUZ.Core.Vm
         }
 
 
-        public static void PrintDebugInstCh(int channel, string message)
+        public void PrintDebugInstCh(int channel, string message)
         {
             if (!_enableZSpyLogs || channel > _zSpyChannel)
             {
@@ -604,66 +591,66 @@ namespace GUZ.Core.Vm
 
         #region NPC
 
-        public static void Npc_SetTalentValue(NpcInstance npc, int talent, int level)
+        public void Npc_SetTalentValue(NpcInstance npc, int talent, int level)
         {
             GameGlobals.Npcs.ExtNpcSetTalentValue(npc, (VmGothicEnums.Talent)talent, level);
         }
 
-        public static void Npc_ChangeAttribute(NpcInstance npc, int attributeId, int value)
+        public void Npc_ChangeAttribute(NpcInstance npc, int attributeId, int value)
         {
             GameGlobals.Npcs.ExtNpcChangeAttribute(npc, attributeId, value);
         }
 
-        public static void CreateInvItem(NpcInstance npc, int itemId)
+        public void CreateInvItem(NpcInstance npc, int itemId)
         {
             GameGlobals.Npcs.ExtCreateInvItems(npc, itemId, 1);
         }
 
 
-        public static void CreateInvItems(NpcInstance npc, int itemId, int amount)
+        public void CreateInvItems(NpcInstance npc, int itemId, int amount)
         {
             GameGlobals.Npcs.ExtCreateInvItems(npc, itemId, amount);
         }
 
 
-        public static void Npc_PercEnable(NpcInstance npc, int perception, int function)
+        public void Npc_PercEnable(NpcInstance npc, int perception, int function)
         {
             GameGlobals.NpcAi.ExtNpcPerceptionEnable(npc, (VmGothicEnums.PerceptionType)perception, function);
         }
 
 
-        public static void Npc_SetPercTime(NpcInstance npc, float time)
+        public void Npc_SetPercTime(NpcInstance npc, float time)
         {
             GameGlobals.NpcAi.ExtNpcSetPerceptionTime(npc, time);
         }
-        
-        public static int Npc_GetPermAttitude(NpcInstance self, NpcInstance other)
+
+        public int Npc_GetPermAttitude(NpcInstance self, NpcInstance other)
         {
             return (int)GameGlobals.NpcAi.ExtGetAttitude(self, other);
         }
 
-        public static int Npc_GetAttitude(NpcInstance self, NpcInstance other)
+        public int Npc_GetAttitude(NpcInstance self, NpcInstance other)
         {
             return (int)GameGlobals.NpcAi.ExtGetAttitude(self, other);
         }
-        
-        public static void Npc_SetAttitude(NpcInstance self, int attitude)
+
+        public void Npc_SetAttitude(NpcInstance self, int attitude)
         {
             GameGlobals.NpcAi.ExtSetAttitude(self, (VmGothicEnums.Attitude)attitude);
         }
 
-        public static void Npc_SetTempAttitude(NpcInstance self, int tempAttitude)
+        public void Npc_SetTempAttitude(NpcInstance self, int tempAttitude)
         {
             GameGlobals.NpcAi.ExtSetTempAttitude(self, (VmGothicEnums.Attitude)tempAttitude);
         }
 
-        public static int Npc_GetBodyState(NpcInstance npc)
+        public int Npc_GetBodyState(NpcInstance npc)
         {
             return (int)GameGlobals.NpcAi.ExtGetBodyState(npc);
         }
 
 
-        public static void Npc_PerceiveAll(NpcInstance npc)
+        public void Npc_PerceiveAll(NpcInstance npc)
         {
             // NOP
 
@@ -672,240 +659,240 @@ namespace GUZ.Core.Vm
         }
 
 
-        public static int Npc_HasItems(NpcInstance npc, int itemId)
+        public int Npc_HasItems(NpcInstance npc, int itemId)
         {
             var count = GameGlobals.Npcs.ExtNpcHasItems(npc, itemId);
             return count;
         }
 
 
-        public static int Npc_GetStateTime(NpcInstance npc)
+        public int Npc_GetStateTime(NpcInstance npc)
         {
             var stateTime = GameGlobals.NpcAi.ExtNpcGetStateTime(npc);
             return stateTime;
         }
 
 
-        public static void Npc_SetStateTime(NpcInstance npc, int seconds)
+        public void Npc_SetStateTime(NpcInstance npc, int seconds)
         {
             GameGlobals.NpcAi.ExtNpcSetStateTime(npc, seconds);
         }
 
 
-        public static ItemInstance Npc_GetEquippedArmor(NpcInstance npc)
+        public ItemInstance Npc_GetEquippedArmor(NpcInstance npc)
         {
             return GameGlobals.NpcAi.ExtGetEquippedArmor(npc);
         }
 
 
-        public static void Npc_SetTalentSkill(NpcInstance npc, int talent, int level)
+        public void Npc_SetTalentSkill(NpcInstance npc, int talent, int level)
         {
             GameGlobals.Npcs.ExtNpcSetTalentSkill(npc, (VmGothicEnums.Talent)talent, level);
         }
 
-        public static string Npc_GetNearestWP(NpcInstance npc)
+        public string Npc_GetNearestWP(NpcInstance npc)
         {
             return GameGlobals.Npcs.ExtGetNearestWayPoint(npc);
         }
 
 
-        public static int Npc_IsOnFP(NpcInstance npc, string vobNamePart)
+        public int Npc_IsOnFP(NpcInstance npc, string vobNamePart)
         {
             var res = NpcHelper.ExtIsNpcOnFp(npc, vobNamePart);
             return Convert.ToInt32(res);
         }
 
 
-        public static int Npc_WasInState(NpcInstance npc, int action)
+        public int Npc_WasInState(NpcInstance npc, int action)
         {
             var result = GameGlobals.NpcAi.ExtNpcWasInState(npc, (uint)action);
             return Convert.ToInt32(result);
         }
 
 
-        public static void Npc_GetInvItem(IntPtr vmPtr)
+        public void Npc_GetInvItem(IntPtr vmPtr)
         {
             // NpcCreator.ExtGetInvItem();
         }
 
 
-        public static void Npc_GetInvItemBySlot(IntPtr vmPtr)
+        public void Npc_GetInvItemBySlot(IntPtr vmPtr)
         {
             // NpcCreator.ExtGetInvItemBySlot();
         }
 
 
-        public static void Npc_RemoveInvItem(IntPtr vmPtr)
+        public void Npc_RemoveInvItem(IntPtr vmPtr)
         {
             // NpcCreator.ExtRemoveInvItem();
         }
 
 
-        public static void Npc_RemoveInvItems(IntPtr vmPtr)
+        public void Npc_RemoveInvItems(IntPtr vmPtr)
         {
             // NpcCreator.ExtRemoveInvItems();
         }
 
 
-        public static void EquipItem(NpcInstance npc, int itemId)
+        public void EquipItem(NpcInstance npc, int itemId)
         {
             GameGlobals.Npcs.ExtEquipItem(npc, itemId);
         }
 
 
-        public static int Npc_GetDistToNpc(NpcInstance npc1, NpcInstance npc2)
+        public int Npc_GetDistToNpc(NpcInstance npc1, NpcInstance npc2)
         {
             return GameGlobals.NpcAi.ExtNpcGetDistToNpc(npc1, npc2);
         }
 
-        public static int Npc_HasEquippedArmor(NpcInstance npc)
+        public int Npc_HasEquippedArmor(NpcInstance npc)
         {
             return GameGlobals.NpcAi.ExtNpcHasEquippedArmor(npc) ? 1 : 0;
         }
 
-        public static ItemInstance Npc_GetEquippedMeleeWeapon(NpcInstance npc)
+        public ItemInstance Npc_GetEquippedMeleeWeapon(NpcInstance npc)
         {
             return NpcHelper.ExtNpcGetEquippedMeleeWeapon(npc);
         }
 
-        public static int Npc_HasEquippedMeleeWeapon(NpcInstance npc)
+        public int Npc_HasEquippedMeleeWeapon(NpcInstance npc)
         {
             return NpcHelper.ExtNpcHasEquippedMeleeWeapon(npc) ? 1 : 0;
         }
 
-        public static ItemInstance Npc_GetEquippedRangedWeapon(NpcInstance npc)
+        public ItemInstance Npc_GetEquippedRangedWeapon(NpcInstance npc)
         {
             return NpcHelper.ExtNpcGetEquippedRangedWeapon(npc);
         }
 
-        public static int Npc_HasEquippedRangedWeapon(NpcInstance npc)
+        public int Npc_HasEquippedRangedWeapon(NpcInstance npc)
         {
             return NpcHelper.ExtNpcHasEquippedRangedWeapon(npc) ? 1 : 0;
         }
 
-        public static int Npc_GetDistToWP(NpcInstance npc, string waypoint)
+        public int Npc_GetDistToWP(NpcInstance npc, string waypoint)
         {
             return NpcHelper.ExtNpcGetDistToWp(npc, waypoint);
         }
 
-        public static void Npc_PercDisable(NpcInstance npc, int perception)
+        public void Npc_PercDisable(NpcInstance npc, int perception)
         {
             GameGlobals.NpcAi.ExtNpcPerceptionDisable(npc, (VmGothicEnums.PerceptionType)perception);
         }
 
-        public static int Npc_CanSeeNpc(NpcInstance npc, NpcInstance target)
+        public int Npc_CanSeeNpc(NpcInstance npc, NpcInstance target)
         {
             return Convert.ToInt32(GameGlobals.NpcAi.ExtNpcCanSeeNpc(npc, target, false));
         }
 
-        public static int Npc_CanSeeNpcFreeLOS(NpcInstance npc, NpcInstance target)
+        public int Npc_CanSeeNpcFreeLOS(NpcInstance npc, NpcInstance target)
         {
             return Convert.ToInt32(GameGlobals.NpcAi.ExtNpcCanSeeNpc(npc, target, true));
         }
 
-        public static void Npc_ClearAiQueue(NpcInstance npc)
+        public void Npc_ClearAiQueue(NpcInstance npc)
         {
             GameGlobals.NpcAi.ExtNpcClearAiQueue(npc);
         }
 
-        public static void Npc_ClearInventory(NpcInstance npc)
+        public void Npc_ClearInventory(NpcInstance npc)
         {
             GameGlobals.Npcs.ExtNpcClearInventory(npc);
         }
 
-        public static string Npc_GetNextWp(NpcInstance npc)
+        public string Npc_GetNextWp(NpcInstance npc)
         {
             return GameGlobals.Npcs.ExtNpcGetNextWp(npc);
         }
 
-        public static int Npc_GetTalentSkill(NpcInstance npc, int skillId)
+        public int Npc_GetTalentSkill(NpcInstance npc, int skillId)
         {
             return NpcHelper.ExtNpcGetTalentSkill(npc, skillId);
         }
 
-        public static int Npc_GetTalentValue(NpcInstance npc, int skillId)
+        public int Npc_GetTalentValue(NpcInstance npc, int skillId)
         {
             return NpcHelper.ExtNpcGetTalentValue(npc, skillId);
         }
 
-        public static int Npc_KnowsInfo(NpcInstance npc, int infoInstance)
+        public int Npc_KnowsInfo(NpcInstance npc, int infoInstance)
         {
             var res = _dialogService.ExtNpcKnowsInfo(npc, infoInstance);
             return Convert.ToInt32(res);
         }
 
-        public static int Npc_CheckInfo(NpcInstance npc, int important)
+        public int Npc_CheckInfo(NpcInstance npc, int important)
         {
             return Convert.ToInt32(_dialogService.ExtCheckInfo(npc, Convert.ToBoolean(important)));
         }
-        
-        public static int Npc_IsDead(NpcInstance npc)
+
+        public int Npc_IsDead(NpcInstance npc)
         {
             return Convert.ToInt32(GameGlobals.NpcAi.ExtNpcIsDead(npc));
         }
-        
-        public static int Npc_IsInState(NpcInstance npc, int state)
+
+        public int Npc_IsInState(NpcInstance npc, int state)
         {
             return Convert.ToInt32(GameGlobals.NpcAi.ExtNpcIsInState(npc, state));
         }
 
-        public static void Npc_SetToFistMode(NpcInstance npc)
+        public void Npc_SetToFistMode(NpcInstance npc)
         {
             GameGlobals.Npcs.ExtNpcSetToFistMode(npc);
         }
 
-        public static void Npc_SetToFightMode(NpcInstance npc, int itemIndex)
+        public void Npc_SetToFightMode(NpcInstance npc, int itemIndex)
         {
             GameGlobals.Npcs.ExtNpcSetToFightMode(npc, itemIndex);
         }
 
-        public static int Npc_IsInFightMode(NpcInstance npc, int fightMode)
+        public int Npc_IsInFightMode(NpcInstance npc, int fightMode)
         {
             return Convert.ToInt32(GameGlobals.NpcAi.ExtNpcIsInFightMode(npc, (VmGothicEnums.FightMode)fightMode));
         }
 
-        public static int Npc_IsPlayer(NpcInstance npc)
+        public int Npc_IsPlayer(NpcInstance npc)
         {
             return Convert.ToInt32(GameGlobals.NpcAi.ExtNpcIsPlayer(npc));
         }
 
-        public static int Npc_OwnedByNpc(ItemInstance item, NpcInstance npc)
+        public int Npc_OwnedByNpc(ItemInstance item, NpcInstance npc)
         {
             return Convert.ToInt32(GameGlobals.NpcAi.ExtNpcOwnedByNpc(item, npc));
         }
-        
-        public static int Npc_GetTarget(NpcInstance npc)
+
+        public int Npc_GetTarget(NpcInstance npc)
         {
             return Convert.ToInt32(GameGlobals.NpcAi.ExtGetTarget(npc));
         }
-        
-        public static void Npc_SetTarget(NpcInstance npc, NpcInstance target)
+
+        public void Npc_SetTarget(NpcInstance npc, NpcInstance target)
         {
             GameGlobals.NpcAi.ExtSetTarget(npc, target);
         }
 
-        public static void Npc_SendPassivePerc(NpcInstance npc, int perc,NpcInstance victim, NpcInstance other)
+        public void Npc_SendPassivePerc(NpcInstance npc, int perc,NpcInstance victim, NpcInstance other)
         {
             GameGlobals.NpcAi.Npc_SendPassivePerc(npc, (VmGothicEnums.PerceptionType)perc, victim, other);
-        }        
-        
-        public static int Npc_SetTrueGuild(NpcInstance npc, int guild)
+        }
+
+        public int Npc_SetTrueGuild(NpcInstance npc, int guild)
         {
             GameGlobals.NpcAi.ExtSetTrueGuild(npc, guild);
             return 0;
-        }       
-        
-        public static int Npc_GetTrueGuild(NpcInstance npc)
+        }
+
+        public int Npc_GetTrueGuild(NpcInstance npc)
         {
             return GameGlobals.NpcAi.ExtGetTrueGuild(npc);
         }
 
-        public static void Npc_SetRefuseTalk(NpcInstance npc, int refuseSeconds)
+        public void Npc_SetRefuseTalk(NpcInstance npc, int refuseSeconds)
         {
             GameGlobals.NpcAi.ExtSetRefuseTalk(npc, refuseSeconds);
         }
 
-        public static int Npc_RefuseTalk(NpcInstance npc)
+        public int Npc_RefuseTalk(NpcInstance npc)
         {
             return Convert.ToInt32(GameGlobals.NpcAi.ExtRefuseTalk(npc));
         }
@@ -914,19 +901,19 @@ namespace GUZ.Core.Vm
 
         #region Day Routine
 
-        public static void TA_MIN(NpcInstance npc, int startH, int startM, int stopH, int stopM, int action,
+        public void TA_MIN(NpcInstance npc, int startH, int startM, int stopH, int stopM, int action,
             string waypoint)
         {
             GameGlobals.Npcs.ExtTaMin(npc, startH, startM, stopH, stopM, action, waypoint);
         }
 
-        public static void Ta(NpcInstance npc, int startH, int stopH, int action,
+        public void Ta(NpcInstance npc, int startH, int stopH, int action,
             string waypoint)
         {
             GameGlobals.Npcs.ExtTaMin(npc, startH, 0, stopH, 0, action, waypoint);
         }
 
-        public static void Npc_ExchangeRoutine(NpcInstance self, string routineName)
+        public void Npc_ExchangeRoutine(NpcInstance self, string routineName)
         {
             GameGlobals.Npcs.ExtNpcExchangeRoutine(self, routineName);
         }
@@ -935,54 +922,54 @@ namespace GUZ.Core.Vm
 
         #region World
 
-        public static void Wld_InsertNpc(int npcInstance, string spawnPoint)
+        public void Wld_InsertNpc(int npcInstance, string spawnPoint)
         {
             GameGlobals.Npcs.ExtWldInsertNpc(npcInstance, spawnPoint);
         }
 
 
-        public static int Wld_IsFPAvailable(NpcInstance npc, string fpName)
+        public int Wld_IsFPAvailable(NpcInstance npc, string fpName)
         {
             var response = GameGlobals.Npcs.ExtWldIsFpAvailable(npc, fpName);
             return Convert.ToInt32(response);
         }
 
 
-        public static int Wld_IsMobAvailable(NpcInstance npc, string vobName)
+        public int Wld_IsMobAvailable(NpcInstance npc, string vobName)
         {
             var res = NpcHelper.ExtIsMobAvailable(npc, vobName);
             return Convert.ToInt32(res);
         }
 
-        public static int Wld_DetectNpc(NpcInstance npc, int npcInstance, int aiState, int guild)
+        public int Wld_DetectNpc(NpcInstance npc, int npcInstance, int aiState, int guild)
         {
             return Wld_DetectNpcEx(npc, npcInstance, aiState, guild, 1);
         }
 
-        public static int Wld_DetectNpcEx(NpcInstance npc, int npcInstance, int aiState, int guild, int detectPlayer)
+        public int Wld_DetectNpcEx(NpcInstance npc, int npcInstance, int aiState, int guild, int detectPlayer)
         {
             var res = NpcHelper.ExtWldDetectNpcEx(npc, npcInstance, aiState, guild, Convert.ToBoolean(detectPlayer));
 
             return Convert.ToInt32(res);
         }
 
-        public static int Wld_IsNextFPAvailable(NpcInstance npc, string fpNamePart)
+        public int Wld_IsNextFPAvailable(NpcInstance npc, string fpNamePart)
         {
             var result = GameGlobals.Npcs.ExtIsNextFpAvailable(npc, fpNamePart);
             return Convert.ToInt32(result);
         }
 
-        public static void Wld_SetTime(int hour, int minute)
+        public void Wld_SetTime(int hour, int minute)
         {
             GameGlobals.Time.SetTime(hour, minute);
         }
 
-        public static int Wld_GetDay()
+        public int Wld_GetDay()
         {
             return GameGlobals.Time.GetDay();
         }
 
-        public static int Wld_IsTime(int beginHour, int beginMinute, int endHour, int endMinute)
+        public int Wld_IsTime(int beginHour, int beginMinute, int endHour, int endMinute)
         {
             var begin = new TimeSpan(beginHour, beginMinute, 0);
             var end = new TimeSpan(endHour, endMinute, 0);
@@ -1002,17 +989,17 @@ namespace GUZ.Core.Vm
             return 0;
         }
 
-        public static int Wld_GetMobState(NpcInstance npc, string scheme)
+        public int Wld_GetMobState(NpcInstance npc, string scheme)
         {
             return NpcHelper.ExtWldGetMobState(npc, scheme);
         }
 
-        public static void Wld_InsertItem(int itemInstance, string spawnpoint)
+        public void Wld_InsertItem(int itemInstance, string spawnpoint)
         {
             GameGlobals.Vobs.ExtWldInsertItem(itemInstance, spawnpoint);
         }
 
-        public static void Wld_ExchangeGuildAttitudes(string name)
+        public void Wld_ExchangeGuildAttitudes(string name)
         {
             var guilds = GameData.GothicVm.GetSymbolByName(name);
 
@@ -1026,7 +1013,7 @@ namespace GUZ.Core.Vm
             }
         }
 
-        public static void Wld_SetGuildAttitude(int guild1, int attitude, int guild2)
+        public void Wld_SetGuildAttitude(int guild1, int attitude, int guild2)
         {
             if (guild1 < 0 || guild2 < 0 || guild1 >= GameData.GuildCount || guild2 >= GameData.GuildCount)
                 return;
@@ -1034,22 +1021,22 @@ namespace GUZ.Core.Vm
             GameData.GuildAttitudes[guild1 * GameData.GuildCount + guild2] = attitude;
         }
 
-        public static void Wld_SetObjectRoutine(int hour, int minute, string name, int status)
+        public void Wld_SetObjectRoutine(int hour, int minute, string name, int status)
         {
             // FIXME - Do more with these ObjectRoutines.
             GameGlobals.Vobs.ObjectRoutines.TryAdd(name, new());
             GameGlobals.Vobs.ObjectRoutines[name].Add((hour, minute, status));
         }
 
-        public static void Wld_SetMobRoutine(int hour, int minute, string name, int status)
+        public void Wld_SetMobRoutine(int hour, int minute, string name, int status)
         {
             // FIXME - Do more with these MobRoutines.
             GameGlobals.Npcs.MobRoutines.TryAdd(name, new());
             GameGlobals.Npcs.MobRoutines[name].Add((hour, minute, status));
         }
 
-        private static bool _debugWld_AssignRoomToGuildExecuted;
-        public static void Wld_AssignRoomToGuild(string room, int guild)
+        private bool _debugWld_AssignRoomToGuildExecuted;
+        public void Wld_AssignRoomToGuild(string room, int guild)
         {
             if (!_debugWld_AssignRoomToGuildExecuted)
             {
@@ -1058,7 +1045,7 @@ namespace GUZ.Core.Vm
             }
         }
 
-        public static int Wld_GetGuildAttitude(int guild1, int guild2)
+        public int Wld_GetGuildAttitude(int guild1, int guild2)
         {
             if (guild1 < 0 || guild2 < 0 || guild1 >= GameData.GuildCount || guild2 >= GameData.GuildCount)
                 return 0;
@@ -1070,41 +1057,41 @@ namespace GUZ.Core.Vm
 
         #region Misc
 
-        public static void Perc_SetRange(int perceptionId, int rangeInCm)
+        public void Perc_SetRange(int perceptionId, int rangeInCm)
         {
             NpcHelper.ExtPErcSetRange(perceptionId, rangeInCm);
         }
 
-        public static string ConcatStrings(string str1, string str2)
+        public string ConcatStrings(string str1, string str2)
         {
             return str1 + str2;
         }
 
 
-        public static string IntToString(int x)
+        public string IntToString(int x)
         {
             return x.ToString();
         }
 
 
-        public static string FloatToString(float x)
+        public string FloatToString(float x)
         {
             return x.ToString();
         }
 
 
-        public static int FloatToInt(float x)
+        public int FloatToInt(float x)
         {
             return (int)x;
         }
 
 
-        public static float IntToFloat(int x)
+        public float IntToFloat(int x)
         {
             return x;
         }
 
-        public static void IntroduceChapter(string chapter, string text, string texture, string wav, int time)
+        public void IntroduceChapter(string chapter, string text, string texture, string wav, int time)
         {
             GameGlobals.Story.ExtIntroduceChapter(chapter, text, texture, wav, time);
         }

@@ -6,6 +6,7 @@ using GUZ.Core.Caches;
 using GUZ.Core.Data.Container;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
+using GUZ.Core.Models.Vm;
 using GUZ.Core.Npc.Actions;
 using GUZ.Core.Npc.Actions.AnimationActions;
 using GUZ.Core.Properties;
@@ -134,7 +135,7 @@ namespace GUZ.Lab.Handler
             };
             MultiTypeCache.NpcCache.Add(npcContainerData);
 
-            var body = new VmGothicExternals.ExtSetVisualBodyData
+            var body = new ExtSetVisualBodyData
             {
                 BodyTexNr = npcData.BodyTexNr,
                 BodyTexColor = npcData.BodyTexColor,

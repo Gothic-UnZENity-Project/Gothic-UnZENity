@@ -1,6 +1,7 @@
 #if GUZ_HVR_INSTALLED
 using System.Collections.Generic;
 using GUZ.Core.Models.Marvin;
+using GUZ.Core.Models.Vm;
 using GUZ.Core.Vm;
 using GUZ.Core.Vob;
 using GUZ.VR.Model.Vob;

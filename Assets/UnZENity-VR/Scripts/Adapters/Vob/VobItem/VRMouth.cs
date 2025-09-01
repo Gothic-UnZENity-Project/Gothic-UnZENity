@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using GUZ.Core;
 using GUZ.Core.Extensions;
+using GUZ.Core.Models.Vm;
 using GUZ.Core.Properties.Vobs;
 using GUZ.Core.Util;
 using GUZ.Core.Vm;

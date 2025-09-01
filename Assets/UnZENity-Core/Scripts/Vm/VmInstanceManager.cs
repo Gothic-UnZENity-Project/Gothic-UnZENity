@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using GUZ.Core.Data.Adapter;
-using GUZ.Core.Data.Container;
 using GUZ.Core.Globals;
 using JetBrains.Annotations;
 using ZenKit.Daedalus;
