@@ -22,7 +22,6 @@ namespace GUZ.Core.Editor
         public SkyManager Sky { get; }
         public GameTimeService Time { get; }
         public VideoManager Video { get; }
-        public MusicService Music { get; }
         public RoutineManager Routines { get; }
         public TextureManager Textures { get; }
         public FontManager Font { get; }

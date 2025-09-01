@@ -5,6 +5,7 @@ using GUZ.Core.Domain.Animations;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Models.Animations;
+using GUZ.Core.Models.Vm;
 using GUZ.Core.Npc;
 using GUZ.Core.Util;
 using GUZ.Core.Vm;
