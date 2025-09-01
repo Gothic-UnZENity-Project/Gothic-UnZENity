@@ -14,7 +14,7 @@ namespace GUZ.VR
     public class UnityLifecycleEvents : MonoBehaviour
     {
         [Inject] private readonly StationaryLightsManager _lightsManager;
-        [Inject] private readonly SkyManager _skyManager;
+        [Inject] private readonly SkyService _skyService;
         [Inject] private readonly BarrierManager _barrierManager;
 
         [Inject] private readonly LoadingManager _loadingManager;
@@ -61,7 +61,7 @@ namespace GUZ.VR
 
         private void OnValidate()
         {
-            _skyManager?.OnValidate();
+            _skyService?.OnValidate();
         }
 #endif
     }

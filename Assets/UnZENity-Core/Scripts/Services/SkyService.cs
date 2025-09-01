@@ -4,7 +4,7 @@ using System.Linq;
 using GUZ.Core.Caches;
 using GUZ.Core.Data;
 using GUZ.Core.Extensions;
-using GUZ.Core.Services;
+using GUZ.Core.Manager;
 using GUZ.Core.Services.Config;
 using GUZ.Core.Util;
 using Reflex.Attributes;
@@ -14,9 +14,9 @@ using Logger = GUZ.Core.Util.Logger;
 using Object = UnityEngine.Object;
 using Random = UnityEngine.Random;
 
-namespace GUZ.Core.Manager
+namespace GUZ.Core.Services
 {
-    public class SkyManager
+    public class SkyService
     {
         [Inject] private ConfigService _configService;
         [Inject] private GameTimeService _gameTimeService;

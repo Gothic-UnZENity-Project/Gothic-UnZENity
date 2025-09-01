@@ -8,7 +8,6 @@ using GUZ.Core.Models.Animations;
 using GUZ.Core.Models.Vm;
 using GUZ.Core.Npc;
 using GUZ.Core.Util;
-using GUZ.Core.Vm;
 using MyBox;
 using Reflex.Attributes;
 using UnityEngine;
@@ -17,7 +16,7 @@ using AnimationState = GUZ.Core.Models.Animations.AnimationState;
 using EventType = ZenKit.EventType;
 using Logger = GUZ.Core.Util.Logger;
 
-namespace GUZ.Core.Adapters
+namespace GUZ.Core.Adapters.Adnimations
 {
     /// <summary>
     /// NPC component to handle animations. The Blending is using the official Gothic animation information:

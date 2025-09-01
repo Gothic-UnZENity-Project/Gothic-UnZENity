@@ -1,4 +1,4 @@
-﻿using GUZ.Core.Morph;
+﻿using GUZ.Core.Adapters.Animations.Morph;
 
 namespace GUZ.Core.Vob
 {

@@ -40,7 +40,7 @@ namespace GUZ.Core
 
         public PlayerManager Player { get; private set; }
         public MarvinManager Marvin { get; private set;  }
-        public SkyManager Sky { get; private set; }
+        public SkyService Sky { get; private set; }
 
         public GameTimeService Time { get; private set; }
         
@@ -78,7 +78,7 @@ namespace GUZ.Core
         [Inject] private readonly VobMeshCullingService _vobMeshCullingService;
         [Inject] private readonly VobSoundCullingService _vobSoundCullingService;
 
-        [Inject] private readonly SkyManager _skyManager;
+        [Inject] private readonly SkyService _skyService;
         [Inject] private readonly BarrierManager _barrierManager;
         [Inject] private readonly LoadingManager _loadingManager;
 
@@ -128,7 +128,7 @@ namespace GUZ.Core
             Marvin = new MarvinManager();
             Time = _gameTimeService;
             Video = new VideoManager();
-            Sky = _skyManager;
+            Sky = _skyService;
             Story = new StoryManager();
             Routines = new RoutineManager(DeveloperConfig);
             SpeechToText = _speechToTextService;

@@ -1,10 +1,9 @@
 using System;
+using GUZ.Core.Adapters.Animations.Morph;
 using GUZ.Core.Extensions;
-using GUZ.Core.Morph;
 using GUZ.Core.Services.Config;
 using GUZ.Core.Util;
 using Reflex.Attributes;
-using UnityEngine;
 using Logger = GUZ.Core.Util.Logger;
 
 namespace GUZ.Core.Npc

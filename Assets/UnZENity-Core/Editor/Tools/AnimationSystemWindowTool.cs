@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using GUZ.Core.Adapters;
+using GUZ.Core.Adapters.Adnimations;
 using GUZ.Core.Globals;
 using GUZ.Core.Npc;
 using GUZ.Core.Npc.Actions;

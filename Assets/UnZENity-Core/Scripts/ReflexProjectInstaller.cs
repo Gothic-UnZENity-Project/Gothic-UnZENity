@@ -50,7 +50,7 @@ namespace GUZ.Core
             containerBuilder.AddSingleton(typeof(NpcManager));
             containerBuilder.AddSingleton(typeof(NpcInitializer));
             containerBuilder.AddSingleton(typeof(StationaryLightsManager));
-            containerBuilder.AddSingleton(typeof(SkyManager));
+            containerBuilder.AddSingleton(typeof(SkyService));
             containerBuilder.AddSingleton(typeof(BarrierManager));
             containerBuilder.AddSingleton(typeof(LoadingManager));
             containerBuilder.AddSingleton(typeof(BarrierManager));

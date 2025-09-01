@@ -1,5 +1,5 @@
 using System;
-using GUZ.Core.Adapters;
+using GUZ.Core.Adapters.Adnimations;
 using GUZ.Core.Data.Container;
 using GUZ.Core.Extensions;
 using UnityEngine;

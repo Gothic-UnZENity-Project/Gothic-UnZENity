@@ -57,7 +57,7 @@ namespace GUZ.Lab
         public StaticCacheManager StaticCache => _staticCacheManager;
         public PlayerManager Player => null;
         public MarvinManager Marvin => _marvinManager;
-        public SkyManager Sky => null;
+        public SkyService Sky => null;
         public GameTimeService Time => _gameTimeService;
         public AudioService Audio => Audio;
         public RoutineManager Routines => _npcRoutineManager;

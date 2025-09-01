@@ -16,7 +16,7 @@ namespace GUZ.Core
 
         public PlayerManager Player { get; }
         public MarvinManager Marvin { get; }
-        public SkyManager Sky { get; }
+        public SkyService Sky { get; }
         public GameTimeService Time { get; }
         public VideoManager Video { get; }
         public RoutineManager Routines { get; }

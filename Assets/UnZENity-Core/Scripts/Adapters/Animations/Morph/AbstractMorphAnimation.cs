@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using GUZ.Core.Caches;
 using GUZ.Core.Extensions;
-using GUZ.Core.Services;
+using GUZ.Core.Models.Animations.Morph;
 using GUZ.Core.Util;
 using JetBrains.Annotations;
 using UnityEngine;
@@ -12,7 +12,7 @@ using Logger = GUZ.Core.Util.Logger;
 using Mesh = UnityEngine.Mesh;
 using Random = UnityEngine.Random;
 
-namespace GUZ.Core.Morph
+namespace GUZ.Core.Adapters.Animations.Morph
 {
     /// <summary>
     ///

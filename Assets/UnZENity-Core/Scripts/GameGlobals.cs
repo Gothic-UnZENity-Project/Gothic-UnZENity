@@ -17,7 +17,7 @@ namespace GUZ.Core
         public static StaticCacheManager StaticCache => Instance.StaticCache;
         public static PlayerManager Player => Instance.Player;
         public static MarvinManager Marvin => Instance.Marvin;
-        public static SkyManager Sky => Instance.Sky;
+        public static SkyService Sky => Instance.Sky;
         public static GameTimeService Time => Instance.Time;
         public static VideoManager Video => Instance.Video;
         public static RoutineManager Routines => Instance.Routines;
