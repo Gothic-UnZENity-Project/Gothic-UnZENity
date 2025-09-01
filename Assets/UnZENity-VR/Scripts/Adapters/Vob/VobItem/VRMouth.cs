@@ -3,12 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using GUZ.Core;
 using GUZ.Core.Extensions;
+using GUZ.Core.Manager;
 using GUZ.Core.Models.Vm;
 using GUZ.Core.Properties.Vobs;
+using GUZ.Core.Services;
 using GUZ.Core.Util;
 using GUZ.Core.Vm;
 using GUZ.Core.Vob;
 using JetBrains.Annotations;
+using Reflex.Attributes;
 using UnityEngine;
 using ZenKit;
 using ZenKit.Daedalus;
@@ -24,6 +27,9 @@ namespace GUZ.VR.Adapters.Vob.VobItem
 
         [SerializeField]
         private AudioSource _mouthAudio;
+
+        [Inject] private readonly AudioService _audioService;
+
 
         // Do not eat them twice during destroy time.
         private List<GameObject> _objectsInDestroyGracePeriod = new();
@@ -97,7 +103,7 @@ namespace GUZ.VR.Adapters.Vob.VobItem
             if (sfxContainer == null)
                 return false;
 
-            clip = sfxContainer.GetRandomClip();
+            clip = _audioService.CreateAudioClip(sfxContainer.GetRandomSound());
             if (clip == null)
                 return false;
 

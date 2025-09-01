@@ -6,6 +6,7 @@ using GUZ.Core.Caches;
 using GUZ.Core.Caches.StaticCache;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
+using GUZ.Core.Services;
 using GUZ.Core.Services.Config;
 using GUZ.Core.Util;
 using Reflex.Attributes;
@@ -41,7 +42,7 @@ namespace GUZ.Core.Manager.Scenes
         };
 
         
-        [Inject] private readonly MusicService _musicService;
+        [Inject] private readonly AudioService _audioService;
 
         
         public void Init()
@@ -87,7 +88,7 @@ namespace GUZ.Core.Manager.Scenes
                 //
                 
                 // Sleeper temple music (similar to installation music)
-                _musicService.Play("KAT_DAY_STD");
+                _audioService.Play("KAT_DAY_STD");
                 
                 GameContext.ContextInteractionService.DisableMenus();
                 _loadingBarHandler.LevelCount = worldsToLoad.Length;

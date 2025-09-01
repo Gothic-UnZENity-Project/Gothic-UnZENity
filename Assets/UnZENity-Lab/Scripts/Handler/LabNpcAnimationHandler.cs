@@ -10,6 +10,7 @@ using GUZ.Core.Models.Vm;
 using GUZ.Core.Npc.Actions;
 using GUZ.Core.Npc.Actions.AnimationActions;
 using GUZ.Core.Properties;
+using GUZ.Core.Services;
 using GUZ.Core.Vm;
 using GUZ.Lab.AnimationActionMocks;
 using TMPro;

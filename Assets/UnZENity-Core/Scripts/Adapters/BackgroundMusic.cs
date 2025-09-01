@@ -9,11 +9,11 @@ namespace GUZ.Core.Adapters
         [SerializeField] private AudioSource _audioSource;
         [SerializeField] private AudioReverbFilter _audioReverbFilter;
 
-        [Inject] private readonly MusicService _musicService;
+        [Inject] private readonly AudioService _audioService;
 
         private void Start()
         {
-            _musicService.SetBackgroundMusic(_audioSource, _audioReverbFilter);
+            _audioService.SetBackgroundMusic(_audioSource, _audioReverbFilter);
         }
     }
 }

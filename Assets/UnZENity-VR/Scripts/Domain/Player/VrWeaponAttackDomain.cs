@@ -7,8 +7,10 @@ using GUZ.Core.Data.Adapter;
 using GUZ.Core.Data.Container;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
+using GUZ.Core.Manager;
 using GUZ.Core.Models.Vm;
 using GUZ.Core.Npc;
+using GUZ.Core.Services;
 using GUZ.Core.Util;
 using GUZ.Core.Vm;
 using GUZ.VR.Model.Vob;
@@ -26,6 +28,7 @@ namespace GUZ.VR.Domain.Player
     public class VrWeaponAttackDomain
     {
         [Inject] private readonly VRPlayerService _vrPlayerService;
+        [Inject] private readonly AudioService _audioService;
 
         private CharacterController _characterController => _vrPlayerService.VRContextInteractionService.GetVRPlayerController().CharacterController;
 
@@ -399,7 +402,7 @@ namespace GUZ.VR.Domain.Player
                 return;
 
             _soundPlayed = true;
-            SFXPlayer.Instance.PlaySFX(_swingSwordSound.GetRandomClip(), _weaponRigidbody.position);
+            SFXPlayer.Instance.PlaySFX(_audioService.CreateAudioClip(_swingSwordSound.GetRandomSound()), _weaponRigidbody.position);
         }
         
         private void HandleInitialWindow()

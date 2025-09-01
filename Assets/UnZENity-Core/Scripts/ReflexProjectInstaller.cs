@@ -31,7 +31,7 @@ namespace GUZ.Core
             containerBuilder.AddSingleton(typeof(ContextDialogService));
             containerBuilder.AddSingleton(typeof(ContextGameVersionService));
 
-            containerBuilder.AddSingleton(typeof(MusicService));
+            containerBuilder.AddSingleton(typeof(AudioService));
             containerBuilder.AddSingleton(typeof(NpcMeshCullingService));
             containerBuilder.AddSingleton(typeof(VobMeshCullingService));
             containerBuilder.AddSingleton(typeof(VobSoundCullingService));

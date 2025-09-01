@@ -18,11 +18,6 @@ namespace GUZ.Core.Extensions
 {
     public static class ZenKitExtension
     {
-        public static AudioClip ToAudioClip(this SoundEffectInstance sfxInstance)
-        {
-            return SoundCreator.ToAudioClip(sfxInstance.File);
-        }
-        
         /// <summary>
         /// A visual name is either extracted from Visual.Name or Name of VOB itself.
         /// </summary>

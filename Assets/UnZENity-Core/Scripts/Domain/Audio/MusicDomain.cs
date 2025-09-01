@@ -4,6 +4,7 @@ using System.Linq;
 using DirectMusic;
 using GUZ.Core.Caches;
 using GUZ.Core.Globals;
+using GUZ.Core.Services;
 using GUZ.Core.Services.Config;
 using GUZ.Core.Util;
 using GUZ.Core.Vob;
@@ -14,7 +15,7 @@ using ZenKit.Daedalus;
 using ZenKit.Vobs;
 using Logger = GUZ.Core.Util.Logger;
 
-namespace GUZ.Core.UnZENity_Core.Scripts.Domain
+namespace GUZ.Core.Domain.Audio
 {
     public class MusicDomain
     {

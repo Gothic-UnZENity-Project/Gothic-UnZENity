@@ -1,6 +1,7 @@
 using System.Linq;
 using GUZ.Core;
 using GUZ.Core.Manager;
+using GUZ.Core.Services;
 using Reflex.Attributes;
 using TMPro;
 using UnityEngine;
@@ -12,7 +13,7 @@ namespace GUZ.Lab.Handler
     {
         public TMP_Dropdown FileSelector;
 
-        [Inject] private readonly MusicService _musicService;
+        [Inject] private readonly AudioService _audioService;
 
         public override void Bootstrap()
         {
@@ -27,7 +28,7 @@ namespace GUZ.Lab.Handler
 
         public void MusicPlayClick()
         {
-            _musicService.Play(FileSelector.options[FileSelector.value].text);
+            _audioService.Play(FileSelector.options[FileSelector.value].text);
         }
     }
 }

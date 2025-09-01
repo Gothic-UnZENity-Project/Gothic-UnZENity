@@ -2,6 +2,8 @@ using System.Collections;
 using GUZ.Core;
 using GUZ.Core.Creator.Sounds;
 using GUZ.Core.Extensions;
+using GUZ.Core.Manager;
+using Reflex.Attributes;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -18,7 +20,9 @@ namespace GUZ.VR.Adapters.Player
         [SerializeField] private Image _chapterImage;
         [SerializeField] private TMP_Text _chapterTitle;
         [SerializeField] private TMP_Text _chapterSubtitle;
-        
+
+        [Inject] private readonly AudioService _audioService;
+
         // Data needed for smooth movement of Canvas
         private Transform _cameraTransform;
         private float _canvasMoveSmoothTime = 0.3f;
@@ -51,7 +55,7 @@ namespace GUZ.VR.Adapters.Player
 
         private void PlayAudio(string wav)
         {
-            _audioSource.clip = SoundCreator.ToAudioClip(wav);
+            _audioSource.clip = _audioService.CreateAudioClip(wav);
             _audioSource.Play();
         }
 

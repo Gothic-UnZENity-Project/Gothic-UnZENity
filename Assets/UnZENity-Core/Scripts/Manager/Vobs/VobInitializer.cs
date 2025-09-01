@@ -35,6 +35,7 @@ namespace GUZ.Core.Manager.Vobs
             _configService;
         [Inject] private readonly VobSoundCullingService _vobSoundCullingService;
         [Inject] private readonly MeshService _meshService;
+        [Inject] private readonly AudioService _audioService;
 
 
         /// <summary>
@@ -547,7 +548,7 @@ namespace GUZ.Core.Manager.Vobs
             // Bugfix - Normally the data is to get C_SFX_DEF entries from VM. But sometimes there might be the real .wav file stored.
             if (soundName.EndsWithIgnoreCase(".wav"))
             {
-                clip = SoundCreator.ToAudioClip(soundName);
+                clip = _audioService.CreateAudioClip(soundName);
             }
             else
             {
@@ -563,7 +564,7 @@ namespace GUZ.Core.Manager.Vobs
                 if (sfxContainer.Count > 1)
                     Logger.LogWarning($"Multiple random elements exist for >{sfxContainer.GetFirstSound().File}< but only first is selected.", LogCat.Audio);
 
-                clip = sfxContainer.GetFirstClip();
+                clip = _audioService.CreateAudioClip(sfxContainer.GetFirstSound().File);
             }
 
             return clip;

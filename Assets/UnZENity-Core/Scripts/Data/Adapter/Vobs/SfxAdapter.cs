@@ -59,15 +59,5 @@ namespace GUZ.Core.Data.Adapter
         {
             return _soundEffects.Length == 1 ? GetFirstSound() : _soundEffects.GetRandom();
         }
-
-        public AudioClip GetFirstClip()
-        {
-            return GetFirstSound().ToAudioClip();
-        }
-
-        public AudioClip GetRandomClip()
-        {
-            return GetRandomSound().ToAudioClip();
-        }
     }
 }

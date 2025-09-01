@@ -30,10 +30,11 @@ namespace GUZ.Core.Manager.Vobs
     {
         [Inject] private readonly ConfigService _configService;
         [Inject] private readonly VobSoundCullingService _vobSoundCullingService;
+        [Inject] private readonly UnityMonoService _unityMonoService;
+        [Inject] private readonly AudioService _audioService;
         // Supporter class where the whole Init() logic is outsourced for better readability.
         [Inject] private readonly VobInitializer _initializer;
-        [Inject] private readonly UnityMonoService _unityMonoService;
-        
+
         public Dictionary<string, List<(int hour, int minute, int status)>> ObjectRoutines = new();
         
         private const float _interactableLookupDistance = 10f; // meter
@@ -147,7 +148,7 @@ namespace GUZ.Core.Manager.Vobs
             // Bugfix - Normally the data is to get C_SFX_DEF entries from VM. But sometimes there might be the real .wav file stored.
             if (soundName.EndsWithIgnoreCase(".wav"))
             {
-                clip = SoundCreator.ToAudioClip(soundName);
+                clip = _audioService.CreateAudioClip(soundName);
             }
             else
             {
@@ -160,7 +161,7 @@ namespace GUZ.Core.Manager.Vobs
                 if (sfxContainer.GetFirstSound().File.EqualsIgnoreCase(SfxConst.NoSoundName))
                     return null;
 
-                clip = sfxContainer.GetRandomClip();
+                clip = _audioService.CreateAudioClip(sfxContainer.GetRandomSound());
             }
 
             return clip;

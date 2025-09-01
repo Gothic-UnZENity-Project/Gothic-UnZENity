@@ -1,10 +1,10 @@
 ﻿#if GUZ_HVR_INSTALLED
-using GUZ.Core.Creator.Sounds;
 using GUZ.Core.Globals;
+using GUZ.Core.Manager;
 using GUZ.Core.Util;
 using GUZ.Core.Vob;
-using GUZ.VR.Services;
 using GUZ.VR.Adapters.Vob.VobItem;
+using GUZ.VR.Services;
 using Reflex.Attributes;
 using UnityEngine;
 using ZenKit.Vobs;
@@ -14,10 +14,13 @@ namespace GUZ.VR.Adapters.Vob.VobDoor
 {
     public class VRDoorLockInteraction : MonoBehaviour
     {
-        [Inject] private readonly VRPlayerService _vrPlayerService;
 
         [SerializeField] private GameObject _rootGO;
         [SerializeField] private AudioSource _audioSource;
+
+        [Inject] private readonly VRPlayerService _vrPlayerService;
+        [Inject] private readonly AudioService _audioService;
+
         private IDoor _vobDoor;
 
         private const string _lockInteractionColliderName = "LockPickInteraction";
@@ -133,7 +136,7 @@ namespace GUZ.VR.Adapters.Vob.VobDoor
 
         private void PlaySound(string soundName, string fallback = null)
         {
-            var clip = SoundCreator.ToAudioClip(soundName);
+            var clip = _audioService.CreateAudioClip(soundName);
             
             if (clip == null && fallback != null)
             {

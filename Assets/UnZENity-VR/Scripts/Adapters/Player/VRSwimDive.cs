@@ -6,13 +6,16 @@ using GUZ.Core;
 using GUZ.Core.Data.Adapter;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
+using GUZ.Core.Manager;
 using GUZ.Core.Models.Marvin;
 using GUZ.Core.Models.Vm;
+using GUZ.Core.Services;
 using GUZ.Core.Vm;
 using GUZ.VR.Adapters.HVROverrides;
 using GUZ.VR.Services.Context;
 using HurricaneVR.Framework.Core.HandPoser;
 using HurricaneVR.Framework.Core.Utils;
+using Reflex.Attributes;
 using UnityEngine;
 using ZenKit.Daedalus;
 using ZenKit.Vobs;
@@ -58,6 +61,9 @@ namespace GUZ.VR.Adapters.Player
         [SerializeField] private float _diveHandMovementMultiplier = 2.5f;
         [SerializeField] private float _diveVelocityFadeRate = 0.25f; // 0.25==75% less velocity with each second
         private bool _isDivingForceStarted; // If we lift the grips, we set it to false again to re-enable sounds later.
+
+
+        [Inject] private readonly AudioService _audioService;
 
 
         private void Start()
@@ -185,7 +191,10 @@ namespace GUZ.VR.Adapters.Player
                 case ZenGineConst.WaterLevel.Chest:
                     // Dive -> Swim
                     if (_mode == VmGothicEnums.WalkMode.Dive)
-                        SFXPlayer.Instance.PlaySFX(_sfxSwim2HangAdapter.GetRandomClip(), Camera.main!.transform.position);
+                    {
+                        var clip = _audioService.CreateAudioClip(_sfxSwim2HangAdapter.GetRandomSound());
+                        SFXPlayer.Instance.PlaySFX(clip, Camera.main!.transform.position);
+                    }
 
                     Shader.SetGlobalInt(Constants.ShaderPropertyWaterEffectToggle, 0);
                     _mode = VmGothicEnums.WalkMode.Swim;
@@ -226,7 +235,7 @@ namespace GUZ.VR.Adapters.Player
             _playerController.Gravity = 0;
             _playerController.MaxFallSpeed = 0;
             
-            SFXPlayer.Instance.PlaySFX(_sfxSwim2DiveAdapter.GetRandomClip(), Camera.main!.transform.position);
+            SFXPlayer.Instance.PlaySFX(_audioService.CreateAudioClip(_sfxSwim2DiveAdapter.GetRandomSound()), Camera.main!.transform.position);
         }
 
         /// <summary>
@@ -288,7 +297,7 @@ namespace GUZ.VR.Adapters.Player
             if (_isSwimmingForceStarted && _currentVelocity.magnitude > 1f)
             {
                 // Play a random swim sound via HVRs SFXPlayer.
-                SFXPlayer.Instance.PlaySFX(_sfxSwimAdapter.GetRandomClip(), Camera.main!.transform.position);
+                SFXPlayer.Instance.PlaySFX(_audioService.CreateAudioClip(_sfxSwimAdapter.GetRandomSound()), Camera.main!.transform.position);
                 _isSwimmingForceStarted = false;
             }
 
@@ -334,7 +343,7 @@ namespace GUZ.VR.Adapters.Player
             if (_isDivingForceStarted && _currentVelocity.magnitude > 1f)
             {
                 // Play a random dive sound via HVRs SFXPlayer.
-                SFXPlayer.Instance.PlaySFX(_sfxDiveAdapter.GetRandomClip(), Camera.main!.transform.position);
+                SFXPlayer.Instance.PlaySFX(_audioService.CreateAudioClip(_sfxDiveAdapter.GetRandomSound()), Camera.main!.transform.position);
                 _isDivingForceStarted = false;
             }
 

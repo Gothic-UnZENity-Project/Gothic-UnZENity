@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using DirectMusic;
-using GUZ.Core.Creator.Sounds;
-using GUZ.Core.Data;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Util;
@@ -184,10 +182,10 @@ namespace GUZ.Core
         /// Please consider using SoundCreator.ToAudioClip() instead.
         /// </summary>
         [CanBeNull]
-        public static SoundData TryGetSound([NotNull] string key)
+        public static byte[] TryGetSoundBytes([NotNull] string key)
         {
             var node = _vfs.Find($"{GetPreparedKey(key)}.wav");
-            return node == null ? null : SoundCreator.ConvertWavByteArrayToFloatArray(node.Buffer.Bytes);
+            return node == null ? null : node.Buffer.Bytes;
         }
 
         [CanBeNull]

@@ -70,7 +70,7 @@ namespace GUZ.Core
         [Inject] private readonly ContextGameVersionService _contextGameVersionService;
 
         [Inject] private readonly UnityMonoService _unityMonoService;
-        [Inject] private readonly MusicService _musicService;
+        [Inject] private readonly AudioService _audioService;
         [Inject] private readonly SpeechToTextService _speechToTextService;
         [Inject] private readonly GameTimeService _gameTimeService;
 
@@ -184,7 +184,7 @@ namespace GUZ.Core
             Logger.Log($"Initializing Gothic installation at: {gothicRootPath}", LogCat.Loading);
             ResourceLoader.Init(gothicRootPath);
 
-            _musicService.Init();
+            _audioService.InitMusic();
             StaticCache.Init(DeveloperConfig);
             Textures.Init();
             Vobs.Init();

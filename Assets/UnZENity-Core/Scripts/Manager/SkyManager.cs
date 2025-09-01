@@ -21,6 +21,7 @@ namespace GUZ.Core.Manager
     {
         [Inject] private ConfigService _configService;
         [Inject] private GameTimeService _gameTimeService;
+        [Inject] private readonly AudioService _audioService;
 
         private Vector3 _sunDirection;
         private bool _isRaining;
@@ -296,7 +297,7 @@ namespace GUZ.Core.Manager
             _rainParticleSystem.Stop();
 
             _rainParticleSound = rainParticlesGameObject.GetComponentInChildren<AudioSource>();
-            _rainParticleSound.clip = SoundCreator.ToAudioClip("RAIN_01");
+            _rainParticleSound.clip = _audioService.CreateAudioClip("RAIN_01");
             _rainParticleSound.volume = 0;
             _rainParticleSound.Stop();
         }

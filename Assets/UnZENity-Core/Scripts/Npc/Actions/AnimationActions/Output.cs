@@ -4,6 +4,7 @@ using GUZ.Core.Data.Container;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
+using GUZ.Core.Services;
 using GUZ.Core.Services.Config;
 using Reflex.Attributes;
 using UnityEngine;
@@ -15,6 +16,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
     {
         [Inject] private readonly ConfigService _configService;
         [Inject] private readonly DialogService _dialogService;
+        [Inject] private readonly AudioService _audioService;
 
         protected virtual string OutputName => Action.String0;
 
@@ -41,7 +43,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
                 }
             }
             
-            var audioClip = SoundCreator.ToAudioClip(OutputName);
+            var audioClip = _audioService.CreateAudioClip(OutputName);
             _audioPlaySeconds = audioClip.length;
 
             // Hero

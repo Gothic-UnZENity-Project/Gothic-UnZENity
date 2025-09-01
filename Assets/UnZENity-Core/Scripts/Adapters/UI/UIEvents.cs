@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
-using GUZ.Core.Creator.Sounds;
 using GUZ.Core.Extensions;
+using GUZ.Core.Manager;
 using GUZ.Core.Util;
 using MyBox;
+using Reflex.Attributes;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -18,6 +19,7 @@ namespace GUZ.Core.Adapters.UI
         [SerializeField] private List<GameObject> _elementsToFilter = new();
         [SerializeField] private AudioSource _audioSource;
 
+        [Inject] private readonly AudioService _audioService;
 
         private static AudioClip _uiHover;
         private static AudioClip _uiClick;
@@ -32,9 +34,9 @@ namespace GUZ.Core.Adapters.UI
         private void InitializeAudio()
         {
             // Set sound files for button clicks initially.
-            _uiHover = SoundCreator.ToAudioClip("inv_change");
-            _uiClick = SoundCreator.ToAudioClip("inv_open");
-            _uiReturnClick = SoundCreator.ToAudioClip("inv_close");
+            _uiHover = _audioService.CreateAudioClip("inv_change");
+            _uiClick = _audioService.CreateAudioClip("inv_open");
+            _uiReturnClick = _audioService.CreateAudioClip("inv_close");
         }
 
         /// <summary>

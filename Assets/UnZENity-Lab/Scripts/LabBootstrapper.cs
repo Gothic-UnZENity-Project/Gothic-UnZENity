@@ -59,7 +59,7 @@ namespace GUZ.Lab
         public MarvinManager Marvin => _marvinManager;
         public SkyManager Sky => null;
         public GameTimeService Time => _gameTimeService;
-        public MusicService Music => Music;
+        public AudioService Audio => Audio;
         public RoutineManager Routines => _npcRoutineManager;
         public TextureManager Textures => _textureManager;
         public FontManager Font => _fontManager;
@@ -75,7 +75,7 @@ namespace GUZ.Lab
 
 
         [Inject] private readonly ConfigService _configService;
-        [Inject] private readonly MusicService _musicService;
+        [Inject] private readonly AudioService _audioService;
         [Inject] private readonly GameTimeService _gameTimeService;
         [Inject] private readonly ContextInteractionService _contextInteractionService;
         [Inject] private readonly ContextGameVersionService _contextGameVersionService;
@@ -137,7 +137,7 @@ namespace GUZ.Lab
             GlobalEventDispatcher.RegisterControlsService.Invoke(DeveloperConfig.GameControls);
             GlobalEventDispatcher.RegisterGameVersionService.Invoke(DeveloperConfig.GameVersion);
 
-            _musicService.Init();
+            _audioService.InitMusic();
             _npcRoutineManager.Init();
             _staticCacheManager.Init(_configService.Dev);
             _textureManager.Init();

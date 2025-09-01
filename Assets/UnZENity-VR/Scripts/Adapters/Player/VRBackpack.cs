@@ -1,8 +1,9 @@
 #if GUZ_HVR_INSTALLED
 using GUZ.Core;
-using GUZ.Core.Creator.Sounds;
 using GUZ.Core.Globals;
+using GUZ.Core.Manager;
 using HurricaneVR.Framework.Core.Sockets;
+using Reflex.Attributes;
 using UnityEngine;
 
 namespace GUZ.VR.Adapters.Player
@@ -10,6 +11,8 @@ namespace GUZ.VR.Adapters.Player
     [RequireComponent(typeof(HVRSocketable))]
     public class VRBackpack : MonoBehaviour
     {
+        [Inject] private readonly AudioService _audioService;
+
         private void Start()
         {
             GlobalEventDispatcher.ZenKitBootstrapped.AddListener(Init);
@@ -19,8 +22,8 @@ namespace GUZ.VR.Adapters.Player
         {
             var socketable = GetComponent<HVRSocketable>();
 
-            socketable.UnsocketedClip = SoundCreator.ToAudioClip(SfxConst.InvOpen.File);
-            socketable.SocketedClip = SoundCreator.ToAudioClip(SfxConst.InvClose.File);
+            socketable.UnsocketedClip = _audioService.CreateAudioClip(SfxConst.InvOpen.File);
+            socketable.SocketedClip = _audioService.CreateAudioClip(SfxConst.InvClose.File);
         }
     }
 }
