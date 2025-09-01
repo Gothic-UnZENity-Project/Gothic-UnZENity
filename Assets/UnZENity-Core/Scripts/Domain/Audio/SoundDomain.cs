@@ -1,12 +1,10 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using GUZ.Core.Caches;
-using GUZ.Core.Creator.Sounds;
-using GUZ.Core.Data;
 using GUZ.Core.Models.Audio;
-using GUZ.Core.Models.Audio;
-using GUZ.Core.Services;
+using JetBrains.Annotations;
 using UnityEngine;
 
 namespace GUZ.Core.Domain.Audio
@@ -18,6 +16,9 @@ namespace GUZ.Core.Domain.Audio
             Bit8 = 8,
             Bit16 = 16
         }
+
+
+        private ImaadpcmDecoderDomain _decoderDomain;
 
 
         public AudioClip CreateAudioClip(string fileName)
@@ -79,7 +80,7 @@ namespace GUZ.Core.Domain.Audio
 
             if (formatCode == "IMA ADPCM")
             {
-                return ConvertWavByteArrayToFloatArray(ImaadpcmDecoder.Decode(fileBytes));
+                return ConvertWavByteArrayToFloatArray(_decoderDomain.Decode(fileBytes));
             }
 
             // sometimes a file has more data than is specified after the RIFF header

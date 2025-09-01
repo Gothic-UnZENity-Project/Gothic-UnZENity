@@ -1,12 +1,12 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using JetBrains.Annotations;
 
-namespace GUZ.Core.Creator.Sounds
+namespace GUZ.Core.Domain.Audio
 {
-    public static class ImaadpcmDecoder
+    public class ImaadpcmDecoderDomain
     {
         private enum WaveFormat
         {
@@ -16,7 +16,7 @@ namespace GUZ.Core.Creator.Sounds
             ImaAdpcm = 0x11
         }
 
-        public static byte[] CreatePCMHeader(int sampleRate, int channels, int bitsPerSample, int dataSize)
+        public byte[] CreatePCMHeader(int sampleRate, int channels, int bitsPerSample, int dataSize)
         {
             var header = new List<byte>();
 
@@ -39,7 +39,7 @@ namespace GUZ.Core.Creator.Sounds
             return header.ToArray();
         }
 
-        private static int ReadHeader(Stream stream, bool forDecode, bool forceMonoEncode)
+        private int ReadHeader(Stream stream, bool forDecode, bool forceMonoEncode)
         {
             var riffLength = 0;
             if (ReadId(stream) != "RIFF")
@@ -163,7 +163,7 @@ namespace GUZ.Core.Creator.Sounds
             return _header.Length;
         }
 
-        public static byte[] Decode(byte[] srcBytes)
+        public byte[] Decode(byte[] srcBytes)
         {
             using (var s = new MemoryStream(srcBytes))
             {
@@ -188,7 +188,7 @@ namespace GUZ.Core.Creator.Sounds
         }
 
         [CanBeNull]
-        private static byte[] DecodeBlock(Stream stream, int source)
+        private byte[] DecodeBlock(Stream stream, int source)
         {
             if (source >= _dataSize / _blockAlign)
             {
@@ -326,7 +326,7 @@ namespace GUZ.Core.Creator.Sounds
             }
         }
 
-        private static byte[] ReadBytes(Stream s, int length)
+        private byte[] ReadBytes(Stream s, int length)
         {
             var ret = new byte[length];
             if (length > 0)
@@ -337,34 +337,34 @@ namespace GUZ.Core.Creator.Sounds
             return ret;
         }
 
-        private static string ReadId(Stream s)
+        private string ReadId(Stream s)
         {
             return Encoding.UTF8.GetString(ReadBytes(s, 4), 0, 4);
         }
 
-        private static int ReadInt32(Stream s)
+        private int ReadInt32(Stream s)
         {
             return BitConverter.ToInt32(ReadBytes(s, 4), 0);
         }
 
-        private static ushort ReadUInt16(Stream s)
+        private ushort ReadUInt16(Stream s)
         {
             return BitConverter.ToUInt16(ReadBytes(s, 2), 0);
         }
 
-        private static int _length;
-        private static ushort _inChannels;
-        private static ushort _outChannels;
-        private static int _samplesPerSecond;
-        private static ushort _blockAlign;
-        private static int _offset;
-        private static int _dataSize;
-        [CanBeNull] private static byte[] _header;
-        private static int _cacheNo = -1;
-        private static byte[] _cache;
+        private int _length;
+        private ushort _inChannels;
+        private ushort _outChannels;
+        private int _samplesPerSecond;
+        private ushort _blockAlign;
+        private int _offset;
+        private int _dataSize;
+        [CanBeNull] private byte[] _header;
+        private int _cacheNo = -1;
+        private byte[] _cache;
 
-        private static int _imaBlockAlign;
-        private static short[] _predictedValues;
-        private static int[] _stepIndexes;
+        private int _imaBlockAlign;
+        private short[] _predictedValues;
+        private int[] _stepIndexes;
     }
 }
