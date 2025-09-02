@@ -3,7 +3,7 @@ using GUZ.Core.Vm;
 using ZenKit.Daedalus;
 using ZenKit.Vobs;
 
-namespace GUZ.Core.Properties.Vobs
+namespace GUZ.Core.Adapters.Properties.Vobs
 {
     public class VobItemProperties2 : VobProperties2
     {

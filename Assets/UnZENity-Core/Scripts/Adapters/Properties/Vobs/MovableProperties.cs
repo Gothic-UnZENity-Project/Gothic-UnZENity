@@ -1,7 +1,7 @@
 using GUZ.Core.Globals;
 using ZenKit.Vobs;
 
-namespace GUZ.Core.Properties.Vobs
+namespace GUZ.Core.Adapters.Properties.Vobs
 {
     public class MovableProperties : VobProperties2
     {

@@ -1,4 +1,5 @@
 using System.Linq;
+using GUZ.Core.Adapters.Properties;
 using GUZ.Core.Caches;
 using GUZ.Core.Data.Container;
 using GUZ.Core.Extensions;
@@ -7,8 +8,6 @@ using GUZ.Core.Manager;
 using GUZ.Core.Models.Vm;
 using GUZ.Core.Npc.Actions;
 using GUZ.Core.Npc.Actions.AnimationActions;
-using GUZ.Core.Properties;
-using GUZ.Core.Vm;
 using UnityEngine;
 using ZenKit.Daedalus;
 using Vector3 = UnityEngine.Vector3;

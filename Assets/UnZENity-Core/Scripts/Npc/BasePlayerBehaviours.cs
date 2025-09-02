@@ -1,8 +1,8 @@
 ﻿using System;
+using GUZ.Core.Adapters.Properties;
 using GUZ.Core.Data.Adapter.Vobs;
 using GUZ.Core.Data.Container;
 using GUZ.Core.Extensions;
-using GUZ.Core.Properties;
 using UnityEngine;
 using ZenKit.Daedalus;
 

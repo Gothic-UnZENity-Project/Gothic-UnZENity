@@ -1,7 +1,7 @@
 using GUZ.Core.Models.Vob.WayNet;
 using UnityEngine;
 
-namespace GUZ.Core.Properties
+namespace GUZ.Core.Adapters.Properties
 {
     public class VobSpotProperties : VobProperties
     {

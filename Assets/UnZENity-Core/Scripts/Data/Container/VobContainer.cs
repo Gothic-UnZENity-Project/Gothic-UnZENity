@@ -1,5 +1,5 @@
 using System;
-using GUZ.Core.Properties.Vobs;
+using GUZ.Core.Adapters.Properties.Vobs;
 using GUZ.Core.Vm;
 using JetBrains.Annotations;
 using UnityEngine;

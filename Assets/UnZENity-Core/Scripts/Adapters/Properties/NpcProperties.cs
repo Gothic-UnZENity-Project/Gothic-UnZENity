@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
+using GUZ.Core.Models.Npc;
 using GUZ.Core.Models.Vm;
 using GUZ.Core.Models.Vob.WayNet;
 using GUZ.Core.Npc.Actions.AnimationActions;
-using GUZ.Core.Npc.Routines;
 using ZenKit.Daedalus;
 
-namespace GUZ.Core.Properties
+namespace GUZ.Core.Adapters.Properties
 {
     public class NpcProperties
     {

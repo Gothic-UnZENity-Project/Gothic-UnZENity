@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using GUZ.Core.Adapters.Properties;
 using GUZ.Core.Adapters.UI.LoadingBars;
 using GUZ.Core.Caches;
 using GUZ.Core.Data.Adapter.Vobs;
@@ -9,7 +10,6 @@ using GUZ.Core.Globals;
 using GUZ.Core.Manager;
 using GUZ.Core.Models.Vm;
 using GUZ.Core.Models.Vob.WayNet;
-using GUZ.Core.Properties;
 using GUZ.Core.Services;
 using GUZ.Core.Util;
 using JetBrains.Annotations;

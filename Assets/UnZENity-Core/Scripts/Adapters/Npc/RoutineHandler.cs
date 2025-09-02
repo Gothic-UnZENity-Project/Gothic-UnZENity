@@ -1,13 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using GUZ.Core.Models.Npc;
 using GUZ.Core.Util;
 using UnityEngine;
 using Logger = GUZ.Core.Util.Logger;
 
-namespace GUZ.Core.Npc.Routines
+namespace GUZ.Core.Adapters.Npc
 {
-    public class Routine : MonoBehaviour
+    public class RoutineHandler : MonoBehaviour
     {
         public readonly List<RoutineData> Routines = new();
 

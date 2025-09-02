@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using GUZ.Core.Adapters.Properties;
 using GUZ.Core.Data;
 using GUZ.Core.Data.Container;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Npc.Actions;
 using GUZ.Core.Npc.Actions.AnimationActions;
-using GUZ.Core.Properties;
 using GUZ.Core.Services.Context;
 using GUZ.Core.Util;
 using Reflex.Attributes;

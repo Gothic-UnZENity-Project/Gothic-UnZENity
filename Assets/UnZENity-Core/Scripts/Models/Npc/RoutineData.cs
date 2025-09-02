@@ -1,4 +1,4 @@
-﻿namespace GUZ.Core.Npc.Routines
+﻿namespace GUZ.Core.Models.Npc
 {
     public class RoutineData
     {

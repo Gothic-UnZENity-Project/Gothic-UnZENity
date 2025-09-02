@@ -1,7 +1,8 @@
 using System;
 using System.Collections.Generic;
+using GUZ.Core.Adapters.Npc;
 using GUZ.Core.Models.Config;
-using GUZ.Core.Npc.Routines;
+using GUZ.Core.Models.Npc;
 
 namespace GUZ.Core.Manager
 {
@@ -10,7 +11,7 @@ namespace GUZ.Core.Manager
     /// </summary>
     public class RoutineManager
     {
-        private Dictionary<int, List<Routine>> _npcStartTimeDict = new();
+        private Dictionary<int, List<RoutineHandler>> _npcStartTimeDict = new();
 
         private readonly int _featureStartHour;
         private readonly int _featureStartMinute;
@@ -35,18 +36,18 @@ namespace GUZ.Core.Manager
             Invoke(time);
         }
 
-        public void Subscribe(Routine npcID, List<RoutineData> routines)
+        public void Subscribe(RoutineHandler npcID, List<RoutineData> routines)
         {
             // We need to fill in routines backwards as e.g. Mud and Scorpio have duplicate routines. Last one needs to win.
             routines.Reverse();
             foreach (var routine in routines)
             {
-                _npcStartTimeDict.TryAdd(routine.NormalizedStart, new List<Routine>());
+                _npcStartTimeDict.TryAdd(routine.NormalizedStart, new List<RoutineHandler>());
                 _npcStartTimeDict[routine.NormalizedStart].Add(npcID);
             }
         }
 
-        public void Unsubscribe(Routine routineInstance, List<RoutineData> routines)
+        public void Unsubscribe(RoutineHandler routineHandlerInstance, List<RoutineData> routines)
         {
             foreach (var routine in routines)
             {
@@ -55,7 +56,7 @@ namespace GUZ.Core.Manager
                     return;
                 }
 
-                routinesForStartPoint.Remove(routineInstance);
+                routinesForStartPoint.Remove(routineHandlerInstance);
 
                 // Remove element if empty
                 if (_npcStartTimeDict[routine.NormalizedStart].Count == 0)

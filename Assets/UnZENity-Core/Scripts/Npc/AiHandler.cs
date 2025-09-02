@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using GUZ.Core.Adapters.Properties;
 using GUZ.Core.Data.ZkEvents;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
@@ -6,10 +7,8 @@ using GUZ.Core.Manager;
 using GUZ.Core.Models.Vm;
 using GUZ.Core.Npc.Actions;
 using GUZ.Core.Npc.Actions.AnimationActions;
-using GUZ.Core.Properties;
 using GUZ.Core.Services.Config;
 using GUZ.Core.Util;
-using GUZ.Core.Vm;
 using MyBox;
 using Reflex.Attributes;
 using UnityEngine;

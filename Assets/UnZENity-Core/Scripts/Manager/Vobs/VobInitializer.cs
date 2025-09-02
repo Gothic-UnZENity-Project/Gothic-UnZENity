@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using GUZ.Core.Adapters.Properties;
 using GUZ.Core.Adapters.Vob;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Models.Vm;
 using GUZ.Core.Models.Vob.WayNet;
-using GUZ.Core.Properties;
 using GUZ.Core.Services;
 using GUZ.Core.Services.Config;
 using GUZ.Core.Services.Culling;

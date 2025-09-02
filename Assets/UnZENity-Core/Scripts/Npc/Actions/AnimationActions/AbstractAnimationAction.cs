@@ -1,14 +1,12 @@
 using System;
 using System.Linq;
-using GUZ.Core.Creator;
+using GUZ.Core.Adapters.Properties;
 using GUZ.Core.Data.Adapter.Vobs;
 using GUZ.Core.Data.Container;
 using GUZ.Core.Data.ZkEvents;
 using GUZ.Core.Extensions;
 using GUZ.Core.Manager;
-using GUZ.Core.Properties;
 using GUZ.Core.Util;
-using GUZ.Core.Vm;
 using UnityEngine;
 using ZenKit.Daedalus;
 using EventType = ZenKit.EventType;
