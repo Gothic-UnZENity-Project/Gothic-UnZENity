@@ -17,15 +17,12 @@ namespace GUZ.Core.Manager
 {
     public class FontManager : SingletonBehaviour<FontManager>
     {
-        [NonSerialized]
-        public TMP_FontAsset DefaultFont;
-
-        [NonSerialized]
-        public TMP_SpriteAsset DefaultSpriteAsset;
-        [NonSerialized]
-        public TMP_SpriteAsset HighlightSpriteAsset;
+        [NonSerialized] public TMP_FontAsset DefaultFont;
+        [NonSerialized] public TMP_SpriteAsset DefaultSpriteAsset;
+        [NonSerialized] public TMP_SpriteAsset HighlightSpriteAsset;
 
         [Inject] private readonly TextureCacheService _textureCacheService;
+        [Inject] private readonly MultiTypeCacheService _multiTypeCacheService;
 
 
         public void Create()
@@ -41,7 +38,7 @@ namespace GUZ.Core.Manager
         public TMP_SpriteAsset TryGetFont(string fontName)
         {
             var preparedKey = $"{ResourceLoader.GetPreparedKey(fontName)}.fnt";
-            if (MultiTypeCache.FontCache.TryGetValue(preparedKey, out var data))
+            if (_multiTypeCacheService.FontCache.TryGetValue(preparedKey, out var data))
             {
                 return data;
             }
@@ -112,7 +109,7 @@ namespace GUZ.Core.Manager
 
             spriteAsset.UpdateLookupTables();
 
-            MultiTypeCache.FontCache[preparedKey] = spriteAsset;
+            _multiTypeCacheService.FontCache[preparedKey] = spriteAsset;
 
             return spriteAsset;
         }

@@ -8,6 +8,7 @@ using GUZ.Core.Models.Vm;
 using GUZ.Core.Npc.Actions;
 using GUZ.Core.Npc.Actions.AnimationActions;
 using GUZ.Core.Services.Config;
+using GUZ.Core.Services.Npc;
 using GUZ.Core.Util;
 using MyBox;
 using Reflex.Attributes;
@@ -25,6 +26,9 @@ namespace GUZ.Core.Npc
 #endif
 
         [Inject] private readonly ConfigService _configService;
+        [Inject] private readonly NpcHelperService _npcHelperService;
+        [Inject] private readonly NpcAiService _npcAiService;
+        [Inject] private readonly NpcService _npcService;
 
 
         private static DaedalusVm Vm => GameData.GothicVm;
@@ -164,18 +168,18 @@ namespace GUZ.Core.Npc
                 return;
             }
             
-            GameGlobals.NpcAi.UpdateEnemyNpc(NpcInstance);
+            _npcAiService.UpdateEnemyNpc(NpcInstance);
 
             // FIXME - CanSense is not separating between smell, hear, and see as of now. Please add functionality.
-            if(NpcHelper.CanSenseNpc(NpcInstance, (NpcInstance)GameData.GothicVm.GlobalHero, false))
+            if(_npcHelperService.CanSenseNpc(NpcInstance, (NpcInstance)GameData.GothicVm.GlobalHero, false))
             {
-                GameGlobals.NpcAi.ExecutePerception(VmGothicEnums.PerceptionType.AssessPlayer, Properties, NpcInstance,null, (NpcInstance)GameData.GothicVm.GlobalHero);
+                _npcAiService.ExecutePerception(VmGothicEnums.PerceptionType.AssessPlayer, Properties, NpcInstance,null, (NpcInstance)GameData.GothicVm.GlobalHero);
             }
 
             // FIXME - Throws a lot of errors and warnings when NPCs are nearby monsters (e.g. Bridge guard next to OC)
             if(Properties.EnemyNpc != null)
             {
-                GameGlobals.NpcAi.ExecutePerception(VmGothicEnums.PerceptionType.AssessEnemy, Properties, NpcInstance,null, Properties.EnemyNpc);
+                _npcAiService.ExecutePerception(VmGothicEnums.PerceptionType.AssessEnemy, Properties, NpcInstance,null, Properties.EnemyNpc);
             }
 
 
@@ -343,7 +347,7 @@ namespace GUZ.Core.Npc
             if (currentRoutine != null)
             {
                 var wpPos = WayNetHelper.GetWayNetPoint(currentRoutine.Waypoint).Position;
-                gameObject.transform.position = GameGlobals.Npcs.GetFreeAreaAtSpawnPoint(wpPos);
+                gameObject.transform.position = _npcService.GetFreeAreaAtSpawnPoint(wpPos);
             }
 
             // Animation state handling

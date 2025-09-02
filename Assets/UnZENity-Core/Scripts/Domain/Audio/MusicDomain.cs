@@ -5,6 +5,7 @@ using DirectMusic;
 using GUZ.Core.Adapters.Vob;
 using GUZ.Core.Caches;
 using GUZ.Core.Globals;
+using GUZ.Core.Services.Caches;
 using GUZ.Core.Services.Config;
 using GUZ.Core.Util;
 using Reflex.Attributes;
@@ -30,6 +31,7 @@ namespace GUZ.Core.Domain.Audio
         }
 
         [Inject] private ConfigService _configService;
+        [Inject] private readonly MultiTypeCacheService _multiTypeCacheService;
 
 
         // Depending on speed of track, 2048 == around less than a second
@@ -226,7 +228,7 @@ namespace GUZ.Core.Domain.Audio
         {
             _musicZones.Clear();
 
-            var zones = MultiTypeCache.VobCache.Where(i => i.Vob is IZoneMusic); // IZoneMusic | IZoneMusicDefault
+            var zones = _multiTypeCacheService.VobCache.Where(i => i.Vob is IZoneMusic); // IZoneMusic | IZoneMusicDefault
             var playerPosition = GameObject.FindWithTag(Constants.PlayerTag).transform.position;
 
             foreach (var zone in zones)

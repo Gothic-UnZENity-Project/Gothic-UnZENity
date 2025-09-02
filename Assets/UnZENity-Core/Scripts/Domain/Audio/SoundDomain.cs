@@ -4,7 +4,9 @@ using System.IO;
 using System.Text;
 using GUZ.Core.Caches;
 using GUZ.Core.Models.Audio;
+using GUZ.Core.Services.Caches;
 using JetBrains.Annotations;
+using Reflex.Attributes;
 using UnityEngine;
 
 namespace GUZ.Core.Domain.Audio
@@ -17,6 +19,7 @@ namespace GUZ.Core.Domain.Audio
             Bit16 = 16
         }
 
+        [Inject] private readonly MultiTypeCacheService _multiTypeCacheService;
 
         private ImaadpcmDecoderDomain _decoderDomain = new();
 
@@ -25,7 +28,7 @@ namespace GUZ.Core.Domain.Audio
         {
             fileName = Path.GetFileNameWithoutExtension(fileName);
 
-            if (MultiTypeCache.AudioClips.TryGetValue(fileName, out AudioClip cachedClip))
+            if (_multiTypeCacheService.AudioClips.TryGetValue(fileName, out AudioClip cachedClip))
                 return cachedClip;
 
             var soundBytes = ResourceLoader.TryGetSoundBytes(fileName);
@@ -38,7 +41,7 @@ namespace GUZ.Core.Domain.Audio
                 soundData.SampleRate, false);
             audioClip.SetData(soundData.Sound, 0);
 
-            MultiTypeCache.AudioClips.Add(fileName, audioClip);
+            _multiTypeCacheService.AudioClips.Add(fileName, audioClip);
             return audioClip;
         }
 

@@ -5,6 +5,7 @@ using GUZ.Core.Caches;
 using GUZ.Core.Globals;
 using GUZ.Core.Services;
 using GUZ.Core.Services.Caches;
+using GUZ.Core.Services.Npc;
 using GUZ.Core.Services.Vm;
 using GUZ.Core.Vm;
 using ZenKit;
@@ -24,8 +25,6 @@ namespace GUZ.Core.Manager
         {
             GameData.Dispose();
             VmInstanceManager.Dispose();
-            MultiTypeCache.Dispose();
-            MorphMeshCache.Dispose();
         }
 
         public static void Boot()
@@ -99,7 +98,8 @@ namespace GUZ.Core.Manager
 
             // FIXME - Shoould be loaded by [Inject] instead!
             ReflexProjectInstaller.DIContainer.Resolve<VmService>().RegisterExternals();
-            NpcHelper.Init();
+            // FIXME - Shoould be loaded by [Inject] instead!
+            ReflexProjectInstaller.DIContainer.Resolve<NpcHelperService>().Init();
         }
         
         private static void LoadMiscVMs()

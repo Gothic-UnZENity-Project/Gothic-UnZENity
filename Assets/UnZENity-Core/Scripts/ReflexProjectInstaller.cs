@@ -8,8 +8,8 @@ using GUZ.Core.Services.Caches;
 using GUZ.Core.Services.Config;
 using GUZ.Core.Services.Context;
 using GUZ.Core.Services.Culling;
+using GUZ.Core.Services.Npc;
 using GUZ.Core.Services.Vm;
-using GUZ.Core.Vm;
 using Reflex.Core;
 using UnityEngine;
 
@@ -42,8 +42,16 @@ namespace GUZ.Core
             containerBuilder.AddSingleton(typeof(AnimationService));
             containerBuilder.AddSingleton(typeof(DialogService));
 
+            // NPC
+            containerBuilder.AddSingleton(typeof(NpcService));
+            containerBuilder.AddSingleton(typeof(NpcAiService));
+            containerBuilder.AddSingleton(typeof(NpcHelperService));
+            containerBuilder.AddSingleton(typeof(NpcRoutineService));
+
             // Caches
+            containerBuilder.AddSingleton(typeof(MultiTypeCacheService));
             containerBuilder.AddSingleton(typeof(TextureCacheService));
+            containerBuilder.AddSingleton(typeof(MorphMeshCacheService));
 
             // World
             containerBuilder.AddSingleton(typeof(WayNetService));
@@ -51,8 +59,6 @@ namespace GUZ.Core
             // FIXME - Need to be migrated to a Service!
             containerBuilder.AddSingleton(typeof(VobManager));
             containerBuilder.AddSingleton(typeof(VobInitializer));
-            containerBuilder.AddSingleton(typeof(NpcManager));
-            containerBuilder.AddSingleton(typeof(NpcInitializer));
             containerBuilder.AddSingleton(typeof(StationaryLightsManager));
             containerBuilder.AddSingleton(typeof(SkyService));
             containerBuilder.AddSingleton(typeof(BarrierManager));

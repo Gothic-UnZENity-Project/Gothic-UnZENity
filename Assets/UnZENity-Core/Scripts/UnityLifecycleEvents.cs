@@ -24,7 +24,11 @@ namespace GUZ.VR
         [Inject] private readonly VobSoundCullingService _vobSoundCullingService;
 
         [Inject] private readonly SpeechToTextService _speechToTextService;
+
+        // Caches
         [Inject] private readonly TextureCacheService _textureCacheService;
+        [Inject] private readonly MorphMeshCacheService _morphMeshCacheService;
+        [Inject] private readonly MultiTypeCacheService _multiTypeCacheService;
 
 
         private void Update()
@@ -51,7 +55,11 @@ namespace GUZ.VR
             _vobMeshCullingService.OnApplicationQuit();
             _vobSoundCullingService.OnApplicationQuit();
 
+            // Caches
             _textureCacheService.Dispose();
+            _morphMeshCacheService.Dispose();
+            _multiTypeCacheService.Dispose();
+
             _speechToTextService.Dispose();
         }
 

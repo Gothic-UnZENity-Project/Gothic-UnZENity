@@ -10,8 +10,10 @@ using GUZ.Core.Globals;
 using GUZ.Core.Models.Vm;
 using GUZ.Core.Npc.Actions;
 using GUZ.Core.Npc.Actions.AnimationActions;
+using GUZ.Core.Services.Caches;
 using GUZ.Core.Vm;
 using GUZ.Lab.AnimationActionMocks;
+using Reflex.Attributes;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -21,12 +23,11 @@ namespace GUZ.Lab.Handler
 {
     public class LabNpcAnimationHandler : AbstractLabHandler
     {
-        [FormerlySerializedAs("npcDropdown")] public TMP_Dropdown NpcDropdown;
-
-        [FormerlySerializedAs("animationDropdown")]
+        public TMP_Dropdown NpcDropdown;
         public TMP_Dropdown AnimationDropdown;
+        public GameObject NpcSlotGo;
 
-        [FormerlySerializedAs("npcSlotGo")] public GameObject NpcSlotGo;
+        [Inject] private readonly MultiTypeCacheService _multiTypeCacheService;
 
 
         private Dictionary<string, (string Name, string MdhMds, string Mdm, int BodyTexNr, int BodyTexColor, string Head
@@ -133,7 +134,7 @@ namespace GUZ.Lab.Handler
                 Instance = npcInstance,
                 Props =  npcProps
             };
-            MultiTypeCache.NpcCache.Add(npcContainerData);
+            _multiTypeCacheService.NpcCache.Add(npcContainerData);
 
             var body = new ExtSetVisualBodyData
             {

@@ -5,14 +5,15 @@ using System.Linq;
 using System.Threading.Tasks;
 using GUZ.Core.Adapters.UI.LoadingBars;
 using GUZ.Core.Adapters.Vob;
-using GUZ.Core.Caches;
 using GUZ.Core.Data.Container;
 using GUZ.Core.Data.Vobs;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Models.Config;
+using GUZ.Core.Services.Caches;
 using GUZ.Core.Services.Config;
 using GUZ.Core.Services.Culling;
+using GUZ.Core.Services.Npc;
 using GUZ.Core.Util;
 using GUZ.Core.Vm;
 using JetBrains.Annotations;
@@ -31,8 +32,11 @@ namespace GUZ.Core.Manager.Vobs
         [Inject] private readonly VobSoundCullingService _vobSoundCullingService;
         [Inject] private readonly UnityMonoService _unityMonoService;
         [Inject] private readonly AudioService _audioService;
+        [Inject] private readonly MultiTypeCacheService _multiTypeCacheService;
+        [Inject] private readonly NpcService _npcService;
         // Supporter class where the whole Init() logic is outsourced for better readability.
         [Inject] private readonly VobInitializer _initializer;
+
 
         public Dictionary<string, List<(int hour, int minute, int status)>> ObjectRoutines = new();
         
@@ -331,7 +335,7 @@ namespace GUZ.Core.Manager.Vobs
                         await CreateWorldVobs(config, loading, vob.Children);
                         continue;
                     case VirtualObjectType.oCNpc:
-                        GameGlobals.Npcs.CreateVobNpc((INpc)vob);
+                        _npcService.CreateVobNpc((INpc)vob);
                         continue;
                 }
 
@@ -360,7 +364,7 @@ namespace GUZ.Core.Manager.Vobs
         private VobContainer CreateContainerWithLoader(IVirtualObject vob)
         {
             var container = new VobContainer(vob);
-            MultiTypeCache.VobCache.Add(container);
+            _multiTypeCacheService.VobCache.Add(container);
 
             container.Go = new GameObject($"{container.Vob.GetVisualName()} (Loader)");
             var loader = container.Go.AddComponent<VobLoader>();

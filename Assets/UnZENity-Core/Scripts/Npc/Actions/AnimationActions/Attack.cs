@@ -4,6 +4,7 @@ using GUZ.Core.Domain.Animations;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Models.Vm;
+using GUZ.Core.Services.Npc;
 using GUZ.Core.Util;
 using GUZ.Core.Vm;
 using Reflex.Attributes;
@@ -16,6 +17,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
     public class Attack : AbstractAnimationAction
     {
         [Inject] private readonly AnimationService _animationService;
+        [Inject] private readonly NpcAiService _npcAiService;
 
 
         private NpcInstance _enemy => (NpcInstance)GameData.GothicVm.GlobalVictim;
@@ -36,7 +38,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
 
         private string FindAiFunctionTemplate()
         {
-            var isInFocus = GameGlobals.NpcAi.ExtNpcCanSeeNpc(NpcInstance, _enemy, false, 30f); // 60° is also assumed by Open Gothic.
+            var isInFocus = _npcAiService.ExtNpcCanSeeNpc(NpcInstance, _enemy, false, 30f); // 60° is also assumed by Open Gothic.
             var distance = GetDistance();
             var attackRange = GetAttackRange();
             var isInWRange = distance <= attackRange; // W-Range == Weapon range
@@ -71,22 +73,22 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             {
                 case FightAiMove.Wait:
                     // We reuse this flag and close the attack action after 200ms.
-                    GameGlobals.NpcAi.ExtAiWait(NpcInstance, 0.2f);
+                    _npcAiService.ExtAiWait(NpcInstance, 0.2f);
                     break;
                 case FightAiMove.Attack:
-                    GameGlobals.NpcAi.ExtAiPlayAni(NpcInstance, GetAnimName(VmGothicEnums.AnimationType.Attack));
+                    _npcAiService.ExtAiPlayAni(NpcInstance, GetAnimName(VmGothicEnums.AnimationType.Attack));
                     break;
                 case FightAiMove.Strafe:
                     if (Random.Range(0, 2) == 0)
-                        GameGlobals.NpcAi.ExtAiPlayAni(NpcInstance, GetAnimName(VmGothicEnums.AnimationType.MoveL));
+                        _npcAiService.ExtAiPlayAni(NpcInstance, GetAnimName(VmGothicEnums.AnimationType.MoveL));
                     else
-                        GameGlobals.NpcAi.ExtAiPlayAni(NpcInstance, GetAnimName(VmGothicEnums.AnimationType.MoveR));
+                        _npcAiService.ExtAiPlayAni(NpcInstance, GetAnimName(VmGothicEnums.AnimationType.MoveR));
                     break;
                 case FightAiMove.Run:
-                    GameGlobals.NpcAi.ExtAiPlayAni(NpcInstance, GetAnimName(VmGothicEnums.AnimationType.Move));
+                    _npcAiService.ExtAiPlayAni(NpcInstance, GetAnimName(VmGothicEnums.AnimationType.Move));
                     break;
                 case FightAiMove.Turn:
-                    GameGlobals.NpcAi.ExtAiTurnToNpc(NpcInstance, _enemy);
+                    _npcAiService.ExtAiTurnToNpc(NpcInstance, _enemy);
                     break;
                 case FightAiMove.RunBack:
                 case FightAiMove.JumpBack:

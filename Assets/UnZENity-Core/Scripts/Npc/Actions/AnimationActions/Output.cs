@@ -4,6 +4,7 @@ using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
 using GUZ.Core.Services.Config;
+using GUZ.Core.Services.Npc;
 using Reflex.Attributes;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -15,6 +16,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
         [Inject] private readonly ConfigService _configService;
         [Inject] private readonly DialogService _dialogService;
         [Inject] private readonly AudioService _audioService;
+        [Inject] private readonly NpcService _npcService;
 
         protected virtual string OutputName => Action.String0;
 
@@ -47,7 +49,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             // Hero
             if (_isHeroSpeaking)
             {
-                GameGlobals.Npcs.GetHeroGameObject().GetComponent<AudioSource>().PlayOneShot(audioClip);
+                _npcService.GetHeroGameObject().GetComponent<AudioSource>().PlayOneShot(audioClip);
 
                 PrintDialog();
             }
@@ -74,7 +76,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
 
             if (_isHeroSpeaking)
             {
-                GameGlobals.Npcs.GetHeroContainer().PrefabProps.NpcSubtitles.ShowSubtitles(currentMessage.Text);
+                _npcService.GetHeroContainer().PrefabProps.NpcSubtitles.ShowSubtitles(currentMessage.Text);
             }
             else
             {
@@ -106,7 +108,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
 
             if (_isHeroSpeaking)
             {
-                GameGlobals.Npcs.GetHeroGameObject().GetComponent<AudioSource>().Stop();
+                _npcService.GetHeroGameObject().GetComponent<AudioSource>().Stop();
             }
             // NPC
             else
@@ -125,7 +127,7 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
                 // Hero
                 if (_isHeroSpeaking)
                 {
-                    GameGlobals.Npcs.GetHeroContainer().PrefabProps.NpcSubtitles.HideSubtitles();
+                    _npcService.GetHeroContainer().PrefabProps.NpcSubtitles.HideSubtitles();
                 }
                 // NPC
                 else

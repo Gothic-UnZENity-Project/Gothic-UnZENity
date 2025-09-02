@@ -12,8 +12,5 @@ namespace GUZ.Core.Services.Vm
         {
             _domain.RegisterExternals();
         }
-
-
-
     }
 }

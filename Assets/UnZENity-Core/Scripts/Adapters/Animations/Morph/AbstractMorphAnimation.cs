@@ -4,8 +4,10 @@ using System.Linq;
 using GUZ.Core.Caches;
 using GUZ.Core.Extensions;
 using GUZ.Core.Models.Animations.Morph;
+using GUZ.Core.Services.Caches;
 using GUZ.Core.Util;
 using JetBrains.Annotations;
+using Reflex.Attributes;
 using UnityEngine;
 using ZenKit;
 using Logger = GUZ.Core.Util.Logger;
@@ -19,6 +21,8 @@ namespace GUZ.Core.Adapters.Animations.Morph
     /// </summary>
     public abstract class AbstractMorphAnimation : MonoBehaviour
     {
+        [Inject] private readonly MorphMeshCacheService _morphMeshCacheService;
+
         /// <summary>
         /// Multiple morphs can run at the same time. e.g. viseme and eyesblink.
         /// We therefore add animations to a list to calculate their positions together.
@@ -57,7 +61,7 @@ namespace GUZ.Core.Adapters.Animations.Morph
                 ? newMorph.MeshMetadata.Animations.First()
                 : newMorph.MeshMetadata.Animations.First(anim => anim.Name.EqualsIgnoreCase(animationName));
             newMorph.AnimationFrameData =
-                MorphMeshCache.TryGetMorphData(morphMeshName, newMorph.AnimationMetadata.Name);
+                _morphMeshCacheService.TryGetMorphData(morphMeshName, newMorph.AnimationMetadata.Name);
 
             // Reset if already added and playing
             if (_runningMorphs.Any(i => i.MeshName == newMorph.MeshName))
@@ -96,7 +100,7 @@ namespace GUZ.Core.Adapters.Animations.Morph
             }
 
             // Reset to a stable value.
-            _mesh.vertices = MorphMeshCache.GetOriginalUnityVertices(morphToStop.MeshName);
+            _mesh.vertices = _morphMeshCacheService.GetOriginalUnityVertices(morphToStop.MeshName);
 
             _runningMorphs.Remove(morphToStop);
         }

@@ -7,7 +7,10 @@ using GUZ.Core.Data.Container;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Npc;
+using GUZ.Core.Services.Caches;
+using GUZ.Core.Services.Npc;
 using GUZ.Lab.Mocks;
+using Reflex.Attributes;
 using UnityEngine;
 using ZenKit.Daedalus;
 
@@ -16,6 +19,10 @@ namespace GUZ.Lab.Handler
     public class LabNpcDialogHandler : AbstractLabHandler
     {
         public GameObject NpcSlotGo;
+
+        [Inject] private readonly MultiTypeCacheService _multiTypeCacheService;
+        [Inject] private readonly NpcService _npcService;
+
 
         private string _bloodwynInstanceId = "GRD_233_Bloodwyn";
         private NpcInstance _bloodwynInstance;
@@ -147,7 +154,7 @@ namespace GUZ.Lab.Handler
 
             _bloodwynInstance.UserData = npcData;
             loaderComp.Npc = _bloodwynInstance;
-            MultiTypeCache.NpcCache.Add(npcData);
+            _multiTypeCacheService.NpcCache.Add(npcData);
 
             newNpc.name = _bloodwynInstance.GetName(NpcNameSlot.Slot0);
             GameData.GothicVm.GlobalSelf = _bloodwynInstance;
@@ -162,7 +169,7 @@ namespace GUZ.Lab.Handler
             }
 
             // We need to initialize the NPC at this frame to set the positions of child GOs now.
-            GameGlobals.Npcs.InitNpc(newNpc, true);
+            _npcService.InitNpc(newNpc, true);
             newNpc.transform.SetLocalPositionAndRotation(default, default);
             newNpc.transform.GetChild(0).SetLocalPositionAndRotation(default, default);
 

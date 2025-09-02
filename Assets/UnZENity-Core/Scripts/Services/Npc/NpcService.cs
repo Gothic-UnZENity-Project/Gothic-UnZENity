@@ -2,16 +2,18 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using GUZ.Core.Caches;
 using GUZ.Core.Data.Adapter.Vobs;
 using GUZ.Core.Data.Container;
 using GUZ.Core.Data.Vobs;
+using GUZ.Core.Domain.Npc;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
 using GUZ.Core.Models.Config;
 using GUZ.Core.Models.Npc;
 using GUZ.Core.Models.Vm;
+using GUZ.Core.Npc;
+using GUZ.Core.Services.Caches;
 using GUZ.Core.Services.Config;
 using GUZ.Core.Util;
 using GUZ.Core.Vm;
@@ -23,19 +25,23 @@ using ZenKit.Daedalus;
 using ZenKit.Vobs;
 using Logger = GUZ.Core.Util.Logger;
 
-namespace GUZ.Core.Npc
+namespace GUZ.Core.Services.Npc
 {
     /// <summary>
     /// Manage all NPC related calls a(Ext* engine calls and e.g. load Npcs at WorldSceneManager time)
     /// </summary>
-    public class NpcManager
+    public class NpcService
     {
         public Dictionary<string, List<(int hour, int minute, int status)>> MobRoutines = new();
+
 
         [Inject] private readonly ConfigService _configService;
         [Inject] private readonly UnityMonoService _unityMonoService;
         // Supporter class where the whole Init() logic is outsourced for better readability.
-        [Inject] private readonly NpcInitializer _initializer;
+        [Inject] private readonly MultiTypeCacheService _multiTypeCacheService;
+
+        private readonly NpcInitializerDomain _initializerDomain = new NpcInitializerDomain().Inject();
+
 
         private Queue<NpcLoader> _objectsToInitQueue = new();
         private Queue<NpcContainer> _objectToReEnableQueue = new();
@@ -86,7 +92,7 @@ namespace GUZ.Core.Npc
                         continue;
                     }
 
-                    _initializer.InitNpc(npcElement.Npc, npcElement.gameObject);
+                    _initializerDomain.InitNpc(npcElement.Npc, npcElement.gameObject);
                 }
 
                 yield return FrameSkipper.TrySkipToNextFrameCoroutine();
@@ -116,12 +122,12 @@ namespace GUZ.Core.Npc
 
         public void SetRootGo(GameObject rootGo)
         {
-            _initializer.RootGo = rootGo;
+            _initializerDomain.RootGo = rootGo;
         }
 
         public Vector3 GetFreeAreaAtSpawnPoint(Vector3 positionToScan)
         {
-            return _initializer.GetFreeAreaAtSpawnPoint(positionToScan);
+            return _initializerDomain.GetFreeAreaAtSpawnPoint(positionToScan);
         }
 
         public async Task CreateWorldNpcs(LoadingManager loading)
@@ -130,9 +136,9 @@ namespace GUZ.Core.Npc
             MobRoutines = new();
             
             if (GameGlobals.SaveGame.IsNewGame)
-                await _initializer.InitNpcsNewGame(loading);
+                await _initializerDomain.InitNpcsNewGame(loading);
             else
-                await _initializer.InitNpcsSaveGame(loading);
+                await _initializerDomain.InitNpcsSaveGame(loading);
         }
 
         /// <summary>
@@ -149,12 +155,12 @@ namespace GUZ.Core.Npc
             }
 
             // Initialize NPC and set its data from SaveGame (VOB entry).
-            _initializer.InitNpcVobSaveGame(vobNpc);
+            _initializerDomain.InitNpcVobSaveGame(vobNpc);
         }
 
         public void ExtWldInsertNpc(int npcInstanceIndex, string spawnPoint)
         {
-            _initializer.ExtWldInsertNpc(npcInstanceIndex, spawnPoint);
+            _initializerDomain.ExtWldInsertNpc(npcInstanceIndex, spawnPoint);
         }
 
         // FIXME - I think they are overwritten when an NPC is loaded from a SaveGame, as we Initialize them again...
@@ -209,7 +215,7 @@ namespace GUZ.Core.Npc
 
         public NpcInstance ExtHlpGetNpc(int instanceId)
         {
-            return MultiTypeCache.NpcCache
+            return _multiTypeCacheService.NpcCache
                 .FirstOrDefault(i => i.Instance.Index == instanceId)?
                 .Instance;
         }
@@ -282,7 +288,7 @@ namespace GUZ.Core.Npc
             {
                 // We assume that this call is only made when the cache got cleared before as we loaded another world.
                 // Therefore, we re-add it now.
-                MultiTypeCache.NpcCache.Add(((NpcInstance)GameData.GothicVm.GlobalHero).GetUserData());
+                _multiTypeCacheService.NpcCache.Add(((NpcInstance)GameData.GothicVm.GlobalHero).GetUserData());
 
                 return;
             }
@@ -319,7 +325,7 @@ namespace GUZ.Core.Npc
 
             heroInstance.UserData = npcData;
 
-            MultiTypeCache.NpcCache.Add(npcData);
+            _multiTypeCacheService.NpcCache.Add(npcData);
             _vm.InitInstance(heroInstance);
             vobNpc.CopyFromInstanceData(heroInstance);
 
@@ -375,20 +381,6 @@ namespace GUZ.Core.Npc
             // FIXME - Spawn Item as well!
         }
 
-        public void ExtNpcExchangeRoutine(NpcInstance npcInstance, string routineName)
-        {
-            var formattedRoutineName = $"Rtn_{routineName}_{npcInstance.Id}";
-            var newRoutine = _vm.GetSymbolByName(formattedRoutineName);
-
-            if (newRoutine == null)
-            {
-                Logger.LogError($"Routine {formattedRoutineName} couldn't be found.", LogCat.Npc);
-                return;
-            }
-
-            ExchangeRoutine(npcInstance, newRoutine.Index);
-        }
-
         public void ExtTaMin(NpcInstance npc, int startH, int startM, int stopH, int stopM, int action, string waypoint)
         {
             var props = npc.GetUserData().Props;
@@ -407,86 +399,6 @@ namespace GUZ.Core.Npc
 
             props.Routines.Add(routine);
         }
-        
-        public void ExchangeRoutine(NpcInstance npc, string routineName)
-        {
-            var routine = GameData.GothicVm.GetSymbolByName(routineName);
-
-            ExchangeRoutine(npc, routine == null ? 0: routine.Index);
-        }
-        
-        public void ExchangeRoutine(NpcInstance npc, int routineIndex)
-        {
-            // Monsters
-            // e.g. Monsters have no routine, and we just need to send StartAiState function.
-            if (routineIndex == 0)
-            {
-                // FIXME - Call StartRoutine somehow again.
-                // We always need to set "self" before executing any Daedalus function.
-                // GameData.GothicVm.GlobalSelf = npcInstance;
-                // go.GetComponent<AiHandler>().StartRoutine(npcInstance.StartAiState);
-                return;
-            }
-
-            npc.GetUserData().Props.Routines.Clear();
-
-            // We always need to set "self" before executing any Daedalus function.
-            GameData.GothicVm.GlobalSelf = npc;
-            GameData.GothicVm.Call(routineIndex);
-
-            npc.GetUserData().Vob.HasRoutine = npc.GetUserData().Props.Routines.NotNullOrEmpty();
-            
-            CalculateCurrentRoutine(npc);
-        }
-
-        /// <summary>
-        /// Based on time of the day, we need to calculate routine.
-        /// </summary>
-        private bool CalculateCurrentRoutine(NpcInstance npc)
-        {
-            var npcProps = npc.GetUserData().Props;
-            var currentTime = GameGlobals.Time.GetCurrentDateTime();
-            var normalizedNow = currentTime.Hour % 24 * 60 + currentTime.Minute;
-            RoutineData newRoutine = null;
-
-            // There are routines where stop is lower than start. (e.g. now:8:00, routine:22:00-9:00), therefore the second check.
-            foreach (var routine in npcProps.Routines)
-            {
-                if (routine.NormalizedStart <= normalizedNow && normalizedNow < routine.NormalizedEnd)
-                {
-                    newRoutine = routine;
-                    break;
-                }
-                // Handling the case where the time range spans across midnight
-
-                if (routine.NormalizedStart > routine.NormalizedEnd)
-                {
-                    if (routine.NormalizedStart <= normalizedNow || normalizedNow < routine.NormalizedEnd)
-                    {
-                        newRoutine = routine;
-                        break;
-                    }
-                }
-            }
-
-            // e.g. Mud has a bug as there is no routine covering 8am. We therefore pick the last one as seen in original G1. (sit)
-            if (newRoutine == null)
-            {
-                newRoutine = npcProps.Routines.Last();
-            }
-
-            var changed = npcProps.RoutineCurrent != newRoutine;
-
-            if (changed)
-            {
-                var routineIndex = npcProps.Routines.IndexOf(newRoutine);
-                var prevRoutineIndex = routineIndex == 0 ? npcProps.Routines.Count - 1 : routineIndex - 1;;
-                npcProps.RoutinePrevious = npcProps.Routines[prevRoutineIndex];
-            }
-            npcProps.RoutineCurrent = newRoutine;
-
-            return changed;
-        }
 
         public bool InitNpc(GameObject go, bool initImmediately = false)
         {
@@ -502,7 +414,7 @@ namespace GUZ.Core.Npc
 
             if (initImmediately)
             {
-                _initializer.InitNpc(loaderComp.Npc, loaderComp.gameObject);
+                _initializerDomain.InitNpc(loaderComp.Npc, loaderComp.gameObject);
             }
             else
             {

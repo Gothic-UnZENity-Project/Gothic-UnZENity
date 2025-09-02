@@ -2,11 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using GUZ.Core.Caches;
 using GUZ.Core.Caches.StaticCache;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
-using GUZ.Core.Services;
 using GUZ.Core.Services.Caches;
 using GUZ.Core.Util;
 using JetBrains.Annotations;
@@ -26,6 +24,8 @@ namespace GUZ.Core.Domain.Meshes.Builder
     public abstract class AbstractMeshBuilder
     {
         [Inject] protected readonly TextureCacheService TextureCacheService;
+        [Inject] private readonly MorphMeshCacheService _morphMeshCacheService;
+        [Inject] private readonly MultiTypeCacheService _multiTypeCacheService;
 
         protected GameObject RootGo;
         protected GameObject ParentGo;
@@ -446,7 +446,7 @@ namespace GUZ.Core.Domain.Meshes.Builder
             var subMeshPerTextureFormat = new Dictionary<TextureCacheService.TextureArrayTypes, int>();
 
             // Elements like NPC armors might have multiple meshes. We therefore need to store each mesh with it's associated index.
-            if (MultiTypeCache.Meshes.TryGetValue($"{MeshName}_{meshIndex}", out Mesh mesh))
+            if (_multiTypeCacheService.Meshes.TryGetValue($"{MeshName}_{meshIndex}", out Mesh mesh))
             {
                 meshFilter.sharedMesh = mesh;
                 return;
@@ -537,7 +537,7 @@ namespace GUZ.Core.Domain.Meshes.Builder
 
             CreateMorphMeshEnd(preparedVertices);
 
-            MultiTypeCache.Meshes.Add($"{MeshName}_{meshIndex}", mesh);
+            _multiTypeCacheService.Meshes.Add($"{MeshName}_{meshIndex}", mesh);
         }
 
         protected void PrepareMeshFilter(MeshFilter meshFilter, ISoftSkinMesh soft, Renderer renderer, int meshIndex)
@@ -682,13 +682,13 @@ namespace GUZ.Core.Domain.Meshes.Builder
             // MorphMeshes will change the vertices. This call optimizes performance.
             mesh.MarkDynamic();
 
-            IsMorphMeshMappingAlreadyCached = MorphMeshCache.IsMappingAlreadyCached(Mmb.Name);
+            IsMorphMeshMappingAlreadyCached = _morphMeshCacheService.IsMappingAlreadyCached(Mmb.Name);
             if (IsMorphMeshMappingAlreadyCached)
             {
                 return;
             }
 
-            MorphMeshCache.AddVertexMapping(Mmb.Name, mrm.PositionCount);
+            _morphMeshCacheService.AddVertexMapping(Mmb.Name, mrm.PositionCount);
         }
 
         private void CreateMorphMeshEntry(int index1, int preparedVerticesCount)
@@ -699,7 +699,7 @@ namespace GUZ.Core.Domain.Meshes.Builder
                 return;
             }
 
-            MorphMeshCache.AddVertexMappingEntry(Mmb.Name, index1, preparedVerticesCount - 1);
+            _morphMeshCacheService.AddVertexMappingEntry(Mmb.Name, index1, preparedVerticesCount - 1);
         }
 
         private void CreateMorphMeshEnd(List<Vector3> preparedVertices)
@@ -709,7 +709,7 @@ namespace GUZ.Core.Domain.Meshes.Builder
                 return;
             }
 
-            MorphMeshCache.SetUnityVerticesForVertexMapping(Mmb.Name, preparedVertices.ToArray());
+            _morphMeshCacheService.SetUnityVerticesForVertexMapping(Mmb.Name, preparedVertices.ToArray());
         }
 
         /// <summary>

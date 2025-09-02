@@ -9,6 +9,7 @@ using GUZ.Core.Globals;
 using GUZ.Core.Npc.Actions;
 using GUZ.Core.Npc.Actions.AnimationActions;
 using GUZ.Core.Services.Context;
+using GUZ.Core.Services.Npc;
 using GUZ.Core.Util;
 using Reflex.Attributes;
 using UnityEngine;
@@ -21,6 +22,7 @@ namespace GUZ.Core.Manager
     public class DialogService
     {
         [Inject] private readonly ContextDialogService _contextDialogService;
+        [Inject] private readonly NpcService _npcService;
 
         /// <summary>
         /// TextToSpeech toggle. So that the hero isn't repeating what we said already.
@@ -41,7 +43,7 @@ namespace GUZ.Core.Manager
                 Logger.LogError("Npc_CheckInfo isn't implemented for important=0.", LogCat.Dialog);
             }
 
-            GameGlobals.Npcs.SetDialogs(npc.GetUserData());
+            _npcService.SetDialogs(npc.GetUserData());
             
             return TryGetImportant(npc.GetUserData(), out _);
         }
@@ -55,7 +57,7 @@ namespace GUZ.Core.Manager
             if (initialDialogStarting)
             {
                 // Optimization: We expect, that AmbientInfos are assigned before Ai_ProcessInfos() is called.
-                GameGlobals.Npcs.SetDialogs(npcContainer);
+                _npcService.SetDialogs(npcContainer);
 
                 _contextDialogService.StartDialogInitially();
             }
@@ -273,7 +275,7 @@ namespace GUZ.Core.Manager
             _contextDialogService.EndDialog();
 
             // Hide subtitles from both dialog partners.
-            GameGlobals.Npcs.GetHeroContainer().PrefabProps.NpcSubtitles.HideSubtitles();
+            _npcService.GetHeroContainer().PrefabProps.NpcSubtitles.HideSubtitles();
             npc.PrefabProps.NpcSubtitles.HideSubtitles();
         }
 

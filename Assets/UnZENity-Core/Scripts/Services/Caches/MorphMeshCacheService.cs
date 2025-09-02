@@ -2,16 +2,15 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using GUZ.Core.Extensions;
-using GUZ.Core.Services;
 using UnityEngine;
 
-namespace GUZ.Core.Caches
+namespace GUZ.Core.Services.Caches
 {
     /// <summary>
     /// We need to store various mappings and vertex data for MorphMeshes to work properly.
     /// We therefore use this separate cache class to ease reading.
     /// </summary>
-    public static class MorphMeshCache
+    public class MorphMeshCacheService
     {
         /// <summary>
         /// Vertex mapping is used for Mesh Morphing as we need to map Unity data back to ZenKit data for updates.
@@ -25,13 +24,13 @@ namespace GUZ.Core.Caches
         ///                       | Array index is former vertexId
         ///                             | Data is new vertexIds from Unity mesh
         /// </summary>
-        private static readonly Dictionary<string, List<List<int>>> _vertexMapping = new();
+        private readonly Dictionary<string, List<List<int>>> _vertexMapping = new();
 
         /// <summary>
         /// We also store the vertices migrated from ZenKit to Unity. They basically differentiate by:
         /// No vertex is reused for different triangles. Every time a vertex is needed, it got duplicated for Unity usage.
         /// </summary>
-        private static readonly Dictionary<string, Vector3[]> _unityVertices = new();
+        private readonly Dictionary<string, Vector3[]> _unityVertices = new();
 
         /// <summary>
         /// Save CPU cycles during runtime by caching the Morph values for every frame.
@@ -40,17 +39,17 @@ namespace GUZ.Core.Caches
         /// [0] - is frame ID of the Morph Animation
         /// {{x,y,z}, {x,y,z}} - are the morph values of every vertex
         /// </summary>
-        private static readonly Dictionary<string, List<Vector3[]>> _animationMorphs = new();
+        private readonly Dictionary<string, List<Vector3[]>> _animationMorphs = new();
 
 
-        public static bool IsMappingAlreadyCached(string morphMeshName)
+        public bool IsMappingAlreadyCached(string morphMeshName)
         {
             var preparedKey = GetPreparedKey(morphMeshName);
 
             return _vertexMapping.ContainsKey(preparedKey);
         }
 
-        public static void AddVertexMapping(string morphMeshName, int arraySize)
+        public void AddVertexMapping(string morphMeshName, int arraySize)
         {
             var preparedKey = GetPreparedKey(morphMeshName);
 
@@ -62,7 +61,7 @@ namespace GUZ.Core.Caches
                 .ForEach(_ => _vertexMapping[preparedKey].Add(new List<int>()));
         }
 
-        public static void AddVertexMappingEntry(string preparedMorphMeshName, int originalVertexIndex,
+        public void AddVertexMappingEntry(string preparedMorphMeshName, int originalVertexIndex,
             int additionalUnityVertexIndex)
         {
             var preparedKey = GetPreparedKey(preparedMorphMeshName);
@@ -70,14 +69,14 @@ namespace GUZ.Core.Caches
             _vertexMapping[preparedKey][originalVertexIndex].Add(additionalUnityVertexIndex);
         }
 
-        public static void SetUnityVerticesForVertexMapping(string preparedMorphMeshName, Vector3[] unityVertices)
+        public void SetUnityVerticesForVertexMapping(string preparedMorphMeshName, Vector3[] unityVertices)
         {
             var preparedKey = GetPreparedKey(preparedMorphMeshName);
 
             _unityVertices.Add(preparedKey, unityVertices);
         }
 
-        public static Vector3[] GetOriginalUnityVertices(string morphMeshName)
+        public Vector3[] GetOriginalUnityVertices(string morphMeshName)
         {
             var preparedKey = GetPreparedKey(morphMeshName);
 
@@ -91,7 +90,7 @@ namespace GUZ.Core.Caches
         /// | Key is frameId
         ///        | Data is the already processed morph data (morph addition to original triangle data)
         /// </summary>
-        public static List<Vector3[]> TryGetMorphData(string mmbName, string animationName)
+        public List<Vector3[]> TryGetMorphData(string mmbName, string animationName)
         {
             var preparedMmbKey = GetPreparedKey(mmbName);
             var preparedAnimKey = GetPreparedKey(animationName);
@@ -138,7 +137,7 @@ namespace GUZ.Core.Caches
             return newData;
         }
 
-        public static string GetPreparedKey(string key)
+        public string GetPreparedKey(string key)
         {
             var lowerKey = key.ToLower();
             var extension = Path.GetExtension(lowerKey);
@@ -151,7 +150,7 @@ namespace GUZ.Core.Caches
             return lowerKey.Replace(extension, "");
         }
 
-        public static void Dispose()
+        public void Dispose()
         {
             _vertexMapping.Clear();
             _unityVertices.Clear();

@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using GUZ.Core.Adapters.Properties;
 using GUZ.Core.Adapters.UI.LoadingBars;
-using GUZ.Core.Caches;
 using GUZ.Core.Data.Adapter.Vobs;
 using GUZ.Core.Data.Container;
 using GUZ.Core.Extensions;
@@ -10,7 +9,10 @@ using GUZ.Core.Globals;
 using GUZ.Core.Manager;
 using GUZ.Core.Models.Vm;
 using GUZ.Core.Models.Vob.WayNet;
+using GUZ.Core.Npc;
 using GUZ.Core.Services;
+using GUZ.Core.Services.Caches;
+using GUZ.Core.Services.Npc;
 using GUZ.Core.Util;
 using JetBrains.Annotations;
 using MyBox;
@@ -23,14 +25,16 @@ using Logger = GUZ.Core.Util.Logger;
 using Object = UnityEngine.Object;
 using WayPoint = GUZ.Core.Models.Vob.WayNet.WayPoint;
 
-namespace GUZ.Core.Npc
+namespace GUZ.Core.Domain.Npc
 {
     /// <summary>
     /// Wrapper for Initialization topics from NpcManager
     /// </summary>
-    public class NpcInitializer
+    public class NpcInitializerDomain
     {
         [Inject] private readonly MeshService _meshService;
+        [Inject] private readonly MultiTypeCacheService _multiTypeCacheService;
+        [Inject] private readonly NpcRoutineService _npcRoutineService;
 
 
         public GameObject RootGo;
@@ -111,7 +115,7 @@ namespace GUZ.Core.Npc
             npcInstance.UserData = userDataObject;
 
             // IMPORTANT!: NpcInstance.UserData stores a weak pointer. i.e. if we do not store the local variable it would get removed.
-            MultiTypeCache.NpcCache.Add(userDataObject);
+            _multiTypeCacheService.NpcCache.Add(userDataObject);
 
             return userDataObject;
         }
@@ -246,7 +250,7 @@ namespace GUZ.Core.Npc
             // As we have our back reference between NpcInstance and NpcData, we can now initialize the object on ZenKit side.
             // Lookups like Npc_SetTalentValue() will work now as NpcInstance.UserData() points to our object which stores the information.
             Vm.InitInstance(npc.Instance);
-            ((NpcAdapter)npc.Vob).CopyFromInstanceData(npc.Instance);
+            npc.Vob.CopyFromInstanceData(npc.Instance);
 
             // NpcInstance is the initialized Daedalus Instance which contains initial data.
             // Vob.Npc contains runtime information. If no runtime information is set (new game started / world entered for the first time), we use the initial data.
@@ -255,8 +259,7 @@ namespace GUZ.Core.Npc
                 npc.Vob.CurrentRoutine = GameData.GothicVm.GetSymbolByIndex(npc.Instance.DailyRoutine)!.Name;
             }
 
-            
-            GameGlobals.Npcs.ExchangeRoutine(npc.Instance, npc.Vob.CurrentRoutine);
+            _npcRoutineService.ExchangeRoutine(npc.Instance, npc.Vob.CurrentRoutine);
         }
 
         public void InitNpc(NpcInstance npcInstance, GameObject lazyLoadGo)

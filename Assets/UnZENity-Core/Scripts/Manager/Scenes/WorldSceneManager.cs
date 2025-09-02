@@ -10,6 +10,7 @@ using GUZ.Core.Manager.Vobs;
 using GUZ.Core.Models.Vob.WayNet;
 using GUZ.Core.Services;
 using GUZ.Core.Services.Config;
+using GUZ.Core.Services.Npc;
 using GUZ.Core.Util;
 using MyBox;
 using Reflex.Attributes;
@@ -25,6 +26,7 @@ namespace GUZ.Core.Manager.Scenes
         [Inject] private readonly VobManager _vobManager;
         [Inject] private readonly WayNetService _wayNetService;
         [Inject] private readonly MeshService _meshService;
+        [Inject] private readonly NpcService _npcService;
 
 
         public void Init()
@@ -100,7 +102,7 @@ namespace GUZ.Core.Manager.Scenes
                 if (_configService.Dev.EnableVOBs)
                 {
                     // If we load a SaveGame, then nearby NPCs are stored as VOB and will be created as GOs inside NpcManager. We need to prepare it before.
-                    GameGlobals.Npcs.SetRootGo(npcRoot);
+                    _npcService.SetRootGo(npcRoot);
 
                     await _vobManager.CreateWorldVobsAsync(_configService.Dev, GameGlobals.Loading, GameGlobals.SaveGame.CurrentWorldData.Vobs, vobRoot)
                         .AwaitAndLog();
@@ -109,11 +111,11 @@ namespace GUZ.Core.Manager.Scenes
 
                 // 5. NPCs
                 // If the world is visited for the first time, then we need to load Npcs via Wld_InsertNpc()
-                GameGlobals.Npcs.CacheHero();
+                _npcService.CacheHero();
                 if (_configService.Dev.EnableNpcs)
                 {
                     // await NpcCreator.CreateAsync(config.Dev, GameGlobals.Loading).AwaitAndLog();
-                    await GameGlobals.Npcs.CreateWorldNpcs(GameGlobals.Loading).AwaitAndLog();
+                    await _npcService.CreateWorldNpcs(GameGlobals.Loading).AwaitAndLog();
                     watch.LogAndRestart("NPCs created");
                 }
 

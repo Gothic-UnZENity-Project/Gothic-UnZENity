@@ -9,9 +9,11 @@ using GUZ.Core.Manager.Vobs;
 using GUZ.Core.Models.Config;
 using GUZ.Core.Npc;
 using GUZ.Core.Services;
+using GUZ.Core.Services.Caches;
 using GUZ.Core.Services.Config;
 using GUZ.Core.Services.Context;
 using GUZ.Core.Services.Culling;
+using GUZ.Core.Services.Npc;
 using GUZ.Core.Util;
 using GUZ.Manager;
 using MyBox;
@@ -57,8 +59,7 @@ namespace GUZ.Core
         public StationaryLightsManager Lights { get; private set; }
 
         public VobManager Vobs { get; private set; }
-        public NpcManager Npcs { get; private set; }
-        public NpcAiManager NpcAi { get; private set; }
+        public NpcService Npcs { get; private set; }
         public VobMeshCullingService VobMeshCulling { get; private set; }
         public NpcMeshCullingService NpcMeshCulling { get; private set; }
         public SpeechToTextService SpeechToText { get; private set; }
@@ -84,7 +85,11 @@ namespace GUZ.Core
 
         [Inject] private readonly VobManager _vobManager;
         [Inject] private readonly ConfigService _configService;
-        [Inject] private readonly NpcManager _npcService;
+        [Inject] private readonly NpcService _npcService;
+        [Inject] private readonly NpcAiService _npcAiService;
+
+        [Inject] private readonly MultiTypeCacheService _multiTypeCacheService;
+
 
         protected override void Awake()
         {
@@ -110,7 +115,7 @@ namespace GUZ.Core
 
             GameGlobals.Instance = this;
             
-            MultiTypeCache.Init();
+            _multiTypeCacheService.Init();
 
             Localization = new LocalizationManager();
             SaveGame = new SaveGameManager();
@@ -120,7 +125,6 @@ namespace GUZ.Core
             StaticCache = new StaticCacheManager();
             Vobs = _vobManager;
             Npcs = _npcService;
-            NpcAi = new NpcAiManager();
             VobMeshCulling = _vobMeshCullingService;
             NpcMeshCulling = _npcMeshCullingService;
             Lights = new StationaryLightsManager();

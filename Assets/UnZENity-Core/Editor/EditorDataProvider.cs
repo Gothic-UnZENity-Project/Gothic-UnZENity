@@ -4,6 +4,7 @@ using GUZ.Core.Manager.Vobs;
 using GUZ.Core.Npc;
 using GUZ.Core.Services;
 using GUZ.Core.Services.Culling;
+using GUZ.Core.Services.Npc;
 using GUZ.Manager;
 
 namespace GUZ.Core.Editor
@@ -28,8 +29,8 @@ namespace GUZ.Core.Editor
         public StationaryLightsManager Lights { get; }
         public StoryManager Story { get; }
         public VobManager Vobs { get; }
-        public NpcManager Npcs { get; }
-        public NpcAiManager NpcAi { get; }
+        public NpcService Npcs { get; }
+        public NpcAiService NpcAi { get; }
         public AnimationService Animations { get; }
         public VobMeshCullingService VobMeshCulling { get; }
         public NpcMeshCullingService NpcMeshCulling { get; }

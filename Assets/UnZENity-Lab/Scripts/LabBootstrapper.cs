@@ -14,6 +14,7 @@ using GUZ.Core.Services.Caches;
 using GUZ.Core.Services.Config;
 using GUZ.Core.Services.Context;
 using GUZ.Core.Services.Culling;
+using GUZ.Core.Services.Npc;
 using GUZ.Core.Util;
 using GUZ.Core.Vm;
 using GUZ.Lab.Handler;
@@ -49,7 +50,7 @@ namespace GUZ.Lab
         private FontManager _fontManager;
         private StoryManager _story;
         private VobManager _vobManager;
-        private NpcManager _npcManager;
+        private NpcService _npcService;
         private MarvinManager _marvinManager;
 
         public LocalizationManager Localization => _localizationManager;
@@ -66,8 +67,8 @@ namespace GUZ.Lab
         public FontManager Font => _fontManager;
         public StationaryLightsManager Lights => null;
         public VobManager Vobs => _vobManager;
-        public NpcManager Npcs => _npcManager;
-        public NpcAiManager NpcAi => null;
+        public NpcService Npcs => _npcService;
+        public NpcAiService NpcAi => null;
         public VobMeshCullingService VobMeshCulling => null;
         public NpcMeshCullingService NpcMeshCulling => null;
         public StoryManager Story => _story;
@@ -82,6 +83,8 @@ namespace GUZ.Lab
         [Inject] private readonly ContextGameVersionService _contextGameVersionService;
         [Inject] private readonly MeshService _meshService;
         [Inject] private readonly TextureCacheService _textureCacheService;
+        [Inject] private readonly MorphMeshCacheService _morphMeshCacheService;
+        [Inject] private readonly MultiTypeCacheService _multiTypeCacheService;
 
 
         private void Awake()
@@ -127,7 +130,7 @@ namespace GUZ.Lab
             _fontManager = GetComponent<FontManager>();
             _npcRoutineManager = new RoutineManager(_configService.Dev);
             _videoManager = new VideoManager();
-            _npcManager = new NpcManager();
+            _npcService = new NpcService();
             _vobManager = new VobManager();
             _marvinManager = new MarvinManager();
 
@@ -143,7 +146,7 @@ namespace GUZ.Lab
             _npcRoutineManager.Init();
             _staticCacheManager.Init(_configService.Dev);
             _textureManager.Init();
-            _npcManager.Init();
+            _npcService.Init();
             _vobManager.Init();
 
             _videoManager.InitVideos();
@@ -370,8 +373,8 @@ namespace GUZ.Lab
             GameData.Dispose();
             VmInstanceManager.Dispose();
             _textureCacheService.Dispose();
-            MultiTypeCache.Dispose();
-            MorphMeshCache.Dispose();
+            _multiTypeCacheService.Dispose();
+            _morphMeshCacheService.Dispose();
         }
     }
 }

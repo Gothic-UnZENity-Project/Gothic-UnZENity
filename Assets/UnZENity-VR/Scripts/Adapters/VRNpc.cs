@@ -6,6 +6,7 @@ using GUZ.Core.Globals;
 using GUZ.Core.Manager;
 using GUZ.Core.Models.Vm;
 using GUZ.Core.Npc;
+using GUZ.Core.Services.Npc;
 using GUZ.Core.Vm;
 using HurricaneVR.Framework.Core;
 using HurricaneVR.Framework.Core.Grabbers;
@@ -18,6 +19,7 @@ namespace GUZ.VR.Adapters
     public class VRNpc : MonoBehaviour
     {
         [Inject] private readonly DialogService _dialogService;
+        [Inject] private readonly NpcAiService _npcAiService;
 
         private NpcContainer _npcData;
 
@@ -34,7 +36,7 @@ namespace GUZ.VR.Adapters
             }
             else
             {
-                GameGlobals.NpcAi.ExecutePerception(VmGothicEnums.PerceptionType.AssessTalk, _npcData.Props, _npcData.Instance, null, (NpcInstance)GameData.GothicVm.GlobalHero);
+                _npcAiService.ExecutePerception(VmGothicEnums.PerceptionType.AssessTalk, _npcData.Props, _npcData.Instance, null, (NpcInstance)GameData.GothicVm.GlobalHero);
             }
         }
     }

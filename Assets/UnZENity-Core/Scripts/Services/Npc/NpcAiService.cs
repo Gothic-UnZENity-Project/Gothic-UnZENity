@@ -1,21 +1,25 @@
 using System.Linq;
 using GUZ.Core.Adapters.Properties;
-using GUZ.Core.Caches;
 using GUZ.Core.Data.Container;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
-using GUZ.Core.Manager;
 using GUZ.Core.Models.Vm;
 using GUZ.Core.Npc.Actions;
 using GUZ.Core.Npc.Actions.AnimationActions;
+using GUZ.Core.Services.Caches;
+using Reflex.Attributes;
 using UnityEngine;
 using ZenKit.Daedalus;
 using Vector3 = UnityEngine.Vector3;
 
-namespace GUZ.Core.Npc
+namespace GUZ.Core.Services.Npc
 {
-    public class NpcAiManager
+    public class NpcAiService
     {
+        [Inject] private readonly NpcHelperService _npcHelperService;
+        [Inject] private readonly MultiTypeCacheService _multiTypeCacheService;
+
+
         public void ExtNpcPerceptionEnable(NpcInstance npc, VmGothicEnums.PerceptionType perception, int function)
         {
             npc.GetUserData().Props.Perceptions[perception] = function;
@@ -389,7 +393,7 @@ namespace GUZ.Core.Npc
                 return VmGothicEnums.Attitude.Neutral;
             }
 
-            return NpcHelper.GetPersonAttitude(npc1, npc2);
+            return _npcHelperService.GetPersonAttitude(npc1, npc2);
         }
 
         /// <summary>
@@ -422,7 +426,7 @@ namespace GUZ.Core.Npc
 
         public void Npc_SendPassivePerc(NpcInstance npc,VmGothicEnums.PerceptionType perc, NpcInstance victim, NpcInstance other)
         {
-            GameGlobals.NpcAi.ExecutePerception(perc, npc.GetUserData().Props, npc, victim, other);
+            ExecutePerception(perc, npc.GetUserData().Props, npc, victim, other);
         }
 
         public void ExtSetTrueGuild(NpcInstance npc, int guild)
@@ -448,7 +452,7 @@ namespace GUZ.Core.Npc
             NpcContainer closestEnemy = null;
             var closestSqrDist = float.MaxValue;
 
-            foreach (var candidate in MultiTypeCache.NpcCache)
+            foreach (var candidate in _multiTypeCacheService.NpcCache)
             {
                 // Fast-fail checks in order of cheapest first
                 if (candidate.Props == null || candidate.Go == null)
@@ -461,7 +465,7 @@ namespace GUZ.Core.Npc
                     continue;
                 }
 
-                if (!NpcHelper.CanSenseNpc(self, candidate.Instance, true))
+                if (!_npcHelperService.CanSenseNpc(self, candidate.Instance, true))
                 {
                     continue;
                 }

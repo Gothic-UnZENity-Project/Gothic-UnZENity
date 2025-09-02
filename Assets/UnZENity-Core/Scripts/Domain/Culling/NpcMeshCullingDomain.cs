@@ -4,7 +4,9 @@ using GUZ.Core.Data.Container;
 using GUZ.Core.Extensions;
 using GUZ.Core.Manager;
 using GUZ.Core.Npc;
+using GUZ.Core.Services.Npc;
 using GUZ.Core.Util;
+using Reflex.Attributes;
 using UnityEngine;
 using Logger = GUZ.Core.Util.Logger;
 
@@ -12,6 +14,9 @@ namespace GUZ.Core.Domain.Culling
 {
     public class NpcMeshCullingDomain : AbstractCullingDomain
     {
+        [Inject] private readonly NpcService _npcService;
+
+
         // Sphere values to track and update when visible NPCs move.
         private BoundingSphere[] _spheres;
         private readonly Dictionary<int, Transform> _visibleNpcs = new();
@@ -92,7 +97,7 @@ namespace GUZ.Core.Domain.Culling
             // Alter position tracking of NPC
             if (isInVisibleRange)
             {
-                var initializedNow = GameGlobals.Npcs.InitNpc(go);
+                var initializedNow = _npcService.InitNpc(go);
                 _visibleNpcs.TryAdd(evt.index, go.transform);
 
                 // If the NPC !wasOutOfDistance (==wasInDistanceAlready), then we spawned our VRPlayer next to the NPC
@@ -100,7 +105,7 @@ namespace GUZ.Core.Domain.Culling
                 // (Which would respawn NPC at a waypoint, which is wrong.)
                 if (wasOutOfDistance && !initializedNow)
                 {
-                    GameGlobals.Npcs.ReEnableNpc(npcData);
+                    _npcService.ReEnableNpc(npcData);
                 }
             }
             // When an NPC gets invisible, we need to check for their next respawn from their initially spawned position.

@@ -3,33 +3,38 @@ using System.Collections.Generic;
 using System.Linq;
 using GUZ.Core.Adapters.Properties;
 using GUZ.Core.Adapters.Properties.Vobs;
-using GUZ.Core.Caches;
 using GUZ.Core.Data.Container;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
+using GUZ.Core.Manager;
 using GUZ.Core.Models.Vm;
+using GUZ.Core.Services.Caches;
 using GUZ.Core.Util;
 using JetBrains.Annotations;
+using Reflex.Attributes;
 using UnityEngine;
 using ZenKit.Daedalus;
 using Logger = GUZ.Core.Util.Logger;
 
-namespace GUZ.Core.Manager
+namespace GUZ.Core.Services.Npc
 {
-    public static class NpcHelper
+    public class NpcHelperService
     {
         /// <summary>
         /// Ranges are in meter.
         ///
         /// FIXME - We should use PERC_ASSESSTALK range to leverage HVR's Grabbable hover and remote grab distance!
         /// </summary>
-        public static readonly Dictionary<VmGothicEnums.PerceptionType, int> PerceptionRanges = new ();
+        public readonly Dictionary<VmGothicEnums.PerceptionType, int> PerceptionRanges = new ();
+
+
+        [Inject] private readonly MultiTypeCacheService _multiTypeCacheService;
 
 
         private const float _fpLookupDistance = 7f; // meter
 
 
-        public static void Init()
+        public void Init()
         {
             // Perceptions
             var percInitSymbol = GameData.GothicVm.GetSymbolByName("InitPerceptions");
@@ -43,12 +48,12 @@ namespace GUZ.Core.Manager
             }
         }
 
-        public static void ExtPErcSetRange(int perceptionId, int rangeInCm)
+        public void ExtPErcSetRange(int perceptionId, int rangeInCm)
         {
             PerceptionRanges[(VmGothicEnums.PerceptionType)perceptionId] = rangeInCm / 100;
         }
 
-        public static bool ExtIsMobAvailable(NpcInstance npcInstance, string vobName)
+        public bool ExtIsMobAvailable(NpcInstance npcInstance, string vobName)
         {
             var npc = GetNpc(npcInstance);
             var container = GameGlobals.Vobs.GetFreeInteractableWithin10M(npc.transform.position, vobName);
@@ -56,7 +61,7 @@ namespace GUZ.Core.Manager
             return container != null;
         }
 
-        public static int ExtWldGetMobState(NpcInstance npcInstance, string scheme)
+        public int ExtWldGetMobState(NpcInstance npcInstance, string scheme)
         {
             var npcGo = GetNpc(npcInstance);
 
@@ -86,7 +91,7 @@ namespace GUZ.Core.Manager
             return Math.Max(0, props.State);
         }
 
-        public static ItemInstance ExtNpcGetEquippedMeleeWeapon(NpcInstance npc)
+        public ItemInstance ExtNpcGetEquippedMeleeWeapon(NpcInstance npc)
         {
             var meleeWeapon = GetProperties(npc).EquippedItems
                 .FirstOrDefault(i => i.MainFlag == (int)VmGothicEnums.ItemFlags.ItemKatNf);
@@ -94,12 +99,12 @@ namespace GUZ.Core.Manager
             return meleeWeapon;
         }
 
-        public static bool ExtNpcHasEquippedMeleeWeapon(NpcInstance npc)
+        public bool ExtNpcHasEquippedMeleeWeapon(NpcInstance npc)
         {
             return ExtNpcGetEquippedMeleeWeapon(npc) != null;
         }
 
-        public static ItemInstance ExtNpcGetEquippedRangedWeapon(NpcInstance npc)
+        public ItemInstance ExtNpcGetEquippedRangedWeapon(NpcInstance npc)
         {
             var rangedWeapon = GetProperties(npc).EquippedItems
                 .FirstOrDefault(i => i.MainFlag == (int)VmGothicEnums.ItemFlags.ItemKatFf);
@@ -107,12 +112,12 @@ namespace GUZ.Core.Manager
             return rangedWeapon;
         }
 
-        public static bool ExtNpcHasEquippedRangedWeapon(NpcInstance npc)
+        public bool ExtNpcHasEquippedRangedWeapon(NpcInstance npc)
         {
             return ExtNpcGetEquippedRangedWeapon(npc) != null;
         }
 
-        public static bool ExtIsNpcOnFp(NpcInstance npc, string vobNamePart)
+        public bool ExtIsNpcOnFp(NpcInstance npc, string vobNamePart)
         {
             var freePoint = GetProperties(npc).CurrentFreePoint;
 
@@ -130,7 +135,7 @@ namespace GUZ.Core.Manager
         /// Hint:
         /// As WldDetectNpc and WldDetectNpc seem to be the same logic except one parameter, we implement both in this function.
         /// </summary>
-        public static bool ExtWldDetectNpcEx(NpcInstance npcInstance, int specificNpcIndex, int aiState, int guild,
+        public bool ExtWldDetectNpcEx(NpcInstance npcInstance, int specificNpcIndex, int aiState, int guild,
             bool detectPlayer)
         {
             var npc = GetProperties(npcInstance);
@@ -138,7 +143,7 @@ namespace GUZ.Core.Manager
             var npcVob = npcInstance.GetUserData().Vob;
 
             // FIXME - add range check based on perceiveAll's range (npc.sense_range)
-            var foundNpc = MultiTypeCache.NpcCache
+            var foundNpc = _multiTypeCacheService.NpcCache
                 .Where(i => i.Props != null) // ignore empty (safe check)
                 .Where(i => i.Go != null) // ignore empty (safe check)
                 .Where(i => i.Instance.Index != npcInstance.Index) // ignore self
@@ -168,7 +173,7 @@ namespace GUZ.Core.Manager
             return foundNpc.Instance != null;
         }
 
-        public static int ExtNpcGetDistToWp(NpcInstance npc, string waypointName)
+        public int ExtNpcGetDistToWp(NpcInstance npc, string waypointName)
         {
             var npcGo = GetNpc(npc);
             var npcPos = npcGo.transform.position;
@@ -184,7 +189,7 @@ namespace GUZ.Core.Manager
             return (int)(Vector3.Distance(npcPos, waypoint.Position) * 100);
         }
 
-        public static int ExtNpcGetTalentSkill(NpcInstance npc, int skillId)
+        public int ExtNpcGetTalentSkill(NpcInstance npc, int skillId)
         {
             var props = GetProperties(npc);
 
@@ -192,12 +197,12 @@ namespace GUZ.Core.Manager
             return 0;
         }
 
-        public static int ExtNpcGetTalentValue(NpcInstance npc, int skillId)
+        public int ExtNpcGetTalentValue(NpcInstance npc, int skillId)
         {
             return GetContainer(npc).Vob.GetTalent(skillId).Value;
         }
 
-        public static VmGothicEnums.Attitude GetPersonAttitude(NpcContainer self, NpcContainer other)
+        public VmGothicEnums.Attitude GetPersonAttitude(NpcContainer self, NpcContainer other)
         {
             if (!self.PrefabProps.IsHero() && !other.PrefabProps.IsHero())
                 return GetGuildAttitude(self.Vob.GuildTrue, other.Vob.Guild);
@@ -210,29 +215,29 @@ namespace GUZ.Core.Manager
                 return (VmGothicEnums.Attitude)npc.Vob.Attitude;
         }
 
-        public static VmGothicEnums.Attitude GetGuildAttitude(int selfGuild, int otherGuild)
+        public VmGothicEnums.Attitude GetGuildAttitude(int selfGuild, int otherGuild)
         {
             return (VmGothicEnums.Attitude)GameData.GuildAttitudes[selfGuild * GameData.GuildCount + otherGuild];
         }
 
         [CanBeNull]
-        private static GameObject GetNpc([CanBeNull] NpcInstance npc)
+        private GameObject GetNpc([CanBeNull] NpcInstance npc)
         {
             return npc.GetUserData().Go;
         }
 
-        private static NpcContainer GetContainer(NpcInstance npc)
+        private NpcContainer GetContainer(NpcInstance npc)
         {
             return npc.GetUserData();
         }
 
-        private static NpcProperties GetProperties([CanBeNull] NpcInstance npc)
+        private NpcProperties GetProperties([CanBeNull] NpcInstance npc)
         {
             return npc?.GetUserData().Props;
         }
 
         // FIXME - CanSense is not separating between smell, hear, and see as of now. Please add functionality.
-        public static bool CanSenseNpc(NpcInstance self, NpcInstance other, bool freeLOS)
+        public bool CanSenseNpc(NpcInstance self, NpcInstance other, bool freeLOS)
         {
             var senseRange = (self.SensesRange / 100); // daedalus values are in cm, we need them in m
             var range = Vector3.Distance(other.GetUserData().Go.transform.position,

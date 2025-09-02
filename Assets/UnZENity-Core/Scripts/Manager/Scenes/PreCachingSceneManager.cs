@@ -7,6 +7,7 @@ using GUZ.Core.Caches.StaticCache;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Services;
+using GUZ.Core.Services.Caches;
 using GUZ.Core.Services.Config;
 using GUZ.Core.Util;
 using Reflex.Attributes;
@@ -19,6 +20,7 @@ namespace GUZ.Core.Manager.Scenes
     public class PreCachingSceneManager : MonoBehaviour, ISceneManager
     {
         [Inject] private readonly ConfigService _configService;
+        [Inject] private readonly MultiTypeCacheService _multiTypeCacheService;
 
 
         [SerializeField]
@@ -158,7 +160,7 @@ namespace GUZ.Core.Manager.Scenes
                 overallWatch.Log("Overall PreCaching done.");
 
                 // Cleanup
-                MultiTypeCache.Dispose();
+                _multiTypeCacheService.Dispose();
 
                 // Every world of the game is cached successfully. Now let's move on!
                 GameManager.I.LoadScene(Constants.SceneLogo, Constants.ScenePreCaching);

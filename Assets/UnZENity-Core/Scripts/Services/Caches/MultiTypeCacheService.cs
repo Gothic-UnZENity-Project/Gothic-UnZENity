@@ -4,13 +4,13 @@ using GUZ.Core.Extensions;
 using TMPro;
 using UnityEngine;
 
-namespace GUZ.Core.Caches
+namespace GUZ.Core.Services.Caches
 {
     /// <summary>
     /// Contains lookup caches for GameObjects, AudioClips and other Unity objects for faster use.
     /// Caching of ZenKit data is done inside ResourceLoader.cs
     /// </summary>
-    public static class MultiTypeCache
+    public class MultiTypeCacheService
     {
         /// <summary>
         /// Hints:
@@ -19,26 +19,26 @@ namespace GUZ.Core.Caches
         ///     * We need to ensure that any time an NpcInstance.UserData contains an NpcData object, that it is stored here.
         ///       Otherwise, UserData's WeakReference pointer gets cleared.
         /// </summary>
-        public static readonly List<NpcContainer> NpcCache = new();
+        public readonly List<NpcContainer> NpcCache = new();
         
-        public static readonly List<VobContainer> VobCache = new();
+        public readonly List<VobContainer> VobCache = new();
         
         
         /// <summary>
         /// This dictionary caches the sprite assets for fonts.
         /// </summary>
-        public static Dictionary<string, TMP_SpriteAsset> FontCache = new();
+        public Dictionary<string, TMP_SpriteAsset> FontCache = new();
         
         /// <summary>
         /// Caching all types of Meshes (World?, Vob, Npc) to optimize memory usage of meshes if duplicated
         /// (e.g. multiple VOBs sharing the same mesh)
         /// </summary>
-        public static Dictionary<string, Mesh> Meshes = new();
+        public Dictionary<string, Mesh> Meshes = new();
         
-        public static Dictionary<string, AudioClip> AudioClips = new();
+        public Dictionary<string, AudioClip> AudioClips = new();
 
         
-        public static void Init()
+        public void Init()
         {
             GlobalEventDispatcher.LoadingSceneLoaded.AddListener(delegate
             {
@@ -47,7 +47,7 @@ namespace GUZ.Core.Caches
             });
         }
 
-        public static void Dispose()
+        public void Dispose()
         {
             FontCache.Clear();
             Meshes.Clear();
