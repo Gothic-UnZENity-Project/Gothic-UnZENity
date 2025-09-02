@@ -8,6 +8,7 @@ using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
 using GUZ.Core.Services;
+using GUZ.Core.Services.Caches;
 using GUZ.Core.Util;
 using GUZ.Core.Vm;
 using MyBox;
@@ -208,23 +209,23 @@ namespace GUZ.Core.Caches.StaticCache
                 Logger.LogError("Only DXT1 and RGBA32 textures are supported for texture arrays as of now!", LogCat.PreCaching);
             }
 
-            var textureArrayType = TextureCache.TextureArrayTypes.Unknown;
+            var textureArrayType = TextureCacheService.TextureArrayTypes.Unknown;
 
             // Water is separate as we use a different shader.
             // TODO - Do we need to check for different TextureFormats as well?
             if (group == MaterialGroup.Water)
             {
-                textureArrayType = TextureCache.TextureArrayTypes.Water;
+                textureArrayType = TextureCacheService.TextureArrayTypes.Water;
             }
             // DXT1 can be opaque
             else if (unityTextureFormat == TextureFormat.DXT1)
             {
-                textureArrayType = TextureCache.TextureArrayTypes.Opaque;
+                textureArrayType = TextureCacheService.TextureArrayTypes.Opaque;
             }
             // RGBA32 is transparent
             else if (unityTextureFormat == TextureFormat.RGBA32)
             {
-                textureArrayType = TextureCache.TextureArrayTypes.Transparent;
+                textureArrayType = TextureCacheService.TextureArrayTypes.Transparent;
             }
             else
             {

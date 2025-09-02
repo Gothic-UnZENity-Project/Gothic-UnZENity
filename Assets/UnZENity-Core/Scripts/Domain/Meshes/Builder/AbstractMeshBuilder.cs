@@ -7,9 +7,11 @@ using GUZ.Core.Caches.StaticCache;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Services;
+using GUZ.Core.Services.Caches;
 using GUZ.Core.Util;
 using JetBrains.Annotations;
 using MyBox;
+using Reflex.Attributes;
 using UnityEngine;
 using UnityEngine.Rendering;
 using ZenKit;
@@ -23,6 +25,8 @@ namespace GUZ.Core.Domain.Meshes.Builder
 {
     public abstract class AbstractMeshBuilder
     {
+        [Inject] protected readonly TextureCacheService TextureCacheService;
+
         protected GameObject RootGo;
         protected GameObject ParentGo;
         protected bool HasMeshCollider = true;
@@ -39,6 +43,8 @@ namespace GUZ.Core.Domain.Meshes.Builder
         protected string MeshName;
 
         protected bool IsMorphMeshMappingAlreadyCached;
+
+
 
         public abstract GameObject Build();
 
@@ -384,16 +390,16 @@ namespace GUZ.Core.Domain.Meshes.Builder
                 }
 
                 Texture texture;
-                TextureCache.TextureArrayTypes textureType;
+                TextureCacheService.TextureArrayTypes textureType;
 
                 if (UseTextureArray)
                 {
-                    TextureCache.GetTextureArrayEntry(materialData.Texture, out texture, out textureType);
+                    TextureCacheService.GetTextureArrayEntry(materialData.Texture, out texture, out textureType);
                 }
                 else
                 {
                     texture = GetTexture(materialData.Texture);
-                    textureType = TextureCache.TextureArrayTypes.Unknown;
+                    textureType = TextureCacheService.TextureArrayTypes.Unknown;
                 }
 
                 // TODO - G1: Skeleton warrior's second texture doesn't exist. No alternatives needed/given.
@@ -437,7 +443,7 @@ namespace GUZ.Core.Domain.Meshes.Builder
             // ISoftSkinMeshes will be prepared before reaching this method. This is due to NPC armors having dedicated offsets per item.
             calculatedVertices ??= mrmData.Positions;
 
-            var subMeshPerTextureFormat = new Dictionary<TextureCache.TextureArrayTypes, int>();
+            var subMeshPerTextureFormat = new Dictionary<TextureCacheService.TextureArrayTypes, int>();
 
             // Elements like NPC armors might have multiple meshes. We therefore need to store each mesh with it's associated index.
             if (MultiTypeCache.Meshes.TryGetValue($"{MeshName}_{meshIndex}", out Mesh mesh))
@@ -471,10 +477,10 @@ namespace GUZ.Core.Domain.Meshes.Builder
                 var textureArrayIndex = 0;
                 var maxMipLevel = 0;
                 var textureScale = Vector2.one;
-                var textureArrayType = TextureCache.TextureArrayTypes.Opaque;
+                var textureArrayType = TextureCacheService.TextureArrayTypes.Opaque;
                 if (UseTextureArray)
                 {
-                    TextureCache.GetTextureArrayIndex(subMesh.Material, out textureArrayType, out textureArrayIndex, out textureScale, out maxMipLevel, out _);
+                    TextureCacheService.GetTextureArrayIndex(subMesh.Material, out textureArrayType, out textureArrayIndex, out textureScale, out maxMipLevel, out _);
                     if (!subMeshPerTextureFormat.ContainsKey(textureArrayType))
                     {
                         subMeshPerTextureFormat.Add(textureArrayType, preparedTriangles.Count);
@@ -717,20 +723,20 @@ namespace GUZ.Core.Domain.Meshes.Builder
 
         protected virtual Texture2D GetTexture(string name)
         {
-            return TextureCache.TryGetTexture(name);
+            return TextureCacheService.TryGetTexture(name);
         }
 
-        private Material GetDefaultMaterial(TextureCache.TextureArrayTypes textureType)
+        private Material GetDefaultMaterial(TextureCacheService.TextureArrayTypes textureType)
         {
             if (UseTextureArray)
             {
                 Shader shader;
                 switch (textureType)
                 {
-                    case TextureCache.TextureArrayTypes.Opaque:
+                    case TextureCacheService.TextureArrayTypes.Opaque:
                         shader = Constants.ShaderWorldLit;
                         break;
-                    case TextureCache.TextureArrayTypes.Transparent:
+                    case TextureCacheService.TextureArrayTypes.Transparent:
                         // Cutout for e.g. bushes.
                         shader = Constants.ShaderLitAlphaToCoverage;
                         break;

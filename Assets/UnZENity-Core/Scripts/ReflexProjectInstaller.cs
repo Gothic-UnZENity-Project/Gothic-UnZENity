@@ -4,6 +4,7 @@ using GUZ.Core.Manager;
 using GUZ.Core.Manager.Vobs;
 using GUZ.Core.Npc;
 using GUZ.Core.Services;
+using GUZ.Core.Services.Caches;
 using GUZ.Core.Services.Config;
 using GUZ.Core.Services.Context;
 using GUZ.Core.Services.Culling;
@@ -40,6 +41,9 @@ namespace GUZ.Core
             containerBuilder.AddSingleton(typeof(MeshService));
             containerBuilder.AddSingleton(typeof(AnimationService));
             containerBuilder.AddSingleton(typeof(DialogService));
+
+            // Caches
+            containerBuilder.AddSingleton(typeof(TextureCacheService));
 
             // World
             containerBuilder.AddSingleton(typeof(WayNetService));

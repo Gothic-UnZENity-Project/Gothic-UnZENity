@@ -10,6 +10,7 @@ using GUZ.Core.Manager.Vobs;
 using GUZ.Core.Models.Config;
 using GUZ.Core.Npc;
 using GUZ.Core.Services;
+using GUZ.Core.Services.Caches;
 using GUZ.Core.Services.Config;
 using GUZ.Core.Services.Context;
 using GUZ.Core.Services.Culling;
@@ -80,6 +81,7 @@ namespace GUZ.Lab
         [Inject] private readonly ContextInteractionService _contextInteractionService;
         [Inject] private readonly ContextGameVersionService _contextGameVersionService;
         [Inject] private readonly MeshService _meshService;
+        [Inject] private readonly TextureCacheService _textureCacheService;
 
 
         private void Awake()
@@ -367,7 +369,7 @@ namespace GUZ.Lab
         {
             GameData.Dispose();
             VmInstanceManager.Dispose();
-            TextureCache.Dispose();
+            _textureCacheService.Dispose();
             MultiTypeCache.Dispose();
             MorphMeshCache.Dispose();
         }

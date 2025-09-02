@@ -10,6 +10,7 @@ using GUZ.Core.Caches.StaticCache;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Models.Config;
+using GUZ.Core.Services.Caches;
 using GUZ.Core.Util;
 using MyBox;
 using UnityEngine;
@@ -54,14 +55,14 @@ namespace GUZ.Core.Manager
 
         public struct TextureInfo
         {
-            public TextureInfo(TextureCache.TextureArrayTypes textureArrayType, int maxDimension, int animFrameCount)
+            public TextureInfo(TextureCacheService.TextureArrayTypes textureArrayType, int maxDimension, int animFrameCount)
             {
                 T = textureArrayType;
                 MaxDim = maxDimension;
                 AnimFrameC = animFrameCount;
             }
 
-            public TextureCache.TextureArrayTypes T; // TextureArrayType
+            public TextureCacheService.TextureArrayTypes T; // TextureArrayType
             public int MaxDim; // MaxDimension
             public int AnimFrameC; // AnimFrameCount
         }
@@ -271,13 +272,13 @@ namespace GUZ.Core.Manager
                 var textureArrayContainer = new TextureArrayContainer
                 {
                     TexturesOpaque = textureArrayInformation
-                        .Where(i => i.Value.T == TextureCache.TextureArrayTypes.Opaque)
+                        .Where(i => i.Value.T == TextureCacheService.TextureArrayTypes.Opaque)
                         .Select(i => new TextureArrayEntry(i.Key, i.Value.MaxDim, i.Value.AnimFrameC)).ToList(),
                     TexturesTransparent = textureArrayInformation
-                        .Where(i => i.Value.T == TextureCache.TextureArrayTypes.Transparent)
+                        .Where(i => i.Value.T == TextureCacheService.TextureArrayTypes.Transparent)
                         .Select(i => new TextureArrayEntry(i.Key, i.Value.MaxDim, i.Value.AnimFrameC)).ToList(),
                     TexturesWater = textureArrayInformation
-                        .Where(i => i.Value.T == TextureCache.TextureArrayTypes.Water)
+                        .Where(i => i.Value.T == TextureCacheService.TextureArrayTypes.Water)
                         .Select(i => new TextureArrayEntry(i.Key, i.Value.MaxDim, i.Value.AnimFrameC)).ToList(),
                 };
                 await SaveCacheFile(textureArrayContainer, BuildFilePathName(_fileNameGlobalTextureArrayData));
@@ -291,16 +292,16 @@ namespace GUZ.Core.Manager
 
         public async Task SaveWorldCache(
             string worldName,
-            Dictionary<TextureCache.TextureArrayTypes, List<WorldChunkCacheCreator.WorldChunk>> mergedChunksByLights,
+            Dictionary<TextureCacheService.TextureArrayTypes, List<WorldChunkCacheCreator.WorldChunk>> mergedChunksByLights,
             List<StationaryLightInfo> stationaryLightInfos)
         {
             try
             {
                 var worldChunkData = new WorldChunkContainer()
                 {
-                    OpaqueChunks = mergedChunksByLights[TextureCache.TextureArrayTypes.Opaque],
-                    TransparentChunks = mergedChunksByLights[TextureCache.TextureArrayTypes.Transparent],
-                    WaterChunks = mergedChunksByLights[TextureCache.TextureArrayTypes.Water],
+                    OpaqueChunks = mergedChunksByLights[TextureCacheService.TextureArrayTypes.Opaque],
+                    TransparentChunks = mergedChunksByLights[TextureCacheService.TextureArrayTypes.Transparent],
+                    WaterChunks = mergedChunksByLights[TextureCacheService.TextureArrayTypes.Water],
                 };
 
                 var stationaryLightData = new StationaryLightContainer()
@@ -359,15 +360,15 @@ namespace GUZ.Core.Manager
 
             var loopIndex = 0;
             LoadedTextureInfoOpaque = textureArrayContainer.TexturesOpaque
-                .ToDictionary(i => i.Tex, i => (index: loopIndex++, data: new TextureInfo(TextureCache.TextureArrayTypes.Opaque, i.MaxDim, i.AnimFrameC)));
+                .ToDictionary(i => i.Tex, i => (index: loopIndex++, data: new TextureInfo(TextureCacheService.TextureArrayTypes.Opaque, i.MaxDim, i.AnimFrameC)));
 
             loopIndex = 0;
             LoadedTextureInfoTransparent = textureArrayContainer.TexturesTransparent
-                .ToDictionary(i => i.Tex, i => (index: loopIndex++, data: new TextureInfo(TextureCache.TextureArrayTypes.Transparent, i.MaxDim, i.AnimFrameC)));
+                .ToDictionary(i => i.Tex, i => (index: loopIndex++, data: new TextureInfo(TextureCacheService.TextureArrayTypes.Transparent, i.MaxDim, i.AnimFrameC)));
 
             loopIndex = 0;
             LoadedTextureInfoWater = textureArrayContainer.TexturesWater
-                .ToDictionary(i => i.Tex, i => (index: loopIndex++, data: new TextureInfo(TextureCache.TextureArrayTypes.Water, i.MaxDim, i.AnimFrameC)));
+                .ToDictionary(i => i.Tex, i => (index: loopIndex++, data: new TextureInfo(TextureCacheService.TextureArrayTypes.Water, i.MaxDim, i.AnimFrameC)));
         }
 
         public async Task LoadWorldCache(string worldName)

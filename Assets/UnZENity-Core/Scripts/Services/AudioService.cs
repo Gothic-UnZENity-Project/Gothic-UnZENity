@@ -12,8 +12,8 @@ namespace GUZ.Core.Manager
     {
         [Inject] private readonly ConfigService _configService;
 
-        private readonly MusicDomain _musicDomain = new();
-        private readonly SoundDomain _soundDomain = new();
+        private readonly MusicDomain _musicDomain = new MusicDomain().Inject();
+        private readonly SoundDomain _soundDomain = new SoundDomain().Inject();
 
 
         //
@@ -27,9 +27,7 @@ namespace GUZ.Core.Manager
 
         public void InitMusic()
         {
-            _musicDomain
-                .Inject() // As we have e.g., ConfigService used inside.
-                .Init();
+            _musicDomain.Init();
 
             GlobalEventDispatcher.MainMenuSceneLoaded.AddListener(OnMainMenuLoaded);
             GlobalEventDispatcher.LoadingSceneLoaded.AddListener(OnLoadingSceneLoaded);

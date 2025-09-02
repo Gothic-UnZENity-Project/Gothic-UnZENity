@@ -29,7 +29,7 @@ namespace GUZ.Core.Services
             Vector3 position = default, Quaternion rotation = default,
             GameObject parent = null, GameObject root = null)
         {
-            var npcBuilder = new NpcMeshBuilder();
+            var npcBuilder = new NpcMeshBuilder().Inject();
             npcBuilder.SetRootPosAndRot(position, rotation);
             npcBuilder.SetGameObject(root, npcName);
             npcBuilder.SetParent(parent);
@@ -40,7 +40,7 @@ namespace GUZ.Core.Services
 
             var npcGo = npcBuilder.Build();
 
-            var npcHeadBuilder = new NpcHeadMeshBuilder();
+            var npcHeadBuilder = new NpcHeadMeshBuilder().Inject();
             npcHeadBuilder.SetGameObject(npcGo);
             npcHeadBuilder.SetBodyData(bodyData);
             npcHeadBuilder.SetMeshName(bodyData.Head);
@@ -54,7 +54,7 @@ namespace GUZ.Core.Services
          public GameObject CreateNpcWeapon(GameObject npcGo, ItemInstance itemData,
             VmGothicEnums.ItemFlags mainFlag, VmGothicEnums.ItemFlags flags)
         {
-            var npcWeaponBuilder = new NpcWeaponMeshBuilder();
+            var npcWeaponBuilder = new NpcWeaponMeshBuilder().Inject();
             npcWeaponBuilder.SetWeaponData(npcGo, itemData, mainFlag, flags);
             npcWeaponBuilder.SetMeshName(itemData.Visual);
 
@@ -83,7 +83,7 @@ namespace GUZ.Core.Services
                 return null;
             }
 
-            var vobBuilder = new VobMeshBuilder();
+            var vobBuilder = new VobMeshBuilder().Inject();
             vobBuilder.SetRootPosAndRot(position, rotation);
             vobBuilder.SetGameObject(rootGo, objectName);
             vobBuilder.SetParent(parent, resetRotation: true);
@@ -109,7 +109,7 @@ namespace GUZ.Core.Services
                 return null;
             }
 
-            var vobBuilder = new VobMeshBuilder();
+            var vobBuilder = new VobMeshBuilder().Inject();
             vobBuilder.SetRootPosAndRot(position, rotation);
             vobBuilder.SetGameObject(rootGo, objectName);
             vobBuilder.SetParent(parent, resetRotation: true); // If we don't reset these, all objects will be rotated wrong!
@@ -125,7 +125,7 @@ namespace GUZ.Core.Services
             GameObject parent = null, GameObject rootGo = null, bool useTextureArray = false,
             bool useColliderCache = false)
         {
-            var vobBuilder = new VobMeshBuilder();
+            var vobBuilder = new VobMeshBuilder().Inject();
             vobBuilder.SetRootPosAndRot(position, rotation);
             vobBuilder.SetGameObject(rootGo, objectName);
             vobBuilder.SetParent(parent);
@@ -146,7 +146,7 @@ namespace GUZ.Core.Services
                 return null;
             }
 
-            var vobBuilder = new VobMeshBuilder();
+            var vobBuilder = new VobMeshBuilder().Inject();
             vobBuilder.SetRootPosAndRot(position, rotation);
             vobBuilder.SetGameObject(rootGo, objectName);
             vobBuilder.SetParent(parent, resetRotation: true);
@@ -179,7 +179,7 @@ namespace GUZ.Core.Services
 
          public GameObject CreateVobPfx(IVirtualObject vob, Vector3 position = default, Quaternion rotation = default, GameObject parent = null)
         {
-            var vobPfxBuilder = new VobPfxMeshBuilder();
+            var vobPfxBuilder = new VobPfxMeshBuilder().Inject();
             vobPfxBuilder.SetGameObject(null, vob.Visual!.Name);
             vobPfxBuilder.SetParent(parent);
             vobPfxBuilder.SetRootPosAndRot(position, rotation);
@@ -190,7 +190,7 @@ namespace GUZ.Core.Services
 
          public GameObject CreateVobDecal(IVirtualObject vob, VisualDecal decal, Vector3 position = default, Quaternion rotation = default, GameObject parent = null)
         {
-            var vobDecalBuilder = new VobDecalMeshBuilder();
+            var vobDecalBuilder = new VobDecalMeshBuilder().Inject();
             vobDecalBuilder.SetGameObject(null, vob.Name);
             vobDecalBuilder.SetParent(parent);
             vobDecalBuilder.SetRootPosAndRot(position, rotation);
@@ -201,12 +201,12 @@ namespace GUZ.Core.Services
 
          public async Task CreateTextureArray()
         {
-            await new TextureArrayBuilder().BuildAsync();
+            await new TextureArrayBuilder().Inject().BuildAsync();
         }
 
          public GameObject CreateBarrier(string objectName, IMesh mesh)
         {
-            var barrierBuilder = new BarrierMeshBuilder();
+            var barrierBuilder = new BarrierMeshBuilder().Inject();
             barrierBuilder.SetGameObject(null, objectName);
             barrierBuilder.SetBarrierMesh(mesh);
 
@@ -216,7 +216,7 @@ namespace GUZ.Core.Services
          public GameObject CreatePolyStrip(GameObject go, int numberOfSegments, Vector3 startPoint,
             Vector3 endPoint)
         {
-            var polyStripBuilder = new PolyStripMeshBuilder();
+            var polyStripBuilder = new PolyStripMeshBuilder().Inject();
             polyStripBuilder.SetGameObject(go);
             polyStripBuilder.SetPolyStripData(numberOfSegments, startPoint, endPoint);
 

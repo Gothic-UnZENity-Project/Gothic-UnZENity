@@ -343,6 +343,7 @@ GameObject:
   - component: {fileID: 1283201086}
   - component: {fileID: 1283201087}
   - component: {fileID: 1283201088}
+  - component: {fileID: 1283201089}
   m_Layer: 0
   m_Name: BackgroundMusic
   m_TagString: Untagged
@@ -485,6 +486,20 @@ AudioReverbFilter:
   m_LFReference: 250
   m_ReflectionsDelay: 0
   m_ReverbPreset: 27
+--- !u!114 &1283201089
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1283201085}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3b2481f9250846bd962db294b6953cad, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _audioSource: {fileID: 1283201087}
+  _audioReverbFilter: {fileID: 1283201088}
 --- !u!1 &2014673629
 GameObject:
   m_ObjectHideFlags: 0

@@ -4,6 +4,7 @@ using System.Linq;
 using GUZ.Core.Caches;
 using GUZ.Core.Globals;
 using GUZ.Core.Services;
+using GUZ.Core.Services.Caches;
 using GUZ.Core.Services.Vm;
 using GUZ.Core.Vm;
 using ZenKit;
@@ -23,7 +24,6 @@ namespace GUZ.Core.Manager
         {
             GameData.Dispose();
             VmInstanceManager.Dispose();
-            TextureCache.Dispose();
             MultiTypeCache.Dispose();
             MorphMeshCache.Dispose();
         }

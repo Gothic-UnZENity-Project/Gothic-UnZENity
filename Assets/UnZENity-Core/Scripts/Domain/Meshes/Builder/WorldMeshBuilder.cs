@@ -7,6 +7,7 @@ using GUZ.Core.Caches.StaticCache;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
+using GUZ.Core.Services.Caches;
 using GUZ.Core.Services.Config;
 using GUZ.Core.Util;
 using JetBrains.Annotations;
@@ -60,12 +61,12 @@ namespace GUZ.Core.Domain.Meshes.Builder
             
             loading?.SetPhase(nameof(WorldLoadingBarHandler.ProgressType.WorldMesh), chunksCount);
 
-            await BuildChunkType(_worldChunks.OpaqueChunks, TextureCache.TextureArrayTypes.Opaque, loading);
-            await BuildChunkType(_worldChunks.TransparentChunks, TextureCache.TextureArrayTypes.Transparent, loading);
-            await BuildChunkType(_worldChunks.WaterChunks, TextureCache.TextureArrayTypes.Water, loading);
+            await BuildChunkType(_worldChunks.OpaqueChunks, TextureCacheService.TextureArrayTypes.Opaque, loading);
+            await BuildChunkType(_worldChunks.TransparentChunks, TextureCacheService.TextureArrayTypes.Transparent, loading);
+            await BuildChunkType(_worldChunks.WaterChunks, TextureCacheService.TextureArrayTypes.Water, loading);
         }
 
-        private async Task BuildChunkType(List<WorldChunkCacheCreator.WorldChunk> chunks, TextureCache.TextureArrayTypes type, [CanBeNull] LoadingManager loading)
+        private async Task BuildChunkType(List<WorldChunkCacheCreator.WorldChunk> chunks, TextureCacheService.TextureArrayTypes type, [CanBeNull] LoadingManager loading)
         {
             var chunkTypeRoot = new GameObject
             {
@@ -81,7 +82,7 @@ namespace GUZ.Core.Domain.Meshes.Builder
                 {
                     name = $"{type}-Entry-{loopIndex++}",
                     isStatic = true,
-                    layer = type == TextureCache.TextureArrayTypes.Water ? Constants.WaterLayer : Constants.DefaultLayer,
+                    layer = type == TextureCacheService.TextureArrayTypes.Water ? Constants.WaterLayer : Constants.DefaultLayer,
                 };
                 chunkGo.SetParent(chunkTypeRoot);
 
@@ -99,7 +100,7 @@ namespace GUZ.Core.Domain.Meshes.Builder
 
                     if (UseTextureArray)
                     {
-                        TextureCache.GetTextureArrayIndex(material, out _, out textureArrayIndex,
+                        TextureCacheService.GetTextureArrayIndex(material, out _, out textureArrayIndex,
                             out textureScale, out maxMipLevel, out animFrameCount);
                     }
 
@@ -173,7 +174,7 @@ namespace GUZ.Core.Domain.Meshes.Builder
             }
         }
 
-        private void PrepareMeshFilter(MeshFilter meshFilter, ChunkData chunk, TextureCache.TextureArrayTypes textureArrayType)
+        private void PrepareMeshFilter(MeshFilter meshFilter, ChunkData chunk, TextureCacheService.TextureArrayTypes textureArrayType)
         {
             // We need to reverse all data. Otherwise, meshes are visible upside down. It's a difference from rendering ZenGine data in Unity.
             // Hint: No, Triangles mustn't be reversed. Only applied data on it.
@@ -191,13 +192,13 @@ namespace GUZ.Core.Domain.Meshes.Builder
             mesh.SetNormals(chunk.Normals);
             mesh.SetColors(chunk.BakedLightColors);
 
-            if (textureArrayType == TextureCache.TextureArrayTypes.Water)
+            if (textureArrayType == TextureCacheService.TextureArrayTypes.Water)
             {
                 mesh.SetUVs(1, chunk.TextureAnimations);
             }
         }
 
-        private void PrepareMeshRenderer(Renderer rend, TextureCache.TextureArrayTypes textureArrayType)
+        private void PrepareMeshRenderer(Renderer rend, TextureCacheService.TextureArrayTypes textureArrayType)
         {
 
 
@@ -205,7 +206,7 @@ namespace GUZ.Core.Domain.Meshes.Builder
             {
                 var material = GetDefaultMaterial(textureArrayType);
                 rend.material = material;
-                var texture = TextureCache.GetTextureArrayEntry(textureArrayType);
+                var texture = TextureCacheService.GetTextureArrayEntry(textureArrayType);
                 material.mainTexture = texture;
             }
             else
@@ -217,18 +218,18 @@ namespace GUZ.Core.Domain.Meshes.Builder
             }
         }
 
-        private Material GetDefaultMaterial(TextureCache.TextureArrayTypes textureArrayType)
+        private Material GetDefaultMaterial(TextureCacheService.TextureArrayTypes textureArrayType)
         {
             var shader = textureArrayType switch
             {
-                TextureCache.TextureArrayTypes.Opaque => Constants.ShaderWorldLit,
-                TextureCache.TextureArrayTypes.Transparent => Constants.ShaderLitAlphaToCoverage,
-                TextureCache.TextureArrayTypes.Water => Constants.ShaderWater,
+                TextureCacheService.TextureArrayTypes.Opaque => Constants.ShaderWorldLit,
+                TextureCacheService.TextureArrayTypes.Transparent => Constants.ShaderLitAlphaToCoverage,
+                TextureCacheService.TextureArrayTypes.Water => Constants.ShaderWater,
                 _ => throw new ArgumentOutOfRangeException(nameof(textureArrayType), textureArrayType, null)
             };
             var material = new Material(shader);
 
-            if (textureArrayType == TextureCache.TextureArrayTypes.Water)
+            if (textureArrayType == TextureCacheService.TextureArrayTypes.Water)
             {
                 // Manually correct the render queue for alpha test, as Unity doesn't want to do it from the shader's render queue tag.
                 // If we don't set it, the water will sometimes "flicker" above ground or becomes invisible.
@@ -238,9 +239,9 @@ namespace GUZ.Core.Domain.Meshes.Builder
             return material;
         }
 
-        private bool IsTransparentShader(TextureCache.TextureArrayTypes textureArrayType)
+        private bool IsTransparentShader(TextureCacheService.TextureArrayTypes textureArrayType)
         {
-            return textureArrayType != TextureCache.TextureArrayTypes.Opaque;
+            return textureArrayType != TextureCacheService.TextureArrayTypes.Opaque;
         }
     }
 }

@@ -5,6 +5,7 @@ using GUZ.Core.Adapters.UI.LoadingBars;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Services;
+using GUZ.Core.Services.Caches;
 using GUZ.Core.Services.Config;
 using GUZ.Core.Util;
 using MyBox;
@@ -27,7 +28,7 @@ namespace GUZ.Core.Caches.StaticCache
         [Inject] private readonly ConfigService _configService;
 
 
-        public Dictionary<TextureCache.TextureArrayTypes, List<WorldChunk>> MergedChunksByLights;
+        public Dictionary<TextureCacheService.TextureArrayTypes, List<WorldChunk>> MergedChunksByLights;
 
         /// <summary>
         /// G1.OrcTempel.zen has no dynamic lights. Therefore, all ~40k polygons will be placed in one chunk and Unity complains:
@@ -276,9 +277,9 @@ namespace GUZ.Core.Caches.StaticCache
 
             MergedChunksByLights = new()
             {
-                { TextureCache.TextureArrayTypes.Opaque, new List<WorldChunk>(finalPolygonsOpaque) },
-                { TextureCache.TextureArrayTypes.Transparent, finalPolygonsTransparent },
-                { TextureCache.TextureArrayTypes.Water, finalPolygonsWater }
+                { TextureCacheService.TextureArrayTypes.Opaque, new List<WorldChunk>(finalPolygonsOpaque) },
+                { TextureCacheService.TextureArrayTypes.Transparent, finalPolygonsTransparent },
+                { TextureCacheService.TextureArrayTypes.Water, finalPolygonsWater }
             };
         }
 

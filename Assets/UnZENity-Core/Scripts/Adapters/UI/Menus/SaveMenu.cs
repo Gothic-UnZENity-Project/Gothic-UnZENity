@@ -5,7 +5,9 @@ using GUZ.Core.Extensions;
 using GUZ.Core.Manager;
 using GUZ.Core.Model.UI.Menu;
 using GUZ.Core.Services;
+using GUZ.Core.Services.Caches;
 using GUZ.Core.Util;
+using Reflex.Attributes;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -34,6 +36,8 @@ namespace GUZ.Core.Adapters.UI.Menus
         private bool _isLoading => !_isSaving;
 
         private string _saveLoadStatus;
+
+        [Inject] private readonly TextureCacheService _textureCacheService;
 
         /// <summary>
         /// Pre-fill the Load Game entries with names and textures (if existing)
@@ -182,7 +186,7 @@ namespace GUZ.Core.Adapters.UI.Menus
             }
 
             Thumbnail.GetComponent<MeshRenderer>().material.mainTexture
-                = TextureCache.TryGetTexture(save.Thumbnail, "savegame_" + save.Metadata.Title);
+                = _textureCacheService.TryGetTexture(save.Thumbnail, "savegame_" + save.Metadata.Title);
             Thumbnail.SetActive(true);
             World.text = save.Metadata.World;
             SavedAt.text = save.Metadata.SaveDate;

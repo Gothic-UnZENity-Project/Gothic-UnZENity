@@ -7,6 +7,7 @@ using GUZ.Core.Globals;
 using GUZ.Core.Manager;
 using GUZ.Core.Models.Config;
 using GUZ.Core.Services;
+using GUZ.Core.Services.Caches;
 using GUZ.Core.Services.Config;
 using GUZ.Core.Util;
 using GUZ.G1;
@@ -101,7 +102,7 @@ namespace GUZ.Core.Editor.Tools
 
             var worldChunkData = new StaticCacheManager.WorldChunkContainer
             {
-                OpaqueChunks = worldChunkCache.MergedChunksByLights[TextureCache.TextureArrayTypes.Opaque],
+                OpaqueChunks = worldChunkCache.MergedChunksByLights[TextureCacheService.TextureArrayTypes.Opaque],
                 // We do not use transparent elements for OC data as it would cull even on transparent edges.
                 TransparentChunks = new(),
                 // We do not use water for OC data

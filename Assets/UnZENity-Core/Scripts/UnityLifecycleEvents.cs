@@ -1,6 +1,7 @@
 using GUZ.Core.Domain.Culling;
 using GUZ.Core.Manager;
 using GUZ.Core.Services;
+using GUZ.Core.Services.Caches;
 using GUZ.Core.Services.Culling;
 using Reflex.Attributes;
 using UnityEngine;
@@ -23,6 +24,7 @@ namespace GUZ.VR
         [Inject] private readonly VobSoundCullingService _vobSoundCullingService;
 
         [Inject] private readonly SpeechToTextService _speechToTextService;
+        [Inject] private readonly TextureCacheService _textureCacheService;
 
 
         private void Update()
@@ -49,6 +51,7 @@ namespace GUZ.VR
             _vobMeshCullingService.OnApplicationQuit();
             _vobSoundCullingService.OnApplicationQuit();
 
+            _textureCacheService.Dispose();
             _speechToTextService.Dispose();
         }
 

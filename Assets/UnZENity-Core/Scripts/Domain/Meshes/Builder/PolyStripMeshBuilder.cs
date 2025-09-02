@@ -1,6 +1,7 @@
 using GUZ.Core.Caches;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
+using GUZ.Core.Services.Caches;
 using UnityEngine;
 
 namespace GUZ.Core.Domain.Meshes.Builder
@@ -24,7 +25,7 @@ namespace GUZ.Core.Domain.Meshes.Builder
 
             material.ToAdditiveMode();
 
-            var texture = TextureCache.TryGetTexture("THUNDER_A0.TGA");
+            var texture = TextureCacheService.TryGetTexture("THUNDER_A0.TGA");
 
             if (texture != null)
             {

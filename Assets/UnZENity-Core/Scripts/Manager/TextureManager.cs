@@ -2,6 +2,8 @@ using System;
 using GUZ.Core.Caches;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
+using GUZ.Core.Services.Caches;
+using Reflex.Attributes;
 using UnityEngine;
 
 public class TextureManager : MonoBehaviour
@@ -38,6 +40,9 @@ public class TextureManager : MonoBehaviour
     public Material BackgroundMaterial;
 
 
+    [Inject] private readonly TextureCacheService _textureCacheService;
+
+
     private void Start()
     {
         MainMenuImageBackgroundMaterial = GetEmptyMaterial(MaterialExtension.BlendMode.Opaque);
@@ -57,29 +62,29 @@ public class TextureManager : MonoBehaviour
 
     public void Init()
     {
-        MainMenuImageBackgroundMaterial.mainTexture = TextureCache.TryGetTexture("STARTSCREEN.TGA");
-        MainMenuBackgroundMaterial.mainTexture = TextureCache.TryGetTexture("MENU_INGAME.TGA");
-        MainMenuSaveLoadBackgroundMaterial.mainTexture = TextureCache.TryGetTexture("MENU_SAVELOAD_BACK.TGA");
-        MainMenuTextImageMaterial.mainTexture = TextureCache.TryGetTexture("MENU_GOTHIC.TGA");
-        MenuChoiceBackMaterial.mainTexture = TextureCache.TryGetTexture("MENU_CHOICE_BACK.TGA");
+        MainMenuImageBackgroundMaterial.mainTexture = _textureCacheService.TryGetTexture("STARTSCREEN.TGA");
+        MainMenuBackgroundMaterial.mainTexture = _textureCacheService.TryGetTexture("MENU_INGAME.TGA");
+        MainMenuSaveLoadBackgroundMaterial.mainTexture = _textureCacheService.TryGetTexture("MENU_SAVELOAD_BACK.TGA");
+        MainMenuTextImageMaterial.mainTexture = _textureCacheService.TryGetTexture("MENU_GOTHIC.TGA");
+        MenuChoiceBackMaterial.mainTexture = _textureCacheService.TryGetTexture("MENU_CHOICE_BACK.TGA");
 
-        GothicLoadingMenuMaterial.mainTexture = TextureCache.TryGetTexture("LOADING.TGA");
-        LoadingBarBackgroundMaterial.mainTexture = TextureCache.TryGetTexture("PROGRESS.TGA");
-        LoadingBarMaterial.mainTexture = TextureCache.TryGetTexture("PROGRESS_BAR.TGA");
-        BackgroundMaterial.mainTexture = TextureCache.TryGetTexture("LOG_PAPER.TGA");
-        ButtonMaterial.mainTexture = TextureCache.TryGetTexture("INV_SLOT.TGA");
-        FillerMaterial.mainTexture = TextureCache.TryGetTexture("MENU_BUTTONBACK.TGA");
-        MapMaterial.mainTexture = TextureCache.TryGetTexture("MAP_WORLD_ORC.TGA");
+        GothicLoadingMenuMaterial.mainTexture = _textureCacheService.TryGetTexture("LOADING.TGA");
+        LoadingBarBackgroundMaterial.mainTexture = _textureCacheService.TryGetTexture("PROGRESS.TGA");
+        LoadingBarMaterial.mainTexture = _textureCacheService.TryGetTexture("PROGRESS_BAR.TGA");
+        BackgroundMaterial.mainTexture = _textureCacheService.TryGetTexture("LOG_PAPER.TGA");
+        ButtonMaterial.mainTexture = _textureCacheService.TryGetTexture("INV_SLOT.TGA");
+        FillerMaterial.mainTexture = _textureCacheService.TryGetTexture("MENU_BUTTONBACK.TGA");
+        MapMaterial.mainTexture = _textureCacheService.TryGetTexture("MAP_WORLD_ORC.TGA");
 
         // Menu
-        ArrowUpMaterial.mainTexture = TextureCache.TryGetTexture("O.TGA");
-        ArrowDownMaterial.mainTexture = TextureCache.TryGetTexture("U.TGA");
-        ArrowLeftMaterial.mainTexture = TextureCache.TryGetTexture("L.TGA");
+        ArrowUpMaterial.mainTexture = _textureCacheService.TryGetTexture("O.TGA");
+        ArrowDownMaterial.mainTexture = _textureCacheService.TryGetTexture("U.TGA");
+        ArrowLeftMaterial.mainTexture = _textureCacheService.TryGetTexture("L.TGA");
     }
 
     public void SetTexture(string texture, Material material)
     {
-        material.mainTexture = TextureCache.TryGetTexture(texture);
+        material.mainTexture = _textureCacheService.TryGetTexture(texture);
     }
 
     public Material GetEmptyMaterial(MaterialExtension.BlendMode blendMode)
@@ -109,7 +114,7 @@ public class TextureManager : MonoBehaviour
     public Material GetMaterial(string textureName, MaterialExtension.BlendMode blendMode = MaterialExtension.BlendMode.Opaque)
     {
         var material = GetEmptyMaterial(blendMode);
-        material.mainTexture = TextureCache.TryGetTexture(textureName);
+        material.mainTexture = _textureCacheService.TryGetTexture(textureName);
 
         return material;
     }

@@ -3,8 +3,10 @@ using System.Reflection;
 using GUZ.Core.Caches;
 using GUZ.Core.Globals;
 using GUZ.Core.Services;
+using GUZ.Core.Services.Caches;
 using GUZ.Core.Util;
 using JetBrains.Annotations;
+using Reflex.Attributes;
 using TMPro;
 using UnityEngine;
 using UnityEngine.TextCore;
@@ -22,6 +24,9 @@ namespace GUZ.Core.Manager
         public TMP_SpriteAsset DefaultSpriteAsset;
         [NonSerialized]
         public TMP_SpriteAsset HighlightSpriteAsset;
+
+        [Inject] private readonly TextureCacheService _textureCacheService;
+
 
         public void Create()
         {
@@ -42,7 +47,7 @@ namespace GUZ.Core.Manager
             }
 
             var font = ResourceLoader.TryGetFont(preparedKey);
-            var fontTexture = TextureCache.TryGetTexture(preparedKey);
+            var fontTexture = _textureCacheService.TryGetTexture(preparedKey);
 
             if (font == null || fontTexture == null)
             {

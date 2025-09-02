@@ -1,5 +1,6 @@
 using GUZ.Core.Caches;
 using GUZ.Core.Globals;
+using GUZ.Core.Services.Caches;
 using MyBox;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
@@ -32,7 +33,7 @@ namespace GUZ.Core.Domain.Meshes.Builder
             }
 
             var decalProj = RootGo.AddComponent<DecalProjector>();
-            var texture = TextureCache.TryGetTexture(decalName);
+            var texture = TextureCacheService.TryGetTexture(decalName);
 
             // x/y needs to be made twice the size and transformed from cm in m.
             // z - value is close to what we see in Gothic spacer.

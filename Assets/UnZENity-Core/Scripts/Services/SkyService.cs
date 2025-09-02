@@ -5,6 +5,7 @@ using GUZ.Core.Caches;
 using GUZ.Core.Data;
 using GUZ.Core.Extensions;
 using GUZ.Core.Manager;
+using GUZ.Core.Services.Caches;
 using GUZ.Core.Services.Config;
 using GUZ.Core.Util;
 using Reflex.Attributes;
@@ -18,9 +19,10 @@ namespace GUZ.Core.Services
 {
     public class SkyService
     {
-        [Inject] private ConfigService _configService;
-        [Inject] private GameTimeService _gameTimeService;
+        [Inject] private readonly ConfigService _configService;
+        [Inject] private readonly GameTimeService _gameTimeService;
         [Inject] private readonly AudioService _audioService;
+        [Inject] private readonly TextureCacheService _textureCacheService;
 
         private Vector3 _sunDirection;
         private bool _isRaining;
@@ -214,7 +216,7 @@ namespace GUZ.Core.Services
             if (!string.IsNullOrEmpty(lastState.Layer[0].TEXName))
             {
                 RenderSettings.skybox.SetTexture(_skyTex1ShaderId,
-                    TextureCache.TryGetTexture(lastState.Layer[0].TEXName));
+                    _textureCacheService.TryGetTexture(lastState.Layer[0].TEXName));
             }
 
             RenderSettings.skybox.SetVector(_skyMovement1ShaderId, lastState.Layer[0].TEXSpeed);
@@ -224,7 +226,7 @@ namespace GUZ.Core.Services
             if (!string.IsNullOrEmpty(lastState.Layer[1].TEXName))
             {
                 RenderSettings.skybox.SetTexture(_skyTex2ShaderId,
-                    TextureCache.TryGetTexture(lastState.Layer[1].TEXName));
+                    _textureCacheService.TryGetTexture(lastState.Layer[1].TEXName));
             }
 
             RenderSettings.skybox.SetVector(_skyMovement2ShaderId, lastState.Layer[1].TEXSpeed);
@@ -234,7 +236,7 @@ namespace GUZ.Core.Services
             if (!string.IsNullOrEmpty(newState.Layer[0].TEXName))
             {
                 RenderSettings.skybox.SetTexture(_skyTex3ShaderId,
-                    TextureCache.TryGetTexture(newState.Layer[0].TEXName));
+                    _textureCacheService.TryGetTexture(newState.Layer[0].TEXName));
             }
 
             RenderSettings.skybox.SetVector(_skyMovement3ShaderId, newState.Layer[0].TEXSpeed);
@@ -244,7 +246,7 @@ namespace GUZ.Core.Services
             if (!string.IsNullOrEmpty(newState.Layer[1].TEXName))
             {
                 RenderSettings.skybox.SetTexture(_skyTex4ShaderId,
-                    TextureCache.TryGetTexture(newState.Layer[1].TEXName));
+                    _textureCacheService.TryGetTexture(newState.Layer[1].TEXName));
             }
 
             RenderSettings.skybox.SetVector(_skyMovement4ShaderId, newState.Layer[1].TEXSpeed);

@@ -1,6 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using GUZ.Core.Caches;
+using GUZ.Core.Services.Caches;
 using UnityEngine;
 
 namespace GUZ.Core.Domain.Meshes.Builder
@@ -18,7 +19,7 @@ namespace GUZ.Core.Domain.Meshes.Builder
 
         public async Task BuildAsync()
         {
-            await TextureCache.BuildTextureArray();
+            await TextureCacheService.BuildTextureArray();
         }
     }
 }

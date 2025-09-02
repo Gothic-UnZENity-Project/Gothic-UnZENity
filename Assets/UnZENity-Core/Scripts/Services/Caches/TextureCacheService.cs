@@ -16,7 +16,7 @@ using Object = UnityEngine.Object;
 using Texture = UnityEngine.Texture;
 using TextureFormat = UnityEngine.TextureFormat;
 
-namespace GUZ.Core.Caches
+namespace GUZ.Core.Services.Caches
 {
     /// <summary>
     /// Texture Array is used for the following improvements:
@@ -29,7 +29,7 @@ namespace GUZ.Core.Caches
     /// 1. NPCs and their armors (as they alter their armaments during runtime)
     /// 2. VOB Items which spawn at a later state (e.g. Player puts an item out of inventory)
     /// </summary>
-    public static class TextureCache
+    public class TextureCacheService
     {
         public const int ReferenceTextureSize = 256;
 
@@ -98,7 +98,7 @@ namespace GUZ.Core.Caches
         ///            As the textures are copied and original Texture2D gets invalidated by Unity during creation of TextureArrays.
         /// </summary>
         [CanBeNull]
-        public static Texture2D TryGetTexture(string key, bool useCache = true)
+        public Texture2D TryGetTexture(string key, bool useCache = true)
         {
             string preparedKey = GetPreparedKey(key);
 
@@ -117,7 +117,7 @@ namespace GUZ.Core.Caches
         /// useCache - We don't use Cache for TextureArrays.
         ///            As the textures are copied and original Texture2D gets invalidated by Unity during creation of TextureArrays.
         /// </summary>
-        public static Texture2D TryGetTexture(ITexture zkTexture, string key, bool useCache = true)
+        public Texture2D TryGetTexture(ITexture zkTexture, string key, bool useCache = true)
         {
             if (zkTexture == null)
             {
@@ -178,7 +178,7 @@ namespace GUZ.Core.Caches
             return texture;
         }
 
-        public static void GetTextureArrayIndex(IMaterial materialData, out TextureArrayTypes textureArrayType, out int arrayIndex, out Vector2 textureScale, out int maxMipLevel, out int animFrameCount)
+        public void GetTextureArrayIndex(IMaterial materialData, out TextureArrayTypes textureArrayType, out int arrayIndex, out Vector2 textureScale, out int maxMipLevel, out int animFrameCount)
         {
             var textureName = materialData.Texture;
             var texture = ResourceLoader.TryGetTexture(textureName);
@@ -221,7 +221,7 @@ namespace GUZ.Core.Caches
             }
         }
 
-        public static async Task BuildTextureArray()
+        public async Task BuildTextureArray()
         {
             await BuildTextureArray(TextureFormat.DXT1,
                 GameGlobals.StaticCache.LoadedTextureInfoOpaque, TextureArrayTypes.Opaque);
@@ -231,7 +231,7 @@ namespace GUZ.Core.Caches
                 GameGlobals.StaticCache.LoadedTextureInfoWater, TextureArrayTypes.Water);
         }
 
-        private static async Task BuildTextureArray(TextureFormat textureFormat, Dictionary<string, (int Index, StaticCacheManager.TextureInfo Data)> textureInfos, TextureArrayTypes texArrType)
+        private async Task BuildTextureArray(TextureFormat textureFormat, Dictionary<string, (int Index, StaticCacheManager.TextureInfo Data)> textureInfos, TextureArrayTypes texArrType)
         {
             // It's either a Texture2DArray (solid meshes) or RenderTexture (water)
             Texture texArray;
@@ -335,7 +335,7 @@ namespace GUZ.Core.Caches
             TextureArrays.Add(texArrType, texArray);
         }
 
-        public static void GetTextureArrayEntry(string textureName, out Texture texture, out TextureArrayTypes textureType)
+        public void GetTextureArrayEntry(string textureName, out Texture texture, out TextureArrayTypes textureType)
         {
             GetTextureArrayEntry(ResourceLoader.TryGetTexture(textureName), out texture, out textureType);
         }
@@ -343,7 +343,7 @@ namespace GUZ.Core.Caches
         /// <summary>
         /// Returns Texture2DArry (Opaque/Transparent) or RenderTexture (Water)
         /// </summary>
-        public static void GetTextureArrayEntry(ITexture zkTexture, out Texture texture, out TextureArrayTypes textureType)
+        public void GetTextureArrayEntry(ITexture zkTexture, out Texture texture, out TextureArrayTypes textureType)
         {
             switch (zkTexture.Format.AsUnityTextureFormat())
             {
@@ -360,7 +360,7 @@ namespace GUZ.Core.Caches
             texture = GetTextureArrayEntry(textureType);
         }
 
-        public static Texture GetTextureArrayEntry(TextureArrayTypes textureArrayType)
+        public Texture GetTextureArrayEntry(TextureArrayTypes textureArrayType)
         {
             return TextureArrays[textureArrayType];
         }
@@ -368,7 +368,7 @@ namespace GUZ.Core.Caches
         /// <summary>
         /// Unity doesn't want to create mips for DXT1 textures. Recreate them as RGB24.
         /// </summary>
-        private static Texture2D GenerateDxt1Mipmaps(ITexture zkTexture)
+        private Texture2D GenerateDxt1Mipmaps(ITexture zkTexture)
         {
             var dxtTexture = new Texture2D(zkTexture.Width, zkTexture.Height, TextureFormat.DXT1, false);
             dxtTexture.SetPixelData(zkTexture.AllMipmapsRaw[0], 0);
@@ -382,7 +382,7 @@ namespace GUZ.Core.Caches
             return texture;
         }
 
-        private static string GetPreparedKey(string key)
+        private string GetPreparedKey(string key)
         {
             var lowerKey = key.ToLower();
             var extension = Path.GetExtension(lowerKey);
@@ -395,7 +395,7 @@ namespace GUZ.Core.Caches
             return lowerKey.Replace(extension, "");
         }
 
-        public static void Dispose()
+        public void Dispose()
         {
             _texture2DCache.Clear();
 
