@@ -1,16 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using GUZ.Core.Adapters.Vob;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Models.Vm;
+using GUZ.Core.Models.Vob.WayNet;
 using GUZ.Core.Properties;
 using GUZ.Core.Services;
 using GUZ.Core.Services.Config;
 using GUZ.Core.Services.Culling;
 using GUZ.Core.Util;
 using GUZ.Core.Vm;
-using GUZ.Core.Vob;
-using GUZ.Core.Vob.WayNet;
 using JetBrains.Annotations;
 using MyBox;
 using Reflex.Attributes;
@@ -614,7 +614,7 @@ namespace GUZ.Core.Manager.Vobs
                 Direction = vob.Rotation.ToUnityQuaternion().eulerAngles
             };
             vobObj.GetComponent<VobSpotProperties>().Fp = freePointData;
-            GameData.FreePoints.TryAdd(fpName, freePointData);
+            GameData.FreePoints.TryAdd(fpName, (FreePoint)freePointData);
 
             return vobObj;
         }

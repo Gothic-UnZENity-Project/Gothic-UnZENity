@@ -2,15 +2,12 @@
 using System.Text;
 using GUZ.Core.Data;
 using GUZ.Core.Data.Container;
+using GUZ.Core.Models.Vob.WayNet;
 using GUZ.Core.Npc.Routines;
-using GUZ.Core.Properties;
-using GUZ.Core.Vob.WayNet;
 using GUZ.Core.World;
-using UnityEngine;
 using ZenKit;
 using ZenKit.Daedalus;
-using ZenKit.Vobs;
-using WayNet_WayPoint = GUZ.Core.Vob.WayNet.WayPoint;
+using WayPoint = GUZ.Core.Models.Vob.WayNet.WayPoint;
 
 namespace GUZ.Core.Globals
 {
@@ -28,7 +25,7 @@ namespace GUZ.Core.Globals
         public static DaedalusVm PfxVm; // Particle FX
 
         // Lookup optimized WayNet data
-        public static readonly Dictionary<string, WayNet_WayPoint> WayPoints = new();
+        public static readonly Dictionary<string, WayPoint> WayPoints = new();
         public static readonly Dictionary<string, FreePoint> FreePoints = new();
 
         // Reorganized waypoints from world data.

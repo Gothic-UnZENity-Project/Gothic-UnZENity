@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace GUZ.Core
+namespace GUZ.Core.Adapters.Vob
 {
     [RequireComponent(typeof(Light))]
     public class StationaryLight : MonoBehaviour

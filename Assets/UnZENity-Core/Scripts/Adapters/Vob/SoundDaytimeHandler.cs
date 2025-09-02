@@ -3,13 +3,12 @@ using System.Collections;
 using GUZ.Core.Data.Container;
 using GUZ.Core.Services;
 using GUZ.Core.Util;
-using GUZ.Core.World;
 using UnityEngine;
 using ZenKit.Vobs;
 using Logger = GUZ.Core.Util.Logger;
 using Random = UnityEngine.Random;
 
-namespace GUZ.Core.Vob
+namespace GUZ.Core.Adapters.Vob
 {
     public class SoundDaytimeHandler : MonoBehaviour
     {

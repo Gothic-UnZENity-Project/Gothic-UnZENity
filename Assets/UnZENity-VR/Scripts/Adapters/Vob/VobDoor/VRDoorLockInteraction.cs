@@ -1,8 +1,8 @@
 ﻿#if GUZ_HVR_INSTALLED
+using GUZ.Core.Adapters.Vob;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
 using GUZ.Core.Util;
-using GUZ.Core.Vob;
 using GUZ.VR.Adapters.Vob.VobItem;
 using GUZ.VR.Services;
 using Reflex.Attributes;

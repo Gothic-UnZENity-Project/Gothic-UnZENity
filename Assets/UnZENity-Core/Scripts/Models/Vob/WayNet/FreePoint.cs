@@ -1,4 +1,4 @@
-namespace GUZ.Core.Vob.WayNet
+namespace GUZ.Core.Models.Vob.WayNet
 {
     public class FreePoint : WayNetPoint
     {

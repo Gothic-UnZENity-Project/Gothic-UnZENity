@@ -7,6 +7,7 @@ using GUZ.Core.Data.Adapter;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
+using GUZ.Core.Models.Audio;
 using GUZ.Core.Models.Marvin;
 using GUZ.Core.Models.Vm;
 using GUZ.Core.Services;
@@ -30,10 +31,10 @@ namespace GUZ.VR.Adapters.Player
         
         private INpc _playerVob;
         private IAiHuman _playerAi;
-        private SfxAdapter _sfxSwimAdapter;
-        private SfxAdapter _sfxDiveAdapter;
-        private SfxAdapter _sfxSwim2DiveAdapter;
-        private SfxAdapter _sfxSwim2HangAdapter; // Normally when pulling out of water only, but we also use when dive -> swim.
+        private SfxModel _sfxSwimModel;
+        private SfxModel _sfxDiveModel;
+        private SfxModel _sfxSwim2DiveModel;
+        private SfxModel _sfxSwim2HangModel; // Normally when pulling out of water only, but we also use when dive -> swim.
         
         private HVRHandAnimator _leftHandAnimator;
         private HVRHandAnimator _rightHandAnimator;
@@ -81,19 +82,19 @@ namespace GUZ.VR.Adapters.Player
                 // FIXME - In G1, there are different sounds for SwimBack, Sideways, and Forward
                 var swimAnim = mds.Animations.First(i => i.Name.EqualsIgnoreCase("s_SwimF"));
                 var swimSfxName = swimAnim.SoundEffects.First().Name;
-                _sfxSwimAdapter = VmInstanceManager.TryGetSfxData(swimSfxName)!;
+                _sfxSwimModel = VmInstanceManager.TryGetSfxData(swimSfxName)!;
                 
                 var diveAnim = mds.Animations.First(i => i.Name.EqualsIgnoreCase("s_DiveF"));
                 var diveSfxName = diveAnim.SoundEffects.First().Name;
-                _sfxDiveAdapter = VmInstanceManager.TryGetSfxData(diveSfxName)!;
+                _sfxDiveModel = VmInstanceManager.TryGetSfxData(diveSfxName)!;
 
                 var swim2DiveAnim = mds.Animations.First(i => i.Name.EqualsIgnoreCase("t_Swim_2_Dive"));
                 var swim2DiveSfxName = swim2DiveAnim.SoundEffects.First().Name;
-                _sfxSwim2DiveAdapter = VmInstanceManager.TryGetSfxData(swim2DiveSfxName)!;
+                _sfxSwim2DiveModel = VmInstanceManager.TryGetSfxData(swim2DiveSfxName)!;
                 
                 var swim2HangAnim = mds.Animations.First(i => i.Name.EqualsIgnoreCase("t_Swim_2_Hang"));
                 var swim2HangSfxName = swim2HangAnim.SoundEffects.First().Name;
-                _sfxSwim2HangAdapter = VmInstanceManager.TryGetSfxData(swim2HangSfxName);
+                _sfxSwim2HangModel = VmInstanceManager.TryGetSfxData(swim2HangSfxName);
             });
 
             GlobalEventDispatcher.WorldSceneLoaded.AddListener(() =>
@@ -192,7 +193,7 @@ namespace GUZ.VR.Adapters.Player
                     // Dive -> Swim
                     if (_mode == VmGothicEnums.WalkMode.Dive)
                     {
-                        var clip = _audioService.CreateAudioClip(_sfxSwim2HangAdapter.GetRandomSound());
+                        var clip = _audioService.CreateAudioClip(_sfxSwim2HangModel.GetRandomSound());
                         SFXPlayer.Instance.PlaySFX(clip, Camera.main!.transform.position);
                     }
 
@@ -235,7 +236,7 @@ namespace GUZ.VR.Adapters.Player
             _playerController.Gravity = 0;
             _playerController.MaxFallSpeed = 0;
             
-            SFXPlayer.Instance.PlaySFX(_audioService.CreateAudioClip(_sfxSwim2DiveAdapter.GetRandomSound()), Camera.main!.transform.position);
+            SFXPlayer.Instance.PlaySFX(_audioService.CreateAudioClip(_sfxSwim2DiveModel.GetRandomSound()), Camera.main!.transform.position);
         }
 
         /// <summary>
@@ -297,7 +298,7 @@ namespace GUZ.VR.Adapters.Player
             if (_isSwimmingForceStarted && _currentVelocity.magnitude > 1f)
             {
                 // Play a random swim sound via HVRs SFXPlayer.
-                SFXPlayer.Instance.PlaySFX(_audioService.CreateAudioClip(_sfxSwimAdapter.GetRandomSound()), Camera.main!.transform.position);
+                SFXPlayer.Instance.PlaySFX(_audioService.CreateAudioClip(_sfxSwimModel.GetRandomSound()), Camera.main!.transform.position);
                 _isSwimmingForceStarted = false;
             }
 
@@ -343,7 +344,7 @@ namespace GUZ.VR.Adapters.Player
             if (_isDivingForceStarted && _currentVelocity.magnitude > 1f)
             {
                 // Play a random dive sound via HVRs SFXPlayer.
-                SFXPlayer.Instance.PlaySFX(_audioService.CreateAudioClip(_sfxDiveAdapter.GetRandomSound()), Camera.main!.transform.position);
+                SFXPlayer.Instance.PlaySFX(_audioService.CreateAudioClip(_sfxDiveModel.GetRandomSound()), Camera.main!.transform.position);
                 _isDivingForceStarted = false;
             }
 

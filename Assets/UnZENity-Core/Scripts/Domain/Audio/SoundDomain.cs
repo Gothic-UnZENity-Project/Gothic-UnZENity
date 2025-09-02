@@ -18,7 +18,7 @@ namespace GUZ.Core.Domain.Audio
         }
 
 
-        private ImaadpcmDecoderDomain _decoderDomain;
+        private ImaadpcmDecoderDomain _decoderDomain = new();
 
 
         public AudioClip CreateAudioClip(string fileName)

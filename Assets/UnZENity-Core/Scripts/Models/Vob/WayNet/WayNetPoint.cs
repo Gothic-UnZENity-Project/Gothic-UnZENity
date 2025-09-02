@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace GUZ.Core.Vob.WayNet
+namespace GUZ.Core.Models.Vob.WayNet
 {
     /// <summary>
     /// Gothic handles WayNet in WayPoints (WP) and FreePoints (FP).

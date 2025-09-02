@@ -1,7 +1,6 @@
 using System;
 using GUZ.Core.Properties.Vobs;
 using GUZ.Core.Vm;
-using GUZ.Core.Vob;
 using JetBrains.Annotations;
 using UnityEngine;
 using ZenKit.Daedalus;

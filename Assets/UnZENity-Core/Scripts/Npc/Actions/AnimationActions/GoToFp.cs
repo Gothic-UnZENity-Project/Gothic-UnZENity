@@ -1,6 +1,6 @@
 using GUZ.Core.Data.Container;
 using GUZ.Core.Manager;
-using GUZ.Core.Vob.WayNet;
+using GUZ.Core.Models.Vob.WayNet;
 using UnityEngine;
 
 namespace GUZ.Core.Npc.Actions.AnimationActions

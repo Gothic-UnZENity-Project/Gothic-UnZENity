@@ -1,8 +1,7 @@
 ﻿using GUZ.Core.Data.Container;
 using UnityEngine;
-using ZenKit.Vobs;
 
-namespace GUZ.Core.Vob
+namespace GUZ.Core.Adapters.Vob
 {
     public class VobLoader : MonoBehaviour
     {

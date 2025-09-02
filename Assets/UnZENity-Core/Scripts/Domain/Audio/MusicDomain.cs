@@ -2,12 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using DirectMusic;
+using GUZ.Core.Adapters.Vob;
 using GUZ.Core.Caches;
 using GUZ.Core.Globals;
-using GUZ.Core.Services;
 using GUZ.Core.Services.Config;
 using GUZ.Core.Util;
-using GUZ.Core.Vob;
 using Reflex.Attributes;
 using UnityEngine;
 using ZenKit;
@@ -85,16 +84,16 @@ namespace GUZ.Core.Domain.Audio
             if (zoneName == null)
                 return;
 
-            var isDay = (tags & MusicDomain.SegmentTags.Ngt) == 0;
+            var isDay = (tags & SegmentTags.Ngt) == 0;
             var result = zoneName.Substring(zoneName.IndexOf("_") + 1);
             var musicTag = "STD";
 
-            if ((tags & MusicDomain.SegmentTags.Fgt) != 0)
+            if ((tags & SegmentTags.Fgt) != 0)
             {
                 musicTag = "FGT";
             }
 
-            if ((tags & MusicDomain.SegmentTags.Thr) != 0)
+            if ((tags & SegmentTags.Thr) != 0)
             {
                 musicTag = "THR";
             }
@@ -194,14 +193,14 @@ namespace GUZ.Core.Domain.Audio
         public void MusicZoneExited(GameObject go)
         {
             RemoveMusicZone(go);
-            Play(MusicDomain.SegmentTags.Std);
+            Play(SegmentTags.Std);
 
         }
 
         public void MusicZoneEntered(GameObject go)
         {
             AddMusicZone(go);
-            Play(MusicDomain.SegmentTags.Std);
+            Play(SegmentTags.Std);
         }
 
         public void AddMusicZone(GameObject newMusicZoneGo)
@@ -246,7 +245,7 @@ namespace GUZ.Core.Domain.Audio
                 }
             }
 
-            Play(MusicDomain.SegmentTags.Std);
+            Play(SegmentTags.Std);
         }
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using GUZ.Core.Data.Adapter;
 using GUZ.Core.Globals;
+using GUZ.Core.Models.Audio;
 using JetBrains.Annotations;
 using ZenKit.Daedalus;
 
@@ -13,7 +14,7 @@ namespace GUZ.Core.Vm
         private static readonly Dictionary<string, ItemInstance> _itemDataCache = new();
         private static readonly Dictionary<string, FightAiAdapter> _fightAiDataCache = new();
         private static readonly Dictionary<int, SvmInstance> _svmDataCache = new();
-        private static readonly Dictionary<string, SfxAdapter> _sfxDataCache = new();
+        private static readonly Dictionary<string, SfxModel> _sfxDataCache = new();
         private static readonly Dictionary<string, ParticleEffectInstance> _pfxDataCache = new();
 
         /// <summary>
@@ -114,7 +115,7 @@ namespace GUZ.Core.Vm
         ///       (e.g., BreathBubbles, BreathBubbles_A1, BreathBubbles_A2), we need to retrieve a container holding all of them.
         /// </summary>
         [CanBeNull]
-        public static SfxAdapter TryGetSfxData(string key)
+        public static SfxModel TryGetSfxData(string key)
         {
             var preparedKey = GetPreparedKey(key);
             if (_sfxDataCache.TryGetValue(preparedKey, out var data))
@@ -122,10 +123,10 @@ namespace GUZ.Core.Vm
                 return data;
             }
 
-            SfxAdapter newData = null;
+            SfxModel newData = null;
             try
             {
-                newData = new SfxAdapter(preparedKey);
+                newData = new SfxModel(preparedKey);
             }
             catch (Exception)
             {

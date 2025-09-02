@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
 using GUZ.Core.Models.Vm;
+using GUZ.Core.Models.Vob.WayNet;
 using GUZ.Core.Npc.Actions.AnimationActions;
 using GUZ.Core.Npc.Routines;
-using GUZ.Core.Vm;
-using GUZ.Core.Vob.WayNet;
 using ZenKit.Daedalus;
 
 namespace GUZ.Core.Properties

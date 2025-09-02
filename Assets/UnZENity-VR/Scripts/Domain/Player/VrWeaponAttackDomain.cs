@@ -8,6 +8,7 @@ using GUZ.Core.Data.Container;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
+using GUZ.Core.Models.Audio;
 using GUZ.Core.Models.Vm;
 using GUZ.Core.Npc;
 using GUZ.Core.Services;
@@ -49,7 +50,7 @@ namespace GUZ.VR.Domain.Player
          */
 
         private bool _soundPlayed;
-        private SfxAdapter _swingSwordSound;
+        private SfxModel _swingSwordSound;
         private float _soundPlayTime;
 
         private VobContainer _weaponVobContainer;

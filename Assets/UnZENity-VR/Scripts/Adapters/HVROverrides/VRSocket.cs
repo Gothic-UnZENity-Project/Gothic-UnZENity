@@ -1,5 +1,5 @@
 #if GUZ_HVR_INSTALLED
-using GUZ.Core.Vob;
+using GUZ.Core.Adapters.Vob;
 using HurricaneVR.Framework.Core;
 using HurricaneVR.Framework.Core.Grabbers;
 

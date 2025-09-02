@@ -1,5 +1,4 @@
-using System;
-using GUZ.Core.Vob.WayNet;
+using GUZ.Core.Models.Vob.WayNet;
 using UnityEngine;
 
 namespace GUZ.Core.Properties

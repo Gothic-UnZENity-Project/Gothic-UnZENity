@@ -1,17 +1,15 @@
 using System.Linq;
+using GUZ.Core.Adapters.Vob;
 using GUZ.Core.Data.Container;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
 using GUZ.Core.Models.Vm;
-using GUZ.Core.Properties;
 using GUZ.Core.Vm;
-using GUZ.Core.Vob;
 using JetBrains.Annotations;
 using MyBox;
 using UnityEngine;
 using ZenKit.Vobs;
-using Logger = GUZ.Core.Util.Logger;
 
 namespace GUZ.Core.Npc.Actions.AnimationActions
 {

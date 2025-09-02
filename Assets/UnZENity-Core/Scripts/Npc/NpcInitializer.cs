@@ -8,11 +8,10 @@ using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
 using GUZ.Core.Models.Vm;
+using GUZ.Core.Models.Vob.WayNet;
 using GUZ.Core.Properties;
 using GUZ.Core.Services;
 using GUZ.Core.Util;
-using GUZ.Core.Vm;
-using GUZ.Core.Vob.WayNet;
 using JetBrains.Annotations;
 using MyBox;
 using Reflex.Attributes;
@@ -22,7 +21,7 @@ using ZenKit.Daedalus;
 using ZenKit.Vobs;
 using Logger = GUZ.Core.Util.Logger;
 using Object = UnityEngine.Object;
-using WayPoint = GUZ.Core.Vob.WayNet.WayPoint;
+using WayPoint = GUZ.Core.Models.Vob.WayNet.WayPoint;
 
 namespace GUZ.Core.Npc
 {

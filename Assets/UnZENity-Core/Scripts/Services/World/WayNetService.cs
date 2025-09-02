@@ -4,13 +4,12 @@ using GUZ.Core.Data.Container;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Models.Config;
-using GUZ.Core.Services;
 using GUZ.Core.World;
 using UnityEngine;
 using ZenKit;
 using Material = UnityEngine.Material;
 using Mesh = UnityEngine.Mesh;
-using WayPoint = GUZ.Core.Vob.WayNet.WayPoint;
+using WayPoint = GUZ.Core.Models.Vob.WayNet.WayPoint;
 
 namespace GUZ.Core.Creator
 {

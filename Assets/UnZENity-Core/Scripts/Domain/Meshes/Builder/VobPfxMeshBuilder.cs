@@ -1,10 +1,9 @@
 ﻿using System;
+using GUZ.Core.Adapters.Vob;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
-using GUZ.Core.Services;
 using GUZ.Core.Util;
 using GUZ.Core.Vm;
-using GUZ.Core.Vob;
 using UnityEngine;
 using UnityEngine.Rendering;
 using ZenKit.Vobs;

@@ -1,7 +1,7 @@
 using GUZ.Core.Globals;
 using UnityEngine;
 
-namespace GUZ.Core.Vob
+namespace GUZ.Core.Adapters.Vob
 {
     public class MusicCollisionHandler : MonoBehaviour
     {

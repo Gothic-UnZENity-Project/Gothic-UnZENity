@@ -1,25 +1,23 @@
 using System;
 using System.Collections.Generic;
-using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using MyBox;
-using UnityEngine;
 using ZenKit.Daedalus;
 
-namespace GUZ.Core.Data.Adapter
+namespace GUZ.Core.Models.Audio
 {
     /// <summary>
     /// As there is a potential for multiple instances per key (e.g., BreathBubbles, BreathBubbles_A1, BreathBubbles_A2),
     /// we need to retrieve a container holding all of them.
     /// </summary>
-    public class SfxAdapter
+    public class SfxModel
     {
         private SoundEffectInstance[]  _soundEffects;
 
         public int Count => _soundEffects.Length;
 
         
-        public SfxAdapter(string preparedKey)
+        public SfxModel(string preparedKey)
         {
             var sounds = new List<SoundEffectInstance>();
             
