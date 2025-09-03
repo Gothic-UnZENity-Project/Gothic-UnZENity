@@ -26,13 +26,8 @@ namespace GUZ.Core.Caches.StaticCache
         // Used for world chunk creation.
         public List<Bounds> StationaryLightBounds = new();
 
-        private bool _debugSpeedUpLoading;
+        private bool _debugSpeedUpLoading => _configService.Dev.SpeedUpLoading;
 
-
-        public StationaryLightCacheCreator()
-        {
-            _debugSpeedUpLoading = _configService.Dev.SpeedUpLoading;
-        }
 
         public async Task CalculateStationaryLights(List<IVirtualObject> vobs, int worldIndex)
         {
