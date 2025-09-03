@@ -5,6 +5,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Threading.Tasks;
+using GUZ.Core.Domain.Config;
 using GUZ.Core.Domain.StaticCache;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
@@ -427,8 +428,7 @@ namespace GUZ.Core.Manager
         private async Task<string> ReadData(string filePath)
         {
             string data = null;
-
-            string filePathCaseInsensitive = FileSearchHandler.FindFileCaseInsensitive(filePath);
+            var filePathCaseInsensitive = IniLoader.FindFileCaseInsensitive(filePath);
 
             if (_configIsCompressed)
             {

@@ -4,7 +4,7 @@ using GUZ.Core.Models.Container;
 using GUZ.Core.Models.Dialog;
 using GUZ.Core.Models.Npc;
 using GUZ.Core.Models.Vob.WayNet;
-using GUZ.Core.World;
+using GUZ.Core.Models.WayNet;
 using ZenKit;
 using ZenKit.Daedalus;
 using WayPoint = GUZ.Core.Models.Vob.WayNet.WayPoint;

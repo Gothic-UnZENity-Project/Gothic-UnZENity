@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using GUZ.Core.Util;
 using Logger = GUZ.Core.Util.Logger;
@@ -9,7 +10,7 @@ namespace GUZ.Core.Domain.Config
     {
         public static Dictionary<string, string> LoadFile(string filePath)
         {
-            var filePathCaseInsensitive = FileSearchHandler.FindFileCaseInsensitive(filePath);
+            var filePathCaseInsensitive = FindFileCaseInsensitive(filePath);
             if (filePathCaseInsensitive == null)
             {
                 Logger.LogError($"The Gothic.ini/GothicGame.ini file does not exist at the specified path: {filePath}", LogCat.Loading);
@@ -42,6 +43,30 @@ namespace GUZ.Core.Domain.Config
             }
 
             return data;
+        }
+
+        public static string FindFileCaseInsensitive(string fullPath)
+        {
+            // Extract directory and filename components
+            var directory = Path.GetDirectoryName(fullPath);
+            var targetFileName = Path.GetFileName(fullPath);
+
+            if (string.IsNullOrEmpty(directory) || !Directory.Exists(directory))
+            {
+                throw new DirectoryNotFoundException($"Directory not found: {directory}");
+            }
+
+            // Case-insensitive search in the target directory
+            foreach (var filePath in Directory.EnumerateFiles(directory))
+            {
+                var currentFileName = Path.GetFileName(filePath);
+                if (currentFileName.Equals(targetFileName, StringComparison.OrdinalIgnoreCase))
+                {
+                    return filePath; // Returns actual case-sensitive path
+                }
+            }
+
+            return null; // File not found
         }
     }
 }

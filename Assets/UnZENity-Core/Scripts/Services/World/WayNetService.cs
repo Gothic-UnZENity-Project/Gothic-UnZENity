@@ -4,7 +4,7 @@ using GUZ.Core.Models.Container;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Models.Config;
-using GUZ.Core.World;
+using GUZ.Core.Models.WayNet;
 using UnityEngine;
 using ZenKit;
 using Material = UnityEngine.Material;

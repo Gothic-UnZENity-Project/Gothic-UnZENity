@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using GUZ.Core.Models.Container;
 using GUZ.Core.Manager;
 using GUZ.Core.Models.Vob.WayNet;
-using GUZ.Core.World;
+using GUZ.Core.Models.WayNet;
 using UnityEngine;
 
 namespace GUZ.Core.Domain.Npc.Actions.AnimationActions
