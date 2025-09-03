@@ -3,14 +3,10 @@ using System.Linq;
 using GUZ.Core.Adapters.Properties;
 using GUZ.Core.Data.Adapter.Vobs;
 using GUZ.Core.Data.Container;
-using GUZ.Core.Data.ZkEvents;
 using GUZ.Core.Extensions;
 using GUZ.Core.Manager;
-using GUZ.Core.Util;
 using UnityEngine;
 using ZenKit.Daedalus;
-using EventType = ZenKit.EventType;
-using Logger = GUZ.Core.Util.Logger;
 using Object = UnityEngine.Object;
 
 namespace GUZ.Core.Npc.Actions.AnimationActions
@@ -49,51 +45,6 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
         {
             // By default, every Daedalus animation starts without using physics. But they can always overwrite it (e.g.) for walking.
             PhysicsHelper.DisablePhysicsForNpc(PrefabProps);
-        }
-
-        /// <summary>
-        /// We just set the audio by default.
-        /// </summary>
-        public virtual void AnimationSfxEventCallback(SerializableEventSoundEffect sfxData)
-        {
-            var clip = GameGlobals.Vobs.GetRandomSoundClip(sfxData.Name);
-            PrefabProps.NpcSound.clip = clip;
-            PrefabProps.NpcSound.maxDistance = sfxData.Range.ToMeter();
-            PrefabProps.NpcSound.Play();
-
-            if (sfxData.EmptySlot)
-            {
-                Logger.LogWarning($"PxEventSfxData.emptySlot not yet implemented: {sfxData.Name}", LogCat.Ai);
-            }
-        }
-
-        public virtual void AnimationEventCallback(SerializableEventTag data)
-        {
-            switch (data.Type)
-            {
-                case EventType.ItemInsert:
-                    InsertItem(data.Slot1, data.Slot2);
-                    break;
-                case EventType.ItemDestroy:
-                case EventType.ItemRemove:
-                    RemoveItem();
-                    break;
-                case EventType.TorchInventory:
-                    Logger.Log(
-                        "EventType.inventory_torch: I assume this means: if torch is in inventory, then put it out. " +
-                        "But not really sure. Need a NPC with real usage of it to predict right.", LogCat.Ai);
-                    break;
-                default:
-                    Logger.LogWarning($"EventType.type {data.Type} not yet supported.", LogCat.Ai);
-                    break;
-            }
-        }
-
-        public virtual void AnimationMorphEventCallback(SerializableEventMorphAnimation data)
-        {
-            var type = PrefabProps.HeadMorph.GetAnimationTypeByName(data.Animation);
-
-            PrefabProps.HeadMorph.StartAnimation(Props.BodyData.Head, type);
         }
 
         protected virtual void InsertItem(string slot1, string slot2)
@@ -145,23 +96,6 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
         /// </summary>
         protected virtual void AnimationEnd()
         {
-            IsFinishedFlag = true;
-        }
-
-        /// <summary>
-        /// Most of our animations are fine if we just set this flag and return it via IsFinished()
-        /// If an animation has also a next animation set, we will call it automatically. Alternatively we play an idle animation.
-        /// If the overall behaviour isn't intended, the overwriting class can always reset/alter the animation being played at the same frame.
-        /// </summary>
-        [Obsolete("As we BlendIn/BlendOut, this method is never reached. Use AnimationEnd() instead.")]
-        public virtual void AnimationEndEventCallback(SerializableEventEndSignal eventData)
-        {
-            if (eventData.NextAnimation.Any())
-            {
-                PhysicsHelper.DisablePhysicsForNpc(PrefabProps);
-                PrefabProps.AnimationSystem.PlayAnimation(eventData.NextAnimation);
-            }
-
             IsFinishedFlag = true;
         }
 

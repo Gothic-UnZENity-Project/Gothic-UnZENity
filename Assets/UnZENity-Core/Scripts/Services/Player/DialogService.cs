@@ -6,6 +6,7 @@ using GUZ.Core.Data;
 using GUZ.Core.Data.Container;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
+using GUZ.Core.Models.Dialog;
 using GUZ.Core.Npc.Actions;
 using GUZ.Core.Npc.Actions.AnimationActions;
 using GUZ.Core.Services.Context;

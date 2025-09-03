@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using GUZ.Core.Adapters.Properties;
-using GUZ.Core.Data.ZkEvents;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
@@ -19,7 +18,7 @@ using Logger = GUZ.Core.Util.Logger;
 
 namespace GUZ.Core.Npc
 {
-    public class AiHandler : BasePlayerBehaviour, IAnimationCallbacks
+    public class AiHandler : BasePlayerBehaviour
     {
 #if UNITY_EDITOR
         public List<(string name, AnimationAction properties)> AiActionHistory = new();
@@ -316,24 +315,6 @@ namespace GUZ.Core.Npc
         {
             Properties.CurrentAction = action;
             action.Start();
-        }
-
-        public void AnimationCallback(string eventTagDataParam)
-        {
-            var eventData = JsonUtility.FromJson<SerializableEventTag>(eventTagDataParam);
-            Properties.CurrentAction.AnimationEventCallback(eventData);
-        }
-
-        public void AnimationSfxCallback(string eventSfxDataParam)
-        {
-            var eventData = JsonUtility.FromJson<SerializableEventSoundEffect>(eventSfxDataParam);
-            Properties.CurrentAction.AnimationSfxEventCallback(eventData);
-        }
-
-        public void AnimationMorphCallback(string eventMorphDataParam)
-        {
-            var eventData = JsonUtility.FromJson<SerializableEventMorphAnimation>(eventMorphDataParam);
-            Properties.CurrentAction.AnimationMorphEventCallback(eventData);
         }
 
         /// <summary>

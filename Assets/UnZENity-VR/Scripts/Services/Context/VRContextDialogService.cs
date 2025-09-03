@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using GUZ.Core.Data;
 using GUZ.Core.Globals;
+using GUZ.Core.Models.Dialog;
 using GUZ.Core.Services.Context;
 using GUZ.VR.Adapters.UI;
 using UnityEngine;

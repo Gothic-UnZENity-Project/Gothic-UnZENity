@@ -1,5 +1,4 @@
 using GUZ.Core.Data.Container;
-using GUZ.Core.Data.ZkEvents;
 using GUZ.Core.Extensions;
 using EventType = ZenKit.EventType;
 
@@ -18,31 +17,6 @@ namespace GUZ.Core.Npc.Actions.AnimationActions
             // "t_Move_2_1hMove" --> drawing
             // "t_1h_2_1hRun"
             PrefabProps.AnimationSystem.PlayAnimation("t_Move_2_1hMove");
-        }
-
-        // FIXME - 1Hand hardcoded so far. We need to get the information from inventory system itself.
-        // FIXME - Sound is hardcoded as well. We need to get material from weapon dynamically of wood or metal.
-        public override void AnimationEventCallback(SerializableEventTag data)
-        {
-            switch (data.Type)
-            {
-                case EventType.SetFightMode:
-                    SyncZSlots();
-                    break;
-                case EventType.SoundDraw:
-                    // FIXME - Handle proper sound effect based on metal or wood weapon
-                    // "DRAWSOUND_ME.WAV" --> metal
-                    // "DRAWSOUND_WO.WAV" --> wood
-                    AnimationSfxEventCallback(new SerializableEventSoundEffect
-                    {
-                        Name = "DRAWSOUND_ME.WAV",
-                        Range = 2000f
-                    });
-                    break;
-                default:
-                    base.AnimationEventCallback(data);
-                    break;
-            }
         }
 
         // FIXME - Hardcoded. We need to set it dynamically and not copying the ZS, but an object below. Otherwise it's hard to find previous parent when undrawing.

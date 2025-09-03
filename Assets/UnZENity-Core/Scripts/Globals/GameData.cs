@@ -2,6 +2,7 @@
 using System.Text;
 using GUZ.Core.Data;
 using GUZ.Core.Data.Container;
+using GUZ.Core.Models.Dialog;
 using GUZ.Core.Models.Npc;
 using GUZ.Core.Models.Vob.WayNet;
 using GUZ.Core.World;

@@ -1,4 +1,4 @@
-namespace GUZ.Core.Data
+namespace GUZ.Core.Models.Dialog
 {
     /// <summary>
     /// Gothic handles Dialogs with two parts:

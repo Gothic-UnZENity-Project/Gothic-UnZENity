@@ -1,4 +1,4 @@
-namespace GUZ.Core.Data
+namespace GUZ.Core.Models.Sky
 {
     public class SkyStateRain : SkyState
     {

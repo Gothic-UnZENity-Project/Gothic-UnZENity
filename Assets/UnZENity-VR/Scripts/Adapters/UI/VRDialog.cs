@@ -8,6 +8,7 @@ using GUZ.Core.Data;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
+using GUZ.Core.Models.Dialog;
 using MyBox;
 using Reflex.Attributes;
 using TMPro;
