@@ -7,7 +7,6 @@ using GUZ.Core.Adapters.UI.LoadingBars;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
-using GUZ.Core.Services;
 using GUZ.Core.Services.Caches;
 using GUZ.Core.Util;
 using GUZ.Core.Vm;
@@ -19,9 +18,9 @@ using Constants = GUZ.Core.Globals.Constants;
 using Logger = GUZ.Core.Util.Logger;
 using TextureFormat = UnityEngine.TextureFormat;
 
-namespace GUZ.Core.Caches.StaticCache
+namespace GUZ.Core.Domain.StaticCache
 {
-    public class TextureArrayCacheCreator
+    public class TextureArrayCacheCreatorDomain
     {
         public Dictionary<string, StaticCacheManager.TextureInfo> TextureArrayInformation { get; } = new();
 

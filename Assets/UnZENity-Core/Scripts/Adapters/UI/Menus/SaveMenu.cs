@@ -1,6 +1,5 @@
 using System;
 using System.IO;
-using GUZ.Core.Caches;
 using GUZ.Core.Extensions;
 using GUZ.Core.Manager;
 using GUZ.Core.Model.UI.Menu;

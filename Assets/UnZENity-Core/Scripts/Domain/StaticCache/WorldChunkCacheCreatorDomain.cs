@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using GUZ.Core.Adapters.UI.LoadingBars;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
-using GUZ.Core.Services;
 using GUZ.Core.Services.Caches;
 using GUZ.Core.Services.Config;
 using GUZ.Core.Util;
@@ -15,9 +14,9 @@ using ZenKit;
 using Logger = GUZ.Core.Util.Logger;
 using TextureFormat = ZenKit.TextureFormat;
 
-namespace GUZ.Core.Caches.StaticCache
+namespace GUZ.Core.Domain.StaticCache
 {
-    public class WorldChunkCacheCreator
+    public class WorldChunkCacheCreatorDomain
     {
         [Serializable] // For cache saving reasons
         public class WorldChunk

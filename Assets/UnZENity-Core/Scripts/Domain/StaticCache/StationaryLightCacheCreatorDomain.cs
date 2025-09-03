@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using GUZ.Core.Adapters.UI.LoadingBars;
 using GUZ.Core.Extensions;
 using GUZ.Core.Manager;
-using GUZ.Core.Services;
 using GUZ.Core.Services.Config;
 using GUZ.Core.Util;
 using MyBox;
@@ -14,9 +13,9 @@ using ZenKit.Vobs;
 using Light = ZenKit.Vobs.Light;
 using Logger = GUZ.Core.Util.Logger;
 
-namespace GUZ.Core.Caches.StaticCache
+namespace GUZ.Core.Domain.StaticCache
 {
-    public class StationaryLightCacheCreator
+    public class StationaryLightCacheCreatorDomain
     {
         [Inject] private readonly ConfigService _configService;
 

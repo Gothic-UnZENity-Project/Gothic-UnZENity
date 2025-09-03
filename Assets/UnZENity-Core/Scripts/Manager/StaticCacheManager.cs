@@ -5,8 +5,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Threading.Tasks;
-using GUZ.Core.Caches;
-using GUZ.Core.Caches.StaticCache;
+using GUZ.Core.Domain.StaticCache;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Models.Config;
@@ -40,7 +39,7 @@ namespace GUZ.Core.Manager
         public bool IsGlobalCacheLoaded { get; private set; }
 
         public Dictionary<string, Bounds> LoadedVobsBounds { get; private set; }
-        public Dictionary<string, List<VobItemColliderCacheCreator.Data>> LoadedVobItemColliders { get; private set; }
+        public Dictionary<string, List<VobItemColliderCacheCreatorDomain.Data>> LoadedVobItemColliders { get; private set; }
 
 
         // During Mesh creation, we need to get the index of a TextureArray entry. For efficient lookup, we store the index here.
@@ -116,14 +115,14 @@ namespace GUZ.Core.Manager
         [Serializable]
         public class VobColliderEntry
         {
-            public VobColliderEntry(string meshName, List<VobItemColliderCacheCreator.Data> colliderData)
+            public VobColliderEntry(string meshName, List<VobItemColliderCacheCreatorDomain.Data> colliderData)
             {
                 Mesh = meshName;
                 Colls = colliderData;
             }
 
             public string Mesh; // MeshName
-            public List<VobItemColliderCacheCreator.Data> Colls; // Colliders
+            public List<VobItemColliderCacheCreatorDomain.Data> Colls; // Colliders
         }
 
         [Serializable]
@@ -152,9 +151,9 @@ namespace GUZ.Core.Manager
         [Serializable]
         public class WorldChunkContainer
         {
-            public List<WorldChunkCacheCreator.WorldChunk> OpaqueChunks;
-            public List<WorldChunkCacheCreator.WorldChunk> TransparentChunks;
-            public List<WorldChunkCacheCreator.WorldChunk> WaterChunks;
+            public List<WorldChunkCacheCreatorDomain.WorldChunk> OpaqueChunks;
+            public List<WorldChunkCacheCreatorDomain.WorldChunk> TransparentChunks;
+            public List<WorldChunkCacheCreatorDomain.WorldChunk> WaterChunks;
         }
 
         [Serializable]
@@ -245,7 +244,7 @@ namespace GUZ.Core.Manager
         }
 
         public async Task SaveGlobalCache(Dictionary<string, Bounds> vobBounds,
-            Dictionary<string, List<VobItemColliderCacheCreator.Data>> itemCollider,
+            Dictionary<string, List<VobItemColliderCacheCreatorDomain.Data>> itemCollider,
             Dictionary<string, TextureInfo> textureArrayInformation)
         {
             try
@@ -292,7 +291,7 @@ namespace GUZ.Core.Manager
 
         public async Task SaveWorldCache(
             string worldName,
-            Dictionary<TextureCacheService.TextureArrayTypes, List<WorldChunkCacheCreator.WorldChunk>> mergedChunksByLights,
+            Dictionary<TextureCacheService.TextureArrayTypes, List<WorldChunkCacheCreatorDomain.WorldChunk>> mergedChunksByLights,
             List<StationaryLightInfo> stationaryLightInfos)
         {
             try

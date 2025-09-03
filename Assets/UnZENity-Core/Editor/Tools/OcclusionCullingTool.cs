@@ -1,7 +1,6 @@
 using System;
 using System.Threading.Tasks;
-using GUZ.Core.Caches;
-using GUZ.Core.Caches.StaticCache;
+using GUZ.Core.Domain.StaticCache;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
@@ -91,8 +90,8 @@ namespace GUZ.Core.Editor.Tools
                 throw new ArgumentException($"Current scene >{worldName}< is no gothic world.");
             }
 
-            var stationaryLightCache = new StationaryLightCacheCreator();
-            var worldChunkCache = new WorldChunkCacheCreator();
+            var stationaryLightCache = new StationaryLightCacheCreatorDomain().Inject();
+            var worldChunkCache = new WorldChunkCacheCreatorDomain().Inject();
 
             await stationaryLightCache.CalculateStationaryLights(world.RootObjects, 0).AwaitAndLog();
             Logger.LogEditor("DONE - Loading stationary light data", LogCat.PreCaching);

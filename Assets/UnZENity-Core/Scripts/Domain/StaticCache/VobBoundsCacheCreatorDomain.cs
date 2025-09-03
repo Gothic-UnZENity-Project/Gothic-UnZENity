@@ -17,9 +17,9 @@ using ZenKit.Vobs;
 using Logger = GUZ.Core.Util.Logger;
 using Object = UnityEngine.Object;
 
-namespace GUZ.Core.Caches.StaticCache
+namespace GUZ.Core.Domain.StaticCache
 {
-    public class VobBoundsCacheCreator
+    public class VobBoundsCacheCreatorDomain
     {
         public Dictionary<string, Bounds> Bounds { get; } = new();
 

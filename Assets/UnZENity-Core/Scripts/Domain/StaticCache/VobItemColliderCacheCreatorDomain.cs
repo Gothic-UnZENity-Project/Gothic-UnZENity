@@ -5,15 +5,14 @@ using System.Threading.Tasks;
 using GUZ.Core.Adapters.UI.LoadingBars;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
-using GUZ.Core.Services;
 using GUZ.Core.Util;
 using GUZ.Core.Vm;
 using UnityEngine;
 using Logger = GUZ.Core.Util.Logger;
 
-namespace GUZ.Core.Caches.StaticCache
+namespace GUZ.Core.Domain.StaticCache
 {
-    public class VobItemColliderCacheCreator
+    public class VobItemColliderCacheCreatorDomain
     {
         public Dictionary<string, List<Data>> ItemCollider { get; } = new();
         

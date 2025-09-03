@@ -2,8 +2,7 @@
 using System.Diagnostics;
 using System.Threading.Tasks;
 using GUZ.Core.Adapters.UI.LoadingBars;
-using GUZ.Core.Caches;
-using GUZ.Core.Caches.StaticCache;
+using GUZ.Core.Domain.StaticCache;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Services;
@@ -99,9 +98,9 @@ namespace GUZ.Core.Manager.Scenes
                 var watch = Stopwatch.StartNew();
                 var overallWatch = Stopwatch.StartNew();
 
-                var vobBoundsCache = new VobBoundsCacheCreator().Inject(); // FIXME - We need to move it to a Domain object and call it via Service.
-                var vobColliderCache = new VobItemColliderCacheCreator();
-                var textureArrayCache = new TextureArrayCacheCreator();
+                var vobBoundsCache = new VobBoundsCacheCreatorDomain().Inject(); // FIXME - We need to move it to a Domain object and call it via Service.
+                var vobColliderCache = new VobItemColliderCacheCreatorDomain();
+                var textureArrayCache = new TextureArrayCacheCreatorDomain();
 
                 GameGlobals.StaticCache.InitCacheFolder();
 
@@ -111,8 +110,8 @@ namespace GUZ.Core.Manager.Scenes
                         
                     Logger.Log($"### PreCaching meshes for world: {worldName}", LogCat.PreCaching);
                     var world = ResourceLoader.TryGetWorld(worldName, GameContext.ContextGameVersionService.Version)!;
-                    var stationaryLightCache = new StationaryLightCacheCreator().Inject();
-                    var worldChunkCache = new WorldChunkCacheCreator().Inject();
+                    var stationaryLightCache = new StationaryLightCacheCreatorDomain().Inject();
+                    var worldChunkCache = new WorldChunkCacheCreatorDomain().Inject();
 
                     await vobBoundsCache.CalculateVobBounds(world.RootObjects, worldIndex);
                     watch.LogAndRestart($"{worldName}: VobBounds calculated.");

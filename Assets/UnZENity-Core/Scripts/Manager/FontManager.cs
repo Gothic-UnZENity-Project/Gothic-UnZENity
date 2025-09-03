@@ -1,6 +1,5 @@
 using System;
 using System.Reflection;
-using GUZ.Core.Caches;
 using GUZ.Core.Globals;
 using GUZ.Core.Services;
 using GUZ.Core.Services.Caches;

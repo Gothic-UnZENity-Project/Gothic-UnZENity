@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using GUZ.Core.Caches.StaticCache;
+using GUZ.Core.Domain.StaticCache;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Services.Caches;
@@ -651,13 +651,13 @@ namespace GUZ.Core.Domain.Meshes.Builder
 
             foreach (var coll in colliders)
             {
-                if (coll.T == VobItemColliderCacheCreator.T.B)
+                if (coll.T == VobItemColliderCacheCreatorDomain.T.B)
                 {
                     var boxCollider = rootGo.AddComponent<BoxCollider>();
                     boxCollider.center = coll.C;
                     boxCollider.size = coll.S;
                 }
-                else if (coll.T == VobItemColliderCacheCreator.T.C)
+                else if (coll.T == VobItemColliderCacheCreatorDomain.T.C)
                 {
                     var capsuleCollider = rootGo.AddComponent<CapsuleCollider>();
                     capsuleCollider.center = coll.C;

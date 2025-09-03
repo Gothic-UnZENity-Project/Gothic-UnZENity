@@ -2,8 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using GUZ.Core.Adapters.UI.LoadingBars;
-using GUZ.Core.Caches;
-using GUZ.Core.Caches.StaticCache;
+using GUZ.Core.Domain.StaticCache;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
@@ -66,7 +65,7 @@ namespace GUZ.Core.Domain.Meshes.Builder
             await BuildChunkType(_worldChunks.WaterChunks, TextureCacheService.TextureArrayTypes.Water, loading);
         }
 
-        private async Task BuildChunkType(List<WorldChunkCacheCreator.WorldChunk> chunks, TextureCacheService.TextureArrayTypes type, [CanBeNull] LoadingManager loading)
+        private async Task BuildChunkType(List<WorldChunkCacheCreatorDomain.WorldChunk> chunks, TextureCacheService.TextureArrayTypes type, [CanBeNull] LoadingManager loading)
         {
             var chunkTypeRoot = new GameObject
             {
