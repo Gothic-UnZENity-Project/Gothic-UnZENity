@@ -5,12 +5,13 @@ using GUZ.Core;
 using GUZ.Core.Adapters.Vob;
 using GUZ.Core.Extensions;
 using GUZ.Core.Const;
+using GUZ.Core.Core.Logging;
 using GUZ.Core.Util;
 using HurricaneVR.Framework.Components;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using ZenKit.Vobs;
-using Logger = GUZ.Core.Util.Logger;
+using Logger = GUZ.Core.Core.Logging.Logger;
 
 namespace GUZ.VR.Adapters.Vob
 {

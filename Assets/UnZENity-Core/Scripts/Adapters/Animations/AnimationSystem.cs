@@ -6,6 +6,7 @@ using GUZ.Core.Adapters.Npc;
 using GUZ.Core.Domain.Animations;
 using GUZ.Core.Extensions;
 using GUZ.Core.Const;
+using GUZ.Core.Core.Logging;
 using GUZ.Core.Models.Animations;
 using GUZ.Core.Models.Vm;
 using GUZ.Core.Npc;
@@ -16,7 +17,7 @@ using UnityEngine;
 using ZenKit;
 using AnimationState = GUZ.Core.Models.Animations.AnimationState;
 using EventType = ZenKit.EventType;
-using Logger = GUZ.Core.Util.Logger;
+using Logger = GUZ.Core.Core.Logging.Logger;
 
 namespace GUZ.Core.Adapters.Adnimations
 {

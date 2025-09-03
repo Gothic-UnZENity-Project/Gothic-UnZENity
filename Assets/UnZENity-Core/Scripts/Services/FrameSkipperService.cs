@@ -1,8 +1,9 @@
 ﻿using System.Collections;
 using System.Threading.Tasks;
+using GUZ.Core.Core.Logging;
 using GUZ.Core.Util;
 using UnityEngine;
-using Logger = GUZ.Core.Util.Logger;
+using Logger = GUZ.Core.Core.Logging.Logger;
 
 namespace GUZ.Core.Services
 {

@@ -1,11 +1,12 @@
 using System;
 using GUZ.Core.Const;
+using GUZ.Core.Core.Logging;
 using GUZ.Core.Services.Config;
 using GUZ.Core.Util;
 using Reflex.Attributes;
 using UnityEngine;
 using ZenKit;
-using Logger = GUZ.Core.Util.Logger;
+using Logger = GUZ.Core.Core.Logging.Logger;
 
 namespace GUZ.Core.Manager.Scenes
 {

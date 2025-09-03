@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using GUZ.Core.Adapters.Vob;
+using GUZ.Core.Core.Logging;
 using GUZ.Core.Models.Container;
 using GUZ.Core.Debugging;
 using GUZ.Core.Extensions;
@@ -14,7 +15,7 @@ using Reflex.Attributes;
 using UnityEngine;
 using ZenKit;
 using ZenKit.Vobs;
-using Logger = GUZ.Core.Util.Logger;
+using Logger = GUZ.Core.Core.Logging.Logger;
 
 namespace GUZ.Core.Domain.Culling
 {

@@ -4,7 +4,7 @@ using UberLogger;
 using UnityEngine;
 using ZenKit;
 
-namespace GUZ.Core.Util
+namespace GUZ.Core.Core.Logging
 {
     /// <summary>
     /// Hint: Unity ignores StackTrace elements only if:

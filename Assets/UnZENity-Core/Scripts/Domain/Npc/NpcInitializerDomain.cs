@@ -7,6 +7,7 @@ using GUZ.Core.Models.Adapter.Vobs;
 using GUZ.Core.Models.Container;
 using GUZ.Core.Extensions;
 using GUZ.Core.Const;
+using GUZ.Core.Core.Logging;
 using GUZ.Core.Manager;
 using GUZ.Core.Models.Vm;
 using GUZ.Core.Models.Vob.WayNet;
@@ -22,7 +23,7 @@ using UnityEngine;
 using ZenKit;
 using ZenKit.Daedalus;
 using ZenKit.Vobs;
-using Logger = GUZ.Core.Util.Logger;
+using Logger = GUZ.Core.Core.Logging.Logger;
 using Object = UnityEngine.Object;
 using WayPoint = GUZ.Core.Models.Vob.WayNet.WayPoint;
 

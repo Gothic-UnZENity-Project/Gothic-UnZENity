@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using GUZ.Core.Adapters.UI.LoadingBars;
 using GUZ.Core.Extensions;
 using GUZ.Core.Const;
+using GUZ.Core.Core.Logging;
 using GUZ.Core.Services;
 using GUZ.Core.Services.Caches;
 using GUZ.Core.Services.Config;
@@ -12,7 +13,7 @@ using MyBox;
 using Reflex.Attributes;
 using UnityEngine;
 using ZenKit;
-using Logger = GUZ.Core.Util.Logger;
+using Logger = GUZ.Core.Core.Logging.Logger;
 using TextureFormat = ZenKit.TextureFormat;
 
 namespace GUZ.Core.Domain.StaticCache

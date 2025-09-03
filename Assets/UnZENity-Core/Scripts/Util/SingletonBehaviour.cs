@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using GUZ.Core.Core.Logging;
+using UnityEngine;
+using Logger = GUZ.Core.Core.Logging.Logger;
 
 namespace GUZ.Core.Util
 {

@@ -1,9 +1,10 @@
+using GUZ.Core.Core.Logging;
 using GUZ.Core.Extensions;
 using GUZ.Core.Models.Vm;
 using GUZ.Core.Util;
 using UnityEngine;
 using ZenKit.Daedalus;
-using Logger = GUZ.Core.Util.Logger;
+using Logger = GUZ.Core.Core.Logging.Logger;
 
 namespace GUZ.Core.Domain.Meshes.Builder
 {

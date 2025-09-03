@@ -1,8 +1,9 @@
 #if GUZ_HVR_INSTALLED
+using GUZ.Core.Core.Logging;
 using GUZ.Core.Util;
 using GUZ.VR.Adapters.Vob.VobDoor;
 using UnityEngine;
-using Logger = GUZ.Core.Util.Logger;
+using Logger = GUZ.Core.Core.Logging.Logger;
 
 namespace GUZ.VR.Adapters.Vob.VobItem
 {

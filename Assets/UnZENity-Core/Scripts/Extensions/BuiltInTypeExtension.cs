@@ -2,11 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using GUZ.Core.Core.Logging;
 using GUZ.Core.Util;
 using Reflex.Core;
 using Reflex.Injectors;
 using UnityEngine;
-using Logger = GUZ.Core.Util.Logger;
+using Logger = GUZ.Core.Core.Logging.Logger;
 
 namespace GUZ.Core.Extensions
 {

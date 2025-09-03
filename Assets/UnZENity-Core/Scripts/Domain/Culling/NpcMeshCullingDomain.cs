@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using GUZ.Core.Adapters.Npc;
+using GUZ.Core.Core.Logging;
 using GUZ.Core.Models.Container;
 using GUZ.Core.Extensions;
 using GUZ.Core.Manager;
@@ -9,7 +10,7 @@ using GUZ.Core.Services.Npc;
 using GUZ.Core.Util;
 using Reflex.Attributes;
 using UnityEngine;
-using Logger = GUZ.Core.Util.Logger;
+using Logger = GUZ.Core.Core.Logging.Logger;
 
 namespace GUZ.Core.Domain.Culling
 {

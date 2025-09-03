@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using GUZ.Core.Core.Logging;
 using GUZ.Core.Extensions;
 using GUZ.Core.Manager;
 using GUZ.Core.Models.Sky;
@@ -10,7 +11,7 @@ using GUZ.Core.Util;
 using Reflex.Attributes;
 using UnityEngine;
 using UnityEngine.Rendering;
-using Logger = GUZ.Core.Util.Logger;
+using Logger = GUZ.Core.Core.Logging.Logger;
 using Object = UnityEngine.Object;
 using Random = UnityEngine.Random;
 

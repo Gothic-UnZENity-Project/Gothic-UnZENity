@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using GUZ.Core.Core.Logging;
 using GUZ.Core.Extensions;
 using GUZ.Core.Models.Animations.Morph;
 using GUZ.Core.Services.Caches;
@@ -9,7 +10,7 @@ using JetBrains.Annotations;
 using Reflex.Attributes;
 using UnityEngine;
 using ZenKit;
-using Logger = GUZ.Core.Util.Logger;
+using Logger = GUZ.Core.Core.Logging.Logger;
 using Mesh = UnityEngine.Mesh;
 using Random = UnityEngine.Random;
 

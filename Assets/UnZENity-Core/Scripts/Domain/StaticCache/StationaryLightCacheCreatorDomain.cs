@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using GUZ.Core.Adapters.UI.LoadingBars;
+using GUZ.Core.Core.Logging;
 using GUZ.Core.Extensions;
 using GUZ.Core.Manager;
 using GUZ.Core.Services;
@@ -12,7 +13,7 @@ using UnityEngine;
 using ZenKit;
 using ZenKit.Vobs;
 using Light = ZenKit.Vobs.Light;
-using Logger = GUZ.Core.Util.Logger;
+using Logger = GUZ.Core.Core.Logging.Logger;
 
 namespace GUZ.Core.Domain.StaticCache
 {

@@ -1,9 +1,10 @@
 using System.Text;
 using GUZ.Core.Const;
+using GUZ.Core.Core.Logging;
 using GUZ.Core.Util;
 using UnityEngine.Localization.Settings;
 using ZenKit;
-using Logger = GUZ.Core.Util.Logger;
+using Logger = GUZ.Core.Core.Logging.Logger;
 
 namespace GUZ.Manager
 {

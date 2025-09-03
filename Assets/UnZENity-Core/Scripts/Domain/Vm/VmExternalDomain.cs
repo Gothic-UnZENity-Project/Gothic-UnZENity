@@ -3,6 +3,7 @@ using System.Linq;
 using System.Numerics;
 using GUZ.Core.Models.Container;
 using GUZ.Core.Const;
+using GUZ.Core.Core.Logging;
 using GUZ.Core.Manager;
 using GUZ.Core.Models.Vm;
 using GUZ.Core.Services.Caches;
@@ -12,7 +13,7 @@ using GUZ.Core.Util;
 using Reflex.Attributes;
 using ZenKit;
 using ZenKit.Daedalus;
-using Logger = GUZ.Core.Util.Logger;
+using Logger = GUZ.Core.Core.Logging.Logger;
 using Random = UnityEngine.Random;
 
 namespace GUZ.Core.Domain.Vm

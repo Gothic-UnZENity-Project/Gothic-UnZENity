@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using GUZ.Core.Core.Logging;
 using GUZ.Core.Manager;
 using GUZ.Core.Util;
 using MyBox;
@@ -9,7 +10,7 @@ using UnityEngine;
 using ZenKit;
 using ZenKit.Util;
 using ZenKit.Vobs;
-using Logger = GUZ.Core.Util.Logger;
+using Logger = GUZ.Core.Core.Logging.Logger;
 using Vector3 = System.Numerics.Vector3;
 
 namespace GUZ.Core.Debugging

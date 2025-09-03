@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using GUZ.Core.Core.Logging;
 using GUZ.Core.Extensions;
 using GUZ.Core.Manager;
 using GUZ.Core.Model.UI.Menu;
@@ -13,7 +14,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using ZenKit;
 using ZenKit.Daedalus;
-using Logger = GUZ.Core.Util.Logger;
+using Logger = GUZ.Core.Core.Logging.Logger;
 
 namespace GUZ.Core.Adapters.UI.Menus
 {

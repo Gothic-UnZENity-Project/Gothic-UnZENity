@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using GUZ.Core.Core.Logging;
 using GUZ.Core.Models.Container;
 using GUZ.Core.Util;
 using JetBrains.Annotations;
@@ -10,7 +11,7 @@ using ZenKit;
 using ZenKit.Daedalus;
 using ZenKit.Util;
 using ZenKit.Vobs;
-using Logger = GUZ.Core.Util.Logger;
+using Logger = GUZ.Core.Core.Logging.Logger;
 using TextureFormat = UnityEngine.TextureFormat;
 
 namespace GUZ.Core.Extensions

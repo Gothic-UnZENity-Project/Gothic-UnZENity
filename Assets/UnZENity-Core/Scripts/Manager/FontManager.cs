@@ -1,6 +1,7 @@
 using System;
 using System.Reflection;
 using GUZ.Core.Const;
+using GUZ.Core.Core.Logging;
 using GUZ.Core.Services;
 using GUZ.Core.Services.Caches;
 using GUZ.Core.Util;
@@ -9,7 +10,7 @@ using Reflex.Attributes;
 using TMPro;
 using UnityEngine;
 using UnityEngine.TextCore;
-using Logger = GUZ.Core.Util.Logger;
+using Logger = GUZ.Core.Core.Logging.Logger;
 
 namespace GUZ.Core.Manager
 {

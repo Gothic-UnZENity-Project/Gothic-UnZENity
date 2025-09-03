@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using GUZ.Core.Extensions;
 using GUZ.Core.Const;
+using GUZ.Core.Core.Logging;
 using GUZ.Core.Models.Vob.WayNet;
 using GUZ.Core.Models.WayNet;
 using GUZ.Core.Util;
 using JetBrains.Annotations;
 using UnityEngine;
-using Logger = GUZ.Core.Util.Logger;
+using Logger = GUZ.Core.Core.Logging.Logger;
 
 namespace GUZ.Core.Manager
 {

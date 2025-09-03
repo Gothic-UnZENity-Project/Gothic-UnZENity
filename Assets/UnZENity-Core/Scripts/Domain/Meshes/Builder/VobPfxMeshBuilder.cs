@@ -3,12 +3,13 @@ using GUZ.Core.Adapters.Properties.Vob;
 using GUZ.Core.Adapters.Vob;
 using GUZ.Core.Extensions;
 using GUZ.Core.Const;
+using GUZ.Core.Core.Logging;
 using GUZ.Core.Services.Caches;
 using GUZ.Core.Util;
 using UnityEngine;
 using UnityEngine.Rendering;
 using ZenKit.Vobs;
-using Logger = GUZ.Core.Util.Logger;
+using Logger = GUZ.Core.Core.Logging.Logger;
 
 namespace GUZ.Core.Domain.Meshes.Builder
 {

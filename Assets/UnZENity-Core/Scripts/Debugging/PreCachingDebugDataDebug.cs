@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using GUZ.Core.Core.Logging;
 using GUZ.Core.Util;
 using UnityEngine;
-using Logger = GUZ.Core.Util.Logger;
+using Logger = GUZ.Core.Core.Logging.Logger;
 
 namespace GUZ.Core.Debugging
 {

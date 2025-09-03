@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using GUZ.Core;
 using GUZ.Core.Extensions;
 using GUZ.Core.Const;
+using GUZ.Core.Core.Logging;
 using GUZ.Core.Manager;
 using GUZ.Core.Manager.Vobs;
 using GUZ.Core.Models.Config;
@@ -20,7 +21,7 @@ using GUZ.Manager;
 using Reflex.Attributes;
 using UnityEngine;
 using ZenKit;
-using Logger = GUZ.Core.Util.Logger;
+using Logger = GUZ.Core.Core.Logging.Logger;
 
 namespace GUZ.Lab
 {

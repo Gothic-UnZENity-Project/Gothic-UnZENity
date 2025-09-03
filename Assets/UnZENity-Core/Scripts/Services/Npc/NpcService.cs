@@ -9,6 +9,7 @@ using GUZ.Core.Models.Vob;
 using GUZ.Core.Domain.Npc;
 using GUZ.Core.Extensions;
 using GUZ.Core.Const;
+using GUZ.Core.Core.Logging;
 using GUZ.Core.Manager;
 using GUZ.Core.Models.Config;
 using GUZ.Core.Models.Npc;
@@ -23,7 +24,7 @@ using UnityEngine;
 using ZenKit;
 using ZenKit.Daedalus;
 using ZenKit.Vobs;
-using Logger = GUZ.Core.Util.Logger;
+using Logger = GUZ.Core.Core.Logging.Logger;
 
 namespace GUZ.Core.Services.Npc
 {

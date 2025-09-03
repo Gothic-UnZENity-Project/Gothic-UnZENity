@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using GUZ.Core.Extensions;
 using GUZ.Core.Const;
+using GUZ.Core.Core.Logging;
 using GUZ.Core.Model.UI.Menu;
 using GUZ.Core.Model.UI.MenuItem;
 using GUZ.Core.Services;
@@ -15,7 +16,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using ZenKit.Daedalus;
-using Logger = GUZ.Core.Util.Logger;
+using Logger = GUZ.Core.Core.Logging.Logger;
 
 namespace GUZ.Core.Adapters.UI.Menus
 {

@@ -2,6 +2,7 @@
 using GUZ.Core.Adapters.Properties;
 using GUZ.Core.Extensions;
 using GUZ.Core.Const;
+using GUZ.Core.Core.Logging;
 using GUZ.Core.Manager;
 using GUZ.Core.Models.Vm;
 using GUZ.Core.Domain.Npc.Actions;
@@ -15,7 +16,7 @@ using Reflex.Attributes;
 using UnityEngine;
 using ZenKit;
 using ZenKit.Daedalus;
-using Logger = GUZ.Core.Util.Logger;
+using Logger = GUZ.Core.Core.Logging.Logger;
 
 namespace GUZ.Core.Adapters.Npc
 {

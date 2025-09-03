@@ -5,12 +5,13 @@ using System.Threading.Tasks;
 using GUZ.Core.Adapters.UI.LoadingBars;
 using GUZ.Core.Extensions;
 using GUZ.Core.Const;
+using GUZ.Core.Core.Logging;
 using GUZ.Core.Services;
 using GUZ.Core.Services.Caches;
 using GUZ.Core.Util;
 using Reflex.Attributes;
 using UnityEngine;
-using Logger = GUZ.Core.Util.Logger;
+using Logger = GUZ.Core.Core.Logging.Logger;
 
 namespace GUZ.Core.Domain.StaticCache
 {

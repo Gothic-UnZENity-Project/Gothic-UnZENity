@@ -2,6 +2,7 @@ using System.Diagnostics;
 using System.Globalization;
 using GUZ.Core.Extensions;
 using GUZ.Core.Const;
+using GUZ.Core.Core.Logging;
 using GUZ.Core.Manager;
 using GUZ.Core.Manager.Scenes;
 using GUZ.Core.Manager.Vobs;
@@ -20,7 +21,7 @@ using Reflex.Attributes;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using ZenKit;
-using Logger = GUZ.Core.Util.Logger;
+using Logger = GUZ.Core.Core.Logging.Logger;
 
 namespace GUZ.Core
 {

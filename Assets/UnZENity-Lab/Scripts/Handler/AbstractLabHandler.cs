@@ -1,10 +1,11 @@
 ﻿using GUZ.Core;
+using GUZ.Core.Core.Logging;
 using GUZ.Core.Services;
 using GUZ.Core.Services.Caches;
 using GUZ.Core.Util;
 using Reflex.Attributes;
 using UnityEngine;
-using Logger = GUZ.Core.Util.Logger;
+using Logger = GUZ.Core.Core.Logging.Logger;
 
 namespace GUZ.Lab.Handler
 {

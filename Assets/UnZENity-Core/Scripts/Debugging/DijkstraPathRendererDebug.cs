@@ -3,12 +3,13 @@ using System.Diagnostics;
 using System.Linq;
 using GUZ.Core.Extensions;
 using GUZ.Core.Const;
+using GUZ.Core.Core.Logging;
 using GUZ.Core.Manager;
 using GUZ.Core.Util;
 using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.Serialization;
-using Logger = GUZ.Core.Util.Logger;
+using Logger = GUZ.Core.Core.Logging.Logger;
 
 namespace GUZ.Core.Debugging
 {
