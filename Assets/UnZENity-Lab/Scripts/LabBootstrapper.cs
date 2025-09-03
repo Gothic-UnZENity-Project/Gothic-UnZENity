@@ -15,7 +15,6 @@ using GUZ.Core.Services.Context;
 using GUZ.Core.Services.Culling;
 using GUZ.Core.Services.Npc;
 using GUZ.Core.Util;
-using GUZ.Core.Vm;
 using GUZ.Lab.Handler;
 using GUZ.Manager;
 using Reflex.Attributes;
@@ -81,6 +80,8 @@ namespace GUZ.Lab
         [Inject] private readonly ContextInteractionService _contextInteractionService;
         [Inject] private readonly ContextGameVersionService _contextGameVersionService;
         [Inject] private readonly MeshService _meshService;
+        
+        [Inject] private readonly VmCacheService _vmCacheService;
         [Inject] private readonly TextureCacheService _textureCacheService;
         [Inject] private readonly MorphMeshCacheService _morphMeshCacheService;
         [Inject] private readonly MultiTypeCacheService _multiTypeCacheService;
@@ -370,7 +371,7 @@ namespace GUZ.Lab
         private void OnDestroy()
         {
             GameData.Dispose();
-            VmInstanceManager.Dispose();
+            _vmCacheService.Dispose();
             _textureCacheService.Dispose();
             _multiTypeCacheService.Dispose();
             _morphMeshCacheService.Dispose();

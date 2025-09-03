@@ -17,7 +17,6 @@ using GUZ.Core.Npc;
 using GUZ.Core.Services.Caches;
 using GUZ.Core.Services.Config;
 using GUZ.Core.Util;
-using GUZ.Core.Vm;
 using MyBox;
 using Reflex.Attributes;
 using UnityEngine;
@@ -40,7 +39,9 @@ namespace GUZ.Core.Services.Npc
         [Inject] private readonly UnityMonoService _unityMonoService;
         // Supporter class where the whole Init() logic is outsourced for better readability.
         [Inject] private readonly MultiTypeCacheService _multiTypeCacheService;
-
+        [Inject] private readonly VmCacheService _vmCacheService;
+        
+        
         private readonly NpcInitializerDomain _initializerDomain = new NpcInitializerDomain().Inject();
 
 
@@ -204,8 +205,8 @@ namespace GUZ.Core.Services.Npc
 
             if (data.Armor >= 0)
             {
-                var armorData = VmInstanceManager.TryGetItemData(data.Armor);
-                props.EquippedItems.Add(VmInstanceManager.TryGetItemData(data.Armor));
+                var armorData = _vmCacheService.TryGetItemData(data.Armor);
+                props.EquippedItems.Add(_vmCacheService.TryGetItemData(data.Armor));
                 props.MdmName = armorData.VisualChange;
             }
             else
@@ -245,7 +246,7 @@ namespace GUZ.Core.Services.Npc
             var vob = npc.GetUserData()!.Vob;
 
             
-            var mainFlag = (VmGothicEnums.ItemFlags)VmInstanceManager.TryGetItemData(itemIndex).MainFlag;
+            var mainFlag = (VmGothicEnums.ItemFlags)_vmCacheService.TryGetItemData(itemIndex).MainFlag;
             var inventoryCat = mainFlag.ToInventoryCategory();
             
             var items = GameGlobals.Vobs.UnpackItems(vob.GetPacked((int)inventoryCat));
@@ -348,7 +349,7 @@ namespace GUZ.Core.Services.Npc
         public void ExtEquipItem(NpcInstance npc, int itemId)
         {
             var props = npc.GetUserData().Props;
-            var itemData = VmInstanceManager.TryGetItemData(itemId);
+            var itemData = _vmCacheService.TryGetItemData(itemId);
             
             props.EquippedItems.Add(itemData);
         }

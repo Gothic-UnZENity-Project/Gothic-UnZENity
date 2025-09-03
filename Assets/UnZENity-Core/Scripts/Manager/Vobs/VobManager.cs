@@ -5,17 +5,17 @@ using System.Linq;
 using System.Threading.Tasks;
 using GUZ.Core.Adapters.UI.LoadingBars;
 using GUZ.Core.Adapters.Vob;
-using GUZ.Core.Models.Container;
-using GUZ.Core.Models.Vob;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Models.Config;
+using GUZ.Core.Models.Container;
+using GUZ.Core.Models.Vob;
+using GUZ.Core.Services.Audio;
 using GUZ.Core.Services.Caches;
 using GUZ.Core.Services.Config;
 using GUZ.Core.Services.Culling;
 using GUZ.Core.Services.Npc;
 using GUZ.Core.Util;
-using GUZ.Core.Vm;
 using JetBrains.Annotations;
 using MyBox;
 using Reflex.Attributes;
@@ -28,6 +28,7 @@ namespace GUZ.Core.Manager.Vobs
 {
     public class VobManager
     {
+        [Inject] private readonly VmCacheService _vmCacheService;
         [Inject] private readonly ConfigService _configService;
         [Inject] private readonly VobSoundCullingService _vobSoundCullingService;
         [Inject] private readonly UnityMonoService _unityMonoService;
@@ -142,7 +143,7 @@ namespace GUZ.Core.Manager.Vobs
         {
             AudioClip clip;
 
-            if (soundName.EqualsIgnoreCase(SfxConst.NoSoundName))
+            if (soundName.EqualsIgnoreCase(SfxService.NoSoundName))
             {
                 //instead of decoding nosound.wav which might be decoded incorrectly, just return null
                 return null;
@@ -155,13 +156,13 @@ namespace GUZ.Core.Manager.Vobs
             }
             else
             {
-                var sfxContainer = VmInstanceManager.TryGetSfxData(soundName);
+                var sfxContainer = _vmCacheService.TryGetSfxData(soundName);
 
                 if (sfxContainer == null)
                     return null;
 
                 // Instead of decoding nosound.wav which might be decoded incorrectly, just return null.
-                if (sfxContainer.GetFirstSound().File.EqualsIgnoreCase(SfxConst.NoSoundName))
+                if (sfxContainer.GetFirstSound().File.EqualsIgnoreCase(SfxService.NoSoundName))
                     return null;
 
                 clip = _audioService.CreateAudioClip(sfxContainer.GetRandomSound());
@@ -219,7 +220,7 @@ namespace GUZ.Core.Manager.Vobs
                 Logger.LogError("No ItemId found. Is this a bug on daedalus or our side?", LogCat.Vob);
                 return; // no item
             }
-            var item = VmInstanceManager.TryGetItemData(itemId);
+            var item = _vmCacheService.TryGetItemData(itemId);
 
             _initializer.CreateItemMesh(item, parentGo, default);
         }
@@ -235,7 +236,7 @@ namespace GUZ.Core.Manager.Vobs
                 return;
             }
 
-            var item = VmInstanceManager.TryGetItemData(itemName);
+            var item = _vmCacheService.TryGetItemData(itemName);
 
             _initializer.CreateItemMesh(item, parentGo, default);
         }
@@ -363,7 +364,7 @@ namespace GUZ.Core.Manager.Vobs
 
         private VobContainer CreateContainerWithLoader(IVirtualObject vob)
         {
-            var container = new VobContainer(vob);
+            var container = new VobContainer(vob).Inject();
             _multiTypeCacheService.VobCache.Add(container);
 
             container.Go = new GameObject($"{container.Vob.GetVisualName()} (Loader)");
@@ -414,7 +415,7 @@ namespace GUZ.Core.Manager.Vobs
             if (!_configService.Dev.EnableVOBs || (!activeTypes.IsEmpty() && activeTypes.Contains(VirtualObjectType.oCItem)))
                 return;
 
-            var item = VmInstanceManager.TryGetItemData(itemInstance);
+            var item = _vmCacheService.TryGetItemData(itemInstance);
             var instanceName = GameData.GothicVm.GetSymbolByIndex(item.Index)!.Name;
             var wp = WayNetHelper.GetWayNetPoint(spawnPoint)!;
 

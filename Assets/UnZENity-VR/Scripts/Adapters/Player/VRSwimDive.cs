@@ -11,7 +11,7 @@ using GUZ.Core.Models.Audio;
 using GUZ.Core.Models.Marvin;
 using GUZ.Core.Models.Vm;
 using GUZ.Core.Services;
-using GUZ.Core.Vm;
+using GUZ.Core.Services.Caches;
 using GUZ.VR.Adapters.HVROverrides;
 using GUZ.VR.Services.Context;
 using HurricaneVR.Framework.Core.HandPoser;
@@ -65,6 +65,7 @@ namespace GUZ.VR.Adapters.Player
 
 
         [Inject] private readonly AudioService _audioService;
+        [Inject] private readonly VmCacheService _vmCacheService;
 
 
         private void Start()
@@ -82,19 +83,19 @@ namespace GUZ.VR.Adapters.Player
                 // FIXME - In G1, there are different sounds for SwimBack, Sideways, and Forward
                 var swimAnim = mds.Animations.First(i => i.Name.EqualsIgnoreCase("s_SwimF"));
                 var swimSfxName = swimAnim.SoundEffects.First().Name;
-                _sfxSwimModel = VmInstanceManager.TryGetSfxData(swimSfxName)!;
+                _sfxSwimModel = _vmCacheService.TryGetSfxData(swimSfxName)!;
                 
                 var diveAnim = mds.Animations.First(i => i.Name.EqualsIgnoreCase("s_DiveF"));
                 var diveSfxName = diveAnim.SoundEffects.First().Name;
-                _sfxDiveModel = VmInstanceManager.TryGetSfxData(diveSfxName)!;
+                _sfxDiveModel = _vmCacheService.TryGetSfxData(diveSfxName)!;
 
                 var swim2DiveAnim = mds.Animations.First(i => i.Name.EqualsIgnoreCase("t_Swim_2_Dive"));
                 var swim2DiveSfxName = swim2DiveAnim.SoundEffects.First().Name;
-                _sfxSwim2DiveModel = VmInstanceManager.TryGetSfxData(swim2DiveSfxName)!;
+                _sfxSwim2DiveModel = _vmCacheService.TryGetSfxData(swim2DiveSfxName)!;
                 
                 var swim2HangAnim = mds.Animations.First(i => i.Name.EqualsIgnoreCase("t_Swim_2_Hang"));
                 var swim2HangSfxName = swim2HangAnim.SoundEffects.First().Name;
-                _sfxSwim2HangModel = VmInstanceManager.TryGetSfxData(swim2HangSfxName);
+                _sfxSwim2HangModel = _vmCacheService.TryGetSfxData(swim2HangSfxName);
             });
 
             GlobalEventDispatcher.WorldSceneLoaded.AddListener(() =>

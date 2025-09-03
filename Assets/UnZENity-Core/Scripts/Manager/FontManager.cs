@@ -9,7 +9,6 @@ using Reflex.Attributes;
 using TMPro;
 using UnityEngine;
 using UnityEngine.TextCore;
-using Constants = GUZ.Core.Globals.Constants;
 using Logger = GUZ.Core.Util.Logger;
 
 namespace GUZ.Core.Manager

@@ -9,12 +9,11 @@ using GUZ.Core.Globals;
 using GUZ.Core.Manager;
 using GUZ.Core.Services.Caches;
 using GUZ.Core.Util;
-using GUZ.Core.Vm;
 using MyBox;
+using Reflex.Attributes;
 using ZenKit;
 using ZenKit.Daedalus;
 using ZenKit.Vobs;
-using Constants = GUZ.Core.Globals.Constants;
 using Logger = GUZ.Core.Util.Logger;
 using TextureFormat = UnityEngine.TextureFormat;
 
@@ -24,6 +23,9 @@ namespace GUZ.Core.Domain.StaticCache
     {
         public Dictionary<string, StaticCacheManager.TextureInfo> TextureArrayInformation { get; } = new();
 
+        [Inject] private readonly VmCacheService _vmCacheService;
+
+        
         /// <summary>
         /// Load all materials from world mesh and assign textures to texture array accordingly.
         ///
@@ -124,7 +126,7 @@ namespace GUZ.Core.Domain.StaticCache
                 await FrameSkipper.TrySkipToNextFrame();
                 GameGlobals.Loading.Tick();
                 
-                var item = VmInstanceManager.TryGetItemData(obj.Name);
+                var item = _vmCacheService.TryGetItemData(obj.Name);
 
                 if (item == null)
                 {

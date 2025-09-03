@@ -99,8 +99,8 @@ namespace GUZ.Core.Manager.Scenes
                 var overallWatch = Stopwatch.StartNew();
 
                 var vobBoundsCache = new VobBoundsCacheCreatorDomain().Inject(); // FIXME - We need to move it to a Domain object and call it via Service.
-                var vobColliderCache = new VobItemColliderCacheCreatorDomain();
-                var textureArrayCache = new TextureArrayCacheCreatorDomain();
+                var vobColliderCache = new VobItemColliderCacheCreatorDomain().Inject();
+                var textureArrayCache = new TextureArrayCacheCreatorDomain().Inject();
 
                 GameGlobals.StaticCache.InitCacheFolder();
 

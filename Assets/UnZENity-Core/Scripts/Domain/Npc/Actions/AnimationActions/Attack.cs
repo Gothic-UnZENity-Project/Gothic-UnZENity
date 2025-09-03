@@ -4,9 +4,9 @@ using GUZ.Core.Domain.Animations;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Models.Vm;
+using GUZ.Core.Services.Caches;
 using GUZ.Core.Services.Npc;
 using GUZ.Core.Util;
-using GUZ.Core.Vm;
 using Reflex.Attributes;
 using ZenKit.Daedalus;
 using Random = UnityEngine.Random;
@@ -18,7 +18,6 @@ namespace GUZ.Core.Domain.Npc.Actions.AnimationActions
     {
         [Inject] private readonly AnimationService _animationService;
         [Inject] private readonly NpcAiService _npcAiService;
-
 
         private NpcInstance _enemy => (NpcInstance)GameData.GothicVm.GlobalVictim;
         
@@ -32,7 +31,7 @@ namespace GUZ.Core.Domain.Npc.Actions.AnimationActions
         public override void Start()
         {
             var aiFunctionTemplate = FindAiFunctionTemplate();
-            _move = VmInstanceManager.TryGetFightAiData(aiFunctionTemplate, Vob.FightTactic).GetRandomMove();
+            _move = VmCacheService.TryGetFightAiData(aiFunctionTemplate, Vob.FightTactic).GetRandomMove();
             StartAttackAction();
         }
 

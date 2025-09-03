@@ -7,8 +7,8 @@ using GUZ.Core.Models.Container;
 using GUZ.Core.Debugging;
 using GUZ.Core.Extensions;
 using GUZ.Core.Manager;
+using GUZ.Core.Services.Caches;
 using GUZ.Core.Util;
-using GUZ.Core.Vm;
 using MyBox;
 using Reflex.Attributes;
 using UnityEngine;
@@ -21,7 +21,7 @@ namespace GUZ.Core.Domain.Culling
     public class VobMeshCullingDomain : AbstractCullingDomain
     {
         [Inject] private readonly UnityMonoService _unityMonoService;
-
+        [Inject] private readonly VmCacheService _vmCacheService;
 
         // Stored for resetting after world switch
         private CullingGroup _cullingGroupSmall => CullingGroup;
@@ -341,7 +341,7 @@ namespace GUZ.Core.Domain.Culling
             switch (vob.Type)
             {
                 case VirtualObjectType.oCItem:
-                    var item = VmInstanceManager.TryGetItemData(vob.Name);
+                    var item = _vmCacheService.TryGetItemData(vob.Name);
                     meshName = item?.Visual;
 
                     // e.g. ITMICELLO has no mesh

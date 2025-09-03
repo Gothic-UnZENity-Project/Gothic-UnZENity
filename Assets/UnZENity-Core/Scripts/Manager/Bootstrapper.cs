@@ -6,7 +6,6 @@ using GUZ.Core.Services;
 using GUZ.Core.Services.Caches;
 using GUZ.Core.Services.Npc;
 using GUZ.Core.Services.Vm;
-using GUZ.Core.Vm;
 using ZenKit;
 using ZenKit.Daedalus;
 using static GUZ.Core.Globals.DaedalusConst;
@@ -23,7 +22,6 @@ namespace GUZ.Core.Manager
         public static void OnApplicationQuit()
         {
             GameData.Dispose();
-            VmInstanceManager.Dispose();
         }
 
         public static void Boot()

@@ -6,8 +6,8 @@ using GUZ.Core.Adapters.UI.LoadingBars;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Services;
+using GUZ.Core.Services.Caches;
 using GUZ.Core.Util;
-using GUZ.Core.Vm;
 using MyBox;
 using Reflex.Attributes;
 using UnityEngine;
@@ -24,7 +24,7 @@ namespace GUZ.Core.Domain.StaticCache
         public Dictionary<string, Bounds> Bounds { get; } = new();
 
         [Inject] private readonly MeshService _meshService;
-
+        [Inject] private readonly VmCacheService _vmCacheService;
 
         public async Task CalculateVobBounds(List<IVirtualObject> vobs, int worldIndex)
         {
@@ -117,7 +117,7 @@ namespace GUZ.Core.Domain.StaticCache
                 await FrameSkipper.TrySkipToNextFrame();
                 GameGlobals.Loading.Tick();
 
-                var item = VmInstanceManager.TryGetItemData(obj.Name);
+                var item = _vmCacheService.TryGetItemData(obj.Name);
 
                 if (item == null)
                     continue;

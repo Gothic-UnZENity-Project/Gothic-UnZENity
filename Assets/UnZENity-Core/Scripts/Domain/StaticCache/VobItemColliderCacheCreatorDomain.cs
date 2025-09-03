@@ -5,8 +5,9 @@ using System.Threading.Tasks;
 using GUZ.Core.Adapters.UI.LoadingBars;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
+using GUZ.Core.Services.Caches;
 using GUZ.Core.Util;
-using GUZ.Core.Vm;
+using Reflex.Attributes;
 using UnityEngine;
 using Logger = GUZ.Core.Util.Logger;
 
@@ -15,6 +16,9 @@ namespace GUZ.Core.Domain.StaticCache
     public class VobItemColliderCacheCreatorDomain
     {
         public Dictionary<string, List<Data>> ItemCollider { get; } = new();
+        
+        [Inject] private readonly VmCacheService _vmCacheService;
+
         
         [Serializable]
         public struct Data // ColliderData
@@ -55,7 +59,7 @@ namespace GUZ.Core.Domain.StaticCache
                 await FrameSkipper.TrySkipToNextFrame();
                 GameGlobals.Loading.Tick();
 
-                var item = VmInstanceManager.TryGetItemData(obj.Name);
+                var item = _vmCacheService.TryGetItemData(obj.Name);
                 if (item == null)
                     continue;
 

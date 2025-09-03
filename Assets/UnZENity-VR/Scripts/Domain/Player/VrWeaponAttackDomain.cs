@@ -13,8 +13,8 @@ using GUZ.Core.Models.Audio;
 using GUZ.Core.Models.Vm;
 using GUZ.Core.Npc;
 using GUZ.Core.Services;
+using GUZ.Core.Services.Caches;
 using GUZ.Core.Util;
-using GUZ.Core.Vm;
 using GUZ.VR.Model.Vob;
 using GUZ.VR.Services;
 using HurricaneVR.Framework.Core.Utils;
@@ -29,6 +29,7 @@ namespace GUZ.VR.Domain.Player
 {
     public class VrWeaponAttackDomain
     {
+        [Inject] private readonly VmCacheService _vmCacheService;
         [Inject] private readonly VRPlayerService _vrPlayerService;
         [Inject] private readonly AudioService _audioService;
 
@@ -304,7 +305,7 @@ namespace GUZ.VR.Domain.Player
                 return;
             }
             
-            _swingSwordSound = VmInstanceManager.TryGetSfxData(soundAttack.Name);
+            _swingSwordSound = _vmCacheService.TryGetSfxData(soundAttack.Name);
             _soundPlayTime = soundAttack.Frame / attackAnim.Fps;
         }
 

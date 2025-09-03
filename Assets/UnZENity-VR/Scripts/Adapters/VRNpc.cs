@@ -8,7 +8,6 @@ using GUZ.Core.Manager;
 using GUZ.Core.Models.Vm;
 using GUZ.Core.Npc;
 using GUZ.Core.Services.Npc;
-using GUZ.Core.Vm;
 using HurricaneVR.Framework.Core;
 using HurricaneVR.Framework.Core.Grabbers;
 using Reflex.Attributes;

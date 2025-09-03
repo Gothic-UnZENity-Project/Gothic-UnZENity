@@ -1,6 +1,5 @@
 using GUZ.Core.Models.Container;
 using GUZ.Core.Models.Vm;
-using GUZ.Core.Vm;
 
 namespace GUZ.Core.Domain.Npc.Actions.AnimationActions
 {

@@ -1,5 +1,6 @@
 using System;
-using GUZ.Core.Vm;
+using GUZ.Core.Services.Caches;
+using Reflex.Attributes;
 using ZenKit.Daedalus;
 using ZenKit.Vobs;
 
@@ -7,11 +8,18 @@ namespace GUZ.Core.Adapters.Properties.Vobs
 {
     public class VobItemProperties2 : VobProperties2
     {
-        public readonly ItemInstance Instance;
+        [Inject] private readonly VmCacheService _vmCacheService;
+
+        public ItemInstance Instance { get; private set; }
 
         public VobItemProperties2(IVirtualObject vob) : base(vob)
+        { }
+
+        public override void Init()
         {
-            var vobItem = (IItem)vob;
+            base.Init();
+            
+            var vobItem = (IItem)Vob;
             
             string itemName;
             if (!string.IsNullOrEmpty(vobItem.Instance))
@@ -21,13 +29,13 @@ namespace GUZ.Core.Adapters.Properties.Vobs
             else
                 throw new Exception("Vob Item -> no usable name found.");
 
-            Instance = VmInstanceManager.TryGetItemData(itemName);
+            Instance = _vmCacheService.TryGetItemData(itemName);
         }
 
         public override string GetFocusName()
         {
             var vobItem = VobAs<IItem>();
-            var itemVmData = VmInstanceManager.TryGetItemData(vobItem.Name);
+            var itemVmData = _vmCacheService.TryGetItemData(vobItem.Name);
             
             if (vobItem?.Amount > 1)
                 return $"{itemVmData?.Name} ({vobItem.Amount})";

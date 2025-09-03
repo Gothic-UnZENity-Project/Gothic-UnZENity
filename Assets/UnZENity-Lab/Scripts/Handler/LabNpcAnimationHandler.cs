@@ -10,7 +10,6 @@ using GUZ.Core.Models.Vm;
 using GUZ.Core.Domain.Npc.Actions;
 using GUZ.Core.Domain.Npc.Actions.AnimationActions;
 using GUZ.Core.Services.Caches;
-using GUZ.Core.Vm;
 using GUZ.Lab.AnimationActionMocks;
 using Reflex.Attributes;
 using TMPro;
@@ -152,7 +151,7 @@ namespace GUZ.Lab.Handler
             if (npcData.sword != null)
             {
                 var swordIndex = GameData.GothicVm.GetSymbolByName(npcData.sword)!.Index;
-                var sword = VmInstanceManager.TryGetItemData(swordIndex);
+                var sword = VmCacheService.TryGetItemData(swordIndex);
 
                 MeshService.CreateNpcWeapon(newNpc, sword, (VmGothicEnums.ItemFlags)sword.MainFlag,
                     (VmGothicEnums.ItemFlags)sword.Flags);

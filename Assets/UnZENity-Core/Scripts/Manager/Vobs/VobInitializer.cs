@@ -7,10 +7,11 @@ using GUZ.Core.Globals;
 using GUZ.Core.Models.Vm;
 using GUZ.Core.Models.Vob.WayNet;
 using GUZ.Core.Services;
+using GUZ.Core.Services.Audio;
+using GUZ.Core.Services.Caches;
 using GUZ.Core.Services.Config;
 using GUZ.Core.Services.Culling;
 using GUZ.Core.Util;
-using GUZ.Core.Vm;
 using JetBrains.Annotations;
 using MyBox;
 using Reflex.Attributes;
@@ -35,6 +36,7 @@ namespace GUZ.Core.Manager.Vobs
         [Inject] private readonly VobSoundCullingService _vobSoundCullingService;
         [Inject] private readonly MeshService _meshService;
         [Inject] private readonly AudioService _audioService;
+        [Inject] private readonly VmCacheService _vmCacheService;
 
 
         /// <summary>
@@ -226,7 +228,7 @@ namespace GUZ.Core.Manager.Vobs
                 case VirtualObjectType.oCItem:
                     var vobItem = (IItem)vob;
                     var itemName = vobItem.Instance.NotNullOrEmpty() ? vobItem.Instance : vobItem.Name;
-                    var item = VmInstanceManager.TryGetItemData(itemName)!;
+                    var item = _vmCacheService.TryGetItemData(itemName)!;
                     var mainFlag = (VmGothicEnums.ItemFlags)item.MainFlag;
                     
                     if (mainFlag is VmGothicEnums.ItemFlags.ItemKatNf or VmGothicEnums.ItemFlags.ItemKatFf)
@@ -415,7 +417,7 @@ namespace GUZ.Core.Manager.Vobs
             else
                 throw new Exception("Vob Item -> no usable name found.");
 
-            var item = VmInstanceManager.TryGetItemData(itemName);
+            var item = _vmCacheService.TryGetItemData(itemName);
 
             if (item == null)
                 return null;
@@ -538,7 +540,7 @@ namespace GUZ.Core.Manager.Vobs
         {
             AudioClip clip;
 
-            if (soundName.EqualsIgnoreCase(SfxConst.NoSoundName))
+            if (soundName.EqualsIgnoreCase(SfxService.NoSoundName))
             {
                 //instead of decoding nosound.wav which might be decoded incorrectly, just return null
                 return null;
@@ -551,13 +553,13 @@ namespace GUZ.Core.Manager.Vobs
             }
             else
             {
-                var sfxContainer = VmInstanceManager.TryGetSfxData(soundName);
+                var sfxContainer = _vmCacheService.TryGetSfxData(soundName);
 
                 if (sfxContainer == null)
                     return null;
 
                 // Instead of decoding nosound.wav which might be decoded incorrectly, just return null.
-                if (sfxContainer.GetFirstSound().File.EqualsIgnoreCase(SfxConst.NoSoundName))
+                if (sfxContainer.GetFirstSound().File.EqualsIgnoreCase(SfxService.NoSoundName))
                     return null;
 
                 if (sfxContainer.Count > 1)

@@ -1,4 +1,5 @@
 using System.Linq;
+using GUZ.Core.Extensions;
 using ZenKit.Vobs;
 
 namespace GUZ.Core.Adapters.Properties.Vobs
@@ -10,6 +11,11 @@ namespace GUZ.Core.Adapters.Properties.Vobs
         public VobProperties2(IVirtualObject vob)
         {
             Vob = vob;
+        }
+        
+        public virtual void Init()
+        {
+            
         }
 
         /// <summary>

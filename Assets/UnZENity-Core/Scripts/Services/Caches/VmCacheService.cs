@@ -7,21 +7,21 @@ using GUZ.Core.Models.Audio;
 using JetBrains.Annotations;
 using ZenKit.Daedalus;
 
-namespace GUZ.Core.Vm
+namespace GUZ.Core.Services.Caches
 {
-    public static class VmInstanceManager
+    public class VmCacheService
     {
-        private static readonly Dictionary<string, ItemInstance> _itemDataCache = new();
-        private static readonly Dictionary<string, FightAiAdapter> _fightAiDataCache = new();
-        private static readonly Dictionary<int, SvmInstance> _svmDataCache = new();
-        private static readonly Dictionary<string, SfxModel> _sfxDataCache = new();
-        private static readonly Dictionary<string, ParticleEffectInstance> _pfxDataCache = new();
+        private readonly Dictionary<string, ItemInstance> _itemDataCache = new();
+        private readonly Dictionary<string, FightAiAdapter> _fightAiDataCache = new();
+        private readonly Dictionary<int, SvmInstance> _svmDataCache = new();
+        private readonly Dictionary<string, SfxModel> _sfxDataCache = new();
+        private readonly Dictionary<string, ParticleEffectInstance> _pfxDataCache = new();
 
         /// <summary>
         /// Hint: Instances only need to be initialized once in ZenKit.
         /// There are two ways of getting Item data. Via INSTANCE name or symbolIndex inside VM.
         /// </summary>
-        public static ItemInstance TryGetItemData(int instanceId)
+        public ItemInstance TryGetItemData(int instanceId)
         {
             var symbol = GameData.GothicVm.GetSymbolByIndex(instanceId);
 
@@ -38,7 +38,7 @@ namespace GUZ.Core.Vm
         /// There are two ways of getting Item data. Via INSTANCE name or symbolIndex inside VM.
         /// </summary>
         [CanBeNull]
-        public static ItemInstance TryGetItemData(string key)
+        public ItemInstance TryGetItemData(string key)
         {
             var preparedKey = GetPreparedKey(key);
             if (_itemDataCache.TryGetValue(preparedKey, out var data))
@@ -61,7 +61,7 @@ namespace GUZ.Core.Vm
             return newData;
         }
 
-        public static FightAiAdapter TryGetFightAiData(string nameTemplate, int instanceId)
+        public FightAiAdapter TryGetFightAiData(string nameTemplate, int instanceId)
         {
             var preparedKey = GetPreparedKey(string.Format(nameTemplate, instanceId));
             
@@ -87,7 +87,7 @@ namespace GUZ.Core.Vm
         /// Hint: Instances only need to be initialized once in ZenKit.
         /// </summary>
         [CanBeNull]
-        public static SvmInstance TryGetSvmData(int voiceId)
+        public SvmInstance TryGetSvmData(int voiceId)
         {
             if (_svmDataCache.TryGetValue(voiceId, out var data))
             {
@@ -115,7 +115,7 @@ namespace GUZ.Core.Vm
         ///       (e.g., BreathBubbles, BreathBubbles_A1, BreathBubbles_A2), we need to retrieve a container holding all of them.
         /// </summary>
         [CanBeNull]
-        public static SfxModel TryGetSfxData(string key)
+        public SfxModel TryGetSfxData(string key)
         {
             var preparedKey = GetPreparedKey(key);
             if (_sfxDataCache.TryGetValue(preparedKey, out var data))
@@ -141,7 +141,7 @@ namespace GUZ.Core.Vm
         /// <summary>
         /// Hint: Instances only need to be initialized once in ZenKit and don't need to be deleted during runtime.
         /// </summary>
-        public static ParticleEffectInstance TryGetPfxData(string key)
+        public ParticleEffectInstance TryGetPfxData(string key)
         {
             var preparedKey = GetPreparedKey(key);
             if (_pfxDataCache.TryGetValue(preparedKey, out var data))
@@ -164,7 +164,7 @@ namespace GUZ.Core.Vm
             return newData;
         }
 
-        private static string GetPreparedKey(string key)
+        private string GetPreparedKey(string key)
         {
             var lowerKey = key.ToLower();
             var extension = Path.GetExtension(lowerKey);
@@ -177,7 +177,7 @@ namespace GUZ.Core.Vm
             return lowerKey.Replace(extension, "");
         }
 
-        public static void Dispose()
+        public void Dispose()
         {
             _itemDataCache.Clear();
             _svmDataCache.Clear();

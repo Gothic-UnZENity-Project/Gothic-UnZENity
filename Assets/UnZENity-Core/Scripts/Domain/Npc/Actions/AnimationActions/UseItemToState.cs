@@ -1,6 +1,6 @@
 using GUZ.Core.Models.Container;
+using GUZ.Core.Services.Caches;
 using GUZ.Core.Util;
-using GUZ.Core.Vm;
 
 namespace GUZ.Core.Domain.Npc.Actions.AnimationActions
 {
@@ -28,7 +28,7 @@ namespace GUZ.Core.Domain.Npc.Actions.AnimationActions
             int target = DesiredState;
             int step = (target > current) ? 1 : -1;
             
-            var item = VmInstanceManager.TryGetItemData(ItemToUse);
+            var item = VmCacheService.TryGetItemData(ItemToUse);
 
             while (current != target)
             {

@@ -7,6 +7,8 @@ using GUZ.Core.Models.Container;
 using GUZ.Core.Extensions;
 using GUZ.Core.Manager;
 using GUZ.Core.Npc;
+using GUZ.Core.Services.Caches;
+using Reflex.Attributes;
 using UnityEngine;
 using ZenKit.Daedalus;
 using Object = UnityEngine.Object;
@@ -17,6 +19,8 @@ namespace GUZ.Core.Domain.Npc.Actions.AnimationActions
     {
         public readonly AnimationAction Action;
 
+        [Inject] protected readonly VmCacheService VmCacheService;
+        
         protected readonly NpcContainer NpcContainer;
         protected readonly NpcInstance NpcInstance;
         protected readonly GameObject NpcGo;

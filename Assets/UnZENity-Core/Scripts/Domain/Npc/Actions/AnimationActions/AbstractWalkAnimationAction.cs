@@ -4,7 +4,6 @@ using GUZ.Core.Globals;
 using GUZ.Core.Manager;
 using GUZ.Core.Models.Vm;
 using GUZ.Core.Util;
-using GUZ.Core.Vm;
 using UnityEngine;
 using Logger = GUZ.Core.Util.Logger;
 

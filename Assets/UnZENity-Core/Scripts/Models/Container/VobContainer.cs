@@ -1,7 +1,9 @@
 using System;
 using GUZ.Core.Adapters.Properties.Vobs;
-using GUZ.Core.Vm;
+using GUZ.Core.Extensions;
+using GUZ.Core.Services.Caches;
 using JetBrains.Annotations;
+using Reflex.Attributes;
 using UnityEngine;
 using ZenKit.Daedalus;
 using ZenKit.Vobs;
@@ -19,6 +21,9 @@ namespace GUZ.Core.Models.Container
         public GameObject Go;
 
 
+        [Inject] private readonly VmCacheService _vmCacheService;
+        
+
         public VobContainer(IVirtualObject vob)
         {
             Vob = vob;
@@ -26,42 +31,44 @@ namespace GUZ.Core.Models.Container
             switch (vob.Type)
             {
                 case VirtualObjectType.zCVobSound:
-                    Props = new SoundProperties(vob);
+                    Props = new SoundProperties(vob).Inject();
                     break;
                 case VirtualObjectType.zCVobSoundDaytime:
-                    Props = new SoundDayTimeProperties(vob);
+                    Props = new SoundDayTimeProperties(vob).Inject();
                     break;
                 case VirtualObjectType.oCZoneMusic:
                 case VirtualObjectType.oCZoneMusicDefault:
-                    Props = new MusicProperties(vob);
+                    Props = new MusicProperties(vob).Inject();
                     break;
                 case VirtualObjectType.oCMobLadder:
-                    Props = new LadderProperties(vob);
+                    Props = new LadderProperties(vob).Inject();
                     break;
                 case VirtualObjectType.oCItem:
-                    Props = new VobItemProperties2(vob);
+                    Props = new VobItemProperties2(vob).Inject();
                     break;
                 case VirtualObjectType.oCMobFire:
                 case VirtualObjectType.oCMobInter:
-                    Props = new InteractiveProperties(vob);
+                    Props = new InteractiveProperties(vob).Inject();
                     break;
                 case VirtualObjectType.oCMobBed:
-                    Props = new BedProperties(vob);
+                    Props = new BedProperties(vob).Inject();
                     break;
                 case VirtualObjectType.oCMobDoor:
-                    Props = new BedProperties(vob);
+                    Props = new BedProperties(vob).Inject();
                     break;
                 case VirtualObjectType.oCMobContainer:
                 case VirtualObjectType.oCMobSwitch:
-                    Props = new SwitchProperties(vob);
+                    Props = new SwitchProperties(vob).Inject();
                     break;
                 case VirtualObjectType.oCMobWheel:
-                    Props = new WheelProperties(vob);
+                    Props = new WheelProperties(vob).Inject();
                     break;
                 default:
-                    Props = new VobProperties2(vob);
+                    Props = new VobProperties2(vob).Inject();
                     break;
             }
+            
+            Props.Init();
         }
         
         /// <summary>
@@ -98,7 +105,7 @@ namespace GUZ.Core.Models.Container
             else
                 throw new Exception("Vob Item -> no usable name found.");
 
-            return VmInstanceManager.TryGetItemData(itemName);
+            return _vmCacheService.TryGetItemData(itemName);
         }
     }
 }

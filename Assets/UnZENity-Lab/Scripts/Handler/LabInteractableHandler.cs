@@ -5,7 +5,7 @@ using GUZ.Core;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Models.Vm;
-using GUZ.Core.Vm;
+using GUZ.Core.Services.Caches;
 using UnityEngine;
 using ZenKit.Daedalus;
 using ZenKit.Vobs;
@@ -37,7 +37,7 @@ namespace GUZ.Lab.Handler
         public override void Bootstrap()
         {
             var itemNames = GameData.GothicVm.GetInstanceSymbols("C_Item").Select(i => i.Name).ToList();
-            var allItems = itemNames.ToDictionary(itemName => itemName, VmInstanceManager.TryGetItemData);
+            var allItems = itemNames.ToDictionary(itemName => itemName, VmCacheService.TryGetItemData);
 
             var meleeWeapons = allItems.Where(i => i.Value.MainFlag == (int)VmGothicEnums.ItemFlags.ItemKatNf)
                 .ToDictionary(i => i.Key, i => i.Value);

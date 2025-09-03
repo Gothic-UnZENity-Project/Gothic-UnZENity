@@ -2,8 +2,8 @@ using GUZ.Core.Creator;
 using GUZ.Core.Domain.Animations;
 using GUZ.Core.Manager;
 using GUZ.Core.Manager.Vobs;
-using GUZ.Core.Npc;
 using GUZ.Core.Services;
+using GUZ.Core.Services.Audio;
 using GUZ.Core.Services.Caches;
 using GUZ.Core.Services.Config;
 using GUZ.Core.Services.Context;
@@ -49,11 +49,16 @@ namespace GUZ.Core
             containerBuilder.AddSingleton(typeof(NpcRoutineService));
 
             // Caches
+            containerBuilder.AddSingleton(typeof(VmCacheService));
             containerBuilder.AddSingleton(typeof(MultiTypeCacheService));
             containerBuilder.AddSingleton(typeof(TextureCacheService));
             containerBuilder.AddSingleton(typeof(MorphMeshCacheService));
             containerBuilder.AddSingleton(typeof(NpcArmorPositionCacheService));
 
+            // Constants
+            containerBuilder.AddSingleton(typeof(SfxService));
+            
+            
             // World
             containerBuilder.AddSingleton(typeof(WayNetService));
 

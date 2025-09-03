@@ -5,7 +5,7 @@ using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
 using GUZ.Core.Models.Vm;
-using GUZ.Core.Vm;
+using GUZ.Core.Services.Caches;
 using JetBrains.Annotations;
 using MyBox;
 using UnityEngine;
@@ -200,7 +200,7 @@ namespace GUZ.Core.Domain.Npc.Actions.AnimationActions
             var itemName = _mobContainer.VobAs<IInteractiveObject>().Item;
             if (itemName.NotNullOrEmpty())
             {
-                var item = VmInstanceManager.TryGetItemData(itemName);
+                var item = VmCacheService.TryGetItemData(itemName);
                 Props.CurrentItem = item!.Index;
             }
             

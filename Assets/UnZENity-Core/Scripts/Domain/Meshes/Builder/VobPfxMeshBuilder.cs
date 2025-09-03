@@ -3,8 +3,8 @@ using GUZ.Core.Adapters.Properties.Vob;
 using GUZ.Core.Adapters.Vob;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
+using GUZ.Core.Services.Caches;
 using GUZ.Core.Util;
-using GUZ.Core.Vm;
 using UnityEngine;
 using UnityEngine.Rendering;
 using ZenKit.Vobs;
@@ -31,7 +31,7 @@ namespace GUZ.Core.Domain.Meshes.Builder
             pfxGo.name = _vob.Visual!.Name;
             pfxGo.SetParent(ParentGo);
 
-            var pfx = VmInstanceManager.TryGetPfxData(_vob.Visual!.Name);
+            var pfx = VmCacheService.TryGetPfxData(_vob.Visual!.Name);
             var particleSystem = pfxGo.GetComponent<ParticleSystem>();
 
             pfxGo.GetComponent<VobPfxProperties>().PfxData = pfx;

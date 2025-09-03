@@ -4,7 +4,6 @@ using GUZ.Core.Domain.Meshes.Builder;
 using GUZ.Core.Extensions;
 using GUZ.Core.Manager;
 using GUZ.Core.Models.Vm;
-using GUZ.Core.Vm;
 using UnityEngine;
 using ZenKit;
 using ZenKit.Daedalus;

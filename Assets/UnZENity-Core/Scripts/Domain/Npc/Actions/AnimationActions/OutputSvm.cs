@@ -1,6 +1,6 @@
 ﻿using GUZ.Core.Models.Container;
 using GUZ.Core.Extensions;
-using GUZ.Core.Vm;
+using GUZ.Core.Services.Caches;
 
 namespace GUZ.Core.Domain.Npc.Actions.AnimationActions
 {
@@ -17,7 +17,7 @@ namespace GUZ.Core.Domain.Npc.Actions.AnimationActions
 
         public override void Start()
         {
-            var svm = VmInstanceManager.TryGetSvmData(NpcInstance.Voice);
+            var svm = VmCacheService.TryGetSvmData(NpcInstance.Voice);
             _preparedSvmFileName = svm.GetAudioName(Action.String0);
 
             base.Start();

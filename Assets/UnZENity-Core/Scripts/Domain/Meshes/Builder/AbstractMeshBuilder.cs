@@ -23,10 +23,11 @@ namespace GUZ.Core.Domain.Meshes.Builder
 {
     public abstract class AbstractMeshBuilder
     {
+        [Inject] protected readonly VmCacheService VmCacheService;
         [Inject] protected readonly TextureCacheService TextureCacheService;
         [Inject] private readonly MorphMeshCacheService _morphMeshCacheService;
         [Inject] private readonly MultiTypeCacheService _multiTypeCacheService;
-
+        
         protected GameObject RootGo;
         protected GameObject ParentGo;
         protected bool HasMeshCollider = true;

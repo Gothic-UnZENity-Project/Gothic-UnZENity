@@ -3,7 +3,6 @@ using GUZ.Core.Domain.Animations;
 using GUZ.Core.Globals;
 using GUZ.Core.Models.Vm;
 using GUZ.Core.Util;
-using GUZ.Core.Vm;
 using Reflex.Attributes;
 using UnityEngine;
 using Logger = GUZ.Core.Util.Logger;

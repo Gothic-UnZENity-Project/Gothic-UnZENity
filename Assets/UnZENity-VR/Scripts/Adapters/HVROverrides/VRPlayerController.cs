@@ -7,7 +7,6 @@ using HurricaneVR.Framework.Core.Player;
 using MyBox;
 using Reflex.Attributes;
 using UnityEngine.SceneManagement;
-using Constants = GUZ.Core.Globals.Constants;
 
 namespace GUZ.VR.Adapters.HVROverrides
 {

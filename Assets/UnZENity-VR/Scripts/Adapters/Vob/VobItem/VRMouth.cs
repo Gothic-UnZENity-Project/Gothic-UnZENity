@@ -7,8 +7,8 @@ using GUZ.Core.Adapters.Vob;
 using GUZ.Core.Extensions;
 using GUZ.Core.Manager;
 using GUZ.Core.Models.Vm;
+using GUZ.Core.Services.Caches;
 using GUZ.Core.Util;
-using GUZ.Core.Vm;
 using JetBrains.Annotations;
 using Reflex.Attributes;
 using UnityEngine;
@@ -24,12 +24,12 @@ namespace GUZ.VR.Adapters.Vob.VobItem
         // e.g. t_Potion_S0_2_Stand
         private const string _animationSchemeWithSfx = "t_{0}_S0_2_Stand";
 
-        [SerializeField]
-        private AudioSource _mouthAudio;
+        [SerializeField] private AudioSource _mouthAudio;
 
         [Inject] private readonly AudioService _audioService;
+        [Inject] private readonly VmCacheService _vmCacheService;
 
-
+        
         // Do not eat them twice during destroy time.
         private List<GameObject> _objectsInDestroyGracePeriod = new();
 
@@ -98,7 +98,7 @@ namespace GUZ.VR.Adapters.Vob.VobItem
                 return false;
             }
 
-            var sfxContainer = VmInstanceManager.TryGetSfxData(sfx.Name);
+            var sfxContainer = _vmCacheService.TryGetSfxData(sfx.Name);
             if (sfxContainer == null)
                 return false;
 
