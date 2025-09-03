@@ -1,4 +1,5 @@
-﻿using GUZ.Core.Adapters.Properties;
+﻿using GUZ.Core.Adapters.Npc;
+using GUZ.Core.Adapters.Properties;
 using GUZ.Core.Data.Adapter.Vobs;
 using GUZ.Core.Npc;
 using UnityEngine;

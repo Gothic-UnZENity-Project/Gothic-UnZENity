@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using GUZ.Core;
+using GUZ.Core.Adapters.Npc;
 using GUZ.Core.Data.Adapter;
 using GUZ.Core.Data.Container;
 using GUZ.Core.Extensions;

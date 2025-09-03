@@ -2,7 +2,7 @@
 using GUZ.Core.Models.Npc;
 using GUZ.Core.Models.Vm;
 using GUZ.Core.Models.Vob.WayNet;
-using GUZ.Core.Npc.Actions.AnimationActions;
+using GUZ.Core.Domain.Npc.Actions.AnimationActions;
 using ZenKit.Daedalus;
 
 namespace GUZ.Core.Adapters.Properties

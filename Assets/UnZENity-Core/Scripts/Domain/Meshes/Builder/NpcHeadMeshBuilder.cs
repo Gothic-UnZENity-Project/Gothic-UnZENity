@@ -1,4 +1,6 @@
 using System.Text.RegularExpressions;
+using GUZ.Core.Adapters.Animations.Morph;
+using GUZ.Core.Adapters.Npc;
 using GUZ.Core.Extensions;
 using GUZ.Core.Npc;
 using GUZ.Core.Util;
