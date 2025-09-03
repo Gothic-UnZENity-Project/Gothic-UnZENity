@@ -4,12 +4,12 @@ using UnityEngine;
 using ZenKit;
 using Vector3 = System.Numerics.Vector3;
 
-namespace GUZ.Core.Caches
+namespace GUZ.Core.Services.Caches
 {
-    public static class NpcArmorPositionCache
+    public class NpcArmorPositionCacheService
     {
-        private static Dictionary<IModelHierarchy, List<Matrix4x4>> _bonesInWorldSpace = new();
-        private static Dictionary<ISoftSkinMesh, List<Vector3>> _correctedVertexPositions = new();
+        private Dictionary<IModelHierarchy, List<Matrix4x4>> _bonesInWorldSpace = new();
+        private Dictionary<ISoftSkinMesh, List<Vector3>> _correctedVertexPositions = new();
 
         /// <summary>
         /// Return calculated positions for NPC armor vertices.
@@ -34,7 +34,7 @@ namespace GUZ.Core.Caches
         /// the cached objects or otherwise you will suffer performance death. ;-)
         /// </summary>
         /// <returns></returns>
-        public static List<Vector3> TryGetPositions(ISoftSkinMesh softSkinMesh, IModelHierarchy mdh)
+        public List<Vector3> TryGetPositions(ISoftSkinMesh softSkinMesh, IModelHierarchy mdh)
         {
             if (!_bonesInWorldSpace.ContainsKey(mdh))
             {
@@ -49,7 +49,7 @@ namespace GUZ.Core.Caches
             return currentCorrectedVertexPositions;
         }
 
-        private static void CalculateBonesInWorldSpace(IModelHierarchy mdh)
+        private void CalculateBonesInWorldSpace(IModelHierarchy mdh)
         {
             List<Matrix4x4> retValue = new();
 
@@ -77,7 +77,7 @@ namespace GUZ.Core.Caches
         /// <summary>
         /// We transform to UnityVector in between as calculation was easier (or at least we found a method which works)
         /// </summary>
-        private static List<Vector3> CalculateCorrectedVertexPositions(ISoftSkinMesh softSkinMesh, IModelHierarchy mdh)
+        private List<Vector3> CalculateCorrectedVertexPositions(ISoftSkinMesh softSkinMesh, IModelHierarchy mdh)
         {
             List<Vector3> retValue = new();
 
@@ -101,7 +101,7 @@ namespace GUZ.Core.Caches
             return retValue;
         }
 
-        public static void Dispose()
+        public void Dispose()
         {
             _bonesInWorldSpace.Clear();
             _correctedVertexPositions.Clear();

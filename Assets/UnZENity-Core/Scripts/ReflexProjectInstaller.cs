@@ -52,6 +52,7 @@ namespace GUZ.Core
             containerBuilder.AddSingleton(typeof(MultiTypeCacheService));
             containerBuilder.AddSingleton(typeof(TextureCacheService));
             containerBuilder.AddSingleton(typeof(MorphMeshCacheService));
+            containerBuilder.AddSingleton(typeof(NpcArmorPositionCacheService));
 
             // World
             containerBuilder.AddSingleton(typeof(WayNetService));

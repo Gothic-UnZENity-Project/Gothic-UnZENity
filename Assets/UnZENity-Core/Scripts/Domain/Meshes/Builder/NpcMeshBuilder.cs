@@ -2,8 +2,10 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using GUZ.Core.Caches;
 using GUZ.Core.Models.Vm;
+using GUZ.Core.Services.Caches;
 using GUZ.Core.Util;
 using GUZ.Core.Vm;
+using Reflex.Attributes;
 using UnityEngine;
 using ZenKit;
 using Logger = GUZ.Core.Util.Logger;
@@ -13,6 +15,9 @@ namespace GUZ.Core.Domain.Meshes.Builder
 {
     public class NpcMeshBuilder : AbstractMeshBuilder
     {
+        [Inject] private readonly NpcArmorPositionCacheService _npcArmorCacheService;
+
+
         protected ExtSetVisualBodyData BodyData;
 
         public virtual void SetBodyData(ExtSetVisualBodyData body)
@@ -61,7 +66,7 @@ namespace GUZ.Core.Domain.Meshes.Builder
         /// </summary>
         protected override List<Vector3> GetSoftSkinMeshPositions(ISoftSkinMesh softSkinMesh)
         {
-            return NpcArmorPositionCache.TryGetPositions(softSkinMesh, Mdh);
+            return _npcArmorCacheService.TryGetPositions(softSkinMesh, Mdh);
         }
     }
 }

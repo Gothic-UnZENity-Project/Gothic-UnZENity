@@ -29,6 +29,7 @@ namespace GUZ.VR
         [Inject] private readonly TextureCacheService _textureCacheService;
         [Inject] private readonly MorphMeshCacheService _morphMeshCacheService;
         [Inject] private readonly MultiTypeCacheService _multiTypeCacheService;
+        [Inject] private readonly NpcArmorPositionCacheService _npcArmorCacheService;
 
 
         private void Update()
@@ -59,6 +60,7 @@ namespace GUZ.VR
             _textureCacheService.Dispose();
             _morphMeshCacheService.Dispose();
             _multiTypeCacheService.Dispose();
+            _npcArmorCacheService.Dispose();
 
             _speechToTextService.Dispose();
         }
