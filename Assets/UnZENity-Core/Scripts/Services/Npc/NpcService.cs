@@ -37,6 +37,7 @@ namespace GUZ.Core.Services.Npc
 
         [Inject] private readonly ConfigService _configService;
         [Inject] private readonly UnityMonoService _unityMonoService;
+        [Inject] private readonly FrameSkipperService _frameSkipperService;
         // Supporter class where the whole Init() logic is outsourced for better readability.
         [Inject] private readonly MultiTypeCacheService _multiTypeCacheService;
         [Inject] private readonly VmCacheService _vmCacheService;
@@ -97,7 +98,7 @@ namespace GUZ.Core.Services.Npc
                     _initializerDomain.InitNpc(npcElement.Npc, npcElement.gameObject);
                 }
 
-                yield return FrameSkipper.TrySkipToNextFrameCoroutine();
+                yield return _frameSkipperService.TrySkipToNextFrameCoroutine();
             }
         }
 
@@ -117,7 +118,7 @@ namespace GUZ.Core.Services.Npc
                     var npcData = _objectToReEnableQueue.Dequeue();
                     // If we walked to an NPC in our game, the NPC will be re-enabled and Routines get reset.
                     npcData.PrefabProps?.AiHandler?.ReEnableNpc();
-                    yield return FrameSkipper.TrySkipToNextFrameCoroutine();
+                    yield return _frameSkipperService.TrySkipToNextFrameCoroutine();
                 }
             }
         }

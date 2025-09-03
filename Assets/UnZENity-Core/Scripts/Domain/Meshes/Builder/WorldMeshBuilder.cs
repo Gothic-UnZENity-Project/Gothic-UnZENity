@@ -6,9 +6,9 @@ using GUZ.Core.Domain.StaticCache;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
+using GUZ.Core.Services;
 using GUZ.Core.Services.Caches;
 using GUZ.Core.Services.Config;
-using GUZ.Core.Util;
 using JetBrains.Annotations;
 using Reflex.Attributes;
 using UnityEditor;
@@ -23,7 +23,7 @@ namespace GUZ.Core.Domain.Meshes.Builder
     public class WorldMeshBuilder : AbstractMeshBuilder
     {
         [Inject] private readonly ConfigService _configService;
-
+        [Inject] private readonly FrameSkipperService _frameSkipperService;
 
         private StaticCacheManager.WorldChunkContainer _worldChunks;
         private IMesh _mesh;
@@ -115,7 +115,7 @@ namespace GUZ.Core.Domain.Meshes.Builder
                     if (!_debugSpeedUpLoading)
                     {
                         // If we have the skips here, we have a smoother loading screen for 20 seconds on loading world. Putting it at the end of each chunk, we have stutter, but save about 40%.
-                        await FrameSkipper.TrySkipToNextFrame();
+                        await _frameSkipperService.TrySkipToNextFrame();
                     }
                 }
 

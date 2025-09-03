@@ -7,6 +7,7 @@ using GUZ.Core.Adapters.UI.LoadingBars;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Manager;
+using GUZ.Core.Services;
 using GUZ.Core.Services.Caches;
 using GUZ.Core.Util;
 using MyBox;
@@ -24,7 +25,7 @@ namespace GUZ.Core.Domain.StaticCache
         public Dictionary<string, StaticCacheManager.TextureInfo> TextureArrayInformation { get; } = new();
 
         [Inject] private readonly VmCacheService _vmCacheService;
-
+        [Inject] private readonly FrameSkipperService _frameSkipperService;
         
         /// <summary>
         /// Load all materials from world mesh and assign textures to texture array accordingly.
@@ -48,7 +49,7 @@ namespace GUZ.Core.Domain.StaticCache
                 AddTextureToCache(material.Group, material.Texture);
 
                 GameGlobals.Loading.Tick();
-                await FrameSkipper.TrySkipToNextFrame();
+                await _frameSkipperService.TrySkipToNextFrame();
             }
 
             GameGlobals.Loading.FinalizePhase();
@@ -79,7 +80,7 @@ namespace GUZ.Core.Domain.StaticCache
             foreach (var vob in vobs)
             {
                 GameGlobals.Loading.Tick();
-                await FrameSkipper.TrySkipToNextFrame();
+                await _frameSkipperService.TrySkipToNextFrame();
 
                 // We ignore oCItem for now as we will load them all in one afterward.
                 // We also calculate bounds only for objects which are marked to be cached inside Constants.
@@ -123,7 +124,7 @@ namespace GUZ.Core.Domain.StaticCache
             
             foreach (var obj in allItems)
             {
-                await FrameSkipper.TrySkipToNextFrame();
+                await _frameSkipperService.TrySkipToNextFrame();
                 GameGlobals.Loading.Tick();
                 
                 var item = _vmCacheService.TryGetItemData(obj.Name);

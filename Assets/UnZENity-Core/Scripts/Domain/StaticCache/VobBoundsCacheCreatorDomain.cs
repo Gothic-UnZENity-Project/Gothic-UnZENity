@@ -25,6 +25,8 @@ namespace GUZ.Core.Domain.StaticCache
 
         [Inject] private readonly MeshService _meshService;
         [Inject] private readonly VmCacheService _vmCacheService;
+        [Inject] private readonly FrameSkipperService _frameSkipperService;
+
 
         public async Task CalculateVobBounds(List<IVirtualObject> vobs, int worldIndex)
         {
@@ -50,7 +52,7 @@ namespace GUZ.Core.Domain.StaticCache
         {
             foreach (var vob in vobs)
             {
-                await FrameSkipper.TrySkipToNextFrame();
+                await _frameSkipperService.TrySkipToNextFrame();
                 GameGlobals.Loading.Tick();
 
                 // We ignore oCItem for now as we will load them all in one afterward.
@@ -114,7 +116,7 @@ namespace GUZ.Core.Domain.StaticCache
             
             foreach (var obj in allItems)
             {
-                await FrameSkipper.TrySkipToNextFrame();
+                await _frameSkipperService.TrySkipToNextFrame();
                 GameGlobals.Loading.Tick();
 
                 var item = _vmCacheService.TryGetItemData(obj.Name);

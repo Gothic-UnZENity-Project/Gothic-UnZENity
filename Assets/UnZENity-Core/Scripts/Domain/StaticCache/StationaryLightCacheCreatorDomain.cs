@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using GUZ.Core.Adapters.UI.LoadingBars;
 using GUZ.Core.Extensions;
 using GUZ.Core.Manager;
+using GUZ.Core.Services;
 using GUZ.Core.Services.Config;
 using GUZ.Core.Util;
 using MyBox;
@@ -18,7 +19,7 @@ namespace GUZ.Core.Domain.StaticCache
     public class StationaryLightCacheCreatorDomain
     {
         [Inject] private readonly ConfigService _configService;
-
+        [Inject] private readonly FrameSkipperService _frameSkipperService;
 
         public List<StaticCacheManager.StationaryLightInfo> StationaryLightInfos = new();
 
@@ -54,7 +55,7 @@ namespace GUZ.Core.Domain.StaticCache
             {
                 if (!_debugSpeedUpLoading)
                 {
-                    await FrameSkipper.TrySkipToNextFrame();
+                    await _frameSkipperService.TrySkipToNextFrame();
                 }
                 GameGlobals.Loading.Tick();
 

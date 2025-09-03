@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using GUZ.Core.Adapters.UI.LoadingBars;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
+using GUZ.Core.Services;
 using GUZ.Core.Services.Caches;
 using GUZ.Core.Services.Config;
 using GUZ.Core.Util;
@@ -25,7 +26,7 @@ namespace GUZ.Core.Domain.StaticCache
         }
 
         [Inject] private readonly ConfigService _configService;
-
+        [Inject] private readonly FrameSkipperService _frameSkipperService;
 
         public Dictionary<TextureCacheService.TextureArrayTypes, List<WorldChunk>> MergedChunksByLights;
 
@@ -84,7 +85,7 @@ namespace GUZ.Core.Domain.StaticCache
                 // Hint: If calculation still stutters in framerate, then set this check at polygon-loop level.
                 if (!_configService.Dev.SpeedUpLoading)
                 {
-                    await FrameSkipper.TrySkipToNextFrame();
+                    await _frameSkipperService.TrySkipToNextFrame();
                 }
                 GameGlobals.Loading.Tick();
 
@@ -154,7 +155,7 @@ namespace GUZ.Core.Domain.StaticCache
                 // Hint: If calculation still stutters in framerate, then set this check at polygon-loop level.
                 if (!_configService.Dev.SpeedUpLoading)
                 {
-                    await FrameSkipper.TrySkipToNextFrame();
+                    await _frameSkipperService.TrySkipToNextFrame();
                 }
                 GameGlobals.Loading.Tick();
 

@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using GUZ.Core.Adapters.UI.LoadingBars;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
+using GUZ.Core.Services;
 using GUZ.Core.Services.Caches;
 using GUZ.Core.Util;
 using Reflex.Attributes;
@@ -18,7 +19,7 @@ namespace GUZ.Core.Domain.StaticCache
         public Dictionary<string, List<Data>> ItemCollider { get; } = new();
         
         [Inject] private readonly VmCacheService _vmCacheService;
-
+        [Inject] private readonly FrameSkipperService _frameSkipperService;
         
         [Serializable]
         public struct Data // ColliderData
@@ -56,7 +57,7 @@ namespace GUZ.Core.Domain.StaticCache
             
             foreach (var obj in allItems)
             {
-                await FrameSkipper.TrySkipToNextFrame();
+                await _frameSkipperService.TrySkipToNextFrame();
                 GameGlobals.Loading.Tick();
 
                 var item = _vmCacheService.TryGetItemData(obj.Name);

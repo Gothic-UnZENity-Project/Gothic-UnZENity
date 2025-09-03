@@ -25,7 +25,7 @@ using Logger = GUZ.Core.Util.Logger;
 namespace GUZ.Lab
 {
     [RequireComponent(typeof(TextureManager), typeof(FontManager))]
-    public class LabBootstrapper : MonoBehaviour, IGlobalDataProvider, ICoroutineManager
+    public class LabBootstrapper : MonoBehaviour, IGlobalDataProvider
     {
         public DeveloperConfig DeveloperConfig;
 

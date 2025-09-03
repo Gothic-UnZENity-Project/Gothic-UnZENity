@@ -10,6 +10,7 @@ using GUZ.Core.Globals;
 using GUZ.Core.Models.Config;
 using GUZ.Core.Models.Container;
 using GUZ.Core.Models.Vob;
+using GUZ.Core.Services;
 using GUZ.Core.Services.Audio;
 using GUZ.Core.Services.Caches;
 using GUZ.Core.Services.Config;
@@ -30,6 +31,7 @@ namespace GUZ.Core.Manager.Vobs
     {
         [Inject] private readonly VmCacheService _vmCacheService;
         [Inject] private readonly ConfigService _configService;
+        [Inject] private readonly FrameSkipperService _frameSkipperService;
         [Inject] private readonly VobSoundCullingService _vobSoundCullingService;
         [Inject] private readonly UnityMonoService _unityMonoService;
         [Inject] private readonly AudioService _audioService;
@@ -204,7 +206,7 @@ namespace GUZ.Core.Manager.Vobs
                     // Should work smoothly until we start lazy loading sub-vobs ;-)
                     _initializer.InitVob(item.Container.Vob, item.gameObject, default, true);
 
-                    yield return FrameSkipper.TrySkipToNextFrameCoroutine();
+                    yield return _frameSkipperService.TrySkipToNextFrameCoroutine();
                 }
             }
         }
@@ -327,7 +329,7 @@ namespace GUZ.Core.Manager.Vobs
             {
                 // It's simpler to have both of them in here.
                 loading.Tick();
-                await FrameSkipper.TrySkipToNextFrame();
+                await _frameSkipperService.TrySkipToNextFrame();
                 
                 switch (vob.Type)
                 {

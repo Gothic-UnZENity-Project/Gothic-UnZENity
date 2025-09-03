@@ -24,13 +24,12 @@ using Logger = GUZ.Core.Util.Logger;
 
 namespace GUZ.Core
 {
-    [RequireComponent(typeof(TextureManager), typeof(FontManager), typeof(FrameSkipper))]
-    public class GameManager : SingletonBehaviour<GameManager>, ICoroutineManager, IGlobalDataProvider
+    [RequireComponent(typeof(TextureManager), typeof(FontManager))]
+    public class GameManager : SingletonBehaviour<GameManager>, IGlobalDataProvider
     {
         public DeveloperConfig DeveloperConfig;
 
         private FileLoggingHandler _fileLoggingHandler;
-        private FrameSkipper _frameSkipper;
 
         public LocalizationManager Localization { get; private set; }
 
@@ -82,6 +81,7 @@ namespace GUZ.Core
         [Inject] private readonly BarrierManager _barrierManager;
         [Inject] private readonly LoadingManager _loadingManager;
 
+        [Inject] private readonly FrameSkipperService _frameSkipperService;
         [Inject] private readonly VobManager _vobManager;
         [Inject] private readonly ConfigService _configService;
         [Inject] private readonly NpcService _npcService;
@@ -110,7 +110,6 @@ namespace GUZ.Core
             _configService.SetDeveloperConfig(DeveloperConfig);
 
             _fileLoggingHandler = new FileLoggingHandler();
-            _frameSkipper = GetComponent<FrameSkipper>();
 
             GameGlobals.Instance = this;
             
@@ -158,7 +157,7 @@ namespace GUZ.Core
         {
             GlobalEventDispatcher.RegisterControlsService.Invoke(_configService.Dev.GameControls);
 
-            _frameSkipper.Init();
+            _frameSkipperService.Init();
             Loading.Init();
             Lights.Init();
             VobMeshCulling.Init();

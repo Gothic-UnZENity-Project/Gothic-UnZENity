@@ -26,6 +26,7 @@ namespace GUZ.Core
 
             containerBuilder.AddSingleton(typeof(UnityMonoService));
             containerBuilder.AddSingleton(typeof(ConfigService));
+            containerBuilder.AddSingleton(typeof(FrameSkipperService));
             containerBuilder.AddSingleton(typeof(VmService));
             containerBuilder.AddSingleton(typeof(ContextInteractionService));
             containerBuilder.AddSingleton(typeof(ContextMenuService));

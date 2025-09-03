@@ -1,8 +1,10 @@
 ﻿using System.Collections;
 using System.Threading.Tasks;
+using GUZ.Core.Util;
 using UnityEngine;
+using Logger = GUZ.Core.Util.Logger;
 
-namespace GUZ.Core.Util
+namespace GUZ.Core.Services
 {
     /// <summary>
     /// Leverage this class to check if an Async operation can continue or should wait until next frame.
@@ -10,7 +12,7 @@ namespace GUZ.Core.Util
     ///
     /// Hint: We set ScriptExecutionOrder to something early on to ensure we fetch frame time early on.
     /// </summary>
-    public class FrameSkipper : MonoBehaviour
+    public class FrameSkipperService
     {
         // We will leverage 50% (0.5f) of a frame time only.
         private const float _frameQuota = 0.5f;
@@ -34,24 +36,24 @@ namespace GUZ.Core.Util
                 // Ite means there is some error in detecting the frame rate in a production build.
                 if (!Application.isEditor)
                 {
-                    Logger.LogError($"[{typeof(FrameSkipper)}] No target frame rate found.", LogCat.Loading);
+                    Logger.LogError($"[{typeof(FrameSkipperService)}] No target frame rate found.", LogCat.Loading);
                 }
             }
-            Logger.Log($"[{typeof(FrameSkipper)}] Target frame rate set to: {_targetFrameRate}", LogCat.Loading);
+            Logger.Log($"[{typeof(FrameSkipperService)}] Target frame rate set to: {_targetFrameRate}", LogCat.Loading);
         }
 
 
         /// <summary>
         /// Every update cycle, we calculate when it started and when our threshold of _skip to next frame_ is reached.
         /// </summary>
-        private void Update()
+        public void Update()
         {
             // _debugSkippedCount = 0;
             _maxFrameUsage = Time.realtimeSinceStartup + _frameQuota / _targetFrameRate;
         }
 
         // private static int _debugSkippedCount;
-        public static async Task TrySkipToNextFrame()
+        public async Task TrySkipToNextFrame()
         {
             if (Time.realtimeSinceStartup > _maxFrameUsage)
             {
@@ -64,7 +66,7 @@ namespace GUZ.Core.Util
             }
         }
 
-        public static IEnumerator TrySkipToNextFrameCoroutine()
+        public IEnumerator TrySkipToNextFrameCoroutine()
         {
             if (Time.realtimeSinceStartup > _maxFrameUsage)
             {

@@ -4,13 +4,12 @@ using System.IO;
 using System.Threading.Tasks;
 using GUZ.Core.Extensions;
 using GUZ.Core.Manager;
-using GUZ.Core.Services;
 using GUZ.Core.Util;
 using JetBrains.Annotations;
+using Reflex.Attributes;
 using UnityEngine;
 using UnityEngine.Rendering;
 using ZenKit;
-using Debug = UnityEngine.Debug;
 using Logger = GUZ.Core.Util.Logger;
 using Object = UnityEngine.Object;
 using Texture = UnityEngine.Texture;
@@ -44,10 +43,16 @@ namespace GUZ.Core.Services.Caches
         // If we have 512 texture size, we have as highest mip of 8 (512<<6=8)
         public const int MaxMipCount = 6;
 
+
+        [Inject] private readonly FrameSkipperService _frameSkipperService;
+
+
         public static Dictionary<TextureArrayTypes, Texture> TextureArrays { get; } = new();
 
         private static readonly Dictionary<string, Texture2D> _texture2DCache = new();
         private static readonly Dictionary<TextureArrayTypes, List<(string PreparedKey, ZkTextureData TextureData)>> _texturesToIncludeInArray = new();
+
+
 
         public enum TextureArrayTypes
         {
@@ -328,7 +333,7 @@ namespace GUZ.Core.Services.Caches
                 // We can save memory in Unity, as we don't need the separate Textures any longer.
                 Object.Destroy(sourceTex);
 
-                await FrameSkipper.TrySkipToNextFrame();
+                await _frameSkipperService.TrySkipToNextFrame();
             }
 
             // Store TextureArray in the appropriate TextureArray Cache object to assign it to objects later.

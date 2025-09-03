@@ -36,7 +36,7 @@ namespace GUZ.Core.Domain.Npc
         [Inject] private readonly MeshService _meshService;
         [Inject] private readonly MultiTypeCacheService _multiTypeCacheService;
         [Inject] private readonly NpcRoutineService _npcRoutineService;
-
+        [Inject] private readonly FrameSkipperService _frameSkipperService;
 
         public GameObject RootGo;
         private readonly List<(NpcContainer npc, string spawnPoint)> _tmpWldInsertNpcData = new();
@@ -57,7 +57,7 @@ namespace GUZ.Core.Domain.Npc
             {
                 // Update the progress bar and check if we need to wait for the next frame now (As some conditions skip -continue- end of loop and would skip check)
                 loading.Tick();
-                await FrameSkipper.TrySkipToNextFrame();
+                await _frameSkipperService.TrySkipToNextFrame();
 
                 var npcContainer = AllocZkInstance(vobNpc);
                 SaveGameAddLazyLoadingAnywhere(npcContainer, vobNpc.ScriptWaypoint);
@@ -146,7 +146,7 @@ namespace GUZ.Core.Domain.Npc
             {
                 // Update the progress bar and check if we need to wait for the next frame now (As some conditions skip -continue- end of loop and would skip check)
                 loading.Tick();
-                await FrameSkipper.TrySkipToNextFrame();
+                await _frameSkipperService.TrySkipToNextFrame();
 
                 var go = InitLazyLoadNpc(element.npc);
 
