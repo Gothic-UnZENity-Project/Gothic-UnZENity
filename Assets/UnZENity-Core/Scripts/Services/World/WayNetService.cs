@@ -2,7 +2,7 @@
 using System.Linq;
 using GUZ.Core.Models.Container;
 using GUZ.Core.Extensions;
-using GUZ.Core.Globals;
+using GUZ.Core.Const;
 using GUZ.Core.Models.Config;
 using GUZ.Core.Models.WayNet;
 using UnityEngine;

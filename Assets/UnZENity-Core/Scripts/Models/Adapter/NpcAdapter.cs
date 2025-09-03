@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Numerics;
-using GUZ.Core.Globals;
+using GUZ.Core.Const;
 using GUZ.Core.Models.Vm;
 using ZenKit.Daedalus;
 using ZenKit.Vobs;

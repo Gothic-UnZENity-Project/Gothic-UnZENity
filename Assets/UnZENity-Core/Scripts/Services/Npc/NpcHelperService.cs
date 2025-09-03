@@ -5,7 +5,7 @@ using GUZ.Core.Adapters.Properties;
 using GUZ.Core.Adapters.Properties.Vobs;
 using GUZ.Core.Models.Container;
 using GUZ.Core.Extensions;
-using GUZ.Core.Globals;
+using GUZ.Core.Const;
 using GUZ.Core.Manager;
 using GUZ.Core.Models.Vm;
 using GUZ.Core.Services.Caches;

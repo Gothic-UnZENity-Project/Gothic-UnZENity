@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using DirectMusic;
 using GUZ.Core.Adapters.Vob;
-using GUZ.Core.Globals;
+using GUZ.Core.Const;
 using GUZ.Core.Services.Caches;
 using GUZ.Core.Services.Config;
 using GUZ.Core.Util;

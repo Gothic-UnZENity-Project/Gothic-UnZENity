@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using GUZ.Core.Adapters.UI.LoadingBars;
 using GUZ.Core.Adapters.Vob;
 using GUZ.Core.Extensions;
-using GUZ.Core.Globals;
+using GUZ.Core.Const;
 using GUZ.Core.Models.Config;
 using GUZ.Core.Models.Container;
 using GUZ.Core.Models.Vob;

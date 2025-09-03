@@ -1,5 +1,5 @@
 using GUZ.Core.Extensions;
-using GUZ.Core.Globals;
+using GUZ.Core.Const;
 using GUZ.Core.Services.Caches;
 using UnityEngine;
 

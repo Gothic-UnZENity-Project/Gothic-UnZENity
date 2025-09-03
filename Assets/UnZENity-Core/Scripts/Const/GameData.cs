@@ -9,7 +9,7 @@ using ZenKit;
 using ZenKit.Daedalus;
 using WayPoint = GUZ.Core.Models.Vob.WayNet.WayPoint;
 
-namespace GUZ.Core.Globals
+namespace GUZ.Core.Const
 {
     public static class GameData
     {

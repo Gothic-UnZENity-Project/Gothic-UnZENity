@@ -4,7 +4,7 @@ using System.Linq;
 using GUZ.Core.Adapters.Properties;
 using GUZ.Core.Models.Container;
 using GUZ.Core.Extensions;
-using GUZ.Core.Globals;
+using GUZ.Core.Const;
 using GUZ.Core.Models.Dialog;
 using GUZ.Core.Domain.Npc.Actions;
 using GUZ.Core.Domain.Npc.Actions.AnimationActions;

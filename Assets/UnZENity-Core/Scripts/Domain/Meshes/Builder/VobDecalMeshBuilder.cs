@@ -1,4 +1,4 @@
-using GUZ.Core.Globals;
+using GUZ.Core.Const;
 using GUZ.Core.Services.Caches;
 using MyBox;
 using UnityEngine;

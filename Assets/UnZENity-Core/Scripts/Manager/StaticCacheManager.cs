@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using GUZ.Core.Domain.Config;
 using GUZ.Core.Domain.StaticCache;
 using GUZ.Core.Extensions;
-using GUZ.Core.Globals;
+using GUZ.Core.Const;
 using GUZ.Core.Models.Config;
 using GUZ.Core.Services.Caches;
 using GUZ.Core.Util;

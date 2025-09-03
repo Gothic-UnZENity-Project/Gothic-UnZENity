@@ -1,5 +1,5 @@
 using System;
-using GUZ.Core.Globals;
+using GUZ.Core.Const;
 using ZenKit.Daedalus;
 
 namespace GUZ.Core.Model.UI.MenuItem

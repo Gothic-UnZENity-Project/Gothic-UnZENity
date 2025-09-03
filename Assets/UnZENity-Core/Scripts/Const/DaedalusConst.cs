@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace GUZ.Core.Globals
+namespace GUZ.Core.Const
 {
     public static class DaedalusConst
     {

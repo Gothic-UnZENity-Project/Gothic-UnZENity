@@ -1,5 +1,5 @@
 using System.Collections;
-using GUZ.Core.Globals;
+using GUZ.Core.Const;
 using GUZ.Core.Services.Config;
 using Reflex.Attributes;
 using UnityEngine;

@@ -1,5 +1,5 @@
 using System;
-using GUZ.Core.Globals;
+using GUZ.Core.Const;
 using GUZ.Core.Model.UI.MenuItem;
 using JetBrains.Annotations;
 

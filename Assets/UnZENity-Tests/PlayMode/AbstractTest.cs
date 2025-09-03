@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections;
-using GUZ.Core.Globals;
+using GUZ.Core.Const;
 using GUZ.Core.Models.Config;
 using UnityEngine;
 using UnityEngine.InputSystem;

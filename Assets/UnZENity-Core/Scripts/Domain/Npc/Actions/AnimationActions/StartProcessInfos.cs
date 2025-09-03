@@ -1,6 +1,6 @@
 using System.Linq;
 using GUZ.Core.Models.Container;
-using GUZ.Core.Globals;
+using GUZ.Core.Const;
 using GUZ.Core.Manager;
 using Reflex.Attributes;
 

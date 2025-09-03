@@ -1,6 +1,6 @@
 using System.Linq;
 using GUZ.Core.Extensions;
-using GUZ.Core.Globals;
+using GUZ.Core.Const;
 using GUZ.Core.Models.Npc;
 using GUZ.Core.Util;
 using MyBox;

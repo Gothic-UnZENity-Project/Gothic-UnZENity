@@ -1,6 +1,6 @@
 #if GUZ_HVR_INSTALLED
 using GUZ.Core;
-using GUZ.Core.Globals;
+using GUZ.Core.Const;
 using UnityEngine;
 using UnityEngine.UI;
 

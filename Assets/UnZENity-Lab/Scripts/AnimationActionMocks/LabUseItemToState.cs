@@ -1,5 +1,5 @@
 using GUZ.Core.Models.Container;
-using GUZ.Core.Globals;
+using GUZ.Core.Const;
 using GUZ.Core.Domain.Npc.Actions;
 using GUZ.Core.Domain.Npc.Actions.AnimationActions;
 

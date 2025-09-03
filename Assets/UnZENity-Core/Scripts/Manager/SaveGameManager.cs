@@ -5,7 +5,7 @@ using System.Linq;
 using GUZ.Core.Models.Adapter.Vobs;
 using GUZ.Core.Models.Container;
 using GUZ.Core.Extensions;
-using GUZ.Core.Globals;
+using GUZ.Core.Const;
 using GUZ.Core.Services;
 using GUZ.Core.Util;
 using JetBrains.Annotations;

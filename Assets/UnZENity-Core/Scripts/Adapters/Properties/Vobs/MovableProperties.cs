@@ -1,4 +1,4 @@
-using GUZ.Core.Globals;
+using GUZ.Core.Const;
 using ZenKit.Vobs;
 
 namespace GUZ.Core.Adapters.Properties.Vobs

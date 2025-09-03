@@ -1,7 +1,7 @@
 ﻿#if GUZ_HVR_INSTALLED
 using System.Collections;
 using GUZ.Core;
-using GUZ.Core.Globals;
+using GUZ.Core.Const;
 using GUZ.Core.Manager;
 using GUZ.Core.Services.Config;
 using GUZ.VR.Services;

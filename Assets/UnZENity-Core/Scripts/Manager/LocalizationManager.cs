@@ -1,5 +1,5 @@
 using System.Text;
-using GUZ.Core.Globals;
+using GUZ.Core.Const;
 using GUZ.Core.Util;
 using UnityEngine.Localization.Settings;
 using ZenKit;

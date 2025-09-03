@@ -3,7 +3,7 @@ using GUZ.Core;
 using GUZ.Core.Adapters.Npc;
 using GUZ.Core.Adapters.Vob;
 using GUZ.Core.Extensions;
-using GUZ.Core.Globals;
+using GUZ.Core.Const;
 using GUZ.Core.Manager;
 using GUZ.Core.Npc;
 using GUZ.Core.Services.Config;

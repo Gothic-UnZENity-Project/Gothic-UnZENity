@@ -1,6 +1,6 @@
 using GUZ.Core.Models.Container;
 using GUZ.Core.Domain.Animations;
-using GUZ.Core.Globals;
+using GUZ.Core.Const;
 using GUZ.Core.Manager;
 using GUZ.Core.Models.Vm;
 using Reflex.Attributes;

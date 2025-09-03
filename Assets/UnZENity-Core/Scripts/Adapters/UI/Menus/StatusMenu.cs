@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Linq;
-using GUZ.Core.Globals;
+using GUZ.Core.Const;
 using GUZ.Core.Model.UI.Menu;
 using MyBox;
 using TMPro;

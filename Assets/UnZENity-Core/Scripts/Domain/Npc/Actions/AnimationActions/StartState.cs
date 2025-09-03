@@ -1,5 +1,5 @@
 using GUZ.Core.Models.Container;
-using GUZ.Core.Globals;
+using GUZ.Core.Const;
 using ZenKit.Daedalus;
 
 namespace GUZ.Core.Domain.Npc.Actions.AnimationActions

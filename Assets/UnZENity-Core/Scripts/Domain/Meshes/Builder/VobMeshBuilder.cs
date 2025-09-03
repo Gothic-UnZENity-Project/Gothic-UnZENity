@@ -1,5 +1,5 @@
 using GUZ.Core.Extensions;
-using GUZ.Core.Globals;
+using GUZ.Core.Const;
 using GUZ.Core.Util;
 using UnityEngine;
 using Logger = GUZ.Core.Util.Logger;

@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Threading.Tasks;
 using GUZ.Core;
 using GUZ.Core.Extensions;
-using GUZ.Core.Globals;
+using GUZ.Core.Const;
 using GUZ.Core.Manager;
 using GUZ.Core.Manager.Vobs;
 using GUZ.Core.Models.Config;

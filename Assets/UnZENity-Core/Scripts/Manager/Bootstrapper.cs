@@ -1,14 +1,14 @@
 using System;
 using System.Globalization;
 using System.Linq;
-using GUZ.Core.Globals;
+using GUZ.Core.Const;
 using GUZ.Core.Services;
 using GUZ.Core.Services.Caches;
 using GUZ.Core.Services.Npc;
 using GUZ.Core.Services.Vm;
 using ZenKit;
 using ZenKit.Daedalus;
-using static GUZ.Core.Globals.DaedalusConst;
+using static GUZ.Core.Const.DaedalusConst;
 
 namespace GUZ.Core.Manager
 {

@@ -4,7 +4,7 @@ using System.Linq;
 using GUZ.Core;
 using GUZ.Core.Adapters.Vob;
 using GUZ.Core.Extensions;
-using GUZ.Core.Globals;
+using GUZ.Core.Const;
 using GUZ.Core.Util;
 using HurricaneVR.Framework.Components;
 using UnityEngine;

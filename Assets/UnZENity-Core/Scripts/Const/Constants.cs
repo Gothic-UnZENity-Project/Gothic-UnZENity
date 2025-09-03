@@ -3,7 +3,7 @@ using UnityEngine;
 using ZenKit.Vobs;
 using Material = UnityEngine.Material;
 
-namespace GUZ.Core.Globals
+namespace GUZ.Core.Const
 {
     public static class Constants
     {

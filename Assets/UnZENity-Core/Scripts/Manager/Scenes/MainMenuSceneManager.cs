@@ -1,4 +1,4 @@
-using GUZ.Core.Globals;
+using GUZ.Core.Const;
 using GUZ.Core.Models.Config;
 using GUZ.Core.Services.Config;
 using Reflex.Attributes;

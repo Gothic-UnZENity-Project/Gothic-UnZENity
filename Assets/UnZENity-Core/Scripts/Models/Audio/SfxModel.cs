@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using GUZ.Core.Globals;
+using GUZ.Core.Const;
 using MyBox;
 using ZenKit.Daedalus;
 

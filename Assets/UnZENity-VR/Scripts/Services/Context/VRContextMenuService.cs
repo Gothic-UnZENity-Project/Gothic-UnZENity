@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using GUZ.Core;
-using GUZ.Core.Globals;
+using GUZ.Core.Const;
 using GUZ.Core.Model.UI.Menu;
 using GUZ.Core.Model.UI.MenuItem;
 using GUZ.Core.Services.Context;

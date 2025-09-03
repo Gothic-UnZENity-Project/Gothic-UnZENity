@@ -2,7 +2,7 @@ using System;
 using System.Collections;
 using System.Linq;
 using GUZ.Core;
-using GUZ.Core.Globals;
+using GUZ.Core.Const;
 using NUnit.Framework;
 using UnityEditor;
 using UnityEngine;

@@ -5,7 +5,7 @@ using System.Linq;
 using GUZ.Core;
 using GUZ.Core.Models.Adapter;
 using GUZ.Core.Extensions;
-using GUZ.Core.Globals;
+using GUZ.Core.Const;
 using GUZ.Core.Manager;
 using GUZ.Core.Models.Audio;
 using GUZ.Core.Models.Marvin;

@@ -2,7 +2,7 @@
 using GUZ.Core.Adapters.Properties.Vob;
 using GUZ.Core.Adapters.Vob;
 using GUZ.Core.Extensions;
-using GUZ.Core.Globals;
+using GUZ.Core.Const;
 using GUZ.Core.Services.Caches;
 using GUZ.Core.Util;
 using UnityEngine;

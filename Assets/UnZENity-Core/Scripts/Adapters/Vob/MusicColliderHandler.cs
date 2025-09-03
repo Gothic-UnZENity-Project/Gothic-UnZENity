@@ -1,4 +1,4 @@
-using GUZ.Core.Globals;
+using GUZ.Core.Const;
 using UnityEngine;
 
 namespace GUZ.Core.Adapters.Vob

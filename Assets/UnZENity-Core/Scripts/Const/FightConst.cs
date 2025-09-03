@@ -1,4 +1,4 @@
-namespace GUZ.Core.Globals
+namespace GUZ.Core.Const
 {
     public static class FightConst
     {
