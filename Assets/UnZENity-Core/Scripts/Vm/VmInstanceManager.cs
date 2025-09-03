@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using GUZ.Core.Data.Adapter;
+using GUZ.Core.Models.Adapter;
 using GUZ.Core.Globals;
 using GUZ.Core.Models.Audio;
 using JetBrains.Annotations;

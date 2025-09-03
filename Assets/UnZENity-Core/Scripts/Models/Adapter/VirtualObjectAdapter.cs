@@ -5,7 +5,7 @@ using ZenKit;
 using ZenKit.Util;
 using ZenKit.Vobs;
 
-namespace GUZ.Core.Data.Adapter.Vobs
+namespace GUZ.Core.Models.Adapter.Vobs
 {
     public class VirtualObjectAdapter : IVirtualObject
     {

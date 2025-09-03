@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using GUZ.Core;
 using GUZ.Core.Adapters.Vob;
-using GUZ.Core.Data.Container;
+using GUZ.Core.Models.Container;
 using GUZ.Core.Extensions;
 using GUZ.Core.Services;
 using GUZ.Core.Util;

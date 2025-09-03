@@ -1,11 +1,10 @@
 ﻿using GUZ.Core.Adapters.Npc;
 using GUZ.Core.Adapters.Properties;
-using GUZ.Core.Data.Adapter.Vobs;
-using GUZ.Core.Npc;
+using GUZ.Core.Models.Adapter.Vobs;
 using UnityEngine;
 using ZenKit.Daedalus;
 
-namespace GUZ.Core.Data.Container
+namespace GUZ.Core.Models.Container
 {
     /// <summary>
     /// Data object containing references to information needed on ZenKit and Unity side.

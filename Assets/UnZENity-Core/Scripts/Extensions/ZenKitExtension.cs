@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using GUZ.Core.Data.Container;
+using GUZ.Core.Models.Container;
 using GUZ.Core.Util;
 using JetBrains.Annotations;
 using MyBox;

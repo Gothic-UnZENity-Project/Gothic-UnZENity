@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using GUZ.Core.Data.Container;
+using GUZ.Core.Models.Container;
 using GUZ.Core.Extensions;
 using TMPro;
 using UnityEngine;

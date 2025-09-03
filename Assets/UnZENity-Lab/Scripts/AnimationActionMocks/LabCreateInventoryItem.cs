@@ -1,5 +1,5 @@
 using GUZ.Core;
-using GUZ.Core.Data.Container;
+using GUZ.Core.Models.Container;
 using GUZ.Core.Globals;
 using GUZ.Core.Domain.Npc.Actions;
 using GUZ.Core.Services.Npc;

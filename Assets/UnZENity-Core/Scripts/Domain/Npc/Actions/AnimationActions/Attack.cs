@@ -1,5 +1,5 @@
 using System;
-using GUZ.Core.Data.Container;
+using GUZ.Core.Models.Container;
 using GUZ.Core.Domain.Animations;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;

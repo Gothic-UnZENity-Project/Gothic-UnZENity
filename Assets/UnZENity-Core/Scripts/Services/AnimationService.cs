@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using GUZ.Core.Data.Adapter.Vobs;
+using GUZ.Core.Models.Adapter.Vobs;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Models.Animations;

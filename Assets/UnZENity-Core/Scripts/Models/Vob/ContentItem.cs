@@ -1,4 +1,4 @@
-namespace GUZ.Core.Data.Vobs
+namespace GUZ.Core.Models.Vob
 {
     public struct ContentItem
     {

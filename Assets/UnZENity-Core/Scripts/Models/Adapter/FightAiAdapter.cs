@@ -3,7 +3,7 @@ using GUZ.Core.Globals;
 using MyBox;
 using ZenKit.Daedalus;
 
-namespace GUZ.Core.Data.Adapter
+namespace GUZ.Core.Models.Adapter
 {
     /// <summary>
     /// Pre-Cache FightAiMoves for better debug capabilities. Otherwise, it needs to be fetched at each AI_Attack() call.

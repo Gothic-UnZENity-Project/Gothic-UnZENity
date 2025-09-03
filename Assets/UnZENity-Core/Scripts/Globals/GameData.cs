@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Text;
-using GUZ.Core.Data;
-using GUZ.Core.Data.Container;
+using GUZ.Core.Models.Container;
 using GUZ.Core.Models.Dialog;
 using GUZ.Core.Models.Npc;
 using GUZ.Core.Models.Vob.WayNet;

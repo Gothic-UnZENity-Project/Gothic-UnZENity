@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using System.Numerics;
 using GUZ.Core.Globals;
 using GUZ.Core.Models.Vm;
-using GUZ.Core.Vm;
 using ZenKit.Daedalus;
 using ZenKit.Vobs;
 
-namespace GUZ.Core.Data.Adapter.Vobs
+namespace GUZ.Core.Models.Adapter.Vobs
 {
     public class NpcAdapter : VirtualObjectAdapter, INpc
     {

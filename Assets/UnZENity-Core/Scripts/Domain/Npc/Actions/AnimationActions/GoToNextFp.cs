@@ -1,4 +1,4 @@
-using GUZ.Core.Data.Container;
+using GUZ.Core.Models.Container;
 
 namespace GUZ.Core.Domain.Npc.Actions.AnimationActions
 {

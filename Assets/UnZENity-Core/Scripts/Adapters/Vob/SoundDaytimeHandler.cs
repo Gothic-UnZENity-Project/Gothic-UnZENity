@@ -1,6 +1,6 @@
 using System;
 using System.Collections;
-using GUZ.Core.Data.Container;
+using GUZ.Core.Models.Container;
 using GUZ.Core.Services;
 using GUZ.Core.Util;
 using UnityEngine;

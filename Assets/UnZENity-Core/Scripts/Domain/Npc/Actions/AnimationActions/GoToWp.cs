@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using GUZ.Core.Data.Container;
+using GUZ.Core.Models.Container;
 using GUZ.Core.Manager;
 using GUZ.Core.Models.Vob.WayNet;
 using GUZ.Core.World;

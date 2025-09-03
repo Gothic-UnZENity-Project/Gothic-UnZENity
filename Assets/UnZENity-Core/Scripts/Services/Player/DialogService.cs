@@ -2,8 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using GUZ.Core.Adapters.Properties;
-using GUZ.Core.Data;
-using GUZ.Core.Data.Container;
+using GUZ.Core.Models.Container;
 using GUZ.Core.Extensions;
 using GUZ.Core.Globals;
 using GUZ.Core.Models.Dialog;

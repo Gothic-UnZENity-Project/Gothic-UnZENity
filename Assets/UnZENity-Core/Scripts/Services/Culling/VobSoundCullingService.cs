@@ -1,4 +1,4 @@
-using GUZ.Core.Data.Container;
+using GUZ.Core.Models.Container;
 using GUZ.Core.Domain.Culling;
 using GUZ.Core.Extensions;
 using UnityEngine;

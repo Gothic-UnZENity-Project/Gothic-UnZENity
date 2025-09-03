@@ -6,7 +6,7 @@ using UnityEngine;
 using ZenKit.Daedalus;
 using ZenKit.Vobs;
 
-namespace GUZ.Core.Data.Container
+namespace GUZ.Core.Models.Container
 {
     public class VobContainer
     {

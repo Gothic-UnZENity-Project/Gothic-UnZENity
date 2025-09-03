@@ -1,4 +1,4 @@
-using GUZ.Core.Data.Container;
+using GUZ.Core.Models.Container;
 using GUZ.Core.Models.Vm;
 using GUZ.Core.Vm;
 

@@ -1,5 +1,5 @@
 #if GUZ_HVR_INSTALLED
-using GUZ.Core.Data.Container;
+using GUZ.Core.Models.Container;
 using GUZ.Core.Extensions;
 using GUZ.VR.Domain.Player;
 using GUZ.VR.Model.Vob;
