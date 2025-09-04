@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using GUZ.Core.Services.World;
+using Reflex.Attributes;
 using UnityEngine;
 
 namespace GUZ.Core.Adapters.Vob
@@ -6,6 +8,9 @@ namespace GUZ.Core.Adapters.Vob
     [RequireComponent(typeof(Light))]
     public class StationaryLight : MonoBehaviour
     {
+        [Inject] private readonly StationaryLightsService _stationaryLightsService;
+        
+        
         public Color Color
         {
             get
@@ -152,21 +157,15 @@ namespace GUZ.Core.Adapters.Vob
         {
             foreach (var rend in _affectedRenderers)
             {
-                GameGlobals.Lights.AddLightOnRenderer(this, rend);
+                _stationaryLightsService.AddLightOnRenderer(this, rend);
             }
         }
 
         private void OnDisable()
         {
-            if (GameGlobals.Lights == null)
-            {
-                // Game is quit.
-                return;
-            }
-
             foreach (var rend in _affectedRenderers)
             {
-                GameGlobals.Lights.RemoveLightOnRenderer(this, rend);
+                _stationaryLightsService.RemoveLightOnRenderer(this, rend);
             }
         }
 

@@ -9,6 +9,7 @@ using GUZ.Core.Models.Config;
 using GUZ.Core.Services;
 using GUZ.Core.Services.Caches;
 using GUZ.Core.Services.Config;
+using GUZ.Core.Services.StaticCache;
 using GUZ.Core.Util;
 using GUZ.G1;
 using GUZ.G2.Services.Context;
@@ -71,7 +72,6 @@ namespace GUZ.Core.Editor.Tools
             ResourceLoader.Init(version == GameVersion.Gothic1 ? config.Root.Gothic1Path : config.Root.Gothic2Path);
 
             var editorDataProvider = new EditorDataProvider();
-            editorDataProvider.StaticCache = new StaticCacheManager();
             GameGlobals.Instance = editorDataProvider;
 
             await Execute(version).AwaitAndLog();
@@ -100,7 +100,7 @@ namespace GUZ.Core.Editor.Tools
             Logger.LogEditor("DONE - Calculating world chunks", LogCat.PreCaching);
 
 
-            var worldChunkData = new StaticCacheManager.WorldChunkContainer
+            var worldChunkData = new StaticCacheService.WorldChunkContainer
             {
                 OpaqueChunks = worldChunkCache.MergedChunksByLights[TextureCacheService.TextureArrayTypes.Opaque],
                 // We do not use transparent elements for OC data as it would cull even on transparent edges.

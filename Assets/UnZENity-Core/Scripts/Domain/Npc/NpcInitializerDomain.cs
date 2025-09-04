@@ -46,13 +46,13 @@ namespace GUZ.Core.Domain.Npc
 
         private static DaedalusVm Vm => GameData.GothicVm;
 
-        public async Task InitNpcsNewGame(LoadingManager loading)
+        public async Task InitNpcsNewGame(LoadingService loading)
         {
             NewRunDaedalus();
             await NewAddLazyLoading(loading);
         }
 
-        public async Task InitNpcsSaveGame(LoadingManager loading)
+        public async Task InitNpcsSaveGame(LoadingService loading)
         {
             var saveGameNpcs = _saveGameService.CurrentWorldData.Npcs;
 
@@ -141,7 +141,7 @@ namespace GUZ.Core.Domain.Npc
         /// <summary>
         /// Now we will create the NPCs step-by-step to ensure smooth loading screen fps.
         /// </summary>
-        private async Task NewAddLazyLoading(LoadingManager loading)
+        private async Task NewAddLazyLoading(LoadingService loading)
         {
             loading.SetPhase(nameof(WorldLoadingBarHandler.ProgressType.Npc), _tmpWldInsertNpcData.Count);
 

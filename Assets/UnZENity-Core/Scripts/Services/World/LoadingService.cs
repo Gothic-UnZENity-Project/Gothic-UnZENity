@@ -5,7 +5,7 @@ using GUZ.Core.Extensions;
 
 namespace GUZ.Core.Manager
 {
-    public class LoadingManager
+    public class LoadingService
     {
         private AbstractLoadingBarHandler _loadingBarHandler;
         private Dictionary<string, float> _progressByType = new();

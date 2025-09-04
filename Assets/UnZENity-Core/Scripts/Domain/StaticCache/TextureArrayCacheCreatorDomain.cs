@@ -10,6 +10,7 @@ using GUZ.Core.Core.Logging;
 using GUZ.Core.Manager;
 using GUZ.Core.Services;
 using GUZ.Core.Services.Caches;
+using GUZ.Core.Services.StaticCache;
 using GUZ.Core.Util;
 using MyBox;
 using Reflex.Attributes;
@@ -23,10 +24,11 @@ namespace GUZ.Core.Domain.StaticCache
 {
     public class TextureArrayCacheCreatorDomain
     {
-        public Dictionary<string, StaticCacheManager.TextureInfo> TextureArrayInformation { get; } = new();
+        public Dictionary<string, StaticCacheService.TextureInfo> TextureArrayInformation { get; } = new();
 
         [Inject] private readonly VmCacheService _vmCacheService;
         [Inject] private readonly FrameSkipperService _frameSkipperService;
+        [Inject] private readonly LoadingService _loadingService;
         
         /// <summary>
         /// Load all materials from world mesh and assign textures to texture array accordingly.
@@ -36,7 +38,7 @@ namespace GUZ.Core.Domain.StaticCache
         /// </summary>
         public async Task CalculateTextureArrayInformation(IMesh worldMesh, int worldIndex)
         {
-            GameGlobals.Loading.SetPhase(
+            _loadingService.SetPhase(
                 $"{nameof(PreCachingLoadingBarHandler.ProgressTypesPerWorld.CalculateTextureArrayInformationMesh)}_{worldIndex}",
                 worldMesh.MaterialCount);
             
@@ -49,20 +51,20 @@ namespace GUZ.Core.Domain.StaticCache
 
                 AddTextureToCache(material.Group, material.Texture);
 
-                GameGlobals.Loading.Tick();
+                _loadingService.Tick();
                 await _frameSkipperService.TrySkipToNextFrame();
             }
 
-            GameGlobals.Loading.FinalizePhase();
+            _loadingService.FinalizePhase();
         }
 
         public async Task CalculateTextureArrayInformation(List<IVirtualObject> vobs, int worldIndex)
         {
             var elementAmount = CalculateElementAmount(vobs);
-            GameGlobals.Loading.SetPhase($"{nameof(PreCachingLoadingBarHandler.ProgressTypesPerWorld.CalculateTextureArrayInformationVobs)}_{worldIndex}", elementAmount);
+            _loadingService.SetPhase($"{nameof(PreCachingLoadingBarHandler.ProgressTypesPerWorld.CalculateTextureArrayInformationVobs)}_{worldIndex}", elementAmount);
             
             await CalculateTextureArrayInformation(vobs);
-            GameGlobals.Loading.FinalizePhase();
+            _loadingService.FinalizePhase();
         }
         
         private int CalculateElementAmount(List<IVirtualObject> vobs)
@@ -80,7 +82,7 @@ namespace GUZ.Core.Domain.StaticCache
         {
             foreach (var vob in vobs)
             {
-                GameGlobals.Loading.Tick();
+                _loadingService.Tick();
                 await _frameSkipperService.TrySkipToNextFrame();
 
                 // We ignore oCItem for now as we will load them all in one afterward.
@@ -121,12 +123,12 @@ namespace GUZ.Core.Domain.StaticCache
         {
             var allItems = GameData.GothicVm.GetInstanceSymbols("C_Item");
 
-            GameGlobals.Loading.SetPhase(nameof(PreCachingLoadingBarHandler.ProgressTypesGlobal.CalculateItemTextureArrayInformation), allItems.Count);
+            _loadingService.SetPhase(nameof(PreCachingLoadingBarHandler.ProgressTypesGlobal.CalculateItemTextureArrayInformation), allItems.Count);
             
             foreach (var obj in allItems)
             {
                 await _frameSkipperService.TrySkipToNextFrame();
-                GameGlobals.Loading.Tick();
+                _loadingService.Tick();
                 
                 var item = _vmCacheService.TryGetItemData(obj.Name);
 
@@ -138,7 +140,7 @@ namespace GUZ.Core.Domain.StaticCache
                 AddTexInfoForItem(item);
             }
             
-            GameGlobals.Loading.FinalizePhase();
+            _loadingService.FinalizePhase();
         }
 
         private void AddTexInfoForSingleVob(IVirtualObject vob)
@@ -239,13 +241,13 @@ namespace GUZ.Core.Domain.StaticCache
 
             // TryAdd is used to ignore duplicates.
             TextureArrayInformation.TryAdd(textureName,
-                new StaticCacheManager.TextureInfo(textureArrayType, Math.Max(texture.Width, texture.Height), animationTextures.Count));
+                new StaticCacheService.TextureInfo(textureArrayType, Math.Max(texture.Width, texture.Height), animationTextures.Count));
 
             // If the texture is an "animated one", we also need to add the animation textures. During runtime, water will iterate the z-index of TextureArray to loop through these elements.
             foreach (var animationTexture in animationTextures)
             {
                 TextureArrayInformation.Add(animationTexture.Key,
-                    new StaticCacheManager.TextureInfo(textureArrayType, Math.Max(animationTexture.Value.Width, animationTexture.Value.Height), 0));
+                    new StaticCacheService.TextureInfo(textureArrayType, Math.Max(animationTexture.Value.Width, animationTexture.Value.Height), 0));
             }
         }
 

@@ -9,6 +9,7 @@ using GUZ.Core.Core.Logging;
 using GUZ.Core.Services;
 using GUZ.Core.Services.Caches;
 using GUZ.Core.Services.Config;
+using GUZ.Core.Services.StaticCache;
 using GUZ.Core.Util;
 using Reflex.Attributes;
 using UnityEngine;
@@ -21,6 +22,8 @@ namespace GUZ.Core.Manager.Scenes
     {
         [Inject] private readonly ConfigService _configService;
         [Inject] private readonly MultiTypeCacheService _multiTypeCacheService;
+        [Inject] private readonly LoadingService _loadingService;
+        [Inject] private readonly StaticCacheService _staticCacheService;
 
 
         [SerializeField]
@@ -74,9 +77,9 @@ namespace GUZ.Core.Manager.Scenes
             {
                 var worldsToLoad = GameContext.ContextGameVersionService.Version == GameVersion.Gothic1 ? _gothic1Worlds : _gothic2Worlds;
                 
-                if (!_configService.Dev.AlwaysRecreateCache && GameGlobals.StaticCache.DoCacheFilesExist(worldsToLoad))
+                if (!_configService.Dev.AlwaysRecreateCache && _staticCacheService.DoCacheFilesExist(worldsToLoad))
                 {
-                    var metadata = await GameGlobals.StaticCache.ReadMetadata();
+                    var metadata = await _staticCacheService.ReadMetadata();
                     if (metadata.Version == Constants.StaticCacheVersion)
                     {
                         Logger.Log("World + Global data is already cached and metadata version matches. Skipping...", LogCat.PreCaching);
@@ -94,7 +97,7 @@ namespace GUZ.Core.Manager.Scenes
                 
                 GameContext.ContextInteractionService.DisableMenus();
                 _loadingBarHandler.LevelCount = worldsToLoad.Length;
-                GameGlobals.Loading.InitLoading(_loadingBarHandler);
+                _loadingService.InitLoading(_loadingBarHandler);
 
                 var watch = Stopwatch.StartNew();
                 var overallWatch = Stopwatch.StartNew();
@@ -103,7 +106,7 @@ namespace GUZ.Core.Manager.Scenes
                 var vobColliderCache = new VobItemColliderCacheCreatorDomain().Inject();
                 var textureArrayCache = new TextureArrayCacheCreatorDomain().Inject();
 
-                GameGlobals.StaticCache.InitCacheFolder();
+                _staticCacheService.InitCacheFolder();
 
                 for (var worldIndex = 0; worldIndex < worldsToLoad.Length; worldIndex++)
                 {
@@ -129,17 +132,17 @@ namespace GUZ.Core.Manager.Scenes
                     await worldChunkCache.CalculateWorldChunks(world, stationaryLightCache.StationaryLightBounds, worldIndex);
                     watch.LogAndRestart($"{worldName}: World chunks calculated.");
 
-                    await GameGlobals.StaticCache.SaveWorldCache(worldName, worldChunkCache.MergedChunksByLights, stationaryLightCache.StationaryLightInfos);
+                    await _staticCacheService.SaveWorldCache(worldName, worldChunkCache.MergedChunksByLights, stationaryLightCache.StationaryLightInfos);
 
                     // DEBUG - Re-enable only when needed.
-                    // await GameGlobals.StaticCache.SaveDebugCache(worldName, stationaryLightCache.StationaryLightBounds);
+                    // await _staticCacheService.SaveDebugCache(worldName, stationaryLightCache.StationaryLightBounds);
 
                     // DEBUG restore
                     // {
                     //     var loadRoot = new GameObject("DebugRestore");
                     //     loadRoot.transform.position = new(1000, 0, 0);
                     //
-                    //     await GameGlobals.StaticCache.LoadCache(loadRoot, worldName);
+                    //     await _staticCacheService.LoadCache(loadRoot, worldName);
                     //
                     //     Logger.Log("DEBUG Loading done!");
                     //     return;
@@ -155,7 +158,7 @@ namespace GUZ.Core.Manager.Scenes
                 await vobColliderCache.CalculateVobItemColliderCache(vobBoundsCache.Bounds);
                 watch.LogAndRestart("Collider for oCItems calculated.");
 
-                await GameGlobals.StaticCache.SaveGlobalCache(vobBoundsCache.Bounds, vobColliderCache.ItemCollider, textureArrayCache.TextureArrayInformation);
+                await _staticCacheService.SaveGlobalCache(vobBoundsCache.Bounds, vobColliderCache.ItemCollider, textureArrayCache.TextureArrayInformation);
                 watch.LogAndRestart("Saved GlobalCache files.");
                 overallWatch.Log("Overall PreCaching done.");
 
@@ -172,7 +175,7 @@ namespace GUZ.Core.Manager.Scenes
             }
             finally
             {
-                GameGlobals.Loading.StopLoading();
+                _loadingService.StopLoading();
 
                 // We need to grant the player always the option to quit the game via menu if something fails.
                 GameContext.ContextInteractionService.EnableMenus();

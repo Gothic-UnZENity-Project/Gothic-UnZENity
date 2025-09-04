@@ -9,6 +9,7 @@ using GUZ.Core.Debugging;
 using GUZ.Core.Extensions;
 using GUZ.Core.Manager;
 using GUZ.Core.Services.Caches;
+using GUZ.Core.Services.StaticCache;
 using GUZ.Core.Util;
 using MyBox;
 using Reflex.Attributes;
@@ -23,6 +24,7 @@ namespace GUZ.Core.Domain.Culling
     {
         [Inject] private readonly UnityMonoService _unityMonoService;
         [Inject] private readonly VmCacheService _vmCacheService;
+        [Inject] private readonly StaticCacheService _staticCacheService;
 
         // Stored for resetting after world switch
         private CullingGroup _cullingGroupSmall => CullingGroup;
@@ -360,7 +362,7 @@ namespace GUZ.Core.Domain.Culling
                 return default;
             }
 
-            if (GameGlobals.StaticCache.LoadedVobsBounds.TryGetValue(meshName, out var bounds))
+            if (_staticCacheService.LoadedVobsBounds.TryGetValue(meshName, out var bounds))
             {
                 return bounds;
             }

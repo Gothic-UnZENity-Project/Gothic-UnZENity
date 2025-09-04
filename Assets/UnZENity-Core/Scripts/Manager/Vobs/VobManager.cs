@@ -85,7 +85,7 @@ namespace GUZ.Core.Manager.Vobs
         /// Load VOBs during world creation. The VOBs itself are then lazy loaded (i.e. when Culling kicks in, a Loading component
         /// will take care of initializing later) or some of them are loaded immediately (e.g. Spots).
         /// </summary>
-        public async Task CreateWorldVobsAsync(DeveloperConfig config, LoadingManager loading, List<IVirtualObject> vobs, GameObject root)
+        public async Task CreateWorldVobsAsync(DeveloperConfig config, LoadingService loading, List<IVirtualObject> vobs, GameObject root)
         {
             PreCreateWorldVobs(vobs, root, loading);
             await CreateWorldVobs(config, loading, vobs);
@@ -253,7 +253,7 @@ namespace GUZ.Core.Manager.Vobs
             throw new NotImplementedException();
         }
         
-        private void PreCreateWorldVobs(List<IVirtualObject> vobs, GameObject rootGo, LoadingManager loading)
+        private void PreCreateWorldVobs(List<IVirtualObject> vobs, GameObject rootGo, LoadingService loading)
         {
             loading.SetPhase(nameof(WorldLoadingBarHandler.ProgressType.VOB), GetTotalVobCount(vobs));
 
@@ -325,7 +325,7 @@ namespace GUZ.Core.Manager.Vobs
             }
         }
 
-        private async Task CreateWorldVobs(DeveloperConfig config, LoadingManager loading, List<IVirtualObject> vobs)
+        private async Task CreateWorldVobs(DeveloperConfig config, LoadingService loading, List<IVirtualObject> vobs)
         {
             foreach (var vob in vobs)
             {

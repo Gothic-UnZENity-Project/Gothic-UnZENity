@@ -15,6 +15,7 @@ using GUZ.Core.Services.Context;
 using GUZ.Core.Services.Culling;
 using GUZ.Core.Services.Meshes;
 using GUZ.Core.Services.Npc;
+using GUZ.Core.Services.StaticCache;
 using GUZ.Core.Services.UI;
 using GUZ.Core.Services.World;
 using GUZ.Core.Util;
@@ -44,7 +45,7 @@ namespace GUZ.Lab
         private VideoService _videoService;
         private RoutineManager _npcRoutineManager;
         private SaveGameService _save;
-        private StaticCacheManager _staticCacheManager;
+        private StaticCacheService _staticCacheService;
         private FontService _fontService;
         private StoryService _story;
         private VobManager _vobManager;
@@ -52,15 +53,14 @@ namespace GUZ.Lab
         private MarvinManager _marvinManager;
 
         public SaveGameService SaveGame => _save;
-        public LoadingManager Loading => null;
-        public StaticCacheManager StaticCache => _staticCacheManager;
+        public LoadingService Loading => null;
+        public StaticCacheService StaticCache => _staticCacheService;
         public PlayerManager Player => null;
         public MarvinManager Marvin => _marvinManager;
         public GameTimeService Time => _gameTimeService;
         public AudioService Audio => Audio;
         public RoutineManager Routines => _npcRoutineManager;
         public FontService Font => _fontService;
-        public StationaryLightsManager Lights => null;
         public VobManager Vobs => _vobManager;
         public NpcService Npcs => _npcService;
         public NpcAiService NpcAi => null;
@@ -121,7 +121,7 @@ namespace GUZ.Lab
             ZenKit.Logger.Set(_configService.Dev.ZenKitLogLevel, Logger.OnZenKitLogMessage);
             DirectMusic.Logger.Set(_configService.Dev.DirectMusicLogLevel, Logger.OnDirectMusicLogMessage);
             _save = new SaveGameService();
-            _staticCacheManager = new StaticCacheManager();
+            _staticCacheService = new StaticCacheService();
             _story = new StoryService();
             _fontService = GetComponent<FontService>();
             _npcRoutineManager = new RoutineManager(_configService.Dev);
@@ -140,7 +140,7 @@ namespace GUZ.Lab
 
             _audioService.InitMusic();
             _npcRoutineManager.Init();
-            _staticCacheManager.Init(_configService.Dev);
+            _staticCacheService.Init(_configService.Dev);
             _textureService.Init();
             _npcService.Init();
             _vobManager.Init();
@@ -159,12 +159,12 @@ namespace GUZ.Lab
 
             Bootstrapper.Boot();
 
-            if (!_staticCacheManager.DoGlobalCacheFilesExist())
+            if (!_staticCacheService.DoGlobalCacheFilesExist())
             {
                 Logger.LogErrorEditor("Please load game once to create global cache first!", LogCat.Debug);
                 throw new SystemException("Please load game once to create global cache first!");
             }
-            await _staticCacheManager.LoadGlobalCache().AwaitAndLog();
+            await _staticCacheService.LoadGlobalCache().AwaitAndLog();
             await _meshService.CreateTextureArray().AwaitAndLog();
 
             LabNpcAnimationHandler.Bootstrap();

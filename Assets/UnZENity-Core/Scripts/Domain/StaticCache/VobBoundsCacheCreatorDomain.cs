@@ -6,6 +6,7 @@ using GUZ.Core.Adapters.UI.LoadingBars;
 using GUZ.Core.Extensions;
 using GUZ.Core.Const;
 using GUZ.Core.Core.Logging;
+using GUZ.Core.Manager;
 using GUZ.Core.Services;
 using GUZ.Core.Services.Caches;
 using GUZ.Core.Util;
@@ -27,15 +28,15 @@ namespace GUZ.Core.Domain.StaticCache
         [Inject] private readonly MeshService _meshService;
         [Inject] private readonly VmCacheService _vmCacheService;
         [Inject] private readonly FrameSkipperService _frameSkipperService;
-
+        [Inject] private readonly LoadingService _loadingService;
 
         public async Task CalculateVobBounds(List<IVirtualObject> vobs, int worldIndex)
         {
             var elementAmount = CalculateElementAmount(vobs);
-            GameGlobals.Loading.SetPhase($"{nameof(PreCachingLoadingBarHandler.ProgressTypesPerWorld.CalculateVobBounds)}_{worldIndex}", elementAmount);
+            _loadingService.SetPhase($"{nameof(PreCachingLoadingBarHandler.ProgressTypesPerWorld.CalculateVobBounds)}_{worldIndex}", elementAmount);
 
             await CalculateVobBounds(vobs);
-            GameGlobals.Loading.FinalizePhase();
+            _loadingService.FinalizePhase();
         }
 
         private int CalculateElementAmount(List<IVirtualObject> vobs)
@@ -54,7 +55,7 @@ namespace GUZ.Core.Domain.StaticCache
             foreach (var vob in vobs)
             {
                 await _frameSkipperService.TrySkipToNextFrame();
-                GameGlobals.Loading.Tick();
+                _loadingService.Tick();
 
                 // We ignore oCItem for now as we will load them all in one afterward.
                 // We also calculate bounds only for objects which are marked to be cached inside Constants.
@@ -113,12 +114,12 @@ namespace GUZ.Core.Domain.StaticCache
         {
             var allItems = GameData.GothicVm.GetInstanceSymbols("C_Item");
 
-            GameGlobals.Loading.SetPhase(nameof(PreCachingLoadingBarHandler.ProgressTypesGlobal.CalculateVobItemBounds), allItems.Count);
+            _loadingService.SetPhase(nameof(PreCachingLoadingBarHandler.ProgressTypesGlobal.CalculateVobItemBounds), allItems.Count);
             
             foreach (var obj in allItems)
             {
                 await _frameSkipperService.TrySkipToNextFrame();
-                GameGlobals.Loading.Tick();
+                _loadingService.Tick();
 
                 var item = _vmCacheService.TryGetItemData(obj.Name);
 
@@ -159,7 +160,7 @@ namespace GUZ.Core.Domain.StaticCache
                 Bounds[item.Visual] = boundingBox;
             }
             
-            GameGlobals.Loading.FinalizePhase();
+            _loadingService.FinalizePhase();
         }
 
         private Bounds CalculateBoundingBox(VisualType visualType, string visualName)

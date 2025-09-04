@@ -9,6 +9,7 @@ using GUZ.Core.Manager;
 using GUZ.Core.Services;
 using GUZ.Core.Services.Caches;
 using GUZ.Core.Services.Config;
+using GUZ.Core.Services.StaticCache;
 using JetBrains.Annotations;
 using Reflex.Attributes;
 using UnityEditor;
@@ -25,7 +26,7 @@ namespace GUZ.Core.Domain.Meshes.Builder
         [Inject] private readonly ConfigService _configService;
         [Inject] private readonly FrameSkipperService _frameSkipperService;
 
-        private StaticCacheManager.WorldChunkContainer _worldChunks;
+        private StaticCacheService.WorldChunkContainer _worldChunks;
         private IMesh _mesh;
         private bool _debugSpeedUpLoading;
 
@@ -39,7 +40,7 @@ namespace GUZ.Core.Domain.Meshes.Builder
             public readonly List<Vector4> TextureAnimations = new();
         }
 
-        public void SetWorldData(StaticCacheManager.WorldChunkContainer worldChunks, IMesh mesh)
+        public void SetWorldData(StaticCacheService.WorldChunkContainer worldChunks, IMesh mesh)
         {
             _worldChunks = worldChunks;
             _mesh = mesh;
@@ -50,7 +51,7 @@ namespace GUZ.Core.Domain.Meshes.Builder
             throw new NotImplementedException("Use BuildAsync instead.");
         }
 
-        public async Task BuildAsync([CanBeNull] LoadingManager loading)
+        public async Task BuildAsync([CanBeNull] LoadingService loading)
         {
             _debugSpeedUpLoading = _configService.Dev.SpeedUpLoading;
 
@@ -65,7 +66,7 @@ namespace GUZ.Core.Domain.Meshes.Builder
             await BuildChunkType(_worldChunks.WaterChunks, TextureCacheService.TextureArrayTypes.Water, loading);
         }
 
-        private async Task BuildChunkType(List<WorldChunkCacheCreatorDomain.WorldChunk> chunks, TextureCacheService.TextureArrayTypes type, [CanBeNull] LoadingManager loading)
+        private async Task BuildChunkType(List<WorldChunkCacheCreatorDomain.WorldChunk> chunks, TextureCacheService.TextureArrayTypes type, [CanBeNull] LoadingService loading)
         {
             var chunkTypeRoot = new GameObject
             {

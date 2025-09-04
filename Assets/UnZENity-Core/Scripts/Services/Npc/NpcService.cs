@@ -134,7 +134,7 @@ namespace GUZ.Core.Services.Npc
             return _initializerDomain.GetFreeAreaAtSpawnPoint(positionToScan);
         }
 
-        public async Task CreateWorldNpcs(LoadingManager loading)
+        public async Task CreateWorldNpcs(LoadingService loading)
         {
             MobRoutines.ClearAndReleaseMemory();
             MobRoutines = new();

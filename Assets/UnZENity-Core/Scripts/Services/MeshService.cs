@@ -4,6 +4,7 @@ using GUZ.Core.Domain.Meshes.Builder;
 using GUZ.Core.Extensions;
 using GUZ.Core.Manager;
 using GUZ.Core.Models.Vm;
+using GUZ.Core.Services.StaticCache;
 using UnityEngine;
 using ZenKit;
 using ZenKit.Daedalus;
@@ -13,8 +14,8 @@ namespace GUZ.Core.Services
 {
     public class MeshService
     {
-        public async Task CreateWorld(StaticCacheManager.WorldChunkContainer worldChunks, IMesh mesh,
-            LoadingManager loading, GameObject rootGo, bool useTextureArray = true)
+        public async Task CreateWorld(StaticCacheService.WorldChunkContainer worldChunks, IMesh mesh,
+            LoadingService loading, GameObject rootGo, bool useTextureArray = true)
         {
             var worldBuilder = new WorldMeshBuilder().Inject();
             worldBuilder.SetGameObject(rootGo);

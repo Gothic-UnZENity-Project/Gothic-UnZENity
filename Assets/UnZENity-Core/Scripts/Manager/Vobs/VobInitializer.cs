@@ -12,6 +12,7 @@ using GUZ.Core.Services.Audio;
 using GUZ.Core.Services.Caches;
 using GUZ.Core.Services.Config;
 using GUZ.Core.Services.Culling;
+using GUZ.Core.Services.StaticCache;
 using GUZ.Core.Util;
 using JetBrains.Annotations;
 using MyBox;
@@ -38,6 +39,7 @@ namespace GUZ.Core.Manager.Vobs
         [Inject] private readonly MeshService _meshService;
         [Inject] private readonly AudioService _audioService;
         [Inject] private readonly VmCacheService _vmCacheService;
+        [Inject] private readonly StaticCacheService _staticCacheService;
 
 
         /// <summary>
@@ -381,7 +383,7 @@ namespace GUZ.Core.Manager.Vobs
             // We therefore need to fetch which Vob has the same position as the one from cache.
             // Hint: The StationaryLights array should be ~512 elements max. If loading is slow,
             // we could also simply remove elements which are set to LightGOs already.
-            lightComp.Index = GameGlobals.StaticCache.LoadedStationaryLights.StationaryLights.FirstIndex(i =>
+            lightComp.Index = _staticCacheService.LoadedStationaryLights.StationaryLights.FirstIndex(i =>
                 i.P == worldPosition);
 
             if (lightComp.Index == -1)

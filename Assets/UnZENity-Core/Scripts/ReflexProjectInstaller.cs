@@ -10,6 +10,7 @@ using GUZ.Core.Services.Context;
 using GUZ.Core.Services.Culling;
 using GUZ.Core.Services.Meshes;
 using GUZ.Core.Services.Npc;
+using GUZ.Core.Services.StaticCache;
 using GUZ.Core.Services.UI;
 using GUZ.Core.Services.Vm;
 using GUZ.Core.Services.World;
@@ -80,12 +81,14 @@ namespace GUZ.Core
             containerBuilder.AddSingleton(typeof(TextureCacheService));
             containerBuilder.AddSingleton(typeof(MorphMeshCacheService));
             containerBuilder.AddSingleton(typeof(NpcArmorPositionCacheService));
-
+            containerBuilder.AddSingleton(typeof(StaticCacheService));
 
             // World
+            containerBuilder.AddSingleton(typeof(LoadingService));
             containerBuilder.AddSingleton(typeof(WayNetService));
             containerBuilder.AddSingleton(typeof(SaveGameService));
             containerBuilder.AddSingleton(typeof(StoryService));
+            containerBuilder.AddSingleton(typeof(StationaryLightsService));
 
             // Misc
             containerBuilder.AddSingleton(typeof(SfxService));
@@ -100,10 +103,10 @@ namespace GUZ.Core
             // FIXME - Need to be migrated to a Service!
             containerBuilder.AddSingleton(typeof(VobManager));
             containerBuilder.AddSingleton(typeof(VobInitializer));
-            containerBuilder.AddSingleton(typeof(StationaryLightsManager));
+            containerBuilder.AddSingleton(typeof(StationaryLightsService));
             containerBuilder.AddSingleton(typeof(SkyService));
             containerBuilder.AddSingleton(typeof(BarrierManager));
-            containerBuilder.AddSingleton(typeof(LoadingManager));
+            containerBuilder.AddSingleton(typeof(LoadingService));
             containerBuilder.AddSingleton(typeof(BarrierManager));
         }
     }

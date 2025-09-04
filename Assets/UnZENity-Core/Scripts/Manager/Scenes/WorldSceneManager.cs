@@ -12,6 +12,7 @@ using GUZ.Core.Models.Vob.WayNet;
 using GUZ.Core.Services;
 using GUZ.Core.Services.Config;
 using GUZ.Core.Services.Npc;
+using GUZ.Core.Services.StaticCache;
 using GUZ.Core.Services.World;
 using GUZ.Core.Util;
 using MyBox;
@@ -31,7 +32,9 @@ namespace GUZ.Core.Manager.Scenes
         [Inject] private readonly NpcService _npcService;
         [Inject] private readonly SaveGameService _saveGameService;
         [Inject] private readonly SkyService _skyService;
-
+        [Inject] private readonly LoadingService _loadingService;
+        [Inject] private readonly StaticCacheService _staticCacheService;
+        [Inject] private readonly StationaryLightsService _stationaryLightsService;
 
         public void Init()
         {
@@ -68,10 +71,10 @@ namespace GUZ.Core.Manager.Scenes
             {
                 // 1.1
                 // Global cache and global calculations (TextureArray) only need to be done once.
-                if (!GameGlobals.StaticCache.IsGlobalCacheLoaded)
+                if (!_staticCacheService.IsGlobalCacheLoaded)
                 {
                     // Load global Static cache and arrange it in memory
-                    await GameGlobals.StaticCache.LoadGlobalCache();
+                    await _staticCacheService.LoadGlobalCache();
                     watch.LogAndRestart("StaticCache - Global loaded");
 
                     await _meshService.CreateTextureArray();
@@ -80,16 +83,16 @@ namespace GUZ.Core.Manager.Scenes
 
                 // 1.2
                 // Load world cache
-                await GameGlobals.StaticCache.LoadWorldCache(_saveGameService.CurrentWorldName).AwaitAndLog();
+                await _staticCacheService.LoadWorldCache(_saveGameService.CurrentWorldName).AwaitAndLog();
                 watch.LogAndRestart("StaticCache - World loaded");
 
                 // 2. Load world based on cached Chunks
                 if (_configService.Dev.EnableWorldMesh)
                 {
                     await _meshService.CreateWorld(
-                        GameGlobals.StaticCache.LoadedWorldChunks,
+                        _staticCacheService.LoadedWorldChunks,
                         _saveGameService.CurrentWorldData.Mesh,
-                        GameGlobals.Loading,
+                        _loadingService,
                         worldRoot
                     ).AwaitAndLog();
                     watch.LogAndRestart("World loaded");
@@ -108,7 +111,7 @@ namespace GUZ.Core.Manager.Scenes
                     // If we load a SaveGame, then nearby NPCs are stored as VOB and will be created as GOs inside NpcManager. We need to prepare it before.
                     _npcService.SetRootGo(npcRoot);
 
-                    await _vobManager.CreateWorldVobsAsync(_configService.Dev, GameGlobals.Loading, _saveGameService.CurrentWorldData.Vobs, vobRoot)
+                    await _vobManager.CreateWorldVobsAsync(_configService.Dev, _loadingService, _saveGameService.CurrentWorldData.Vobs, vobRoot)
                         .AwaitAndLog();
                     watch.LogAndRestart("VOBs created");
                 }
@@ -118,15 +121,15 @@ namespace GUZ.Core.Manager.Scenes
                 _npcService.CacheHero();
                 if (_configService.Dev.EnableNpcs)
                 {
-                    // await NpcCreator.CreateAsync(config.Dev, GameGlobals.Loading).AwaitAndLog();
-                    await _npcService.CreateWorldNpcs(GameGlobals.Loading).AwaitAndLog();
+                    // await NpcCreator.CreateAsync(config.Dev, _loadingService).AwaitAndLog();
+                    await _npcService.CreateWorldNpcs(_loadingService).AwaitAndLog();
                     watch.LogAndRestart("NPCs created");
                 }
 
                 // 6. Stationary lights
                 // They are affecting (1) World Mesh and (2) VOB meshes.
                 // We therefore need to initialize them after both are created.
-                GameGlobals.Lights.InitStationaryLights();
+                _stationaryLightsService.InitStationaryLights();
                 watch.LogAndRestart("Stationary lights initialized");
 
 
@@ -153,7 +156,7 @@ namespace GUZ.Core.Manager.Scenes
                     Logger.LogError(e.ToString(), LogCat.Loading);
                 }
 
-                GameGlobals.Loading.StopLoading();
+                _loadingService.StopLoading();
                 SceneManager.UnloadSceneAsync(Constants.SceneLoading);
             }
             catch(Exception ex)

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using GUZ.Core.Core.Logging;
+using GUZ.Core.Services.StaticCache;
 using GUZ.Core.Services.World;
 using GUZ.Core.Util;
 using Reflex.Attributes;
@@ -19,7 +20,7 @@ namespace GUZ.Core.Debugging
 
         
         [Inject] private readonly SaveGameService _saveGameService;
-        
+        [Inject] private readonly StaticCacheService _staticCacheService;
         
         private List<Vector3> _lightPositions = new();
 
@@ -32,8 +33,8 @@ namespace GUZ.Core.Debugging
 
             try
             {
-                await GameGlobals.StaticCache.LoadDebugCache(_saveGameService.CurrentWorldName);
-                _lightPositions = GameGlobals.StaticCache.LoadedDebugData.LightPositions;
+                await _staticCacheService.LoadDebugCache(_saveGameService.CurrentWorldName);
+                _lightPositions = _staticCacheService.LoadedDebugData.LightPositions;
             }
             catch (Exception e)
             {

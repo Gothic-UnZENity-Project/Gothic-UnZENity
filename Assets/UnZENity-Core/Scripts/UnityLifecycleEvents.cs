@@ -3,6 +3,7 @@ using GUZ.Core.Manager;
 using GUZ.Core.Services;
 using GUZ.Core.Services.Caches;
 using GUZ.Core.Services.Culling;
+using GUZ.Core.Services.World;
 using GUZ.Core.Util;
 using Reflex.Attributes;
 using UnityEngine;
@@ -16,7 +17,7 @@ namespace GUZ.VR
     public class UnityLifecycleEvents : MonoBehaviour
     {
 
-        [Inject] private readonly LoadingManager _loadingManager;
+        [Inject] private readonly LoadingService _loadingService;
         [Inject] private readonly NpcMeshCullingService _npcMeshCullingService;
         [Inject] private readonly VobMeshCullingService _vobMeshCullingService;
         [Inject] private readonly VobSoundCullingService _vobSoundCullingService;
@@ -31,7 +32,7 @@ namespace GUZ.VR
         [Inject] private readonly NpcArmorPositionCacheService _npcArmorCacheService;
 
         // Misc
-        [Inject] private readonly StationaryLightsManager _lightsManager;
+        [Inject] private readonly StationaryLightsService _lightsService;
         [Inject] private readonly SkyService _skyService;
         [Inject] private readonly BarrierManager _barrierManager;
         [Inject] private readonly SpeechToTextService _speechToTextService;
@@ -41,12 +42,12 @@ namespace GUZ.VR
         {
             _frameSkipperService.Update();
             _npcMeshCullingService.Update();
-            _loadingManager.Update();
+            _loadingService.Update();
         }
 
         private void LateUpdate()
         {
-            _lightsManager.LateUpdate();
+            _lightsService.LateUpdate();
         }
 
         private void FixedUpdate()

@@ -12,15 +12,14 @@ using GUZ.Core.Const;
 using GUZ.Core.Core.Logging;
 using GUZ.Core.Models.Config;
 using GUZ.Core.Services.Caches;
-using GUZ.Core.Util;
 using MyBox;
 using UnityEngine;
 using CompressionLevel = System.IO.Compression.CompressionLevel;
 using Logger = GUZ.Core.Core.Logging.Logger;
 
-namespace GUZ.Core.Manager
+namespace GUZ.Core.Services.StaticCache
 {
-    public class StaticCacheManager
+    public class StaticCacheService
     {
         private const string _gzipExt = ".gz";
 

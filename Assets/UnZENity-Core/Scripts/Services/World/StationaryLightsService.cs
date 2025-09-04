@@ -1,12 +1,16 @@
 using System.Collections.Generic;
 using GUZ.Core.Adapters.Vob;
 using GUZ.Core.Extensions;
+using GUZ.Core.Services.StaticCache;
+using Reflex.Attributes;
 using UnityEngine;
 
-namespace GUZ.Core.Manager
+namespace GUZ.Core.Services.World
 {
-    public class StationaryLightsManager
+    public class StationaryLightsService
     {
+        [Inject] private readonly StaticCacheService _staticCacheService;
+        
         private static readonly int _globalStationaryLightPositionsAndAttenuationShaderId =
             Shader.PropertyToID("_GlobalStationaryLightPositionsAndAttenuation");
 
@@ -117,7 +121,7 @@ namespace GUZ.Core.Manager
         /// </summary>
         public void InitStationaryLights()
         {
-            var lights = GameGlobals.StaticCache.LoadedStationaryLights.StationaryLights;
+            var lights = _staticCacheService.LoadedStationaryLights.StationaryLights;
 
             var lightPositionsAndAttenuation = new Vector4[lights.Count];
             var lightColors = new Vector4[lights.Count];

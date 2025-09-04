@@ -7,6 +7,7 @@ using GUZ.Core.Extensions;
 using GUZ.Core.Const;
 using GUZ.Core.Core.Logging;
 using GUZ.Core.Services.Caches;
+using GUZ.Core.Services.StaticCache;
 using GUZ.Core.Util;
 using JetBrains.Annotations;
 using MyBox;
@@ -28,6 +29,7 @@ namespace GUZ.Core.Domain.Meshes.Builder
         [Inject] protected readonly TextureCacheService TextureCacheService;
         [Inject] private readonly MorphMeshCacheService _morphMeshCacheService;
         [Inject] private readonly MultiTypeCacheService _multiTypeCacheService;
+        [Inject] private readonly StaticCacheService _staticCacheService;
         
         protected GameObject RootGo;
         protected GameObject ParentGo;
@@ -645,7 +647,7 @@ namespace GUZ.Core.Domain.Meshes.Builder
         
         protected void PrepareCachedCollider(GameObject rootGo, Mesh mesh)
         {
-            if (!GameGlobals.StaticCache.LoadedVobItemColliders.TryGetValue(MeshName, out var colliders))
+            if (!_staticCacheService.LoadedVobItemColliders.TryGetValue(MeshName, out var colliders))
             {
                 Logger.LogError($"Can't find Collider data for {MeshName}. Skipping...", LogCat.Mesh);
                 return;

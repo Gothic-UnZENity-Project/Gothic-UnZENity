@@ -10,14 +10,11 @@ namespace GUZ.Core
     {
         public static IGlobalDataProvider Instance;
 
-        public static LoadingManager Loading => Instance.Loading;
-        public static StaticCacheManager StaticCache => Instance.StaticCache;
         public static PlayerManager Player => Instance.Player;
         public static MarvinManager Marvin => Instance.Marvin;
         public static GameTimeService Time => Instance.Time;
         public static RoutineManager Routines => Instance.Routines;
         public static StoryService Story => Instance.Story;
-        public static StationaryLightsManager Lights => Instance.Lights;
         public static VobManager Vobs => Instance.Vobs;
         public static VobMeshCullingService VobMeshCulling => Instance.VobMeshCulling;
         public static NpcMeshCullingService NpcMeshCulling => Instance.NpcMeshCulling;

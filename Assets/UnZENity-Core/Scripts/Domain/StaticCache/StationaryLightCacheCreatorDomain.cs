@@ -6,6 +6,7 @@ using GUZ.Core.Extensions;
 using GUZ.Core.Manager;
 using GUZ.Core.Services;
 using GUZ.Core.Services.Config;
+using GUZ.Core.Services.StaticCache;
 using GUZ.Core.Util;
 using MyBox;
 using Reflex.Attributes;
@@ -19,24 +20,26 @@ namespace GUZ.Core.Domain.StaticCache
 {
     public class StationaryLightCacheCreatorDomain
     {
-        [Inject] private readonly ConfigService _configService;
-        [Inject] private readonly FrameSkipperService _frameSkipperService;
-
-        public List<StaticCacheManager.StationaryLightInfo> StationaryLightInfos = new();
-
+        public List<StaticCacheService.StationaryLightInfo> StationaryLightInfos = new();
         // Used for world chunk creation.
         public List<Bounds> StationaryLightBounds = new();
 
+
+        [Inject] private readonly ConfigService _configService;
+        [Inject] private readonly FrameSkipperService _frameSkipperService;
+        [Inject] private readonly LoadingService _loadingService;
+
+        
         private bool _debugSpeedUpLoading => _configService.Dev.SpeedUpLoading;
 
 
         public async Task CalculateStationaryLights(List<IVirtualObject> vobs, int worldIndex)
         {
             var elementAmount = CalculateElementAmount(vobs);
-            GameGlobals.Loading.SetPhase($"{nameof(PreCachingLoadingBarHandler.ProgressTypesPerWorld.CalculateStationaryLights)}_{worldIndex}", elementAmount);
+            _loadingService.SetPhase($"{nameof(PreCachingLoadingBarHandler.ProgressTypesPerWorld.CalculateStationaryLights)}_{worldIndex}", elementAmount);
 
             await CalculateStationaryLights(vobs);
-            GameGlobals.Loading.FinalizePhase();
+            _loadingService.FinalizePhase();
         }
         
         private int CalculateElementAmount(List<IVirtualObject> vobs)
@@ -58,7 +61,7 @@ namespace GUZ.Core.Domain.StaticCache
                 {
                     await _frameSkipperService.TrySkipToNextFrame();
                 }
-                GameGlobals.Loading.Tick();
+                _loadingService.Tick();
 
                 var vobWorldPosition = CalculateWorldPosition(parentWorldPosition, vob.Position.ToUnityVector());
 
@@ -77,7 +80,7 @@ namespace GUZ.Core.Domain.StaticCache
 
                     var linearColor = new Color(light.Color.R / 255f, light.Color.G / 255f, light.Color.B / 255f, light.Color.A / 255f).linear;
                     // Range/100 --> m (ZenKit) in centimeter (Unity)
-                    StationaryLightInfos.Add(new StaticCacheManager.StationaryLightInfo(vobWorldPosition, light.Range / 100, linearColor));
+                    StationaryLightInfos.Add(new StaticCacheService.StationaryLightInfo(vobWorldPosition, light.Range / 100, linearColor));
 
                     // Calculation: Vector3.One (vectorify) * Range / 100 (centimeter to meter in Unity) * 2 (from range (half-width) to width)
                     var boundsSize = Vector3.one * light.Range / 100 * 2;

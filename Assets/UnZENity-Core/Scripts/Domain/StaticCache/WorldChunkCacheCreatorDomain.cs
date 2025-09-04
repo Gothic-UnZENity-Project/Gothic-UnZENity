@@ -5,6 +5,7 @@ using GUZ.Core.Adapters.UI.LoadingBars;
 using GUZ.Core.Extensions;
 using GUZ.Core.Const;
 using GUZ.Core.Core.Logging;
+using GUZ.Core.Manager;
 using GUZ.Core.Services;
 using GUZ.Core.Services.Caches;
 using GUZ.Core.Services.Config;
@@ -28,7 +29,9 @@ namespace GUZ.Core.Domain.StaticCache
 
         [Inject] private readonly ConfigService _configService;
         [Inject] private readonly FrameSkipperService _frameSkipperService;
-
+        [Inject] private readonly LoadingService _loadingService;
+        
+        
         public Dictionary<TextureCacheService.TextureArrayTypes, List<WorldChunk>> MergedChunksByLights;
 
         /// <summary>
@@ -48,13 +51,13 @@ namespace GUZ.Core.Domain.StaticCache
             var cachedBspTree = (CachedBspTree)world.BspTree.Cache();
             
             var elementAmount = CalculateElementAmount(cachedBspTree);
-            GameGlobals.Loading.SetPhase($"{nameof(PreCachingLoadingBarHandler.ProgressTypesPerWorld.CalculateWorldChunks)}_{worldIndex}", elementAmount);
+            _loadingService.SetPhase($"{nameof(PreCachingLoadingBarHandler.ProgressTypesPerWorld.CalculateWorldChunks)}_{worldIndex}", elementAmount);
 
             _stationaryLightBounds = stationaryLightBounds;
             // Hint: We need to cache BspTree, otherwise looping through it will take ages.
             await BuildBspTree(world.Mesh, cachedBspTree);
             
-            GameGlobals.Loading.FinalizePhase();
+            _loadingService.FinalizePhase();
 
         }
 
@@ -88,7 +91,7 @@ namespace GUZ.Core.Domain.StaticCache
                 {
                     await _frameSkipperService.TrySkipToNextFrame();
                 }
-                GameGlobals.Loading.Tick();
+                _loadingService.Tick();
 
                 var currentNodePolygonIds = new List<int>();
 
@@ -158,7 +161,7 @@ namespace GUZ.Core.Domain.StaticCache
                 {
                     await _frameSkipperService.TrySkipToNextFrame();
                 }
-                GameGlobals.Loading.Tick();
+                _loadingService.Tick();
 
                 var node = bspTree.GetNode(nodeData.Key);
                 var polygonIds = nodeData.Value;

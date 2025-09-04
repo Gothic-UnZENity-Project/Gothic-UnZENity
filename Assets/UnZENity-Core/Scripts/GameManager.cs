@@ -14,6 +14,7 @@ using GUZ.Core.Services.Context;
 using GUZ.Core.Services.Culling;
 using GUZ.Core.Services.Meshes;
 using GUZ.Core.Services.Npc;
+using GUZ.Core.Services.StaticCache;
 using GUZ.Core.Services.World;
 using GUZ.Core.Util;
 using MyBox;
@@ -32,8 +33,7 @@ namespace GUZ.Core
         private FileLoggingHandler _fileLoggingHandler;
 
 
-        public LoadingManager Loading { get; private set; }
-        public StaticCacheManager StaticCache { get; private set; }
+        public LoadingService Loading { get; private set; }
 
         public PlayerManager Player { get; private set; }
         public MarvinManager Marvin { get; private set;  }
@@ -45,7 +45,7 @@ namespace GUZ.Core
         public StoryService Story { get; private set; }
 
 
-        public StationaryLightsManager Lights { get; private set; }
+        public StationaryLightsService Lights { get; private set; }
 
         public VobManager Vobs { get; private set; }
         public NpcService Npcs { get; private set; }
@@ -70,7 +70,7 @@ namespace GUZ.Core
 
         [Inject] private readonly SkyService _skyService;
         [Inject] private readonly BarrierManager _barrierManager;
-        [Inject] private readonly LoadingManager _loadingManager;
+        [Inject] private readonly LoadingService _loadingService;
         [Inject] private readonly TextureService _textureService;
         [Inject] private readonly SaveGameService _saveGameService;
         
@@ -81,6 +81,7 @@ namespace GUZ.Core
         [Inject] private readonly NpcAiService _npcAiService;
 
         [Inject] private readonly MultiTypeCacheService _multiTypeCacheService;
+        [Inject] private readonly StaticCacheService _staticCacheService;
 
 
         protected override void Awake()
@@ -108,13 +109,12 @@ namespace GUZ.Core
             
             _multiTypeCacheService.Init();
 
-            Loading = _loadingManager;
-            StaticCache = new StaticCacheManager();
+            Loading = _loadingService;
             Vobs = _vobManager;
             Npcs = _npcService;
             VobMeshCulling = _vobMeshCullingService;
             NpcMeshCulling = _npcMeshCullingService;
-            Lights = new StationaryLightsManager();
+            Lights = new StationaryLightsService();
             Player = new PlayerManager();
             Marvin = new MarvinManager();
             Time = _gameTimeService;
@@ -174,7 +174,7 @@ namespace GUZ.Core
             ResourceLoader.Init(gothicRootPath);
 
             _audioService.InitMusic();
-            StaticCache.Init(DeveloperConfig);
+            _staticCacheService.Init(DeveloperConfig);
             _textureService.Init();
             Vobs.Init();
             Npcs.Init();
