@@ -11,6 +11,7 @@ using GUZ.Core.Domain.Npc.Actions;
 using GUZ.Core.Domain.Npc.Actions.AnimationActions;
 using GUZ.Core.Services.Context;
 using GUZ.Core.Services.Npc;
+using GUZ.Core.Services.World;
 using GUZ.Core.Util;
 using Reflex.Attributes;
 using UnityEngine;
@@ -24,6 +25,7 @@ namespace GUZ.Core.Manager
     {
         [Inject] private readonly ContextDialogService _contextDialogService;
         [Inject] private readonly NpcService _npcService;
+        [Inject] private readonly SaveGameService _saveGameService;
 
         /// <summary>
         /// TextToSpeech toggle. So that the hero isn't repeating what we said already.
@@ -326,7 +328,7 @@ namespace GUZ.Core.Manager
         public bool ExtNpcKnowsInfo(NpcInstance npc, int informationIndex)
         {
             var infoInstanceName = GameData.GothicVm.GetSymbolByIndex(informationIndex)!.Name;
-            var state = GameGlobals.SaveGame.Save.State;
+            var state = _saveGameService.Save.State;
             SaveInfoState foundInfo = default;
             
             for (var i = 0; i < state.InfoStateCount; i++)
@@ -346,7 +348,7 @@ namespace GUZ.Core.Manager
                     Name = infoInstanceName,
                     Told = false
                 };
-                GameGlobals.SaveGame.Save.State.AddInfoState(foundInfo);
+                _saveGameService.Save.State.AddInfoState(foundInfo);
             }
 
             return foundInfo.Told;
@@ -355,7 +357,7 @@ namespace GUZ.Core.Manager
         private SaveInfoState GetInfoState(int informationIndex)
         {
             var infoInstanceName = GameData.GothicVm.GetSymbolByIndex(informationIndex)!.Name;
-            var state = GameGlobals.SaveGame.Save.State;
+            var state = _saveGameService.Save.State;
 
             for (var i = 0; i < state.InfoStateCount; i++)
             {
@@ -372,7 +374,7 @@ namespace GUZ.Core.Manager
         private void AddNpcInfoTold(int informationIndex)
         {
             var infoInstanceName = GameData.GothicVm.GetSymbolByIndex(informationIndex)!.Name;
-            var state = GameGlobals.SaveGame.Save.State;
+            var state = _saveGameService.Save.State;
             
             for (var i = 0; i < state.InfoStateCount; i++)
             {

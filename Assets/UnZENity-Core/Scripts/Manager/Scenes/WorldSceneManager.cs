@@ -12,6 +12,7 @@ using GUZ.Core.Models.Vob.WayNet;
 using GUZ.Core.Services;
 using GUZ.Core.Services.Config;
 using GUZ.Core.Services.Npc;
+using GUZ.Core.Services.World;
 using GUZ.Core.Util;
 using MyBox;
 using Reflex.Attributes;
@@ -28,6 +29,8 @@ namespace GUZ.Core.Manager.Scenes
         [Inject] private readonly WayNetService _wayNetService;
         [Inject] private readonly MeshService _meshService;
         [Inject] private readonly NpcService _npcService;
+        [Inject] private readonly SaveGameService _saveGameService;
+        [Inject] private readonly SkyService _skyService;
 
 
         public void Init()
@@ -77,7 +80,7 @@ namespace GUZ.Core.Manager.Scenes
 
                 // 1.2
                 // Load world cache
-                await GameGlobals.StaticCache.LoadWorldCache(GameGlobals.SaveGame.CurrentWorldName).AwaitAndLog();
+                await GameGlobals.StaticCache.LoadWorldCache(_saveGameService.CurrentWorldName).AwaitAndLog();
                 watch.LogAndRestart("StaticCache - World loaded");
 
                 // 2. Load world based on cached Chunks
@@ -85,7 +88,7 @@ namespace GUZ.Core.Manager.Scenes
                 {
                     await _meshService.CreateWorld(
                         GameGlobals.StaticCache.LoadedWorldChunks,
-                        GameGlobals.SaveGame.CurrentWorldData.Mesh,
+                        _saveGameService.CurrentWorldData.Mesh,
                         GameGlobals.Loading,
                         worldRoot
                     ).AwaitAndLog();
@@ -93,7 +96,7 @@ namespace GUZ.Core.Manager.Scenes
                 }
 
                 // 3. WayNet
-                _wayNetService.Create(_configService.Dev, GameGlobals.SaveGame.CurrentWorldData);
+                _wayNetService.Create(_configService.Dev, _saveGameService.CurrentWorldData);
                 watch.LogAndRestart("WayNet initialized");
 
 
@@ -105,7 +108,7 @@ namespace GUZ.Core.Manager.Scenes
                     // If we load a SaveGame, then nearby NPCs are stored as VOB and will be created as GOs inside NpcManager. We need to prepare it before.
                     _npcService.SetRootGo(npcRoot);
 
-                    await _vobManager.CreateWorldVobsAsync(_configService.Dev, GameGlobals.Loading, GameGlobals.SaveGame.CurrentWorldData.Vobs, vobRoot)
+                    await _vobManager.CreateWorldVobsAsync(_configService.Dev, GameGlobals.Loading, _saveGameService.CurrentWorldData.Vobs, vobRoot)
                         .AwaitAndLog();
                     watch.LogAndRestart("VOBs created");
                 }
@@ -136,7 +139,7 @@ namespace GUZ.Core.Manager.Scenes
                 vobRoot.SetActive(true);
                 npcRoot.SetActive(true);
 
-                GameGlobals.Sky.InitWorld();
+                _skyService.InitWorld();
 
                 TeleportPlayerToStart();
 
@@ -177,10 +180,10 @@ namespace GUZ.Core.Manager.Scenes
             var debugSpawnAtWayPoint = _configService.Dev.SpawnAtWaypoint;
 
             // If we currently load world from a save game, we will use the stored hero position which was set during VOB loading.
-            if (GameGlobals.SaveGame.IsFirstWorldLoadingFromSaveGame)
+            if (_saveGameService.IsFirstWorldLoadingFromSaveGame)
             {
                 // We only use the Vob location once per save game loading.
-                GameGlobals.SaveGame.IsFirstWorldLoadingFromSaveGame = false;
+                _saveGameService.IsFirstWorldLoadingFromSaveGame = false;
 
                 if (debugSpawnAtWayPoint.NotNullOrEmpty())
                 {

@@ -134,7 +134,9 @@ namespace GUZ.Core.Manager
 
         private static void LoadVideos()
         {
-            GameGlobals.Video.InitVideos();
+            // FIXME - Shoould be loaded by [Inject] instead!
+            var videoService = ReflexProjectInstaller.DIContainer.Resolve<VideoService>();
+            videoService.InitVideos();
         }
 
         private static void LoadFonts()

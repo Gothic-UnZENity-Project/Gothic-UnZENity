@@ -12,6 +12,7 @@ using GUZ.Core.Services.Meshes;
 using GUZ.Core.Services.Npc;
 using GUZ.Core.Services.UI;
 using GUZ.Core.Services.Vm;
+using GUZ.Core.Services.World;
 using GUZ.Services.UI;
 using Reflex.Core;
 using UnityEngine;
@@ -83,10 +84,13 @@ namespace GUZ.Core
 
             // World
             containerBuilder.AddSingleton(typeof(WayNetService));
+            containerBuilder.AddSingleton(typeof(SaveGameService));
+            containerBuilder.AddSingleton(typeof(StoryService));
 
             // Misc
             containerBuilder.AddSingleton(typeof(SfxService));
             containerBuilder.AddSingleton(typeof(TextureService));
+            containerBuilder.AddSingleton(typeof(VideoService));
             
             // UI
             containerBuilder.AddSingleton(typeof(FontService));

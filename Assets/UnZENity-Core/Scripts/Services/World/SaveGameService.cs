@@ -2,13 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using GUZ.Core.Models.Adapter.Vobs;
-using GUZ.Core.Models.Container;
-using GUZ.Core.Extensions;
 using GUZ.Core.Const;
 using GUZ.Core.Core.Logging;
-using GUZ.Core.Services;
-using GUZ.Core.Util;
+using GUZ.Core.Extensions;
+using GUZ.Core.Models.Adapter.Vobs;
+using GUZ.Core.Models.Container;
 using JetBrains.Annotations;
 using UnityEngine;
 using ZenKit;
@@ -19,7 +17,7 @@ using Mesh = ZenKit.Mesh;
 using Texture = ZenKit.Texture;
 using TextureFormat = ZenKit.TextureFormat;
 
-namespace GUZ.Core.Manager
+namespace GUZ.Core.Services.World
 {
     /// <summary>
     /// Usage:
@@ -35,7 +33,7 @@ namespace GUZ.Core.Manager
     /// Helper methods:
     /// * GetSaveGame(saveGameId:int)       -> Return a save game object (or null) if requested. (e.g. used for LoadMenu to prepare data.
     /// </summary>
-    public class SaveGameManager
+    public class SaveGameService
     {
         public SlotId SaveGameId;
         public bool IsNewGame => SaveGameId == SlotId.NewGame;

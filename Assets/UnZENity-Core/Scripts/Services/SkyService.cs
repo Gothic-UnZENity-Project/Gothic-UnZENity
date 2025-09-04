@@ -395,7 +395,7 @@ namespace GUZ.Core.Services
             return (previousIndex, nextIndex);
         }
 
-        private static SkyState CreatePresetState(SkyState skyState, Action<SkyState> applyPreset)
+        private SkyState CreatePresetState(SkyState skyState, Action<SkyState> applyPreset)
         {
             applyPreset(skyState);
             return skyState;

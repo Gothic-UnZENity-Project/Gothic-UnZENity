@@ -2,6 +2,7 @@ using GUZ.Core.Const;
 using GUZ.Core.Models.Config;
 using GUZ.Core.Services.Config;
 using GUZ.Core.Services.Meshes;
+using GUZ.Core.Services.World;
 using Reflex.Attributes;
 using UnityEngine;
 
@@ -17,6 +18,7 @@ namespace GUZ.Core.Manager.Scenes
         
         [Inject] private readonly ConfigService _configService;
         [Inject] private readonly TextureService _textureService;
+        [Inject] private readonly SaveGameService _saveGameService;
 
 
         public void Init()
@@ -30,8 +32,8 @@ namespace GUZ.Core.Manager.Scenes
 
                 if (_configService.Dev.LoadFromSaveSlot)
                 {
-                    var saveId = (SaveGameManager.SlotId)_configService.Dev.SaveSlotToLoad;
-                    var save = GameGlobals.SaveGame.GetSaveGame(saveId);
+                    var saveId = (SaveGameService.SlotId)_configService.Dev.SaveSlotToLoad;
+                    var save = _saveGameService.GetSaveGame(saveId);
                     GameManager.I.LoadWorld(save.Metadata.World, saveId, Constants.SceneMainMenu);
                 }
                 else

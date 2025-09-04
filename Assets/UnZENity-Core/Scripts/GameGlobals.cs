@@ -2,6 +2,7 @@ using GUZ.Core.Manager;
 using GUZ.Core.Manager.Vobs;
 using GUZ.Core.Services;
 using GUZ.Core.Services.Culling;
+using GUZ.Core.Services.World;
 
 namespace GUZ.Core
 {
@@ -9,16 +10,13 @@ namespace GUZ.Core
     {
         public static IGlobalDataProvider Instance;
 
-        public static SaveGameManager SaveGame => Instance.SaveGame;
         public static LoadingManager Loading => Instance.Loading;
         public static StaticCacheManager StaticCache => Instance.StaticCache;
         public static PlayerManager Player => Instance.Player;
         public static MarvinManager Marvin => Instance.Marvin;
-        public static SkyService Sky => Instance.Sky;
         public static GameTimeService Time => Instance.Time;
-        public static VideoManager Video => Instance.Video;
         public static RoutineManager Routines => Instance.Routines;
-        public static StoryManager Story => Instance.Story;
+        public static StoryService Story => Instance.Story;
         public static StationaryLightsManager Lights => Instance.Lights;
         public static VobManager Vobs => Instance.Vobs;
         public static VobMeshCullingService VobMeshCulling => Instance.VobMeshCulling;

@@ -5,9 +5,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using GUZ.Core.Adapters.UI.LoadingBars;
 using GUZ.Core.Adapters.Vob;
-using GUZ.Core.Extensions;
 using GUZ.Core.Const;
 using GUZ.Core.Core.Logging;
+using GUZ.Core.Extensions;
 using GUZ.Core.Models.Config;
 using GUZ.Core.Models.Container;
 using GUZ.Core.Models.Vob;
@@ -17,7 +17,7 @@ using GUZ.Core.Services.Caches;
 using GUZ.Core.Services.Config;
 using GUZ.Core.Services.Culling;
 using GUZ.Core.Services.Npc;
-using GUZ.Core.Util;
+using GUZ.Core.Services.World;
 using JetBrains.Annotations;
 using MyBox;
 using Reflex.Attributes;
@@ -38,6 +38,7 @@ namespace GUZ.Core.Manager.Vobs
         [Inject] private readonly AudioService _audioService;
         [Inject] private readonly MultiTypeCacheService _multiTypeCacheService;
         [Inject] private readonly NpcService _npcService;
+        [Inject] private readonly SaveGameService _saveGameService;
         // Supporter class where the whole Init() logic is outsourced for better readability.
         [Inject] private readonly VobInitializer _initializer;
 
@@ -289,7 +290,7 @@ namespace GUZ.Core.Manager.Vobs
         /// </summary>
         private void PreLoadVob(IVirtualObject vob)
         {
-            if (!GameGlobals.SaveGame.IsWorldEnteredFirstTime)
+            if (!_saveGameService.IsWorldEnteredFirstTime)
                 return;
 
             switch (vob.Type)
@@ -433,7 +434,7 @@ namespace GUZ.Core.Manager.Vobs
 
             var container = CreateContainerWithLoader(vob);
             GameGlobals.VobMeshCulling.AddCullingEntry(container);
-            GameGlobals.SaveGame.CurrentWorldData.Vobs.Add(container.Vob);
+            _saveGameService.CurrentWorldData.Vobs.Add(container.Vob);
         }
 
         [CanBeNull]

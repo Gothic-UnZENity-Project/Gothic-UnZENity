@@ -14,6 +14,7 @@ using GUZ.Core.Services.Context;
 using GUZ.Core.Services.Culling;
 using GUZ.Core.Services.Meshes;
 using GUZ.Core.Services.Npc;
+using GUZ.Core.Services.World;
 using GUZ.Core.Util;
 using MyBox;
 using Reflex.Attributes;
@@ -31,22 +32,17 @@ namespace GUZ.Core
         private FileLoggingHandler _fileLoggingHandler;
 
 
-        public SaveGameManager SaveGame { get; private set; }
-
         public LoadingManager Loading { get; private set; }
         public StaticCacheManager StaticCache { get; private set; }
 
         public PlayerManager Player { get; private set; }
         public MarvinManager Marvin { get; private set;  }
-        public SkyService Sky { get; private set; }
 
         public GameTimeService Time { get; private set; }
         
-        public VideoManager Video { get; private set; }
-        
         public RoutineManager Routines { get; private set; }
 
-        public StoryManager Story { get; private set; }
+        public StoryService Story { get; private set; }
 
 
         public StationaryLightsManager Lights { get; private set; }
@@ -76,6 +72,7 @@ namespace GUZ.Core
         [Inject] private readonly BarrierManager _barrierManager;
         [Inject] private readonly LoadingManager _loadingManager;
         [Inject] private readonly TextureService _textureService;
+        [Inject] private readonly SaveGameService _saveGameService;
         
         [Inject] private readonly FrameSkipperService _frameSkipperService;
         [Inject] private readonly VobManager _vobManager;
@@ -111,7 +108,6 @@ namespace GUZ.Core
             
             _multiTypeCacheService.Init();
 
-            SaveGame = new SaveGameManager();
             Loading = _loadingManager;
             StaticCache = new StaticCacheManager();
             Vobs = _vobManager;
@@ -122,9 +118,7 @@ namespace GUZ.Core
             Player = new PlayerManager();
             Marvin = new MarvinManager();
             Time = _gameTimeService;
-            Video = new VideoManager();
-            Sky = _skyService;
-            Story = new StoryManager();
+            Story = new StoryService();
             Routines = new RoutineManager(DeveloperConfig);
             SpeechToText = _speechToTextService;
 
@@ -191,7 +185,7 @@ namespace GUZ.Core
             GlobalEventDispatcher.LevelChangeTriggered.AddListener((world, spawn) =>
             {
                 Player.LastLevelChangeTriggerVobName = spawn;
-                LoadWorld(world, SaveGameManager.SlotId.WorldChangeOnly, SceneManager.GetActiveScene().name);
+                LoadWorld(world, SaveGameService.SlotId.WorldChangeOnly, SceneManager.GetActiveScene().name);
             });
 
             watch.Log("Phase2 done. (mostly ZenKit initialized)");
@@ -213,25 +207,25 @@ namespace GUZ.Core
         /// saveGameId = -1 -> Change World
         /// </summary>
         /// <param name="saveGameId">-1-15</param>
-        public void LoadWorld(string worldName, SaveGameManager.SlotId saveGameId, string sceneToUnload = null)
+        public void LoadWorld(string worldName, SaveGameService.SlotId saveGameId, string sceneToUnload = null)
         {
             // We need to add .zen as early as possible as all related data needs the file ending.
             worldName += worldName.EndsWithIgnoreCase(".zen") ? "" : ".zen";
 
             // Pre-load ZenKit save game data now. Can be reused by LoadingSceneManager later.
-            if (saveGameId == SaveGameManager.SlotId.NewGame)
+            if (saveGameId == SaveGameService.SlotId.NewGame)
             {
-                SaveGame.LoadNewGame();
+                _saveGameService.LoadNewGame();
             }
             else if (saveGameId > 0)
             {
-                SaveGame.LoadSavedGame(saveGameId);
+                _saveGameService.LoadSavedGame(saveGameId);
             }
             else
             {
                 // If we have saveGameId -1 that means to just change the world and keep the same data.
             }
-            SaveGame.ChangeWorld(worldName);
+            _saveGameService.ChangeWorld(worldName);
 
             LoadScene(Constants.SceneLoading, sceneToUnload);
         }

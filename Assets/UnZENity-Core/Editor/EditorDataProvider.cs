@@ -6,6 +6,7 @@ using GUZ.Core.Services.Culling;
 using GUZ.Core.Services.Meshes;
 using GUZ.Core.Services.Npc;
 using GUZ.Core.Services.UI;
+using GUZ.Core.Services.World;
 using GUZ.Services.UI;
 
 namespace GUZ.Core.Editor
@@ -15,17 +16,17 @@ namespace GUZ.Core.Editor
     /// </summary>
     public class EditorDataProvider : IGlobalDataProvider
     {
-        public SaveGameManager SaveGame { get; }
+        public SaveGameService SaveGame { get; }
         public LoadingManager Loading { get; }
         public StaticCacheManager StaticCache { get; set; }
         public PlayerManager Player { get; }
         public MarvinManager Marvin { get; }
         public SkyService Sky { get; }
         public GameTimeService Time { get; }
-        public VideoManager Video { get; }
+        public VideoService Video { get; }
         public RoutineManager Routines { get; }
         public StationaryLightsManager Lights { get; }
-        public StoryManager Story { get; }
+        public StoryService Story { get; }
         public VobManager Vobs { get; }
         public NpcService Npcs { get; }
         public NpcAiService NpcAi { get; }

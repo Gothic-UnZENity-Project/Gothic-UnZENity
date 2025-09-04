@@ -1,15 +1,20 @@
 ﻿using System.Collections.Generic;
+using Reflex.Attributes;
 using ZenKit;
 
-namespace GUZ.Core.Manager
+namespace GUZ.Core.Services.World
 {
-    public class StoryManager
+    public class StoryService
     {
         // Chapter switching topics
         public bool _isChapterSwitchPending;
+        
+        [Inject] private readonly SaveGameService _saveGameService;
+
+        
         private (string chapter, string text, string texture, string wav, int time) _chapterSwitchData;
 
-        private SaveState _saveState => GameGlobals.SaveGame.Save.State;
+        private SaveState _saveState => _saveGameService.Save.State;
 
 
         public void ExtLogCreateTopic(string name, SaveTopicSection section)

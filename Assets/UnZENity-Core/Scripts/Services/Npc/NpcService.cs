@@ -16,6 +16,7 @@ using GUZ.Core.Models.Npc;
 using GUZ.Core.Models.Vm;
 using GUZ.Core.Services.Caches;
 using GUZ.Core.Services.Config;
+using GUZ.Core.Services.World;
 using GUZ.Core.Util;
 using MyBox;
 using Reflex.Attributes;
@@ -41,7 +42,7 @@ namespace GUZ.Core.Services.Npc
         // Supporter class where the whole Init() logic is outsourced for better readability.
         [Inject] private readonly MultiTypeCacheService _multiTypeCacheService;
         [Inject] private readonly VmCacheService _vmCacheService;
-        
+        [Inject] private readonly SaveGameService _saveGameService;
         
         private readonly NpcInitializerDomain _initializerDomain = new NpcInitializerDomain().Inject();
 
@@ -138,7 +139,7 @@ namespace GUZ.Core.Services.Npc
             MobRoutines.ClearAndReleaseMemory();
             MobRoutines = new();
             
-            if (GameGlobals.SaveGame.IsNewGame)
+            if (_saveGameService.IsNewGame)
                 await _initializerDomain.InitNpcsNewGame(loading);
             else
                 await _initializerDomain.InitNpcsSaveGame(loading);
@@ -234,7 +235,7 @@ namespace GUZ.Core.Services.Npc
         {
             // We also initialize NPCs inside Daedalus when we load a save game. It's needed as some data isn't stored on save games.
             // But e.g., inventory items will be skipped as they are stored inside save game VOBs.
-            if (!GameGlobals.SaveGame.IsWorldLoadedForTheFirstTime)
+            if (!_saveGameService.IsWorldLoadedForTheFirstTime)
                 return;
 
             if (npc.GetUserData() == null)

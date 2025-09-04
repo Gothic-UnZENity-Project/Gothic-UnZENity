@@ -14,6 +14,7 @@ using GUZ.Core.Models.Vob.WayNet;
 using GUZ.Core.Services;
 using GUZ.Core.Services.Caches;
 using GUZ.Core.Services.Npc;
+using GUZ.Core.Services.World;
 using GUZ.Core.Util;
 using JetBrains.Annotations;
 using MyBox;
@@ -37,7 +38,9 @@ namespace GUZ.Core.Domain.Npc
         [Inject] private readonly MultiTypeCacheService _multiTypeCacheService;
         [Inject] private readonly NpcRoutineService _npcRoutineService;
         [Inject] private readonly FrameSkipperService _frameSkipperService;
+        [Inject] private readonly SaveGameService _saveGameService;
 
+        
         public GameObject RootGo;
         private readonly List<(NpcContainer npc, string spawnPoint)> _tmpWldInsertNpcData = new();
 
@@ -51,7 +54,7 @@ namespace GUZ.Core.Domain.Npc
 
         public async Task InitNpcsSaveGame(LoadingManager loading)
         {
-            var saveGameNpcs = GameGlobals.SaveGame.CurrentWorldData.Npcs;
+            var saveGameNpcs = _saveGameService.CurrentWorldData.Npcs;
 
             foreach (var vobNpc in saveGameNpcs)
             {
@@ -131,8 +134,8 @@ namespace GUZ.Core.Domain.Npc
 
             // Inside Startup.d, it's always STARTUP_{MAPNAME} and INIT_{MAPNAME}
             // FIXME - Inside Startup.d some Startup_*() functions also call Init_*() some not. How to handle properly? (Force calling it here? Even if done twice?)
-            GameData.GothicVm.Call($"STARTUP_{GameGlobals.SaveGame.CurrentWorldName.ToUpper().RemoveEnd(".ZEN")}");
-            GameData.GothicVm.Call($"INIT_{GameGlobals.SaveGame.CurrentWorldName.ToUpper().RemoveEnd(".ZEN")}"); // call init as well, as per opengothic
+            GameData.GothicVm.Call($"STARTUP_{_saveGameService.CurrentWorldName.ToUpper().RemoveEnd(".ZEN")}");
+            GameData.GothicVm.Call($"INIT_{_saveGameService.CurrentWorldName.ToUpper().RemoveEnd(".ZEN")}"); // call init as well, as per opengothic
         }
 
         /// <summary>

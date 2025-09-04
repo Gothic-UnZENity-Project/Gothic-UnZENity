@@ -16,6 +16,7 @@ using GUZ.Core.Services.Culling;
 using GUZ.Core.Services.Meshes;
 using GUZ.Core.Services.Npc;
 using GUZ.Core.Services.UI;
+using GUZ.Core.Services.World;
 using GUZ.Core.Util;
 using GUZ.Lab.Handler;
 using GUZ.Services.UI;
@@ -40,22 +41,21 @@ namespace GUZ.Lab
         public LabNpcAnimationHandler LabNpcAnimationHandler;
         public LabLockHandler LabLockHandler;
 
-        private VideoManager _videoManager;
+        private VideoService _videoService;
         private RoutineManager _npcRoutineManager;
-        private SaveGameManager _save;
+        private SaveGameService _save;
         private StaticCacheManager _staticCacheManager;
         private FontService _fontService;
-        private StoryManager _story;
+        private StoryService _story;
         private VobManager _vobManager;
         private NpcService _npcService;
         private MarvinManager _marvinManager;
 
-        public SaveGameManager SaveGame => _save;
+        public SaveGameService SaveGame => _save;
         public LoadingManager Loading => null;
         public StaticCacheManager StaticCache => _staticCacheManager;
         public PlayerManager Player => null;
         public MarvinManager Marvin => _marvinManager;
-        public SkyService Sky => null;
         public GameTimeService Time => _gameTimeService;
         public AudioService Audio => Audio;
         public RoutineManager Routines => _npcRoutineManager;
@@ -66,8 +66,8 @@ namespace GUZ.Lab
         public NpcAiService NpcAi => null;
         public VobMeshCullingService VobMeshCulling => null;
         public NpcMeshCullingService NpcMeshCulling => null;
-        public StoryManager Story => _story;
-        public VideoManager Video => _videoManager;
+        public StoryService Story => _story;
+        public VideoService Video => _videoService;
         public SpeechToTextService SpeechToText => null;
 
 
@@ -120,12 +120,12 @@ namespace GUZ.Lab
 
             ZenKit.Logger.Set(_configService.Dev.ZenKitLogLevel, Logger.OnZenKitLogMessage);
             DirectMusic.Logger.Set(_configService.Dev.DirectMusicLogLevel, Logger.OnDirectMusicLogMessage);
-            _save = new SaveGameManager();
+            _save = new SaveGameService();
             _staticCacheManager = new StaticCacheManager();
-            _story = new StoryManager();
+            _story = new StoryService();
             _fontService = GetComponent<FontService>();
             _npcRoutineManager = new RoutineManager(_configService.Dev);
-            _videoManager = new VideoManager();
+            _videoService = new VideoService();
             _npcService = new NpcService();
             _vobManager = new VobManager();
             _marvinManager = new MarvinManager();
@@ -145,7 +145,7 @@ namespace GUZ.Lab
             _npcService.Init();
             _vobManager.Init();
 
-            _videoManager.InitVideos();
+            _videoService.InitVideos();
             _save.LoadNewGame();
         }
 

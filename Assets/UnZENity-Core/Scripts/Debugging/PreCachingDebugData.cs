@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using GUZ.Core.Core.Logging;
+using GUZ.Core.Services.World;
 using GUZ.Core.Util;
+using Reflex.Attributes;
 using UnityEngine;
 using Logger = GUZ.Core.Core.Logging.Logger;
 
@@ -11,10 +13,14 @@ namespace GUZ.Core.Debugging
     /// Use whatever pre-caching data got saved at StaticCacheManager.SaveDebugCache().
     /// The actual loading of this data is hidden behind an Activate switch to ensure we don't waste resources during normal gameplay.
     /// </summary>
-    public class PreCachingDebugDataDebug : MonoBehaviour
+    public class PreCachingDebugData : MonoBehaviour
     {
         public bool Activate;
 
+        
+        [Inject] private readonly SaveGameService _saveGameService;
+        
+        
         private List<Vector3> _lightPositions = new();
 
         private async void OnValidate()
@@ -26,7 +32,7 @@ namespace GUZ.Core.Debugging
 
             try
             {
-                await GameGlobals.StaticCache.LoadDebugCache(GameGlobals.SaveGame.CurrentWorldName);
+                await GameGlobals.StaticCache.LoadDebugCache(_saveGameService.CurrentWorldName);
                 _lightPositions = GameGlobals.StaticCache.LoadedDebugData.LightPositions;
             }
             catch (Exception e)

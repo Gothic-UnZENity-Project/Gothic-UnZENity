@@ -3,12 +3,11 @@ using System.IO;
 using System.Linq;
 using GUZ.Core.Core.Logging;
 using GUZ.Core.Extensions;
-using GUZ.Core.Util;
 using Logger = GUZ.Core.Core.Logging.Logger;
 
-namespace GUZ.Core.Manager
+namespace GUZ.Core.Services
 {
-    public class VideoManager
+    public class VideoService
     {
         public List<string> VideoFileNamesMp4 = new();
         public List<string> VideoFilePathsMp4 = new();
