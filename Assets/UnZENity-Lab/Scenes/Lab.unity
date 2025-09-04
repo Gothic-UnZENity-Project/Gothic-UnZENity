@@ -15683,11 +15683,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2101890269}
+  - component: {fileID: 2101890270}
   - component: {fileID: 2101890274}
   - component: {fileID: 2101890275}
-  - component: {fileID: 2101890270}
-  - component: {fileID: 2101890272}
-  - component: {fileID: 2101890271}
+  - component: {fileID: 2101890276}
   - component: {fileID: 2101890273}
   m_Layer: 0
   m_Name: Bootstrap
@@ -15734,36 +15733,6 @@ MonoBehaviour:
   VobItemHandler: {fileID: 330949651}
   LabNpcAnimationHandler: {fileID: 501618520}
   LabLockHandler: {fileID: 640496639}
---- !u!114 &2101890271
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2101890268}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 354f53e468562f34da62c8c144374eb9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &2101890272
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2101890268}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d06cd27c7d627aa499a0430dd39b8238, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  MenuChoiceBackMaterial: {fileID: 2100000, guid: abf584ad0ef807746abef146336eebe6, type: 2}
-  ButtonMaterial: {fileID: 2100000, guid: 731db01b086aeb94582b82a16a95775b, type: 2}
-  FillerMaterial: {fileID: 2100000, guid: 7f15366450c487344a1e66a13b22a847, type: 2}
-  SkyMaterial: {fileID: 2100000, guid: 39ac659c922b5b1489714aacd9b952e9, type: 2}
-  MapMaterial: {fileID: 2100000, guid: 6edba26a8e8b5c3488fd2eb615350942, type: 2}
-  BackgroundMaterial: {fileID: 2100000, guid: 1e349bd46543d684da0fd00dfcc78b72, type: 2}
 --- !u!82 &2101890273
 AudioSource:
   m_ObjectHideFlags: 0
@@ -15885,6 +15854,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 81ddd7eac5de44b6a0d295c68dbe0171, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &2101890276
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2101890268}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9fc8f470556f4fd7b7ba4721f0cb5c70, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  MenuChoiceBackMaterial: {fileID: 2100000, guid: 1e349bd46543d684da0fd00dfcc78b72, type: 2}
+  ButtonMaterial: {fileID: 2100000, guid: 731db01b086aeb94582b82a16a95775b, type: 2}
+  FillerMaterial: {fileID: 2100000, guid: 7f15366450c487344a1e66a13b22a847, type: 2}
+  SkyMaterial: {fileID: 2100000, guid: 39ac659c922b5b1489714aacd9b952e9, type: 2}
+  BackgroundMaterial: {fileID: 2100000, guid: 1e349bd46543d684da0fd00dfcc78b72, type: 2}
 --- !u!1 &2122853906
 GameObject:
   m_ObjectHideFlags: 0

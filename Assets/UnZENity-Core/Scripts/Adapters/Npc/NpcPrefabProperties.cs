@@ -4,7 +4,6 @@ using GUZ.Core.Adapters.Animations.Morph;
 using GUZ.Core.Animations;
 using GUZ.Core.Models.Container;
 using GUZ.Core.Extensions;
-using GUZ.Core.Npc;
 using UnityEngine;
 using ZenKit.Daedalus;
 

@@ -7,6 +7,7 @@ using GUZ.Core.Manager;
 using GUZ.Core.Models.Sky;
 using GUZ.Core.Services.Caches;
 using GUZ.Core.Services.Config;
+using GUZ.Core.Services.Meshes;
 using GUZ.Core.Util;
 using Reflex.Attributes;
 using UnityEngine;
@@ -23,7 +24,9 @@ namespace GUZ.Core.Services
         [Inject] private readonly GameTimeService _gameTimeService;
         [Inject] private readonly AudioService _audioService;
         [Inject] private readonly TextureCacheService _textureCacheService;
-
+        [Inject] private readonly TextureService _textureService;
+        
+        
         private Vector3 _sunDirection;
         private bool _isRaining;
 
@@ -77,7 +80,7 @@ namespace GUZ.Core.Services
             GlobalEventDispatcher.GameTimeSecondChangeCallback.AddListener(Interpolate);
             GlobalEventDispatcher.GameTimeHourChangeCallback.AddListener(UpdateRainTime);
 
-            RenderSettings.skybox = Object.Instantiate(GameGlobals.Textures.SkyMaterial);
+            RenderSettings.skybox = Object.Instantiate(_textureService.SkyMaterial);
             InitRainGo();
             InitSky();
         }

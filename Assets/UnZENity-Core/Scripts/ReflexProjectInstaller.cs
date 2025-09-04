@@ -8,6 +8,7 @@ using GUZ.Core.Services.Caches;
 using GUZ.Core.Services.Config;
 using GUZ.Core.Services.Context;
 using GUZ.Core.Services.Culling;
+using GUZ.Core.Services.Meshes;
 using GUZ.Core.Services.Npc;
 using GUZ.Core.Services.UI;
 using GUZ.Core.Services.Vm;
@@ -85,7 +86,8 @@ namespace GUZ.Core
 
             // Misc
             containerBuilder.AddSingleton(typeof(SfxService));
-
+            containerBuilder.AddSingleton(typeof(TextureService));
+            
             // UI
             containerBuilder.AddSingleton(typeof(FontService));
             containerBuilder.AddSingleton(typeof(UIEventsService));

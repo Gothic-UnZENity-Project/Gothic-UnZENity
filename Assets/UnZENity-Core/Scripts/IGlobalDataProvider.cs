@@ -18,7 +18,6 @@ namespace GUZ.Core
         public GameTimeService Time { get; }
         public VideoManager Video { get; }
         public RoutineManager Routines { get; }
-        public TextureManager Textures { get; }
         public StationaryLightsManager Lights { get; }
         public StoryManager Story { get; }
         public VobManager Vobs { get; }

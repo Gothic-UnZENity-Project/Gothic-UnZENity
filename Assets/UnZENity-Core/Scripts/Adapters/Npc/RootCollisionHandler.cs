@@ -1,4 +1,3 @@
-using GUZ.Core.Npc;
 using UnityEngine;
 
 namespace GUZ.Core.Adapters.Npc

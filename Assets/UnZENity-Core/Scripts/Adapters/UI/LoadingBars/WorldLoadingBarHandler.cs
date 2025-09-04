@@ -27,7 +27,7 @@ namespace GUZ.Core.Adapters.UI.LoadingBars
             var textureNameForLoadingScreen = GameGlobals.SaveGame.IsNewGame
                 ? "LOADING.TGA"
                 : $"LOADING_{GameGlobals.SaveGame.CurrentWorldName.ToUpper().RemoveEnd(".ZEN")}.TGA";
-            GameGlobals.Textures.SetTexture(textureNameForLoadingScreen, GameGlobals.Textures.GothicLoadingMenuMaterial);
+            TextureService.SetTexture(textureNameForLoadingScreen, TextureService.GothicLoadingMenuMaterial);
         }
     }
 }

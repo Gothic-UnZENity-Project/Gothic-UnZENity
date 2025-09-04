@@ -12,6 +12,7 @@ using GUZ.Core.Services.Caches;
 using GUZ.Core.Services.Config;
 using GUZ.Core.Services.Context;
 using GUZ.Core.Services.Culling;
+using GUZ.Core.Services.Meshes;
 using GUZ.Core.Services.Npc;
 using GUZ.Core.Util;
 using MyBox;
@@ -23,7 +24,6 @@ using Logger = GUZ.Core.Core.Logging.Logger;
 
 namespace GUZ.Core
 {
-    [RequireComponent(typeof(TextureManager))]
     public class GameManager : SingletonBehaviour<GameManager>, IGlobalDataProvider
     {
         public DeveloperConfig DeveloperConfig;
@@ -45,8 +45,6 @@ namespace GUZ.Core
         public VideoManager Video { get; private set; }
         
         public RoutineManager Routines { get; private set; }
-
-        public TextureManager Textures { get; private set; }
 
         public StoryManager Story { get; private set; }
 
@@ -77,7 +75,8 @@ namespace GUZ.Core
         [Inject] private readonly SkyService _skyService;
         [Inject] private readonly BarrierManager _barrierManager;
         [Inject] private readonly LoadingManager _loadingManager;
-
+        [Inject] private readonly TextureService _textureService;
+        
         [Inject] private readonly FrameSkipperService _frameSkipperService;
         [Inject] private readonly VobManager _vobManager;
         [Inject] private readonly ConfigService _configService;
@@ -113,7 +112,6 @@ namespace GUZ.Core
             _multiTypeCacheService.Init();
 
             SaveGame = new SaveGameManager();
-            Textures = GetComponent<TextureManager>();
             Loading = _loadingManager;
             StaticCache = new StaticCacheManager();
             Vobs = _vobManager;
@@ -183,7 +181,7 @@ namespace GUZ.Core
 
             _audioService.InitMusic();
             StaticCache.Init(DeveloperConfig);
-            Textures.Init();
+            _textureService.Init();
             Vobs.Init();
             Npcs.Init();
 

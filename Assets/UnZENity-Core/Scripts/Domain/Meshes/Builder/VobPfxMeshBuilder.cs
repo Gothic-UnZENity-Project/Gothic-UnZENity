@@ -5,7 +5,9 @@ using GUZ.Core.Extensions;
 using GUZ.Core.Const;
 using GUZ.Core.Core.Logging;
 using GUZ.Core.Services.Caches;
+using GUZ.Core.Services.Meshes;
 using GUZ.Core.Util;
+using Reflex.Attributes;
 using UnityEngine;
 using UnityEngine.Rendering;
 using ZenKit.Vobs;
@@ -19,6 +21,9 @@ namespace GUZ.Core.Domain.Meshes.Builder
     /// </summary>
     public class VobPfxMeshBuilder : AbstractMeshBuilder
     {
+        [Inject] private readonly TextureService _textureService;
+
+        
         private IVirtualObject _vob;
 
         public void SetPfxData(IVirtualObject vob)
@@ -136,7 +141,7 @@ namespace GUZ.Core.Domain.Meshes.Builder
                 var standardShader = Constants.ShaderUnlitParticles;
                 var material = new Material(standardShader);
                 rendererModule.material = material;
-                GameGlobals.Textures.SetTexture(pfx.VisNameS, rendererModule.material);
+                _textureService.SetTexture(pfx.VisNameS, rendererModule.material);
                 // renderer.material.renderQueue = (int)UnityEngine.Rendering.RenderQueue.AlphaTest; // First check with no change.
 
                 switch (pfx.VisAlphaFuncS.ToUpper())

@@ -3,7 +3,6 @@ using GUZ.Core.Adapters.Animations.Morph;
 using GUZ.Core.Adapters.Npc;
 using GUZ.Core.Core.Logging;
 using GUZ.Core.Extensions;
-using GUZ.Core.Npc;
 using GUZ.Core.Util;
 using UnityEngine;
 using Logger = GUZ.Core.Core.Logging.Logger;

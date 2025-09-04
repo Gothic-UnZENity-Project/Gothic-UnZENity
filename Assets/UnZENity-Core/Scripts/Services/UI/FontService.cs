@@ -14,9 +14,9 @@ namespace GUZ.Core.Services.UI
 {
     public class FontService
     {
-        [NonSerialized] public TMP_FontAsset DefaultFont;
-        [NonSerialized] public TMP_SpriteAsset DefaultSpriteAsset;
-        [NonSerialized] public TMP_SpriteAsset HighlightSpriteAsset;
+        public TMP_FontAsset DefaultFont;
+        public TMP_SpriteAsset DefaultSpriteAsset;
+        public TMP_SpriteAsset HighlightSpriteAsset;
 
         [Inject] private readonly TextureCacheService _textureCacheService;
         [Inject] private readonly MultiTypeCacheService _multiTypeCacheService;

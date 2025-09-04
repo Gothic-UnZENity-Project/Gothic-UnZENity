@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using GUZ.Core.Services.Meshes;
+using Reflex.Attributes;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -10,6 +12,9 @@ namespace GUZ.Core.Adapters.UI.LoadingBars
         public Image ProgressBackgroundImage;
         public Image ProgressBarImage;
 
+        
+        [Inject] protected readonly TextureService TextureService;
+
 
         public abstract List<string> GetProgressTypes();
         
@@ -20,10 +25,9 @@ namespace GUZ.Core.Adapters.UI.LoadingBars
         
         protected virtual void SetMaterials()
         {
-            var tm = GameGlobals.Textures;
-            LoadingImage.material = tm.GothicLoadingMenuMaterial;
-            ProgressBackgroundImage.material = tm.LoadingBarBackgroundMaterial;
-            ProgressBarImage.material = tm.LoadingBarMaterial;
+            LoadingImage.material = TextureService.GothicLoadingMenuMaterial;
+            ProgressBackgroundImage.material = TextureService.LoadingBarBackgroundMaterial;
+            ProgressBarImage.material = TextureService.LoadingBarMaterial;
         }
     }
 }

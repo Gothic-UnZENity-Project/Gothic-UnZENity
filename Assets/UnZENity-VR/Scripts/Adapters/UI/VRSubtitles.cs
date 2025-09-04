@@ -1,7 +1,6 @@
 ﻿#if GUZ_HVR_INSTALLED
 using GUZ.Core;
 using GUZ.Core.Adapters.Npc;
-using GUZ.Core.Npc;
 using GUZ.Core.Services.Config;
 using GUZ.Core.Services.UI;
 using Reflex.Attributes;

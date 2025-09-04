@@ -188,7 +188,7 @@ namespace GUZ.Core.Adapters.UI.Menus
 
                         go.transform.localScale = new Vector3(2, 2, 1);
                         container.ArrowUpGo = go;
-                        rend.sharedMaterial = GameGlobals.Textures.ArrowUpMaterial;
+                        rend.sharedMaterial = TextureService.ArrowUpMaterial;
                         button.onClick.AddListener(OnArrowUpClick);
 
                         rect.SetWidth(rend.sharedMaterial.mainTexture.width);
@@ -206,7 +206,7 @@ namespace GUZ.Core.Adapters.UI.Menus
 
                         go.transform.localScale = new Vector3(2, 2, 1);
                         container.ArrowDownGo = go;
-                        rend.sharedMaterial = GameGlobals.Textures.ArrowDownMaterial;
+                        rend.sharedMaterial = TextureService.ArrowDownMaterial;
                         button.onClick.AddListener(OnArrowDownClick);
 
                         rect.SetWidth(rend.sharedMaterial.mainTexture.width);
@@ -239,7 +239,7 @@ namespace GUZ.Core.Adapters.UI.Menus
                 var button = go.GetComponentInChildren<Button>();
 
                 go.transform.localScale = new Vector3(2, 2, 1);
-                rend.sharedMaterial = GameGlobals.Textures.ArrowUpMaterial;
+                rend.sharedMaterial = TextureService.ArrowUpMaterial;
                 button.onClick.AddListener(OnContentViewerArrowUpClick);
 
                 rect.SetWidth(rend.sharedMaterial.mainTexture.width);
@@ -256,7 +256,7 @@ namespace GUZ.Core.Adapters.UI.Menus
                 var button = go.GetComponentInChildren<Button>();
 
                 go.transform.localScale = new Vector3(2, 2, 1);
-                rend.sharedMaterial = GameGlobals.Textures.ArrowDownMaterial;
+                rend.sharedMaterial = TextureService.ArrowDownMaterial;
                 button.onClick.AddListener(OnContentViewerArrowDownClick);
 
                 rect.SetWidth(rend.sharedMaterial.mainTexture.width);
@@ -273,7 +273,7 @@ namespace GUZ.Core.Adapters.UI.Menus
                 var button = go.GetComponentInChildren<Button>();
 
                 go.transform.localScale = new Vector3(2, 2, 1);
-                rend.sharedMaterial = GameGlobals.Textures.ArrowLeftMaterial;
+                rend.sharedMaterial = TextureService.ArrowLeftMaterial;
                 button.onClick.AddListener(OnContentViewerBackClick);
 
                 rect.SetWidth(rend.sharedMaterial.mainTexture.width);

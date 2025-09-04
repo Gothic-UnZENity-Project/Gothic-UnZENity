@@ -1,5 +1,4 @@
 using GUZ.Core.Adapters.Npc;
-using GUZ.Core.Npc;
 using UnityEngine;
 
 namespace GUZ.Core.Manager

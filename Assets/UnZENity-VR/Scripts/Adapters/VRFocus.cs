@@ -5,7 +5,6 @@ using GUZ.Core.Adapters.Vob;
 using GUZ.Core.Extensions;
 using GUZ.Core.Const;
 using GUZ.Core.Manager;
-using GUZ.Core.Npc;
 using GUZ.Core.Services.Config;
 using HurricaneVR.Framework.Core;
 using HurricaneVR.Framework.Core.Grabbers;

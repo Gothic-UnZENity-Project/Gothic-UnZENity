@@ -2,6 +2,7 @@ using System.Collections;
 using GUZ.Core;
 using GUZ.Core.Extensions;
 using GUZ.Core.Manager;
+using GUZ.Core.Services.Meshes;
 using Reflex.Attributes;
 using TMPro;
 using UnityEngine;
@@ -20,6 +21,7 @@ namespace GUZ.VR.Adapters.Player
         [SerializeField] private TMP_Text _chapterTitle;
         [SerializeField] private TMP_Text _chapterSubtitle;
 
+        [Inject] private readonly TextureService _textureService;
         [Inject] private readonly AudioService _audioService;
 
         // Data needed for smooth movement of Canvas
@@ -61,8 +63,8 @@ namespace GUZ.VR.Adapters.Player
         private void ShowChapterCanvas(string chapter, string text, string texture)
         {
             // Set texture for cover
-            _chapterImage.material = GameGlobals.Textures.GetEmptyMaterial(MaterialExtension.BlendMode.Opaque);
-            GameGlobals.Textures.SetTexture(texture, _chapterImage.material);
+            _chapterImage.material = _textureService.GetEmptyMaterial(MaterialExtension.BlendMode.Opaque);
+            _textureService.SetTexture(texture, _chapterImage.material);
 
             _chapterTitle.text = chapter;
             _chapterSubtitle.text = text;

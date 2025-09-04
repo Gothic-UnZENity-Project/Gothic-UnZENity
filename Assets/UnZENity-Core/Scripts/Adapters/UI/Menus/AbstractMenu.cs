@@ -7,6 +7,7 @@ using GUZ.Core.Extensions;
 using GUZ.Core.Model.UI.Menu;
 using GUZ.Core.Model.UI.MenuItem;
 using GUZ.Core.Services.Config;
+using GUZ.Core.Services.Meshes;
 using GUZ.Core.Services.UI;
 using MyBox;
 using Reflex.Attributes;
@@ -24,6 +25,7 @@ namespace GUZ.Core.Adapters.UI.Menus
         [Inject] protected readonly ConfigService ConfigService;
         [Inject] protected readonly UIEventsService UIEventsService;
         [Inject] protected readonly FontService FontService;
+        [Inject] protected readonly TextureService TextureService;
 
 
         protected MenuHandler MenuHandler;
@@ -95,7 +97,7 @@ namespace GUZ.Core.Adapters.UI.Menus
 
         private void CreateRootElements()
         {
-            var backPic = GameGlobals.Textures.GetMaterial(MenuInstance.BackPic);
+            var backPic = TextureService.GetMaterial(MenuInstance.BackPic);
             SetupBackground(backPic);
             SetupCanvasSize(backPic);
             ComputePixelRatios(backPic);
@@ -221,7 +223,7 @@ namespace GUZ.Core.Adapters.UI.Menus
             if (!item.BackPic.NotNullOrEmpty()) return;
 
             var backPicGo = ResourceLoader.TryGetPrefabObject(PrefabType.UiTexture, name: item.BackPic, parent: itemGo)!;
-            var backPic = GameGlobals.Textures.GetMaterial(item.BackPic);
+            var backPic = TextureService.GetMaterial(item.BackPic);
 
             if (!item.AlphaMode.IsNullOrEmpty())
             {
@@ -365,7 +367,7 @@ namespace GUZ.Core.Adapters.UI.Menus
             
             // Set image for handle bar.
             var handlebarImage = go.GetComponentInChildren<Image>();
-            handlebarImage.material = GameGlobals.Textures.GetMaterial(item.GetUserString(0));
+            handlebarImage.material = TextureService.GetMaterial(item.GetUserString(0));
         }
 
         /// <summary>

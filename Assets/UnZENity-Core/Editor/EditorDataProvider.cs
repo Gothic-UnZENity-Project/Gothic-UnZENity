@@ -1,9 +1,9 @@
 ﻿using GUZ.Core.Domain.Animations;
 using GUZ.Core.Manager;
 using GUZ.Core.Manager.Vobs;
-using GUZ.Core.Npc;
 using GUZ.Core.Services;
 using GUZ.Core.Services.Culling;
+using GUZ.Core.Services.Meshes;
 using GUZ.Core.Services.Npc;
 using GUZ.Core.Services.UI;
 using GUZ.Services.UI;
@@ -24,7 +24,6 @@ namespace GUZ.Core.Editor
         public GameTimeService Time { get; }
         public VideoManager Video { get; }
         public RoutineManager Routines { get; }
-        public TextureManager Textures { get; }
         public StationaryLightsManager Lights { get; }
         public StoryManager Story { get; }
         public VobManager Vobs { get; }

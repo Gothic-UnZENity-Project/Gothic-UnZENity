@@ -1,6 +1,7 @@
 using GUZ.Core.Const;
 using GUZ.Core.Models.Config;
 using GUZ.Core.Services.Config;
+using GUZ.Core.Services.Meshes;
 using Reflex.Attributes;
 using UnityEngine;
 
@@ -11,10 +12,12 @@ namespace GUZ.Core.Manager.Scenes
     /// </summary>
     public class MainMenuSceneManager : MonoBehaviour, ISceneManager
     {
-        [Inject] private readonly ConfigService _configService;
-
-
         [SerializeField] private GameObject _mainMenuImageBackground;
+
+        
+        [Inject] private readonly ConfigService _configService;
+        [Inject] private readonly TextureService _textureService;
+
 
         public void Init()
         {
@@ -40,7 +43,7 @@ namespace GUZ.Core.Manager.Scenes
             }
             
             // We set the gothic background image in MainMenu with this material.
-            _mainMenuImageBackground.GetComponent<MeshRenderer>().material = GameGlobals.Textures.MainMenuImageBackgroundMaterial;
+            _mainMenuImageBackground.GetComponent<MeshRenderer>().material = _textureService.MainMenuImageBackgroundMaterial;
 
             GameContext.ContextInteractionService.TeleportPlayerTo(Vector3.zero);
             GameContext.ContextInteractionService.DisableMenus();

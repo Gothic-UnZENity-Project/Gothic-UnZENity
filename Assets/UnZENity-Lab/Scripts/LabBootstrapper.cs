@@ -8,12 +8,12 @@ using GUZ.Core.Core.Logging;
 using GUZ.Core.Manager;
 using GUZ.Core.Manager.Vobs;
 using GUZ.Core.Models.Config;
-using GUZ.Core.Npc;
 using GUZ.Core.Services;
 using GUZ.Core.Services.Caches;
 using GUZ.Core.Services.Config;
 using GUZ.Core.Services.Context;
 using GUZ.Core.Services.Culling;
+using GUZ.Core.Services.Meshes;
 using GUZ.Core.Services.Npc;
 using GUZ.Core.Services.UI;
 using GUZ.Core.Util;
@@ -26,7 +26,6 @@ using Logger = GUZ.Core.Core.Logging.Logger;
 
 namespace GUZ.Lab
 {
-    [RequireComponent(typeof(TextureManager), typeof(FontService))]
     public class LabBootstrapper : MonoBehaviour, IGlobalDataProvider
     {
         public DeveloperConfig DeveloperConfig;
@@ -45,7 +44,6 @@ namespace GUZ.Lab
         private RoutineManager _npcRoutineManager;
         private SaveGameManager _save;
         private StaticCacheManager _staticCacheManager;
-        private TextureManager _textureManager;
         private FontService _fontService;
         private StoryManager _story;
         private VobManager _vobManager;
@@ -61,7 +59,6 @@ namespace GUZ.Lab
         public GameTimeService Time => _gameTimeService;
         public AudioService Audio => Audio;
         public RoutineManager Routines => _npcRoutineManager;
-        public TextureManager Textures => _textureManager;
         public FontService Font => _fontService;
         public StationaryLightsManager Lights => null;
         public VobManager Vobs => _vobManager;
@@ -80,12 +77,13 @@ namespace GUZ.Lab
         [Inject] private readonly ContextInteractionService _contextInteractionService;
         [Inject] private readonly ContextGameVersionService _contextGameVersionService;
         [Inject] private readonly MeshService _meshService;
+        [Inject] private readonly TextureService _textureService;
         
         [Inject] private readonly VmCacheService _vmCacheService;
         [Inject] private readonly TextureCacheService _textureCacheService;
         [Inject] private readonly MorphMeshCacheService _morphMeshCacheService;
         [Inject] private readonly MultiTypeCacheService _multiTypeCacheService;
-
+        
 
         private void Awake()
         {
@@ -125,7 +123,6 @@ namespace GUZ.Lab
             _save = new SaveGameManager();
             _staticCacheManager = new StaticCacheManager();
             _story = new StoryManager();
-            _textureManager = GetComponent<TextureManager>();
             _fontService = GetComponent<FontService>();
             _npcRoutineManager = new RoutineManager(_configService.Dev);
             _videoManager = new VideoManager();
@@ -144,7 +141,7 @@ namespace GUZ.Lab
             _audioService.InitMusic();
             _npcRoutineManager.Init();
             _staticCacheManager.Init(_configService.Dev);
-            _textureManager.Init();
+            _textureService.Init();
             _npcService.Init();
             _vobManager.Init();
 

@@ -1,5 +1,4 @@
 ﻿using System;
-using GUZ.Core.Adapters.Npc;
 using GUZ.Core.Adapters.Properties;
 using GUZ.Core.Models.Adapter.Vobs;
 using GUZ.Core.Models.Container;
@@ -7,12 +6,11 @@ using GUZ.Core.Extensions;
 using UnityEngine;
 using ZenKit.Daedalus;
 
-namespace GUZ.Core.Npc
+namespace GUZ.Core.Adapters.Npc
 {
     public abstract class BasePlayerBehaviour : MonoBehaviour
     {
-        [NonSerialized]
-        public NpcContainer NpcData;
+        [NonSerialized] public NpcContainer NpcData;
 
         public NpcInstance NpcInstance => NpcData.Instance;
         public NpcAdapter Vob => NpcData.Vob;

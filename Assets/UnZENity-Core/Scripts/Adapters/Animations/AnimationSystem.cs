@@ -9,7 +9,6 @@ using GUZ.Core.Const;
 using GUZ.Core.Core.Logging;
 using GUZ.Core.Models.Animations;
 using GUZ.Core.Models.Vm;
-using GUZ.Core.Npc;
 using GUZ.Core.Util;
 using MyBox;
 using Reflex.Attributes;

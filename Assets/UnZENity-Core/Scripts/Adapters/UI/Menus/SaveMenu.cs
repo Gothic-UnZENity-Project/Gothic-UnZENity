@@ -45,7 +45,7 @@ namespace GUZ.Core.Adapters.UI.Menus
         private void Start()
         {
             Thumbnail.GetComponent<MeshRenderer>().material =
-                GameGlobals.Textures.GetEmptyMaterial(MaterialExtension.BlendMode.Opaque);
+                TextureService.GetEmptyMaterial(MaterialExtension.BlendMode.Opaque);
         }
 
         private void OnEnable()

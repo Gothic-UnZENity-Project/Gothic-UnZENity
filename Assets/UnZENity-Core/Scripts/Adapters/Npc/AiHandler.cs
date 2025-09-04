@@ -7,7 +7,6 @@ using GUZ.Core.Manager;
 using GUZ.Core.Models.Vm;
 using GUZ.Core.Domain.Npc.Actions;
 using GUZ.Core.Domain.Npc.Actions.AnimationActions;
-using GUZ.Core.Npc;
 using GUZ.Core.Services.Config;
 using GUZ.Core.Services.Npc;
 using GUZ.Core.Util;

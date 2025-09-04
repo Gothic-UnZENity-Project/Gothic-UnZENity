@@ -2,7 +2,6 @@ using GUZ.Core.Manager;
 using GUZ.Core.Manager.Vobs;
 using GUZ.Core.Services;
 using GUZ.Core.Services.Culling;
-using GUZ.Services.UI;
 
 namespace GUZ.Core
 {
@@ -19,7 +18,6 @@ namespace GUZ.Core
         public static GameTimeService Time => Instance.Time;
         public static VideoManager Video => Instance.Video;
         public static RoutineManager Routines => Instance.Routines;
-        public static TextureManager Textures => Instance.Textures;
         public static StoryManager Story => Instance.Story;
         public static StationaryLightsManager Lights => Instance.Lights;
         public static VobManager Vobs => Instance.Vobs;

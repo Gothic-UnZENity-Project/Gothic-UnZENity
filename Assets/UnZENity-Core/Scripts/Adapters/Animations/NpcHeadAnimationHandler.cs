@@ -1,4 +1,4 @@
-﻿using GUZ.Core.Npc;
+﻿using GUZ.Core.Adapters.Npc;
 using UnityEngine;
 
 namespace GUZ.Core.Animations
