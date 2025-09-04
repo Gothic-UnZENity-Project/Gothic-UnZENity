@@ -6,7 +6,9 @@ using GUZ.Core.Const;
 using GUZ.Core.Model.UI.Menu;
 using GUZ.Core.Model.UI.MenuItem;
 using GUZ.Core.Services.Context;
+using GUZ.Services.UI;
 using HurricaneVR.Framework.Core.Player;
+using Reflex.Attributes;
 using UnityEngine;
 using ZenKit.Daedalus;
 
@@ -14,6 +16,8 @@ namespace GUZ.VR.Services.Context
 {
     public class VRContextMenuService : IContextMenuService
     {
+        [Inject] private readonly LocalizationService _localizationService;
+        
         /// <summary>
         /// Update menu entries based on VR needs.
         /// --> Replace control menu with VR settings menu
@@ -68,7 +72,7 @@ namespace GUZ.VR.Services.Context
             controlsMenuParent.ReplaceItemAt(controlsItemIndex, vrAccessibilityMenuItem);
 
             // Add some setting
-            vrAccessibilityMenuItem.SetText(0, GameGlobals.Localization.GetText("menuitem.vr_accessibility"));
+            vrAccessibilityMenuItem.SetText(0, _localizationService.GetText("menuitem.vr_accessibility"));
             vrAccessibilityMenuItem.SetOnSelAction(0, MenuItemSelectAction.StartMenu);
             vrAccessibilityMenuItem.SetOnSelActionS(0, "MENU_UNZENITY_OPT_VR_ACCESSIBILITY");
             vrAccessibilityMenuItem.MenuInstance = vrAccessibilityMenu;
@@ -80,7 +84,7 @@ namespace GUZ.VR.Services.Context
         {
             var gameHeadline = gameMenu.FindMenuItem("MENUITEM_GAME_HEADLINE", out _);
             var vrHeadline = new MutableMenuItemInstance("MENUITEM_UNZENITY_OPT_VR_ACCESSIBILITY_HEADLINE", gameHeadline);
-            vrHeadline.SetText(0, GameGlobals.Localization.GetText("menuitem.vr_accessibility.headline"));
+            vrHeadline.SetText(0, _localizationService.GetText("menuitem.vr_accessibility.headline"));
             
             return vrHeadline;
         }
@@ -92,8 +96,8 @@ namespace GUZ.VR.Services.Context
             
             sitStandLabel.PosY = posY;
             
-            sitStandLabel.SetText(0, GameGlobals.Localization.GetText("menuitem.sitStand.label"));
-            sitStandLabel.SetText(1, GameGlobals.Localization.GetText("menuitem.sitStand.description"));
+            sitStandLabel.SetText(0, _localizationService.GetText("menuitem.sitStand.label"));
+            sitStandLabel.SetText(1, _localizationService.GetText("menuitem.sitStand.description"));
             
             return sitStandLabel;
         }
@@ -106,7 +110,7 @@ namespace GUZ.VR.Services.Context
             sitStandSetting.PosY = posY;
             sitStandSetting.SetUserFloat(3, (int)HVRSitStand.PlayerHeight); // Default value if no INI value exists.
 
-            sitStandSetting.SetText(0, GameGlobals.Localization.GetText("menuitem.sitStand.value"));
+            sitStandSetting.SetText(0, _localizationService.GetText("menuitem.sitStand.value"));
             sitStandSetting.OnChgSetOption = VRConstants.IniNames.SitStand;
             sitStandSetting.OnChgSetOptionSection = VRConstants.IniSectionAccessibility;
             
@@ -120,8 +124,8 @@ namespace GUZ.VR.Services.Context
             
             moveDirectionLabel.PosY = posY;
             
-            moveDirectionLabel.SetText(0, GameGlobals.Localization.GetText("menuitem.moveDirection.label"));
-            moveDirectionLabel.SetText(1, GameGlobals.Localization.GetText("menuitem.moveDirection.description"));
+            moveDirectionLabel.SetText(0, _localizationService.GetText("menuitem.moveDirection.label"));
+            moveDirectionLabel.SetText(1, _localizationService.GetText("menuitem.moveDirection.description"));
             
             return moveDirectionLabel;
         }
@@ -133,7 +137,7 @@ namespace GUZ.VR.Services.Context
 
             moveDirectionSetting.PosY = posY;
 
-            moveDirectionSetting.SetText(0, GameGlobals.Localization.GetText("menuitem.moveDirection.value"));
+            moveDirectionSetting.SetText(0, _localizationService.GetText("menuitem.moveDirection.value"));
             moveDirectionSetting.OnChgSetOption = VRConstants.IniNames.MoveDirection;
             moveDirectionSetting.OnChgSetOptionSection = VRConstants.IniSectionAccessibility;
             
@@ -147,8 +151,8 @@ namespace GUZ.VR.Services.Context
             
             rotationTypeLabel.PosY = posY;
             
-            rotationTypeLabel.SetText(0, GameGlobals.Localization.GetText("menuitem.rotationType.label"));
-            rotationTypeLabel.SetText(1, GameGlobals.Localization.GetText("menuitem.rotationType.description"));
+            rotationTypeLabel.SetText(0, _localizationService.GetText("menuitem.rotationType.label"));
+            rotationTypeLabel.SetText(1, _localizationService.GetText("menuitem.rotationType.description"));
             
             return rotationTypeLabel;
         }
@@ -161,7 +165,7 @@ namespace GUZ.VR.Services.Context
             rotationTypeSetting.PosY = posY;
             rotationTypeSetting.SetUserFloat(3, (int)RotationType.Snap); // Default value if no INI value exists.
 
-            rotationTypeSetting.SetText(0, GameGlobals.Localization.GetText("menuitem.rotationType.value"));
+            rotationTypeSetting.SetText(0, _localizationService.GetText("menuitem.rotationType.value"));
             rotationTypeSetting.OnChgSetOption = VRConstants.IniNames.RotationType;
             rotationTypeSetting.OnChgSetOptionSection = VRConstants.IniSectionAccessibility;
             
@@ -175,8 +179,8 @@ namespace GUZ.VR.Services.Context
             
             smoothRotationLabel.PosY = posY;
             
-            smoothRotationLabel.SetText(0, GameGlobals.Localization.GetText("menuitem.smoothRotation.label"));
-            smoothRotationLabel.SetText(1, GameGlobals.Localization.GetText("menuitem.smoothRotation.description"));
+            smoothRotationLabel.SetText(0, _localizationService.GetText("menuitem.smoothRotation.label"));
+            smoothRotationLabel.SetText(1, _localizationService.GetText("menuitem.smoothRotation.description"));
             
             return smoothRotationLabel;
         }
@@ -203,8 +207,8 @@ namespace GUZ.VR.Services.Context
             
             smoothRotationLabel.PosY = posY;
             
-            smoothRotationLabel.SetText(0, GameGlobals.Localization.GetText("menuitem.snapRotation.label"));
-            smoothRotationLabel.SetText(1, GameGlobals.Localization.GetText("menuitem.snapRotation.description"));
+            smoothRotationLabel.SetText(0, _localizationService.GetText("menuitem.snapRotation.label"));
+            smoothRotationLabel.SetText(1, _localizationService.GetText("menuitem.snapRotation.description"));
             
             return smoothRotationLabel;
         }
@@ -217,7 +221,7 @@ namespace GUZ.VR.Services.Context
             snapRotationSetting.PosY = posY;
             snapRotationSetting.SetUserFloat(3, VRConstants.SnapRotationDefaultValue); // Default value if no INI value exists.
 
-            snapRotationSetting.SetText(0, GameGlobals.Localization.GetText("menuitem.snapRotation.value"));
+            snapRotationSetting.SetText(0, _localizationService.GetText("menuitem.snapRotation.value"));
             snapRotationSetting.OnChgSetOption = VRConstants.IniNames.SnapRotationAmount;
             snapRotationSetting.OnChgSetOptionSection = VRConstants.IniSectionAccessibility;
             
@@ -231,8 +235,8 @@ namespace GUZ.VR.Services.Context
             
             smoothingLabel.PosY = posY;
             
-            smoothingLabel.SetText(0, GameGlobals.Localization.GetText("menuitem.smooth.label"));
-            smoothingLabel.SetText(1, GameGlobals.Localization.GetText("menuitem.smooth.description"));
+            smoothingLabel.SetText(0, _localizationService.GetText("menuitem.smooth.label"));
+            smoothingLabel.SetText(1, _localizationService.GetText("menuitem.smooth.description"));
             
             return smoothingLabel;
         }
@@ -244,7 +248,7 @@ namespace GUZ.VR.Services.Context
 
             smoothingSetting.PosY = posY;
 
-            smoothingSetting.SetText(0, GameGlobals.Localization.GetText("menuitem.smooth.value"));
+            smoothingSetting.SetText(0, _localizationService.GetText("menuitem.smooth.value"));
             smoothingSetting.OnChgSetOption = VRConstants.IniNames.SmoothSpectator;
             smoothingSetting.OnChgSetOptionSection = VRConstants.IniSectionAccessibility;
             
@@ -279,7 +283,7 @@ namespace GUZ.VR.Services.Context
             controlsMenuParent.ReplaceItemAt(perfItemIndex, vrImmersionMenuItem);
 
             // Add some setting
-            vrImmersionMenuItem.SetText(0, GameGlobals.Localization.GetText("menuitem.vr_immersion"));
+            vrImmersionMenuItem.SetText(0, _localizationService.GetText("menuitem.vr_immersion"));
             vrImmersionMenuItem.SetOnSelAction(0, MenuItemSelectAction.StartMenu);
             vrImmersionMenuItem.SetOnSelActionS(0, "MENU_UNZENITY_OPT_VR_IMMERSION");
             vrImmersionMenuItem.MenuInstance = vrImmersionMenu;
@@ -291,7 +295,7 @@ namespace GUZ.VR.Services.Context
         {
             var gameHeadline = gameMenu.FindMenuItem("MENUITEM_GAME_HEADLINE", out _);
             var vrHeadline = new MutableMenuItemInstance("MENUITEM_UNZENITY_OPT_VR_IMMERSION_HEADLINE", gameHeadline);
-            vrHeadline.SetText(0, GameGlobals.Localization.GetText("menuitem.vr_immersion.headline"));
+            vrHeadline.SetText(0, _localizationService.GetText("menuitem.vr_immersion.headline"));
             
             return vrHeadline;
         }
@@ -303,8 +307,8 @@ namespace GUZ.VR.Services.Context
             
             microphoneLabel.PosY = posY;
             
-            microphoneLabel.SetText(0, GameGlobals.Localization.GetText("menuitem.microphone.label"));
-            microphoneLabel.SetText(1, GameGlobals.Localization.GetText("menuitem.microphone.description"));
+            microphoneLabel.SetText(0, _localizationService.GetText("menuitem.microphone.label"));
+            microphoneLabel.SetText(1, _localizationService.GetText("menuitem.microphone.description"));
             
             return microphoneLabel;
         }
@@ -327,7 +331,7 @@ namespace GUZ.VR.Services.Context
         private string GetMicrophoneList()
         {
             var result = new List<string>();
-            result.Add(GameGlobals.Localization.GetText("menuitem.microphone.none_value"));
+            result.Add(_localizationService.GetText("menuitem.microphone.none_value"));
             result.AddRange(Microphone.devices);
             result = result.Select(i => i.Length > 15 ? i.Substring(0, 12) + "..." : i).ToList();
 

@@ -6,7 +6,7 @@ using GUZ.Core.Services;
 using GUZ.Core.Services.Culling;
 using GUZ.Core.Services.Npc;
 using GUZ.Core.Services.UI;
-using GUZ.Manager;
+using GUZ.Services.UI;
 
 namespace GUZ.Core.Editor
 {
@@ -15,7 +15,6 @@ namespace GUZ.Core.Editor
     /// </summary>
     public class EditorDataProvider : IGlobalDataProvider
     {
-        public LocalizationManager Localization { get; set; }
         public SaveGameManager SaveGame { get; }
         public LoadingManager Loading { get; }
         public StaticCacheManager StaticCache { get; set; }

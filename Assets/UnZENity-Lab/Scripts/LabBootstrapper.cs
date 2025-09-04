@@ -18,7 +18,7 @@ using GUZ.Core.Services.Npc;
 using GUZ.Core.Services.UI;
 using GUZ.Core.Util;
 using GUZ.Lab.Handler;
-using GUZ.Manager;
+using GUZ.Services.UI;
 using Reflex.Attributes;
 using UnityEngine;
 using ZenKit;
@@ -41,7 +41,6 @@ namespace GUZ.Lab
         public LabNpcAnimationHandler LabNpcAnimationHandler;
         public LabLockHandler LabLockHandler;
 
-        private LocalizationManager _localizationManager;
         private VideoManager _videoManager;
         private RoutineManager _npcRoutineManager;
         private SaveGameManager _save;
@@ -53,7 +52,6 @@ namespace GUZ.Lab
         private NpcService _npcService;
         private MarvinManager _marvinManager;
 
-        public LocalizationManager Localization => _localizationManager;
         public SaveGameManager SaveGame => _save;
         public LoadingManager Loading => null;
         public StaticCacheManager StaticCache => _staticCacheManager;
@@ -124,7 +122,6 @@ namespace GUZ.Lab
 
             ZenKit.Logger.Set(_configService.Dev.ZenKitLogLevel, Logger.OnZenKitLogMessage);
             DirectMusic.Logger.Set(_configService.Dev.DirectMusicLogLevel, Logger.OnDirectMusicLogMessage);
-            _localizationManager = new LocalizationManager();
             _save = new SaveGameManager();
             _staticCacheManager = new StaticCacheManager();
             _story = new StoryManager();

@@ -2,7 +2,7 @@ using GUZ.Core.Manager;
 using GUZ.Core.Manager.Vobs;
 using GUZ.Core.Services;
 using GUZ.Core.Services.Culling;
-using GUZ.Manager;
+using GUZ.Services.UI;
 
 namespace GUZ.Core
 {
@@ -10,7 +10,6 @@ namespace GUZ.Core
     {
         public static IGlobalDataProvider Instance;
 
-        public static LocalizationManager Localization => Instance.Localization;
         public static SaveGameManager SaveGame => Instance.SaveGame;
         public static LoadingManager Loading => Instance.Loading;
         public static StaticCacheManager StaticCache => Instance.StaticCache;

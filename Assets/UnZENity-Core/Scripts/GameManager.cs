@@ -1,22 +1,19 @@
 using System.Diagnostics;
 using System.Globalization;
-using GUZ.Core.Extensions;
 using GUZ.Core.Const;
 using GUZ.Core.Core.Logging;
+using GUZ.Core.Extensions;
 using GUZ.Core.Manager;
 using GUZ.Core.Manager.Scenes;
 using GUZ.Core.Manager.Vobs;
 using GUZ.Core.Models.Config;
-using GUZ.Core.Npc;
 using GUZ.Core.Services;
 using GUZ.Core.Services.Caches;
 using GUZ.Core.Services.Config;
 using GUZ.Core.Services.Context;
 using GUZ.Core.Services.Culling;
 using GUZ.Core.Services.Npc;
-using GUZ.Core.Services.UI;
 using GUZ.Core.Util;
-using GUZ.Manager;
 using MyBox;
 using Reflex.Attributes;
 using UnityEngine;
@@ -33,7 +30,6 @@ namespace GUZ.Core
 
         private FileLoggingHandler _fileLoggingHandler;
 
-        public LocalizationManager Localization { get; private set; }
 
         public SaveGameManager SaveGame { get; private set; }
 
@@ -116,7 +112,6 @@ namespace GUZ.Core
             
             _multiTypeCacheService.Init();
 
-            Localization = new LocalizationManager();
             SaveGame = new SaveGameManager();
             Textures = GetComponent<TextureManager>();
             Loading = _loadingManager;

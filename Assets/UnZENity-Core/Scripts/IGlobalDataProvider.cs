@@ -2,13 +2,12 @@ using GUZ.Core.Manager;
 using GUZ.Core.Manager.Vobs;
 using GUZ.Core.Services;
 using GUZ.Core.Services.Culling;
-using GUZ.Manager;
+using GUZ.Services.UI;
 
 namespace GUZ.Core
 {
     public interface IGlobalDataProvider
     {
-        public LocalizationManager Localization { get; }
         public SaveGameManager SaveGame { get; }
         public LoadingManager Loading { get; }
         public StaticCacheManager StaticCache { get; }

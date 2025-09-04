@@ -11,6 +11,7 @@ using GUZ.Core.Services.Culling;
 using GUZ.Core.Services.Npc;
 using GUZ.Core.Services.UI;
 using GUZ.Core.Services.Vm;
+using GUZ.Services.UI;
 using Reflex.Core;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -84,8 +85,11 @@ namespace GUZ.Core
 
             // Misc
             containerBuilder.AddSingleton(typeof(SfxService));
+
+            // UI
             containerBuilder.AddSingleton(typeof(FontService));
             containerBuilder.AddSingleton(typeof(UIEventsService));
+            containerBuilder.AddSingleton(typeof(LocalizationService));
 
             // FIXME - Need to be migrated to a Service!
             containerBuilder.AddSingleton(typeof(VobManager));
