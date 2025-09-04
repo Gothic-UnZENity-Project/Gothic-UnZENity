@@ -383,7 +383,7 @@ namespace GUZ.Core.Adapters.UI.Menus
             // Disable everything...
             foreach (var menuItem in MenuItemCache.Values)
             {
-                UIEvents.SetDefaultFontsForChildren(menuItem.go);
+                UIEventsService.SetDefaultFontsForChildren(menuItem.go);
                 menuItem.go.SetActive(false);
             }
 

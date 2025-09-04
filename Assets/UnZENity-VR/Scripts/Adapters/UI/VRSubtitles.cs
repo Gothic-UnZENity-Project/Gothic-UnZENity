@@ -3,6 +3,7 @@ using GUZ.Core;
 using GUZ.Core.Adapters.Npc;
 using GUZ.Core.Npc;
 using GUZ.Core.Services.Config;
+using GUZ.Core.Services.UI;
 using Reflex.Attributes;
 using TMPro;
 using UnityEngine;
@@ -18,6 +19,7 @@ namespace GUZ.VR.Adapters.UI
     public class VRSubtitles : BasePlayerBehaviour, INpcSubtitles
     {
         [Inject] private readonly ConfigService _configService;
+        [Inject] private readonly FontService _fontService;
 
         // Hero has different behaviour for NpcInstance handling within Awake() function.
         [SerializeField] private bool _isHero;
@@ -29,7 +31,7 @@ namespace GUZ.VR.Adapters.UI
         protected override void Awake()
         {
             gameObject.SetActive(false); // The whole subtitle topic will be enabled later during gameplay.
-            _dialogNpcNameText.spriteAsset = GameGlobals.Font.HighlightSpriteAsset;
+            _dialogNpcNameText.spriteAsset = _fontService.HighlightSpriteAsset;
 
             if (_isHero)
             {

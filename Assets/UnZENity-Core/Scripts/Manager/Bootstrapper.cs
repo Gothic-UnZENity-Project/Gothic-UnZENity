@@ -5,6 +5,7 @@ using GUZ.Core.Const;
 using GUZ.Core.Services;
 using GUZ.Core.Services.Caches;
 using GUZ.Core.Services.Npc;
+using GUZ.Core.Services.UI;
 using GUZ.Core.Services.Vm;
 using ZenKit;
 using ZenKit.Daedalus;
@@ -134,7 +135,8 @@ namespace GUZ.Core.Manager
 
         private static void LoadFonts()
         {
-            GameGlobals.Font.Create();
+            // FIXME - Shoould be loaded by [Inject] instead!
+            ReflexProjectInstaller.DIContainer.Resolve<FontService>().Create();
         }
 
         private static void LoadGuildData()

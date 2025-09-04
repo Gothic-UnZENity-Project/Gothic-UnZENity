@@ -14,6 +14,7 @@ using GUZ.Core.Services.Config;
 using GUZ.Core.Services.Context;
 using GUZ.Core.Services.Culling;
 using GUZ.Core.Services.Npc;
+using GUZ.Core.Services.UI;
 using GUZ.Core.Util;
 using GUZ.Manager;
 using MyBox;
@@ -25,7 +26,7 @@ using Logger = GUZ.Core.Core.Logging.Logger;
 
 namespace GUZ.Core
 {
-    [RequireComponent(typeof(TextureManager), typeof(FontManager))]
+    [RequireComponent(typeof(TextureManager))]
     public class GameManager : SingletonBehaviour<GameManager>, IGlobalDataProvider
     {
         public DeveloperConfig DeveloperConfig;
@@ -53,7 +54,6 @@ namespace GUZ.Core
 
         public StoryManager Story { get; private set; }
 
-        public FontManager Font { get; private set; }
 
         public StationaryLightsManager Lights { get; private set; }
 
@@ -119,7 +119,6 @@ namespace GUZ.Core
             Localization = new LocalizationManager();
             SaveGame = new SaveGameManager();
             Textures = GetComponent<TextureManager>();
-            Font = GetComponent<FontManager>();
             Loading = _loadingManager;
             StaticCache = new StaticCacheManager();
             Vobs = _vobManager;

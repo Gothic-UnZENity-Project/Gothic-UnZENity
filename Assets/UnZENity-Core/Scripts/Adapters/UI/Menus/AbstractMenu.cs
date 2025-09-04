@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using GUZ.Core.Extensions;
 using GUZ.Core.Const;
 using GUZ.Core.Core.Logging;
+using GUZ.Core.Extensions;
 using GUZ.Core.Model.UI.Menu;
 using GUZ.Core.Model.UI.MenuItem;
-using GUZ.Core.Services;
 using GUZ.Core.Services.Config;
-using GUZ.Core.Util;
+using GUZ.Core.Services.UI;
 using MyBox;
 using Reflex.Attributes;
 using TMPro;
@@ -23,6 +22,8 @@ namespace GUZ.Core.Adapters.UI.Menus
     public abstract class AbstractMenu : MonoBehaviour
     {
         [Inject] protected readonly ConfigService ConfigService;
+        [Inject] protected readonly UIEventsService UIEventsService;
+        [Inject] protected readonly FontService FontService;
 
 
         protected MenuHandler MenuHandler;
@@ -30,7 +31,7 @@ namespace GUZ.Core.Adapters.UI.Menus
         [SerializeField] protected GameObject Canvas;
         [SerializeField] protected GameObject Background;
         [SerializeField] protected TMP_Text Comment;
-        
+
         protected Dictionary<string, (AbstractMenuItemInstance item, GameObject go)> MenuItemCache = new();
 
         // Pixel ratio of whole menu (Canvas) is based on background picture pixel and virtual pixels named inside Daedalus.
@@ -308,7 +309,7 @@ namespace GUZ.Core.Adapters.UI.Menus
             // VerticalAlignment setting stored on Prefab isn't being used by Unity. We therefore need to set it now.
             textComp.verticalAlignment = VerticalAlignmentOptions.Top;
 
-            textComp.spriteAsset = GameGlobals.Font.TryGetFont(item.FontName);
+            textComp.spriteAsset = FontService.TryGetFont(item.FontName);
             textComp.fontSize = item.FontName.ToLowerInvariant().Contains("font_old_10_white") ? 16 : 36;
 
             // Text component needs to align in dimensions with parent rect.

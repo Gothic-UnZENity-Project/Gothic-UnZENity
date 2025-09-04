@@ -9,9 +9,11 @@ using GUZ.Core.Services.Config;
 using GUZ.Core.Services.Context;
 using GUZ.Core.Services.Culling;
 using GUZ.Core.Services.Npc;
+using GUZ.Core.Services.UI;
 using GUZ.Core.Services.Vm;
 using Reflex.Core;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace GUZ.Core
 {
@@ -20,8 +22,28 @@ namespace GUZ.Core
         public static Container DIContainer;
 
 
+        /// <summary>
+        /// As of now, we have two scopes where we set up Service - DI. By default, Reflex always inherits every SceneScope from ProjectScope.
+        /// But in our case, Scene World.scene requires us to inherit Player.scene as we e.g., inject Vobs with VR behaviour in this scene.
+        /// But the VR injects are defined in Player.scene scope.
+        ///
+        /// Lookup path goes like this:
+        /// * OtherScopes
+        ///       ^^^
+        /// * PlayerScope (VR/Flat)
+        ///       ^^^
+        /// * ProjectScope (Bootstrap)
+        /// </summary>
+        public void OverrideParent(Scene scene, ContainerBuilder builder)
+        {
+            // If we have the PlayerScope already registered, then inherit every new SceneScope from it.
+            if (DIContainer.Name.StartsWith("Player"))
+                builder.SetParent(DIContainer);
+        }
+
         public void InstallBindings(ContainerBuilder containerBuilder)
         {
+            SceneScope.OnSceneContainerBuilding += OverrideParent;
             containerBuilder.OnContainerBuilt += (container) => DIContainer = container;
 
             containerBuilder.AddSingleton(typeof(UnityMonoService));
@@ -56,12 +78,14 @@ namespace GUZ.Core
             containerBuilder.AddSingleton(typeof(MorphMeshCacheService));
             containerBuilder.AddSingleton(typeof(NpcArmorPositionCacheService));
 
-            // Constants
-            containerBuilder.AddSingleton(typeof(SfxService));
-            
-            
+
             // World
             containerBuilder.AddSingleton(typeof(WayNetService));
+
+            // Misc
+            containerBuilder.AddSingleton(typeof(SfxService));
+            containerBuilder.AddSingleton(typeof(FontService));
+            containerBuilder.AddSingleton(typeof(UIEventsService));
 
             // FIXME - Need to be migrated to a Service!
             containerBuilder.AddSingleton(typeof(VobManager));

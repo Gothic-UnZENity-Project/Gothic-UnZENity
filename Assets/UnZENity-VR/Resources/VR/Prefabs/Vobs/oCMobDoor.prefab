@@ -690,6 +690,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2022050282646122291}
   - component: {fileID: 383653129316940499}
+  - component: {fileID: 4113372032469626311}
   m_Layer: 0
   m_Name: oCMobDoor
   m_TagString: GUZVob
@@ -727,6 +728,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: beb28839f2664c78905b1f0012f8a020, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &4113372032469626311
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6503575194566409312}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20620ae30fdd0164c9bb5bdc717d3ada, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _injectionStrategy: 2
 --- !u!1 &8911497835147767188
 GameObject:
   m_ObjectHideFlags: 0

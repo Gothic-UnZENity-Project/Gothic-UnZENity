@@ -2,9 +2,7 @@ using System;
 using System.Reflection;
 using GUZ.Core.Const;
 using GUZ.Core.Core.Logging;
-using GUZ.Core.Services;
 using GUZ.Core.Services.Caches;
-using GUZ.Core.Util;
 using JetBrains.Annotations;
 using Reflex.Attributes;
 using TMPro;
@@ -12,9 +10,9 @@ using UnityEngine;
 using UnityEngine.TextCore;
 using Logger = GUZ.Core.Core.Logging.Logger;
 
-namespace GUZ.Core.Manager
+namespace GUZ.Core.Services.UI
 {
-    public class FontManager : SingletonBehaviour<FontManager>
+    public class FontService
     {
         [NonSerialized] public TMP_FontAsset DefaultFont;
         [NonSerialized] public TMP_SpriteAsset DefaultSpriteAsset;
@@ -47,7 +45,7 @@ namespace GUZ.Core.Manager
 
             if (font == null || fontTexture == null)
             {
-                Logger.LogError($"[{nameof(FontManager)}]: Could not find font {fontName}", LogCat.Misc);
+                Logger.LogError($"[{nameof(FontService)}]: Could not find font {fontName}", LogCat.Misc);
                 return null;
             }
             var spriteAsset = ScriptableObject.CreateInstance<TMP_SpriteAsset>();
@@ -113,7 +111,7 @@ namespace GUZ.Core.Manager
             return spriteAsset;
         }
 
-        private static Material GetDefaultSpriteMaterial(Texture2D spriteSheet = null)
+        private Material GetDefaultSpriteMaterial(Texture2D spriteSheet = null)
         {
             ShaderUtilities.GetShaderPropertyIDs();
 

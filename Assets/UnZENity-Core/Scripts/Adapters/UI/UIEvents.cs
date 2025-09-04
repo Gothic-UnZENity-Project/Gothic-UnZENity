@@ -2,8 +2,7 @@
 using GUZ.Core.Core.Logging;
 using GUZ.Core.Extensions;
 using GUZ.Core.Manager;
-using GUZ.Core.Util;
-using MyBox;
+using GUZ.Core.Services.UI;
 using Reflex.Attributes;
 using TMPro;
 using UnityEngine;
@@ -20,7 +19,9 @@ namespace GUZ.Core.Adapters.UI
         [SerializeField] private List<GameObject> _elementsToFilter = new();
         [SerializeField] private AudioSource _audioSource;
 
+        [Inject] private readonly UIEventsService _uiEventsService;
         [Inject] private readonly AudioService _audioService;
+        [Inject] private readonly FontService _fontService;
 
         private static AudioClip _uiHover;
         private static AudioClip _uiClick;
@@ -51,7 +52,7 @@ namespace GUZ.Core.Adapters.UI
             // Reset fonts of all items. Useful if previously hovered elements will be toggled in visibility and highlighted again when going "Back".
             if (resetHover)
             {
-                _elementsToFilter.ForEach(i => i.GetComponentInChildren<TMP_Text>().spriteAsset = GameGlobals.Font.DefaultSpriteAsset);
+                _elementsToFilter.ForEach(i => i.GetComponentInChildren<TMP_Text>().spriteAsset = _fontService.DefaultSpriteAsset);
             }
         }
         
@@ -71,7 +72,7 @@ namespace GUZ.Core.Adapters.UI
                     continue;
                 }
                 
-                SetHighlightFont(hoveredObj.GetComponentInChildren<TMP_Text>());
+                _uiEventsService.SetHighlightFont(hoveredObj.GetComponentInChildren<TMP_Text>());
                 elementFound = true;
             }
             
@@ -95,74 +96,8 @@ namespace GUZ.Core.Adapters.UI
                     continue;
                 }
 
-                SetDefaultFont(hoveredObj.GetComponentInChildren<TMP_Text>());
+                _uiEventsService.SetDefaultFont(hoveredObj.GetComponentInChildren<TMP_Text>());
             }
-        }
-
-        private void SetHighlightFont(TMP_Text textComp)
-        {
-            if (textComp == null)
-            {
-                return;
-            }
-
-            // Font has default value assigned and somehow Unity marks spriteAsset as null in this case.
-            if (textComp.spriteAsset == null)
-            {
-                textComp.spriteAsset = GameGlobals.Font.HighlightSpriteAsset;
-            }
-            else
-            {
-                if (textComp.spriteAsset.name.EndsWith("_hi.fnt"))
-                {
-                    return;
-                }
-
-                SetFont(textComp, textComp.spriteAsset.name.RemoveEnd(".fnt") + "_hi");
-            }
-        }
-
-        /// <summary>
-        /// On certain conditions (like SetEnabled(false), the appropriate OnPointerExit() won't be recognized.
-        /// Let's do it manually.
-        /// </summary>
-        public static void SetDefaultFontsForChildren(GameObject root)
-        {
-            foreach (var textComp in root.GetComponentsInChildren<TMP_Text>())
-            {
-                SetDefaultFont(textComp);
-            }
-        }
-
-        private static void SetDefaultFont(TMP_Text textComp)
-        {
-            if (textComp == null)
-            {
-                return;
-            }
-
-            // Font has default value assigned and somehow Unity marks spriteAsset as null in this case.
-            if (textComp.spriteAsset == null)
-            {
-                textComp.spriteAsset = GameGlobals.Font.DefaultSpriteAsset;
-            }
-            else
-            {
-                SetFont(textComp, textComp.spriteAsset.name.RemoveEnd("_hi.fnt"));
-            }
-        }
-
-        private static void SetFont(TMP_Text textComp, string fontName)
-        {
-            var newFont = GameGlobals.Font.TryGetFont(fontName);
-
-            if (newFont == null)
-            {
-                Logger.LogWarning($"Font {newFont} not found.", LogCat.Ui);
-                return;
-            }
-
-            textComp.spriteAsset = newFont;
         }
 
         public void OnButtonClicked()
@@ -174,8 +109,7 @@ namespace GUZ.Core.Adapters.UI
             }
 
             _audioSource.PlayOneShot(_uiClick);
-            SetDefaultFont(GetComponentInChildren<TMP_Text>());
-
+            _uiEventsService.SetDefaultFont(GetComponentInChildren<TMP_Text>());
         }
 
         public void OnButtonBackClicked()

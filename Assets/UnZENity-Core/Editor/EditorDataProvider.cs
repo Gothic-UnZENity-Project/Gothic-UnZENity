@@ -5,6 +5,7 @@ using GUZ.Core.Npc;
 using GUZ.Core.Services;
 using GUZ.Core.Services.Culling;
 using GUZ.Core.Services.Npc;
+using GUZ.Core.Services.UI;
 using GUZ.Manager;
 
 namespace GUZ.Core.Editor
@@ -25,7 +26,6 @@ namespace GUZ.Core.Editor
         public VideoManager Video { get; }
         public RoutineManager Routines { get; }
         public TextureManager Textures { get; }
-        public FontManager Font { get; }
         public StationaryLightsManager Lights { get; }
         public StoryManager Story { get; }
         public VobManager Vobs { get; }

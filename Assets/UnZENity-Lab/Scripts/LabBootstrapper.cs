@@ -15,6 +15,7 @@ using GUZ.Core.Services.Config;
 using GUZ.Core.Services.Context;
 using GUZ.Core.Services.Culling;
 using GUZ.Core.Services.Npc;
+using GUZ.Core.Services.UI;
 using GUZ.Core.Util;
 using GUZ.Lab.Handler;
 using GUZ.Manager;
@@ -25,7 +26,7 @@ using Logger = GUZ.Core.Core.Logging.Logger;
 
 namespace GUZ.Lab
 {
-    [RequireComponent(typeof(TextureManager), typeof(FontManager))]
+    [RequireComponent(typeof(TextureManager), typeof(FontService))]
     public class LabBootstrapper : MonoBehaviour, IGlobalDataProvider
     {
         public DeveloperConfig DeveloperConfig;
@@ -46,7 +47,7 @@ namespace GUZ.Lab
         private SaveGameManager _save;
         private StaticCacheManager _staticCacheManager;
         private TextureManager _textureManager;
-        private FontManager _fontManager;
+        private FontService _fontService;
         private StoryManager _story;
         private VobManager _vobManager;
         private NpcService _npcService;
@@ -63,7 +64,7 @@ namespace GUZ.Lab
         public AudioService Audio => Audio;
         public RoutineManager Routines => _npcRoutineManager;
         public TextureManager Textures => _textureManager;
-        public FontManager Font => _fontManager;
+        public FontService Font => _fontService;
         public StationaryLightsManager Lights => null;
         public VobManager Vobs => _vobManager;
         public NpcService Npcs => _npcService;
@@ -128,7 +129,7 @@ namespace GUZ.Lab
             _staticCacheManager = new StaticCacheManager();
             _story = new StoryManager();
             _textureManager = GetComponent<TextureManager>();
-            _fontManager = GetComponent<FontManager>();
+            _fontService = GetComponent<FontService>();
             _npcRoutineManager = new RoutineManager(_configService.Dev);
             _videoManager = new VideoManager();
             _npcService = new NpcService();
