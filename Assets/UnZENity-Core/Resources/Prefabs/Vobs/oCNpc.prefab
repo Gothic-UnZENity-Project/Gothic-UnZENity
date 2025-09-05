@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 1199752534748503035}
   - component: {fileID: 3046509075852218844}
   - component: {fileID: 9042877295681826828}
+  - component: {fileID: 2695374316263995920}
   m_Layer: 0
   m_Name: oCNpc
   m_TagString: GUZVob
@@ -46,7 +47,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1843bf3f157d495d89f708f6cba8ed49, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  RootGo: {fileID: 0}
 --- !u!111 &9042877295681826828
 Animation:
   m_ObjectHideFlags: 0
@@ -55,13 +55,27 @@ Animation:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2202926895728732233}
   m_Enabled: 1
-  serializedVersion: 3
+  serializedVersion: 4
   m_Animation: {fileID: 0}
   m_Animations: []
   m_WrapMode: 0
   m_PlayAutomatically: 1
   m_AnimatePhysics: 0
+  m_UpdateMode: 0
   m_CullingType: 0
+--- !u!114 &2695374316263995920
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2202926895728732233}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20620ae30fdd0164c9bb5bdc717d3ada, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _injectionStrategy: 2
 --- !u!1 &2815092147823170342
 GameObject:
   m_ObjectHideFlags: 0
@@ -106,6 +120,7 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
   m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
@@ -287,4 +302,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e31e900fff574068b5e83a20a4f2df42, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  RootGo: {fileID: 2202926895728732233}
+  _capsuleCollider: {fileID: 0}

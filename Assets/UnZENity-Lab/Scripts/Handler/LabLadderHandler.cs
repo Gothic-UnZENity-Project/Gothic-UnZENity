@@ -1,5 +1,5 @@
 using GUZ.Core;
-using GUZ.Core.Creator.Meshes;
+using GUZ.Core.Services;
 using UnityEngine;
 
 namespace GUZ.Lab.Handler
@@ -14,10 +14,7 @@ namespace GUZ.Lab.Handler
             var ladderName = "LADDER_3.MDL";
             var mdl = ResourceLoader.TryGetModel(ladderName);
 
-            var vobObj = MeshFactory.CreateVob(ladderName, mdl, Vector3.zero, Quaternion.Euler(0, 180, 0),
-                LadderSlot, itemPrefab, false);
-
-            var climbableObj = vobObj.GetComponentInChildren<MeshCollider>().gameObject;
+            MeshService.CreateVob(ladderName, mdl, Vector3.zero, Quaternion.Euler(0, 180, 0), LadderSlot, itemPrefab, false);
         }
     }
 }

@@ -40,12 +40,12 @@ namespace GUZ.Core
         VobLadder,
         VobLight,
         VobMover,
+        VobTriggerChangeLevel,
 
         VobItem,
         VobItemLockPick,
         VobItemWeapon,
         
-        Player,
         StoryIntroduceChapter
     }
 
@@ -91,12 +91,12 @@ namespace GUZ.Core
                 PrefabType.VobLadder => "Prefabs/Vobs/oCMobLadder",
                 PrefabType.VobLight => "Prefabs/Vobs/zCVobLight",
                 PrefabType.VobMover => "Prefabs/Vobs/zCMover",
-
+                PrefabType.VobTriggerChangeLevel => "Prefabs/Vobs/oCTriggerChangeLevel",
+                
                 PrefabType.VobItem => "Prefabs/Vobs/oCItem",
                 PrefabType.VobItemLockPick => "Prefabs/Vobs/oCItem/LockPick",
                 PrefabType.VobItemWeapon => "Prefabs/Vobs/oCItem/Weapon",
                 
-                PrefabType.Player => "Prefabs/Player",
                 PrefabType.StoryIntroduceChapter => "Prefabs/Story/IntroduceChapter",
                 _ => throw new Exception($"Enum value {type} not yet defined.")
             };

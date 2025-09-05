@@ -140,7 +140,7 @@ PlayerSettings:
   loadStoreDebugModeEnabled: 0
   visionOSBundleVersion: 1.0
   tvOSBundleVersion: 1.0
-  bundleVersion: 0.1
+  bundleVersion: SET-VIA-RELEASE-PIPELINE
   preloadedAssets:
   - {fileID: 0}
   - {fileID: 0}

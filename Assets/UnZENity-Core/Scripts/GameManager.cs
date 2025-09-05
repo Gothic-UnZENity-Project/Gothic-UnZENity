@@ -1,72 +1,74 @@
 using System.Diagnostics;
 using System.Globalization;
-using GUZ.Core.Animations;
-using GUZ.Core.Caches;
-using GUZ.Core.Config;
+using GUZ.Core.Adapters.Scenes;
+using GUZ.Core.Const;
+using GUZ.Core.Core.Logging;
 using GUZ.Core.Extensions;
-using GUZ.Core.Globals;
 using GUZ.Core.Manager;
-using GUZ.Core.Manager.Culling;
-using GUZ.Core.Manager.Scenes;
-using GUZ.Core.Manager.Vobs;
-using GUZ.Core.Npc;
-using GUZ.Core.UnZENity_Core.Scripts.Manager;
+using GUZ.Core.Models.Config;
+using GUZ.Core.Services;
+using GUZ.Core.Services.Caches;
+using GUZ.Core.Services.Config;
+using GUZ.Core.Services.Context;
+using GUZ.Core.Services.Culling;
+using GUZ.Core.Services.Meshes;
+using GUZ.Core.Services.Npc;
+using GUZ.Core.Services.Player;
+using GUZ.Core.Services.StaticCache;
+using GUZ.Core.Services.Vobs;
+using GUZ.Core.Services.World;
 using GUZ.Core.Util;
-using GUZ.Core.World;
-using GUZ.Manager;
 using MyBox;
-using UnityEngine;
+using Reflex.Attributes;
 using UnityEngine.SceneManagement;
 using ZenKit;
-using Logger = GUZ.Core.Util.Logger;
+using Logger = GUZ.Core.Core.Logging.Logger;
 
 namespace GUZ.Core
 {
-    [RequireComponent(typeof(TextureManager), typeof(FontManager), typeof(FrameSkipper))]
-    public class GameManager : SingletonBehaviour<GameManager>, ICoroutineManager, IGlobalDataProvider
+    public class GameManager : SingletonBehaviour<GameManager>, IGlobalDataProvider
     {
         public DeveloperConfig DeveloperConfig;
 
         private FileLoggingHandler _fileLoggingHandler;
-        private FrameSkipper _frameSkipper;
-        private BarrierManager _barrierManager;
 
-        public ConfigManager Config { get; private set; }
-        public LocalizationManager Localization { get; private set; }
-
-        public SaveGameManager SaveGame { get; private set; }
-
-        public LoadingManager Loading { get; private set; }
-        public StaticCacheManager StaticCache { get; private set; }
-
-        public PlayerManager Player { get; private set; }
-        public MarvinManager Marvin { get; private set;  }
-        public SkyManager Sky { get; private set; }
-
-        public GameTime Time { get; private set; }
-        
-        public VideoManager Video { get; private set; }
-        
-        public MusicManager Music { get; private set; }
-
-        public RoutineManager Routines { get; private set; }
-
-        public TextureManager Textures { get; private set; }
-
-        public StoryManager Story { get; private set; }
-
-        public FontManager Font { get; private set; }
-
-        public StationaryLightsManager Lights { get; private set; }
 
         public VobManager Vobs { get; private set; }
-        public NpcManager Npcs { get; private set; }
-        public NpcAiManager NpcAi { get; private set; }
-        public AnimationManager Animations { get; private set; }
-        public VobMeshCullingManager VobMeshCulling { get; private set; }
-        public NpcMeshCullingManager NpcMeshCulling { get; private set; }
-        public VobSoundCullingManager SoundCulling { get; private set; }
-        public VoiceManager Voice { get; private set; }
+        public NpcService Npcs { get; private set; }
+        public VobMeshCullingService VobMeshCulling { get; private set; }
+        public SpeechToTextService SpeechToText { get; private set; }
+
+
+        [Inject] private readonly ContextInteractionService _contextInteractionService;
+        [Inject] private readonly ContextMenuService _contextMenuService;
+        [Inject] private readonly ContextDialogService _contextDialogService;
+        [Inject] private readonly ContextGameVersionService _contextGameVersionService;
+
+        [Inject] private readonly UnityMonoService _unityMonoService;
+        [Inject] private readonly AudioService _audioService;
+        [Inject] private readonly SpeechToTextService _speechToTextService;
+        [Inject] private readonly GameTimeService _gameTimeService;
+
+        [Inject] private readonly NpcMeshCullingService _npcMeshCullingService;
+        [Inject] private readonly VobMeshCullingService _vobMeshCullingService;
+        [Inject] private readonly VobSoundCullingService _vobSoundCullingService;
+
+        [Inject] private readonly SkyService _skyService;
+        [Inject] private readonly BarrierService _barrierService;
+        [Inject] private readonly LoadingService _loadingService;
+        [Inject] private readonly TextureService _textureService;
+        [Inject] private readonly SaveGameService _saveGameService;
+        [Inject] private readonly PlayerService _playerService;
+        
+        [Inject] private readonly FrameSkipperService _frameSkipperService;
+        [Inject] private readonly VobManager _vobManager;
+        [Inject] private readonly ConfigService _configService;
+        [Inject] private readonly NpcService _npcService;
+        [Inject] private readonly NpcAiService _npcAiService;
+        [Inject] private readonly RoutineService _routineService;
+        
+        [Inject] private readonly MultiTypeCacheService _multiTypeCacheService;
+        [Inject] private readonly StaticCacheService _staticCacheService;
 
 
         protected override void Awake()
@@ -74,80 +76,59 @@ namespace GUZ.Core
             base.Awake();
 
             GameContext.IsLab = false;
-            
+
+            // FIXME - Hack for now. Once we get rid of the GameContext global, we will remove these lines.
+            GameContext.ContextInteractionService = _contextInteractionService;
+
             // We need to set culture to this, otherwise e.g. polish numbers aren't parsed correct.
             CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;
             CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.InvariantCulture;
 
-            Config = new ConfigManager();
-            Config.LoadRootJson();
-            Config.SetDeveloperConfig(DeveloperConfig);
+            // Simply set "any" MonoBehaviour (like this) as object to use within game logic.
+            _unityMonoService.SetMonoBehaviour(this);
+
+            _configService.LoadRootJson();
+            _configService.SetDeveloperConfig(DeveloperConfig);
 
             _fileLoggingHandler = new FileLoggingHandler();
-            _frameSkipper = GetComponent<FrameSkipper>();
 
             GameGlobals.Instance = this;
             
-            // Set Context as early as possible to ensure everything else boots based on the activated modules.
-            GameContext.SetControlContext(Config.Dev.GameControls);
+            _multiTypeCacheService.Init();
 
-            MultiTypeCache.Init();
+            Vobs = _vobManager;
+            Npcs = _npcService;
+            VobMeshCulling = _vobMeshCullingService;
+            SpeechToText = _speechToTextService;
 
-            Localization = new LocalizationManager();
-            SaveGame = new SaveGameManager();
-            Textures = GetComponent<TextureManager>();
-            Font = GetComponent<FontManager>();
-            Loading = new LoadingManager();
-            StaticCache = new StaticCacheManager();
-            Vobs = new VobManager();
-            Npcs = new NpcManager();
-            NpcAi = new NpcAiManager();
-            Animations = new AnimationManager();
-            VobMeshCulling = new VobMeshCullingManager(DeveloperConfig, this);
-            NpcMeshCulling = new NpcMeshCullingManager(DeveloperConfig);
-            SoundCulling = new VobSoundCullingManager(DeveloperConfig);
-            _barrierManager = new BarrierManager(DeveloperConfig);
-            Lights = new StationaryLightsManager();
-            Player = new PlayerManager(DeveloperConfig);
-            Marvin = new MarvinManager();
-            Time = new GameTime(DeveloperConfig, this);
-            Video = new VideoManager(DeveloperConfig);
-            Sky = new SkyManager(DeveloperConfig, Time);
-            Music = new MusicManager(DeveloperConfig);
-            Story = new StoryManager(DeveloperConfig);
-            Routines = new RoutineManager(DeveloperConfig);
-            Voice = new VoiceManager();
+            ZenKit.Logger.Set(_configService.Dev.ZenKitLogLevel, Logger.OnZenKitLogMessage);
+            DirectMusic.Logger.Set(_configService.Dev.DirectMusicLogLevel, Logger.OnDirectMusicLogMessage);
+
+            _fileLoggingHandler.Init(_configService.Root);
         }
 
         private void Start()
         {
-            InitPhase1();
+            SceneManager.sceneLoaded += OnSceneLoaded;
+            SceneManager.sceneUnloaded += OnSceneUnloaded;
+
+            // Call init function of BootstrapSceneManager directly as it kicks off cleaning up of further loaded scenes.
+            SceneManager.GetActiveScene().GetComponentInChildren<BootstrapScene>()!.Init();
         }
 
         /// <summary>
         /// Init when game starts and Controls are set already, but no Gothic game version is selected so far.
         /// </summary>
-        private void InitPhase1()
+        public void InitPhase1()
         {
-            // Call init function of BootstrapSceneManager directly as it kicks off cleaning up of further loaded scenes.
-            SceneManager.GetActiveScene().GetComponentInChildren<BootstrapSceneManager>()!.Init();
+            GlobalEventDispatcher.RegisterControlsService.Invoke(_configService.Dev.GameControls);
 
-            SceneManager.sceneLoaded += OnSceneLoaded;
-            SceneManager.sceneUnloaded += OnSceneUnloaded;
-
-            ZenKit.Logger.Set(Config.Dev.ZenKitLogLevel, Logger.OnZenKitLogMessage);
-            DirectMusic.Logger.Set(Config.Dev.DirectMusicLogLevel, Logger.OnDirectMusicLogMessage);
-
-            _fileLoggingHandler.Init(Config.Root);
-            _frameSkipper.Init();
-            Loading.Init();
-            Lights.Init();
+            _frameSkipperService.Init();
             VobMeshCulling.Init();
-            NpcMeshCulling.Init();
-            SoundCulling.Init();
-            Time.Init();
-            Player.Init();
-            Routines.Init();
+            _npcMeshCullingService.Init();
+            _vobSoundCullingService.Init();
+            _gameTimeService.Init();
+            _routineService.Init();
         }
 
         /// <summary>
@@ -157,31 +138,33 @@ namespace GUZ.Core
         {
             var watch = Stopwatch.StartNew();
 
-            Config.LoadGothicInis(version);
-            GameContext.SetGameVersionContext(version);
+            GlobalEventDispatcher.RegisterGameVersionService.Invoke(version);
+            GameContext.ContextGameVersionService = _contextGameVersionService;
 
-            var gothicRootPath = GameContext.GameVersionAdapter.RootPath;
+            _configService.LoadGothicInis(version);
+
+            var gothicRootPath = GameContext.ContextGameVersionService.RootPath;
 
             // Otherwise, continue loading Gothic.
             Logger.Log($"Initializing Gothic installation at: {gothicRootPath}", LogCat.Loading);
             ResourceLoader.Init(gothicRootPath);
 
-            Music.Init();
-            StaticCache.Init(DeveloperConfig);
-            Textures.Init();
-            Vobs.Init(this);
-            Npcs.Init(this);
+            _audioService.InitMusic();
+            _staticCacheService.Init(DeveloperConfig);
+            _textureService.Init();
+            Vobs.Init();
+            Npcs.Init();
 
             Bootstrapper.Boot();
-            Voice.Init(); // Init after language set.
+            SpeechToText.Init(); // Init after language set.
 
             GlobalEventDispatcher.LevelChangeTriggered.AddListener((world, spawn) =>
             {
-                Player.LastLevelChangeTriggerVobName = spawn;
-                LoadWorld(world, SaveGameManager.SlotId.WorldChangeOnly, SceneManager.GetActiveScene().name);
+                _playerService.LastLevelChangeTriggerVobName = spawn;
+                LoadWorld(world, SaveGameService.SlotId.WorldChangeOnly, SceneManager.GetActiveScene().name);
             });
 
-            watch.Log("Phase2 (mostly ZenKit) initialized in");
+            watch.Log("Phase2 done. (mostly ZenKit initialized)");
         }
 
         public void LoadScene(string sceneName, string unloadScene = null)
@@ -200,25 +183,25 @@ namespace GUZ.Core
         /// saveGameId = -1 -> Change World
         /// </summary>
         /// <param name="saveGameId">-1-15</param>
-        public void LoadWorld(string worldName, SaveGameManager.SlotId saveGameId, string sceneToUnload = null)
+        public void LoadWorld(string worldName, SaveGameService.SlotId saveGameId, string sceneToUnload = null)
         {
             // We need to add .zen as early as possible as all related data needs the file ending.
             worldName += worldName.EndsWithIgnoreCase(".zen") ? "" : ".zen";
 
             // Pre-load ZenKit save game data now. Can be reused by LoadingSceneManager later.
-            if (saveGameId == SaveGameManager.SlotId.NewGame)
+            if (saveGameId == SaveGameService.SlotId.NewGame)
             {
-                SaveGame.LoadNewGame();
+                _saveGameService.LoadNewGame();
             }
             else if (saveGameId > 0)
             {
-                SaveGame.LoadSavedGame(saveGameId);
+                _saveGameService.LoadSavedGame(saveGameId);
             }
             else
             {
                 // If we have saveGameId -1 that means to just change the world and keep the same data.
             }
-            SaveGame.ChangeWorld(worldName);
+            _saveGameService.ChangeWorld(worldName);
 
             LoadScene(Constants.SceneLoading, sceneToUnload);
         }
@@ -230,10 +213,10 @@ namespace GUZ.Core
             // Newly created scenes are always the ones which we set as main scenes (i.e. new GameObjects will spawn in here automatically)
             SceneManager.SetActiveScene(scene);
 
-            var sceneManager = scene.GetComponentInChildren<ISceneManager>();
+            var sceneManager = scene.GetComponentInChildren<IScene>();
             if (sceneManager == null)
             {
-                Logger.LogError($"{nameof(ISceneManager)} for scene >{scene.name}< not found. Game won't proceed as " +
+                Logger.LogError($"{nameof(IScene)} for scene >{scene.name}< not found. Game won't proceed as " +
                                 "bootstrapper for scene is invalid/non-existent.", LogCat.Loading);
                 return;
             }
@@ -245,56 +228,11 @@ namespace GUZ.Core
             Logger.Log($"Scene unloaded: {scene.name}", LogCat.Loading);
         }
 
-        private void Update()
-        {
-            NpcMeshCulling.Update();
-            Loading.Update();
-        }
-
-        private void FixedUpdate()
-        {
-            _barrierManager.FixedUpdate();
-        }
-
-        private void LateUpdate()
-        {
-            Lights.LateUpdate();
-        }
-
-        private void OnValidate()
-        {
-            Sky?.OnValidate();
-        }
-
-        private void OnDrawGizmos()
-        {
-            VobMeshCulling?.OnDrawGizmos();
-        }
-
         public void OnDestroy()
         {
-            VobMeshCulling.Destroy();
-            NpcMeshCulling.Destroy();
-            SoundCulling.Destroy();
             _fileLoggingHandler.Destroy();
 
-            Loading = null;
             VobMeshCulling = null;
-            NpcMeshCulling = null;
-            SoundCulling = null;
-            _barrierManager = null;
-            Lights = null;
-            Time = null;
-            Sky = null;
-            Music = null;
-            Routines = null;
-        }
-
-        private void OnApplicationQuit()
-        {
-            Bootstrapper.OnApplicationQuit();
-            
-            Voice?.Dispose();
         }
     }
 }

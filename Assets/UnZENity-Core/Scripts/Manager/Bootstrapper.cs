@@ -1,12 +1,16 @@
 using System;
 using System.Globalization;
 using System.Linq;
-using GUZ.Core.Caches;
-using GUZ.Core.Globals;
-using GUZ.Core.Vm;
+using GUZ.Core.Const;
+using GUZ.Core.Services;
+using GUZ.Core.Services.Caches;
+using GUZ.Core.Services.Npc;
+using GUZ.Core.Services.UI;
+using GUZ.Core.Services.Vm;
+using GUZ.Services.UI;
 using ZenKit;
 using ZenKit.Daedalus;
-using static GUZ.Core.Globals.DaedalusConst;
+using static GUZ.Core.Const.DaedalusConst;
 
 namespace GUZ.Core.Manager
 {
@@ -20,10 +24,6 @@ namespace GUZ.Core.Manager
         public static void OnApplicationQuit()
         {
             GameData.Dispose();
-            VmInstanceManager.Dispose();
-            TextureCache.Dispose();
-            MultiTypeCache.Dispose();
-            MorphMeshCache.Dispose();
         }
 
         public static void Boot()
@@ -48,30 +48,33 @@ namespace GUZ.Core.Manager
         /// </summary>
         private static void SetLanguage()
         {
+            // FIXME - Shoould be loaded by [Inject] instead!
+            var localizationService = ReflexProjectInstaller.DIContainer.Resolve<LocalizationService>();
+
             // cs
             if (CheckEncoding(StringEncoding.CentralEurope, "MOBNAME_CRATE", "Bedna"))
-                GameGlobals.Localization.SetLanguage("cs", StringEncoding.CentralEurope);
+                localizationService.SetLanguage("cs", StringEncoding.CentralEurope);
             // pl
             else if (CheckEncoding(StringEncoding.CentralEurope, "MOBNAME_CRATE", "Skrzynia"))
-                GameGlobals.Localization.SetLanguage("pl", StringEncoding.CentralEurope);
+                localizationService.SetLanguage("pl", StringEncoding.CentralEurope);
             // ru
             else if (CheckEncoding(StringEncoding.CentralEurope, "MOBNAME_CRATE", "Коробка"))
-                GameGlobals.Localization.SetLanguage("ru", StringEncoding.EastEurope);
+                localizationService.SetLanguage("ru", StringEncoding.EastEurope);
             // de
             else if (CheckEncoding(StringEncoding.CentralEurope, "MOBNAME_CRATE", "Kiste"))
-                GameGlobals.Localization.SetLanguage("de", StringEncoding.WestEurope);
+                localizationService.SetLanguage("de", StringEncoding.WestEurope);
             // en - 2x as G1 vs G2 use a different value for it
             else if (CheckEncoding(StringEncoding.CentralEurope, "MOBNAME_CRATE", "Crate", "Box"))
-                GameGlobals.Localization.SetLanguage("en", StringEncoding.WestEurope);
+                localizationService.SetLanguage("en", StringEncoding.WestEurope);
             // es
             else if (CheckEncoding(StringEncoding.CentralEurope, "MOBNAME_CRATE", "Caja"))
-                GameGlobals.Localization.SetLanguage("es", StringEncoding.WestEurope);
+                localizationService.SetLanguage("es", StringEncoding.WestEurope);
             // fr
             else if (CheckEncoding(StringEncoding.EastEurope, "MOBNAME_CRATE", "Boite"))
-                GameGlobals.Localization.SetLanguage("fr", StringEncoding.WestEurope);
+                localizationService.SetLanguage("fr", StringEncoding.WestEurope);
             // it
             else if (CheckEncoding(StringEncoding.CentralEurope, "MOBNAME_CRATE", "Cassa"))
-                GameGlobals.Localization.SetLanguage("it", StringEncoding.WestEurope);
+                localizationService.SetLanguage("it", StringEncoding.WestEurope);
             // Nothing found
             // TODO - Potentially re-enable error label on screen to say: We couldn't identify your language.
             // TODO - It also might make sense to manually overwrite/define language/Encoding via GameConfiguration.json - but only if needed in the future.
@@ -94,8 +97,11 @@ namespace GUZ.Core.Manager
         public static void LoadGothicVm()
         {
             GameData.GothicVm = ResourceLoader.TryGetDaedalusVm("GOTHIC");
-            VmGothicExternals.RegisterExternals();
-            NpcHelper.Init();
+
+            // FIXME - Shoould be loaded by [Inject] instead!
+            ReflexProjectInstaller.DIContainer.Resolve<VmService>().RegisterExternals();
+            // FIXME - Shoould be loaded by [Inject] instead!
+            ReflexProjectInstaller.DIContainer.Resolve<NpcHelperService>().Init();
         }
         
         private static void LoadMiscVMs()
@@ -120,20 +126,23 @@ namespace GUZ.Core.Manager
 
         private static void LoadSubtitles()
         {
-            var cutsceneSuffix = GameContext.GameVersionAdapter.CutsceneFileSuffix;
+            var cutsceneSuffix = GameContext.ContextGameVersionService.CutsceneFileSuffix;
             var cutscenePath =
-                $"{GameContext.GameVersionAdapter.RootPath}/_work/DATA/scripts/content/CUTSCENE/OU.{cutsceneSuffix}";
+                $"{GameContext.ContextGameVersionService.RootPath}/_work/DATA/scripts/content/CUTSCENE/OU.{cutsceneSuffix}";
             GameData.Dialogs.CutsceneLibrary = new(cutscenePath);
         }
 
         private static void LoadVideos()
         {
-            GameGlobals.Video.InitVideos();
+            // FIXME - Shoould be loaded by [Inject] instead!
+            var videoService = ReflexProjectInstaller.DIContainer.Resolve<VideoService>();
+            videoService.InitVideos();
         }
 
         private static void LoadFonts()
         {
-            GameGlobals.Font.Create();
+            // FIXME - Shoould be loaded by [Inject] instead!
+            ReflexProjectInstaller.DIContainer.Resolve<FontService>().Create();
         }
 
         private static void LoadGuildData()

@@ -2,14 +2,30 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using GUZ.Core.Core.Logging;
 using GUZ.Core.Util;
+using Reflex.Core;
+using Reflex.Injectors;
 using UnityEngine;
-using Logger = GUZ.Core.Util.Logger;
+using Logger = GUZ.Core.Core.Logging.Logger;
 
 namespace GUZ.Core.Extensions
 {
     public static class BuiltInTypeExtension
     {
+        /// <summary>
+        /// Execute on newly created C# object to execute DI injection.
+        /// Please use it only, when needed as it causes some CPU cycles when done.
+        ///
+        /// Checks for [Inject] properties and methods.
+        /// </summary>
+        public static T Inject<T>(this T instance)
+        {
+            AttributeInjector.Inject(instance, ReflexProjectInstaller.DIContainer);
+            return instance;
+        }
+
+
         /// <summary>
         /// await (async Task) calls silently drop exceptions.
         /// This call logs them at least to make it easier to debug.

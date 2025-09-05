@@ -1,7 +1,7 @@
-using GUZ.Core.Data.Container;
-using GUZ.Core.Globals;
-using GUZ.Core.Npc.Actions;
-using GUZ.Core.Npc.Actions.AnimationActions;
+using GUZ.Core.Models.Container;
+using GUZ.Core.Const;
+using GUZ.Core.Domain.Npc.Actions;
+using GUZ.Core.Domain.Npc.Actions.AnimationActions;
 
 namespace GUZ.Lab.AnimationActionMocks
 {

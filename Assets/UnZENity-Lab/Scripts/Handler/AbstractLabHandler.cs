@@ -1,17 +1,23 @@
 ﻿using GUZ.Core;
-using GUZ.Core.Creator.Meshes;
+using GUZ.Core.Core.Logging;
+using GUZ.Core.Services;
+using GUZ.Core.Services.Caches;
 using GUZ.Core.Util;
-using GUZ.Core.Vm;
+using Reflex.Attributes;
 using UnityEngine;
-using Logger = GUZ.Core.Util.Logger;
+using Logger = GUZ.Core.Core.Logging.Logger;
 
 namespace GUZ.Lab.Handler
 {
     public abstract class AbstractLabHandler : MonoBehaviour
     {
         public abstract void Bootstrap();
-        
-        
+
+
+        [Inject] protected readonly VmCacheService VmCacheService;
+        [Inject] protected readonly MeshService MeshService;
+
+
         protected GameObject SpawnInteractable(string mdlName, PrefabType type, GameObject parentGo, Vector3 position = default, Quaternion rotation = default)
         {
             var prefab = ResourceLoader.TryGetPrefabObject(type);
@@ -23,16 +29,16 @@ namespace GUZ.Lab.Handler
                 return null;
             }
 
-            return MeshFactory.CreateVob(mdlName, mdl, position, rotation,
+            return MeshService.CreateVob(mdlName, mdl, position, rotation,
                 rootGo: prefab, parent: parentGo, useTextureArray: false);
         }
         
         protected GameObject SpawnItem(string itemName, GameObject parentGo, Vector3 position = default, PrefabType type = PrefabType.VobItem)
         {
             var itemPrefab = ResourceLoader.TryGetPrefabObject(type);
-            var item = VmInstanceManager.TryGetItemData(itemName);
+            var item = VmCacheService.TryGetItemData(itemName);
             var mrm = ResourceLoader.TryGetMultiResolutionMesh(item.Visual);
-            var itemGo = MeshFactory.CreateVob(item.Visual, mrm, position, default, true,
+            var itemGo = MeshService.CreateVob(item.Visual, mrm, position, default, true,
                 rootGo: itemPrefab, parent: parentGo, useTextureArray: false);
 
             return itemGo;

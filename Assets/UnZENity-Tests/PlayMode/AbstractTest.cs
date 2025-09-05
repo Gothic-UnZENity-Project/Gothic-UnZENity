@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections;
-using GUZ.Core.Config;
-using GUZ.Core.Globals;
+using GUZ.Core.Const;
+using GUZ.Core.Models.Config;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Controls;
@@ -12,6 +12,8 @@ namespace GUZ.Tests.PlayMode
     public abstract class AbstractTest
     {
         protected Scene MainScene => SceneManager.GetActiveScene();
+
+        // FIXME - Needs to be VRPlayer or FlatPlayer.
         protected Scene GeneralScene => SceneManager.GetSceneByName(Constants.ScenePlayer);
         
         private readonly InputTestFixture _inputSimulator = new ();

@@ -3,15 +3,15 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using DirectMusic;
-using GUZ.Core.Creator.Sounds;
-using GUZ.Core.Data;
-using GUZ.Core.Globals;
+using GUZ.Core.Extensions;
+using GUZ.Core.Const;
+using GUZ.Core.Core.Logging;
 using GUZ.Core.Util;
 using JetBrains.Annotations;
 using UnityEngine;
 using ZenKit;
 using Font = ZenKit.Font;
-using Logger = GUZ.Core.Util.Logger;
+using Logger = GUZ.Core.Core.Logging.Logger;
 using Mesh = ZenKit.Mesh;
 using Object = UnityEngine.Object;
 using Texture = ZenKit.Texture;
@@ -53,7 +53,7 @@ namespace GUZ.Core
         );
 
         private static readonly Resource<IModel> _model = new(
-            s => new Model(_vfs, s).Cache()
+            s => new ZenKit.Model(_vfs, s).Cache()
         );
 
         private static readonly Resource<IModelMesh> _modelMesh = new(
@@ -77,7 +77,7 @@ namespace GUZ.Core
             // Lookup is done in following places:
             // 1. CONTEXT_NAME/Prefabs/... - overwrites lookup path below, used for specific prefabs, for current context (HVR, Flat, ...)
             // 2. Prefabs/... - Located inside core module (UnZENity-Core), if we don't need special handling.
-            var contextPrefixPath = $"{GameContext.InteractionAdapter.GetContextName()}/{s}";
+            var contextPrefixPath = $"{GameContext.ContextInteractionService.GetContextName()}/{s}";
             return new[] { contextPrefixPath, s }.Select(Resources.Load<GameObject>)
                 .FirstOrDefault(newPrefab => newPrefab != null);
         });
@@ -183,10 +183,10 @@ namespace GUZ.Core
         /// Please consider using SoundCreator.ToAudioClip() instead.
         /// </summary>
         [CanBeNull]
-        public static SoundData TryGetSound([NotNull] string key)
+        public static byte[] TryGetSoundBytes([NotNull] string key)
         {
             var node = _vfs.Find($"{GetPreparedKey(key)}.wav");
-            return node == null ? null : SoundCreator.ConvertWavByteArrayToFloatArray(node.Buffer.Bytes);
+            return node == null ? null : node.Buffer.Bytes;
         }
 
         [CanBeNull]
@@ -241,6 +241,7 @@ namespace GUZ.Core
         public static GameObject TryGetPrefabObject(PrefabType key, string name = null, GameObject parent = null)
         {
             // worldPositionStays=false - initialize the object at 0,0,0. If needed, we will later set positions.
+
             var go = Object.Instantiate(TryGetPrefab(key), parent?.transform, worldPositionStays: false);
                 
             if (name != null)
@@ -249,23 +250,6 @@ namespace GUZ.Core
             return go;
         }
 
-        /// <summary>
-        /// Alternative way to load a dynamically named prefab and cache it.
-        /// 
-        /// HINT: Please check if using PrefabType overload is better suited before using this function.
-        /// </summary>
-        public static GameObject TryGetPrefabObject(string prefabPath, Vector3 position = default, Quaternion rotation = default, string name = null, GameObject parent = null)
-        {
-            var go = Object.Instantiate(TryGetPrefab(prefabPath), position, rotation, parent?.transform);
-
-            if (name != null)
-            {
-                go.name = name;
-            }
-
-            return go;
-        }
-        
         /// <summary>
         /// Alternative way to load a dynamically named prefab and cache it.
         /// 

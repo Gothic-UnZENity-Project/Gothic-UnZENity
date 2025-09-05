@@ -2,14 +2,17 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using GUZ.Core.Core.Logging;
 using GUZ.Core.Manager;
+using GUZ.Core.Services.World;
 using GUZ.Core.Util;
 using MyBox;
+using Reflex.Attributes;
 using UnityEngine;
 using ZenKit;
 using ZenKit.Util;
 using ZenKit.Vobs;
-using Logger = GUZ.Core.Util.Logger;
+using Logger = GUZ.Core.Core.Logging.Logger;
 using Vector3 = System.Numerics.Vector3;
 
 namespace GUZ.Core.Debugging
@@ -24,6 +27,9 @@ namespace GUZ.Core.Debugging
         [Range(1, 15)] public int SaveSlot1ToCompare = 1;
         [Range(1, 15)] public int SaveSlot2ToCompare = 15;
         public string WorldToCompare = "WORLD.zen";
+
+        
+        [Inject] private readonly SaveGameService _saveGameService;
 
 
         private void OnValidate()
@@ -48,15 +54,15 @@ namespace GUZ.Core.Debugging
         {
             yield return new WaitForEndOfFrame();
 
-            GameGlobals.SaveGame.SaveCurrentGame((SaveGameManager.SlotId)SaveSlot, $"UnZENity-DEBUG - {DateTime.Now}");
+            _saveGameService.SaveCurrentGame((SaveGameService.SlotId)SaveSlot, $"UnZENity-DEBUG - {DateTime.Now}");
 
             Logger.LogEditor("DONE", LogCat.Debug);
         }
 
         private void CompareSaves()
         {
-            var save1 = GameGlobals.SaveGame.GetSaveGame((SaveGameManager.SlotId)SaveSlot1ToCompare)!;
-            var save2 = GameGlobals.SaveGame.GetSaveGame((SaveGameManager.SlotId)SaveSlot2ToCompare)!;
+            var save1 = _saveGameService.GetSaveGame((SaveGameService.SlotId)SaveSlot1ToCompare)!;
+            var save2 = _saveGameService.GetSaveGame((SaveGameService.SlotId)SaveSlot2ToCompare)!;
 
             var world1 = save1.LoadWorld(WorldToCompare)!;
             var world2 = save2.LoadWorld(WorldToCompare)!;

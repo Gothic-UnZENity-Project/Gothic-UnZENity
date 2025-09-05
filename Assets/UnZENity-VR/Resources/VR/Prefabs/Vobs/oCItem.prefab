@@ -99,6 +99,7 @@ GameObject:
   - component: {fileID: -6808202407213995710}
   - component: {fileID: 8543334853728962911}
   - component: {fileID: 8461469363836242350}
+  - component: {fileID: 2018021949967966991}
   m_Layer: 6
   m_Name: oCItem
   m_TagString: GUZVob
@@ -380,6 +381,19 @@ MonoBehaviour:
   Tags:
     Tags: {fileID: 11400000, guid: 836908d62a0d2e8489d7e21e7f774964, type: 2}
     _data: 1
+--- !u!114 &2018021949967966991
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6503575194566409312}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20620ae30fdd0164c9bb5bdc717d3ada, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _injectionStrategy: 2
 --- !u!1 &8287200665113283090
 GameObject:
   m_ObjectHideFlags: 0
