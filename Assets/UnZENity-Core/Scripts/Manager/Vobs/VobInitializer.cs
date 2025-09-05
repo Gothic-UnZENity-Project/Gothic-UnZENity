@@ -619,7 +619,7 @@ namespace GUZ.Core.Manager.Vobs
                 Direction = vob.Rotation.ToUnityQuaternion().eulerAngles
             };
             vobObj.GetComponent<VobSpotProperties>().Fp = freePointData;
-            GameData.FreePoints.TryAdd(fpName, (FreePoint)freePointData);
+            GameData.FreePoints.TryAdd(fpName, freePointData);
 
             return vobObj;
         }
@@ -631,7 +631,7 @@ namespace GUZ.Core.Manager.Vobs
 
             vobObj.layer = Constants.IgnoreRaycastLayer;
 
-            var trigger = vobObj.AddComponent<BoxCollider>();
+            var trigger = vobObj.GetComponent<BoxCollider>();
             trigger.isTrigger = true;
 
             var min = vob.BoundingBox.Min.ToUnityVector();
@@ -640,7 +640,7 @@ namespace GUZ.Core.Manager.Vobs
 
             vobObj.transform.localScale = max - min;
 
-            var triggerHandler = vobObj.AddComponent<ChangeLevelTriggerHandler>();
+            var triggerHandler = vobObj.GetComponent<ChangeLevelTriggerHandler>();
             triggerHandler.LevelName = vob.LevelName;
             triggerHandler.StartVob = vob.StartVob;
             return vobObj;
@@ -649,7 +649,7 @@ namespace GUZ.Core.Manager.Vobs
         private GameObject CreateAnimatedVob(Animate vob, GameObject parent = null)
         {
             var go = CreateDefaultMesh(vob, parent);
-            var morph = go.AddComponent<VobAnimateMorph>();
+            var morph = go.GetComponent<VobAnimateMorph>();
             morph.StartAnimation(vob.Visual!.Name);
             return go;
         }
