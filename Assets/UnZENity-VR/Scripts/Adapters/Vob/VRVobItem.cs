@@ -5,6 +5,7 @@ using GUZ.Core.Const;
 using GUZ.Core.Manager;
 using GUZ.Core.Services;
 using GUZ.Core.Services.Config;
+using GUZ.Core.Services.Culling;
 using GUZ.Core.Services.Meshes;
 using GUZ.VR.Services;
 using HurricaneVR.Framework.Core;
@@ -21,6 +22,7 @@ namespace GUZ.VR.Adapters.Vob
         [Inject] private readonly ConfigService _configService;
         [Inject] private readonly MarvinService _marvinService;
         [Inject] private readonly DynamicMaterialService _dynamicMaterialService;
+        [Inject] private readonly VobMeshCullingService _vobMeshCullingService;
 
         [SerializeField] private VRVobItemProperties _vrProperties;
         [SerializeField] private Rigidbody _rigidbody;
@@ -84,7 +86,7 @@ namespace GUZ.VR.Adapters.Vob
             // If we want Item collisions, we just temporarily deactivate them until the item is free of collisions.
             StartCoroutine(ReEnableCollisionRoutine());
             
-            GameGlobals.VobMeshCulling?.StartTrackVobPositionUpdates(gameObject);
+            _vobMeshCullingService?.StartTrackVobPositionUpdates(gameObject);
             _vrPlayerService.SetGrab(grabber, grabbable);
         }
 
@@ -92,12 +94,12 @@ namespace GUZ.VR.Adapters.Vob
         {
             gameObject.layer = Constants.VobItem; // Back to default
 
-            GameGlobals.VobMeshCulling?.StopTrackVobPositionUpdates(gameObject);
+            _vobMeshCullingService?.StopTrackVobPositionUpdates(gameObject);
 
             // Disable "ghostification" of object.
             _dynamicMaterialService.ResetDynamicValue(gameObject, Constants.ShaderPropertyTransparency, Constants.ShaderPropertyTransparencyDefault);
 
-            GameGlobals.VobMeshCulling?.StartTrackVobPositionUpdates(gameObject);
+            _vobMeshCullingService?.StartTrackVobPositionUpdates(gameObject);
             _vrPlayerService.UnsetGrab(grabber, grabbable);
             
             // If we sock an object on our hips etc.

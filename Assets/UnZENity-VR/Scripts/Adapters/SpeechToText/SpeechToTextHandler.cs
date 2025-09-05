@@ -55,7 +55,7 @@ namespace GUZ.VR.Adapters.SpeechToText
             _recordingImage.SetActive(false);
             _aiWaitingImage.SetActive(false);
             
-            if (!GameGlobals.SpeechToText.IsEnabled)
+            if (!_speechToTextService.IsEnabled)
             {
                 Logger.Log("Disabling SpeechToText feature as Manager is Disabled (e.g. because of Microphone or Whisper).", LogCat.Audio);
                 _state = State.Uninitialized;

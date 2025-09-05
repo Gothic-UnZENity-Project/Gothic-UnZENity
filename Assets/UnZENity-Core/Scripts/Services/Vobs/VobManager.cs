@@ -41,6 +41,8 @@ namespace GUZ.Core.Services.Vobs
         [Inject] private readonly NpcService _npcService;
         [Inject] private readonly SaveGameService _saveGameService;
         [Inject] private readonly WayNetService _wayNetService;
+        [Inject] private readonly VobMeshCullingService _vobMeshCullingService;
+        
         // Supporter class where the whole Init() logic is outsourced for better readability.
         [Inject] private readonly VobInitializer _initializer;
 
@@ -435,7 +437,7 @@ namespace GUZ.Core.Services.Vobs
             };
 
             var container = CreateContainerWithLoader(vob);
-            GameGlobals.VobMeshCulling.AddCullingEntry(container);
+            _vobMeshCullingService.AddCullingEntry(container);
             _saveGameService.CurrentWorldData.Vobs.Add(container.Vob);
         }
 
@@ -492,7 +494,7 @@ namespace GUZ.Core.Services.Vobs
                 return;
             }
 
-            GameGlobals.VobMeshCulling.AddCullingEntry(container);
+            _vobMeshCullingService.AddCullingEntry(container);
         }
 
         private void AddToMobInteractableList(VobContainer container)
