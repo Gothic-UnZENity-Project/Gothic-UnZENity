@@ -36,7 +36,6 @@ namespace GUZ.Core
         public VobManager Vobs { get; private set; }
         public NpcService Npcs { get; private set; }
         public VobMeshCullingService VobMeshCulling { get; private set; }
-        public NpcMeshCullingService NpcMeshCulling { get; private set; }
         public SpeechToTextService SpeechToText { get; private set; }
 
 
@@ -100,7 +99,6 @@ namespace GUZ.Core
             Vobs = _vobManager;
             Npcs = _npcService;
             VobMeshCulling = _vobMeshCullingService;
-            NpcMeshCulling = _npcMeshCullingService;
             SpeechToText = _speechToTextService;
 
             ZenKit.Logger.Set(_configService.Dev.ZenKitLogLevel, Logger.OnZenKitLogMessage);
@@ -127,7 +125,7 @@ namespace GUZ.Core
 
             _frameSkipperService.Init();
             VobMeshCulling.Init();
-            NpcMeshCulling.Init();
+            _npcMeshCullingService.Init();
             _vobSoundCullingService.Init();
             _gameTimeService.Init();
             _routineService.Init();
@@ -235,7 +233,6 @@ namespace GUZ.Core
             _fileLoggingHandler.Destroy();
 
             VobMeshCulling = null;
-            NpcMeshCulling = null;
         }
     }
 }

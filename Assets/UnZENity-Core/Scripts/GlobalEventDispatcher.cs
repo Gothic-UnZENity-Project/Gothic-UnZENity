@@ -1,4 +1,6 @@
 ﻿using System;
+using GUZ.Core.Adapters.Npc;
+using GUZ.Core.Models.Container;
 using UnityEngine;
 using UnityEngine.Events;
 using ZenKit;
@@ -35,5 +37,8 @@ namespace GUZ.Core
         public static readonly UnityEvent<string, object> PlayerPrefUpdated = new();
         
         public static readonly UnityEvent LoadGameStart = new();
+        
+        
+        public static readonly UnityEvent<NpcContainer, NpcLoader, bool, bool> NpcMeshCullingChanged = new();
     }
 }

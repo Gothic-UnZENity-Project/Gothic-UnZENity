@@ -14,6 +14,7 @@ using GUZ.Core.Models.Vm;
 using GUZ.Core.Models.Vob.WayNet;
 using GUZ.Core.Services;
 using GUZ.Core.Services.Caches;
+using GUZ.Core.Services.Culling;
 using GUZ.Core.Services.Npc;
 using GUZ.Core.Services.World;
 using JetBrains.Annotations;
@@ -40,6 +41,7 @@ namespace GUZ.Core.Domain.Npc
         [Inject] private readonly FrameSkipperService _frameSkipperService;
         [Inject] private readonly SaveGameService _saveGameService;
         [Inject] private readonly WayNetService _wayNetService;
+        [Inject] private readonly NpcMeshCullingService _npcMeshCullingService;
 
         
         public GameObject RootGo;
@@ -173,7 +175,7 @@ namespace GUZ.Core.Domain.Npc
                 }
 
                 go.transform.SetPositionAndRotation(spawnPoint.Position, spawnPoint.Rotation);
-                GameGlobals.NpcMeshCulling.AddCullingEntry(go);
+                _npcMeshCullingService.AddCullingEntry(go);
             }
 
             _tmpWldInsertNpcData.ClearAndReleaseMemory();
@@ -190,7 +192,7 @@ namespace GUZ.Core.Domain.Npc
             var go = InitLazyLoadNpc(npc);
 
             go.transform.SetPositionAndRotation(npcVob.Position.ToUnityVector(), npcVob.Rotation.ToUnityQuaternion());
-            GameGlobals.NpcMeshCulling.AddCullingEntry(go);
+            _npcMeshCullingService.AddCullingEntry(go);
         }
 
         /// <summary>
@@ -224,7 +226,7 @@ namespace GUZ.Core.Domain.Npc
             npc.Vob.CurrentStateValid = false;
             npc.Vob.NextStateValid = false;
             
-            GameGlobals.NpcMeshCulling.AddCullingEntry(go);
+            _npcMeshCullingService.AddCullingEntry(go);
         }
 
         // Just some number to find a monster easier when debugging in Unity Inspector.

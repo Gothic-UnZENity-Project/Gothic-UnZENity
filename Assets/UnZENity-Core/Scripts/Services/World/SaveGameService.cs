@@ -7,7 +7,9 @@ using GUZ.Core.Core.Logging;
 using GUZ.Core.Extensions;
 using GUZ.Core.Models.Adapter.Vobs;
 using GUZ.Core.Models.Container;
+using GUZ.Core.Services.Culling;
 using JetBrains.Annotations;
+using Reflex.Attributes;
 using UnityEngine;
 using ZenKit;
 using ZenKit.Daedalus;
@@ -59,6 +61,9 @@ namespace GUZ.Core.Services.World
         public WorldContainer CurrentWorldData => _worlds[CurrentWorldName];
 
 
+        [Inject] private readonly NpcMeshCullingService _npcMeshCullingService;
+
+        
         public enum SlotId
         {
             WorldChangeOnly = -1,
@@ -316,8 +321,8 @@ namespace GUZ.Core.Services.World
                 allVobs.Add(heroContainer.Vob);
             }
 
-            GameGlobals.NpcMeshCulling.UpdateVobPositionOfVisibleNpcs();
-            var visibleNpcs = GameGlobals.NpcMeshCulling.GetVisibleNpcs();
+            _npcMeshCullingService.UpdateVobPositionOfVisibleNpcs();
+            var visibleNpcs = _npcMeshCullingService.GetVisibleNpcs();
 
             foreach (var visibleNpc in visibleNpcs)
             {

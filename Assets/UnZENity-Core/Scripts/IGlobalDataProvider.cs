@@ -8,7 +8,6 @@ namespace GUZ.Core
     {
         public VobManager Vobs { get; }
         public VobMeshCullingService VobMeshCulling { get; }
-        public NpcMeshCullingService NpcMeshCulling { get; }
         public SpeechToTextService SpeechToText { get; }
     }
 }

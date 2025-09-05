@@ -68,6 +68,8 @@ namespace GUZ.Core.Services.Npc
                 _objectsToInitQueue.Clear();
                 _objectToReEnableQueue.Clear();
             });
+            
+            GlobalEventDispatcher.NpcMeshCullingChanged.AddListener(EventNpcMeshCullingChanged);
         }
 
         private IEnumerator InitNpcCoroutine()
@@ -526,6 +528,23 @@ namespace GUZ.Core.Services.Npc
         public void ExtNpcClearInventory(NpcInstance npc)
         {
             npc.GetUserData()!.Vob.ClearItems();
+        }
+
+        private void EventNpcMeshCullingChanged(NpcContainer npcContainer, NpcLoader npcLoader, bool isInVisibleRange, bool wasOutOfDistance)
+        {
+            // Alter position tracking of NPC
+            if (isInVisibleRange)
+            {
+                var initializedNow = InitNpc(npcLoader.gameObject);
+
+                // If the NPC !wasOutOfDistance (==wasInDistanceAlready), then we spawned our VRPlayer next to the NPC
+                // (e.g. from a save game) and we need to go on with the current routine instead of "resetting" the routine.
+                // (Which would respawn NPC at a waypoint, which is wrong.)
+                if (wasOutOfDistance && !initializedNow)
+                {
+                    ReEnableNpc(npcContainer);
+                }
+            }
         }
     }
 }

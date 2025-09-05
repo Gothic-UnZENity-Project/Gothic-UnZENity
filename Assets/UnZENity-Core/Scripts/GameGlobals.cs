@@ -11,6 +11,5 @@ namespace GUZ.Core
         public static IGlobalDataProvider Instance;
 
         public static VobManager Vobs => Instance.Vobs;
-        public static NpcMeshCullingService NpcMeshCulling => Instance.NpcMeshCulling;
     }
 }

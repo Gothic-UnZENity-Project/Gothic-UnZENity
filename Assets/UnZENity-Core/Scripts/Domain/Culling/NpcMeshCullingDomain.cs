@@ -14,7 +14,6 @@ namespace GUZ.Core.Domain.Culling
 {
     public class NpcMeshCullingDomain : AbstractCullingDomain
     {
-        [Inject] private readonly NpcService _npcService;
         [Inject] private readonly WayNetService _wayNetService;
 
 
@@ -94,20 +93,13 @@ namespace GUZ.Core.Domain.Culling
             }
 
             go.SetActive(isInVisibleRange);
+            
+            GlobalEventDispatcher.NpcMeshCullingChanged.Invoke(npcData, loaderComp, isInVisibleRange, wasOutOfDistance);
 
             // Alter position tracking of NPC
             if (isInVisibleRange)
             {
-                var initializedNow = _npcService.InitNpc(go);
                 _visibleNpcs.TryAdd(evt.index, go.transform);
-
-                // If the NPC !wasOutOfDistance (==wasInDistanceAlready), then we spawned our VRPlayer next to the NPC
-                // (e.g. from a save game) and we need to go on with the current routine instead of "resetting" the routine.
-                // (Which would respawn NPC at a waypoint, which is wrong.)
-                if (wasOutOfDistance && !initializedNow)
-                {
-                    _npcService.ReEnableNpc(npcData);
-                }
             }
             // When an NPC gets invisible, we need to check for their next respawn from their initially spawned position.
             else
