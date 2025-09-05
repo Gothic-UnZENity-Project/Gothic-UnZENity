@@ -1,6 +1,7 @@
 using GUZ.Core.Models.Container;
 using GUZ.Core.Domain.Animations;
 using GUZ.Core.Const;
+using GUZ.Core.Creator;
 using GUZ.Core.Manager;
 using GUZ.Core.Models.Vm;
 using Reflex.Attributes;
@@ -61,7 +62,7 @@ namespace GUZ.Core.Domain.Npc.Actions.AnimationActions
 
         protected virtual void StartWalk()
         {
-            PhysicsHelper.EnablePhysicsForNpc(PrefabProps);
+            PhysicsService.EnablePhysicsForNpc(PrefabProps);
 
             var animName = _animationService.GetAnimationName(VmGothicEnums.AnimationType.Move, Vob);
             PrefabProps.AnimationSystem.PlayAnimation(animName);
@@ -69,7 +70,7 @@ namespace GUZ.Core.Domain.Npc.Actions.AnimationActions
 
         protected virtual void StopWalk()
         {
-            PhysicsHelper.EnablePhysicsForNpc(PrefabProps);
+            PhysicsService.EnablePhysicsForNpc(PrefabProps);
 
             var animName = _animationService.GetAnimationName(VmGothicEnums.AnimationType.Move, Vob);
             PrefabProps.AnimationSystem.StopAnimation(animName);

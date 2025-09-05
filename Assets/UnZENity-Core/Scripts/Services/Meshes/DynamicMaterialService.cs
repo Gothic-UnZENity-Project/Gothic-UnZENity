@@ -5,7 +5,7 @@ using GUZ.Core.Const;
 using UnityEngine;
 using UnityEngine.Rendering;
 
-namespace GUZ.Core.Manager
+namespace GUZ.Core.Services.Meshes
 {
     /// <summary>
     /// Objects like items and interactables can alter their materials based on shader needs.
@@ -14,7 +14,7 @@ namespace GUZ.Core.Manager
     /// Unfortunately events in Unity can suffer race conditions (e.g. a hover is stopped after grab is started etc.)
     /// We therefore need to ensure, that two different shader changes will be reflected in the same material and not overwrite themselves.
     /// </summary>
-    public static class DynamicMaterialManager
+    public class DynamicMaterialService
     {
         private class CacheEntry
         {
@@ -26,7 +26,7 @@ namespace GUZ.Core.Manager
         }
 
 
-        private static Dictionary<string, (Shader dynamicShader, int shaderType)> _dynamicShaderMap = new ()
+        private Dictionary<string, (Shader dynamicShader, int shaderType)> _dynamicShaderMap = new ()
         {
             { Constants.ShaderSingleMeshLitName, new (Constants.ShaderSingleMeshLitDynamic, Constants.ShaderTypeTransparent) },
             // Basically: Leave the default shader (no special logic inside code needed with this handling.
@@ -35,10 +35,10 @@ namespace GUZ.Core.Manager
         };
 
         // Some objects (like NPCs) have multiple meshes. We therefore add all self+children renderers/materials.
-        private static Dictionary<GameObject, CacheEntry> _cache = new();
+        private Dictionary<GameObject, CacheEntry> _cache = new();
 
 
-        public static void SetDynamicValue(GameObject go, int shaderProperty, float shaderValue)
+        public void SetDynamicValue(GameObject go, int shaderProperty, float shaderValue)
         {
             if (!_cache.TryGetValue(go, out var entry))
             {
@@ -62,7 +62,7 @@ namespace GUZ.Core.Manager
         ///
         /// Hint: shaderProperties[].shaderValue need to be default ones to reset.
         /// </summary>
-        public static void ResetDynamicValue(GameObject go, int shaderProperty, float shaderValue)
+        public void ResetDynamicValue(GameObject go, int shaderProperty, float shaderValue)
         {
             if (!_cache.TryGetValue(go, out var entry))
             {
@@ -82,12 +82,12 @@ namespace GUZ.Core.Manager
         /// <summary>
         /// e.g. called whenever a GameObject is culled out.
         /// </summary>
-        public static void ResetAllDynamicValues(GameObject go)
+        public void ResetAllDynamicValues(GameObject go)
         {
             RemoveFromCache(go);
         }
 
-        private static void CacheGameObject(GameObject go)
+        private void CacheGameObject(GameObject go)
         {
             var renderers = go.GetComponentsInChildren<Renderer>().ToList();
             var defaultMaterials = go.GetComponentsInChildren<Renderer>()
@@ -114,7 +114,7 @@ namespace GUZ.Core.Manager
             });
         }
 
-        private static void RemoveFromCache(GameObject go)
+        private void RemoveFromCache(GameObject go)
         {
             if (!_cache.TryGetValue(go, out var entry))
             {
@@ -129,7 +129,7 @@ namespace GUZ.Core.Manager
         /// <summary>
         /// Change all materials and shaders of renderers.
         /// </summary>
-        private static void ActivateDynamicRenderers(CacheEntry entry)
+        private void ActivateDynamicRenderers(CacheEntry entry)
         {
             if (entry.IsCurrentlyDynamic)
             {
@@ -144,7 +144,7 @@ namespace GUZ.Core.Manager
             entry.IsCurrentlyDynamic = true;
         }
 
-        private static void DeactivateDynamicRenderers(CacheEntry entry)
+        private void DeactivateDynamicRenderers(CacheEntry entry)
         {
             if (!entry.IsCurrentlyDynamic)
             {

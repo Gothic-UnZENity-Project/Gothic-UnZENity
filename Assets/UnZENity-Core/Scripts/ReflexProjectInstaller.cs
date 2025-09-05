@@ -1,7 +1,6 @@
 using GUZ.Core.Creator;
 using GUZ.Core.Domain.Animations;
 using GUZ.Core.Manager;
-using GUZ.Core.Manager.Vobs;
 using GUZ.Core.Services;
 using GUZ.Core.Services.Audio;
 using GUZ.Core.Services.Caches;
@@ -10,9 +9,11 @@ using GUZ.Core.Services.Context;
 using GUZ.Core.Services.Culling;
 using GUZ.Core.Services.Meshes;
 using GUZ.Core.Services.Npc;
+using GUZ.Core.Services.Player;
 using GUZ.Core.Services.StaticCache;
 using GUZ.Core.Services.UI;
 using GUZ.Core.Services.Vm;
+using GUZ.Core.Services.Vobs;
 using GUZ.Core.Services.World;
 using GUZ.Services.UI;
 using Reflex.Core;
@@ -67,12 +68,16 @@ namespace GUZ.Core
             containerBuilder.AddSingleton(typeof(GameTimeService));
             containerBuilder.AddSingleton(typeof(MeshService));
             containerBuilder.AddSingleton(typeof(AnimationService));
-            containerBuilder.AddSingleton(typeof(DialogService));
 
+            // Player
+            containerBuilder.AddSingleton(typeof(DialogService));
+            containerBuilder.AddSingleton(typeof(PlayerService));
+            
             // NPC
             containerBuilder.AddSingleton(typeof(NpcService));
             containerBuilder.AddSingleton(typeof(NpcAiService));
             containerBuilder.AddSingleton(typeof(NpcHelperService));
+            containerBuilder.AddSingleton(typeof(RoutineService));
             containerBuilder.AddSingleton(typeof(NpcRoutineService));
 
             // Caches
@@ -89,12 +94,16 @@ namespace GUZ.Core
             containerBuilder.AddSingleton(typeof(SaveGameService));
             containerBuilder.AddSingleton(typeof(StoryService));
             containerBuilder.AddSingleton(typeof(StationaryLightsService));
+            containerBuilder.AddSingleton(typeof(PhysicsService));
 
             // Misc
             containerBuilder.AddSingleton(typeof(SfxService));
-            containerBuilder.AddSingleton(typeof(TextureService));
             containerBuilder.AddSingleton(typeof(VideoService));
             
+            // Meshes
+            containerBuilder.AddSingleton(typeof(TextureService));
+            containerBuilder.AddSingleton(typeof(DynamicMaterialService));
+
             // UI
             containerBuilder.AddSingleton(typeof(FontService));
             containerBuilder.AddSingleton(typeof(UIEventsService));

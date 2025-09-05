@@ -2,11 +2,13 @@ using System;
 using System.Linq;
 using GUZ.Core.Adapters.Npc;
 using GUZ.Core.Adapters.Properties;
+using GUZ.Core.Creator;
 using GUZ.Core.Models.Adapter.Vobs;
 using GUZ.Core.Models.Container;
 using GUZ.Core.Extensions;
 using GUZ.Core.Manager;
 using GUZ.Core.Services.Caches;
+using GUZ.Core.Services.World;
 using Reflex.Attributes;
 using UnityEngine;
 using ZenKit.Daedalus;
@@ -19,7 +21,9 @@ namespace GUZ.Core.Domain.Npc.Actions.AnimationActions
         public readonly AnimationAction Action;
 
         [Inject] protected readonly VmCacheService VmCacheService;
-        
+        [Inject] protected readonly PhysicsService PhysicsService;
+        [Inject] protected readonly WayNetService WayNetService;
+
         protected readonly NpcContainer NpcContainer;
         protected readonly NpcInstance NpcInstance;
         protected readonly GameObject NpcGo;
@@ -49,7 +53,7 @@ namespace GUZ.Core.Domain.Npc.Actions.AnimationActions
         public virtual void Start()
         {
             // By default, every Daedalus animation starts without using physics. But they can always overwrite it (e.g.) for walking.
-            PhysicsHelper.DisablePhysicsForNpc(PrefabProps);
+            PhysicsService.DisablePhysicsForNpc(PrefabProps);
         }
 
         protected virtual void InsertItem(string slot1, string slot2)

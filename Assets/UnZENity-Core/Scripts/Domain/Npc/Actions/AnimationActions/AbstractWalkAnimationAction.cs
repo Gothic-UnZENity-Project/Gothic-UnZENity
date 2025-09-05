@@ -40,7 +40,7 @@ namespace GUZ.Core.Domain.Npc.Actions.AnimationActions
         {
             base.Start();
 
-            PhysicsHelper.EnablePhysicsForNpc(PrefabProps);
+            PhysicsService.EnablePhysicsForNpc(PrefabProps);
         }
 
         protected virtual void OnDestinationReached()
@@ -154,7 +154,7 @@ namespace GUZ.Core.Domain.Npc.Actions.AnimationActions
             // We need to ensure, that physics still apply when an animation is looped.
             if (State != WalkState.Done)
             {
-                PhysicsHelper.EnablePhysicsForNpc(PrefabProps);
+                PhysicsService.EnablePhysicsForNpc(PrefabProps);
             }
 
             NpcGo.transform.localPosition = PrefabProps.Bip01.position;

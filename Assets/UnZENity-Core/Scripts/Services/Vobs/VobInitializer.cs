@@ -2,18 +2,17 @@
 using System.Collections.Generic;
 using GUZ.Core.Adapters.Properties;
 using GUZ.Core.Adapters.Vob;
-using GUZ.Core.Extensions;
 using GUZ.Core.Const;
 using GUZ.Core.Core.Logging;
+using GUZ.Core.Extensions;
+using GUZ.Core.Manager;
 using GUZ.Core.Models.Vm;
 using GUZ.Core.Models.Vob.WayNet;
-using GUZ.Core.Services;
 using GUZ.Core.Services.Audio;
 using GUZ.Core.Services.Caches;
 using GUZ.Core.Services.Config;
 using GUZ.Core.Services.Culling;
 using GUZ.Core.Services.StaticCache;
-using GUZ.Core.Util;
 using JetBrains.Annotations;
 using MyBox;
 using Reflex.Attributes;
@@ -26,15 +25,14 @@ using LightType = ZenKit.Vobs.LightType;
 using Logger = GUZ.Core.Core.Logging.Logger;
 using Object = UnityEngine.Object;
 
-namespace GUZ.Core.Manager.Vobs
+namespace GUZ.Core.Services.Vobs
 {
     /// <summary>
     /// Outsourced logic to create actual VOB GO structures.
     /// </summary>
     public class VobInitializer
     {
-        [Inject] private readonly ConfigService
-            _configService;
+        [Inject] private readonly ConfigService _configService;
         [Inject] private readonly VobSoundCullingService _vobSoundCullingService;
         [Inject] private readonly MeshService _meshService;
         [Inject] private readonly AudioService _audioService;

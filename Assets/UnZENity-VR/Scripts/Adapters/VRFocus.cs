@@ -5,7 +5,9 @@ using GUZ.Core.Adapters.Vob;
 using GUZ.Core.Extensions;
 using GUZ.Core.Const;
 using GUZ.Core.Manager;
+using GUZ.Core.Services;
 using GUZ.Core.Services.Config;
+using GUZ.Core.Services.Meshes;
 using HurricaneVR.Framework.Core;
 using HurricaneVR.Framework.Core.Grabbers;
 using Reflex.Attributes;
@@ -26,6 +28,7 @@ namespace GUZ.VR.Adapters
     public class VRFocus : MonoBehaviour
     {
         [Inject] private readonly ConfigService _configService;
+        [Inject] private readonly DynamicMaterialService _dynamicMaterialService;
 
 
         private static Camera _mainCamera;
@@ -76,7 +79,7 @@ namespace GUZ.VR.Adapters
 
             if (_featureBrightenUp)
             {
-                DynamicMaterialManager.SetDynamicValue(gameObject, Constants.ShaderPropertyFocusBrightness, Constants.ShaderPropertyFocusBrightnessValue);
+                _dynamicMaterialService.SetDynamicValue(gameObject, Constants.ShaderPropertyFocusBrightness, Constants.ShaderPropertyFocusBrightnessValue);
             }
 
             if (_featureShowName)
@@ -91,7 +94,7 @@ namespace GUZ.VR.Adapters
         {
             if (_featureBrightenUp)
             {
-                DynamicMaterialManager.ResetDynamicValue(gameObject, Constants.ShaderPropertyFocusBrightness, Constants.ShaderPropertyFocusBrightnessDefault);
+                _dynamicMaterialService.ResetDynamicValue(gameObject, Constants.ShaderPropertyFocusBrightness, Constants.ShaderPropertyFocusBrightnessDefault);
             }
 
             _nameCanvas.SetActive(false);
@@ -117,7 +120,7 @@ namespace GUZ.VR.Adapters
         /// </summary>
         private void OnDisable()
         {
-            DynamicMaterialManager.ResetAllDynamicValues(gameObject);
+            _dynamicMaterialService.ResetAllDynamicValues(gameObject);
 
             _isHovered = false;
         }

@@ -7,11 +7,12 @@ using GUZ.Core.Adapters.UI.LoadingBars;
 using GUZ.Core.Adapters.Vob;
 using GUZ.Core.Const;
 using GUZ.Core.Core.Logging;
+using GUZ.Core.Creator;
 using GUZ.Core.Extensions;
+using GUZ.Core.Manager;
 using GUZ.Core.Models.Config;
 using GUZ.Core.Models.Container;
 using GUZ.Core.Models.Vob;
-using GUZ.Core.Services;
 using GUZ.Core.Services.Audio;
 using GUZ.Core.Services.Caches;
 using GUZ.Core.Services.Config;
@@ -26,7 +27,7 @@ using ZenKit.Vobs;
 using Logger = GUZ.Core.Core.Logging.Logger;
 using Object = UnityEngine.Object;
 
-namespace GUZ.Core.Manager.Vobs
+namespace GUZ.Core.Services.Vobs
 {
     public class VobManager
     {
@@ -39,6 +40,7 @@ namespace GUZ.Core.Manager.Vobs
         [Inject] private readonly MultiTypeCacheService _multiTypeCacheService;
         [Inject] private readonly NpcService _npcService;
         [Inject] private readonly SaveGameService _saveGameService;
+        [Inject] private readonly WayNetService _wayNetService;
         // Supporter class where the whole Init() logic is outsourced for better readability.
         [Inject] private readonly VobInitializer _initializer;
 
@@ -421,7 +423,7 @@ namespace GUZ.Core.Manager.Vobs
 
             var item = _vmCacheService.TryGetItemData(itemInstance);
             var instanceName = GameData.GothicVm.GetSymbolByIndex(item.Index)!.Name;
-            var wp = WayNetHelper.GetWayNetPoint(spawnPoint)!;
+            var wp = _wayNetService.GetWayNetPoint(spawnPoint)!;
 
             var vob = new Item
             {

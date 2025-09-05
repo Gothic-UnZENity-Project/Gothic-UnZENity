@@ -3,19 +3,19 @@ using System.Threading.Tasks;
 using GUZ.Core.Adapters.Npc;
 using GUZ.Core.Adapters.Properties;
 using GUZ.Core.Adapters.UI.LoadingBars;
-using GUZ.Core.Models.Adapter.Vobs;
-using GUZ.Core.Models.Container;
-using GUZ.Core.Extensions;
 using GUZ.Core.Const;
 using GUZ.Core.Core.Logging;
+using GUZ.Core.Creator;
+using GUZ.Core.Extensions;
 using GUZ.Core.Manager;
+using GUZ.Core.Models.Adapter.Vobs;
+using GUZ.Core.Models.Container;
 using GUZ.Core.Models.Vm;
 using GUZ.Core.Models.Vob.WayNet;
 using GUZ.Core.Services;
 using GUZ.Core.Services.Caches;
 using GUZ.Core.Services.Npc;
 using GUZ.Core.Services.World;
-using GUZ.Core.Util;
 using JetBrains.Annotations;
 using MyBox;
 using Reflex.Attributes;
@@ -39,6 +39,7 @@ namespace GUZ.Core.Domain.Npc
         [Inject] private readonly NpcRoutineService _npcRoutineService;
         [Inject] private readonly FrameSkipperService _frameSkipperService;
         [Inject] private readonly SaveGameService _saveGameService;
+        [Inject] private readonly WayNetService _wayNetService;
 
         
         public GameObject RootGo;
@@ -303,19 +304,19 @@ namespace GUZ.Core.Domain.Npc
             if (npc.Props.RoutineCurrent != null)
             {
                 var routineSpawnPointName = npc.Props.RoutineCurrent.Waypoint;
-                var wp = WayNetHelper.GetWayNetPoint(routineSpawnPointName);
+                var wp = _wayNetService.GetWayNetPoint(routineSpawnPointName);
 
                 // Some Routines have a misspelled WP name. (e.g. Graham at 8am [..]OUSIDE[...] - >T< missing)
                 // We will therefore do a fallback to the previous routine.
                 if (wp == null)
-                    return WayNetHelper.GetWayNetPoint(npc.Props.RoutinePrevious.Waypoint);
+                    return _wayNetService.GetWayNetPoint(npc.Props.RoutinePrevious.Waypoint);
                 else
                     return wp;
             }
             // Fallback: If no routine exists, spawn at the spot which is named inside Wld_insertNpc()
             else
             {
-                return WayNetHelper.GetWayNetPoint(fallbackSpawnPoint);
+                return _wayNetService.GetWayNetPoint(fallbackSpawnPoint);
             }
         }
 

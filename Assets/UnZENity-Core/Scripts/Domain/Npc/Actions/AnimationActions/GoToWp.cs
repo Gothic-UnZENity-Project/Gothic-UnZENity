@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using GUZ.Core.Models.Container;
-using GUZ.Core.Manager;
 using GUZ.Core.Models.Vob.WayNet;
 using GUZ.Core.Models.WayNet;
 using UnityEngine;
@@ -19,8 +18,8 @@ namespace GUZ.Core.Domain.Npc.Actions.AnimationActions
 
         public override void Start()
         {
-            var currentWaypoint = Props.CurrentWayPoint ?? WayNetHelper.FindNearestWayPoint(PrefabProps.Bip01.position);
-            var destinationWaypoint = (WayPoint)WayNetHelper.GetWayNetPoint(Destination);
+            var currentWaypoint = Props.CurrentWayPoint ?? WayNetService.FindNearestWayPoint(PrefabProps.Bip01.position);
+            var destinationWaypoint = (WayPoint)WayNetService.GetWayNetPoint(Destination);
             
             /*
              * Two situations, when this action can be skipped:
@@ -34,7 +33,7 @@ namespace GUZ.Core.Domain.Npc.Actions.AnimationActions
             }
 
             // We need to set the route now to ensure base.Start() can check if NPC is already _on_ the final destination.
-            _route = new Stack<DijkstraWaypoint>(WayNetHelper.FindFastestPath(currentWaypoint.Name,
+            _route = new Stack<DijkstraWaypoint>(WayNetService.FindFastestPath(currentWaypoint.Name,
                 destinationWaypoint.Name));
 
             base.Start();

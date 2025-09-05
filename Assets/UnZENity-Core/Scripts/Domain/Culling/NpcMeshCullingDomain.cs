@@ -2,11 +2,10 @@ using System.Collections.Generic;
 using System.Linq;
 using GUZ.Core.Adapters.Npc;
 using GUZ.Core.Core.Logging;
-using GUZ.Core.Models.Container;
+using GUZ.Core.Creator;
 using GUZ.Core.Extensions;
-using GUZ.Core.Manager;
+using GUZ.Core.Models.Container;
 using GUZ.Core.Services.Npc;
-using GUZ.Core.Util;
 using Reflex.Attributes;
 using UnityEngine;
 using Logger = GUZ.Core.Core.Logging.Logger;
@@ -16,6 +15,7 @@ namespace GUZ.Core.Domain.Culling
     public class NpcMeshCullingDomain : AbstractCullingDomain
     {
         [Inject] private readonly NpcService _npcService;
+        [Inject] private readonly WayNetService _wayNetService;
 
 
         // Sphere values to track and update when visible NPCs move.
@@ -119,7 +119,7 @@ namespace GUZ.Core.Domain.Culling
                 if (props.RoutineCurrent != null)
                 {
                     var spawnedWayPointName = props.RoutineCurrent.Waypoint;
-                    var wayNetPoint = WayNetHelper.GetWayNetPoint(spawnedWayPointName);
+                    var wayNetPoint = _wayNetService.GetWayNetPoint(spawnedWayPointName);
 
                     if (wayNetPoint is not null)
                     {

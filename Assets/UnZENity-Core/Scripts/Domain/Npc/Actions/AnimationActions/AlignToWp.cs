@@ -1,8 +1,6 @@
 using System;
 using GUZ.Core.Core.Logging;
 using GUZ.Core.Models.Container;
-using GUZ.Core.Manager;
-using GUZ.Core.Util;
 using UnityEngine;
 using Logger = GUZ.Core.Core.Logging.Logger;
 
@@ -18,7 +16,7 @@ namespace GUZ.Core.Domain.Npc.Actions.AnimationActions
         {
             try
             {
-                var currentWaypoint = Props.CurrentWayPoint ?? WayNetHelper.FindNearestWayPoint(PrefabProps.Bip01.position);
+                var currentWaypoint = Props.CurrentWayPoint ?? WayNetService.FindNearestWayPoint(PrefabProps.Bip01.position);
 
                 return Quaternion.Euler(currentWaypoint.Direction);
             }

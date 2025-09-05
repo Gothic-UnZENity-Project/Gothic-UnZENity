@@ -2,8 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using GUZ.Core.Core.Logging;
+using GUZ.Core.Manager;
 using GUZ.Core.Models.Npc;
+using GUZ.Core.Services.Npc;
 using GUZ.Core.Util;
+using Reflex.Attributes;
 using UnityEngine;
 using Logger = GUZ.Core.Core.Logging.Logger;
 
@@ -11,18 +14,20 @@ namespace GUZ.Core.Adapters.Npc
 {
     public class RoutineHandler : MonoBehaviour
     {
+        [Inject] private readonly RoutineService _routineService;
+        
         public readonly List<RoutineData> Routines = new();
 
         public RoutineData CurrentRoutine;
 
         private void Start()
         {
-            GameGlobals.Routines.Subscribe(this, Routines);
+            _routineService.Subscribe(this, Routines);
         }
 
         private void OnDisable()
         {
-            GameGlobals.Routines.Unsubscribe(this, Routines);
+            _routineService.Unsubscribe(this, Routines);
         }
 
         public void ChangeRoutine(DateTime now)

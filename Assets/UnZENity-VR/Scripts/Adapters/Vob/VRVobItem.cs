@@ -3,7 +3,9 @@ using System.Collections;
 using GUZ.Core;
 using GUZ.Core.Const;
 using GUZ.Core.Manager;
+using GUZ.Core.Services;
 using GUZ.Core.Services.Config;
+using GUZ.Core.Services.Meshes;
 using GUZ.VR.Services;
 using HurricaneVR.Framework.Core;
 using HurricaneVR.Framework.Core.Grabbers;
@@ -18,6 +20,7 @@ namespace GUZ.VR.Adapters.Vob
         [Inject] private readonly VRPlayerService _vrPlayerService;
         [Inject] private readonly ConfigService _configService;
         [Inject] private readonly MarvinService _marvinService;
+        [Inject] private readonly DynamicMaterialService _dynamicMaterialService;
 
         [SerializeField] private VRVobItemProperties _vrProperties;
         [SerializeField] private Rigidbody _rigidbody;
@@ -76,7 +79,7 @@ namespace GUZ.VR.Adapters.Vob
             gameObject.layer = Constants.VobItemNoWorldCollision;
 
             // At least until object isn't colliding with anything any longer, the object will be a ghost (i.e. no collision + transparency activated)
-            DynamicMaterialManager.SetDynamicValue(gameObject, Constants.ShaderPropertyTransparency, Constants.ShaderPropertyTransparencyValue);
+            _dynamicMaterialService.SetDynamicValue(gameObject, Constants.ShaderPropertyTransparency, Constants.ShaderPropertyTransparencyValue);
 
             // If we want Item collisions, we just temporarily deactivate them until the item is free of collisions.
             StartCoroutine(ReEnableCollisionRoutine());
@@ -92,7 +95,7 @@ namespace GUZ.VR.Adapters.Vob
             GameGlobals.VobMeshCulling?.StopTrackVobPositionUpdates(gameObject);
 
             // Disable "ghostification" of object.
-            DynamicMaterialManager.ResetDynamicValue(gameObject, Constants.ShaderPropertyTransparency, Constants.ShaderPropertyTransparencyDefault);
+            _dynamicMaterialService.ResetDynamicValue(gameObject, Constants.ShaderPropertyTransparency, Constants.ShaderPropertyTransparencyDefault);
 
             GameGlobals.VobMeshCulling?.StartTrackVobPositionUpdates(gameObject);
             _vrPlayerService.UnsetGrab(grabber, grabbable);
@@ -168,7 +171,7 @@ namespace GUZ.VR.Adapters.Vob
             gameObject.layer = Constants.VobItem;
 
             // Disable "ghostification" of object.
-            DynamicMaterialManager.ResetDynamicValue(gameObject, Constants.ShaderPropertyTransparency, Constants.ShaderPropertyTransparencyDefault);
+            _dynamicMaterialService.ResetDynamicValue(gameObject, Constants.ShaderPropertyTransparency, Constants.ShaderPropertyTransparencyDefault);
         }
 
         /// <summary>
@@ -272,7 +275,7 @@ namespace GUZ.VR.Adapters.Vob
         /// </summary>
         private void OnDisable()
         {
-            DynamicMaterialManager.ResetAllDynamicValues(gameObject);
+            _dynamicMaterialService.ResetAllDynamicValues(gameObject);
         }
     }
 }

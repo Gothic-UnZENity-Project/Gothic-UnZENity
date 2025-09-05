@@ -1,5 +1,4 @@
 using GUZ.Core.Models.Container;
-using GUZ.Core.Manager;
 using UnityEngine;
 
 namespace GUZ.Core.Domain.Npc.Actions.AnimationActions
@@ -15,7 +14,7 @@ namespace GUZ.Core.Domain.Npc.Actions.AnimationActions
 
         protected override Quaternion GetRotationDirection()
         {
-            var euler = WayNetHelper.GetWayNetPoint(WaypointName).Direction;
+            var euler = WayNetService.GetWayNetPoint(WaypointName).Direction;
             return Quaternion.Euler(euler);
         }
     }

@@ -3,6 +3,7 @@ using GUZ.Core.Adapters.Properties;
 using GUZ.Core.Extensions;
 using GUZ.Core.Const;
 using GUZ.Core.Core.Logging;
+using GUZ.Core.Creator;
 using GUZ.Core.Manager;
 using GUZ.Core.Models.Vm;
 using GUZ.Core.Domain.Npc.Actions;
@@ -29,6 +30,7 @@ namespace GUZ.Core.Adapters.Npc
         [Inject] private readonly NpcHelperService _npcHelperService;
         [Inject] private readonly NpcAiService _npcAiService;
         [Inject] private readonly NpcService _npcService;
+        [Inject]  private readonly WayNetService _wayNetService;
 
 
         private static DaedalusVm Vm => GameData.GothicVm;
@@ -328,7 +330,7 @@ namespace GUZ.Core.Adapters.Npc
             var currentRoutine = Properties.RoutineCurrent;
             if (currentRoutine != null)
             {
-                var wpPos = WayNetHelper.GetWayNetPoint(currentRoutine.Waypoint).Position;
+                var wpPos = _wayNetService.GetWayNetPoint(currentRoutine.Waypoint).Position;
                 gameObject.transform.position = _npcService.GetFreeAreaAtSpawnPoint(wpPos);
             }
 

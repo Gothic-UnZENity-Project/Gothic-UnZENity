@@ -3,24 +3,21 @@ using System.Collections.Generic;
 using GUZ.Core.Adapters.Npc;
 using GUZ.Core.Models.Config;
 using GUZ.Core.Models.Npc;
+using GUZ.Core.Services.Config;
+using GUZ.Core.Services.Npc;
+using Reflex.Attributes;
 
 namespace GUZ.Core.Manager
 {
     /// <summary>
     /// Manages the Routines in a central spot. Routines Subscribe here. Calls the Routines when they are due.
     /// </summary>
-    public class RoutineManager
+    public class RoutineService
     {
+        [Inject] private readonly ConfigService _configService;
+        
         private Dictionary<int, List<RoutineHandler>> _npcStartTimeDict = new();
 
-        private readonly int _featureStartHour;
-        private readonly int _featureStartMinute;
-
-        public RoutineManager(DeveloperConfig config)
-        {
-            _featureStartHour = config.StartTimeHour;
-            _featureStartMinute = config.StartTimeMinute;
-        }
 
         public void Init()
         {
@@ -31,7 +28,7 @@ namespace GUZ.Core.Manager
 
         private void WorldLoadedEvent()
         {
-            var time = new DateTime(1, 1, 1, _featureStartHour, _featureStartMinute, 0);
+            var time = new DateTime(1, 1, 1, _configService.Dev.StartTimeHour, _configService.Dev.StartTimeMinute, 0);
 
             Invoke(time);
         }

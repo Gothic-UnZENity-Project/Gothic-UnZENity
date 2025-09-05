@@ -3,21 +3,22 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using GUZ.Core.Adapters.Npc;
-using GUZ.Core.Models.Adapter.Vobs;
-using GUZ.Core.Models.Container;
-using GUZ.Core.Models.Vob;
-using GUZ.Core.Domain.Npc;
-using GUZ.Core.Extensions;
 using GUZ.Core.Const;
 using GUZ.Core.Core.Logging;
+using GUZ.Core.Creator;
+using GUZ.Core.Domain.Npc;
+using GUZ.Core.Extensions;
 using GUZ.Core.Manager;
+using GUZ.Core.Models.Adapter.Vobs;
 using GUZ.Core.Models.Config;
+using GUZ.Core.Models.Container;
 using GUZ.Core.Models.Npc;
 using GUZ.Core.Models.Vm;
+using GUZ.Core.Models.Vob;
 using GUZ.Core.Services.Caches;
 using GUZ.Core.Services.Config;
+using GUZ.Core.Services.Player;
 using GUZ.Core.Services.World;
-using GUZ.Core.Util;
 using MyBox;
 using Reflex.Attributes;
 using UnityEngine;
@@ -43,7 +44,9 @@ namespace GUZ.Core.Services.Npc
         [Inject] private readonly MultiTypeCacheService _multiTypeCacheService;
         [Inject] private readonly VmCacheService _vmCacheService;
         [Inject] private readonly SaveGameService _saveGameService;
-        
+        [Inject] private readonly PlayerService _playerService;
+        [Inject] private readonly WayNetService _wayNetService;
+
         private readonly NpcInitializerDomain _initializerDomain = new NpcInitializerDomain().Inject();
 
 
@@ -153,8 +156,8 @@ namespace GUZ.Core.Services.Npc
         {
             if (vobNpc.Name.EqualsIgnoreCase(Constants.DaedalusHeroInstanceName))
             {
-                GameGlobals.Player.HeroSpawnPosition = vobNpc.Position.ToUnityVector();
-                GameGlobals.Player.HeroSpawnRotation = vobNpc.Rotation.ToUnityQuaternion();
+                _playerService.HeroSpawnPosition = vobNpc.Position.ToUnityVector();
+                _playerService.HeroSpawnRotation = vobNpc.Rotation.ToUnityQuaternion();
                 return;
             }
 
@@ -437,7 +440,7 @@ namespace GUZ.Core.Services.Npc
         {
             var pos = npc.GetUserData().Go.transform.position;
 
-            return WayNetHelper.FindNearestWayPoint(pos, true).Name;
+            return _wayNetService.FindNearestWayPoint(pos, true).Name;
         }
 
         public bool ExtWldIsFpAvailable(NpcInstance npc, string fpNamePart)
@@ -445,7 +448,7 @@ namespace GUZ.Core.Services.Npc
             var props = npc.GetUserData().Props;
             var npcGo = npc.GetUserData().Go;
             var freePoints =
-                WayNetHelper.FindFreePointsWithName(npcGo.transform.position, fpNamePart, _fpLookupDistance);
+                _wayNetService.FindFreePointsWithName(npcGo.transform.position, fpNamePart, _fpLookupDistance);
 
             foreach (var fp in freePoints)
             {
@@ -469,14 +472,14 @@ namespace GUZ.Core.Services.Npc
         {
             var pos = npc.GetUserData().Go.transform.position;
 
-            return WayNetHelper.FindNearestWayPoint(pos).Name;
+            return _wayNetService.FindNearestWayPoint(pos).Name;
         }
 
         public bool ExtIsNextFpAvailable(NpcInstance npc, string fpNamePart)
         {
             var props = npc.GetUserData().Props;
             var pos = npc.GetUserData().Go.transform.position;
-            var fp = WayNetHelper.FindNearestFreePoint(pos, fpNamePart, null);
+            var fp = _wayNetService.FindNearestFreePoint(pos, fpNamePart, null);
 
             if (fp == null)
             {

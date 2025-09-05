@@ -1,9 +1,9 @@
 ﻿using GUZ.Core.Domain.Animations;
 using GUZ.Core.Manager;
-using GUZ.Core.Manager.Vobs;
 using GUZ.Core.Services;
 using GUZ.Core.Services.Culling;
 using GUZ.Core.Services.Npc;
+using GUZ.Core.Services.Vobs;
 using GUZ.Core.Services.World;
 
 namespace GUZ.Core.Editor
@@ -14,11 +14,9 @@ namespace GUZ.Core.Editor
     public class EditorDataProvider : IGlobalDataProvider
     {
         public SaveGameService SaveGame { get; }
-        public PlayerManager Player { get; }
         public SkyService Sky { get; }
         public GameTimeService Time { get; }
         public VideoService Video { get; }
-        public RoutineManager Routines { get; }
         public StoryService Story { get; }
         public VobManager Vobs { get; }
         public NpcService Npcs { get; }

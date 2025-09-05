@@ -1,5 +1,4 @@
 using GUZ.Core.Models.Container;
-using GUZ.Core.Manager;
 using GUZ.Core.Models.Vob.WayNet;
 using UnityEngine;
 
@@ -20,7 +19,7 @@ namespace GUZ.Core.Domain.Npc.Actions.AnimationActions
         public override void Start()
         {
             var npcPos = NpcGo.transform.position;
-            _fp = WayNetHelper.FindNearestFreePoint(npcPos, _destination, Props.CurrentFreePoint);
+            _fp = WayNetService.FindNearestFreePoint(npcPos, _destination, Props.CurrentFreePoint);
 
             if (_fp == null)
             {

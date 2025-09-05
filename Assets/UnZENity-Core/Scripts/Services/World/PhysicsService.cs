@@ -1,16 +1,16 @@
 using GUZ.Core.Adapters.Npc;
 using UnityEngine;
 
-namespace GUZ.Core.Manager
+namespace GUZ.Core.Services.World
 {
-    public static class PhysicsHelper
+    public class PhysicsService
     {
-        public static void DisablePhysicsForNpc(NpcPrefabProperties prefabProps)
+        public void DisablePhysicsForNpc(NpcPrefabProperties prefabProps)
         {
             prefabProps.ColliderRootMotion.GetComponent<Rigidbody>().isKinematic = true;
         }
 
-        public static void EnablePhysicsForNpc(NpcPrefabProperties prefabProps)
+        public void EnablePhysicsForNpc(NpcPrefabProperties prefabProps)
         {
             prefabProps.ColliderRootMotion.GetComponent<Rigidbody>().isKinematic = false;
         }

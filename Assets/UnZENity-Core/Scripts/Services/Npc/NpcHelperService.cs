@@ -3,14 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using GUZ.Core.Adapters.Properties;
 using GUZ.Core.Adapters.Properties.Vobs;
-using GUZ.Core.Models.Container;
-using GUZ.Core.Extensions;
 using GUZ.Core.Const;
 using GUZ.Core.Core.Logging;
-using GUZ.Core.Manager;
+using GUZ.Core.Creator;
+using GUZ.Core.Extensions;
+using GUZ.Core.Models.Container;
 using GUZ.Core.Models.Vm;
 using GUZ.Core.Services.Caches;
-using GUZ.Core.Util;
 using JetBrains.Annotations;
 using Reflex.Attributes;
 using UnityEngine;
@@ -30,6 +29,7 @@ namespace GUZ.Core.Services.Npc
 
 
         [Inject] private readonly MultiTypeCacheService _multiTypeCacheService;
+        [Inject] private readonly WayNetService _wayNetService;
 
 
         private const float _fpLookupDistance = 7f; // meter
@@ -179,7 +179,7 @@ namespace GUZ.Core.Services.Npc
             var npcGo = GetNpc(npc);
             var npcPos = npcGo.transform.position;
 
-            var waypoint = WayNetHelper.GetWayNetPoint(waypointName);
+            var waypoint = _wayNetService.GetWayNetPoint(waypointName);
 
             if (waypoint == null || !npcGo)
             {

@@ -8,12 +8,13 @@ using GUZ.Core.Extensions;
 using GUZ.Core.Const;
 using GUZ.Core.Core.Logging;
 using GUZ.Core.Manager;
-using GUZ.Core.Manager.Vobs;
 using GUZ.Core.Models.Vob.WayNet;
 using GUZ.Core.Services;
 using GUZ.Core.Services.Config;
 using GUZ.Core.Services.Npc;
+using GUZ.Core.Services.Player;
 using GUZ.Core.Services.StaticCache;
+using GUZ.Core.Services.Vobs;
 using GUZ.Core.Services.World;
 using GUZ.Core.Util;
 using MyBox;
@@ -36,7 +37,8 @@ namespace GUZ.Core.Adapters.Scenes
         [Inject] private readonly LoadingService _loadingService;
         [Inject] private readonly StaticCacheService _staticCacheService;
         [Inject] private readonly StationaryLightsService _stationaryLightsService;
-
+        [Inject] private readonly PlayerService _playerService;
+        
         public void Init()
         {
 #pragma warning disable CS4014 // Do not wait. We want to update player movement (VR) and camera view (progress bar)
@@ -203,9 +205,9 @@ namespace GUZ.Core.Adapters.Scenes
             }
 
             // 2.
-            if (GameGlobals.Player.HeroSpawnPosition != default)
+            if (_playerService.HeroSpawnPosition != default)
             {
-                TeleportPlayerToStart(GameGlobals.Player.HeroSpawnPosition, GameGlobals.Player.HeroSpawnRotation);
+                TeleportPlayerToStart(_playerService.HeroSpawnPosition, _playerService.HeroSpawnRotation);
                 return;
             }
             
@@ -213,12 +215,12 @@ namespace GUZ.Core.Adapters.Scenes
             KeyValuePair<string, FreePoint> startPoint;
             
             // 3.
-            if(GameGlobals.Player.LastLevelChangeTriggerVobName != null)
+            if(_playerService.LastLevelChangeTriggerVobName != null)
             {
                 startPoint = spots.FirstOrDefault(
-                    go => go.Key.EqualsIgnoreCase(GameGlobals.Player.LastLevelChangeTriggerVobName));
+                    go => go.Key.EqualsIgnoreCase(_playerService.LastLevelChangeTriggerVobName));
                 TeleportPlayerToStart(startPoint.Value.Position, startPoint.Value.Rotation);
-                GameGlobals.Player.LastLevelChangeTriggerVobName = null;
+                _playerService.LastLevelChangeTriggerVobName = null;
                 return;
             }
 
@@ -240,7 +242,7 @@ namespace GUZ.Core.Adapters.Scenes
         {
             GameContext.ContextInteractionService.TeleportPlayerTo(position, rotation);
             GameContext.ContextInteractionService.UnlockPlayer();
-            GameGlobals.Player.ResetSpawn();
+            _playerService.ResetSpawn();
         }
     }
 }

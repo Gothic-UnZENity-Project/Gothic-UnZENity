@@ -1,11 +1,10 @@
 using System.Diagnostics;
 using System.Globalization;
+using GUZ.Core.Adapters.Scenes;
 using GUZ.Core.Const;
 using GUZ.Core.Core.Logging;
 using GUZ.Core.Extensions;
 using GUZ.Core.Manager;
-using GUZ.Core.Adapters.Scenes;
-using GUZ.Core.Manager.Vobs;
 using GUZ.Core.Models.Config;
 using GUZ.Core.Services;
 using GUZ.Core.Services.Caches;
@@ -14,12 +13,13 @@ using GUZ.Core.Services.Context;
 using GUZ.Core.Services.Culling;
 using GUZ.Core.Services.Meshes;
 using GUZ.Core.Services.Npc;
+using GUZ.Core.Services.Player;
 using GUZ.Core.Services.StaticCache;
+using GUZ.Core.Services.Vobs;
 using GUZ.Core.Services.World;
 using GUZ.Core.Util;
 using MyBox;
 using Reflex.Attributes;
-using UnityEngine;
 using UnityEngine.SceneManagement;
 using ZenKit;
 using Logger = GUZ.Core.Core.Logging.Logger;
@@ -35,12 +35,8 @@ namespace GUZ.Core
 
         public LoadingService Loading { get; private set; }
 
-        public PlayerManager Player { get; private set; }
-
         public GameTimeService Time { get; private set; }
         
-        public RoutineManager Routines { get; private set; }
-
         public StoryService Story { get; private set; }
 
 
@@ -72,13 +68,15 @@ namespace GUZ.Core
         [Inject] private readonly LoadingService _loadingService;
         [Inject] private readonly TextureService _textureService;
         [Inject] private readonly SaveGameService _saveGameService;
+        [Inject] private readonly PlayerService _playerService;
         
         [Inject] private readonly FrameSkipperService _frameSkipperService;
         [Inject] private readonly VobManager _vobManager;
         [Inject] private readonly ConfigService _configService;
         [Inject] private readonly NpcService _npcService;
         [Inject] private readonly NpcAiService _npcAiService;
-
+        [Inject] private readonly RoutineService _routineService;
+        
         [Inject] private readonly MultiTypeCacheService _multiTypeCacheService;
         [Inject] private readonly StaticCacheService _staticCacheService;
 
@@ -114,10 +112,8 @@ namespace GUZ.Core
             VobMeshCulling = _vobMeshCullingService;
             NpcMeshCulling = _npcMeshCullingService;
             Lights = new StationaryLightsService();
-            Player = new PlayerManager();
             Time = _gameTimeService;
             Story = new StoryService();
-            Routines = new RoutineManager(DeveloperConfig);
             SpeechToText = _speechToTextService;
 
             ZenKit.Logger.Set(_configService.Dev.ZenKitLogLevel, Logger.OnZenKitLogMessage);
@@ -149,8 +145,7 @@ namespace GUZ.Core
             NpcMeshCulling.Init();
             _vobSoundCullingService.Init();
             Time.Init();
-            Player.Init();
-            Routines.Init();
+            _routineService.Init();
         }
 
         /// <summary>
@@ -182,7 +177,7 @@ namespace GUZ.Core
 
             GlobalEventDispatcher.LevelChangeTriggered.AddListener((world, spawn) =>
             {
-                Player.LastLevelChangeTriggerVobName = spawn;
+                _playerService.LastLevelChangeTriggerVobName = spawn;
                 LoadWorld(world, SaveGameService.SlotId.WorldChangeOnly, SceneManager.GetActiveScene().name);
             });
 
@@ -258,7 +253,6 @@ namespace GUZ.Core
             NpcMeshCulling = null;
             Lights = null;
             Time = null;
-            Routines = null;
         }
     }
 }

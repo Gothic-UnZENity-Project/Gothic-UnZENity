@@ -156,7 +156,7 @@ namespace GUZ.Core.Domain.Npc.Actions.AnimationActions
                 PrefabProps.CurrentInteractableSlot = null;
                 Props.BodyState = VmGothicEnums.BodyState.BsStand;
 
-                PhysicsHelper.EnablePhysicsForNpc(PrefabProps);
+                PhysicsService.EnablePhysicsForNpc(PrefabProps);
             }
             // Loop Mobsi animation until the same UseMob with -1 is called.
             else
@@ -204,7 +204,7 @@ namespace GUZ.Core.Domain.Npc.Actions.AnimationActions
                 Props.CurrentItem = item!.Index;
             }
             
-            PhysicsHelper.DisablePhysicsForNpc(PrefabProps);
+            PhysicsService.DisablePhysicsForNpc(PrefabProps);
 
             NpcGo.transform.SetPositionAndRotation(_slotGo.transform.position, _slotGo.transform.rotation);
 

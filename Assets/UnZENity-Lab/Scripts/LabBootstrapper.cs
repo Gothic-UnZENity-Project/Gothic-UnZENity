@@ -2,11 +2,10 @@ using System;
 using System.Globalization;
 using System.Threading.Tasks;
 using GUZ.Core;
-using GUZ.Core.Extensions;
 using GUZ.Core.Const;
 using GUZ.Core.Core.Logging;
+using GUZ.Core.Extensions;
 using GUZ.Core.Manager;
-using GUZ.Core.Manager.Vobs;
 using GUZ.Core.Models.Config;
 using GUZ.Core.Services;
 using GUZ.Core.Services.Caches;
@@ -17,10 +16,9 @@ using GUZ.Core.Services.Meshes;
 using GUZ.Core.Services.Npc;
 using GUZ.Core.Services.StaticCache;
 using GUZ.Core.Services.UI;
+using GUZ.Core.Services.Vobs;
 using GUZ.Core.Services.World;
-using GUZ.Core.Util;
 using GUZ.Lab.Handler;
-using GUZ.Services.UI;
 using Reflex.Attributes;
 using UnityEngine;
 using ZenKit;
@@ -43,29 +41,17 @@ namespace GUZ.Lab
         public LabLockHandler LabLockHandler;
 
         private VideoService _videoService;
-        private RoutineManager _npcRoutineManager;
         private SaveGameService _save;
         private StaticCacheService _staticCacheService;
-        private FontService _fontService;
         private StoryService _story;
         private VobManager _vobManager;
         private NpcService _npcService;
 
-        public SaveGameService SaveGame => _save;
-        public LoadingService Loading => null;
-        public StaticCacheService StaticCache => _staticCacheService;
-        public PlayerManager Player => null;
         public GameTimeService Time => _gameTimeService;
-        public AudioService Audio => Audio;
-        public RoutineManager Routines => _npcRoutineManager;
-        public FontService Font => _fontService;
         public VobManager Vobs => _vobManager;
-        public NpcService Npcs => _npcService;
-        public NpcAiService NpcAi => null;
         public VobMeshCullingService VobMeshCulling => null;
         public NpcMeshCullingService NpcMeshCulling => null;
         public StoryService Story => _story;
-        public VideoService Video => _videoService;
         public SpeechToTextService SpeechToText => null;
 
 
@@ -121,8 +107,6 @@ namespace GUZ.Lab
             _save = new SaveGameService();
             _staticCacheService = new StaticCacheService();
             _story = new StoryService();
-            _fontService = GetComponent<FontService>();
-            _npcRoutineManager = new RoutineManager(_configService.Dev);
             _videoService = new VideoService();
             _npcService = new NpcService();
             _vobManager = new VobManager();
@@ -136,7 +120,6 @@ namespace GUZ.Lab
             GlobalEventDispatcher.RegisterGameVersionService.Invoke(DeveloperConfig.GameVersion);
 
             _audioService.InitMusic();
-            _npcRoutineManager.Init();
             _staticCacheService.Init(_configService.Dev);
             _textureService.Init();
             _npcService.Init();

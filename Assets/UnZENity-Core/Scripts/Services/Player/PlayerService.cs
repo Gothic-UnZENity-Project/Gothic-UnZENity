@@ -1,18 +1,13 @@
 using UnityEngine;
 
-namespace GUZ.Core.Manager
+namespace GUZ.Core.Services.Player
 {
-    public class PlayerManager
+    public class PlayerService
     {
         public Vector3 HeroSpawnPosition;
         public Quaternion HeroSpawnRotation;
 
         public string LastLevelChangeTriggerVobName;
-
-        public void Init()
-        {
-            // Nothing to do for now. Might be needed later.
-        }
 
         public void ResetSpawn()
         {
