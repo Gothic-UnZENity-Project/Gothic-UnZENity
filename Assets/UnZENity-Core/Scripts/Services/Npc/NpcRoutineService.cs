@@ -5,6 +5,7 @@ using GUZ.Core.Core.Logging;
 using GUZ.Core.Models.Npc;
 using GUZ.Core.Util;
 using MyBox;
+using Reflex.Attributes;
 using ZenKit;
 using ZenKit.Daedalus;
 using Logger = GUZ.Core.Core.Logging.Logger;
@@ -13,6 +14,8 @@ namespace GUZ.Core.Services.Npc
 {
     public class NpcRoutineService
     {
+        [Inject] private readonly GameTimeService _gameTimeService;
+        
         private static DaedalusVm _vm => GameData.GothicVm;
 
         public void ExtNpcExchangeRoutine(NpcInstance npcInstance, string routineName)
@@ -66,7 +69,7 @@ namespace GUZ.Core.Services.Npc
         private bool CalculateCurrentRoutine(NpcInstance npc)
         {
             var npcProps = npc.GetUserData().Props;
-            var currentTime = GameGlobals.Time.GetCurrentDateTime();
+            var currentTime = _gameTimeService.GetCurrentDateTime();
             var normalizedNow = currentTime.Hour % 24 * 60 + currentTime.Minute;
             RoutineData newRoutine = null;
 

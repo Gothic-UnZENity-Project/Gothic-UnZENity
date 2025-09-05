@@ -4,6 +4,7 @@ using GUZ.Core.Core.Logging;
 using GUZ.Core.Models.Container;
 using GUZ.Core.Services;
 using GUZ.Core.Util;
+using Reflex.Attributes;
 using UnityEngine;
 using ZenKit.Vobs;
 using Logger = GUZ.Core.Core.Logging.Logger;
@@ -16,6 +17,8 @@ namespace GUZ.Core.Adapters.Vob
         [SerializeField] private AudioSource _audioSource1;
         [SerializeField] private AudioSource _audioSource2;
 
+        [Inject] private readonly GameTimeService _gameTimeService;
+        
         private VobContainer _vobContainer;
 
         private DateTime _startSound1 = GameTimeService.MinTime;
@@ -30,7 +33,7 @@ namespace GUZ.Core.Adapters.Vob
             _vobContainer = GetComponentInParent<VobLoader>().Container;
 
             // Set active sound initially
-            HourEventCallback(GameGlobals.Time.GetCurrentDateTime());
+            HourEventCallback(_gameTimeService.GetCurrentDateTime());
 
             if (gameObject.activeSelf)
                 StartCoroutineInternal();
@@ -51,7 +54,7 @@ namespace GUZ.Core.Adapters.Vob
 
         private void OnEnable()
         {
-            HourEventCallback(GameGlobals.Time.GetCurrentDateTime());
+            HourEventCallback(_gameTimeService.GetCurrentDateTime());
 
             GlobalEventDispatcher.GameTimeHourChangeCallback.AddListener(HourEventCallback);
 

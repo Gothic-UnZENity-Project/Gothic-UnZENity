@@ -6,6 +6,7 @@ using GUZ.Core.Const;
 using GUZ.Core.Core.Logging;
 using GUZ.Core.Manager;
 using GUZ.Core.Models.Vm;
+using GUZ.Core.Services;
 using GUZ.Core.Services.Caches;
 using GUZ.Core.Services.Config;
 using GUZ.Core.Services.Npc;
@@ -30,6 +31,7 @@ namespace GUZ.Core.Domain.Vm
         [Inject] private readonly NpcService _npcService;
         [Inject] private readonly NpcAiService _npcAiService;
         [Inject] private readonly NpcRoutineService _npcRoutineService;
+        [Inject] private readonly GameTimeService _gameTimeService;
 
 
         private bool _enableZSpyLogs;
@@ -970,12 +972,12 @@ namespace GUZ.Core.Domain.Vm
 
         public void Wld_SetTime(int hour, int minute)
         {
-            GameGlobals.Time.SetTime(hour, minute);
+            _gameTimeService.SetTime(hour, minute);
         }
 
         public int Wld_GetDay()
         {
-            return GameGlobals.Time.GetDay();
+            return _gameTimeService.GetDay();
         }
 
         public int Wld_IsTime(int beginHour, int beginMinute, int endHour, int endMinute)
@@ -983,7 +985,7 @@ namespace GUZ.Core.Domain.Vm
             var begin = new TimeSpan(beginHour, beginMinute, 0);
             var end = new TimeSpan(endHour, endMinute, 0);
 
-            var now = GameGlobals.Time.GetCurrentTime();
+            var now = _gameTimeService.GetCurrentTime();
 
             if (begin <= end && begin <= now && now < end)
             {

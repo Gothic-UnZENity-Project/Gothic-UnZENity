@@ -4,6 +4,7 @@ using System.Linq;
 using GUZ.Core.Core.Logging;
 using GUZ.Core.Manager;
 using GUZ.Core.Models.Npc;
+using GUZ.Core.Services;
 using GUZ.Core.Services.Npc;
 using GUZ.Core.Util;
 using Reflex.Attributes;
@@ -15,6 +16,7 @@ namespace GUZ.Core.Adapters.Npc
     public class RoutineHandler : MonoBehaviour
     {
         [Inject] private readonly RoutineService _routineService;
+        [Inject] private readonly GameTimeService _gameTimeService;
         
         public readonly List<RoutineData> Routines = new();
 
@@ -55,7 +57,7 @@ namespace GUZ.Core.Adapters.Npc
         /// <returns>Whether the routine changed or not.</returns>
         public bool CalculateCurrentRoutine()
         {
-            var currentTime = GameGlobals.Time.GetCurrentDateTime();
+            var currentTime = _gameTimeService.GetCurrentDateTime();
 
             var normalizedNow = currentTime.Hour % 24 * 60 + currentTime.Minute;
 

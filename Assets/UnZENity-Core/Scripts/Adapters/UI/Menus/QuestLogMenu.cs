@@ -7,6 +7,7 @@ using GUZ.Core.Model.UI.MenuItem;
 using GUZ.Core.Services;
 using GUZ.Core.Util;
 using MyBox;
+using Reflex.Attributes;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -70,6 +71,8 @@ namespace GUZ.Core.Adapters.UI.Menus
         private ListItemContainer _activeListMenu;
 
 
+        [Inject] private readonly GameTimeService _gameTimeService;
+
         private class ListItemContainer
         {
             public string InstanceName;
@@ -98,7 +101,7 @@ namespace GUZ.Core.Adapters.UI.Menus
             base.InitializeMenu(menuInstance);
 
             Setup();
-            UpdateDayAndTime(GameManager.I.Time.GetCurrentDateTime());
+            UpdateDayAndTime(_gameTimeService.GetCurrentDateTime());
             GlobalEventDispatcher.GameTimeMinuteChangeCallback.AddListener(UpdateDayAndTime);
         }
 

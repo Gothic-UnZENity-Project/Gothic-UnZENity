@@ -33,10 +33,6 @@ namespace GUZ.Core
         private FileLoggingHandler _fileLoggingHandler;
 
 
-        public LoadingService Loading { get; private set; }
-
-        public GameTimeService Time { get; private set; }
-        
         public StoryService Story { get; private set; }
 
 
@@ -106,13 +102,11 @@ namespace GUZ.Core
             
             _multiTypeCacheService.Init();
 
-            Loading = _loadingService;
             Vobs = _vobManager;
             Npcs = _npcService;
             VobMeshCulling = _vobMeshCullingService;
             NpcMeshCulling = _npcMeshCullingService;
             Lights = new StationaryLightsService();
-            Time = _gameTimeService;
             Story = new StoryService();
             SpeechToText = _speechToTextService;
 
@@ -139,12 +133,11 @@ namespace GUZ.Core
             GlobalEventDispatcher.RegisterControlsService.Invoke(_configService.Dev.GameControls);
 
             _frameSkipperService.Init();
-            Loading.Init();
             Lights.Init();
             VobMeshCulling.Init();
             NpcMeshCulling.Init();
             _vobSoundCullingService.Init();
-            Time.Init();
+            _gameTimeService.Init();
             _routineService.Init();
         }
 
@@ -252,7 +245,6 @@ namespace GUZ.Core
             VobMeshCulling = null;
             NpcMeshCulling = null;
             Lights = null;
-            Time = null;
         }
     }
 }

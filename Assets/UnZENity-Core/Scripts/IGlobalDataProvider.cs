@@ -8,7 +8,6 @@ namespace GUZ.Core
 {
     public interface IGlobalDataProvider
     {
-        public GameTimeService Time { get; }
         public StoryService Story { get; }
         public VobManager Vobs { get; }
         public VobMeshCullingService VobMeshCulling { get; }

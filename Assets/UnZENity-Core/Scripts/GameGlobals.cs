@@ -10,7 +10,6 @@ namespace GUZ.Core
     {
         public static IGlobalDataProvider Instance;
 
-        public static GameTimeService Time => Instance.Time;
         public static StoryService Story => Instance.Story;
         public static VobManager Vobs => Instance.Vobs;
         public static VobMeshCullingService VobMeshCulling => Instance.VobMeshCulling;

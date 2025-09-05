@@ -17,11 +17,6 @@ namespace GUZ.Core.Manager
         // Recalculate and update loading bar next frame if something changed. Do not recalculate with every Tick() (for sake of performance)
         private bool _isDirty;
 
-        public void Init()
-        {
-            // NOP
-        }
-
         public void Update()
         {
             if (_isInitialized && _isDirty)
