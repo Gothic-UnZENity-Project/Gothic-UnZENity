@@ -2,15 +2,14 @@ using System;
 using GUZ.Core.Const;
 using GUZ.Core.Core.Logging;
 using GUZ.Core.Services.Config;
-using GUZ.Core.Util;
 using Reflex.Attributes;
 using UnityEngine;
 using ZenKit;
 using Logger = GUZ.Core.Core.Logging.Logger;
 
-namespace GUZ.Core.Manager.Scenes
+namespace GUZ.Core.Adapters.Scenes
 {
-    public class GameVersionSceneManager : MonoBehaviour, ISceneManager
+    public class GameVersionScene : MonoBehaviour, IScene
     {
         [Inject] private readonly ConfigService _configService;
 

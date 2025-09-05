@@ -5,12 +5,12 @@ using Reflex.Attributes;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace GUZ.Core.Manager.Scenes
+namespace GUZ.Core.Adapters.Scenes
 {
     /// <summary>
     /// Specific manager for Bootstrap.unity scene tasks only.
     /// </summary>
-    public class BootstrapSceneManager : MonoBehaviour, ISceneManager
+    public class BootstrapScene : MonoBehaviour, IScene
     {
         [Inject] private readonly ConfigService _configService;
 

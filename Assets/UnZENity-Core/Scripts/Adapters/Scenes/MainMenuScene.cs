@@ -6,12 +6,12 @@ using GUZ.Core.Services.World;
 using Reflex.Attributes;
 using UnityEngine;
 
-namespace GUZ.Core.Manager.Scenes
+namespace GUZ.Core.Adapters.Scenes
 {
     /// <summary>
     /// Specific manager for MainMenu.unity scene tasks only.
     /// </summary>
-    public class MainMenuSceneManager : MonoBehaviour, ISceneManager
+    public class MainMenuScene : MonoBehaviour, IScene
     {
         [SerializeField] private GameObject _mainMenuImageBackground;
 

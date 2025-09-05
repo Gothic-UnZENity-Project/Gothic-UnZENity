@@ -1,12 +1,13 @@
 using GUZ.Core.Adapters.UI.LoadingBars;
 using GUZ.Core.Const;
+using GUZ.Core.Manager;
 using GUZ.Core.Services.World;
 using Reflex.Attributes;
 using UnityEngine;
 
-namespace GUZ.Core.Manager.Scenes
+namespace GUZ.Core.Adapters.Scenes
 {
-    public class LoadingSceneManager : MonoBehaviour, ISceneManager
+    public class LoadingScene : MonoBehaviour, IScene
     {
         [SerializeField] private AbstractLoadingBarHandler _loadingBarHandler;
         

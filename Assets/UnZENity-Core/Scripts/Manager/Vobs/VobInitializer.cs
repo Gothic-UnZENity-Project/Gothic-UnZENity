@@ -297,6 +297,9 @@ namespace GUZ.Core.Manager.Vobs
                 case VirtualObjectType.zCVobLight:
                     go = ResourceLoader.TryGetPrefabObject(PrefabType.VobLight, name: name, parent: parent);
                     break;
+                case VirtualObjectType.oCTriggerChangeLevel:
+                    go = ResourceLoader.TryGetPrefabObject(PrefabType.VobTriggerChangeLevel, name: name, parent: parent);
+                    break;
                 default:
                     go = ResourceLoader.TryGetPrefabObject(PrefabType.Vob, name: name, parent: parent);
                     break;
@@ -626,13 +629,7 @@ namespace GUZ.Core.Manager.Vobs
 
         private GameObject CreateTriggerChangeLevel(TriggerChangeLevel vob, GameObject parent)
         {
-            var vobObj = GetPrefab(vob);
-            vobObj.SetParent(parent, true, true);
-
-            vobObj.layer = Constants.IgnoreRaycastLayer;
-
-            var trigger = vobObj.GetComponent<BoxCollider>();
-            trigger.isTrigger = true;
+            var vobObj = GetPrefab(vob, parent);
 
             var min = vob.BoundingBox.Min.ToUnityVector();
             var max = vob.BoundingBox.Max.ToUnityVector();

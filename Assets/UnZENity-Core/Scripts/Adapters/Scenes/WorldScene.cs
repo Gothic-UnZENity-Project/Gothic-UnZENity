@@ -7,6 +7,7 @@ using GUZ.Core.Creator;
 using GUZ.Core.Extensions;
 using GUZ.Core.Const;
 using GUZ.Core.Core.Logging;
+using GUZ.Core.Manager;
 using GUZ.Core.Manager.Vobs;
 using GUZ.Core.Models.Vob.WayNet;
 using GUZ.Core.Services;
@@ -21,9 +22,9 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using Logger = GUZ.Core.Core.Logging.Logger;
 
-namespace GUZ.Core.Manager.Scenes
+namespace GUZ.Core.Adapters.Scenes
 {
-    public class WorldSceneManager : MonoBehaviour, ISceneManager
+    public class WorldScene : MonoBehaviour, IScene
     {
         [Inject] private readonly ConfigService _configService;
         [Inject] private readonly VobManager _vobManager;

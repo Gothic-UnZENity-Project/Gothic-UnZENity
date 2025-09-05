@@ -11,9 +11,9 @@ using UnityEngine;
 using UnityEngine.Video;
 using Logger = GUZ.Core.Core.Logging.Logger;
 
-namespace GUZ.Core.Manager.Scenes
+namespace GUZ.Core.Adapters.Scenes
 {
-    public class LogoSceneManager : MonoBehaviour , ISceneManager
+    public class LogoScene : MonoBehaviour , IScene
     {
         [Inject] private readonly ConfigService _configService;
         [Inject] private readonly VideoService _videoService;

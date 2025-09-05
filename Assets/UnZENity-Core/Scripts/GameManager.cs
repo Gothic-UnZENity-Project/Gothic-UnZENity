@@ -4,7 +4,7 @@ using GUZ.Core.Const;
 using GUZ.Core.Core.Logging;
 using GUZ.Core.Extensions;
 using GUZ.Core.Manager;
-using GUZ.Core.Manager.Scenes;
+using GUZ.Core.Adapters.Scenes;
 using GUZ.Core.Manager.Vobs;
 using GUZ.Core.Models.Config;
 using GUZ.Core.Services;
@@ -132,7 +132,7 @@ namespace GUZ.Core
             SceneManager.sceneUnloaded += OnSceneUnloaded;
 
             // Call init function of BootstrapSceneManager directly as it kicks off cleaning up of further loaded scenes.
-            SceneManager.GetActiveScene().GetComponentInChildren<BootstrapSceneManager>()!.Init();
+            SceneManager.GetActiveScene().GetComponentInChildren<BootstrapScene>()!.Init();
         }
 
         /// <summary>
@@ -235,10 +235,10 @@ namespace GUZ.Core
             // Newly created scenes are always the ones which we set as main scenes (i.e. new GameObjects will spawn in here automatically)
             SceneManager.SetActiveScene(scene);
 
-            var sceneManager = scene.GetComponentInChildren<ISceneManager>();
+            var sceneManager = scene.GetComponentInChildren<IScene>();
             if (sceneManager == null)
             {
-                Logger.LogError($"{nameof(ISceneManager)} for scene >{scene.name}< not found. Game won't proceed as " +
+                Logger.LogError($"{nameof(IScene)} for scene >{scene.name}< not found. Game won't proceed as " +
                                 "bootstrapper for scene is invalid/non-existent.", LogCat.Loading);
                 return;
             }

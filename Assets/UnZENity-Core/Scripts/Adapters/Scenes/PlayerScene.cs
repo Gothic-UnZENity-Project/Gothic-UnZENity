@@ -4,9 +4,9 @@ using GUZ.Core.Services.Context;
 using Reflex.Attributes;
 using UnityEngine;
 
-namespace GUZ.Core.Manager.Scenes
+namespace GUZ.Core.Adapters.Scenes
 {
-    public class PlayerSceneManager : MonoBehaviour, ISceneManager
+    public class PlayerScene : MonoBehaviour, IScene
     {
         [Inject] private readonly ConfigService _configService;
         [Inject] private readonly ContextInteractionService _contextInteractionService;

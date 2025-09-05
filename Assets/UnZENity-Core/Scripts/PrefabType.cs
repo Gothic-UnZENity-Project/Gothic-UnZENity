@@ -40,6 +40,7 @@ namespace GUZ.Core
         VobLadder,
         VobLight,
         VobMover,
+        VobTriggerChangeLevel,
 
         VobItem,
         VobItemLockPick,
@@ -90,7 +91,8 @@ namespace GUZ.Core
                 PrefabType.VobLadder => "Prefabs/Vobs/oCMobLadder",
                 PrefabType.VobLight => "Prefabs/Vobs/zCVobLight",
                 PrefabType.VobMover => "Prefabs/Vobs/zCMover",
-
+                PrefabType.VobTriggerChangeLevel => "Prefabs/Vobs/oCTriggerChangeLevel",
+                
                 PrefabType.VobItem => "Prefabs/Vobs/oCItem",
                 PrefabType.VobItemLockPick => "Prefabs/Vobs/oCItem/LockPick",
                 PrefabType.VobItemWeapon => "Prefabs/Vobs/oCItem/Weapon",
