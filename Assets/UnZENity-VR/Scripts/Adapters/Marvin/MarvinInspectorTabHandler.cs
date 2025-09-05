@@ -3,8 +3,10 @@ using GUZ.Core;
 using GUZ.Core.Adapters.UI;
 using GUZ.Core.Core.Logging;
 using GUZ.Core.Extensions;
+using GUZ.Core.Manager;
 using GUZ.Core.Models.Marvin;
 using GUZ.Core.Services;
+using GUZ.Core.Services.Config;
 using GUZ.Core.Util;
 using GUZ.VR.Services;
 using Reflex.Attributes;
@@ -17,12 +19,15 @@ namespace GUZ.VR.Adapters.Marvin
 {
     public class MarvinInspectorTabHandler : MonoBehaviour
     {
-        [Inject] private readonly VRPlayerService _vrPlayerService;
-
         [SerializeField] private TMP_Text _objectTextComp;
         [SerializeField] private RectTransform _contentTransform;
         [SerializeField] private ToggleButton _chooseVobButton;
         [SerializeField] private ToggleButton _selectHeroButton;
+
+
+        [Inject] private readonly VRPlayerService _vrPlayerService;
+        [Inject] private readonly MarvinService _marvinService;
+
 
         private const int _propertyHeight = 15;
         private const int _propertyMarginBottom = 10;
@@ -33,7 +38,7 @@ namespace GUZ.VR.Adapters.Marvin
         
         private void Update()
         {
-            if (!GameGlobals.Marvin.IsMarvinSelectionMode)
+            if (!_marvinService.IsMarvinSelectionMode)
                 return;
 
             FillMarvinSelection();
@@ -44,8 +49,8 @@ namespace GUZ.VR.Adapters.Marvin
         /// </summary>
         public void OnChooseVobClick()
         {
-            GameGlobals.Marvin.IsMarvinSelectionMode = true;
-            GameGlobals.Marvin.MarvinSelectionGO = null;
+            _marvinService.IsMarvinSelectionMode = true;
+            _marvinService.MarvinSelectionGO = null;
 
             _chooseVobButton.SetActive();
             _selectHeroButton.SetInactive();
@@ -56,8 +61,8 @@ namespace GUZ.VR.Adapters.Marvin
         /// </summary>
         public void OnSelectHeroClick()
         {
-            GameGlobals.Marvin.IsMarvinSelectionMode = true;
-            GameGlobals.Marvin.MarvinSelectionGO = _vrPlayerService.VRContextInteractionService.GetCurrentPlayerController();
+            _marvinService.IsMarvinSelectionMode = true;
+            _marvinService.MarvinSelectionGO = _vrPlayerService.VRContextInteractionService.GetCurrentPlayerController();
 
             _selectHeroButton.SetActive();
             _chooseVobButton.SetInactive();
@@ -65,14 +70,14 @@ namespace GUZ.VR.Adapters.Marvin
 
         private void FillMarvinSelection()
         {
-            var go = GameGlobals.Marvin.MarvinSelectionGO;
+            var go = _marvinService.MarvinSelectionGO;
 
             // Wait until an object is selected.
             if (go == null)
                 return;
 
             // Reset first. If we have errors below to ensure normal gameplay is reactivated.
-            GameGlobals.Marvin.IsMarvinSelectionMode = false;
+            _marvinService.IsMarvinSelectionMode = false;
             _chooseVobButton.SetInactive();
 
             var propertyCollectors = go.GetComponentsInChildren<IMarvinPropertyCollector>();
@@ -94,7 +99,7 @@ namespace GUZ.VR.Adapters.Marvin
 
         private void CreateFields()
         {
-            _objectTextComp.text = GameGlobals.Marvin.MarvinSelectionGO.name;
+            _objectTextComp.text = _marvinService.MarvinSelectionGO.name;
             _propertyCount = 0;
 
             if (_contentTransform.childCount != 0)

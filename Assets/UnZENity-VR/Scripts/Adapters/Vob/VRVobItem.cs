@@ -17,6 +17,7 @@ namespace GUZ.VR.Adapters.Vob
     {
         [Inject] private readonly VRPlayerService _vrPlayerService;
         [Inject] private readonly ConfigService _configService;
+        [Inject] private readonly MarvinService _marvinService;
 
         [SerializeField] private VRVobItemProperties _vrProperties;
         [SerializeField] private Rigidbody _rigidbody;
@@ -54,9 +55,9 @@ namespace GUZ.VR.Adapters.Vob
 
         public void OnGrabbed(HVRGrabberBase grabber, HVRGrabbable grabbable)
         {
-            if (GameGlobals.Marvin.IsMarvinSelectionMode)
+            if (_marvinService.IsMarvinSelectionMode)
             {
-                GameGlobals.Marvin.MarvinSelectionGO = grabbable.gameObject;
+                _marvinService.MarvinSelectionGO = grabbable.gameObject;
                 return;
             }
 

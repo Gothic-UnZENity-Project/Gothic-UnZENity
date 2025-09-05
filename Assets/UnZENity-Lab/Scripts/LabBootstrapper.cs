@@ -50,13 +50,11 @@ namespace GUZ.Lab
         private StoryService _story;
         private VobManager _vobManager;
         private NpcService _npcService;
-        private MarvinManager _marvinManager;
 
         public SaveGameService SaveGame => _save;
         public LoadingService Loading => null;
         public StaticCacheService StaticCache => _staticCacheService;
         public PlayerManager Player => null;
-        public MarvinManager Marvin => _marvinManager;
         public GameTimeService Time => _gameTimeService;
         public AudioService Audio => Audio;
         public RoutineManager Routines => _npcRoutineManager;
@@ -128,7 +126,6 @@ namespace GUZ.Lab
             _videoService = new VideoService();
             _npcService = new NpcService();
             _vobManager = new VobManager();
-            _marvinManager = new MarvinManager();
 
             ResourceLoader.Init(_configService.Root.Gothic1Path);
 

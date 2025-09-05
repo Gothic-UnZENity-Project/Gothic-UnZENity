@@ -34,7 +34,7 @@ namespace GUZ.VR
         // Misc
         [Inject] private readonly StationaryLightsService _lightsService;
         [Inject] private readonly SkyService _skyService;
-        [Inject] private readonly BarrierManager _barrierManager;
+        [Inject] private readonly BarrierService _barrierService;
         [Inject] private readonly SpeechToTextService _speechToTextService;
 
 
@@ -52,7 +52,7 @@ namespace GUZ.VR
 
         private void FixedUpdate()
         {
-            _barrierManager.FixedUpdate();
+            _barrierService.FixedUpdate();
         }
 
         private void OnApplicationQuit()

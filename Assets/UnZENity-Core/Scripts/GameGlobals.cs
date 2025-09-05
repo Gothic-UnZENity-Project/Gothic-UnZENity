@@ -11,7 +11,6 @@ namespace GUZ.Core
         public static IGlobalDataProvider Instance;
 
         public static PlayerManager Player => Instance.Player;
-        public static MarvinManager Marvin => Instance.Marvin;
         public static GameTimeService Time => Instance.Time;
         public static RoutineManager Routines => Instance.Routines;
         public static StoryService Story => Instance.Story;

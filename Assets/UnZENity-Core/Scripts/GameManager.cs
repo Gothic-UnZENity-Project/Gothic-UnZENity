@@ -36,7 +36,6 @@ namespace GUZ.Core
         public LoadingService Loading { get; private set; }
 
         public PlayerManager Player { get; private set; }
-        public MarvinManager Marvin { get; private set;  }
 
         public GameTimeService Time { get; private set; }
         
@@ -69,7 +68,7 @@ namespace GUZ.Core
         [Inject] private readonly VobSoundCullingService _vobSoundCullingService;
 
         [Inject] private readonly SkyService _skyService;
-        [Inject] private readonly BarrierManager _barrierManager;
+        [Inject] private readonly BarrierService _barrierService;
         [Inject] private readonly LoadingService _loadingService;
         [Inject] private readonly TextureService _textureService;
         [Inject] private readonly SaveGameService _saveGameService;
@@ -116,7 +115,6 @@ namespace GUZ.Core
             NpcMeshCulling = _npcMeshCullingService;
             Lights = new StationaryLightsService();
             Player = new PlayerManager();
-            Marvin = new MarvinManager();
             Time = _gameTimeService;
             Story = new StoryService();
             Routines = new RoutineManager(DeveloperConfig);

@@ -3,12 +3,8 @@ using GUZ.Core.Manager;
 using GUZ.Core.Manager.Vobs;
 using GUZ.Core.Services;
 using GUZ.Core.Services.Culling;
-using GUZ.Core.Services.Meshes;
 using GUZ.Core.Services.Npc;
-using GUZ.Core.Services.StaticCache;
-using GUZ.Core.Services.UI;
 using GUZ.Core.Services.World;
-using GUZ.Services.UI;
 
 namespace GUZ.Core.Editor
 {
@@ -19,7 +15,6 @@ namespace GUZ.Core.Editor
     {
         public SaveGameService SaveGame { get; }
         public PlayerManager Player { get; }
-        public MarvinManager Marvin { get; }
         public SkyService Sky { get; }
         public GameTimeService Time { get; }
         public VideoService Video { get; }

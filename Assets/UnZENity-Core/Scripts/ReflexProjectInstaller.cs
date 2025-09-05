@@ -100,14 +100,17 @@ namespace GUZ.Core
             containerBuilder.AddSingleton(typeof(UIEventsService));
             containerBuilder.AddSingleton(typeof(LocalizationService));
 
+            // Marvin
+            containerBuilder.AddSingleton(typeof(MarvinService));
+
             // FIXME - Need to be migrated to a Service!
             containerBuilder.AddSingleton(typeof(VobManager));
             containerBuilder.AddSingleton(typeof(VobInitializer));
             containerBuilder.AddSingleton(typeof(StationaryLightsService));
             containerBuilder.AddSingleton(typeof(SkyService));
-            containerBuilder.AddSingleton(typeof(BarrierManager));
+            containerBuilder.AddSingleton(typeof(BarrierService));
             containerBuilder.AddSingleton(typeof(LoadingService));
-            containerBuilder.AddSingleton(typeof(BarrierManager));
+            containerBuilder.AddSingleton(typeof(BarrierService));
         }
     }
 }

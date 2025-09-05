@@ -1,13 +1,12 @@
 using GUZ.Core.Extensions;
-using GUZ.Core.Services;
 using GUZ.Core.Services.Config;
 using Reflex.Attributes;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-namespace GUZ.Core.Manager
+namespace GUZ.Core.Services.World
 {
-    public class BarrierManager
+    public class BarrierService
     {
         [Inject] private readonly ConfigService _configService;
         [Inject] private readonly MeshService _meshService;
@@ -45,7 +44,7 @@ namespace GUZ.Core.Manager
         private const float _timeStepToUpdateFade = 0.001f;
 
 
-        public BarrierManager()
+        public BarrierService()
         {
             GlobalEventDispatcher.WorldSceneLoaded.AddListener(CreateBarrier);
         }
