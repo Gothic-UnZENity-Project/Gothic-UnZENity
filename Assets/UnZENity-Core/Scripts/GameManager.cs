@@ -33,11 +33,6 @@ namespace GUZ.Core
         private FileLoggingHandler _fileLoggingHandler;
 
 
-        public StoryService Story { get; private set; }
-
-
-        public StationaryLightsService Lights { get; private set; }
-
         public VobManager Vobs { get; private set; }
         public NpcService Npcs { get; private set; }
         public VobMeshCullingService VobMeshCulling { get; private set; }
@@ -106,8 +101,6 @@ namespace GUZ.Core
             Npcs = _npcService;
             VobMeshCulling = _vobMeshCullingService;
             NpcMeshCulling = _npcMeshCullingService;
-            Lights = new StationaryLightsService();
-            Story = new StoryService();
             SpeechToText = _speechToTextService;
 
             ZenKit.Logger.Set(_configService.Dev.ZenKitLogLevel, Logger.OnZenKitLogMessage);
@@ -133,7 +126,6 @@ namespace GUZ.Core
             GlobalEventDispatcher.RegisterControlsService.Invoke(_configService.Dev.GameControls);
 
             _frameSkipperService.Init();
-            Lights.Init();
             VobMeshCulling.Init();
             NpcMeshCulling.Init();
             _vobSoundCullingService.Init();
@@ -244,7 +236,6 @@ namespace GUZ.Core
 
             VobMeshCulling = null;
             NpcMeshCulling = null;
-            Lights = null;
         }
     }
 }

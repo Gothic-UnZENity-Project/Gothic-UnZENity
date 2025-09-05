@@ -21,11 +21,6 @@ namespace GUZ.Core.Services.World
         private readonly HashSet<MeshRenderer> _dirtiedMeshes = new();
         private readonly Dictionary<MeshRenderer, List<StationaryLight>> _lightsPerRenderer = new();
 
-        public void Init()
-        {
-            // NOP
-        }
-
         public void LateUpdate()
         {
             // Update the renderer once for all updated lights.

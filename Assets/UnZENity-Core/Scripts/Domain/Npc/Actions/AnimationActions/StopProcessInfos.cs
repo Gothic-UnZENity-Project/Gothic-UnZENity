@@ -1,5 +1,6 @@
 using GUZ.Core.Models.Container;
 using GUZ.Core.Manager;
+using GUZ.Core.Services.World;
 using Reflex.Attributes;
 
 namespace GUZ.Core.Domain.Npc.Actions.AnimationActions
@@ -11,6 +12,8 @@ namespace GUZ.Core.Domain.Npc.Actions.AnimationActions
     public class StopProcessInfos : AbstractAnimationAction
     {
         [Inject] private readonly DialogService _dialogService;
+        [Inject] private readonly StoryService _storyService;
+
 
         public StopProcessInfos(AnimationAction action, NpcContainer npcContainer) : base(action, npcContainer)
         {
@@ -19,7 +22,7 @@ namespace GUZ.Core.Domain.Npc.Actions.AnimationActions
         public override void Start()
         {
             _dialogService.StopDialog(NpcContainer);
-            GameGlobals.Story.SwitchChapterIfPending();
+            _storyService.SwitchChapterIfPending();
             IsFinishedFlag = true;
         }
     }

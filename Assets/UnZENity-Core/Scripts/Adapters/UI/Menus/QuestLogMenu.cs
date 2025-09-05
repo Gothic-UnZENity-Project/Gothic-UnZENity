@@ -5,7 +5,7 @@ using GUZ.Core.Core.Logging;
 using GUZ.Core.Model.UI.Menu;
 using GUZ.Core.Model.UI.MenuItem;
 using GUZ.Core.Services;
-using GUZ.Core.Util;
+using GUZ.Core.Services.World;
 using MyBox;
 using Reflex.Attributes;
 using TMPro;
@@ -72,6 +72,8 @@ namespace GUZ.Core.Adapters.UI.Menus
 
 
         [Inject] private readonly GameTimeService _gameTimeService;
+        [Inject] private readonly StoryService _storyService;
+        
 
         private class ListItemContainer
         {
@@ -341,10 +343,10 @@ namespace GUZ.Core.Adapters.UI.Menus
 
         private void FillLists()
         {
-            _listMenuCache[_instanceNameActiveMissions].LogTopics = GameGlobals.Story.GetLogTopics(SaveTopicSection.Missions, SaveTopicStatus.Running);
-            _listMenuCache[_instanceNameSuccessMissions].LogTopics = GameGlobals.Story.GetLogTopics(SaveTopicSection.Missions, SaveTopicStatus.Success);
-            _listMenuCache[_instanceNameFailedMissions].LogTopics = GameGlobals.Story.GetLogTopics(SaveTopicSection.Missions, SaveTopicStatus.Failure);
-            _listMenuCache[_instanceNameLog].LogTopics = GameGlobals.Story.GetLogTopics(SaveTopicSection.Notes, SaveTopicStatus.Free);
+            _listMenuCache[_instanceNameActiveMissions].LogTopics = _storyService.GetLogTopics(SaveTopicSection.Missions, SaveTopicStatus.Running);
+            _listMenuCache[_instanceNameSuccessMissions].LogTopics = _storyService.GetLogTopics(SaveTopicSection.Missions, SaveTopicStatus.Success);
+            _listMenuCache[_instanceNameFailedMissions].LogTopics = _storyService.GetLogTopics(SaveTopicSection.Missions, SaveTopicStatus.Failure);
+            _listMenuCache[_instanceNameLog].LogTopics = _storyService.GetLogTopics(SaveTopicSection.Notes, SaveTopicStatus.Free);
 
             foreach (var list in _listMenuCache.Values)
             {

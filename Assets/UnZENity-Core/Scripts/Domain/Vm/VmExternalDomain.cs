@@ -10,6 +10,7 @@ using GUZ.Core.Services;
 using GUZ.Core.Services.Caches;
 using GUZ.Core.Services.Config;
 using GUZ.Core.Services.Npc;
+using GUZ.Core.Services.World;
 using GUZ.Core.Util;
 using Reflex.Attributes;
 using ZenKit;
@@ -32,6 +33,7 @@ namespace GUZ.Core.Domain.Vm
         [Inject] private readonly NpcAiService _npcAiService;
         [Inject] private readonly NpcRoutineService _npcRoutineService;
         [Inject] private readonly GameTimeService _gameTimeService;
+        [Inject] private readonly StoryService _storyService;
 
 
         private bool _enableZSpyLogs;
@@ -470,17 +472,17 @@ namespace GUZ.Core.Domain.Vm
 
         public void Log_AddEntry(string topic, string entry)
         {
-            GameGlobals.Story.ExtLogAddEntry(topic, entry);
+            _storyService.ExtLogAddEntry(topic, entry);
         }
 
         public void Log_CreateTopic(string name, int section)
         {
-            GameGlobals.Story.ExtLogCreateTopic(name, (SaveTopicSection)section);
+            _storyService.ExtLogCreateTopic(name, (SaveTopicSection)section);
         }
 
         public void Log_SetTopicStatus(string name, int status)
         {
-            GameGlobals.Story.ExtLogSetTopicStatus(name, (SaveTopicStatus)status);
+            _storyService.ExtLogSetTopicStatus(name, (SaveTopicStatus)status);
         }
 
         #endregion
@@ -1104,7 +1106,7 @@ namespace GUZ.Core.Domain.Vm
 
         public void IntroduceChapter(string chapter, string text, string texture, string wav, int time)
         {
-            GameGlobals.Story.ExtIntroduceChapter(chapter, text, texture, wav, time);
+            _storyService.ExtIntroduceChapter(chapter, text, texture, wav, time);
         }
 
         #endregion
