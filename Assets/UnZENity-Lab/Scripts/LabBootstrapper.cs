@@ -44,11 +44,11 @@ namespace GUZ.Lab
         private SaveGameService _save;
         private StaticCacheService _staticCacheService;
         private StoryService _story;
-        private VobManager _vobManager;
+        private VobService _vobService;
         private NpcService _npcService;
 
         public GameTimeService Time => _gameTimeService;
-        public VobManager Vobs => _vobManager;
+        public VobService Vobs => _vobService;
         public VobMeshCullingService VobMeshCulling => null;
         public NpcMeshCullingService NpcMeshCulling => null;
         public StoryService Story => _story;
@@ -109,7 +109,7 @@ namespace GUZ.Lab
             _story = new StoryService();
             _videoService = new VideoService();
             _npcService = new NpcService();
-            _vobManager = new VobManager();
+            _vobService = new VobService();
 
             ResourceLoader.Init(_configService.Root.Gothic1Path);
 
@@ -123,7 +123,7 @@ namespace GUZ.Lab
             _staticCacheService.Init(_configService.Dev);
             _textureService.Init();
             _npcService.Init();
-            _vobManager.Init();
+            _vobService.Init();
 
             _videoService.InitVideos();
             _save.LoadNewGame();

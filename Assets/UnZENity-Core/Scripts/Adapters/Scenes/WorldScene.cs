@@ -28,7 +28,7 @@ namespace GUZ.Core.Adapters.Scenes
     public class WorldScene : MonoBehaviour, IScene
     {
         [Inject] private readonly ConfigService _configService;
-        [Inject] private readonly VobManager _vobManager;
+        [Inject] private readonly VobService _vobService;
         [Inject] private readonly WayNetService _wayNetService;
         [Inject] private readonly MeshService _meshService;
         [Inject] private readonly NpcService _npcService;
@@ -114,7 +114,7 @@ namespace GUZ.Core.Adapters.Scenes
                     // If we load a SaveGame, then nearby NPCs are stored as VOB and will be created as GOs inside NpcManager. We need to prepare it before.
                     _npcService.SetRootGo(npcRoot);
 
-                    await _vobManager.CreateWorldVobsAsync(_configService.Dev, _loadingService, _saveGameService.CurrentWorldData.Vobs, vobRoot)
+                    await _vobService.CreateWorldVobsAsync(_configService.Dev, _loadingService, _saveGameService.CurrentWorldData.Vobs, vobRoot)
                         .AwaitAndLog();
                     watch.LogAndRestart("VOBs created");
                 }

@@ -9,7 +9,5 @@ namespace GUZ.Core
     public static class GameGlobals
     {
         public static IGlobalDataProvider Instance;
-
-        public static VobManager Vobs => Instance.Vobs;
     }
 }

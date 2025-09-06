@@ -4,7 +4,9 @@ using System.Linq;
 using GUZ.Core;
 using GUZ.Core.Adapters.Vob;
 using GUZ.Core.Extensions;
+using GUZ.Core.Manager;
 using HurricaneVR.Framework.Components;
+using Reflex.Attributes;
 using UnityEngine;
 using ZenKit.Vobs;
 
@@ -12,6 +14,9 @@ namespace GUZ.VR.Adapters.Vob
 {
     public class VRVobDoor : MonoBehaviour
     {
+        [Inject] private readonly AudioService _audioService;
+
+        
         private static Dictionary<string, AudioClip> _doorOpenedClips = new();
         private static Dictionary<string, AudioClip> _doorClosedClips= new();
         
@@ -54,8 +59,8 @@ namespace GUZ.VR.Adapters.Vob
                 var openSoundEffect = mds.Animations.First(i => i.Name.EqualsIgnoreCase("t_S0_2_S1")).SoundEffects.First().Name;
                 var closeSoundEffect = mds.Animations.First(i => i.Name.EqualsIgnoreCase("t_S1_2_S0")).SoundEffects.First().Name;
 
-                _doorOpenedClips.Add(mdsName.ToLower(), GameGlobals.Vobs.GetRandomSoundClip(openSoundEffect));
-                _doorClosedClips.Add(mdsName.ToLower(), GameGlobals.Vobs.GetRandomSoundClip(closeSoundEffect));
+                _doorOpenedClips.Add(mdsName.ToLower(), _audioService.GetRandomSoundClip(openSoundEffect));
+                _doorClosedClips.Add(mdsName.ToLower(), _audioService.GetRandomSoundClip(closeSoundEffect));
             }
 
             var hvrDoor = GetComponentInChildren<HVRPhysicsDoor>();

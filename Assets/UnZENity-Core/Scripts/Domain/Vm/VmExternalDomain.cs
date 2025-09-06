@@ -10,6 +10,7 @@ using GUZ.Core.Services;
 using GUZ.Core.Services.Caches;
 using GUZ.Core.Services.Config;
 using GUZ.Core.Services.Npc;
+using GUZ.Core.Services.Vobs;
 using GUZ.Core.Services.World;
 using GUZ.Core.Util;
 using Reflex.Attributes;
@@ -34,6 +35,7 @@ namespace GUZ.Core.Domain.Vm
         [Inject] private readonly NpcRoutineService _npcRoutineService;
         [Inject] private readonly GameTimeService _gameTimeService;
         [Inject] private readonly StoryService _storyService;
+        [Inject] private readonly VobService _vobService;
 
 
         private bool _enableZSpyLogs;
@@ -1009,7 +1011,7 @@ namespace GUZ.Core.Domain.Vm
 
         public void Wld_InsertItem(int itemInstance, string spawnpoint)
         {
-            GameGlobals.Vobs.ExtWldInsertItem(itemInstance, spawnpoint);
+            _vobService.ExtWldInsertItem(itemInstance, spawnpoint);
         }
 
         public void Wld_ExchangeGuildAttitudes(string name)
@@ -1037,8 +1039,8 @@ namespace GUZ.Core.Domain.Vm
         public void Wld_SetObjectRoutine(int hour, int minute, string name, int status)
         {
             // FIXME - Do more with these ObjectRoutines.
-            GameGlobals.Vobs.ObjectRoutines.TryAdd(name, new());
-            GameGlobals.Vobs.ObjectRoutines[name].Add((hour, minute, status));
+            _vobService.ObjectRoutines.TryAdd(name, new());
+            _vobService.ObjectRoutines[name].Add((hour, minute, status));
         }
 
         public void Wld_SetMobRoutine(int hour, int minute, string name, int status)

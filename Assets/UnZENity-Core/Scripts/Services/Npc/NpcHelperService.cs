@@ -10,6 +10,7 @@ using GUZ.Core.Extensions;
 using GUZ.Core.Models.Container;
 using GUZ.Core.Models.Vm;
 using GUZ.Core.Services.Caches;
+using GUZ.Core.Services.Vobs;
 using JetBrains.Annotations;
 using Reflex.Attributes;
 using UnityEngine;
@@ -22,18 +23,15 @@ namespace GUZ.Core.Services.Npc
     {
         /// <summary>
         /// Ranges are in meter.
-        ///
         /// FIXME - We should use PERC_ASSESSTALK range to leverage HVR's Grabbable hover and remote grab distance!
         /// </summary>
         public readonly Dictionary<VmGothicEnums.PerceptionType, int> PerceptionRanges = new ();
-
-
+        
         [Inject] private readonly MultiTypeCacheService _multiTypeCacheService;
         [Inject] private readonly WayNetService _wayNetService;
-
-
+        [Inject] private readonly VobService _vobService;
+        
         private const float _fpLookupDistance = 7f; // meter
-
 
         public void Init()
         {
@@ -57,7 +55,7 @@ namespace GUZ.Core.Services.Npc
         public bool ExtIsMobAvailable(NpcInstance npcInstance, string vobName)
         {
             var npc = GetNpc(npcInstance);
-            var container = GameGlobals.Vobs.GetFreeInteractableWithin10M(npc.transform.position, vobName);
+            var container = _vobService.GetFreeInteractableWithin10M(npc.transform.position, vobName);
 
             return container != null;
         }
@@ -84,7 +82,7 @@ namespace GUZ.Core.Services.Npc
                 }
             }
             else
-                props = GameGlobals.Vobs.GetFreeInteractableWithin10M(npcGo.transform.position, scheme)?.PropsAs<InteractiveProperties>();
+                props = _vobService.GetFreeInteractableWithin10M(npcGo.transform.position, scheme)?.PropsAs<InteractiveProperties>();
 
             if (props == null)
                 return -1;

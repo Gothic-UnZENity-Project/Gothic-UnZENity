@@ -40,9 +40,11 @@ namespace GUZ.Core.Domain.Culling
             var go = Objects[evt.index];
             
             go.SetActive(inAudibleRange);
-            
+
             if (inAudibleRange)
-                GameGlobals.Vobs.InitVob(go);
+            {
+                GlobalEventDispatcher.VobMeshCullingChanged.Invoke(go);
+            }
         }
 
         /// <summary>

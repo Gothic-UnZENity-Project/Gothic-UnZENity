@@ -2,6 +2,7 @@
 using GUZ.Core.Core.Logging;
 using GUZ.Core.Services;
 using GUZ.Core.Services.Caches;
+using GUZ.Core.Services.Vobs;
 using GUZ.Core.Util;
 using Reflex.Attributes;
 using UnityEngine;
@@ -16,6 +17,7 @@ namespace GUZ.Lab.Handler
 
         [Inject] protected readonly VmCacheService VmCacheService;
         [Inject] protected readonly MeshService MeshService;
+        [Inject] protected readonly VobService VobService;
 
 
         protected GameObject SpawnInteractable(string mdlName, PrefabType type, GameObject parentGo, Vector3 position = default, Quaternion rotation = default)

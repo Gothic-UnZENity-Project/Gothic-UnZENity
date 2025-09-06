@@ -4,13 +4,12 @@ using System.Collections.Generic;
 using System.Linq;
 using GUZ.Core.Adapters.Vob;
 using GUZ.Core.Core.Logging;
-using GUZ.Core.Models.Container;
 using GUZ.Core.Debugging;
 using GUZ.Core.Extensions;
 using GUZ.Core.Manager;
+using GUZ.Core.Models.Container;
 using GUZ.Core.Services.Caches;
 using GUZ.Core.Services.StaticCache;
-using GUZ.Core.Util;
 using MyBox;
 using Reflex.Attributes;
 using UnityEngine;
@@ -183,7 +182,7 @@ namespace GUZ.Core.Domain.Culling
             {
                 case 0: // grace period band - ignore FC and OC, plainly enable the vob!
                     vobObjects[evt.index].SetActive(true);
-                    GameGlobals.Vobs.InitVob(go);
+                    GlobalEventDispatcher.VobMeshCullingChanged.Invoke(go);
                     break;
                 default:
                     var setActive = evt.hasBecomeVisible || (evt.isVisible && !evt.hasBecomeInvisible);
@@ -191,7 +190,7 @@ namespace GUZ.Core.Domain.Culling
 
                     if (setActive)
                     {
-                        GameGlobals.Vobs.InitVob(go);
+                        GlobalEventDispatcher.VobMeshCullingChanged.Invoke(go);
                     }
 
                     break;

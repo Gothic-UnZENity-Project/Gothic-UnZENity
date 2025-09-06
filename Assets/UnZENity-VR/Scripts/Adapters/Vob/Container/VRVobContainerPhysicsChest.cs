@@ -9,6 +9,7 @@ using GUZ.Core.Core.Logging;
 using GUZ.Core.Models.Container;
 using GUZ.Core.Extensions;
 using GUZ.Core.Services;
+using GUZ.Core.Services.Vobs;
 using GUZ.Core.Util;
 using HurricaneVR.Framework.Components;
 using HurricaneVR.Framework.Core;
@@ -25,6 +26,7 @@ namespace GUZ.VR.Adapters.Vob.Container
     public class VRVobContainerPhysicsChest : HVRPhysicsDoor
     {
         [Inject] private readonly MeshService _meshService;
+        [Inject] private readonly VobService _vobService;
 
 
         private readonly char[] _itemNameSeparators = { ';', ',' };
@@ -266,7 +268,7 @@ namespace GUZ.VR.Adapters.Vob.Container
                     }
                 };
 
-                var vobContainer = GameGlobals.Vobs.CreateItem(zkVob);
+                var vobContainer = _vobService.CreateItem(zkVob);
 
                 // Wait 1 frame to ensure our mesh bounds can be calculated by HVR Socket.
                 yield return null;

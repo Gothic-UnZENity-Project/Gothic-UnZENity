@@ -18,7 +18,7 @@ namespace GUZ.Core.Editor
         public GameTimeService Time { get; }
         public VideoService Video { get; }
         public StoryService Story { get; }
-        public VobManager Vobs { get; }
+        public VobService Vobs { get; }
         public NpcService Npcs { get; }
         public NpcAiService NpcAi { get; }
         public AnimationService Animations { get; }

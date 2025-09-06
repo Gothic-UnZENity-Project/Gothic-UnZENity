@@ -8,7 +8,7 @@ using GUZ.Core.Extensions;
 using GUZ.Core.Manager;
 using GUZ.Core.Models.Vm;
 using GUZ.Core.Models.Vob.WayNet;
-using GUZ.Core.Services.Audio;
+using GUZ.Core.Services;
 using GUZ.Core.Services.Caches;
 using GUZ.Core.Services.Config;
 using GUZ.Core.Services.Culling;
@@ -25,12 +25,12 @@ using LightType = ZenKit.Vobs.LightType;
 using Logger = GUZ.Core.Core.Logging.Logger;
 using Object = UnityEngine.Object;
 
-namespace GUZ.Core.Services.Vobs
+namespace GUZ.Core.Domain.Vobs
 {
     /// <summary>
     /// Outsourced logic to create actual VOB GO structures.
     /// </summary>
-    public class VobInitializer
+    public class VobInitializerDomain
     {
         [Inject] private readonly ConfigService _configService;
         [Inject] private readonly VobSoundCullingService _vobSoundCullingService;
@@ -544,7 +544,7 @@ namespace GUZ.Core.Services.Vobs
         {
             AudioClip clip;
 
-            if (soundName.EqualsIgnoreCase(SfxService.NoSoundName))
+            if (soundName.EqualsIgnoreCase(AudioService.NoSoundName))
             {
                 //instead of decoding nosound.wav which might be decoded incorrectly, just return null
                 return null;
@@ -563,7 +563,7 @@ namespace GUZ.Core.Services.Vobs
                     return null;
 
                 // Instead of decoding nosound.wav which might be decoded incorrectly, just return null.
-                if (sfxContainer.GetFirstSound().File.EqualsIgnoreCase(SfxService.NoSoundName))
+                if (sfxContainer.GetFirstSound().File.EqualsIgnoreCase(AudioService.NoSoundName))
                     return null;
 
                 if (sfxContainer.Count > 1)

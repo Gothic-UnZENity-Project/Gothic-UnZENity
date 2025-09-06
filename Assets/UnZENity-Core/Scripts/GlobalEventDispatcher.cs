@@ -4,6 +4,7 @@ using GUZ.Core.Models.Container;
 using UnityEngine;
 using UnityEngine.Events;
 using ZenKit;
+using ZenKit.Vobs;
 
 namespace GUZ.Core
 {
@@ -40,5 +41,8 @@ namespace GUZ.Core
         
         
         public static readonly UnityEvent<NpcContainer, NpcLoader, bool, bool> NpcMeshCullingChanged = new();
+        public static readonly UnityEvent<GameObject> VobMeshCullingChanged = new();
+
+        public static readonly UnityEvent<INpc> CreateNpcCalled = new();
     }
 }

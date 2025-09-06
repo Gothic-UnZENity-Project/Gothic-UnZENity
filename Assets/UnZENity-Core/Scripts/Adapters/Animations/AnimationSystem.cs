@@ -7,8 +7,10 @@ using GUZ.Core.Domain.Animations;
 using GUZ.Core.Extensions;
 using GUZ.Core.Const;
 using GUZ.Core.Core.Logging;
+using GUZ.Core.Manager;
 using GUZ.Core.Models.Animations;
 using GUZ.Core.Models.Vm;
+using GUZ.Core.Services.Vobs;
 using GUZ.Core.Util;
 using MyBox;
 using Reflex.Attributes;
@@ -36,6 +38,9 @@ namespace GUZ.Core.Adapters.Adnimations
 #endif
 
         [Inject] private readonly AnimationService _animationService;
+        [Inject] private readonly AudioService _audioService;
+        [Inject] private readonly VobService _vobService;
+
 
 
         public Transform RootBone;
@@ -523,7 +528,7 @@ namespace GUZ.Core.Adapters.Adnimations
 
             foreach (var sfx in sfxEvents)
             {
-                var clip = GameGlobals.Vobs.GetRandomSoundClip(sfx.Name);
+                var clip = _audioService.GetRandomSoundClip(sfx.Name);
                 PrefabProps.NpcSound.clip = clip;
                 PrefabProps.NpcSound.maxDistance = sfx.Range.ToMeter();
                 PrefabProps.NpcSound.Play();
@@ -565,7 +570,7 @@ namespace GUZ.Core.Adapters.Adnimations
 
             var slotGo = PrefabProps.Bip01.gameObject.FindChildRecursively(slot1);
 
-            GameGlobals.Vobs.CreateItemMesh(Properties.CurrentItem, slotGo);
+            _vobService.CreateItemMesh(Properties.CurrentItem, slotGo);
 
             Properties.UsedItemSlot = slot1;
         }

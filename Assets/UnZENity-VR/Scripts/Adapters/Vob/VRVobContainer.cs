@@ -6,8 +6,11 @@ using GUZ.Core.Adapters.Vob;
 using GUZ.Core.Extensions;
 using GUZ.Core.Const;
 using GUZ.Core.Core.Logging;
+using GUZ.Core.Manager;
+using GUZ.Core.Services.Vobs;
 using GUZ.Core.Util;
 using HurricaneVR.Framework.Components;
+using Reflex.Attributes;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using ZenKit.Vobs;
@@ -17,6 +20,9 @@ namespace GUZ.VR.Adapters.Vob
 {
     public class VRVobContainer : MonoBehaviour
     {
+        [Inject] private readonly AudioService _audioService;
+
+        
         private static Dictionary<string, AudioClip> _containerOpenedClips = new();
         private static Dictionary<string, AudioClip> _containerClosedClips= new();
         
@@ -64,8 +70,8 @@ namespace GUZ.VR.Adapters.Vob
                 var openSoundEffect = mds.Animations.First(i => i.Name.EqualsIgnoreCase("t_S0_2_S1")).SoundEffects.First().Name;
                 var closeSoundEffect = mds.Animations.First(i => i.Name.EqualsIgnoreCase("t_S1_2_S0")).SoundEffects.First().Name;
 
-                _containerOpenedClips.Add(mdsName.ToLower(), GameGlobals.Vobs.GetRandomSoundClip(openSoundEffect));
-                _containerClosedClips.Add(mdsName.ToLower(), GameGlobals.Vobs.GetRandomSoundClip(closeSoundEffect));
+                _containerOpenedClips.Add(mdsName.ToLower(), _audioService.GetRandomSoundClip(openSoundEffect));
+                _containerClosedClips.Add(mdsName.ToLower(), _audioService.GetRandomSoundClip(closeSoundEffect));
             }
 
             // We leverage the same "door" script for containers (As it's also just an object to be rotated.

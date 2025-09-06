@@ -99,7 +99,7 @@ namespace GUZ.Lab.Handler
 
         private void CreateItem(string instanceName, ref float zPosition, float zRotation, GameObject parent)
         {
-            var vobContainer = GameGlobals.Vobs.CreateItem(new Item()
+            var vobContainer = VobService.CreateItem(new Item()
             {
                 Name = instanceName,
                 Position = new Vector3(0f, 1.5f, zPosition).ToZkVector(),

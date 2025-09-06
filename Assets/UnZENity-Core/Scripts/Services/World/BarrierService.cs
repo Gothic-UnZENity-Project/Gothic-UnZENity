@@ -1,5 +1,8 @@
+using GUZ.Core.Domain.Npc;
 using GUZ.Core.Extensions;
+using GUZ.Core.Manager;
 using GUZ.Core.Services.Config;
+using GUZ.Core.Services.Vobs;
 using Reflex.Attributes;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -10,6 +13,8 @@ namespace GUZ.Core.Services.World
     {
         [Inject] private readonly ConfigService _configService;
         [Inject] private readonly MeshService _meshService;
+        [Inject] private readonly VobService _vobService;
+        [Inject] private readonly AudioService _audioService;
 
         private GameObject _barrier;
 
@@ -108,7 +113,7 @@ namespace GUZ.Core.Services.World
 
             if (_showThunder && _configService.Dev.EnableGameSounds)
             {
-                var sound = GameGlobals.Vobs.GetRandomSoundClip("MFX_BARRIERE_AMBIENT");
+                var sound = _audioService.GetRandomSoundClip("MFX_BARRIERE_AMBIENT");
 
                 for (var i = 0; i < 4; i++)
                 {

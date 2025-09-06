@@ -6,7 +6,6 @@ namespace GUZ.Core
 {
     public interface IGlobalDataProvider
     {
-        public VobManager Vobs { get; }
         public VobMeshCullingService VobMeshCulling { get; }
         public SpeechToTextService SpeechToText { get; }
     }

@@ -8,6 +8,7 @@ using GUZ.Core.Models.Container;
 using GUZ.Core.Extensions;
 using GUZ.Core.Manager;
 using GUZ.Core.Services.Caches;
+using GUZ.Core.Services.Vobs;
 using GUZ.Core.Services.World;
 using Reflex.Attributes;
 using UnityEngine;
@@ -23,6 +24,8 @@ namespace GUZ.Core.Domain.Npc.Actions.AnimationActions
         [Inject] protected readonly VmCacheService VmCacheService;
         [Inject] protected readonly PhysicsService PhysicsService;
         [Inject] protected readonly WayNetService WayNetService;
+        [Inject] protected readonly VobService VobService;
+
 
         protected readonly NpcContainer NpcContainer;
         protected readonly NpcInstance NpcInstance;
@@ -65,7 +68,7 @@ namespace GUZ.Core.Domain.Npc.Actions.AnimationActions
 
             var slotGo = NpcGo.FindChildRecursively(slot1);
 
-            GameGlobals.Vobs.CreateItemMesh(Props.CurrentItem, slotGo);
+            VobService.CreateItemMesh(Props.CurrentItem, slotGo);
 
             Props.UsedItemSlot = slot1;
         }

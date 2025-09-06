@@ -18,6 +18,7 @@ using GUZ.Core.Models.Vob;
 using GUZ.Core.Services.Caches;
 using GUZ.Core.Services.Config;
 using GUZ.Core.Services.Player;
+using GUZ.Core.Services.Vobs;
 using GUZ.Core.Services.World;
 using MyBox;
 using Reflex.Attributes;
@@ -46,6 +47,7 @@ namespace GUZ.Core.Services.Npc
         [Inject] private readonly SaveGameService _saveGameService;
         [Inject] private readonly PlayerService _playerService;
         [Inject] private readonly WayNetService _wayNetService;
+        [Inject] private readonly VobService _vobService;
 
         private readonly NpcInitializerDomain _initializerDomain = new NpcInitializerDomain().Inject();
 
@@ -70,6 +72,7 @@ namespace GUZ.Core.Services.Npc
             });
             
             GlobalEventDispatcher.NpcMeshCullingChanged.AddListener(EventNpcMeshCullingChanged);
+            GlobalEventDispatcher.CreateNpcCalled.AddListener(CreateVobNpc);
         }
 
         private IEnumerator InitNpcCoroutine()
@@ -256,7 +259,7 @@ namespace GUZ.Core.Services.Npc
             var mainFlag = (VmGothicEnums.ItemFlags)_vmCacheService.TryGetItemData(itemIndex).MainFlag;
             var inventoryCat = mainFlag.ToInventoryCategory();
             
-            var items = GameGlobals.Vobs.UnpackItems(vob.GetPacked((int)inventoryCat));
+            var items = _vobService.UnpackItems(vob.GetPacked((int)inventoryCat));
             var itemFound = false;
             
             for (var i = 0; i < items.Count; i++)
@@ -272,7 +275,7 @@ namespace GUZ.Core.Services.Npc
             if (!itemFound)
                 items.Add(new ContentItem(itemInstance.Name, amount));
 
-            vob.SetPacked((int)inventoryCat, GameGlobals.Vobs.PackItems(items));
+            vob.SetPacked((int)inventoryCat, _vobService.PackItems(items));
         }
 
         public NpcContainer GetHeroContainer()

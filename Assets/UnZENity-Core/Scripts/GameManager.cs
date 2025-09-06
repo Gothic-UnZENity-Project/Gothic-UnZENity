@@ -33,7 +33,6 @@ namespace GUZ.Core
         private FileLoggingHandler _fileLoggingHandler;
 
 
-        public VobManager Vobs { get; private set; }
         public NpcService Npcs { get; private set; }
         public VobMeshCullingService VobMeshCulling { get; private set; }
         public SpeechToTextService SpeechToText { get; private set; }
@@ -61,7 +60,7 @@ namespace GUZ.Core
         [Inject] private readonly PlayerService _playerService;
         
         [Inject] private readonly FrameSkipperService _frameSkipperService;
-        [Inject] private readonly VobManager _vobManager;
+        [Inject] private readonly VobService _vobService;
         [Inject] private readonly ConfigService _configService;
         [Inject] private readonly NpcService _npcService;
         [Inject] private readonly NpcAiService _npcAiService;
@@ -96,7 +95,6 @@ namespace GUZ.Core
             
             _multiTypeCacheService.Init();
 
-            Vobs = _vobManager;
             Npcs = _npcService;
             VobMeshCulling = _vobMeshCullingService;
             SpeechToText = _speechToTextService;
@@ -152,7 +150,7 @@ namespace GUZ.Core
             _audioService.InitMusic();
             _staticCacheService.Init(DeveloperConfig);
             _textureService.Init();
-            Vobs.Init();
+            _vobService.Init();
             Npcs.Init();
 
             Bootstrapper.Boot();

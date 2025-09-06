@@ -8,12 +8,12 @@ using GUZ.Core.Adapters.Vob;
 using GUZ.Core.Const;
 using GUZ.Core.Core.Logging;
 using GUZ.Core.Creator;
+using GUZ.Core.Domain.Vobs;
 using GUZ.Core.Extensions;
 using GUZ.Core.Manager;
 using GUZ.Core.Models.Config;
 using GUZ.Core.Models.Container;
 using GUZ.Core.Models.Vob;
-using GUZ.Core.Services.Audio;
 using GUZ.Core.Services.Caches;
 using GUZ.Core.Services.Config;
 using GUZ.Core.Services.Culling;
@@ -29,7 +29,7 @@ using Object = UnityEngine.Object;
 
 namespace GUZ.Core.Services.Vobs
 {
-    public class VobManager
+    public class VobService
     {
         [Inject] private readonly VmCacheService _vmCacheService;
         [Inject] private readonly ConfigService _configService;
@@ -38,13 +38,12 @@ namespace GUZ.Core.Services.Vobs
         [Inject] private readonly UnityMonoService _unityMonoService;
         [Inject] private readonly AudioService _audioService;
         [Inject] private readonly MultiTypeCacheService _multiTypeCacheService;
-        [Inject] private readonly NpcService _npcService;
         [Inject] private readonly SaveGameService _saveGameService;
         [Inject] private readonly WayNetService _wayNetService;
         [Inject] private readonly VobMeshCullingService _vobMeshCullingService;
         
         // Supporter class where the whole Init() logic is outsourced for better readability.
-        [Inject] private readonly VobInitializer _initializer;
+        private readonly VobInitializerDomain _initializerDomain = new VobInitializerDomain().Inject();
 
 
         public Dictionary<string, List<(int hour, int minute, int status)>> ObjectRoutines = new();
@@ -75,14 +74,12 @@ namespace GUZ.Core.Services.Vobs
             VirtualObjectType.zCVobLevelCompo
         };
 
-        public VobManager()
-        {
-            int a = 2;
-        }
-        
         public void Init()
         {
             _unityMonoService.StartCoroutine(InitVobCoroutine());
+            
+            // Decoupling Culling logic from actual init logic.
+            GlobalEventDispatcher.VobMeshCullingChanged.AddListener(InitVob);
         }
 
         /// <summary>
@@ -121,7 +118,7 @@ namespace GUZ.Core.Services.Vobs
         /// </summary>
         public void InitVobNow(VobContainer container)
         {
-            _initializer.InitVob(container.Vob, container.Go, default, true);
+            _initializerDomain.InitVob(container.Vob, container.Go, default, true);
         }
         
         /// <summary>
@@ -141,42 +138,6 @@ namespace GUZ.Core.Services.Vobs
                 return;
 
             _objectsToInitQueue.Enqueue(go.GetComponent<VobLoader>());
-        }
-
-        /// <summary>
-        /// Hint: If you want to fetch sounds randomly, do not cache them on e.g., MonoBehavior, but fetch them each time you want to run it.
-        ///       The AudioClips itself are cached by this method automatically. No performance penalty when re-running this method.
-        /// </summary>
-        public AudioClip GetRandomSoundClip(string soundName)
-        {
-            AudioClip clip;
-
-            if (soundName.EqualsIgnoreCase(SfxService.NoSoundName))
-            {
-                //instead of decoding nosound.wav which might be decoded incorrectly, just return null
-                return null;
-            }
-
-            // Bugfix - Normally the data is to get C_SFX_DEF entries from VM. But sometimes there might be the real .wav file stored.
-            if (soundName.EndsWithIgnoreCase(".wav"))
-            {
-                clip = _audioService.CreateAudioClip(soundName);
-            }
-            else
-            {
-                var sfxContainer = _vmCacheService.TryGetSfxData(soundName);
-
-                if (sfxContainer == null)
-                    return null;
-
-                // Instead of decoding nosound.wav which might be decoded incorrectly, just return null.
-                if (sfxContainer.GetFirstSound().File.EqualsIgnoreCase(SfxService.NoSoundName))
-                    return null;
-
-                clip = _audioService.CreateAudioClip(sfxContainer.GetRandomSound());
-            }
-
-            return clip;
         }
 
         // DEBUG - Check how many frames it took to initialize all the objects
@@ -210,7 +171,7 @@ namespace GUZ.Core.Services.Vobs
 
                     // We assume that each loaded VOB is centered at parent=0,0,0.
                     // Should work smoothly until we start lazy loading sub-vobs ;-)
-                    _initializer.InitVob(item.Container.Vob, item.gameObject, default, true);
+                    _initializerDomain.InitVob(item.Container.Vob, item.gameObject, default, true);
 
                     yield return _frameSkipperService.TrySkipToNextFrameCoroutine();
                 }
@@ -230,7 +191,7 @@ namespace GUZ.Core.Services.Vobs
             }
             var item = _vmCacheService.TryGetItemData(itemId);
 
-            _initializer.CreateItemMesh(item, parentGo, default);
+            _initializerDomain.CreateItemMesh(item, parentGo, default);
         }
 
         /// <summary>
@@ -246,7 +207,7 @@ namespace GUZ.Core.Services.Vobs
 
             var item = _vmCacheService.TryGetItemData(itemName);
 
-            _initializer.CreateItemMesh(item, parentGo, default);
+            _initializerDomain.CreateItemMesh(item, parentGo, default);
         }
 
         /// <summary>
@@ -325,7 +286,7 @@ namespace GUZ.Core.Services.Vobs
             if (!_configService.Dev.EnableVOBMeshCulling)
             {
                 var lazyLoadVobs = Object.FindObjectsOfType<VobLoader>(true);
-                lazyLoadVobs.ForEach(i => GameGlobals.Vobs.InitVob(i.gameObject));
+                lazyLoadVobs.ForEach(i => InitVob(i.gameObject));
             }
         }
 
@@ -344,7 +305,7 @@ namespace GUZ.Core.Services.Vobs
                         await CreateWorldVobs(config, loading, vob.Children);
                         continue;
                     case VirtualObjectType.oCNpc:
-                        _npcService.CreateVobNpc((INpc)vob);
+                        GlobalEventDispatcher.CreateNpcCalled.Invoke((INpc)vob);
                         continue;
                 }
 
@@ -379,7 +340,7 @@ namespace GUZ.Core.Services.Vobs
             var loader = container.Go.AddComponent<VobLoader>();
             loader.Container = container;
 
-            _initializer.SetPosAndRot(container.Go, container.Vob.Position, container.Vob.Rotation);
+            _initializerDomain.SetPosAndRot(container.Go, container.Vob.Position, container.Vob.Rotation);
             container.Go.SetParent(GetRootGameObjectOfType(container.Vob.Type));
 
             return container;

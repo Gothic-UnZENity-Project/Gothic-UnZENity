@@ -1,8 +1,8 @@
 using GUZ.Core.Creator;
 using GUZ.Core.Domain.Animations;
+using GUZ.Core.Domain.Vobs;
 using GUZ.Core.Manager;
 using GUZ.Core.Services;
-using GUZ.Core.Services.Audio;
 using GUZ.Core.Services.Caches;
 using GUZ.Core.Services.Config;
 using GUZ.Core.Services.Context;
@@ -60,7 +60,6 @@ namespace GUZ.Core
             containerBuilder.AddSingleton(typeof(ContextDialogService));
             containerBuilder.AddSingleton(typeof(ContextGameVersionService));
 
-            containerBuilder.AddSingleton(typeof(AudioService));
             containerBuilder.AddSingleton(typeof(NpcMeshCullingService));
             containerBuilder.AddSingleton(typeof(VobMeshCullingService));
             containerBuilder.AddSingleton(typeof(VobSoundCullingService));
@@ -97,7 +96,7 @@ namespace GUZ.Core
             containerBuilder.AddSingleton(typeof(PhysicsService));
 
             // Misc
-            containerBuilder.AddSingleton(typeof(SfxService));
+            containerBuilder.AddSingleton(typeof(AudioService));
             containerBuilder.AddSingleton(typeof(VideoService));
             
             // Meshes
@@ -113,8 +112,8 @@ namespace GUZ.Core
             containerBuilder.AddSingleton(typeof(MarvinService));
 
             // FIXME - Need to be migrated to a Service!
-            containerBuilder.AddSingleton(typeof(VobManager));
-            containerBuilder.AddSingleton(typeof(VobInitializer));
+            containerBuilder.AddSingleton(typeof(VobService));
+            containerBuilder.AddSingleton(typeof(VobInitializerDomain));
             containerBuilder.AddSingleton(typeof(StationaryLightsService));
             containerBuilder.AddSingleton(typeof(SkyService));
             containerBuilder.AddSingleton(typeof(BarrierService));
