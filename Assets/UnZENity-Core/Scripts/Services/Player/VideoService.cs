@@ -5,7 +5,7 @@ using GUZ.Core.Core.Logging;
 using GUZ.Core.Extensions;
 using Logger = GUZ.Core.Core.Logging.Logger;
 
-namespace GUZ.Core.Services
+namespace GUZ.Core.Services.Player
 {
     public class VideoService
     {

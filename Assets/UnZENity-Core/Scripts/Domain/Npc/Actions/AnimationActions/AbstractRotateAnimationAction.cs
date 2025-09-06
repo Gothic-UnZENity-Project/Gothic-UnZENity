@@ -1,8 +1,8 @@
 using GUZ.Core.Models.Container;
-using GUZ.Core.Domain.Animations;
 using GUZ.Core.Const;
 using GUZ.Core.Core.Logging;
 using GUZ.Core.Models.Vm;
+using GUZ.Core.Services.Npc;
 using GUZ.Core.Util;
 using Reflex.Attributes;
 using UnityEngine;

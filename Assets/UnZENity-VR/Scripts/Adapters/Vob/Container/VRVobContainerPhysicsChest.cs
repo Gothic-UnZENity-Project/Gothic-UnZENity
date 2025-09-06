@@ -9,6 +9,7 @@ using GUZ.Core.Core.Logging;
 using GUZ.Core.Models.Container;
 using GUZ.Core.Extensions;
 using GUZ.Core.Services;
+using GUZ.Core.Services.Meshes;
 using GUZ.Core.Services.Vobs;
 using GUZ.Core.Util;
 using HurricaneVR.Framework.Components;

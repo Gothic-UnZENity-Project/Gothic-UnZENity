@@ -4,6 +4,7 @@ using GUZ.Core.Core.Logging;
 using GUZ.Core.Manager;
 using GUZ.Core.Services;
 using GUZ.Core.Services.Config;
+using GUZ.Core.Services.Player;
 using GUZ.Core.Util;
 using GUZ.VR.Services.Context;
 using GUZ.VR.Adapters.HVROverrides;

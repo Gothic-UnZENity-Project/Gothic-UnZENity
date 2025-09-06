@@ -1,5 +1,7 @@
 using System.Collections;
 using GUZ.Core.Const;
+using GUZ.Core.Manager;
+using GUZ.Core.Services;
 using GUZ.Core.Services.Config;
 using Reflex.Attributes;
 using UnityEngine;
@@ -13,6 +15,7 @@ namespace GUZ.Core.Adapters.Scenes
     public class BootstrapScene : MonoBehaviour, IScene
     {
         [Inject] private readonly ConfigService _configService;
+        [Inject] private readonly BootstrapService _bootstrapService;
 
 
         public void Init()
@@ -37,7 +40,7 @@ namespace GUZ.Core.Adapters.Scenes
             var playerContextName = _configService.Dev.GameControls.ToString();
 
             // Load Player scene by its full path name. Otherwise, it will not be found as Flat and VR module have same Player.unity scene name in use.
-            GameManager.I.LoadScene($"UnZENity-{playerContextName}/Scenes/{playerContextName}/{Constants.ScenePlayer}");
+            _bootstrapService.LoadScene($"UnZENity-{playerContextName}/Scenes/{playerContextName}/{Constants.ScenePlayer}");
         }
     }
 }

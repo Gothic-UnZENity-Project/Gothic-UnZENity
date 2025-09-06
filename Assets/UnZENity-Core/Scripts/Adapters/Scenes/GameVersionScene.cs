@@ -1,6 +1,7 @@
 using System;
 using GUZ.Core.Const;
 using GUZ.Core.Core.Logging;
+using GUZ.Core.Services;
 using GUZ.Core.Services.Config;
 using Reflex.Attributes;
 using UnityEngine;
@@ -12,6 +13,7 @@ namespace GUZ.Core.Adapters.Scenes
     public class GameVersionScene : MonoBehaviour, IScene
     {
         [Inject] private readonly ConfigService _configService;
+        [Inject] private readonly BootstrapService _bootstrapService;
 
 
         [SerializeField] private GameObject _invalidInstallationDir;
@@ -44,8 +46,8 @@ namespace GUZ.Core.Adapters.Scenes
 
                 if (isInstalled)
                 {
-                    GameManager.I.InitPhase2(_configService.Dev.GameVersion);
-                    GameManager.I.LoadScene(Constants.ScenePreCaching, Constants.SceneGameVersion);
+                    _bootstrapService.InitPhase2(_configService.Dev.GameVersion);
+                    _bootstrapService.LoadScene(Constants.ScenePreCaching, Constants.SceneGameVersion);
                 }
                 else
                 {
@@ -76,8 +78,8 @@ namespace GUZ.Core.Adapters.Scenes
 
                 Logger.Log($"Installation for {version} found only.", LogCat.Loading);
 
-                GameManager.I.InitPhase2(version);
-                GameManager.I.LoadScene(Constants.SceneLogo, Constants.SceneGameVersion);
+                _bootstrapService.InitPhase2(version);
+                _bootstrapService.LoadScene(Constants.SceneLogo, Constants.SceneGameVersion);
             }
         }
     }

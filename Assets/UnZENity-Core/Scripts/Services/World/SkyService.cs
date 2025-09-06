@@ -8,7 +8,6 @@ using GUZ.Core.Models.Sky;
 using GUZ.Core.Services.Caches;
 using GUZ.Core.Services.Config;
 using GUZ.Core.Services.Meshes;
-using GUZ.Core.Util;
 using Reflex.Attributes;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -16,7 +15,7 @@ using Logger = GUZ.Core.Core.Logging.Logger;
 using Object = UnityEngine.Object;
 using Random = UnityEngine.Random;
 
-namespace GUZ.Core.Services
+namespace GUZ.Core.Services.World
 {
     public class SkyService
     {

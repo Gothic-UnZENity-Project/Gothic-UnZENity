@@ -12,7 +12,9 @@ using GUZ.Core.Const;
 using GUZ.Core.Core.Logging;
 using GUZ.Core.Models.Config;
 using GUZ.Core.Services.Caches;
+using GUZ.Core.Services.Config;
 using MyBox;
+using Reflex.Attributes;
 using UnityEngine;
 using CompressionLevel = System.IO.Compression.CompressionLevel;
 using Logger = GUZ.Core.Core.Logging.Logger;
@@ -52,6 +54,8 @@ namespace GUZ.Core.Services.StaticCache
         public StationaryLightContainer LoadedStationaryLights;
         public DebugDataContainer LoadedDebugData;
 
+        
+        [Inject] private readonly ConfigService _configService;
 
         public struct TextureInfo
         {
@@ -185,9 +189,9 @@ namespace GUZ.Core.Services.StaticCache
         }
 
 
-        public void Init(DeveloperConfig config)
+        public void Init()
         {
-            _configIsCompressed = config.CompressStaticCacheFiles;
+            _configIsCompressed = _configService.Dev.CompressStaticCacheFiles;
             _cacheRootFolderPath = $"{Application.persistentDataPath}/Cache/{GameContext.ContextGameVersionService.Version}/";
         }
 

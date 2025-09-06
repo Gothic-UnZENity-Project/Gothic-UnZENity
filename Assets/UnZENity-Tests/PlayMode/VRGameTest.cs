@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Linq;
 using GUZ.Core;
+using GUZ.Core.Adapters;
 using GUZ.Core.Const;
 using NUnit.Framework;
 using UnityEditor;
@@ -40,7 +41,7 @@ namespace GUZ.Tests.PlayMode
             yield return PrepareTest();
 
             // Assert
-            if (SceneManager.GetActiveScene().GetRootGameObjects().First().GetComponent<GameManager>().DeveloperConfig.name != "Production")
+            if (SceneManager.GetActiveScene().GetRootGameObjects().First().GetComponent<BootstrapAdapter>().DeveloperConfig.name != "Production")
             {
                 // Unfortunately I couldn't figure out an easy way to check for active .Config setting without triggering .Start() of GameObject.
                 // Therefore let's check that we always have Production active.

@@ -211,7 +211,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 583338018}
-  - component: {fileID: 583338017}
+  - component: {fileID: 583338027}
   - component: {fileID: 583338024}
   - component: {fileID: 583338022}
   - component: {fileID: 583338025}
@@ -223,19 +223,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &583338017
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 583338016}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2e5cf8b27b704b1fba675d25e253108e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  DeveloperConfig: {fileID: 11400000, guid: 6d8d06c956029b1158d990363b5992b5, type: 2}
 --- !u!4 &583338018
 Transform:
   m_ObjectHideFlags: 0
@@ -305,6 +292,19 @@ MonoBehaviour:
   FillerMaterial: {fileID: 2100000, guid: 7f15366450c487344a1e66a13b22a847, type: 2}
   SkyMaterial: {fileID: 2100000, guid: 39ac659c922b5b1489714aacd9b952e9, type: 2}
   BackgroundMaterial: {fileID: 2100000, guid: 1e349bd46543d684da0fd00dfcc78b72, type: 2}
+--- !u!114 &583338027
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 583338016}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a6cdd2dfb90340eeb158c13af2c44203, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  DeveloperConfig: {fileID: 11400000, guid: 6d8d06c956029b1158d990363b5992b5, type: 2}
 --- !u!1 &1283201085
 GameObject:
   m_ObjectHideFlags: 0

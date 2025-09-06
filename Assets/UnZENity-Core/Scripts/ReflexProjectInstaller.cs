@@ -1,5 +1,4 @@
 using GUZ.Core.Creator;
-using GUZ.Core.Domain.Animations;
 using GUZ.Core.Domain.Vobs;
 using GUZ.Core.Manager;
 using GUZ.Core.Services;
@@ -51,6 +50,8 @@ namespace GUZ.Core
             SceneScope.OnSceneContainerBuilding += OverrideParent;
             containerBuilder.OnContainerBuilt += (container) => DIContainer = container;
 
+            containerBuilder.AddSingleton(typeof(BootstrapService));
+            
             containerBuilder.AddSingleton(typeof(UnityMonoService));
             containerBuilder.AddSingleton(typeof(ConfigService));
             containerBuilder.AddSingleton(typeof(FrameSkipperService));

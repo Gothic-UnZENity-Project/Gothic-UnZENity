@@ -10,7 +10,7 @@ using ZenKit;
 using ZenKit.Daedalus;
 using ZenKit.Vobs;
 
-namespace GUZ.Core.Services
+namespace GUZ.Core.Services.Meshes
 {
     public class MeshService
     {

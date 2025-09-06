@@ -2,6 +2,7 @@ using GUZ.Core.Domain.Npc;
 using GUZ.Core.Extensions;
 using GUZ.Core.Manager;
 using GUZ.Core.Services.Config;
+using GUZ.Core.Services.Meshes;
 using GUZ.Core.Services.Vobs;
 using Reflex.Attributes;
 using UnityEngine;

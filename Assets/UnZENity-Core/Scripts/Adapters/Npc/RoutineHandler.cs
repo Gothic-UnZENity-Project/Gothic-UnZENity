@@ -6,6 +6,7 @@ using GUZ.Core.Manager;
 using GUZ.Core.Models.Npc;
 using GUZ.Core.Services;
 using GUZ.Core.Services.Npc;
+using GUZ.Core.Services.World;
 using GUZ.Core.Util;
 using Reflex.Attributes;
 using UnityEngine;

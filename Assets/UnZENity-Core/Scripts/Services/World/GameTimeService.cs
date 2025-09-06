@@ -5,7 +5,7 @@ using GUZ.Core.Services.Config;
 using Reflex.Attributes;
 using UnityEngine;
 
-namespace GUZ.Core.Services
+namespace GUZ.Core.Services.World
 {
     public class GameTimeService
     {

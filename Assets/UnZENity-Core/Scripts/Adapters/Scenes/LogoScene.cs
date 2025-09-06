@@ -5,6 +5,7 @@ using GUZ.Core.Const;
 using GUZ.Core.Core.Logging;
 using GUZ.Core.Services;
 using GUZ.Core.Services.Config;
+using GUZ.Core.Services.Player;
 using GUZ.Core.Util;
 using Reflex.Attributes;
 using UnityEngine;
@@ -17,7 +18,7 @@ namespace GUZ.Core.Adapters.Scenes
     {
         [Inject] private readonly ConfigService _configService;
         [Inject] private readonly VideoService _videoService;
-
+        [Inject] private readonly BootstrapService _bootstrapService;
 
         [SerializeField] private VideoPlayer _videoPlayer;
 
@@ -28,7 +29,7 @@ namespace GUZ.Core.Adapters.Scenes
             Logger.Log($"INI: playLogoVideos = {_configService.Gothic.IniPlayLogoVideos}", LogCat.Loading);
             if (_configService.Gothic.IniPlayLogoVideos)
             {
-                GameManager.I.LoadScene(Constants.SceneMainMenu, Constants.SceneLogo);
+                _bootstrapService.LoadScene(Constants.SceneMainMenu, Constants.SceneLogo);
                 return;
             }
 
@@ -49,7 +50,7 @@ namespace GUZ.Core.Adapters.Scenes
         {
             if (_logoVideos.IsEmpty())
             {
-                GameManager.I.LoadScene(Constants.SceneMainMenu, Constants.SceneLogo);
+                _bootstrapService.LoadScene(Constants.SceneMainMenu, Constants.SceneLogo);
                 return;
             }
             

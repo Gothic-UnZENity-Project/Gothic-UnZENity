@@ -11,6 +11,7 @@ using GUZ.Core.Manager;
 using GUZ.Core.Models.Vob.WayNet;
 using GUZ.Core.Services;
 using GUZ.Core.Services.Config;
+using GUZ.Core.Services.Meshes;
 using GUZ.Core.Services.Npc;
 using GUZ.Core.Services.Player;
 using GUZ.Core.Services.StaticCache;

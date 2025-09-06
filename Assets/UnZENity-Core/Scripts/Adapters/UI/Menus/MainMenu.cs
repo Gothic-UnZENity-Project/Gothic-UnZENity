@@ -1,6 +1,8 @@
 using System;
 using System.Linq;
 using GUZ.Core.Const;
+using GUZ.Core.Services;
+using Reflex.Attributes;
 using UnityEngine.SceneManagement;
 using ZenKit.Daedalus;
 
@@ -8,6 +10,9 @@ namespace GUZ.Core.Adapters.UI.Menus
 {
     public class MainMenu : AbstractMenu
     {
+        [Inject] private readonly BootstrapService _bootstrapService;
+        
+        
         protected override void Undefined(string itemName, string commandName)
         {
             throw new NotImplementedException();
@@ -28,7 +33,7 @@ namespace GUZ.Core.Adapters.UI.Menus
             MenuHandler.ToggleVisibility();
             if (commandName == "NEW_GAME")
             {
-                GameManager.I.LoadWorld(ConfigService.GothicGame.World, 0, SceneManager.GetActiveScene().name);
+                _bootstrapService.LoadWorld(ConfigService.GothicGame.World, 0, SceneManager.GetActiveScene().name);
             }
         }
 

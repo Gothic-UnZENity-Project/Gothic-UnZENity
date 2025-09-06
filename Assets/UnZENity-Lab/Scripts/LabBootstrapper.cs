@@ -14,6 +14,7 @@ using GUZ.Core.Services.Context;
 using GUZ.Core.Services.Culling;
 using GUZ.Core.Services.Meshes;
 using GUZ.Core.Services.Npc;
+using GUZ.Core.Services.Player;
 using GUZ.Core.Services.StaticCache;
 using GUZ.Core.Services.Vobs;
 using GUZ.Core.Services.World;
@@ -117,7 +118,7 @@ namespace GUZ.Lab
             GlobalEventDispatcher.RegisterGameVersionService.Invoke(DeveloperConfig.GameVersion);
 
             _audioService.InitMusic();
-            _staticCacheService.Init(_configService.Dev);
+            _staticCacheService.Init();
             _textureService.Init();
             _npcService.Init();
             _vobService.Init();

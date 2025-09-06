@@ -3,6 +3,7 @@ using GUZ.Core.Manager;
 using GUZ.Core.Services;
 using GUZ.Core.Services.Caches;
 using GUZ.Core.Services.Culling;
+using GUZ.Core.Services.Player;
 using GUZ.Core.Services.World;
 using GUZ.Core.Util;
 using Reflex.Attributes;

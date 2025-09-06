@@ -1,6 +1,7 @@
 using System.Linq;
 using GUZ.Core;
 using GUZ.Core.Services;
+using GUZ.Core.Services.Player;
 using Reflex.Attributes;
 using TMPro;
 using UnityEngine;

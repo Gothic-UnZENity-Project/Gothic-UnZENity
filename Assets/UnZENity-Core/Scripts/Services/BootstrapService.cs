@@ -6,7 +6,6 @@ using GUZ.Core.Core.Logging;
 using GUZ.Core.Extensions;
 using GUZ.Core.Manager;
 using GUZ.Core.Models.Config;
-using GUZ.Core.Services;
 using GUZ.Core.Services.Caches;
 using GUZ.Core.Services.Config;
 using GUZ.Core.Services.Context;
@@ -17,24 +16,18 @@ using GUZ.Core.Services.Player;
 using GUZ.Core.Services.StaticCache;
 using GUZ.Core.Services.Vobs;
 using GUZ.Core.Services.World;
-using GUZ.Core.Util;
 using MyBox;
 using Reflex.Attributes;
 using UnityEngine.SceneManagement;
 using ZenKit;
 using Logger = GUZ.Core.Core.Logging.Logger;
 
-namespace GUZ.Core
+namespace GUZ.Core.Services
 {
-    public class GameManager : SingletonBehaviour<GameManager>
+    public class BootstrapService
     {
-        public DeveloperConfig DeveloperConfig;
 
         private FileLoggingHandler _fileLoggingHandler;
-
-
-        public VobMeshCullingService VobMeshCulling { get; private set; }
-        public SpeechToTextService SpeechToText { get; private set; }
 
 
         [Inject] private readonly ContextInteractionService _contextInteractionService;
@@ -69,10 +62,8 @@ namespace GUZ.Core
         [Inject] private readonly StaticCacheService _staticCacheService;
 
 
-        protected override void Awake()
+        public void AwakeUnity(DeveloperConfig config)
         {
-            base.Awake();
-
             GameContext.IsLab = false;
 
             // FIXME - Hack for now. Once we get rid of the GameContext global, we will remove these lines.
@@ -82,18 +73,12 @@ namespace GUZ.Core
             CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;
             CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.InvariantCulture;
 
-            // Simply set "any" MonoBehaviour (like this) as object to use within game logic.
-            _unityMonoService.SetMonoBehaviour(this);
-
             _configService.LoadRootJson();
-            _configService.SetDeveloperConfig(DeveloperConfig);
+            _configService.SetDeveloperConfig(config);
 
             _fileLoggingHandler = new FileLoggingHandler();
 
             _multiTypeCacheService.Init();
-
-            VobMeshCulling = _vobMeshCullingService;
-            SpeechToText = _speechToTextService;
 
             ZenKit.Logger.Set(_configService.Dev.ZenKitLogLevel, Logger.OnZenKitLogMessage);
             DirectMusic.Logger.Set(_configService.Dev.DirectMusicLogLevel, Logger.OnDirectMusicLogMessage);
@@ -101,7 +86,7 @@ namespace GUZ.Core
             _fileLoggingHandler.Init(_configService.Root);
         }
 
-        private void Start()
+        public void StartUnity()
         {
             SceneManager.sceneLoaded += OnSceneLoaded;
             SceneManager.sceneUnloaded += OnSceneUnloaded;
@@ -118,7 +103,7 @@ namespace GUZ.Core
             GlobalEventDispatcher.RegisterControlsService.Invoke(_configService.Dev.GameControls);
 
             _frameSkipperService.Init();
-            VobMeshCulling.Init();
+            _vobMeshCullingService.Init();
             _npcMeshCullingService.Init();
             _vobSoundCullingService.Init();
             _gameTimeService.Init();
@@ -144,13 +129,13 @@ namespace GUZ.Core
             ResourceLoader.Init(gothicRootPath);
 
             _audioService.InitMusic();
-            _staticCacheService.Init(DeveloperConfig);
+            _staticCacheService.Init();
             _textureService.Init();
             _vobService.Init();
             _npcService.Init();
 
             Bootstrapper.Boot();
-            SpeechToText.Init(); // Init after language set.
+            _speechToTextService.Init(); // Init after language set.
 
             GlobalEventDispatcher.LevelChangeTriggered.AddListener((world, spawn) =>
             {
@@ -225,8 +210,6 @@ namespace GUZ.Core
         public void OnDestroy()
         {
             _fileLoggingHandler.Destroy();
-
-            VobMeshCulling = null;
         }
     }
 }

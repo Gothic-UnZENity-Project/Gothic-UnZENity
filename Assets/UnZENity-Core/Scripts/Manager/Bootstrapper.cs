@@ -5,6 +5,7 @@ using GUZ.Core.Const;
 using GUZ.Core.Services;
 using GUZ.Core.Services.Caches;
 using GUZ.Core.Services.Npc;
+using GUZ.Core.Services.Player;
 using GUZ.Core.Services.UI;
 using GUZ.Core.Services.Vm;
 using GUZ.Services.UI;

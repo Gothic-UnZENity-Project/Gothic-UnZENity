@@ -1,9 +1,9 @@
 using GUZ.Core.Models.Container;
-using GUZ.Core.Domain.Animations;
 using GUZ.Core.Const;
 using GUZ.Core.Creator;
 using GUZ.Core.Manager;
 using GUZ.Core.Models.Vm;
+using GUZ.Core.Services.Npc;
 using Reflex.Attributes;
 using UnityEngine;
 

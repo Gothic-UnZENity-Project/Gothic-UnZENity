@@ -25,7 +25,7 @@ namespace GUZ.Core.Adapters.Scenes
         [Inject] private readonly MultiTypeCacheService _multiTypeCacheService;
         [Inject] private readonly LoadingService _loadingService;
         [Inject] private readonly StaticCacheService _staticCacheService;
-
+        [Inject] private readonly BootstrapService _bootstrapService;
 
         [SerializeField]
         private PreCachingLoadingBarHandler _loadingBarHandler;
@@ -84,7 +84,7 @@ namespace GUZ.Core.Adapters.Scenes
                     if (metadata.Version == Constants.StaticCacheVersion)
                     {
                         Logger.Log("World + Global data is already cached and metadata version matches. Skipping...", LogCat.PreCaching);
-                        GameManager.I.LoadScene(Constants.SceneLogo, Constants.ScenePreCaching);
+                        _bootstrapService.LoadScene(Constants.SceneLogo, Constants.ScenePreCaching);
                         return;
                     }
                 }
@@ -167,7 +167,7 @@ namespace GUZ.Core.Adapters.Scenes
                 _multiTypeCacheService.Dispose();
 
                 // Every world of the game is cached successfully. Now let's move on!
-                GameManager.I.LoadScene(Constants.SceneLogo, Constants.ScenePreCaching);
+                _bootstrapService.LoadScene(Constants.SceneLogo, Constants.ScenePreCaching);
             }
             catch (Exception e)
             {

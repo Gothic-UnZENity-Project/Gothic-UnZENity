@@ -2,11 +2,10 @@ using System;
 using System.Threading.Tasks;
 using GUZ.Core.Core.Logging;
 using GUZ.Core.UnZENity_Core.Scripts.Domain;
-using GUZ.Core.Util;
 using UnityEngine;
 using Logger = GUZ.Core.Core.Logging.Logger;
 
-namespace GUZ.Core.Services
+namespace GUZ.Core.Services.Player
 {
     public class SpeechToTextService : IDisposable
     {

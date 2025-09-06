@@ -2,20 +2,18 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using GUZ.Core.Models.Adapter.Vobs;
-using GUZ.Core.Extensions;
 using GUZ.Core.Const;
 using GUZ.Core.Core.Logging;
+using GUZ.Core.Extensions;
+using GUZ.Core.Models.Adapter.Vobs;
 using GUZ.Core.Models.Animations;
 using GUZ.Core.Models.Vm;
-using GUZ.Core.Services;
-using GUZ.Core.Util;
 using JetBrains.Annotations;
 using UnityEngine;
 using ZenKit;
 using Logger = GUZ.Core.Core.Logging.Logger;
 
-namespace GUZ.Core.Domain.Animations
+namespace GUZ.Core.Services.Npc
 {
     public class AnimationService
     {

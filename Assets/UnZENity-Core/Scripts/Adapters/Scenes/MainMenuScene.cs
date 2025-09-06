@@ -1,5 +1,6 @@
 using GUZ.Core.Const;
 using GUZ.Core.Models.Config;
+using GUZ.Core.Services;
 using GUZ.Core.Services.Config;
 using GUZ.Core.Services.Meshes;
 using GUZ.Core.Services.World;
@@ -19,7 +20,7 @@ namespace GUZ.Core.Adapters.Scenes
         [Inject] private readonly ConfigService _configService;
         [Inject] private readonly TextureService _textureService;
         [Inject] private readonly SaveGameService _saveGameService;
-
+        [Inject] private readonly BootstrapService _bootstrapService;
 
         public void Init()
         {
@@ -34,12 +35,12 @@ namespace GUZ.Core.Adapters.Scenes
                 {
                     var saveId = (SaveGameService.SlotId)_configService.Dev.SaveSlotToLoad;
                     var save = _saveGameService.GetSaveGame(saveId);
-                    GameManager.I.LoadWorld(save.Metadata.World, saveId, Constants.SceneMainMenu);
+                    _bootstrapService.LoadWorld(save.Metadata.World, saveId, Constants.SceneMainMenu);
                 }
                 else
                 {
                     // Load New game at certain world
-                    GameManager.I.LoadWorld(GetWorldNameToSpawn(), 0, Constants.SceneMainMenu);
+                    _bootstrapService.LoadWorld(GetWorldNameToSpawn(), 0, Constants.SceneMainMenu);
                 }
                 return;
             }

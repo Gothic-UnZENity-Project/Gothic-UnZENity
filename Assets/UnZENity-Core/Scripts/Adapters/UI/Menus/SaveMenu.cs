@@ -41,7 +41,8 @@ namespace GUZ.Core.Adapters.UI.Menus
         
         [Inject] private readonly TextureCacheService _textureCacheService;
         [Inject] private readonly SaveGameService _saveGameService;
-
+        [Inject] private readonly BootstrapService _bootstrapService;
+        
         
         /// <summary>
         /// Pre-fill the Load Game entries with names and textures (if existing)
@@ -228,7 +229,7 @@ namespace GUZ.Core.Adapters.UI.Menus
                 }
 
                 // Can be triggered from Scene:mainMenu or Scene:AnyWorld, therefore removing active scene.
-                GameManager.I.LoadWorld(save.Metadata.World, (SaveGameService.SlotId)id, SceneManager.GetActiveScene().name);
+                _bootstrapService.LoadWorld(save.Metadata.World, (SaveGameService.SlotId)id, SceneManager.GetActiveScene().name);
             }
             else
             {

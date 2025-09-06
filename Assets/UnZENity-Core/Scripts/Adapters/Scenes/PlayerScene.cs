@@ -1,4 +1,5 @@
 ﻿using GUZ.Core.Const;
+using GUZ.Core.Services;
 using GUZ.Core.Services.Config;
 using GUZ.Core.Services.Context;
 using Reflex.Attributes;
@@ -10,16 +11,17 @@ namespace GUZ.Core.Adapters.Scenes
     {
         [Inject] private readonly ConfigService _configService;
         [Inject] private readonly ContextInteractionService _contextInteractionService;
-
+        [Inject] private readonly BootstrapService _bootstrapService;
+        
         public void Init()
         {
-            GameManager.I.InitPhase1();
+            _bootstrapService.InitPhase1();
 
             _contextInteractionService.SetupPlayerController(_configService.Dev);
 
             GlobalEventDispatcher.PlayerSceneLoaded.Invoke();
 
-            GameManager.I.LoadScene(Constants.SceneGameVersion);
+            _bootstrapService.LoadScene(Constants.SceneGameVersion);
         }
     }
 }
