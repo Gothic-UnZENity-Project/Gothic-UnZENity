@@ -26,14 +26,13 @@ using Logger = GUZ.Core.Core.Logging.Logger;
 
 namespace GUZ.Core
 {
-    public class GameManager : SingletonBehaviour<GameManager>, IGlobalDataProvider
+    public class GameManager : SingletonBehaviour<GameManager>
     {
         public DeveloperConfig DeveloperConfig;
 
         private FileLoggingHandler _fileLoggingHandler;
 
 
-        public NpcService Npcs { get; private set; }
         public VobMeshCullingService VobMeshCulling { get; private set; }
         public SpeechToTextService SpeechToText { get; private set; }
 
@@ -91,11 +90,8 @@ namespace GUZ.Core
 
             _fileLoggingHandler = new FileLoggingHandler();
 
-            GameGlobals.Instance = this;
-            
             _multiTypeCacheService.Init();
 
-            Npcs = _npcService;
             VobMeshCulling = _vobMeshCullingService;
             SpeechToText = _speechToTextService;
 
@@ -151,7 +147,7 @@ namespace GUZ.Core
             _staticCacheService.Init(DeveloperConfig);
             _textureService.Init();
             _vobService.Init();
-            Npcs.Init();
+            _npcService.Init();
 
             Bootstrapper.Boot();
             SpeechToText.Init(); // Init after language set.

@@ -71,9 +71,6 @@ namespace GUZ.Core.Editor.Tools
             config.LoadRootJson();
             ResourceLoader.Init(version == GameVersion.Gothic1 ? config.Root.Gothic1Path : config.Root.Gothic2Path);
 
-            var editorDataProvider = new EditorDataProvider();
-            GameGlobals.Instance = editorDataProvider;
-
             await Execute(version).AwaitAndLog();
         }
 

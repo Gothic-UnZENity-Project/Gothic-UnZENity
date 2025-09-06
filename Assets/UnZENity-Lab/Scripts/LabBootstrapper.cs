@@ -15,7 +15,6 @@ using GUZ.Core.Services.Culling;
 using GUZ.Core.Services.Meshes;
 using GUZ.Core.Services.Npc;
 using GUZ.Core.Services.StaticCache;
-using GUZ.Core.Services.UI;
 using GUZ.Core.Services.Vobs;
 using GUZ.Core.Services.World;
 using GUZ.Lab.Handler;
@@ -26,7 +25,7 @@ using Logger = GUZ.Core.Core.Logging.Logger;
 
 namespace GUZ.Lab
 {
-    public class LabBootstrapper : MonoBehaviour, IGlobalDataProvider
+    public class LabBootstrapper : MonoBehaviour
     {
         public DeveloperConfig DeveloperConfig;
 
@@ -96,8 +95,6 @@ namespace GUZ.Lab
 
         private void InitManager()
         {
-            GameGlobals.Instance = this;
-
             _configService.LoadRootJson();
             _configService.SetDeveloperConfig(DeveloperConfig);
             _configService.LoadGothicInis(GameVersion.Gothic1);
