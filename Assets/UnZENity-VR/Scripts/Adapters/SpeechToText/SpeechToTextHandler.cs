@@ -2,13 +2,11 @@
 using GUZ.Core;
 using GUZ.Core.Logging;
 using GUZ.Core.Manager;
-using GUZ.Core.Services;
 using GUZ.Core.Services.Config;
 using GUZ.Core.Services.Player;
-using GUZ.Core.Util;
-using GUZ.VR.Services.Context;
 using GUZ.VR.Adapters.HVROverrides;
 using GUZ.VR.Adapters.UI;
+using GUZ.VR.Services.Context;
 using Reflex.Attributes;
 using UnityEngine;
 using Logger = GUZ.Core.Logging.Logger;

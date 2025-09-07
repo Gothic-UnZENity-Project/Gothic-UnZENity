@@ -1,13 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using GUZ.Core.Adapters.UI.LoadingBars;
-using GUZ.Core.Logging;
 using GUZ.Core.Extensions;
+using GUZ.Core.Logging;
 using GUZ.Core.Manager;
 using GUZ.Core.Services;
 using GUZ.Core.Services.Config;
 using GUZ.Core.Services.StaticCache;
-using GUZ.Core.Util;
 using MyBox;
 using Reflex.Attributes;
 using UnityEngine;

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using GUZ.Core.Logging;
-using GUZ.Core.Util;
 using Logger = GUZ.Core.Logging.Logger;
 
 namespace GUZ.Core.Domain.Config

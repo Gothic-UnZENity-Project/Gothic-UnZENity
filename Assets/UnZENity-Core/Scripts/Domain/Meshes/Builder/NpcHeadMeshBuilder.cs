@@ -1,9 +1,8 @@
 using System.Text.RegularExpressions;
 using GUZ.Core.Adapters.Animations.Morph;
 using GUZ.Core.Adapters.Npc;
-using GUZ.Core.Logging;
 using GUZ.Core.Extensions;
-using GUZ.Core.Util;
+using GUZ.Core.Logging;
 using UnityEngine;
 using Logger = GUZ.Core.Logging.Logger;
 

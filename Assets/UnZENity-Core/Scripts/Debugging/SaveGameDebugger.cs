@@ -3,9 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using GUZ.Core.Logging;
-using GUZ.Core.Manager;
 using GUZ.Core.Services.World;
-using GUZ.Core.Util;
 using MyBox;
 using Reflex.Attributes;
 using UnityEngine;
@@ -103,9 +101,9 @@ namespace GUZ.Core.Debugging
             Logger.LogEditor("Compare close NPCs (excluding Monster)", LogCat.Debug);
             {
                 var npcsA = world1.RootObjects.Where(i => i.Type == VirtualObjectType.oCNpc)
-                    .Select(i => (ZenKit.Vobs.Npc)i).ToList();
+                    .Select(i => (Npc)i).ToList();
                 var npcsB = world2.RootObjects.Where(i => i.Type == VirtualObjectType.oCNpc)
-                    .Select(i => (ZenKit.Vobs.Npc)i).ToList();
+                    .Select(i => (Npc)i).ToList();
 
                 foreach (var npcA in npcsA)
                 {

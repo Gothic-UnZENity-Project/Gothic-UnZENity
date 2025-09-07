@@ -1,10 +1,8 @@
 using System;
-using GUZ.Core.Models.Container;
 using GUZ.Core.Const;
 using GUZ.Core.Logging;
-using GUZ.Core.Manager;
+using GUZ.Core.Models.Container;
 using GUZ.Core.Models.Vm;
-using GUZ.Core.Util;
 using UnityEngine;
 using Logger = GUZ.Core.Logging.Logger;
 

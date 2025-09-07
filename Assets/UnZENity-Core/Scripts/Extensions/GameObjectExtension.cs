@@ -1,7 +1,6 @@
 using System;
 using System.Linq;
 using GUZ.Core.Logging;
-using GUZ.Core.Util;
 using JetBrains.Annotations;
 using Reflex.Injectors;
 using UnityEngine;

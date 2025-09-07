@@ -1,9 +1,8 @@
 using System;
-using GUZ.Core.Const;
 using GUZ.Core.Logging;
 using GUZ.Core.Services;
-using GUZ.Core.Util;
 using UnityEditor;
+using Logger = UberLogger.Logger;
 
 namespace GUZ.Core.Editor.Tools
 {
@@ -15,7 +14,7 @@ namespace GUZ.Core.Editor.Tools
         {
             UberLoggerEditorWindow.OnEnableWindow.AddListener(() =>
             {
-                var editorLogWindow = UberLogger.Logger.GetLogger<UberLoggerEditor>();
+                var editorLogWindow = Logger.GetLogger<UberLoggerEditor>();
                 if (editorLogWindow == null)
                     return;
 
@@ -35,7 +34,7 @@ namespace GUZ.Core.Editor.Tools
             var gothicVm = ReflexProjectInstaller.DIContainer.Resolve<GameStateService>()?.GothicVm;
             
             if (gothicVm == null)
-                Logger.LogErrorEditor("No Gothic VM initialized. Please start the game first.", LogCat.Debug);
+                Logging.Logger.LogErrorEditor("No Gothic VM initialized. Please start the game first.", LogCat.Debug);
             
             gothicVm?.PrintStackTrace();
         }

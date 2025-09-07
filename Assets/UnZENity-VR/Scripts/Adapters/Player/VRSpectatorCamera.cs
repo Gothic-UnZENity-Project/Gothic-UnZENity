@@ -4,7 +4,6 @@ using GUZ.Core;
 using GUZ.Core.Logging;
 using GUZ.Core.Models.Config;
 using GUZ.Core.Services.Config;
-using GUZ.Core.Util;
 using GUZ.VR.Adapters.HVROverrides;
 using Reflex.Attributes;
 using UnityEngine;

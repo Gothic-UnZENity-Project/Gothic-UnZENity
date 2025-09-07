@@ -1,12 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using GUZ.Core.Extensions;
 using GUZ.Core.Const;
+using GUZ.Core.Extensions;
 using GUZ.Core.Logging;
 using GUZ.Core.Services;
 using GUZ.Core.Services.Config;
 using GUZ.Core.Services.Player;
-using GUZ.Core.Util;
 using Reflex.Attributes;
 using UnityEngine;
 using UnityEngine.Video;

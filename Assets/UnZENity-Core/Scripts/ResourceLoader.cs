@@ -3,11 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using DirectMusic;
-using GUZ.Core.Extensions;
-using GUZ.Core.Const;
 using GUZ.Core.Logging;
 using GUZ.Core.Services;
-using GUZ.Core.Util;
 using JetBrains.Annotations;
 using UnityEngine;
 using ZenKit;
@@ -24,11 +21,11 @@ namespace GUZ.Core
         private static readonly Vfs _vfs = new();
         private static readonly Loader _dmLoader = Loader.Create(LoaderOptions.Default | LoaderOptions.Download);
 
-        private static readonly Resource<ZenKit.World> _world = new(
+        private static readonly Resource<World> _world = new(
             (s, version) =>
             {
                 // We do not cache the world itself, but only the loading pointer. As Mesh could exhaust our memory consumption.
-                var fireWorld = new ZenKit.World(_vfs, s, version);
+                var fireWorld = new World(_vfs, s, version);
 
                 // FIRE worlds aren't positioned at 0,0,0. We need to do it now, to have the correct parent-child positioning.
                 fireWorld.RootObjects.ForEach(i => i.Position = default);
@@ -212,9 +209,9 @@ namespace GUZ.Core
         }
 
         [CanBeNull]
-        public static ZenKit.World TryGetWorld([NotNull] string key)
+        public static World TryGetWorld([NotNull] string key)
         {
-            return new ZenKit.World(_vfs, $"{GetPreparedKey(key)}.zen");
+            return new World(_vfs, $"{GetPreparedKey(key)}.zen");
         }
 
         /// <summary>
@@ -226,7 +223,7 @@ namespace GUZ.Core
         /// <param name="cacheFire"></param>
         /// <returns></returns>
         [CanBeNull]
-        public static ZenKit.World TryGetWorld([NotNull] string key, GameVersion version, bool cacheFire = false)
+        public static World TryGetWorld([NotNull] string key, GameVersion version, bool cacheFire = false)
         {
             if (cacheFire)
             {
@@ -234,7 +231,7 @@ namespace GUZ.Core
             }
             else
             {
-                return new ZenKit.World(_vfs, $"{GetPreparedKey(key)}.zen", version);
+                return new World(_vfs, $"{GetPreparedKey(key)}.zen", version);
             }
         }
 

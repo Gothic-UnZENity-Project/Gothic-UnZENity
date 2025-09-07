@@ -1,13 +1,10 @@
 using System.Collections.Generic;
 using GUZ.Core;
 using GUZ.Core.Adapters.UI;
-using GUZ.Core.Logging;
 using GUZ.Core.Extensions;
+using GUZ.Core.Logging;
 using GUZ.Core.Manager;
 using GUZ.Core.Models.Marvin;
-using GUZ.Core.Services;
-using GUZ.Core.Services.Config;
-using GUZ.Core.Util;
 using GUZ.VR.Services;
 using Reflex.Attributes;
 using TMPro;

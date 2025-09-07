@@ -3,10 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using GUZ.Core.Logging;
-using GUZ.Core.Util;
-using Reflex.Core;
 using Reflex.Injectors;
-using UnityEngine;
 using Logger = GUZ.Core.Logging.Logger;
 
 namespace GUZ.Core.Extensions

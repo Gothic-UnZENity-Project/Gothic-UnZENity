@@ -1,8 +1,7 @@
 using System;
-using GUZ.Core.Logging;
 using GUZ.Core.Extensions;
+using GUZ.Core.Logging;
 using GUZ.Core.Services.Config;
-using GUZ.Core.Util;
 using Reflex.Attributes;
 using Logger = GUZ.Core.Logging.Logger;
 

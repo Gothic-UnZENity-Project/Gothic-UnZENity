@@ -1,7 +1,5 @@
 using GUZ.Core.Logging;
 using GUZ.Core.Models.Container;
-using GUZ.Core.Services.Caches;
-using GUZ.Core.Util;
 
 namespace GUZ.Core.Domain.Npc.Actions.AnimationActions
 {
