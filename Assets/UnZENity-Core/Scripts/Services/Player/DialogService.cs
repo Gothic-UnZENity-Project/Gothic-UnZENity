@@ -5,7 +5,7 @@ using GUZ.Core.Adapters.Properties;
 using GUZ.Core.Models.Container;
 using GUZ.Core.Extensions;
 using GUZ.Core.Const;
-using GUZ.Core.Core.Logging;
+using GUZ.Core.Logging;
 using GUZ.Core.Models.Dialog;
 using GUZ.Core.Domain.Npc.Actions;
 using GUZ.Core.Domain.Npc.Actions.AnimationActions;
@@ -18,7 +18,7 @@ using Reflex.Attributes;
 using UnityEngine;
 using ZenKit;
 using ZenKit.Daedalus;
-using Logger = GUZ.Core.Core.Logging.Logger;
+using Logger = GUZ.Core.Logging.Logger;
 
 namespace GUZ.Core.Manager
 {

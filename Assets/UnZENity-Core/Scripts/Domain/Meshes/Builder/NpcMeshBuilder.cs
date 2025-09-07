@@ -1,13 +1,13 @@
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
-using GUZ.Core.Core.Logging;
+using GUZ.Core.Logging;
 using GUZ.Core.Models.Vm;
 using GUZ.Core.Services.Caches;
 using GUZ.Core.Util;
 using Reflex.Attributes;
 using UnityEngine;
 using ZenKit;
-using Logger = GUZ.Core.Core.Logging.Logger;
+using Logger = GUZ.Core.Logging.Logger;
 using Vector3 = System.Numerics.Vector3;
 
 namespace GUZ.Core.Domain.Meshes.Builder

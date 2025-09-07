@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using GUZ.Core.Core.Logging;
+using GUZ.Core.Logging;
 using GUZ.Core.Extensions;
-using Logger = GUZ.Core.Core.Logging.Logger;
+using Logger = GUZ.Core.Logging.Logger;
 
 namespace GUZ.Core.Services.Player
 {

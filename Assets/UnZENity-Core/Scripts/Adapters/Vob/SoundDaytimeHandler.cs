@@ -1,6 +1,6 @@
 using System;
 using System.Collections;
-using GUZ.Core.Core.Logging;
+using GUZ.Core.Logging;
 using GUZ.Core.Models.Container;
 using GUZ.Core.Services;
 using GUZ.Core.Services.World;
@@ -8,7 +8,7 @@ using GUZ.Core.Util;
 using Reflex.Attributes;
 using UnityEngine;
 using ZenKit.Vobs;
-using Logger = GUZ.Core.Core.Logging.Logger;
+using Logger = GUZ.Core.Logging.Logger;
 using Random = UnityEngine.Random;
 
 namespace GUZ.Core.Adapters.Vob

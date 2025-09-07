@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using GUZ.Core.Core.Logging;
+using GUZ.Core.Logging;
 using GUZ.Core.Model.UI.Menu;
 using GUZ.Core.Model.UI.MenuItem;
 using GUZ.Core.Services;
@@ -13,7 +13,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using ZenKit;
 using ZenKit.Daedalus;
-using Logger = GUZ.Core.Core.Logging.Logger;
+using Logger = GUZ.Core.Logging.Logger;
 
 namespace GUZ.Core.Adapters.UI.Menus
 {

@@ -4,7 +4,7 @@ using System.Linq;
 using GUZ.Core;
 using GUZ.Core.Adapters.Properties.Vobs;
 using GUZ.Core.Adapters.Vob;
-using GUZ.Core.Core.Logging;
+using GUZ.Core.Logging;
 using GUZ.Core.Extensions;
 using GUZ.Core.Manager;
 using GUZ.Core.Models.Vm;
@@ -15,7 +15,7 @@ using Reflex.Attributes;
 using UnityEngine;
 using ZenKit;
 using ZenKit.Daedalus;
-using Logger = GUZ.Core.Core.Logging.Logger;
+using Logger = GUZ.Core.Logging.Logger;
 
 namespace GUZ.VR.Adapters.Vob.VobItem
 {

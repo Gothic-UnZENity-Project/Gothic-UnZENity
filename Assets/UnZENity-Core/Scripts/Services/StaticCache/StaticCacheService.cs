@@ -9,7 +9,7 @@ using GUZ.Core.Domain.Config;
 using GUZ.Core.Domain.StaticCache;
 using GUZ.Core.Extensions;
 using GUZ.Core.Const;
-using GUZ.Core.Core.Logging;
+using GUZ.Core.Logging;
 using GUZ.Core.Models.Config;
 using GUZ.Core.Services.Caches;
 using GUZ.Core.Services.Config;
@@ -17,7 +17,7 @@ using MyBox;
 using Reflex.Attributes;
 using UnityEngine;
 using CompressionLevel = System.IO.Compression.CompressionLevel;
-using Logger = GUZ.Core.Core.Logging.Logger;
+using Logger = GUZ.Core.Logging.Logger;
 
 namespace GUZ.Core.Services.StaticCache
 {

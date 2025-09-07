@@ -1,14 +1,14 @@
 using System;
 using System.Reflection;
 using GUZ.Core.Const;
-using GUZ.Core.Core.Logging;
+using GUZ.Core.Logging;
 using GUZ.Core.Services.Caches;
 using JetBrains.Annotations;
 using Reflex.Attributes;
 using TMPro;
 using UnityEngine;
 using UnityEngine.TextCore;
-using Logger = GUZ.Core.Core.Logging.Logger;
+using Logger = GUZ.Core.Logging.Logger;
 
 namespace GUZ.Core.Services.UI
 {

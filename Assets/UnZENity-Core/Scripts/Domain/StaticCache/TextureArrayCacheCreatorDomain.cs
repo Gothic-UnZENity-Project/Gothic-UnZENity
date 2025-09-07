@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using GUZ.Core.Adapters.UI.LoadingBars;
 using GUZ.Core.Extensions;
 using GUZ.Core.Const;
-using GUZ.Core.Core.Logging;
+using GUZ.Core.Logging;
 using GUZ.Core.Manager;
 using GUZ.Core.Services;
 using GUZ.Core.Services.Caches;
@@ -17,7 +17,7 @@ using Reflex.Attributes;
 using ZenKit;
 using ZenKit.Daedalus;
 using ZenKit.Vobs;
-using Logger = GUZ.Core.Core.Logging.Logger;
+using Logger = GUZ.Core.Logging.Logger;
 using TextureFormat = UnityEngine.TextureFormat;
 
 namespace GUZ.Core.Domain.StaticCache

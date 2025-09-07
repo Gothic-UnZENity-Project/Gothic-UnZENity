@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Threading.Tasks;
 using GUZ.Core;
 using GUZ.Core.Const;
-using GUZ.Core.Core.Logging;
+using GUZ.Core.Logging;
 using GUZ.Core.Domain;
 using GUZ.Core.Extensions;
 using GUZ.Core.Manager;
@@ -23,7 +23,7 @@ using GUZ.Lab.Handler;
 using Reflex.Attributes;
 using UnityEngine;
 using ZenKit;
-using Logger = GUZ.Core.Core.Logging.Logger;
+using Logger = GUZ.Core.Logging.Logger;
 
 namespace GUZ.Lab
 {

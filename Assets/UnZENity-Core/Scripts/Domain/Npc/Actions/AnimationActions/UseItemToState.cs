@@ -1,4 +1,4 @@
-using GUZ.Core.Core.Logging;
+using GUZ.Core.Logging;
 using GUZ.Core.Models.Container;
 using GUZ.Core.Services.Caches;
 using GUZ.Core.Util;

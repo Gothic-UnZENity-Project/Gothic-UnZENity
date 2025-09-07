@@ -1,5 +1,5 @@
 ﻿using GUZ.Core;
-using GUZ.Core.Core.Logging;
+using GUZ.Core.Logging;
 using GUZ.Core.Services;
 using GUZ.Core.Services.Caches;
 using GUZ.Core.Services.Meshes;
@@ -7,7 +7,7 @@ using GUZ.Core.Services.Vobs;
 using GUZ.Core.Util;
 using Reflex.Attributes;
 using UnityEngine;
-using Logger = GUZ.Core.Core.Logging.Logger;
+using Logger = GUZ.Core.Logging.Logger;
 
 namespace GUZ.Lab.Handler
 {

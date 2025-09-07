@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using GUZ.Core.Adapters.Properties;
 using GUZ.Core.Adapters.Vob;
 using GUZ.Core.Const;
-using GUZ.Core.Core.Logging;
+using GUZ.Core.Logging;
 using GUZ.Core.Extensions;
 using GUZ.Core.Manager;
 using GUZ.Core.Models.Vm;
@@ -23,7 +23,7 @@ using ZenKit.Util;
 using ZenKit.Vobs;
 using Light = ZenKit.Vobs.Light;
 using LightType = ZenKit.Vobs.LightType;
-using Logger = GUZ.Core.Core.Logging.Logger;
+using Logger = GUZ.Core.Logging.Logger;
 using Object = UnityEngine.Object;
 
 namespace GUZ.Core.Domain.Vobs

@@ -1,6 +1,6 @@
 using System;
 using GUZ.Core.Const;
-using GUZ.Core.Core.Logging;
+using GUZ.Core.Logging;
 using GUZ.Core.Services;
 using GUZ.Core.Util;
 using UnityEditor;

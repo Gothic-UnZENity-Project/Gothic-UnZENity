@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using GUZ.Core.Adapters.Npc;
 using GUZ.Core.Adapters.Properties;
 using GUZ.Core.Adapters.UI.LoadingBars;
-using GUZ.Core.Core.Logging;
+using GUZ.Core.Logging;
 using GUZ.Core.Creator;
 using GUZ.Core.Extensions;
 using GUZ.Core.Manager;
@@ -24,7 +24,7 @@ using UnityEngine;
 using ZenKit;
 using ZenKit.Daedalus;
 using ZenKit.Vobs;
-using Logger = GUZ.Core.Core.Logging.Logger;
+using Logger = GUZ.Core.Logging.Logger;
 using Object = UnityEngine.Object;
 using WayPoint = GUZ.Core.Models.Vob.WayNet.WayPoint;
 

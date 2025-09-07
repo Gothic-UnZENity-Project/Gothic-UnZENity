@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using GUZ.Core;
 using GUZ.Core.Adapters.UI;
-using GUZ.Core.Core.Logging;
+using GUZ.Core.Logging;
 using GUZ.Core.Extensions;
 using GUZ.Core.Manager;
 using GUZ.Core.Models.Marvin;
@@ -13,7 +13,7 @@ using Reflex.Attributes;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using Logger = GUZ.Core.Core.Logging.Logger;
+using Logger = GUZ.Core.Logging.Logger;
 
 namespace GUZ.VR.Adapters.Marvin
 {

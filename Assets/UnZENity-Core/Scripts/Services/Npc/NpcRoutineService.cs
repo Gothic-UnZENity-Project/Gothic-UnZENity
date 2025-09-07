@@ -1,7 +1,7 @@
 using System.Linq;
 using GUZ.Core.Extensions;
 using GUZ.Core.Const;
-using GUZ.Core.Core.Logging;
+using GUZ.Core.Logging;
 using GUZ.Core.Models.Npc;
 using GUZ.Core.Services.World;
 using GUZ.Core.Util;
@@ -9,7 +9,7 @@ using MyBox;
 using Reflex.Attributes;
 using ZenKit;
 using ZenKit.Daedalus;
-using Logger = GUZ.Core.Core.Logging.Logger;
+using Logger = GUZ.Core.Logging.Logger;
 
 namespace GUZ.Core.Services.Npc
 {

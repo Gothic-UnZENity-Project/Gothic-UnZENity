@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using GUZ.Core;
 using GUZ.Core.Adapters.UI;
-using GUZ.Core.Core.Logging;
+using GUZ.Core.Logging;
 using GUZ.Core.Extensions;
 using GUZ.Core.Services;
 using GUZ.Core.Services.Config;

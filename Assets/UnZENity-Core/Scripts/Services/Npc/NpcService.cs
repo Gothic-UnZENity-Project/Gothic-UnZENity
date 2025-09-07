@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using GUZ.Core.Adapters.Npc;
 using GUZ.Core.Const;
-using GUZ.Core.Core.Logging;
+using GUZ.Core.Logging;
 using GUZ.Core.Creator;
 using GUZ.Core.Domain.Npc;
 using GUZ.Core.Extensions;
@@ -27,7 +27,7 @@ using UnityEngine;
 using ZenKit;
 using ZenKit.Daedalus;
 using ZenKit.Vobs;
-using Logger = GUZ.Core.Core.Logging.Logger;
+using Logger = GUZ.Core.Logging.Logger;
 
 namespace GUZ.Core.Services.Npc
 {

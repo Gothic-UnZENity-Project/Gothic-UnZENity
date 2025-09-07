@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using GUZ.Core.Core.Logging;
+using GUZ.Core.Logging;
 using GUZ.Core.Extensions;
 using GUZ.Core.Model.UI.Menu;
 using GUZ.Core.Services;
@@ -8,7 +8,7 @@ using GUZ.Core.Util;
 using MyBox;
 using Reflex.Attributes;
 using UnityEngine;
-using Logger = GUZ.Core.Core.Logging.Logger;
+using Logger = GUZ.Core.Logging.Logger;
 
 namespace GUZ.Core.Adapters.UI.Menus
 {

@@ -1,12 +1,12 @@
 using System;
 using GUZ.Core.Models.Container;
 using GUZ.Core.Const;
-using GUZ.Core.Core.Logging;
+using GUZ.Core.Logging;
 using GUZ.Core.Manager;
 using GUZ.Core.Models.Vm;
 using GUZ.Core.Util;
 using UnityEngine;
-using Logger = GUZ.Core.Core.Logging.Logger;
+using Logger = GUZ.Core.Logging.Logger;
 
 namespace GUZ.Core.Domain.Npc.Actions.AnimationActions
 {

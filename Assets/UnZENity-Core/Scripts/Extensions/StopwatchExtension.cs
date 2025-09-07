@@ -1,5 +1,5 @@
 ﻿using System.Diagnostics;
-using GUZ.Core.Core.Logging;
+using GUZ.Core.Logging;
 using GUZ.Core.Util;
 using Debug = UnityEngine.Debug;
 

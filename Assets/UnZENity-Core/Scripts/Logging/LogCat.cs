@@ -1,4 +1,4 @@
-namespace GUZ.Core.Core.Logging
+namespace GUZ.Core.Logging
 {
     public enum LogCat
     {

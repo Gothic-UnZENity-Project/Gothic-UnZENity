@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using GUZ.Core.Creator;
 using GUZ.Core.Extensions;
 using GUZ.Core.Const;
-using GUZ.Core.Core.Logging;
+using GUZ.Core.Logging;
 using GUZ.Core.Manager;
 using GUZ.Core.Models.Vob.WayNet;
 using GUZ.Core.Services;
@@ -22,7 +22,7 @@ using MyBox;
 using Reflex.Attributes;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using Logger = GUZ.Core.Core.Logging.Logger;
+using Logger = GUZ.Core.Logging.Logger;
 
 namespace GUZ.Core.Adapters.Scenes
 {

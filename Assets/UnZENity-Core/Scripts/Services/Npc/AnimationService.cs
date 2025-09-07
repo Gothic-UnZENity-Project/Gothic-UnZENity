@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using GUZ.Core.Const;
-using GUZ.Core.Core.Logging;
+using GUZ.Core.Logging;
 using GUZ.Core.Extensions;
 using GUZ.Core.Models.Adapter.Vobs;
 using GUZ.Core.Models.Animations;
@@ -11,7 +11,7 @@ using GUZ.Core.Models.Vm;
 using JetBrains.Annotations;
 using UnityEngine;
 using ZenKit;
-using Logger = GUZ.Core.Core.Logging.Logger;
+using Logger = GUZ.Core.Logging.Logger;
 
 namespace GUZ.Core.Services.Npc
 {
