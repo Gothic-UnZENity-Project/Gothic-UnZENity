@@ -39,6 +39,7 @@ namespace GUZ.Core.Domain.Vobs
         [Inject] private readonly AudioService _audioService;
         [Inject] private readonly VmCacheService _vmCacheService;
         [Inject] private readonly StaticCacheService _staticCacheService;
+        [Inject] private readonly GameStateService _gameStateService;
 
 
         /// <summary>
@@ -621,7 +622,7 @@ namespace GUZ.Core.Domain.Vobs
                 Direction = vob.Rotation.ToUnityQuaternion().eulerAngles
             };
             vobObj.GetComponent<VobSpotProperties>().Fp = freePointData;
-            GameData.FreePoints.TryAdd(fpName, freePointData);
+            _gameStateService.FreePoints.TryAdd(fpName, freePointData);
 
             return vobObj;
         }

@@ -2,6 +2,7 @@
 using GUZ.Core;
 using GUZ.Core.Adapters.UI.Menus;
 using GUZ.Core.Const;
+using GUZ.Core.Services;
 using GUZ.Core.Services.Config;
 using HurricaneVR.Framework.Core.Player;
 using MyBox;
@@ -13,7 +14,7 @@ namespace GUZ.VR.Adapters.HVROverrides
     public class VRPlayerController : HVRPlayerController
     {
         [Inject] private readonly ConfigService _configService;
-
+        [Inject] private readonly GameStateService _gameStateService;
 
         public VRPlayerInputs VrInputs => (VRPlayerInputs)Inputs;
 
@@ -35,7 +36,7 @@ namespace GUZ.VR.Adapters.HVROverrides
 
             if (VrInputs.IsMenuActivated && IsGameScene())
             {
-                GameData.InGameAndAlive = true;
+                _gameStateService.InGameAndAlive = true;
                 MenuHandler.ToggleVisibility();
             }
         }

@@ -1,12 +1,10 @@
 using System.Collections;
-using GUZ.Core;
 using GUZ.Core.Adapters.Adnimations;
 using GUZ.Core.Adapters.Npc;
 using GUZ.Core.Animations;
+using GUZ.Core.Extensions;
 using GUZ.Core.Models.Adapter.Vobs;
 using GUZ.Core.Models.Container;
-using GUZ.Core.Extensions;
-using GUZ.Core.Const;
 using GUZ.Core.Services.Caches;
 using GUZ.Core.Services.Npc;
 using GUZ.Lab.Mocks;
@@ -48,7 +46,7 @@ namespace GUZ.Lab.Handler
 
             // For UseItemToState animations
             var props = npcRoot.GetComponentInParent<NpcLoader>().Npc.GetUserData().Props;
-            var beerSymbol = GameData.GothicVm.GetSymbolByName("ItFoBeer");
+            var beerSymbol = GameStateService.GothicVm.GetSymbolByName("ItFoBeer");
             props.CurrentItem = beerSymbol!.Index;
 
             yield return new WaitForSeconds(1f);
@@ -142,8 +140,8 @@ namespace GUZ.Lab.Handler
 
             newNpc.SetParent(NpcSlotGo);
 
-            var npcSymbol = GameData.GothicVm.GetSymbolByName(_bloodwynInstanceId)!;
-            _bloodwynInstance = GameData.GothicVm.AllocInstance<NpcInstance>(npcSymbol);
+            var npcSymbol = GameStateService.GothicVm.GetSymbolByName(_bloodwynInstanceId)!;
+            _bloodwynInstance = GameStateService.GothicVm.AllocInstance<NpcInstance>(npcSymbol);
 
             var npcData = new NpcContainer
             {
@@ -157,15 +155,15 @@ namespace GUZ.Lab.Handler
             _multiTypeCacheService.NpcCache.Add(npcData);
 
             newNpc.name = _bloodwynInstance.GetName(NpcNameSlot.Slot0);
-            GameData.GothicVm.GlobalSelf = _bloodwynInstance;
+            GameStateService.GothicVm.GlobalSelf = _bloodwynInstance;
 
-            GameData.GothicVm.InitInstance(_bloodwynInstance);
+            GameStateService.GothicVm.InitInstance(_bloodwynInstance);
 
             // Hero
             {
                 // Need to be set for later usage (e.g. Bloodwyn checks your inventory if enough nuggets are carried)
-                var heroInstance = GameData.GothicVm.InitInstance<NpcInstance>("hero");
-                GameData.GothicVm.GlobalHero = heroInstance;
+                var heroInstance = GameStateService.GothicVm.InitInstance<NpcInstance>("hero");
+                GameStateService.GothicVm.GlobalHero = heroInstance;
             }
 
             // We need to initialize the NPC at this frame to set the positions of child GOs now.

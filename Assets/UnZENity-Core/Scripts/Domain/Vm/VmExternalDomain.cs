@@ -36,6 +36,7 @@ namespace GUZ.Core.Domain.Vm
         [Inject] private readonly GameTimeService _gameTimeService;
         [Inject] private readonly StoryService _storyService;
         [Inject] private readonly VobService _vobService;
+        [Inject] private readonly GameStateService _gameStateService;
 
 
         private bool _enableZSpyLogs;
@@ -48,7 +49,7 @@ namespace GUZ.Core.Domain.Vm
             _zSpyChannel = _configService.Dev.ZSpyChannel;
 
 
-            var vm = GameData.GothicVm;
+            var vm = _gameStateService.GothicVm;
             vm.RegisterExternalDefault(DefaultExternal);
 
             // AI
@@ -221,14 +222,14 @@ namespace GUZ.Core.Domain.Vm
             //throw new NotImplementedException("External >" + value + "< not registered but required by DaedalusVM.");
             try
             {
-                if (GameData.GothicVm.GlobalSelf == null)
+                if (_gameStateService.GothicVm.GlobalSelf == null)
                 {
                     Logger.LogWarningEditor($"Method >{sym.Name}< not yet implemented in DaedalusVM.", LogCat.ZenKit);
                 }
                 else
                 {
                     // Add additional log information if existing.
-                    var selfUserData = GameData.GothicVm.GlobalSelf.UserData as NpcContainer;
+                    var selfUserData = _gameStateService.GothicVm.GlobalSelf.UserData as NpcContainer;
                     var npcName = _multiTypeCacheService.NpcCache.FirstOrDefault(x => x.Instance == selfUserData.Instance)?.Go
                         ?.transform.parent.name;
                     Logger.LogWarningEditor($"Method >{sym.Name}< not yet implemented in DaedalusVM (called on >{npcName}<).", LogCat.ZenKit);
@@ -1016,24 +1017,24 @@ namespace GUZ.Core.Domain.Vm
 
         public void Wld_ExchangeGuildAttitudes(string name)
         {
-            var guilds = GameData.GothicVm.GetSymbolByName(name);
+            var guilds = _gameStateService.GothicVm.GetSymbolByName(name);
 
             if (guilds == null)
                 return;
 
-            for (double i = 0, count = GameData.GuildTableSize; i < count; ++i)
+            for (double i = 0, count = _gameStateService.GuildTableSize; i < count; ++i)
             {
                 for (var j = 0; j < count; ++j)
-                    GameData.GuildAttitudes[(int)(i * count + j)] = guilds.GetInt((ushort)(i * count + j));
+                    _gameStateService.GuildAttitudes[(int)(i * count + j)] = guilds.GetInt((ushort)(i * count + j));
             }
         }
 
         public void Wld_SetGuildAttitude(int guild1, int attitude, int guild2)
         {
-            if (guild1 < 0 || guild2 < 0 || guild1 >= GameData.GuildCount || guild2 >= GameData.GuildCount)
+            if (guild1 < 0 || guild2 < 0 || guild1 >= _gameStateService.GuildCount || guild2 >= _gameStateService.GuildCount)
                 return;
 
-            GameData.GuildAttitudes[guild1 * GameData.GuildCount + guild2] = attitude;
+            _gameStateService.GuildAttitudes[guild1 * _gameStateService.GuildCount + guild2] = attitude;
         }
 
         public void Wld_SetObjectRoutine(int hour, int minute, string name, int status)
@@ -1062,10 +1063,10 @@ namespace GUZ.Core.Domain.Vm
 
         public int Wld_GetGuildAttitude(int guild1, int guild2)
         {
-            if (guild1 < 0 || guild2 < 0 || guild1 >= GameData.GuildCount || guild2 >= GameData.GuildCount)
+            if (guild1 < 0 || guild2 < 0 || guild1 >= _gameStateService.GuildCount || guild2 >= _gameStateService.GuildCount)
                 return 0;
 
-            return GameData.GuildAttitudes[guild1 * GameData.GuildCount + guild2];
+            return _gameStateService.GuildAttitudes[guild1 * _gameStateService.GuildCount + guild2];
         }
 
         #endregion

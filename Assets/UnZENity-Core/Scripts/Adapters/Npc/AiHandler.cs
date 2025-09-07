@@ -8,8 +8,10 @@ using GUZ.Core.Manager;
 using GUZ.Core.Models.Vm;
 using GUZ.Core.Domain.Npc.Actions;
 using GUZ.Core.Domain.Npc.Actions.AnimationActions;
+using GUZ.Core.Services;
 using GUZ.Core.Services.Config;
 using GUZ.Core.Services.Npc;
+using GUZ.Core.Services.Vm;
 using GUZ.Core.Util;
 using MyBox;
 using Reflex.Attributes;
@@ -26,14 +28,16 @@ namespace GUZ.Core.Adapters.Npc
         public List<(string name, AnimationAction properties)> AiActionHistory = new();
 #endif
 
+        [Inject] private readonly GameStateService _gameStateService;
         [Inject] private readonly ConfigService _configService;
         [Inject] private readonly NpcHelperService _npcHelperService;
         [Inject] private readonly NpcAiService _npcAiService;
         [Inject] private readonly NpcService _npcService;
-        [Inject]  private readonly WayNetService _wayNetService;
+        [Inject] private readonly WayNetService _wayNetService;
+        [Inject] private readonly VmService _vmService;
 
 
-        private static DaedalusVm Vm => GameData.GothicVm;
+        private DaedalusVm Vm => _gameStateService.GothicVm;
         private const int _daedalusLoopContinue = 0; // Id taken from a Daedalus constant.
         private const int _daedalusLoopEnd = 1;
 
@@ -173,9 +177,9 @@ namespace GUZ.Core.Adapters.Npc
             _npcAiService.UpdateEnemyNpc(NpcInstance);
 
             // FIXME - CanSense is not separating between smell, hear, and see as of now. Please add functionality.
-            if(_npcHelperService.CanSenseNpc(NpcInstance, (NpcInstance)GameData.GothicVm.GlobalHero, false))
+            if(_npcHelperService.CanSenseNpc(NpcInstance, (NpcInstance)_gameStateService.GothicVm.GlobalHero, false))
             {
-                _npcAiService.ExecutePerception(VmGothicEnums.PerceptionType.AssessPlayer, Properties, NpcInstance,null, (NpcInstance)GameData.GothicVm.GlobalHero);
+                _npcAiService.ExecutePerception(VmGothicEnums.PerceptionType.AssessPlayer, Properties, NpcInstance,null, (NpcInstance)_gameStateService.GothicVm.GlobalHero);
             }
 
             // FIXME - Throws a lot of errors and warnings when NPCs are nearby monsters (e.g. Bridge guard next to OC)
@@ -376,7 +380,7 @@ namespace GUZ.Core.Adapters.Npc
             // FIXME - We need to properly set this value for Gothic2 as well.
             if (_configService.Dev.GameVersion == GameVersion.Gothic1)
             {
-                NpcInstance.SetAiVar(DaedalusConst.AIVItemStatusKey, DaedalusConst.TAITNone);
+                NpcInstance.SetAiVar(_vmService.AIVItemStatusKey, _vmService.TAITNone);
             }
 
             // Start over

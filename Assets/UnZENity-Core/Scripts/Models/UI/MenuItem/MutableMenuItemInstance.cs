@@ -1,11 +1,15 @@
 using System;
 using GUZ.Core.Const;
+using GUZ.Core.Services.Vm;
+using Reflex.Attributes;
 using ZenKit.Daedalus;
 
 namespace GUZ.Core.Model.UI.MenuItem
 {
     public class MutableMenuItemInstance : AbstractMenuItemInstance
     {
+        [Inject] private readonly VmService _vmService;
+        
         /// <summary>
         /// Copy constructor. Mostly copying dimensions and look.
         /// </summary>
@@ -38,36 +42,53 @@ namespace GUZ.Core.Model.UI.MenuItem
             SetUserString(0, reference.GetUserString(0));
         }
 
-        private string[] _texts = new string[Constants.DaedalusMenu.MaxUserStrings];
+        private string[] _texts;
         public override string GetText(int i)
         {
+            if (_texts == null)
+                _texts = new string[_vmService.MaxUserStrings];
+            
             return _texts[i];
         }
 
         public override void SetText(int i, string text)
         {
+            if (_texts == null)
+                _texts = new string[_vmService.MaxUserStrings];
+            
             _texts[i] = text;
         }
 
-        private MenuItemSelectAction[] _onSelActions = new MenuItemSelectAction[Constants.DaedalusMenu.MaxSelActions];
+        private MenuItemSelectAction[] _onSelActions;
         public override MenuItemSelectAction GetOnSelAction(int i)
         {
+            if (_onSelActions == null)
+                _onSelActions = new MenuItemSelectAction[ _vmService.MaxSelActions];
+            
             return _onSelActions[i];
         }
 
         public override void SetOnSelAction(int i, MenuItemSelectAction action)
         {
+            if (_onSelActions == null)
+                _onSelActions = new MenuItemSelectAction[ _vmService.MaxSelActions];
             _onSelActions[i] = action;
         }
 
-        private string[] _onSelActionStrings = new string[Constants.DaedalusMenu.MaxSelActions];
+        private string[] _onSelActionStrings;
         public override string GetOnSelActionS(int i)
         {
+            if (_onSelActionStrings == null)
+                _onSelActionStrings = new string[_vmService.MaxSelActions];
+            
             return _onSelActionStrings[i];
         }
 
         public override void SetOnSelActionS(int i, string actionS)
         {
+            if (_onSelActionStrings == null)
+                _onSelActionStrings = new string[_vmService.MaxSelActions];
+            
             _onSelActionStrings[i] = actionS;
         }
 
@@ -76,25 +97,37 @@ namespace GUZ.Core.Model.UI.MenuItem
             throw new NotImplementedException();
         }
 
-        private float[] _userFloats = new float[Constants.DaedalusMenu.MaxUserVars];
+        private float[] _userFloats;
         public override float GetUserFloat(int i)
         {
+            if (_userFloats == null)
+                _userFloats = new float[_vmService.MaxUserVars];
+            
             return _userFloats[i];
         }
 
         public override void SetUserFloat(int i, float value)
         {
+            if (_userFloats == null)
+                _userFloats = new float[_vmService.MaxUserVars];
+            
             _userFloats[i] = value;
         }
 
-        private string[] _userStrings = new string[Constants.DaedalusMenu.MaxUserVars];
+        private string[] _userStrings;
         public override string GetUserString(int i)
         {
+            if (_userStrings == null)
+                _userStrings = new string[_vmService.MaxUserVars];
+            
             return _userStrings[i];
         }
 
         public override void SetUserString(int i, string text)
         {
+            if (_userStrings == null)
+                _userStrings = new string[_vmService.MaxUserVars];
+            
             _userStrings[i] = text;
         }
     }

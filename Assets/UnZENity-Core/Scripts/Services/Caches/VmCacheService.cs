@@ -3,14 +3,18 @@ using System.Collections.Generic;
 using System.IO;
 using GUZ.Core.Models.Adapter;
 using GUZ.Core.Const;
+using GUZ.Core.Extensions;
 using GUZ.Core.Models.Audio;
 using JetBrains.Annotations;
+using Reflex.Attributes;
 using ZenKit.Daedalus;
 
 namespace GUZ.Core.Services.Caches
 {
     public class VmCacheService
     {
+        [Inject] private readonly GameStateService _gameStateService;
+        
         private readonly Dictionary<string, ItemInstance> _itemDataCache = new();
         private readonly Dictionary<string, FightAiAdapter> _fightAiDataCache = new();
         private readonly Dictionary<int, SvmInstance> _svmDataCache = new();
@@ -23,7 +27,7 @@ namespace GUZ.Core.Services.Caches
         /// </summary>
         public ItemInstance TryGetItemData(int instanceId)
         {
-            var symbol = GameData.GothicVm.GetSymbolByIndex(instanceId);
+            var symbol = _gameStateService.GothicVm.GetSymbolByIndex(instanceId);
 
             if (symbol == null)
             {
@@ -49,7 +53,7 @@ namespace GUZ.Core.Services.Caches
             ItemInstance newData = null;
             try
             {
-                newData = GameData.GothicVm.InitInstance<ItemInstance>(preparedKey);
+                newData = _gameStateService.GothicVm.InitInstance<ItemInstance>(preparedKey);
             }
             catch (Exception)
             {
@@ -71,7 +75,7 @@ namespace GUZ.Core.Services.Caches
             FightAiAdapter newData = null;
             try
             {
-                newData = new FightAiAdapter(GameData.FightVm.InitInstance<FightAiInstance>(preparedKey));
+                newData = new FightAiAdapter(_gameStateService.FightVm.InitInstance<FightAiInstance>(preparedKey)).Inject();
             }
             catch (Exception)
             {
@@ -97,7 +101,7 @@ namespace GUZ.Core.Services.Caches
             SvmInstance newData = null;
             try
             {
-                newData = GameData.GothicVm.InitInstance<SvmInstance>($"SVM_{voiceId}");
+                newData = _gameStateService.GothicVm.InitInstance<SvmInstance>($"SVM_{voiceId}");
             }
             catch (Exception)
             {
@@ -126,7 +130,7 @@ namespace GUZ.Core.Services.Caches
             SfxModel newData = null;
             try
             {
-                newData = new SfxModel(preparedKey);
+                newData = new SfxModel(preparedKey).Inject();
             }
             catch (Exception)
             {
@@ -152,7 +156,7 @@ namespace GUZ.Core.Services.Caches
             ParticleEffectInstance newData = null;
             try
             {
-                newData = GameData.PfxVm.InitInstance<ParticleEffectInstance>(preparedKey);
+                newData = _gameStateService.PfxVm.InitInstance<ParticleEffectInstance>(preparedKey);
             }
             catch (Exception)
             {

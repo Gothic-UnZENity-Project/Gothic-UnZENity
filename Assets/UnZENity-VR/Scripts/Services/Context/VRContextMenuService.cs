@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using GUZ.Core;
 using GUZ.Core.Const;
+using GUZ.Core.Extensions;
 using GUZ.Core.Model.UI.Menu;
 using GUZ.Core.Model.UI.MenuItem;
 using GUZ.Core.Services.Context;
+using GUZ.Core.Services.Vm;
 using GUZ.Services.UI;
 using HurricaneVR.Framework.Core.Player;
 using Reflex.Attributes;
@@ -17,6 +19,8 @@ namespace GUZ.VR.Services.Context
     public class VRContextMenuService : IContextMenuService
     {
         [Inject] private readonly LocalizationService _localizationService;
+        [Inject] private readonly VmService _vmService;
+        
         
         /// <summary>
         /// Update menu entries based on VR needs.
@@ -29,8 +33,8 @@ namespace GUZ.VR.Services.Context
             // Will be used to clone render settings from its items.
             var gameMenu = mainMenu.FindMenuRecursive("MENU_OPT_GAME")!;
 
-            var menuStartY = Constants.DaedalusMenu.MenuStartY;
-            var menuDY = Constants.DaedalusMenu.MenuDY;
+            var menuStartY =  _vmService.MenuStartY;
+            var menuDY =  _vmService.MenuDY;
             
             vrAccessibilityMenu.Items.Add(CreateAccessibilityHeadline(gameMenu));
 

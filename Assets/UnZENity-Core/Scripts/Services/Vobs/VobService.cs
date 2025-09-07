@@ -31,6 +31,7 @@ namespace GUZ.Core.Services.Vobs
 {
     public class VobService
     {
+        [Inject] private readonly GameStateService _gameStateService;
         [Inject] private readonly VmCacheService _vmCacheService;
         [Inject] private readonly ConfigService _configService;
         [Inject] private readonly FrameSkipperService _frameSkipperService;
@@ -367,7 +368,7 @@ namespace GUZ.Core.Services.Vobs
         [CanBeNull]
         public VobContainer GetFreeInteractableWithin10M(Vector3 position, string visualScheme)
         {
-            if (!GameData.VobsInteractable.TryGetValue(visualScheme.ToUpper(), out var vobs))
+            if (!_gameStateService.VobsInteractable.TryGetValue(visualScheme.ToUpper(), out var vobs))
                 return null;
             
             return vobs
@@ -385,7 +386,7 @@ namespace GUZ.Core.Services.Vobs
                 return;
 
             var item = _vmCacheService.TryGetItemData(itemInstance);
-            var instanceName = GameData.GothicVm.GetSymbolByIndex(item.Index)!.Name;
+            var instanceName = _gameStateService.GothicVm.GetSymbolByIndex(item.Index)!.Name;
             var wp = _wayNetService.GetWayNetPoint(spawnPoint)!;
 
             var vob = new Item
@@ -478,8 +479,8 @@ namespace GUZ.Core.Services.Vobs
                     if (visualScheme.IsNullOrEmpty())
                         return;
                     
-                    GameData.VobsInteractable.TryAdd(visualScheme, new());
-                    GameData.VobsInteractable[visualScheme!].Add(container);
+                    _gameStateService.VobsInteractable.TryAdd(visualScheme, new());
+                    _gameStateService.VobsInteractable[visualScheme!].Add(container);
                     break;
             }
         }

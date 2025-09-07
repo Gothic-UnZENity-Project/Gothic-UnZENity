@@ -9,6 +9,7 @@ using GUZ.Core.Core.Logging;
 using GUZ.Core.Models.Dialog;
 using GUZ.Core.Domain.Npc.Actions;
 using GUZ.Core.Domain.Npc.Actions.AnimationActions;
+using GUZ.Core.Services;
 using GUZ.Core.Services.Context;
 using GUZ.Core.Services.Npc;
 using GUZ.Core.Services.World;
@@ -23,6 +24,7 @@ namespace GUZ.Core.Manager
 {
     public class DialogService
     {
+        [Inject] private readonly GameStateService _gameStateService;
         [Inject] private readonly ContextDialogService _contextDialogService;
         [Inject] private readonly NpcService _npcService;
         [Inject] private readonly SaveGameService _saveGameService;
@@ -65,21 +67,21 @@ namespace GUZ.Core.Manager
                 _contextDialogService.StartDialogInitially();
             }
 
-            GameData.Dialogs.IsInDialog = true;
+            _gameStateService.Dialogs.IsInDialog = true;
 
             // WIP: locking movement 
             GameContext.ContextInteractionService.LockPlayerInPlace();
 
             // We are already inside a sub-dialog
-            if (GameData.Dialogs.CurrentDialog.Options.Any())
+            if (_gameStateService.Dialogs.CurrentOptions.Any())
             {
-                _contextDialogService.FillDialog(npcContainer.Instance, GameData.Dialogs.CurrentDialog.Options);
+                _contextDialogService.FillDialog(npcContainer.Instance, _gameStateService.Dialogs.CurrentOptions);
                 _contextDialogService.ShowDialog(npcContainer.Go);
             }
             // There is at least one important entry, the NPC wants to talk to the hero about.
             else if (initialDialogStarting && TryGetImportant(npcContainer, out var infoInstance))
             {
-                GameData.Dialogs.CurrentDialog.Instance = infoInstance;
+                _gameStateService.Dialogs.CurrentInstance = infoInstance;
                 CallMainInformation(npcContainer, infoInstance);
             }
             else
@@ -96,10 +98,10 @@ namespace GUZ.Core.Manager
 
                     
                     // TODO - Should be outsourced to some VmManager.Call<int> function which sets and resets values.
-                    var oldSelf = GameData.GothicVm.GlobalSelf;
-                    GameData.GothicVm.GlobalSelf = npcContainer.Instance;
-                    var conditionResult = GameData.GothicVm.Call<int>(dialog.Condition);
-                    GameData.GothicVm.GlobalSelf = oldSelf;
+                    var oldSelf = _gameStateService.GothicVm.GlobalSelf;
+                    _gameStateService.GothicVm.GlobalSelf = npcContainer.Instance;
+                    var conditionResult = _gameStateService.GothicVm.Call<int>(dialog.Condition);
+                    _gameStateService.GothicVm.GlobalSelf = oldSelf;
 
                     // Dialog condition is false
                     if (conditionResult == 0)
@@ -143,10 +145,10 @@ namespace GUZ.Core.Manager
                 }
                 
                 // TODO - Should be outsourced to some VmManager.Call<int> function which sets and resets values.
-                var oldSelf = GameData.GothicVm.GlobalSelf;
-                GameData.GothicVm.GlobalSelf = npcContainer.Instance;
-                var conditionResult = GameData.GothicVm.Call<int>(dialog.Condition);
-                GameData.GothicVm.GlobalSelf = oldSelf;
+                var oldSelf = _gameStateService.GothicVm.GlobalSelf;
+                _gameStateService.GothicVm.GlobalSelf = npcContainer.Instance;
+                var conditionResult = _gameStateService.GothicVm.Call<int>(dialog.Condition);
+                _gameStateService.GothicVm.GlobalSelf = oldSelf;
 
                 if (conditionResult == 0)
                 {
@@ -194,7 +196,7 @@ namespace GUZ.Core.Manager
 
         public bool ExtInfoManagerHasFinished()
         {
-            return !GameData.Dialogs.IsInDialog;
+            return !_gameStateService.Dialogs.IsInDialog;
         }
 
         /// <summary>
@@ -202,19 +204,19 @@ namespace GUZ.Core.Manager
         /// </summary>
         public void ExtInfoClearChoices(int info)
         {
-            GameData.Dialogs.CurrentDialog.Options.Clear();
+            _gameStateService.Dialogs.CurrentOptions.Clear();
         }
 
         public void ExtInfoAddChoice(int info, string text, int function)
         {
             // Check if we need to change current instance as it wasn't cleared before.
-            var oldInstance = GameData.Dialogs.CurrentDialog.Instance;
+            var oldInstance = _gameStateService.Dialogs.CurrentInstance;
 
             // First entry of current dialog to add
             if (oldInstance == null)
             {
-                GameData.Dialogs.CurrentDialog.Instance = GameData.Dialogs.Instances.First(i => i.Index == info);
-                GameData.Dialogs.CurrentDialog.Options.Clear();
+                _gameStateService.Dialogs.CurrentInstance = _gameStateService.Dialogs.Instances.First(i => i.Index == info);
+                _gameStateService.Dialogs.CurrentOptions.Clear();
             }
             else if (oldInstance.Index != info)
             {
@@ -223,7 +225,7 @@ namespace GUZ.Core.Manager
             }
 
             // Add new entry
-            GameData.Dialogs.CurrentDialog.Options.Add(new DialogOption
+            _gameStateService.Dialogs.CurrentOptions.Add(new DialogOption
             {
                 Text = text,
                 Function = function
@@ -268,9 +270,9 @@ namespace GUZ.Core.Manager
 
         public void StopDialog(NpcContainer npc)
         {
-            GameData.Dialogs.CurrentDialog.Instance = null;
-            GameData.Dialogs.CurrentDialog.Options.Clear();
-            GameData.Dialogs.IsInDialog = false;
+            _gameStateService.Dialogs.CurrentInstance = null;
+            _gameStateService.Dialogs.CurrentOptions.Clear();
+            _gameStateService.Dialogs.IsInDialog = false;
 
             // WIP: unlocking movement
             GameContext.ContextInteractionService.UnlockPlayer();
@@ -288,7 +290,7 @@ namespace GUZ.Core.Manager
         private void CallMainInformation(NpcContainer npcContainer, InfoInstance infoInstance)
         {
             // Set a new CurrentInstance for potential sub-dialog choices to fetch later.
-            GameData.Dialogs.CurrentDialog.Instance = npcContainer.Props.Dialogs
+            _gameStateService.Dialogs.CurrentInstance = npcContainer.Props.Dialogs
                 .First(d => d.Information == infoInstance.Information);
 
             // Add entry to list of "told" information if it is main element only. (Sub-dialogs will never be reached again as main one (entry point) is already told)
@@ -304,10 +306,10 @@ namespace GUZ.Core.Manager
             _contextDialogService.HideDialog();
 
             // We always need to set "self" before executing any Daedalus function.
-            GameData.GothicVm.GlobalSelf = npcContainer.Instance;
-            GameData.GothicVm.GlobalOther = GameData.GothicVm.GlobalHero;
+            _gameStateService.GothicVm.GlobalSelf = npcContainer.Instance;
+            _gameStateService.GothicVm.GlobalOther = _gameStateService.GothicVm.GlobalHero;
 
-            GameData.GothicVm.Call(information);
+            _gameStateService.GothicVm.Call(information);
 
 
             var animationQueue = npcContainer.Props.AnimationQueue;
@@ -327,7 +329,7 @@ namespace GUZ.Core.Manager
 
         public bool ExtNpcKnowsInfo(NpcInstance npc, int informationIndex)
         {
-            var infoInstanceName = GameData.GothicVm.GetSymbolByIndex(informationIndex)!.Name;
+            var infoInstanceName = _gameStateService.GothicVm.GetSymbolByIndex(informationIndex)!.Name;
             var state = _saveGameService.Save.State;
             SaveInfoState foundInfo = default;
             
@@ -356,7 +358,7 @@ namespace GUZ.Core.Manager
 
         private SaveInfoState GetInfoState(int informationIndex)
         {
-            var infoInstanceName = GameData.GothicVm.GetSymbolByIndex(informationIndex)!.Name;
+            var infoInstanceName = _gameStateService.GothicVm.GetSymbolByIndex(informationIndex)!.Name;
             var state = _saveGameService.Save.State;
 
             for (var i = 0; i < state.InfoStateCount; i++)
@@ -373,7 +375,7 @@ namespace GUZ.Core.Manager
 
         private void AddNpcInfoTold(int informationIndex)
         {
-            var infoInstanceName = GameData.GothicVm.GetSymbolByIndex(informationIndex)!.Name;
+            var infoInstanceName = _gameStateService.GothicVm.GetSymbolByIndex(informationIndex)!.Name;
             var state = _saveGameService.Save.State;
             
             for (var i = 0; i < state.InfoStateCount; i++)

@@ -6,9 +6,11 @@ using System.Threading.Tasks;
 using GUZ.Core.Extensions;
 using GUZ.Core.Const;
 using GUZ.Core.Core.Logging;
+using GUZ.Core.Services;
 using GUZ.Core.Util;
 using MyBox;
 using Newtonsoft.Json;
+using Reflex.Attributes;
 using Unity.Collections;
 using Unity.InferenceEngine;
 using UnityEngine;
@@ -21,6 +23,9 @@ namespace GUZ.Core.UnZENity_Core.Scripts.Domain
     /// </summary>
     public class WhisperDomain : IDisposable
     {
+        [Inject] private readonly GameStateService _gameStateService;
+
+        
         public bool IsInitialized;
         public bool IsTranscribing;
         public string OutputString;
@@ -202,8 +207,8 @@ namespace GUZ.Core.UnZENity_Core.Scripts.Domain
 
         private int GetLanguageToken()
         {
-            Logger.Log($"Trying to set Whisper language to {GameData.Language}", LogCat.Audio);
-            switch (GameData.Language)
+            Logger.Log($"Trying to set Whisper language to {_gameStateService.Language}", LogCat.Audio);
+            switch (_gameStateService.Language)
             {
                 case "cs":
                     return _cs;

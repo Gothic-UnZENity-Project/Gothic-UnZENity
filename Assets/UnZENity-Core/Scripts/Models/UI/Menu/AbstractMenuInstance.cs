@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using GUZ.Core.Extensions;
 using GUZ.Core.Model.UI.MenuItem;
 using JetBrains.Annotations;
 using ZenKit.Daedalus;
@@ -13,6 +14,9 @@ namespace GUZ.Core.Model.UI.Menu
 
         protected AbstractMenuInstance(string name, [CanBeNull] AbstractMenuInstance parentMenu)
         {
+            // As we will need it for most of the elements.
+            this.Inject();
+            
             Name = name;
             Parent = parentMenu;
         }

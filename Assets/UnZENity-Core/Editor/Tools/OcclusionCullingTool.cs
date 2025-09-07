@@ -122,7 +122,8 @@ namespace GUZ.Core.Editor.Tools
 
         private void OnDestroy()
         {
-            GameData.Dispose();
+            // FIXME - Needed?
+            // _gameStateService.Dispose();
         }
     }
 }

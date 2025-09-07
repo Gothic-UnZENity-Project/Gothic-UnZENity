@@ -3,18 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using GUZ.Core;
 using GUZ.Core.Adapters.Properties;
-using GUZ.Core.Models.Container;
-using GUZ.Core.Extensions;
-using GUZ.Core.Const;
-using GUZ.Core.Models.Vm;
 using GUZ.Core.Domain.Npc.Actions;
 using GUZ.Core.Domain.Npc.Actions.AnimationActions;
+using GUZ.Core.Extensions;
+using GUZ.Core.Models.Container;
+using GUZ.Core.Models.Vm;
 using GUZ.Core.Services.Caches;
 using GUZ.Lab.AnimationActionMocks;
 using Reflex.Attributes;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Serialization;
 using ZenKit.Daedalus;
 
 namespace GUZ.Lab.Handler
@@ -123,8 +121,8 @@ namespace GUZ.Lab.Handler
             newNpc.SetParent(NpcSlotGo);
             newNpc.name = npcData.Name;
 
-            var npcSymbol = GameData.GothicVm.GetSymbolByName(npcInstanceName);
-            var npcInstance = GameData.GothicVm.InitInstance<NpcInstance>(npcSymbol!);
+            var npcSymbol = GameStateService.GothicVm.GetSymbolByName(npcInstanceName);
+            var npcInstance = GameStateService.GothicVm.InitInstance<NpcInstance>(npcSymbol!);
             var npcProps = newNpc.GetComponent<NpcProperties>();
 
             var npcContainerData = new NpcContainer
@@ -150,7 +148,7 @@ namespace GUZ.Lab.Handler
 
             if (npcData.sword != null)
             {
-                var swordIndex = GameData.GothicVm.GetSymbolByName(npcData.sword)!.Index;
+                var swordIndex = GameStateService.GothicVm.GetSymbolByName(npcData.sword)!.Index;
                 var sword = VmCacheService.TryGetItemData(swordIndex);
 
                 MeshService.CreateNpcWeapon(newNpc, sword, (VmGothicEnums.ItemFlags)sword.MainFlag,

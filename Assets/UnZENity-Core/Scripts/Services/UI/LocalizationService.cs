@@ -1,6 +1,8 @@
 using System.Text;
 using GUZ.Core.Const;
 using GUZ.Core.Core.Logging;
+using GUZ.Core.Services;
+using Reflex.Attributes;
 using UnityEngine.Localization.Settings;
 using ZenKit;
 using Logger = GUZ.Core.Core.Logging.Logger;
@@ -9,6 +11,8 @@ namespace GUZ.Services.UI
 {
     public class LocalizationService
     {
+        [Inject] private readonly GameStateService _gameStateService;
+        
         private const string _localizationStringTable = "UnZENity-UI";
         
         public void SetLanguage(string language, StringEncoding encoding)
@@ -19,8 +23,8 @@ namespace GUZ.Services.UI
             StringEncodingController.SetEncoding(encoding);
             
             // GameData
-            GameData.Encoding = Encoding.GetEncoding((int)encoding);
-            GameData.Language = language;
+            _gameStateService.Encoding = Encoding.GetEncoding((int)encoding);
+            _gameStateService.Language = language;
             
             // Unity.Localization
             var locale = LocalizationSettings.AvailableLocales.GetLocale(language);

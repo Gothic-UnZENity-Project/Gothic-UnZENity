@@ -61,8 +61,9 @@ namespace GUZ.Core.Services.World
         public WorldContainer CurrentWorldData => _worlds[CurrentWorldName];
 
 
+        [Inject] private readonly GameStateService _gameStateService;
         [Inject] private readonly NpcMeshCullingService _npcMeshCullingService;
-
+        
         
         public enum SlotId
         {
@@ -314,7 +315,7 @@ namespace GUZ.Core.Services.World
             // We need to set Hero at the beginning of the list like in a G1 save game.
             if (isCurrentWorld)
             {
-                var heroContainer = ((NpcInstance)GameData.GothicVm.GlobalHero).GetUserData()!;
+                var heroContainer = ((NpcInstance)_gameStateService.GothicVm.GlobalHero).GetUserData()!;
                 heroContainer.Vob.Position = heroContainer.Go.transform.position.ToZkVector();
                 heroContainer.Vob.Rotation = heroContainer.Go.transform.rotation.ToZkMatrix();
                 
@@ -349,7 +350,7 @@ namespace GUZ.Core.Services.World
                 
                 wrappedVobs.Add(vob.Type switch
                 {
-                    VirtualObjectType.oCNpc => new NpcAdapter(vob),
+                    VirtualObjectType.oCNpc => new NpcAdapter(vob).Inject(),
                     _ => vob
                 });
             }

@@ -19,6 +19,7 @@ namespace GUZ.Lab.Handler
         [Inject] protected readonly VmCacheService VmCacheService;
         [Inject] protected readonly MeshService MeshService;
         [Inject] protected readonly VobService VobService;
+        [Inject] protected readonly GameStateService GameStateService;
 
 
         protected GameObject SpawnInteractable(string mdlName, PrefabType type, GameObject parentGo, Vector3 position = default, Quaternion rotation = default)

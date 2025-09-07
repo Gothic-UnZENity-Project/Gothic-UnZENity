@@ -6,6 +6,7 @@ using DirectMusic;
 using GUZ.Core.Extensions;
 using GUZ.Core.Const;
 using GUZ.Core.Core.Logging;
+using GUZ.Core.Services;
 using GUZ.Core.Util;
 using JetBrains.Annotations;
 using UnityEngine;
@@ -200,7 +201,7 @@ namespace GUZ.Core
         /// <summary>
         /// Load a <b>new</b> <see cref="DaedalusVm"/> from the assets by name. VMs are not cached, thus this call will
         /// <b>always create a new VM</b>. You most likely need to use the prepared VM instances in
-        /// <see cref="GameData"/> instead.
+        /// <see cref="GameStateService"/> instead.
         /// </summary>
         [CanBeNull]
         public static DaedalusVm TryGetDaedalusVm([NotNull] string key)

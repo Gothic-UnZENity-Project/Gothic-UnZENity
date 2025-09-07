@@ -2,7 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Numerics;
 using GUZ.Core.Const;
+using GUZ.Core.Extensions;
 using GUZ.Core.Models.Vm;
+using GUZ.Core.Services;
+using GUZ.Core.Services.Vm;
+using Reflex.Attributes;
 using ZenKit.Daedalus;
 using ZenKit.Vobs;
 
@@ -10,6 +14,9 @@ namespace GUZ.Core.Models.Adapter.Vobs
 {
     public class NpcAdapter : VirtualObjectAdapter, INpc
     {
+        [Inject] private readonly GameStateService _gameStateService;
+        [Inject] private readonly VmService _vmService;
+
         protected INpc Npc => (INpc)Vob;
         protected bool IsNew;
 
@@ -18,6 +25,8 @@ namespace GUZ.Core.Models.Adapter.Vobs
         /// </summary>
         public NpcAdapter(int index) : base(new ZenKit.Vobs.Npc())
         {
+            this.Inject();
+            
             IsNew = true;
             InitNew(index);
         }
@@ -39,7 +48,7 @@ namespace GUZ.Core.Models.Adapter.Vobs
 
         private void InitNew(int npcIndex)
         {
-            Name = GameData.GothicVm.GetSymbolByIndex(npcIndex)!.Name;
+            Name = _gameStateService.GothicVm.GetSymbolByIndex(npcIndex)!.Name;
             NpcInstance = Name;
 
             Ai = new AiHuman
@@ -58,7 +67,7 @@ namespace GUZ.Core.Models.Adapter.Vobs
             AddSlot().Name = Constants.SlotHelmet;
             AddSlot().Name = Constants.SlotTorso;
 
-            for (var i = 0; i < DaedalusConst.TalentsMax; i++)
+            for (var i = 0; i < _vmService.TalentsMax; i++)
             {
                 AddTalent(new Talent
                 {

@@ -1,11 +1,8 @@
 using System.Linq;
 using GUZ.Core.Adapters.Vob;
-using GUZ.Core.Models.Container;
 using GUZ.Core.Extensions;
-using GUZ.Core.Const;
-using GUZ.Core.Manager;
+using GUZ.Core.Models.Container;
 using GUZ.Core.Models.Vm;
-using GUZ.Core.Services.Caches;
 using JetBrains.Annotations;
 using MyBox;
 using UnityEngine;
@@ -90,13 +87,13 @@ namespace GUZ.Core.Domain.Npc.Actions.AnimationActions
 
         private void SetBodyState()
         {
-            if (DaedalusConst.MobSit.Contains(_mobsiScheme))
+            if (VmService.MobSit.Contains(_mobsiScheme))
                 Props.BodyState = VmGothicEnums.BodyState.BsSit;
-            else if (DaedalusConst.MobLie.Contains(_mobsiScheme))
+            else if (VmService.MobLie.Contains(_mobsiScheme))
                 Props.BodyState = VmGothicEnums.BodyState.BsLie;
-            else if (DaedalusConst.MobClimb.Contains(_mobsiScheme))
+            else if (VmService.MobClimb.Contains(_mobsiScheme))
                 Props.BodyState = VmGothicEnums.BodyState.BsClimb;
-            else if (DaedalusConst.MobNotInterruptable.Contains(_mobsiScheme))
+            else if (VmService.MobNotInterruptable.Contains(_mobsiScheme))
                 Props.BodyState = VmGothicEnums.BodyState.BsMobinteract;
             else
                 Props.BodyState = VmGothicEnums.BodyState.BsMobinteractInterrupt;

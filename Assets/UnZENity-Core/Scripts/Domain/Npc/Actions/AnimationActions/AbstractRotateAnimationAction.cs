@@ -2,7 +2,9 @@ using GUZ.Core.Models.Container;
 using GUZ.Core.Const;
 using GUZ.Core.Core.Logging;
 using GUZ.Core.Models.Vm;
+using GUZ.Core.Services;
 using GUZ.Core.Services.Npc;
+using GUZ.Core.Services.Vm;
 using GUZ.Core.Util;
 using Reflex.Attributes;
 using UnityEngine;
@@ -13,6 +15,7 @@ namespace GUZ.Core.Domain.Npc.Actions.AnimationActions
     public abstract class AbstractRotateAnimationAction : AbstractAnimationAction
     {
         [Inject] private readonly AnimationService _animationService;
+        [Inject] private readonly GameStateService _gameStateService;
 
         // Can be used to rotate without animation.
         protected bool PlayAnimation = true;
@@ -112,7 +115,7 @@ namespace GUZ.Core.Domain.Npc.Actions.AnimationActions
         /// </summary>
         private void HandleRotation(Transform npcTransform)
         {
-            var turnSpeed = GameData.GuildValues.GetTurnSpeed((int)DaedalusConst.Guild.GIL_HUMAN);
+            var turnSpeed = _gameStateService.GuildValues.GetTurnSpeed((int)VmService.Guild.GIL_HUMAN);
             var currentRotation =
                 Quaternion.RotateTowards(npcTransform.rotation, _finalRotation, Time.deltaTime * turnSpeed);
 

@@ -1,3 +1,4 @@
+using GUZ.Core.Extensions;
 using GUZ.Core.Model.UI.Menu;
 using ZenKit.Daedalus;
 
@@ -10,6 +11,8 @@ namespace GUZ.Core.Model.UI.MenuItem
 
         protected AbstractMenuItemInstance(string menuItemName)
         {
+            // As we will need it for most of the elements.
+            this.Inject();
             Name = menuItemName;
         }
         

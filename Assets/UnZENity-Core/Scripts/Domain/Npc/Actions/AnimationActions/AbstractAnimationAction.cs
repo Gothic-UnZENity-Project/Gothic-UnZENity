@@ -7,7 +7,10 @@ using GUZ.Core.Models.Adapter.Vobs;
 using GUZ.Core.Models.Container;
 using GUZ.Core.Extensions;
 using GUZ.Core.Manager;
+using GUZ.Core.Services;
 using GUZ.Core.Services.Caches;
+using GUZ.Core.Services.Npc;
+using GUZ.Core.Services.Vm;
 using GUZ.Core.Services.Vobs;
 using GUZ.Core.Services.World;
 using Reflex.Attributes;
@@ -25,6 +28,8 @@ namespace GUZ.Core.Domain.Npc.Actions.AnimationActions
         [Inject] protected readonly PhysicsService PhysicsService;
         [Inject] protected readonly WayNetService WayNetService;
         [Inject] protected readonly VobService VobService;
+        [Inject] protected readonly VmService VmService;
+        [Inject] protected readonly GameStateService GameStateService;
 
 
         protected readonly NpcContainer NpcContainer;

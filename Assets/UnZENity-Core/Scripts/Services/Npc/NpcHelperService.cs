@@ -27,6 +27,7 @@ namespace GUZ.Core.Services.Npc
         /// </summary>
         public readonly Dictionary<VmGothicEnums.PerceptionType, int> PerceptionRanges = new ();
         
+        [Inject] private readonly GameStateService _gameStateService;
         [Inject] private readonly MultiTypeCacheService _multiTypeCacheService;
         [Inject] private readonly WayNetService _wayNetService;
         [Inject] private readonly VobService _vobService;
@@ -36,14 +37,14 @@ namespace GUZ.Core.Services.Npc
         public void Init()
         {
             // Perceptions
-            var percInitSymbol = GameData.GothicVm.GetSymbolByName("InitPerceptions");
+            var percInitSymbol = _gameStateService.GothicVm.GetSymbolByName("InitPerceptions");
             if (percInitSymbol == null)
             {
                 Logger.LogError("InitPerceptions symbol not found.", LogCat.Npc);
             }
             else
             {
-                GameData.GothicVm.Call(percInitSymbol.Index);
+                _gameStateService.GothicVm.Call(percInitSymbol.Index);
             }
         }
 
@@ -148,7 +149,7 @@ namespace GUZ.Core.Services.Npc
                 .Where(i => i.Instance.Index != npcInstance.Index) // ignore self
                 .Where(i => detectPlayer ||
                             i.Instance.Index !=
-                            GameData.GothicVm.GlobalHero!.Index) // if we don't detect player, then skip it
+                            _gameStateService.GothicVm.GlobalHero!.Index) // if we don't detect player, then skip it
                 .Where(i => specificNpcIndex < 0 ||
                             specificNpcIndex == i.Instance.Index) // Specific NPC is found right now?
                 .Where(i => aiState < 0 || npcVob.CurrentStateIndex == i.Vob.CurrentStateIndex)
@@ -166,7 +167,7 @@ namespace GUZ.Core.Services.Npc
             // if (Wld_DetectNpc(self, ...) && (Npc_GetDistToNpc(self, other)<HAI_DIST_SMALLTALK)
             if (foundNpc.Instance != null)
             {
-                GameData.GothicVm.GlobalOther = foundNpc.Instance;
+                _gameStateService.GothicVm.GlobalOther = foundNpc.Instance;
             }
 
             return foundNpc.Instance != null;
@@ -216,7 +217,7 @@ namespace GUZ.Core.Services.Npc
 
         public VmGothicEnums.Attitude GetGuildAttitude(int selfGuild, int otherGuild)
         {
-            return (VmGothicEnums.Attitude)GameData.GuildAttitudes[selfGuild * GameData.GuildCount + otherGuild];
+            return (VmGothicEnums.Attitude)_gameStateService.GuildAttitudes[selfGuild * _gameStateService.GuildCount + otherGuild];
         }
 
         [CanBeNull]

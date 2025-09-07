@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using GUZ.Core.Const;
+using GUZ.Core.Services;
 using MyBox;
+using Reflex.Attributes;
 using ZenKit.Daedalus;
 
 namespace GUZ.Core.Models.Audio
@@ -12,6 +14,10 @@ namespace GUZ.Core.Models.Audio
     /// </summary>
     public class SfxModel
     {
+        // TODO - Injecting in a Model wasn't intended. Try to use it without injecting.
+        [Inject] private readonly GameStateService _gameStateService;
+
+        private string soundKey;
         private SoundEffectInstance[]  _soundEffects;
 
         public int Count => _soundEffects.Length;
@@ -19,9 +25,30 @@ namespace GUZ.Core.Models.Audio
         
         public SfxModel(string preparedKey)
         {
+            soundKey = preparedKey;
+        }
+
+        public SoundEffectInstance GetFirstSound()
+        {
+            if (_soundEffects == null)
+                LoadSoundEffects();
+
+            return _soundEffects[0];
+        }
+        
+        public SoundEffectInstance GetRandomSound()
+        {
+            if (_soundEffects == null)
+                LoadSoundEffects();
+            
+            return _soundEffects.Length == 1 ? GetFirstSound() : _soundEffects.GetRandom();
+        }
+
+        private void LoadSoundEffects()
+        {
             var sounds = new List<SoundEffectInstance>();
             
-            var firstSound = GameData.SfxVm.InitInstance<SoundEffectInstance>(preparedKey);
+            var firstSound = _gameStateService.SfxVm.InitInstance<SoundEffectInstance>(soundKey);
             sounds.Add(firstSound);
 
             // Check if we have additional sounds which will be picked randomly at runtime.
@@ -29,10 +56,10 @@ namespace GUZ.Core.Models.Audio
             do
             {
                 // e.g., BreathBubbles_A2
-                var nextKey = $"{preparedKey}_A{randomIndex}";
+                var nextKey = $"{soundKey}_A{randomIndex}";
                 try
                 {
-                    var nextSound = GameData.SfxVm.InitInstance<SoundEffectInstance>(nextKey);
+                    var nextSound = _gameStateService.SfxVm.InitInstance<SoundEffectInstance>(nextKey);
                     
                     // Hint: We also add nosound.wav entries. In G1, e.g., MOL_Ambient_A4 which is randomly picked, sometimes do not yell a sound - intended.
                     sounds.Add(nextSound);
@@ -46,16 +73,6 @@ namespace GUZ.Core.Models.Audio
             } while (true);
             
             _soundEffects = sounds.ToArray();
-        }
-
-        public SoundEffectInstance GetFirstSound()
-        {
-            return _soundEffects[0];
-        }
-        
-        public SoundEffectInstance GetRandomSound()
-        {
-            return _soundEffects.Length == 1 ? GetFirstSound() : _soundEffects.GetRandom();
         }
     }
 }

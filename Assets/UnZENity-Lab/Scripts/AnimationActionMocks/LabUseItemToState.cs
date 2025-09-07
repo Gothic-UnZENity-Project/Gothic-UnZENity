@@ -1,24 +1,26 @@
-using GUZ.Core.Models.Container;
-using GUZ.Core.Const;
 using GUZ.Core.Domain.Npc.Actions;
 using GUZ.Core.Domain.Npc.Actions.AnimationActions;
+using GUZ.Core.Models.Container;
+using GUZ.Core.Services;
+using Reflex.Attributes;
 
 namespace GUZ.Lab.AnimationActionMocks
 {
     public class LabUseItemToState : UseItemToState
     {
-        public LabUseItemToState(AnimationAction action, NpcContainer npcContainer) : base(CalculateItemIndex(action), npcContainer)
+        [Inject] private readonly GameStateService _gameStateService;
+        
+        public LabUseItemToState(AnimationAction action, NpcContainer npcContainer) : base(action, npcContainer)
         {
         }
 
-        private static AnimationAction CalculateItemIndex(AnimationAction action)
+        public override void Start()
         {
-            var item = GameData.GothicVm.GetSymbolByName(action.String0);
+            // TODO - I don't know about a good injection method now. We need to fix it later...
+            // var item = _gameStateService.GothicVm.GetSymbolByName(Action.String0);
+            // Action.Int0 = item!.Index;
 
-            return new AnimationAction(
-                int0: item!.Index,
-                int1: action.Int1
-            );
+            base.Start();
         }
     }
 }

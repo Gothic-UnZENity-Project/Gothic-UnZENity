@@ -12,6 +12,7 @@ using GUZ.Core.Models.Marvin;
 using GUZ.Core.Models.Vm;
 using GUZ.Core.Services;
 using GUZ.Core.Services.Caches;
+using GUZ.Core.Services.Vm;
 using GUZ.VR.Adapters.HVROverrides;
 using GUZ.VR.Services.Context;
 using HurricaneVR.Framework.Core.HandPoser;
@@ -64,6 +65,7 @@ namespace GUZ.VR.Adapters.Player
         private bool _isDivingForceStarted; // If we lift the grips, we set it to false again to re-enable sounds later.
 
 
+        [Inject] private readonly GameStateService _gameStateService;
         [Inject] private readonly AudioService _audioService;
         [Inject] private readonly VmCacheService _vmCacheService;
 
@@ -100,7 +102,7 @@ namespace GUZ.VR.Adapters.Player
 
             GlobalEventDispatcher.WorldSceneLoaded.AddListener(() =>
             {
-                _playerVob = ((NpcInstance)GameData.GothicVm.GlobalHero).GetUserData()!.Vob;
+                _playerVob = ((NpcInstance)_gameStateService.GothicVm.GlobalHero).GetUserData()!.Vob;
                 _playerAi = (IAiHuman)_playerVob.Ai;
             });
             
@@ -133,8 +135,8 @@ namespace GUZ.VR.Adapters.Player
 				return;
 
             // FIXME - As we have different sizes of people in VR, we should use the size based on real heights.
-            var kneeDeepHeight = GameData.GuildValues.GetWaterDepthKnee((int)DaedalusConst.Guild.GIL_HUMAN).ToMeter();
-            var chestDeepHeight =  GameData.GuildValues.GetWaterDepthChest((int)DaedalusConst.Guild.GIL_HUMAN).ToMeter();
+            var kneeDeepHeight = _gameStateService.GuildValues.GetWaterDepthKnee((int)VmService.Guild.GIL_HUMAN).ToMeter();
+            var chestDeepHeight =  _gameStateService.GuildValues.GetWaterDepthChest((int)VmService.Guild.GIL_HUMAN).ToMeter();
             var chestDeepHeightWithBuffer = chestDeepHeight + 2; // Do raycast a little bit longer than it needs to be, to ensure it's working.
 
             RaycastHit hit;

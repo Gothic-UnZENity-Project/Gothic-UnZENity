@@ -5,6 +5,7 @@ using GUZ.Core.Const;
 using GUZ.Core.Core.Logging;
 using GUZ.Core.Creator;
 using GUZ.Core.Extensions;
+using GUZ.Core.Services;
 using JetBrains.Annotations;
 using Reflex.Attributes;
 using UnityEngine;
@@ -20,6 +21,7 @@ namespace GUZ.Core.Debugging
         public List<string> PathDistanceCalculation;
 
         [Inject] private readonly WayNetService _wayNetService;
+        [Inject] private readonly GameStateService _gameStateService;
         
         private Vector3[] _gizmoWayPoints;
         private GameObject _wayPointsGo;
@@ -34,10 +36,14 @@ namespace GUZ.Core.Debugging
             if (_wayPointsGo == null)
             {
                 _wayPointsGo = GameObject.Find("World/Waynet/Waypoints");
+
+                // Not yet ready.
+                if (_wayPointsGo == null)
+                    return;
             }
 
-            if (GameData.DijkstraWaypoints.TryGetValue(DebugStart, out var startWaypoint) &&
-                GameData.DijkstraWaypoints.TryGetValue(DebugEnd, out var endWaypoint))
+            if (_gameStateService.DijkstraWaypoints.TryGetValue(DebugStart, out var startWaypoint) &&
+                _gameStateService.DijkstraWaypoints.TryGetValue(DebugEnd, out var endWaypoint))
             {
                 LightUpWaypoint(DebugStart, Color.green);
                 LightUpWaypoint(DebugEnd, Color.green);

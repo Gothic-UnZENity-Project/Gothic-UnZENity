@@ -16,6 +16,7 @@ namespace GUZ.Core.Services.Npc
 {
     public class NpcAiService
     {
+        [Inject] private readonly GameStateService _gameStateService;
         [Inject] private readonly NpcHelperService _npcHelperService;
         [Inject] private readonly MultiTypeCacheService _multiTypeCacheService;
 
@@ -46,27 +47,27 @@ namespace GUZ.Core.Services.Npc
                 return;
             }
 
-            var oldSelf = GameData.GothicVm.GlobalSelf;
-            var oldVictim = GameData.GothicVm.GlobalVictim;
-            var oldOther = GameData.GothicVm.GlobalVictim;
+            var oldSelf = _gameStateService.GothicVm.GlobalSelf;
+            var oldVictim = _gameStateService.GothicVm.GlobalVictim;
+            var oldOther = _gameStateService.GothicVm.GlobalVictim;
 
-            GameData.GothicVm.GlobalSelf = self;
+            _gameStateService.GothicVm.GlobalSelf = self;
             
             if(other != null)
             {
-                GameData.GothicVm.GlobalOther = other;
+                _gameStateService.GothicVm.GlobalOther = other;
             }
 
             if(victim != null)
             {
-                GameData.GothicVm.GlobalVictim = victim;
+                _gameStateService.GothicVm.GlobalVictim = victim;
             }
 
-            GameData.GothicVm.Call(perceptionFunction);
+            _gameStateService.GothicVm.Call(perceptionFunction);
             
-            GameData.GothicVm.GlobalSelf = oldSelf;
-            GameData.GothicVm.GlobalVictim = oldVictim;
-            GameData.GothicVm.GlobalVictim = oldOther;
+            _gameStateService.GothicVm.GlobalSelf = oldSelf;
+            _gameStateService.GothicVm.GlobalVictim = oldVictim;
+            _gameStateService.GothicVm.GlobalVictim = oldOther;
         }
 
         public void ExtNpcSetPerceptionTime(NpcInstance npc, float time)
@@ -178,8 +179,8 @@ namespace GUZ.Core.Services.Npc
 
         public void ExtAiStartState(NpcInstance npc, int action, bool stopCurrentState, string wayPointName)
         {
-            var other = (NpcInstance)GameData.GothicVm.GlobalOther;
-            var victim = (NpcInstance)GameData.GothicVm.GlobalOther;
+            var other = (NpcInstance)_gameStateService.GothicVm.GlobalOther;
+            var victim = (NpcInstance)_gameStateService.GothicVm.GlobalOther;
             
             npc.GetUserData().Props.AnimationQueue.Enqueue(new StartState(
                 new AnimationAction(int0: action, bool0: stopCurrentState, string0: wayPointName, instance0: other, instance1: victim),
@@ -353,7 +354,7 @@ namespace GUZ.Core.Services.Npc
 
         public bool ExtNpcIsPlayer(NpcInstance npc)
         {
-            return npc.Index == GameData.GothicVm.GlobalHero!.Index;
+            return npc.Index == _gameStateService.GothicVm.GlobalHero!.Index;
         }
 
         public ItemInstance ExtGetEquippedArmor(NpcInstance npc)

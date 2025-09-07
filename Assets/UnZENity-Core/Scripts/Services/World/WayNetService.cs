@@ -8,7 +8,9 @@ using GUZ.Core.Core.Logging;
 using GUZ.Core.Models.Config;
 using GUZ.Core.Models.Vob.WayNet;
 using GUZ.Core.Models.WayNet;
+using GUZ.Core.Services;
 using JetBrains.Annotations;
+using Reflex.Attributes;
 using UnityEngine;
 using ZenKit;
 using Logger = GUZ.Core.Core.Logging.Logger;
@@ -20,6 +22,8 @@ namespace GUZ.Core.Creator
 {
     public class WayNetService
     {
+        [Inject] private readonly GameStateService _gameStateService;
+        
         public void Create(DeveloperConfig config, WorldContainer world)
         {
             var waynetObj = new GameObject("WayNet");
@@ -32,11 +36,11 @@ namespace GUZ.Core.Creator
 
         private void SetWayPointCache(IWayNet wayNet)
         {
-            GameData.WayPoints.Clear();
+            _gameStateService.WayPoints.Clear();
 
             foreach (var wp in wayNet.Points)
             {
-                GameData.WayPoints.Add(wp.Name, new WayPoint
+                _gameStateService.WayPoints.Add(wp.Name, new WayPoint
                 {
                     Name = wp.Name,
                     Position = wp.Position.ToUnityVector(),
@@ -74,14 +78,14 @@ namespace GUZ.Core.Creator
                         Neighbors = g.Select(x => x.b.Name).ToList()
                     });
 
-            GameData.DijkstraWaypoints = dijkstraWaypoints;
+            _gameStateService.DijkstraWaypoints = dijkstraWaypoints;
         }
 
         private void AttachWaypointPositionToDijkstraEntries()
         {
-            foreach (var waypoint in GameData.DijkstraWaypoints)
+            foreach (var waypoint in _gameStateService.DijkstraWaypoints)
             {
-                var result = GameData.WayPoints.First(i => i.Key == waypoint.Key).Value.Position;
+                var result = _gameStateService.WayPoints.First(i => i.Key == waypoint.Key).Value.Position;
                 waypoint.Value.Position = result;
             }
         }
@@ -91,7 +95,7 @@ namespace GUZ.Core.Creator
         /// </summary>
         private void CalculateDijkstraNeighbourDistances()
         {
-            foreach (var waypoint in GameData.DijkstraWaypoints.Values)
+            foreach (var waypoint in _gameStateService.DijkstraWaypoints.Values)
             {
                 foreach (var neighbour in waypoint.Neighbors)
                 {
@@ -101,7 +105,7 @@ namespace GUZ.Core.Creator
                     }
 
                     waypoint.DistanceToNeighbors.Add(neighbour,
-                        Vector3.Distance(waypoint.Position, GameData.DijkstraWaypoints[neighbour].Position));
+                        Vector3.Distance(waypoint.Position, _gameStateService.DijkstraWaypoints[neighbour].Position));
                 }
             }
         }
@@ -168,7 +172,7 @@ namespace GUZ.Core.Creator
         [CanBeNull]
         public WayNetPoint GetWayNetPoint(string pointName)
         {
-            var wayPoint = GameData.WayPoints
+            var wayPoint = _gameStateService.WayPoints
                 .FirstOrDefault(item => item.Key.Equals(pointName, StringComparison.OrdinalIgnoreCase))
                 .Value;
             if (wayPoint != null)
@@ -176,7 +180,7 @@ namespace GUZ.Core.Creator
                 return wayPoint;
             }
 
-            var freePoint = GameData.FreePoints
+            var freePoint = _gameStateService.FreePoints
                 .FirstOrDefault(pair => pair.Key.Equals(pointName, StringComparison.OrdinalIgnoreCase))
                 .Value;
             return freePoint;
@@ -184,7 +188,7 @@ namespace GUZ.Core.Creator
 
         public List<FreePoint> FindFreePointsWithName(Vector3 lookupPosition, string namePart, float maxDistance)
         {
-            var matchingFreePoints = GameData.FreePoints
+            var matchingFreePoints = _gameStateService.FreePoints
                 .Where(pair => pair.Key.Contains(namePart))
                 .Where(pair => Vector3.Distance(lookupPosition, pair.Value.Position) <= maxDistance) // PF is in range
                 .OrderBy(pair =>
@@ -196,7 +200,7 @@ namespace GUZ.Core.Creator
 
         public WayPoint FindNearestWayPoint(Vector3 lookupPosition, bool findSecondNearest = false)
         {
-            var wayPoint = GameData.WayPoints
+            var wayPoint = _gameStateService.WayPoints
                 .OrderBy(pair => Vector3.Distance(pair.Value.Position, lookupPosition))
                 .Skip(findSecondNearest ? 1 : 0)
                 .FirstOrDefault();
@@ -210,7 +214,7 @@ namespace GUZ.Core.Creator
         [CanBeNull]
         public FreePoint FindNearestFreePoint(Vector3 lookupPosition, string fpNamePart, FreePoint npcOnFp)
         {
-            return GameData.FreePoints
+            return _gameStateService.FreePoints
                 .Where(pair =>
                     pair.Value.Name.ContainsIgnoreCase(fpNamePart) && (pair.Value == npcOnFp || !pair.Value.IsLocked))
                 .OrderBy(pair => Vector3.Distance(pair.Value.Position, lookupPosition))
@@ -222,8 +226,8 @@ namespace GUZ.Core.Creator
         public DijkstraWaypoint[] FindFastestPath(string startWaypoint, string endWaypoint)
         {
             // Get the start and end waypoints from the DijkstraWaypoints dictionary
-            var startDijkstraWaypoint = GameData.DijkstraWaypoints[startWaypoint];
-            var endDijkstraWaypoint = GameData.DijkstraWaypoints[endWaypoint];
+            var startDijkstraWaypoint = _gameStateService.DijkstraWaypoints[startWaypoint];
+            var endDijkstraWaypoint = _gameStateService.DijkstraWaypoints[endWaypoint];
 
             // Initialize the previousNodes dictionary to keep track of the path
             var previousNodes = new Dictionary<string, DijkstraWaypoint>();
@@ -231,7 +235,7 @@ namespace GUZ.Core.Creator
             var unvisited = new PriorityQueue();
 
             // For each waypoint in DijkstraWaypoints
-            foreach (var waypointX in GameData.DijkstraWaypoints.Values)
+            foreach (var waypointX in _gameStateService.DijkstraWaypoints.Values)
             {
                 // If the waypoint is the start waypoint, set its SummedDistance to 0
                 if (waypointX.Name == startWaypoint)
@@ -256,7 +260,7 @@ namespace GUZ.Core.Creator
 
                 foreach (var neighborName in currentWaypoint.DistanceToNeighbors.Keys)
                 {
-                    var neighbor = GameData.DijkstraWaypoints[neighborName];
+                    var neighbor = _gameStateService.DijkstraWaypoints[neighborName];
                     var alt = currentWaypoint.SummedDistance + currentWaypoint.DistanceToNeighbors[neighborName];
 
                     // If a shorter path to the neighbor is found, update its distance and previous node.

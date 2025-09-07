@@ -33,7 +33,7 @@ namespace GUZ.Lab.Handler
              * 3. Load Vob name list
              * 4. Fill dropdown
              */
-            var itemNames = GameData.GothicVm.GetInstanceSymbols("C_Item").Select(i => i.Name).ToList();
+            var itemNames = GameStateService.GothicVm.GetInstanceSymbols("C_Item").Select(i => i.Name).ToList();
 
             _items = itemNames
                 .ToDictionary(itemName => itemName, VmCacheService.TryGetItemData);

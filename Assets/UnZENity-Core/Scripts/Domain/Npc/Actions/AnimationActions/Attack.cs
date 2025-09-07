@@ -4,6 +4,7 @@ using GUZ.Core.Extensions;
 using GUZ.Core.Const;
 using GUZ.Core.Core.Logging;
 using GUZ.Core.Models.Vm;
+using GUZ.Core.Services;
 using GUZ.Core.Services.Caches;
 using GUZ.Core.Services.Npc;
 using GUZ.Core.Util;
@@ -18,8 +19,9 @@ namespace GUZ.Core.Domain.Npc.Actions.AnimationActions
     {
         [Inject] private readonly AnimationService _animationService;
         [Inject] private readonly NpcAiService _npcAiService;
+        [Inject] private readonly GameStateService _gameStateService;
 
-        private NpcInstance _enemy => (NpcInstance)GameData.GothicVm.GlobalVictim;
+        private NpcInstance _enemy => (NpcInstance)_gameStateService.GothicVm.GlobalVictim;
         
         private FightAiMove _move;
         
@@ -122,9 +124,9 @@ namespace GUZ.Core.Domain.Npc.Actions.AnimationActions
         /// Fight range is calculated by base range + weapon attack range.
         private float GetAttackRange()
         {
-            var baseRange = GameData.GuildValues.GetFightRangeBase(Vob.GuildTrue);
+            var baseRange = _gameStateService.GuildValues.GetFightRangeBase(Vob.GuildTrue);
             // FIXME - Currently we assume Fist only. We need to set range for weapons properly as well. (e.g., Orcs)
-            var weaponRange = GameData.GuildValues.GetFightRangeFist(Vob.GuildTrue);
+            var weaponRange = _gameStateService.GuildValues.GetFightRangeFist(Vob.GuildTrue);
             return (baseRange + weaponRange) / 100f; // m -> cm
         }
 

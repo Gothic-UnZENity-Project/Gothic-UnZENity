@@ -9,6 +9,7 @@ using GUZ.Core.Model.UI.MenuItem;
 using GUZ.Core.Services.Config;
 using GUZ.Core.Services.Meshes;
 using GUZ.Core.Services.UI;
+using GUZ.Core.Services.Vm;
 using MyBox;
 using Reflex.Attributes;
 using TMPro;
@@ -26,7 +27,7 @@ namespace GUZ.Core.Adapters.UI.Menus
         [Inject] protected readonly UIEventsService UIEventsService;
         [Inject] protected readonly FontService FontService;
         [Inject] protected readonly TextureService TextureService;
-
+        [Inject] private readonly VmService _vmService;
 
         protected MenuHandler MenuHandler;
         protected AbstractMenuInstance MenuInstance;
@@ -45,6 +46,7 @@ namespace GUZ.Core.Adapters.UI.Menus
             MenuHandler = transform.parent.GetComponent<MenuHandler>();
             
             MenuInstance = menuInstance;
+            
             CreateRootElements();
         }
         
@@ -67,7 +69,7 @@ namespace GUZ.Core.Adapters.UI.Menus
 
         protected virtual bool IsMenuItemActive(string menuItemName)
         {
-            if (Constants.DaedalusMenu.DisabledGothicMenuSettings.Contains(menuItemName))
+            if ( _vmService.DisabledGothicMenuSettings.Contains(menuItemName))
                 return false;
             else
                 return true;

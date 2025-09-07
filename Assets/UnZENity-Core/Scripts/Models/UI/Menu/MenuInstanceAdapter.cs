@@ -1,19 +1,23 @@
 using System.Linq;
 using GUZ.Core.Const;
 using GUZ.Core.Model.UI.MenuItem;
+using GUZ.Core.Services;
 using JetBrains.Annotations;
 using MyBox;
+using Reflex.Attributes;
 using ZenKit.Daedalus;
 
 namespace GUZ.Core.Model.UI.Menu
 {
     public class MenuInstanceAdapter : AbstractMenuInstance
     {
-        private readonly MenuInstance _menuInstance;
+        [Inject] private readonly GameStateService _gameStateService;
+        
+        private MenuInstance _menuInstance;
 
         public MenuInstanceAdapter(string name, [CanBeNull] AbstractMenuInstance parentAbstractMenu): base(name, parentAbstractMenu)
         {
-            _menuInstance = GameData.MenuVm.InitInstance<MenuInstance>(name);
+            _menuInstance = _gameStateService.MenuVm.InitInstance<MenuInstance>(Name);
             
             // We immediately initialize all menu entries as we will later change Index of them (e.g. add a new menu in between).
             Items = new();
@@ -25,7 +29,7 @@ namespace GUZ.Core.Model.UI.Menu
                 if (itemName.IsNullOrEmpty())
                     break;
 
-                var instance = GameData.MenuVm.InitInstance<MenuItemInstance>(itemName);
+                var instance = _gameStateService.MenuVm.InitInstance<MenuItemInstance>(itemName);
                 Items.Add(new MenuItemInstanceAdapter(instance, itemName, this));
             }
         }

@@ -1,3 +1,4 @@
+using GUZ.Core.Extensions;
 using GUZ.Core.Model.UI.Menu;
 using ZenKit.Daedalus;
 
@@ -11,9 +12,11 @@ namespace GUZ.Core.Model.UI.MenuItem
             base(menuItemName)
         {
             _menuItemInstance = menuItemInstance;
-            
+
             if (_menuItemInstance.GetOnSelAction(0) == MenuItemSelectAction.StartMenu)
+            {
                 MenuInstance = new MenuInstanceAdapter(_menuItemInstance.GetOnSelActionS(0), parentAbstractMenu);
+            }
         }
 
 

@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using GUZ.Core.Adapters.Npc;
 using GUZ.Core.Adapters.Properties;
 using GUZ.Core.Adapters.UI.LoadingBars;
-using GUZ.Core.Const;
 using GUZ.Core.Core.Logging;
 using GUZ.Core.Creator;
 using GUZ.Core.Extensions;
@@ -43,12 +42,13 @@ namespace GUZ.Core.Domain.Npc
         [Inject] private readonly SaveGameService _saveGameService;
         [Inject] private readonly WayNetService _wayNetService;
         [Inject] private readonly NpcMeshCullingService _npcMeshCullingService;
+        [Inject] private readonly GameStateService _gameStateService;
 
         
         public GameObject RootGo;
         private readonly List<(NpcContainer npc, string spawnPoint)> _tmpWldInsertNpcData = new();
 
-        private static DaedalusVm Vm => GameData.GothicVm;
+        private DaedalusVm Vm => _gameStateService.GothicVm;
 
         public async Task InitNpcsNewGame(LoadingService loading)
         {
@@ -99,7 +99,7 @@ namespace GUZ.Core.Domain.Npc
 
         private NpcContainer AllocZkInstance(INpc vobNpc)
         {
-            var symbol = GameData.GothicVm.GetSymbolByName(vobNpc.Name)!;
+            var symbol = _gameStateService.GothicVm.GetSymbolByName(vobNpc.Name)!;
             var userDataObject = AllocZkInstance(symbol.Index);
             userDataObject.Vob = (NpcAdapter)vobNpc;
             
@@ -138,8 +138,8 @@ namespace GUZ.Core.Domain.Npc
 
             // Inside Startup.d, it's always STARTUP_{MAPNAME} and INIT_{MAPNAME}
             // FIXME - Inside Startup.d some Startup_*() functions also call Init_*() some not. How to handle properly? (Force calling it here? Even if done twice?)
-            GameData.GothicVm.Call($"STARTUP_{_saveGameService.CurrentWorldName.ToUpper().RemoveEnd(".ZEN")}");
-            GameData.GothicVm.Call($"INIT_{_saveGameService.CurrentWorldName.ToUpper().RemoveEnd(".ZEN")}"); // call init as well, as per opengothic
+            _gameStateService.GothicVm.Call($"STARTUP_{_saveGameService.CurrentWorldName.ToUpper().RemoveEnd(".ZEN")}");
+            _gameStateService.GothicVm.Call($"INIT_{_saveGameService.CurrentWorldName.ToUpper().RemoveEnd(".ZEN")}"); // call init as well, as per opengothic
         }
 
         /// <summary>
@@ -264,7 +264,7 @@ namespace GUZ.Core.Domain.Npc
             // Vob.Npc contains runtime information. If no runtime information is set (new game started / world entered for the first time), we use the initial data.
             if (npc.Vob.CurrentRoutine.IsNullOrEmpty())
             {
-                npc.Vob.CurrentRoutine = GameData.GothicVm.GetSymbolByIndex(npc.Instance.DailyRoutine)!.Name;
+                npc.Vob.CurrentRoutine = _gameStateService.GothicVm.GetSymbolByIndex(npc.Instance.DailyRoutine)!.Name;
             }
 
             _npcRoutineService.ExchangeRoutine(npc.Instance, npc.Vob.CurrentRoutine);

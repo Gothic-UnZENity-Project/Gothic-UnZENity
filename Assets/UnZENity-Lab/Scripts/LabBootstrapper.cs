@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using GUZ.Core;
 using GUZ.Core.Const;
 using GUZ.Core.Core.Logging;
+using GUZ.Core.Domain;
 using GUZ.Core.Extensions;
 using GUZ.Core.Manager;
 using GUZ.Core.Models.Config;
@@ -53,8 +54,9 @@ namespace GUZ.Lab
         public NpcMeshCullingService NpcMeshCulling => null;
         public StoryService Story => _story;
         public SpeechToTextService SpeechToText => null;
-
-
+        
+        
+        [Inject] private readonly GameStateService _gameStateService;
         [Inject] private readonly ConfigService _configService;
         [Inject] private readonly AudioService _audioService;
         [Inject] private readonly GameTimeService _gameTimeService;
@@ -68,6 +70,8 @@ namespace GUZ.Lab
         [Inject] private readonly MorphMeshCacheService _morphMeshCacheService;
         [Inject] private readonly MultiTypeCacheService _multiTypeCacheService;
         
+        
+        private BootstrapDomain _bootstrapDomain = new BootstrapDomain().Inject();
 
         private void Awake()
         {
@@ -135,7 +139,7 @@ namespace GUZ.Lab
             // TODO - Broken. Fix before use.
             // NpcHelper.CacheHero();
 
-            Bootstrapper.Boot();
+            _bootstrapDomain.Boot();
 
             if (!_staticCacheService.DoGlobalCacheFilesExist())
             {
@@ -344,7 +348,7 @@ namespace GUZ.Lab
 
         private void OnDestroy()
         {
-            GameData.Dispose();
+            _gameStateService.Dispose();
             _vmCacheService.Dispose();
             _textureCacheService.Dispose();
             _multiTypeCacheService.Dispose();

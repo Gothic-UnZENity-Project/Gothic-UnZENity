@@ -1,6 +1,7 @@
 using System;
 using GUZ.Core.Const;
 using GUZ.Core.Core.Logging;
+using GUZ.Core.Services;
 using GUZ.Core.Util;
 using UnityEditor;
 
@@ -31,10 +32,12 @@ namespace GUZ.Core.Editor.Tools
         [MenuItem(itemName: "UnZENity/Debug/Daedalus StackTrace", priority = 2)]
         public static void PrintStackTrace()
         {
-            if (GameData.GothicVm == null)
+            var gothicVm = ReflexProjectInstaller.DIContainer.Resolve<GameStateService>()?.GothicVm;
+            
+            if (gothicVm == null)
                 Logger.LogErrorEditor("No Gothic VM initialized. Please start the game first.", LogCat.Debug);
             
-            GameData.GothicVm?.PrintStackTrace();
+            gothicVm?.PrintStackTrace();
         }
     }
 }

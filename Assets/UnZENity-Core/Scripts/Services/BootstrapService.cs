@@ -3,6 +3,7 @@ using System.Globalization;
 using GUZ.Core.Adapters.Scenes;
 using GUZ.Core.Const;
 using GUZ.Core.Core.Logging;
+using GUZ.Core.Domain;
 using GUZ.Core.Extensions;
 using GUZ.Core.Manager;
 using GUZ.Core.Models.Config;
@@ -31,22 +32,16 @@ namespace GUZ.Core.Services
 
 
         [Inject] private readonly ContextInteractionService _contextInteractionService;
-        [Inject] private readonly ContextMenuService _contextMenuService;
-        [Inject] private readonly ContextDialogService _contextDialogService;
         [Inject] private readonly ContextGameVersionService _contextGameVersionService;
-
-        [Inject] private readonly UnityMonoService _unityMonoService;
+        
         [Inject] private readonly AudioService _audioService;
         [Inject] private readonly SpeechToTextService _speechToTextService;
         [Inject] private readonly GameTimeService _gameTimeService;
-
+        
         [Inject] private readonly NpcMeshCullingService _npcMeshCullingService;
         [Inject] private readonly VobMeshCullingService _vobMeshCullingService;
         [Inject] private readonly VobSoundCullingService _vobSoundCullingService;
-
-        [Inject] private readonly SkyService _skyService;
-        [Inject] private readonly BarrierService _barrierService;
-        [Inject] private readonly LoadingService _loadingService;
+        
         [Inject] private readonly TextureService _textureService;
         [Inject] private readonly SaveGameService _saveGameService;
         [Inject] private readonly PlayerService _playerService;
@@ -55,13 +50,14 @@ namespace GUZ.Core.Services
         [Inject] private readonly VobService _vobService;
         [Inject] private readonly ConfigService _configService;
         [Inject] private readonly NpcService _npcService;
-        [Inject] private readonly NpcAiService _npcAiService;
         [Inject] private readonly RoutineService _routineService;
         
         [Inject] private readonly MultiTypeCacheService _multiTypeCacheService;
         [Inject] private readonly StaticCacheService _staticCacheService;
 
 
+        private BootstrapDomain _bootstrapDomain = new BootstrapDomain().Inject();
+        
         public void AwakeUnity(DeveloperConfig config)
         {
             GameContext.IsLab = false;
@@ -134,7 +130,7 @@ namespace GUZ.Core.Services
             _vobService.Init();
             _npcService.Init();
 
-            Bootstrapper.Boot();
+            _bootstrapDomain.Boot();
             _speechToTextService.Init(); // Init after language set.
 
             GlobalEventDispatcher.LevelChangeTriggered.AddListener((world, spawn) =>

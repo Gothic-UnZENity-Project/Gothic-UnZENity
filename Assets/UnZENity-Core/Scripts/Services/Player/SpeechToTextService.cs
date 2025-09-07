@@ -1,6 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using GUZ.Core.Core.Logging;
+using GUZ.Core.Extensions;
 using GUZ.Core.UnZENity_Core.Scripts.Domain;
 using UnityEngine;
 using Logger = GUZ.Core.Core.Logging.Logger;
@@ -34,7 +35,7 @@ namespace GUZ.Core.Services.Player
 #pragma warning disable CS1998 // Whisper might take some seconds to initialize. Do not wait.
         private async Task InitializeWhisper()
         {
-            _whisper = new();
+            _whisper = new WhisperDomain().Inject();
             _whisper.Init();
         }
 #pragma warning restore CS1998

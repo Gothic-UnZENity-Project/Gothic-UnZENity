@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using GUZ.Core.Const;
+using GUZ.Core.Services.Vm;
 using MyBox;
+using Reflex.Attributes;
 using ZenKit.Daedalus;
 
 namespace GUZ.Core.Models.Adapter
@@ -10,6 +12,8 @@ namespace GUZ.Core.Models.Adapter
     /// </summary>
     public class FightAiAdapter
     {
+        [Inject] private readonly VmService _vmService;
+        
         private readonly FightAiInstance _fightAiInstance;
 
         public readonly int MoveCount;
@@ -30,7 +34,7 @@ namespace GUZ.Core.Models.Adapter
         {
             var tempMoves = new List<FightAiMove>();
             
-            for (moveCount = 0; moveCount < FightConst.FightAiMoveMax; moveCount++)
+            for (moveCount = 0; moveCount < _vmService.FightAiMoveMax; moveCount++)
             {
                 // Load all move entries in list until the value is 0 aka unset.
                 if (_fightAiInstance.GetMove(moveCount) == FightAiMove.Nop)

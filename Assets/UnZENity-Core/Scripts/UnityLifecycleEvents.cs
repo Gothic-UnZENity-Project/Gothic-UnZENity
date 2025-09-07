@@ -1,11 +1,9 @@
-using GUZ.Core.Domain.Culling;
 using GUZ.Core.Manager;
 using GUZ.Core.Services;
 using GUZ.Core.Services.Caches;
 using GUZ.Core.Services.Culling;
 using GUZ.Core.Services.Player;
 using GUZ.Core.Services.World;
-using GUZ.Core.Util;
 using Reflex.Attributes;
 using UnityEngine;
 
@@ -17,7 +15,8 @@ namespace GUZ.VR
     /// </summary>
     public class UnityLifecycleEvents : MonoBehaviour
     {
-
+        [Inject] private readonly GameStateService _gameStateService;
+        
         [Inject] private readonly LoadingService _loadingService;
         [Inject] private readonly NpcMeshCullingService _npcMeshCullingService;
         [Inject] private readonly VobMeshCullingService _vobMeshCullingService;
@@ -58,7 +57,7 @@ namespace GUZ.VR
 
         private void OnApplicationQuit()
         {
-            Bootstrapper.OnApplicationQuit();
+            _gameStateService.Dispose();
 
             _npcMeshCullingService.OnApplicationQuit();
             _vobMeshCullingService.OnApplicationQuit();

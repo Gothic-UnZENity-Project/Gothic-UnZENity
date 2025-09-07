@@ -1,4 +1,5 @@
 using GUZ.Core.Extensions;
+using GUZ.Core.Services;
 using UnityEngine;
 using ZenKit.Vobs;
 using Material = UnityEngine.Material;
@@ -7,45 +8,6 @@ namespace GUZ.Core.Const
 {
     public static class Constants
     {
-        public static class DaedalusMenu
-        {
-            
-            public static readonly string[] DisabledGothicMenuSettings =
-            {
-                // Whole submenus
-                "MENUITEM_OPT_VIDEO", "MENUITEM_OPT_CONTROLS",
-                // Parts of main SETTINGS menu
-                "MENUITEM_PERF", "MENUITEM_PERF_CHOICE",
-                // Parts of GAME menu
-                "MENUITEM_GAME_ANIMATE_WINDOWS", "MENUITEM_GAME_ANIMATE_WINDOWS_CHOICE",
-                "MENUITEM_GAME_LOOKAROUND_INVERSE", "MENUITEM_GAME_LOOKAROUND_INVERSE_CHOICE",
-                "MENUITEM_M", "MENUITEM_M_CHOICE",
-                "MENUITEM_MSENSITIVITY", "MENUITEM_MSENSITIVITY_SLIDER",
-                "MENUITEM_GAME_BLOOD", "MENUITEM_GAME_BLOOD_CHOICE",
-                // Parts of GRAPHICS menu
-                "MENUITEM_GRA_TEXQUAL", "MENUITEM_GRA_TEXQUAL_SLIDER",
-                "MENUITEM_GRA_MODEL_DETAIL", "MENUITEM_GRA_MODEL_DETAIL_SLIDER",
-                "MENUITEM_GRA_SKY_EFFECTS", "MENUITEM_GRA_SKY_EFFECTS_CHOICE",
-                // Parts of AUDIO menu
-                "MENUITEM_AUDIO_SFXVOL", "MENUITEM_AUDIO_SFXVOL_SLIDER",
-                "MENUITEM_AUDIO_PROVIDER", "MENUITEM_AUDIO_PROVIDER_CHOICE",
-                "MENUITEM_AUDIO_SPEEKER", "MENUITEM_AUDIO_SPEEKER_CHOICE",
-                "MENUITEM_AUDIO_REVERB", "MENUITEM_AUDIO_REVERB_CHOICE",
-                "MENUITEM_AUDIO_SAMPLERATE", "MENUITEM_AUDIO_SAMPLERATE_CHOICE"
-            };
-            
-            public static int MaxUserStrings => GameData.MenuVm.GetSymbolInt("MAX_USERSTRINGS");
-            public static int MaxItems => GameData.MenuVm.GetSymbolInt("MAX_ITEMS");
-            public static int MaxEvent => GameData.MenuVm.GetSymbolInt("MAX_EVENTS");
-            public static int MaxSelActions => GameData.MenuVm.GetSymbolInt("MAX_SEL_ACTIONS");
-            public static int MaxUserVars => GameData.MenuVm.GetSymbolInt("MAX_USERVARS");
-            
-            public static string BackPic => GameData.MenuVm.GetSymbolString("MENU_BACK_PIC");
-
-            public static int MenuStartY => GameData.MenuVm.GetSymbolInt("MENU_START_Y");
-            public static int MenuDY => GameData.MenuVm.GetSymbolInt("MENU_DY");
-        }
-        
         public static class Animations
         {
             public const string RootBoneName = "BIP01";

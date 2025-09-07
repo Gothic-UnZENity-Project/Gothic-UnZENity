@@ -1,7 +1,7 @@
 using System.Linq;
-using GUZ.Core.Models.Container;
-using GUZ.Core.Const;
 using GUZ.Core.Manager;
+using GUZ.Core.Models.Container;
+using GUZ.Core.Services;
 using Reflex.Attributes;
 
 namespace GUZ.Core.Domain.Npc.Actions.AnimationActions
@@ -13,7 +13,9 @@ namespace GUZ.Core.Domain.Npc.Actions.AnimationActions
     public class StartProcessInfos : AbstractAnimationAction
     {
         [Inject] private readonly DialogService _dialogService;
+        [Inject] private readonly GameStateService _gameStateService;
 
+        
         private bool _isDialogStarting => Action.Bool0;
         private int _dialogId => Action.Int0;
 
@@ -36,17 +38,17 @@ namespace GUZ.Core.Domain.Npc.Actions.AnimationActions
             }
 
 
-            var isInSubDialog = GameData.Dialogs.CurrentDialog.Options.Any();
+            var isInSubDialog = _gameStateService.Dialogs.CurrentOptions.Any();
 
             if (isInSubDialog)
             {
-                var foundItem = GameData.Dialogs.CurrentDialog.Options
+                var foundItem = _gameStateService.Dialogs.CurrentOptions
                         .FirstOrDefault(option => option.Function == _dialogId);
 
                 // If a dialog calls Info_ClearChoices(), then the current sub dialog is already gone.
                 if (foundItem != null)
                 {
-                    GameData.Dialogs.CurrentDialog.Options.Remove(foundItem);
+                    _gameStateService.Dialogs.CurrentOptions.Remove(foundItem);
                 }
             }
 

@@ -23,7 +23,8 @@ namespace GUZ.Core.Domain.StaticCache
         [Inject] private readonly VmCacheService _vmCacheService;
         [Inject] private readonly FrameSkipperService _frameSkipperService;
         [Inject] private readonly LoadingService _loadingService;
-        
+        [Inject] private readonly GameStateService _gameStateService;
+
         
         [Serializable]
         public struct Data // ColliderData
@@ -55,7 +56,7 @@ namespace GUZ.Core.Domain.StaticCache
         
         public async Task CalculateVobItemColliderCache(Dictionary<string, Bounds> cachedVobBounds)
         {
-            var allItems = GameData.GothicVm.GetInstanceSymbols("C_Item");
+            var allItems = _gameStateService.GothicVm.GetInstanceSymbols("C_Item");
             
             _loadingService.SetPhase(nameof(PreCachingLoadingBarHandler.ProgressTypesGlobal.CalculateVobItemCollider), allItems.Count);
             

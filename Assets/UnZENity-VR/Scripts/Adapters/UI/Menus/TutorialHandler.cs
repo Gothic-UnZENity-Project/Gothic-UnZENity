@@ -2,6 +2,7 @@
 using GUZ.Core;
 using GUZ.Core.Const;
 using GUZ.Core.Services.Meshes;
+using GUZ.Core.Services.Vm;
 using Reflex.Attributes;
 using UnityEngine;
 using UnityEngine.UI;
@@ -12,7 +13,7 @@ namespace GUZ.VR.Adapters.UI.Menus
     {
         [SerializeField] private Image[] _backgroundImages;
 
-        
+        [Inject] private readonly VmService _vmService;
         [Inject] private readonly TextureService _textureService;
 
         
@@ -23,7 +24,7 @@ namespace GUZ.VR.Adapters.UI.Menus
 
         private void Start()
         {
-            var backPic = _textureService.GetMaterial(Constants.DaedalusMenu.BackPic);
+            var backPic = _textureService.GetMaterial(_vmService.BackPic);
             
             foreach (var image in _backgroundImages)
             {

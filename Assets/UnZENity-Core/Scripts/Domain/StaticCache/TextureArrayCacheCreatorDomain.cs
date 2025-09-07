@@ -29,6 +29,8 @@ namespace GUZ.Core.Domain.StaticCache
         [Inject] private readonly VmCacheService _vmCacheService;
         [Inject] private readonly FrameSkipperService _frameSkipperService;
         [Inject] private readonly LoadingService _loadingService;
+        [Inject] private readonly GameStateService _gameStateService;
+
         
         /// <summary>
         /// Load all materials from world mesh and assign textures to texture array accordingly.
@@ -121,7 +123,7 @@ namespace GUZ.Core.Domain.StaticCache
         /// </summary>
         public async Task CalculateItemTextureArrayInformation()
         {
-            var allItems = GameData.GothicVm.GetInstanceSymbols("C_Item");
+            var allItems = _gameStateService.GothicVm.GetInstanceSymbols("C_Item");
 
             _loadingService.SetPhase(nameof(PreCachingLoadingBarHandler.ProgressTypesGlobal.CalculateItemTextureArrayInformation), allItems.Count);
             

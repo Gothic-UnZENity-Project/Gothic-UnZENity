@@ -11,6 +11,7 @@ namespace GUZ.Core.Adapters.UI.Menus
     public class MainMenu : AbstractMenu
     {
         [Inject] private readonly BootstrapService _bootstrapService;
+        [Inject] private readonly GameStateService _gameStateService;
         
         
         protected override void Undefined(string itemName, string commandName)
@@ -64,9 +65,9 @@ namespace GUZ.Core.Adapters.UI.Menus
                 return false;
             
             return ((MenuItemCache[menuItemName].item.Flags & MenuItemFlag.OnlyInGame) == 0 &&
-                    !GameData.InGameAndAlive) ||
+                    !_gameStateService.InGameAndAlive) ||
                    ((MenuItemCache[menuItemName].item.Flags & MenuItemFlag.OnlyOutGame) == 0 &&
-                    GameData.InGameAndAlive);
+                    _gameStateService.InGameAndAlive);
         }
     }
 }

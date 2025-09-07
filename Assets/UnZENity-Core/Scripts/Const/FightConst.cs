@@ -1,9 +1,9 @@
+using GUZ.Core.Services;
+
 namespace GUZ.Core.Const
 {
     public static class FightConst
     {
-        public static int FightAiMoveMax = GameData.FightVm.GetSymbolByName("MAX_MOVE")!.GetInt(0);
-        
         // TODO - G1 only. G2 has different attack actions!
         public static class AttackActions
         {

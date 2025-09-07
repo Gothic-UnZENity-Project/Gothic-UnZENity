@@ -20,7 +20,7 @@ namespace GUZ.Core.Services.UI
 
         [Inject] private readonly TextureCacheService _textureCacheService;
         [Inject] private readonly MultiTypeCacheService _multiTypeCacheService;
-
+        [Inject] private readonly GameStateService _gameStateService;
 
         public void Create()
         {
@@ -84,7 +84,7 @@ namespace GUZ.Core.Services.UI
 
                 
                 // Convert the glyph index (treated as a codepage-byte) to its Unicode equivalent
-                var unicodeChars = GameData.Encoding.GetChars(new[]{(byte)i});
+                var unicodeChars = _gameStateService.Encoding.GetChars(new[]{(byte)i});
                 var unicodeValue = (uint)unicodeChars[0];  // Return the Unicode character's code point
                 var spriteCharacter = new TMP_SpriteCharacter(unicodeValue, spriteGlyph);
 

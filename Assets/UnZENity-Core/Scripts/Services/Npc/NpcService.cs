@@ -18,6 +18,7 @@ using GUZ.Core.Models.Vob;
 using GUZ.Core.Services.Caches;
 using GUZ.Core.Services.Config;
 using GUZ.Core.Services.Player;
+using GUZ.Core.Services.Vm;
 using GUZ.Core.Services.Vobs;
 using GUZ.Core.Services.World;
 using MyBox;
@@ -37,11 +38,11 @@ namespace GUZ.Core.Services.Npc
     {
         public Dictionary<string, List<(int hour, int minute, int status)>> MobRoutines = new();
 
-
+        [Inject] private readonly GameStateService _gameStateService;
+        [Inject] private readonly VmService _vmService;
         [Inject] private readonly ConfigService _configService;
         [Inject] private readonly UnityMonoService _unityMonoService;
         [Inject] private readonly FrameSkipperService _frameSkipperService;
-        // Supporter class where the whole Init() logic is outsourced for better readability.
         [Inject] private readonly MultiTypeCacheService _multiTypeCacheService;
         [Inject] private readonly VmCacheService _vmCacheService;
         [Inject] private readonly SaveGameService _saveGameService;
@@ -49,13 +50,14 @@ namespace GUZ.Core.Services.Npc
         [Inject] private readonly WayNetService _wayNetService;
         [Inject] private readonly VobService _vobService;
 
+        // Supporter class where the whole Init() logic is outsourced for better readability.
         private readonly NpcInitializerDomain _initializerDomain = new NpcInitializerDomain().Inject();
 
 
         private Queue<NpcLoader> _objectsToInitQueue = new();
         private Queue<NpcContainer> _objectToReEnableQueue = new();
 
-        private static DaedalusVm _vm => GameData.GothicVm;
+        private DaedalusVm _vm => _gameStateService.GothicVm;
 
         private const float _fpLookupDistance = 7f; // meter
 
@@ -87,7 +89,7 @@ namespace GUZ.Core.Services.Npc
                 {
                     var npcElement = _objectsToInitQueue.Dequeue();
                     var npcId = npcElement.Npc.Id;
-                    var monsterId = npcElement.Npc.GetAiVar(DaedalusConst.AIVMMRealId);
+                    var monsterId = npcElement.Npc.GetAiVar(_vmService.AIVMMRealId);
 
                     // Do not load NPCs we don't want to have via Debug flags.
                     if (npcId != 0 && _configService.Dev.SpawnNpcInstances.Value.Any() &&
@@ -252,7 +254,7 @@ namespace GUZ.Core.Services.Npc
                 return;
             }
 
-            var itemInstance = GameData.GothicVm.GetSymbolByIndex(itemIndex)!;
+            var itemInstance = _gameStateService.GothicVm.GetSymbolByIndex(itemIndex)!;
             var vob = npc.GetUserData()!.Vob;
 
             
@@ -280,12 +282,12 @@ namespace GUZ.Core.Services.Npc
 
         public NpcContainer GetHeroContainer()
         {
-            return ((NpcInstance)GameData.GothicVm.GlobalHero).GetUserData();
+            return ((NpcInstance)_gameStateService.GothicVm.GlobalHero).GetUserData();
         }
 
         public GameObject GetHeroGameObject()
         {
-            return ((NpcInstance)GameData.GothicVm.GlobalHero).GetUserData().Go;
+            return ((NpcInstance)_gameStateService.GothicVm.GlobalHero).GetUserData().Go;
         }
 
         /// <summary>
@@ -296,11 +298,11 @@ namespace GUZ.Core.Services.Npc
         /// </summary>
         public void CacheHero()
         {
-            if (GameData.GothicVm.GlobalHero != null)
+            if (_gameStateService.GothicVm.GlobalHero != null)
             {
                 // We assume that this call is only made when the cache got cleared before as we loaded another world.
                 // Therefore, we re-add it now.
-                _multiTypeCacheService.NpcCache.Add(((NpcInstance)GameData.GothicVm.GlobalHero).GetUserData());
+                _multiTypeCacheService.NpcCache.Add(((NpcInstance)_gameStateService.GothicVm.GlobalHero).GetUserData());
 
                 return;
             }
@@ -314,8 +316,8 @@ namespace GUZ.Core.Services.Npc
                 playerGo = GameObject.FindWithTag(Constants.MainCameraTag);
             }
 
-            var heroInstance = GameData.GothicVm.AllocInstance<NpcInstance>(_configService.GothicGame.Player);
-            var heroDaedalusInstance = GameData.GothicVm.GetSymbolByName(_configService.GothicGame.Player)!;
+            var heroInstance = _gameStateService.GothicVm.AllocInstance<NpcInstance>(_configService.GothicGame.Player);
+            var heroDaedalusInstance = _gameStateService.GothicVm.GetSymbolByName(_configService.GothicGame.Player)!;
 
             var vobNpc = new NpcAdapter(heroDaedalusInstance.Index)
             {
@@ -508,7 +510,7 @@ namespace GUZ.Core.Services.Npc
         public void SetDialogs(NpcContainer npcContainer)
         {
             var npcIndex = npcContainer.Instance.Index;
-            npcContainer.Props.Dialogs = GameData.Dialogs.Instances
+            npcContainer.Props.Dialogs = _gameStateService.Dialogs.Instances
                 .Where(dialog => dialog.Npc == npcIndex)
                 .OrderByDescending(dialog => dialog.Important)
                 .ToList();
@@ -517,7 +519,7 @@ namespace GUZ.Core.Services.Npc
         public int ExtNpcHasItems(NpcInstance npc, int itemId)
         {
             var npcVob = npc.GetUserData()!.Vob;
-            var itemInstanceName = GameData.GothicVm.GetSymbolByIndex(itemId)!.Name;
+            var itemInstanceName = _gameStateService.GothicVm.GetSymbolByIndex(itemId)!.Name;
             
             for (var i = 0; i < npcVob.ItemCount; i++)
             {

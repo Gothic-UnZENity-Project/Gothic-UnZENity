@@ -2,7 +2,9 @@
 using System.Linq;
 using GUZ.Core.Const;
 using GUZ.Core.Model.UI.Menu;
+using GUZ.Core.Services.Vm;
 using MyBox;
+using Reflex.Attributes;
 using TMPro;
 
 namespace GUZ.Core.Adapters.UI.Menus
@@ -22,6 +24,9 @@ namespace GUZ.Core.Adapters.UI.Menus
         private string _itemTalentTitlePattern = "MENU_ITEM_TALENT_{0}_TITLE";
         private string _itemTalentSkillPattern = "MENU_ITEM_TALENT_{0}_SKILL";
         private string _itemTalentDescriptionPattern = "MENU_ITEM_TALENT_{0}";
+
+        
+        [Inject] private readonly VmService _vmService;
 
         
         private void Awake()
@@ -63,8 +68,8 @@ namespace GUZ.Core.Adapters.UI.Menus
                 MenuItemCache[key].go.GetComponentInChildren<TMP_Text>().text = $"{i}";
             });
 
-            var talentTitles = DaedalusConst.TalentTitles;
-            var talentSkills = DaedalusConst.TalentSkills;
+            var talentTitles = _vmService.TalentTitles;
+            var talentSkills = _vmService.TalentSkills;
 
             Enumerable.Range(0, 12).ForEach(i =>
             {

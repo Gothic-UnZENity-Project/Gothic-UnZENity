@@ -51,10 +51,12 @@ namespace GUZ.Core
             containerBuilder.OnContainerBuilt += (container) => DIContainer = container;
 
             containerBuilder.AddSingleton(typeof(BootstrapService));
+            containerBuilder.AddSingleton(typeof(GameStateService));
             
             containerBuilder.AddSingleton(typeof(UnityMonoService));
             containerBuilder.AddSingleton(typeof(ConfigService));
             containerBuilder.AddSingleton(typeof(FrameSkipperService));
+            containerBuilder.AddSingleton(typeof(VmExternalService));
             containerBuilder.AddSingleton(typeof(VmService));
             containerBuilder.AddSingleton(typeof(ContextInteractionService));
             containerBuilder.AddSingleton(typeof(ContextMenuService));

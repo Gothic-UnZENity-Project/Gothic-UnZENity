@@ -3,6 +3,7 @@ using GUZ.Core.Adapters.Vob;
 using GUZ.Core.Const;
 using GUZ.Core.Core.Logging;
 using GUZ.Core.Manager;
+using GUZ.Core.Services.Vm;
 using GUZ.Core.Util;
 using GUZ.VR.Adapters.Vob.VobItem;
 using GUZ.VR.Services;
@@ -21,6 +22,7 @@ namespace GUZ.VR.Adapters.Vob.VobDoor
 
         [Inject] private readonly VRPlayerService _vrPlayerService;
         [Inject] private readonly AudioService _audioService;
+        [Inject] private readonly VmService _vmService;
 
         private IDoor _vobDoor;
 
@@ -56,7 +58,7 @@ namespace GUZ.VR.Adapters.Vob.VobDoor
                 return;
 
             _combinationPos = 0;
-            PlaySound(DaedalusConst.DoorLockSoundName);
+            PlaySound(_vmService.DoorLockSoundName);
 
             var lockPickProperties = other.gameObject.GetComponentInParent<VRLockPickProperties>();
             lockPickProperties.IsInsideLock = true;
@@ -83,7 +85,7 @@ namespace GUZ.VR.Adapters.Vob.VobDoor
                 return;
             }
 
-            PlaySound(DaedalusConst.DoorLockSoundName);
+            PlaySound(_vmService.DoorLockSoundName);
             
             var lockPickProperties = other.gameObject.GetComponentInParent<VRLockPickProperties>();
             lockPickProperties.IsInsideLock = false;
@@ -110,12 +112,12 @@ namespace GUZ.VR.Adapters.Vob.VobDoor
                     // Reactivate rotation
                     _rootGO.GetComponentInChildren<ConfigurableJoint>().axis = Vector3.up;
 
-                    PlaySound(DaedalusConst.PickLockUnlockSoundName, DaedalusConst.DoorUnlockSoundName);
+                    PlaySound(_vmService.PickLockUnlockSoundName, _vmService.DoorUnlockSoundName);
 
                     return DoorLockStatus.Unlocked;
                 }
 
-                PlaySound(DaedalusConst.PickLockSuccessSoundName);
+                PlaySound(_vmService.PickLockSuccessSoundName);
                 return DoorLockStatus.StepSuccess;
             }
             else
@@ -123,11 +125,11 @@ namespace GUZ.VR.Adapters.Vob.VobDoor
                 // TODO - Pseudo breaking for testings only
                 if (Random.value > 0.5f)
                 {
-                    PlaySound(DaedalusConst.PickLockFailureSoundName);
+                    PlaySound(_vmService.PickLockFailureSoundName);
                 }
                 else
                 {
-                    PlaySound(DaedalusConst.PickLockBrokenSoundName);
+                    PlaySound(_vmService.PickLockBrokenSoundName);
                 }
 
                 _combinationPos = 0;

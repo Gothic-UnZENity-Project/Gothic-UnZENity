@@ -28,6 +28,7 @@ namespace GUZ.Core.Adapters.Scenes
 {
     public class WorldScene : MonoBehaviour, IScene
     {
+        [Inject] private readonly GameStateService _gameStateService;
         [Inject] private readonly ConfigService _configService;
         [Inject] private readonly VobService _vobService;
         [Inject] private readonly WayNetService _wayNetService;
@@ -212,7 +213,7 @@ namespace GUZ.Core.Adapters.Scenes
                 return;
             }
             
-            var spots = GameData.FreePoints;
+            var spots = _gameStateService.FreePoints;
             KeyValuePair<string, FreePoint> startPoint;
             
             // 3.

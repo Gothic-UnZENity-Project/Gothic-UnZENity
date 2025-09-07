@@ -15,9 +15,10 @@ namespace GUZ.Core.Services.Npc
 {
     public class NpcRoutineService
     {
+        [Inject] private readonly GameStateService _gameStateService;
         [Inject] private readonly GameTimeService _gameTimeService;
         
-        private static DaedalusVm _vm => GameData.GothicVm;
+        private DaedalusVm _vm => _gameStateService.GothicVm;
 
         public void ExtNpcExchangeRoutine(NpcInstance npcInstance, string routineName)
         {
@@ -35,7 +36,7 @@ namespace GUZ.Core.Services.Npc
 
         public void ExchangeRoutine(NpcInstance npc, string routineName)
         {
-            var routine = GameData.GothicVm.GetSymbolByName(routineName);
+            var routine = _gameStateService.GothicVm.GetSymbolByName(routineName);
 
             ExchangeRoutine(npc, routine == null ? 0: routine.Index);
         }
@@ -56,8 +57,8 @@ namespace GUZ.Core.Services.Npc
             npc.GetUserData().Props.Routines.Clear();
 
             // We always need to set "self" before executing any Daedalus function.
-            GameData.GothicVm.GlobalSelf = npc;
-            GameData.GothicVm.Call(routineIndex);
+            _gameStateService.GothicVm.GlobalSelf = npc;
+            _gameStateService.GothicVm.Call(routineIndex);
 
             npc.GetUserData().Vob.HasRoutine = npc.GetUserData().Props.Routines.NotNullOrEmpty();
 
