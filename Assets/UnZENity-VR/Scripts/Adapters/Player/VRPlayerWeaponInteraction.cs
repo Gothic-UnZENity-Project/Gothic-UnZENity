@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using GUZ.Core.Adapters.Vob;
 using GUZ.Core.Models.Marvin;
 using GUZ.Core.Models.Vm;
-using GUZ.VR.Model.Vob;
+using GUZ.VR.Models.Vob;
 using GUZ.VR.Services;
 using HurricaneVR.Framework.Core;
 using HurricaneVR.Framework.Core.Grabbers;

@@ -12,7 +12,7 @@ using GUZ.Core.Models.Audio;
 using GUZ.Core.Models.Container;
 using GUZ.Core.Models.Vm;
 using GUZ.Core.Services.Caches;
-using GUZ.VR.Model.Vob;
+using GUZ.VR.Models.Vob;
 using GUZ.VR.Services;
 using HurricaneVR.Framework.Core.Utils;
 using HurricaneVR.Framework.Shared;

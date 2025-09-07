@@ -1,10 +1,9 @@
 #if GUZ_HVR_INSTALLED
-using GUZ.Core.Models.Container;
 using GUZ.Core.Extensions;
+using GUZ.Core.Models.Container;
 using GUZ.VR.Domain.Player;
-using GUZ.VR.Model.Vob;
+using GUZ.VR.Models.Vob;
 using HurricaneVR.Framework.Shared;
-using Reflex.Attributes;
 
 namespace GUZ.VR.Services
 {
