@@ -1,6 +1,7 @@
 using GUZ.Core;
 using GUZ.Core.Adapters.Context;
 using GUZ.Core.Extensions;
+using GUZ.Core.Models.Context;
 using GUZ.Core.Services.Context;
 using GUZ.VR.Services.Context;
 using Reflex.Attributes;
@@ -17,9 +18,9 @@ namespace GUZ.VR.Adapters.Context
         [Inject] private readonly ContextMenuService _contextMenuService;
         [Inject] private readonly ContextDialogService _contextDialogService;
 
-        protected override void RegisterControlModule(GameContext.Controls controls)
+        protected override void RegisterControlModule(Controls controls)
         {
-            if (controls != GameContext.Controls.VR)
+            if (controls != Controls.VR)
                 return;
 
 // We register VR only if we have HVR installed.

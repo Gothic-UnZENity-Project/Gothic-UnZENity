@@ -2,6 +2,7 @@ using GUZ.Core.Const;
 using GUZ.Core.Models.Config;
 using GUZ.Core.Services;
 using GUZ.Core.Services.Config;
+using GUZ.Core.Services.Context;
 using GUZ.Core.Services.Meshes;
 using GUZ.Core.Services.World;
 using Reflex.Attributes;
@@ -21,10 +22,12 @@ namespace GUZ.Core.Adapters.Scenes
         [Inject] private readonly TextureService _textureService;
         [Inject] private readonly SaveGameService _saveGameService;
         [Inject] private readonly BootstrapService _bootstrapService;
-
+        [Inject] private readonly ContextInteractionService _contextInteractionService;
+        
+        
         public void Init()
         {
-            GameContext.ContextInteractionService.InitUIInteraction();
+            _contextInteractionService.InitUIInteraction();
 
             if (!_configService.Dev.EnableMainMenu)
             {
@@ -48,8 +51,8 @@ namespace GUZ.Core.Adapters.Scenes
             // We set the gothic background image in MainMenu with this material.
             _mainMenuImageBackground.GetComponent<MeshRenderer>().material = _textureService.MainMenuImageBackgroundMaterial;
 
-            GameContext.ContextInteractionService.TeleportPlayerTo(Vector3.zero);
-            GameContext.ContextInteractionService.DisableMenus();
+            _contextInteractionService.TeleportPlayerTo(Vector3.zero);
+            _contextInteractionService.DisableMenus();
 
             GlobalEventDispatcher.MainMenuSceneLoaded.Invoke();
         }

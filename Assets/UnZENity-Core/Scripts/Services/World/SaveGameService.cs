@@ -8,6 +8,7 @@ using GUZ.Core.Extensions;
 using GUZ.Core.Models.Adapter.Vobs;
 using GUZ.Core.Models.Container;
 using GUZ.Core.Services.Caches;
+using GUZ.Core.Services.Context;
 using GUZ.Core.Services.Culling;
 using JetBrains.Annotations;
 using Reflex.Attributes;
@@ -65,6 +66,7 @@ namespace GUZ.Core.Services.World
         [Inject] private readonly GameStateService _gameStateService;
         [Inject] private readonly NpcMeshCullingService _npcMeshCullingService;
         [Inject] private readonly ResourceCacheService _resourceCacheService;
+        [Inject] private readonly ContextGameVersionService _contextGameVersionService;
 
         
         public enum SlotId
@@ -99,7 +101,7 @@ namespace GUZ.Core.Services.World
             GlobalEventDispatcher.LoadGameStart.Invoke();
 
             SaveGameId = 0;
-            Save = new SaveGame(GameContext.ContextGameVersionService.Version);
+            Save = new SaveGame(_contextGameVersionService.Version);
             IsFirstWorldLoadingFromSaveGame = true;
             _worlds.ClearAndReleaseMemory();
         }
@@ -201,7 +203,7 @@ namespace GUZ.Core.Services.World
         public SaveGame GetSaveGame(SlotId folderSaveId)
         {
             // Load metadata
-            var save = new SaveGame(GameContext.ContextGameVersionService.Version);
+            var save = new SaveGame(_contextGameVersionService.Version);
             var saveGamePath = GetSaveGamePath(folderSaveId);
 
             if (!Directory.Exists(saveGamePath))
@@ -228,7 +230,7 @@ namespace GUZ.Core.Services.World
         /// </summary>
         public void SaveCurrentGame(SlotId saveGameId, string title)
         {
-            var saveGame = new SaveGame(GameContext.ContextGameVersionService.Version);
+            var saveGame = new SaveGame(_contextGameVersionService.Version);
             saveGame.Metadata.Title = title;
             saveGame.Metadata.SaveDate = DateTime.Now.ToString();
             saveGame.Thumbnail = CreateThumbnail();
@@ -381,7 +383,7 @@ namespace GUZ.Core.Services.World
 
         private string GetSaveGamePath(SlotId folderSaveId)
         {
-            var gothicDir = GameContext.ContextGameVersionService.RootPath;
+            var gothicDir = _contextGameVersionService.RootPath;
             return Path.GetFullPath(Path.Join(gothicDir, $"Saves/savegame{(int)folderSaveId}"));
         }
     }

@@ -12,6 +12,7 @@ using GUZ.Core.Models.Vob.WayNet;
 using GUZ.Core.Services;
 using GUZ.Core.Services.Caches;
 using GUZ.Core.Services.Config;
+using GUZ.Core.Services.Context;
 using GUZ.Core.Services.Culling;
 using GUZ.Core.Services.Meshes;
 using GUZ.Core.Services.StaticCache;
@@ -42,6 +43,7 @@ namespace GUZ.Core.Domain.Vobs
         [Inject] private readonly StaticCacheService _staticCacheService;
         [Inject] private readonly GameStateService _gameStateService;
         [Inject] private readonly ResourceCacheService _resourceCacheService;
+        [Inject] private readonly ContextGameVersionService _contextGameVersionService;
 
 
         /// <summary>
@@ -338,7 +340,7 @@ namespace GUZ.Core.Domain.Vobs
                 return null;
             }
 
-            var vobTree = _resourceCacheService.TryGetWorld(vob.VobTree, GameContext.ContextGameVersionService.Version, true)!.RootObjects;
+            var vobTree = _resourceCacheService.TryGetWorld(vob.VobTree, _contextGameVersionService.Version, true)!.RootObjects;
 
             CreateFireVobs(vobTree, go.FindChildRecursively(vob.Slot) ?? go, worldPosition);
 

@@ -1,4 +1,5 @@
 using System;
+using GUZ.Core.Models.Context;
 using GUZ.Core.Services;
 using GUZ.Core.Services.World;
 using MyBox;
@@ -44,10 +45,10 @@ namespace GUZ.Core.Models.Config
         [ConditionalField(fieldToCheck: nameof(PreselectGameVersion), compareValues: true)]
         public GameVersion GameVersion = GameVersion.Gothic1;
         
-        public GameContext.Controls GameControls = GameContext.Controls.VR;
+        public Controls GameControls = Controls.VR;
 
         [Separator("Debug")]
-        [ConditionalField(fieldToCheck: nameof(GameControls), compareValues: GameContext.Controls.VR)]
+        [ConditionalField(fieldToCheck: nameof(GameControls), compareValues: Controls.VR)]
         public bool EnableVRDeviceSimulator;
 
         [Tooltip("Show Marvin Mode menu next to left hand in VR.")]

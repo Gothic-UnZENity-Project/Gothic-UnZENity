@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using GUZ.Core.Models.Context;
+using UnityEngine;
 using ZenKit;
 
 namespace GUZ.Core.Adapters.Context
@@ -9,7 +10,7 @@ namespace GUZ.Core.Adapters.Context
     /// </summary>
     public abstract class AbstractContextBootstrap : MonoBehaviour
     {
-        protected abstract void RegisterControlModule(GameContext.Controls controls);
+        protected abstract void RegisterControlModule(Controls controls);
 
         protected abstract void RegisterGameVersionModule(GameVersion version);
         

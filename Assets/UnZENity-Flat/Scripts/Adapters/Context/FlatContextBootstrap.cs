@@ -1,6 +1,7 @@
 ﻿using System;
 using GUZ.Core;
 using GUZ.Core.Adapters.Context;
+using GUZ.Core.Models.Context;
 using ZenKit;
 
 namespace GUZ.Flat.Adapters.Context
@@ -10,9 +11,9 @@ namespace GUZ.Flat.Adapters.Context
     /// </summary>
     public class FlatContextBootstrap : AbstractContextBootstrap
     {
-        protected override void RegisterControlModule(GameContext.Controls controls)
+        protected override void RegisterControlModule(Controls controls)
         {
-            if (controls != GameContext.Controls.Flat)
+            if (controls != Controls.Flat)
                 return;
 
             throw new NotImplementedException("FlatContext needs rework.");

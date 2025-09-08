@@ -9,6 +9,7 @@ using GUZ.Core.Logging;
 using GUZ.Core.Manager;
 using GUZ.Core.Services;
 using GUZ.Core.Services.Caches;
+using GUZ.Core.Services.Context;
 using GUZ.Core.Services.Meshes;
 using MyBox;
 using Reflex.Attributes;
@@ -31,6 +32,7 @@ namespace GUZ.Core.Domain.StaticCache
         [Inject] private readonly LoadingService _loadingService;
         [Inject] private readonly GameStateService _gameStateService;
         [Inject] private readonly ResourceCacheService _resourceCacheService;
+        [Inject] private readonly ContextGameVersionService _contextGameVersionService;
 
 
         public async Task CalculateVobBounds(List<IVirtualObject> vobs, int worldIndex)
@@ -139,7 +141,7 @@ namespace GUZ.Core.Domain.StaticCache
                     // In G1 it is only ITLSTORCHBURNING.ZEN --> RootObjects[0].Visual=ITLS_TORCHBURNED_01.3DS
                     if (item.Visual.EndsWith(".ZEN"))
                     {
-                        var world = _resourceCacheService.TryGetWorld(item.Visual, GameContext.ContextGameVersionService.Version);
+                        var world = _resourceCacheService.TryGetWorld(item.Visual, _contextGameVersionService.Version);
                         if (world!.RootObjects.Count != 1)
                         {
                             Logger.LogError(

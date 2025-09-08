@@ -6,6 +6,7 @@ using GUZ.Core.Model.UI.Menu;
 using GUZ.Core.Models.Caches;
 using GUZ.Core.Services;
 using GUZ.Core.Services.Caches;
+using GUZ.Core.Services.Context;
 using GUZ.Core.Services.World;
 using Reflex.Attributes;
 using TMPro;
@@ -42,6 +43,7 @@ namespace GUZ.Core.Adapters.UI.Menus
         [Inject] private readonly SaveGameService _saveGameService;
         [Inject] private readonly BootstrapService _bootstrapService;
         [Inject] private readonly ResourceCacheService _resourceCacheService;
+        [Inject] private readonly ContextGameVersionService _contextGameVersionService;
 
         
         /// <summary>
@@ -147,7 +149,7 @@ namespace GUZ.Core.Adapters.UI.Menus
 
         private void FillSaveGameEntries()
         {
-            var gothicDir = GameContext.ContextGameVersionService.RootPath;
+            var gothicDir = _contextGameVersionService.RootPath;
             var saveGameListPath = Path.GetFullPath(Path.Join(gothicDir, "Saves"));
 
             foreach (var fullPath in Directory.EnumerateDirectories(saveGameListPath))

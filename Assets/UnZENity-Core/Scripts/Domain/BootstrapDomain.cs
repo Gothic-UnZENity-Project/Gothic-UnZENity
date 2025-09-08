@@ -3,6 +3,7 @@ using System.Globalization;
 using System.Linq;
 using GUZ.Core.Services;
 using GUZ.Core.Services.Caches;
+using GUZ.Core.Services.Context;
 using GUZ.Core.Services.Npc;
 using GUZ.Core.Services.Player;
 using GUZ.Core.Services.UI;
@@ -23,7 +24,8 @@ namespace GUZ.Core.Domain
         [Inject] private readonly VideoService _videoService;
         [Inject] private readonly FontService _fontService;
         [Inject] private readonly ResourceCacheService _resourceCacheService;
-        
+        [Inject] private readonly ContextGameVersionService _contextGameVersionService;
+
         
         public BootstrapDomain()
         {
@@ -41,7 +43,6 @@ namespace GUZ.Core.Domain
             LoadFonts();
             LoadGuildData();
 
-            GameContext.IsZenKitInitialized = true;
             GlobalEventDispatcher.ZenKitBootstrapped.Invoke();
         }
 
@@ -125,9 +126,9 @@ namespace GUZ.Core.Domain
 
         private void LoadSubtitles()
         {
-            var cutsceneSuffix = GameContext.ContextGameVersionService.CutsceneFileSuffix;
+            var cutsceneSuffix = _contextGameVersionService.CutsceneFileSuffix;
             var cutscenePath =
-                $"{GameContext.ContextGameVersionService.RootPath}/_work/DATA/scripts/content/CUTSCENE/OU.{cutsceneSuffix}";
+                $"{_contextGameVersionService.RootPath}/_work/DATA/scripts/content/CUTSCENE/OU.{cutsceneSuffix}";
             _gameStateService.Dialogs.CutsceneLibrary = new(cutscenePath);
         }
 

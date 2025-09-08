@@ -4,6 +4,7 @@ using GUZ.Core;
 using GUZ.Core.Logging;
 using GUZ.Core.Models.Config;
 using GUZ.Core.Services.Config;
+using GUZ.Core.Services.Context;
 using GUZ.VR.Adapters.HVROverrides;
 using Reflex.Attributes;
 using UnityEngine;
@@ -14,7 +15,7 @@ namespace GUZ.VR.Adapters.Player
     public class VRSpectatorCamera : MonoBehaviour
     {
         [Inject] private readonly ConfigService _configService;
-
+        [Inject] private readonly ContextInteractionService _contextInteractionService;
 
         public enum SmoothingLevel
         {
@@ -66,7 +67,7 @@ namespace GUZ.VR.Adapters.Player
         /// </summary>
         private void GothicStart()
         {
-            var playerController = GameContext.ContextInteractionService.GetCurrentPlayerController().GetComponent<VRPlayerController>();
+            var playerController = _contextInteractionService.GetCurrentPlayerController().GetComponent<VRPlayerController>();
             playerController.Teleporter.PositionUpdate.AddListener(SetTeleportPosition);
 
             SetSmoothness();

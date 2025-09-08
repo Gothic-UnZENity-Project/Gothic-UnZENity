@@ -3,6 +3,7 @@ using GUZ.Core;
 using GUZ.Core.Logging;
 using GUZ.Core.Manager;
 using GUZ.Core.Services.Config;
+using GUZ.Core.Services.Context;
 using GUZ.Core.Services.Player;
 using GUZ.VR.Adapters.HVROverrides;
 using GUZ.VR.Adapters.UI;
@@ -18,7 +19,7 @@ namespace GUZ.VR.Adapters.SpeechToText
         [Inject] private readonly ConfigService _configService;
         [Inject] private readonly SpeechToTextService _speechToTextService;
         [Inject] private readonly DialogService _dialogService;
-
+        [Inject] private readonly ContextInteractionService _contextInteractionService;
 
         [SerializeField]
         private VRDialog _vrDialog;
@@ -62,7 +63,7 @@ namespace GUZ.VR.Adapters.SpeechToText
                 return;
             }
             
-            _playerInputs = GameContext.ContextInteractionService.GetImpl<VRContextInteractionService>().GetVRPlayerInputs();
+            _playerInputs = _contextInteractionService.GetImpl<VRContextInteractionService>().GetVRPlayerInputs();
             _state = State.Idle;
         }
 

@@ -23,13 +23,21 @@ namespace GUZ.Core.Adapters.UI
         [Inject] private readonly AudioService _audioService;
         [Inject] private readonly FontService _fontService;
 
+        private static bool _isZenKitInitialized;
         private static AudioClip _uiHover;
         private static AudioClip _uiClick;
         private static AudioClip _uiReturnClick;
 
+        static UIEvents()
+        {
+            // We might have a first UIEvent being added to a scene before initializing ZenKit. Init later.
+            GlobalEventDispatcher.ZenKitBootstrapped.AddListener(() => _isZenKitInitialized = true);
+        }
+        
         private void Awake()
         {
-            if (GameContext.IsZenKitInitialized && _uiHover == null)
+            // We might have a first UIEvent being added to a scene before initializing ZenKit. Init later.
+            if (_isZenKitInitialized && _uiHover == null)
                 InitializeAudio();
         }
 

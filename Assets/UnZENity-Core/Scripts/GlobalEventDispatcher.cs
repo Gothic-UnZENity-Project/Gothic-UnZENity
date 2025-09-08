@@ -1,6 +1,7 @@
 ﻿using System;
 using GUZ.Core.Adapters.Npc;
 using GUZ.Core.Models.Container;
+using GUZ.Core.Models.Context;
 using UnityEngine;
 using UnityEngine.Events;
 using ZenKit;
@@ -16,7 +17,7 @@ namespace GUZ.Core
     {
         // We need to ensure, that other modules will register themselves based on current Control+GameMode setting.
         // Since we can't call them (e.g. Flat/VR) directly, we need to leverage this IoC pattern.
-        public static readonly UnityEvent<GameContext.Controls> RegisterControlsService = new();
+        public static readonly UnityEvent<Controls> RegisterControlsService = new();
         public static readonly UnityEvent<GameVersion> RegisterGameVersionService = new();
 
         // Events are named in order of execution during a normal game play.

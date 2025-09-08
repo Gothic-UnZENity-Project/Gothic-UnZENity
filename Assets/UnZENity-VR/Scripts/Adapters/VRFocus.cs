@@ -45,10 +45,6 @@ namespace GUZ.VR.Adapters
         {
             _nameCanvas.SetActive(false);
 
-            // Do not set inside Lab
-            if (GameContext.IsLab)
-                return;
-
             var vobContainer = GetComponentInParent<VobLoader>()?.Container;
             if (vobContainer != null)
             {

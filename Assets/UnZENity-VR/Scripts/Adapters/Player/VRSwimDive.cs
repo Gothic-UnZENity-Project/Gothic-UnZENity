@@ -12,6 +12,7 @@ using GUZ.Core.Models.Marvin;
 using GUZ.Core.Models.Vm;
 using GUZ.Core.Services;
 using GUZ.Core.Services.Caches;
+using GUZ.Core.Services.Context;
 using GUZ.Core.Services.Vm;
 using GUZ.VR.Adapters.HVROverrides;
 using GUZ.VR.Services.Context;
@@ -69,13 +70,13 @@ namespace GUZ.VR.Adapters.Player
         [Inject] private readonly AudioService _audioService;
         [Inject] private readonly VmCacheService _vmCacheService;
         [Inject] private readonly ResourceCacheService _resourceCacheService;
-
+        [Inject] private readonly ContextInteractionService _contextInteractionService;
 
         private void Start()
         {
             Shader.SetGlobalInt(Constants.ShaderPropertyWaterEffectToggle, 0);
 
-            var vrPlayer = GameContext.ContextInteractionService.GetImpl<VRContextInteractionService>().GetVRPlayerController();
+            var vrPlayer = _contextInteractionService.GetImpl<VRContextInteractionService>().GetVRPlayerController();
             _leftHandAnimator = vrPlayer.LeftHand.HandAnimator;
             _rightHandAnimator = vrPlayer.RightHand.HandAnimator;
             

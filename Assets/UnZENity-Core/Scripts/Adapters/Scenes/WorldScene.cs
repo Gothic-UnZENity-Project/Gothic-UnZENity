@@ -12,6 +12,7 @@ using GUZ.Core.Models.Vob.WayNet;
 using GUZ.Core.Services;
 using GUZ.Core.Services.Caches;
 using GUZ.Core.Services.Config;
+using GUZ.Core.Services.Context;
 using GUZ.Core.Services.Meshes;
 using GUZ.Core.Services.Npc;
 using GUZ.Core.Services.Player;
@@ -41,7 +42,9 @@ namespace GUZ.Core.Adapters.Scenes
         [Inject] private readonly StationaryLightsService _stationaryLightsService;
         [Inject] private readonly PlayerService _playerService;
         [Inject] private readonly ResourceCacheService _resourceCacheService;
-
+        [Inject] private readonly ContextInteractionService _contextInteractionService;
+        
+        
         public void Init()
         {
 #pragma warning disable CS4014 // Do not wait. We want to update player movement (VR) and camera view (progress bar)
@@ -60,7 +63,7 @@ namespace GUZ.Core.Adapters.Scenes
         /// </summary>
         private async Task LoadWorldContentAsync()
         {
-            GameContext.ContextInteractionService.DisableMenus();
+            _contextInteractionService.DisableMenus();
             
             var watch = Stopwatch.StartNew();
 
@@ -171,7 +174,7 @@ namespace GUZ.Core.Adapters.Scenes
             }
             finally
             {
-                GameContext.ContextInteractionService.EnableMenus();
+                _contextInteractionService.EnableMenus();
                 fullWatch.Log("Full world loaded");
             }
         }
@@ -243,8 +246,8 @@ namespace GUZ.Core.Adapters.Scenes
 
         private void TeleportPlayerToStart(Vector3 position, Quaternion rotation)
         {
-            GameContext.ContextInteractionService.TeleportPlayerTo(position, rotation);
-            GameContext.ContextInteractionService.UnlockPlayer();
+            _contextInteractionService.TeleportPlayerTo(position, rotation);
+            _contextInteractionService.UnlockPlayer();
             _playerService.ResetSpawn();
         }
     }

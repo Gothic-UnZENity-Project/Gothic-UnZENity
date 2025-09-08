@@ -9,6 +9,7 @@ using GUZ.Core.Extensions;
 using GUZ.Core.Manager;
 using GUZ.Core.Models.Container;
 using GUZ.Core.Services.Caches;
+using GUZ.Core.Services.Context;
 using GUZ.Core.Services.StaticCache;
 using MyBox;
 using Reflex.Attributes;
@@ -25,7 +26,9 @@ namespace GUZ.Core.Domain.Culling
         [Inject] private readonly VmCacheService _vmCacheService;
         [Inject] private readonly StaticCacheService _staticCacheService;
         [Inject] private readonly ResourceCacheService _resourceCacheService;
+        [Inject] private readonly ContextGameVersionService _contextGameVersionService;
 
+        
         // Stored for resetting after world switch
         private CullingGroup _cullingGroupSmall => CullingGroup;
         private CullingGroup _cullingGroupMedium;
@@ -310,7 +313,7 @@ namespace GUZ.Core.Domain.Culling
             if (vob.Type == VirtualObjectType.oCMobFire)
             {
                 var fireWorld =
-                    _resourceCacheService.TryGetWorld(((IFire)vob).VobTree, GameContext.ContextGameVersionService.Version, true);
+                    _resourceCacheService.TryGetWorld(((IFire)vob).VobTree, _contextGameVersionService.Version, true);
 
                 // e.g. "NC_FIREPLACE_STONE" has no VobTree. But could we potentially render it as mesh?
                 if (fireWorld == null)

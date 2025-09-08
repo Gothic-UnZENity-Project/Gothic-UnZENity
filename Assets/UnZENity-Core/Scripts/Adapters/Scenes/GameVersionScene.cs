@@ -3,6 +3,7 @@ using GUZ.Core.Const;
 using GUZ.Core.Logging;
 using GUZ.Core.Services;
 using GUZ.Core.Services.Config;
+using GUZ.Core.Services.Context;
 using Reflex.Attributes;
 using UnityEngine;
 using ZenKit;
@@ -14,7 +15,7 @@ namespace GUZ.Core.Adapters.Scenes
     {
         [Inject] private readonly ConfigService _configService;
         [Inject] private readonly BootstrapService _bootstrapService;
-
+        [Inject] private readonly ContextInteractionService _contextInteractionService;
 
         [SerializeField] private GameObject _invalidInstallationDir;
 
@@ -35,7 +36,7 @@ namespace GUZ.Core.Adapters.Scenes
              */
 
             // Whatever comes next, we don't want the player to move around right now.
-            GameContext.ContextInteractionService.LockPlayerInPlace();
+            _contextInteractionService.LockPlayerInPlace();
 
             var isG1Installed = _configService.CheckIfGothicInstallationExists(GameVersion.Gothic1);
             var isG2Installed = _configService.CheckIfGothicInstallationExists(GameVersion.Gothic2);

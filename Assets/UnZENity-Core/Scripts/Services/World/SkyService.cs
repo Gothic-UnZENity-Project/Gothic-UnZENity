@@ -287,12 +287,6 @@ namespace GUZ.Core.Services.World
 
         private void InitRainGo()
         {
-            // Should it rain in a lab? Hm...
-            if (GameContext.IsLab)
-            {
-                return;
-            }
-
             // by default rainPFX is disabled so we need to find the parent and activate it
             var rainParticlesGameObject = GameObject.Find("Rain").FindChildRecursively("RainParticles");
             rainParticlesGameObject.SetActive(true);

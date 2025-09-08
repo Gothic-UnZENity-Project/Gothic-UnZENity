@@ -12,7 +12,7 @@ namespace GUZ.Core.Services.Context
         }
 
         public GameVersion Version => _impl.Version;
-        string IContextGameVersionService.RootPath => _impl.RootPath;
+        public string RootPath => _impl.RootPath;
         public string CutsceneFileSuffix => _impl.CutsceneFileSuffix;
         public string InitialWorld => _impl.InitialWorld;
     }

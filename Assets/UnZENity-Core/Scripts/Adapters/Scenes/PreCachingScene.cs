@@ -10,6 +10,7 @@ using GUZ.Core.Manager;
 using GUZ.Core.Services;
 using GUZ.Core.Services.Caches;
 using GUZ.Core.Services.Config;
+using GUZ.Core.Services.Context;
 using GUZ.Core.Services.StaticCache;
 using Reflex.Attributes;
 using UnityEngine;
@@ -26,7 +27,10 @@ namespace GUZ.Core.Adapters.Scenes
         [Inject] private readonly StaticCacheService _staticCacheService;
         [Inject] private readonly BootstrapService _bootstrapService;
         [Inject] private readonly ResourceCacheService _resourceCacheService;
+        [Inject] private readonly ContextInteractionService _contextInteractionService;
+        [Inject] private readonly ContextGameVersionService _contextGameVersionService;
 
+        
         [SerializeField]
         private PreCachingLoadingBarHandler _loadingBarHandler;
 
@@ -53,9 +57,9 @@ namespace GUZ.Core.Adapters.Scenes
         
         public void Init()
         {
-            GameContext.ContextInteractionService.DisableMenus();
-            GameContext.ContextInteractionService.InitUIInteraction();
-            GameContext.ContextInteractionService.TeleportPlayerTo(_loadingBarHandler.transform.position);
+            _contextInteractionService.DisableMenus();
+            _contextInteractionService.InitUIInteraction();
+            _contextInteractionService.TeleportPlayerTo(_loadingBarHandler.transform.position);
 
 #pragma warning disable CS4014 // Do not wait. We want to update player movement (VR) and camera view (progress bar)
             CreateCaches();
@@ -76,7 +80,7 @@ namespace GUZ.Core.Adapters.Scenes
         {
             try
             {
-                var worldsToLoad = GameContext.ContextGameVersionService.Version == GameVersion.Gothic1 ? _gothic1Worlds : _gothic2Worlds;
+                var worldsToLoad = _contextGameVersionService.Version == GameVersion.Gothic1 ? _gothic1Worlds : _gothic2Worlds;
                 
                 if (!_configService.Dev.AlwaysRecreateCache && _staticCacheService.DoCacheFilesExist(worldsToLoad))
                 {
@@ -96,7 +100,7 @@ namespace GUZ.Core.Adapters.Scenes
                 // Sleeper temple music (similar to installation music)
                 _audioService.Play("KAT_DAY_STD");
                 
-                GameContext.ContextInteractionService.DisableMenus();
+                _contextInteractionService.DisableMenus();
                 _loadingBarHandler.LevelCount = worldsToLoad.Length;
                 _loadingService.InitLoading(_loadingBarHandler);
 
@@ -114,7 +118,7 @@ namespace GUZ.Core.Adapters.Scenes
                     var worldName = worldsToLoad[worldIndex];
                         
                     Logger.Log($"### PreCaching meshes for world: {worldName}", LogCat.PreCaching);
-                    var world = _resourceCacheService.TryGetWorld(worldName, GameContext.ContextGameVersionService.Version)!;
+                    var world = _resourceCacheService.TryGetWorld(worldName, _contextGameVersionService.Version)!;
                     var stationaryLightCache = new StationaryLightCacheCreatorDomain().Inject();
                     var worldChunkCache = new WorldChunkCacheCreatorDomain().Inject();
 
@@ -179,7 +183,7 @@ namespace GUZ.Core.Adapters.Scenes
                 _loadingService.StopLoading();
 
                 // We need to grant the player always the option to quit the game via menu if something fails.
-                GameContext.ContextInteractionService.EnableMenus();
+                _contextInteractionService.EnableMenus();
             }
         }
     }

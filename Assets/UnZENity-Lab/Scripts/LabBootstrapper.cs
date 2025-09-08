@@ -71,12 +71,11 @@ namespace GUZ.Lab
         [Inject] private readonly MultiTypeCacheService _multiTypeCacheService;
         [Inject] private readonly ResourceCacheService _resourceCacheService;
         
+        
         private BootstrapDomain _bootstrapDomain = new BootstrapDomain().Inject();
 
         private void Awake()
         {
-            GameContext.IsLab = true;
-            
             // We need to set culture to this, otherwise e.g. polish numbers aren't parsed correct.
             CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;
             CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.InvariantCulture;
@@ -116,8 +115,6 @@ namespace GUZ.Lab
             _resourceCacheService.Init(_configService.Root.Gothic1Path);
 
             // In lab, we can safely say: VR only!
-            GameContext.ContextInteractionService = _contextInteractionService;
-            GameContext.ContextGameVersionService = _contextGameVersionService;
             GlobalEventDispatcher.RegisterControlsService.Invoke(DeveloperConfig.GameControls);
             GlobalEventDispatcher.RegisterGameVersionService.Invoke(DeveloperConfig.GameVersion);
 
@@ -159,7 +156,7 @@ namespace GUZ.Lab
             VobItemHandler.Bootstrap();
             LabLockHandler.Bootstrap();
 
-            GameContext.ContextInteractionService.InitUIInteraction(); // For (e.g.) QuestLog to enable hand pointer.
+            _contextInteractionService.InitUIInteraction(); // For (e.g.) QuestLog to enable hand pointer.
             BootstrapPlayer();
         }
 

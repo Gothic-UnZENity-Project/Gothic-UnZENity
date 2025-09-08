@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Threading.Tasks;
 using GUZ.Core.Logging;
+using GUZ.Core.Services.Context;
+using Reflex.Attributes;
 using UnityEngine;
 using Logger = GUZ.Core.Logging.Logger;
 
@@ -14,6 +16,8 @@ namespace GUZ.Core.Services
     /// </summary>
     public class FrameSkipperService
     {
+        [Inject] private readonly ContextInteractionService _contextInteractionService;
+        
         // We will leverage 50% (0.5f) of a frame time only.
         private const float _frameQuota = 0.5f;
 
@@ -26,7 +30,7 @@ namespace GUZ.Core.Services
         /// </summary>
         public void Init()
         {
-            _targetFrameRate = GameContext.ContextInteractionService.GetFrameRate();
+            _targetFrameRate = _contextInteractionService.GetFrameRate();
 
             if (_targetFrameRate <= 0)
             {

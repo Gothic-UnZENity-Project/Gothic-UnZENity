@@ -26,7 +26,9 @@ namespace GUZ.Core.Manager
         [Inject] private readonly ContextDialogService _contextDialogService;
         [Inject] private readonly NpcService _npcService;
         [Inject] private readonly SaveGameService _saveGameService;
-
+        [Inject] private readonly ContextInteractionService _contextInteractionService;
+        
+        
         /// <summary>
         /// TextToSpeech toggle. So that the hero isn't repeating what we said already.
         /// </summary>
@@ -68,7 +70,7 @@ namespace GUZ.Core.Manager
             _gameStateService.Dialogs.IsInDialog = true;
 
             // WIP: locking movement 
-            GameContext.ContextInteractionService.LockPlayerInPlace();
+            _contextInteractionService.LockPlayerInPlace();
 
             // We are already inside a sub-dialog
             if (_gameStateService.Dialogs.CurrentOptions.Any())
@@ -273,7 +275,7 @@ namespace GUZ.Core.Manager
             _gameStateService.Dialogs.IsInDialog = false;
 
             // WIP: unlocking movement
-            GameContext.ContextInteractionService.UnlockPlayer();
+            _contextInteractionService.UnlockPlayer();
 
             _contextDialogService.EndDialog();
 

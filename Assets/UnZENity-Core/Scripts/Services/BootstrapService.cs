@@ -61,11 +61,6 @@ namespace GUZ.Core.Services
         
         public void AwakeUnity(DeveloperConfig config)
         {
-            GameContext.IsLab = false;
-
-            // FIXME - Hack for now. Once we get rid of the GameContext global, we will remove these lines.
-            GameContext.ContextInteractionService = _contextInteractionService;
-
             // We need to set culture to this, otherwise e.g. polish numbers aren't parsed correct.
             CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;
             CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.InvariantCulture;
@@ -115,11 +110,10 @@ namespace GUZ.Core.Services
             var watch = Stopwatch.StartNew();
 
             GlobalEventDispatcher.RegisterGameVersionService.Invoke(version);
-            GameContext.ContextGameVersionService = _contextGameVersionService;
 
             _configService.LoadGothicInis(version);
 
-            var gothicRootPath = GameContext.ContextGameVersionService.RootPath;
+            var gothicRootPath = _contextGameVersionService.RootPath;
 
             // Otherwise, continue loading Gothic.
             Logger.Log($"Initializing Gothic installation at: {gothicRootPath}", LogCat.Loading);

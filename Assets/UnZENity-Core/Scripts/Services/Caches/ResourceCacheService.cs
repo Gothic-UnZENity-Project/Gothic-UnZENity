@@ -6,7 +6,9 @@ using DirectMusic;
 using GUZ.Core.Extensions;
 using GUZ.Core.Logging;
 using GUZ.Core.Models.Caches;
+using GUZ.Core.Services.Context;
 using JetBrains.Annotations;
+using Reflex.Attributes;
 using UnityEngine;
 using ZenKit;
 using Font = ZenKit.Font;
@@ -19,6 +21,8 @@ namespace GUZ.Core.Services.Caches
 {
     public class ResourceCacheService
     {
+        [Inject] private readonly ContextInteractionService _contextInteractionService;
+        
         private readonly Vfs _vfs = new();
         private readonly Loader _dmLoader = Loader.Create(LoaderOptions.Default | LoaderOptions.Download);
 
@@ -76,7 +80,7 @@ namespace GUZ.Core.Services.Caches
                 // Lookup is done in following places:
                 // 1. CONTEXT_NAME/Prefabs/... - overwrites lookup path below, used for specific prefabs, for current context (HVR, Flat, ...)
                 // 2. Prefabs/... - Located inside core module (UnZENity-Core), if we don't need special handling.
-                var contextPrefixPath = $"{GameContext.ContextInteractionService.GetContextName()}/{s}";
+                var contextPrefixPath = $"{_contextInteractionService.GetContextName()}/{s}";
                 return new[] { contextPrefixPath, s }.Select(Resources.Load<GameObject>)
                     .FirstOrDefault(newPrefab => newPrefab != null);
             });

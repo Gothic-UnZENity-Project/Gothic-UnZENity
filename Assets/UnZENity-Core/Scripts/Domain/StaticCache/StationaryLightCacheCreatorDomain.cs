@@ -7,6 +7,7 @@ using GUZ.Core.Manager;
 using GUZ.Core.Services;
 using GUZ.Core.Services.Caches;
 using GUZ.Core.Services.Config;
+using GUZ.Core.Services.Context;
 using GUZ.Core.Services.StaticCache;
 using MyBox;
 using Reflex.Attributes;
@@ -29,6 +30,7 @@ namespace GUZ.Core.Domain.StaticCache
         [Inject] private readonly FrameSkipperService _frameSkipperService;
         [Inject] private readonly LoadingService _loadingService;
         [Inject] private readonly ResourceCacheService _resourceCacheService;
+        [Inject] private readonly ContextGameVersionService _contextGameVersionService;
 
         
         private bool _debugSpeedUpLoading => _configService.Dev.SpeedUpLoading;
@@ -97,13 +99,13 @@ namespace GUZ.Core.Domain.StaticCache
                     }
 
                     // FIXME - For some reason, FIRETREE_LARGE.ZEN is broken in G2. Let's fix it properly later.)
-                    if (GameContext.ContextGameVersionService.Version == GameVersion.Gothic2 && fire.VobTree == "FIRETREE_LARGE.ZEN")
+                    if (_contextGameVersionService.Version == GameVersion.Gothic2 && fire.VobTree == "FIRETREE_LARGE.ZEN")
                     {
                         Logger.LogError("For some reason, FIRETREE_LARGE.ZEN is broken in G2. Let's fix it properly for caching.", LogCat.PreCaching);
                         continue;
                     }
 
-                    var fireWorldVobs = _resourceCacheService.TryGetWorld(fire.VobTree, GameContext.ContextGameVersionService.Version, true)!.RootObjects;
+                    var fireWorldVobs = _resourceCacheService.TryGetWorld(fire.VobTree, _contextGameVersionService.Version, true)!.RootObjects;
 
                     // As we loaded the child-VOBs for fire*.zen at this time, we iterate now.
                     await CalculateStationaryLights(fireWorldVobs, vobWorldPosition);

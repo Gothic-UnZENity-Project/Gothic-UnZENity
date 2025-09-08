@@ -1,6 +1,8 @@
 #if GUZ_HVR_INSTALLED
 using GUZ.Core;
+using GUZ.Core.Services.Context;
 using GUZ.VR.Adapters.HVROverrides;
+using Reflex.Attributes;
 using UnityEngine;
 
 namespace GUZ.VR.Adapters.UI
@@ -16,6 +18,8 @@ namespace GUZ.VR.Adapters.UI
 
         [SerializeField] private float _positionSmoothTime = 0.3f;
 
+        [Inject] private readonly ContextInteractionService _contextInteractionService;
+        
         private Transform _playerTransform;
         private VRPlayerController _playerController;
         private Vector3 _moveVelocity;
@@ -25,7 +29,7 @@ namespace GUZ.VR.Adapters.UI
         {
             if (_playerTransform == null)
             {
-                _playerTransform = GameContext.ContextInteractionService.GetCurrentPlayerController().transform;
+                _playerTransform = _contextInteractionService.GetCurrentPlayerController().transform;
                 _playerController = _playerTransform.GetComponent<VRPlayerController>();
             }
 

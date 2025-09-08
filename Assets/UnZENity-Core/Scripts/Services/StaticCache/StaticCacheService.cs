@@ -5,14 +5,14 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Threading.Tasks;
+using GUZ.Core.Const;
 using GUZ.Core.Domain.Config;
 using GUZ.Core.Domain.StaticCache;
 using GUZ.Core.Extensions;
-using GUZ.Core.Const;
 using GUZ.Core.Logging;
-using GUZ.Core.Models.Config;
 using GUZ.Core.Services.Caches;
 using GUZ.Core.Services.Config;
+using GUZ.Core.Services.Context;
 using MyBox;
 using Reflex.Attributes;
 using UnityEngine;
@@ -37,6 +37,9 @@ namespace GUZ.Core.Services.StaticCache
 
         private string _cacheRootFolderPath;
         private bool _configIsCompressed;
+
+        
+        [Inject] private readonly ContextGameVersionService _contextGameVersionService;
 
 
         public bool IsGlobalCacheLoaded { get; private set; }
@@ -192,7 +195,7 @@ namespace GUZ.Core.Services.StaticCache
         public void Init()
         {
             _configIsCompressed = _configService.Dev.CompressStaticCacheFiles;
-            _cacheRootFolderPath = $"{Application.persistentDataPath}/Cache/{GameContext.ContextGameVersionService.Version}/";
+            _cacheRootFolderPath = $"{Application.persistentDataPath}/Cache/{_contextGameVersionService.Version}/";
         }
 
         /// <summary>

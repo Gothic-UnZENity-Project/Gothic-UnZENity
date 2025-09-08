@@ -3,6 +3,8 @@ using System.IO;
 using System.Linq;
 using GUZ.Core.Logging;
 using GUZ.Core.Extensions;
+using GUZ.Core.Services.Context;
+using Reflex.Attributes;
 using Logger = GUZ.Core.Logging.Logger;
 
 namespace GUZ.Core.Services.Player
@@ -12,10 +14,13 @@ namespace GUZ.Core.Services.Player
         public List<string> VideoFileNamesMp4 = new();
         public List<string> VideoFilePathsMp4 = new();
 
+        
+        [Inject] private readonly ContextGameVersionService _contextGameVersionService;
+
 
         public void InitVideos()
         {
-            var videoFileFolder = $"{GameContext.ContextGameVersionService.RootPath}/_work/DATA/video/";
+            var videoFileFolder = $"{_contextGameVersionService.RootPath}/_work/DATA/video/";
 
             if (!Directory.Exists(videoFileFolder))
             {

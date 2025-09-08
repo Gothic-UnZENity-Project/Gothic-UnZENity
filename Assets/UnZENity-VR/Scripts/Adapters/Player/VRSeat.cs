@@ -4,16 +4,20 @@ using System.Collections.Generic;
 using System.Linq;
 using GUZ.Core;
 using GUZ.Core.Extensions;
+using GUZ.Core.Services.Context;
 using HurricaneVR.Framework.Core;
 using HurricaneVR.Framework.Core.Grabbers;
 using HurricaneVR.Framework.Core.Player;
 using HurricaneVR.Framework.Core.Utils;
+using Reflex.Attributes;
 using UnityEngine;
 
 namespace GUZ.VR.Adapters.Player
 {
     public class VRSeat : MonoBehaviour
     {
+        [Inject] private readonly ContextInteractionService _contextInteractionService;
+        
         //this will enable player to sit on benches/chairs etc
         private Vector3 _posOffset = new(0, -0.75f, 0.9f);
         private Vector3 _eulerOffset = new(0, 180, 0);
@@ -65,7 +69,7 @@ namespace GUZ.VR.Adapters.Player
             //get player object
             _canPlayerSit = false; // disable this function to cooldown
 
-            GameObject player = GameContext.ContextInteractionService.GetCurrentPlayerController();
+            GameObject player = _contextInteractionService.GetCurrentPlayerController();
             
             _canvasFade = player.FindChildRecursively("GlobalCameraFade").GetComponent<HVRCanvasFade>();
 
@@ -90,7 +94,7 @@ namespace GUZ.VR.Adapters.Player
 
         private IEnumerator SitDown(GameObject player)
         {
-            GameContext.ContextInteractionService.LockPlayerInPlace();
+            _contextInteractionService.LockPlayerInPlace();
             _currentSnapPoint = GetNearestSnapPoint(player.transform.position);
 
             // Fade in
@@ -114,7 +118,7 @@ namespace GUZ.VR.Adapters.Player
 
             // Move player
             player.transform.position += player.transform.TransformDirection(new Vector3(0, 0.5f, 1f));
-            GameContext.ContextInteractionService.UnlockPlayer();
+            _contextInteractionService.UnlockPlayer();
 
             // Fade out
             _canvasFade.Fade(0f, _fadeSpeed);

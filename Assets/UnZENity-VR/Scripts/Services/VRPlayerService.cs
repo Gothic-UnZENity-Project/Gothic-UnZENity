@@ -1,10 +1,12 @@
 ﻿#if GUZ_HVR_INSTALLED
 using GUZ.Core;
+using GUZ.Core.Services.Context;
 using GUZ.VR.Adapters.HVROverrides;
 using GUZ.VR.Services.Context;
 using HurricaneVR.Framework.Core;
 using HurricaneVR.Framework.Core.Grabbers;
 using HurricaneVR.Framework.Shared;
+using Reflex.Attributes;
 using UnityEngine;
 
 namespace GUZ.VR.Services
@@ -14,7 +16,9 @@ namespace GUZ.VR.Services
     /// </summary>
     public class VRPlayerService
     {
-        public VRContextInteractionService VRContextInteractionService => GameContext.ContextInteractionService.GetImpl<VRContextInteractionService>();
+        [Inject] private readonly ContextInteractionService _contextInteractionService;
+        
+        public VRContextInteractionService VRContextInteractionService => _contextInteractionService.GetImpl<VRContextInteractionService>();
         public VRPlayerInputs VRPlayerInputs => VRContextInteractionService.GetVRPlayerInputs();
         
         public GameObject GrabbedItemLeft;
@@ -47,9 +51,9 @@ namespace GUZ.VR.Services
         public HVRController GetHand(HVRHandSide side)
         {
             if (side == HVRHandSide.Left)
-                return GameContext.ContextInteractionService.GetCurrentPlayerController().GetComponent<VRPlayerController>().LeftHand.Controller;
+                return _contextInteractionService.GetCurrentPlayerController().GetComponent<VRPlayerController>().LeftHand.Controller;
             else
-                return GameContext.ContextInteractionService.GetCurrentPlayerController().GetComponent<VRPlayerController>().RightHand.Controller;
+                return _contextInteractionService.GetCurrentPlayerController().GetComponent<VRPlayerController>().RightHand.Controller;
         }
     }
 }

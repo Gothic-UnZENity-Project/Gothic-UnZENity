@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using GUZ.Core.Services.Context;
 using Reflex.Attributes;
 using ZenKit;
 
@@ -10,7 +11,7 @@ namespace GUZ.Core.Services.World
         public bool _isChapterSwitchPending;
         
         [Inject] private readonly SaveGameService _saveGameService;
-
+        [Inject] private readonly ContextInteractionService _contextInteractionService;
         
         private (string chapter, string text, string texture, string wav, int time) _chapterSwitchData;
 
@@ -92,7 +93,7 @@ namespace GUZ.Core.Services.World
                 return;
             }
 
-            GameContext.ContextInteractionService.IntroduceChapter(
+            _contextInteractionService.IntroduceChapter(
                 _chapterSwitchData.chapter,
                 _chapterSwitchData.text,
                 _chapterSwitchData.texture,

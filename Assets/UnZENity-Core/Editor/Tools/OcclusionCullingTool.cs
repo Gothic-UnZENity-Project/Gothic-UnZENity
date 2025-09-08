@@ -74,40 +74,40 @@ namespace GUZ.Core.Editor.Tools
 
         private static async Task Execute(GameVersion version)
         {
-            // Needed during Cache creation. (StationaryLightCache is calling worlds from Fire.zen and need to have this information.)
-            GameContext.ContextGameVersionService = version == GameVersion.Gothic1 ? new G1ContextService() : new G2ContextService();
-
-            var worldName = SceneManager.GetActiveScene().name;
-            
-            // FIXME - Inject won't work at EditorTime. Find another way.
-            IWorld world = null; // _resourceCacheService.TryGetWorld(worldName, version)!;
-            Logger.LogEditor("DONE - Loading world from ZenKit", LogCat.PreCaching);
-
-            if (world == null)
-            {
-                throw new ArgumentException($"Current scene >{worldName}< is no gothic world.");
-            }
-
-            var stationaryLightCache = new StationaryLightCacheCreatorDomain().Inject();
-            var worldChunkCache = new WorldChunkCacheCreatorDomain().Inject();
-
-            await stationaryLightCache.CalculateStationaryLights(world.RootObjects, 0).AwaitAndLog();
-            Logger.LogEditor("DONE - Loading stationary light data", LogCat.PreCaching);
-            await worldChunkCache.CalculateWorldChunks(world, stationaryLightCache.StationaryLightBounds, 0).AwaitAndLog();
-            Logger.LogEditor("DONE - Calculating world chunks", LogCat.PreCaching);
-
-
-            var worldChunkData = new StaticCacheService.WorldChunkContainer
-            {
-                OpaqueChunks = worldChunkCache.MergedChunksByLights[TextureCacheService.TextureArrayTypes.Opaque],
-                // We do not use transparent elements for OC data as it would cull even on transparent edges.
-                TransparentChunks = new(),
-                // We do not use water for OC data
-                WaterChunks = new()
-            };
-
-            await new MeshService().CreateWorld(worldChunkData, world.Mesh, null, null, useTextureArray: false).AwaitAndLog();
-            Logger.LogEditor("DONE - Loading world mesh", LogCat.PreCaching);
+            // // Needed during Cache creation. (StationaryLightCache is calling worlds from Fire.zen and need to have this information.)
+            // GameContext.ContextGameVersionService = version == GameVersion.Gothic1 ? new G1ContextService() : new G2ContextService();
+            //
+            // var worldName = SceneManager.GetActiveScene().name;
+            //
+            // // FIXME - Inject won't work at EditorTime. Find another way.
+            // IWorld world = null; // _resourceCacheService.TryGetWorld(worldName, version)!;
+            // Logger.LogEditor("DONE - Loading world from ZenKit", LogCat.PreCaching);
+            //
+            // if (world == null)
+            // {
+            //     throw new ArgumentException($"Current scene >{worldName}< is no gothic world.");
+            // }
+            //
+            // var stationaryLightCache = new StationaryLightCacheCreatorDomain().Inject();
+            // var worldChunkCache = new WorldChunkCacheCreatorDomain().Inject();
+            //
+            // await stationaryLightCache.CalculateStationaryLights(world.RootObjects, 0).AwaitAndLog();
+            // Logger.LogEditor("DONE - Loading stationary light data", LogCat.PreCaching);
+            // await worldChunkCache.CalculateWorldChunks(world, stationaryLightCache.StationaryLightBounds, 0).AwaitAndLog();
+            // Logger.LogEditor("DONE - Calculating world chunks", LogCat.PreCaching);
+            //
+            //
+            // var worldChunkData = new StaticCacheService.WorldChunkContainer
+            // {
+            //     OpaqueChunks = worldChunkCache.MergedChunksByLights[TextureCacheService.TextureArrayTypes.Opaque],
+            //     // We do not use transparent elements for OC data as it would cull even on transparent edges.
+            //     TransparentChunks = new(),
+            //     // We do not use water for OC data
+            //     WaterChunks = new()
+            // };
+            //
+            // await new MeshService().CreateWorld(worldChunkData, world.Mesh, null, null, useTextureArray: false).AwaitAndLog();
+            // Logger.LogEditor("DONE - Loading world mesh", LogCat.PreCaching);
         }
 
         private void OnGUI()
