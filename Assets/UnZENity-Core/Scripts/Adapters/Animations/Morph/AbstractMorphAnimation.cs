@@ -21,6 +21,7 @@ namespace GUZ.Core.Adapters.Animations.Morph
     public abstract class AbstractMorphAnimation : MonoBehaviour
     {
         [Inject] private readonly MorphMeshCacheService _morphMeshCacheService;
+        [Inject] private readonly ResourceCacheService _resourceCacheService;
 
         /// <summary>
         /// Multiple morphs can run at the same time. e.g. viseme and eyesblink.
@@ -55,7 +56,7 @@ namespace GUZ.Core.Adapters.Animations.Morph
         {
             var newMorph = new MorphAnimationData();
 
-            newMorph.MeshMetadata = ResourceLoader.TryGetMorphMesh(morphMeshName);
+            newMorph.MeshMetadata = _resourceCacheService.TryGetMorphMesh(morphMeshName);
             newMorph.AnimationMetadata = animationName == null
                 ? newMorph.MeshMetadata.Animations.First()
                 : newMorph.MeshMetadata.Animations.First(anim => anim.Name.EqualsIgnoreCase(animationName));

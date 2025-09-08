@@ -5,6 +5,7 @@ using GUZ.Core.Extensions;
 using GUZ.Core.Logging;
 using GUZ.Core.Manager;
 using GUZ.Core.Services;
+using GUZ.Core.Services.Caches;
 using GUZ.Core.Services.Config;
 using GUZ.Core.Services.StaticCache;
 using MyBox;
@@ -27,6 +28,7 @@ namespace GUZ.Core.Domain.StaticCache
         [Inject] private readonly ConfigService _configService;
         [Inject] private readonly FrameSkipperService _frameSkipperService;
         [Inject] private readonly LoadingService _loadingService;
+        [Inject] private readonly ResourceCacheService _resourceCacheService;
 
         
         private bool _debugSpeedUpLoading => _configService.Dev.SpeedUpLoading;
@@ -101,7 +103,7 @@ namespace GUZ.Core.Domain.StaticCache
                         continue;
                     }
 
-                    var fireWorldVobs = ResourceLoader.TryGetWorld(fire.VobTree, GameContext.ContextGameVersionService.Version, true)!.RootObjects;
+                    var fireWorldVobs = _resourceCacheService.TryGetWorld(fire.VobTree, GameContext.ContextGameVersionService.Version, true)!.RootObjects;
 
                     // As we loaded the child-VOBs for fire*.zen at this time, we iterate now.
                     await CalculateStationaryLights(fireWorldVobs, vobWorldPosition);

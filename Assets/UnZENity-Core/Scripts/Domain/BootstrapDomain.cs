@@ -1,9 +1,8 @@
 using System;
 using System.Globalization;
 using System.Linq;
-using System.Runtime.InteropServices;
 using GUZ.Core.Services;
-using GUZ.Core.Services.Context;
+using GUZ.Core.Services.Caches;
 using GUZ.Core.Services.Npc;
 using GUZ.Core.Services.Player;
 using GUZ.Core.Services.UI;
@@ -23,6 +22,8 @@ namespace GUZ.Core.Domain
         [Inject] private readonly NpcHelperService _npcHelperService;
         [Inject] private readonly VideoService _videoService;
         [Inject] private readonly FontService _fontService;
+        [Inject] private readonly ResourceCacheService _resourceCacheService;
+        
         
         public BootstrapDomain()
         {
@@ -96,7 +97,7 @@ namespace GUZ.Core.Domain
 
         public void LoadGothicVm()
         {
-            _gameStateService.GothicVm = ResourceLoader.TryGetDaedalusVm("GOTHIC");
+            _gameStateService.GothicVm = _resourceCacheService.TryGetDaedalusVm("GOTHIC");
 
             _vmExternalService.RegisterExternals();
             _npcHelperService.Init();
@@ -104,10 +105,10 @@ namespace GUZ.Core.Domain
         
         private void LoadMiscVMs()
         {
-            _gameStateService.FightVm = ResourceLoader.TryGetDaedalusVm("FIGHT");
-            _gameStateService.MenuVm = ResourceLoader.TryGetDaedalusVm("MENU");
-            _gameStateService.SfxVm = ResourceLoader.TryGetDaedalusVm("SFX");
-            _gameStateService.PfxVm = ResourceLoader.TryGetDaedalusVm("PARTICLEFX");
+            _gameStateService.FightVm = _resourceCacheService.TryGetDaedalusVm("FIGHT");
+            _gameStateService.MenuVm = _resourceCacheService.TryGetDaedalusVm("MENU");
+            _gameStateService.SfxVm = _resourceCacheService.TryGetDaedalusVm("SFX");
+            _gameStateService.PfxVm = _resourceCacheService.TryGetDaedalusVm("PARTICLEFX");
         }
 
         /// <summary>

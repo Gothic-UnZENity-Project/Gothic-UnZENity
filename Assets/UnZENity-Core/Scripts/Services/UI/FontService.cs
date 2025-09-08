@@ -21,6 +21,7 @@ namespace GUZ.Core.Services.UI
         [Inject] private readonly TextureCacheService _textureCacheService;
         [Inject] private readonly MultiTypeCacheService _multiTypeCacheService;
         [Inject] private readonly GameStateService _gameStateService;
+        [Inject] private readonly ResourceCacheService _resourceCacheService;
 
         public void Create()
         {
@@ -34,13 +35,13 @@ namespace GUZ.Core.Services.UI
         [CanBeNull]
         public TMP_SpriteAsset TryGetFont(string fontName)
         {
-            var preparedKey = $"{ResourceLoader.GetPreparedKey(fontName)}.fnt";
+            var preparedKey = $"{_resourceCacheService.GetPreparedKey(fontName)}.fnt";
             if (_multiTypeCacheService.FontCache.TryGetValue(preparedKey, out var data))
             {
                 return data;
             }
 
-            var font = ResourceLoader.TryGetFont(preparedKey);
+            var font = _resourceCacheService.TryGetFont(preparedKey);
             var fontTexture = _textureCacheService.TryGetTexture(preparedKey);
 
             if (font == null || fontTexture == null)

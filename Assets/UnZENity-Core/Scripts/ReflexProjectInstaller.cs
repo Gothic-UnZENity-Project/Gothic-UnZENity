@@ -83,6 +83,7 @@ namespace GUZ.Core
             containerBuilder.AddSingleton(typeof(NpcRoutineService));
 
             // Caches
+            containerBuilder.AddSingleton(typeof(ResourceCacheService));
             containerBuilder.AddSingleton(typeof(VmCacheService));
             containerBuilder.AddSingleton(typeof(MultiTypeCacheService));
             containerBuilder.AddSingleton(typeof(TextureCacheService));

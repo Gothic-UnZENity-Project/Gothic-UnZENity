@@ -5,6 +5,7 @@ using GUZ.Core;
 using GUZ.Core.Adapters.UI;
 using GUZ.Core.Extensions;
 using GUZ.Core.Logging;
+using GUZ.Core.Services.Caches;
 using GUZ.Core.Services.Config;
 using MyBox;
 using Reflex.Attributes;
@@ -22,6 +23,7 @@ namespace GUZ.VR.Adapters.Marvin
     public class MarvinLogsTabHandler : MonoBehaviour, ILogger
     {
         [Inject] private readonly ConfigService _configService;
+        [Inject] private readonly ResourceCacheService _resourceCacheService;
 
 
         [SerializeField] private ScrollRect _logsRoot;
@@ -133,7 +135,7 @@ namespace GUZ.VR.Adapters.Marvin
             var catIndex = 0;
             foreach (var category in defaultCategories.Concat(Enum.GetNames(typeof(LogCat))))
             {
-                var categoryGo = ResourceLoader.TryGetPrefabObject(PrefabType.UiDebugToggleButton, name: category, parent: _categoriesRoot.gameObject);
+                var categoryGo = _resourceCacheService.TryGetPrefabObject(PrefabType.UiDebugToggleButton, name: category, parent: _categoriesRoot.gameObject);
                 var categoryTransform = categoryGo!.GetComponent<RectTransform>();
                 categoryTransform.localPosition = new Vector2(0, -_categoryFilterMarginTop - (_logLineHeight / 2f) - _logLineHeight * catIndex);
                 categoryTransform.sizeDelta = new Vector2(_categoriesRoot.rect.width - 25f, _logLineHeight);
@@ -211,7 +213,7 @@ namespace GUZ.VR.Adapters.Marvin
         
         private void AddTextItem(LogInfo logInfo)
         {
-            var itemGo = ResourceLoader.TryGetPrefabObject(PrefabType.UiDebugLogLine, name: "LogItem", parent: _logContentContainer.gameObject);
+            var itemGo = _resourceCacheService.TryGetPrefabObject(PrefabType.UiDebugLogLine, name: "LogItem", parent: _logContentContainer.gameObject);
             var itemTransform = itemGo!.GetComponent<RectTransform>();
             itemTransform.localScale = Vector3.one; // 0 when instantiating.
             itemTransform.anchorMin = new Vector2(0, 1);

@@ -1,6 +1,7 @@
 using GUZ.Core.Domain.Npc;
 using GUZ.Core.Extensions;
 using GUZ.Core.Manager;
+using GUZ.Core.Services.Caches;
 using GUZ.Core.Services.Config;
 using GUZ.Core.Services.Meshes;
 using GUZ.Core.Services.Vobs;
@@ -16,6 +17,7 @@ namespace GUZ.Core.Services.World
         [Inject] private readonly MeshService _meshService;
         [Inject] private readonly VobService _vobService;
         [Inject] private readonly AudioService _audioService;
+        [Inject] private readonly ResourceCacheService _resourceCacheService;
 
         private GameObject _barrier;
 
@@ -62,7 +64,7 @@ namespace GUZ.Core.Services.World
                 return;
             }
 
-            var barrierMesh = ResourceLoader.TryGetMesh("MAGICFRONTIER_OUT.MSH");
+            var barrierMesh = _resourceCacheService.TryGetMesh("MAGICFRONTIER_OUT.MSH");
             _barrier = _meshService.CreateBarrier("Barrier", barrierMesh)
                 .GetAllDirectChildren()[0];
 

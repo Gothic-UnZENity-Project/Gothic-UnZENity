@@ -6,6 +6,7 @@ using GUZ.Core.Logging;
 using GUZ.Core.Extensions;
 using GUZ.Core.Model.UI.Menu;
 using GUZ.Core.Model.UI.MenuItem;
+using GUZ.Core.Services.Caches;
 using GUZ.Core.Services.Config;
 using GUZ.Core.Services.Meshes;
 using GUZ.Core.Services.UI;
@@ -28,6 +29,7 @@ namespace GUZ.Core.Adapters.UI.Menus
         [Inject] protected readonly FontService FontService;
         [Inject] protected readonly TextureService TextureService;
         [Inject] private readonly VmService _vmService;
+        [Inject] private readonly ResourceCacheService _resourceCacheService;
 
         protected MenuHandler MenuHandler;
         protected AbstractMenuInstance MenuInstance;
@@ -155,32 +157,32 @@ namespace GUZ.Core.Adapters.UI.Menus
             GameObject itemGo;
             if (item.MenuItemType == MenuItemType.ListBox)
             {
-                itemGo = ResourceLoader.TryGetPrefabObject(PrefabType.UiEmpty, name: item.Name, parent: Canvas)!;
+                itemGo = _resourceCacheService.TryGetPrefabObject(PrefabType.UiEmpty, name: item.Name, parent: Canvas)!;
             }
             else if (item.Flags.HasFlag(MenuItemFlag.Selectable))
             {
-                itemGo = ResourceLoader.TryGetPrefabObject(PrefabType.UiButton, name: item.Name, parent: Canvas)!;
+                itemGo = _resourceCacheService.TryGetPrefabObject(PrefabType.UiButton, name: item.Name, parent: Canvas)!;
                 var button = itemGo.GetComponentInChildren<Button>();
                 button.onClick.AddListener(() => HandleMenuItemClick(item));
             }
             else if (item.MenuItemType == MenuItemType.ChoiceBox)
             {
-                itemGo = ResourceLoader.TryGetPrefabObject(PrefabType.UiButton, name: item.Name, parent: Canvas)!;
+                itemGo = _resourceCacheService.TryGetPrefabObject(PrefabType.UiButton, name: item.Name, parent: Canvas)!;
                 var button = itemGo.GetComponentInChildren<Button>();
                 button.onClick.AddListener(() => HandleChoiceBoxClick(item, itemGo));
             }
             else if (item.MenuItemType == MenuItemType.Slider)
             {
-                itemGo = ResourceLoader.TryGetPrefabObject(PrefabType.UiSlider, name: item.Name, parent: Canvas)!;
+                itemGo = _resourceCacheService.TryGetPrefabObject(PrefabType.UiSlider, name: item.Name, parent: Canvas)!;
                 SetSliderValues(itemGo, item);
             }
             else if (item.MenuItemType == MenuItemType.Text)
             {
-                itemGo = ResourceLoader.TryGetPrefabObject(PrefabType.UiText, name: item.Name, parent: Canvas)!;
+                itemGo = _resourceCacheService.TryGetPrefabObject(PrefabType.UiText, name: item.Name, parent: Canvas)!;
             }
             else
             {
-                itemGo = ResourceLoader.TryGetPrefabObject(PrefabType.UiEmpty, name: item.Name, parent: Canvas)!;
+                itemGo = _resourceCacheService.TryGetPrefabObject(PrefabType.UiEmpty, name: item.Name, parent: Canvas)!;
             }
             return itemGo;
         }
@@ -224,7 +226,7 @@ namespace GUZ.Core.Adapters.UI.Menus
         {
             if (!item.BackPic.NotNullOrEmpty()) return;
 
-            var backPicGo = ResourceLoader.TryGetPrefabObject(PrefabType.UiTexture, name: item.BackPic, parent: itemGo)!;
+            var backPicGo = _resourceCacheService.TryGetPrefabObject(PrefabType.UiTexture, name: item.BackPic, parent: itemGo)!;
             var backPic = TextureService.GetMaterial(item.BackPic);
 
             if (!item.AlphaMode.IsNullOrEmpty())

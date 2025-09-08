@@ -43,6 +43,7 @@ namespace GUZ.Core.Domain.Npc
         [Inject] private readonly WayNetService _wayNetService;
         [Inject] private readonly NpcMeshCullingService _npcMeshCullingService;
         [Inject] private readonly GameStateService _gameStateService;
+        [Inject] private readonly ResourceCacheService _resourceCacheService;
 
         
         public GameObject RootGo;
@@ -273,7 +274,7 @@ namespace GUZ.Core.Domain.Npc
         public void InitNpc(NpcInstance npcInstance, GameObject lazyLoadGo)
         {
             var npcData = npcInstance.GetUserData();
-            var newNpc = ResourceLoader.TryGetPrefabObject(PrefabType.Npc, parent: lazyLoadGo)!;
+            var newNpc = _resourceCacheService.TryGetPrefabObject(PrefabType.Npc, parent: lazyLoadGo)!;
             var props = npcData.Props;
 
             // We set the root of Prefab as the new Root object. LazyLoading Root-GO isn't needed for anything, but it's name anymore.

@@ -8,7 +8,9 @@ using GUZ.Core.Extensions;
 using GUZ.Core.Models.Adapter.Vobs;
 using GUZ.Core.Models.Animations;
 using GUZ.Core.Models.Vm;
+using GUZ.Core.Services.Caches;
 using JetBrains.Annotations;
+using Reflex.Attributes;
 using UnityEngine;
 using ZenKit;
 using Logger = GUZ.Core.Logging.Logger;
@@ -21,6 +23,8 @@ namespace GUZ.Core.Services.Npc
 
         [ItemCanBeNull]
         private Dictionary<string, AnimationTrack> _tracks = new();
+
+        [Inject] private readonly ResourceCacheService _resourceCacheService;
 
 
         /// <summary>
@@ -50,7 +54,7 @@ namespace GUZ.Core.Services.Npc
                 return track;
             }
 
-            var mds = ResourceLoader.TryGetModelScript(mdsName)!;
+            var mds = _resourceCacheService.TryGetModelScript(mdsName)!;
 
             var anim = mds.Animations.FirstOrDefault(i => i.Name.EqualsIgnoreCase(animName));
             IAnimationAlias animAlias = null;
@@ -79,7 +83,7 @@ namespace GUZ.Core.Services.Npc
             }
             animName = anim.Name; // We need to use the actual name, as we might have an alias.
 
-            var modelAnimation = ResourceLoader.TryGetModelAnimation(mdsName, animName);
+            var modelAnimation = _resourceCacheService.TryGetModelAnimation(mdsName, animName);
             if (modelAnimation == null)
             {
                 // Caching an empty track means, we don't need to try creating this track again.
@@ -89,7 +93,7 @@ namespace GUZ.Core.Services.Npc
 
             // For animations: mdhName == mdsName (with different file ending of course ;-))
             var mdhName = mdsName;
-            var mdh = ResourceLoader.TryGetModelHierarchy(mdhName);
+            var mdh = _resourceCacheService.TryGetModelHierarchy(mdhName);
 
             track = CreateTrack(modelAnimation, mdh, anim, animAlias);
             AddTrackDuration(track, modelAnimation);

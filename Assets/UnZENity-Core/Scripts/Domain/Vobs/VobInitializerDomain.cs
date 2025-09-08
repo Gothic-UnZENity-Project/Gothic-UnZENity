@@ -40,6 +40,7 @@ namespace GUZ.Core.Domain.Vobs
         [Inject] private readonly VmCacheService _vmCacheService;
         [Inject] private readonly StaticCacheService _staticCacheService;
         [Inject] private readonly GameStateService _gameStateService;
+        [Inject] private readonly ResourceCacheService _resourceCacheService;
 
 
         /// <summary>
@@ -235,30 +236,30 @@ namespace GUZ.Core.Domain.Vobs
                     var mainFlag = (VmGothicEnums.ItemFlags)item.MainFlag;
                     
                     if (mainFlag is VmGothicEnums.ItemFlags.ItemKatNf or VmGothicEnums.ItemFlags.ItemKatFf)
-                        go = ResourceLoader.TryGetPrefabObject(PrefabType.VobItemWeapon, name: name, parent: parent);
+                        go = _resourceCacheService.TryGetPrefabObject(PrefabType.VobItemWeapon, name: name, parent: parent);
                     else
-                        go = ResourceLoader.TryGetPrefabObject(PrefabType.VobItem, name: name, parent: parent);
+                        go = _resourceCacheService.TryGetPrefabObject(PrefabType.VobItem, name: name, parent: parent);
 
                     break;
                 case VirtualObjectType.zCVobSpot:
                 case VirtualObjectType.zCVobStartpoint:
-                    go = ResourceLoader.TryGetPrefabObject(PrefabType.VobSpot, name: name, parent: parent);
+                    go = _resourceCacheService.TryGetPrefabObject(PrefabType.VobSpot, name: name, parent: parent);
                     break;
                 case VirtualObjectType.zCVobSound:
-                    go = ResourceLoader.TryGetPrefabObject(PrefabType.VobSound, name: name, parent: parent);
+                    go = _resourceCacheService.TryGetPrefabObject(PrefabType.VobSound, name: name, parent: parent);
                     break;
                 case VirtualObjectType.zCVobSoundDaytime:
-                    go = ResourceLoader.TryGetPrefabObject(PrefabType.VobSoundDaytime, name: name, parent: parent);
+                    go = _resourceCacheService.TryGetPrefabObject(PrefabType.VobSoundDaytime, name: name, parent: parent);
                     break;
                 case VirtualObjectType.oCZoneMusic:
                 case VirtualObjectType.oCZoneMusicDefault:
-                    go = ResourceLoader.TryGetPrefabObject(PrefabType.VobMusic, name: name, parent: parent);
+                    go = _resourceCacheService.TryGetPrefabObject(PrefabType.VobMusic, name: name, parent: parent);
                     break;
                 case VirtualObjectType.oCMOB:
-                    go = ResourceLoader.TryGetPrefabObject(PrefabType.Vob, name: name, parent: parent);
+                    go = _resourceCacheService.TryGetPrefabObject(PrefabType.Vob, name: name, parent: parent);
                     break;
                 case VirtualObjectType.oCMobFire:
-                    go = ResourceLoader.TryGetPrefabObject(PrefabType.VobFire, name: name, parent: parent);
+                    go = _resourceCacheService.TryGetPrefabObject(PrefabType.VobFire, name: name, parent: parent);
                     break;
                 case VirtualObjectType.oCMobInter:
                     if (vob.Name.ContainsIgnoreCase("bench") ||
@@ -266,42 +267,42 @@ namespace GUZ.Core.Domain.Vobs
                         vob.Name.ContainsIgnoreCase("throne") ||
                         vob.Name.ContainsIgnoreCase("barrelo"))
                     {
-                        go = ResourceLoader.TryGetPrefabObject(PrefabType.VobInteractableSeat);
+                        go = _resourceCacheService.TryGetPrefabObject(PrefabType.VobInteractableSeat);
                     }
                     else
                     {
-                        go = ResourceLoader.TryGetPrefabObject(PrefabType.VobInteractable);
+                        go = _resourceCacheService.TryGetPrefabObject(PrefabType.VobInteractable);
                     }
                     break;
                 case VirtualObjectType.oCMobBed:
-                    go = ResourceLoader.TryGetPrefabObject(PrefabType.VobBed, name: name, parent: parent);
+                    go = _resourceCacheService.TryGetPrefabObject(PrefabType.VobBed, name: name, parent: parent);
                     break;
                 case VirtualObjectType.oCMobWheel:
-                    go = ResourceLoader.TryGetPrefabObject(PrefabType.VobWheel, name: name, parent: parent);
+                    go = _resourceCacheService.TryGetPrefabObject(PrefabType.VobWheel, name: name, parent: parent);
                     break;
                 case VirtualObjectType.oCMobSwitch:
-                    go = ResourceLoader.TryGetPrefabObject(PrefabType.VobSwitch, name: name, parent: parent);
+                    go = _resourceCacheService.TryGetPrefabObject(PrefabType.VobSwitch, name: name, parent: parent);
                     break;
                 case VirtualObjectType.oCMobDoor:
-                    go = ResourceLoader.TryGetPrefabObject(PrefabType.VobDoor, name: name, parent: parent);
+                    go = _resourceCacheService.TryGetPrefabObject(PrefabType.VobDoor, name: name, parent: parent);
                     break;
                 case VirtualObjectType.oCMobContainer:
-                    go = ResourceLoader.TryGetPrefabObject(PrefabType.VobContainer, name: name, parent: parent);
+                    go = _resourceCacheService.TryGetPrefabObject(PrefabType.VobContainer, name: name, parent: parent);
                     break;
                 case VirtualObjectType.oCMobLadder:
-                    go = ResourceLoader.TryGetPrefabObject(PrefabType.VobLadder, name: name, parent: parent);
+                    go = _resourceCacheService.TryGetPrefabObject(PrefabType.VobLadder, name: name, parent: parent);
                     break;
                 case VirtualObjectType.zCVobAnimate:
-                    go = ResourceLoader.TryGetPrefabObject(PrefabType.VobAnimate, name: name, parent: parent);
+                    go = _resourceCacheService.TryGetPrefabObject(PrefabType.VobAnimate, name: name, parent: parent);
                     break;
                 case VirtualObjectType.zCVobLight:
-                    go = ResourceLoader.TryGetPrefabObject(PrefabType.VobLight, name: name, parent: parent);
+                    go = _resourceCacheService.TryGetPrefabObject(PrefabType.VobLight, name: name, parent: parent);
                     break;
                 case VirtualObjectType.oCTriggerChangeLevel:
-                    go = ResourceLoader.TryGetPrefabObject(PrefabType.VobTriggerChangeLevel, name: name, parent: parent);
+                    go = _resourceCacheService.TryGetPrefabObject(PrefabType.VobTriggerChangeLevel, name: name, parent: parent);
                     break;
                 default:
-                    go = ResourceLoader.TryGetPrefabObject(PrefabType.Vob, name: name, parent: parent);
+                    go = _resourceCacheService.TryGetPrefabObject(PrefabType.Vob, name: name, parent: parent);
                     break;
             }
 
@@ -336,7 +337,7 @@ namespace GUZ.Core.Domain.Vobs
                 return null;
             }
 
-            var vobTree = ResourceLoader.TryGetWorld(vob.VobTree, GameContext.ContextGameVersionService.Version, true)!.RootObjects;
+            var vobTree = _resourceCacheService.TryGetWorld(vob.VobTree, GameContext.ContextGameVersionService.Version, true)!.RootObjects;
 
             CreateFireVobs(vobTree, go.FindChildRecursively(vob.Slot) ?? go, worldPosition);
 
@@ -445,7 +446,7 @@ namespace GUZ.Core.Domain.Vobs
 
         private GameObject CreateItemMesh(ItemInstance item, GameObject go, GameObject parent)
         {
-            var mrm = ResourceLoader.TryGetMultiResolutionMesh(item.Visual);
+            var mrm = _resourceCacheService.TryGetMultiResolutionMesh(item.Visual);
 
             if (mrm != null)
             {
@@ -453,21 +454,21 @@ namespace GUZ.Core.Domain.Vobs
             }
 
             // shortbow (itrw_bow_l_01) has no mrm, but has mmb
-            var mmb = ResourceLoader.TryGetMorphMesh(item.Visual);
+            var mmb = _resourceCacheService.TryGetMorphMesh(item.Visual);
 
             return _meshService.CreateVob(item.Visual, mmb, parent: parent, rootGo: go, useColliderCache: true);
         }
 
         public GameObject CreateItemMesh(ItemInstance item, GameObject parentGo, Vector3 position)
         {
-            var mrm = ResourceLoader.TryGetMultiResolutionMesh(item.Visual);
+            var mrm = _resourceCacheService.TryGetMultiResolutionMesh(item.Visual);
             if (mrm != null)
             {
                 return _meshService.CreateVob(item.Visual, mrm, position, default, false, parentGo, useTextureArray: false);
             }
 
             // shortbow (itrw_bow_l_01) has no mrm, but has mmb
-            var mmb = ResourceLoader.TryGetMorphMesh(item.Visual);
+            var mmb = _resourceCacheService.TryGetMorphMesh(item.Visual);
 
             return _meshService.CreateVob(item.Visual, mmb, position, default, parentGo, useColliderCache: true);
         }
@@ -663,7 +664,7 @@ namespace GUZ.Core.Domain.Vobs
             }
 
             // MDL
-            var mdl = ResourceLoader.TryGetModel(meshName);
+            var mdl = _resourceCacheService.TryGetModel(meshName);
             if (mdl != null)
             {
                 var ret = _meshService.CreateVob(meshName, mdl, parent: parent, rootGo: go);
@@ -678,8 +679,8 @@ namespace GUZ.Core.Domain.Vobs
             }
 
             // MDH+MDM (without MDL as wrapper)
-            var mdh = ResourceLoader.TryGetModelHierarchy(meshName);
-            var mdm = ResourceLoader.TryGetModelMesh(meshName);
+            var mdh = _resourceCacheService.TryGetModelHierarchy(meshName);
+            var mdm = _resourceCacheService.TryGetModelMesh(meshName);
             if (mdh != null && mdm != null)
             {
                 var ret = _meshService.CreateVob(meshName, mdm, mdh, parent: parent, rootGo: go);
@@ -694,7 +695,7 @@ namespace GUZ.Core.Domain.Vobs
             }
 
             // MMB
-            var mmb = ResourceLoader.TryGetMorphMesh(meshName);
+            var mmb = _resourceCacheService.TryGetMorphMesh(meshName);
             if (mmb != null)
             {
                 var ret = _meshService.CreateVob(meshName, mmb, parent: parent, rootGo: go);
@@ -711,7 +712,7 @@ namespace GUZ.Core.Domain.Vobs
             }
 
             // MRM
-            var mrm = ResourceLoader.TryGetMultiResolutionMesh(meshName);
+            var mrm = _resourceCacheService.TryGetMultiResolutionMesh(meshName);
             if (mrm != null)
             {
                 // If the object is a dynamic one, it will collide.

@@ -5,6 +5,7 @@ using GUZ.Core.Extensions;
 using GUZ.Core.Logging;
 using GUZ.Core.Manager;
 using GUZ.Core.Models.Marvin;
+using GUZ.Core.Services.Caches;
 using GUZ.VR.Services;
 using Reflex.Attributes;
 using TMPro;
@@ -24,7 +25,7 @@ namespace GUZ.VR.Adapters.Marvin
 
         [Inject] private readonly VRPlayerService _vrPlayerService;
         [Inject] private readonly MarvinService _marvinService;
-
+        [Inject] private readonly ResourceCacheService _resourceCacheService;
 
         private const int _propertyHeight = 15;
         private const int _propertyMarginBottom = 10;
@@ -146,7 +147,7 @@ namespace GUZ.VR.Adapters.Marvin
 
         private GameObject CreateField(MarvinPropertyHeader header, GameObject rootGo, float y)
         {
-            var headerGo = ResourceLoader.TryGetPrefabObject(PrefabType.UiDebugText, parent: rootGo);
+            var headerGo = _resourceCacheService.TryGetPrefabObject(PrefabType.UiDebugText, parent: rootGo);
             headerGo.GetComponentInChildren<TMP_Text>().text = header.Name;
             
             var headerTransform = headerGo!.GetComponent<RectTransform>();
@@ -162,7 +163,7 @@ namespace GUZ.VR.Adapters.Marvin
         {
             var labelGo = CreateField(new MarvinPropertyHeader(boolProperty.Name), rootGo, y);
 
-            var toggleGo = ResourceLoader.TryGetPrefabObject(PrefabType.UiDebugToggle, parent: rootGo);
+            var toggleGo = _resourceCacheService.TryGetPrefabObject(PrefabType.UiDebugToggle, parent: rootGo);
             
             var toggleTransform = toggleGo!.GetComponent<RectTransform>();
             toggleTransform.anchorMin = new Vector2(0, 1);
@@ -196,7 +197,7 @@ namespace GUZ.VR.Adapters.Marvin
             var labelWidth = labelGo.GetComponent<RectTransform>().sizeDelta.x;
             
             // Slider
-            var sliderGo = ResourceLoader.TryGetPrefabObject(PrefabType.UiDebugSlider, parent: rootGo);
+            var sliderGo = _resourceCacheService.TryGetPrefabObject(PrefabType.UiDebugSlider, parent: rootGo);
 
             var sliderTransform = sliderGo!.GetComponent<RectTransform>();
             sliderTransform.anchorMin = new Vector2(0, 1);

@@ -8,6 +8,7 @@ using GUZ.Core.Adapters.Vob;
 using GUZ.Core.Extensions;
 using GUZ.Core.Logging;
 using GUZ.Core.Models.Container;
+using GUZ.Core.Services.Caches;
 using GUZ.Core.Services.Meshes;
 using GUZ.Core.Services.Vobs;
 using HurricaneVR.Framework.Components;
@@ -26,6 +27,7 @@ namespace GUZ.VR.Adapters.Vob.Container
     {
         [Inject] private readonly MeshService _meshService;
         [Inject] private readonly VobService _vobService;
+        [Inject] private readonly ResourceCacheService _resourceCacheService;
 
 
         private readonly char[] _itemNameSeparators = { ';', ',' };
@@ -307,9 +309,9 @@ namespace GUZ.VR.Adapters.Vob.Container
         /// </summary>
         private GameObject TempCreateItem(ItemInstance itemInstance)
         {
-            var go = ResourceLoader.TryGetPrefabObject(PrefabType.VobItem);
+            var go = _resourceCacheService.TryGetPrefabObject(PrefabType.VobItem);
             
-            var mrm = ResourceLoader.TryGetMultiResolutionMesh(itemInstance.Visual);
+            var mrm = _resourceCacheService.TryGetMultiResolutionMesh(itemInstance.Visual);
             return _meshService.CreateVob(itemInstance.Name, mrm, default, default, true, rootGo: go, useTextureArray: false);
         }
     }

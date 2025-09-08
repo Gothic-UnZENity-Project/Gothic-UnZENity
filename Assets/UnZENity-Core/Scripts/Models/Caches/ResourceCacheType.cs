@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using JetBrains.Annotations;
 using ZenKit;
 
-namespace GUZ.Core
+namespace GUZ.Core.Models.Caches
 {
     /// <summary>
     /// <b>Represents a cached resource of a given type <see cref="T"/>.</b>
@@ -17,7 +17,7 @@ namespace GUZ.Core
     /// </p>
     /// </summary>
     /// <typeparam name="T">The type of the resource, e.g. <see cref="Model"/></typeparam>
-    public class Resource<T>
+    public class ResourceCacheType<T>
     {
         private readonly Dictionary<string, T> _cache = new();
         private readonly Func<string, T> _loader;
@@ -30,12 +30,12 @@ namespace GUZ.Core
         /// A function which, when called, attempts to load an asset of type <see cref="T"/> with a given name. This
         /// function is only called once for each unique asset name. May throw.
         /// </param>
-        public Resource(Func<string, T> loader)
+        public ResourceCacheType(Func<string, T> loader)
         {
             _loader = loader;
         }
 
-        public Resource(Func<string, GameVersion, T> gameVersionLoader)
+        public ResourceCacheType(Func<string, GameVersion, T> gameVersionLoader)
         {
             _gameVersionLoader = gameVersionLoader;
         }

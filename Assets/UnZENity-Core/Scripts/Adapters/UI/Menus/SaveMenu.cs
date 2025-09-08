@@ -40,7 +40,8 @@ namespace GUZ.Core.Adapters.UI.Menus
         [Inject] private readonly TextureCacheService _textureCacheService;
         [Inject] private readonly SaveGameService _saveGameService;
         [Inject] private readonly BootstrapService _bootstrapService;
-        
+        [Inject] private readonly ResourceCacheService _resourceCacheService;
+
         
         /// <summary>
         /// Pre-fill the Load Game entries with names and textures (if existing)
@@ -74,7 +75,7 @@ namespace GUZ.Core.Adapters.UI.Menus
             _saveLoadStatus = _isSaving ? "SAVE" : "LOAD";
 
             var thumbnailGo = MenuItemCache["MENUITEM_LOADSAVE_THUMBPIC"].go;
-            Thumbnail = ResourceLoader.TryGetPrefabObject(PrefabType.UiThumbnail, name: "Thumbnail",
+            Thumbnail = _resourceCacheService.TryGetPrefabObject(PrefabType.UiThumbnail, name: "Thumbnail",
                 parent: thumbnailGo)!;
 
             Thumbnail.transform.localPosition = Vector3.zero;

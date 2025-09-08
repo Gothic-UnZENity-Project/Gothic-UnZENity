@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using GUZ.Core.Extensions;
+using Reflex.Attributes;
 using UnityEngine;
 
 namespace GUZ.Core.Services.Caches
@@ -12,6 +13,9 @@ namespace GUZ.Core.Services.Caches
     /// </summary>
     public class MorphMeshCacheService
     {
+        [Inject] private readonly ResourceCacheService _resourceCacheService;
+
+        
         /// <summary>
         /// Vertex mapping is used for Mesh Morphing as we need to map Unity data back to ZenKit data for updates.
         ///
@@ -102,7 +106,7 @@ namespace GUZ.Core.Services.Caches
             }
 
             // Create logic
-            var mmb = ResourceLoader.TryGetMorphMesh(mmbName);
+            var mmb = _resourceCacheService.TryGetMorphMesh(mmbName);
             var anim = mmb.Animations.First(anim => anim.Name.EqualsIgnoreCase(animationName));
 
             var originalVertexMapping = _vertexMapping[preparedMmbKey];

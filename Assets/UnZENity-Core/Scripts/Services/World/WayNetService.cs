@@ -9,6 +9,7 @@ using GUZ.Core.Models.Config;
 using GUZ.Core.Models.Vob.WayNet;
 using GUZ.Core.Models.WayNet;
 using GUZ.Core.Services;
+using GUZ.Core.Services.Caches;
 using JetBrains.Annotations;
 using Reflex.Attributes;
 using UnityEngine;
@@ -23,7 +24,8 @@ namespace GUZ.Core.Creator
     public class WayNetService
     {
         [Inject] private readonly GameStateService _gameStateService;
-        
+        [Inject] private readonly ResourceCacheService _resourceCacheService;
+
         public void Create(DeveloperConfig config, WorldContainer world)
         {
             var waynetObj = new GameObject("WayNet");
@@ -117,7 +119,7 @@ namespace GUZ.Core.Creator
 
             foreach (var waypoint in world.WayNet.Points)
             {
-                var wpObject = ResourceLoader.TryGetPrefabObject(PrefabType.WayPoint)!;
+                var wpObject = _resourceCacheService.TryGetPrefabObject(PrefabType.WayPoint)!;
 
                 if (debugDraw)
                 {

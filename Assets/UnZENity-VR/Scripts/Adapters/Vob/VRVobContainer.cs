@@ -7,6 +7,7 @@ using GUZ.Core.Const;
 using GUZ.Core.Extensions;
 using GUZ.Core.Logging;
 using GUZ.Core.Manager;
+using GUZ.Core.Services.Caches;
 using HurricaneVR.Framework.Components;
 using Reflex.Attributes;
 using UnityEngine;
@@ -19,6 +20,7 @@ namespace GUZ.VR.Adapters.Vob
     public class VRVobContainer : MonoBehaviour
     {
         [Inject] private readonly AudioService _audioService;
+        [Inject] private readonly ResourceCacheService _resourceCacheService;
 
         
         private static Dictionary<string, AudioClip> _containerOpenedClips = new();
@@ -57,7 +59,7 @@ namespace GUZ.VR.Adapters.Vob
             // If the sound isn't already loaded and cached: Do it now.
             if (!_containerClosedClips.ContainsKey(mdsName.ToLower()))
             {
-                var mds = ResourceLoader.TryGetModelScript(mdsName);
+                var mds = _resourceCacheService.TryGetModelScript(mdsName);
 
                 if (mds == null)
                 {

@@ -29,7 +29,8 @@ namespace GUZ.Core.Domain.Meshes.Builder
         [Inject] private readonly MorphMeshCacheService _morphMeshCacheService;
         [Inject] private readonly MultiTypeCacheService _multiTypeCacheService;
         [Inject] private readonly StaticCacheService _staticCacheService;
-        
+        [Inject] private readonly ResourceCacheService _resourceCacheService;
+
         protected GameObject RootGo;
         protected GameObject ParentGo;
         protected bool HasMeshCollider = true;
@@ -97,7 +98,7 @@ namespace GUZ.Core.Domain.Meshes.Builder
 
         public void SetMdh(string mdhName)
         {
-            Mdh = ResourceLoader.TryGetModelHierarchy(mdhName);
+            Mdh = _resourceCacheService.TryGetModelHierarchy(mdhName);
 
             if (Mdh == null)
             {
@@ -112,7 +113,7 @@ namespace GUZ.Core.Domain.Meshes.Builder
 
         public void SetMdm(string mdmName)
         {
-            Mdm = ResourceLoader.TryGetModelMesh(mdmName);
+            Mdm = _resourceCacheService.TryGetModelMesh(mdmName);
 
             if (Mdm == null)
             {
@@ -137,7 +138,7 @@ namespace GUZ.Core.Domain.Meshes.Builder
 
         public void SetMrm(string mrmName)
         {
-            Mrm = ResourceLoader.TryGetMultiResolutionMesh(mrmName);
+            Mrm = _resourceCacheService.TryGetMultiResolutionMesh(mrmName);
 
             if (Mrm == null)
             {
@@ -156,7 +157,7 @@ namespace GUZ.Core.Domain.Meshes.Builder
                 return;
             }
 
-            Mmb = ResourceLoader.TryGetMorphMesh(mmbName);
+            Mmb = _resourceCacheService.TryGetMorphMesh(mmbName);
 
             if (Mmb == null)
             {

@@ -28,6 +28,7 @@ namespace GUZ.VR.Adapters.Vob.VobItem
 
         [Inject] private readonly AudioService _audioService;
         [Inject] private readonly VmCacheService _vmCacheService;
+        [Inject] private readonly ResourceCacheService _resourceCacheService;
 
         
         // Do not eat them twice during destroy time.
@@ -84,7 +85,7 @@ namespace GUZ.VR.Adapters.Vob.VobItem
         {
             clip = null;
 
-            var mds = ResourceLoader.TryGetModelScript("Humans")!;
+            var mds = _resourceCacheService.TryGetModelScript("Humans")!;
             var animationName = string.Format(_animationSchemeWithSfx, item.SchemeName);
             var anim = mds.Animations.FirstOrDefault(i => i.Name.EqualsIgnoreCase(animationName));
             if (anim == null)

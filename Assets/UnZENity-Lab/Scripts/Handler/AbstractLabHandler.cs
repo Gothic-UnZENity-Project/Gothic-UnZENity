@@ -19,12 +19,13 @@ namespace GUZ.Lab.Handler
         [Inject] protected readonly MeshService MeshService;
         [Inject] protected readonly VobService VobService;
         [Inject] protected readonly GameStateService GameStateService;
+        [Inject] protected readonly ResourceCacheService ResourceCacheService;
 
 
         protected GameObject SpawnInteractable(string mdlName, PrefabType type, GameObject parentGo, Vector3 position = default, Quaternion rotation = default)
         {
-            var prefab = ResourceLoader.TryGetPrefabObject(type);
-            var mdl = ResourceLoader.TryGetModel(mdlName);
+            var prefab = ResourceCacheService.TryGetPrefabObject(type);
+            var mdl = ResourceCacheService.TryGetModel(mdlName);
 
             if (mdl == null)
             {
@@ -38,9 +39,9 @@ namespace GUZ.Lab.Handler
         
         protected GameObject SpawnItem(string itemName, GameObject parentGo, Vector3 position = default, PrefabType type = PrefabType.VobItem)
         {
-            var itemPrefab = ResourceLoader.TryGetPrefabObject(type);
+            var itemPrefab = ResourceCacheService.TryGetPrefabObject(type);
             var item = VmCacheService.TryGetItemData(itemName);
-            var mrm = ResourceLoader.TryGetMultiResolutionMesh(item.Visual);
+            var mrm = ResourceCacheService.TryGetMultiResolutionMesh(item.Visual);
             var itemGo = MeshService.CreateVob(item.Visual, mrm, position, default, true,
                 rootGo: itemPrefab, parent: parentGo, useTextureArray: false);
 

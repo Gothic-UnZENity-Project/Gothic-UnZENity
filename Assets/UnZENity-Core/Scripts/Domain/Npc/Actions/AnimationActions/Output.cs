@@ -6,6 +6,7 @@ using GUZ.Core.Extensions;
 using GUZ.Core.Const;
 using GUZ.Core.Manager;
 using GUZ.Core.Services;
+using GUZ.Core.Services.Caches;
 using GUZ.Core.Services.Config;
 using GUZ.Core.Services.Npc;
 using Reflex.Attributes;
@@ -21,6 +22,7 @@ namespace GUZ.Core.Domain.Npc.Actions.AnimationActions
         [Inject] private readonly AudioService _audioService;
         [Inject] private readonly NpcService _npcService;
         [Inject] private readonly GameStateService _gameStateService;
+        [Inject] private readonly ResourceCacheService _resourceCacheService;
 
         protected virtual string OutputName => Action.String0;
 
@@ -97,7 +99,7 @@ namespace GUZ.Core.Domain.Npc.Actions.AnimationActions
             {
                 // FIXME - We might need to check overlayMds and baseMds
                 // FIXME - We might need to save amount of gestures based on mds names (if they differ for e.g. humans and orcs)
-                var mds = ResourceLoader.TryGetModelScript(Props.MdsNameBase);
+                var mds = _resourceCacheService.TryGetModelScript(Props.MdsNameBase);
 
                 _gameStateService.Dialogs.GestureCount = mds.Animations
                     .Count(anim => anim.Name.StartsWithIgnoreCase("T_DIALOGGESTURE_"));

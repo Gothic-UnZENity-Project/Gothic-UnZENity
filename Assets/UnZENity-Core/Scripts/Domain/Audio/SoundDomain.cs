@@ -19,6 +19,7 @@ namespace GUZ.Core.Domain.Audio
         }
 
         [Inject] private readonly MultiTypeCacheService _multiTypeCacheService;
+        [Inject] private readonly ResourceCacheService _resourceCacheService;
 
         private ImaadpcmDecoderDomain _decoderDomain = new();
 
@@ -30,7 +31,7 @@ namespace GUZ.Core.Domain.Audio
             if (_multiTypeCacheService.AudioClips.TryGetValue(fileName, out AudioClip cachedClip))
                 return cachedClip;
 
-            var soundBytes = ResourceLoader.TryGetSoundBytes(fileName);
+            var soundBytes = _resourceCacheService.TryGetSoundBytes(fileName);
             if (soundBytes == null)
                 return null;
 

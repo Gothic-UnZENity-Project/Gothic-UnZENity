@@ -3,10 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using GUZ.Core;
-using GUZ.Core.Const;
 using GUZ.Core.Models.Vm;
-using GUZ.Core.Services;
-using GUZ.Core.Services.Caches;
 using TMPro;
 using UnityEngine;
 using ZenKit.Daedalus;
@@ -79,9 +76,9 @@ namespace GUZ.Lab.Handler
 
         private GameObject CreateItem(string itemName)
         {
-            var itemPrefab = ResourceLoader.TryGetPrefabObject(PrefabType.VobItem);
+            var itemPrefab = ResourceCacheService.TryGetPrefabObject(PrefabType.VobItem);
             var item = VmCacheService.TryGetItemData(itemName);
-            var mrm = ResourceLoader.TryGetMultiResolutionMesh(item.Visual);
+            var mrm = ResourceCacheService.TryGetMultiResolutionMesh(item.Visual);
             var itemGo = MeshService.CreateVob(item.Visual, mrm, default, default, true,
                 rootGo: itemPrefab, parent: ItemSpawnSlot, useTextureArray: false);
 

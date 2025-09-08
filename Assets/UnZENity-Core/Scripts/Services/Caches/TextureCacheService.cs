@@ -46,6 +46,7 @@ namespace GUZ.Core.Services.Caches
 
         [Inject] private readonly FrameSkipperService _frameSkipperService;
         [Inject] private readonly StaticCacheService _staticCacheService;
+        [Inject] private readonly ResourceCacheService _resourceCacheService;
 
         public static Dictionary<TextureArrayTypes, Texture> TextureArrays { get; } = new();
 
@@ -115,7 +116,7 @@ namespace GUZ.Core.Services.Caches
                 }
             }
 
-            return TryGetTexture(ResourceLoader.TryGetTexture(key), preparedKey, useCache);
+            return TryGetTexture(_resourceCacheService.TryGetTexture(key), preparedKey, useCache);
         }
 
         /// <summary>
@@ -186,7 +187,7 @@ namespace GUZ.Core.Services.Caches
         public void GetTextureArrayIndex(IMaterial materialData, out TextureArrayTypes textureArrayType, out int arrayIndex, out Vector2 textureScale, out int maxMipLevel, out int animFrameCount)
         {
             var textureName = materialData.Texture;
-            var texture = ResourceLoader.TryGetTexture(textureName);
+            var texture = _resourceCacheService.TryGetTexture(textureName);
 
             if (_staticCacheService.LoadedTextureInfoOpaque.ContainsKey(materialData.Texture))
             {
@@ -342,7 +343,7 @@ namespace GUZ.Core.Services.Caches
 
         public void GetTextureArrayEntry(string textureName, out Texture texture, out TextureArrayTypes textureType)
         {
-            GetTextureArrayEntry(ResourceLoader.TryGetTexture(textureName), out texture, out textureType);
+            GetTextureArrayEntry(_resourceCacheService.TryGetTexture(textureName), out texture, out textureType);
         }
 
         /// <summary>

@@ -69,7 +69,7 @@ namespace GUZ.Lab
         [Inject] private readonly TextureCacheService _textureCacheService;
         [Inject] private readonly MorphMeshCacheService _morphMeshCacheService;
         [Inject] private readonly MultiTypeCacheService _multiTypeCacheService;
-        
+        [Inject] private readonly ResourceCacheService _resourceCacheService;
         
         private BootstrapDomain _bootstrapDomain = new BootstrapDomain().Inject();
 
@@ -113,7 +113,7 @@ namespace GUZ.Lab
             _npcService = new NpcService();
             _vobService = new VobService();
 
-            ResourceLoader.Init(_configService.Root.Gothic1Path);
+            _resourceCacheService.Init(_configService.Root.Gothic1Path);
 
             // In lab, we can safely say: VR only!
             GameContext.ContextInteractionService = _contextInteractionService;

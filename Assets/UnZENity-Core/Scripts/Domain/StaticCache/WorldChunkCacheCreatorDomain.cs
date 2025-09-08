@@ -29,7 +29,8 @@ namespace GUZ.Core.Domain.StaticCache
         [Inject] private readonly ConfigService _configService;
         [Inject] private readonly FrameSkipperService _frameSkipperService;
         [Inject] private readonly LoadingService _loadingService;
-        
+        [Inject] private readonly ResourceCacheService _resourceCacheService;
+
         
         public Dictionary<TextureCacheService.TextureArrayTypes, List<WorldChunk>> MergedChunksByLights;
 
@@ -174,7 +175,7 @@ namespace GUZ.Core.Domain.StaticCache
                 {
                     var polygon = mesh.GetPolygon(polygonId);
                     var material = mesh.GetMaterial(polygon.MaterialIndex);
-                    var texture = ResourceLoader.TryGetTexture(material.Texture);
+                    var texture = _resourceCacheService.TryGetTexture(material.Texture);
 
                     if (texture == null)
                     {

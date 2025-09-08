@@ -68,6 +68,7 @@ namespace GUZ.VR.Adapters.Player
         [Inject] private readonly GameStateService _gameStateService;
         [Inject] private readonly AudioService _audioService;
         [Inject] private readonly VmCacheService _vmCacheService;
+        [Inject] private readonly ResourceCacheService _resourceCacheService;
 
 
         private void Start()
@@ -80,7 +81,7 @@ namespace GUZ.VR.Adapters.Player
             
 			GlobalEventDispatcher.ZenKitBootstrapped.AddListener(() =>
             {
-                var mds = ResourceLoader.TryGetModelScript("Humans")!;
+                var mds = _resourceCacheService.TryGetModelScript("Humans")!;
                 
                 // FIXME - In G1, there are different sounds for SwimBack, Sideways, and Forward
                 var swimAnim = mds.Animations.First(i => i.Name.EqualsIgnoreCase("s_SwimF"));

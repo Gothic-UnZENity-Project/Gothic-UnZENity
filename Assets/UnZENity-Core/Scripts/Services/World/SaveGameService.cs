@@ -7,6 +7,7 @@ using GUZ.Core.Logging;
 using GUZ.Core.Extensions;
 using GUZ.Core.Models.Adapter.Vobs;
 using GUZ.Core.Models.Container;
+using GUZ.Core.Services.Caches;
 using GUZ.Core.Services.Culling;
 using JetBrains.Annotations;
 using Reflex.Attributes;
@@ -63,7 +64,8 @@ namespace GUZ.Core.Services.World
 
         [Inject] private readonly GameStateService _gameStateService;
         [Inject] private readonly NpcMeshCullingService _npcMeshCullingService;
-        
+        [Inject] private readonly ResourceCacheService _resourceCacheService;
+
         
         public enum SlotId
         {
@@ -144,7 +146,7 @@ namespace GUZ.Core.Services.World
             }
 
             IsWorldLoadedForTheFirstTime = true;
-            ZenKit.World originalWorld = ResourceLoader.TryGetWorld(worldName)!; // Always needed for some data not present in SaveGame.
+            ZenKit.World originalWorld = _resourceCacheService.TryGetWorld(worldName)!; // Always needed for some data not present in SaveGame.
             ZenKit.World saveGameWorld = null;
             bool worldFoundInSaveGame = false;
 
@@ -241,7 +243,7 @@ namespace GUZ.Core.Services.World
                 if (worldContainer.SaveGameWorld == null)
                 {
                     // We simply load the world an additional time to have a Pointer to save later.
-                    worldContainer.SaveGameWorld = ResourceLoader.TryGetWorld(worldData.Key)!;
+                    worldContainer.SaveGameWorld = _resourceCacheService.TryGetWorld(worldData.Key)!;
                 }
                 
                 PrepareWorldDataForSaving(worldData.Key == CurrentWorldName, worldContainer);

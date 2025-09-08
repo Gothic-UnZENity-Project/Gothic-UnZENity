@@ -64,8 +64,10 @@ namespace GUZ.Core.Editor.Tools
 
             // Prepare configuration needed during execution.
             var config = new ConfigService();
-            config.LoadRootJson();
-            ResourceLoader.Init(version == GameVersion.Gothic1 ? config.Root.Gothic1Path : config.Root.Gothic2Path);
+            config.LoadRootJson(); 
+            
+            // FIXME - Inject won't work at EditorTime. Find another way.
+            // ResourceCacheService.Init(version == GameVersion.Gothic1 ? config.Root.Gothic1Path : config.Root.Gothic2Path);
 
             await Execute(version).AwaitAndLog();
         }
@@ -76,7 +78,9 @@ namespace GUZ.Core.Editor.Tools
             GameContext.ContextGameVersionService = version == GameVersion.Gothic1 ? new G1ContextService() : new G2ContextService();
 
             var worldName = SceneManager.GetActiveScene().name;
-            var world = ResourceLoader.TryGetWorld(worldName, version)!;
+            
+            // FIXME - Inject won't work at EditorTime. Find another way.
+            IWorld world = null; // _resourceCacheService.TryGetWorld(worldName, version)!;
             Logger.LogEditor("DONE - Loading world from ZenKit", LogCat.PreCaching);
 
             if (world == null)

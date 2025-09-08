@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using GUZ.Core.Logging;
 using GUZ.Core.Model.UI.Menu;
+using GUZ.Core.Services.Caches;
 using GUZ.Core.Services.Context;
 using MyBox;
 using Reflex.Attributes;
@@ -13,6 +14,7 @@ namespace GUZ.Core.Adapters.UI.Menus
     {
         [Inject] private readonly ContextMenuService _contextMenuService;
         [Inject] private readonly ContextInteractionService _contextInteractionService;
+        [Inject] private readonly ResourceCacheService _resourceCacheService;
 
         private Dictionary<string, GameObject> _menuList = new();
         private string _currentMenu;
@@ -51,7 +53,7 @@ namespace GUZ.Core.Adapters.UI.Menus
 
             foreach (var menuName in menuInstanceNames)
             {
-                var go = ResourceLoader.TryGetPrefabObject($"Prefabs/UI/Menus/{menuName}", parent: this.gameObject, worldPositionStays: false);
+                var go = _resourceCacheService.TryGetPrefabObject($"Prefabs/UI/Menus/{menuName}", parent: this.gameObject, worldPositionStays: false);
 
                 if (go == null)
                 {

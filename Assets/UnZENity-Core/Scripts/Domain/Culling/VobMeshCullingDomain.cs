@@ -24,6 +24,7 @@ namespace GUZ.Core.Domain.Culling
         [Inject] private readonly UnityMonoService _unityMonoService;
         [Inject] private readonly VmCacheService _vmCacheService;
         [Inject] private readonly StaticCacheService _staticCacheService;
+        [Inject] private readonly ResourceCacheService _resourceCacheService;
 
         // Stored for resetting after world switch
         private CullingGroup _cullingGroupSmall => CullingGroup;
@@ -309,7 +310,7 @@ namespace GUZ.Core.Domain.Culling
             if (vob.Type == VirtualObjectType.oCMobFire)
             {
                 var fireWorld =
-                    ResourceLoader.TryGetWorld(((IFire)vob).VobTree, GameContext.ContextGameVersionService.Version, true);
+                    _resourceCacheService.TryGetWorld(((IFire)vob).VobTree, GameContext.ContextGameVersionService.Version, true);
 
                 // e.g. "NC_FIREPLACE_STONE" has no VobTree. But could we potentially render it as mesh?
                 if (fireWorld == null)

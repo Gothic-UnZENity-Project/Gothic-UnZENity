@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using DirectMusic;
 using GUZ.Core.Logging;
-using GUZ.Core.Services;
+using GUZ.Core.Models.Caches;
 using JetBrains.Annotations;
 using UnityEngine;
 using ZenKit;
@@ -14,73 +14,26 @@ using Mesh = ZenKit.Mesh;
 using Object = UnityEngine.Object;
 using Texture = ZenKit.Texture;
 
-namespace GUZ.Core
+namespace GUZ.Core.Services.Caches
 {
-    public static class ResourceLoader
+    public class ResourceCacheService
     {
-        private static readonly Vfs _vfs = new();
-        private static readonly Loader _dmLoader = Loader.Create(LoaderOptions.Default | LoaderOptions.Download);
+        private readonly Vfs _vfs = new();
+        private readonly Loader _dmLoader = Loader.Create(LoaderOptions.Default | LoaderOptions.Download);
 
-        private static readonly Resource<World> _world = new(
-            (s, version) =>
-            {
-                // We do not cache the world itself, but only the loading pointer. As Mesh could exhaust our memory consumption.
-                var fireWorld = new World(_vfs, s, version);
+        private ResourceCacheType<ZenKit.World> _world;
+        private ResourceCacheType<IModelScript> _modelScript;
+        private ResourceCacheType<IModelAnimation> _modelAnimation;
+        private ResourceCacheType<IMesh> _mesh;
+        private ResourceCacheType<IModel> _model;
+        private ResourceCacheType<IModelHierarchy> _modelHierarchy;
+        private ResourceCacheType<IModelMesh> _modelMesh;
+        private ResourceCacheType<IMultiResolutionMesh> _multiResolutionMesh;
+        private ResourceCacheType<IMorphMesh> _morphMesh;
+        private ResourceCacheType<IFont> _font;
+        private ResourceCacheType<GameObject> _prefab;
 
-                // FIRE worlds aren't positioned at 0,0,0. We need to do it now, to have the correct parent-child positioning.
-                fireWorld.RootObjects.ForEach(i => i.Position = default);
-
-                return fireWorld;
-            }
-        );
-
-        private static readonly Resource<IModelScript> _modelScript = new(
-            s => new ModelScript(_vfs, s).Cache()
-        );
-
-        private static readonly Resource<IModelAnimation> _modelAnimation = new(
-            s => new ModelAnimation(_vfs, s).Cache()
-        );
-
-        private static readonly Resource<IMesh> _mesh = new(
-            s => new Mesh(_vfs, s).Cache()
-        );
-
-        private static readonly Resource<IModelHierarchy> _modelHierarchy = new(
-            s => new ModelHierarchy(_vfs, s).Cache()
-        );
-
-        private static readonly Resource<IModel> _model = new(
-            s => new ZenKit.Model(_vfs, s).Cache()
-        );
-
-        private static readonly Resource<IModelMesh> _modelMesh = new(
-            s => new ModelMesh(_vfs, s).Cache()
-        );
-
-        private static readonly Resource<IMultiResolutionMesh> _multiResolutionMesh = new(
-            s => new MultiResolutionMesh(_vfs, s).Cache()
-        );
-
-        private static readonly Resource<IMorphMesh> _morphMesh = new(
-            s => new MorphMesh(_vfs, s).Cache()
-        );
-
-        private static readonly Resource<IFont> _font = new(
-            s => new Font(_vfs, s).Cache()
-        );
-
-        private static readonly Resource<GameObject> _prefab = new(s =>
-        {
-            // Lookup is done in following places:
-            // 1. CONTEXT_NAME/Prefabs/... - overwrites lookup path below, used for specific prefabs, for current context (HVR, Flat, ...)
-            // 2. Prefabs/... - Located inside core module (UnZENity-Core), if we don't need special handling.
-            var contextPrefixPath = $"{GameContext.ContextInteractionService.GetContextName()}/{s}";
-            return new[] { contextPrefixPath, s }.Select(Resources.Load<GameObject>)
-                .FirstOrDefault(newPrefab => newPrefab != null);
-        });
-
-        public static void Init(string root)
+        public void Init(string root)
         {
             var workPath = FindWorkPath(root);
             var diskPaths = FindDiskPaths(root);
@@ -93,10 +46,43 @@ namespace GUZ.Core
                 var node = _vfs.Find(name);
                 return node?.Buffer.Bytes;
             });
+            
+            _world = new(
+                (s, version) =>
+                {
+                    // We do not cache the world itself, but only the loading pointer. As Mesh could exhaust our memory consumption.
+                    var fireWorld = new ZenKit.World(_vfs, s, version);
+
+                    // FIRE worlds aren't positioned at 0,0,0. We need to do it now, to have the correct parent-child positioning.
+                    fireWorld.RootObjects.ForEach(i => i.Position = default);
+
+                    return fireWorld;
+                }
+            );
+            
+            _modelScript = new(s => new ModelScript(_vfs, s).Cache());
+            _model = new(s => new ZenKit.Model(_vfs, s).Cache());
+            _modelAnimation = new(s => new ModelAnimation(_vfs, s).Cache());
+            _mesh = new(s => new Mesh(_vfs, s).Cache());
+            _modelHierarchy = new(s => new ModelHierarchy(_vfs, s).Cache() );
+            _modelMesh = new(s => new ModelMesh(_vfs, s).Cache());
+            _multiResolutionMesh = new(s => new MultiResolutionMesh(_vfs, s).Cache());
+            _morphMesh = new(s => new MorphMesh(_vfs, s).Cache());
+            _font = new(s => new Font(_vfs, s).Cache());
+            
+            _prefab = new(s =>
+            {
+                // Lookup is done in following places:
+                // 1. CONTEXT_NAME/Prefabs/... - overwrites lookup path below, used for specific prefabs, for current context (HVR, Flat, ...)
+                // 2. Prefabs/... - Located inside core module (UnZENity-Core), if we don't need special handling.
+                var contextPrefixPath = $"{GameContext.ContextInteractionService.GetContextName()}/{s}";
+                return new[] { contextPrefixPath, s }.Select(Resources.Load<GameObject>)
+                    .FirstOrDefault(newPrefab => newPrefab != null);
+            });
         }
 
         [CanBeNull]
-        public static ITexture TryGetTexture([NotNull] string key)
+        public ITexture TryGetTexture([NotNull] string key)
         {
             // Zen texture data is not cached as we do not need to keep the pixel data in memory as managed objects.
             // Instead, TextureCache loads the texture data when need and creates a Texture2D.
@@ -113,7 +99,7 @@ namespace GUZ.Core
         /// <summary>
         /// Once a world is loaded, release data which was cached during loading. We don't need it any longer and free up memory.
         /// </summary>
-        public static void ReleaseLoadedData()
+        public void ReleaseLoadedData()
         {
             _mesh.Dispose();
             _model.Dispose();
@@ -122,56 +108,56 @@ namespace GUZ.Core
         }
 
         [CanBeNull]
-        public static IModelScript TryGetModelScript([NotNull] string key)
+        public IModelScript TryGetModelScript([NotNull] string key)
         {
             return _modelScript.TryLoad($"{GetPreparedKey(key)}.mds", out var item) ? item : null;
         }
 
         [CanBeNull]
-        public static IModelAnimation TryGetModelAnimation([NotNull] string mds, [NotNull] string key)
+        public IModelAnimation TryGetModelAnimation([NotNull] string mds, [NotNull] string key)
         {
             key = $"{GetPreparedKey(mds)}-{GetPreparedKey(key)}.man";
             return _modelAnimation.TryLoad(key, out var item) ? item : null;
         }
 
         [CanBeNull]
-        public static IMesh TryGetMesh([NotNull] string key)
+        public IMesh TryGetMesh([NotNull] string key)
         {
             return _mesh.TryLoad($"{GetPreparedKey(key)}.msh", out var item) ? item : null;
         }
 
         [CanBeNull]
-        public static IModelHierarchy TryGetModelHierarchy([NotNull] string key)
+        public IModelHierarchy TryGetModelHierarchy([NotNull] string key)
         {
             return _modelHierarchy.TryLoad($"{GetPreparedKey(key)}.mdh", out var item) ? item : null;
         }
 
         [CanBeNull]
-        public static IModel TryGetModel([NotNull] string key)
+        public IModel TryGetModel([NotNull] string key)
         {
             return _model.TryLoad($"{GetPreparedKey(key)}.mdl", out var item) ? item : null;
         }
 
         [CanBeNull]
-        public static IModelMesh TryGetModelMesh([NotNull] string key)
+        public IModelMesh TryGetModelMesh([NotNull] string key)
         {
             return _modelMesh.TryLoad($"{GetPreparedKey(key)}.mdm", out var item) ? item : null;
         }
 
         [CanBeNull]
-        public static IMultiResolutionMesh TryGetMultiResolutionMesh([NotNull] string key)
+        public IMultiResolutionMesh TryGetMultiResolutionMesh([NotNull] string key)
         {
             return _multiResolutionMesh.TryLoad($"{GetPreparedKey(key)}.mrm", out var item) ? item : null;
         }
 
         [CanBeNull]
-        public static IMorphMesh TryGetMorphMesh([NotNull] string key)
+        public IMorphMesh TryGetMorphMesh([NotNull] string key)
         {
             return _morphMesh.TryLoad($"{GetPreparedKey(key)}.mmb", out var item) ? item : null;
         }
 
         [CanBeNull]
-        public static IFont TryGetFont([NotNull] string key)
+        public IFont TryGetFont([NotNull] string key)
         {
             return _font.TryLoad($"{GetPreparedKey(key)}.fnt", out var item) ? item : null;
         }
@@ -181,14 +167,14 @@ namespace GUZ.Core
         /// Please consider using SoundCreator.ToAudioClip() instead.
         /// </summary>
         [CanBeNull]
-        public static byte[] TryGetSoundBytes([NotNull] string key)
+        public byte[] TryGetSoundBytes([NotNull] string key)
         {
             var node = _vfs.Find($"{GetPreparedKey(key)}.wav");
             return node == null ? null : node.Buffer.Bytes;
         }
 
         [CanBeNull]
-        public static Segment TryGetSegment([NotNull] string key)
+        public Segment TryGetSegment([NotNull] string key)
         {
             // NOTE(lmichaelis): There is no caching required here, since the loader
             //                   already caches segments upon loading them
@@ -201,7 +187,7 @@ namespace GUZ.Core
         /// <see cref="GameStateService"/> instead.
         /// </summary>
         [CanBeNull]
-        public static DaedalusVm TryGetDaedalusVm([NotNull] string key)
+        public DaedalusVm TryGetDaedalusVm([NotNull] string key)
         {
             // NOTE(lmichaelis): These are not cached, since they contain internal state
             //                   which should not be shared.
@@ -209,9 +195,9 @@ namespace GUZ.Core
         }
 
         [CanBeNull]
-        public static World TryGetWorld([NotNull] string key)
+        public ZenKit.World TryGetWorld([NotNull] string key)
         {
-            return new World(_vfs, $"{GetPreparedKey(key)}.zen");
+            return new ZenKit.World(_vfs, $"{GetPreparedKey(key)}.zen");
         }
 
         /// <summary>
@@ -223,7 +209,7 @@ namespace GUZ.Core
         /// <param name="cacheFire"></param>
         /// <returns></returns>
         [CanBeNull]
-        public static World TryGetWorld([NotNull] string key, GameVersion version, bool cacheFire = false)
+        public ZenKit.World TryGetWorld([NotNull] string key, GameVersion version, bool cacheFire = false)
         {
             if (cacheFire)
             {
@@ -231,12 +217,12 @@ namespace GUZ.Core
             }
             else
             {
-                return new World(_vfs, $"{GetPreparedKey(key)}.zen", version);
+                return new ZenKit.World(_vfs, $"{GetPreparedKey(key)}.zen", version);
             }
         }
 
         [CanBeNull]
-        public static GameObject TryGetPrefabObject(PrefabType key, string name = null, GameObject parent = null)
+        public GameObject TryGetPrefabObject(PrefabType key, string name = null, GameObject parent = null)
         {
             // worldPositionStays=false - initialize the object at 0,0,0. If needed, we will later set positions.
 
@@ -253,7 +239,7 @@ namespace GUZ.Core
         /// 
         /// HINT: Please check if using PrefabType overload is better suited before using this function.
         /// </summary>
-        public static GameObject TryGetPrefabObject(string prefabPath, string name = null, GameObject parent = null, bool worldPositionStays = true)
+        public GameObject TryGetPrefabObject(string prefabPath, string name = null, GameObject parent = null, bool worldPositionStays = true)
         {
             var go = Object.Instantiate(TryGetPrefab(prefabPath), parent?.transform, worldPositionStays);
 
@@ -266,13 +252,13 @@ namespace GUZ.Core
         }
 
         [CanBeNull]
-        private static GameObject TryGetPrefab(PrefabType key)
+        private GameObject TryGetPrefab(PrefabType key)
         {
             return _prefab.TryLoad(key.Path(), out var item) ? item : null;
         }
         
         [CanBeNull]
-        private static GameObject TryGetPrefab(string prefabPath)
+        private GameObject TryGetPrefab(string prefabPath)
         {
             _prefab.TryLoad(prefabPath, out var item);
             
@@ -283,7 +269,7 @@ namespace GUZ.Core
         }
 
         [NotNull]
-        public static string GetPreparedKey([NotNull] string key)
+        public string GetPreparedKey([NotNull] string key)
         {
             return Path.GetFileNameWithoutExtension(key).ToLower();
         }
@@ -295,7 +281,7 @@ namespace GUZ.Core
         /// </summary>
         /// <param name="root">A path to a Gothic installation's root directory</param>
         /// <returns>The absolute path to the <c>_work</c> folder of the Gothic installation</returns>
-        private static string FindWorkPath(string root)
+        private string FindWorkPath(string root)
         {
             var path = Directory.GetDirectories(root, "_work", new EnumerationOptions
             {
@@ -312,7 +298,7 @@ namespace GUZ.Core
         /// </summary>
         /// <param name="root">A path to a Gothic installation's root directory</param>
         /// <returns>A list of absolute paths to all <c>.vdf</c> files the <c>data</c> folder of the Gothic installation</returns>
-        private static List<string> FindDiskPaths(string root)
+        private List<string> FindDiskPaths(string root)
         {
             var path = Directory.GetDirectories(root, "data", new EnumerationOptions
             {

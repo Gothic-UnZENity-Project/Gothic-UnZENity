@@ -29,6 +29,7 @@ namespace GUZ.VR.Domain.Player
         [Inject] private readonly VmCacheService _vmCacheService;
         [Inject] private readonly VRPlayerService _vrPlayerService;
         [Inject] private readonly AudioService _audioService;
+        [Inject] private readonly ResourceCacheService _resourceCacheService;
 
         private CharacterController _characterController => _vrPlayerService.VRContextInteractionService.GetVRPlayerController().CharacterController;
 
@@ -240,7 +241,7 @@ namespace GUZ.VR.Domain.Player
             var attackAnimationName = $"t_{(Is2HD() ? "2" : "1")}hAttackL";
 
             // FIXME - Combo settings for hero with more skills are in overlay mds (e.g., HUMANS_1HST2.mds) Use for improved weapon handling.
-            var mds = ResourceLoader.TryGetModelScript("Humans")!;
+            var mds = _resourceCacheService.TryGetModelScript("Humans")!;
             return mds.Animations.First(i => i.Name.EqualsIgnoreCase(attackAnimationName));
 
         }

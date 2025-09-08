@@ -30,6 +30,7 @@ namespace GUZ.Core.Domain.StaticCache
         [Inject] private readonly FrameSkipperService _frameSkipperService;
         [Inject] private readonly LoadingService _loadingService;
         [Inject] private readonly GameStateService _gameStateService;
+        [Inject] private readonly ResourceCacheService _resourceCacheService;
 
 
         public async Task CalculateVobBounds(List<IVirtualObject> vobs, int worldIndex)
@@ -138,7 +139,7 @@ namespace GUZ.Core.Domain.StaticCache
                     // In G1 it is only ITLSTORCHBURNING.ZEN --> RootObjects[0].Visual=ITLS_TORCHBURNED_01.3DS
                     if (item.Visual.EndsWith(".ZEN"))
                     {
-                        var world = ResourceLoader.TryGetWorld(item.Visual, GameContext.ContextGameVersionService.Version);
+                        var world = _resourceCacheService.TryGetWorld(item.Visual, GameContext.ContextGameVersionService.Version);
                         if (world!.RootObjects.Count != 1)
                         {
                             Logger.LogError(
@@ -172,7 +173,7 @@ namespace GUZ.Core.Domain.StaticCache
             switch (visualType)
             {
                 case VisualType.Mesh:
-                    var msh = ResourceLoader.TryGetMesh(visualName);
+                    var msh = _resourceCacheService.TryGetMesh(visualName);
 
                     if (msh == null)
                     {
@@ -182,7 +183,7 @@ namespace GUZ.Core.Domain.StaticCache
                     bounds = GetBoundsByOrientedBbox(msh.OrientedBoundingBox);
                     break;
                 case VisualType.MultiResolutionMesh:
-                    var mrm = ResourceLoader.TryGetMultiResolutionMesh(visualName);
+                    var mrm = _resourceCacheService.TryGetMultiResolutionMesh(visualName);
 
                     if (mrm == null)
                     {
@@ -192,7 +193,7 @@ namespace GUZ.Core.Domain.StaticCache
                     bounds = GetBoundsByOrientedBbox(mrm.OrientedBoundingBox);
                     break;
                case VisualType.Model:
-                    var mdl = ResourceLoader.TryGetModel(visualName);
+                    var mdl = _resourceCacheService.TryGetModel(visualName);
                     IModelMesh mdm;
                     if (mdl != null)
                     {
@@ -201,7 +202,7 @@ namespace GUZ.Core.Domain.StaticCache
                     else
                     {
                         // Some models miss their wrapping .mdl file. We therefore load the .mdm file (with same name) directly.
-                        mdm = ResourceLoader.TryGetModelMesh(visualName);
+                        mdm = _resourceCacheService.TryGetModelMesh(visualName);
                     }
 
                     foreach (var mesh in mdm!.Meshes)
@@ -216,7 +217,7 @@ namespace GUZ.Core.Domain.StaticCache
 
                     break;
                 case VisualType.MorphMesh:
-                    var mmb = ResourceLoader.TryGetMorphMesh(visualName);
+                    var mmb = _resourceCacheService.TryGetMorphMesh(visualName);
 
                     if (mmb == null)
                     {

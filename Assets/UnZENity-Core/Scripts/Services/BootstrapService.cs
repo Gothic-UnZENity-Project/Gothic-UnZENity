@@ -31,6 +31,7 @@ namespace GUZ.Core.Services
         private FileLoggingHandler _fileLoggingHandler;
 
 
+        [Inject] private readonly ResourceCacheService _resourceCacheService;
         [Inject] private readonly ContextInteractionService _contextInteractionService;
         [Inject] private readonly ContextGameVersionService _contextGameVersionService;
         
@@ -122,7 +123,7 @@ namespace GUZ.Core.Services
 
             // Otherwise, continue loading Gothic.
             Logger.Log($"Initializing Gothic installation at: {gothicRootPath}", LogCat.Loading);
-            ResourceLoader.Init(gothicRootPath);
+            _resourceCacheService.Init(gothicRootPath);
 
             _audioService.InitMusic();
             _staticCacheService.Init();

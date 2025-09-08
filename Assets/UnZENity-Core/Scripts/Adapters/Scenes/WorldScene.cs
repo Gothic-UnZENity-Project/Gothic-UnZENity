@@ -10,6 +10,7 @@ using GUZ.Core.Logging;
 using GUZ.Core.Manager;
 using GUZ.Core.Models.Vob.WayNet;
 using GUZ.Core.Services;
+using GUZ.Core.Services.Caches;
 using GUZ.Core.Services.Config;
 using GUZ.Core.Services.Meshes;
 using GUZ.Core.Services.Npc;
@@ -39,7 +40,8 @@ namespace GUZ.Core.Adapters.Scenes
         [Inject] private readonly StaticCacheService _staticCacheService;
         [Inject] private readonly StationaryLightsService _stationaryLightsService;
         [Inject] private readonly PlayerService _playerService;
-        
+        [Inject] private readonly ResourceCacheService _resourceCacheService;
+
         public void Init()
         {
 #pragma warning disable CS4014 // Do not wait. We want to update player movement (VR) and camera view (progress bar)
@@ -139,7 +141,7 @@ namespace GUZ.Core.Adapters.Scenes
 
                 // World fully loaded
                 // TODO - Does this call add benefits for memory?
-                ResourceLoader.ReleaseLoadedData();
+                _resourceCacheService.ReleaseLoadedData();
 
                 // TODO - Still needed?
                 worldRoot.SetActive(true);

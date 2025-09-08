@@ -31,6 +31,7 @@ namespace GUZ.Core.Domain.Audio
 
         [Inject] private ConfigService _configService;
         [Inject] private readonly MultiTypeCacheService _multiTypeCacheService;
+        [Inject] private readonly ResourceCacheService _resourceCacheService;
 
 
         // Depending on speed of track, 2048 == around less than a second
@@ -113,7 +114,7 @@ namespace GUZ.Core.Domain.Audio
                 return;
             }
 
-            var segment = ResourceLoader.TryGetSegment(theme.File);
+            var segment = _resourceCacheService.TryGetSegment(theme.File);
 
             var timing = ToTiming(theme.TransSubType);
             var embellishment = ToEmbellishment(theme.TransType);
@@ -157,7 +158,7 @@ namespace GUZ.Core.Domain.Audio
         private void InitializeDxMusic()
         {
             // Load the VM and initialize all music theme instances
-            _vm = ResourceLoader.TryGetDaedalusVm("MUSIC");
+            _vm = _resourceCacheService.TryGetDaedalusVm("MUSIC");
             _vm.GetInstanceSymbols("C_MUSICTHEME").ForEach(v =>
             {
                 _themes[v.Name] = _vm.InitInstance<MusicThemeInstance>(v);

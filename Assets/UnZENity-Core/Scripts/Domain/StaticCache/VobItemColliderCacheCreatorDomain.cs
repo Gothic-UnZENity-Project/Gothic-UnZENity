@@ -22,6 +22,7 @@ namespace GUZ.Core.Domain.StaticCache
         [Inject] private readonly FrameSkipperService _frameSkipperService;
         [Inject] private readonly LoadingService _loadingService;
         [Inject] private readonly GameStateService _gameStateService;
+        [Inject] private readonly ResourceCacheService _resourceCacheService;
 
         
         [Serializable]
@@ -84,7 +85,7 @@ namespace GUZ.Core.Domain.StaticCache
         public void GenerateItemColliders(string visualName, Dictionary<string, Bounds> cachedVobBounds, float widthThreshold = 0.4f, int minVerticesPerSegment = 3,
             int samples = 50, float segmentDistance = 0.05f)
         {
-            var mrm = ResourceLoader.TryGetMultiResolutionMesh(visualName)?.Cache();
+            var mrm = _resourceCacheService.TryGetMultiResolutionMesh(visualName)?.Cache();
             if (mrm == null)
                 return;
 

@@ -117,7 +117,7 @@ namespace GUZ.Lab.Handler
             var npcInstanceName = NpcDropdown.options[NpcDropdown.value].text;
             var npcData = _npcs[npcInstanceName];
 
-            var newNpc = ResourceLoader.TryGetPrefabObject(PrefabType.Npc);
+            var newNpc = ResourceCacheService.TryGetPrefabObject(PrefabType.Npc);
             newNpc.SetParent(NpcSlotGo);
             newNpc.name = npcData.Name;
 

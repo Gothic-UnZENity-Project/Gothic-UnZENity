@@ -1,5 +1,4 @@
 using System.Linq;
-using GUZ.Core;
 using GUZ.Core.Manager;
 using Reflex.Attributes;
 using TMPro;
@@ -15,7 +14,7 @@ namespace GUZ.Lab.Handler
 
         public override void Bootstrap()
         {
-            var vm = ResourceLoader.TryGetDaedalusVm("SFX");
+            var vm = ResourceCacheService.TryGetDaedalusVm("SFX");
 
             var sfxInstances = vm.GetInstanceSymbols("C_SFX")
                 .Select(s => s.Name)

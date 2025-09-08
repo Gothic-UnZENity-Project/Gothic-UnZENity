@@ -5,6 +5,7 @@ using GUZ.Core.Extensions;
 using GUZ.Core.Const;
 using GUZ.Core.Models.Config;
 using GUZ.Core.Services;
+using GUZ.Core.Services.Caches;
 using GUZ.Core.Services.Config;
 using GUZ.Core.Services.Context;
 using GUZ.VR.Adapters.HVROverrides;
@@ -23,6 +24,7 @@ namespace GUZ.VR.Services.Context
     public class VRContextInteractionService : IContextInteractionService
     {
         [Inject] private readonly ConfigService _configService;
+        [Inject] private readonly ResourceCacheService _resourceCacheService;
 
         private const string _contextName = "VR";
 
@@ -148,7 +150,7 @@ namespace GUZ.VR.Services.Context
             
             if (chapterPrefab == null)
             {
-                chapterPrefab = ResourceLoader.TryGetPrefabObject(PrefabType.StoryIntroduceChapter);
+                chapterPrefab = _resourceCacheService.TryGetPrefabObject(PrefabType.StoryIntroduceChapter);
                 SceneManager.MoveGameObjectToScene(chapterPrefab, playerScene);
             }
             

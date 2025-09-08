@@ -3,6 +3,7 @@ using GUZ.Core.Adapters.Properties.Vob;
 using GUZ.Core.Const;
 using GUZ.Core.Extensions;
 using GUZ.Core.Logging;
+using GUZ.Core.Services.Caches;
 using GUZ.Core.Services.Meshes;
 using Reflex.Attributes;
 using UnityEngine;
@@ -19,6 +20,7 @@ namespace GUZ.Core.Domain.Meshes.Builder
     public class VobPfxMeshBuilder : AbstractMeshBuilder
     {
         [Inject] private readonly TextureService _textureService;
+        [Inject] private readonly ResourceCacheService _resourceCacheService;
 
         
         private IVirtualObject _vob;
@@ -30,7 +32,7 @@ namespace GUZ.Core.Domain.Meshes.Builder
 
         public override GameObject Build()
         {
-            var pfxGo = ResourceLoader.TryGetPrefabObject(PrefabType.VobPfx);
+            var pfxGo = _resourceCacheService.TryGetPrefabObject(PrefabType.VobPfx);
             pfxGo.name = _vob.Visual!.Name;
             pfxGo.SetParent(ParentGo);
 

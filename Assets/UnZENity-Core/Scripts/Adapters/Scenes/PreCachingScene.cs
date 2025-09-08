@@ -25,6 +25,7 @@ namespace GUZ.Core.Adapters.Scenes
         [Inject] private readonly LoadingService _loadingService;
         [Inject] private readonly StaticCacheService _staticCacheService;
         [Inject] private readonly BootstrapService _bootstrapService;
+        [Inject] private readonly ResourceCacheService _resourceCacheService;
 
         [SerializeField]
         private PreCachingLoadingBarHandler _loadingBarHandler;
@@ -113,7 +114,7 @@ namespace GUZ.Core.Adapters.Scenes
                     var worldName = worldsToLoad[worldIndex];
                         
                     Logger.Log($"### PreCaching meshes for world: {worldName}", LogCat.PreCaching);
-                    var world = ResourceLoader.TryGetWorld(worldName, GameContext.ContextGameVersionService.Version)!;
+                    var world = _resourceCacheService.TryGetWorld(worldName, GameContext.ContextGameVersionService.Version)!;
                     var stationaryLightCache = new StationaryLightCacheCreatorDomain().Inject();
                     var worldChunkCache = new WorldChunkCacheCreatorDomain().Inject();
 

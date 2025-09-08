@@ -1,11 +1,7 @@
 using System.Linq;
-using GUZ.Core;
 using GUZ.Core.Manager;
-using GUZ.Core.Services;
 using Reflex.Attributes;
 using TMPro;
-using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace GUZ.Lab.Handler
 {
@@ -17,7 +13,7 @@ namespace GUZ.Lab.Handler
 
         public override void Bootstrap()
         {
-            var vm = ResourceLoader.TryGetDaedalusVm("MUSIC");
+            var vm = ResourceCacheService.TryGetDaedalusVm("MUSIC");
 
             var musicInstances = vm.GetInstanceSymbols("C_MUSICTHEME")
                 .Select(s => s.Name)

@@ -5,6 +5,7 @@ using GUZ.Core.Logging;
 using GUZ.Core.Model.UI.Menu;
 using GUZ.Core.Model.UI.MenuItem;
 using GUZ.Core.Services;
+using GUZ.Core.Services.Caches;
 using GUZ.Core.Services.World;
 using MyBox;
 using Reflex.Attributes;
@@ -73,7 +74,8 @@ namespace GUZ.Core.Adapters.UI.Menus
 
         [Inject] private readonly GameTimeService _gameTimeService;
         [Inject] private readonly StoryService _storyService;
-        
+        [Inject] private readonly ResourceCacheService _resourceCacheService;
+
 
         private class ListItemContainer
         {
@@ -160,7 +162,7 @@ namespace GUZ.Core.Adapters.UI.Menus
                 // Create Item GameObjects (22x)
                 for (var i = 0; i < _visibleListItemAmount; i++)
                 {
-                    var itemGo = ResourceLoader.TryGetPrefabObject(PrefabType.UiButton, name: $"{i}", parent: listEntry.go)!;
+                    var itemGo = _resourceCacheService.TryGetPrefabObject(PrefabType.UiButton, name: $"{i}", parent: listEntry.go)!;
                     container.ItemGOs[i] = itemGo;
 
                     var rect = itemGo.GetComponentInChildren<RectTransform>();
@@ -186,7 +188,7 @@ namespace GUZ.Core.Adapters.UI.Menus
                 {
                     // UP
                     {
-                        var go = ResourceLoader.TryGetPrefabObject(PrefabType.UiButtonTextured, name: "ARROW_UP", parent: listEntry.go)!;
+                        var go = _resourceCacheService.TryGetPrefabObject(PrefabType.UiButtonTextured, name: "ARROW_UP", parent: listEntry.go)!;
                         var rect = go.GetComponentInChildren<RectTransform>();
                         var rend = go.GetComponentInChildren<MeshRenderer>();
                         var button = go.GetComponentInChildren<Button>();
@@ -204,7 +206,7 @@ namespace GUZ.Core.Adapters.UI.Menus
 
                     // DOWN
                     {
-                        var go = ResourceLoader.TryGetPrefabObject(PrefabType.UiButtonTextured, name: "ARROW_DOWN", parent: listEntry.go)!;
+                        var go = _resourceCacheService.TryGetPrefabObject(PrefabType.UiButtonTextured, name: "ARROW_DOWN", parent: listEntry.go)!;
                         var rect = go.GetComponentInChildren<RectTransform>();
                         var rend = go.GetComponentInChildren<MeshRenderer>();
                         var button = go.GetComponentInChildren<Button>();
@@ -238,7 +240,7 @@ namespace GUZ.Core.Adapters.UI.Menus
 
             // UP
             {
-                var go = ResourceLoader.TryGetPrefabObject(PrefabType.UiButtonTextured, name: "ARROW_UP", parent: contentViewer.go)!;
+                var go = _resourceCacheService.TryGetPrefabObject(PrefabType.UiButtonTextured, name: "ARROW_UP", parent: contentViewer.go)!;
                 var rect = go.GetComponentInChildren<RectTransform>();
                 var rend = go.GetComponentInChildren<MeshRenderer>();
                 var button = go.GetComponentInChildren<Button>();
@@ -255,7 +257,7 @@ namespace GUZ.Core.Adapters.UI.Menus
 
             // DOWN
             {
-                var go = ResourceLoader.TryGetPrefabObject(PrefabType.UiButtonTextured, name: "ARROW_DOWN", parent: contentViewer.go)!;
+                var go = _resourceCacheService.TryGetPrefabObject(PrefabType.UiButtonTextured, name: "ARROW_DOWN", parent: contentViewer.go)!;
                 var rect = go.GetComponentInChildren<RectTransform>();
                 var rend = go.GetComponentInChildren<MeshRenderer>();
                 var button = go.GetComponentInChildren<Button>();
@@ -272,7 +274,7 @@ namespace GUZ.Core.Adapters.UI.Menus
 
             // BACK
             {
-                var go = ResourceLoader.TryGetPrefabObject(PrefabType.UiButtonTextured, name: "ARROW_BACK", parent: contentViewer.go)!;
+                var go = _resourceCacheService.TryGetPrefabObject(PrefabType.UiButtonTextured, name: "ARROW_BACK", parent: contentViewer.go)!;
                 var rect = go.GetComponentInChildren<RectTransform>();
                 var rend = go.GetComponentInChildren<MeshRenderer>();
                 var button = go.GetComponentInChildren<Button>();

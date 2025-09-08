@@ -29,6 +29,7 @@ namespace GUZ.Core.Domain.StaticCache
         [Inject] private readonly FrameSkipperService _frameSkipperService;
         [Inject] private readonly LoadingService _loadingService;
         [Inject] private readonly GameStateService _gameStateService;
+        [Inject] private readonly ResourceCacheService _resourceCacheService;
 
         
         /// <summary>
@@ -149,7 +150,7 @@ namespace GUZ.Core.Domain.StaticCache
             switch (vob.Visual!.Type)
             {
                 case VisualType.Mesh:
-                    var mdm = ResourceLoader.TryGetModelMesh(vob.GetVisualName());
+                    var mdm = _resourceCacheService.TryGetModelMesh(vob.GetVisualName());
 
                     if (mdm == null)
                     {
@@ -160,7 +161,7 @@ namespace GUZ.Core.Domain.StaticCache
                     mdm.Attachments.ForEach(mesh => mesh.Value.Materials.ForEach(material => AddTextureToCache(material.Group, material.Texture)));
                     break;
                 case VisualType.MultiResolutionMesh:
-                    var mrm = ResourceLoader.TryGetMultiResolutionMesh(vob.GetVisualName());
+                    var mrm = _resourceCacheService.TryGetMultiResolutionMesh(vob.GetVisualName());
 
                     if (mrm == null)
                     {
@@ -170,7 +171,7 @@ namespace GUZ.Core.Domain.StaticCache
                     mrm.Materials.ForEach(material => AddTextureToCache(material.Group, material.Texture));
                     break;
                 case VisualType.Model:
-                    var mdl = ResourceLoader.TryGetModel(vob.GetVisualName());
+                    var mdl = _resourceCacheService.TryGetModel(vob.GetVisualName());
 
                     if (mdl == null)
                     {
@@ -181,7 +182,7 @@ namespace GUZ.Core.Domain.StaticCache
                     mdl.Mesh.Attachments.ForEach(mesh => mesh.Value.Materials.ForEach(material => AddTextureToCache(material.Group, material.Texture)));
                     break;
                 case VisualType.MorphMesh:
-                    var mmb = ResourceLoader.TryGetMorphMesh(vob.GetVisualName());
+                    var mmb = _resourceCacheService.TryGetMorphMesh(vob.GetVisualName());
 
                     if (mmb == null)
                     {
@@ -201,7 +202,7 @@ namespace GUZ.Core.Domain.StaticCache
                 return;
             }
 
-            var texture = ResourceLoader.TryGetTexture(textureName);
+            var texture = _resourceCacheService.TryGetTexture(textureName);
 
             if (texture == null)
             {
@@ -268,7 +269,7 @@ namespace GUZ.Core.Domain.StaticCache
             {
                 // Replace the frame number in the key with the current id
                 var frameKey = Regex.Replace(textureName, "_[Aa]0", $"_A{id}");
-                var zkTex = ResourceLoader.TryGetTexture(frameKey);
+                var zkTex = _resourceCacheService.TryGetTexture(frameKey);
 
                 if (zkTex == null)
                 {
@@ -284,7 +285,7 @@ namespace GUZ.Core.Domain.StaticCache
         private void AddTexInfoForItem(ItemInstance item)
         {
             // MDL
-            var mdl = ResourceLoader.TryGetModel(item.Visual);
+            var mdl = _resourceCacheService.TryGetModel(item.Visual);
             if (mdl != null)
             {
                 mdl.Mesh.Meshes.ForEach(mesh => mesh.Mesh.Materials.ForEach(material => AddTextureToCache(material.Group, material.Texture)));
@@ -293,8 +294,8 @@ namespace GUZ.Core.Domain.StaticCache
             }
 
             // MDH+MDM (without MDL as wrapper)
-            var mdh = ResourceLoader.TryGetModelHierarchy(item.Visual);
-            var mdm = ResourceLoader.TryGetModelMesh(item.Visual);
+            var mdh = _resourceCacheService.TryGetModelHierarchy(item.Visual);
+            var mdm = _resourceCacheService.TryGetModelMesh(item.Visual);
             if (mdh != null && mdm != null)
             {
                 mdm.Meshes.ForEach(mesh => mesh.Mesh.Materials.ForEach(material => AddTextureToCache(material.Group, material.Texture)));
@@ -303,7 +304,7 @@ namespace GUZ.Core.Domain.StaticCache
             }
 
             // MMB
-            var mmb = ResourceLoader.TryGetMorphMesh(item.Visual);
+            var mmb = _resourceCacheService.TryGetMorphMesh(item.Visual);
             if (mmb != null)
             {
                 mmb.Mesh.Materials.ForEach(material => AddTextureToCache(material.Group, material.Texture));
@@ -311,7 +312,7 @@ namespace GUZ.Core.Domain.StaticCache
             }
 
             // MRM
-            var mrm = ResourceLoader.TryGetMultiResolutionMesh(item.Visual);
+            var mrm = _resourceCacheService.TryGetMultiResolutionMesh(item.Visual);
             if (mrm != null)
             {
                 mrm.Materials.ForEach(material => AddTextureToCache(material.Group, material.Texture));
