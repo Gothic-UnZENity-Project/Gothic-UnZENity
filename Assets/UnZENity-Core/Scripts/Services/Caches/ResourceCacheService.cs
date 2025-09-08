@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using DirectMusic;
+using GUZ.Core.Extensions;
 using GUZ.Core.Logging;
 using GUZ.Core.Models.Caches;
 using JetBrains.Annotations;

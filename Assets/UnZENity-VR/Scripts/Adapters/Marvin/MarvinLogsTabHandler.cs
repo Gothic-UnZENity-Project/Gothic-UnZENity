@@ -16,7 +16,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using ILogger = UberLogger.ILogger;
 using Logger = UberLogger.Logger;
-using PrefabType = GUZ.Core.PrefabType;
+using PrefabType = GUZ.Core.Models.Caches.PrefabType;
 
 namespace GUZ.VR.Adapters.Marvin
 {

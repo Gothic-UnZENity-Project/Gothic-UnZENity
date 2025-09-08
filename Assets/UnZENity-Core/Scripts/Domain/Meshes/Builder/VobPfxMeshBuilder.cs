@@ -3,6 +3,7 @@ using GUZ.Core.Adapters.Properties.Vob;
 using GUZ.Core.Const;
 using GUZ.Core.Extensions;
 using GUZ.Core.Logging;
+using GUZ.Core.Models.Caches;
 using GUZ.Core.Services.Caches;
 using GUZ.Core.Services.Meshes;
 using Reflex.Attributes;
