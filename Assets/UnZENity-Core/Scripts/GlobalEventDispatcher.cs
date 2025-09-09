@@ -1,7 +1,11 @@
 ﻿using System;
+using GUZ.Core.Adapters.Npc;
+using GUZ.Core.Models.Container;
+using GUZ.Core.Models.Context;
 using UnityEngine;
 using UnityEngine.Events;
 using ZenKit;
+using ZenKit.Vobs;
 
 namespace GUZ.Core
 {
@@ -13,8 +17,8 @@ namespace GUZ.Core
     {
         // We need to ensure, that other modules will register themselves based on current Control+GameMode setting.
         // Since we can't call them (e.g. Flat/VR) directly, we need to leverage this IoC pattern.
-        public static readonly UnityEvent<GameContext.Controls> RegisterControlAdapters = new();
-        public static readonly UnityEvent<GameVersion> RegisterGameVersionAdapters = new();
+        public static readonly UnityEvent<Controls> RegisterControlsService = new();
+        public static readonly UnityEvent<GameVersion> RegisterGameVersionService = new();
 
         // Events are named in order of execution during a normal game play.
         public static readonly UnityEvent PlayerSceneLoaded = new();
@@ -35,5 +39,11 @@ namespace GUZ.Core
         public static readonly UnityEvent<string, object> PlayerPrefUpdated = new();
         
         public static readonly UnityEvent LoadGameStart = new();
+        
+        
+        public static readonly UnityEvent<NpcContainer, NpcLoader, bool, bool> NpcMeshCullingChanged = new();
+        public static readonly UnityEvent<GameObject> VobMeshCullingChanged = new();
+
+        public static readonly UnityEvent<INpc> CreateNpcCalled = new();
     }
 }

@@ -1,7 +1,8 @@
-using GUZ.Core.Util;
+using System;
+using GUZ.Core.Logging;
 using UnityEditor;
 using UnityEngine;
-using Logger = GUZ.Core.Util.Logger;
+using Logger = GUZ.Core.Logging.Logger;
 
 namespace GUZ.Core.Editor.Tools
 {
@@ -21,7 +22,7 @@ namespace GUZ.Core.Editor.Tools
         [MenuItem("UnZENity/Debug/SceneView/Move to Position", priority = 200)]
         private static void SetSceneCameraPosition()
         {
-            var window = ScriptableObject.CreateInstance<SceneViewCameraQuickMoveTool>();
+            var window = CreateInstance<SceneViewCameraQuickMoveTool>();
             window.position = new Rect(0, 0, 250, 100);
             window.ShowPopup();
         }
@@ -44,7 +45,7 @@ namespace GUZ.Core.Editor.Tools
 
             // Create dropdown
             _selectedPositionIndex = EditorGUILayout.Popup("Position", _selectedPositionIndex,
-                System.Array.ConvertAll(cameraPositions, pos => pos.Name));
+                Array.ConvertAll(cameraPositions, pos => pos.Name));
 
             EditorGUILayout.Space(10);
 

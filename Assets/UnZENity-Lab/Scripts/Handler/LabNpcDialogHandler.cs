@@ -1,13 +1,14 @@
 using System.Collections;
-using GUZ.Core;
+using GUZ.Core.Adapters.Adnimations;
+using GUZ.Core.Adapters.Npc;
 using GUZ.Core.Animations;
-using GUZ.Core.Caches;
-using GUZ.Core.Data.Adapter.Vobs;
-using GUZ.Core.Data.Container;
 using GUZ.Core.Extensions;
-using GUZ.Core.Globals;
-using GUZ.Core.Npc;
+using GUZ.Core.Models.Adapter.Vobs;
+using GUZ.Core.Models.Container;
+using GUZ.Core.Services.Caches;
+using GUZ.Core.Services.Npc;
 using GUZ.Lab.Mocks;
+using Reflex.Attributes;
 using UnityEngine;
 using ZenKit.Daedalus;
 
@@ -16,6 +17,10 @@ namespace GUZ.Lab.Handler
     public class LabNpcDialogHandler : AbstractLabHandler
     {
         public GameObject NpcSlotGo;
+
+        [Inject] private readonly MultiTypeCacheService _multiTypeCacheService;
+        [Inject] private readonly NpcService _npcService;
+
 
         private string _bloodwynInstanceId = "GRD_233_Bloodwyn";
         private NpcInstance _bloodwynInstance;
@@ -41,7 +46,7 @@ namespace GUZ.Lab.Handler
 
             // For UseItemToState animations
             var props = npcRoot.GetComponentInParent<NpcLoader>().Npc.GetUserData().Props;
-            var beerSymbol = GameData.GothicVm.GetSymbolByName("ItFoBeer");
+            var beerSymbol = GameStateService.GothicVm.GetSymbolByName("ItFoBeer");
             props.CurrentItem = beerSymbol!.Index;
 
             yield return new WaitForSeconds(1f);
@@ -135,8 +140,8 @@ namespace GUZ.Lab.Handler
 
             newNpc.SetParent(NpcSlotGo);
 
-            var npcSymbol = GameData.GothicVm.GetSymbolByName(_bloodwynInstanceId)!;
-            _bloodwynInstance = GameData.GothicVm.AllocInstance<NpcInstance>(npcSymbol);
+            var npcSymbol = GameStateService.GothicVm.GetSymbolByName(_bloodwynInstanceId)!;
+            _bloodwynInstance = GameStateService.GothicVm.AllocInstance<NpcInstance>(npcSymbol);
 
             var npcData = new NpcContainer
             {
@@ -147,22 +152,22 @@ namespace GUZ.Lab.Handler
 
             _bloodwynInstance.UserData = npcData;
             loaderComp.Npc = _bloodwynInstance;
-            MultiTypeCache.NpcCache.Add(npcData);
+            _multiTypeCacheService.NpcCache.Add(npcData);
 
             newNpc.name = _bloodwynInstance.GetName(NpcNameSlot.Slot0);
-            GameData.GothicVm.GlobalSelf = _bloodwynInstance;
+            GameStateService.GothicVm.GlobalSelf = _bloodwynInstance;
 
-            GameData.GothicVm.InitInstance(_bloodwynInstance);
+            GameStateService.GothicVm.InitInstance(_bloodwynInstance);
 
             // Hero
             {
                 // Need to be set for later usage (e.g. Bloodwyn checks your inventory if enough nuggets are carried)
-                var heroInstance = GameData.GothicVm.InitInstance<NpcInstance>("hero");
-                GameData.GothicVm.GlobalHero = heroInstance;
+                var heroInstance = GameStateService.GothicVm.InitInstance<NpcInstance>("hero");
+                GameStateService.GothicVm.GlobalHero = heroInstance;
             }
 
             // We need to initialize the NPC at this frame to set the positions of child GOs now.
-            GameGlobals.Npcs.InitNpc(newNpc, true);
+            _npcService.InitNpc(newNpc, true);
             newNpc.transform.SetLocalPositionAndRotation(default, default);
             newNpc.transform.GetChild(0).SetLocalPositionAndRotation(default, default);
 

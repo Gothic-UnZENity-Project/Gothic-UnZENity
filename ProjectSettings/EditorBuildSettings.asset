@@ -9,8 +9,11 @@ EditorBuildSettings:
     path: Assets/UnZENity-Core/Scenes/Bootstrap.unity
     guid: 9fc0d4010bbf28b4594072e72b8655ab
   - enabled: 1
-    path: Assets/UnZENity-Core/Scenes/Player.unity
-    guid: 7fb2dedbd5edb7d4a92ee584eec7cc33
+    path: Assets/UnZENity-VR/Scenes/VR/Player.unity
+    guid: 0f1f0b96208eb0244b0a4a3c95752195
+  - enabled: 1
+    path: Assets/UnZENity-Flat/Scenes/Flat/Player.unity
+    guid: 716b378fb4a24824981c259811f737ca
   - enabled: 1
     path: Assets/UnZENity-Core/Scenes/GameVersion.unity
     guid: 1535f2639ebe98e4fb89e286ff0e5da1
@@ -58,3 +61,4 @@ EditorBuildSettings:
     com.unity.localization.settings: {fileID: 11400000, guid: f528c8266c3365449b0110f9b4155c00, type: 2}
     com.unity.xr.management.loader_settings: {fileID: 11400000, guid: 62335432a157ca04fa416f6c859c1ce4, type: 2}
     com.unity.xr.openxr.settings4: {fileID: 11400000, guid: bf3e862595e1e234bb413ecbf9a1156d, type: 2}
+  m_UseUCBPForAssetBundles: 0

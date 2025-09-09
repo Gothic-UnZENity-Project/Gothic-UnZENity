@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using GUZ.Core.Creator.Sounds;
-using GUZ.Core.Data.Container;
-using GUZ.Core.Util;
+using GUZ.Core.Logging;
+using GUZ.Core.Models.Container;
 using JetBrains.Annotations;
 using MyBox;
 using UnityEngine;
@@ -11,18 +10,13 @@ using ZenKit;
 using ZenKit.Daedalus;
 using ZenKit.Util;
 using ZenKit.Vobs;
-using Logger = GUZ.Core.Util.Logger;
+using Logger = GUZ.Core.Logging.Logger;
 using TextureFormat = UnityEngine.TextureFormat;
 
 namespace GUZ.Core.Extensions
 {
     public static class ZenKitExtension
     {
-        public static AudioClip ToAudioClip(this SoundEffectInstance sfxInstance)
-        {
-            return SoundCreator.ToAudioClip(sfxInstance.File);
-        }
-        
         /// <summary>
         /// A visual name is either extracted from Visual.Name or Name of VOB itself.
         /// </summary>

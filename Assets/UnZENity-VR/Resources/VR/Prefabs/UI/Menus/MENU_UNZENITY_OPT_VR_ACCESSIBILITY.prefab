@@ -249,6 +249,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2282871596405899006}
   - component: {fileID: 8170383117626889508}
+  - component: {fileID: 8720572720981513687}
   m_Layer: 0
   m_Name: MENU_UNZENITY_OPT_VR_ACCESSIBILITY
   m_TagString: Untagged
@@ -287,6 +288,19 @@ MonoBehaviour:
   Canvas: {fileID: 4377388513586376009}
   Background: {fileID: 7348004100775829510}
   Comment: {fileID: 8195715374867419552}
+--- !u!114 &8720572720981513687
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8412591900964177680}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20620ae30fdd0164c9bb5bdc717d3ada, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _injectionStrategy: 2
 --- !u!1001 &4136749761303385679
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -1,14 +1,27 @@
 using System;
 using System.Linq;
-using GUZ.Core.Util;
+using GUZ.Core.Logging;
 using JetBrains.Annotations;
+using Reflex.Injectors;
 using UnityEngine;
-using Logger = GUZ.Core.Util.Logger;
+using Logger = GUZ.Core.Logging.Logger;
 
 namespace GUZ.Core.Extensions
 {
     public static class GameObjectExtension
     {
+        /// <summary>
+        /// Execute on newly created GameObject and its children to execute DI injection.
+        /// Please use it only, when needed as it causes some CPU cycles when done.
+        ///
+        /// Checks for [Inject] properties and methods.
+        /// </summary>
+        public static GameObject Inject(this GameObject instance)
+        {
+            GameObjectInjector.InjectRecursive(instance, ReflexProjectInstaller.DIContainer);
+            return instance;
+        }
+
         public static void SetParent(this GameObject obj, GameObject parent, bool resetLocation = false,
             bool resetRotation = false, bool worldPositionStays = false)
         {

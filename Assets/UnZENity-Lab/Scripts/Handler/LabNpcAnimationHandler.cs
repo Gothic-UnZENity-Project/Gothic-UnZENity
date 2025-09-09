@@ -2,31 +2,29 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using GUZ.Core;
-using GUZ.Core.Caches;
-using GUZ.Core.Creator.Meshes;
-using GUZ.Core.Data.Container;
+using GUZ.Core.Adapters.Properties;
+using GUZ.Core.Domain.Npc.Actions;
+using GUZ.Core.Domain.Npc.Actions.AnimationActions;
 using GUZ.Core.Extensions;
-using GUZ.Core.Globals;
-using GUZ.Core.Npc.Actions;
-using GUZ.Core.Npc.Actions.AnimationActions;
-using GUZ.Core.Properties;
-using GUZ.Core.Vm;
+using GUZ.Core.Models.Caches;
+using GUZ.Core.Models.Container;
+using GUZ.Core.Models.Vm;
+using GUZ.Core.Services.Caches;
 using GUZ.Lab.AnimationActionMocks;
+using Reflex.Attributes;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Serialization;
 using ZenKit.Daedalus;
 
 namespace GUZ.Lab.Handler
 {
     public class LabNpcAnimationHandler : AbstractLabHandler
     {
-        [FormerlySerializedAs("npcDropdown")] public TMP_Dropdown NpcDropdown;
-
-        [FormerlySerializedAs("animationDropdown")]
+        public TMP_Dropdown NpcDropdown;
         public TMP_Dropdown AnimationDropdown;
+        public GameObject NpcSlotGo;
 
-        [FormerlySerializedAs("npcSlotGo")] public GameObject NpcSlotGo;
+        [Inject] private readonly MultiTypeCacheService _multiTypeCacheService;
 
 
         private Dictionary<string, (string Name, string MdhMds, string Mdm, int BodyTexNr, int BodyTexColor, string Head
@@ -120,12 +118,12 @@ namespace GUZ.Lab.Handler
             var npcInstanceName = NpcDropdown.options[NpcDropdown.value].text;
             var npcData = _npcs[npcInstanceName];
 
-            var newNpc = ResourceLoader.TryGetPrefabObject(PrefabType.Npc);
+            var newNpc = ResourceCacheService.TryGetPrefabObject(PrefabType.Npc);
             newNpc.SetParent(NpcSlotGo);
             newNpc.name = npcData.Name;
 
-            var npcSymbol = GameData.GothicVm.GetSymbolByName(npcInstanceName);
-            var npcInstance = GameData.GothicVm.InitInstance<NpcInstance>(npcSymbol!);
+            var npcSymbol = GameStateService.GothicVm.GetSymbolByName(npcInstanceName);
+            var npcInstance = GameStateService.GothicVm.InitInstance<NpcInstance>(npcSymbol!);
             var npcProps = newNpc.GetComponent<NpcProperties>();
 
             var npcContainerData = new NpcContainer
@@ -133,9 +131,9 @@ namespace GUZ.Lab.Handler
                 Instance = npcInstance,
                 Props =  npcProps
             };
-            MultiTypeCache.NpcCache.Add(npcContainerData);
+            _multiTypeCacheService.NpcCache.Add(npcContainerData);
 
-            var body = new VmGothicExternals.ExtSetVisualBodyData
+            var body = new ExtSetVisualBodyData
             {
                 BodyTexNr = npcData.BodyTexNr,
                 BodyTexColor = npcData.BodyTexColor,
@@ -147,14 +145,14 @@ namespace GUZ.Lab.Handler
                 Armor = -1 // We set the armor via Mdm file manually
             };
 
-            MeshFactory.CreateNpc(newNpc.name, npcData.Mdm, npcData.MdhMds, body, root: newNpc);
+            MeshService.CreateNpc(newNpc.name, npcData.Mdm, npcData.MdhMds, body, root: newNpc);
 
             if (npcData.sword != null)
             {
-                var swordIndex = GameData.GothicVm.GetSymbolByName(npcData.sword)!.Index;
-                var sword = VmInstanceManager.TryGetItemData(swordIndex);
+                var swordIndex = GameStateService.GothicVm.GetSymbolByName(npcData.sword)!.Index;
+                var sword = VmCacheService.TryGetItemData(swordIndex);
 
-                MeshFactory.CreateNpcWeapon(newNpc, sword, (VmGothicEnums.ItemFlags)sword.MainFlag,
+                MeshService.CreateNpcWeapon(newNpc, sword, (VmGothicEnums.ItemFlags)sword.MainFlag,
                     (VmGothicEnums.ItemFlags)sword.Flags);
             }
         }

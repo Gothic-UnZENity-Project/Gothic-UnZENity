@@ -2,31 +2,32 @@ using System;
 using System.Globalization;
 using System.Threading.Tasks;
 using GUZ.Core;
-using GUZ.Core.Animations;
-using GUZ.Core.Caches;
-using GUZ.Core.Config;
-using GUZ.Core.Creator.Meshes;
+using GUZ.Core.Const;
+using GUZ.Core.Logging;
+using GUZ.Core.Domain;
 using GUZ.Core.Extensions;
-using GUZ.Core.Globals;
 using GUZ.Core.Manager;
-using GUZ.Core.Manager.Culling;
-using GUZ.Core.Manager.Vobs;
-using GUZ.Core.Npc;
-using GUZ.Core.UnZENity_Core.Scripts.Manager;
-using GUZ.Core.Util;
-using GUZ.Core.Vm;
-using GUZ.Core.World;
+using GUZ.Core.Models.Config;
+using GUZ.Core.Services;
+using GUZ.Core.Services.Caches;
+using GUZ.Core.Services.Config;
+using GUZ.Core.Services.Context;
+using GUZ.Core.Services.Culling;
+using GUZ.Core.Services.Meshes;
+using GUZ.Core.Services.Npc;
+using GUZ.Core.Services.Player;
+using GUZ.Core.Services.StaticCache;
+using GUZ.Core.Services.Vobs;
+using GUZ.Core.Services.World;
 using GUZ.Lab.Handler;
-using GUZ.Manager;
+using Reflex.Attributes;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using ZenKit;
-using Logger = GUZ.Core.Util.Logger;
+using Logger = GUZ.Core.Logging.Logger;
 
 namespace GUZ.Lab
 {
-    [RequireComponent(typeof(TextureManager), typeof(FontManager))]
-    public class LabBootstrapper : MonoBehaviour, IGlobalDataProvider, ICoroutineManager
+    public class LabBootstrapper : MonoBehaviour
     {
         public DeveloperConfig DeveloperConfig;
 
@@ -40,59 +41,47 @@ namespace GUZ.Lab
         public LabNpcAnimationHandler LabNpcAnimationHandler;
         public LabLockHandler LabLockHandler;
 
-        private ConfigManager _configManager;
-        private LocalizationManager _localizationManager;
-        private MusicManager _gameMusicManager;
-        private VideoManager _videoManager;
-        private RoutineManager _npcRoutineManager;
-        private SaveGameManager _save;
-        private StaticCacheManager _staticCacheManager;
-        private TextureManager _textureManager;
-        private FontManager _fontManager;
-        private StoryManager _story;
-        private VobManager _vobManager;
-        private NpcManager _npcManager;
-        private AnimationManager _animationManager;
-        private SkyManager _skyManager;
-        private GameTime _gameTime;
-        private MarvinManager _marvinManager;
+        private VideoService _videoService;
+        private SaveGameService _save;
+        private StaticCacheService _staticCacheService;
+        private StoryService _story;
+        private VobService _vobService;
+        private NpcService _npcService;
 
-        public ConfigManager Config => _configManager;
-        public LocalizationManager Localization => _localizationManager;
-        public SaveGameManager SaveGame => _save;
-        public LoadingManager Loading => null;
-        public StaticCacheManager StaticCache => _staticCacheManager;
-        public PlayerManager Player => null;
-        public MarvinManager Marvin => _marvinManager;
-        public SkyManager Sky => _skyManager;
-        public GameTime Time => _gameTime;
-        public MusicManager Music => Music;
-        public RoutineManager Routines => _npcRoutineManager;
-        public TextureManager Textures => _textureManager;
-        public FontManager Font => _fontManager;
-        public StationaryLightsManager Lights => null;
-        public VobManager Vobs => _vobManager;
-        public NpcManager Npcs => _npcManager;
-        public NpcAiManager NpcAi => null;
-        public AnimationManager Animations => _animationManager;
-        public VobMeshCullingManager VobMeshCulling => null;
-        public NpcMeshCullingManager NpcMeshCulling => null;
-        public VobSoundCullingManager SoundCulling => null;
-        public StoryManager Story => _story;
-        public VideoManager Video => _videoManager;
-        public VoiceManager Voice => null;
-
+        public GameTimeService Time => _gameTimeService;
+        public VobService Vobs => _vobService;
+        public VobMeshCullingService VobMeshCulling => null;
+        public NpcMeshCullingService NpcMeshCulling => null;
+        public StoryService Story => _story;
+        public SpeechToTextService SpeechToText => null;
+        
+        
+        [Inject] private readonly GameStateService _gameStateService;
+        [Inject] private readonly ConfigService _configService;
+        [Inject] private readonly AudioService _audioService;
+        [Inject] private readonly GameTimeService _gameTimeService;
+        [Inject] private readonly ContextInteractionService _contextInteractionService;
+        [Inject] private readonly ContextGameVersionService _contextGameVersionService;
+        [Inject] private readonly MeshService _meshService;
+        [Inject] private readonly TextureService _textureService;
+        
+        [Inject] private readonly VmCacheService _vmCacheService;
+        [Inject] private readonly TextureCacheService _textureCacheService;
+        [Inject] private readonly MorphMeshCacheService _morphMeshCacheService;
+        [Inject] private readonly MultiTypeCacheService _multiTypeCacheService;
+        [Inject] private readonly ResourceCacheService _resourceCacheService;
+        
+        
+        private BootstrapDomain _bootstrapDomain = new BootstrapDomain().Inject();
 
         private void Awake()
         {
-            GameContext.IsLab = true;
-            
             // We need to set culture to this, otherwise e.g. polish numbers aren't parsed correct.
             CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;
             CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.InvariantCulture;
             
 #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-            BootLab();
+            BootLab().AwaitAndLog();
 #pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
         }
 
@@ -110,68 +99,55 @@ namespace GUZ.Lab
 
         private void InitManager()
         {
-            GameGlobals.Instance = this;
+            _configService.LoadRootJson();
+            _configService.SetDeveloperConfig(DeveloperConfig);
+            _configService.LoadGothicInis(GameVersion.Gothic1);
 
-            _configManager = new ConfigManager();
-            _configManager.LoadRootJson();
-            _configManager.SetDeveloperConfig(DeveloperConfig);
-            _configManager.LoadGothicInis(GameVersion.Gothic1);
+            ZenKit.Logger.Set(_configService.Dev.ZenKitLogLevel, Logger.OnZenKitLogMessage);
+            DirectMusic.Logger.Set(_configService.Dev.DirectMusicLogLevel, Logger.OnDirectMusicLogMessage);
+            _save = new SaveGameService();
+            _staticCacheService = new StaticCacheService();
+            _story = new StoryService();
+            _videoService = new VideoService();
+            _npcService = new NpcService();
+            _vobService = new VobService();
 
-            ZenKit.Logger.Set(Config.Dev.ZenKitLogLevel, Logger.OnZenKitLogMessage);
-            DirectMusic.Logger.Set(Config.Dev.DirectMusicLogLevel, Logger.OnDirectMusicLogMessage);
-            _localizationManager = new LocalizationManager();
-            _save = new SaveGameManager();
-            _staticCacheManager = new StaticCacheManager();
-            _story = new StoryManager(Config.Dev);
-            _textureManager = GetComponent<TextureManager>();
-            _fontManager = GetComponent<FontManager>();
-            _npcRoutineManager = new RoutineManager(Config.Dev);
-            _gameMusicManager = new MusicManager(Config.Dev);
-            _videoManager = new VideoManager(Config.Dev);
-            _npcManager = new NpcManager();
-            _vobManager = new VobManager();
-            _animationManager = new AnimationManager();
-            _gameTime = new GameTime(Config.Dev, this);
-            _skyManager = new SkyManager(Config.Dev, _gameTime);
-            _marvinManager = new MarvinManager();
+            _resourceCacheService.Init(_configService.Root.Gothic1Path);
 
-            ResourceLoader.Init(Config.Root.Gothic1Path);
+            // In lab, we can safely say: VR only!
+            GlobalEventDispatcher.RegisterControlsService.Invoke(DeveloperConfig.GameControls);
+            GlobalEventDispatcher.RegisterGameVersionService.Invoke(DeveloperConfig.GameVersion);
 
-            GameContext.SetControlContext(Config.Dev.GameControls);
-            GameContext.SetGameVersionContext(Config.Dev.GameVersion);
+            _audioService.InitMusic();
+            _staticCacheService.Init();
+            _textureService.Init();
+            _npcService.Init();
+            _vobService.Init();
 
-            _gameMusicManager.Init();
-            _npcRoutineManager.Init();
-            _staticCacheManager.Init(_configManager.Dev);
-            _textureManager.Init();
-            _npcManager.Init(this);
-            _vobManager.Init(this);
-            _skyManager.InitWorld();
-
-            _videoManager.InitVideos();
+            _videoService.InitVideos();
             _save.LoadNewGame();
         }
 
         private async Task InitLab()
         {
-            GameContext.InteractionAdapter.CreatePlayerController(SceneManager.GetActiveScene());
-            GameContext.InteractionAdapter.CreateVRDeviceSimulator();
+
+            _contextInteractionService.SetupPlayerController(DeveloperConfig);
+
             // TODO - Broken. Fix before use.
             // NpcHelper.CacheHero();
 
-            Bootstrapper.Boot();
+            _bootstrapDomain.Boot();
 
-            if (!_staticCacheManager.DoGlobalCacheFilesExist())
+            if (!_staticCacheService.DoGlobalCacheFilesExist())
             {
                 Logger.LogErrorEditor("Please load game once to create global cache first!", LogCat.Debug);
                 throw new SystemException("Please load game once to create global cache first!");
             }
-            await _staticCacheManager.LoadGlobalCache().AwaitAndLog();
-            await MeshFactory.CreateTextureArray().AwaitAndLog();
+            await _staticCacheService.LoadGlobalCache().AwaitAndLog();
+            await _meshService.CreateTextureArray().AwaitAndLog();
 
             LabNpcAnimationHandler.Bootstrap();
             LabMusicHandler.Bootstrap();
-            LabMusicHandler.MusicManager = _gameMusicManager;
             LabSoundHandler.Bootstrap();
             LabVideoHandler.Bootstrap();
             NpcDialogHandler.Bootstrap();
@@ -180,7 +156,7 @@ namespace GUZ.Lab
             VobItemHandler.Bootstrap();
             LabLockHandler.Bootstrap();
 
-            GameContext.InteractionAdapter.InitUIInteraction(); // For (e.g.) QuestLog to enable hand pointer.
+            _contextInteractionService.InitUIInteraction(); // For (e.g.) QuestLog to enable hand pointer.
             BootstrapPlayer();
         }
 
@@ -369,11 +345,11 @@ namespace GUZ.Lab
 
         private void OnDestroy()
         {
-            GameData.Dispose();
-            VmInstanceManager.Dispose();
-            TextureCache.Dispose();
-            MultiTypeCache.Dispose();
-            MorphMeshCache.Dispose();
+            _gameStateService.Dispose();
+            _vmCacheService.Dispose();
+            _textureCacheService.Dispose();
+            _multiTypeCacheService.Dispose();
+            _morphMeshCacheService.Dispose();
         }
     }
 }

@@ -1,6 +1,5 @@
 ﻿using System.Diagnostics;
-using GUZ.Core.Util;
-using Debug = UnityEngine.Debug;
+using GUZ.Core.Logging;
 
 namespace GUZ.Core.Extensions
 {

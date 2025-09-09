@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using GUZ.Core.Util;
+using GUZ.Core.Logging;
 using UnityEditor;
 using UnityEngine;
-using Logger = GUZ.Core.Util.Logger;
+using Logger = GUZ.Core.Logging.Logger;
 using Object = UnityEngine.Object;
 
 namespace GUZ.Core.Editor

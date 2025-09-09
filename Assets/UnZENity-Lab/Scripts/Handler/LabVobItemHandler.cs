@@ -3,10 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using GUZ.Core;
-using GUZ.Core.Creator.Meshes;
-using GUZ.Core.Globals;
-using GUZ.Core.Properties;
-using GUZ.Core.Vm;
+using GUZ.Core.Models.Caches;
+using GUZ.Core.Models.Vm;
 using TMPro;
 using UnityEngine;
 using ZenKit.Daedalus;
@@ -33,10 +31,10 @@ namespace GUZ.Lab.Handler
              * 3. Load Vob name list
              * 4. Fill dropdown
              */
-            var itemNames = GameData.GothicVm.GetInstanceSymbols("C_Item").Select(i => i.Name).ToList();
+            var itemNames = GameStateService.GothicVm.GetInstanceSymbols("C_Item").Select(i => i.Name).ToList();
 
             _items = itemNames
-                .ToDictionary(itemName => itemName, VmInstanceManager.TryGetItemData);
+                .ToDictionary(itemName => itemName, VmCacheService.TryGetItemData);
 
             VobCategoryDropdown.options = _items
                 .Select(item => ((VmGothicEnums.ItemFlags)item.Value.MainFlag).ToString())
@@ -79,10 +77,10 @@ namespace GUZ.Lab.Handler
 
         private GameObject CreateItem(string itemName)
         {
-            var itemPrefab = ResourceLoader.TryGetPrefabObject(PrefabType.VobItem);
-            var item = VmInstanceManager.TryGetItemData(itemName);
-            var mrm = ResourceLoader.TryGetMultiResolutionMesh(item.Visual);
-            var itemGo = MeshFactory.CreateVob(item.Visual, mrm, default, default, true,
+            var itemPrefab = ResourceCacheService.TryGetPrefabObject(PrefabType.VobItem);
+            var item = VmCacheService.TryGetItemData(itemName);
+            var mrm = ResourceCacheService.TryGetMultiResolutionMesh(item.Visual);
+            var itemGo = MeshService.CreateVob(item.Visual, mrm, default, default, true,
                 rootGo: itemPrefab, parent: ItemSpawnSlot, useTextureArray: false);
 
             return gameObject;

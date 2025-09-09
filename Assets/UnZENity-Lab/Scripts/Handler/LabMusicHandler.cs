@@ -1,9 +1,7 @@
 using System.Linq;
-using GUZ.Core;
 using GUZ.Core.Manager;
+using Reflex.Attributes;
 using TMPro;
-using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace GUZ.Lab.Handler
 {
@@ -11,11 +9,11 @@ namespace GUZ.Lab.Handler
     {
         public TMP_Dropdown FileSelector;
 
-        public MusicManager MusicManager;
+        [Inject] private readonly AudioService _audioService;
 
         public override void Bootstrap()
         {
-            var vm = ResourceLoader.TryGetDaedalusVm("MUSIC");
+            var vm = ResourceCacheService.TryGetDaedalusVm("MUSIC");
 
             var musicInstances = vm.GetInstanceSymbols("C_MUSICTHEME")
                 .Select(s => s.Name)
@@ -26,7 +24,7 @@ namespace GUZ.Lab.Handler
 
         public void MusicPlayClick()
         {
-            MusicManager.Play(FileSelector.options[FileSelector.value].text);
+            _audioService.Play(FileSelector.options[FileSelector.value].text);
         }
     }
 }

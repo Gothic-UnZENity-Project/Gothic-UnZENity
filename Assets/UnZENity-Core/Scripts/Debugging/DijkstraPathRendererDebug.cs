@@ -1,25 +1,28 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using GUZ.Core.Const;
+using GUZ.Core.Logging;
+using GUZ.Core.Creator;
 using GUZ.Core.Extensions;
-using GUZ.Core.Globals;
-using GUZ.Core.Manager;
-using GUZ.Core.Util;
+using GUZ.Core.Services;
 using JetBrains.Annotations;
+using Reflex.Attributes;
 using UnityEngine;
-using UnityEngine.Serialization;
-using Logger = GUZ.Core.Util.Logger;
+using Logger = GUZ.Core.Logging.Logger;
 
 namespace GUZ.Core.Debugging
 {
     public class DijkstraPathRendererDebug : MonoBehaviour
     {
-        [FormerlySerializedAs("debugStart")] public string DebugStart;
-        [FormerlySerializedAs("debugEnd")] public string DebugEnd;
+        public string DebugStart;
+        public string DebugEnd;
 
-        [FormerlySerializedAs("pathDistanceCalculation")]
         public List<string> PathDistanceCalculation;
 
+        [Inject] private readonly WayNetService _wayNetService;
+        [Inject] private readonly GameStateService _gameStateService;
+        
         private Vector3[] _gizmoWayPoints;
         private GameObject _wayPointsGo;
 
@@ -33,16 +36,20 @@ namespace GUZ.Core.Debugging
             if (_wayPointsGo == null)
             {
                 _wayPointsGo = GameObject.Find("World/Waynet/Waypoints");
+
+                // Not yet ready.
+                if (_wayPointsGo == null)
+                    return;
             }
 
-            if (GameData.DijkstraWaypoints.TryGetValue(DebugStart, out var startWaypoint) &&
-                GameData.DijkstraWaypoints.TryGetValue(DebugEnd, out var endWaypoint))
+            if (_gameStateService.DijkstraWaypoints.TryGetValue(DebugStart, out var startWaypoint) &&
+                _gameStateService.DijkstraWaypoints.TryGetValue(DebugEnd, out var endWaypoint))
             {
                 LightUpWaypoint(DebugStart, Color.green);
                 LightUpWaypoint(DebugEnd, Color.green);
 
                 var watch = Stopwatch.StartNew();
-                var path = WayNetHelper.FindFastestPath(DebugStart, DebugEnd);
+                var path = _wayNetService.FindFastestPath(DebugStart, DebugEnd);
                 watch.Stop();
                 Logger.LogEditor($"Path found in {watch.Elapsed.Seconds} seconds.", LogCat.Debug);
 

@@ -16,6 +16,7 @@ MonoBehaviour:
   GameVersion: 0
   GameControls: 0
   EnableVRDeviceSimulator: 0
+  ActivateMarvinMode: 0
   ZenKitLogLevel: 1
   EnableZSpyLogs: 0
   ZSpyChannel: 9
