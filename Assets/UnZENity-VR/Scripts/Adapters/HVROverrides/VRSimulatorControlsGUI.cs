@@ -10,8 +10,8 @@ namespace GUZ.VR.Adapters.HVROverrides
     /// </summary>
     public class VRSimulatorControlsGUI : HVRSimulatorControlsGUI
     {
-        private HVRBodySimulator _bodySimulator;
-        private HVRHandsSimulator _handsSimulator;
+        private HVRBodySimulator _vrBodySimulator;
+        private HVRHandsSimulator _vrHandsSimulator;
 
         private const string _tutorialText =
 @"Move -> WASD
@@ -27,24 +27,24 @@ Status -> B";
         private void Awake()
         {
             if (GetComponent<HVRBodySimulator>() != null)
-                _bodySimulator = GetComponent<HVRBodySimulator>();
+                _vrBodySimulator = GetComponent<HVRBodySimulator>();
 
             if (GetComponent<HVRHandsSimulator>() != null)
-                _handsSimulator = GetComponent<HVRHandsSimulator>();
+                _vrHandsSimulator = GetComponent<HVRHandsSimulator>();
         }
         public void OnGUI()
         {
-            if (_bodySimulator && _bodySimulator.enabled)
+            if (_vrBodySimulator && _vrBodySimulator.enabled)
                 RenderBodySimulatorTutorial();
 
-            if (_handsSimulator && _handsSimulator.enabled)
+            if (_vrHandsSimulator && _vrHandsSimulator.enabled)
                 RenderHandsSimulatorTutorial();
         }
 
         private void RenderBodySimulatorTutorial()
         {
             float y = 300;
-            if (!_handsSimulator || !_handsSimulator.enabled)
+            if (!_vrHandsSimulator || !_vrHandsSimulator.enabled)
                 y = 100;
 
             GUI.BeginGroup(new Rect(1, Screen.height - y, 300, 100));
@@ -65,10 +65,10 @@ Move Right hand -> {1}";
             bool leftHandTutorial = false;
             bool rightHandTutorial = false;
 
-            if (_handsSimulator.UsingLeftHand)
+            if (_vrHandsSimulator.UsingLeftHand)
             {
                 leftHandTutorial = true;
-                grabOrRelease = (_handsSimulator.HandGrabberLeft.IsGrabbing) ? "Release" : "Grab";
+                grabOrRelease = (_vrHandsSimulator.HandGrabberLeft.IsGrabbing) ? "Release" : "Grab";
                 title = "<b>Left hand controls</b>";
                 tutorialText =
     @"While holding -> {0}
@@ -81,10 +81,10 @@ Secondary button -> {4}
 Joystick button -> {5}";
             }
 
-            if (_handsSimulator.UsingRightHand)
+            if (_vrHandsSimulator.UsingRightHand)
             {
                 rightHandTutorial = true;
-                grabOrRelease = (_handsSimulator.HandGrabberRight.IsGrabbing) ? "Release" : "Grab";
+                grabOrRelease = (_vrHandsSimulator.HandGrabberRight.IsGrabbing) ? "Release" : "Grab";
                 title = "<b>Right hand controls</b>";
                 tutorialText =
     @"While holding -> {0}
@@ -103,26 +103,26 @@ Joystick button -> {5}";
             if (leftHandTutorial)
             {
                 GUI.TextArea(new Rect(0, 25, 300, 150), string.Format(tutorialText,
-                                                      _handsSimulator.LeftHandKey.ToString(),
+                                                      _vrHandsSimulator.LeftHandKey.ToString(),
                                                       grabOrRelease,
-                                                      _handsSimulator.GripKey.ToString(),
-                                                      _handsSimulator.PrimaryButtonKey.ToString(),
-                                                      _handsSimulator.SecondaryButtonKey.ToString(),
-                                                      _handsSimulator.JoystickButtonKey.ToString()));
+                                                      _vrHandsSimulator.GripKey.ToString(),
+                                                      _vrHandsSimulator.PrimaryButtonKey.ToString(),
+                                                      _vrHandsSimulator.SecondaryButtonKey.ToString(),
+                                                      _vrHandsSimulator.JoystickButtonKey.ToString()));
             }
             else if (rightHandTutorial)
             {
                 GUI.TextArea(new Rect(0, 25, 300, 150), string.Format(tutorialText,
-                                                      _handsSimulator.RightHandKey.ToString(),
+                                                      _vrHandsSimulator.RightHandKey.ToString(),
                                                       grabOrRelease,
-                                                      _handsSimulator.GripKey.ToString(),
-                                                      _handsSimulator.PrimaryButtonKey.ToString(),
-                                                      _handsSimulator.SecondaryButtonKey.ToString(),
-                                                      _handsSimulator.JoystickButtonKey.ToString()));
+                                                      _vrHandsSimulator.GripKey.ToString(),
+                                                      _vrHandsSimulator.PrimaryButtonKey.ToString(),
+                                                      _vrHandsSimulator.SecondaryButtonKey.ToString(),
+                                                      _vrHandsSimulator.JoystickButtonKey.ToString()));
             }
             else
             {
-                GUI.TextArea(new Rect(0, 25, 300, 150), string.Format(tutorialText, _handsSimulator.LeftHandKey.ToString(), _handsSimulator.RightHandKey.ToString()));
+                GUI.TextArea(new Rect(0, 25, 300, 150), string.Format(tutorialText, _vrHandsSimulator.LeftHandKey.ToString(), _vrHandsSimulator.RightHandKey.ToString()));
             }
 
 
