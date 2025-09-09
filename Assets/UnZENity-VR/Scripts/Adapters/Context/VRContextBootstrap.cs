@@ -1,3 +1,4 @@
+#if GUZ_HVR_INSTALLED
 using GUZ.Core;
 using GUZ.Core.Adapters.Context;
 using GUZ.Core.Extensions;
@@ -43,3 +44,4 @@ namespace GUZ.VR.Adapters.Context
         }
     }
 }
+#endif

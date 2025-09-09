@@ -1,3 +1,4 @@
+#if GUZ_HVR_INSTALLED
 using System.Collections.Generic;
 using GUZ.Core;
 using GUZ.Core.Adapters.UI;
@@ -228,3 +229,4 @@ namespace GUZ.VR.Adapters.Marvin
         }
     }
 }
+#endif
