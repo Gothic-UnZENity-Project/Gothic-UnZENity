@@ -10,6 +10,7 @@ namespace GUZ.Core.Adapters.Properties.Vobs
 
         public VobProperties2(IVirtualObject vob)
         {
+            this.Inject();
             Vob = vob;
         }
         

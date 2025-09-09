@@ -1,6 +1,9 @@
 ﻿using System.Collections;
-using GUZ.Core;
+using GUZ.Core.Adapters.Vob;
+using GUZ.Core.Extensions;
+using GUZ.Core.Models.Container;
 using UnityEngine;
+using ZenKit.Vobs;
 
 namespace GUZ.Lab.Handler
 {
@@ -12,7 +15,37 @@ namespace GUZ.Lab.Handler
 
         public override void Bootstrap()
         {
-            // FIXME - Need to initialize them via VobLoader.LoadNow(IVob) instead of loading mesh. Otherwise we get exceptions in child Start() calls.
+            // Door
+            {
+                var door = new Door
+                {
+                    IsLocked = true,
+                    PickString = "LLRRLR",
+                    Visual = new VisualMesh
+                    {
+                        Name = "DOOR_WOODEN"
+                    }
+                };
+
+                var go = new GameObject("Door");
+                go.SetParent(_doorSlot);
+                var loader = go.AddComponent<VobLoader>();
+                loader.Container = new VobContainer(door);
+
+                VobService.InitVob(go);
+            }
+
+            // LockPick
+            {
+                var vobContainer = VobService.CreateItem(new Item
+                {
+                    Name = "ItKeLockpick",
+                    Visual = new VisualMesh(),
+                    Instance = "ItKeLockpick"
+                });
+
+                vobContainer.Go.SetParent(_lockPickSlot);
+            }
 
             // SpawnInteractable("DOOR_WOODEN", PrefabType.VobDoor, _doorSlot);
             // SpawnItem("ItKeLockpick", _lockPickSlot, new(0, -0.5f, 0), PrefabType.VobItemLockPick);

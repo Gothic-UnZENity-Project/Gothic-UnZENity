@@ -31,40 +31,40 @@ namespace GUZ.Core.Models.Container
             switch (vob.Type)
             {
                 case VirtualObjectType.zCVobSound:
-                    Props = new SoundProperties(vob).Inject();
+                    Props = new SoundProperties(vob);
                     break;
                 case VirtualObjectType.zCVobSoundDaytime:
-                    Props = new SoundDayTimeProperties(vob).Inject();
+                    Props = new SoundDayTimeProperties(vob);
                     break;
                 case VirtualObjectType.oCZoneMusic:
                 case VirtualObjectType.oCZoneMusicDefault:
-                    Props = new MusicProperties(vob).Inject();
+                    Props = new MusicProperties(vob);
                     break;
                 case VirtualObjectType.oCMobLadder:
-                    Props = new LadderProperties(vob).Inject();
+                    Props = new LadderProperties(vob);
                     break;
                 case VirtualObjectType.oCItem:
-                    Props = new VobItemProperties2(vob).Inject();
+                    Props = new VobItemProperties2(vob);
                     break;
                 case VirtualObjectType.oCMobFire:
                 case VirtualObjectType.oCMobInter:
-                    Props = new InteractiveProperties(vob).Inject();
+                    Props = new InteractiveProperties(vob);
                     break;
                 case VirtualObjectType.oCMobBed:
-                    Props = new BedProperties(vob).Inject();
+                    Props = new BedProperties(vob);
                     break;
                 case VirtualObjectType.oCMobDoor:
-                    Props = new BedProperties(vob).Inject();
+                    Props = new BedProperties(vob);
                     break;
                 case VirtualObjectType.oCMobContainer:
                 case VirtualObjectType.oCMobSwitch:
-                    Props = new SwitchProperties(vob).Inject();
+                    Props = new SwitchProperties(vob);
                     break;
                 case VirtualObjectType.oCMobWheel:
-                    Props = new WheelProperties(vob).Inject();
+                    Props = new WheelProperties(vob);
                     break;
                 default:
-                    Props = new VobProperties2(vob).Inject();
+                    Props = new VobProperties2(vob);
                     break;
             }
             
