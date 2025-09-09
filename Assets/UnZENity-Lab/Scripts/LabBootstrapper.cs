@@ -60,7 +60,7 @@ namespace GUZ.Lab
         [Inject] private readonly MultiTypeCacheService _multiTypeCacheService;
         [Inject] private readonly ResourceCacheService _resourceCacheService;
         [Inject] private readonly UnityMonoService _unityMonoService;
-
+        [Inject] private readonly SkyService _skyService;
 
         private BootstrapDomain _bootstrapDomain;
 
@@ -101,6 +101,8 @@ namespace GUZ.Lab
         {
             _configService.LoadRootJson();
             _configService.LoadGothicInis(GameVersion.Gothic1);
+
+            _skyService.InitWorld(); // Add lighting to world. (otherwise VOBs/NPCs are black).
 
             ZenKit.Logger.Set(_configService.Dev.ZenKitLogLevel, Logger.OnZenKitLogMessage);
             DirectMusic.Logger.Set(_configService.Dev.DirectMusicLogLevel, Logger.OnDirectMusicLogMessage);
