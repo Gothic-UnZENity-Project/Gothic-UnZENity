@@ -9,12 +9,33 @@ namespace GUZ.Lab.Handler
 {
     public class LabLockHandler : AbstractLabHandler
     {
+        [SerializeField] private GameObject _chestSlot;
         [SerializeField] private GameObject _doorSlot;
         [SerializeField] private GameObject _lockPickSlot;
 
 
         public override void Bootstrap()
         {
+            // Chest
+            {
+                var chest = new Container
+                {
+                    IsLocked = true,
+                    PickString = "RRLLRL",
+                    Visual = new VisualMesh
+                    {
+                        Name = "CHESTSMALL_OCCHESTSMALLLOCKED"
+                    }
+                };
+
+                var go = new GameObject("Chest");
+                go.SetParent(_chestSlot);
+                var loader = go.AddComponent<VobLoader>();
+                loader.Container = new VobContainer(chest);
+
+                VobService.InitVob(go);
+            }
+
             // Door
             {
                 var door = new Door
@@ -46,20 +67,6 @@ namespace GUZ.Lab.Handler
 
                 vobContainer.Go.SetParent(_lockPickSlot);
             }
-
-            // SpawnInteractable("DOOR_WOODEN", PrefabType.VobDoor, _doorSlot);
-            // SpawnItem("ItKeLockpick", _lockPickSlot, new(0, -0.5f, 0), PrefabType.VobItemLockPick);
-            //
-            // StartCoroutine(ExecAfter1Frame());
-        }
-
-        private IEnumerator ExecAfter1Frame()
-        {
-            // We need to wait 1 frame for HVR to create additional Components
-            yield return null;
-
-            // Lock the door (no rotation)
-            _doorSlot.GetComponentInChildren<ConfigurableJoint>().axis = Vector3.zero;
         }
     }
 }

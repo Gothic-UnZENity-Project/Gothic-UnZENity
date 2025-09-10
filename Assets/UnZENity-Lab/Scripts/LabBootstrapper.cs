@@ -90,8 +90,8 @@ namespace GUZ.Lab
         /// </summary>
         private async Task BootLab()
         {
-            // We need to wait for e.g., 0.5 seconds to ensure, that Unity properly set up all MonoBehavior components and their properties.
-            await Task.Delay(500);
+            // We need to wait for e.g., 0.05 seconds to ensure, that Unity properly set up all MonoBehavior components and their properties.
+            await Task.Delay(50);
 
             InitManager();
             await InitLab().AwaitAndLog();

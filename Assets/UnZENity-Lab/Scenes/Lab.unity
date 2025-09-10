@@ -3705,6 +3705,7 @@ Transform:
   m_Children:
   - {fileID: 946990590}
   - {fileID: 1270003793}
+  - {fileID: 1667122654}
   - {fileID: 1162407906}
   - {fileID: 1264235286}
   m_Father: {fileID: 648481967}
@@ -3721,6 +3722,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6c9df1dc49cc4f09ab20efa402e2e04e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _chestSlot: {fileID: 1667122653}
   _doorSlot: {fileID: 1162407905}
   _lockPickSlot: {fileID: 1494566055}
 --- !u!1001 &641796454
@@ -8253,11 +8255,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1317661251346845374, guid: c9aaa67c73a5ed34d8a865ecc7613ca2, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -366.49954
+      value: -366.4995
       objectReference: {fileID: 0}
     - target: {fileID: 1317661251346845374, guid: c9aaa67c73a5ed34d8a865ecc7613ca2, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 166.49911
+      value: 166.49997
       objectReference: {fileID: 0}
     - target: {fileID: 1365252485424465809, guid: c9aaa67c73a5ed34d8a865ecc7613ca2, type: 3}
       propertyPath: m_AnchorMax.x
@@ -9646,7 +9648,7 @@ Transform:
   m_GameObject: {fileID: 1162407905}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -2, y: 0.1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -10268,8 +10270,8 @@ Transform:
   m_GameObject: {fileID: 1270003792}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 0.1, z: 1}
+  m_LocalPosition: {x: -1, y: 0, z: -0}
+  m_LocalScale: {x: 3, y: 0.1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 640496638}
@@ -12804,6 +12806,37 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 893294720952735752, guid: 30a1e77eafe8f644dba70315d5f67504, type: 3}
   m_PrefabInstance: {fileID: 1640956628}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1667122653
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1667122654}
+  m_Layer: 0
+  m_Name: ChestSlot
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1667122654
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1667122653}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.1, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 640496638}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1676113005
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -15231,6 +15264,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f050d09eef924423ad3ce4734f50f452, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  IsActive: 0
   Weapons1HGO: {fileID: 432268076}
   Weapons2HGO: {fileID: 429607157}
   RangedWeaponsGO: {fileID: 406499994}

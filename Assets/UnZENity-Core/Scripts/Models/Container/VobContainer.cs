@@ -26,6 +26,8 @@ namespace GUZ.Core.Models.Container
 
         public VobContainer(IVirtualObject vob)
         {
+            this.Inject();
+
             Vob = vob;
             
             switch (vob.Type)

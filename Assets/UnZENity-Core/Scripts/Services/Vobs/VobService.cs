@@ -334,7 +334,7 @@ namespace GUZ.Core.Services.Vobs
 
         private VobContainer CreateContainerWithLoader(IVirtualObject vob)
         {
-            var container = new VobContainer(vob).Inject();
+            var container = new VobContainer(vob);
             _multiTypeCacheService.VobCache.Add(container);
 
             container.Go = new GameObject($"{container.Vob.GetVisualName()} (Loader)");

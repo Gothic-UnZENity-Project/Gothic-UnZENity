@@ -22,12 +22,12 @@ namespace GUZ.VR.Adapters.Vob.VobDoor
         [Inject] private readonly AudioService _audioService;
         [Inject] private readonly VmService _vmService;
 
-        private IDoor _vobDoor;
+        private bool _isLocked;
+        private string _combination;
 
         private const string _lockInteractionColliderName = "LockPickInteraction";
 
         // FIXME - Move into IDoor lab instance once provided by ZenKit.
-        private string _combination = "LLRRL";
         private int _combinationPos = 0;
         
         public enum DoorLockStatus
@@ -40,19 +40,30 @@ namespace GUZ.VR.Adapters.Vob.VobDoor
 
         private void Start()
         {
-            _vobDoor = GetComponentInParent<VobLoader>().Container.VobAs<IDoor>();
+            var vob = GetComponentInParent<VobLoader>().Container.Vob;
+            switch (vob)
+            {
+                case IDoor door:
+                    _isLocked = door.IsLocked;
+                    _combination = door.PickString;
+                    break;
+                case IContainer container:
+                    _isLocked = container.IsLocked;
+                    _combination = container.PickString;
+                    break;
+                default:
+                    Logger.LogError($"VRDoorLockInteraction: No door or container found for >{vob.Name}<.", LogCat.VR);
+                    break;
+            }
+
+            // Stop this handler if the object is already unlocked.
+            if (!_isLocked)
+                gameObject.SetActive(false);
         }
-        
+
         private void OnTriggerEnter(Collider other)
         {
             if (!other.gameObject.name.Equals(_lockInteractionColliderName))
-            {
-                return;
-            }
-
-            // FIXME - For lab only. Remove once Interface of Door (IDoor) exists: https://github.com/GothicKit/ZenKitCS/pull/12
-            // Mark all doors as locked in lab
-            if (!_vobDoor.IsLocked)
                 return;
 
             _combinationPos = 0;
