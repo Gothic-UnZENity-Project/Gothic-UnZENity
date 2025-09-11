@@ -97,19 +97,19 @@ namespace GUZ.VR.Adapters.Vob.VobItem
             _handRotationState = state;
 
             // Trigger right/left information to currently active door
-            var doorState = _properties.ActiveDoorLock.UpdateCombination(_handRotationState == RotationState.Left);
+            var doorState = _properties.ActiveLockPicking.UpdateCombination(_handRotationState == RotationState.Left);
 
             switch (doorState)
             {
-                case VRDoorLockInteraction.DoorLockStatus.StepFailure:
+                case VRLockPickingInteraction.DoorLockStatus.StepFailure:
                     // FIXME - Handle break of a Lock Pick based on hero's skill level
                     break;
-                case VRDoorLockInteraction.DoorLockStatus.StepSuccess:
+                case VRLockPickingInteraction.DoorLockStatus.StepSuccess:
                     break;
-                case VRDoorLockInteraction.DoorLockStatus.Unlocked:
+                case VRLockPickingInteraction.DoorLockStatus.Unlocked:
                     // We immediately reset current door as it's unlocked, and we don't need to use lock pick any longer.
                     _properties.IsInsideLock = false;
-                    _properties.ActiveDoorLock = null;
+                    _properties.ActiveLockPicking = null;
                     _properties.HoldingHand = null;
                     break;
             }

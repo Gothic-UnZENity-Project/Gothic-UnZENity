@@ -7,7 +7,7 @@ namespace GUZ.VR.Adapters.Vob.VobItem
     public class VRLockPickProperties : VRVobItemProperties
     {
         public bool IsInsideLock;
-        public VRDoorLockInteraction ActiveDoorLock;
+        public VRLockPickingInteraction ActiveLockPicking;
         public Transform HoldingHand;
     }
 }

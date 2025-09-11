@@ -17,6 +17,7 @@ namespace GUZ.VR
 
             containerBuilder.AddSingleton(typeof(VRPlayerService));
             containerBuilder.AddSingleton(typeof(VRWeaponService));
+            containerBuilder.AddSingleton(typeof(VrHapticsService));
         }
     }
 }
