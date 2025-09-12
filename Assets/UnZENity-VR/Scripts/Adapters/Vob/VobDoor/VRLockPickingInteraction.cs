@@ -1,4 +1,5 @@
 ﻿#if GUZ_HVR_INSTALLED
+using System.Collections;
 using GUZ.Core;
 using GUZ.Core.Adapters.Vob;
 using GUZ.Core.Logging;
@@ -7,6 +8,7 @@ using GUZ.Core.Models.Container;
 using GUZ.Core.Services.Vm;
 using GUZ.VR.Adapters.Vob.VobItem;
 using GUZ.VR.Services;
+using HurricaneVR.Framework.Core.Utils;
 using HurricaneVR.Framework.Shared;
 using Reflex.Attributes;
 using UnityEngine;
@@ -47,7 +49,7 @@ namespace GUZ.VR.Adapters.Vob.VobDoor
         private void Start()
         {
             _lockable = GetComponentInParent<VobLoader>().Container;
-            switch (_lockable)
+            switch (_lockable.Vob)
             {
                 case IDoor door:
                     _isLocked = door.IsLocked;
@@ -66,8 +68,18 @@ namespace GUZ.VR.Adapters.Vob.VobDoor
             if (!_isLocked)
                 gameObject.SetActive(false);
 
+            StartCoroutine(StartDelayed());
+        }
+
+        private IEnumerator StartDelayed()
+        {
+            yield return null;
+            
+            // FIXME - When door/chest is unlocked, move Joint a little. Maybe there is an ease function at HVR for it.
+            
             // Deactivate rotation
-            _rootGO.GetComponentInChildren<ConfigurableJoint>().axis = Vector3.up;
+            // FIXME - Doesn't work! Door still opening, Chest lid rotating horizontally.
+            _rootGO.GetComponentInChildren<ConfigurableJoint>().LockAllAngularMotion();
         }
 
         private void OnTriggerEnter(Collider other)

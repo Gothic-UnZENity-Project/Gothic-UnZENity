@@ -62,7 +62,8 @@ namespace GUZ.Lab.Handler
                 {
                     Name = "ItKeLockpick",
                     Visual = new VisualMesh(),
-                    Instance = "ItKeLockpick"
+                    Instance = "ItKeLockpick",
+                    Amount = 10
                 });
 
                 vobContainer.Go.SetParent(_lockPickSlot);
