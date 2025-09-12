@@ -8,7 +8,7 @@ namespace GUZ.Core.Services.Vm
 {
     public class VmExternalService
     {
-        private VmExternalDomain _domain = new VmExternalDomain().Inject();
+        private VmExternalDomain _domain = new();
         
         public void RegisterExternals()
         {

@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Numerics;
+using GUZ.Core.Extensions;
 using GUZ.Core.Logging;
 using GUZ.Core.Manager;
 using GUZ.Core.Models.Container;
@@ -31,6 +32,7 @@ namespace GUZ.Core.Domain.Vm
         [Inject] private readonly NpcService _npcService;
         [Inject] private readonly NpcAiService _npcAiService;
         [Inject] private readonly NpcRoutineService _npcRoutineService;
+        [Inject] private readonly NpcInventoryService _npcInventoryService;
         [Inject] private readonly GameTimeService _gameTimeService;
         [Inject] private readonly StoryService _storyService;
         [Inject] private readonly VobService _vobService;
@@ -40,6 +42,11 @@ namespace GUZ.Core.Domain.Vm
         private bool _enableZSpyLogs;
         private int _zSpyChannel;
 
+
+        public VmExternalDomain()
+        {
+            this.Inject();
+        }
 
         public void RegisterExternals()
         {
@@ -117,6 +124,8 @@ namespace GUZ.Core.Domain.Vm
             vm.RegisterExternal<NpcInstance, int, int>("Npc_ChangeAttribute", Npc_ChangeAttribute);
             vm.RegisterExternal<NpcInstance, int>("CreateInvItem", CreateInvItem);
             vm.RegisterExternal<NpcInstance, int, int>("CreateInvItems", CreateInvItems);
+            vm.RegisterExternal<NpcInstance, int>("Npc_RemoveInvItem", Npc_RemoveInvItem);
+            vm.RegisterExternal<NpcInstance, int, int>("Npc_RemoveInvItems", Npc_RemoveInvItems);
             vm.RegisterExternal<NpcInstance, int, int>("Npc_PercEnable", Npc_PercEnable);
             vm.RegisterExternal<NpcInstance, float>("Npc_SetPercTime", Npc_SetPercTime);
             vm.RegisterExternal<int, NpcInstance, NpcInstance>("Npc_GetPermAttitude", Npc_GetPermAttitude);
@@ -617,13 +626,23 @@ namespace GUZ.Core.Domain.Vm
 
         public void CreateInvItem(NpcInstance npc, int itemId)
         {
-            _npcService.ExtCreateInvItems(npc, itemId, 1);
+            _npcInventoryService.ExtCreateInvItems(npc, itemId, 1);
         }
 
 
         public void CreateInvItems(NpcInstance npc, int itemId, int amount)
         {
-            _npcService.ExtCreateInvItems(npc, itemId, amount);
+            _npcInventoryService.ExtCreateInvItems(npc, itemId, amount);
+        }
+        
+        public void Npc_RemoveInvItem(NpcInstance npc, int itemId)
+        {
+            _npcInventoryService.ExtRemoveInvItems(npc, itemId, 1);
+        }
+        
+        public void Npc_RemoveInvItems(NpcInstance npc, int itemId, int amount)
+        {
+            _npcInventoryService.ExtRemoveInvItems(npc, itemId, amount);
         }
 
 
@@ -675,7 +694,7 @@ namespace GUZ.Core.Domain.Vm
 
         public int Npc_HasItems(NpcInstance npc, int itemId)
         {
-            var count = _npcService.ExtNpcHasItems(npc, itemId);
+            var count = _npcInventoryService.ExtNpcHasItems(npc, itemId);
             return count;
         }
 
@@ -685,20 +704,17 @@ namespace GUZ.Core.Domain.Vm
             var stateTime = _npcAiService.ExtNpcGetStateTime(npc);
             return stateTime;
         }
-
-
+        
         public void Npc_SetStateTime(NpcInstance npc, int seconds)
         {
             _npcAiService.ExtNpcSetStateTime(npc, seconds);
         }
-
-
+        
         public ItemInstance Npc_GetEquippedArmor(NpcInstance npc)
         {
             return _npcAiService.ExtGetEquippedArmor(npc);
         }
-
-
+        
         public void Npc_SetTalentSkill(NpcInstance npc, int talent, int level)
         {
             _npcService.ExtNpcSetTalentSkill(npc, (VmGothicEnums.Talent)talent, level);
@@ -708,49 +724,37 @@ namespace GUZ.Core.Domain.Vm
         {
             return _npcService.ExtGetNearestWayPoint(npc);
         }
-
-
+        
         public int Npc_IsOnFP(NpcInstance npc, string vobNamePart)
         {
             var res = _npcHelperService.ExtIsNpcOnFp(npc, vobNamePart);
             return Convert.ToInt32(res);
         }
-
-
+        
         public int Npc_WasInState(NpcInstance npc, int action)
         {
             var result = _npcAiService.ExtNpcWasInState(npc, (uint)action);
             return Convert.ToInt32(result);
         }
 
-
         public void Npc_GetInvItem(IntPtr vmPtr)
         {
             // NpcCreator.ExtGetInvItem();
         }
-
-
+        
         public void Npc_GetInvItemBySlot(IntPtr vmPtr)
         {
             // NpcCreator.ExtGetInvItemBySlot();
         }
-
-
-        public void Npc_RemoveInvItem(IntPtr vmPtr)
-        {
-            // NpcCreator.ExtRemoveInvItem();
-        }
-
 
         public void Npc_RemoveInvItems(IntPtr vmPtr)
         {
             // NpcCreator.ExtRemoveInvItems();
         }
 
-
         public void EquipItem(NpcInstance npc, int itemId)
         {
-            _npcService.ExtEquipItem(npc, itemId);
+            _npcInventoryService.ExtEquipItem(npc, itemId);
         }
 
 
@@ -811,7 +815,7 @@ namespace GUZ.Core.Domain.Vm
 
         public void Npc_ClearInventory(NpcInstance npc)
         {
-            _npcService.ExtNpcClearInventory(npc);
+            _npcInventoryService.ExtNpcClearInventory(npc);
         }
 
         public string Npc_GetNextWp(NpcInstance npc)

@@ -44,7 +44,7 @@ namespace GUZ.Core
         public static readonly UnityEvent<NpcContainer, NpcLoader, bool, bool> NpcMeshCullingChanged = new();
         public static readonly UnityEvent<GameObject> VobMeshCullingChanged = new();
 
-        public static readonly UnityEvent<INpc> CreateNpcCalled = new();
+        public static readonly UnityEvent<INpc> CreateNpc = new();
 
 
         // LockPicking events

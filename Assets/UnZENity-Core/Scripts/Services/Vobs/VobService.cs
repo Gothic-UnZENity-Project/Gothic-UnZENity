@@ -306,7 +306,7 @@ namespace GUZ.Core.Services.Vobs
                         await CreateWorldVobs(config, loading, vob.Children);
                         continue;
                     case VirtualObjectType.oCNpc:
-                        GlobalEventDispatcher.CreateNpcCalled.Invoke((INpc)vob);
+                        GlobalEventDispatcher.CreateNpc.Invoke((INpc)vob);
                         continue;
                 }
 

@@ -32,7 +32,7 @@ namespace GUZ.VR.Services
             new (0.5f, 0.6f, 80f)
         };
 
-        private VrHapticsService()
+        public VrHapticsService()
         {
             // Info
 
@@ -47,6 +47,7 @@ namespace GUZ.VR.Services
             GlobalEventDispatcher.LockPickComboFinished.AddListener((_, _, handSide) => Vibrate((HVRHandSide)handSide, VibrationType.Success));
         }
 
+        
         public void Vibrate(HVRHandSide handSide, VibrationType type)
         {
             _vrPlayerService.GetHand(handSide).Vibrate(_vibrationData[(int)type]);
