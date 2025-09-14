@@ -23,7 +23,7 @@ namespace GUZ.Core.Services.Player
         public PlayerService()
         {
             GlobalEventDispatcher.LockPickComboBroken.AddListener(
-                (_, lockPick, _) => RemoveItem(lockPick.VobAs<IItem>().Instance, 1));
+                (lockPick, _, _) => RemoveItem(lockPick.VobAs<IItem>().Instance, 1));
         }
         
         public void SetHero(NpcContainer heroContainer)
@@ -36,7 +36,13 @@ namespace GUZ.Core.Services.Player
             HeroSpawnPosition = default;
             HeroSpawnRotation = default;
         }
-        
+
+        public void AddItem(string itemInstanceName, int amount)
+        {
+            var item = _vmCacheService.TryGetItemData(itemInstanceName)!;
+            _npcInventoryService.ExtCreateInvItems(HeroContainer.Instance, item.Index, amount);
+        }
+
         public void RemoveItem(string itemInstanceName, int amount)
         {
             var item = _vmCacheService.TryGetItemData(itemInstanceName)!;

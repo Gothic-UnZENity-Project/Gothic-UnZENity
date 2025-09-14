@@ -81,6 +81,7 @@ namespace GUZ.Core.Services.Vobs
             
             // Decoupling Culling logic from actual init logic.
             GlobalEventDispatcher.VobMeshCullingChanged.AddListener(InitVob);
+            GlobalEventDispatcher.LockPickComboBroken.AddListener((lockPick, _, _) => lockPick.VobAs<IItem>().Amount--);
         }
 
         /// <summary>

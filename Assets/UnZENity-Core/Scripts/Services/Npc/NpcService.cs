@@ -264,7 +264,6 @@ namespace GUZ.Core.Services.Npc
                 // Therefore, we re-add it now.
                 var heroContainer = ((NpcInstance)_gameStateService.GothicVm.GlobalHero).GetUserData();
                 _multiTypeCacheService.NpcCache.Add(heroContainer);
-                _playerService.SetHero(heroContainer);
 
                 return;
             }
@@ -301,6 +300,7 @@ namespace GUZ.Core.Services.Npc
 
             heroInstance.UserData = npcData;
 
+            _playerService.SetHero(npcData);
             _multiTypeCacheService.NpcCache.Add(npcData);
             _vm.InitInstance(heroInstance);
             vobNpc.CopyFromInstanceData(heroInstance);

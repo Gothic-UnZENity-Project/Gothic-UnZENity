@@ -121,8 +121,7 @@ namespace GUZ.Lab
 
         private async Task InitLab()
         {
-            // TODO - Broken. Fix before use.
-            // NpcHelper.CacheHero();
+            _npcService.CacheHero();
 
             _bootstrapDomain.Boot();
 
