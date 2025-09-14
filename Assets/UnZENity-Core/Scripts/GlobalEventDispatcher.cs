@@ -54,6 +54,8 @@ namespace GUZ.Core
         public static readonly UnityEvent<VobContainer, VobContainer, int> LockPickComboCorrect = new();
         public static readonly UnityEvent<VobContainer, VobContainer, int> LockPickComboWrong = new();
         public static readonly UnityEvent<VobContainer, VobContainer, int> LockPickComboFinished = new();
+
+        // FIXME - If LockPick in hand is Amount=0, then destroy as Mesh.
         public static readonly UnityEvent<VobContainer, VobContainer, int> LockPickComboBroken = new();
     }
 }
