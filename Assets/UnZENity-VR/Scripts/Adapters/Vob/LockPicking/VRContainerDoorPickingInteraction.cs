@@ -8,20 +8,21 @@ using GUZ.Core.Models.Container;
 using GUZ.Core.Services.Vm;
 using GUZ.VR.Adapters.Vob.VobItem;
 using GUZ.VR.Services;
-using HurricaneVR.Framework.Core.Utils;
+using HurricaneVR.Framework.Components;
 using HurricaneVR.Framework.Shared;
 using Reflex.Attributes;
 using UnityEngine;
 using ZenKit.Vobs;
 using Logger = GUZ.Core.Logging.Logger;
 
-namespace GUZ.VR.Adapters.Vob.VobDoor
+namespace GUZ.VR.Adapters.Vob.LockPicking
 {
-    public class VRLockPickingInteraction : MonoBehaviour
+    public class VRContainerDoorPickingInteraction : MonoBehaviour
     {
 
         [SerializeField] private GameObject _rootGO;
         [SerializeField] private AudioSource _audioSource;
+        [SerializeField] private HVRPhysicsDoor _hvrPhysicsDoor;
 
         [Inject] private readonly VRPlayerService _vrPlayerService;
         [Inject] private readonly AudioService _audioService;
@@ -78,8 +79,7 @@ namespace GUZ.VR.Adapters.Vob.VobDoor
             // FIXME - When door/chest is unlocked, move Joint a little. Maybe there is an ease function at HVR for it.
             
             // Deactivate rotation
-            // FIXME - Doesn't work! Door still opening, Chest lid rotating horizontally.
-            _rootGO.GetComponentInChildren<ConfigurableJoint>().LockAllAngularMotion();
+            _hvrPhysicsDoor.Lock();
         }
 
         private void OnTriggerEnter(Collider other)
@@ -95,7 +95,7 @@ namespace GUZ.VR.Adapters.Vob.VobDoor
 
             var lockPickProperties = other.gameObject.GetComponentInParent<VRLockPickProperties>();
             lockPickProperties.IsInsideLock = true;
-            lockPickProperties.ActiveLockPicking = this;
+            lockPickProperties.ActiveContainerDoorPicking = this;
 
 
             if (_vrPlayerService.GrabbedItemLeft?.GetComponentInChildren<VRLockPickInteraction>().gameObject == other.gameObject)
@@ -123,11 +123,9 @@ namespace GUZ.VR.Adapters.Vob.VobDoor
                 return;
             }
 
-            PlaySound(_vmService.DoorLockSoundName);
-            
             var lockPickProperties = other.gameObject.GetComponentInParent<VRLockPickProperties>();
             lockPickProperties.IsInsideLock = false;
-            lockPickProperties.ActiveLockPicking = null;
+            lockPickProperties.ActiveContainerDoorPicking = null;
             lockPickProperties.HoldingHand = null;
         }
 
@@ -137,29 +135,38 @@ namespace GUZ.VR.Adapters.Vob.VobDoor
             var isCorrect = (isLeft && currentChar == 'L') || (!isLeft && currentChar == 'R');
 
             Logger.Log($"IsCorrect={isCorrect}, CombinationChar={currentChar}", LogCat.VR);
-            
+
             if (isCorrect)
             {
                 _combinationPos++;
 
-                // Opened!
-                if (_combinationPos == _combination.Length)
+                // Just a correct step, but not yet finished.
+                if (_combinationPos != _combination.Length)
+                {
+                    GlobalEventDispatcher.LockPickComboCorrect.Invoke(_lockPick, _lockable, (int)_handSide);
+
+                    PlaySound(_vmService.PickLockSuccessSoundName);
+                    return DoorLockStatus.StepSuccess;
+                }
+                // Unlocked!
+                else
                 {
                     // FIXME - handle lock state of Interactable in event catching service.
                     GlobalEventDispatcher.LockPickComboFinished.Invoke(_lockPick, _lockable, (int)_handSide);
 
                     // Reactivate rotation
-                    _rootGO.GetComponentInChildren<ConfigurableJoint>().axis = Vector3.up;
+                    _hvrPhysicsDoor.Unlock();
 
-                    PlaySound(_vmService.PickLockUnlockSoundName, _vmService.DoorUnlockSoundName);
+                    // Get the door's forward direction in world space
+                    var pushDirection = _hvrPhysicsDoor.transform.forward;
+                    var pushForce = 10f;
+
+                    // Apply force in the door's forward direction
+                    _hvrPhysicsDoor.GetComponent<Rigidbody>().AddForce(pushDirection * pushForce, ForceMode.Impulse);
+                    gameObject.SetActive(false);
 
                     return DoorLockStatus.Unlocked;
                 }
-
-                GlobalEventDispatcher.LockPickComboCorrect.Invoke(_lockPick, _lockable, (int)_handSide);
-
-                PlaySound(_vmService.PickLockSuccessSoundName);
-                return DoorLockStatus.StepSuccess;
             }
             else
             {
@@ -171,7 +178,6 @@ namespace GUZ.VR.Adapters.Vob.VobDoor
                 }
                 else
                 {
-                    // FIXME - decrease lock pick count in ivnentory.
                     GlobalEventDispatcher.LockPickComboBroken.Invoke(_lockPick, _lockable, (int)_handSide);
                     PlaySound(_vmService.PickLockBrokenSoundName);
                 }

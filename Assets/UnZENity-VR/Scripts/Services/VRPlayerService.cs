@@ -57,7 +57,12 @@ namespace GUZ.VR.Services
         {
             var dualGrabPrev = IsDualGrabbed;
 
-            if (grabbable.LeftHandGrabber)
+            // Something other grabbed our item. Ignore it.
+            if (!grabber.IsHandGrabber)
+                return;
+
+            var handGrabber = grabber as HVRHandGrabber;
+            if (handGrabber!.IsLeftHand)
                 GrabbedItemLeft = null;
             else
                 GrabbedObjectRight = null;
