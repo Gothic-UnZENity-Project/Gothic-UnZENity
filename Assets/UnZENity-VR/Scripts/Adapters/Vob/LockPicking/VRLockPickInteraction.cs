@@ -1,10 +1,9 @@
 #if GUZ_HVR_INSTALLED
 using GUZ.Core.Logging;
-using GUZ.VR.Adapters.Vob.VobDoor;
 using UnityEngine;
 using Logger = GUZ.Core.Logging.Logger;
 
-namespace GUZ.VR.Adapters.Vob.VobItem
+namespace GUZ.VR.Adapters.Vob.LockPicking
 {
     public class VRLockPickInteraction : MonoBehaviour
     {
@@ -97,19 +96,19 @@ namespace GUZ.VR.Adapters.Vob.VobItem
             _handRotationState = state;
 
             // Trigger right/left information to currently active door
-            var doorState = _properties.ActiveDoorLock.UpdateCombination(_handRotationState == RotationState.Left);
+            var doorState = _properties.ActiveContainerDoorPicking.UpdateCombination(_handRotationState == RotationState.Left);
 
             switch (doorState)
             {
-                case VRDoorLockInteraction.DoorLockStatus.StepFailure:
+                case VRContainerDoorPickingInteraction.DoorLockStatus.StepFailure:
                     // FIXME - Handle break of a Lock Pick based on hero's skill level
                     break;
-                case VRDoorLockInteraction.DoorLockStatus.StepSuccess:
+                case VRContainerDoorPickingInteraction.DoorLockStatus.StepSuccess:
                     break;
-                case VRDoorLockInteraction.DoorLockStatus.Unlocked:
+                case VRContainerDoorPickingInteraction.DoorLockStatus.Unlocked:
                     // We immediately reset current door as it's unlocked, and we don't need to use lock pick any longer.
                     _properties.IsInsideLock = false;
-                    _properties.ActiveDoorLock = null;
+                    _properties.ActiveContainerDoorPicking = null;
                     _properties.HoldingHand = null;
                     break;
             }

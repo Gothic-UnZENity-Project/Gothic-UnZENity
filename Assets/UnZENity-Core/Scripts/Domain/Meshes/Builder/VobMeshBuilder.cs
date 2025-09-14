@@ -24,7 +24,7 @@ namespace GUZ.Core.Domain.Meshes.Builder
             }
             else
             {
-                Logger.LogError($"No suitable data for Vob to be created found >{RootGo.name}<", LogCat.Mesh);
+                Logger.LogWarning($"No suitable data for Vob to be created found >{RootGo.name}<", LogCat.Mesh);
                 return null;
             }
 

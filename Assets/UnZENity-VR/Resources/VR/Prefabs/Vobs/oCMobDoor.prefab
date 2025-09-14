@@ -46,7 +46,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 980716176992391296}
   serializedVersion: 4
-  m_Mass: 1
+  m_Mass: 10
   m_Drag: 0
   m_AngularDrag: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -285,7 +285,7 @@ MonoBehaviour:
   StartLocked: 0
   ConnectedBody: {fileID: 0}
   CloseAngle: 5
-  CloseOverTime: 0.25
+  CloseOverTime: 0
   CloseDetectionTime: 0.5
   SFXThresholdAngle: 2.5
   SFXResetThreshold: 1
@@ -488,7 +488,7 @@ GameObject:
   - component: {fileID: 4385990735154456048}
   - component: {fileID: 827370569709809547}
   m_Layer: 0
-  m_Name: LockInteraction
+  m_Name: LockPickingInteraction
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -503,7 +503,7 @@ Transform:
   m_GameObject: {fileID: 3397705996622112300}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.5, y: 0.75, z: 0.15}
+  m_LocalPosition: {x: -0.3, y: 0.75, z: 0.15}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -523,6 +523,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _rootGO: {fileID: 6503575194566409312}
   _audioSource: {fileID: 4670513280573296585}
+  _hvrPhysicsDoor: {fileID: 2964456439257095392}
 --- !u!135 &827370569709809547
 SphereCollider:
   m_ObjectHideFlags: 0

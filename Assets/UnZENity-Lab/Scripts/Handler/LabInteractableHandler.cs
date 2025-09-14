@@ -16,6 +16,8 @@ namespace GUZ.Lab.Handler
 {
     public class LabInteractableHandler : AbstractLabHandler
     {
+        public bool IsActive = true;
+
         public GameObject Weapons1HGO;
         public GameObject Weapons2HGO;
         public GameObject RangedWeaponsGO;
@@ -38,6 +40,9 @@ namespace GUZ.Lab.Handler
 
         public override void Bootstrap()
         {
+            if (!IsActive)
+                return;
+
             var itemNames = GameStateService.GothicVm.GetInstanceSymbols("C_Item").Select(i => i.Name).ToList();
             var allItems = itemNames.ToDictionary(itemName => itemName, VmCacheService.TryGetItemData);
 

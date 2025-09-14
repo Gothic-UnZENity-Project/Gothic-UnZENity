@@ -81,6 +81,14 @@ namespace GUZ.Core.Services.Vobs
             
             // Decoupling Culling logic from actual init logic.
             GlobalEventDispatcher.VobMeshCullingChanged.AddListener(InitVob);
+            GlobalEventDispatcher.LockPickComboBroken.AddListener((lockPick, _, _) => lockPick.VobAs<IItem>().Amount--);
+            GlobalEventDispatcher.LockPickComboFinished.AddListener((_, containerOrDoor, _) =>
+            {
+                if (containerOrDoor.Vob is IContainer container)
+                    container.IsLocked = false;
+                else if (containerOrDoor.Vob is IDoor door)
+                    door.IsLocked = false;
+            });
         }
 
         /// <summary>
@@ -306,7 +314,7 @@ namespace GUZ.Core.Services.Vobs
                         await CreateWorldVobs(config, loading, vob.Children);
                         continue;
                     case VirtualObjectType.oCNpc:
-                        GlobalEventDispatcher.CreateNpcCalled.Invoke((INpc)vob);
+                        GlobalEventDispatcher.CreateNpc.Invoke((INpc)vob);
                         continue;
                 }
 
@@ -334,7 +342,7 @@ namespace GUZ.Core.Services.Vobs
 
         private VobContainer CreateContainerWithLoader(IVirtualObject vob)
         {
-            var container = new VobContainer(vob).Inject();
+            var container = new VobContainer(vob);
             _multiTypeCacheService.VobCache.Add(container);
 
             container.Go = new GameObject($"{container.Vob.GetVisualName()} (Loader)");

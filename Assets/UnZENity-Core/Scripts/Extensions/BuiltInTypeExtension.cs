@@ -18,6 +18,10 @@ namespace GUZ.Core.Extensions
         /// </summary>
         public static T Inject<T>(this T instance)
         {
+            // e.g., Lab's MonoBehaviours are not yet initialized when scene is added in editor mode, but this method gets called. Ignore it.
+            if (ReflexProjectInstaller.DIContainer == null)
+                return instance;
+
             AttributeInjector.Inject(instance, ReflexProjectInstaller.DIContainer);
             return instance;
         }

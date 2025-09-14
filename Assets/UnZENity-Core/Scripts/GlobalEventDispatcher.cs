@@ -44,6 +44,16 @@ namespace GUZ.Core
         public static readonly UnityEvent<NpcContainer, NpcLoader, bool, bool> NpcMeshCullingChanged = new();
         public static readonly UnityEvent<GameObject> VobMeshCullingChanged = new();
 
-        public static readonly UnityEvent<INpc> CreateNpcCalled = new();
+        public static readonly UnityEvent<INpc> CreateNpc = new();
+
+
+        // LockPicking events
+        // 1. VobContainer -> LockPick
+        // 2. VobContainer -> Door/Chest
+        // 3. HandSide (for VR) -> (0 = Left, 1 = Right)
+        public static readonly UnityEvent<VobContainer, VobContainer, int> LockPickComboCorrect = new();
+        public static readonly UnityEvent<VobContainer, VobContainer, int> LockPickComboWrong = new();
+        public static readonly UnityEvent<VobContainer, VobContainer, int> LockPickComboFinished = new();
+        public static readonly UnityEvent<VobContainer, VobContainer, int> LockPickComboBroken = new();
     }
 }

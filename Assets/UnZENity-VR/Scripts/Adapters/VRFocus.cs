@@ -44,20 +44,6 @@ namespace GUZ.VR.Adapters
         private void Start()
         {
             _nameCanvas.SetActive(false);
-
-            var vobContainer = GetComponentInParent<VobLoader>()?.Container;
-            if (vobContainer != null)
-            {
-                _nameCanvas.GetComponentInChildren<TMP_Text>().text = vobContainer.Props.GetFocusName();
-                return;
-            }
-
-            var npcLoader = GetComponentInParent<NpcLoader>();
-            if (npcLoader != null)
-            {
-                _nameCanvas.GetComponentInChildren<TMP_Text>().text = npcLoader.Npc.GetUserData().PrefabProps.GetFocusName();
-                return;
-            }
         }
 
         public void OnHoverEnter(HVRGrabberBase grabber, HVRGrabbable grabbable)
@@ -80,7 +66,7 @@ namespace GUZ.VR.Adapters
 
             if (_featureShowName)
             {
-                _nameCanvas.SetActive(true);
+                SetFocusName();
             }
 
             _isHovered = true;
@@ -119,6 +105,25 @@ namespace GUZ.VR.Adapters
             _dynamicMaterialService.ResetAllDynamicValues(gameObject);
 
             _isHovered = false;
+        }
+
+        private void SetFocusName()
+        {
+            _nameCanvas.SetActive(true);
+
+            var vobContainer = GetComponentInParent<VobLoader>()?.Container;
+            if (vobContainer != null)
+            {
+                _nameCanvas.GetComponentInChildren<TMP_Text>().text = vobContainer.Props.GetFocusName();
+                return;
+            }
+
+            var npcLoader = GetComponentInParent<NpcLoader>();
+            if (npcLoader != null)
+            {
+                _nameCanvas.GetComponentInChildren<TMP_Text>().text = npcLoader.Npc.GetUserData().PrefabProps.GetFocusName();
+                return;
+            }
         }
     }
 }

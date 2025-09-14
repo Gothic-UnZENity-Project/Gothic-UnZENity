@@ -240,6 +240,8 @@ namespace GUZ.Core.Domain.Vobs
                     
                     if (mainFlag is VmGothicEnums.ItemFlags.ItemKatNf or VmGothicEnums.ItemFlags.ItemKatFf)
                         go = _resourceCacheService.TryGetPrefabObject(PrefabType.VobItemWeapon, name: name, parent: parent);
+                    else if (name.EqualsIgnoreCase("ItKeLockpick"))
+                        go = _resourceCacheService.TryGetPrefabObject(PrefabType.VobItemLockPick, name: name, parent: parent);
                     else
                         go = _resourceCacheService.TryGetPrefabObject(PrefabType.VobItem, name: name, parent: parent);
 
@@ -438,7 +440,7 @@ namespace GUZ.Core.Domain.Vobs
             if (vobObj == null)
             {
                 Object.Destroy(prefabInstance); // No mesh created. Delete the prefab instance again.
-                Logger.LogError(
+                Logger.LogWarning(
                     $"There should be no! object which can't be found n:{vob.Name} i:{vob.Instance}. " +
                     $"We need to use >PxVobItem.instance< to do it right!", LogCat.Vob);
                 return null;

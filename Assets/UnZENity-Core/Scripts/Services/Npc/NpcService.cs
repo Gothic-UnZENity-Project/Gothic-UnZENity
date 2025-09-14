@@ -48,7 +48,6 @@ namespace GUZ.Core.Services.Npc
         [Inject] private readonly SaveGameService _saveGameService;
         [Inject] private readonly PlayerService _playerService;
         [Inject] private readonly WayNetService _wayNetService;
-        [Inject] private readonly VobService _vobService;
 
         // Supporter class where the whole Init() logic is outsourced for better readability.
         private readonly NpcInitializerDomain _initializerDomain = new NpcInitializerDomain().Inject();
@@ -74,7 +73,7 @@ namespace GUZ.Core.Services.Npc
             });
             
             GlobalEventDispatcher.NpcMeshCullingChanged.AddListener(EventNpcMeshCullingChanged);
-            GlobalEventDispatcher.CreateNpcCalled.AddListener(CreateVobNpc);
+            GlobalEventDispatcher.CreateNpc.AddListener(CreateVobNpc);
         }
 
         private IEnumerator InitNpcCoroutine()
@@ -241,45 +240,6 @@ namespace GUZ.Core.Services.Npc
             vob.Attributes[attributeId] = value;
         }
 
-        public void ExtCreateInvItems(NpcInstance npc, int itemIndex, int amount)
-        {
-            // We also initialize NPCs inside Daedalus when we load a save game. It's needed as some data isn't stored on save games.
-            // But e.g., inventory items will be skipped as they are stored inside save game VOBs.
-            if (!_saveGameService.IsWorldLoadedForTheFirstTime)
-                return;
-
-            if (npc.GetUserData() == null)
-            {
-                Logger.LogError($"NPC is not set for {nameof(ExtCreateInvItems)}. Is it an error on Daedalus or our end?", LogCat.Npc);
-                return;
-            }
-
-            var itemInstance = _gameStateService.GothicVm.GetSymbolByIndex(itemIndex)!;
-            var vob = npc.GetUserData()!.Vob;
-
-            
-            var mainFlag = (VmGothicEnums.ItemFlags)_vmCacheService.TryGetItemData(itemIndex).MainFlag;
-            var inventoryCat = mainFlag.ToInventoryCategory();
-            
-            var items = _vobService.UnpackItems(vob.GetPacked((int)inventoryCat));
-            var itemFound = false;
-            
-            for (var i = 0; i < items.Count; i++)
-            {
-                if (items[i].Name == itemInstance.Name)
-                {
-                    items[i] = new ContentItem(items[i], amount);
-                    itemFound = true;
-                    break;
-                }
-            }
-
-            if (!itemFound)
-                items.Add(new ContentItem(itemInstance.Name, amount));
-
-            vob.SetPacked((int)inventoryCat, _vobService.PackItems(items));
-        }
-
         public NpcContainer GetHeroContainer()
         {
             return ((NpcInstance)_gameStateService.GothicVm.GlobalHero).GetUserData();
@@ -302,7 +262,8 @@ namespace GUZ.Core.Services.Npc
             {
                 // We assume that this call is only made when the cache got cleared before as we loaded another world.
                 // Therefore, we re-add it now.
-                _multiTypeCacheService.NpcCache.Add(((NpcInstance)_gameStateService.GothicVm.GlobalHero).GetUserData());
+                var heroContainer = ((NpcInstance)_gameStateService.GothicVm.GlobalHero).GetUserData();
+                _multiTypeCacheService.NpcCache.Add(heroContainer);
 
                 return;
             }
@@ -339,6 +300,7 @@ namespace GUZ.Core.Services.Npc
 
             heroInstance.UserData = npcData;
 
+            _playerService.SetHero(npcData);
             _multiTypeCacheService.NpcCache.Add(npcData);
             _vm.InitInstance(heroInstance);
             vobNpc.CopyFromInstanceData(heroInstance);
@@ -356,14 +318,6 @@ namespace GUZ.Core.Services.Npc
         {
             // FIXME - Set this value on actual GameObject later.
             npc.GetUserData().Vob.ModelFatness = fatness;
-        }
-
-        public void ExtEquipItem(NpcInstance npc, int itemId)
-        {
-            var props = npc.GetUserData().Props;
-            var itemData = _vmCacheService.TryGetItemData(itemId);
-            
-            props.EquippedItems.Add(itemData);
         }
 
         public void ExtApplyOverlayMds(NpcInstance npc, string overlayName)
@@ -514,25 +468,6 @@ namespace GUZ.Core.Services.Npc
                 .Where(dialog => dialog.Npc == npcIndex)
                 .OrderByDescending(dialog => dialog.Important)
                 .ToList();
-        }
-
-        public int ExtNpcHasItems(NpcInstance npc, int itemId)
-        {
-            var npcVob = npc.GetUserData()!.Vob;
-            var itemInstanceName = _gameStateService.GothicVm.GetSymbolByIndex(itemId)!.Name;
-            
-            for (var i = 0; i < npcVob.ItemCount; i++)
-            {
-                if (npcVob.GetItem(i).Name == itemInstanceName)
-                    return npcVob.GetItem(i).Amount;
-            }
-            
-            return 0;
-        }
-        
-        public void ExtNpcClearInventory(NpcInstance npc)
-        {
-            npc.GetUserData()!.Vob.ClearItems();
         }
 
         private void EventNpcMeshCullingChanged(NpcContainer npcContainer, NpcLoader npcLoader, bool isInVisibleRange, bool wasOutOfDistance)
