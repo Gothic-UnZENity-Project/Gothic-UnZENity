@@ -76,8 +76,6 @@ namespace GUZ.VR.Adapters.Vob.LockPicking
         {
             yield return null;
             
-            // FIXME - When door/chest is unlocked, move Joint a little. Maybe there is an ease function at HVR for it.
-            
             // Deactivate rotation
             _hvrPhysicsDoor.Lock();
         }
@@ -86,6 +84,8 @@ namespace GUZ.VR.Adapters.Vob.LockPicking
         {
             if (!other.gameObject.name.Equals(_lockInteractionColliderName))
                 return;
+
+            // FIXME - Check if LockPick is in any hand. Otherwise its "flying" around and needs to be ignored.
 
             _combinationPos = 0;
             PlaySound(_vmService.DoorLockSoundName);
@@ -151,7 +151,6 @@ namespace GUZ.VR.Adapters.Vob.LockPicking
                 // Unlocked!
                 else
                 {
-                    // FIXME - handle lock state of Interactable in event catching service.
                     GlobalEventDispatcher.LockPickComboFinished.Invoke(_lockPick, _lockable, (int)_handSide);
 
                     // Reactivate rotation

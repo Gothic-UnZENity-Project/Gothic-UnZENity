@@ -285,7 +285,7 @@ MonoBehaviour:
   StartLocked: 0
   ConnectedBody: {fileID: 0}
   CloseAngle: 5
-  CloseOverTime: 0.25
+  CloseOverTime: 0
   CloseDetectionTime: 0.5
   SFXThresholdAngle: 2.5
   SFXResetThreshold: 1

@@ -41,7 +41,7 @@ namespace GUZ.Lab.Handler
                 var door = new Door
                 {
                     IsLocked = true,
-                    PickString = "LLRRLR",
+                    PickString = "LRLRRRLLLR",
                     Visual = new VisualMesh
                     {
                         Name = "DOOR_WOODEN"
@@ -68,6 +68,22 @@ namespace GUZ.Lab.Handler
 
                 vobContainer.Go.SetParent(_lockPickSlot);
             }
+        }
+
+
+        public void OnResetClicked()
+        {
+            Destroy(_chestSlot.transform.GetChild(0).gameObject);
+            Destroy(_doorSlot.transform.GetChild(0).gameObject);
+            Destroy(_lockPickSlot.transform.GetChild(0).gameObject);
+
+            StartCoroutine(OnResetClickedDelayed());
+        }
+
+        private IEnumerator OnResetClickedDelayed()
+        {
+            yield return null;
+            Bootstrap();
         }
     }
 }
