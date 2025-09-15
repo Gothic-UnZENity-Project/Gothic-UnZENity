@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using GUZ.Core.Logging;
 using GUZ.Core.Extensions;
 using GUZ.Core.Manager;
@@ -20,10 +21,8 @@ namespace GUZ.Core.Adapters.UI
         [SerializeField] private AudioSource _audioSource;
 
         [Inject] private readonly UIEventsService _uiEventsService;
-        [Inject] private readonly AudioService _audioService;
         [Inject] private readonly FontService _fontService;
 
-        private static bool _isZenKitInitialized;
         private static AudioClip _uiHover;
         private static AudioClip _uiClick;
         private static AudioClip _uiReturnClick;
@@ -31,22 +30,25 @@ namespace GUZ.Core.Adapters.UI
         static UIEvents()
         {
             // We might have a first UIEvent being added to a scene before initializing ZenKit. Init later.
-            GlobalEventDispatcher.ZenKitBootstrapped.AddListener(() => _isZenKitInitialized = true);
+            GlobalEventDispatcher.ZenKitBootstrapped.AddListener(InitializeAudio);
         }
         
-        private void Awake()
-        {
-            // We might have a first UIEvent being added to a scene before initializing ZenKit. Init later.
-            if (_isZenKitInitialized && _uiHover == null)
-                InitializeAudio();
-        }
+        // private void Awake()
+        // {
+        //     // We might have a first UIEvent being added to a scene before initializing ZenKit. Init later.
+        //     if (_isZenKitInitialized && _uiHover == null)
+        //         InitializeAudio();
+        // }
 
-        private void InitializeAudio()
+        private static void InitializeAudio()
         {
+            // Hack: We need to initialize AudioService only once and in static context. Therefore doing it now.
+            var audioService = ReflexProjectInstaller.DIContainer.Resolve<AudioService>();
+
             // Set sound files for button clicks initially.
-            _uiHover = _audioService.CreateAudioClip("inv_change");
-            _uiClick = _audioService.CreateAudioClip("inv_open");
-            _uiReturnClick = _audioService.CreateAudioClip("inv_close");
+            _uiHover = audioService.CreateAudioClip("inv_change");
+            _uiClick = audioService.CreateAudioClip("inv_open");
+            _uiReturnClick = audioService.CreateAudioClip("inv_close");
         }
 
         /// <summary>
