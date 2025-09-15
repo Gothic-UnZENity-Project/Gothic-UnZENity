@@ -1,11 +1,18 @@
 #if GUZ_HVR_INSTALLED
+using System.Collections.Generic;
 using GUZ.Core;
+using GUZ.Core.Extensions;
 using GUZ.Core.Manager;
+using GUZ.Core.Models.Vob;
 using GUZ.Core.Services.Player;
+using GUZ.Core.Services.Vobs;
+using HurricaneVR.Framework.Core;
+using HurricaneVR.Framework.Core.Grabbers;
 using HurricaneVR.Framework.Core.Sockets;
 using Reflex.Attributes;
 using TMPro;
 using UnityEngine;
+using ZenKit.Vobs;
 
 namespace GUZ.VR.Adapters.Player
 {
@@ -13,12 +20,15 @@ namespace GUZ.VR.Adapters.Player
     public class VRBackpack : MonoBehaviour
     {
         [SerializeField] private TMP_Text _pagerText;
+        [SerializeField] private HVRSocketContainer _socketContainer;
+
         private int _currentPage = 1;
         private int _totalPages = 5;
 
         
         [Inject] private readonly AudioService _audioService;
         [Inject] private readonly PlayerService _playerService;
+        [Inject] private readonly VobService _vobService;
 
         
         private void Start()
@@ -33,7 +43,9 @@ namespace GUZ.VR.Adapters.Player
             socketable.UnsocketedClip = _audioService.CreateAudioClip(_audioService.InvOpen.File);
             socketable.SocketedClip = _audioService.CreateAudioClip(_audioService.InvClose.File);
 
-            UpdatePagerText();
+            var inventory = _playerService.GetInventory();
+            UpdatePagerText(inventory);
+            UpdateSockets(inventory);
         }
 
         public void OnPrevPageClick()
@@ -42,19 +54,23 @@ namespace GUZ.VR.Adapters.Player
             if (_currentPage < 1)
                 _currentPage = 1;
 
-            UpdatePagerText();
+            var inventory = _playerService.GetInventory();
+            UpdatePagerText(inventory);
+            UpdateSockets(inventory);
         }
 
         public void OnNextPageClick()
         {
             _currentPage++;
 
-            UpdatePagerText();
+            var inventory = _playerService.GetInventory();
+            UpdatePagerText(inventory);
+            UpdateSockets(inventory);
         }
 
-        private void UpdatePagerText()
+
+        private void UpdatePagerText(List<ContentItem> inventory)
         {
-            var inventory = _playerService.GetInventory();
             _totalPages = Mathf.CeilToInt((float)inventory.Count / 9);
             if (_currentPage > _totalPages)
                 _currentPage = _totalPages;
@@ -62,7 +78,34 @@ namespace GUZ.VR.Adapters.Player
             _pagerText.text = $"{_currentPage}/{_totalPages}";
         }
 
-        
+        private void UpdateSockets(List<ContentItem> inventory)
+        {
+            foreach (var socket in _socketContainer.Sockets)
+            {
+                // Nothing inside socket
+                if (!socket.IsGrabbing)
+                    continue;
+
+                Destroy(socket.HeldObject.gameObject);
+            }
+
+            var startIndex = _currentPage * 9 - 9;
+            var count = Mathf.Min(9, inventory.Count - startIndex);
+            var items = inventory.GetRange(startIndex, count);
+
+            foreach (var item in items)
+            {
+                var vobContainer = _vobService.CreateItem(new Item
+                {
+                    Name = item.Name,
+                    Visual = new VisualMesh(),
+                    Instance = item.Name,
+                    Amount = item.Amount
+                });
+
+                _socketContainer.TryAddGrabbable(vobContainer.Go.GetComponentInChildren<HVRGrabbable>());
+            }
+        }
     }
 }
 #endif
