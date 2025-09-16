@@ -1,11 +1,14 @@
 #if GUZ_HVR_INSTALLED
 using System.Collections.Generic;
 using GUZ.Core;
+using GUZ.Core.Adapters.Vob;
 using GUZ.Core.Extensions;
 using GUZ.Core.Manager;
 using GUZ.Core.Models.Vob;
+using GUZ.Core.Services.Culling;
 using GUZ.Core.Services.Player;
 using GUZ.Core.Services.Vobs;
+using GUZ.Core.Services.World;
 using HurricaneVR.Framework.Core;
 using HurricaneVR.Framework.Core.Grabbers;
 using HurricaneVR.Framework.Core.Sockets;
@@ -22,6 +25,7 @@ namespace GUZ.VR.Adapters.Player
     {
         [SerializeField] private TMP_Text _pagerText;
         [SerializeField] private HVRSocketContainer _socketContainer;
+        [SerializeField] private GameObject _itemsRootBucket; // Root GO where we store the objects from Backpack.
 
         private int _currentPage = 1;
         private int _totalPages;
@@ -30,6 +34,8 @@ namespace GUZ.VR.Adapters.Player
         [Inject] private readonly AudioService _audioService;
         [Inject] private readonly PlayerService _playerService;
         [Inject] private readonly VobService _vobService;
+        [Inject] private readonly VobMeshCullingService _vobMeshCullingService;
+        [Inject] private readonly SaveGameService _saveGameService;
 
         
         private void Start()
@@ -54,6 +60,9 @@ namespace GUZ.VR.Adapters.Player
             ClearSockets();
         }
 
+        // FIXME - Destroy() will now destroy Socket from within Backpack
+        // FIXME - Changing parent doesn't work as it will move the Socket before changing back to bucket. We should add the VobLoader inside Socket instead!
+        
         public void OnShoulderReleased(HVRGrabberBase grabber, HVRGrabbable grabbable)
         {
             if (grabber is not HVRShoulderSocket)
@@ -62,6 +71,36 @@ namespace GUZ.VR.Adapters.Player
             var inventory = _playerService.GetInventory();
             UpdatePagerText(inventory);
             UpdateSockets(inventory);
+        }
+
+        public void OnItemPutIntoBackpack(HVRGrabberBase grabber, HVRGrabbable grabbable)
+        {
+            // Put out means a hand is grabbing (not the Socket of backpack itself.
+            if (grabber is not HVRHandGrabber)
+                return;
+
+            var vobLoader = grabbable.GetComponentInParent<VobLoader>();
+            var vobContainer = vobLoader.Container;
+            
+            vobLoader.gameObject.SetParent(_itemsRootBucket);
+            
+            _vobMeshCullingService.RemoveCullingEntry(vobContainer);
+            _saveGameService.CurrentWorldData.Vobs.Remove(vobContainer.Vob);
+        }
+
+        public void OnItemPutOutOfBackpack(HVRGrabberBase grabber, HVRGrabbable grabbable)
+        {
+            // Put out means a hand is grabbing (not the Socket of backpack itself.
+            if (grabber is not HVRHandGrabber)
+                return;
+            
+            var vobLoader = grabbable.GetComponentInParent<VobLoader>();
+            var vobContainer = vobLoader.Container;
+            
+            vobLoader.gameObject.SetParent(_vobService.GetRootGameObjectOfType(VirtualObjectType.oCItem));
+            
+            _vobMeshCullingService.AddCullingEntry(vobContainer);
+            _saveGameService.CurrentWorldData.Vobs.Add(vobContainer.Vob);
         }
 
         public void OnPrevPageClick()
@@ -112,6 +151,7 @@ namespace GUZ.VR.Adapters.Player
                     Amount = item.Amount
                 });
 
+                vobContainer.Go.SetParent(_itemsRootBucket);
                 _socketContainer.TryAddGrabbable(vobContainer.Go.GetComponentInChildren<HVRGrabbable>());
             }
         }
@@ -124,7 +164,8 @@ namespace GUZ.VR.Adapters.Player
                 if (!socket.IsGrabbing)
                     continue;
 
-                Destroy(socket.HeldObject.gameObject);
+                // Destroy VobLoader GO
+                Destroy(socket.HeldObject.transform.parent.gameObject);
             }
         }
     }

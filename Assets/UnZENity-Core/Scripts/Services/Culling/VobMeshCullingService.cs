@@ -24,6 +24,11 @@ namespace GUZ.Core.Services.Culling
             _vobDomain.AddCullingEntry(container);
         }
 
+        public void RemoveCullingEntry(VobContainer vobContainer)
+        {
+            _vobDomain.RemoveCullingEntry(vobContainer);
+        }
+
         public void StartTrackVobPositionUpdates(GameObject go)
         {
             _vobDomain.StartTrackVobPositionUpdates(go);

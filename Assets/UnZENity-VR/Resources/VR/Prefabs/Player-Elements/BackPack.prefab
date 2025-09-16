@@ -298,7 +298,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8926554697999766765}
   m_Layer: 0
-  m_Name: Row (1)
+  m_Name: Row (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -317,8 +317,8 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 5587329364365519005}
   - {fileID: 901045011827173957}
+  - {fileID: 5587329364365519005}
   - {fileID: 240719423423058112}
   m_Father: {fileID: 2904657445768608170}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -351,9 +351,9 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 3253045148732185064}
   - {fileID: 5817949314995334537}
   - {fileID: 8926554697999766765}
-  - {fileID: 3253045148732185064}
   - {fileID: 3170987708469907919}
   m_Father: {fileID: 1165366422000051137}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -474,6 +474,37 @@ MonoBehaviour:
   LineFreeRotation: 0
   LineInitialCanRotate: 1
   Others: []
+--- !u!1 &4561232388913866523
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7532164557936152093}
+  m_Layer: 0
+  m_Name: ItemsRoot
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7532164557936152093
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4561232388913866523}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6814442414849411837}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &4634846722307163912
 GameObject:
   m_ObjectHideFlags: 0
@@ -618,7 +649,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5817949314995334537}
   m_Layer: 0
-  m_Name: Row
+  m_Name: Row (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -637,8 +668,8 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 2154181883506743840}
   - {fileID: 3960725057190234191}
+  - {fileID: 2154181883506743840}
   - {fileID: 5658424827838203124}
   m_Father: {fileID: 2904657445768608170}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -788,7 +819,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3253045148732185064}
   m_Layer: 0
-  m_Name: Row (2)
+  m_Name: Row (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -807,8 +838,8 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 2651650257055036679}
   - {fileID: 539806511183236873}
+  - {fileID: 2651650257055036679}
   - {fileID: 6343286390695634847}
   m_Father: {fileID: 2904657445768608170}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1423,6 +1454,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: LargeInventorySlot (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 5745926728969230625, guid: 9c8562e025362a940aa6d5640a2299a3, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1486,24 +1521,52 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
-      propertyPath: Released.m_PersistentCalls.m_Calls.Array.size
+      propertyPath: Grabbed.m_PersistentCalls.m_Calls.Array.size
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
+      propertyPath: Released.m_PersistentCalls.m_Calls.Array.size
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
       propertyPath: BeforeGrabbed.m_PersistentCalls.m_Calls.Array.size
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
+      propertyPath: Grabbed.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 7245954016319570917}
+    - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
       propertyPath: Released.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 3389792897302281518}
+    - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
+      propertyPath: Released.m_PersistentCalls.m_Calls.Array.data[1].m_Target
+      value: 
+      objectReference: {fileID: 7245954016319570917}
+    - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
+      propertyPath: Grabbed.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
+      propertyPath: Grabbed.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnItemPutOutOfBackpack
+      objectReference: {fileID: 0}
     - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
       propertyPath: Released.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
+      propertyPath: Released.m_PersistentCalls.m_Calls.Array.data[1].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
       propertyPath: Released.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
       value: OnReleased
+      objectReference: {fileID: 0}
+    - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
+      propertyPath: Released.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
+      value: OnItemPutIntoBackpack
       objectReference: {fileID: 0}
     - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
       propertyPath: BeforeGrabbed.m_PersistentCalls.m_Calls.Array.data[0].m_Target
@@ -1518,15 +1581,31 @@ PrefabInstance:
       value: OnBeforeGrabbed
       objectReference: {fileID: 0}
     - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
+      propertyPath: Grabbed.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: GUZ.VR.Adapters.Player.VRBackpack, UnZENity.VR
+      objectReference: {fileID: 0}
+    - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
       propertyPath: Released.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
       value: GUZ.HVR.Components.VobContainer.HVRVobContainerSocketInventory, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
+      propertyPath: Released.m_PersistentCalls.m_Calls.Array.data[1].m_TargetAssemblyTypeName
+      value: GUZ.VR.Adapters.Player.VRBackpack, UnZENity.VR
       objectReference: {fileID: 0}
     - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
       propertyPath: BeforeGrabbed.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
       value: GUZ.HVR.Components.VobContainer.HVRVobContainerSocketInventory, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
+      propertyPath: Grabbed.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
       propertyPath: Released.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
+      propertyPath: Released.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
@@ -1535,7 +1614,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5861164055357080340, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
       propertyPath: m_Name
-      value: BackpackInventorySlot
+      value: BackpackInventorySlot (5)
       objectReference: {fileID: 0}
     - target: {fileID: 8782956222347397959, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
       propertyPath: Tags.Tags
@@ -1608,24 +1687,52 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
-      propertyPath: Released.m_PersistentCalls.m_Calls.Array.size
+      propertyPath: Grabbed.m_PersistentCalls.m_Calls.Array.size
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
+      propertyPath: Released.m_PersistentCalls.m_Calls.Array.size
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
       propertyPath: BeforeGrabbed.m_PersistentCalls.m_Calls.Array.size
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
+      propertyPath: Grabbed.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 7245954016319570917}
+    - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
       propertyPath: Released.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 3389792897302281518}
+    - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
+      propertyPath: Released.m_PersistentCalls.m_Calls.Array.data[1].m_Target
+      value: 
+      objectReference: {fileID: 7245954016319570917}
+    - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
+      propertyPath: Grabbed.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
+      propertyPath: Grabbed.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnItemPutOutOfBackpack
+      objectReference: {fileID: 0}
     - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
       propertyPath: Released.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
+      propertyPath: Released.m_PersistentCalls.m_Calls.Array.data[1].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
       propertyPath: Released.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
       value: OnReleased
+      objectReference: {fileID: 0}
+    - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
+      propertyPath: Released.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
+      value: OnItemPutIntoBackpack
       objectReference: {fileID: 0}
     - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
       propertyPath: BeforeGrabbed.m_PersistentCalls.m_Calls.Array.data[0].m_Target
@@ -1640,15 +1747,31 @@ PrefabInstance:
       value: OnBeforeGrabbed
       objectReference: {fileID: 0}
     - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
+      propertyPath: Grabbed.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: GUZ.VR.Adapters.Player.VRBackpack, UnZENity.VR
+      objectReference: {fileID: 0}
+    - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
       propertyPath: Released.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
       value: GUZ.HVR.Components.VobContainer.HVRVobContainerSocketInventory, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
+      propertyPath: Released.m_PersistentCalls.m_Calls.Array.data[1].m_TargetAssemblyTypeName
+      value: GUZ.VR.Adapters.Player.VRBackpack, UnZENity.VR
       objectReference: {fileID: 0}
     - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
       propertyPath: BeforeGrabbed.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
       value: GUZ.HVR.Components.VobContainer.HVRVobContainerSocketInventory, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
+      propertyPath: Grabbed.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
       propertyPath: Released.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
+      propertyPath: Released.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
@@ -1657,7 +1780,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5861164055357080340, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
       propertyPath: m_Name
-      value: BackpackInventorySlot (5)
+      value: BackpackInventorySlot (9)
       objectReference: {fileID: 0}
     - target: {fileID: 8782956222347397959, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
       propertyPath: Tags.Tags
@@ -1730,24 +1853,52 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
-      propertyPath: Released.m_PersistentCalls.m_Calls.Array.size
+      propertyPath: Grabbed.m_PersistentCalls.m_Calls.Array.size
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
+      propertyPath: Released.m_PersistentCalls.m_Calls.Array.size
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
       propertyPath: BeforeGrabbed.m_PersistentCalls.m_Calls.Array.size
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
+      propertyPath: Grabbed.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 7245954016319570917}
+    - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
       propertyPath: Released.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 3389792897302281518}
+    - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
+      propertyPath: Released.m_PersistentCalls.m_Calls.Array.data[1].m_Target
+      value: 
+      objectReference: {fileID: 7245954016319570917}
+    - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
+      propertyPath: Grabbed.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
+      propertyPath: Grabbed.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnItemPutOutOfBackpack
+      objectReference: {fileID: 0}
     - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
       propertyPath: Released.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
+      propertyPath: Released.m_PersistentCalls.m_Calls.Array.data[1].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
       propertyPath: Released.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
       value: OnReleased
+      objectReference: {fileID: 0}
+    - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
+      propertyPath: Released.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
+      value: OnItemPutIntoBackpack
       objectReference: {fileID: 0}
     - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
       propertyPath: BeforeGrabbed.m_PersistentCalls.m_Calls.Array.data[0].m_Target
@@ -1762,15 +1913,31 @@ PrefabInstance:
       value: OnBeforeGrabbed
       objectReference: {fileID: 0}
     - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
+      propertyPath: Grabbed.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: GUZ.VR.Adapters.Player.VRBackpack, UnZENity.VR
+      objectReference: {fileID: 0}
+    - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
       propertyPath: Released.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
       value: GUZ.HVR.Components.VobContainer.HVRVobContainerSocketInventory, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
+      propertyPath: Released.m_PersistentCalls.m_Calls.Array.data[1].m_TargetAssemblyTypeName
+      value: GUZ.VR.Adapters.Player.VRBackpack, UnZENity.VR
       objectReference: {fileID: 0}
     - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
       propertyPath: BeforeGrabbed.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
       value: GUZ.HVR.Components.VobContainer.HVRVobContainerSocketInventory, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
+      propertyPath: Grabbed.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
       propertyPath: Released.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
+      propertyPath: Released.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
@@ -1779,7 +1946,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5861164055357080340, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
       propertyPath: m_Name
-      value: BackpackInventorySlot (7)
+      value: BackpackInventorySlot (1)
       objectReference: {fileID: 0}
     - target: {fileID: 8782956222347397959, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
       propertyPath: Tags.Tags
@@ -1852,24 +2019,52 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
-      propertyPath: Released.m_PersistentCalls.m_Calls.Array.size
+      propertyPath: Grabbed.m_PersistentCalls.m_Calls.Array.size
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
+      propertyPath: Released.m_PersistentCalls.m_Calls.Array.size
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
       propertyPath: BeforeGrabbed.m_PersistentCalls.m_Calls.Array.size
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
+      propertyPath: Grabbed.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 7245954016319570917}
+    - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
       propertyPath: Released.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 3389792897302281518}
+    - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
+      propertyPath: Released.m_PersistentCalls.m_Calls.Array.data[1].m_Target
+      value: 
+      objectReference: {fileID: 7245954016319570917}
+    - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
+      propertyPath: Grabbed.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
+      propertyPath: Grabbed.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnItemPutOutOfBackpack
+      objectReference: {fileID: 0}
     - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
       propertyPath: Released.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
+      propertyPath: Released.m_PersistentCalls.m_Calls.Array.data[1].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
       propertyPath: Released.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
       value: OnReleased
+      objectReference: {fileID: 0}
+    - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
+      propertyPath: Released.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
+      value: OnItemPutIntoBackpack
       objectReference: {fileID: 0}
     - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
       propertyPath: BeforeGrabbed.m_PersistentCalls.m_Calls.Array.data[0].m_Target
@@ -1884,15 +2079,31 @@ PrefabInstance:
       value: OnBeforeGrabbed
       objectReference: {fileID: 0}
     - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
+      propertyPath: Grabbed.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: GUZ.VR.Adapters.Player.VRBackpack, UnZENity.VR
+      objectReference: {fileID: 0}
+    - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
       propertyPath: Released.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
       value: GUZ.HVR.Components.VobContainer.HVRVobContainerSocketInventory, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
+      propertyPath: Released.m_PersistentCalls.m_Calls.Array.data[1].m_TargetAssemblyTypeName
+      value: GUZ.VR.Adapters.Player.VRBackpack, UnZENity.VR
       objectReference: {fileID: 0}
     - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
       propertyPath: BeforeGrabbed.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
       value: GUZ.HVR.Components.VobContainer.HVRVobContainerSocketInventory, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
+      propertyPath: Grabbed.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
       propertyPath: Released.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
+      propertyPath: Released.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
@@ -1901,7 +2112,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5861164055357080340, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
       propertyPath: m_Name
-      value: BackpackInventorySlot (4)
+      value: BackpackInventorySlot (7)
       objectReference: {fileID: 0}
     - target: {fileID: 8782956222347397959, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
       propertyPath: Tags.Tags
@@ -2028,6 +2239,10 @@ PrefabInstance:
     - target: {fileID: 5745926728969230625, guid: 9c8562e025362a940aa6d5640a2299a3, type: 3}
       propertyPath: m_Name
       value: LargeInventorySlot (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 5745926728969230625, guid: 9c8562e025362a940aa6d5640a2299a3, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -2266,24 +2481,52 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
-      propertyPath: Released.m_PersistentCalls.m_Calls.Array.size
+      propertyPath: Grabbed.m_PersistentCalls.m_Calls.Array.size
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
+      propertyPath: Released.m_PersistentCalls.m_Calls.Array.size
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
       propertyPath: BeforeGrabbed.m_PersistentCalls.m_Calls.Array.size
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
+      propertyPath: Grabbed.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 7245954016319570917}
+    - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
       propertyPath: Released.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 3389792897302281518}
+    - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
+      propertyPath: Released.m_PersistentCalls.m_Calls.Array.data[1].m_Target
+      value: 
+      objectReference: {fileID: 7245954016319570917}
+    - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
+      propertyPath: Grabbed.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
+      propertyPath: Grabbed.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnItemPutOutOfBackpack
+      objectReference: {fileID: 0}
     - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
       propertyPath: Released.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
+      propertyPath: Released.m_PersistentCalls.m_Calls.Array.data[1].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
       propertyPath: Released.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
       value: OnReleased
+      objectReference: {fileID: 0}
+    - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
+      propertyPath: Released.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
+      value: OnItemPutIntoBackpack
       objectReference: {fileID: 0}
     - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
       propertyPath: BeforeGrabbed.m_PersistentCalls.m_Calls.Array.data[0].m_Target
@@ -2298,15 +2541,31 @@ PrefabInstance:
       value: OnBeforeGrabbed
       objectReference: {fileID: 0}
     - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
+      propertyPath: Grabbed.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: GUZ.VR.Adapters.Player.VRBackpack, UnZENity.VR
+      objectReference: {fileID: 0}
+    - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
       propertyPath: Released.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
       value: GUZ.HVR.Components.VobContainer.HVRVobContainerSocketInventory, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
+      propertyPath: Released.m_PersistentCalls.m_Calls.Array.data[1].m_TargetAssemblyTypeName
+      value: GUZ.VR.Adapters.Player.VRBackpack, UnZENity.VR
       objectReference: {fileID: 0}
     - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
       propertyPath: BeforeGrabbed.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
       value: GUZ.HVR.Components.VobContainer.HVRVobContainerSocketInventory, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
+      propertyPath: Grabbed.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
       propertyPath: Released.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
+      propertyPath: Released.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
@@ -2315,7 +2574,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5861164055357080340, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
       propertyPath: m_Name
-      value: BackpackInventorySlot (1)
+      value: BackpackInventorySlot (4)
       objectReference: {fileID: 0}
     - target: {fileID: 8782956222347397959, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
       propertyPath: Tags.Tags
@@ -2443,6 +2702,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: LargeInventorySlot
       objectReference: {fileID: 0}
+    - target: {fileID: 5745926728969230625, guid: 9c8562e025362a940aa6d5640a2299a3, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -2506,24 +2769,52 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
-      propertyPath: Released.m_PersistentCalls.m_Calls.Array.size
+      propertyPath: Grabbed.m_PersistentCalls.m_Calls.Array.size
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
+      propertyPath: Released.m_PersistentCalls.m_Calls.Array.size
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
       propertyPath: BeforeGrabbed.m_PersistentCalls.m_Calls.Array.size
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
+      propertyPath: Grabbed.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 7245954016319570917}
+    - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
       propertyPath: Released.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 3389792897302281518}
+    - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
+      propertyPath: Released.m_PersistentCalls.m_Calls.Array.data[1].m_Target
+      value: 
+      objectReference: {fileID: 7245954016319570917}
+    - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
+      propertyPath: Grabbed.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
+      propertyPath: Grabbed.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnItemPutOutOfBackpack
+      objectReference: {fileID: 0}
     - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
       propertyPath: Released.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
+      propertyPath: Released.m_PersistentCalls.m_Calls.Array.data[1].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
       propertyPath: Released.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
       value: OnReleased
+      objectReference: {fileID: 0}
+    - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
+      propertyPath: Released.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
+      value: OnItemPutIntoBackpack
       objectReference: {fileID: 0}
     - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
       propertyPath: BeforeGrabbed.m_PersistentCalls.m_Calls.Array.data[0].m_Target
@@ -2538,15 +2829,31 @@ PrefabInstance:
       value: OnBeforeGrabbed
       objectReference: {fileID: 0}
     - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
+      propertyPath: Grabbed.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: GUZ.VR.Adapters.Player.VRBackpack, UnZENity.VR
+      objectReference: {fileID: 0}
+    - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
       propertyPath: Released.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
       value: GUZ.HVR.Components.VobContainer.HVRVobContainerSocketInventory, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
+      propertyPath: Released.m_PersistentCalls.m_Calls.Array.data[1].m_TargetAssemblyTypeName
+      value: GUZ.VR.Adapters.Player.VRBackpack, UnZENity.VR
       objectReference: {fileID: 0}
     - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
       propertyPath: BeforeGrabbed.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
       value: GUZ.HVR.Components.VobContainer.HVRVobContainerSocketInventory, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
+      propertyPath: Grabbed.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
       propertyPath: Released.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
+      propertyPath: Released.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
@@ -2555,7 +2862,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5861164055357080340, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
       propertyPath: m_Name
-      value: BackpackInventorySlot (6)
+      value: BackpackInventorySlot (2)
       objectReference: {fileID: 0}
     - target: {fileID: 8782956222347397959, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
       propertyPath: Tags.Tags
@@ -2628,24 +2935,52 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
-      propertyPath: Released.m_PersistentCalls.m_Calls.Array.size
+      propertyPath: Grabbed.m_PersistentCalls.m_Calls.Array.size
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
+      propertyPath: Released.m_PersistentCalls.m_Calls.Array.size
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
       propertyPath: BeforeGrabbed.m_PersistentCalls.m_Calls.Array.size
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
+      propertyPath: Grabbed.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 7245954016319570917}
+    - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
       propertyPath: Released.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 3389792897302281518}
+    - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
+      propertyPath: Released.m_PersistentCalls.m_Calls.Array.data[1].m_Target
+      value: 
+      objectReference: {fileID: 7245954016319570917}
+    - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
+      propertyPath: Grabbed.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
+      propertyPath: Grabbed.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnItemPutOutOfBackpack
+      objectReference: {fileID: 0}
     - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
       propertyPath: Released.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
+      propertyPath: Released.m_PersistentCalls.m_Calls.Array.data[1].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
       propertyPath: Released.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
       value: OnReleased
+      objectReference: {fileID: 0}
+    - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
+      propertyPath: Released.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
+      value: OnItemPutIntoBackpack
       objectReference: {fileID: 0}
     - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
       propertyPath: BeforeGrabbed.m_PersistentCalls.m_Calls.Array.data[0].m_Target
@@ -2660,15 +2995,31 @@ PrefabInstance:
       value: OnBeforeGrabbed
       objectReference: {fileID: 0}
     - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
+      propertyPath: Grabbed.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: GUZ.VR.Adapters.Player.VRBackpack, UnZENity.VR
+      objectReference: {fileID: 0}
+    - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
       propertyPath: Released.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
       value: GUZ.HVR.Components.VobContainer.HVRVobContainerSocketInventory, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
+      propertyPath: Released.m_PersistentCalls.m_Calls.Array.data[1].m_TargetAssemblyTypeName
+      value: GUZ.VR.Adapters.Player.VRBackpack, UnZENity.VR
       objectReference: {fileID: 0}
     - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
       propertyPath: BeforeGrabbed.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
       value: GUZ.HVR.Components.VobContainer.HVRVobContainerSocketInventory, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
+      propertyPath: Grabbed.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
       propertyPath: Released.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
+      propertyPath: Released.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
@@ -2677,7 +3028,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5861164055357080340, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
       propertyPath: m_Name
-      value: BackpackInventorySlot (8)
+      value: BackpackInventorySlot (3)
       objectReference: {fileID: 0}
     - target: {fileID: 8782956222347397959, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
       propertyPath: Tags.Tags
@@ -2757,6 +3108,9 @@ PrefabInstance:
     m_RemovedGameObjects:
     - {fileID: 3871562402525892186, guid: 6cb8512e2712dc24ab93173e96e1a2bf, type: 3}
     m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: 6cb8512e2712dc24ab93173e96e1a2bf, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7532164557936152093}
     - targetCorrespondingSourceObject: {fileID: 8560556203703700366, guid: 6cb8512e2712dc24ab93173e96e1a2bf, type: 3}
       insertIndex: -1
       addedObject: {fileID: 6517613525841014101}
@@ -3043,6 +3397,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _pagerText: {fileID: 5783876815826470689}
   _socketContainer: {fileID: 7942131790731640917}
+  _itemsRootBucket: {fileID: 4561232388913866523}
 --- !u!4 &3447029125977450136 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8560556203703700366, guid: 6cb8512e2712dc24ab93173e96e1a2bf, type: 3}
@@ -3106,24 +3461,52 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
-      propertyPath: Released.m_PersistentCalls.m_Calls.Array.size
+      propertyPath: Grabbed.m_PersistentCalls.m_Calls.Array.size
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
+      propertyPath: Released.m_PersistentCalls.m_Calls.Array.size
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
       propertyPath: BeforeGrabbed.m_PersistentCalls.m_Calls.Array.size
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
+      propertyPath: Grabbed.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 7245954016319570917}
+    - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
       propertyPath: Released.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 3389792897302281518}
+    - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
+      propertyPath: Released.m_PersistentCalls.m_Calls.Array.data[1].m_Target
+      value: 
+      objectReference: {fileID: 7245954016319570917}
+    - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
+      propertyPath: Grabbed.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
+      propertyPath: Grabbed.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnItemPutOutOfBackpack
+      objectReference: {fileID: 0}
     - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
       propertyPath: Released.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
+      propertyPath: Released.m_PersistentCalls.m_Calls.Array.data[1].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
       propertyPath: Released.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
       value: OnReleased
+      objectReference: {fileID: 0}
+    - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
+      propertyPath: Released.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
+      value: OnItemPutIntoBackpack
       objectReference: {fileID: 0}
     - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
       propertyPath: BeforeGrabbed.m_PersistentCalls.m_Calls.Array.data[0].m_Target
@@ -3138,15 +3521,31 @@ PrefabInstance:
       value: OnBeforeGrabbed
       objectReference: {fileID: 0}
     - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
+      propertyPath: Grabbed.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: GUZ.VR.Adapters.Player.VRBackpack, UnZENity.VR
+      objectReference: {fileID: 0}
+    - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
       propertyPath: Released.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
       value: GUZ.HVR.Components.VobContainer.HVRVobContainerSocketInventory, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
+      propertyPath: Released.m_PersistentCalls.m_Calls.Array.data[1].m_TargetAssemblyTypeName
+      value: GUZ.VR.Adapters.Player.VRBackpack, UnZENity.VR
       objectReference: {fileID: 0}
     - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
       propertyPath: BeforeGrabbed.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
       value: GUZ.HVR.Components.VobContainer.HVRVobContainerSocketInventory, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
+      propertyPath: Grabbed.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
       propertyPath: Released.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
+      propertyPath: Released.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
@@ -3155,7 +3554,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5861164055357080340, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
       propertyPath: m_Name
-      value: BackpackInventorySlot (3)
+      value: BackpackInventorySlot (8)
       objectReference: {fileID: 0}
     - target: {fileID: 8782956222347397959, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
       propertyPath: Tags.Tags
@@ -3228,24 +3627,52 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
-      propertyPath: Released.m_PersistentCalls.m_Calls.Array.size
+      propertyPath: Grabbed.m_PersistentCalls.m_Calls.Array.size
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
+      propertyPath: Released.m_PersistentCalls.m_Calls.Array.size
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
       propertyPath: BeforeGrabbed.m_PersistentCalls.m_Calls.Array.size
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
+      propertyPath: Grabbed.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 7245954016319570917}
+    - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
       propertyPath: Released.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 3389792897302281518}
+    - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
+      propertyPath: Released.m_PersistentCalls.m_Calls.Array.data[1].m_Target
+      value: 
+      objectReference: {fileID: 7245954016319570917}
+    - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
+      propertyPath: Grabbed.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
+      propertyPath: Grabbed.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnItemPutOutOfBackpack
+      objectReference: {fileID: 0}
     - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
       propertyPath: Released.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
+      propertyPath: Released.m_PersistentCalls.m_Calls.Array.data[1].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
       propertyPath: Released.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
       value: OnReleased
+      objectReference: {fileID: 0}
+    - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
+      propertyPath: Released.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
+      value: OnItemPutIntoBackpack
       objectReference: {fileID: 0}
     - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
       propertyPath: BeforeGrabbed.m_PersistentCalls.m_Calls.Array.data[0].m_Target
@@ -3260,15 +3687,31 @@ PrefabInstance:
       value: OnBeforeGrabbed
       objectReference: {fileID: 0}
     - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
+      propertyPath: Grabbed.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: GUZ.VR.Adapters.Player.VRBackpack, UnZENity.VR
+      objectReference: {fileID: 0}
+    - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
       propertyPath: Released.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
       value: GUZ.HVR.Components.VobContainer.HVRVobContainerSocketInventory, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
+      propertyPath: Released.m_PersistentCalls.m_Calls.Array.data[1].m_TargetAssemblyTypeName
+      value: GUZ.VR.Adapters.Player.VRBackpack, UnZENity.VR
       objectReference: {fileID: 0}
     - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
       propertyPath: BeforeGrabbed.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
       value: GUZ.HVR.Components.VobContainer.HVRVobContainerSocketInventory, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
+      propertyPath: Grabbed.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
       propertyPath: Released.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
+      propertyPath: Released.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     - target: {fileID: 3711332657821201227, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
@@ -3277,7 +3720,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5861164055357080340, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
       propertyPath: m_Name
-      value: BackpackInventorySlot (2)
+      value: BackpackInventorySlot (6)
       objectReference: {fileID: 0}
     - target: {fileID: 8782956222347397959, guid: 9c9b0b9371709014197c4cbcb83f2a4c, type: 3}
       propertyPath: Tags.Tags
