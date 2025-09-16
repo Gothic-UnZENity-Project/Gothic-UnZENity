@@ -9,6 +9,7 @@ using GUZ.Core.Services.Vobs;
 using HurricaneVR.Framework.Core;
 using HurricaneVR.Framework.Core.Grabbers;
 using HurricaneVR.Framework.Core.Sockets;
+using HurricaneVR.Framework.Core.Utils;
 using Reflex.Attributes;
 using TMPro;
 using UnityEngine;
@@ -23,7 +24,7 @@ namespace GUZ.VR.Adapters.Player
         [SerializeField] private HVRSocketContainer _socketContainer;
 
         private int _currentPage = 1;
-        private int _totalPages = 5;
+        private int _totalPages;
 
         
         [Inject] private readonly AudioService _audioService;
@@ -42,6 +43,21 @@ namespace GUZ.VR.Adapters.Player
 
             socketable.UnsocketedClip = _audioService.CreateAudioClip(_audioService.InvOpen.File);
             socketable.SocketedClip = _audioService.CreateAudioClip(_audioService.InvClose.File);
+        }
+
+        public void OnShoulderGrabbed(HVRGrabberBase grabber, HVRGrabbable grabbable)
+        {
+            if (grabber is not HVRShoulderSocket)
+                return;
+
+            _currentPage = 1;
+            ClearSockets();
+        }
+
+        public void OnShoulderReleased(HVRGrabberBase grabber, HVRGrabbable grabbable)
+        {
+            if (grabber is not HVRShoulderSocket)
+                return;
 
             var inventory = _playerService.GetInventory();
             UpdatePagerText(inventory);
@@ -80,14 +96,7 @@ namespace GUZ.VR.Adapters.Player
 
         private void UpdateSockets(List<ContentItem> inventory)
         {
-            foreach (var socket in _socketContainer.Sockets)
-            {
-                // Nothing inside socket
-                if (!socket.IsGrabbing)
-                    continue;
-
-                Destroy(socket.HeldObject.gameObject);
-            }
+            ClearSockets();
 
             var startIndex = _currentPage * 9 - 9;
             var count = Mathf.Min(9, inventory.Count - startIndex);
@@ -104,6 +113,18 @@ namespace GUZ.VR.Adapters.Player
                 });
 
                 _socketContainer.TryAddGrabbable(vobContainer.Go.GetComponentInChildren<HVRGrabbable>());
+            }
+        }
+
+        private void ClearSockets()
+        {
+            foreach (var socket in _socketContainer.Sockets)
+            {
+                // Nothing inside socket
+                if (!socket.IsGrabbing)
+                    continue;
+
+                Destroy(socket.HeldObject.gameObject);
             }
         }
     }

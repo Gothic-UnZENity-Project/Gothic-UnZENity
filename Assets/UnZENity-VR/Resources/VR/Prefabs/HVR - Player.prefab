@@ -2304,6 +2304,62 @@ PrefabInstance:
       propertyPath: Socket
       value: 
       objectReference: {fileID: 3895146393690940081}
+    - target: {fileID: 6847336371662012770, guid: 9887ca19e46b4d547b2ad40c47c756b9, type: 3}
+      propertyPath: Grabbed.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6847336371662012770, guid: 9887ca19e46b4d547b2ad40c47c756b9, type: 3}
+      propertyPath: Released.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6847336371662012770, guid: 9887ca19e46b4d547b2ad40c47c756b9, type: 3}
+      propertyPath: Grabbed.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6847336371662012770, guid: 9887ca19e46b4d547b2ad40c47c756b9, type: 3}
+      propertyPath: Released.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6847336371662012770, guid: 9887ca19e46b4d547b2ad40c47c756b9, type: 3}
+      propertyPath: Grabbed.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 3760600358070659426}
+    - target: {fileID: 6847336371662012770, guid: 9887ca19e46b4d547b2ad40c47c756b9, type: 3}
+      propertyPath: Released.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 3760600358070659426}
+    - target: {fileID: 6847336371662012770, guid: 9887ca19e46b4d547b2ad40c47c756b9, type: 3}
+      propertyPath: Grabbed.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6847336371662012770, guid: 9887ca19e46b4d547b2ad40c47c756b9, type: 3}
+      propertyPath: Grabbed.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnShoulderGrabbed
+      objectReference: {fileID: 0}
+    - target: {fileID: 6847336371662012770, guid: 9887ca19e46b4d547b2ad40c47c756b9, type: 3}
+      propertyPath: Released.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6847336371662012770, guid: 9887ca19e46b4d547b2ad40c47c756b9, type: 3}
+      propertyPath: Released.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnShoulderReleased
+      objectReference: {fileID: 0}
+    - target: {fileID: 6847336371662012770, guid: 9887ca19e46b4d547b2ad40c47c756b9, type: 3}
+      propertyPath: Grabbed.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: GUZ.VR.Adapters.Player.VRBackpack, UnZENity.VR
+      objectReference: {fileID: 0}
+    - target: {fileID: 6847336371662012770, guid: 9887ca19e46b4d547b2ad40c47c756b9, type: 3}
+      propertyPath: Released.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: GUZ.VR.Adapters.Player.VRBackpack, UnZENity.VR
+      objectReference: {fileID: 0}
+    - target: {fileID: 6847336371662012770, guid: 9887ca19e46b4d547b2ad40c47c756b9, type: 3}
+      propertyPath: Grabbed.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 6847336371662012770, guid: 9887ca19e46b4d547b2ad40c47c756b9, type: 3}
+      propertyPath: Released.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -2318,6 +2374,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6ebc937e678155e4d86feeb9248cca97, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &3760600358070659426 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7245954016319570917, guid: 9887ca19e46b4d547b2ad40c47c756b9, type: 3}
+  m_PrefabInstance: {fileID: 5818257988439845511}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0e87e25baf014b28a5aaa89ab1e7c31f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &4505433718888639186 stripped
@@ -2853,7 +2920,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5582560689641485545, guid: 8348fe5825a421c42be0dad392e03669, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 166.49992
+      value: 166.49988
       objectReference: {fileID: 0}
     - target: {fileID: 5603077536188825030, guid: 8348fe5825a421c42be0dad392e03669, type: 3}
       propertyPath: m_AnchorMax.x
