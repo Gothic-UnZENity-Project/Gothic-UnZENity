@@ -122,10 +122,6 @@ namespace GUZ.Lab
 
         private async Task InitLab()
         {
-            _npcService.CacheHero();
-
-            _bootstrapDomain.Boot();
-
             if (!_staticCacheService.DoGlobalCacheFilesExist())
             {
                 Logger.LogErrorEditor("Please load game once to create global cache first!", LogCat.Debug);
@@ -133,6 +129,11 @@ namespace GUZ.Lab
             }
             await _staticCacheService.LoadGlobalCache().AwaitAndLog();
             await _meshService.CreateTextureArray().AwaitAndLog();
+
+            _npcService.CacheHero();
+            BootstrapPlayer();
+
+            _bootstrapDomain.Boot();
 
             LabNpcAnimationHandler.Bootstrap();
             LabMusicHandler.Bootstrap();
@@ -145,7 +146,6 @@ namespace GUZ.Lab
             LabLockHandler.Bootstrap();
 
             _contextInteractionService.InitUIInteraction(); // For (e.g.) QuestLog to enable hand pointer.
-            BootstrapPlayer();
         }
 
         private void BootstrapPlayer()
