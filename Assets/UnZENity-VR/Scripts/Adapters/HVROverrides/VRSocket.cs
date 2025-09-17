@@ -1,5 +1,6 @@
 #if GUZ_HVR_INSTALLED
 using GUZ.Core.Adapters.Vob;
+using GUZ.Core.Extensions;
 using HurricaneVR.Framework.Core;
 using HurricaneVR.Framework.Core.Grabbers;
 
@@ -18,7 +19,7 @@ namespace GUZ.VR.Adapters.HVROverrides
         protected override void OnGrabbed(HVRGrabArgs args)
         {
             // HINT: We can't call base.OnGrabbed(), as it would break the parent behaviour already. We therefore recreate its logic here.
-            
+
             // From HVRGrabberBase.cs
             {
                 args.Grabbable.Destroyed.AddListener(OnGrabbableDestroyed);
@@ -61,7 +62,7 @@ namespace GUZ.VR.Adapters.HVROverrides
         protected override void AttachGrabbable(HVRGrabbable grabbable)
         {
             // Structure: Bucket -> VobLoader -> Grabbable. We therefore need to put the VobLoader to another spot.
-            grabbable.GetComponentInParent<VobLoader>().transform.parent = transform;
+            grabbable.GetComponentInParent<VobLoader>().gameObject.SetParent(transform.gameObject, resetLocation: true, resetRotation: true);
         }
     }
 }
