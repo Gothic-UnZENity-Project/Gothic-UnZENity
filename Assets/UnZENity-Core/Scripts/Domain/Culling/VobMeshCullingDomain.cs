@@ -520,6 +520,9 @@ namespace GUZ.Core.Domain.Culling
         /// </summary>
         public void StopTrackVobPositionUpdates(GameObject go)
         {
+            if (!ConfigService.Dev.EnableVOBMeshCulling)
+                return;
+            
             // Meshes are always 1...n levels below initially created VobLoader GO. Therefore, we need to fetch its parent for track updates.
             var rootGo = go.GetComponentInParent<VobLoader>().gameObject;
 

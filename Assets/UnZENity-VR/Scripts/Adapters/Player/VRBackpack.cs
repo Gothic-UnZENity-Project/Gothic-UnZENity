@@ -1,5 +1,6 @@
 #if GUZ_HVR_INSTALLED
 using System.Collections.Generic;
+using Assets.HurricaneVR.Framework.Shared.Utilities;
 using GUZ.Core;
 using GUZ.Core.Adapters.Vob;
 using GUZ.Core.Extensions;
@@ -164,8 +165,11 @@ namespace GUZ.VR.Adapters.Player
                 if (!socket.IsGrabbing)
                     continue;
 
-                // Destroy VobLoader GO
-                Destroy(socket.HeldObject.transform.parent.gameObject);
+                // Destroy VobLoader GO after releasing it from slot (proper event handling)
+                var heldRoot = socket.HeldObject.transform.parent.gameObject;
+                socket.ForceRelease();
+                heldRoot.SetActive(false); // Disable it, as it would be with scale 1 in front of our camera for 1 second.
+                this.ExecuteNextUpdate(() => Destroy(heldRoot));
             }
         }
     }
