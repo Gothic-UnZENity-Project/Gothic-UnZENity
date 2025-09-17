@@ -33,13 +33,6 @@ namespace GUZ.Core.Adapters.UI
             GlobalEventDispatcher.ZenKitBootstrapped.AddListener(InitializeAudio);
         }
         
-        // private void Awake()
-        // {
-        //     // We might have a first UIEvent being added to a scene before initializing ZenKit. Init later.
-        //     if (_isZenKitInitialized && _uiHover == null)
-        //         InitializeAudio();
-        // }
-
         private static void InitializeAudio()
         {
             // Hack: We need to initialize AudioService only once and in static context. Therefore doing it now.
