@@ -97,7 +97,7 @@ namespace GUZ.VR.Adapters.Player
             var vobLoader = grabbable.GetComponentInParent<VobLoader>();
             var vobContainer = vobLoader.Container;
             
-            vobLoader.gameObject.SetParent(_vobService.GetRootGameObjectOfType(VirtualObjectType.oCItem));
+            // vobLoader.gameObject.SetParent(_vobService.GetRootGameObjectOfType(VirtualObjectType.oCItem));
             
             _vobMeshCullingService.AddCullingEntry(vobContainer);
             _saveGameService.CurrentWorldData.Vobs.Add(vobContainer.Vob);
@@ -151,7 +151,7 @@ namespace GUZ.VR.Adapters.Player
                     Amount = item.Amount
                 });
 
-                vobContainer.Go.SetParent(_itemsRootBucket);
+                // vobContainer.Go.SetParent(_itemsRootBucket);
                 _socketContainer.TryAddGrabbable(vobContainer.Go.GetComponentInChildren<HVRGrabbable>());
             }
         }
