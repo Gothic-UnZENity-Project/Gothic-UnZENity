@@ -25,6 +25,7 @@ namespace GUZ.VR.Adapters.HVROverrides
             }
             
             // From HVRSocket.cs (change: _previousParent variable is a different one)
+            // Structure: Bucket -> VobLoader -> Grabbable. We therefore need to put the VobLoader to another spot.
             {
                 var grabbable = args.Grabbable;
                 _previousParent = grabbable.GetComponentInParent<VobLoader>().transform.parent; // We use parent of Grabbable object.
@@ -55,6 +56,12 @@ namespace GUZ.VR.Adapters.HVROverrides
             
             grabbable.transform.parent = itemRoot;
             itemRoot.parent = tmpPreviousParent;
+        }
+
+        protected override void AttachGrabbable(HVRGrabbable grabbable)
+        {
+            // Structure: Bucket -> VobLoader -> Grabbable. We therefore need to put the VobLoader to another spot.
+            grabbable.GetComponentInParent<VobLoader>().transform.parent = transform;
         }
     }
 }
