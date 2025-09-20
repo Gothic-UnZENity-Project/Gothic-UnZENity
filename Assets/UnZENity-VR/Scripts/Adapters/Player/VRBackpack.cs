@@ -26,7 +26,6 @@ namespace GUZ.VR.Adapters.Player
     {
         [SerializeField] private TMP_Text _pagerText;
         [SerializeField] private HVRSocketContainer _socketContainer;
-        [SerializeField] private GameObject _itemsRootBucket; // Root GO where we store the objects from Backpack.
 
         private int _currentPage = 1;
         private int _totalPages;
@@ -60,9 +59,6 @@ namespace GUZ.VR.Adapters.Player
             _currentPage = 1;
             ClearSockets();
         }
-
-        // FIXME - Destroy() will now destroy Socket from within Backpack
-        // FIXME - Changing parent doesn't work as it will move the Socket before changing back to bucket. We should add the VobLoader inside Socket instead!
         
         public void OnShoulderReleased(HVRGrabberBase grabber, HVRGrabbable grabbable)
         {
@@ -82,9 +78,7 @@ namespace GUZ.VR.Adapters.Player
 
             var vobLoader = grabbable.GetComponentInParent<VobLoader>();
             var vobContainer = vobLoader.Container;
-            
-            vobLoader.gameObject.SetParent(_itemsRootBucket);
-            
+
             _vobMeshCullingService.RemoveCullingEntry(vobContainer);
             _saveGameService.CurrentWorldData.Vobs.Remove(vobContainer.Vob);
         }
@@ -97,9 +91,7 @@ namespace GUZ.VR.Adapters.Player
             
             var vobLoader = grabbable.GetComponentInParent<VobLoader>();
             var vobContainer = vobLoader.Container;
-            
-            // vobLoader.gameObject.SetParent(_vobService.GetRootGameObjectOfType(VirtualObjectType.oCItem));
-            
+
             _vobMeshCullingService.AddCullingEntry(vobContainer);
             _saveGameService.CurrentWorldData.Vobs.Add(vobContainer.Vob);
         }
