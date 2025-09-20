@@ -92,6 +92,10 @@ namespace GUZ.VR.Adapters.Vob
 
         public void OnReleased(HVRGrabberBase grabber, HVRGrabbable grabbable)
         {
+            // Releasing from a Socket doesn't count.
+            if (grabber is not HVRHandGrabber)
+                return;
+            
             gameObject.layer = Constants.VobItem; // Back to default
 
             _vobMeshCullingService?.StopTrackVobPositionUpdates(gameObject);

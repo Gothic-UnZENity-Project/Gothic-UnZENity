@@ -248,6 +248,51 @@ namespace GUZ.Core.Domain.Culling
             }
         }
 
+        public void RemoveCullingEntry(VobContainer container)
+        {
+            if (container.Go == null)
+                return;
+
+            var index = _objectsSmall.IndexOf(container.Go);
+            if (index >= 0)
+            {
+                _objectsSmall.RemoveAt(index);
+                _spheresSmall.RemoveAt(index);
+    
+                // Each time we add an entry, we need to recreate the array for the CullingGroup.
+                if (CurrentState == State.WorldLoaded)
+                    _cullingGroupSmall.SetBoundingSpheres(_spheresSmall.ToArray());
+                
+                return;
+            }
+            
+            index = _objectsMedium.IndexOf(container.Go);
+            if (index >= 0)
+            {
+                _objectsMedium.RemoveAt(index);
+                _spheresMedium.RemoveAt(index);
+                
+                // Each time we add an entry, we need to recreate the array for the CullingGroup.
+                if (CurrentState == State.WorldLoaded)
+                    _cullingGroupMedium.SetBoundingSpheres(_spheresMedium.ToArray());
+                
+                return;
+            }
+
+            index = _objectsLarge.IndexOf(container.Go);
+            if (index >= 0)
+            {
+                _objectsLarge.RemoveAt(index);
+                _spheresLarge.RemoveAt(index);
+                
+                // Each time we add an entry, we need to recreate the array for the CullingGroup.
+                if (CurrentState == State.WorldLoaded)
+                    _cullingGroupLarge.SetBoundingSpheres(_spheresLarge.ToArray());
+                
+                return;
+            }
+        }
+
         private BoundingSphere GetSphere(GameObject go, Bounds bounds)
         {
             var bboxSize = bounds.size;
@@ -475,6 +520,9 @@ namespace GUZ.Core.Domain.Culling
         /// </summary>
         public void StopTrackVobPositionUpdates(GameObject go)
         {
+            if (!ConfigService.Dev.EnableVOBMeshCulling)
+                return;
+            
             // Meshes are always 1...n levels below initially created VobLoader GO. Therefore, we need to fetch its parent for track updates.
             var rootGo = go.GetComponentInParent<VobLoader>().gameObject;
 

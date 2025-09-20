@@ -61,6 +61,7 @@ namespace GUZ.Lab
         [Inject] private readonly ResourceCacheService _resourceCacheService;
         [Inject] private readonly UnityMonoService _unityMonoService;
         [Inject] private readonly SkyService _skyService;
+        [Inject] private readonly PlayerService _playerService;
 
         private BootstrapDomain _bootstrapDomain;
 
@@ -121,10 +122,6 @@ namespace GUZ.Lab
 
         private async Task InitLab()
         {
-            _npcService.CacheHero();
-
-            _bootstrapDomain.Boot();
-
             if (!_staticCacheService.DoGlobalCacheFilesExist())
             {
                 Logger.LogErrorEditor("Please load game once to create global cache first!", LogCat.Debug);
@@ -132,6 +129,11 @@ namespace GUZ.Lab
             }
             await _staticCacheService.LoadGlobalCache().AwaitAndLog();
             await _meshService.CreateTextureArray().AwaitAndLog();
+
+            _npcService.CacheHero();
+            BootstrapPlayer();
+
+            _bootstrapDomain.Boot();
 
             LabNpcAnimationHandler.Bootstrap();
             LabMusicHandler.Bootstrap();
@@ -144,11 +146,444 @@ namespace GUZ.Lab
             LabLockHandler.Bootstrap();
 
             _contextInteractionService.InitUIInteraction(); // For (e.g.) QuestLog to enable hand pointer.
-            BootstrapPlayer();
         }
 
         private void BootstrapPlayer()
         {
+            // Items - from PC_Rockefeller ;-)
+            {
+                //----------------------------------------
+                //Armor.d
+                //----------------------------------------
+                _playerService.AddItem("ORE_ARMOR_H");
+	            _playerService.AddItem("ORE_ARMOR_M");
+	            _playerService.AddItem("CRW_ARMOR_H");
+	            _playerService.AddItem("DMB_ARMOR_M");
+	            _playerService.AddItem("EBR_ARMOR_M");
+	            _playerService.AddItem("EBR_ARMOR_H");
+	            _playerService.AddItem("EBR_ARMOR_H2");
+	            _playerService.AddItem("GRD_ARMOR_L");
+	            _playerService.AddItem("GRD_ARMOR_M");
+	            _playerService.AddItem("GRD_ARMOR_H");
+	            _playerService.AddItem("GUR_ARMOR_H");
+	            _playerService.AddItem("GUR_ARMOR_M");
+	            _playerService.AddItem("KDF_ARMOR_L");
+	            _playerService.AddItem("KDF_ARMOR_H");
+	            _playerService.AddItem("KDW_ARMOR_L");
+	            _playerService.AddItem("KDW_ARMOR_H");
+	            _playerService.AddItem("NOV_ARMOR_L");
+	            _playerService.AddItem("NOV_ARMOR_M");
+	            _playerService.AddItem("NOV_ARMOR_H");
+	            _playerService.AddItem("ORG_ARMOR_L");
+	            _playerService.AddItem("ORG_ARMOR_M");
+	            _playerService.AddItem("ORG_ARMOR_H");
+	            _playerService.AddItem("SFB_ARMOR_L");
+	            _playerService.AddItem("SLD_ARMOR_L");
+	            _playerService.AddItem("SLD_ARMOR_M");
+	            _playerService.AddItem("SLD_ARMOR_H");
+	            _playerService.AddItem("STT_ARMOR_M");
+	            _playerService.AddItem("STT_ARMOR_H");
+	            _playerService.AddItem("TPL_ARMOR_L");
+	            _playerService.AddItem("TPL_ARMOR_M");
+	            _playerService.AddItem("TPL_ARMOR_H");
+	            _playerService.AddItem("VLK_ARMOR_M");
+	            _playerService.AddItem("VLK_ARMOR_L");
+
+                //Magic Runes
+	            _playerService.AddItem("ItArRuneLight");
+	            _playerService.AddItem("ItArRuneFirebolt");
+	            _playerService.AddItem("ItArRuneFireball");
+	            _playerService.AddItem("ItArRuneFirestorm");
+	            _playerService.AddItem("ItArRuneFireRain");
+	            _playerService.AddItem("ItArRuneTeleport1");
+	            _playerService.AddItem("ItArRuneTeleport2");
+	            _playerService.AddItem("ItArRuneTeleport3");
+	            _playerService.AddItem("ItArScrollTeleport4", 20);
+	            _playerService.AddItem("ItArRuneTeleport5");
+	            _playerService.AddItem("ItArRuneHeal");
+	            _playerService.AddItem("ItArRuneChainLightning");
+	            _playerService.AddItem("ItArRuneThunderbolt");
+	            _playerService.AddItem("ItArRuneThunderball");
+	            _playerService.AddItem("ItArRuneIceCube");
+	            _playerService.AddItem("ItArRuneIceWave");
+                _playerService.AddItem("ItArRuneDestroyUndead");
+
+                //Magic Scrolls
+                _playerService.AddItem("ItArScrollTrfBloodfly", 10);
+	            _playerService.AddItem("ItArScrollTrfCrawler", 10);
+	            _playerService.AddItem("ItArScrollTrfLurker", 10);
+	            _playerService.AddItem("ItArScrollTrfMeatbug", 10);
+	            _playerService.AddItem("ItArScrollTrfMolerat", 10);
+	            _playerService.AddItem("ItArScrollTrfOrcdog", 10);
+	            _playerService.AddItem("ItArScrollTrfScavenger", 10);
+	            _playerService.AddItem("ItArScrollTrfShadowbeast", 10);
+	            _playerService.AddItem("ItArScrollTrfSnapper", 10);
+	            _playerService.AddItem("ItArScrollTrfWaran", 10);
+	            _playerService.AddItem("ItArScrollTrfWolf", 10);
+	            _playerService.AddItem("ItArScrollSummonDemon", 10);
+	            _playerService.AddItem("ItArScrollSummonSkeletons", 10);
+	            _playerService.AddItem("ItArScrollSummonGolem", 10);
+	            _playerService.AddItem("ItArScrollArmyOfDarkness", 10);
+
+                //Psi-Runes
+	            _playerService.AddItem("ItArRuneWindfist");
+	            _playerService.AddItem("ItArRuneStormfist");
+	            _playerService.AddItem("ItArRuneTelekinesis");
+	            _playerService.AddItem("ItArRuneCharm");
+	            _playerService.AddItem("ItArRuneSleep");
+	            _playerService.AddItem("ItArRunePyrokinesis");
+	            _playerService.AddItem("ItArRuneControl");
+	            _playerService.AddItem("ItArRuneBreathOfDeath");
+
+                //Psi-Scrolls
+	            _playerService.AddItem("ItArScrollFear", 10);
+	            _playerService.AddItem("ItArScrollBerzerk", 10);
+	            _playerService.AddItem("ItArScrollShrink", 10);
+
+                //----------------------------------------
+                //Food.d
+                //----------------------------------------
+	            _playerService.AddItem("ItFo_mutton_01", 20);
+	            _playerService.AddItem("ItFoApple", 5);
+	            _playerService.AddItem("ItFoLoaf", 5);
+	            _playerService.AddItem("ItFoMutton", 10);
+	            _playerService.AddItem("ItFoMuttonRaw", 20);
+	            _playerService.AddItem("ItFoCheese", 5);
+	            _playerService.AddItem("ItFoRice", 5);
+	            _playerService.AddItem("ItFoSoup", 5);
+	            _playerService.AddItem("ItFoMeatbugragout", 5);
+	            _playerService.AddItem("ItFoCrawlersoup", 5);
+	            _playerService.AddItem("ItFoBooze", 10);
+	            _playerService.AddItem("ItFoWine", 5);
+	            _playerService.AddItem("ItFo_wineberrys_01", 5);
+	            _playerService.AddItem("ItFoBeer", 5);
+
+                //PFLANZEN
+	            _playerService.AddItem("ItFo_Plants_Trollberrys_01", 5);
+	            _playerService.AddItem("ItFo_Plants_Flameberry_01", 5);
+	            _playerService.AddItem("ItFo_Plants_Nightshadow_01", 5);
+	            _playerService.AddItem("ItFo_Plants_Nightshadow_02", 5);
+	            _playerService.AddItem("ItFo_Plants_OrcHerb_01", 5);
+	            _playerService.AddItem("ItFo_Plants_OrcHerb_02", 5);
+	            _playerService.AddItem("ItFo_Plants_mushroom_01", 5);
+	            _playerService.AddItem("ItFo_Plants_mushroom_02", 5);
+	            _playerService.AddItem("ItFo_Plants_Stoneroot_01", 5);
+	            _playerService.AddItem("ItFo_Plants_Stoneroot_02", 5);
+	            _playerService.AddItem("ItFo_Plants_RavenHerb_01", 5);
+	            _playerService.AddItem("ItFo_Plants_RavenHerb_02", 5);
+	            _playerService.AddItem("ItFo_Plants_mountainmoos_01", 5);
+	            _playerService.AddItem("ItFo_Plants_mountainmoos_02", 5);
+	            _playerService.AddItem("ItFo_Plants_Berrys_01", 5);
+	            _playerService.AddItem("ItFo_Plants_Bloodwood_01", 5);
+	            _playerService.AddItem("ItFo_Plants_Towerwood_01", 5);
+	            _playerService.AddItem("ItFo_Plants_Seraphis_01", 5);
+	            _playerService.AddItem("ItFo_Plants_Velayis_01", 5);
+	            _playerService.AddItem("ItFo_Plants_Herb_03", 5);
+	            _playerService.AddItem("ItFo_Plants_Herb_02", 5);
+	            _playerService.AddItem("ItFo_Plants_Herb_01", 5);
+	            _playerService.AddItem("ItMi_Plants_Swampherb_01", 5);
+
+
+                //----------------------------------------
+                //MISC //Schlüssel
+                //----------------------------------------
+	            _playerService.AddItem("ItKeKey1");
+	            _playerService.AddItem("ItKeKey2");
+	            _playerService.AddItem("ItKeKey3");
+	            _playerService.AddItem("ItKeKey4");
+	            _playerService.AddItem("ItKeLockpick", 100);
+                //----------------------------------------
+                //MISC /Light_sources
+                //----------------------------------------
+                _playerService.AddItem("ItLsTorch", 50);
+
+                //----------------------------------------
+                //misc.d
+                //----------------------------------------
+	            _playerService.AddItem("ItMiHammer", 5);
+	            _playerService.AddItem("ItMiScoop", 5);
+                _playerService.AddItem("ItMiNugget", 1000);
+	            _playerService.AddItem("ItMiAlarmhorn");
+	            _playerService.AddItem("ItMiSwordraw", 5);
+	            _playerService.AddItem("ItMiLute");
+	            _playerService.AddItem("ItMiStomper", 5);
+	            _playerService.AddItem("ItMiFlask", 5);
+                //---------------------------------------------------
+                //MISC STUFF
+                //-------------------------------------------------
+	            _playerService.AddItem("ItMi_Stuff_Pipe_01");
+	            _playerService.AddItem("ItMi_Stuff_Barbknife_01");
+	            _playerService.AddItem("ItMi_Stuff_OldCoin_01");
+	            _playerService.AddItem("ItMi_Stuff_Plate_01");
+	            _playerService.AddItem("ItMi_Stuff_Candel_01");
+	            _playerService.AddItem("ItMi_Stuff_Cup_01");
+	            _playerService.AddItem("ItMi_Stuff_Cup_02");
+	            _playerService.AddItem("ItMi_Stuff_Silverware_01");
+	            _playerService.AddItem("ItMi_Stuff_Pan_01");
+	            _playerService.AddItem("ItMi_Stuff_Mug_01");
+	            _playerService.AddItem("ItMi_Stuff_Amphore_01");
+	            _playerService.AddItem("ItMi_Stuff_Idol_Sleeper_01");
+	            _playerService.AddItem("ItMi_Stuff_Idol_Ogront_01");
+	            _playerService.AddItem("ItMiJoint_1", 5);
+	            _playerService.AddItem("ItMiJoint_2", 5);
+	            _playerService.AddItem("ItMiJoint_3", 5);
+                //----------------------------------------
+                //Ranged_weapons.d
+                //----------------------------------------
+	            //Kurzbogen
+	            _playerService.AddItem("ItRw_Bow_Small_01");
+	            _playerService.AddItem("ItRw_Bow_Small_02");
+	            _playerService.AddItem("ItRw_Bow_Small_03");
+	            _playerService.AddItem("ItRw_Bow_Small_04");
+	            _playerService.AddItem("ItRw_Bow_Small_05");
+	            //Langbogen
+	            _playerService.AddItem("ItRw_Bow_Long_01");
+	            _playerService.AddItem("ItRw_Bow_Long_02");
+	            _playerService.AddItem("ItRw_Bow_Long_03");
+	            _playerService.AddItem("ItRw_Bow_Long_04");
+	            _playerService.AddItem("ItRw_Bow_Long_05");
+	            _playerService.AddItem("ItRw_Bow_Long_06");
+	            _playerService.AddItem("ItRw_Bow_Long_07");
+	            _playerService.AddItem("ItRw_Bow_Long_08");
+	            _playerService.AddItem("ItRw_Bow_Long_09");
+	            //Kriegsbogen
+	            _playerService.AddItem("ItRw_Bow_War_01");
+	            _playerService.AddItem("ItRw_Bow_War_02");
+	            _playerService.AddItem("ItRw_Bow_War_03");
+	            _playerService.AddItem("ItRw_Bow_War_04");
+	            _playerService.AddItem("ItRw_Bow_War_05");
+	            //Armbrust
+	            _playerService.AddItem("ItRw_Crossbow_01");
+	            _playerService.AddItem("ItRw_Crossbow_02");
+	            _playerService.AddItem("ItRw_Crossbow_03");
+	            _playerService.AddItem("ItRw_Crossbow_04");
+
+                //----------------------------------------
+                //Ammunition.d
+                //----------------------------------------
+	            _playerService.AddItem("ItAmArrow", 50);
+	            _playerService.AddItem("ItAmBolt", 50);
+
+                //----------------------------------------
+                //Written.d
+                //----------------------------------------
+	            _playerService.AddItem("ItWrWorldmap");
+	            _playerService.AddItem("ItWrWorldmap_Orc");
+	            _playerService.AddItem("ItWrOMmap");
+	            _playerService.AddItem("ItWrFocusmapPsi");
+	            _playerService.AddItem("ItWrFocimap");
+	            _playerService.AddItem("ItWrOCmap");
+	            _playerService.AddItem("ItWrNCmap");
+	            _playerService.AddItem("ItWrPSImap");
+
+	            _playerService.AddItem("Goettergabe");
+	            _playerService.AddItem("Geheimnisse_der_Zauberei");
+	            _playerService.AddItem("Machtvolle_Kunst");
+	            _playerService.AddItem("Elementare_Arcanei");
+	            _playerService.AddItem("Wahre_Macht");
+	            _playerService.AddItem("Das_magische_Erz");
+	            _playerService.AddItem("Schlacht_um_Varant1");
+	            _playerService.AddItem("Schlacht_um_Varant2");
+	            _playerService.AddItem("Myrtanas_Lyrik");
+	            _playerService.AddItem("Lehren_der_Goetter1");
+	            _playerService.AddItem("Lehren_der_Goetter2");
+	            _playerService.AddItem("Lehren_der_Goetter3");
+	            _playerService.AddItem("Jagd_und_Beute");
+	            _playerService.AddItem("Kampfkunst");
+	            _playerService.AddItem("Astronomie");
+	            _playerService.AddItem("Rezepturen");
+	            _playerService.AddItem("Rezepturen2");
+
+	            _playerService.AddItem("ItWr_Book_Circle_01");
+	            _playerService.AddItem("ItWr_Book_Circle_02");
+	            _playerService.AddItem("ItWr_Book_Circle_03");
+	            _playerService.AddItem("ItWr_Book_Circle_04");
+	            _playerService.AddItem("ItWr_Book_Circle_05");
+	            _playerService.AddItem("ItWr_Book_Circle_06");
+
+                //----------------------------------------
+                //Melee_weapons.d
+                //----------------------------------------
+	            _playerService.AddItem("ItMw_1H_Club_01");
+	            _playerService.AddItem("ItMw_1H_Poker_01");
+	            _playerService.AddItem("ItMw_1H_Sickle_01");
+	            _playerService.AddItem("ItMw_1H_Mace_Light_01");
+	            _playerService.AddItem("ItMw_1H_Sledgehammer_01");
+	            _playerService.AddItem("ItMw_1H_Warhammer_01");
+	            _playerService.AddItem("ItMw_1H_Warhammer_02");
+	            _playerService.AddItem("ItMw_1H_Warhammer_03");
+	            _playerService.AddItem("ItMw_1H_Hatchet_01");
+	            _playerService.AddItem("ItMw_1H_Sword_Old_01");
+	            _playerService.AddItem("ItMw_1H_Nailmace_01");
+	            _playerService.AddItem("ItMw_1H_Sword_Short_01");
+	            _playerService.AddItem("ItMw_1H_Sword_Short_02");
+	            _playerService.AddItem("ItMw_1H_Sword_Short_03");
+	            _playerService.AddItem("ItMw_1H_Sword_Short_04");
+	            _playerService.AddItem("ItMw_1H_Sword_Short_05");
+	            _playerService.AddItem("ItMw_1H_Axe_Old_01");
+	            _playerService.AddItem("ItMw_1H_Scythe_01");
+	            _playerService.AddItem("ItMw_2H_Staff_01");
+	            _playerService.AddItem("ItMw_2H_Staff_02");
+	            _playerService.AddItem("ItMw_2H_Staff_03");
+	            _playerService.AddItem("ItMw_1H_Mace_01");
+	            _playerService.AddItem("ItMw_1H_Mace_02");
+	            _playerService.AddItem("ItMw_1H_Mace_03");
+	            _playerService.AddItem("ItMw_1H_Mace_04");
+	            _playerService.AddItem("ItMw_1H_Sword_01");
+	            _playerService.AddItem("ItMw_1H_Sword_02");
+	            _playerService.AddItem("ItMw_1H_Sword_03");
+	            _playerService.AddItem("ItMw_1H_Sword_04");
+	            _playerService.AddItem("ItMw_1H_Sword_05");
+	            _playerService.AddItem("ItMw_1H_Sword_01");
+	            _playerService.AddItem("ItMw_1H_Mace_War_01");
+	            _playerService.AddItem("ItMw_1H_Mace_War_02");
+	            _playerService.AddItem("ItMw_1H_Mace_War_03");
+	            _playerService.AddItem("ItMw_1H_Mace_War_04");
+	            _playerService.AddItem("ItMw_1H_Sword_Long_01");
+	            _playerService.AddItem("ItMw_1H_Sword_Long_02");
+	            _playerService.AddItem("ItMw_1H_Sword_Long_03");
+	            _playerService.AddItem("ItMw_1H_Sword_Long_04");
+	            _playerService.AddItem("ItMw_1H_Sword_Long_05");
+	            _playerService.AddItem("ItMw_1H_Axe_01");
+	            _playerService.AddItem("ItMw_1H_Axe_02");
+	            _playerService.AddItem("ItMw_1H_Axe_03");
+	            _playerService.AddItem("ItMw_1H_Sword_Broad_01");
+	            _playerService.AddItem("ItMw_1H_Sword_Broad_02");
+	            _playerService.AddItem("ItMw_1H_Sword_Broad_03");
+	            _playerService.AddItem("ItMw_1H_Sword_Broad_04");
+	            _playerService.AddItem("ItMw_2H_Sword_Old_01");
+	            _playerService.AddItem("ItMw_1H_Sword_Bastard_01");
+	            _playerService.AddItem("ItMw_1H_Sword_Bastard_02");
+	            _playerService.AddItem("ItMw_1H_Sword_Bastard_03");
+	            _playerService.AddItem("ItMw_1H_Sword_Bastard_04");
+	            _playerService.AddItem("ItMw_2H_Axe_Old_01");
+	            _playerService.AddItem("ItMw_2H_Axe_Old_02");
+	            _playerService.AddItem("ItMw_2H_Axe_Old_03");
+	            _playerService.AddItem("ItMw_2H_Sword_Light_01");
+	            _playerService.AddItem("ItMw_2H_Sword_Light_02");
+	            _playerService.AddItem("ItMw_2H_Sword_Light_03");
+	            _playerService.AddItem("ItMw_2H_Sword_Light_04");
+	            _playerService.AddItem("ItMw_2H_Sword_Light_05");
+	            _playerService.AddItem("ItMw_2H_Axe_light_01");
+	            _playerService.AddItem("ItMw_2H_Axe_light_02");
+	            _playerService.AddItem("ItMw_2H_Axe_light_03");
+	            _playerService.AddItem("ItMw_2H_Sword_01");
+	            _playerService.AddItem("ItMw_2H_Sword_02");
+	            _playerService.AddItem("ItMw_2H_Sword_03");
+	            _playerService.AddItem("ItMw_2H_Sword_Heavy_01");
+	            _playerService.AddItem("ItMw_2H_Sword_Heavy_02");
+	            _playerService.AddItem("ItMw_2H_Sword_Heavy_03");
+	            _playerService.AddItem("ItMw_2H_Sword_Heavy_04");
+	            _playerService.AddItem("ItMw_2H_Axe_Heavy_01");
+	            _playerService.AddItem("ItMw_2H_Axe_Heavy_02");
+	            _playerService.AddItem("ItMw_2H_Axe_Heavy_03");
+	            _playerService.AddItem("ItMw_2H_Axe_Heavy_04");
+	            _playerService.AddItem("ItMw2hOrcSword01");
+	            _playerService.AddItem("ItMw2hOrcAxe01");
+	            _playerService.AddItem("ItMw2hOrcAxe02");
+	            _playerService.AddItem("ItMw2hOrcAxe03");
+	            _playerService.AddItem("ItMw2hOrcAxe04");
+	            _playerService.AddItem("ItMw2hOrcMace01");
+
+                //-----------------------------------------------------------
+                //Amulette
+                //-----------------------------------------------------------
+	            _playerService.AddItem("ItMi_Amulet_Psi_01");
+	            _playerService.AddItem("Schutzamulett_Waffen");
+	            _playerService.AddItem("Schutzamulett_Feuer");
+	            _playerService.AddItem("Schutzamulett_Geschosse");
+	            _playerService.AddItem("Schutzamulett_Magie");
+	            _playerService.AddItem("Schutzamulett_Magie_Feuer");
+	            _playerService.AddItem("Schutzamulett_Waffen_Geschosse");
+	            _playerService.AddItem("Schutzamulett_Total");
+	            _playerService.AddItem("Gewandtheitsamulett");
+	            _playerService.AddItem("Gewandtheitsamulett2");
+	            _playerService.AddItem("Staerkeamulett");
+	            _playerService.AddItem("Staerkeamulett2");
+	            _playerService.AddItem("Lebensamulett");
+	            _playerService.AddItem("Amulett_der_Magie");
+	            _playerService.AddItem("Amulett_der_Macht");
+	            _playerService.AddItem("Amulett_der_Erleuchtung");
+
+                //------------------------------------------------------------
+                //Ringe
+                //------------------------------------------------------------
+	            _playerService.AddItem("Schutzring_Feuer1");
+	            _playerService.AddItem("Schutzring_Feuer2");
+	            _playerService.AddItem("Schutzring_Geschosse1");
+	            _playerService.AddItem("Schutzring_Geschosse2");
+	            _playerService.AddItem("Schutzring_Waffen1");
+	            _playerService.AddItem("Schutzring_Waffen2");
+	            _playerService.AddItem("Schutzring_Magie1");
+	            _playerService.AddItem("Schutzring_Magie2");
+	            _playerService.AddItem("Schutzring_Magie1_Fire1");
+	            _playerService.AddItem("Schutzring_Magie2_Fire2");
+	            _playerService.AddItem("Schutzring_Geschosse1_Waffen1");
+	            _playerService.AddItem("Schutzring_Geschosse1_Waffen1");
+	            _playerService.AddItem("Schutzring_Geschosse2_Waffen2");
+	            _playerService.AddItem("Schutzring_Total1");
+	            _playerService.AddItem("Schutzring_Total2");
+	            _playerService.AddItem("Ring_des_Geschicks");
+	            _playerService.AddItem("Ring_des_Geschicks2");
+	            _playerService.AddItem("Ring_des_Lebens");
+	            _playerService.AddItem("Ring_des_Lebens2");
+	            _playerService.AddItem("Staerkering");
+	            _playerService.AddItem("Staerkering2");
+	            _playerService.AddItem("Ring_der_Magie");
+	            _playerService.AddItem("Ring_der_Erleuchtung");
+	            _playerService.AddItem("Machtring");
+
+                //---------------------------------------------------------------------
+                //Potions
+                //---------------------------------------------------------------------
+	            _playerService.AddItem("ItFo_Potion_Mana_01");
+	            _playerService.AddItem("ItFo_Potion_Mana_02");
+	            _playerService.AddItem("ItFo_Potion_Mana_03");
+	            _playerService.AddItem("ItFo_Potion_Health_01");
+	            _playerService.AddItem("ItFo_Potion_Health_02");
+	            _playerService.AddItem("ItFo_Potion_Health_03");
+	            _playerService.AddItem("ItFo_Potion_Elixier");
+	            _playerService.AddItem("ItFo_Potion_Elixier_Egg");
+	            _playerService.AddItem("ItFo_Potion_Strength_01");
+	            _playerService.AddItem("ItFo_Potion_Strength_02");
+	            _playerService.AddItem("ItFo_Potion_Strength_03");
+	            _playerService.AddItem("ItFo_Potion_Dex_01");
+	            _playerService.AddItem("ItFo_Potion_Dex_02");
+	            _playerService.AddItem("ItFo_Potion_Dex_03");
+	            _playerService.AddItem("ItFo_Potion_Health_Perma_01");
+	            _playerService.AddItem("ItFo_Potion_Health_Perma_02");
+	            _playerService.AddItem("ItFo_Potion_Health_Perma_03");
+	            _playerService.AddItem("ItFo_Potion_Mana_Perma_01");
+	            _playerService.AddItem("ItFo_Potion_Mana_Perma_02");
+	            _playerService.AddItem("ItFo_Potion_Mana_Perma_03");
+	            _playerService.AddItem("ItFo_Potion_Master_01");
+	            _playerService.AddItem("ItFo_Potion_Master_02");
+	            _playerService.AddItem("ItFo_Potion_Water_01");
+	            _playerService.AddItem("ItFo_Potion_Haste_01");
+
+                //---------------------------------------------------------------------
+                // Animaltropy
+                //---------------------------------------------------------------------
+	            _playerService.AddItem("ItAt_Teeth_01", 5);
+	            _playerService.AddItem("ItAt_Wolf_01", 5);
+	            _playerService.AddItem("ItAt_Wolf_02", 5);
+	            _playerService.AddItem("ItAt_Waran_01", 5);
+	            _playerService.AddItem("ItAt_Claws_01", 5);
+	            _playerService.AddItem("ItAt_Crawler_02", 5);
+	            _playerService.AddItem("ItAt_Crawler_01", 5);
+	            _playerService.AddItem("ItAt_Shadow_01", 5);
+	            _playerService.AddItem("ItAt_Shadow_02", 5);
+	            _playerService.AddItem("ItAt_Lurker_01", 5);
+	            _playerService.AddItem("ItAt_Lurker_02", 5);
+	            _playerService.AddItem("ItAt_Troll_02", 5);
+	            _playerService.AddItem("ItAt_Troll_01", 5);
+	            _playerService.AddItem("ItAt_Swampshark_02", 5);
+	            _playerService.AddItem("ItAt_Swampshark_01", 5);
+	            _playerService.AddItem("ItAt_Bloodfly_02", 5);
+                _playerService.AddItem("ItAt_Bloodfly_01", 5);
+	            _playerService.AddItem("ItAt_Meatbug_01", 5);
+            }
+
             // Add Missions and Notes
             {
                 string topic;

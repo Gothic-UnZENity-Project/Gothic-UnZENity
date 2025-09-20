@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using GUZ.Core.Extensions;
 using GUZ.Core.Logging;
 using GUZ.Core.Models.Vm;
@@ -26,9 +27,9 @@ namespace GUZ.Core.Services.Npc
         
         public void ExtCreateInvItems(NpcInstance npc, int itemIndex, int amount)
         {
+            // FIXME - Does it make sense? It would mean we never add an item if we loaded a SaveGame...
             // We also initialize NPCs inside Daedalus when we load a save game. It's needed as some data isn't stored on save games.
             // But e.g., inventory items will be skipped as they are stored inside save game VOBs.
-            // FIXME - Does it make sense? It would mean we never add an item if we loaded a SaveGame...
             // if (!_saveGameService.IsWorldLoadedForTheFirstTime)
             //     return;
 
@@ -102,7 +103,21 @@ namespace GUZ.Core.Services.Npc
 
             vob.SetPacked((int)inventoryCat, _vobService.PackItems(items));
         }
-        
+
+        public List<ContentItem> GetInventoryItems(NpcInstance npc)
+        {
+                var npcVob = npc.GetUserData()!.Vob;
+                var result = new List<ContentItem>();
+
+                // FIXME - Once category paging is there, we need to alter this page using category filter.
+                for (var i = (int)VmGothicEnums.InvCats.InvWeapon; i < (int)VmGothicEnums.InvCats.InvCatMax; i++)
+                {
+                    result.AddRange(_vobService.UnpackItems(npcVob.GetPacked(i)));
+                }
+
+                return result;
+        }
+
         public int ExtNpcHasItems(NpcInstance npc, int itemId)
         {
             var npcVob = npc.GetUserData()!.Vob;
