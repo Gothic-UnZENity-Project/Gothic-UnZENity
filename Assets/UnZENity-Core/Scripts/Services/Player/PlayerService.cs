@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using GUZ.Core.Models.Container;
+using GUZ.Core.Models.Vm;
 using GUZ.Core.Models.Vob;
 using GUZ.Core.Services.Caches;
 using GUZ.Core.Services.Npc;
@@ -39,9 +40,9 @@ namespace GUZ.Core.Services.Player
             HeroSpawnRotation = default;
         }
 
-        public List<ContentItem> GetInventory()
+        public List<ContentItem> GetInventory(VmGothicEnums.ItemFlags category)
         {
-            return _npcInventoryService.GetInventoryItems(HeroContainer.Instance);
+            return _npcInventoryService.GetInventoryItems(HeroContainer.Instance, category);
         }
 
         public void AddItem(string itemInstanceName, int amount = 1)

@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using Assets.HurricaneVR.Framework.Shared.Utilities;
 using GUZ.Core;
 using GUZ.Core.Adapters.Vob;
-using GUZ.Core.Extensions;
 using GUZ.Core.Manager;
+using GUZ.Core.Models.Vm;
 using GUZ.Core.Models.Vob;
 using GUZ.Core.Services.Culling;
 using GUZ.Core.Services.Player;
@@ -14,21 +14,25 @@ using HurricaneVR.Framework.Core;
 using HurricaneVR.Framework.Core.Grabbers;
 using HurricaneVR.Framework.Core.Sockets;
 using HurricaneVR.Framework.Core.Utils;
+using MyBox;
 using Reflex.Attributes;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 using ZenKit.Vobs;
 
-namespace GUZ.VR.Adapters.Player
+namespace GUZ.VR.Adapters.Player.Backpack
 {
     [RequireComponent(typeof(HVRSocketable))]
     public class VRBackpack : MonoBehaviour
     {
         [SerializeField] private TMP_Text _pagerText;
         [SerializeField] private HVRSocketContainer _socketContainer;
+        [SerializeField] private RawImage[] _categoryImages;
 
         private int _currentPage = 1;
         private int _totalPages;
+        private VmGothicEnums.ItemFlags _selectedCategory =  VmGothicEnums.ItemFlags.ItemKatNf;
 
         
         [Inject] private readonly AudioService _audioService;
@@ -65,7 +69,7 @@ namespace GUZ.VR.Adapters.Player
             if (grabber is not HVRShoulderSocket)
                 return;
 
-            var inventory = _playerService.GetInventory();
+            var inventory = _playerService.GetInventory(_selectedCategory);
             UpdatePagerText(inventory);
             UpdateSockets(inventory);
         }
@@ -102,7 +106,7 @@ namespace GUZ.VR.Adapters.Player
             if (_currentPage < 1)
                 _currentPage = 1;
 
-            var inventory = _playerService.GetInventory();
+            var inventory = _playerService.GetInventory(_selectedCategory);
             UpdatePagerText(inventory);
             UpdateSockets(inventory);
         }
@@ -111,11 +115,24 @@ namespace GUZ.VR.Adapters.Player
         {
             _currentPage++;
 
-            var inventory = _playerService.GetInventory();
+            var inventory = _playerService.GetInventory(_selectedCategory);
             UpdatePagerText(inventory);
             UpdateSockets(inventory);
         }
 
+        public void OnCategoryClicked(VmGothicEnums.ItemFlags category)
+        {
+            if (category == _selectedCategory)
+                return;
+            
+            _selectedCategory = category;
+
+            _categoryImages.ForEach(i => i.color = Color.black);
+
+            var inventory = _playerService.GetInventory(_selectedCategory);
+            UpdatePagerText(inventory);
+            UpdateSockets(inventory);
+        }
 
         private void UpdatePagerText(List<ContentItem> inventory)
         {

@@ -7,6 +7,7 @@ using GUZ.Core.Services.Caches;
 using GUZ.Core.Services.Vobs;
 using Reflex.Attributes;
 using ZenKit.Daedalus;
+using static GUZ.Core.Models.Vm.VmGothicEnums;
 
 namespace GUZ.Core.Services.Npc
 {
@@ -43,7 +44,7 @@ namespace GUZ.Core.Services.Npc
             var vob = npc.GetUserData()!.Vob;
 
             
-            var mainFlag = (VmGothicEnums.ItemFlags)_vmCacheService.TryGetItemData(itemIndex).MainFlag;
+            var mainFlag = (ItemFlags)_vmCacheService.TryGetItemData(itemIndex).MainFlag;
             var inventoryCat = mainFlag.ToInventoryCategory();
             
             var items = _vobService.UnpackItems(vob.GetPacked((int)inventoryCat));
@@ -76,7 +77,7 @@ namespace GUZ.Core.Services.Npc
             var itemInstance = _gameStateService.GothicVm.GetSymbolByIndex(itemIndex)!;
             var vob = npc.GetUserData()!.Vob;
             
-            var mainFlag = (VmGothicEnums.ItemFlags)_vmCacheService.TryGetItemData(itemIndex).MainFlag;
+            var mainFlag = (ItemFlags)_vmCacheService.TryGetItemData(itemIndex).MainFlag;
             var inventoryCat = mainFlag.ToInventoryCategory();
             
             var items = _vobService.UnpackItems(vob.GetPacked((int)inventoryCat));
@@ -104,18 +105,50 @@ namespace GUZ.Core.Services.Npc
             vob.SetPacked((int)inventoryCat, _vobService.PackItems(items));
         }
 
-        public List<ContentItem> GetInventoryItems(NpcInstance npc)
+        public List<ContentItem> GetInventoryItems(NpcInstance npc, ItemFlags category)
         {
                 var npcVob = npc.GetUserData()!.Vob;
                 var result = new List<ContentItem>();
 
                 // FIXME - Once category paging is there, we need to alter this page using category filter.
-                for (var i = (int)VmGothicEnums.InvCats.InvWeapon; i < (int)VmGothicEnums.InvCats.InvCatMax; i++)
+                foreach (var cat in GetRealCategories(category))
                 {
-                    result.AddRange(_vobService.UnpackItems(npcVob.GetPacked(i)));
+                    result.AddRange(_vobService.UnpackItems(npcVob.GetPacked((int)cat)));
                 }
 
                 return result;
+        }
+
+        /// <summary>
+        /// In G1, not every category has its own filter. We need to combine them as it's been done there.
+        /// </summary>
+        private ItemFlags[] GetRealCategories(ItemFlags category)
+        {
+            switch (category)
+            {
+                case ItemFlags.ItemKatNf:
+                case ItemFlags.ItemKatFf:
+                case ItemFlags.ItemKatMun:
+                    return new[] { ItemFlags.ItemKatNf, ItemFlags.ItemKatFf, ItemFlags.ItemKatMun };
+                case ItemFlags.ItemKatArmor:
+                    return new[] { ItemFlags.ItemKatArmor };
+                case ItemFlags.ItemKatMagic: // Artifacts
+                    return new []{ ItemFlags.ItemKatMagic };
+                case ItemFlags.ItemKatRune: // Rune and Scrolls
+                    return new []{ ItemFlags.ItemKatRune };
+                case ItemFlags.ItemKatFood:
+                    return new []{ ItemFlags.ItemKatFood };
+                case ItemFlags.ItemKatPotions:
+                    return new []{ ItemFlags.ItemKatPotions };
+                case ItemFlags.ItemKatDocs: // Writings
+                    return new []{ ItemFlags.ItemKatDocs };
+                case ItemFlags.ItemKatNone:
+                case ItemFlags.ItemKatLight:
+                    return new []{ ItemFlags.ItemKatNone, ItemFlags.ItemKatLight };
+                default:
+                    Logger.LogError($"Unknown category: >{category}<, using >None< instead", LogCat.Npc);
+                    return GetRealCategories(ItemFlags.ItemKatNone);
+            }
         }
 
         public int ExtNpcHasItems(NpcInstance npc, int itemId)
