@@ -32,7 +32,7 @@ namespace GUZ.VR.Adapters.Player.Backpack
 
         private int _currentPage = 1;
         private int _totalPages;
-        private VmGothicEnums.ItemFlags _selectedCategory =  VmGothicEnums.ItemFlags.ItemKatNf;
+        private VmGothicEnums.InvCats _selectedCategory =  VmGothicEnums.InvCats.InvWeapon;
 
         
         [Inject] private readonly AudioService _audioService;
@@ -120,7 +120,7 @@ namespace GUZ.VR.Adapters.Player.Backpack
             UpdateSockets(inventory);
         }
 
-        public void OnCategoryClicked(VmGothicEnums.ItemFlags category)
+        public void OnCategoryClicked(VmGothicEnums.InvCats category)
         {
             if (category == _selectedCategory)
                 return;

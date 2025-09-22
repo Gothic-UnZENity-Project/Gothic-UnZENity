@@ -40,7 +40,7 @@ namespace GUZ.Core.Services.Player
             HeroSpawnRotation = default;
         }
 
-        public List<ContentItem> GetInventory(VmGothicEnums.ItemFlags category)
+        public List<ContentItem> GetInventory(VmGothicEnums.InvCats category)
         {
             return _npcInventoryService.GetInventoryItems(HeroContainer.Instance, category);
         }
