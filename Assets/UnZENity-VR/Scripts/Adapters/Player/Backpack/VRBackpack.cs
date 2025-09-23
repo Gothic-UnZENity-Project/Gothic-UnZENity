@@ -126,6 +126,7 @@ namespace GUZ.VR.Adapters.Player.Backpack
                 return;
             
             _selectedCategory = category;
+            _currentPage = 1;
 
             _categoryImages.ForEach(i => i.color = Color.black);
 
