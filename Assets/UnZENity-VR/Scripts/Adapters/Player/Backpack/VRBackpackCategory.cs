@@ -1,3 +1,4 @@
+#if GUZ_HVR_INSTALLED
 using GUZ.Core.Models.Vm;
 using UnityEngine;
 using UnityEngine.UI;
@@ -24,3 +25,4 @@ namespace GUZ.VR.Adapters.Player.Backpack
         }
     }
 }
+#endif
