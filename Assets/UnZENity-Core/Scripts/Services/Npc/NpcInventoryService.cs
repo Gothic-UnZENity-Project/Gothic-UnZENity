@@ -7,6 +7,7 @@ using GUZ.Core.Services.Caches;
 using GUZ.Core.Services.Vobs;
 using Reflex.Attributes;
 using ZenKit.Daedalus;
+using static GUZ.Core.Models.Vm.VmGothicEnums;
 
 namespace GUZ.Core.Services.Npc
 {
@@ -43,7 +44,7 @@ namespace GUZ.Core.Services.Npc
             var vob = npc.GetUserData()!.Vob;
 
             
-            var mainFlag = (VmGothicEnums.ItemFlags)_vmCacheService.TryGetItemData(itemIndex).MainFlag;
+            var mainFlag = (ItemFlags)_vmCacheService.TryGetItemData(itemIndex).MainFlag;
             var inventoryCat = mainFlag.ToInventoryCategory();
             
             var items = _vobService.UnpackItems(vob.GetPacked((int)inventoryCat));
@@ -76,7 +77,7 @@ namespace GUZ.Core.Services.Npc
             var itemInstance = _gameStateService.GothicVm.GetSymbolByIndex(itemIndex)!;
             var vob = npc.GetUserData()!.Vob;
             
-            var mainFlag = (VmGothicEnums.ItemFlags)_vmCacheService.TryGetItemData(itemIndex).MainFlag;
+            var mainFlag = (ItemFlags)_vmCacheService.TryGetItemData(itemIndex).MainFlag;
             var inventoryCat = mainFlag.ToInventoryCategory();
             
             var items = _vobService.UnpackItems(vob.GetPacked((int)inventoryCat));
@@ -104,18 +105,10 @@ namespace GUZ.Core.Services.Npc
             vob.SetPacked((int)inventoryCat, _vobService.PackItems(items));
         }
 
-        public List<ContentItem> GetInventoryItems(NpcInstance npc)
+        public List<ContentItem> GetInventoryItems(NpcInstance npc, InvCats category)
         {
                 var npcVob = npc.GetUserData()!.Vob;
-                var result = new List<ContentItem>();
-
-                // FIXME - Once category paging is there, we need to alter this page using category filter.
-                for (var i = (int)VmGothicEnums.InvCats.InvWeapon; i < (int)VmGothicEnums.InvCats.InvCatMax; i++)
-                {
-                    result.AddRange(_vobService.UnpackItems(npcVob.GetPacked(i)));
-                }
-
-                return result;
+                return _vobService.UnpackItems(npcVob.GetPacked((int)category));
         }
 
         public int ExtNpcHasItems(NpcInstance npc, int itemId)

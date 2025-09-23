@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using Assets.HurricaneVR.Framework.Shared.Utilities;
 using GUZ.Core;
 using GUZ.Core.Adapters.Vob;
-using GUZ.Core.Extensions;
 using GUZ.Core.Manager;
+using GUZ.Core.Models.Vm;
 using GUZ.Core.Models.Vob;
 using GUZ.Core.Services.Culling;
 using GUZ.Core.Services.Player;
+using GUZ.Core.Services.Vm;
 using GUZ.Core.Services.Vobs;
 using GUZ.Core.Services.World;
 using HurricaneVR.Framework.Core;
@@ -24,11 +25,13 @@ namespace GUZ.VR.Adapters.Player
     [RequireComponent(typeof(HVRSocketable))]
     public class VRBackpack : MonoBehaviour
     {
+        [SerializeField] private TMP_Text _categoryText;
         [SerializeField] private TMP_Text _pagerText;
         [SerializeField] private HVRSocketContainer _socketContainer;
 
         private int _currentPage = 1;
         private int _totalPages;
+        private VmGothicEnums.InvCats _selectedCategory =  VmGothicEnums.InvCats.InvWeapon;
 
         
         [Inject] private readonly AudioService _audioService;
@@ -36,6 +39,7 @@ namespace GUZ.VR.Adapters.Player
         [Inject] private readonly VobService _vobService;
         [Inject] private readonly VobMeshCullingService _vobMeshCullingService;
         [Inject] private readonly SaveGameService _saveGameService;
+        [Inject] private readonly VmService _vmService;
 
         
         private void Start()
@@ -65,7 +69,8 @@ namespace GUZ.VR.Adapters.Player
             if (grabber is not HVRShoulderSocket)
                 return;
 
-            var inventory = _playerService.GetInventory();
+            var inventory = _playerService.GetInventory(_selectedCategory);
+            UpdateCategoryText();
             UpdatePagerText(inventory);
             UpdateSockets(inventory);
         }
@@ -102,7 +107,7 @@ namespace GUZ.VR.Adapters.Player
             if (_currentPage < 1)
                 _currentPage = 1;
 
-            var inventory = _playerService.GetInventory();
+            var inventory = _playerService.GetInventory(_selectedCategory);
             UpdatePagerText(inventory);
             UpdateSockets(inventory);
         }
@@ -111,11 +116,45 @@ namespace GUZ.VR.Adapters.Player
         {
             _currentPage++;
 
-            var inventory = _playerService.GetInventory();
+            var inventory = _playerService.GetInventory(_selectedCategory);
             UpdatePagerText(inventory);
             UpdateSockets(inventory);
         }
 
+        public void OnNextCategoryClick()
+        {
+            if (_selectedCategory >= VmGothicEnums.InvCats.InvMisc)
+                return;
+
+            _selectedCategory++;
+
+            OnCategoryClick();
+        }
+
+        public void OnPrevCategoryClick()
+        {
+            if (_selectedCategory <= VmGothicEnums.InvCats.InvWeapon)
+                return;
+
+            _selectedCategory--;
+
+            OnCategoryClick();
+        }
+
+        private void OnCategoryClick()
+        {
+            _currentPage = 1;
+
+            var inventory = _playerService.GetInventory(_selectedCategory);
+            UpdateCategoryText();
+            UpdatePagerText(inventory);
+            UpdateSockets(inventory);
+        }
+
+        private void UpdateCategoryText()
+        {
+            _categoryText.text = _vmService.InventoryCategories[(int)_selectedCategory];
+        }
 
         private void UpdatePagerText(List<ContentItem> inventory)
         {
