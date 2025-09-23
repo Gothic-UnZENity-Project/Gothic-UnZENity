@@ -54,6 +54,17 @@ namespace GUZ.Core.Services.Vm
             }
         }
 
+        public int InvCatMax => _gameStateService.GothicVm.GetSymbolByName("INV_CAT_MAX").GetInt(0);
+        public List<string> InventoryCategories
+        {
+            get
+            {
+                var invCats = _gameStateService.GothicVm.GetSymbolByName("TXT_INV_CAT")!;
+                var invCatCount = InvCatMax;
+                return Enumerable.Range(0, invCatCount).Select(i => invCats.GetString((ushort)i)).ToList();
+            }
+        }
+
         public enum Guild
         {
             GIL_NONE = 0, // (keine)

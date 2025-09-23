@@ -8,27 +8,26 @@ using GUZ.Core.Models.Vm;
 using GUZ.Core.Models.Vob;
 using GUZ.Core.Services.Culling;
 using GUZ.Core.Services.Player;
+using GUZ.Core.Services.Vm;
 using GUZ.Core.Services.Vobs;
 using GUZ.Core.Services.World;
 using HurricaneVR.Framework.Core;
 using HurricaneVR.Framework.Core.Grabbers;
 using HurricaneVR.Framework.Core.Sockets;
 using HurricaneVR.Framework.Core.Utils;
-using MyBox;
 using Reflex.Attributes;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 using ZenKit.Vobs;
 
-namespace GUZ.VR.Adapters.Player.Backpack
+namespace GUZ.VR.Adapters.Player
 {
     [RequireComponent(typeof(HVRSocketable))]
     public class VRBackpack : MonoBehaviour
     {
+        [SerializeField] private TMP_Text _categoryText;
         [SerializeField] private TMP_Text _pagerText;
         [SerializeField] private HVRSocketContainer _socketContainer;
-        [SerializeField] private RawImage[] _categoryImages;
 
         private int _currentPage = 1;
         private int _totalPages;
@@ -40,6 +39,7 @@ namespace GUZ.VR.Adapters.Player.Backpack
         [Inject] private readonly VobService _vobService;
         [Inject] private readonly VobMeshCullingService _vobMeshCullingService;
         [Inject] private readonly SaveGameService _saveGameService;
+        [Inject] private readonly VmService _vmService;
 
         
         private void Start()
@@ -70,6 +70,7 @@ namespace GUZ.VR.Adapters.Player.Backpack
                 return;
 
             var inventory = _playerService.GetInventory(_selectedCategory);
+            UpdateCategoryText();
             UpdatePagerText(inventory);
             UpdateSockets(inventory);
         }
@@ -120,19 +121,39 @@ namespace GUZ.VR.Adapters.Player.Backpack
             UpdateSockets(inventory);
         }
 
-        public void OnCategoryClicked(VmGothicEnums.InvCats category)
+        public void OnNextCategoryClick()
         {
-            if (category == _selectedCategory)
+            if (_selectedCategory >= VmGothicEnums.InvCats.InvMisc)
                 return;
-            
-            _selectedCategory = category;
+
+            _selectedCategory++;
+
+            OnCategoryClick();
+        }
+
+        public void OnPrevCategoryClick()
+        {
+            if (_selectedCategory <= VmGothicEnums.InvCats.InvWeapon)
+                return;
+
+            _selectedCategory--;
+
+            OnCategoryClick();
+        }
+
+        private void OnCategoryClick()
+        {
             _currentPage = 1;
 
-            _categoryImages.ForEach(i => i.color = Color.black);
-
             var inventory = _playerService.GetInventory(_selectedCategory);
+            UpdateCategoryText();
             UpdatePagerText(inventory);
             UpdateSockets(inventory);
+        }
+
+        private void UpdateCategoryText()
+        {
+            _categoryText.text = _vmService.InventoryCategories[(int)_selectedCategory];
         }
 
         private void UpdatePagerText(List<ContentItem> inventory)
