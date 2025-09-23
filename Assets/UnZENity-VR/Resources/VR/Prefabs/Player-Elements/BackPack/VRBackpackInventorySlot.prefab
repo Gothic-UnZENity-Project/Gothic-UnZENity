@@ -140,8 +140,8 @@ MonoBehaviour:
   CanGrabStabbingGrabbable: 0
   AudioGrabbedOverride: {fileID: 0}
   AudioReleasedOverride: {fileID: 0}
-  AudioGrabbedFallback: {fileID: 8300000, guid: 9b424bd470d64e34f81ec06f2463c847, type: 3}
-  AudioReleasedFallback: {fileID: 8300000, guid: 9b424bd470d64e34f81ec06f2463c847, type: 3}
+  AudioGrabbedFallback: {fileID: 0}
+  AudioReleasedFallback: {fileID: 0}
   SocketFilters: []
   FilterCondition: 0
   DistanceSource: {fileID: 0}
