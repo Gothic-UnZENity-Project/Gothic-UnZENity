@@ -60,22 +60,22 @@ namespace GUZ.Core.Domain
             else if (CheckEncoding(StringEncoding.CentralEurope, "MOBNAME_CRATE", "Skrzynia"))
                 _localizationService.SetLanguage("pl", StringEncoding.CentralEurope);
             // ru
-            else if (CheckEncoding(StringEncoding.CentralEurope, "MOBNAME_CRATE", "Коробка"))
+            else if (CheckEncoding(StringEncoding.EastEurope, "MOBNAME_CRATE", "Коробка"))
                 _localizationService.SetLanguage("ru", StringEncoding.EastEurope);
             // de
-            else if (CheckEncoding(StringEncoding.CentralEurope, "MOBNAME_CRATE", "Kiste"))
+            else if (CheckEncoding(StringEncoding.WestEurope, "MOBNAME_CRATE", "Kiste"))
                 _localizationService.SetLanguage("de", StringEncoding.WestEurope);
             // en - 2x as G1 vs G2 use a different value for it
-            else if (CheckEncoding(StringEncoding.CentralEurope, "MOBNAME_CRATE", "Crate", "Box"))
+            else if (CheckEncoding(StringEncoding.WestEurope, "MOBNAME_CRATE", "Crate", "Box"))
                 _localizationService.SetLanguage("en", StringEncoding.WestEurope);
             // es
-            else if (CheckEncoding(StringEncoding.CentralEurope, "MOBNAME_CRATE", "Caja"))
+            else if (CheckEncoding(StringEncoding.WestEurope, "MOBNAME_CRATE", "Caja"))
                 _localizationService.SetLanguage("es", StringEncoding.WestEurope);
             // fr
-            else if (CheckEncoding(StringEncoding.EastEurope, "MOBNAME_CRATE", "Boite"))
+            else if (CheckEncoding(StringEncoding.WestEurope, "MOBNAME_CRATE", "Boite"))
                 _localizationService.SetLanguage("fr", StringEncoding.WestEurope);
             // it
-            else if (CheckEncoding(StringEncoding.CentralEurope, "MOBNAME_CRATE", "Cassa"))
+            else if (CheckEncoding(StringEncoding.WestEurope, "MOBNAME_CRATE", "Cassa"))
                 _localizationService.SetLanguage("it", StringEncoding.WestEurope);
             // Nothing found
             // TODO - Potentially re-enable error label on screen to say: We couldn't identify your language.
