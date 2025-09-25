@@ -16087,6 +16087,8 @@ GameObject:
   - component: {fileID: 2101890274}
   - component: {fileID: 2101890276}
   - component: {fileID: 2101890273}
+  - component: {fileID: 2101890278}
+  - component: {fileID: 2101890277}
   m_Layer: 0
   m_Name: Bootstrap
   m_TagString: Untagged
@@ -16270,6 +16272,30 @@ MonoBehaviour:
   FillerMaterial: {fileID: 2100000, guid: 7f15366450c487344a1e66a13b22a847, type: 2}
   SkyMaterial: {fileID: 2100000, guid: 39ac659c922b5b1489714aacd9b952e9, type: 2}
   BackgroundMaterial: {fileID: 2100000, guid: 1e349bd46543d684da0fd00dfcc78b72, type: 2}
+--- !u!114 &2101890277
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2101890268}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b7f92354d3374d2f854f4dbc0f98c774, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &2101890278
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2101890268}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6305c756d4b749f3892509e274236a46, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2122853906
 GameObject:
   m_ObjectHideFlags: 0
