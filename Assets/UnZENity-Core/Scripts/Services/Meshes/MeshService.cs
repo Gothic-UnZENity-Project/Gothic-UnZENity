@@ -5,6 +5,7 @@ using GUZ.Core.Extensions;
 using GUZ.Core.Manager;
 using GUZ.Core.Models.Vm;
 using GUZ.Core.Services.StaticCache;
+using MyBox;
 using UnityEngine;
 using ZenKit;
 using ZenKit.Daedalus;
@@ -40,13 +41,16 @@ namespace GUZ.Core.Services.Meshes
 
             var npcGo = npcBuilder.Build();
 
-            var npcHeadBuilder = new NpcHeadMeshBuilder().Inject();
-            npcHeadBuilder.SetGameObject(npcGo);
-            npcHeadBuilder.SetBodyData(bodyData);
-            npcHeadBuilder.SetMeshName(bodyData.Head);
-            npcHeadBuilder.SetMmb(bodyData.Head);
+            if (bodyData.Head.NotNullOrEmpty())
+            {
+                var npcHeadBuilder = new NpcHeadMeshBuilder().Inject();
+                npcHeadBuilder.SetGameObject(npcGo);
+                npcHeadBuilder.SetBodyData(bodyData);
+                npcHeadBuilder.SetMeshName(bodyData.Head);
+                npcHeadBuilder.SetMmb(bodyData.Head);
 
-            npcHeadBuilder.Build();
+                npcHeadBuilder.Build();
+            }
 
             return npcGo;
         }
