@@ -120,7 +120,7 @@ namespace GUZ.Core.Adapters.Adnimations
 
             // FIXME - Now we need to handle animation flags: M - Move and R - Rotate.
             //         Then S_ROTATEL will work properly and stop once rotated enough.
-            Logger.LogEditor($"Playing animation: {newTrack.Name}, alias: {newTrack.AliasName}", LogCat.Animation);
+            Logger.LogEditor($"Playing animation: {newTrack.Name}, alias: {newTrack.AliasName} by: {RootBone.parent.parent.name}", LogCat.Animation);
 
             if (IsAlreadyPlaying(newTrack))
                 return true;
