@@ -203,6 +203,9 @@ namespace GUZ.Core.Adapters.Adnimations
             }
 #endif
 
+            var newTrack = _animationService.GetTrack(animationName, Properties.MdsNameBase, Properties.MdsNameOverlay);
+            
+            
             Logger.LogEditor($"Stopping animation: {animationName}", LogCat.Animation);
             AnimationTrackInstance instanceToStop = null;
 
@@ -211,7 +214,7 @@ namespace GUZ.Core.Adapters.Adnimations
             {
                 var instance = _trackInstances[i];
                 // If animation is found, then mark it as "BlendOut"
-                if (instance.Track.Name.EqualsIgnoreCase(animationName))
+                if (instance.Track.Name.EqualsIgnoreCase(newTrack.Name))
                 {
                     instanceToStop = instance;
                     instance.BlendOutTrack(instance.Track.BlendOut);
