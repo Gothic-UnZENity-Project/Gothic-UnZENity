@@ -1,10 +1,13 @@
+using System;
 using System.Collections;
 using GUZ.Core;
 using GUZ.Core.Extensions;
 using GUZ.Core.Manager;
 using GUZ.Core.Services.Meshes;
+using GUZ.Core.Services;
 using Reflex.Attributes;
 using TMPro;
+using UnityEditor.PackageManager;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -26,6 +29,12 @@ namespace GUZ.VR.Adapters.Player
 
         // Data needed for smooth movement of Canvas
         private Transform _cameraTransform;
+
+        private void Awake()
+        {
+            // Ensure DI injection for dynamically created GameObjects
+            this.Inject();
+        }
         private float _canvasMoveSmoothTime = 0.3f;
         private Vector3 _canvasMovementOffset = new(0, 0, 4f); // Expected offset of Canvas in front of Camera view.
         private Vector3 _canvasMoveVelocity = Vector3.zero;
@@ -47,7 +56,7 @@ namespace GUZ.VR.Adapters.Player
         public void DisplayIntroduction(string chapter, string text, string texture, string wav, int time)
         {
             gameObject.SetActive(true);
-            
+
             PlayAudio(wav);
             ShowChapterCanvas(chapter, text, texture);
             
