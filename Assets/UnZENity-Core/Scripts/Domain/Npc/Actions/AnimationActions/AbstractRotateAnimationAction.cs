@@ -62,7 +62,7 @@ namespace GUZ.Core.Domain.Npc.Actions.AnimationActions
             var cross = Vector3.Cross(NpcGo.transform.forward, _finalRotation.eulerAngles);
             _isRotateLeft = cross.y >= 0;
 
-            if (Quaternion.Angle(NpcGo.transform.rotation, _finalRotation) > 1f && PlayAnimation)
+            if (PlayAnimation)
             {
                 PrefabProps.AnimationSystem.PlayAnimation(GetRotateModeAnimationString());
             }
@@ -75,7 +75,7 @@ namespace GUZ.Core.Domain.Npc.Actions.AnimationActions
             switch (walkMode)
             {
                 case VmGothicEnums.WalkMode.Walk:
-                    walkModeString = "RUN"; // FIXME: We need to implement aniAlias feature, then change it back to t_WalkTurnL
+                    walkModeString = "WALK";
                     break;
                 case VmGothicEnums.WalkMode.Run:
                     walkModeString = "Run";
@@ -104,6 +104,9 @@ namespace GUZ.Core.Domain.Npc.Actions.AnimationActions
         {
             base.Tick();
 
+            if (IsFinishedFlag)
+                return;
+
             HandleRotation(NpcGo.transform);
         }
 
@@ -118,10 +121,9 @@ namespace GUZ.Core.Domain.Npc.Actions.AnimationActions
                 Quaternion.RotateTowards(npcTransform.rotation, _finalRotation, Time.deltaTime * turnSpeed);
 
             // Check if rotation is done.
-            if (Quaternion.Angle(npcTransform.rotation, _finalRotation) < 1f && IsFinishedFlag != true)
+            if (Quaternion.Angle(npcTransform.rotation, _finalRotation) < 1f)
             {
                 PrefabProps.AnimationSystem.StopAnimation(GetRotateModeAnimationString());
-                PrefabProps.AnimationSystem.PlayAnimation(_animationService.GetAnimationName(VmGothicEnums.AnimationType.Move, Vob));
 
                 IsFinishedFlag = true;
             }
