@@ -264,13 +264,18 @@ namespace GUZ.VR.Adapters.Player
         /// [🆗] Rotating player with Thumbstick
         ///
         ///
-        // Test 3. Translation with Camera.main!
+        /// Test 3. Translation with Camera.main!
         /// var combinedVelocity = (leftHandVelocity + rightHandVelocity) * _swimHandMovementMultiplier;
         /// var rotatedVelocity = Camera.main!.transform.TransformDirection(combinedVelocity);
         /// _currentVelocity = Vector3.Lerp(_currentVelocity, -rotatedVelocity, Time.deltaTime);
         ///
         /// [🛑] Moving physical head
         /// [🆗] Rotating player with Thumbstick
+        ///
+        /// Test 4. Using Hand's Rigidbody.linearVelocity
+        /// [🆗] Moving physical head
+        /// [🆗] Rotating player with Thumbstick
+        /// [🛑] Rigidbody velocity is only tracked at FixedUpdate(). Which makes the movement wonky and I couldn't figure out how to apply multiplier right.
         /// </summary>
 
         private void HandleSwim()
