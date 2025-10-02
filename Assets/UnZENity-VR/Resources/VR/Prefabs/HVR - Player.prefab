@@ -1212,8 +1212,7 @@ MonoBehaviour:
   m_RequiresDepthTextureOption: 2
   m_RequiresOpaqueTextureOption: 2
   m_CameraType: 0
-  m_Cameras:
-  - {fileID: 0}
+  m_Cameras: []
   m_RendererIndex: -1
   m_VolumeLayerMask:
     serializedVersion: 2
@@ -1534,8 +1533,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _playerController: {fileID: 1958783043908878430}
   _playerInputs: {fileID: 6929123780788603430}
-  _leftHandRigidbody: {fileID: 7701449421344543976}
-  _rightHandRigidbody: {fileID: 6965913448549182657}
   _waterBobAmplitude: 0.001
   _waterBobFrequency: 2.5
   _swimStartDiveVerticalVelocity: -5
@@ -1572,7 +1569,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3469872688444955626}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 94f83c78c0664d83b28cbaed370379c1, type: 3}
   m_Name: 

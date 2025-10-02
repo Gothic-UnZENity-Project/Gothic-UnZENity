@@ -254,7 +254,6 @@ namespace GUZ.VR.Adapters.Player
         /// [🆗] Moving physical head
         /// [🛑] Rotating player with Thumbstick
         ///
-        ///
         /// Test 2. Translation with PlayerController (where Thumbstick rotation is applied)
         /// var combinedVelocity = (leftHandVelocity + rightHandVelocity) * _swimHandMovementMultiplier;
         /// var rotatedVelocity = _playerController.transform.TransformDirection(combinedVelocity);
@@ -276,6 +275,16 @@ namespace GUZ.VR.Adapters.Player
         /// [🆗] Moving physical head
         /// [🆗] Rotating player with Thumbstick
         /// [🛑] Rigidbody velocity is only tracked at FixedUpdate(). Which makes the movement wonky and I couldn't figure out how to apply multiplier right.
+        ///
+        /// Test 5. Using CameraRig as TransformDirection
+        /// var rotatedVelocity = _playerController.CameraRig.transform.TransformDirection(combinedVelocity);
+        /// Why? Something like: The two rotations are applied like this in HVR Player:
+        /// PlayerController - real and synthetic rotation
+        ///   - CameraRig    - inverse real rotation
+        ///     - Camera     - real rotation
+        /// It means that real rotation is calculated out, but the synthetic rotation is counted in when transforming from CameraRig.
+        /// [🆗] Moving physical head
+        /// [🆗] Rotating player with Thumbstick
         /// </summary>
 
         private void HandleSwim()
@@ -294,10 +303,10 @@ namespace GUZ.VR.Adapters.Player
                 var combinedVelocity = (leftHandVelocity + rightHandVelocity) * _swimHandMovementMultiplier;
                 
                 // Transform velocity to world space based on player rotation
-                // var rotatedVelocity = Camera.main!.transform.TransformDirection(combinedVelocity);
+                var rotatedVelocity = _playerController.CameraRig.transform.TransformDirection(combinedVelocity);
                 
                 // Apply opposite force for swimming - Only horizontal!
-                _currentVelocity = Vector3.Lerp(_currentVelocity, -combinedVelocity, Time.deltaTime);
+                _currentVelocity = Vector3.Lerp(_currentVelocity, -rotatedVelocity, Time.deltaTime);
             }
             // Fade out movement
             else
@@ -340,10 +349,10 @@ namespace GUZ.VR.Adapters.Player
                 var combinedVelocity = (leftHandVelocity + rightHandVelocity) * _diveHandMovementMultiplier;
 
                 // Transform velocity to world space based on player rotation
-                // var rotatedVelocity = Camera.main!.transform.TransformDirection(combinedVelocity);
+                var rotatedVelocity = _playerController.CameraRig.transform.TransformDirection(combinedVelocity);
 
-                // Apply opposite force for diving
-                _currentVelocity = Vector3.Lerp(_currentVelocity, -combinedVelocity, Time.deltaTime);
+                // Apply opposite force for swimming - Only horizontal!
+                _currentVelocity = Vector3.Lerp(_currentVelocity, -rotatedVelocity, Time.deltaTime);
             }
             // Fade out movement
             else
