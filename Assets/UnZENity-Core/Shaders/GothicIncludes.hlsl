@@ -7,6 +7,8 @@ float3 _SunDirection;
 real3 _SunColor;
 real3 _AmbientColor;
 real _PointLightIntensity;
+bool _UnderwaterEffect;
+float3 _UnderwaterColor;
 
 float3 ApplyFog(float3 color, float3 worldPos)
 {
@@ -77,6 +79,16 @@ half3 SunAndAmbientDiffuse(float3 normal, half3 vertexShadowmap)
 {
     half diffuseDot = saturate(dot(normal, -_SunDirection));
     return saturate(diffuseDot * _SunColor * vertexShadowmap + _AmbientColor);
+}
+
+// Apply underwater color tinting when flag is enabled
+half3 ApplyUnderWaterEffect(half3 diffuse)
+{
+    if (_UnderwaterEffect)
+    {
+        diffuse *= _UnderwaterColor;
+    }
+    return diffuse;
 }
 
 #endif

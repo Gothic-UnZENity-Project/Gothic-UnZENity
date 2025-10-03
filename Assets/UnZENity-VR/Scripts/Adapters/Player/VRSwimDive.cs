@@ -66,6 +66,10 @@ namespace GUZ.VR.Adapters.Player
         [SerializeField] private float _diveVelocityFadeRate = 0.25f; // 0.25==75% less velocity with each second
         private bool _isDivingForceStarted; // If we lift the grips, we set it to false again to re-enable sounds later.
 
+        
+        [Header("Debugging")]
+        [SerializeField] private bool _debugStartDive;
+
 
         [Inject] private readonly GameStateService _gameStateService;
         [Inject] private readonly AudioService _audioService;
@@ -161,6 +165,23 @@ namespace GUZ.VR.Adapters.Player
             // else
             // FIXME - We need to add a possiblity to reset water IF the hero is teleported away from water or falling through a waterfall, ...
             //         so that the water level is reset and we can walk again normally.
+        }
+        
+        /// <summary>
+        /// Debug only
+        /// </summary>
+        private void OnValidate()
+        {
+            if (_debugStartDive)
+            {
+                _debugStartDive = false;
+
+                if (_mode == VmGothicEnums.WalkMode.Swim)
+                {
+                    _playerController.CharacterController.Move(Vector3.down * 5);
+                    StartDive();
+                }
+            }
         }
 
         private void ChangeWaterBehavior()
