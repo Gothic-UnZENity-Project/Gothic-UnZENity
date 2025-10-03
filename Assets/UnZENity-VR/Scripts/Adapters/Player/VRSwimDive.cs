@@ -4,9 +4,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using GUZ.Core;
-using GUZ.Core.Models.Adapter;
-using GUZ.Core.Extensions;
 using GUZ.Core.Const;
+using GUZ.Core.Extensions;
 using GUZ.Core.Manager;
 using GUZ.Core.Models.Audio;
 using GUZ.Core.Models.Marvin;
@@ -16,7 +15,6 @@ using GUZ.Core.Services.Caches;
 using GUZ.Core.Services.Context;
 using GUZ.Core.Services.Vm;
 using GUZ.VR.Adapters.HVROverrides;
-using GUZ.VR.Services.Context;
 using HurricaneVR.Framework.Core.HandPoser;
 using HurricaneVR.Framework.Core.Utils;
 using Reflex.Attributes;
@@ -199,8 +197,6 @@ namespace GUZ.VR.Adapters.Player
                     _playerController.RunSpeed = _initialRunSpeed;
                     _playerController.CanSprint = true;
                     _playerController.MaxFallSpeed = _initialFallSpeed;
-                    _leftHandAnimator.enabled = true;
-                    _rightHandAnimator.enabled = true;
                     
                     _playerController.SetWalkingControls();
                     break;
@@ -214,8 +210,6 @@ namespace GUZ.VR.Adapters.Player
                     _playerController.RunSpeed = _initialMoveSpeed / 2; // No running, but it might be, that we run into deep water, then we need to slow it down like walking.
                     _playerController.CanSprint = false;
                     _playerController.MaxFallSpeed = _initialFallSpeed;
-                    _leftHandAnimator.enabled = true;
-                    _rightHandAnimator.enabled = true;
                     
                     _playerController.SetWaterWalkingControls();
                     break;
@@ -231,9 +225,7 @@ namespace GUZ.VR.Adapters.Player
                     _mode = VmGothicEnums.WalkMode.Swim;
                     _playerController.Gravity = 0f;
                     _playerController.MaxFallSpeed = 0f;
-                    _leftHandAnimator.enabled = false;
-                    _rightHandAnimator.enabled = false;
-                    
+
                     _playerController.SetSwimmingControls();
                     
                     if (_waterBobbingCoroutine == null)
@@ -267,7 +259,7 @@ namespace GUZ.VR.Adapters.Player
             
             _playerController.Gravity = 0;
             _playerController.MaxFallSpeed = 0;
-            
+
             _playerController.SetDivingControls();
             SFXPlayer.Instance.PlaySFX(_audioService.CreateAudioClip(_sfxSwim2DiveModel.GetRandomSound()), Camera.main!.transform.position);
         }

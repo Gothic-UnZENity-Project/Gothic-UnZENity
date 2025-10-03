@@ -143,6 +143,33 @@ namespace GUZ.VR.Adapters.HVROverrides
             RightHand.ForceGrabber.AllowGrabbing = enable;
             RightHand.AllowHovering = enable;
             RightHand.ForceGrabber.AllowHovering = enable;
+            
+            // Disable hand animations. Basically open the hand fully if disabled=true
+            if (LeftHand.HandAnimator && LeftHand.HandAnimator.CurrentPoser)
+            {
+                if (LeftHand.HandAnimator.CurrentPoser.PrimaryPose != null)
+                {
+                    LeftHand.HandAnimator.CurrentPoser.PrimaryPose.Disabled = !enable;
+                }
+
+                if (LeftHand.HandAnimator.CurrentPoser.Blends != null)
+                {
+                    LeftHand.HandAnimator.CurrentPoser.Blends.ForEach(i => i.Disabled = !enable);
+                }
+            }
+
+            if (RightHand.HandAnimator && RightHand.HandAnimator.CurrentPoser)
+            {
+                if (RightHand.HandAnimator.CurrentPoser.PrimaryPose != null)
+                {
+                    RightHand.HandAnimator.CurrentPoser.PrimaryPose.Disabled = !enable;
+                }
+
+                if (RightHand.HandAnimator.CurrentPoser.Blends != null)
+                {
+                    RightHand.HandAnimator.CurrentPoser.Blends.ForEach(i => i.Disabled = !enable);
+                }
+            }
         }
 
         private void OnPlayerPrefsUpdated(string preferenceKey, object value)
