@@ -99,6 +99,51 @@ namespace GUZ.VR.Adapters.HVROverrides
             RotationEnabled = true;
             Teleporter.enabled = true;
         }
+        
+        public void SetWalkingControls()
+        {
+            ChangeGrabbing(true);
+
+            // Enable backpack
+            // HVRHandGrabber.AllowGrabbing = false;
+            // Enable grabbing of objects
+
+            // Disable vertical walking controls
+        }
+        
+        public void SetWaterWalkingControls()
+        {
+            ChangeGrabbing(true);
+        }
+
+        public void SetSwimmingControls()
+        {
+            // Disable grabbing of objects (as in G1)
+            ChangeGrabbing(false);
+
+            // Disable vertical walking controls
+        }
+        
+        public void SetDivingControls()
+        {
+            // Disable grabbing of objects (as in G1)
+            ChangeGrabbing(false);
+            
+            // Enable vertical walking controls
+        }
+
+        private void ChangeGrabbing(bool enable)
+        {
+            LeftHand.AllowGrabbing = enable;
+            LeftHand.ForceGrabber.AllowGrabbing = enable;
+            LeftHand.AllowHovering = enable;
+            LeftHand.ForceGrabber.AllowHovering = enable;
+
+            RightHand.AllowGrabbing = enable;
+            RightHand.ForceGrabber.AllowGrabbing = enable;
+            RightHand.AllowHovering = enable;
+            RightHand.ForceGrabber.AllowHovering = enable;
+        }
 
         private void OnPlayerPrefsUpdated(string preferenceKey, object value)
         {

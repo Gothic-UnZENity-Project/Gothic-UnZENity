@@ -81,9 +81,8 @@ namespace GUZ.VR.Adapters.Player
         {
             Shader.SetGlobalInt(Constants.ShaderPropertyWaterEffectToggle, 0);
 
-            var vrPlayer = _contextInteractionService.GetImpl<VRContextInteractionService>().GetVRPlayerController();
-            _leftHandAnimator = vrPlayer.LeftHand.HandAnimator;
-            _rightHandAnimator = vrPlayer.RightHand.HandAnimator;
+            _leftHandAnimator = _playerController.LeftHand.HandAnimator;
+            _rightHandAnimator = _playerController.RightHand.HandAnimator;
             
 			GlobalEventDispatcher.ZenKitBootstrapped.AddListener(() =>
             {
@@ -202,6 +201,8 @@ namespace GUZ.VR.Adapters.Player
                     _playerController.MaxFallSpeed = _initialFallSpeed;
                     _leftHandAnimator.enabled = true;
                     _rightHandAnimator.enabled = true;
+                    
+                    _playerController.SetWalkingControls();
                     break;
                 case ZenGineConst.WaterLevel.Knee:
                     // FIXME - Or is it "WalkMode.Water"?
@@ -215,6 +216,8 @@ namespace GUZ.VR.Adapters.Player
                     _playerController.MaxFallSpeed = _initialFallSpeed;
                     _leftHandAnimator.enabled = true;
                     _rightHandAnimator.enabled = true;
+                    
+                    _playerController.SetWaterWalkingControls();
                     break;
                 case ZenGineConst.WaterLevel.Chest:
                     // Dive -> Swim
@@ -230,6 +233,8 @@ namespace GUZ.VR.Adapters.Player
                     _playerController.MaxFallSpeed = 0f;
                     _leftHandAnimator.enabled = false;
                     _rightHandAnimator.enabled = false;
+                    
+                    _playerController.SetSwimmingControls();
                     
                     if (_waterBobbingCoroutine == null)
                         _waterBobbingCoroutine = StartCoroutine(WaterBobbing());
@@ -253,9 +258,9 @@ namespace GUZ.VR.Adapters.Player
         
         private void StartDive()
         {
-            Shader.SetGlobalInt(Constants.ShaderPropertyWaterEffectToggle, 1);
             _mode = VmGothicEnums.WalkMode.Dive;
-
+            Shader.SetGlobalInt(Constants.ShaderPropertyWaterEffectToggle, 1);
+            
             // Reset velocity so that dive down is smoothed. Otherwise, we are on the ground already. ;-)
             // (After "forcing" diving by moving hands down.)
             _currentVelocity = Vector3.zero;
@@ -263,6 +268,7 @@ namespace GUZ.VR.Adapters.Player
             _playerController.Gravity = 0;
             _playerController.MaxFallSpeed = 0;
             
+            _playerController.SetDivingControls();
             SFXPlayer.Instance.PlaySFX(_audioService.CreateAudioClip(_sfxSwim2DiveModel.GetRandomSound()), Camera.main!.transform.position);
         }
 

@@ -47,6 +47,26 @@ namespace GUZ.Core.Services.Context
             _impl.UnlockPlayer();
         }
 
+        public void SetWalkingControls()
+        {
+            _impl.SetWalkingControls();
+        }
+
+        public void SetWaterWalkingControls()
+        {
+            _impl.SetWaterWalkingControls();
+        }
+
+        public void SetSwimmingControls()
+        {
+            _impl.SetSwimmingControls();
+        }
+
+        public void SetDivingControls()
+        {
+            _impl.SetDivingControls();
+        }
+
         public void TeleportPlayerTo(Vector3 position, Quaternion rotation = default)
         {
             _impl.TeleportPlayerTo(position,rotation);
