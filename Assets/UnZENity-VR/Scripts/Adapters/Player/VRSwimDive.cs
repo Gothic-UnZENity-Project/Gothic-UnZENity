@@ -37,9 +37,6 @@ namespace GUZ.VR.Adapters.Player
         private SfxModel _sfxSwim2DiveModel;
         private SfxModel _sfxSwim2HangModel; // Normally when pulling out of water only, but we also use when dive -> swim.
         
-        private HVRHandAnimator _leftHandAnimator;
-        private HVRHandAnimator _rightHandAnimator;
-            
         private float _initialGravity;
         private float _initialMoveSpeed;
         private float _initialRunSpeed;
@@ -47,6 +44,14 @@ namespace GUZ.VR.Adapters.Player
 
         private VmGothicEnums.WalkMode _mode = VmGothicEnums.WalkMode.Walk;
 
+        // Swim + Dive properties
+        private Vector3 _currentVelocity;
+        // If we lift the grips, we set it to false again to re-enable sounds later.
+        private bool _isSwimDiveForceLeftStarted;
+        private bool _isSwimDiveForceRightStarted;
+        // SFX cooldown identifiers (to prevent calling multiple swim sounds at once)
+        private readonly Guid _swimDiveSfxUuid = Guid.NewGuid();
+        
         // Water Bobbing
         private Coroutine _waterBobbingCoroutine;
         [SerializeField] private float _waterBobAmplitude = 0.001f;
@@ -56,10 +61,8 @@ namespace GUZ.VR.Adapters.Player
         [SerializeField] private float _swimStartDiveVerticalVelocity = -5f;
         [SerializeField] private float _swimHandMovementMultiplier = 5f;
         [SerializeField] private float _swimVelocityFadeRate = 0.25f; // e.g., 0.25==75% less velocity with each second
-        private bool _isSwimmingForceStarted; // If we lift the grips, we set it to false again to re-enable sounds later.
         
         // Dive movement
-        private Vector3 _currentVelocity;
         [SerializeField] private float _diveHandMovementMultiplier = 2.5f;
         [SerializeField] private float _diveVelocityFadeRate = 0.25f; // 0.25==75% less velocity with each second
         private bool _isDivingForceStarted; // If we lift the grips, we set it to false again to re-enable sounds later.
@@ -79,9 +82,6 @@ namespace GUZ.VR.Adapters.Player
         {
             Shader.SetGlobalInt(Constants.ShaderPropertyWaterEffectToggle, 0);
 
-            _leftHandAnimator = _playerController.LeftHand.HandAnimator;
-            _rightHandAnimator = _playerController.RightHand.HandAnimator;
-            
 			GlobalEventDispatcher.ZenKitBootstrapped.AddListener(() =>
             {
                 var mds = _resourceCacheService.TryGetModelScript("Humans")!;
@@ -308,37 +308,56 @@ namespace GUZ.VR.Adapters.Player
 
         private void HandleSwim()
         {
-            if (_playerInputs.BothGripsActiveState.JustActivated)
+            if (_playerInputs.IsLeftGrabActivated)
+                _isSwimDiveForceLeftStarted = true;
+            if (_playerInputs.IsRightGrabActivated)
+                _isSwimDiveForceRightStarted = true;
+
+            // Use force to pull yourself (per hand). Only include hands whose Grip is currently held.
+            if (_playerInputs.IsLeftGripHoldActive || _playerInputs.IsRightGripHoldActive)
             {
-                _isSwimmingForceStarted = true;
-            }
-            
-            // Use force to pull yourself.
-            if (_playerInputs.IsBothGripsActive)
-            {
-                // Calculate hand movement direction and force
-                var leftHandVelocity = _playerInputs.LeftController.Velocity;
-                var rightHandVelocity = _playerInputs.RightController.Velocity;
-                var combinedVelocity = (leftHandVelocity + rightHandVelocity) * _swimHandMovementMultiplier;
-                
+                var desiredLocalVelocity = Vector3.zero;
+
+                if (_playerInputs.IsLeftGripHoldActive)
+                {
+                    var leftHandVelocity = _playerInputs.LeftController.Velocity;
+                    desiredLocalVelocity += leftHandVelocity;
+                }
+
+                if (_playerInputs.IsRightGripHoldActive)
+                {
+                    var rightHandVelocity = _playerInputs.RightController.Velocity;
+                    desiredLocalVelocity += rightHandVelocity;
+                }
+
+                desiredLocalVelocity *= _swimHandMovementMultiplier;
+
                 // Transform velocity to world space based on player rotation
-                var rotatedVelocity = _playerController.CameraRig.transform.TransformDirection(combinedVelocity);
-                
+                var rotatedVelocity = _playerController.CameraRig.transform.TransformDirection(desiredLocalVelocity);
+
                 // Apply opposite force for swimming - Only horizontal!
                 _currentVelocity = Vector3.Lerp(_currentVelocity, -rotatedVelocity, Time.deltaTime);
             }
-            // Fade out movement
+            // Fade out movement when no grip is active
             else
             {
                 _currentVelocity *= Mathf.Pow(_swimVelocityFadeRate, Time.deltaTime);
-                _isSwimmingForceStarted = false;
+                _isSwimDiveForceLeftStarted = false;
+                _isSwimDiveForceRightStarted = false;
             }
-            
-            if (_isSwimmingForceStarted && _currentVelocity.magnitude > 1f)
+
+            // Play swim SFX for each hand that just started pulling
+            if (_isSwimDiveForceLeftStarted && _currentVelocity.magnitude > 1f)
             {
-                // Play a random swim sound via HVRs SFXPlayer.
-                SFXPlayer.Instance.PlaySFX(_audioService.CreateAudioClip(_sfxSwimModel.GetRandomSound()), Camera.main!.transform.position);
-                _isSwimmingForceStarted = false;
+                var clip = _audioService.CreateAudioClip(_sfxSwimModel.GetRandomSound())!;
+                SFXPlayer.Instance.PlaySFXCooldown(clip, Camera.main!.transform.position, _swimDiveSfxUuid, cooldownTime: clip.length);
+                _isSwimDiveForceLeftStarted = false;
+            }
+            if (_isSwimDiveForceRightStarted && _currentVelocity.magnitude > 1f)
+            {
+                var clip = _audioService.CreateAudioClip(_sfxSwimModel.GetRandomSound())!;
+                SFXPlayer.Instance.PlaySFXCooldown(clip, Camera.main!.transform.position, _swimDiveSfxUuid, cooldownTime: clip.length);
+                _isSwimDiveForceRightStarted = false;
             }
 
             // Move the character - Horizontal only
@@ -354,37 +373,56 @@ namespace GUZ.VR.Adapters.Player
 
         private void HandleDive()
         {
-            if (_playerInputs.BothGripsActiveState.JustActivated)
+            if (_playerInputs.IsLeftGrabActivated)
+                _isSwimDiveForceLeftStarted = true;
+            if (_playerInputs.IsRightGrabActivated)
+                _isSwimDiveForceRightStarted = true;
+
+            // Use force to pull yourself (per hand). Only include hands whose Grip is currently held.
+            if (_playerInputs.IsLeftGripHoldActive || _playerInputs.IsRightGripHoldActive)
             {
-                _isDivingForceStarted = true;
-            }
-            
-            // Use force to pull yourself.
-            if (_playerInputs.IsBothGripsActive)
-            {
-                // Calculate hand movement direction and force
-                var leftHandVelocity = _playerInputs.LeftController.Velocity;
-                var rightHandVelocity = _playerInputs.RightController.Velocity;
-                var combinedVelocity = (leftHandVelocity + rightHandVelocity) * _diveHandMovementMultiplier;
+                var desiredLocalVelocity = Vector3.zero;
+
+                if (_playerInputs.IsLeftGripHoldActive)
+                {
+                    var leftHandVelocity = _playerInputs.LeftController.Velocity;
+                    desiredLocalVelocity += leftHandVelocity;
+                }
+
+                if (_playerInputs.IsRightGripHoldActive)
+                {
+                    var rightHandVelocity = _playerInputs.RightController.Velocity;
+                    desiredLocalVelocity += rightHandVelocity;
+                }
+
+                desiredLocalVelocity *= _diveHandMovementMultiplier;
 
                 // Transform velocity to world space based on player rotation
-                var rotatedVelocity = _playerController.CameraRig.transform.TransformDirection(combinedVelocity);
+                var rotatedVelocity = _playerController.CameraRig.transform.TransformDirection(desiredLocalVelocity);
 
-                // Apply opposite force for swimming - Only horizontal!
+                // Apply opposite force for diving (full 3D movement)
                 _currentVelocity = Vector3.Lerp(_currentVelocity, -rotatedVelocity, Time.deltaTime);
             }
-            // Fade out movement
+            // Fade out movement when no grip is active
             else
             {
                 _currentVelocity *= Mathf.Pow(_diveVelocityFadeRate, Time.deltaTime);
-                _isDivingForceStarted = false;
+                _isSwimDiveForceLeftStarted = false;
+                _isSwimDiveForceRightStarted = false;
             }
-            
-            if (_isDivingForceStarted && _currentVelocity.magnitude > 1f)
+
+            // Play dive SFX for each hand that just started pulling, prevent overlap via cooldown
+            if (_isSwimDiveForceLeftStarted && _currentVelocity.magnitude > 1f)
             {
-                // Play a random dive sound via HVRs SFXPlayer.
-                SFXPlayer.Instance.PlaySFX(_audioService.CreateAudioClip(_sfxDiveModel.GetRandomSound()), Camera.main!.transform.position);
-                _isDivingForceStarted = false;
+                var clip = _audioService.CreateAudioClip(_sfxDiveModel.GetRandomSound())!;
+                SFXPlayer.Instance.PlaySFXCooldown(clip, Camera.main!.transform.position, _swimDiveSfxUuid, cooldownTime: clip.length);
+                _isSwimDiveForceLeftStarted = false;
+            }
+            if (_isSwimDiveForceRightStarted && _currentVelocity.magnitude > 1f)
+            {
+                var clip = _audioService.CreateAudioClip(_sfxDiveModel.GetRandomSound())!;
+                SFXPlayer.Instance.PlaySFXCooldown(clip, Camera.main!.transform.position, _swimDiveSfxUuid, cooldownTime: clip.length);
+                _isSwimDiveForceRightStarted = false;
             }
 
             // Move the character
