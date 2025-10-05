@@ -1544,8 +1544,8 @@ MonoBehaviour:
   _playerInputs: {fileID: 6929123780788603430}
   _waterBobAmplitude: 0.001
   _waterBobFrequency: 2.5
-  _swimStartDiveVerticalVelocity: -5
-  _swimHandMovementMultiplier: 5
+  _swimStartDiveVerticalVelocity: -1
+  _swimHandMovementMultiplier: 4
   _swimVelocityFadeRate: 0.25
   _diveHandMovementMultiplier: 2.5
   _diveVelocityFadeRate: 0.25

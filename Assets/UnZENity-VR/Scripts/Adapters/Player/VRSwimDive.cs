@@ -185,6 +185,7 @@ namespace GUZ.VR.Adapters.Player
         {
             if (_waterBobbingCoroutine != null)
             {
+                _currentVelocity = Vector3.zero;
                 StopCoroutine(_waterBobbingCoroutine);
                 _waterBobbingCoroutine = null;
             }
@@ -305,7 +306,6 @@ namespace GUZ.VR.Adapters.Player
         /// [🆗] Moving physical head
         /// [🆗] Rotating player with Thumbstick
         /// </summary>
-
         private void HandleSwim()
         {
             if (_playerInputs.IsLeftGrabActivated)
@@ -320,14 +320,20 @@ namespace GUZ.VR.Adapters.Player
 
                 if (_playerInputs.IsLeftGripHoldActive)
                 {
-                    var leftHandVelocity = _playerInputs.LeftController.Velocity;
-                    desiredLocalVelocity += leftHandVelocity;
+                    if (IsHandBelowWater(_playerController.LeftControllerTransform))
+                    {
+                        var leftHandVelocity = _playerInputs.LeftController.Velocity;
+                        desiredLocalVelocity += leftHandVelocity;
+                    }
                 }
 
                 if (_playerInputs.IsRightGripHoldActive)
                 {
-                    var rightHandVelocity = _playerInputs.RightController.Velocity;
-                    desiredLocalVelocity += rightHandVelocity;
+                    if (IsHandBelowWater(_playerController.RightControllerTransform))
+                    {
+                        var rightHandVelocity = _playerInputs.RightController.Velocity;
+                        desiredLocalVelocity += rightHandVelocity;
+                    }
                 }
 
                 desiredLocalVelocity *= _swimHandMovementMultiplier;
@@ -369,6 +375,15 @@ namespace GUZ.VR.Adapters.Player
             {
                 StartDive();
             }
+        }
+
+        private bool IsHandBelowWater(Transform handTransform)
+        {
+            RaycastHit hit;
+
+            // Is there water above your hand?
+            return Physics.Raycast(handTransform.position, Vector3.up, out hit, _playerController.CameraHeight,
+                1 << Constants.WaterLayer);
         }
 
         private void HandleDive()
