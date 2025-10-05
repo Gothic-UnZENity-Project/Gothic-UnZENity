@@ -121,7 +121,7 @@ namespace GUZ.VR.Adapters.HVROverrides
         {
             ChangeGrabbing(true);
 
-            CharacterController.stepOffset = _defaultCharacterControllerStepHeight;
+            CharacterController.stepOffset = _characterControllerSwimDiveStepHeight;
         }
 
         public void SetSwimmingControls()
