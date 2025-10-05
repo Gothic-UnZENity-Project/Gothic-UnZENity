@@ -287,7 +287,7 @@ namespace GUZ.Core.Services.World
             
             // TODO - Could be moved to another Service as Sky handling for dive color is not 100% true ;-)
             // TODO - We can also outsource this value to an Ini file if gamers want to have more control over its color.
-            var underwaterColor = new Color(0.03f, 0.07f, 0.31f);
+            var underwaterColor = new Color(0.15f, 0.23f, 0.7f);
             Shader.SetGlobalVector(_underwaterColorShaderId, new Vector3(underwaterColor.r, underwaterColor.g, underwaterColor.b));
         }
 
