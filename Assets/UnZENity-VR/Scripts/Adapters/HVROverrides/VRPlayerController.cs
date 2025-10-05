@@ -7,6 +7,7 @@ using GUZ.Core.Services.Config;
 using HurricaneVR.Framework.Core.Player;
 using MyBox;
 using Reflex.Attributes;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 
 namespace GUZ.VR.Adapters.HVROverrides
@@ -21,10 +22,17 @@ namespace GUZ.VR.Adapters.HVROverrides
         [Separator("GUZ - Settings")]
         public MenuHandler MenuHandler;
 
+        [SerializeField] private float _characterControllerSwimDiveStepHeight = 1f; // 1m means walking out of water in Xardas' old tower in G1.
+
+        // For resetting values when stop swimming.
+        private float _defaultCharacterControllerStepHeight;
+
         protected override void Start()
         {
             base.Start();
             GlobalEventDispatcher.PlayerPrefUpdated.AddListener(OnPlayerPrefsUpdated);
+
+            _defaultCharacterControllerStepHeight = CharacterController.stepOffset;
 
             // Enabled later via button press or other events
             MenuHandler?.gameObject.SetActive(false);
@@ -104,9 +112,7 @@ namespace GUZ.VR.Adapters.HVROverrides
         {
             ChangeGrabbing(true);
 
-            // Enable backpack
-            // HVRHandGrabber.AllowGrabbing = false;
-            // Enable grabbing of objects
+            CharacterController.stepOffset = _defaultCharacterControllerStepHeight;
 
             // Disable vertical walking controls
         }
@@ -114,12 +120,16 @@ namespace GUZ.VR.Adapters.HVROverrides
         public void SetWaterWalkingControls()
         {
             ChangeGrabbing(true);
+
+            CharacterController.stepOffset = _defaultCharacterControllerStepHeight;
         }
 
         public void SetSwimmingControls()
         {
             // Disable grabbing of objects (as in G1)
             ChangeGrabbing(false);
+
+            CharacterController.stepOffset = _characterControllerSwimDiveStepHeight;
 
             // Disable vertical walking controls
         }
@@ -128,7 +138,10 @@ namespace GUZ.VR.Adapters.HVROverrides
         {
             // Disable grabbing of objects (as in G1)
             ChangeGrabbing(false);
-            
+
+
+            CharacterController.stepOffset = _characterControllerSwimDiveStepHeight;
+
             // Enable vertical walking controls
         }
 

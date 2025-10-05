@@ -605,6 +605,14 @@ PrefabInstance:
       propertyPath: Player
       value: 
       objectReference: {fileID: 1958783043908878430}
+    - target: {fileID: 2923976313076319298, guid: c43ac1b5fbd2fc24ea40fb28bae6be3e, type: 3}
+      propertyPath: m_SlopeLimit
+      value: 55
+      objectReference: {fileID: 0}
+    - target: {fileID: 2923976313076319298, guid: c43ac1b5fbd2fc24ea40fb28bae6be3e, type: 3}
+      propertyPath: m_StepOffset
+      value: 0.5
+      objectReference: {fileID: 0}
     - target: {fileID: 2923976313076319325, guid: c43ac1b5fbd2fc24ea40fb28bae6be3e, type: 3}
       propertyPath: m_TagString
       value: Player
@@ -1316,6 +1324,7 @@ MonoBehaviour:
   IsGrounded: 0
   _actualVelocity: 0
   MenuHandler: {fileID: 2192772470500779476}
+  _characterControllerSwimDiveStepHeight: 1
 --- !u!114 &6929123780788603430
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1540,6 +1549,7 @@ MonoBehaviour:
   _swimVelocityFadeRate: 0.25
   _diveHandMovementMultiplier: 2.5
   _diveVelocityFadeRate: 0.25
+  _debugStartDive: 0
 --- !u!114 &4104050421938227924
 MonoBehaviour:
   m_ObjectHideFlags: 0
