@@ -202,6 +202,13 @@ namespace GUZ.VR.Adapters.Player
                     _playerController.SetWalkingControls();
                     break;
                 case ZenGineConst.WaterLevel.Knee:
+                    // Dive -> Swim (sometimes when pulling hard up, we are briefly knee deep and need to call the sound in here once)
+                    if (_mode == VmGothicEnums.WalkMode.Dive)
+                    {
+                        var clip = _audioService.CreateAudioClip(_sfxSwim2HangModel.GetRandomSound());
+                        SFXPlayer.Instance.PlaySFX(clip, Camera.main!.transform.position);
+                    }
+                    
                     // FIXME - Or is it "WalkMode.Water"?
                     _mode = VmGothicEnums.WalkMode.Walk;
                     Shader.SetGlobalInt(Constants.ShaderPropertyWaterEffectToggle, 0);

@@ -112,6 +112,9 @@ namespace GUZ.VR.Adapters.HVROverrides
         {
             ChangeGrabbing(true);
 
+            CanCrouch = true;
+            CanJump = true;
+            Teleporter.enabled = true;
             CharacterController.stepOffset = _defaultCharacterControllerStepHeight;
 
             // Disable vertical walking controls
@@ -121,6 +124,9 @@ namespace GUZ.VR.Adapters.HVROverrides
         {
             ChangeGrabbing(true);
 
+            CanCrouch = false;
+            CanJump = false;
+            Teleporter.enabled = false;
             CharacterController.stepOffset = _characterControllerSwimDiveStepHeight;
         }
 
@@ -129,6 +135,9 @@ namespace GUZ.VR.Adapters.HVROverrides
             // Disable grabbing of objects (as in G1)
             ChangeGrabbing(false);
 
+            CanCrouch = false;
+            CanJump = false;
+            Teleporter.enabled = false;
             CharacterController.stepOffset = _characterControllerSwimDiveStepHeight;
 
             // Disable vertical walking controls
@@ -139,7 +148,9 @@ namespace GUZ.VR.Adapters.HVROverrides
             // Disable grabbing of objects (as in G1)
             ChangeGrabbing(false);
 
-
+            CanCrouch = false;
+            CanJump = false;
+            Teleporter.enabled = false;
             CharacterController.stepOffset = _characterControllerSwimDiveStepHeight;
 
             // Enable vertical walking controls
