@@ -23,21 +23,20 @@ namespace GUZ.Core.Domain.Meshes.Builder
         [Inject] private readonly TextureService _textureService;
         [Inject] private readonly ResourceCacheService _resourceCacheService;
 
+        private string _visualName;
+
         
-        private IVirtualObject _vob;
-
-        public void SetPfxData(IVirtualObject vob)
+        public void SetPfxData(string visualName)
         {
-            _vob = vob;
+            _visualName = visualName;
         }
-
+        
         public override GameObject Build()
         {
-            var pfxGo = _resourceCacheService.TryGetPrefabObject(PrefabType.VobPfx);
-            pfxGo.name = _vob.Visual!.Name;
-            pfxGo.SetParent(ParentGo);
+            var pfxGo = _resourceCacheService.TryGetPrefabObject(PrefabType.VobPfx, parent: RootGo)!;
+            pfxGo.name = _visualName;
 
-            var pfx = VmCacheService.TryGetPfxData(_vob.Visual!.Name);
+            var pfx = VmCacheService.TryGetPfxData(_visualName);
             var particleSystem = pfxGo.GetComponent<ParticleSystem>();
 
             pfxGo.GetComponent<VobPfxProperties>().PfxData = pfx;
