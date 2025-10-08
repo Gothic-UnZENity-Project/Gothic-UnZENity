@@ -55,7 +55,6 @@ Shader "Lit/World"
                 int _StationaryLightCount;
                 float4x4 _StationaryLightIndices;
                 float4x4 _StationaryLightIndices2;
-                bool _UnderwaterEffect;
             CBUFFER_END
 
             #include "GothicIncludes.hlsl"
@@ -107,15 +106,10 @@ Shader "Lit/World"
             {
                 float mipLevel = CalcMipLevel(i.uv.xy * _MainTex_TexelSize.zw);
                 half4 albedo = SAMPLE_TEXTURE2D_ARRAY_LOD(_MainTex, sampler_MainTex, i.uv.xy, i.uv.z,
-             clamp(mipLevel, 0, i.uv.w));
+                clamp(mipLevel, 0, i.uv.w));
                 half3 diffuse = albedo * i.diffuse * _FocusBrightness;
 
-                // Apply underwater color tinting when flag is enabled
-                if (_UnderwaterEffect == 1)
-                {
-                    half3 underwaterColor = half3(0.03, 0.07, 0.31); // Blue
-                    diffuse *= underwaterColor;
-                }
+                diffuse = ApplyUnderWaterEffect(diffuse);
 
 #if FOG_LINEAR || FOG_EXP || FOG_EXP2
                 diffuse = ApplyFog(diffuse, i.worldPos);

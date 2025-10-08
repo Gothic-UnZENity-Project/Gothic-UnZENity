@@ -94,6 +94,8 @@ Shader "Lit/Water"
                 half4 albedo = SAMPLE_TEXTURE2D_ARRAY_LOD(_MainTex, sampler_MainTex, i.uv.xy, i.uv.z + i.frameIndex, clamp(mipLevel, 0, i.uv.w));
                 half3 diffuse = albedo * i.diffuse;
 
+                diffuse = ApplyUnderWaterEffect(diffuse);
+
 #if FOG_LINEAR || FOG_EXP || FOG_EXP2
                 diffuse = ApplyFog(diffuse, i.worldPos);
 #endif

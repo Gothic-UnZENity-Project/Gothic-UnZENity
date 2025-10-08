@@ -7,6 +7,7 @@ using GUZ.Core.Services.Config;
 using HurricaneVR.Framework.Core.Player;
 using MyBox;
 using Reflex.Attributes;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 
 namespace GUZ.VR.Adapters.HVROverrides
@@ -21,10 +22,17 @@ namespace GUZ.VR.Adapters.HVROverrides
         [Separator("GUZ - Settings")]
         public MenuHandler MenuHandler;
 
+        [SerializeField] private float _characterControllerSwimDiveStepHeight = 1f; // 1m means walking out of water in Xardas' old tower in G1.
+
+        // For resetting values when stop swimming.
+        private float _defaultCharacterControllerStepHeight;
+
         protected override void Start()
         {
             base.Start();
             GlobalEventDispatcher.PlayerPrefUpdated.AddListener(OnPlayerPrefsUpdated);
+
+            _defaultCharacterControllerStepHeight = CharacterController.stepOffset;
 
             // Enabled later via button press or other events
             MenuHandler?.gameObject.SetActive(false);
@@ -98,6 +106,94 @@ namespace GUZ.VR.Adapters.HVROverrides
             MovementEnabled = true;
             RotationEnabled = true;
             Teleporter.enabled = true;
+        }
+        
+        public void SetWalkingControls()
+        {
+            ChangeGrabbing(true);
+
+            CanCrouch = true;
+            CanJump = true;
+            Teleporter.enabled = true;
+            CharacterController.stepOffset = _defaultCharacterControllerStepHeight;
+
+            // Disable vertical walking controls
+        }
+        
+        public void SetWaterWalkingControls()
+        {
+            ChangeGrabbing(true);
+
+            CanCrouch = false;
+            CanJump = false;
+            Teleporter.enabled = false;
+            CharacterController.stepOffset = _characterControllerSwimDiveStepHeight;
+        }
+
+        public void SetSwimmingControls()
+        {
+            // Disable grabbing of objects (as in G1)
+            ChangeGrabbing(false);
+
+            CanCrouch = false;
+            CanJump = false;
+            Teleporter.enabled = false;
+            CharacterController.stepOffset = _characterControllerSwimDiveStepHeight;
+
+            // Disable vertical walking controls
+        }
+        
+        public void SetDivingControls()
+        {
+            // Disable grabbing of objects (as in G1)
+            ChangeGrabbing(false);
+
+            CanCrouch = false;
+            CanJump = false;
+            Teleporter.enabled = false;
+            CharacterController.stepOffset = _characterControllerSwimDiveStepHeight;
+
+            // Enable vertical walking controls
+        }
+
+        private void ChangeGrabbing(bool enable)
+        {
+            LeftHand.AllowGrabbing = enable;
+            LeftHand.ForceGrabber.AllowGrabbing = enable;
+            LeftHand.AllowHovering = enable;
+            LeftHand.ForceGrabber.AllowHovering = enable;
+
+            RightHand.AllowGrabbing = enable;
+            RightHand.ForceGrabber.AllowGrabbing = enable;
+            RightHand.AllowHovering = enable;
+            RightHand.ForceGrabber.AllowHovering = enable;
+            
+            // Disable hand animations. Basically open the hand fully if disabled=true
+            if (LeftHand.HandAnimator && LeftHand.HandAnimator.CurrentPoser)
+            {
+                if (LeftHand.HandAnimator.CurrentPoser.PrimaryPose != null)
+                {
+                    LeftHand.HandAnimator.CurrentPoser.PrimaryPose.Disabled = !enable;
+                }
+
+                if (LeftHand.HandAnimator.CurrentPoser.Blends != null)
+                {
+                    LeftHand.HandAnimator.CurrentPoser.Blends.ForEach(i => i.Disabled = !enable);
+                }
+            }
+
+            if (RightHand.HandAnimator && RightHand.HandAnimator.CurrentPoser)
+            {
+                if (RightHand.HandAnimator.CurrentPoser.PrimaryPose != null)
+                {
+                    RightHand.HandAnimator.CurrentPoser.PrimaryPose.Disabled = !enable;
+                }
+
+                if (RightHand.HandAnimator.CurrentPoser.Blends != null)
+                {
+                    RightHand.HandAnimator.CurrentPoser.Blends.ForEach(i => i.Disabled = !enable);
+                }
+            }
         }
 
         private void OnPlayerPrefsUpdated(string preferenceKey, object value)

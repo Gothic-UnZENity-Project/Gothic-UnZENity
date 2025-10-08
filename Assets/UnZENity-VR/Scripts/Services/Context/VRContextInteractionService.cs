@@ -1,11 +1,10 @@
 #if GUZ_HVR_INSTALLED
 using System.Linq;
 using GUZ.Core;
-using GUZ.Core.Extensions;
 using GUZ.Core.Const;
+using GUZ.Core.Extensions;
 using GUZ.Core.Models.Caches;
 using GUZ.Core.Models.Config;
-using GUZ.Core.Services;
 using GUZ.Core.Services.Caches;
 using GUZ.Core.Services.Config;
 using GUZ.Core.Services.Context;
@@ -123,6 +122,26 @@ namespace GUZ.VR.Services.Context
         public void UnlockPlayer()
         {
             _playerController.SetUnlockedControls();
+        }
+
+        public void SetWalkingControls()
+        {
+            _playerController.SetWalkingControls();
+        }
+
+        public void SetWaterWalkingControls()
+        {
+            _playerController.SetWaterWalkingControls();
+        }
+
+        public void SetSwimmingControls()
+        {
+            _playerController.SetSwimmingControls();
+        }
+
+        public void SetDivingControls()
+        {
+            _playerController.SetDivingControls();
         }
 
         public void TeleportPlayerTo(Vector3 position, Quaternion rotation = default)

@@ -113,6 +113,9 @@ Shader "Lit/AlphaToCoverage-Dynamic"
                                                       saturate(max(i.distance, 0.0001) / _DistanceFade));
 
                 half3 diffuse = albedo.rgb * i.diffuse * _FocusBrightness;
+
+                diffuse = ApplyUnderWaterEffect(diffuse);
+                
 #if FOG_LINEAR || FOG_EXP || FOG_EXP2
                 diffuse = ApplyFog(diffuse, i.worldPos);
 #endif

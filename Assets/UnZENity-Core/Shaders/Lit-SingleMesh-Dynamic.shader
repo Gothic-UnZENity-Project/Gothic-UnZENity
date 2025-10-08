@@ -88,6 +88,8 @@ Shader "Lit/SingleMesh-Dynamic"
                 half4 albedo = tex2D(_MainTex, i.uv);
                 half3 diffuse = albedo * i.diffuse * _FocusBrightness;
 
+                diffuse = ApplyUnderWaterEffect(diffuse);
+
 #if FOG_LINEAR || FOG_EXP || FOG_EXP2
                 diffuse = ApplyFog(diffuse, i.worldPos);
 #endif
