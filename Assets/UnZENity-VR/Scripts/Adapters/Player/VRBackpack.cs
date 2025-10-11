@@ -77,7 +77,7 @@ namespace GUZ.VR.Adapters.Player
 
         public void OnItemPutIntoBackpack(HVRGrabberBase grabber, HVRGrabbable grabbable)
         {
-            // Put out means a hand is grabbing (not the Socket of backpack itself.
+            // Put out means a hand is grabbing (not the Socket of backpack itself).
             if (grabber is not HVRHandGrabber)
                 return;
 
@@ -158,7 +158,7 @@ namespace GUZ.VR.Adapters.Player
 
         private void UpdatePagerText(List<ContentItem> inventory)
         {
-            _totalPages = Mathf.CeilToInt((float)inventory.Count / 9);
+            _totalPages = Mathf.CeilToInt((float)inventory.Count / 9) + 1;
             if (_currentPage > _totalPages)
                 _currentPage = _totalPages;
 
