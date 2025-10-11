@@ -118,6 +118,7 @@ namespace GUZ.Lab
 
             _videoService.InitVideos();
             _saveGameService.LoadNewGame();
+            _saveGameService.ChangeWorld("world.zen"); // Needed for some VOB settings for a "fake" save game when interacting with VOBs and e.g., Backpack.
         }
 
         private async Task InitLab()

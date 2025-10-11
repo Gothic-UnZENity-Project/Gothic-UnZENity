@@ -32,7 +32,7 @@ namespace GUZ.VR.Adapters.Player
         private int _currentPage = 1;
         private int _totalPages;
         private VmGothicEnums.InvCats _selectedCategory =  VmGothicEnums.InvCats.InvWeapon;
-
+        private bool _tempIgnoreSocketing;
         
         [Inject] private readonly AudioService _audioService;
         [Inject] private readonly PlayerService _playerService;
@@ -69,29 +69,28 @@ namespace GUZ.VR.Adapters.Player
             if (grabber is not HVRShoulderSocket)
                 return;
 
-            var inventory = _playerService.GetInventory(_selectedCategory);
-            UpdateCategoryText();
-            UpdatePagerText(inventory);
-            UpdateSockets(inventory);
+            UpdateInventoryView();
         }
 
         public void OnItemPutIntoBackpack(HVRGrabberBase grabber, HVRGrabbable grabbable)
         {
-            // Put out means a hand is grabbing (not the Socket of backpack itself).
-            if (grabber is not HVRHandGrabber)
+            if (_tempIgnoreSocketing)
                 return;
-
+            
             var vobLoader = grabbable.GetComponentInParent<VobLoader>();
             var vobContainer = vobLoader.Container;
 
             _vobMeshCullingService.RemoveCullingEntry(vobContainer);
             _saveGameService.CurrentWorldData.Vobs.Remove(vobContainer.Vob);
+            
+            _playerService.AddItem(vobContainer.Vob.Name, vobContainer.VobAs<IItem>().Amount);
+            
+            UpdateInventoryView();
         }
 
         public void OnItemPutOutOfBackpack(HVRGrabberBase grabber, HVRGrabbable grabbable)
         {
-            // Put out means a hand is grabbing (not the Socket of backpack itself.
-            if (grabber is not HVRHandGrabber)
+            if (_tempIgnoreSocketing)
                 return;
             
             var vobLoader = grabbable.GetComponentInParent<VobLoader>();
@@ -99,26 +98,26 @@ namespace GUZ.VR.Adapters.Player
 
             _vobMeshCullingService.AddCullingEntry(vobContainer);
             _saveGameService.CurrentWorldData.Vobs.Add(vobContainer.Vob);
-        }
+            
+            _playerService.RemoveItem(vobContainer.Vob.Name, vobContainer.VobAs<IItem>().Amount);
 
+            UpdateInventoryView();
+        }
+        
         public void OnPrevPageClick()
         {
             _currentPage--;
             if (_currentPage < 1)
                 _currentPage = 1;
 
-            var inventory = _playerService.GetInventory(_selectedCategory);
-            UpdatePagerText(inventory);
-            UpdateSockets(inventory);
+            UpdateInventoryView();
         }
 
         public void OnNextPageClick()
         {
             _currentPage++;
 
-            var inventory = _playerService.GetInventory(_selectedCategory);
-            UpdatePagerText(inventory);
-            UpdateSockets(inventory);
+            UpdateInventoryView();
         }
 
         public void OnNextCategoryClick()
@@ -145,10 +144,7 @@ namespace GUZ.VR.Adapters.Player
         {
             _currentPage = 1;
 
-            var inventory = _playerService.GetInventory(_selectedCategory);
-            UpdateCategoryText();
-            UpdatePagerText(inventory);
-            UpdateSockets(inventory);
+            UpdateInventoryView();
         }
 
         private void UpdateCategoryText()
@@ -167,6 +163,9 @@ namespace GUZ.VR.Adapters.Player
 
         private void UpdateSockets(List<ContentItem> inventory)
         {
+            // While we re-stack items into slots, we need to ignore their events. Otherwise we create a loop.
+            _tempIgnoreSocketing = true;
+            
             ClearSockets();
 
             var startIndex = _currentPage * 9 - 9;
@@ -183,9 +182,10 @@ namespace GUZ.VR.Adapters.Player
                     Amount = item.Amount
                 });
 
-                // vobContainer.Go.SetParent(_itemsRootBucket);
                 _socketContainer.TryAddGrabbable(vobContainer.Go.GetComponentInChildren<HVRGrabbable>());
             }
+            
+            _tempIgnoreSocketing = false;
         }
 
         private void ClearSockets()
@@ -202,6 +202,15 @@ namespace GUZ.VR.Adapters.Player
                 heldRoot.SetActive(false); // Disable it, as it would be with scale 1 in front of our camera for 1 second.
                 this.ExecuteNextUpdate(() => Destroy(heldRoot));
             }
+        }
+        
+        private void UpdateInventoryView()
+        {
+            var inventory = _playerService.GetInventory(_selectedCategory);
+
+            UpdateCategoryText();
+            UpdatePagerText(inventory);
+            UpdateSockets(inventory);
         }
     }
 }
