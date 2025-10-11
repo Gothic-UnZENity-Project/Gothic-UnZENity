@@ -1,4 +1,7 @@
+using System;
+using System.Collections;
 using System.Collections.Generic;
+using GUZ.Core.Manager;
 using GUZ.Core.Models.Container;
 using GUZ.Core.Models.Vm;
 using GUZ.Core.Models.Vob;
@@ -21,12 +24,31 @@ namespace GUZ.Core.Services.Player
         
         [Inject] private readonly VmCacheService _vmCacheService;
         [Inject] private readonly NpcInventoryService _npcInventoryService;
+        [Inject] private readonly GameStateService _gameStateService;
+        [Inject] private readonly UnityMonoService _unityMonoService;
 
+
+        // Air in lungs isn't stored in G1 savegame, therefore setting it here temporarily at runtime.
+        [NonSerialized] public bool IsDiving;
+        [NonSerialized] public float MaxAir;
+        [NonSerialized] public bool HasMaxAir; // Faster check for other components. Rather than calculating value on their own each frame.
+        [NonSerialized] public float CurrentAir = float.MaxValue;
+        
         
         public PlayerService()
         {
             GlobalEventDispatcher.LockPickComboBroken.AddListener(
                 (lockPick, _, _) => RemoveItem(lockPick.VobAs<IItem>().Instance, 1));
+            
+            GlobalEventDispatcher.ZenKitBootstrapped.AddListener(OnZenKitBootstrapped);
+        }
+
+        private void OnZenKitBootstrapped()
+        {
+            MaxAir = _gameStateService.GuildValues.GetDiveTime((int)VmGothicEnums.Guild.GIL_HUMAN);
+            CurrentAir = MaxAir; // Isn't stored in SaveGame, therefore setting it to full now.
+
+            _unityMonoService.StartCoroutine(HandleStatusEffects());
         }
         
         public void SetHero(NpcContainer heroContainer)
@@ -57,5 +79,39 @@ namespace GUZ.Core.Services.Player
             _npcInventoryService.ExtRemoveInvItems(HeroContainer.Instance, item.Index, amount);
         }
 
+        public void StartDiving()
+        {
+            IsDiving = true;
+        }
+
+        public void StopDiving()
+        {
+            IsDiving = false;
+        }
+
+        private IEnumerator HandleStatusEffects()
+        {
+            while (true)
+            {
+                if (IsDiving)
+                {
+                    if (CurrentAir > 0)
+                        CurrentAir -= Time.deltaTime;
+                }
+                else if (!HasMaxAir)
+                {
+                    if (CurrentAir < MaxAir)
+                        CurrentAir += Time.deltaTime;
+                    else
+                    {
+                        CurrentAir = MaxAir;
+                        HasMaxAir = true;
+                    }
+                }
+                
+                yield return null;
+            }
+            // ReSharper disable once IteratorNeverReturns
+        }
     }
 }

@@ -1,5 +1,7 @@
 using System;
+using System.Collections;
 using GUZ.Core.Services.Meshes;
+using GUZ.Core.Services.Player;
 using Reflex.Attributes;
 using UnityEngine;
 using UnityEngine.UI;
@@ -13,6 +15,7 @@ namespace GUZ.Core.Adapters.UI.StatusBars
         [SerializeField] private Image _statusValue;
 
         [Inject] private readonly TextureService _textureService;
+        [Inject] private readonly PlayerService _playerService;
 
         private enum StatusType
         {
@@ -39,6 +42,38 @@ namespace GUZ.Core.Adapters.UI.StatusBars
                 StatusType.Misc => _textureService.StatusBarMiscMaterial,
                 _ => throw new ArgumentOutOfRangeException()
             };
+
+            switch (_statusType)
+            {
+                case StatusType.Health:
+                    break;
+                case StatusType.Mana:
+                    break;
+                case StatusType.Misc:
+                    StartCoroutine(HandleDiveValue());
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+
+        private IEnumerator HandleDiveValue()
+        {
+            while (true)
+            {
+                if (!_playerService.IsDiving)
+                {
+                    DisableBar();
+                }
+                else
+                {
+                    _statusValue.fillAmount = _playerService.CurrentAir / _playerService.MaxAir;
+                    EnableBar();
+                }
+
+                yield return null;
+            }
+            // ReSharper disable once FunctionNeverReturns
         }
 
         public void DisableBar()

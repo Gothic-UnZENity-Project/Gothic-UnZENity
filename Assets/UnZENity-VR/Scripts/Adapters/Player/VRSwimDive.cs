@@ -14,6 +14,7 @@ using GUZ.Core.Services;
 using GUZ.Core.Services.Caches;
 using GUZ.Core.Services.Context;
 using GUZ.Core.Services.Meshes;
+using GUZ.Core.Services.Player;
 using GUZ.Core.Services.Vm;
 using GUZ.VR.Adapters.HVROverrides;
 using HurricaneVR.Framework.Core.Utils;
@@ -80,6 +81,7 @@ namespace GUZ.VR.Adapters.Player
         [Inject] private readonly ResourceCacheService _resourceCacheService;
         [Inject] private readonly ContextInteractionService _contextInteractionService;
         [Inject] private readonly MeshService _meshService;
+        [Inject] private readonly PlayerService _playerService;
 
         private void Start()
         {
@@ -147,8 +149,8 @@ namespace GUZ.VR.Adapters.Player
 				return;
 
             // FIXME - As we have different sizes of people in VR, we should use the size based on real heights.
-            var kneeDeepHeight = _gameStateService.GuildValues.GetWaterDepthKnee((int)VmService.Guild.GIL_HUMAN).ToMeter();
-            var chestDeepHeight =  _gameStateService.GuildValues.GetWaterDepthChest((int)VmService.Guild.GIL_HUMAN).ToMeter();
+            var kneeDeepHeight = _gameStateService.GuildValues.GetWaterDepthKnee((int)VmGothicEnums.Guild.GIL_HUMAN).ToMeter();
+            var chestDeepHeight =  _gameStateService.GuildValues.GetWaterDepthChest((int)VmGothicEnums.Guild.GIL_HUMAN).ToMeter();
             var chestDeepHeightWithBuffer = chestDeepHeight + 2; // Do raycast a little bit longer than it needs to be, to ensure it's working.
 
             RaycastHit hit;
@@ -213,6 +215,7 @@ namespace GUZ.VR.Adapters.Player
                     // Dive -> Swim (sometimes when pulling hard up, we are briefly knee deep and need to call the sound in here once)
                     if (_mode == VmGothicEnums.WalkMode.Dive)
                     {
+                        _playerService.StopDiving();
                         var clip = _audioService.CreateAudioClip(_sfxSwim2HangSound.GetRandomSound());
                         SFXPlayer.Instance.PlaySFX(clip, Camera.main!.transform.position);
                         _diveBubbles.SetActive(false);
@@ -234,6 +237,7 @@ namespace GUZ.VR.Adapters.Player
                     // Dive -> Swim
                     if (_mode == VmGothicEnums.WalkMode.Dive)
                     {
+                        _playerService.StopDiving();
                         var clip = _audioService.CreateAudioClip(_sfxSwim2HangSound.GetRandomSound());
                         SFXPlayer.Instance.PlaySFX(clip, Camera.main!.transform.position);
                         _diveBubbles.SetActive(false);
@@ -279,6 +283,8 @@ namespace GUZ.VR.Adapters.Player
             _playerController.MaxFallSpeed = 0;
 
             _playerController.SetDivingControls();
+
+            _playerService.StartDiving();
             SFXPlayer.Instance.PlaySFX(_audioService.CreateAudioClip(_sfxSwim2DiveSound.GetRandomSound()), Camera.main!.transform.position);
             _diveBubbles.SetActive(true);
         }
