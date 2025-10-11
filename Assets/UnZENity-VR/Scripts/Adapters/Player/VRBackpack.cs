@@ -82,8 +82,9 @@ namespace GUZ.VR.Adapters.Player
 
             _vobMeshCullingService.RemoveCullingEntry(vobContainer);
             _saveGameService.CurrentWorldData.Vobs.Remove(vobContainer.Vob);
-            
-            _playerService.AddItem(vobContainer.Vob.Name, vobContainer.VobAs<IItem>().Amount);
+
+            // Keep commented out: Item is already "in inventory" when we grab it.
+            // _playerService.AddItem(vobContainer.Vob.Name, vobContainer.VobAs<IItem>().Amount);
             
             UpdateInventoryView();
         }
@@ -98,8 +99,9 @@ namespace GUZ.VR.Adapters.Player
 
             _vobMeshCullingService.AddCullingEntry(vobContainer);
             _saveGameService.CurrentWorldData.Vobs.Add(vobContainer.Vob);
-            
-            _playerService.RemoveItem(vobContainer.Vob.Name, vobContainer.VobAs<IItem>().Amount);
+
+            // Keep commented out: Item will be put "out of inventory" when we release it from hand later.
+            // _playerService.RemoveItem(vobContainer.Vob.Name, vobContainer.VobAs<IItem>().Amount);
 
             UpdateInventoryView();
         }

@@ -93,7 +93,7 @@ namespace GUZ.VR.Adapters.Vob
         public void OnReleased(HVRGrabberBase grabber, HVRGrabbable grabbable)
         {
             // Releasing from a Socket doesn't count.
-            if (grabber is not HVRHandGrabber)
+            if (!grabber.IsHandGrabber)
                 return;
             
             gameObject.layer = Constants.VobItem; // Back to default
@@ -105,10 +105,6 @@ namespace GUZ.VR.Adapters.Vob
 
             _vobMeshCullingService?.StartTrackVobPositionUpdates(gameObject);
             _vrPlayerService.UnsetGrab(grabber, grabbable);
-            
-            // If we sock an object on our hips etc.
-            if (grabber is HVRSocket)
-                _vrProperties.IsSocketed = false;
         }
 
         /// <summary>

@@ -39,7 +39,13 @@ namespace GUZ.VR.Services
 
         public void SetGrab(HVRGrabberBase grabber, HVRGrabbable grabbable)
         {
-            if (grabbable.LeftHandGrabber)
+            HVRHandGrabber handGrabber;
+            if (grabber is HVRForceGrabber forceGrabber)
+                handGrabber = forceGrabber.HandGrabber;
+            else
+                handGrabber = grabber as HVRHandGrabber;
+            
+            if (handGrabber!.IsLeftHand)
                 GrabbedItemLeft = grabbable.gameObject;
             else
                 GrabbedObjectRight = grabbable.gameObject;
