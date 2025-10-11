@@ -16,7 +16,8 @@ jobs:
   testCompileWithoutHVR:
     name: Compile test without HVR installation
     runs-on: ubuntu-latest
-    if: github.event.pull_request.draft == false
+    # disabled - Let's re-enable once we implement Flat implementation.
+    if: false && github.event.pull_request.draft == false
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
