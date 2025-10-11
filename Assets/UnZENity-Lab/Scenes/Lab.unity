@@ -15461,7 +15461,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f050d09eef924423ad3ce4734f50f452, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  IsActive: 0
+  IsActive: 1
   Weapons1HGO: {fileID: 432268076}
   Weapons2HGO: {fileID: 429607157}
   RangedWeaponsGO: {fileID: 406499994}
