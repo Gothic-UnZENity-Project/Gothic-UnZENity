@@ -23,9 +23,15 @@ namespace GUZ.Core.Services.Meshes
         public Material ArrowDownMaterial;
         public Material ArrowLeftMaterial;
 
-        // Loading
+        // Loading Bars
         public Material LoadingBarBackgroundMaterial;
         public Material LoadingBarMaterial;
+
+        // Status Bars
+        public Material StatusBarBackgroundMaterial;
+        public Material StatusBarHealthMaterial;
+        public Material StatusBarManaMaterial;
+        public Material StatusBarMiscMaterial; // Air in water
 
         // Misc
         public Material SkyMaterial;
@@ -42,9 +48,16 @@ namespace GUZ.Core.Services.Meshes
             MainMenuSaveLoadBackgroundMaterial = GetEmptyMaterial(MaterialExtension.BlendMode.Opaque);
             MainMenuTextImageMaterial = GetEmptyMaterial(MaterialExtension.BlendMode.Transparent);
 
+            // Loading Bars
             GothicLoadingMenuMaterial = GetEmptyMaterial(MaterialExtension.BlendMode.Opaque);
             LoadingBarBackgroundMaterial = GetEmptyMaterial(MaterialExtension.BlendMode.Opaque);
             LoadingBarMaterial = GetEmptyMaterial(MaterialExtension.BlendMode.Opaque);
+            
+            // Status Bars
+            StatusBarBackgroundMaterial = GetEmptyMaterial(MaterialExtension.BlendMode.Opaque);
+            StatusBarHealthMaterial = GetEmptyMaterial(MaterialExtension.BlendMode.Opaque);
+            StatusBarManaMaterial = GetEmptyMaterial(MaterialExtension.BlendMode.Opaque);
+            StatusBarMiscMaterial = GetEmptyMaterial(MaterialExtension.BlendMode.Opaque);
 
             // Menu
             ArrowUpMaterial = GetEmptyMaterial(MaterialExtension.BlendMode.Opaque);
@@ -58,9 +71,17 @@ namespace GUZ.Core.Services.Meshes
             MainMenuTextImageMaterial.mainTexture = _textureCacheService.TryGetTexture("MENU_GOTHIC.TGA");
             MenuChoiceBackMaterial.mainTexture = _textureCacheService.TryGetTexture("MENU_CHOICE_BACK.TGA");
 
+            // Loading Bars
             GothicLoadingMenuMaterial.mainTexture = _textureCacheService.TryGetTexture("LOADING.TGA");
             LoadingBarBackgroundMaterial.mainTexture = _textureCacheService.TryGetTexture("PROGRESS.TGA");
             LoadingBarMaterial.mainTexture = _textureCacheService.TryGetTexture("PROGRESS_BAR.TGA");
+            
+            // Status Bars
+            StatusBarBackgroundMaterial.mainTexture = _textureCacheService.TryGetTexture("BAR_BACK.TGA");
+            StatusBarHealthMaterial.mainTexture = _textureCacheService.TryGetTexture("BAR_HEALTH.TGA");
+            StatusBarManaMaterial.mainTexture = _textureCacheService.TryGetTexture("BAR_MANA.TGA");
+            StatusBarMiscMaterial.mainTexture = _textureCacheService.TryGetTexture("BAR_MISC.TGA");
+            
             BackgroundMaterial.mainTexture = _textureCacheService.TryGetTexture("LOG_PAPER.TGA");
             ButtonMaterial.mainTexture = _textureCacheService.TryGetTexture("INV_SLOT.TGA");
             FillerMaterial.mainTexture = _textureCacheService.TryGetTexture("MENU_BUTTONBACK.TGA");

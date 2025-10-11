@@ -116,7 +116,7 @@ namespace GUZ.Core.Domain.Npc.Actions.AnimationActions
         /// </summary>
         private void HandleRotation(Transform npcTransform)
         {
-            var turnSpeed = _gameStateService.GuildValues.GetTurnSpeed((int)VmService.Guild.GIL_HUMAN);
+            var turnSpeed = _gameStateService.GuildValues.GetTurnSpeed((int)VmGothicEnums.Guild.GIL_HUMAN);
             var currentRotation =
                 Quaternion.RotateTowards(npcTransform.rotation, _finalRotation, Time.deltaTime * turnSpeed);
 
