@@ -33,7 +33,7 @@ namespace GUZ.VR.Adapters.HVROverrides
             // Structure: Bucket -> VobLoader -> Grabbable. We therefore need to put the VobLoader to another spot.
             {
                 var grabbable = args.Grabbable;
-                var vobLoader = grabbable.GetComponentInParent<VobLoader>();
+                var vobLoader = grabbable.GetComponentInParent<VobLoader>(true); // e.g., Backpack item might be disabled already as it's re-parented in parallel.
                 _previousParent = vobLoader.transform.parent; // We use parent of Grabbable object.
                 _previousScale = grabbable.transform.localScale;
 
