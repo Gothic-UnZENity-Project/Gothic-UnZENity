@@ -216,7 +216,7 @@ namespace GUZ.VR.Adapters.Player
                     if (_mode == VmGothicEnums.WalkMode.Dive)
                     {
                         _playerService.StopDiving();
-                        _playerController.ScreenFader.UpdateFade(0); // Immediately fade the screen back to normal (no fade)
+                        _playerController.ScreenFader.Fade(0, float.MaxValue); // Immediately fade the screen back to normal (no fade)
 
                         var clip = _audioService.CreateAudioClip(_sfxSwim2HangSound.GetRandomSound());
                         SFXPlayer.Instance.PlaySFX(clip, Camera.main!.transform.position);
@@ -240,7 +240,7 @@ namespace GUZ.VR.Adapters.Player
                     if (_mode == VmGothicEnums.WalkMode.Dive)
                     {
                         _playerService.StopDiving();
-                        _playerController.ScreenFader.UpdateFade(0); // Immediately fade the screen back to normal (no fade)
+                        _playerController.ScreenFader.Fade(0, float.MaxValue); // Immediately fade the screen back to normal (no fade)
 
                         var clip = _audioService.CreateAudioClip(_sfxSwim2HangSound.GetRandomSound());
                         SFXPlayer.Instance.PlaySFX(clip, Camera.main!.transform.position);
@@ -289,7 +289,7 @@ namespace GUZ.VR.Adapters.Player
             _playerController.SetDivingControls();
 
             _playerService.StartDiving();
-            _playerController.ScreenFader.Fade(1, 1/_playerService.CurrentAir); // We fade to black based on our start level of air (in seconds)
+            _playerController.ScreenFader.Fade(0.8f, 1/_playerService.CurrentAir); // We fade to black based on our start level of air (in seconds)
             
             SFXPlayer.Instance.PlaySFX(_audioService.CreateAudioClip(_sfxSwim2DiveSound.GetRandomSound()), Camera.main!.transform.position);
             _diveBubbles.SetActive(true);
