@@ -95,6 +95,8 @@ namespace GUZ.Core.Services.Player
             {
                 if (IsDiving)
                 {
+                    HasMaxAir = false;
+                    
                     if (CurrentAir > 0)
                         CurrentAir -= Time.deltaTime;
                 }
