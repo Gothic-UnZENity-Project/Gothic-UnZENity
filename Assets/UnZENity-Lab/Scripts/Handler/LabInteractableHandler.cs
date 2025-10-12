@@ -1,13 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using GUZ.Core;
 using GUZ.Core.Extensions;
-using GUZ.Core.Const;
 using GUZ.Core.Models.Caches;
 using GUZ.Core.Models.Vm;
-using GUZ.Core.Services;
-using GUZ.Core.Services.Caches;
 using UnityEngine;
 using ZenKit.Daedalus;
 using ZenKit.Vobs;
@@ -112,7 +108,8 @@ namespace GUZ.Lab.Handler
                 Position = new Vector3(0f, 1.5f, zPosition).ToZkVector(),
                 Rotation = Quaternion.Euler(new Vector3(0, 0, zRotation)).ToZkMatrix(), // Quaternion.identity.ToZkMatrix(), 
                 Visual = new VisualMesh(),
-                Instance = instanceName
+                Instance = instanceName,
+                Amount = 1
             });
 
             vobContainer.Go.SetParent(parent);
