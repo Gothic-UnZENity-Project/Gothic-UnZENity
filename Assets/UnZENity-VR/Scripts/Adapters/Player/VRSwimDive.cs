@@ -109,9 +109,22 @@ namespace GUZ.VR.Adapters.Player
                 var swim2HangAnim = mds.Animations.First(i => i.Name.EqualsIgnoreCase("t_Swim_2_Hang"));
                 var swim2HangSfxName = swim2HangAnim.SoundEffects.First().Name;
                 _sfxSwim2HangSound = _vmCacheService.TryGetSfxData(swim2HangSfxName);
-                
-                _diveBubbles = _meshService.CreateVobPfx(_diveBubbleParticleName, parent: _playerController.ScreenFader.gameObject);
-                _diveBubbles.SetActive(false);
+
+                // Bubble settings
+                {
+                    _diveBubbles = _meshService.CreateVobPfx(_diveBubbleParticleName, parent: _playerController.ScreenFader.gameObject);
+                    _diveBubbles.transform.localPosition = new Vector3(0, 0.1f, 0.2f);
+                    var particleRenderer = _diveBubbles.GetComponentInChildren<ParticleSystemRenderer>();
+                    particleRenderer.renderMode = ParticleSystemRenderMode.Mesh;
+
+                    var go = GameObject.CreatePrimitive(PrimitiveType.Capsule);
+                    particleRenderer.mesh = go.GetComponent<MeshFilter>().sharedMesh;
+
+                    go.SetActive(false);
+                    Destroy(go);
+                    
+                    _diveBubbles.SetActive(false);
+                }
             });
 
             GlobalEventDispatcher.WorldSceneLoaded.AddListener(() =>
