@@ -1,5 +1,6 @@
 #if GUZ_HVR_INSTALLED
 using System.Collections.Generic;
+using System.Linq;
 using Assets.HurricaneVR.Framework.Shared.Utilities;
 using GUZ.Core;
 using GUZ.Core.Adapters.Vob;
@@ -11,6 +12,7 @@ using GUZ.Core.Services.Player;
 using GUZ.Core.Services.Vm;
 using GUZ.Core.Services.Vobs;
 using GUZ.Core.Services.World;
+using GUZ.VR.Services;
 using HurricaneVR.Framework.Core;
 using HurricaneVR.Framework.Core.Grabbers;
 using HurricaneVR.Framework.Core.Sockets;
@@ -36,6 +38,7 @@ namespace GUZ.VR.Adapters.Player
         
         [Inject] private readonly AudioService _audioService;
         [Inject] private readonly PlayerService _playerService;
+        [Inject] private readonly VRPlayerService _vrPlayerService;
         [Inject] private readonly VobService _vobService;
         [Inject] private readonly VobMeshCullingService _vobMeshCullingService;
         [Inject] private readonly SaveGameService _saveGameService;
@@ -210,9 +213,33 @@ namespace GUZ.VR.Adapters.Player
         {
             var inventory = _playerService.GetInventory(_selectedCategory);
 
+            // Subtract amount of held items from inventory
+            SubtractItemFromHand(inventory, _vrPlayerService.GrabbedItemLeft);
+            SubtractItemFromHand(inventory, _vrPlayerService.GrabbedItemRight);
+            
             UpdateCategoryText();
             UpdatePagerText(inventory);
             UpdateSockets(inventory);
+        }
+
+        private void SubtractItemFromHand(List<ContentItem> inventory, GameObject handItem)
+        {
+            var item = handItem?.GetComponentInParent<VobLoader>().Container.VobAs<IItem>();
+
+            if (item == null)
+                return;
+            
+            var matchingItem = inventory.FirstOrDefault(x => x.Name == item.Instance);
+
+            // == nothing found
+            if (matchingItem == null)
+                return;
+            
+            matchingItem.Amount -= item.Amount;
+            if (matchingItem.Amount <= 0)
+            {
+                inventory.Remove(matchingItem);
+            }
         }
     }
 }

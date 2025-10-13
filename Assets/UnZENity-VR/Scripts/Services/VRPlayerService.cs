@@ -27,7 +27,7 @@ namespace GUZ.VR.Services
         public VRPlayerInputs VRPlayerInputs => VRContextInteractionService.GetVRPlayerInputs();
         
         public GameObject GrabbedItemLeft;
-        public GameObject GrabbedObjectRight;
+        public GameObject GrabbedItemRight;
 
         public enum HandType
         {
@@ -35,7 +35,7 @@ namespace GUZ.VR.Services
             Right
         }
 
-        public bool IsDualGrabbed => GrabbedItemLeft != null && GrabbedItemLeft == GrabbedObjectRight;
+        public bool IsDualGrabbed => GrabbedItemLeft != null && GrabbedItemLeft == GrabbedItemRight;
 
         public void SetGrab(HVRGrabberBase grabber, HVRGrabbable grabbable)
         {
@@ -44,11 +44,25 @@ namespace GUZ.VR.Services
                 handGrabber = forceGrabber.HandGrabber;
             else
                 handGrabber = grabber as HVRHandGrabber;
-            
+
             if (handGrabber!.IsLeftHand)
+            {
+                // If we did remote grabbing, this function is called twice (remote grabber+hand grabber).
+                // As we already count remote grabbing as "in inventory", we skip it the second time.
+                if (GrabbedItemLeft == grabbable.gameObject)
+                    return;
+                
                 GrabbedItemLeft = grabbable.gameObject;
+            }
             else
-                GrabbedObjectRight = grabbable.gameObject;
+            {
+                // If we did remote grabbing, this function is called twice (remote grabber+hand grabber).
+                // As we already count remote grabbing as "in inventory", we skip it the second time.
+                if (GrabbedItemRight == grabbable.gameObject)
+                    return;
+
+                GrabbedItemRight = grabbable.gameObject;
+            }
 
             // If we grabbed the element with second hand, return.
             if (IsDualGrabbed)
@@ -71,7 +85,7 @@ namespace GUZ.VR.Services
             if (handGrabber!.IsLeftHand)
                 GrabbedItemLeft = null;
             else
-                GrabbedObjectRight = null;
+                GrabbedItemRight = null;
 
             // If we removed one hand from our item.
             if (dualGrabPrev)

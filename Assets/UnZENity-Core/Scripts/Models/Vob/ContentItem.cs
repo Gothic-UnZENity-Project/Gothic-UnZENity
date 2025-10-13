@@ -1,6 +1,6 @@
 namespace GUZ.Core.Models.Vob
 {
-    public struct ContentItem
+    public class ContentItem
     {
         public string Name;
         public int Amount;
