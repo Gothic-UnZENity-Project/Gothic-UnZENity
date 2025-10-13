@@ -1,8 +1,8 @@
 ---
-name: Release Issue
-about: Template for tracking release preparation and testing
+name: Release
+about: Tracking release preparation and testing
 title: "Release [VERSION] - [RELEASE_NAME]"
-labels: ["release", "testing"]
+labels: ["release"]
 assignees: ""
 ---
 
@@ -13,8 +13,10 @@ assignees: ""
 - **Platform(s):** [e.g., Android, iOS, PC]
 
 ## Pre-Release Checklist
-
-### Development Tasks
 - [ ] All planned features implemented
-- [ ] Code review completed
-- [ ] Performance testing completed
+  - [ ] ...
+  - [ ] ...
+  - [ ] ...
+- [ ] Tested on (feature + performance)
+  - [ ] Quest 2
+  - [ ] PCVR
