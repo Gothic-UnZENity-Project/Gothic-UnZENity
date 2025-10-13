@@ -6,14 +6,13 @@ labels: ["bug"]
 assignees: ""
 ---
 
-## Bug Description
-### Brief Summary:
+### Description
 A quick description of what the bug is.
 
-### Expected Behavior:
+### Expected Behavior
 What did you expect to happen?
 
-### Actual Behavior:
+### Actual Behavior
 But what happened instead?
 
 ### Reproduction Steps
@@ -24,12 +23,12 @@ But what happened instead?
 
 ## Environment Information
 - **Reproducibility**: Always/Sometimes/Rarely/Cannot
-- **Platform:** [e.g., PCVR, Quest, Pico]
-- **Game Version:** [e.g., v1.2.0]
-- **Is this a fresh install or an update?** [Fresh/Update from version X.X.X]
+- **Platform:** PCVR/Quest/Pico
+- **Game Version:** v...
+- **Is this a fresh install or an update?** Fresh/Update from v...
 
 ### Logs/Screenshots/Videos
-Please attach logs, screenshots, or videos that give us more insights.
+Please attach at least logs (Gothic-UnZENity.log) and screenshots or videos that give us more insights.
 - [ ] Logs attached
 - [ ] Screenshot attached
 - [ ] Video attached

@@ -13,10 +13,10 @@ assignees: ""
 - **Platform(s):** [e.g., Android, iOS, PC]
 
 ## Pre-Release Checklist
-- [ ] All planned features implemented
+- [ ] Planned features implemented
   - [ ] ...
   - [ ] ...
   - [ ] ...
-- [ ] Tested on (feature + performance)
+- [ ] Tested on (feature and performance)
   - [ ] Quest 2
   - [ ] PCVR
