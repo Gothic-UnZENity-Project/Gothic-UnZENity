@@ -159,7 +159,11 @@ namespace GUZ.VR.Adapters.Player
 
         private void UpdatePagerText(List<ContentItem> inventory)
         {
-            _totalPages = Mathf.CeilToInt((float)inventory.Count / 9) + 1;
+            if (inventory.Count == 0)
+                _totalPages = 1;
+            else
+                _totalPages = Mathf.CeilToInt((float)inventory.Count / 9);
+
             if (_currentPage > _totalPages)
                 _currentPage = _totalPages;
 
