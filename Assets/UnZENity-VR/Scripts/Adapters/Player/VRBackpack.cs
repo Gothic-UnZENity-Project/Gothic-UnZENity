@@ -80,7 +80,7 @@ namespace GUZ.VR.Adapters.Player
             if (_tempIgnoreSocketing)
                 return;
             
-            var vobLoader = grabbable.GetComponentInParent<VobLoader>();
+            var vobLoader = grabbable.GetComponentInParent<VobLoader>(true);
             var vobContainer = vobLoader.Container;
 
             _vobMeshCullingService.RemoveCullingEntry(vobContainer);
