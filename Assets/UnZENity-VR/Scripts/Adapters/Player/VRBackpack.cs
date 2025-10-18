@@ -1,4 +1,5 @@
 #if GUZ_HVR_INSTALLED
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Assets.HurricaneVR.Framework.Shared.Utilities;
@@ -86,8 +87,7 @@ namespace GUZ.VR.Adapters.Player
             _vobMeshCullingService.RemoveCullingEntry(vobContainer);
             _saveGameService.CurrentWorldData.Vobs.Remove(vobContainer.Vob);
 
-            // Keep commented out: Item is already "in inventory" when we grab it.
-            // _playerService.AddItem(vobContainer.Vob.Name, vobContainer.VobAs<IItem>().Amount);
+            _playerService.AddItem(vobContainer.Vob.Name, vobContainer.VobAs<IItem>().Amount);
             
             UpdateInventoryView();
         }
@@ -166,12 +166,13 @@ namespace GUZ.VR.Adapters.Player
             _pagerText.text = $"{_currentPage}/{_totalPages}";
         }
 
-        private void UpdateSockets(List<ContentItem> inventory)
+        private IEnumerator UpdateSockets(List<ContentItem> inventory)
         {
             // While we re-stack items into slots, we need to ignore their events. Otherwise we create a loop.
             _tempIgnoreSocketing = true;
             
             ClearSockets();
+            yield return null; // Releasing and destroying objects takes until next frame.
 
             var startIndex = _currentPage * 9 - 9;
             var count = Mathf.Min(9, inventory.Count - startIndex);
@@ -205,6 +206,7 @@ namespace GUZ.VR.Adapters.Player
                 var heldRoot = socket.HeldObject.transform.parent.gameObject;
                 socket.ForceRelease();
                 heldRoot.SetActive(false); // Disable it, as it would be with scale 1 in front of our camera for 1 second.
+                // We need to wait until next frame to ensure HVR has removed the item from socket.
                 this.ExecuteNextUpdate(() => Destroy(heldRoot));
             }
         }
@@ -219,7 +221,7 @@ namespace GUZ.VR.Adapters.Player
             
             UpdateCategoryText();
             UpdatePagerText(inventory);
-            UpdateSockets(inventory);
+            StartCoroutine(UpdateSockets(inventory));
         }
 
         private void SubtractItemFromHand(List<ContentItem> inventory, GameObject handItem)
