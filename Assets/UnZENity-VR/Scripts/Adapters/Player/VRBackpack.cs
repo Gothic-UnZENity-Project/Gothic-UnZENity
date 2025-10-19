@@ -13,11 +13,11 @@ using GUZ.Core.Services.Player;
 using GUZ.Core.Services.Vm;
 using GUZ.Core.Services.Vobs;
 using GUZ.Core.Services.World;
+using GUZ.VR.Adapters.HVROverrides;
 using GUZ.VR.Services;
 using HurricaneVR.Framework.Core;
 using HurricaneVR.Framework.Core.Grabbers;
 using HurricaneVR.Framework.Core.Sockets;
-using HurricaneVR.Framework.Core.Utils;
 using Reflex.Attributes;
 using TMPro;
 using UnityEngine;
@@ -70,11 +70,24 @@ namespace GUZ.VR.Adapters.Player
         
         public void OnBackpackReleasedFromShoulder(HVRGrabberBase grabber, HVRGrabbable grabbable)
         {
-            if (grabber is not HVRShoulderSocket)
+            if (grabber is not VRShoulderSocket)
                 return;
 
             UpdateInventoryView();
         }
+
+        /// <summary>
+        /// When putting into holster, culling is already deactivated.
+        /// We simply need to tell the game: add inventory amount.
+        /// </summary>
+        public void OnItemPutIntoHolster(HVRGrabberBase grabber, HVRGrabbable grabbable)
+        {
+            var vobLoader = grabbable.GetComponentInParent<VobLoader>();
+            var vobContainer = vobLoader.Container;
+
+            _playerService.AddItem(vobContainer.Vob.Name, vobContainer.VobAs<IItem>().Amount);
+        }
+
 
         public void OnItemPutIntoBackpack(HVRGrabberBase grabber, HVRGrabbable grabbable)
         {
@@ -90,6 +103,18 @@ namespace GUZ.VR.Adapters.Player
             _playerService.AddItem(vobContainer.Vob.Name, vobContainer.VobAs<IItem>().Amount);
             
             UpdateInventoryView();
+        }
+
+        /// <summary>
+        /// When putting out of holster, culling is already deactivated.
+        /// We simply need to tell the game: substract inventory amount.
+        /// </summary>
+        public void OnItemPutOutOfHolster(HVRGrabberBase grabber, HVRGrabbable grabbable)
+        {
+            var vobLoader = grabbable.GetComponentInParent<VobLoader>();
+            var vobContainer = vobLoader.Container;
+
+            _playerService.RemoveItem(vobContainer.Vob.Name, vobContainer.VobAs<IItem>().Amount);
         }
 
         public void OnItemPutOutOfBackpack(HVRGrabberBase grabber, HVRGrabbable grabbable)

@@ -505,6 +505,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 3866233120056885002}
     m_Modifications:
+    - target: {fileID: 887448239260712835, guid: c43ac1b5fbd2fc24ea40fb28bae6be3e, type: 3}
+      propertyPath: m_Name
+      value: LeftHolster
+      objectReference: {fileID: 0}
     - target: {fileID: 1226179414421721547, guid: c43ac1b5fbd2fc24ea40fb28bae6be3e, type: 3}
       propertyPath: Tags.Tags
       value: 
@@ -600,6 +604,10 @@ PrefabInstance:
     - target: {fileID: 2034389217661245426, guid: c43ac1b5fbd2fc24ea40fb28bae6be3e, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: -90
+      objectReference: {fileID: 0}
+    - target: {fileID: 2641012728304036569, guid: c43ac1b5fbd2fc24ea40fb28bae6be3e, type: 3}
+      propertyPath: m_Name
+      value: RightHolster
       objectReference: {fileID: 0}
     - target: {fileID: 2838705763913648339, guid: c43ac1b5fbd2fc24ea40fb28bae6be3e, type: 3}
       propertyPath: Player
@@ -1125,6 +1133,8 @@ PrefabInstance:
     - {fileID: 2923976313076319297, guid: c43ac1b5fbd2fc24ea40fb28bae6be3e, type: 3}
     - {fileID: 2096712260218427046, guid: c43ac1b5fbd2fc24ea40fb28bae6be3e, type: 3}
     - {fileID: 3367897735511474143, guid: c43ac1b5fbd2fc24ea40fb28bae6be3e, type: 3}
+    - {fileID: 5075706113723013766, guid: c43ac1b5fbd2fc24ea40fb28bae6be3e, type: 3}
+    - {fileID: 7964226425467949020, guid: c43ac1b5fbd2fc24ea40fb28bae6be3e, type: 3}
     m_RemovedGameObjects:
     - {fileID: 4653310549361533989, guid: c43ac1b5fbd2fc24ea40fb28bae6be3e, type: 3}
     m_AddedGameObjects:
@@ -1171,6 +1181,12 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 703588620095445913, guid: c43ac1b5fbd2fc24ea40fb28bae6be3e, type: 3}
       insertIndex: -1
       addedObject: {fileID: 851891696609758034}
+    - targetCorrespondingSourceObject: {fileID: 2641012728304036569, guid: c43ac1b5fbd2fc24ea40fb28bae6be3e, type: 3}
+      insertIndex: 1
+      addedObject: {fileID: 1678881631422854599}
+    - targetCorrespondingSourceObject: {fileID: 887448239260712835, guid: c43ac1b5fbd2fc24ea40fb28bae6be3e, type: 3}
+      insertIndex: 1
+      addedObject: {fileID: 757337884793384726}
     - targetCorrespondingSourceObject: {fileID: 8886962481680141934, guid: c43ac1b5fbd2fc24ea40fb28bae6be3e, type: 3}
       insertIndex: -1
       addedObject: {fileID: 4516976911541839521}
@@ -1264,6 +1280,125 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 930940621509673985, guid: c43ac1b5fbd2fc24ea40fb28bae6be3e, type: 3}
   m_PrefabInstance: {fileID: 1779900574691844023}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1505226319018549300 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 887448239260712835, guid: c43ac1b5fbd2fc24ea40fb28bae6be3e, type: 3}
+  m_PrefabInstance: {fileID: 1779900574691844023}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &757337884793384726
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1505226319018549300}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7825d73edbaf4c528607f54c7c8177e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  BeforeGrabbed:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 9202099228209387433}
+        m_TargetAssemblyTypeName: GUZ.VR.Adapters.Vob.Container.VRVobContainerSocketInventory,
+          UnZENity.VR
+        m_MethodName: OnBeforeGrabbed
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  Grabbed:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 3760600358070659426}
+        m_TargetAssemblyTypeName: GUZ.VR.Adapters.Player.VRBackpack, UnZENity.VR
+        m_MethodName: OnItemPutIntoHolster
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  Released:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 9202099228209387433}
+        m_TargetAssemblyTypeName: GUZ.VR.Adapters.Vob.Container.VRVobContainerSocketInventory,
+          UnZENity.VR
+        m_MethodName: OnReleased
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 3760600358070659426}
+        m_TargetAssemblyTypeName: GUZ.VR.Adapters.Player.VRBackpack, UnZENity.VR
+        m_MethodName: OnItemPutOutOfHolster
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  BeforeHoverEnter:
+    m_PersistentCalls:
+      m_Calls: []
+  HoverEnter:
+    m_PersistentCalls:
+      m_Calls: []
+  HoverExit:
+    m_PersistentCalls:
+      m_Calls: []
+  _grabBag: {fileID: 0}
+  GrabBags: []
+  GrabControl: 0
+  GrabDetectionType: 1
+  CheckHandOverlap: 0
+  ReleasesOnHover: 0
+  InstantHandPose: 0
+  HoldType: 0
+  AutoSpawnPrefab: {fileID: 0}
+  GrabTimeout: 0
+  GrabbableMustBeHeld: 1
+  GrabsFromHand: 0
+  HoverActions: []
+  HandGrabActions:
+  - {fileID: 4547828311593582872}
+  ParentDisablesGrab: 1
+  ParentGrabbable: {fileID: 0}
+  CanRemoveGrabbable: 1
+  ScaleGrabbable: 1
+  Size: 0.3
+  CanGrabStabbingGrabbable: 0
+  AudioGrabbedOverride: {fileID: 0}
+  AudioReleasedOverride: {fileID: 0}
+  AudioGrabbedFallback: {fileID: 0}
+  AudioReleasedFallback: {fileID: 0}
+  SocketFilters: []
+  FilterCondition: 0
+  DistanceSource: {fileID: 0}
+  PoseTag: 
+  DisableCollision: 1
+  SpawnedPrefab:
+    m_PersistentCalls:
+      m_Calls: []
+  DebugScale: 0
 --- !u!4 &1672321467721471303 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1118649348335930096, guid: c43ac1b5fbd2fc24ea40fb28bae6be3e, type: 3}
@@ -1759,7 +1894,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 3760600358070659426}
         m_TargetAssemblyTypeName: GUZ.VR.Adapters.Player.VRBackpack, UnZENity.VR
-        m_MethodName: OnItemPutIntoBackpack
+        m_MethodName: OnItemPutIntoHolster
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1787,7 +1922,7 @@ MonoBehaviour:
         m_CallState: 2
       - m_Target: {fileID: 3760600358070659426}
         m_TargetAssemblyTypeName: GUZ.VR.Adapters.Player.VRBackpack, UnZENity.VR
-        m_MethodName: OnItemPutOutOfBackpack
+        m_MethodName: OnItemPutOutOfHolster
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1839,7 +1974,6 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   DebugScale: 0
-  VelocityCutoff: 2
 --- !u!114 &3895146393690940081 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 3367897735596539142, guid: c43ac1b5fbd2fc24ea40fb28bae6be3e, type: 3}
@@ -1851,6 +1985,125 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6953a3149e8e4d1468962577608f0002, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &4329570237425759598 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2641012728304036569, guid: c43ac1b5fbd2fc24ea40fb28bae6be3e, type: 3}
+  m_PrefabInstance: {fileID: 1779900574691844023}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1678881631422854599
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4329570237425759598}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7825d73edbaf4c528607f54c7c8177e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  BeforeGrabbed:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 9202099228209387433}
+        m_TargetAssemblyTypeName: GUZ.VR.Adapters.Vob.Container.VRVobContainerSocketInventory,
+          UnZENity.VR
+        m_MethodName: OnBeforeGrabbed
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  Grabbed:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 3760600358070659426}
+        m_TargetAssemblyTypeName: GUZ.VR.Adapters.Player.VRBackpack, UnZENity.VR
+        m_MethodName: OnItemPutIntoHolster
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  Released:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 9202099228209387433}
+        m_TargetAssemblyTypeName: GUZ.VR.Adapters.Vob.Container.VRVobContainerSocketInventory,
+          UnZENity.VR
+        m_MethodName: OnReleased
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 3760600358070659426}
+        m_TargetAssemblyTypeName: GUZ.VR.Adapters.Player.VRBackpack, UnZENity.VR
+        m_MethodName: OnItemPutOutOfHolster
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  BeforeHoverEnter:
+    m_PersistentCalls:
+      m_Calls: []
+  HoverEnter:
+    m_PersistentCalls:
+      m_Calls: []
+  HoverExit:
+    m_PersistentCalls:
+      m_Calls: []
+  _grabBag: {fileID: 0}
+  GrabBags: []
+  GrabControl: 0
+  GrabDetectionType: 1
+  CheckHandOverlap: 0
+  ReleasesOnHover: 0
+  InstantHandPose: 0
+  HoldType: 0
+  AutoSpawnPrefab: {fileID: 0}
+  GrabTimeout: 0
+  GrabbableMustBeHeld: 1
+  GrabsFromHand: 0
+  HoverActions: []
+  HandGrabActions:
+  - {fileID: 4547828311593582872}
+  ParentDisablesGrab: 1
+  ParentGrabbable: {fileID: 0}
+  CanRemoveGrabbable: 1
+  ScaleGrabbable: 1
+  Size: 0.3
+  CanGrabStabbingGrabbable: 0
+  AudioGrabbedOverride: {fileID: 0}
+  AudioReleasedOverride: {fileID: 0}
+  AudioGrabbedFallback: {fileID: 0}
+  AudioReleasedFallback: {fileID: 0}
+  SocketFilters: []
+  FilterCondition: 0
+  DistanceSource: {fileID: 0}
+  PoseTag: 
+  DisableCollision: 1
+  SpawnedPrefab:
+    m_PersistentCalls:
+      m_Calls: []
+  DebugScale: 0
 --- !u!1 &5011691423529762508 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 6718914276336705915, guid: c43ac1b5fbd2fc24ea40fb28bae6be3e, type: 3}
@@ -2689,6 +2942,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a720840bf52a6f14e9d5811fae81999e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &4547828311593582872 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8044479042722278303, guid: 9887ca19e46b4d547b2ad40c47c756b9, type: 3}
+  m_PrefabInstance: {fileID: 5818257988439845511}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d4f9954f3bc24c2faf5b2e22c0fd3a52, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!4 &5653444333136488522 stripped
