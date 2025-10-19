@@ -62,20 +62,13 @@ namespace GUZ.VR.Adapters.Player
             _isZenKitBootstrapped = true;
         }
 
-        public void OnShoulderGrabbed(HVRGrabberBase grabber, HVRGrabbable grabbable)
+        public void OnBackpackGrabbedToShoulder(HVRGrabberBase grabber, HVRGrabbable grabbable)
         {
-            // When we boot the game, the VRPlayer is already there and HVR is calling this method. But we need it once the game is initialized first.
-            if (!_isZenKitBootstrapped)
-                return;
-
-            if (grabber is not HVRShoulderSocket)
-                return;
-
-            _currentPage = 1;
-            UpdateInventoryView();
+            // Nothing to do for now.
+            // We could potentially remove the meshes inside Backpack or simply hide it from rendering later.
         }
         
-        public void OnShoulderReleased(HVRGrabberBase grabber, HVRGrabbable grabbable)
+        public void OnBackpackReleasedFromShoulder(HVRGrabberBase grabber, HVRGrabbable grabbable)
         {
             if (grabber is not HVRShoulderSocket)
                 return;
