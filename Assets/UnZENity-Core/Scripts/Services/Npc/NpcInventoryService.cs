@@ -107,8 +107,8 @@ namespace GUZ.Core.Services.Npc
 
         public List<ContentItem> GetInventoryItems(NpcInstance npc, InvCats category)
         {
-                var npcVob = npc.GetUserData()!.Vob;
-                return _vobService.UnpackItems(npcVob.GetPacked((int)category));
+            var npcVob = npc.GetUserData()!.Vob;
+            return _vobService.UnpackItems(npcVob.GetPacked((int)category));
         }
 
         public int ExtNpcHasItems(NpcInstance npc, int itemId)

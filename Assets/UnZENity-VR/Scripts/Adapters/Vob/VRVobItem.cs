@@ -58,20 +58,23 @@ namespace GUZ.VR.Adapters.Vob
             GetComponent<HVRGrabbable>().SetupColliders();
         }
 
+        /// <summary>
+        /// 1. Grabbed via ForceGrabber (remote grabbing into hand)
+        /// 2. Grabbed via HandGrabber (direct grabbing into hand)
+        /// 3. Grabbed via Socket (e.g., backpack)
+        /// </summary>
         public void OnGrabbed(HVRGrabberBase grabber, HVRGrabbable grabbable)
         {
+            // Ignore grabbing once, if MarvinSelectionMode is active.
             if (_marvinService.IsMarvinSelectionMode)
             {
                 _marvinService.MarvinSelectionGO = grabbable.gameObject;
                 return;
             }
 
-            // If we sock an object on our hips etc.
-            if (grabber is HVRSocket)
-                _vrProperties.IsSocketed = true;
-            
             // OnGrabbed is normally called multiple times. Even after an object is already socketed. If so, then let's stop Grab behaviour.
-            if (_vrProperties.IsSocketed)
+            // If we sock an object on our hips or backpack etc.
+            if (grabber is HVRSocket)
                 return;
 
             // In Gothic, Items have no physics when lying around. We need to activate physics for HVR to properly move items into our hands.
@@ -90,20 +93,24 @@ namespace GUZ.VR.Adapters.Vob
             _vrPlayerService.SetGrab(grabber, grabbable);
         }
 
+        /// <summary>
+        /// 1. Grabbed via ForceGrabber (remote grabbing into hand)
+        /// 2. Grabbed via HandGrabber (direct grabbing into hand)
+        /// 3. Grabbed via Socket (e.g., backpack)
+        /// </summary>
         public void OnReleased(HVRGrabberBase grabber, HVRGrabbable grabbable)
         {
-            // Releasing from a Socket doesn't count.
-            if (!grabber.IsHandGrabber)
+            // If we release an object from our hips or backpack etc.
+            // We then assume, that the item is already with correct values as it was grabbed before (shader, layer, ...)
+            if (grabber is HVRSocket)
                 return;
-            
-            gameObject.layer = Constants.VobItem; // Back to default
 
-            _vobMeshCullingService?.StopTrackVobPositionUpdates(gameObject);
+            gameObject.layer = Constants.VobItem; // Back to default
 
             // Disable "ghostification" of object.
             _dynamicMaterialService.ResetDynamicValue(gameObject, Constants.ShaderPropertyTransparency, Constants.ShaderPropertyTransparencyDefault);
 
-            _vobMeshCullingService?.StartTrackVobPositionUpdates(gameObject);
+            _vobMeshCullingService?.StopTrackVobPositionUpdates(gameObject);
             _vrPlayerService.UnsetGrab(grabber, grabbable);
         }
 

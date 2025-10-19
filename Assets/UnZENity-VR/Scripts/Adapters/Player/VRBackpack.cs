@@ -32,6 +32,7 @@ namespace GUZ.VR.Adapters.Player
         [SerializeField] private TMP_Text _pagerText;
         [SerializeField] private HVRSocketContainer _socketContainer;
 
+        private bool _isZenKitBootstrapped;
         private int _currentPage = 1;
         private int _totalPages;
         private VmGothicEnums.InvCats _selectedCategory =  VmGothicEnums.InvCats.InvWeapon;
@@ -57,15 +58,21 @@ namespace GUZ.VR.Adapters.Player
 
             socketable.UnsocketedClip = _audioService.CreateAudioClip(_audioService.InvOpen.File);
             socketable.SocketedClip = _audioService.CreateAudioClip(_audioService.InvClose.File);
+
+            _isZenKitBootstrapped = true;
         }
 
         public void OnShoulderGrabbed(HVRGrabberBase grabber, HVRGrabbable grabbable)
         {
+            // When we boot the game, the VRPlayer is already there and HVR is calling this method. But we need it once the game is initialized first.
+            if (!_isZenKitBootstrapped)
+                return;
+
             if (grabber is not HVRShoulderSocket)
                 return;
 
             _currentPage = 1;
-            ClearSockets();
+            UpdateInventoryView();
         }
         
         public void OnShoulderReleased(HVRGrabberBase grabber, HVRGrabbable grabbable)
