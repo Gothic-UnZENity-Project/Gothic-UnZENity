@@ -14,6 +14,7 @@ using GUZ.Core.Services;
 using GUZ.Core.Services.Caches;
 using GUZ.Core.Services.Context;
 using GUZ.Core.Services.Meshes;
+using GUZ.Core.Services.Player;
 using GUZ.Core.Services.Vm;
 using GUZ.VR.Adapters.HVROverrides;
 using HurricaneVR.Framework.Core.Utils;
@@ -36,7 +37,9 @@ namespace GUZ.VR.Adapters.Player
         private SfxModel _sfxDiveSound;
         private SfxModel _sfxSwim2DiveSound;
         private SfxModel _sfxSwim2HangSound; // Normally when pulling out of water only, but we also use when dive -> swim.
-        private string _diveBubbleParticleName;
+        
+        // FIXME - Bubbles are too big on screen. Needs more love.
+        // private string _diveBubbleParticleName;
         
         private float _initialGravity;
         private float _initialMoveSpeed;
@@ -67,7 +70,9 @@ namespace GUZ.VR.Adapters.Player
         [SerializeField] private float _diveHandMovementMultiplier = 2.5f;
         [SerializeField] private float _diveVelocityFadeRate = 0.25f; // 0.25==75% less velocity with each second
         private bool _isDivingForceStarted; // If we lift the grips, we set it to false again to re-enable sounds later.
-        private GameObject _diveBubbles;
+        
+        // FIXME - Bubbles are too big on screen. Needs more love.
+        // private GameObject _diveBubbles;
         
         
         [Header("Debugging")]
@@ -80,6 +85,7 @@ namespace GUZ.VR.Adapters.Player
         [Inject] private readonly ResourceCacheService _resourceCacheService;
         [Inject] private readonly ContextInteractionService _contextInteractionService;
         [Inject] private readonly MeshService _meshService;
+        [Inject] private readonly PlayerService _playerService;
 
         private void Start()
         {
@@ -98,7 +104,6 @@ namespace GUZ.VR.Adapters.Player
                 var diveSfxName = diveAnim.SoundEffects.First().Name;
                 _sfxDiveSound = _vmCacheService.TryGetSfxData(diveSfxName)!;
 
-                _diveBubbleParticleName = diveAnim.ParticleEffects.First().Name;
 
                 var swim2DiveAnim = mds.Animations.First(i => i.Name.EqualsIgnoreCase("t_Swim_2_Dive"));
                 var swim2DiveSfxName = swim2DiveAnim.SoundEffects.First().Name;
@@ -107,9 +112,24 @@ namespace GUZ.VR.Adapters.Player
                 var swim2HangAnim = mds.Animations.First(i => i.Name.EqualsIgnoreCase("t_Swim_2_Hang"));
                 var swim2HangSfxName = swim2HangAnim.SoundEffects.First().Name;
                 _sfxSwim2HangSound = _vmCacheService.TryGetSfxData(swim2HangSfxName);
-                
-                _diveBubbles = _meshService.CreateVobPfx(_diveBubbleParticleName, parent: _playerController.ScreenFader.gameObject);
-                _diveBubbles.SetActive(false);
+
+                // FIXME - Bubbles are too big on screen. Needs more love.
+                // Bubble settings
+                // {
+                //     _diveBubbleParticleName = diveAnim.ParticleEffects.First().Name;
+                //     _diveBubbles = _meshService.CreateVobPfx(_diveBubbleParticleName, parent: _playerController.ScreenFader.gameObject);
+                //     _diveBubbles.transform.localPosition = new Vector3(0, 0.1f, 0.2f);
+                //     var particleRenderer = _diveBubbles.GetComponentInChildren<ParticleSystemRenderer>();
+                //     particleRenderer.renderMode = ParticleSystemRenderMode.Mesh;
+                //
+                //     var go = GameObject.CreatePrimitive(PrimitiveType.Capsule);
+                //     particleRenderer.mesh = go.GetComponent<MeshFilter>().sharedMesh;
+                //
+                //     go.SetActive(false);
+                //     Destroy(go);
+                //     
+                //     _diveBubbles.SetActive(false);
+                // }
             });
 
             GlobalEventDispatcher.WorldSceneLoaded.AddListener(() =>
@@ -147,8 +167,8 @@ namespace GUZ.VR.Adapters.Player
 				return;
 
             // FIXME - As we have different sizes of people in VR, we should use the size based on real heights.
-            var kneeDeepHeight = _gameStateService.GuildValues.GetWaterDepthKnee((int)VmService.Guild.GIL_HUMAN).ToMeter();
-            var chestDeepHeight =  _gameStateService.GuildValues.GetWaterDepthChest((int)VmService.Guild.GIL_HUMAN).ToMeter();
+            var kneeDeepHeight = _gameStateService.GuildValues.GetWaterDepthKnee((int)VmGothicEnums.Guild.GIL_HUMAN).ToMeter();
+            var chestDeepHeight =  _gameStateService.GuildValues.GetWaterDepthChest((int)VmGothicEnums.Guild.GIL_HUMAN).ToMeter();
             var chestDeepHeightWithBuffer = chestDeepHeight + 2; // Do raycast a little bit longer than it needs to be, to ensure it's working.
 
             RaycastHit hit;
@@ -213,9 +233,14 @@ namespace GUZ.VR.Adapters.Player
                     // Dive -> Swim (sometimes when pulling hard up, we are briefly knee deep and need to call the sound in here once)
                     if (_mode == VmGothicEnums.WalkMode.Dive)
                     {
+                        _playerService.StopDiving();
+                        _playerController.ScreenFader.Fade(0, float.MaxValue); // Immediately fade the screen back to normal (no fade)
+
                         var clip = _audioService.CreateAudioClip(_sfxSwim2HangSound.GetRandomSound());
                         SFXPlayer.Instance.PlaySFX(clip, Camera.main!.transform.position);
-                        _diveBubbles.SetActive(false);
+
+                        // FIXME - Bubbles are too big on screen. Needs more love.
+                        // _diveBubbles.SetActive(false);
                     }
                     
                     // FIXME - Or is it "WalkMode.Water"?
@@ -234,9 +259,14 @@ namespace GUZ.VR.Adapters.Player
                     // Dive -> Swim
                     if (_mode == VmGothicEnums.WalkMode.Dive)
                     {
+                        _playerService.StopDiving();
+                        _playerController.ScreenFader.Fade(0, float.MaxValue); // Immediately fade the screen back to normal (no fade)
+
                         var clip = _audioService.CreateAudioClip(_sfxSwim2HangSound.GetRandomSound());
                         SFXPlayer.Instance.PlaySFX(clip, Camera.main!.transform.position);
-                        _diveBubbles.SetActive(false);
+                        
+                        // FIXME - Bubbles are too big on screen. Needs more love.
+                        // _diveBubbles.SetActive(false);
                     }
 
                     Shader.SetGlobalInt(Constants.ShaderPropertyWaterEffectToggle, 0);
@@ -279,8 +309,14 @@ namespace GUZ.VR.Adapters.Player
             _playerController.MaxFallSpeed = 0;
 
             _playerController.SetDivingControls();
+
+            _playerService.StartDiving();
+            _playerController.ScreenFader.Fade(0.8f, 1/_playerService.CurrentAir); // We fade to black based on our start level of air (in seconds)
+            
             SFXPlayer.Instance.PlaySFX(_audioService.CreateAudioClip(_sfxSwim2DiveSound.GetRandomSound()), Camera.main!.transform.position);
-            _diveBubbles.SetActive(true);
+            
+            // FIXME - Bubbles are too big on screen. Needs more love.
+            // _diveBubbles.SetActive(true);
         }
 
         /// <summary>

@@ -1,6 +1,7 @@
 using System;
 using System.Globalization;
 using System.Linq;
+using GUZ.Core.Models.Vm;
 using GUZ.Core.Services;
 using GUZ.Core.Services.Caches;
 using GUZ.Core.Services.Context;
@@ -160,40 +161,42 @@ namespace GUZ.Core.Domain
             }
 
             _gameStateService.GuildValues = _gameStateService.GothicVm.InitInstance<GuildValuesInstance>(id);
-            for (var i = 0; i < (int)VmService.Guild.GIL_PUBLIC; ++i)
-            {
-                _gameStateService.GuildValues.SetWaterDepthKnee(i, _gameStateService.GuildValues.GetWaterDepthKnee((int)VmService.Guild.GIL_HUMAN));
-                _gameStateService.GuildValues.SetWaterDepthChest(i, _gameStateService.GuildValues.GetWaterDepthChest((int)VmService.Guild.GIL_HUMAN));
-                _gameStateService.GuildValues.SetJumpUpHeight(i, _gameStateService.GuildValues.GetJumpUpHeight((int)VmService.Guild.GIL_HUMAN));
-                _gameStateService.GuildValues.SetSwimTime(i, _gameStateService.GuildValues.GetSwimTime((int)VmService.Guild.GIL_HUMAN));
-                _gameStateService.GuildValues.SetDiveTime(i, _gameStateService.GuildValues.GetDiveTime((int)VmService.Guild.GIL_HUMAN));
-                _gameStateService.GuildValues.SetStepHeight(i, _gameStateService.GuildValues.GetStepHeight((int)VmService.Guild.GIL_HUMAN));
-                _gameStateService.GuildValues.SetJumpLowHeight(i, _gameStateService.GuildValues.GetJumpLowHeight((int)VmService.Guild.GIL_HUMAN));
-                _gameStateService.GuildValues.SetJumpMidHeight(i, _gameStateService.GuildValues.GetJumpMidHeight((int)VmService.Guild.GIL_HUMAN));
-                _gameStateService.GuildValues.SetSlideAngle(i, _gameStateService.GuildValues.GetSlideAngle((int)VmService.Guild.GIL_HUMAN));
-                _gameStateService.GuildValues.SetSlideAngle2(i, _gameStateService.GuildValues.GetSlideAngle2((int)VmService.Guild.GIL_HUMAN));
-                _gameStateService.GuildValues.SetDisableAutoRoll(i, _gameStateService.GuildValues.GetDisableAutoRoll((int)VmService.Guild.GIL_HUMAN));
-                _gameStateService.GuildValues.SetSurfaceAlign(i, _gameStateService.GuildValues.GetSurfaceAlign((int)VmService.Guild.GIL_HUMAN));
-                _gameStateService.GuildValues.SetClimbHeadingAngle(i, _gameStateService.GuildValues.GetClimbHeadingAngle((int)VmService.Guild.GIL_HUMAN));
-                _gameStateService.GuildValues.SetClimbHorizAngle(i, _gameStateService.GuildValues.GetClimbHorizAngle((int)VmService.Guild.GIL_HUMAN));
-                _gameStateService.GuildValues.SetClimbGroundAngle(i, _gameStateService.GuildValues.GetClimbGroundAngle((int)VmService.Guild.GIL_HUMAN));
-                _gameStateService.GuildValues.SetFightRangeBase(i, _gameStateService.GuildValues.GetFightRangeBase((int)VmService.Guild.GIL_HUMAN));
-                _gameStateService.GuildValues.SetFightRangeFist(i, _gameStateService.GuildValues.GetFightRangeFist((int)VmService.Guild.GIL_HUMAN));
-                _gameStateService.GuildValues.SetFightRangeG(i, _gameStateService.GuildValues.GetFightRangeG((int)VmService.Guild.GIL_HUMAN));
-                _gameStateService.GuildValues.SetFightRange1Hs(i, _gameStateService.GuildValues.GetFightRange1Hs((int)VmService.Guild.GIL_HUMAN));
-                _gameStateService.GuildValues.SetFightRange1Ha(i, _gameStateService.GuildValues.GetFightRange1Ha((int)VmService.Guild.GIL_HUMAN));
-                _gameStateService.GuildValues.SetFightRange2Hs(i, _gameStateService.GuildValues.GetFightRange2Hs((int)VmService.Guild.GIL_HUMAN));
-                _gameStateService.GuildValues.SetFightRange2Ha(i, _gameStateService.GuildValues.GetFightRange2Ha((int)VmService.Guild.GIL_HUMAN));
-                _gameStateService.GuildValues.SetFallDownHeight(i, _gameStateService.GuildValues.GetFallDownHeight((int)VmService.Guild.GIL_HUMAN));
-                _gameStateService.GuildValues.SetFallDownDamage(i, _gameStateService.GuildValues.GetFallDownDamage((int)VmService.Guild.GIL_HUMAN));
-                _gameStateService.GuildValues.SetBloodDisabled(i, _gameStateService.GuildValues.GetBloodDisabled((int)VmService.Guild.GIL_HUMAN));
-                _gameStateService.GuildValues.SetBloodMaxDistance(i, _gameStateService.GuildValues.GetBloodMaxDistance((int)VmService.Guild.GIL_HUMAN));
-                _gameStateService.GuildValues.SetBloodAmount(i, _gameStateService.GuildValues.GetBloodAmount((int)VmService.Guild.GIL_HUMAN));
-                _gameStateService.GuildValues.SetBloodFlow(i, _gameStateService.GuildValues.GetBloodFlow((int)VmService.Guild.GIL_HUMAN));
-                _gameStateService.GuildValues.SetTurnSpeed(i, _gameStateService.GuildValues.GetTurnSpeed((int)VmService.Guild.GIL_HUMAN));
-                _gameStateService.GuildValues.SetBloodEmitter(i, _gameStateService.GuildValues.GetBloodEmitter((int)VmService.Guild.GIL_HUMAN));
-                _gameStateService.GuildValues.SetBloodTexture(i, _gameStateService.GuildValues.GetBloodTexture((int)VmService.Guild.GIL_HUMAN,0)); //TODO: PR FIX to zenkitcs, getter should have only 1 param not 2
-            }
+            
+            // TODO - Can be removed? -> When Gil_Values is instanciated inside G1 Daedalus, all values are already filled. No need to copy Human values into it.
+            // for (var i = 0; i < (int)VmGothicEnums.Guild.GIL_PUBLIC; ++i)
+            // {
+            //     _gameStateService.GuildValues.SetWaterDepthKnee(i, _gameStateService.GuildValues.GetWaterDepthKnee((int)VmGothicEnums.Guild.GIL_HUMAN));
+            //     _gameStateService.GuildValues.SetWaterDepthChest(i, _gameStateService.GuildValues.GetWaterDepthChest((int)VmGothicEnums.Guild.GIL_HUMAN));
+            //     _gameStateService.GuildValues.SetJumpUpHeight(i, _gameStateService.GuildValues.GetJumpUpHeight((int)VmGothicEnums.Guild.GIL_HUMAN));
+            //     _gameStateService.GuildValues.SetSwimTime(i, _gameStateService.GuildValues.GetSwimTime((int)VmGothicEnums.Guild.GIL_HUMAN));
+            //     _gameStateService.GuildValues.SetDiveTime(i, _gameStateService.GuildValues.GetDiveTime((int)VmGothicEnums.Guild.GIL_HUMAN));
+            //     _gameStateService.GuildValues.SetStepHeight(i, _gameStateService.GuildValues.GetStepHeight((int)VmGothicEnums.Guild.GIL_HUMAN));
+            //     _gameStateService.GuildValues.SetJumpLowHeight(i, _gameStateService.GuildValues.GetJumpLowHeight((int)VmGothicEnums.Guild.GIL_HUMAN));
+            //     _gameStateService.GuildValues.SetJumpMidHeight(i, _gameStateService.GuildValues.GetJumpMidHeight((int)VmGothicEnums.Guild.GIL_HUMAN));
+            //     _gameStateService.GuildValues.SetSlideAngle(i, _gameStateService.GuildValues.GetSlideAngle((int)VmGothicEnums.Guild.GIL_HUMAN));
+            //     _gameStateService.GuildValues.SetSlideAngle2(i, _gameStateService.GuildValues.GetSlideAngle2((int)VmGothicEnums.Guild.GIL_HUMAN));
+            //     _gameStateService.GuildValues.SetDisableAutoRoll(i, _gameStateService.GuildValues.GetDisableAutoRoll((int)VmGothicEnums.Guild.GIL_HUMAN));
+            //     _gameStateService.GuildValues.SetSurfaceAlign(i, _gameStateService.GuildValues.GetSurfaceAlign((int)VmGothicEnums.Guild.GIL_HUMAN));
+            //     _gameStateService.GuildValues.SetClimbHeadingAngle(i, _gameStateService.GuildValues.GetClimbHeadingAngle((int)VmGothicEnums.Guild.GIL_HUMAN));
+            //     _gameStateService.GuildValues.SetClimbHorizAngle(i, _gameStateService.GuildValues.GetClimbHorizAngle((int)VmGothicEnums.Guild.GIL_HUMAN));
+            //     _gameStateService.GuildValues.SetClimbGroundAngle(i, _gameStateService.GuildValues.GetClimbGroundAngle((int)VmGothicEnums.Guild.GIL_HUMAN));
+            //     _gameStateService.GuildValues.SetFightRangeBase(i, _gameStateService.GuildValues.GetFightRangeBase((int)VmGothicEnums.Guild.GIL_HUMAN));
+            //     _gameStateService.GuildValues.SetFightRangeFist(i, _gameStateService.GuildValues.GetFightRangeFist((int)VmGothicEnums.Guild.GIL_HUMAN));
+            //     _gameStateService.GuildValues.SetFightRangeG(i, _gameStateService.GuildValues.GetFightRangeG((int)VmGothicEnums.Guild.GIL_HUMAN));
+            //     _gameStateService.GuildValues.SetFightRange1Hs(i, _gameStateService.GuildValues.GetFightRange1Hs((int)VmGothicEnums.Guild.GIL_HUMAN));
+            //     _gameStateService.GuildValues.SetFightRange1Ha(i, _gameStateService.GuildValues.GetFightRange1Ha((int)VmGothicEnums.Guild.GIL_HUMAN));
+            //     _gameStateService.GuildValues.SetFightRange2Hs(i, _gameStateService.GuildValues.GetFightRange2Hs((int)VmGothicEnums.Guild.GIL_HUMAN));
+            //     _gameStateService.GuildValues.SetFightRange2Ha(i, _gameStateService.GuildValues.GetFightRange2Ha((int)VmGothicEnums.Guild.GIL_HUMAN));
+            //     _gameStateService.GuildValues.SetFallDownHeight(i, _gameStateService.GuildValues.GetFallDownHeight((int)VmGothicEnums.Guild.GIL_HUMAN));
+            //     _gameStateService.GuildValues.SetFallDownDamage(i, _gameStateService.GuildValues.GetFallDownDamage((int)VmGothicEnums.Guild.GIL_HUMAN));
+            //     _gameStateService.GuildValues.SetBloodDisabled(i, _gameStateService.GuildValues.GetBloodDisabled((int)VmGothicEnums.Guild.GIL_HUMAN));
+            //     _gameStateService.GuildValues.SetBloodMaxDistance(i, _gameStateService.GuildValues.GetBloodMaxDistance((int)VmGothicEnums.Guild.GIL_HUMAN));
+            //     _gameStateService.GuildValues.SetBloodAmount(i, _gameStateService.GuildValues.GetBloodAmount((int)VmGothicEnums.Guild.GIL_HUMAN));
+            //     _gameStateService.GuildValues.SetBloodFlow(i, _gameStateService.GuildValues.GetBloodFlow((int)VmGothicEnums.Guild.GIL_HUMAN));
+            //     _gameStateService.GuildValues.SetTurnSpeed(i, _gameStateService.GuildValues.GetTurnSpeed((int)VmGothicEnums.Guild.GIL_HUMAN));
+            //     _gameStateService.GuildValues.SetBloodEmitter(i, _gameStateService.GuildValues.GetBloodEmitter((int)VmGothicEnums.Guild.GIL_HUMAN));
+            //     _gameStateService.GuildValues.SetBloodTexture(i, _gameStateService.GuildValues.GetBloodTexture((int)VmGothicEnums.Guild.GIL_HUMAN,0)); //TODO: PR FIX to zenkitcs, getter should have only 1 param not 2
+            // }
         }
     }
 }
