@@ -18,6 +18,7 @@ using GUZ.VR.Services;
 using HurricaneVR.Framework.Core;
 using HurricaneVR.Framework.Core.Grabbers;
 using HurricaneVR.Framework.Core.Sockets;
+using HurricaneVR.Framework.Core.Utils;
 using Reflex.Attributes;
 using TMPro;
 using UnityEngine;
@@ -70,7 +71,7 @@ namespace GUZ.VR.Adapters.Player
         
         public void OnBackpackReleasedFromShoulder(HVRGrabberBase grabber, HVRGrabbable grabbable)
         {
-            if (grabber is not VRShoulderSocket)
+            if (grabber is not VRShoulderSocket && grabber is not HVRShoulderSocket)
                 return;
 
             UpdateInventoryView();
