@@ -77,9 +77,6 @@ namespace GUZ.VR.Adapters.Vob
             if (grabber is HVRSocket)
                 return;
 
-            // In Gothic, Items have no physics when lying around. We need to activate physics for HVR to properly move items into our hands.
-            transform.GetComponent<Rigidbody>().isKinematic = false;
-
             // Stop collisions while being dragged around (at least shortly; otherwise e.g. items might stick inside chests when pulled out).
             gameObject.layer = Constants.VobItemNoWorldCollision;
 

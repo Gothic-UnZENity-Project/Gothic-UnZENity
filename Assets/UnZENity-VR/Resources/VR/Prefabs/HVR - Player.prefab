@@ -534,6 +534,10 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1685099869530008038, guid: c43ac1b5fbd2fc24ea40fb28bae6be3e, type: 3}
+      propertyPath: BeforeGrabbed.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1685099869530008038, guid: c43ac1b5fbd2fc24ea40fb28bae6be3e, type: 3}
       propertyPath: Grabbed.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
       value: 0
       objectReference: {fileID: 0}
@@ -554,6 +558,10 @@ PrefabInstance:
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 1685099869530008038, guid: c43ac1b5fbd2fc24ea40fb28bae6be3e, type: 3}
+      propertyPath: BeforeGrabbed.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1685099869530008038, guid: c43ac1b5fbd2fc24ea40fb28bae6be3e, type: 3}
       propertyPath: Grabbed.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
       value: OnGrabbed
       objectReference: {fileID: 0}
@@ -566,6 +574,18 @@ PrefabInstance:
       value: OnReleased
       objectReference: {fileID: 0}
     - target: {fileID: 1685099869530008038, guid: c43ac1b5fbd2fc24ea40fb28bae6be3e, type: 3}
+      propertyPath: BeforeGrabbed.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 5592562468148006618}
+    - target: {fileID: 1685099869530008038, guid: c43ac1b5fbd2fc24ea40fb28bae6be3e, type: 3}
+      propertyPath: BeforeGrabbed.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1685099869530008038, guid: c43ac1b5fbd2fc24ea40fb28bae6be3e, type: 3}
+      propertyPath: BeforeGrabbed.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnBeforeGrabbed
+      objectReference: {fileID: 0}
+    - target: {fileID: 1685099869530008038, guid: c43ac1b5fbd2fc24ea40fb28bae6be3e, type: 3}
       propertyPath: Grabbed.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
       value: GUZ.VR.Components.Player.VRPlayerWeaponInteraction, UnZENity.VR
       objectReference: {fileID: 0}
@@ -574,11 +594,19 @@ PrefabInstance:
       value: GUZ.VR.Components.Player.VRPlayerWeaponInteraction, UnZENity.VR
       objectReference: {fileID: 0}
     - target: {fileID: 1685099869530008038, guid: c43ac1b5fbd2fc24ea40fb28bae6be3e, type: 3}
+      propertyPath: BeforeGrabbed.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: GUZ.VR.Adapters.Player.VRPlayerItemAdapter, UnZENity.VR
+      objectReference: {fileID: 0}
+    - target: {fileID: 1685099869530008038, guid: c43ac1b5fbd2fc24ea40fb28bae6be3e, type: 3}
       propertyPath: Grabbed.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     - target: {fileID: 1685099869530008038, guid: c43ac1b5fbd2fc24ea40fb28bae6be3e, type: 3}
       propertyPath: Released.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 1685099869530008038, guid: c43ac1b5fbd2fc24ea40fb28bae6be3e, type: 3}
+      propertyPath: BeforeGrabbed.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     - target: {fileID: 2034389217661245426, guid: c43ac1b5fbd2fc24ea40fb28bae6be3e, type: 3}
@@ -676,6 +704,34 @@ PrefabInstance:
     - target: {fileID: 2980805439611176150, guid: c43ac1b5fbd2fc24ea40fb28bae6be3e, type: 3}
       propertyPath: SFXGrab
       value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 2980805439611176150, guid: c43ac1b5fbd2fc24ea40fb28bae6be3e, type: 3}
+      propertyPath: BeforeGrabbed.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2980805439611176150, guid: c43ac1b5fbd2fc24ea40fb28bae6be3e, type: 3}
+      propertyPath: BeforeGrabbed.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2980805439611176150, guid: c43ac1b5fbd2fc24ea40fb28bae6be3e, type: 3}
+      propertyPath: BeforeGrabbed.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 5592562468148006618}
+    - target: {fileID: 2980805439611176150, guid: c43ac1b5fbd2fc24ea40fb28bae6be3e, type: 3}
+      propertyPath: BeforeGrabbed.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2980805439611176150, guid: c43ac1b5fbd2fc24ea40fb28bae6be3e, type: 3}
+      propertyPath: BeforeGrabbed.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnBeforeGrabbed
+      objectReference: {fileID: 0}
+    - target: {fileID: 2980805439611176150, guid: c43ac1b5fbd2fc24ea40fb28bae6be3e, type: 3}
+      propertyPath: BeforeGrabbed.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: GUZ.VR.Adapters.Player.VRPlayerItemAdapter, UnZENity.VR
+      objectReference: {fileID: 0}
+    - target: {fileID: 2980805439611176150, guid: c43ac1b5fbd2fc24ea40fb28bae6be3e, type: 3}
+      propertyPath: BeforeGrabbed.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     - target: {fileID: 3063419232759952031, guid: c43ac1b5fbd2fc24ea40fb28bae6be3e, type: 3}
       propertyPath: Tags.Tags
@@ -837,6 +893,34 @@ PrefabInstance:
       propertyPath: SFXGrab
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 3964033594404211023, guid: c43ac1b5fbd2fc24ea40fb28bae6be3e, type: 3}
+      propertyPath: BeforeGrabbed.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3964033594404211023, guid: c43ac1b5fbd2fc24ea40fb28bae6be3e, type: 3}
+      propertyPath: BeforeGrabbed.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3964033594404211023, guid: c43ac1b5fbd2fc24ea40fb28bae6be3e, type: 3}
+      propertyPath: BeforeGrabbed.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 5592562468148006618}
+    - target: {fileID: 3964033594404211023, guid: c43ac1b5fbd2fc24ea40fb28bae6be3e, type: 3}
+      propertyPath: BeforeGrabbed.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3964033594404211023, guid: c43ac1b5fbd2fc24ea40fb28bae6be3e, type: 3}
+      propertyPath: BeforeGrabbed.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnBeforeGrabbed
+      objectReference: {fileID: 0}
+    - target: {fileID: 3964033594404211023, guid: c43ac1b5fbd2fc24ea40fb28bae6be3e, type: 3}
+      propertyPath: BeforeGrabbed.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: GUZ.VR.Adapters.Player.VRPlayerItemAdapter, UnZENity.VR
+      objectReference: {fileID: 0}
+    - target: {fileID: 3964033594404211023, guid: c43ac1b5fbd2fc24ea40fb28bae6be3e, type: 3}
+      propertyPath: BeforeGrabbed.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
     - target: {fileID: 4653310549361533989, guid: c43ac1b5fbd2fc24ea40fb28bae6be3e, type: 3}
       propertyPath: m_IsActive
       value: 0
@@ -930,6 +1014,10 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7204430235297583144, guid: c43ac1b5fbd2fc24ea40fb28bae6be3e, type: 3}
+      propertyPath: BeforeGrabbed.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7204430235297583144, guid: c43ac1b5fbd2fc24ea40fb28bae6be3e, type: 3}
       propertyPath: Grabbed.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
       value: 0
       objectReference: {fileID: 0}
@@ -950,6 +1038,10 @@ PrefabInstance:
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 7204430235297583144, guid: c43ac1b5fbd2fc24ea40fb28bae6be3e, type: 3}
+      propertyPath: BeforeGrabbed.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7204430235297583144, guid: c43ac1b5fbd2fc24ea40fb28bae6be3e, type: 3}
       propertyPath: Grabbed.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
       value: OnGrabbed
       objectReference: {fileID: 0}
@@ -962,6 +1054,18 @@ PrefabInstance:
       value: OnReleased
       objectReference: {fileID: 0}
     - target: {fileID: 7204430235297583144, guid: c43ac1b5fbd2fc24ea40fb28bae6be3e, type: 3}
+      propertyPath: BeforeGrabbed.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 5592562468148006618}
+    - target: {fileID: 7204430235297583144, guid: c43ac1b5fbd2fc24ea40fb28bae6be3e, type: 3}
+      propertyPath: BeforeGrabbed.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7204430235297583144, guid: c43ac1b5fbd2fc24ea40fb28bae6be3e, type: 3}
+      propertyPath: BeforeGrabbed.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnBeforeGrabbed
+      objectReference: {fileID: 0}
+    - target: {fileID: 7204430235297583144, guid: c43ac1b5fbd2fc24ea40fb28bae6be3e, type: 3}
       propertyPath: Grabbed.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
       value: GUZ.VR.Components.Player.VRPlayerWeaponInteraction, UnZENity.VR
       objectReference: {fileID: 0}
@@ -970,11 +1074,19 @@ PrefabInstance:
       value: GUZ.VR.Components.Player.VRPlayerWeaponInteraction, UnZENity.VR
       objectReference: {fileID: 0}
     - target: {fileID: 7204430235297583144, guid: c43ac1b5fbd2fc24ea40fb28bae6be3e, type: 3}
+      propertyPath: BeforeGrabbed.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: GUZ.VR.Adapters.Player.VRPlayerItemAdapter, UnZENity.VR
+      objectReference: {fileID: 0}
+    - target: {fileID: 7204430235297583144, guid: c43ac1b5fbd2fc24ea40fb28bae6be3e, type: 3}
       propertyPath: Grabbed.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     - target: {fileID: 7204430235297583144, guid: c43ac1b5fbd2fc24ea40fb28bae6be3e, type: 3}
       propertyPath: Released.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 7204430235297583144, guid: c43ac1b5fbd2fc24ea40fb28bae6be3e, type: 3}
+      propertyPath: BeforeGrabbed.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     - target: {fileID: 7340868166416387179, guid: c43ac1b5fbd2fc24ea40fb28bae6be3e, type: 3}
@@ -1175,6 +1287,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 2923976313076319325, guid: c43ac1b5fbd2fc24ea40fb28bae6be3e, type: 3}
       insertIndex: -1
       addedObject: {fileID: 3759470947065555123}
+    - targetCorrespondingSourceObject: {fileID: 2923976313076319325, guid: c43ac1b5fbd2fc24ea40fb28bae6be3e, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5592562468148006618}
     - targetCorrespondingSourceObject: {fileID: 2923976313507361695, guid: c43ac1b5fbd2fc24ea40fb28bae6be3e, type: 3}
       insertIndex: -1
       addedObject: {fileID: 3789326534228044634}
@@ -1848,6 +1963,18 @@ MonoBehaviour:
   _rightHandModel: {fileID: 3179937809927698473}
   _leftHandRigidbody: {fileID: 7701449421344543976}
   _rightHandRigidbody: {fileID: 6965913448549182657}
+--- !u!114 &5592562468148006618
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3469872688444955626}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0e83c537278f4d8ba1c1c30f5e029f15, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &3699890743539135334 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 3164866306463935697, guid: c43ac1b5fbd2fc24ea40fb28bae6be3e, type: 3}
