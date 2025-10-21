@@ -257,6 +257,7 @@ namespace GUZ.VR.Adapters.Player
                     Amount = item.Amount
                 });
 
+                vobContainer.Go.GetComponentInChildren<Rigidbody>().isKinematic = false; // Get rid of isKinematic warnings as the Grab is done "physically".
                 _socketContainer.TryAddGrabbable(vobContainer.Go.GetComponentInChildren<HVRGrabbable>());
             }
         }
