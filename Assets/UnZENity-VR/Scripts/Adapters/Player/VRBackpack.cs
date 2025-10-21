@@ -177,6 +177,19 @@ namespace GUZ.VR.Adapters.Player
             UpdateInventoryView();
         }
 
+        private void UpdateInventoryView()
+        {
+            var inventory = _playerService.GetInventory(_selectedCategory);
+
+            // Subtract amount of held items from inventory
+            SubtractItemFromHand(inventory, _vrPlayerService.GrabbedItemLeft);
+            SubtractItemFromHand(inventory, _vrPlayerService.GrabbedItemRight);
+
+            UpdateCategoryText();
+            UpdatePagerText(inventory);
+            StartCoroutine(UpdateSockets(inventory));
+        }
+
         private void UpdateCategoryText()
         {
             _categoryText.text = _vmService.InventoryCategories[(int)_selectedCategory];
@@ -197,29 +210,17 @@ namespace GUZ.VR.Adapters.Player
 
         private IEnumerator UpdateSockets(List<ContentItem> inventory)
         {
+            yield return null;
+
             // While we re-stack items into slots, we need to ignore their events. Otherwise we create a loop.
             _tempIgnoreSocketing = true;
             
             ClearSockets();
             yield return null; // Releasing and destroying objects takes until next frame.
 
-            var startIndex = _currentPage * 9 - 9;
-            var count = Mathf.Min(9, inventory.Count - startIndex);
-            var items = inventory.GetRange(startIndex, count);
+            RefillSockets(inventory);
+            yield return null;
 
-            foreach (var item in items)
-            {
-                var vobContainer = _vobService.CreateItem(new Item
-                {
-                    Name = item.Name,
-                    Visual = new VisualMesh(),
-                    Instance = item.Name,
-                    Amount = item.Amount
-                });
-
-                _socketContainer.TryAddGrabbable(vobContainer.Go.GetComponentInChildren<HVRGrabbable>());
-            }
-            
             _tempIgnoreSocketing = false;
         }
 
@@ -239,18 +240,25 @@ namespace GUZ.VR.Adapters.Player
                 this.ExecuteNextUpdate(() => Destroy(heldRoot));
             }
         }
-        
-        private void UpdateInventoryView()
-        {
-            var inventory = _playerService.GetInventory(_selectedCategory);
 
-            // Subtract amount of held items from inventory
-            SubtractItemFromHand(inventory, _vrPlayerService.GrabbedItemLeft);
-            SubtractItemFromHand(inventory, _vrPlayerService.GrabbedItemRight);
-            
-            UpdateCategoryText();
-            UpdatePagerText(inventory);
-            StartCoroutine(UpdateSockets(inventory));
+        private void RefillSockets(List<ContentItem> inventory)
+        {
+            var startIndex = _currentPage * 9 - 9;
+            var count = Mathf.Min(9, inventory.Count - startIndex);
+            var items = inventory.GetRange(startIndex, count);
+
+            foreach (var item in items)
+            {
+                var vobContainer = _vobService.CreateItem(new Item
+                {
+                    Name = item.Name,
+                    Visual = new VisualMesh(),
+                    Instance = item.Name,
+                    Amount = item.Amount
+                });
+
+                _socketContainer.TryAddGrabbable(vobContainer.Go.GetComponentInChildren<HVRGrabbable>());
+            }
         }
 
         private void SubtractItemFromHand(List<ContentItem> inventory, GameObject handItem)
