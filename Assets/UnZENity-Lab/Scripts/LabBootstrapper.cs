@@ -30,12 +30,14 @@ namespace GUZ.Lab
         public DeveloperConfig DeveloperConfig;
         
         [SerializeField] private bool _fillBackpack;
+        [SerializeField] private bool _spawnItems;
 
         public LabMusicHandler LabMusicHandler;
         public LabSoundHandler LabSoundHandler;
         public LabVideoHandler LabVideoHandler;
         public LabNpcDialogHandler NpcDialogHandler;
         public LabInteractableHandler InteractableHandler;
+        public LabMonsterHandler MonsterHandler;
         public LabLadderLabHandler LadderLabHandler;
         public LabVobItemHandler VobItemHandler;
         public LabNpcAnimationHandler LabNpcAnimationHandler;
@@ -143,7 +145,10 @@ namespace GUZ.Lab
             LabSoundHandler.Bootstrap();
             LabVideoHandler.Bootstrap();
             NpcDialogHandler.Bootstrap();
+
+            InteractableHandler.SpawnItems = _spawnItems;
             InteractableHandler.Bootstrap();
+            MonsterHandler.Bootstrap();
             LadderLabHandler.Bootstrap();
             VobItemHandler.Bootstrap();
             LabLockHandler.Bootstrap();

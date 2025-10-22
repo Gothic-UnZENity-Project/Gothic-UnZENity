@@ -238,13 +238,13 @@ namespace GUZ.Core.Domain.Vm
                     // Add additional log information if existing.
                     var selfUserData = _gameStateService.GothicVm.GlobalSelf.UserData as NpcContainer;
                     var npcName = _multiTypeCacheService.NpcCache.FirstOrDefault(x => x.Instance == selfUserData.Instance)?.Go
-                        ?.transform.parent.name;
+                        ?.transform?.parent?.name;
                     Logger.LogWarningEditor($"Method >{sym.Name}< not yet implemented in DaedalusVM (called on >{npcName}<).", LogCat.ZenKit);
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                Logger.LogErrorEditor("Bug in getting Npc. Fix or delete.", LogCat.ZenKit);
+                Logger.LogErrorEditor($"Bug in getting Npc. Fix or delete: {e}", LogCat.ZenKit);
             }
         }
 
