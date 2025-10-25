@@ -33,7 +33,7 @@ namespace GUZ.VR.Adapters.HVROverrides
             // Structure: Bucket -> VobLoader -> Grabbable. We therefore need to put the VobLoader to another spot.
             {
                 var grabbable = args.Grabbable;
-                var vobLoader = grabbable.GetComponentInParent<VobLoader>();
+                var vobLoader = grabbable.GetComponentInParent<VobLoader>(true); // e.g., Backpack item might be disabled already as it's re-parented in parallel.
                 _previousParent = vobLoader.transform.parent; // We use parent of Grabbable object.
                 _previousScale = grabbable.transform.localScale;
 
@@ -56,7 +56,7 @@ namespace GUZ.VR.Adapters.HVROverrides
         protected override void OnReleased(HVRGrabbable grabbable)
         {
             var tmpPreviousParent = _previousParent;
-            var itemRoot = grabbable.GetComponentInParent<VobLoader>().transform;
+            var itemRoot = grabbable.GetComponentInParent<VobLoader>(true).transform;
 
             base.OnReleased(grabbable);
             
@@ -66,7 +66,7 @@ namespace GUZ.VR.Adapters.HVROverrides
 
         protected override void AttachGrabbable(HVRGrabbable grabbable)
         {
-            var vobLoader = grabbable.GetComponentInParent<VobLoader>();
+            var vobLoader = grabbable.GetComponentInParent<VobLoader>(true);
             // Structure: Bucket -> VobLoader -> Grabbable. We therefore need to put the VobLoader to another spot.
             vobLoader.gameObject.SetParent(transform.gameObject, resetLocation: true, resetRotation: true);
             

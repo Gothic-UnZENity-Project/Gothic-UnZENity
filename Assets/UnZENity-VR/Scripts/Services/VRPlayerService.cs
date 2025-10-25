@@ -27,7 +27,7 @@ namespace GUZ.VR.Services
         public VRPlayerInputs VRPlayerInputs => VRContextInteractionService.GetVRPlayerInputs();
         
         public GameObject GrabbedItemLeft;
-        public GameObject GrabbedObjectRight;
+        public GameObject GrabbedItemRight;
 
         public enum HandType
         {
@@ -35,14 +35,34 @@ namespace GUZ.VR.Services
             Right
         }
 
-        public bool IsDualGrabbed => GrabbedItemLeft != null && GrabbedItemLeft == GrabbedObjectRight;
+        public bool IsDualGrabbed => GrabbedItemLeft != null && GrabbedItemLeft == GrabbedItemRight;
 
         public void SetGrab(HVRGrabberBase grabber, HVRGrabbable grabbable)
         {
-            if (grabbable.LeftHandGrabber)
-                GrabbedItemLeft = grabbable.gameObject;
+            HVRHandGrabber handGrabber;
+            if (grabber is HVRForceGrabber forceGrabber)
+                handGrabber = forceGrabber.HandGrabber;
             else
-                GrabbedObjectRight = grabbable.gameObject;
+                handGrabber = grabber as HVRHandGrabber;
+
+            if (handGrabber.IsLeftHand)
+            {
+                // If we did remote grabbing, this function is called twice (remote grabber+hand grabber).
+                // As we already count remote grabbing as "in inventory", we skip it the second time.
+                if (GrabbedItemLeft == grabbable.gameObject)
+                    return;
+                
+                GrabbedItemLeft = grabbable.gameObject;
+            }
+            else
+            {
+                // If we did remote grabbing, this function is called twice (remote grabber+hand grabber).
+                // As we already count remote grabbing as "in inventory", we skip it the second time.
+                if (GrabbedItemRight == grabbable.gameObject)
+                    return;
+
+                GrabbedItemRight = grabbable.gameObject;
+            }
 
             // If we grabbed the element with second hand, return.
             if (IsDualGrabbed)
@@ -57,15 +77,30 @@ namespace GUZ.VR.Services
         {
             var dualGrabPrev = IsDualGrabbed;
 
-            // Something other grabbed our item. Ignore it.
-            if (!grabber.IsHandGrabber)
-                return;
-
-            var handGrabber = grabber as HVRHandGrabber;
-            if (handGrabber!.IsLeftHand)
-                GrabbedItemLeft = null;
+            HVRHandGrabber handGrabber;
+            if (grabber is HVRForceGrabber forceGrabber)
+                handGrabber = forceGrabber.HandGrabber;
             else
-                GrabbedObjectRight = null;
+                handGrabber = grabber as HVRHandGrabber;
+
+            if (handGrabber.IsLeftHand)
+            {
+                // If we did remote grabbing, this function is called twice (remote grabber+hand grabber).
+                // As we already count remote grabbing as "in inventory", we skip it the second time.
+                if (GrabbedItemLeft == null)
+                    return;
+
+                GrabbedItemLeft = null;
+            }
+            else
+            {
+                // If we did remote grabbing, this function is called twice (remote grabber+hand grabber).
+                // As we already count remote grabbing as "in inventory", we skip it the second time.
+                if (GrabbedItemRight == null)
+                    return;
+
+                GrabbedItemRight = null;
+            }
 
             // If we removed one hand from our item.
             if (dualGrabPrev)

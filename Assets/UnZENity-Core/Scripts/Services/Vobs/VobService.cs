@@ -510,11 +510,7 @@ namespace GUZ.Core.Services.Vobs
                 if (nameCountSplit.Length != 1)
                     count = int.Parse(nameCountSplit[1]);
         
-                result.Add(new ContentItem
-                {
-                    Name = nameCountSplit[0],
-                    Amount = count
-                });
+                result.Add(new ContentItem(nameCountSplit[0], count));
             }
 
             return result;

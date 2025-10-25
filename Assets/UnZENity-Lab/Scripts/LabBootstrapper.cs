@@ -28,6 +28,8 @@ namespace GUZ.Lab
     public class LabBootstrapper : MonoBehaviour
     {
         public DeveloperConfig DeveloperConfig;
+        
+        [SerializeField] private bool _fillBackpack;
 
         public LabMusicHandler LabMusicHandler;
         public LabSoundHandler LabSoundHandler;
@@ -118,6 +120,7 @@ namespace GUZ.Lab
 
             _videoService.InitVideos();
             _saveGameService.LoadNewGame();
+            _saveGameService.ChangeWorld("world.zen"); // Needed for some VOB settings for a "fake" save game when interacting with VOBs and e.g., Backpack.
         }
 
         private async Task InitLab()
@@ -151,6 +154,7 @@ namespace GUZ.Lab
         private void BootstrapPlayer()
         {
             // Items - from PC_Rockefeller ;-)
+            if (_fillBackpack)
             {
                 //----------------------------------------
                 //Armor.d

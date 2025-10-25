@@ -1,6 +1,6 @@
 namespace GUZ.Core.Models.Vob
 {
-    public struct ContentItem
+    public class ContentItem
     {
         public string Name;
         public int Amount;
@@ -10,12 +10,6 @@ namespace GUZ.Core.Models.Vob
         {
             Name = name;
             Amount = amount;
-        }
-
-        public ContentItem(ContentItem item, int amountChange)
-        {
-            Name = item.Name;
-            Amount = item.Amount + amountChange;
         }
     }
 }

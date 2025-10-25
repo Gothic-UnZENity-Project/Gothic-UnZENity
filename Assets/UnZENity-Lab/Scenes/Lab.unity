@@ -8290,6 +8290,30 @@ PrefabInstance:
       propertyPath: m_AnchorMin.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3469872688444955627, guid: c9aaa67c73a5ed34d8a865ecc7613ca2, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -6.659337
+      objectReference: {fileID: 0}
+    - target: {fileID: 3469872688444955627, guid: c9aaa67c73a5ed34d8a865ecc7613ca2, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -10.552103
+      objectReference: {fileID: 0}
+    - target: {fileID: 3469872688444955627, guid: c9aaa67c73a5ed34d8a865ecc7613ca2, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.23004994
+      objectReference: {fileID: 0}
+    - target: {fileID: 3469872688444955627, guid: c9aaa67c73a5ed34d8a865ecc7613ca2, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3469872688444955627, guid: c9aaa67c73a5ed34d8a865ecc7613ca2, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0.97317886
+      objectReference: {fileID: 0}
+    - target: {fileID: 3469872688444955627, guid: c9aaa67c73a5ed34d8a865ecc7613ca2, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
     - target: {fileID: 3866233120056885002, guid: c9aaa67c73a5ed34d8a865ecc7613ca2, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -15461,7 +15485,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f050d09eef924423ad3ce4734f50f452, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  IsActive: 0
+  IsActive: 1
   Weapons1HGO: {fileID: 432268076}
   Weapons2HGO: {fileID: 429607157}
   RangedWeaponsGO: {fileID: 406499994}
@@ -16125,6 +16149,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   DeveloperConfig: {fileID: 11400000, guid: d1ee11f3526d3a847a5aaeefc5da6ab2, type: 2}
+  _fillBackpack: 0
   LabMusicHandler: {fileID: 408181898}
   LabSoundHandler: {fileID: 1011376553}
   LabVideoHandler: {fileID: 1219449894}

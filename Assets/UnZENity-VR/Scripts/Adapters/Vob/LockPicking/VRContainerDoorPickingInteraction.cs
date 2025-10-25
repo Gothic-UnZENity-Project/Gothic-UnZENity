@@ -104,9 +104,9 @@ namespace GUZ.VR.Adapters.Vob.LockPicking
                 _handSide = HVRHandSide.Left;
                 _hapticsService.Vibrate(HVRHandSide.Left, VrHapticsService.VibrationType.Info);
             }
-            else if (_vrPlayerService.GrabbedObjectRight?.GetComponentInChildren<VRLockPickInteraction>().gameObject == other.gameObject)
+            else if (_vrPlayerService.GrabbedItemRight?.GetComponentInChildren<VRLockPickInteraction>().gameObject == other.gameObject)
             {
-                lockPickProperties.HoldingHand = _vrPlayerService.GrabbedObjectRight!.transform;
+                lockPickProperties.HoldingHand = _vrPlayerService.GrabbedItemRight!.transform;
                 _handSide = HVRHandSide.Right;
                 _hapticsService.Vibrate(HVRHandSide.Right, VrHapticsService.VibrationType.Info);
             }

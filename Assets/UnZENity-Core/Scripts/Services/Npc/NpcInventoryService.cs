@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using GUZ.Core.Extensions;
 using GUZ.Core.Logging;
-using GUZ.Core.Models.Vm;
 using GUZ.Core.Models.Vob;
 using GUZ.Core.Services.Caches;
 using GUZ.Core.Services.Vobs;
@@ -54,7 +53,7 @@ namespace GUZ.Core.Services.Npc
             {
                 if (items[i].Name == itemInstance.Name)
                 {
-                    items[i] = new ContentItem(items[i], amount);
+                    items[i].Amount += amount;
                     itemFound = true;
                     break;
                 }
@@ -92,7 +91,7 @@ namespace GUZ.Core.Services.Npc
                     if (newAmount <= 0)
                         items.RemoveAt(i);
                     else
-                        items[i] = new ContentItem(items[i], newAmount);
+                        items[i].Amount -= amount;
     
                     itemFound = true;
                     break;
@@ -107,8 +106,8 @@ namespace GUZ.Core.Services.Npc
 
         public List<ContentItem> GetInventoryItems(NpcInstance npc, InvCats category)
         {
-                var npcVob = npc.GetUserData()!.Vob;
-                return _vobService.UnpackItems(npcVob.GetPacked((int)category));
+            var npcVob = npc.GetUserData()!.Vob;
+            return _vobService.UnpackItems(npcVob.GetPacked((int)category));
         }
 
         public int ExtNpcHasItems(NpcInstance npc, int itemId)
