@@ -276,16 +276,38 @@ namespace GUZ.VR.Services.Context
         private MutableMenuInstance CreateImmersionMenu(AbstractMenuInstance mainMenu)
         {
             // Find MENU_OPT_AUDIO --> PERF menu item to overwrite
-            var controlsMenuParent = mainMenu.FindMenuRecursive("MENU_OPT_AUDIO")!.Parent;
-            var perfItemMenu = controlsMenuParent.FindMenuItem("MENUITEM_PERF", out var perfItemIndex);
+            var optMenuParent = mainMenu.FindMenuRecursive("MENU_OPT_AUDIO")!.Parent;
+            var referenceItemMenu = optMenuParent.FindMenuItem("MENUITEM_PERF", out var referenceItemIndex);
+            var replace = true;
+            
+            // e.g., on russian language
+            if (referenceItemMenu == null)
+            {
+                replace = false;
+                referenceItemMenu = optMenuParent.FindMenuItem("MENUITEM_UNZENITY_OPT_VR_ACCESSIBILITY", out referenceItemIndex);
+            }
             
             // Create empty menu
-            var vrImmersionMenu = new MutableMenuInstance("MENU_UNZENITY_OPT_VR_IMMERSION", controlsMenuParent);
+            var vrImmersionMenu = new MutableMenuInstance("MENU_UNZENITY_OPT_VR_IMMERSION", optMenuParent);
             
             // Create menu item and replace it where >Keyboard< settings are normally
-            var vrImmersionMenuItem = new MutableMenuItemInstance("MENUITEM_UNZENITY_OPT_VR_IMMERSION", perfItemMenu);
-            controlsMenuParent.ReplaceItemAt(perfItemIndex, vrImmersionMenuItem);
+            var vrImmersionMenuItem = new MutableMenuItemInstance("MENUITEM_UNZENITY_OPT_VR_IMMERSION", referenceItemMenu);
 
+            if (replace)
+            {
+                optMenuParent.ReplaceItemAt(referenceItemIndex, vrImmersionMenuItem);
+            }
+            // Calculate posY based on other 2 elements' diff and use it. 
+            else
+            {
+                var optVideoPosY = optMenuParent.FindMenuItem("MENUITEM_OPT_VIDEO", out var _)!.PosY;
+                var optAudioPosY = optMenuParent.FindMenuItem("MENUITEM_OPT_AUDIO", out var _)!.PosY;
+                var diffPosY = optAudioPosY - optVideoPosY;
+                vrImmersionMenuItem.PosY += diffPosY;
+
+                optMenuParent.Items.Add(vrImmersionMenuItem);
+            }
+            
             // Add some setting
             vrImmersionMenuItem.SetText(0, _localizationService.GetText("menuitem.vr_immersion"));
             vrImmersionMenuItem.SetOnSelAction(0, MenuItemSelectAction.StartMenu);
