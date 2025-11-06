@@ -1765,6 +1765,37 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 313077506}
   m_CullTransparentMesh: 0
+--- !u!1 &314036219
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 314036220}
+  m_Layer: 0
+  m_Name: SpawnPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &314036220
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 314036219}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -3.278, y: -0.385, z: 4.89}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1232199910}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &330949649
 GameObject:
   m_ObjectHideFlags: 0
@@ -10997,6 +11028,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 314036220}
   - {fileID: 1645121188}
   - {fileID: 277202609}
   - {fileID: 723174867}
@@ -11751,7 +11783,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cbfb7e4ea19c41f19efbd40eafb87482, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  FileSelector: {fileID: 1911515745}
+  _monsterSelector: {fileID: 1911515745}
+  _spawnPoint: {fileID: 314036219}
 --- !u!1 &1324751454
 GameObject:
   m_ObjectHideFlags: 0
