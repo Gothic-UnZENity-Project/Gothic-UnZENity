@@ -43,7 +43,7 @@ namespace GUZ.Lab.Handler
                     Instance = instance,
                     Vob =  new NpcAdapter(instance.Index),
                     Props = new(),
-                    // All other elements aren't needed for Lab usage.
+                    PrefabProps = new()
                 };
                 
                 instance.UserData = npcData;

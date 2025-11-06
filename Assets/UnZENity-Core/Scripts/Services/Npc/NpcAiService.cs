@@ -453,6 +453,9 @@ namespace GUZ.Core.Services.Npc
             NpcContainer closestEnemy = null;
             var closestSqrDist = float.MaxValue;
 
+            // FIXME - Performance - Can we clean this up to support only spawned and visible NPCs/Monsters?
+            //         Otherwise we might need to loop through it for each visible monster and 1000x per visible NPC/Monster
+            //         -> about 10k checks per frame!
             foreach (var candidate in _multiTypeCacheService.NpcCache)
             {
                 // Fast-fail checks in order of cheapest first

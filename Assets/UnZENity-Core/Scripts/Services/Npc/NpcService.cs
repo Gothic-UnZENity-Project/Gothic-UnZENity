@@ -433,7 +433,7 @@ namespace GUZ.Core.Services.Npc
         {
             var pos = npc.GetUserData().Go.transform.position;
 
-            return _wayNetService.FindNearestWayPoint(pos).Name;
+            return _wayNetService.FindNearestWayPoint(pos)?.Name ?? "";
         }
 
         public bool ExtIsNextFpAvailable(NpcInstance npc, string fpNamePart)
