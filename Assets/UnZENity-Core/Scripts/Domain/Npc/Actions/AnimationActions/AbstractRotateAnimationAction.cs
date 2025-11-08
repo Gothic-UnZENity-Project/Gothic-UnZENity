@@ -70,34 +70,40 @@ namespace GUZ.Core.Domain.Npc.Actions.AnimationActions
 
         private string GetRotateModeAnimationString()
         {
+            var fightMode = (VmGothicEnums.WeaponState)Vob.FightMode;
+            var weaponState = fightMode == VmGothicEnums.WeaponState.NoWeapon
+                ? ""
+                : fightMode.ToString();
             var walkMode = (VmGothicEnums.WalkMode)Vob.AiHuman.WalkMode;
-            string walkModeString;
+
+            string finalString;
+            
             switch (walkMode)
             {
                 case VmGothicEnums.WalkMode.Walk:
-                    walkModeString = "WALK";
+                    finalString = "Walk";
                     break;
                 case VmGothicEnums.WalkMode.Run:
-                    walkModeString = "Run";
+                    finalString = "Run";
                     break;
                 case VmGothicEnums.WalkMode.Sneak:
-                    walkModeString = "Sneak";
+                    finalString = "Sneak";
                     break;
                 case VmGothicEnums.WalkMode.Water:
-                    walkModeString = "Water";
+                    finalString = "Water";
                     break;
                 case VmGothicEnums.WalkMode.Swim:
-                    walkModeString = "Swim";
+                    finalString = "Swim";
                     break;
                 case VmGothicEnums.WalkMode.Dive:
-                    walkModeString = "Dive";
+                    finalString = "Dive";
                     break;
                 default:
                     Logger.LogWarning($"Animation of type {walkMode} not yet implemented.", LogCat.Ai);
                     return "";
             }
 
-            return $"T_{walkModeString}TURN{(_isRotateLeft ? 'L' : 'R')}";
+            return $"T_{weaponState}{finalString}TURN{(_isRotateLeft ? 'L' : 'R')}";
         }
 
         public override void Tick()

@@ -65,10 +65,15 @@ namespace GUZ.Lab.Handler
             var monsterLoaderComp = _usableMonsters[_monsterSelector.value];
 
             _npcService.InitNpc(monsterLoaderComp.gameObject, true);
-
-            // FIXME -> Now spawn the monster
         }
 
+        public void SpawnMoleratClick()
+        {
+            var moleratLoaderComp = _usableMonsters.FirstOrDefault(i => i.Container.Instance.GetName(NpcNameSlot.Slot0).EqualsIgnoreCase("Molerat"));
+
+            _npcService.InitNpc(moleratLoaderComp.gameObject, true);
+        }
+        
         public void MonsterDestroyClick()
         {
             // TODO -> Destroy the monster
