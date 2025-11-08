@@ -122,8 +122,8 @@ namespace GUZ.Core.Services.Npc
             var otherHead = otherContainer.PrefabProps.Head ?? otherRoot;
 
             // Unity places positions of objects at the bottom. We need to lift them up towards the head
-            var selfRealHeadPosition = new Vector3(selfRoot.position.x, selfHead.position.y, selfRoot.position.y);
-            var otherRealHeadPosition = new Vector3(otherRoot.position.x, otherHead.position.y, otherRoot.position.y);
+            var selfRealHeadPosition = new Vector3(selfRoot.position.x, selfHead.position.y, selfRoot.position.z);
+            var otherRealHeadPosition = new Vector3(otherRoot.position.x, otherHead.position.y, otherRoot.position.z);
 
             var distanceToNpc = Vector3.Distance(selfRealHeadPosition, otherRealHeadPosition);
             var inSightRange = distanceToNpc <= self.SensesRange;
@@ -131,7 +131,7 @@ namespace GUZ.Core.Services.Npc
             var layersToIgnore = Constants.HandLayer | Constants.GrabbableLayer | Constants.VobItem | Constants.VobItemNoWorldCollision | Constants.UILayer;
             var hasLineOfSightCollisions = Physics.Linecast(selfRealHeadPosition, otherRealHeadPosition, layersToIgnore);
 
-            var directionToTarget = (otherRoot.position - selfRealHeadPosition).normalized;
+            var directionToTarget = (otherRealHeadPosition - selfRealHeadPosition).normalized;
             var angleToTarget = Vector3.Angle(selfRoot.forward, directionToTarget);
             var inFov = angleToTarget <= fov;
 
