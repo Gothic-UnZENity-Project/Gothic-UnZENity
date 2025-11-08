@@ -368,6 +368,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _capsuleCollider: {fileID: 8720130747125307888}
+  _weaponAttackTriggerCollider: {fileID: 5278470615718556174}
 --- !u!114 &8095166574519349901
 MonoBehaviour:
   m_ObjectHideFlags: 0

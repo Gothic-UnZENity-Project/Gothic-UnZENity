@@ -1,5 +1,3 @@
-using System;
-using GUZ.Core.Const;
 using UnityEngine;
 
 namespace GUZ.Core.Adapters.Npc
@@ -7,9 +5,8 @@ namespace GUZ.Core.Adapters.Npc
     [RequireComponent(typeof(CapsuleCollider))]
     public class RootCollisionHandler : BasePlayerBehaviour
     {
-        [SerializeField]
-        private CapsuleCollider _capsuleCollider;
-        private CapsuleCollider _weaponAttackTriggerCollider;
+        [SerializeField] private CapsuleCollider _capsuleCollider;
+        [SerializeField] private CapsuleCollider _weaponAttackTriggerCollider;
 
         private SkinnedMeshRenderer[] _meshRenderers;
 

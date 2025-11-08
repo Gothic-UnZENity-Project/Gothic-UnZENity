@@ -270,6 +270,8 @@ namespace GUZ.Core.Services.Npc
                 VmGothicEnums.AnimationType.MoveR => $"t_{weaponStateString}{walkModeString}StrafeR",
                 VmGothicEnums.AnimationType.RotL => $"T_{weaponStateString}{walkModeString}TurnL",
                 VmGothicEnums.AnimationType.RotR => $"T_{weaponStateString}{walkModeString}TurnR",
+                VmGothicEnums.AnimationType.StumbleA => "T_Stumble",
+                VmGothicEnums.AnimationType.StumbleB or
                 VmGothicEnums.AnimationType.NoAnim or
                 VmGothicEnums.AnimationType.MoveBack or
                 VmGothicEnums.AnimationType.WhirlL or
@@ -300,8 +302,6 @@ namespace GUZ.Core.Services.Npc
                 VmGothicEnums.AnimationType.AttackR or
                 VmGothicEnums.AnimationType.AttackBlock or
                 VmGothicEnums.AnimationType.AttackFinish or
-                VmGothicEnums.AnimationType.StumbleA or
-                VmGothicEnums.AnimationType.StumbleB or
                 VmGothicEnums.AnimationType.AimBow or
                 VmGothicEnums.AnimationType.PointAt or
                 VmGothicEnums.AnimationType.ItmGet or
