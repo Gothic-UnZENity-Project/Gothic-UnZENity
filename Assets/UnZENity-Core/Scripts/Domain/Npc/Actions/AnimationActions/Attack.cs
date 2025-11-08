@@ -133,12 +133,7 @@ namespace GUZ.Core.Domain.Npc.Actions.AnimationActions
         /// </summary>
         private string GetAnimName(VmGothicEnums.AnimationType type)
         {
-            return _animationService.GetAnimationName(type, Vob);
-        }
-
-        public override void Tick()
-        {
-            base.Tick();
+            return _animationService.GetAnimationName(type, NpcContainer);
         }
     }
 }

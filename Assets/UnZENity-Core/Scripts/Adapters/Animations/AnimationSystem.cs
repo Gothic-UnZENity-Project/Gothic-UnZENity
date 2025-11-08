@@ -177,7 +177,7 @@ namespace GUZ.Core.Adapters.Adnimations
 
         public bool PlayIdleAnimation()
         {
-            return PlayAnimation(_animationService.GetAnimationName(VmGothicEnums.AnimationType.Idle, Vob));
+            return PlayAnimation(_animationService.GetAnimationName(VmGothicEnums.AnimationType.Idle, NpcData));
         }
 
         public float GetAnimationDuration(string animationName)
