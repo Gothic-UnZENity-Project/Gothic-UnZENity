@@ -102,7 +102,7 @@ namespace GUZ.VR.Adapters.Vob
             if (grabber is HVRSocket)
                 return;
 
-            gameObject.layer = Constants.VobItem; // Back to default
+            gameObject.layer = Constants.VobItemLayer; // Back to default
 
             // Disable "ghostification" of object.
             _dynamicMaterialService.ResetDynamicValue(gameObject, Constants.ShaderPropertyTransparency, Constants.ShaderPropertyTransparencyDefault);
@@ -174,7 +174,7 @@ namespace GUZ.VR.Adapters.Vob
             yield return new WaitForSeconds(1f);
 
             // Re-enable collisions
-            gameObject.layer = Constants.VobItem;
+            gameObject.layer = Constants.VobItemLayer;
 
             // Disable "ghostification" of object.
             _dynamicMaterialService.ResetDynamicValue(gameObject, Constants.ShaderPropertyTransparency, Constants.ShaderPropertyTransparencyDefault);

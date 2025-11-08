@@ -1,4 +1,5 @@
 #if GUZ_HVR_INSTALLED
+using GUZ.Core.Adapters.Vob;
 using GUZ.Core.Extensions;
 using GUZ.Core.Models.Container;
 using GUZ.VR.Domain.Player;
@@ -40,6 +41,24 @@ namespace GUZ.VR.Services
         {
             _firstAttackDomain.FixedUpdate();
             _secondAttackDomain.FixedUpdate();
+        }
+
+        public bool IsWeaponInAttackWindow(VobContainer vobContainer)
+        {
+            if (vobContainer == _firstAttackDomain.WeaponVobContainer)
+                return _firstAttackDomain.IsInAttackState();
+            else if (vobContainer == _secondAttackDomain.WeaponVobContainer)
+                return _secondAttackDomain.IsInAttackState();
+            else
+                return false;
+        }
+
+        public void HitDone(VobContainer vobContainer)
+        {
+            if (vobContainer == _firstAttackDomain.WeaponVobContainer)
+                _firstAttackDomain.AdvanceStateAfterAttack();
+            else if (vobContainer == _secondAttackDomain.WeaponVobContainer)
+                _secondAttackDomain.AdvanceStateAfterAttack();
         }
     }
 }

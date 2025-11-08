@@ -113,7 +113,7 @@ namespace GUZ.Core.Const
         public static LayerMask HandLayer = LayerMask.NameToLayer("Hand"); // Layer 21 (suggested by HVR)
 
         // Custom layers
-        public static LayerMask VobItem = LayerMask.NameToLayer("VobItem");
+        public static LayerMask VobItemLayer = LayerMask.NameToLayer("VobItem");
         public static LayerMask VobItemNoWorldCollision = LayerMask.NameToLayer("VobItemNoWorldCollision"); // No collision with world (e.g. while item is in our hands)
         public static LayerMask VobNpcOrMonster = LayerMask.NameToLayer("VobNpcOrMonster");
         public static LayerMask VobMovableLayer = LayerMask.NameToLayer("VobMovable"); // No collision with world (e.g. for chest lid and door)

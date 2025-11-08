@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using GUZ.Core;
 using GUZ.Core.Adapters.Npc;
 using GUZ.Core.Const;
 using GUZ.Core.Extensions;
@@ -53,7 +52,7 @@ namespace GUZ.VR.Domain.Player
         private SfxModel _swingSwordSound;
         private float _soundPlayTime;
 
-        private VobContainer _weaponVobContainer;
+        public VobContainer WeaponVobContainer { get; private set; }
         private Rigidbody _weaponRigidbody;
         private Collider[] _weaponColliders;
 
@@ -123,9 +122,9 @@ namespace GUZ.VR.Domain.Player
 
 
             // First time grabbing this weapon.
-            if (_weaponVobContainer == null)
+            if (WeaponVobContainer == null)
             {
-                _weaponVobContainer = vobContainer;
+                WeaponVobContainer = vobContainer;
                 _weaponRigidbody = vobContainer.Go.GetComponentInChildren<Rigidbody>();
                 _weaponColliders = _weaponRigidbody.GetComponentsInChildren<Collider>();
 
@@ -154,11 +153,11 @@ namespace GUZ.VR.Domain.Player
         private bool CanHandle(VobContainer newWeapon)
         {
             // No weapon handled so far. Free for the first one.
-            if (_weaponVobContainer == null)
+            if (WeaponVobContainer == null)
                 return true;
 
             // The same weapon is trying to be grabbed by another hand.
-            if (_weaponVobContainer == newWeapon)
+            if (WeaponVobContainer == newWeapon)
                 return true;
 
             // else
@@ -199,7 +198,7 @@ namespace GUZ.VR.Domain.Player
 
         private void FullStopHandling()
         {
-            _weaponVobContainer = null;
+            WeaponVobContainer = null;
             _weaponRigidbody = null;
             _weaponColliders = null;
             _handlesLeftHand = false;
@@ -248,7 +247,7 @@ namespace GUZ.VR.Domain.Player
 
         private bool Is2HD()
         {
-            return (_weaponVobContainer.GetItemInstance().Flags & _twoHandedFlags) != 0;
+            return (WeaponVobContainer.GetItemInstance().Flags & _twoHandedFlags) != 0;
         }
 
         /// <summary>
@@ -660,6 +659,11 @@ namespace GUZ.VR.Domain.Player
         public float GetVelocityDropThreshold()
         {
             return _velocityDropThreshold;
+        }
+
+        public void AdvanceStateAfterAttack()
+        {
+            _currentWindow = TimeWindow.WaitingForCombo;
         }
     }
 }
