@@ -13,7 +13,7 @@ using ZenKit.Daedalus;
 
 namespace GUZ.Lab.Handler
 {
-    public class LabMonsterHandler : AbstractLabHandler
+    public class LabFightHandler : AbstractLabHandler
     {
         [SerializeField] private TMP_Dropdown _monsterSelector;
         [SerializeField] private GameObject _spawnPoint;
@@ -21,7 +21,7 @@ namespace GUZ.Lab.Handler
         [Inject] private readonly MultiTypeCacheService _multiTypeCacheService;
         [Inject] private readonly NpcService _npcService;
 
-        private List<NpcContainer> _usableMonsters = new();
+        private List<NpcLoader> _usableMonsters = new();
 
 
         public override void Bootstrap()
@@ -32,18 +32,16 @@ namespace GUZ.Lab.Handler
             {
                 var instance = GameStateService.GothicVm.AllocInstance<NpcInstance>(instanceName);
 
-                var monsterLoadingGo = new GameObject($"{instanceName} (Loader)");
+                var monsterLoadingGo = new GameObject(instanceName);
                 monsterLoadingGo.SetParent(_spawnPoint);
                 var loaderGoComp = monsterLoadingGo.AddComponent<NpcLoader>();
                 loaderGoComp.Npc = instance;
 
                 var npcData = new NpcContainer
                 {
-                    Go = loaderGoComp.gameObject,
                     Instance = instance,
                     Vob =  new NpcAdapter(instance.Index),
-                    Props = new(),
-                    PrefabProps = new()
+                    Props = new()
                 };
                 
                 instance.UserData = npcData;
@@ -55,17 +53,17 @@ namespace GUZ.Lab.Handler
                 if (instance.Id != 0 || instance.Voice != 0)
                     continue;
 
-                _usableMonsters.Add(npcData);
+                _usableMonsters.Add(loaderGoComp);
             }
 
-            _monsterSelector.options = _usableMonsters.Select(i => new TMP_Dropdown.OptionData(i.Vob.Name)).ToList();
+            _monsterSelector.options = _usableMonsters.Select(i => new TMP_Dropdown.OptionData(i.gameObject.name)).ToList();
         }
 
         public void MonsterSpawnClick()
         {
-            var monsterToSpawn = _usableMonsters[_monsterSelector.value];
+            var monsterLoaderComp = _usableMonsters[_monsterSelector.value];
 
-            _npcService.InitNpc(monsterToSpawn.Go, true);
+            _npcService.InitNpc(monsterLoaderComp.gameObject, true);
 
             // FIXME -> Now spawn the monster
         }

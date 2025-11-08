@@ -116,15 +116,15 @@ namespace GUZ.Core.Domain.Npc
             var userDataObject = new NpcContainer
             {
                 Instance = npcInstance,
-                Props = new(),
-                Vob = new NpcAdapter(npcIndex)
+                Vob = new NpcAdapter(npcIndex),
+                Props = new()
             };
             
             // We reference our object as user data to retrieve it whenever a Daedalus External provides an NpcInstance as input.
             // With this, we can always switch between our UnZENity data and ZenKit data.
             npcInstance.UserData = userDataObject;
 
-            // IMPORTANT!: NpcInstance.UserData stores a weak pointer. i.e. if we do not store the local variable it would get removed.
+            // IMPORTANT!: NpcInstance.UserData stores a weak pointer. i.e., if we do not store the local variable, it would get removed.
             _multiTypeCacheService.NpcCache.Add(userDataObject);
 
             return userDataObject;

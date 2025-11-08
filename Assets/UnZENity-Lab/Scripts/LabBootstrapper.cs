@@ -37,7 +37,7 @@ namespace GUZ.Lab
         public LabVideoHandler LabVideoHandler;
         public LabNpcDialogHandler NpcDialogHandler;
         public LabInteractableHandler InteractableHandler;
-        public LabMonsterHandler MonsterHandler;
+        public LabFightHandler FightHandler;
         public LabLadderLabHandler LadderLabHandler;
         public LabVobItemHandler VobItemHandler;
         public LabNpcAnimationHandler LabNpcAnimationHandler;
@@ -148,7 +148,7 @@ namespace GUZ.Lab
 
             InteractableHandler.SpawnItems = _spawnItems;
             InteractableHandler.Bootstrap();
-            MonsterHandler.Bootstrap();
+            FightHandler.Bootstrap();
             LadderLabHandler.Bootstrap();
             VobItemHandler.Bootstrap();
             LabLockHandler.Bootstrap();
