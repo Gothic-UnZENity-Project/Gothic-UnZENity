@@ -19,8 +19,14 @@ namespace GUZ.Core.Models.Adapter
 
         public readonly int MoveCount;
         public readonly FightAiMove[] Moves;
-        public FightAiMove GetRandomMove() => Moves.GetRandom();
-        
+        public FightAiMove GetRandomMove()
+        {
+            if (Moves.Length == 0)
+                return FightAiMove.Nop;
+            else
+                return Moves.GetRandom();
+        }
+
         public FightAiAdapter(FightAiInstance fightAiInstance)
         {
             this.Inject();

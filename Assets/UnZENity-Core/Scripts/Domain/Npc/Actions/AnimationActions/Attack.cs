@@ -89,6 +89,9 @@ namespace GUZ.Core.Domain.Npc.Actions.AnimationActions
                 case FightAiMove.Turn:
                     _npcAiService.ExtAiTurnToNpc(NpcInstance, _enemy);
                     break;
+                // Some attacks have no action. Therefore TryGetFightAiData() returns Nop as fallback.
+                case FightAiMove.Nop:
+                    break;
                 case FightAiMove.RunBack:
                 case FightAiMove.JumpBack:
                 case FightAiMove.AttackSide:
@@ -102,12 +105,9 @@ namespace GUZ.Core.Domain.Npc.Actions.AnimationActions
                 case FightAiMove.WaitLonger:
                 case FightAiMove.WaitExt:
                     Logger.LogError($"Ai_Attack() type >{_move}< not yet handled. Skipping...", LogCat.Ai);
-                    IsFinishedFlag = true;
                     break;
-                case FightAiMove.Nop:
                 default:
                     Logger.LogError("No action for Ai_Attack() selected. Missing path in logic!", LogCat.Ai);
-                    IsFinishedFlag = true;
                     break;
             }
             
