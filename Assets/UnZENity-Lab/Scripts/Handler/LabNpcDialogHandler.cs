@@ -159,13 +159,6 @@ namespace GUZ.Lab.Handler
 
             GameStateService.GothicVm.InitInstance(_bloodwynInstance);
 
-            // Hero
-            {
-                // Need to be set for later usage (e.g. Bloodwyn checks your inventory if enough nuggets are carried)
-                var heroInstance = GameStateService.GothicVm.InitInstance<NpcInstance>("hero");
-                GameStateService.GothicVm.GlobalHero = heroInstance;
-            }
-
             // We need to initialize the NPC at this frame to set the positions of child GOs now.
             _npcService.InitNpc(newNpc, true);
             newNpc.transform.SetLocalPositionAndRotation(default, default);

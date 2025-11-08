@@ -17647,7 +17647,7 @@ MonoBehaviour:
   LabVideoHandler: {fileID: 1219449894}
   NpcDialogHandler: {fileID: 1791413021}
   InteractableHandler: {fileID: 1956714045}
-  MonsterHandler: {fileID: 1288354492}
+  FightHandler: {fileID: 1288354492}
   LadderLabHandler: {fileID: 747305793}
   VobItemHandler: {fileID: 330949651}
   LabNpcAnimationHandler: {fileID: 501618520}

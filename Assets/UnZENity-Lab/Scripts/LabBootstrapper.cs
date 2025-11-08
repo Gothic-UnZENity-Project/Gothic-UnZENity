@@ -135,10 +135,10 @@ namespace GUZ.Lab
             await _staticCacheService.LoadGlobalCache().AwaitAndLog();
             await _meshService.CreateTextureArray().AwaitAndLog();
 
+            _bootstrapDomain.Boot();
+
             _npcService.CacheHero();
             BootstrapPlayer();
-
-            _bootstrapDomain.Boot();
 
             LabNpcAnimationHandler.Bootstrap();
             LabMusicHandler.Bootstrap();
