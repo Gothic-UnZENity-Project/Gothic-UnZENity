@@ -113,19 +113,26 @@ namespace GUZ.Core.Services.Npc
             {
                 return false;
             }
-            // TODO: Implement a proper fix for head props being null
-            // this is the case for monsters that do not have a separate head mesh 
-            var selfHeadBone = selfContainer.PrefabProps.Head != null ? selfContainer.PrefabProps.Head : selfContainer.Go.transform;
-            var otherHeadBone = otherContainer.PrefabProps.Head != null ? otherContainer.PrefabProps.Head : otherContainer.Go.transform;
 
-            var distanceToNpc = Vector3.Distance(selfContainer.Go.transform.position, otherHeadBone.position);
+            // Hint: For forward direction check, we can't use HeadMesh as e.g., Molerat's head is rotated to have red axis (right) as forward.
+            //       OpenGothic is therefore using Body rotation, too.
+            var selfRoot = selfContainer.Go.transform;
+            var otherRoot = otherContainer.Go.transform;
+            var selfHead = selfContainer.PrefabProps.Head ?? selfRoot;
+            var otherHead = otherContainer.PrefabProps.Head ?? otherRoot;
+
+            // Unity places positions of objects at the bottom. We need to lift them up towards the head
+            var selfRealHeadPosition = new Vector3(selfRoot.position.x, selfHead.position.y, selfRoot.position.y);
+            var otherRealHeadPosition = new Vector3(otherRoot.position.x, otherHead.position.y, otherRoot.position.y);
+
+            var distanceToNpc = Vector3.Distance(selfRealHeadPosition, otherRealHeadPosition);
             var inSightRange = distanceToNpc <= self.SensesRange;
 
-            var layersToIgnore = Constants.HandLayer | Constants.GrabbableLayer | Constants.VobItem | Constants.VobItemNoWorldCollision;
-            var hasLineOfSightCollisions = Physics.Linecast(selfHeadBone.position, otherHeadBone.position, layersToIgnore);
+            var layersToIgnore = Constants.HandLayer | Constants.GrabbableLayer | Constants.VobItem | Constants.VobItemNoWorldCollision | Constants.UILayer;
+            var hasLineOfSightCollisions = Physics.Linecast(selfRealHeadPosition, otherRealHeadPosition, layersToIgnore);
 
-            var directionToTarget = (otherHeadBone.position - selfHeadBone.position).normalized;
-            var angleToTarget = Vector3.Angle(selfHeadBone.forward, directionToTarget);
+            var directionToTarget = (otherRoot.position - selfRealHeadPosition).normalized;
+            var angleToTarget = Vector3.Angle(selfRoot.forward, directionToTarget);
             var inFov = angleToTarget <= fov;
 
             return inSightRange && !hasLineOfSightCollisions && (freeLOS || inFov);
