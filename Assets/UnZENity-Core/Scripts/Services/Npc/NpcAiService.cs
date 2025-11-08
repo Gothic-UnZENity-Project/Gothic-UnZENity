@@ -121,6 +121,8 @@ namespace GUZ.Core.Services.Npc
             var selfHead = selfContainer.PrefabProps.Head ?? selfRoot;
             var otherHead = otherContainer.PrefabProps.Head ?? otherRoot;
 
+            var selfGroundPosition = selfRoot.position;
+            var otherGroundPosition = otherRoot.position;
             // Unity places positions of objects at the bottom. We need to lift them up towards the head
             var selfRealHeadPosition = new Vector3(selfRoot.position.x, selfHead.position.y, selfRoot.position.z);
             var otherRealHeadPosition = new Vector3(otherRoot.position.x, otherHead.position.y, otherRoot.position.z);
@@ -131,8 +133,14 @@ namespace GUZ.Core.Services.Npc
             var layersToIgnore = Constants.HandLayer | Constants.GrabbableLayer | Constants.VobItem | Constants.VobItemNoWorldCollision | Constants.UILayer;
             var hasLineOfSightCollisions = Physics.Linecast(selfRealHeadPosition, otherRealHeadPosition, layersToIgnore);
 
-            var directionToTarget = (otherRealHeadPosition - selfRealHeadPosition).normalized;
-            var angleToTarget = Vector3.Angle(selfRoot.forward, directionToTarget);
+            // Calculate horizontal direction only (ignore Y axis for FOV check), basically a Gobbo is only using x+z for FOV and hero standing in front of it will work correctly. 
+            var directionToTarget = new Vector3(
+                otherGroundPosition.x - selfGroundPosition.x,
+                0f,
+                otherGroundPosition.z - selfGroundPosition.z
+            ).normalized;
+            var selfForwardHorizontal = new Vector3(selfRoot.forward.x, 0f, selfRoot.forward.z).normalized;
+            var angleToTarget = Vector3.Angle(selfForwardHorizontal, directionToTarget);
             var inFov = angleToTarget <= fov;
 
             return inSightRange && !hasLineOfSightCollisions && (freeLOS || inFov);
