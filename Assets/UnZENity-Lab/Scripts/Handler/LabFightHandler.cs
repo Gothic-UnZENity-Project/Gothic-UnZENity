@@ -48,7 +48,8 @@ namespace GUZ.Lab.Handler
 
                 _multiTypeCacheService.NpcCache.Add(npcData);
                 GameStateService.GothicVm.InitInstance(instance);
-
+                npcData.Vob.CopyFromInstanceData(instance); // e.g., copy Instance.FightTactics -> Vob.FightTactics
+                
                 // Only NPCs have an ID && Monsters have no voice.
                 if (instance.Id != 0 || instance.Voice != 0)
                     continue;

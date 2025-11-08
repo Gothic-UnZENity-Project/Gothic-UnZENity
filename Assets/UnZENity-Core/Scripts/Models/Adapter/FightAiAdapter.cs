@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using GUZ.Core.Const;
+using GUZ.Core.Extensions;
 using GUZ.Core.Services.Vm;
 using MyBox;
 using Reflex.Attributes;
@@ -22,6 +23,8 @@ namespace GUZ.Core.Models.Adapter
         
         public FightAiAdapter(FightAiInstance fightAiInstance)
         {
+            this.Inject();
+
             _fightAiInstance = fightAiInstance;
 
             CalculateAttackMoves(out MoveCount, out Moves);

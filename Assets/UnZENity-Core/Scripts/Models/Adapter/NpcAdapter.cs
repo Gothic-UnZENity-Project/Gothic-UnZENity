@@ -36,6 +36,8 @@ namespace GUZ.Core.Models.Adapter.Vobs
         /// </summary>
         public NpcAdapter(IVirtualObject vob) : base(vob)
         {
+            this.Inject();
+                
             if (vob.Ai == null)
             {
                 vob.Ai = new AiHuman
