@@ -4,6 +4,7 @@ using GUZ.Core.Adapters.Npc;
 using GUZ.Core.Extensions;
 using GUZ.Core.Models.Adapter.Vobs;
 using GUZ.Core.Models.Container;
+using GUZ.Core.Models.Vm;
 using GUZ.Core.Services.Caches;
 using GUZ.Core.Services.Npc;
 using Reflex.Attributes;
@@ -69,9 +70,23 @@ namespace GUZ.Lab.Handler
 
         public void SpawnMoleratClick()
         {
-            var moleratLoaderComp = _usableMonsters.FirstOrDefault(i => i.Container.Instance.GetName(NpcNameSlot.Slot0).EqualsIgnoreCase("Molerat"));
+            var loaderComp = _usableMonsters.FirstOrDefault(i => i.Container.Instance.Guild == (int)VmGothicEnums.Guild.GIL_MOLERAT);
 
-            _npcService.InitNpc(moleratLoaderComp.gameObject, true);
+            _npcService.InitNpc(loaderComp.gameObject, true);
+        }
+
+        public void SpawnGoblinClick()
+        {
+            var loaderComp = _usableMonsters.FirstOrDefault(i => i.Container.Instance.Guild == (int)VmGothicEnums.Guild.GIL_GOBBO);
+
+            _npcService.InitNpc(loaderComp.gameObject, true);
+        }
+
+        public void SpawnZombieClick()
+        {
+            var loaderComp = _usableMonsters.FirstOrDefault(i => i.Container.Instance.Guild == (int)VmGothicEnums.Guild.GIL_ZOMBIE);
+
+            _npcService.InitNpc(loaderComp.gameObject, true);
         }
         
         public void MonsterDestroyClick()
