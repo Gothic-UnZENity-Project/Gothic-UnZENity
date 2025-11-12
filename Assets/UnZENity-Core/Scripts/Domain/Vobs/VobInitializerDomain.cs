@@ -703,9 +703,7 @@ namespace GUZ.Core.Domain.Vobs
             var mmb = _resourceCacheService.TryGetMorphMesh(meshName);
             if (mmb != null)
             {
-                var ret = _meshService.CreateVob(meshName, mmb, parent: parent, rootGo: go);
-
-                // this is a dynamic object
+                var ret = _meshService.CreateVob(meshName, mmb, parent: parent, rootGo: go, useTextureArray: true);
 
                 // A few objects are broken and have no meshes. We need to destroy them immediately again.
                 if (ret == null)
