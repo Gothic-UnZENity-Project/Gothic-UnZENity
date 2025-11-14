@@ -144,6 +144,14 @@ namespace GUZ.Core.Services
                 SceneManager.UnloadSceneAsync(SceneManager.GetSceneByName(unloadScene));
             }
 
+            // Fallback world loading without OC.
+            // FIXME - needs to be solved better for performance reasons and dynamic support of Mods.
+            if (SceneUtility.GetBuildIndexByScenePath(sceneName) == -1)
+            {
+                Logger.LogWarning($"Scene {sceneName} not found. Falling back to {Constants.SceneDefaultWorld} without Occlusion Culling.", LogCat.Loading);
+                sceneName = Constants.SceneDefaultWorld;
+            }
+
             SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
         }
 

@@ -138,24 +138,25 @@ namespace GUZ.Core.Services.World
         /// </summary>
         public void ChangeWorld(string worldName)
         {
-            CurrentWorldName = worldName;
+            // G2 has for example: AddonWorld\NewWorld.zen --> NewWorld.zen
+            CurrentWorldName = Path.GetFileName(worldName);
 
             // 1. World was already loaded.
-            if (_worlds.ContainsKey(worldName))
+            if (_worlds.ContainsKey(CurrentWorldName))
             {
                 IsWorldLoadedForTheFirstTime = false;
                 return;
             }
 
             IsWorldLoadedForTheFirstTime = true;
-            ZenKit.World originalWorld = _resourceCacheService.TryGetWorld(worldName)!; // Always needed for some data not present in SaveGame.
+            ZenKit.World originalWorld = _resourceCacheService.TryGetWorld(CurrentWorldName)!; // Always needed for some data not present in SaveGame.
             ZenKit.World saveGameWorld = null;
             bool worldFoundInSaveGame = false;
 
             // 2. Try to load world from save game.
             if (IsLoadedGame)
             {
-                saveGameWorld = Save.LoadWorld(worldName);
+                saveGameWorld = Save.LoadWorld(CurrentWorldName);
                 worldFoundInSaveGame = saveGameWorld != null;
             }
 
@@ -175,7 +176,7 @@ namespace GUZ.Core.Services.World
 
             // 3. Store this world into runtime data as it's now loaded and cached during gameplay. (To save later when needed.)
             // TODO - If we get memory consumption issue, we can consider removing some data to free memory once world is loaded later.
-            _worlds[worldName] = new WorldContainer
+            _worlds[CurrentWorldName] = new WorldContainer
             {
                 OriginalWorld = originalWorld,
                 SaveGameWorld = saveGameWorld,

@@ -70,6 +70,7 @@ namespace GUZ.Core.Const
         public const string SceneLogo = "Logo";
         public const string SceneMainMenu = "MainMenu";
         public const string SceneLoading = "Loading";
+        public const string SceneDefaultWorld = "DefaultWorld";
         public const string SceneLab = "Lab";
 
         // Water settings
