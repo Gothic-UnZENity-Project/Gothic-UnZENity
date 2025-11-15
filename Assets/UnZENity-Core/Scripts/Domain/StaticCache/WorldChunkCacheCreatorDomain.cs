@@ -142,17 +142,17 @@ namespace GUZ.Core.Domain.StaticCache
             var currentOpaqueChunkPolygons = new WorldChunk();
             var isCurrentNodeWithOpaque = false;
             var currentOpaqueChunkLightsCount = 0;
-            var currentOpaqueAlreadyAffectingLightIndices = new List<int>();
+            var currentOpaqueAlreadyAffectingLightIndices = new HashSet<int>();
 
             var currentTransparentChunkPolygons = new WorldChunk();
             var isCurrentNodeWithTransparent = false;
             var currentTransparentChunkLightsCount = 0;
-            var currentTransparentAlreadyAffectingLightIndices = new List<int>();
+            var currentTransparentAlreadyAffectingLightIndices = new HashSet<int>();
 
             var currentWaterChunkPolygons = new WorldChunk();
             var isCurrentNodeWithWater = false;
             var currentWaterChunkLightsCount = 0;
-            var currentWaterAlreadyAffectingLightIndices = new List<int>();
+            var currentWaterAlreadyAffectingLightIndices = new HashSet<int>();
 
             foreach (var nodeData in leafNodesWithPolygons)
             {
@@ -166,7 +166,9 @@ namespace GUZ.Core.Domain.StaticCache
                 var node = bspTree.GetNode(nodeData.Key);
                 var polygonIds = nodeData.Value;
 
-                // This indicator will later on decide, if a node has a value of this type. If so, we add the light count.
+                // Calculate lights ONCE per node, not per polygon (otherwise 3sec will go up to 50sec)
+                var nodeBounds = node.BoundingBox.ToUnityBounds();
+
                 isCurrentNodeWithOpaque = false;
                 isCurrentNodeWithTransparent = false;
                 isCurrentNodeWithWater = false;
@@ -184,24 +186,20 @@ namespace GUZ.Core.Domain.StaticCache
 
                     if (material.Group == MaterialGroup.Water)
                     {
-                        var lightsOfChunk = GetLightsInBound(node.BoundingBox, currentWaterAlreadyAffectingLightIndices);
-
                         // First time we have a Polygon with Water in this node.
                         if (!isCurrentNodeWithWater)
                         {
-                            currentWaterChunkLightsCount += lightsOfChunk;
+                            currentWaterChunkLightsCount += GetLightsInBound(nodeBounds, currentWaterAlreadyAffectingLightIndices);
                             isCurrentNodeWithWater = true;
                         }
                         currentWaterChunkPolygons.PolygonIds.Add(polygonId);
                     }
                     else if (texture.Format == TextureFormat.Dxt1)
                     {
-                        var lightsOfChunk = GetLightsInBound(node.BoundingBox, currentOpaqueAlreadyAffectingLightIndices);
-
                         // First time we have a Polygon with Dxt1 in this node.
                         if (!isCurrentNodeWithOpaque)
                         {
-                            currentOpaqueChunkLightsCount += lightsOfChunk;
+                            currentOpaqueChunkLightsCount += GetLightsInBound(nodeBounds, currentOpaqueAlreadyAffectingLightIndices);
                             isCurrentNodeWithOpaque = true;
                         }
                         currentOpaqueChunkPolygons.PolygonIds.Add(polygonId);
@@ -209,12 +207,10 @@ namespace GUZ.Core.Domain.StaticCache
                     // aka TextureFormat.R8G8B8A8 or anything else (e.g. DTX3, which will be changed to uncompressed R8G8B8A8 anyways)
                     else
                     {
-                        var lightsOfChunk = GetLightsInBound(node.BoundingBox, currentTransparentAlreadyAffectingLightIndices);
-
                         // First time we have a Polygon with R8G8B8A8 in this node.
                         if (!isCurrentNodeWithTransparent)
                         {
-                            currentTransparentChunkLightsCount += lightsOfChunk;
+                            currentTransparentChunkLightsCount += GetLightsInBound(nodeBounds, currentTransparentAlreadyAffectingLightIndices);
                             isCurrentNodeWithTransparent = true;
                         }
                         currentTransparentChunkPolygons.PolygonIds.Add(polygonId);
@@ -287,21 +283,17 @@ namespace GUZ.Core.Domain.StaticCache
             };
         }
 
-        private int GetLightsInBound(AxisAlignedBoundingBox aabb, List<int> excludeElements)
+        private int GetLightsInBound(Bounds nodeBounds, HashSet<int> excludeElements)
         {
             var returnCount = 0;
-            var unityBbox = aabb.ToUnityBounds();
-
             for (var i = 0; i < _stationaryLightBounds.Count; i++)
             {
-                // If a light is already added to current mesh chunk's affecting lights, we don't need to add it again!
-                // Otherwise, a chunk can close after 16 nodes already, as each node's bbox calculates a single light as +1 each time instead of once only.
                 if (excludeElements.Contains(i))
                 {
                     continue;
                 }
 
-                if (_stationaryLightBounds[i].Intersects(unityBbox))
+                if (_stationaryLightBounds[i].Intersects(nodeBounds))
                 {
                     excludeElements.Add(i);
                     returnCount++;
