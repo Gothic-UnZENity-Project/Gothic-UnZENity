@@ -485,6 +485,7 @@ GameObject:
   - component: {fileID: 2014673630}
   - component: {fileID: 2014673633}
   - component: {fileID: 2014673634}
+  - component: {fileID: 2014673635}
   m_Layer: 0
   m_Name: Debug
   m_TagString: Untagged
@@ -553,6 +554,23 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Activate: 0
+--- !u!114 &2014673635
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2014673629}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cfe71aeda0ae4fb9a05b5c36303f79e9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _showLeafNodes: 0
+  _leafNodeStart: -1
+  _leafNodeCount: -1
+  _showSectionsAmount: -1
+  _showPortalsAmount: -1
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

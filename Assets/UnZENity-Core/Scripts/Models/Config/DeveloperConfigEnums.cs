@@ -15,7 +15,7 @@ namespace GUZ.Core.Models.Config
             G1OrcGraveyard,
             G1OrcTempel,
             // G2
-            G2Newworld,
+            G2NewWorld,
             G2OldWorld,
             G2AddonWorld,
             G2DragonIsland,
@@ -72,7 +72,7 @@ namespace GUZ.Core.Models.Config
             { WorldToSpawn.G1OrcGraveyard, "orcgraveyard.zen" },
             { WorldToSpawn.G1OrcTempel, "orctempel.zen" },
             // G2
-            { WorldToSpawn.G2Newworld, "newworld.zen" },
+            { WorldToSpawn.G2NewWorld, "newworld.zen" },
             { WorldToSpawn.G2OldWorld, "oldworld.zen" },
             { WorldToSpawn.G2AddonWorld, "addonworld.zen" },
             { WorldToSpawn.G2DragonIsland, "dragonisland.zen" }

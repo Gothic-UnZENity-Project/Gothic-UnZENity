@@ -437,6 +437,9 @@ namespace GUZ.Core.Services.StaticCache
             string data = null;
             var filePathCaseInsensitive = IniLoader.FindFileCaseInsensitive(filePath);
 
+            if (filePathCaseInsensitive == null)
+                throw new FileNotFoundException($"Can't load cached file. File at >{filePath}< not found.");
+            
             if (_configIsCompressed)
             {
                 using (var fileStream = new FileStream(filePathCaseInsensitive, FileMode.Open))
