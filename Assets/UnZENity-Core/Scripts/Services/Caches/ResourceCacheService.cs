@@ -37,6 +37,7 @@ namespace GUZ.Core.Services.Caches
         private ResourceCacheType<IMultiResolutionMesh> _multiResolutionMesh;
         private ResourceCacheType<IMorphMesh> _morphMesh;
         private ResourceCacheType<IFont> _font;
+        private ResourceCacheType<ITexture> _texture;
         private ResourceCacheType<GameObject> _prefab;
 
         public void Init(string root)
@@ -75,6 +76,7 @@ namespace GUZ.Core.Services.Caches
             _multiResolutionMesh = new(s => new MultiResolutionMesh(Vfs, s).Cache());
             _morphMesh = new(s => new MorphMesh(Vfs, s).Cache());
             _font = new(s => new Font(Vfs, s).Cache());
+            _texture = new(s => new Texture(Vfs, s).Cache());
             
             _prefab = new(s =>
             {
@@ -90,11 +92,12 @@ namespace GUZ.Core.Services.Caches
         [CanBeNull]
         public ITexture TryGetTexture([NotNull] string key)
         {
-            // Zen texture data is not cached as we do not need to keep the pixel data in memory as managed objects.
-            // Instead, TextureCache loads the texture data when need and creates a Texture2D.
+            // 2024 - Initial idea: ZenKit texture data is not cached as we do not need to keep the pixel data in memory as managed objects.
+            //        Instead, TextureCache loads the texture data when need and creates a Texture2D.
+            // 2025 - But reality shows that loading time from e.g., G2.DragonIsland is reduced from 30sec to 2sec with it (called very often during calculation of WorldChunks)
             try
             {
-                return new Texture(Vfs, $"{GetPreparedKey(key)}-c.tex");
+                return _texture.TryLoad($"{GetPreparedKey(key)}-c.tex", out var item) ? item : null;
             }
             catch (Exception e)
             {
@@ -111,6 +114,7 @@ namespace GUZ.Core.Services.Caches
             _model.Dispose();
             _modelMesh.Dispose();
             _multiResolutionMesh.Dispose();
+            _texture.Dispose();
         }
 
         [CanBeNull]

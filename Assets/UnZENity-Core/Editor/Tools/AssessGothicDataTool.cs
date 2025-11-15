@@ -61,10 +61,11 @@ namespace GUZ.Core.Editor.Tools
             foreach (var keyValuePair in worlds)
             {
                 Debug.Log($"{keyValuePair.Key}: " +
-                          $"MaterialCount={keyValuePair.Value.Mesh.MaterialCount}, " +
                           $"NodeCount={keyValuePair.Value.BspTree.NodeCount}, " +
+                          $"LeaveNodeIndicesCount={keyValuePair.Value.BspTree.LeafNodeIndices.Count}, " +
                           $"SectorCount={keyValuePair.Value.BspTree.SectorCount}, " + 
-                          $"LightPointsCount={keyValuePair.Value.BspTree.LightPointCount}");
+                          $"LightPointsCount={keyValuePair.Value.BspTree.LightPointCount}, " +
+                          $"MaterialCount={keyValuePair.Value.Mesh.MaterialCount}");
             }
             
             return worlds;
