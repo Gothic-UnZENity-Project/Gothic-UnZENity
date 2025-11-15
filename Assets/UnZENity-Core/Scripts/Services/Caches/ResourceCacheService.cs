@@ -23,7 +23,8 @@ namespace GUZ.Core.Services.Caches
     {
         [Inject] private readonly ContextInteractionService _contextInteractionService;
         
-        private readonly Vfs _vfs = new();
+        public readonly Vfs Vfs = new();
+
         private readonly Loader _dmLoader = Loader.Create(LoaderOptions.Default | LoaderOptions.Download);
 
         private ResourceCacheType<ZenKit.World> _world;
@@ -43,12 +44,12 @@ namespace GUZ.Core.Services.Caches
             var workPath = FindWorkPath(root);
             var diskPaths = FindDiskPaths(root);
 
-            diskPaths.ForEach(v => _vfs.MountDisk(v, VfsOverwriteBehavior.Older));
-            _vfs.Mount(Path.GetFullPath(workPath), "/_work", VfsOverwriteBehavior.Older);
+            diskPaths.ForEach(v => Vfs.MountDisk(v, VfsOverwriteBehavior.Older));
+            Vfs.Mount(Path.GetFullPath(workPath), "/_work", VfsOverwriteBehavior.Older);
 
             _dmLoader.AddResolver(name =>
             {
-                var node = _vfs.Find(name);
+                var node = Vfs.Find(name);
                 return node?.Buffer.Bytes;
             });
             
@@ -56,7 +57,7 @@ namespace GUZ.Core.Services.Caches
                 (s, version) =>
                 {
                     // We do not cache the world itself, but only the loading pointer. As Mesh could exhaust our memory consumption.
-                    var fireWorld = new ZenKit.World(_vfs, s, version);
+                    var fireWorld = new ZenKit.World(Vfs, s, version);
 
                     // FIRE worlds aren't positioned at 0,0,0. We need to do it now, to have the correct parent-child positioning.
                     fireWorld.RootObjects.ForEach(i => i.Position = default);
@@ -65,15 +66,15 @@ namespace GUZ.Core.Services.Caches
                 }
             );
             
-            _modelScript = new(s => new ModelScript(_vfs, s).Cache());
-            _model = new(s => new ZenKit.Model(_vfs, s).Cache());
-            _modelAnimation = new(s => new ModelAnimation(_vfs, s).Cache());
-            _mesh = new(s => new Mesh(_vfs, s).Cache());
-            _modelHierarchy = new(s => new ModelHierarchy(_vfs, s).Cache() );
-            _modelMesh = new(s => new ModelMesh(_vfs, s).Cache());
-            _multiResolutionMesh = new(s => new MultiResolutionMesh(_vfs, s).Cache());
-            _morphMesh = new(s => new MorphMesh(_vfs, s).Cache());
-            _font = new(s => new Font(_vfs, s).Cache());
+            _modelScript = new(s => new ModelScript(Vfs, s).Cache());
+            _model = new(s => new ZenKit.Model(Vfs, s).Cache());
+            _modelAnimation = new(s => new ModelAnimation(Vfs, s).Cache());
+            _mesh = new(s => new Mesh(Vfs, s).Cache());
+            _modelHierarchy = new(s => new ModelHierarchy(Vfs, s).Cache() );
+            _modelMesh = new(s => new ModelMesh(Vfs, s).Cache());
+            _multiResolutionMesh = new(s => new MultiResolutionMesh(Vfs, s).Cache());
+            _morphMesh = new(s => new MorphMesh(Vfs, s).Cache());
+            _font = new(s => new Font(Vfs, s).Cache());
             
             _prefab = new(s =>
             {
@@ -93,9 +94,9 @@ namespace GUZ.Core.Services.Caches
             // Instead, TextureCache loads the texture data when need and creates a Texture2D.
             try
             {
-                return new Texture(_vfs, $"{GetPreparedKey(key)}-c.tex");
+                return new Texture(Vfs, $"{GetPreparedKey(key)}-c.tex");
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 return null;
             }
@@ -174,7 +175,7 @@ namespace GUZ.Core.Services.Caches
         [CanBeNull]
         public byte[] TryGetSoundBytes([NotNull] string key)
         {
-            var node = _vfs.Find($"{GetPreparedKey(key)}.wav");
+            var node = Vfs.Find($"{GetPreparedKey(key)}.wav");
             return node == null ? null : node.Buffer.Bytes;
         }
 
@@ -196,13 +197,13 @@ namespace GUZ.Core.Services.Caches
         {
             // NOTE(lmichaelis): These are not cached, since they contain internal state
             //                   which should not be shared.
-            return new DaedalusVm(_vfs, $"{GetPreparedKey(key)}.dat");
+            return new DaedalusVm(Vfs, $"{GetPreparedKey(key)}.dat");
         }
 
         [CanBeNull]
         public ZenKit.World TryGetWorld([NotNull] string key)
         {
-            return new ZenKit.World(_vfs, $"{GetPreparedKey(key)}.zen");
+            return new ZenKit.World(Vfs, $"{GetPreparedKey(key)}.zen");
         }
 
         /// <summary>
@@ -222,7 +223,7 @@ namespace GUZ.Core.Services.Caches
             }
             else
             {
-                return new ZenKit.World(_vfs, $"{GetPreparedKey(key)}.zen", version);
+                return new ZenKit.World(Vfs, $"{GetPreparedKey(key)}.zen", version);
             }
         }
 

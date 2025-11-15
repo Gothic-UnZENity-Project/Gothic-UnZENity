@@ -9,14 +9,15 @@ namespace GUZ.Core.Domain.Config
 {
     public static class JsonRootLoader
     {
+        public const string DefaultSteamGothic1Folder = @"C:\Program Files (x86)\Steam\steamapps\common\Gothic\";
+        public const string DefaultSteamGothic2Folder = @"C:\Program Files (x86)\Steam\steamapps\common\Gothic II\";
+
         private const string _settingsFileName = "GameSettings.json";
         private const string _settingsFileNameDev = "GameSettings.dev.json";
 
         private const string _speechToTextFolder = "SpeechToText";
         private const string _speechToTextHowto = "HOWTO.txt";
         
-        private const string _defaultSteamGothic1Folder = @"C:\Program Files (x86)\Steam\steamapps\common\Gothic\";
-        private const string _defaultSteamGothic2Folder = @"C:\Program Files (x86)\Steam\steamapps\common\Gothic II\";
 
 
         public static JsonRootConfig Load()
@@ -169,11 +170,11 @@ namespace GUZ.Core.Domain.Config
             {
                 if (version == GameVersion.Gothic1)
                 {
-                    return _defaultSteamGothic1Folder;
+                    return DefaultSteamGothic1Folder;
                 }
                 else
                 {
-                    return _defaultSteamGothic2Folder;
+                    return DefaultSteamGothic2Folder;
                 }
             }
         }
