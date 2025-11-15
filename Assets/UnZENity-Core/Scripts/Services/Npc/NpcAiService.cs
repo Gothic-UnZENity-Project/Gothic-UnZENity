@@ -113,19 +113,34 @@ namespace GUZ.Core.Services.Npc
             {
                 return false;
             }
-            // TODO: Implement a proper fix for head props being null
-            // this is the case for monsters that do not have a separate head mesh 
-            var selfHeadBone = selfContainer.PrefabProps.Head != null ? selfContainer.PrefabProps.Head : selfContainer.Go.transform;
-            var otherHeadBone = otherContainer.PrefabProps.Head != null ? otherContainer.PrefabProps.Head : otherContainer.Go.transform;
 
-            var distanceToNpc = Vector3.Distance(selfContainer.Go.transform.position, otherHeadBone.position);
+            // Hint: For forward direction check, we can't use HeadMesh as e.g., Molerat's head is rotated to have red axis (right) as forward.
+            //       OpenGothic is therefore using Body rotation, too.
+            var selfRoot = selfContainer.Go.transform;
+            var otherRoot = otherContainer.Go.transform;
+            var selfHead = selfContainer.PrefabProps.Head ?? selfRoot;
+            var otherHead = otherContainer.PrefabProps.Head ?? otherRoot;
+
+            var selfGroundPosition = selfRoot.position;
+            var otherGroundPosition = otherRoot.position;
+            // Unity places positions of objects at the bottom. We need to lift them up towards the head
+            var selfRealHeadPosition = new Vector3(selfRoot.position.x, selfHead.position.y, selfRoot.position.z);
+            var otherRealHeadPosition = new Vector3(otherRoot.position.x, otherHead.position.y, otherRoot.position.z);
+
+            var distanceToNpc = Vector3.Distance(selfRealHeadPosition, otherRealHeadPosition);
             var inSightRange = distanceToNpc <= self.SensesRange;
 
-            var layersToIgnore = Constants.HandLayer | Constants.GrabbableLayer | Constants.VobItem | Constants.VobItemNoWorldCollision;
-            var hasLineOfSightCollisions = Physics.Linecast(selfHeadBone.position, otherHeadBone.position, layersToIgnore);
+            var layersToIgnore = Constants.HandLayer | Constants.GrabbableLayer | Constants.VobItemLayer | Constants.VobItemNoWorldCollision | Constants.UILayer;
+            var hasLineOfSightCollisions = Physics.Linecast(selfRealHeadPosition, otherRealHeadPosition, layersToIgnore);
 
-            var directionToTarget = (otherHeadBone.position - selfHeadBone.position).normalized;
-            var angleToTarget = Vector3.Angle(selfHeadBone.forward, directionToTarget);
+            // Calculate horizontal direction only (ignore Y axis for FOV check), basically a Gobbo is only using x+z for FOV and hero standing in front of it will work correctly. 
+            var directionToTarget = new Vector3(
+                otherGroundPosition.x - selfGroundPosition.x,
+                0f,
+                otherGroundPosition.z - selfGroundPosition.z
+            ).normalized;
+            var selfForwardHorizontal = new Vector3(selfRoot.forward.x, 0f, selfRoot.forward.z).normalized;
+            var angleToTarget = Vector3.Angle(selfForwardHorizontal, directionToTarget);
             var inFov = angleToTarget <= fov;
 
             return inSightRange && !hasLineOfSightCollisions && (freeLOS || inFov);
@@ -453,6 +468,9 @@ namespace GUZ.Core.Services.Npc
             NpcContainer closestEnemy = null;
             var closestSqrDist = float.MaxValue;
 
+            // FIXME - Performance - Can we clean this up to support only spawned and visible NPCs/Monsters?
+            //         Otherwise we might need to loop through it for each visible monster and 1000x per visible NPC/Monster
+            //         -> about 10k checks per frame!
             foreach (var candidate in _multiTypeCacheService.NpcCache)
             {
                 // Fast-fail checks in order of cheapest first

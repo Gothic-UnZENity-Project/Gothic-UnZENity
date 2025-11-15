@@ -45,6 +45,7 @@ namespace GUZ.Core.Domain.Npc
         [Inject] private readonly NpcMeshCullingService _npcMeshCullingService;
         [Inject] private readonly GameStateService _gameStateService;
         [Inject] private readonly ResourceCacheService _resourceCacheService;
+        [Inject] private readonly VmCacheService _vmCacheService;
 
         
         public GameObject RootGo;
@@ -116,15 +117,15 @@ namespace GUZ.Core.Domain.Npc
             var userDataObject = new NpcContainer
             {
                 Instance = npcInstance,
-                Props = new(),
-                Vob = new NpcAdapter(npcIndex)
+                Vob = new NpcAdapter(npcIndex),
+                Props = new()
             };
             
             // We reference our object as user data to retrieve it whenever a Daedalus External provides an NpcInstance as input.
             // With this, we can always switch between our UnZENity data and ZenKit data.
             npcInstance.UserData = userDataObject;
 
-            // IMPORTANT!: NpcInstance.UserData stores a weak pointer. i.e. if we do not store the local variable it would get removed.
+            // IMPORTANT!: NpcInstance.UserData stores a weak pointer. i.e., if we do not store the local variable, it would get removed.
             _multiTypeCacheService.NpcCache.Add(userDataObject);
 
             return userDataObject;
@@ -299,6 +300,14 @@ namespace GUZ.Core.Domain.Npc
             {
                 _meshService.CreateNpcWeapon(newNpc, equippedItem, (VmGothicEnums.ItemFlags)equippedItem.MainFlag,
                     (VmGothicEnums.ItemFlags)equippedItem.Flags);
+            }
+            
+            // Some monsters have equipped weapons directly in their hands.
+            if (props.CurrentItem > 0)
+            {
+                var weaponInHand = _vmCacheService.TryGetItemData(props.CurrentItem);
+                _meshService.CreateNpcWeapon(newNpc, weaponInHand, (VmGothicEnums.ItemFlags)weaponInHand.MainFlag,
+                    (VmGothicEnums.ItemFlags)weaponInHand.Flags, true);
             }
         }
 

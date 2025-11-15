@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using GUZ.Core.Const;
+using GUZ.Core.Extensions;
 using GUZ.Core.Services.Vm;
 using MyBox;
 using Reflex.Attributes;
@@ -18,10 +19,18 @@ namespace GUZ.Core.Models.Adapter
 
         public readonly int MoveCount;
         public readonly FightAiMove[] Moves;
-        public FightAiMove GetRandomMove() => Moves.GetRandom();
-        
+        public FightAiMove GetRandomMove()
+        {
+            if (Moves.Length == 0)
+                return FightAiMove.Nop;
+            else
+                return Moves.GetRandom();
+        }
+
         public FightAiAdapter(FightAiInstance fightAiInstance)
         {
+            this.Inject();
+
             _fightAiInstance = fightAiInstance;
 
             CalculateAttackMoves(out MoveCount, out Moves);

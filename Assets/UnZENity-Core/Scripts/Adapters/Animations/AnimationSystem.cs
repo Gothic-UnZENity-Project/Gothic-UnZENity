@@ -39,6 +39,7 @@ namespace GUZ.Core.Adapters.Adnimations
         [Inject] private readonly AnimationService _animationService;
         [Inject] private readonly AudioService _audioService;
         [Inject] private readonly VobService _vobService;
+        [Inject] private readonly NpcService _npcService;
 
 
 
@@ -176,7 +177,7 @@ namespace GUZ.Core.Adapters.Adnimations
 
         public bool PlayIdleAnimation()
         {
-            return PlayAnimation(_animationService.GetAnimationName(VmGothicEnums.AnimationType.Idle, Vob));
+            return PlayAnimation(_animationService.GetAnimationName(VmGothicEnums.AnimationType.Idle, NpcData));
         }
 
         public float GetAnimationDuration(string animationName)
@@ -506,7 +507,7 @@ namespace GUZ.Core.Adapters.Adnimations
                 switch (eventTag.Type)
                 {
                     case EventType.ItemInsert:
-                        InsertItem(eventTag.Slots.Item1, eventTag.Slots.Item2);
+                        _npcService.InsertItem(NpcData, eventTag.Slots.Item1, eventTag.Slots.Item2);
                         break;
                     case EventType.ItemDestroy:
                     case EventType.ItemRemove:
@@ -561,20 +562,6 @@ namespace GUZ.Core.Adapters.Adnimations
 
                 PrefabProps.HeadMorph.StartAnimation(Properties.BodyData.Head, type);
             }
-        }
-
-        private void InsertItem(string slot1, string slot2)
-        {
-            if (slot2.Any())
-            {
-                throw new Exception("Slot 2 is set but not yet handled by InsertItem as AnimationEvent.");
-            }
-
-            var slotGo = PrefabProps.Bip01.gameObject.FindChildRecursively(slot1);
-
-            _vobService.CreateItemMesh(Properties.CurrentItem, slotGo);
-
-            Properties.UsedItemSlot = slot1;
         }
 
         private void RemoveItem()

@@ -52,10 +52,10 @@ namespace GUZ.Core.Services.Meshes
         }
 
          public GameObject CreateNpcWeapon(GameObject npcGo, ItemInstance itemData,
-            VmGothicEnums.ItemFlags mainFlag, VmGothicEnums.ItemFlags flags)
+            VmGothicEnums.ItemFlags mainFlag, VmGothicEnums.ItemFlags flags, bool isEquipped = false)
         {
             var npcWeaponBuilder = new NpcWeaponMeshBuilder().Inject();
-            npcWeaponBuilder.SetWeaponData(npcGo, itemData, mainFlag, flags);
+            npcWeaponBuilder.SetWeaponData(npcGo, itemData, mainFlag, flags, isEquipped);
             npcWeaponBuilder.SetMeshName(itemData.Visual);
 
             switch (mainFlag)

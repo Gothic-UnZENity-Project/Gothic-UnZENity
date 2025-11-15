@@ -355,7 +355,7 @@ namespace GUZ.Core.Services.World
                 
                 wrappedVobs.Add(vob.Type switch
                 {
-                    VirtualObjectType.oCNpc => new NpcAdapter(vob).Inject(),
+                    VirtualObjectType.oCNpc => new NpcAdapter(vob),
                     _ => vob
                 });
             }

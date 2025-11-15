@@ -13,14 +13,16 @@ namespace GUZ.Core.Domain.Meshes.Builder
         private ItemInstance _itemData;
         private VmGothicEnums.ItemFlags _mainFlag;
         private VmGothicEnums.ItemFlags _flags;
+        private bool _isEquipped;
 
         public void SetWeaponData(GameObject npcGo, ItemInstance itemData, VmGothicEnums.ItemFlags mainFlag,
-            VmGothicEnums.ItemFlags flags)
+            VmGothicEnums.ItemFlags flags, bool isEquipped)
         {
             _npcGo = npcGo;
             _itemData = itemData;
             _mainFlag = mainFlag;
             _flags = flags;
+            _isEquipped = isEquipped;
         }
 
         public override GameObject Build()
@@ -40,17 +42,25 @@ namespace GUZ.Core.Domain.Meshes.Builder
         private GameObject EquipMeleeWeapon()
         {
             string slotName;
-            switch ((VmGothicEnums.ItemFlags)_itemData.Flags)
-            {
-                case VmGothicEnums.ItemFlags.Item2HdAxe:
-                case VmGothicEnums.ItemFlags.Item2HdSwd:
-                    slotName = "ZS_LONGSWORD";
-                    break;
-                default:
-                    slotName = "ZS_SWORD";
-                    break;
-            }
 
+            if (_isEquipped)
+            {
+                slotName = "ZS_RIGHTHAND";
+            }
+            else
+            {
+                switch ((VmGothicEnums.ItemFlags)_itemData.Flags)
+                {
+                    case VmGothicEnums.ItemFlags.Item2HdAxe:
+                    case VmGothicEnums.ItemFlags.Item2HdSwd:
+                        slotName = "ZS_LONGSWORD";
+                        break;
+                    default:
+                        slotName = "ZS_SWORD";
+                        break;
+                }
+            }
+            
             var weaponSlotGo = _npcGo.FindChildRecursively(slotName);
             if (weaponSlotGo == null)
             {
