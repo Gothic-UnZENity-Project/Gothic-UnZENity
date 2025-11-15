@@ -1,10 +1,10 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using GUZ.Core.Adapters.Npc;
 using GUZ.Core.Const;
-using GUZ.Core.Logging;
 using GUZ.Core.Creator;
 using GUZ.Core.Domain.Npc;
 using GUZ.Core.Extensions;
@@ -14,7 +14,6 @@ using GUZ.Core.Models.Config;
 using GUZ.Core.Models.Container;
 using GUZ.Core.Models.Npc;
 using GUZ.Core.Models.Vm;
-using GUZ.Core.Models.Vob;
 using GUZ.Core.Services.Caches;
 using GUZ.Core.Services.Config;
 using GUZ.Core.Services.Player;
@@ -27,7 +26,7 @@ using UnityEngine;
 using ZenKit;
 using ZenKit.Daedalus;
 using ZenKit.Vobs;
-using Logger = GUZ.Core.Logging.Logger;
+using Object = UnityEngine.Object;
 
 namespace GUZ.Core.Services.Npc
 {
@@ -49,6 +48,7 @@ namespace GUZ.Core.Services.Npc
         [Inject] private readonly PlayerService _playerService;
         [Inject] private readonly WayNetService _wayNetService;
         [Inject] private readonly VobService _vobService;
+        [Inject] private readonly NpcInventoryService _npcInventoryService;
 
         
         // Supporter class where the whole Init() logic is outsourced for better readability.
@@ -353,11 +353,19 @@ namespace GUZ.Core.Services.Npc
             Object.Destroy(item.gameObject);
         }
         
+        /// <summary>
+        /// Method is called, when a NPCInstance from Daedalus is initialized.
+        /// As it's before any mesh is created, we do not spawn the item now.
+        /// </summary>
         public void ExtNpcSetToFightMode(NpcInstance npc, int itemIndex)
         {
+            var item = _vmCacheService.TryGetItemData(itemIndex);
             npc.GetUserData()!.Vob.FightMode = (int)VmGothicEnums.WeaponState.W1H;
-
-            // FIXME - Spawn Item as well!
+            npc.GetUserData().Props.CurrentItem = itemIndex;
+            
+            // Also add item into Inventory (G1; e.g., Gobbo NailMace).
+            // TODO - Check if it's the same in G2.
+            _npcInventoryService.ExtCreateInvItems(npc, item.Index, 1);
         }
 
         public void ExtTaMin(NpcInstance npc, int startH, int startM, int stopH, int stopM, int action, string waypoint)
@@ -412,7 +420,7 @@ namespace GUZ.Core.Services.Npc
         {
             var pos = npc.GetUserData().Go.transform.position;
 
-            return _wayNetService.FindNearestWayPoint(pos, true).Name;
+            return _wayNetService.FindNearestWayPoint(pos, true)?.Name ?? "";
         }
 
         public bool ExtWldIsFpAvailable(NpcInstance npc, string fpNamePart)
@@ -444,7 +452,7 @@ namespace GUZ.Core.Services.Npc
         {
             var pos = npc.GetUserData().Go.transform.position;
 
-            return _wayNetService.FindNearestWayPoint(pos).Name;
+            return _wayNetService.FindNearestWayPoint(pos)?.Name ?? "";
         }
 
         public bool ExtIsNextFpAvailable(NpcInstance npc, string fpNamePart)
@@ -496,6 +504,20 @@ namespace GUZ.Core.Services.Npc
                     ReEnableNpc(npcContainer);
                 }
             }
+        }
+        
+        public void InsertItem(NpcContainer npcContainer, string slot1, string slot2 = "")
+        {
+            if (slot2.Any())
+            {
+                throw new Exception("Slot 2 is set but not yet handled by InsertItem as AnimationEvent.");
+            }
+
+            var slotGo = npcContainer.PrefabProps.Bip01.gameObject.FindChildRecursively(slot1);
+
+             _vobService.CreateItemMesh(npcContainer.Props.CurrentItem, slotGo);
+
+            npcContainer.Props.UsedItemSlot = slot1;
         }
     }
 }

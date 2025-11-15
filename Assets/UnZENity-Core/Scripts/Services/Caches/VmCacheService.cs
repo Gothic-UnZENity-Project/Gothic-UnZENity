@@ -75,7 +75,7 @@ namespace GUZ.Core.Services.Caches
             FightAiAdapter newData = null;
             try
             {
-                newData = new FightAiAdapter(_gameStateService.FightVm.InitInstance<FightAiInstance>(preparedKey)).Inject();
+                newData = new FightAiAdapter(_gameStateService.FightVm.InitInstance<FightAiInstance>(preparedKey));
             }
             catch (Exception)
             {

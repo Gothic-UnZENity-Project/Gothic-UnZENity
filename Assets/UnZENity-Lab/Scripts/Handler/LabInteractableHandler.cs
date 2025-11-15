@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,7 +13,7 @@ namespace GUZ.Lab.Handler
 {
     public class LabInteractableHandler : AbstractLabHandler
     {
-        public bool IsActive = true;
+        [NonSerialized] public bool SpawnItems;
 
         public GameObject Weapons1HGO;
         public GameObject Weapons2HGO;
@@ -36,7 +37,7 @@ namespace GUZ.Lab.Handler
 
         public override void Bootstrap()
         {
-            if (!IsActive)
+            if (!SpawnItems)
                 return;
 
             var itemNames = GameStateService.GothicVm.GetInstanceSymbols("C_Item").Select(i => i.Name).ToList();

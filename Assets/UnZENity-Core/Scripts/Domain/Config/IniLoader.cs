@@ -17,7 +17,8 @@ namespace GUZ.Core.Domain.Config
                 return null;
             }
 
-            var data = new Dictionary<string, string>();
+            // StringComparer.OrdinalIgnoreCase -> Lookups will be case insensitive.
+            var data = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
             foreach (var line in File.ReadLines(filePathCaseInsensitive))
             {

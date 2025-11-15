@@ -207,6 +207,12 @@ namespace GUZ.Core.Domain.StaticCache
                         mdm = _resourceCacheService.TryGetModelMesh(visualName);
                     }
 
+                    if (mdm == null)
+                    {
+                        Logger.LogError($"No MDM for {visualName} found.", LogCat.PreCaching);
+                        break;
+                    }
+
                     foreach (var mesh in mdm!.Meshes)
                     {
                         bounds.Encapsulate(GetBoundsByOrientedBbox(mesh.Mesh.OrientedBoundingBox));

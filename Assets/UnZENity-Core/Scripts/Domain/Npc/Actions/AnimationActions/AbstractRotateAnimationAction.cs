@@ -1,12 +1,9 @@
-using GUZ.Core.Logging;
 using GUZ.Core.Models.Container;
 using GUZ.Core.Models.Vm;
 using GUZ.Core.Services;
 using GUZ.Core.Services.Npc;
-using GUZ.Core.Services.Vm;
 using Reflex.Attributes;
 using UnityEngine;
-using Logger = GUZ.Core.Logging.Logger;
 
 namespace GUZ.Core.Domain.Npc.Actions.AnimationActions
 {
@@ -20,6 +17,7 @@ namespace GUZ.Core.Domain.Npc.Actions.AnimationActions
 
         private Quaternion _finalRotation;
         private bool _isRotateLeft;
+        private string _rotationAnimationName;
 
         private Transform NpcHeadTransform => PrefabProps.Head;
 
@@ -64,40 +62,11 @@ namespace GUZ.Core.Domain.Npc.Actions.AnimationActions
 
             if (PlayAnimation)
             {
-                PrefabProps.AnimationSystem.PlayAnimation(GetRotateModeAnimationString());
+                _rotationAnimationName = _animationService.GetAnimationName(
+                    _isRotateLeft ? VmGothicEnums.AnimationType.RotL : VmGothicEnums.AnimationType.RotR,
+                    NpcContainer);
+                PrefabProps.AnimationSystem.PlayAnimation(_rotationAnimationName);
             }
-        }
-
-        private string GetRotateModeAnimationString()
-        {
-            var walkMode = (VmGothicEnums.WalkMode)Vob.AiHuman.WalkMode;
-            string walkModeString;
-            switch (walkMode)
-            {
-                case VmGothicEnums.WalkMode.Walk:
-                    walkModeString = "WALK";
-                    break;
-                case VmGothicEnums.WalkMode.Run:
-                    walkModeString = "Run";
-                    break;
-                case VmGothicEnums.WalkMode.Sneak:
-                    walkModeString = "Sneak";
-                    break;
-                case VmGothicEnums.WalkMode.Water:
-                    walkModeString = "Water";
-                    break;
-                case VmGothicEnums.WalkMode.Swim:
-                    walkModeString = "Swim";
-                    break;
-                case VmGothicEnums.WalkMode.Dive:
-                    walkModeString = "Dive";
-                    break;
-                default:
-                    Logger.LogWarning($"Animation of type {walkMode} not yet implemented.", LogCat.Ai);
-                    return "";
-            }
-
-            return $"T_{walkModeString}TURN{(_isRotateLeft ? 'L' : 'R')}";
         }
 
         public override void Tick()
@@ -123,7 +92,7 @@ namespace GUZ.Core.Domain.Npc.Actions.AnimationActions
             // Check if rotation is done.
             if (Quaternion.Angle(npcTransform.rotation, _finalRotation) < 1f)
             {
-                PrefabProps.AnimationSystem.StopAnimation(GetRotateModeAnimationString());
+                PrefabProps.AnimationSystem.StopAnimation(_rotationAnimationName);
 
                 IsFinishedFlag = true;
             }

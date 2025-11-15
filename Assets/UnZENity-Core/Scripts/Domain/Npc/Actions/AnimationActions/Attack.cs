@@ -89,6 +89,9 @@ namespace GUZ.Core.Domain.Npc.Actions.AnimationActions
                 case FightAiMove.Turn:
                     _npcAiService.ExtAiTurnToNpc(NpcInstance, _enemy);
                     break;
+                // Some attacks have no action. Therefore TryGetFightAiData() returns Nop as fallback.
+                case FightAiMove.Nop:
+                    break;
                 case FightAiMove.RunBack:
                 case FightAiMove.JumpBack:
                 case FightAiMove.AttackSide:
@@ -102,12 +105,9 @@ namespace GUZ.Core.Domain.Npc.Actions.AnimationActions
                 case FightAiMove.WaitLonger:
                 case FightAiMove.WaitExt:
                     Logger.LogError($"Ai_Attack() type >{_move}< not yet handled. Skipping...", LogCat.Ai);
-                    IsFinishedFlag = true;
                     break;
-                case FightAiMove.Nop:
                 default:
                     Logger.LogError("No action for Ai_Attack() selected. Missing path in logic!", LogCat.Ai);
-                    IsFinishedFlag = true;
                     break;
             }
             
@@ -123,8 +123,38 @@ namespace GUZ.Core.Domain.Npc.Actions.AnimationActions
         private float GetAttackRange()
         {
             var baseRange = _gameStateService.GuildValues.GetFightRangeBase(Vob.GuildTrue);
-            // FIXME - Currently we assume Fist only. We need to set range for weapons properly as well. (e.g., Orcs)
-            var weaponRange = _gameStateService.GuildValues.GetFightRangeFist(Vob.GuildTrue);
+
+            // By default, use Fist range.
+            float weaponRange = _gameStateService.GuildValues.GetFightRangeFist(Vob.GuildTrue);;
+
+            // If NPC has a weapon equipped, then use it's length in G1 (as FIGHT_RANGE_1HA and FIGHT_RANGE_1HS aren't set. Same for 2H).
+            // FIXME - Check how G2 is handling ranges. Also via weapon range or guild values?
+            var item = VmCacheService.TryGetItemData(Props.CurrentItem);
+            if (item != null)
+            {
+                weaponRange = item.Range;
+            }
+            else
+            {
+                switch ((VmGothicEnums.WeaponState)Vob.FightMode)
+                {
+                    case VmGothicEnums.WeaponState.NoWeapon:
+                    case VmGothicEnums.WeaponState.Fist:
+                        weaponRange = _gameStateService.GuildValues.GetFightRangeFist(Vob.GuildTrue);
+                        break;
+                    case VmGothicEnums.WeaponState.W1H:
+                    case VmGothicEnums.WeaponState.W2H:
+                    case VmGothicEnums.WeaponState.Bow:
+                    case VmGothicEnums.WeaponState.CBow:
+                    case VmGothicEnums.WeaponState.Mage:
+                        weaponRange = _gameStateService.GuildValues.GetFightRangeFist(Vob.GuildTrue);
+                        Logger.LogWarning($"WeaponState attackrange not yet handled for {(VmGothicEnums.WeaponState)Vob.FightMode}. Assuming fist range.", LogCat.Npc);
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+            }
+
             return (baseRange + weaponRange) / 100f; // m -> cm
         }
 
@@ -133,12 +163,7 @@ namespace GUZ.Core.Domain.Npc.Actions.AnimationActions
         /// </summary>
         private string GetAnimName(VmGothicEnums.AnimationType type)
         {
-            return _animationService.GetAnimationName(type, Vob);
-        }
-
-        public override void Tick()
-        {
-            base.Tick();
+            return _animationService.GetAnimationName(type, NpcContainer);
         }
     }
 }

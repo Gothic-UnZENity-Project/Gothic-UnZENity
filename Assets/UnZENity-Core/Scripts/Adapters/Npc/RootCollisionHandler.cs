@@ -5,8 +5,8 @@ namespace GUZ.Core.Adapters.Npc
     [RequireComponent(typeof(CapsuleCollider))]
     public class RootCollisionHandler : BasePlayerBehaviour
     {
-        [SerializeField]
-        private CapsuleCollider _capsuleCollider;
+        [SerializeField] private CapsuleCollider _capsuleCollider;
+        [SerializeField] private CapsuleCollider _weaponAttackTriggerCollider;
 
         private SkinnedMeshRenderer[] _meshRenderers;
 
@@ -39,6 +39,10 @@ namespace GUZ.Core.Adapters.Npc
             // We only want to move the Collider to the center of the body in vertical orientation. A slight move left/right can be ignored.
             _capsuleCollider.center = new Vector3(0, bbox.center.y, 0);
             _capsuleCollider.height = bbox.size.y;
+
+            // We need to ensure, that the pos+size of attack trigger is the same as mesh collider.
+            _weaponAttackTriggerCollider.center = _capsuleCollider.center;
+            _weaponAttackTriggerCollider.height = _capsuleCollider.height;
 
             /*
              * NPC GO hierarchy:
