@@ -50,6 +50,7 @@ namespace GUZ.Core.Services.Npc
         [Inject] private readonly VobService _vobService;
         [Inject] private readonly NpcInventoryService _npcInventoryService;
 
+        
         // Supporter class where the whole Init() logic is outsourced for better readability.
         private readonly NpcInitializerDomain _initializerDomain = new NpcInitializerDomain().Inject();
 
@@ -305,6 +306,15 @@ namespace GUZ.Core.Services.Npc
             _multiTypeCacheService.NpcCache.Add(npcData);
             _vm.InitInstance(heroInstance);
             vobNpc.CopyFromInstanceData(heroInstance);
+
+            if (_configService.Dev.PlayerInventoryAddition.NotNullOrEmpty())
+            {
+                var items = _vobService.UnpackItems(_configService.Dev.PlayerInventoryAddition);
+                foreach (var item in items)
+                {
+                    _playerService.AddItem(item.Name, item.Amount);
+                }
+            }
 
             _vm.GlobalHero = heroInstance;
         }
