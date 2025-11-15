@@ -30,6 +30,9 @@ EditorBuildSettings:
     path: Assets/UnZENity-Core/Scenes/Loading.unity
     guid: 4aeb2cb64559fae4aaff124c2e25ca03
   - enabled: 1
+    path: Assets/UnZENity-Core/Scenes/DefaultWorld.unity
+    guid: 6025897fdd52a4848a0699d25def131a
+  - enabled: 1
     path: Packages/com.unzenity.core.binaries/Scenes/Worlds/Gothic1/world.zen.unity
     guid: 0fe2ff4c941e7e7498ba4cf8c563338d
   - enabled: 1

@@ -3,6 +3,7 @@ using GUZ.Core.Extensions;
 using GUZ.Core.Manager;
 using GUZ.Core.Services.Caches;
 using GUZ.Core.Services.Config;
+using GUZ.Core.Services.Context;
 using GUZ.Core.Services.Meshes;
 using GUZ.Core.Services.Vobs;
 using Reflex.Attributes;
@@ -18,6 +19,7 @@ namespace GUZ.Core.Services.World
         [Inject] private readonly VobService _vobService;
         [Inject] private readonly AudioService _audioService;
         [Inject] private readonly ResourceCacheService _resourceCacheService;
+        [Inject] private readonly ContextGameVersionService _contextGameVersionService;
 
         private GameObject _barrier;
 
@@ -59,6 +61,9 @@ namespace GUZ.Core.Services.World
 
         private void CreateBarrier()
         {
+            if (_contextGameVersionService.IsGothic2())
+                return;
+
             if (!_configService.Dev.EnableBarrierVisual)
             {
                 return;

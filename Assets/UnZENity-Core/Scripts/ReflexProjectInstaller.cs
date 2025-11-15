@@ -117,13 +117,12 @@ namespace GUZ.Core
             containerBuilder.AddSingleton(typeof(MarvinService));
 
             // FIXME - Need to be migrated to a Service!
-            containerBuilder.AddSingleton(typeof(VobService));
             containerBuilder.AddSingleton(typeof(VobInitializerDomain));
+            containerBuilder.AddSingleton(typeof(VobService));
             containerBuilder.AddSingleton(typeof(StationaryLightsService));
             containerBuilder.AddSingleton(typeof(SkyService));
             containerBuilder.AddSingleton(typeof(BarrierService));
             containerBuilder.AddSingleton(typeof(LoadingService));
-            containerBuilder.AddSingleton(typeof(BarrierService));
         }
     }
 }
