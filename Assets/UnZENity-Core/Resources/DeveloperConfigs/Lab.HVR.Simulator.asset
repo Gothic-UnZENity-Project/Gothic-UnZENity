@@ -42,6 +42,7 @@ MonoBehaviour:
     CullingDistance: 200
   BrightenUpHoveredVOBs: 1
   ShowNamesOnHoveredVOBs: 1
+  PlayerInventoryAddition: 
   ShowVOBMeshCullingGizmos: 0
   ShowCapsuleOverlapGizmos: 0
   EnableNpcs: 0
