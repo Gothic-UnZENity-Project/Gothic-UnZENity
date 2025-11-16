@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
+using GUZ.Core.Logging;
 using JetBrains.Annotations;
 using ZenKit;
+using Logger = GUZ.Core.Logging.Logger;
 
 namespace GUZ.Core.Models.Caches
 {
@@ -61,9 +63,10 @@ namespace GUZ.Core.Models.Caches
                 _cache[key] = value;
                 return true;
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                // ignored
+                // Need to log missing files. Otherwise, we will never know which file is missing.
+                Logger.LogWarning($"Resource {key} not found: {e.Message}", LogCat.Loading);
             }
 
             _cache[key] = default;

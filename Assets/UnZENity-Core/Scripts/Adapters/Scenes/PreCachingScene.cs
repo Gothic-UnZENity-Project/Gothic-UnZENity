@@ -34,6 +34,7 @@ namespace GUZ.Core.Adapters.Scenes
         [SerializeField]
         private PreCachingLoadingBarHandler _loadingBarHandler;
 
+        // FIXME - Load worlds dynamically inside folder _work/Data/Worlds and with file ending .zen.
         private static readonly string[] _gothic1Worlds =
         {
             "World.zen",
@@ -43,6 +44,7 @@ namespace GUZ.Core.Adapters.Scenes
             "OrcTempel.zen"
         };
 
+        // FIXME - Load worlds dynamically inside folder _work/Data/Worlds and with file ending .zen.
         private static readonly string[] _gothic2Worlds =
         {
             "NewWorld.zen",
