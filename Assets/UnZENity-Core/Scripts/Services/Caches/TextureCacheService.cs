@@ -260,16 +260,16 @@ namespace GUZ.Core.Services.Caches
 
                 var skipCountOfOversizeMips = 0;
                 var sourceMaxDim = Mathf.Max(sourceTex.width, sourceTex.height);
-                var sourceWidth = sourceTex.width;
-                var sourceHeight = sourceTex.height;
+                var effectiveWidth = sourceTex.width;  // The actual size we'll use in the array
+                var effectiveHeight = sourceTex.height;
 
                 // If a texture's size is higher than MaxTextureSize, then divide by 2 until we shrink it enough.
                 while (sourceMaxDim > MaxTextureSize)
                 {
                     skipCountOfOversizeMips++;
                     sourceMaxDim /= 2;
-                    sourceWidth /= 2;
-                    sourceHeight /= 2;
+                    effectiveWidth /= 2;
+                    effectiveHeight /= 2;
                 }
 
                 for (var mip = skipCountOfOversizeMips; mip < sourceTex.mipmapCount; mip++)
@@ -284,16 +284,23 @@ namespace GUZ.Core.Services.Caches
                         break;
                     }
 
-                    for (var x = 0; x < texArray.width / sourceWidth; x++)
-                    {
-                        for (var y = 0; y < texArray.height / sourceHeight; y++)
-                        {
+                    // Calculate mip dimensions based on EFFECTIVE size, not source size
+                    var mipWidth = effectiveWidth >> targetMip;
+                    var mipHeight = effectiveHeight >> targetMip;
 
+                    // Tile based on the effective size at mip 0
+                    var tilesX = texArray.width / effectiveWidth;
+                    var tilesY = texArray.height / effectiveHeight;
+
+                    for (var x = 0; x < tilesX; x++)
+                    {
+                        for (var y = 0; y < tilesY; y++)
+                        {
                             if (texArray is Texture2DArray)
                             {
                                 Graphics.CopyTexture(sourceTex, 0, mip, 0, 0,
-                                    sourceWidth >> mip, sourceHeight >> mip, texArray, i, targetMip,
-                                    (sourceWidth >> mip) * x, (sourceHeight >> mip) * y);
+                                    mipWidth, mipHeight, texArray, i, targetMip,
+                                    mipWidth * x, mipHeight * y);
                             }
                             // aka Water
                             else
@@ -301,7 +308,7 @@ namespace GUZ.Core.Services.Caches
                                 var cmd = CommandBufferPool.Get();
                                 var rt = (RenderTexture)texArray;
                                 cmd.SetRenderTarget(new RenderTargetBinding(new RenderTargetSetup(rt.colorBuffer, rt.depthBuffer, targetMip, CubemapFace.Unknown, i)));
-                                var scale = new Vector2((float)sourceTex.width / texArray.width, (float)sourceTex.height / texArray.height);
+                                var scale = new Vector2((float)effectiveWidth / texArray.width, (float)effectiveHeight / texArray.height);
                                 Blitter.BlitQuad(cmd, sourceTex, new Vector4(1, 1, 0, 0), new Vector4(scale.x, scale.y, scale.x * x, scale.y * y), mip, false);
                                 Graphics.ExecuteCommandBuffer(cmd);
                                 cmd.Clear();
