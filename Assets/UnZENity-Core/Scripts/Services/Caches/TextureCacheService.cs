@@ -51,7 +51,6 @@ namespace GUZ.Core.Services.Caches
         public static Dictionary<TextureArrayTypes, Texture> TextureArrays { get; } = new();
 
         private static readonly Dictionary<string, Texture2D> _texture2DCache = new();
-        private static readonly Dictionary<TextureArrayTypes, List<(string PreparedKey, ZkTextureData TextureData)>> _texturesToIncludeInArray = new();
 
 
 
@@ -77,25 +76,6 @@ namespace GUZ.Core.Services.Caches
                 {
                     Renderers.Add(renderer);
                 }
-            }
-        }
-
-        private class ZkTextureData
-        {
-            public string Key { get; set; }
-            public Vector2 Scale { get; set; }
-            public int Width { get; set; }
-            public int Height { get; set; }
-            public int MipmapCount { get; set; }
-            public int AnimFrameCount { get; set; }
-
-            public ZkTextureData(string key, ITexture zkTexture)
-            {
-                Key = key;
-                MipmapCount = zkTexture.MipmapCount;
-                Width = zkTexture.Width;
-                Height = zkTexture.Height;
-                Scale = new Vector2((float)zkTexture.Width / ReferenceTextureSize, (float)zkTexture.Height / ReferenceTextureSize);
             }
         }
 
@@ -407,12 +387,6 @@ namespace GUZ.Core.Services.Caches
 
             TextureArrays.Clear();
             TextureArrays.TrimExcess();
-
-            foreach (var textureList in _texturesToIncludeInArray.Values)
-            {
-                textureList.Clear();
-                textureList.TrimExcess();
-            }
         }
     }
 }
