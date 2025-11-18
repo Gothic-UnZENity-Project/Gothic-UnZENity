@@ -204,6 +204,7 @@ namespace GUZ.Core.Services.Caches
             return new DaedalusVm(Vfs, $"{GetPreparedKey(key)}.dat");
         }
 
+        // FIXME - Should it be used without Gothic game version? Or better always call with it?
         [CanBeNull]
         public ZenKit.World TryGetWorld([NotNull] string key)
         {
@@ -216,12 +217,12 @@ namespace GUZ.Core.Services.Caches
         /// </summary>
         /// <param name="key"></param>
         /// <param name="version"></param>
-        /// <param name="cacheFire"></param>
+        /// <param name="cache"></param>
         /// <returns></returns>
         [CanBeNull]
-        public ZenKit.World TryGetWorld([NotNull] string key, GameVersion version, bool cacheFire = false)
+        public ZenKit.World TryGetWorld([NotNull] string key, GameVersion version, bool cache = false)
         {
-            if (cacheFire)
+            if (cache)
             {
                 return _world.TryLoad($"{GetPreparedKey(key)}.zen", version, out var item) ? item : null;
             }

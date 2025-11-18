@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using GUZ.Core.Adapters.UI.LoadingBars;
@@ -21,6 +22,8 @@ namespace GUZ.Core.Adapters.Scenes
 {
     public class PreCachingScene : MonoBehaviour, IScene
     {
+        [SerializeField] private PreCachingLoadingBarHandler _loadingBarHandler;
+
         [Inject] private readonly ConfigService _configService;
         [Inject] private readonly MultiTypeCacheService _multiTypeCacheService;
         [Inject] private readonly LoadingService _loadingService;
@@ -29,32 +32,9 @@ namespace GUZ.Core.Adapters.Scenes
         [Inject] private readonly ResourceCacheService _resourceCacheService;
         [Inject] private readonly ContextInteractionService _contextInteractionService;
         [Inject] private readonly ContextGameVersionService _contextGameVersionService;
-
-        
-        [SerializeField]
-        private PreCachingLoadingBarHandler _loadingBarHandler;
-
-        // FIXME - Load worlds dynamically inside folder _work/Data/Worlds and with file ending .zen.
-        private static readonly string[] _gothic1Worlds =
-        {
-            "World.zen",
-            "Freemine.zen",
-            "Oldmine.zen",
-            "OrcGraveyard.zen",
-            "OrcTempel.zen"
-        };
-
-        // FIXME - Load worlds dynamically inside folder _work/Data/Worlds and with file ending .zen.
-        private static readonly string[] _gothic2Worlds =
-        {
-            "NewWorld.zen",
-            "OldWorld.zen",
-            "AddonWorld.zen",
-            "DragonIsland.zen"
-        };
-
-        
         [Inject] private readonly AudioService _audioService;
+        
+        private const string _worldsPath = "/_work/Data/Worlds";
 
         
         public void Init()
@@ -82,9 +62,32 @@ namespace GUZ.Core.Adapters.Scenes
         {
             try
             {
-                var worldsToLoad = _contextGameVersionService.Version == GameVersion.Gothic1 ? _gothic1Worlds : _gothic2Worlds;
+                var worldsRootFolder = _resourceCacheService.Vfs.Resolve(_worldsPath);
+                var allWorldNames = new List<string>();
+                GetWorldsFromVfs(worldsRootFolder, allWorldNames);
+
+                var worldNamesToLoad = new List<string>();
+                var worldsToLoad = new List<IWorld>();
+
+                foreach (var worldNameToCheck in allWorldNames)
+                {
+                    var world = _resourceCacheService.TryGetWorld(worldNameToCheck, _contextGameVersionService.Version);
+
+                    // e.g., FIRETREE.ZEN is no real world.
+                    if (world == null || world.Mesh.PositionCount == 0)
+                        continue;
+                    
+                    worldNamesToLoad.Add(worldNameToCheck);
+                    worldsToLoad.Add(world);
+                }
                 
-                if (!_configService.Dev.AlwaysRecreateCache && _staticCacheService.DoCacheFilesExist(worldsToLoad))
+                // DEBUG - only cache one world for tests
+                // worldsToLoad.Clear();
+                // worldNamesToLoad.Clear();
+                // worldNamesToLoad.Add("WORLDNAME.ZEN");
+                // worldsToLoad.Add(_resourceCacheService.TryGetWorld(worldNamesToLoad.First(), _contextGameVersionService.Version));
+                
+                if (!_configService.Dev.AlwaysRecreateCache && _staticCacheService.DoCacheFilesExist(worldNamesToLoad))
                 {
                     var metadata = await _staticCacheService.ReadMetadata();
                     if (metadata.Version == Constants.StaticCacheVersion)
@@ -94,19 +97,22 @@ namespace GUZ.Core.Adapters.Scenes
                         return;
                     }
                 }
+                else
+                {
+                    Logger.Log($"World + Global data is not (fully) cached or metadata version doesn't match. Recreating now for: [{string.Join(", ", worldNamesToLoad)}]", LogCat.PreCaching);
+                }
                 
                 //
                 // Now we (re)create whole cache.
                 //
                 
                 // Sleeper temple music (similar to installation music)
-                
-                // FIXME - Find music for G1
+                // FIXME - Find music for G2 to play in here
                 if (_contextGameVersionService.Version == GameVersion.Gothic1)
                     _audioService.Play("KAT_DAY_STD");
                 
                 _contextInteractionService.DisableMenus();
-                _loadingBarHandler.LevelCount = worldsToLoad.Length;
+                _loadingBarHandler.LevelCount = worldsToLoad.Count;
                 _loadingService.InitLoading(_loadingBarHandler);
 
                 var watch = Stopwatch.StartNew();
@@ -118,12 +124,12 @@ namespace GUZ.Core.Adapters.Scenes
 
                 _staticCacheService.InitCacheFolder();
 
-                for (var worldIndex = 0; worldIndex < worldsToLoad.Length; worldIndex++)
+                for (var worldIndex = 0; worldIndex < worldsToLoad.Count; worldIndex++)
                 {
-                    var worldName = worldsToLoad[worldIndex];
+                    var world = worldsToLoad[worldIndex];
+                    var worldName = worldNamesToLoad[worldIndex];
                         
                     Logger.Log($"### PreCaching meshes for world: {worldName}", LogCat.PreCaching);
-                    var world = _resourceCacheService.TryGetWorld(worldName, _contextGameVersionService.Version)!;
                     var stationaryLightCache = new StationaryLightCacheCreatorDomain().Inject();
                     var worldChunkCache = new WorldChunkCacheCreatorDomain().Inject();
 
@@ -189,6 +195,17 @@ namespace GUZ.Core.Adapters.Scenes
 
                 // We need to grant the player always the option to quit the game via menu if something fails.
                 _contextInteractionService.EnableMenus();
+            }
+        }
+        
+        private void GetWorldsFromVfs(VfsNode folder, List<string> worlds)
+        {
+            foreach (var child in folder.Children)
+            {
+                if (child.IsDir())
+                    GetWorldsFromVfs(child, worlds);
+                else if (child.Name.EndsWithIgnoreCase(".zen"))
+                    worlds.Add(child.Name);
             }
         }
     }
