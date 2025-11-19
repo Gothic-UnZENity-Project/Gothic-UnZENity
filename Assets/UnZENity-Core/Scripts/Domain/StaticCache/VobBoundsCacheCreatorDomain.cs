@@ -168,81 +168,74 @@ namespace GUZ.Core.Domain.StaticCache
             _loadingService.FinalizePhase();
         }
 
+        /// <summary>
+        /// Get mesh information from various sources of Vob. Similar to logic used in GUZ.Core.Domain.Vobs.VobInitializerDomain.CreateDefaultMesh()
+        /// </summary>
         private Bounds CalculateBoundingBox(VisualType visualType, string visualName)
         {
-            Bounds bounds = default;
-
-            switch (visualType)
+            // MDL
+            var mdl = _resourceCacheService.TryGetModel(visualName, false);
+            if (mdl != null)
             {
-                case VisualType.Mesh:
-                    var msh = _resourceCacheService.TryGetMesh(visualName);
+                var bounds = new Bounds();
 
-                    if (msh == null)
-                    {
-                        return default;
-                    }
+                var mdmFromMdl = mdl.Mesh;
 
-                    bounds = GetBoundsByOrientedBbox(msh.OrientedBoundingBox);
-                    break;
-                case VisualType.MultiResolutionMesh:
-                    var mrm = _resourceCacheService.TryGetMultiResolutionMesh(visualName);
+                foreach (var mesh in mdmFromMdl.Meshes)
+                {
+                    bounds.Encapsulate(GetBoundsByOrientedBbox(mesh.Mesh.OrientedBoundingBox));
+                }
 
-                    if (mrm == null)
-                    {
-                        return default;
-                    }
+                foreach (var attachment in mdmFromMdl.Attachments)
+                {
+                    bounds.Encapsulate(GetBoundsByOrientedBbox(attachment.Value.OrientedBoundingBox));
+                }
 
-                    bounds = GetBoundsByOrientedBbox(mrm.OrientedBoundingBox);
-                    break;
-               case VisualType.Model:
-                    var mdl = _resourceCacheService.TryGetModel(visualName, false);
-                    IModelMesh mdm;
-                    if (mdl != null)
-                    {
-                        mdm = mdl.Mesh;
-                    }
-                    else
-                    {
-                        // Some models miss their wrapping .mdl file. We therefore load the .mdm file (with same name) directly.
-                        mdm = _resourceCacheService.TryGetModelMesh(visualName, false);
-                    }
-
-                    if (mdm == null)
-                    {
-                        Logger.LogError($"No MDL or MDM for {visualName} found.", LogCat.PreCaching);
-                        break;
-                    }
-
-                    foreach (var mesh in mdm!.Meshes)
-                    {
-                        bounds.Encapsulate(GetBoundsByOrientedBbox(mesh.Mesh.OrientedBoundingBox));
-                    }
-
-                    foreach (var attachment in mdm.Attachments)
-                    {
-                        bounds.Encapsulate(GetBoundsByOrientedBbox(attachment.Value.OrientedBoundingBox));
-                    }
-
-                    break;
-                case VisualType.MorphMesh:
-                    var mmb = _resourceCacheService.TryGetMorphMesh(visualName);
-
-                    if (mmb == null)
-                    {
-                        return default;
-                    }
-
-                    bounds = GetBoundsByOrientedBbox(mmb.Mesh.OrientedBoundingBox);
-                    break;
-                case VisualType.ParticleEffect:
-                case VisualType.Camera:
-                case VisualType.Unknown:
-                case VisualType.Decal:
-                default:
-                    throw new ArgumentOutOfRangeException(visualType.ToString());
+                return bounds;
             }
 
-            return bounds;
+            // MDH+MDM (without MDL as wrapper)
+            var mdh = _resourceCacheService.TryGetModelHierarchy(visualName, false);
+            var mdm = _resourceCacheService.TryGetModelMesh(visualName, false);
+            if (mdh != null && mdm != null)
+            {
+                var bounds = new Bounds();
+                foreach (var mesh in mdm!.Meshes)
+                {
+                    bounds.Encapsulate(GetBoundsByOrientedBbox(mesh.Mesh.OrientedBoundingBox));
+                }
+
+                foreach (var attachment in mdm.Attachments)
+                {
+                    bounds.Encapsulate(GetBoundsByOrientedBbox(attachment.Value.OrientedBoundingBox));
+                }
+
+                return bounds;
+            }
+
+            // MMB
+            var mmb = _resourceCacheService.TryGetMorphMesh(visualName, false);
+            if (mmb != null)
+            {
+                return GetBoundsByOrientedBbox(mmb.Mesh.OrientedBoundingBox);
+            }
+            
+            // MRM
+            var mrm = _resourceCacheService.TryGetMultiResolutionMesh(visualName, false);
+            if (mrm != null)
+            {
+                return GetBoundsByOrientedBbox(mrm.OrientedBoundingBox);
+            }
+            
+            // MSH - Final check if at least a mesh exists with the provided name.
+            var msh = _resourceCacheService.TryGetMesh(visualName, false);
+            if (msh != null)
+            {
+                return GetBoundsByOrientedBbox(msh.OrientedBoundingBox);
+            }
+
+            Logger.LogWarning($">{visualName}<'s has no mdl/mdh+mdm/mmb/mrm/msh.", LogCat.PreCaching);
+            return default;
         }
 
         private enum AxesType

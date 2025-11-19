@@ -131,9 +131,9 @@ namespace GUZ.Core.Services.Caches
         }
 
         [CanBeNull]
-        public IMesh TryGetMesh([NotNull] string key)
+        public IMesh TryGetMesh([NotNull] string key, bool printNotFoundWarning = true)
         {
-            return _mesh.TryLoad($"{GetPreparedKey(key)}.msh", out var item) ? item : null;
+            return _mesh.TryLoad($"{GetPreparedKey(key)}.msh", out var item, printNotFoundWarning) ? item : null;
         }
 
         [CanBeNull]
@@ -279,6 +279,11 @@ namespace GUZ.Core.Services.Caches
             return item;
         }
 
+        /// <summary>
+        /// Hint: This method only removes last file name extension on purpose (multiple endings seems like a bug in mods).
+        ///       Will they be rendered in G2 normally anyway?
+        ///       e.g., foo.tga.tga => foo.tga
+        /// </summary>
         [NotNull]
         public string GetPreparedKey([NotNull] string key)
         {

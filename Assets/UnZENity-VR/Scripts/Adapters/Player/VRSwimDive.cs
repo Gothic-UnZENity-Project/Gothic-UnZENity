@@ -6,6 +6,7 @@ using System.Linq;
 using GUZ.Core;
 using GUZ.Core.Const;
 using GUZ.Core.Extensions;
+using GUZ.Core.Logging;
 using GUZ.Core.Manager;
 using GUZ.Core.Models.Audio;
 using GUZ.Core.Models.Marvin;
@@ -22,6 +23,7 @@ using Reflex.Attributes;
 using UnityEngine;
 using ZenKit.Daedalus;
 using ZenKit.Vobs;
+using Logger = GUZ.Core.Logging.Logger;
 
 namespace GUZ.VR.Adapters.Player
 {
@@ -86,6 +88,7 @@ namespace GUZ.VR.Adapters.Player
         [Inject] private readonly ContextInteractionService _contextInteractionService;
         [Inject] private readonly MeshService _meshService;
         [Inject] private readonly PlayerService _playerService;
+        [Inject] private readonly ContextGameVersionService _contextGameVersionService;
 
         private void Start()
         {
@@ -93,6 +96,12 @@ namespace GUZ.VR.Adapters.Player
 
 			GlobalEventDispatcher.ZenKitBootstrapped.AddListener(() =>
             {
+                if (_contextGameVersionService.IsGothic2())
+                {
+                    Logger.LogError("Swimming is not yet implemented for G2. Skipping...", LogCat.VR);
+                    return;
+                }
+                
                 var mds = _resourceCacheService.TryGetModelScript("Humans")!;
                 
                 // FIXME - In G1, there are different sounds for SwimBack, Sideways, and Forward
