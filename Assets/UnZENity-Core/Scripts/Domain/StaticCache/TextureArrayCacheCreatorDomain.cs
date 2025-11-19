@@ -285,7 +285,7 @@ namespace GUZ.Core.Domain.StaticCache
         private void AddTexInfoForItem(ItemInstance item)
         {
             // MDL
-            var mdl = _resourceCacheService.TryGetModel(item.Visual);
+            var mdl = _resourceCacheService.TryGetModel(item.Visual, false);
             if (mdl != null)
             {
                 mdl.Mesh.Meshes.ForEach(mesh => mesh.Mesh.Materials.ForEach(material => AddTextureToCache(material.Group, material.Texture)));
@@ -294,8 +294,8 @@ namespace GUZ.Core.Domain.StaticCache
             }
 
             // MDH+MDM (without MDL as wrapper)
-            var mdh = _resourceCacheService.TryGetModelHierarchy(item.Visual);
-            var mdm = _resourceCacheService.TryGetModelMesh(item.Visual);
+            var mdh = _resourceCacheService.TryGetModelHierarchy(item.Visual, false);
+            var mdm = _resourceCacheService.TryGetModelMesh(item.Visual, false);
             if (mdh != null && mdm != null)
             {
                 mdm.Meshes.ForEach(mesh => mesh.Mesh.Materials.ForEach(material => AddTextureToCache(material.Group, material.Texture)));
@@ -304,7 +304,7 @@ namespace GUZ.Core.Domain.StaticCache
             }
 
             // MMB
-            var mmb = _resourceCacheService.TryGetMorphMesh(item.Visual);
+            var mmb = _resourceCacheService.TryGetMorphMesh(item.Visual, false);
             if (mmb != null)
             {
                 mmb.Mesh.Materials.ForEach(material => AddTextureToCache(material.Group, material.Texture));
@@ -312,12 +312,14 @@ namespace GUZ.Core.Domain.StaticCache
             }
 
             // MRM
-            var mrm = _resourceCacheService.TryGetMultiResolutionMesh(item.Visual);
+            var mrm = _resourceCacheService.TryGetMultiResolutionMesh(item.Visual, false);
             if (mrm != null)
             {
                 mrm.Materials.ForEach(material => AddTextureToCache(material.Group, material.Texture));
                 return;
             }
+
+            Logger.LogWarning($">{item.Visual}<'s has no mdl/mdh+mdm/mmb/mrm.", LogCat.PreCaching);
         }
     }
 }

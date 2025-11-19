@@ -342,9 +342,15 @@ namespace GUZ.Core.Domain.Vobs
                 return null;
             }
 
-            var vobTree = _resourceCacheService.TryGetWorld(vob.VobTree, _contextGameVersionService.Version, true)!.RootObjects;
+            var fireWorld = _resourceCacheService.TryGetWorld(vob.VobTree, _contextGameVersionService.Version, true);
 
-            CreateFireVobs(vobTree, go.FindChildRecursively(vob.Slot) ?? go, worldPosition);
+            if (fireWorld == null)
+            {
+                Logger.LogWarning($"Fire world {vob.VobTree} not found. Skipping usage...", LogCat.Loading);
+                return null;
+            }
+            
+            CreateFireVobs(fireWorld.RootObjects, go.FindChildRecursively(vob.Slot) ?? go, worldPosition);
 
             return go;
         }

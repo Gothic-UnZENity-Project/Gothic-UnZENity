@@ -336,8 +336,15 @@ namespace GUZ.Core.Services.Caches
         /// <summary>
         /// Returns Texture2DArry (Opaque/Transparent) or RenderTexture (Water)
         /// </summary>
-        public void GetTextureArrayEntry(ITexture zkTexture, out Texture texture, out TextureArrayTypes textureType)
+        public void GetTextureArrayEntry(ITexture zkTexture, [CanBeNull] out Texture texture, out TextureArrayTypes textureType)
         {
+            if (zkTexture == null)
+            {
+                texture = null;
+                textureType = TextureArrayTypes.Unknown;
+                return;
+            }
+            
             switch (zkTexture.Format.AsUnityTextureFormat())
             {
                 case TextureFormat.DXT1:
