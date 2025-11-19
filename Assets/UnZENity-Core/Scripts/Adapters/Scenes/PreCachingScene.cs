@@ -13,6 +13,7 @@ using GUZ.Core.Services.Caches;
 using GUZ.Core.Services.Config;
 using GUZ.Core.Services.Context;
 using GUZ.Core.Services.StaticCache;
+using MyBox;
 using Reflex.Attributes;
 using UnityEngine;
 using ZenKit;
@@ -80,12 +81,16 @@ namespace GUZ.Core.Adapters.Scenes
                     worldNamesToLoad.Add(worldNameToCheck);
                     worldsToLoad.Add(world);
                 }
-                
-                // DEBUG - only cache one world for tests
-                // worldsToLoad.Clear();
-                // worldNamesToLoad.Clear();
-                // worldNamesToLoad.Add("WORLDNAME.ZEN");
-                // worldsToLoad.Add(_resourceCacheService.TryGetWorld(worldNamesToLoad.First(), _contextGameVersionService.Version));
+
+                // DEBUG - only cache one world for faster tests
+                if (_configService.Dev.OnlyCreateCacheForWorld.NotNullOrEmpty())
+                {
+                    worldsToLoad.Clear();
+                    worldNamesToLoad.Clear();
+                    worldNamesToLoad.Add(_configService.Dev.OnlyCreateCacheForWorld);
+                    worldsToLoad.Add(_resourceCacheService.TryGetWorld(_configService.Dev.OnlyCreateCacheForWorld,
+                        _contextGameVersionService.Version));
+                }
                 
                 if (!_configService.Dev.AlwaysRecreateCache && _staticCacheService.DoCacheFilesExist(worldNamesToLoad))
                 {
