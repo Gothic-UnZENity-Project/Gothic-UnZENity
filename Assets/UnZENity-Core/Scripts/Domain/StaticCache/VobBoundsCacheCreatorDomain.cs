@@ -195,7 +195,7 @@ namespace GUZ.Core.Domain.StaticCache
                     bounds = GetBoundsByOrientedBbox(mrm.OrientedBoundingBox);
                     break;
                case VisualType.Model:
-                    var mdl = _resourceCacheService.TryGetModel(visualName);
+                    var mdl = _resourceCacheService.TryGetModel(visualName, false);
                     IModelMesh mdm;
                     if (mdl != null)
                     {
@@ -204,12 +204,12 @@ namespace GUZ.Core.Domain.StaticCache
                     else
                     {
                         // Some models miss their wrapping .mdl file. We therefore load the .mdm file (with same name) directly.
-                        mdm = _resourceCacheService.TryGetModelMesh(visualName);
+                        mdm = _resourceCacheService.TryGetModelMesh(visualName, false);
                     }
 
                     if (mdm == null)
                     {
-                        Logger.LogError($"No MDM for {visualName} found.", LogCat.PreCaching);
+                        Logger.LogError($"No MDL or MDM for {visualName} found.", LogCat.PreCaching);
                         break;
                     }
 

@@ -124,7 +124,7 @@ namespace GUZ.Core.Domain.StaticCache
             if (vertices.Length == 0 || triangles.Length == 0)
                 return;
             
-            Logger.LogEditor($"Calculating Colliders for {visualName}", LogCat.PreCaching);
+            // Logger.LogEditor($"Calculating Colliders for {visualName}", LogCat.PreCaching);
             
             // Step 1: Determine the weapon's main axis and orientation
             var weaponOrientation = DetermineWeaponOrientation(vertices, bounds);
@@ -138,7 +138,7 @@ namespace GUZ.Core.Domain.StaticCache
             // Step 4: Create appropriate colliders for each segment
             CreateCollidersFromSegments(visualName, segments, weaponOrientation);
 
-            Logger.LogEditor($"Created {segments.Count} colliders for {visualName} using {weaponOrientation.mainAxis} axis (bounds: {bounds.size})", LogCat.PreCaching);
+            // Logger.LogEditor($"Created {segments.Count} colliders for {visualName} using {weaponOrientation.mainAxis} axis (bounds: {bounds.size})", LogCat.PreCaching);
         }
         
         private struct WeaponOrientation
@@ -187,7 +187,7 @@ namespace GUZ.Core.Domain.StaticCache
             if (aspectRatio < 1.5f)
                 Logger.LogWarning($"Weapon aspect ratio is low ({aspectRatio:F2}). This might not be a typical weapon shape.", LogCat.PreCaching);
 
-            Logger.LogEditor($"Weapon orientation: {orientation.mainAxis} axis, length: {orientation.length:F3}, aspect ratio: {aspectRatio:F2}", LogCat.PreCaching);
+            // Logger.LogEditor($"Weapon orientation: {orientation.mainAxis} axis, length: {orientation.length:F3}, aspect ratio: {aspectRatio:F2}", LogCat.PreCaching);
             
             return orientation;
         }
@@ -420,7 +420,7 @@ namespace GUZ.Core.Domain.StaticCache
                     var boundary = orientation.minValue + ((float)i / widthProfile.Count) * orientation.length;
                     segmentBoundaries.Add(boundary);
 
-                    Logger.LogEditor($"Found width change at position {boundary:F3}: {previousWidth:F3} -> {currentWidth:F3} (ratio: {changeRatio:F3})", LogCat.PreCaching);
+                    // Logger.LogEditor($"Found width change at position {boundary:F3}: {previousWidth:F3} -> {currentWidth:F3} (ratio: {changeRatio:F3})", LogCat.PreCaching);
                 }
             }
             
@@ -504,7 +504,7 @@ namespace GUZ.Core.Domain.StaticCache
             var aspectRatio = height / (maxWidth + 0.001f); // Avoid division by zero
             segment.SuggestedType = aspectRatio > 2.0f ? T.C : T.B;
             
-            Logger.LogEditor($"Segment properties: Height={height:F3}, Width={maxWidth:F3}, AspectRatio={aspectRatio:F2}, Type={segment.SuggestedType}", LogCat.PreCaching);
+            // Logger.LogEditor($"Segment properties: Height={height:F3}, Width={maxWidth:F3}, AspectRatio={aspectRatio:F2}, Type={segment.SuggestedType}", LogCat.PreCaching);
         }
         
         private float GetAxisSize(Vector3 size, int axis)
@@ -534,7 +534,7 @@ namespace GUZ.Core.Domain.StaticCache
                 else
                     CreateBoxCollider(cacheKey, segment);
                 
-                Logger.Log($"Segment {i}: {segment.SuggestedType}, Width: {segment.AverageWidth:F3}, Height: {segment.MaxHeight - segment.MinHeight:F3}, Vertices: {segment.Vertices.Count}", LogCat.PreCaching);
+                // Logger.LogEditor($"Segment {i}: {segment.SuggestedType}, Width: {segment.AverageWidth:F3}, Height: {segment.MaxHeight - segment.MinHeight:F3}, Vertices: {segment.Vertices.Count}", LogCat.PreCaching);
             }
         }
         

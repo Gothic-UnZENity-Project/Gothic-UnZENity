@@ -59,7 +59,7 @@ namespace GUZ.VR.Adapters.Vob
             // If the sound isn't already loaded and cached: Do it now.
             if (!_containerClosedClips.ContainsKey(mdsName.ToLower()))
             {
-                var mds = _resourceCacheService.TryGetModelScript(mdsName);
+                var mds = _resourceCacheService.TryGetModelScript(mdsName, false);
 
                 if (mds == null)
                 {

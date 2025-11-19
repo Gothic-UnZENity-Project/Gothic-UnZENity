@@ -118,9 +118,9 @@ namespace GUZ.Core.Services.Caches
         }
 
         [CanBeNull]
-        public IModelScript TryGetModelScript([NotNull] string key)
+        public IModelScript TryGetModelScript([NotNull] string key, bool printNotFoundWarning = true)
         {
-            return _modelScript.TryLoad($"{GetPreparedKey(key)}.mds", out var item) ? item : null;
+            return _modelScript.TryLoad($"{GetPreparedKey(key)}.mds", out var item, printNotFoundWarning) ? item : null;
         }
 
         [CanBeNull]
@@ -137,33 +137,33 @@ namespace GUZ.Core.Services.Caches
         }
 
         [CanBeNull]
-        public IModelHierarchy TryGetModelHierarchy([NotNull] string key)
+        public IModelHierarchy TryGetModelHierarchy([NotNull] string key, bool printNotFoundWarning = true)
         {
-            return _modelHierarchy.TryLoad($"{GetPreparedKey(key)}.mdh", out var item) ? item : null;
+            return _modelHierarchy.TryLoad($"{GetPreparedKey(key)}.mdh", out var item, printNotFoundWarning) ? item : null;
         }
 
         [CanBeNull]
-        public IModel TryGetModel([NotNull] string key)
+        public IModel TryGetModel([NotNull] string key, bool printNotFoundWarning = true)
         {
-            return _model.TryLoad($"{GetPreparedKey(key)}.mdl", out var item) ? item : null;
+            return _model.TryLoad($"{GetPreparedKey(key)}.mdl", out var item, printNotFoundWarning) ? item : null;
         }
 
         [CanBeNull]
-        public IModelMesh TryGetModelMesh([NotNull] string key)
+        public IModelMesh TryGetModelMesh([NotNull] string key, bool printNotFoundWarning = true)
         {
-            return _modelMesh.TryLoad($"{GetPreparedKey(key)}.mdm", out var item) ? item : null;
+            return _modelMesh.TryLoad($"{GetPreparedKey(key)}.mdm", out var item, printNotFoundWarning) ? item : null;
         }
 
         [CanBeNull]
-        public IMultiResolutionMesh TryGetMultiResolutionMesh([NotNull] string key)
+        public IMultiResolutionMesh TryGetMultiResolutionMesh([NotNull] string key, bool printNotFoundWarning = true)
         {
-            return _multiResolutionMesh.TryLoad($"{GetPreparedKey(key)}.mrm", out var item) ? item : null;
+            return _multiResolutionMesh.TryLoad($"{GetPreparedKey(key)}.mrm", out var item, printNotFoundWarning) ? item : null;
         }
 
         [CanBeNull]
-        public IMorphMesh TryGetMorphMesh([NotNull] string key)
+        public IMorphMesh TryGetMorphMesh([NotNull] string key, bool printNotFoundWarning = true)
         {
-            return _morphMesh.TryLoad($"{GetPreparedKey(key)}.mmb", out var item) ? item : null;
+            return _morphMesh.TryLoad($"{GetPreparedKey(key)}.mmb", out var item, printNotFoundWarning) ? item : null;
         }
 
         [CanBeNull]

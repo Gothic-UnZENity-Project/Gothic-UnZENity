@@ -669,7 +669,7 @@ namespace GUZ.Core.Domain.Vobs
             }
 
             // MDL
-            var mdl = _resourceCacheService.TryGetModel(meshName);
+            var mdl = _resourceCacheService.TryGetModel(meshName, false);
             if (mdl != null)
             {
                 var ret = _meshService.CreateVob(meshName, mdl, parent: parent, rootGo: go);
@@ -684,8 +684,8 @@ namespace GUZ.Core.Domain.Vobs
             }
 
             // MDH+MDM (without MDL as wrapper)
-            var mdh = _resourceCacheService.TryGetModelHierarchy(meshName);
-            var mdm = _resourceCacheService.TryGetModelMesh(meshName);
+            var mdh = _resourceCacheService.TryGetModelHierarchy(meshName, false);
+            var mdm = _resourceCacheService.TryGetModelMesh(meshName, false);
             if (mdh != null && mdm != null)
             {
                 var ret = _meshService.CreateVob(meshName, mdm, mdh, parent: parent, rootGo: go);
@@ -700,7 +700,7 @@ namespace GUZ.Core.Domain.Vobs
             }
 
             // MMB
-            var mmb = _resourceCacheService.TryGetMorphMesh(meshName);
+            var mmb = _resourceCacheService.TryGetMorphMesh(meshName, false);
             if (mmb != null)
             {
                 var ret = _meshService.CreateVob(meshName, mmb, parent: parent, rootGo: go, useTextureArray: true);
@@ -715,7 +715,7 @@ namespace GUZ.Core.Domain.Vobs
             }
 
             // MRM
-            var mrm = _resourceCacheService.TryGetMultiResolutionMesh(meshName);
+            var mrm = _resourceCacheService.TryGetMultiResolutionMesh(meshName, false);
             if (mrm != null)
             {
                 // If the object is a dynamic one, it will collide.
@@ -732,7 +732,7 @@ namespace GUZ.Core.Domain.Vobs
                 return ret;
             }
 
-            Logger.LogWarning($">{meshName}<'s has no mdl/mrm.", LogCat.Vob);
+            Logger.LogWarning($">{meshName}<'s has no mdl/mdh+mdm/mmb/mrm.", LogCat.Vob);
             return null;
         }
 
