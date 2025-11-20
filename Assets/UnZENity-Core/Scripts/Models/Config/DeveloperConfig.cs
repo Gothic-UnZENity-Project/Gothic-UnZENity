@@ -258,6 +258,8 @@ namespace GUZ.Core.Models.Config
         [Separator("StaticCache")]
         public bool CompressStaticCacheFiles = true;
         public bool AlwaysRecreateCache = false;
+        [Tooltip("If filled, then only the selected world and it's data is calculated. (Speeds up caching when testing for a specific world)")]
+        public string OnlyCreateCacheForWorld = string.Empty;
 
         [Separator("WIP - Not production ready", true)]
         public bool EnableDecalVisuals;

@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
+using GUZ.Core.Logging;
 using JetBrains.Annotations;
 using ZenKit;
+using Logger = GUZ.Core.Logging.Logger;
 
 namespace GUZ.Core.Models.Caches
 {
@@ -47,8 +49,9 @@ namespace GUZ.Core.Models.Caches
         /// </summary>
         /// <param name="key">The name of the asset to load by calling the <see cref="_loader"/> function</param>
         /// <param name="value">The asset to be returned (out)</param>
+        /// <param name="pringNotFoundWarning">Some elements like mdm and mdl need to be checked together. Ignore if one of these doesn't exist (expected behavior with Gothic files.)</param>
         /// <returns><c>true</c> if loading the asset succeeded and <c>false</c> if it failed</returns>
-        public bool TryLoad([NotNull] string key, out T value)
+        public bool TryLoad([NotNull] string key, out T value, bool pringNotFoundWarning = true)
         {
             if (_cache.TryGetValue(key, out value))
             {
@@ -61,9 +64,13 @@ namespace GUZ.Core.Models.Caches
                 _cache[key] = value;
                 return true;
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                // ignored
+                if (pringNotFoundWarning)
+                {
+                    // Need to log missing files. Otherwise, we will never know which file is missing.
+                    Logger.LogWarning($"Resource {key} not found: {e.Message}", LogCat.Loading);
+                }
             }
 
             _cache[key] = default;

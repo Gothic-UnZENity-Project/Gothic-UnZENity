@@ -145,53 +145,57 @@ namespace GUZ.Core.Domain.StaticCache
             _loadingService.FinalizePhase();
         }
 
+        /// <summary>
+        /// Get mesh information from various sources of Vob. Similar to logic used in GUZ.Core.Domain.Vobs.VobInitializerDomain.CreateDefaultMesh()
+        /// </summary>
         private void AddTexInfoForSingleVob(IVirtualObject vob)
         {
-            switch (vob.Visual!.Type)
+            var meshName = vob.GetVisualName();
+            
+            // MDL
+            var mdl = _resourceCacheService.TryGetModel(meshName, false);
+            if (mdl != null)
             {
-                case VisualType.Mesh:
-                    var mdm = _resourceCacheService.TryGetModelMesh(vob.GetVisualName());
-
-                    if (mdm == null)
-                    {
-                        return;
-                    }
-
-                    mdm.Meshes.ForEach(mesh => mesh.Mesh.Materials.ForEach(material => AddTextureToCache(material.Group, material.Texture)));
-                    mdm.Attachments.ForEach(mesh => mesh.Value.Materials.ForEach(material => AddTextureToCache(material.Group, material.Texture)));
-                    break;
-                case VisualType.MultiResolutionMesh:
-                    var mrm = _resourceCacheService.TryGetMultiResolutionMesh(vob.GetVisualName());
-
-                    if (mrm == null)
-                    {
-                        return;
-                    }
-
-                    mrm.Materials.ForEach(material => AddTextureToCache(material.Group, material.Texture));
-                    break;
-                case VisualType.Model:
-                    var mdl = _resourceCacheService.TryGetModel(vob.GetVisualName());
-
-                    if (mdl == null)
-                    {
-                        return;
-                    }
-
-                    mdl.Mesh.Meshes.ForEach(mesh => mesh.Mesh.Materials.ForEach(material => AddTextureToCache(material.Group, material.Texture)));
-                    mdl.Mesh.Attachments.ForEach(mesh => mesh.Value.Materials.ForEach(material => AddTextureToCache(material.Group, material.Texture)));
-                    break;
-                case VisualType.MorphMesh:
-                    var mmb = _resourceCacheService.TryGetMorphMesh(vob.GetVisualName());
-
-                    if (mmb == null)
-                    {
-                        return;
-                    }
-
-                    mmb.Mesh.Materials.ForEach(material => AddTextureToCache(material.Group, material.Texture));
-                    break;
+                mdl.Mesh.Meshes.ForEach(mesh => mesh.Mesh.Materials.ForEach(material => AddTextureToCache(material.Group, material.Texture)));
+                mdl.Mesh.Attachments.ForEach(mesh => mesh.Value.Materials.ForEach(material => AddTextureToCache(material.Group, material.Texture)));
+                return;
             }
+
+            // MDH+MDM (without MDL as wrapper)
+            var mdh = _resourceCacheService.TryGetModelHierarchy(meshName, false);
+            var mdm = _resourceCacheService.TryGetModelMesh(meshName, false);
+            if (mdh != null && mdm != null)
+            {
+                mdm.Meshes.ForEach(mesh => mesh.Mesh.Materials.ForEach(material => AddTextureToCache(material.Group, material.Texture)));
+                mdm.Attachments.ForEach(mesh => mesh.Value.Materials.ForEach(material => AddTextureToCache(material.Group, material.Texture)));
+                return;
+            }
+
+            // MMB
+            var mmb = _resourceCacheService.TryGetMorphMesh(meshName, false);
+            if (mmb != null)
+            {
+                mmb.Mesh.Materials.ForEach(material => AddTextureToCache(material.Group, material.Texture));
+                return;
+            }
+
+            // MRM
+            var mrm = _resourceCacheService.TryGetMultiResolutionMesh(meshName, false);
+            if (mrm != null)
+            {
+                mrm.Materials.ForEach(material => AddTextureToCache(material.Group, material.Texture));
+                return;
+            }
+            
+            // MSH - Final check if at least a mesh exists with the provided name.
+            var msh = _resourceCacheService.TryGetMesh(meshName, false);
+            if (msh != null)
+            {
+                msh.Materials.ForEach(material => AddTextureToCache(material.Group, material.Texture));
+                return;
+            }
+
+            Logger.LogWarning($">{meshName}<'s has no mdl/mdh+mdm/mmb/mrm.", LogCat.PreCaching);
         }
 
         private void AddTextureToCache(MaterialGroup group, string textureName)
@@ -285,7 +289,7 @@ namespace GUZ.Core.Domain.StaticCache
         private void AddTexInfoForItem(ItemInstance item)
         {
             // MDL
-            var mdl = _resourceCacheService.TryGetModel(item.Visual);
+            var mdl = _resourceCacheService.TryGetModel(item.Visual, false);
             if (mdl != null)
             {
                 mdl.Mesh.Meshes.ForEach(mesh => mesh.Mesh.Materials.ForEach(material => AddTextureToCache(material.Group, material.Texture)));
@@ -294,8 +298,8 @@ namespace GUZ.Core.Domain.StaticCache
             }
 
             // MDH+MDM (without MDL as wrapper)
-            var mdh = _resourceCacheService.TryGetModelHierarchy(item.Visual);
-            var mdm = _resourceCacheService.TryGetModelMesh(item.Visual);
+            var mdh = _resourceCacheService.TryGetModelHierarchy(item.Visual, false);
+            var mdm = _resourceCacheService.TryGetModelMesh(item.Visual, false);
             if (mdh != null && mdm != null)
             {
                 mdm.Meshes.ForEach(mesh => mesh.Mesh.Materials.ForEach(material => AddTextureToCache(material.Group, material.Texture)));
@@ -304,7 +308,7 @@ namespace GUZ.Core.Domain.StaticCache
             }
 
             // MMB
-            var mmb = _resourceCacheService.TryGetMorphMesh(item.Visual);
+            var mmb = _resourceCacheService.TryGetMorphMesh(item.Visual, false);
             if (mmb != null)
             {
                 mmb.Mesh.Materials.ForEach(material => AddTextureToCache(material.Group, material.Texture));
@@ -312,12 +316,14 @@ namespace GUZ.Core.Domain.StaticCache
             }
 
             // MRM
-            var mrm = _resourceCacheService.TryGetMultiResolutionMesh(item.Visual);
+            var mrm = _resourceCacheService.TryGetMultiResolutionMesh(item.Visual, false);
             if (mrm != null)
             {
                 mrm.Materials.ForEach(material => AddTextureToCache(material.Group, material.Texture));
                 return;
             }
+
+            Logger.LogWarning($">{item.Visual}<'s has no mdl/mdh+mdm/mmb/mrm.", LogCat.PreCaching);
         }
     }
 }

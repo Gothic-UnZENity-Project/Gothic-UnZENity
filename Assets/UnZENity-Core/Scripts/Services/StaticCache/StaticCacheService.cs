@@ -201,7 +201,7 @@ namespace GUZ.Core.Services.StaticCache
         /// <summary>
         /// We check for all required cache files once. If any of these are missing, the whole cache is marked as invalid.
         /// </summary>
-        public bool DoCacheFilesExist(string[] worldNames)
+        public bool DoCacheFilesExist(List<string> worldNames)
         {
             // Check all world specific files.
             foreach (var worldName in worldNames)

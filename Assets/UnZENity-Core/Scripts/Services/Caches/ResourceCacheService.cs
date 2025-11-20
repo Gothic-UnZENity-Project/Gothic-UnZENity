@@ -118,9 +118,9 @@ namespace GUZ.Core.Services.Caches
         }
 
         [CanBeNull]
-        public IModelScript TryGetModelScript([NotNull] string key)
+        public IModelScript TryGetModelScript([NotNull] string key, bool printNotFoundWarning = true)
         {
-            return _modelScript.TryLoad($"{GetPreparedKey(key)}.mds", out var item) ? item : null;
+            return _modelScript.TryLoad($"{GetPreparedKey(key)}.mds", out var item, printNotFoundWarning) ? item : null;
         }
 
         [CanBeNull]
@@ -131,39 +131,39 @@ namespace GUZ.Core.Services.Caches
         }
 
         [CanBeNull]
-        public IMesh TryGetMesh([NotNull] string key)
+        public IMesh TryGetMesh([NotNull] string key, bool printNotFoundWarning = true)
         {
-            return _mesh.TryLoad($"{GetPreparedKey(key)}.msh", out var item) ? item : null;
+            return _mesh.TryLoad($"{GetPreparedKey(key)}.msh", out var item, printNotFoundWarning) ? item : null;
         }
 
         [CanBeNull]
-        public IModelHierarchy TryGetModelHierarchy([NotNull] string key)
+        public IModelHierarchy TryGetModelHierarchy([NotNull] string key, bool printNotFoundWarning = true)
         {
-            return _modelHierarchy.TryLoad($"{GetPreparedKey(key)}.mdh", out var item) ? item : null;
+            return _modelHierarchy.TryLoad($"{GetPreparedKey(key)}.mdh", out var item, printNotFoundWarning) ? item : null;
         }
 
         [CanBeNull]
-        public IModel TryGetModel([NotNull] string key)
+        public IModel TryGetModel([NotNull] string key, bool printNotFoundWarning = true)
         {
-            return _model.TryLoad($"{GetPreparedKey(key)}.mdl", out var item) ? item : null;
+            return _model.TryLoad($"{GetPreparedKey(key)}.mdl", out var item, printNotFoundWarning) ? item : null;
         }
 
         [CanBeNull]
-        public IModelMesh TryGetModelMesh([NotNull] string key)
+        public IModelMesh TryGetModelMesh([NotNull] string key, bool printNotFoundWarning = true)
         {
-            return _modelMesh.TryLoad($"{GetPreparedKey(key)}.mdm", out var item) ? item : null;
+            return _modelMesh.TryLoad($"{GetPreparedKey(key)}.mdm", out var item, printNotFoundWarning) ? item : null;
         }
 
         [CanBeNull]
-        public IMultiResolutionMesh TryGetMultiResolutionMesh([NotNull] string key)
+        public IMultiResolutionMesh TryGetMultiResolutionMesh([NotNull] string key, bool printNotFoundWarning = true)
         {
-            return _multiResolutionMesh.TryLoad($"{GetPreparedKey(key)}.mrm", out var item) ? item : null;
+            return _multiResolutionMesh.TryLoad($"{GetPreparedKey(key)}.mrm", out var item, printNotFoundWarning) ? item : null;
         }
 
         [CanBeNull]
-        public IMorphMesh TryGetMorphMesh([NotNull] string key)
+        public IMorphMesh TryGetMorphMesh([NotNull] string key, bool printNotFoundWarning = true)
         {
-            return _morphMesh.TryLoad($"{GetPreparedKey(key)}.mmb", out var item) ? item : null;
+            return _morphMesh.TryLoad($"{GetPreparedKey(key)}.mmb", out var item, printNotFoundWarning) ? item : null;
         }
 
         [CanBeNull]
@@ -204,6 +204,7 @@ namespace GUZ.Core.Services.Caches
             return new DaedalusVm(Vfs, $"{GetPreparedKey(key)}.dat");
         }
 
+        // FIXME - Should it be used without Gothic game version? Or better always call with it?
         [CanBeNull]
         public ZenKit.World TryGetWorld([NotNull] string key)
         {
@@ -216,12 +217,12 @@ namespace GUZ.Core.Services.Caches
         /// </summary>
         /// <param name="key"></param>
         /// <param name="version"></param>
-        /// <param name="cacheFire"></param>
+        /// <param name="cache"></param>
         /// <returns></returns>
         [CanBeNull]
-        public ZenKit.World TryGetWorld([NotNull] string key, GameVersion version, bool cacheFire = false)
+        public ZenKit.World TryGetWorld([NotNull] string key, GameVersion version, bool cache = false)
         {
-            if (cacheFire)
+            if (cache)
             {
                 return _world.TryLoad($"{GetPreparedKey(key)}.zen", version, out var item) ? item : null;
             }
@@ -278,6 +279,11 @@ namespace GUZ.Core.Services.Caches
             return item;
         }
 
+        /// <summary>
+        /// Hint: This method only removes last file name extension on purpose (multiple endings seems like a bug in mods).
+        ///       Will they be rendered in G2 normally anyway?
+        ///       e.g., foo.tga.tga => foo.tga
+        /// </summary>
         [NotNull]
         public string GetPreparedKey([NotNull] string key)
         {
