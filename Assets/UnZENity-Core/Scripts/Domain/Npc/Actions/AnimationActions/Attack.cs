@@ -84,7 +84,7 @@ namespace GUZ.Core.Domain.Npc.Actions.AnimationActions
                         _npcAiService.ExtAiPlayAni(NpcInstance, GetAnimName(VmGothicEnums.AnimationType.MoveR));
                     break;
                 case FightAiMove.Run:
-                    _npcAiService.ExtAiPlayAni(NpcInstance, GetAnimName(VmGothicEnums.AnimationType.Move));
+                    _npcAiService.PlayAni(NpcInstance, GetAnimName(VmGothicEnums.AnimationType.Move), _enemy);
                     break;
                 case FightAiMove.Turn:
                     _npcAiService.ExtAiTurnToNpc(NpcInstance, _enemy);
