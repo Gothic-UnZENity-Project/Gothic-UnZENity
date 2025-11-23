@@ -452,7 +452,7 @@ namespace GUZ.VR.Domain.Player
         {
             CalculateBoxColliderOverlap(boxCollider, out var center, out var size, out var rotation);;
 
-            var colliders = Physics.OverlapBox(center, size / 2, rotation, 1 << Constants.VobNpcOrMonster);
+            var colliders = Physics.OverlapBox(center, size / 2, rotation, 1 << Constants.VobNpcOrMonsterLayer);
 
             return colliders;
         }
@@ -470,7 +470,7 @@ namespace GUZ.VR.Domain.Player
         {
             CalculateCapsuleOverlap(capsuleCollider, out var point0, out var point1, out var radius);
 
-            var colliders = Physics.OverlapCapsule(point0, point1, radius, 1 << Constants.VobNpcOrMonster);
+            var colliders = Physics.OverlapCapsule(point0, point1, radius, 1 << Constants.VobNpcOrMonsterLayer);
 
             return colliders;
         }

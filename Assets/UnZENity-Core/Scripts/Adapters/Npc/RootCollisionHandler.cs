@@ -1,3 +1,4 @@
+using GUZ.Core.Const;
 using UnityEngine;
 
 namespace GUZ.Core.Adapters.Npc
@@ -58,6 +59,21 @@ namespace GUZ.Core.Adapters.Npc
 
             // Empty physics based diff. Next frame physics will be recalculated.
             transform.localPosition = Vector3.zero;
+        }
+
+        private void OnCollisionEnter(Collision collision)
+        {
+            // As we already use these layers for Monsters+NPCs+Hero, we will simply reuse it instead of using a Tag.
+            // PERC_MOVENPC is only relevant for hero + NPCs in G1.
+            if (collision.gameObject.layer.Equals(Constants.PlayerLayer))
+            {
+                PrefabProps.AiHandler.HeroCollisionDetected();
+            }
+            else
+            {
+                // Nothing relevant collided with.
+                return;
+            }
         }
     }
 }
