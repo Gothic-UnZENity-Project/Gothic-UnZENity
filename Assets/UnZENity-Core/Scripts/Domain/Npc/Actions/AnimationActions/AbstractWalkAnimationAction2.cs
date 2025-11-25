@@ -9,9 +9,6 @@ namespace GUZ.Core.Domain.Npc.Actions.AnimationActions
 {
     public abstract class AbstractWalkAnimationAction2 : AbstractAnimationAction
     {
-        [Inject] private readonly AnimationService _animationService;
-
-
         protected Transform NpcTransform => NpcGo.transform;
         protected bool IsDestReached;
 
@@ -62,7 +59,7 @@ namespace GUZ.Core.Domain.Npc.Actions.AnimationActions
         {
             PhysicsService.EnablePhysicsForNpc(PrefabProps);
 
-            var animName = _animationService.GetAnimationName(VmGothicEnums.AnimationType.Move, NpcContainer);
+            var animName = AnimationService.GetAnimationName(VmGothicEnums.AnimationType.Move, NpcContainer);
             PrefabProps.AnimationSystem.PlayAnimation(animName);
         }
 
@@ -70,7 +67,7 @@ namespace GUZ.Core.Domain.Npc.Actions.AnimationActions
         {
             PhysicsService.EnablePhysicsForNpc(PrefabProps);
 
-            var animName = _animationService.GetAnimationName(VmGothicEnums.AnimationType.Move, NpcContainer);
+            var animName = AnimationService.GetAnimationName(VmGothicEnums.AnimationType.Move, NpcContainer);
             PrefabProps.AnimationSystem.StopAnimation(animName);
         }
 

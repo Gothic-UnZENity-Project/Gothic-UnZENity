@@ -194,7 +194,7 @@ namespace GUZ.Core.Services.Npc
 
         public void PlayAttackAni(NpcInstance npc, string name, FightAiMove move, NpcInstance moveTarget)
         {
-            npc.GetUserData().Props.AnimationQueue.Enqueue(new PlayAttackAni(
+            npc.GetUserData().Props.AnimationQueue.Enqueue(new AttackPlayAni(
                 new AnimationAction(name, int0: (int)move, instance0: moveTarget),
                 npc.GetUserData()));
         }
