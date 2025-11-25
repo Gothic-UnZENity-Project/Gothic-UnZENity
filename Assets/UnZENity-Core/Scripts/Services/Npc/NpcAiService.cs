@@ -189,12 +189,14 @@ namespace GUZ.Core.Services.Npc
 
         public void ExtAiPlayAni(NpcInstance npc, string name)
         {
-            PlayAni(npc, name, null);
+            npc.GetUserData().Props.AnimationQueue.Enqueue(new PlayAni(new AnimationAction(name), npc.GetUserData()));
         }
 
-        public void PlayAni(NpcInstance npc, string name, NpcInstance moveTarget)
+        public void PlayAttackAni(NpcInstance npc, string name, FightAiMove move, NpcInstance moveTarget)
         {
-            npc.GetUserData().Props.AnimationQueue.Enqueue(new PlayAni(new AnimationAction(name, instance0: moveTarget), npc.GetUserData()));
+            npc.GetUserData().Props.AnimationQueue.Enqueue(new PlayAttackAni(
+                new AnimationAction(name, int0: (int)move, instance0: moveTarget),
+                npc.GetUserData()));
         }
 
         public void ExtAiStartState(NpcInstance npc, int action, bool stopCurrentState, string wayPointName)

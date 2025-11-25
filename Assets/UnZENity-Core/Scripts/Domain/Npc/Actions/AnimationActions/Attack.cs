@@ -75,16 +75,16 @@ namespace GUZ.Core.Domain.Npc.Actions.AnimationActions
                     _npcAiService.ExtAiWait(NpcInstance, 0.2f);
                     break;
                 case FightAiMove.Attack:
-                    _npcAiService.ExtAiPlayAni(NpcInstance, GetAnimName(VmGothicEnums.AnimationType.Attack));
+                    _npcAiService.PlayAttackAni(NpcInstance, GetAnimName(VmGothicEnums.AnimationType.Attack), _move, _enemy);
                     break;
                 case FightAiMove.Strafe:
                     if (Random.Range(0, 2) == 0)
-                        _npcAiService.ExtAiPlayAni(NpcInstance, GetAnimName(VmGothicEnums.AnimationType.MoveL));
+                        _npcAiService.PlayAttackAni(NpcInstance, GetAnimName(VmGothicEnums.AnimationType.MoveL), _move, _enemy);
                     else
-                        _npcAiService.ExtAiPlayAni(NpcInstance, GetAnimName(VmGothicEnums.AnimationType.MoveR));
+                        _npcAiService.PlayAttackAni(NpcInstance, GetAnimName(VmGothicEnums.AnimationType.MoveR), _move, _enemy);
                     break;
                 case FightAiMove.Run:
-                    _npcAiService.PlayAni(NpcInstance, GetAnimName(VmGothicEnums.AnimationType.Move), _enemy);
+                    _npcAiService.PlayAttackAni(NpcInstance, GetAnimName(VmGothicEnums.AnimationType.Move), _move, _enemy);
                     break;
                 case FightAiMove.Turn:
                     _npcAiService.ExtAiTurnToNpc(NpcInstance, _enemy);
