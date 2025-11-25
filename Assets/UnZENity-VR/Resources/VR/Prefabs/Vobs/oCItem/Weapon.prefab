@@ -55,35 +55,5 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 6503575194566409312, guid: b8c776d1865a6014385673931a399ebc, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 574299268932569820}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b8c776d1865a6014385673931a399ebc, type: 3}
---- !u!1 &1109521133577554838 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 6503575194566409312, guid: b8c776d1865a6014385673931a399ebc, type: 3}
-  m_PrefabInstance: {fileID: 6135196513653094390}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &574299268932569820
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1109521133577554838}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 99f0a46232384db0a4a79f2b55bacf2e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _mass2HOneHanded: 15
-  _mass1HAnyHand2HTwoHanded: 2
-  _linearDamping2HOneHanded: 0
-  _linearDamping1HAnyHand2HTwoHanded: 0
-  _angularDamping2HOneHanded: 0
-  _angularDamping1HAnyHand2HTwoHanded: 0
-  _weaponVelocityThreshold: 2
-  _weaponVelocityDropPercentage: 0.1
-  _velocityCheckDuration: 0.5
-  _velocitySampleCount: 5
