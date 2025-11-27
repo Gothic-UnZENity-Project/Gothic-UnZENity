@@ -4,19 +4,33 @@ using Reflex.Attributes;
 using UnityEngine;
 using Logger = GUZ.Core.Logging.Logger;
 
-namespace GUZ.VR.Adapters.Vob.VobItem
+namespace GUZ.Core.Adapters.Vob.Item
 {
-    public class VRWeapon : MonoBehaviour
+    public class Weapon : MonoBehaviour
     {
         [SerializeField] private TrailRenderer _trailRenderer;
 
         [Inject] private TextureService _textureService;
 
+        private void Awake()
+        {
+            _trailRenderer.enabled = false;
+        }
         
         private void Start()
         {
             _trailRenderer.material = _textureService.WeaponTrailMaterial;
             SetTrailWidth();
+        }
+
+        public void StartTrail()
+        {
+            _trailRenderer.enabled = true;
+        }
+
+        public void EndTrail()
+        {
+            _trailRenderer.enabled = false;
         }
         
         /// <summary>

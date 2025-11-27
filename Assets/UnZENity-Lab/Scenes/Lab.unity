@@ -18226,7 +18226,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   DeveloperConfig: {fileID: 11400000, guid: d1ee11f3526d3a847a5aaeefc5da6ab2, type: 2}
   _fillBackpack: 0
-  _spawnItems: 0
+  _spawnItems: 1
   LabMusicHandler: {fileID: 408181898}
   LabSoundHandler: {fileID: 1011376553}
   LabVideoHandler: {fileID: 1219449894}

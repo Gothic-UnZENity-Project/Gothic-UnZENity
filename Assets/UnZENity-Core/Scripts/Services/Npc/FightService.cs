@@ -1,3 +1,4 @@
+using GUZ.Core.Adapters.Vob.Item;
 using GUZ.Core.Domain.Npc.Actions.AnimationActions;
 using GUZ.Core.Logging;
 using GUZ.Core.Manager;
@@ -29,6 +30,16 @@ namespace GUZ.Core.Services.Npc
             // In G1, Humans needs to have stumble sound called via Aargh svm. Monsters will have their stumble sound inside animations itself.
             var randomId = Random.Range(0, _vmService.NpcVoiceVariationMax);
             _audioService.Play($"SVM_{target.Instance.Voice}_AARGH_{randomId}");
+        }
+
+        public void StartAttack(GameObject weapon)
+        {
+            weapon.GetComponentInChildren<Weapon>().StartTrail();
+        }
+
+        public void EndAttack(GameObject weapon)
+        {
+            weapon.GetComponentInChildren<Weapon>().EndTrail();
         }
     }
 }
