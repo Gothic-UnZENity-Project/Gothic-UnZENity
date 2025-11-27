@@ -34,20 +34,36 @@ namespace GUZ.VR.Services
 
         public VrHapticsService()
         {
-            // Info
-
-            // Warning
+            // Fight
+            GlobalEventDispatcher.FightWindowAttack.AddListener((_, handSide) => AttackVibration(handSide, VibrationType.Success)); // Attack can happen now
+            GlobalEventDispatcher.FightWindowCombo.AddListener((_, handSide) => AttackVibration(handSide, VibrationType.Info)); // Now you can start another attack
+            GlobalEventDispatcher.FightWindowComboFailed.AddListener((_, handSide) => AttackVibration(handSide, VibrationType.Error)); // Attack window passed
+            
+            // Lock picking
             GlobalEventDispatcher.LockPickComboWrong.AddListener((_, _, handSide) => Vibrate((HVRHandSide)handSide, VibrationType.Warning));
-
-            // Error
             GlobalEventDispatcher.LockPickComboBroken.AddListener((_, _, handSide) => Vibrate((HVRHandSide)handSide, VibrationType.Error));
-
-            // Success
             GlobalEventDispatcher.LockPickComboCorrect.AddListener((_, _, handSide) => Vibrate((HVRHandSide)handSide, VibrationType.Success));
             GlobalEventDispatcher.LockPickComboFinished.AddListener((_, _, handSide) => Vibrate((HVRHandSide)handSide, VibrationType.Success));
         }
 
-        
+        private void AttackVibration(GlobalEventDispatcher.HandSide handSide, VibrationType vibrationType)
+        {
+            switch (handSide)
+            {
+                case GlobalEventDispatcher.HandSide.Both:
+                    Vibrate(HVRHandSide.Left, vibrationType);
+                    Vibrate(HVRHandSide.Right, vibrationType);
+                    break;
+                case GlobalEventDispatcher.HandSide.Left:
+                    Vibrate(HVRHandSide.Left, vibrationType);
+                    break;
+                case GlobalEventDispatcher.HandSide.Right:
+                    Vibrate(HVRHandSide.Right, vibrationType);
+                    break;
+            }
+        }
+
+
         public void Vibrate(HVRHandSide handSide, VibrationType type)
         {
             _vrPlayerService.GetHand(handSide).Vibrate(_vibrationData[(int)type]);

@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using GUZ.Core.Adapters.Npc;
+using GUZ.Core;
 using GUZ.Core.Const;
 using GUZ.Core.Extensions;
 using GUZ.Core.Logging;
@@ -59,6 +59,18 @@ namespace GUZ.VR.Domain.Player
 
         private bool _handlesLeftHand;
         private bool _handlesRightHand;
+        private GlobalEventDispatcher.HandSide _handValue
+        {
+            get
+            {
+                if (_handlesLeftHand && _handlesRightHand)
+                    return GlobalEventDispatcher.HandSide.Both;
+                else if (_handlesLeftHand)
+                    return GlobalEventDispatcher.HandSide.Left;
+                else
+                    return GlobalEventDispatcher.HandSide.Right;
+            }
+        }
 
         private float _attackVelocityThreshold;
         private float _velocityDropPercentage;
@@ -493,6 +505,7 @@ namespace GUZ.VR.Domain.Player
                 
                 _fightService.EndAttack(WeaponVobContainer.Go);
 
+                GlobalEventDispatcher.FightWindowComboFailed.Invoke(WeaponVobContainer, _handValue);
                 return true;
             }
 
@@ -533,7 +546,7 @@ namespace GUZ.VR.Domain.Player
         {
             _currentWindow = TimeWindow.Attack;
             _overallFlowTime = 0f; // Restart timer
-
+            
             // Restart failure checks.
             _hasDroppedBelowThreshold = false;
             _hasReturnedToThreshold = false;
@@ -544,6 +557,8 @@ namespace GUZ.VR.Domain.Player
             
             // Trigger attack
             _fightService.StartAttack(WeaponVobContainer.Go);
+
+            GlobalEventDispatcher.FightWindowAttack.Invoke(WeaponVobContainer, _handValue);
         }
         
         // FIXME - DEBUG values. Need to be adjustable via MarvinMode Inspector...
@@ -558,11 +573,8 @@ namespace GUZ.VR.Domain.Player
             // We restart velocity check now. It's expected, that the player changes velocity within this time window now!
             _hasDroppedBelowThreshold = false;
             _hasReturnedToThreshold = false;
-
-            if (_handlesLeftHand)
-                _vrPlayerService.GetHand(HVRHandSide.Left).Vibrate(_amplitude, _duration, _frequency);
-            if (_handlesRightHand)
-                _vrPlayerService.GetHand(HVRHandSide.Right).Vibrate(_amplitude, _duration, _frequency);
+            
+            GlobalEventDispatcher.FightWindowCombo.Invoke(WeaponVobContainer, _handValue);
         }
         
         // Public methods for external systems

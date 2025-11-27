@@ -46,6 +46,32 @@ namespace GUZ.Core
 
         public static readonly UnityEvent<INpc> CreateNpc = new();
 
+        
+        // Fight events
+        public enum HandSide
+        {
+            None  = 0,
+            Left  = 1,
+            Right = 2,
+            Both  = 3
+        }
+        
+        /// <summary>
+        /// Assumptions:
+        /// 1. Attack window (collider hit check) always ends before the combo window starts.
+        /// --attack---|--
+        /// --------------|--combo---|
+        ///
+        /// 2. If we fail the combo window by doing e.g., "left-right" within the attack window, the combo is failed, and we need to wait.
+        /// --attack---|--
+        /// ------|fail--------------|
+        /// </summary>
+        public static readonly UnityEvent<VobContainer, HandSide> FightWindowInitial = new();
+        public static readonly UnityEvent<VobContainer, HandSide> FightWindowComboFailed = new();
+        public static readonly UnityEvent<VobContainer, HandSide> FightWindowAttack = new();
+        public static readonly UnityEvent<VobContainer, HandSide> FightWindowWaitingForCombo = new();
+        public static readonly UnityEvent<VobContainer, HandSide> FightWindowCombo = new();
+        
 
         // LockPicking events
         // 1. VobContainer -> LockPick
