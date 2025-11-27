@@ -74,7 +74,7 @@ namespace GUZ.Core
 
             // Vob
             containerBuilder.AddSingleton(typeof(VobService));
-            containerBuilder.AddSingleton(typeof(WeaponService));
+            containerBuilder.AddSingleton(typeof(ParticleService));
             
             // Player
             containerBuilder.AddSingleton(typeof(DialogService));

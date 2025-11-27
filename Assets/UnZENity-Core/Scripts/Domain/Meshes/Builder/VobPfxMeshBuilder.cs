@@ -9,8 +9,8 @@ using GUZ.Core.Services.Meshes;
 using Reflex.Attributes;
 using UnityEngine;
 using UnityEngine.Rendering;
-using ZenKit.Vobs;
 using Logger = GUZ.Core.Logging.Logger;
+using Object = System.Object;
 
 namespace GUZ.Core.Domain.Meshes.Builder
 {
@@ -24,11 +24,17 @@ namespace GUZ.Core.Domain.Meshes.Builder
         [Inject] private readonly ResourceCacheService _resourceCacheService;
 
         private string _visualName;
+        private bool _destroyAfterPlay;
 
-        
+
         public void SetPfxData(string visualName)
         {
             _visualName = visualName;
+        }
+        
+        public void SetDestroyAfterPlay(bool destroyAfterPlay)
+        {
+            _destroyAfterPlay = destroyAfterPlay;
         }
         
         public override GameObject Build()
@@ -222,6 +228,12 @@ namespace GUZ.Core.Domain.Meshes.Builder
             }
 
             particleSystem.Play();
+
+            // WARNING: If we provided an existing GO, then it will also destroy other Components. We assume it's a new GO() for Destroy only.
+            if (!particleSystem.main.loop && _destroyAfterPlay)
+            {
+                UnityEngine.Object.Destroy(RootGo, particleSystem.main.duration);
+            }
 
             return pfxGo;
         }

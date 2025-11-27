@@ -66,6 +66,7 @@ namespace GUZ.Lab
         [Inject] private readonly UnityMonoService _unityMonoService;
         [Inject] private readonly SkyService _skyService;
         [Inject] private readonly PlayerService _playerService;
+        [Inject] private readonly ParticleService _particleService;
 
         private BootstrapDomain _bootstrapDomain;
 
@@ -119,6 +120,7 @@ namespace GUZ.Lab
             _textureService.Init();
             _npcService.Init();
             _vobService.Init();
+            _particleService.Init();
 
             _videoService.InitVideos();
             _saveGameService.LoadNewGame();

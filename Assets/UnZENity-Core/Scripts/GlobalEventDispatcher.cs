@@ -72,6 +72,8 @@ namespace GUZ.Core
         public static readonly UnityEvent<VobContainer, HandSide> FightWindowWaitingForCombo = new();
         public static readonly UnityEvent<VobContainer, HandSide> FightWindowCombo = new();
         
+        public static readonly UnityEvent<NpcContainer, Vector3> FightHit = new();
+        
 
         // LockPicking events
         // 1. VobContainer -> LockPick

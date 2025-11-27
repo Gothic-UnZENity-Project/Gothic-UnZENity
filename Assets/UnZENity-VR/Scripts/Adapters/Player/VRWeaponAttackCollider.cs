@@ -1,3 +1,4 @@
+using GUZ.Core;
 using GUZ.Core.Adapters.Npc;
 using GUZ.Core.Adapters.Vob;
 using GUZ.Core.Const;
@@ -32,6 +33,10 @@ namespace GUZ.VR.Adapters.Player
             if (!_vrWeaponService.IsWeaponInAttackWindow(vobContainer))
                 return;
 
+            var hitPosition = other.ClosestPoint(transform.position);
+            GlobalEventDispatcher.FightHit.Invoke(_npcContainer, hitPosition);
+ 
+            // FIXME - Move to event too.
             _fightService.ExecuteHit(_npcContainer);
             _vrWeaponService.HitDone(vobContainer);
         }
