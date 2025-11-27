@@ -6,12 +6,13 @@ using Logger = GUZ.Core.Logging.Logger;
 
 namespace GUZ.Core.Adapters.Vob.Item
 {
-    public class Weapon : MonoBehaviour
+    public class WeaponAdapter : MonoBehaviour
     {
         [SerializeField] private TrailRenderer _trailRenderer;
 
         [Inject] private TextureService _textureService;
 
+        
         private void Awake()
         {
             _trailRenderer.enabled = false;
@@ -54,7 +55,7 @@ namespace GUZ.Core.Adapters.Vob.Item
             }
             else
             {
-                Logger.LogWarning("No MeshFilter found on weapon parent!", LogCat.Fight);
+                Logger.LogWarning("No MeshFilter found on weapon parent.", LogCat.Fight);
             }
         }
     }

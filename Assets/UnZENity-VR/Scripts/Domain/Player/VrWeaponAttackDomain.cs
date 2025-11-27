@@ -30,7 +30,6 @@ namespace GUZ.VR.Domain.Player
         [Inject] private readonly VRPlayerService _vrPlayerService;
         [Inject] private readonly AudioService _audioService;
         [Inject] private readonly ResourceCacheService _resourceCacheService;
-        [Inject] private readonly FightService _fightService;
 
         private CharacterController _characterController => _vrPlayerService.VRContextInteractionService.GetVRPlayerController().CharacterController;
 
@@ -204,6 +203,9 @@ namespace GUZ.VR.Domain.Player
 
         private void FullStopHandling()
         {
+            // We need to execute it before we clear values.
+            GlobalEventDispatcher.FightWindowInitial.Invoke(WeaponVobContainer, _handValue);
+
             WeaponVobContainer = null;
             _weaponRigidbody = null;
             _handlesLeftHand = false;
@@ -391,7 +393,10 @@ namespace GUZ.VR.Domain.Player
                 case TimeWindow.ComboFailed:
                     // Simply wait until the whole "animation" is over and then start again.
                     if (_overallFlowTime >= _comboWindowTime)
+                    {
                         _currentWindow = TimeWindow.Initial;
+                        GlobalEventDispatcher.FightWindowInitial.Invoke(WeaponVobContainer, _handValue);
+                    }
                     break;
                 case TimeWindow.WaitingForCombo:
                     HandleWaitingForComboWindow();
@@ -425,7 +430,10 @@ namespace GUZ.VR.Domain.Player
                 return;
 
             if (_overallFlowTime >= _attackWindowTime)
+            {
                 _currentWindow = TimeWindow.WaitingForCombo;
+                GlobalEventDispatcher.FightWindowWaitingForCombo.Invoke(WeaponVobContainer, _handValue);
+            }
         }
 
         private Collider[] CheckBoxColliderOverlap(BoxCollider boxCollider)
@@ -502,10 +510,8 @@ namespace GUZ.VR.Domain.Player
                 _hasReturnedToThreshold = true;
                 // Combo failed - velocity dropped and returned during attack window
                 _currentWindow = TimeWindow.ComboFailed;
-                
-                _fightService.EndAttack(WeaponVobContainer.Go);
-
                 GlobalEventDispatcher.FightWindowComboFailed.Invoke(WeaponVobContainer, _handValue);
+                
                 return true;
             }
 
@@ -538,7 +544,7 @@ namespace GUZ.VR.Domain.Player
             {
                 // Missed combo window
                 _currentWindow = TimeWindow.Initial;
-                _fightService.EndAttack(WeaponVobContainer.Go);
+                GlobalEventDispatcher.FightWindowInitial.Invoke(WeaponVobContainer, _handValue);
             }
         }
         
@@ -555,9 +561,6 @@ namespace GUZ.VR.Domain.Player
             // If no sound is set, ignore playing it and mark it as "played".
             _soundPlayed = _swingSwordSound == null;
             
-            // Trigger attack
-            _fightService.StartAttack(WeaponVobContainer.Go);
-
             GlobalEventDispatcher.FightWindowAttack.Invoke(WeaponVobContainer, _handValue);
         }
         
@@ -611,6 +614,8 @@ namespace GUZ.VR.Domain.Player
         public void AdvanceStateAfterAttack()
         {
             _currentWindow = TimeWindow.WaitingForCombo;
+            
+            GlobalEventDispatcher.FightWindowWaitingForCombo.Invoke(WeaponVobContainer, _handValue);
         }
     }
 }

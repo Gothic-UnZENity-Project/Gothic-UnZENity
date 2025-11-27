@@ -31,15 +31,5 @@ namespace GUZ.Core.Services.Npc
             var randomId = Random.Range(0, _vmService.NpcVoiceVariationMax);
             _audioService.Play($"SVM_{target.Instance.Voice}_AARGH_{randomId}");
         }
-
-        public void StartAttack(GameObject weapon)
-        {
-            weapon.GetComponentInChildren<Weapon>().StartTrail();
-        }
-
-        public void EndAttack(GameObject weapon)
-        {
-            weapon.GetComponentInChildren<Weapon>().EndTrail();
-        }
     }
 }
