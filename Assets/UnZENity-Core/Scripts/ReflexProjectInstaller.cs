@@ -82,6 +82,7 @@ namespace GUZ.Core
             containerBuilder.AddSingleton(typeof(RoutineService));
             containerBuilder.AddSingleton(typeof(NpcRoutineService));
             containerBuilder.AddSingleton(typeof(NpcInventoryService));
+            containerBuilder.AddSingleton(typeof(FightService));
 
             // Caches
             containerBuilder.AddSingleton(typeof(ResourceCacheService));

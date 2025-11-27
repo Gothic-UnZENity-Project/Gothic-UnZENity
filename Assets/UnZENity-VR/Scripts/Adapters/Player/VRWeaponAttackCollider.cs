@@ -17,6 +17,7 @@ namespace GUZ.VR.Adapters.Player
     {
         [Inject] private readonly VRWeaponService _vrWeaponService;
         [Inject] private readonly AnimationService _animationService;
+        [Inject] private readonly FightService _fightService;
 
         private NpcContainer _npcContainer;
         
@@ -32,16 +33,13 @@ namespace GUZ.VR.Adapters.Player
 
 
             var vobContainer = other.GetComponentInParent<VobLoader>()?.Container;
+
             if (!_vrWeaponService.IsWeaponInAttackWindow(vobContainer))
                 return;
 
-            Logger.LogEditor("Attack started!", LogCat.VR);
-            
+
+            _fightService.ExecuteHit(_npcContainer);
             _vrWeaponService.HitDone(vobContainer);
-            
-            var animName = _animationService.GetAnimationName(VmGothicEnums.AnimationType.StumbleA, _npcContainer);
-            _npcContainer.Props.CurrentAction.StopImmediately();
-            _npcContainer.Props.AnimationQueue.Enqueue(new PlayAni(new(animName), _npcContainer));
         }
     }
 }

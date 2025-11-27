@@ -18,15 +18,17 @@ namespace GUZ.Core.Services.Vm
         public int AIVItemStatusKey => _gameStateService.GothicVm.GetSymbolByName("AIV_ITEMSTATUS")!.GetInt(0);
         public int AIVItemFreqKey => _gameStateService.GothicVm.GetSymbolByName("AIV_ITEMFREQ")!.GetInt(0);
         public int TAITNone => _gameStateService.GothicVm.GetSymbolByName("TA_IT_NONE")!.GetInt(0);
-        
-        
+
+        // Fight
+        public int NpcVoiceVariationMax => _gameStateService.GothicVm.GetSymbolByName("NPC_VOICE_VARIATION_MAX")!.GetInt(0);
+
+        // Lock picking
         public string DoorLockSoundName => "DOOR_LOCK.WAV";
         public string PickLockFailureSoundName => _gameStateService.GothicVm.GetSymbolByName("_STR_SOUND_PICKLOCK_FAILURE").GetString(0);
         public string PickLockBrokenSoundName => _gameStateService.GothicVm.GetSymbolByName("_STR_SOUND_PICKLOCK_BROKEN").GetString(0);
         public string PickLockSuccessSoundName => _gameStateService.GothicVm.GetSymbolByName("_STR_SOUND_PICKLOCK_SUCCESS").GetString(0);
         public string PickLockUnlockSoundName => _gameStateService.GothicVm.GetSymbolByName("_STR_SOUND_PICKLOCK_UNLOCK").GetString(0);
         // public string DoorUnlockSoundName => "DOOR_UNLOCK.WAV"; // _STR_*_UNLOCK value above couldn't be found/isn't used in G1, therefore we use this as fallback.
-
 
         public string[] MobSit => _gameStateService.GothicVm.GetSymbolByName("MOB_SIT").GetString(0).Split(',');
         public string[] MobLie => _gameStateService.GothicVm.GetSymbolByName("MOB_LIE").GetString(0).Split(',');
