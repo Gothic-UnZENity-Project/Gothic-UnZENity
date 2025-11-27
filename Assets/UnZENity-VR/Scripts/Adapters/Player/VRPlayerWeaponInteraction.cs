@@ -128,12 +128,12 @@ namespace GUZ.VR.Adapters.Player
                     "Mass one handed",
                     () => _mass2HOneHanded,
                     value => _mass2HOneHanded = value,
-                    0f, 50f),
+                    0f, 15f),
                 new MarvinProperty<float>(
                     "Mass two handed",
                     () => _mass1HAnyHand2HTwoHanded,
                     value => _mass1HAnyHand2HTwoHanded = value,
-                    0f, 50f),
+                    0f, 5f),
                 new MarvinProperty<float>(
                     "Move damping one handed",
                     () => _linearDamping2HOneHanded,
