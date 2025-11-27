@@ -97,10 +97,16 @@ namespace GUZ.Core.Services.Meshes
             var dynamicMaterials = new List<Material>();
             foreach (var mat in defaultMaterials)
             {
-                var newMaterial = new Material(_dynamicShaderMap[mat.shader.name].dynamicShader)
+                if (!_dynamicShaderMap.TryGetValue(mat.shader.name, out var shaderMapEntry))
+                {
+                    dynamicMaterials.Add(null); // We need to set an empty entry for the array to backfill when hover is over.
+                    continue;
+                }
+                
+                var newMaterial = new Material(shaderMapEntry.dynamicShader)
                 {
                     mainTexture = mat.mainTexture,
-                    renderQueue = _dynamicShaderMap[mat.shader.name].shaderType
+                    renderQueue = shaderMapEntry.shaderType
                 };
 
                 dynamicMaterials.Add(newMaterial);
@@ -138,7 +144,13 @@ namespace GUZ.Core.Services.Meshes
 
             for (var i = 0; i < entry.Renderers.Count; i++)
             {
-                entry.Renderers[i].sharedMaterial = entry.DynamicMaterials[i];
+                var dynamicMaterial = entry.DynamicMaterials[i];
+
+                // It's a shader we didn't touch.
+                if (dynamicMaterial == null)
+                    continue;
+
+                entry.Renderers[i].sharedMaterial = dynamicMaterial;
             }
 
             entry.IsCurrentlyDynamic = true;
@@ -153,7 +165,13 @@ namespace GUZ.Core.Services.Meshes
 
             for (var i = 0; i < entry.Renderers.Count; i++)
             {
-                entry.Renderers[i].sharedMaterial = entry.DefaultMaterials[i];
+                var defaultMaterial = entry.DefaultMaterials[i];
+
+                // It's a shader we didn't touch.
+                if (defaultMaterial == null)
+                    continue;
+                
+                entry.Renderers[i].sharedMaterial = defaultMaterial;
             }
 
             entry.IsCurrentlyDynamic = false;
