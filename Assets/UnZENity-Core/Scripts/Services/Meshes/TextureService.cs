@@ -36,6 +36,7 @@ namespace GUZ.Core.Services.Meshes
         // Misc
         public Material SkyMaterial;
         public Material BackgroundMaterial;
+        public Material WeaponTrailMaterial;
 
 
         [Inject] private readonly TextureCacheService _textureCacheService;
@@ -63,8 +64,11 @@ namespace GUZ.Core.Services.Meshes
             ArrowUpMaterial = GetEmptyMaterial(MaterialExtension.BlendMode.Opaque);
             ArrowDownMaterial = GetEmptyMaterial(MaterialExtension.BlendMode.Opaque);
             ArrowLeftMaterial = GetEmptyMaterial(MaterialExtension.BlendMode.Opaque);
-
+            
+            // Misc
+            WeaponTrailMaterial = GetEmptyMaterial(MaterialExtension.BlendMode.Transparent);
         
+            
             MainMenuImageBackgroundMaterial.mainTexture = _textureCacheService.TryGetTexture("STARTSCREEN.TGA");
             MainMenuBackgroundMaterial.mainTexture = _textureCacheService.TryGetTexture("MENU_INGAME.TGA");
             MainMenuSaveLoadBackgroundMaterial.mainTexture = _textureCacheService.TryGetTexture("MENU_SAVELOAD_BACK.TGA");
@@ -90,6 +94,13 @@ namespace GUZ.Core.Services.Meshes
             ArrowUpMaterial.mainTexture = _textureCacheService.TryGetTexture("O.TGA");
             ArrowDownMaterial.mainTexture = _textureCacheService.TryGetTexture("U.TGA");
             ArrowLeftMaterial.mainTexture = _textureCacheService.TryGetTexture("L.TGA");
+            
+            // Misc
+            WeaponTrailMaterial.mainTexture = _textureCacheService.TryGetTexture("ZWEAPONTRAIL.TGA");
+            // Set alpha to 135/255 ≈ 0.53
+            var color = WeaponTrailMaterial.color;
+            color.a = 135f / 255f;
+            WeaponTrailMaterial.color = color;
         }
 
         public void SetTexture(string texture, Material material)
