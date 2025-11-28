@@ -144,7 +144,8 @@ namespace GUZ.VR.Adapters.Marvin
                 _propertyCount++;
             }
             
-            _contentTransform.sizeDelta = new Vector2(_contentTransform.sizeDelta.x, Mathf.Abs(y));
+            // + 2.5 * _propertyHeight -> Grant more spaze at the bottom to ensure we can read all properties.
+            _contentTransform.sizeDelta = new Vector2(_contentTransform.sizeDelta.x, Mathf.Abs(y) + 2.5f * _propertyHeight);
         }
 
         private GameObject CreateField(MarvinPropertyHeader header, GameObject rootGo, float y)

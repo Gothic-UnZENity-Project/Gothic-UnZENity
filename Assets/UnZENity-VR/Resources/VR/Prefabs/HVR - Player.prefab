@@ -1501,6 +1501,7 @@ MonoBehaviour:
       m_Calls: []
   _grabBag: {fileID: 0}
   GrabBags: []
+  _allowGrabbing: 0
   GrabControl: 0
   GrabDetectionType: 1
   CheckHandOverlap: 0
@@ -1951,8 +1952,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 99f0a46232384db0a4a79f2b55bacf2e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _mass2HOneHanded: 15
-  _mass1HAnyHand2HTwoHanded: 2
+  _mass2HOneHanded: 5
+  _mass1HAnyHand2HTwoHanded: 1
   _linearDamping2HOneHanded: 0
   _linearDamping1HAnyHand2HTwoHanded: 0
   _angularDamping2HOneHanded: 0
@@ -2089,6 +2090,7 @@ MonoBehaviour:
       m_Calls: []
   _grabBag: {fileID: 0}
   GrabBags: []
+  _allowGrabbing: 0
   GrabControl: 0
   GrabDetectionType: 1
   CheckHandOverlap: 0
@@ -2218,6 +2220,7 @@ MonoBehaviour:
       m_Calls: []
   _grabBag: {fileID: 0}
   GrabBags: []
+  _allowGrabbing: 0
   GrabControl: 0
   GrabDetectionType: 1
   CheckHandOverlap: 0

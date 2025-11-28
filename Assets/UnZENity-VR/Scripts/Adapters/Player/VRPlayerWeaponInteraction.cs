@@ -20,8 +20,8 @@ namespace GUZ.VR.Adapters.Player
 
         // FIXME - All of these values will be dynamic in the future. Based on skill level and weapon type.
         [Header("Weapon weight")]
-        [SerializeField] private float _mass2HOneHanded = 15f;
-        [SerializeField] private float _mass1HAnyHand2HTwoHanded = 2f;
+        [SerializeField] private float _mass2HOneHanded = 5f;
+        [SerializeField] private float _mass1HAnyHand2HTwoHanded = 1f;
         [SerializeField] private float _linearDamping2HOneHanded = 0f;
         [SerializeField] private float _linearDamping1HAnyHand2HTwoHanded = 0f;
         [SerializeField] private float _angularDamping2HOneHanded = 0f;
