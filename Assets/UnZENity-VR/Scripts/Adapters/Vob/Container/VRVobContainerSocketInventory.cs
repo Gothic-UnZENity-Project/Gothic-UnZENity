@@ -1,6 +1,9 @@
 ﻿#if GUZ_HVR_INSTALLED
+using GUZ.Core.Adapters.Vob;
+using GUZ.VR.Services;
 using HurricaneVR.Framework.Core;
 using HurricaneVR.Framework.Core.Grabbers;
+using Reflex.Attributes;
 using UnityEngine;
 
 namespace GUZ.VR.Adapters.Vob.Container
@@ -10,17 +13,19 @@ namespace GUZ.VR.Adapters.Vob.Container
     /// </summary>
     public class VRVobContainerSocketInventory : MonoBehaviour
     {
-
+        [Inject] private VRWeaponService _vrWeaponService;
+        
         public void OnBeforeGrabbed(HVRGrabberBase grabber, HVRGrabbable grabbable)
         {
-            grabbable.GetComponent<VRVobItemProperties>().IsSocketed = true;
+            Debug.Log("Undraw");
+            _vrWeaponService.PlayUndrawSound(grabbable.GetComponentInParent<VobLoader>().Container);
         }
 
         public void OnReleased(HVRGrabberBase grabber, HVRGrabbable grabbable)
         {
-            grabbable.GetComponent<VRVobItemProperties>().IsSocketed = false;
+            Debug.Log("Draw");
+            _vrWeaponService.PlayDrawSound(grabbable.GetComponentInParent<VobLoader>().Container);
         }
-
     }
 }
 #endif
