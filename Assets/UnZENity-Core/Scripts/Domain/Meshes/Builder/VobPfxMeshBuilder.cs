@@ -51,13 +51,14 @@ namespace GUZ.Core.Domain.Meshes.Builder
             particleSystem.Stop();
 
             var gravity = pfx.FlyGravityS.Split();
-            float gravityX = 1f, gravityY = 1f, gravityZ = 1f;
+            float gravityX = 0f, gravityY = 0f, gravityZ = 0f;
             if (gravity.Length == 3)
             {
-                // Gravity seems too low. Therefore *10k.
-                gravityX = float.Parse(gravity[0]) * 10000;
-                gravityY = float.Parse(gravity[1]) * 10000;
-                gravityZ = float.Parse(gravity[2]) * 10000;
+                // Gravity values in Gothic are very small (e.g., -0.0003)
+                // Multiplying by 1k - Blood effects for Zombies are spreading good then.
+                gravityX = float.Parse(gravity[0]) * 10;
+                gravityY = float.Parse(gravity[1]) * 10;
+                gravityZ = float.Parse(gravity[2]) * 10;
             }
 
             // Main module
@@ -70,11 +71,13 @@ namespace GUZ.Core.Domain.Meshes.Builder
                 mainModule.startLifetime = new ParticleSystem.MinMaxCurve(minLifeTime, maxLifeTime);
                 mainModule.loop = Convert.ToBoolean(pfx.PpsIsLooping);
 
-                // Velocity in Gothic PFX seems already in a small unit (samples use 0.1). Do not divide by 1000.
-                var minSpeed = Mathf.Max(0f, (pfx.VelAvg - pfx.VelVar));
-                var maxSpeed = Mathf.Max(0f, (pfx.VelAvg + pfx.VelVar));
+                // Velocity in Gothic PFX seems already in a small unit (samples use 0.1). 
+                // For blood splatter effects it's tested to work with a scale factor for spreading
+                var velocityScale = 10f; // Empirical value for blood splatter
+                var minSpeed = Mathf.Max(0f, (pfx.VelAvg - pfx.VelVar) * velocityScale);
+                var maxSpeed = Mathf.Max(0f, (pfx.VelAvg + pfx.VelVar) * velocityScale);
                 mainModule.startSpeed = new ParticleSystem.MinMaxCurve(minSpeed, maxSpeed);
-    
+                
                 // Always disable Unity's built-in gravity - use Force over Lifetime instead
                 mainModule.gravityModifier = 0f;
 
@@ -100,6 +103,11 @@ namespace GUZ.Core.Domain.Meshes.Builder
             // Emission module
             {
                 var emissionModule = particleSystem.emission;
+                
+                // Gothic's ppsValue is particles/second, but we need to scale it down significantly.
+                // dividing by 100 gives the right amount of blood emitter for zombies. Keeping it for now.
+                var scaledEmissionRate = pfx.PpsValue / 100f;
+                
                 // Use ppsScaleKeys to modulate emission over normalized time [0..1]
                 if (pfx.PpsScaleKeysS.NotNullOrEmpty() && pfx.PpsScaleKeysS != "=")
                 {
@@ -123,17 +131,17 @@ namespace GUZ.Core.Domain.Meshes.Builder
                             }
                         }
 
-                        // Apply with base multiplier ppsValue
-                        emissionModule.rateOverTime = new ParticleSystem.MinMaxCurve(pfx.PpsValue, curve);
+                        // Apply with scaled multiplier
+                        emissionModule.rateOverTime = new ParticleSystem.MinMaxCurve(scaledEmissionRate, curve);
                     }
                     else
                     {
-                        emissionModule.rateOverTime = new ParticleSystem.MinMaxCurve(pfx.PpsValue);
+                        emissionModule.rateOverTime = new ParticleSystem.MinMaxCurve(scaledEmissionRate);
                     }
                 }
                 else
                 {
-                    emissionModule.rateOverTime = new ParticleSystem.MinMaxCurve(pfx.PpsValue);
+                    emissionModule.rateOverTime = new ParticleSystem.MinMaxCurve(scaledEmissionRate);
                 }
             }
 
@@ -308,12 +316,13 @@ namespace GUZ.Core.Domain.Meshes.Builder
                 // Apply direction mode and angle variations
                 if (pfx.DirModeS.EqualsIgnoreCase("RAND"))
                 {
-                    // For random direction, we use a cone emitter
-                    // The angle variance creates the cone spread
-                    var maxAngle = Mathf.Max(pfx.DirAngleHeadVar, pfx.DirAngleElevVar);
-                    shapeModule.angle = maxAngle;
+                    // For random direction with angle spread, use Sphere shape to emit in all directions
+                    // The velocity variations will be handled by start speed and velocity over lifetime
+                    shapeModule.shapeType = ParticleSystemShapeType.Sphere;
+                    shapeModule.radius = 0.01f; // Very small radius for point-like emission
+                    shapeModule.radiusThickness = 0f; // Emit from surface only
                     
-                    // Randomize direction within the cone
+                    // Enable randomized direction
                     shapeModule.randomDirectionAmount = 1f;
                 }
                 else if (pfx.DirModeS.EqualsIgnoreCase("DIR"))
@@ -321,9 +330,8 @@ namespace GUZ.Core.Domain.Meshes.Builder
                     // Fixed direction using head/elev angles
                     shapeModule.angle = 0f;
                     shapeModule.randomDirectionAmount = 0f;
+                    shapeModule.rotation = new Vector3(pfx.DirAngleElev, pfx.DirAngleHead, 0);
                 }
-
-                shapeModule.rotation = new Vector3(pfx.DirAngleElev, pfx.DirAngleHead, 0);
 
                 var shapeOffsetVec = pfx.ShpOffsetVecS.Split();
                 if (float.TryParse(shapeOffsetVec[0], out var x) && float.TryParse(shapeOffsetVec[1], out var y) &&
@@ -332,28 +340,19 @@ namespace GUZ.Core.Domain.Meshes.Builder
                     shapeModule.position = new Vector3(x / 100, y / 100, z / 100);
                 }
 
-                shapeModule.alignToDirection = true;
-
-                shapeModule.radiusThickness = Convert.ToBoolean(pfx.ShpIsVolume) ? 1f : 0f;
+                shapeModule.alignToDirection = false; // Don't align to direction for blood splatter
             }
 
             // Velocity over Lifetime module (for directional spread and TARGET)
             {
                 var velocityModule = particleSystem.velocityOverLifetime;
                 
-                if (pfx.DirModeS.ToUpper() == "RAND" && (pfx.DirAngleHeadVar > 0 || pfx.DirAngleElevVar > 0))
+                if (pfx.DirModeS.ToUpper() == "RAND")
                 {
-                    velocityModule.enabled = true;
-                    velocityModule.space = ParticleSystemSimulationSpace.Local;
-                    
-                    // Create randomized velocity based on angle variations
-                    // This adds the spread pattern you see in the image
-                    var headVariance = pfx.DirAngleHeadVar / 180f; // Normalize to 0-1
-                    var elevVariance = pfx.DirAngleElevVar / 180f;
-                    
-                    velocityModule.x = new ParticleSystem.MinMaxCurve(-headVariance, headVariance);
-                    velocityModule.y = new ParticleSystem.MinMaxCurve(-elevVariance, elevVariance);
-                    velocityModule.z = new ParticleSystem.MinMaxCurve(-headVariance, headVariance);
+                    // For RAND mode, particles should spread in multiple directions
+                    // The shape module handles the initial random direction
+                    // We don't need additional velocity over lifetime for basic spreading
+                    velocityModule.enabled = false;
                 }
                 else if (pfx.DirModeS.ToUpper() == "TARGET" && !string.IsNullOrEmpty(pfx.DirModeTargetPosS) && pfx.DirModeTargetPosS != "=")
                 {
