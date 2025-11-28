@@ -29,10 +29,6 @@ namespace GUZ.VR.Adapters.Player
 
             var vobContainer = other.GetComponentInParent<VobLoader>()?.Container;
 
-            // DEBUG
-            var hitPosition0 = other.ClosestPoint(transform.position);
-            GlobalEventDispatcher.FightHit.Invoke(_npcContainer, vobContainer, hitPosition0);
-            
             if (!_vrWeaponService.IsWeaponInAttackWindow(vobContainer))
                 return;
 

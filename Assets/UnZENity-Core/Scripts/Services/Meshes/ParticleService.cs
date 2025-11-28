@@ -13,8 +13,8 @@ namespace GUZ.Core.Services.Meshes
 
         public void Init()
         {
-            GlobalEventDispatcher.FightWindowInitial.AddListener((vobContainer, _) => ChangeTrail(vobContainer, true));
-            GlobalEventDispatcher.FightWindowAttack.AddListener((vobContainer, _) => ChangeTrail(vobContainer, false));
+            GlobalEventDispatcher.FightWindowInitial.AddListener((vobContainer, _) => ChangeTrail(vobContainer, false));
+            GlobalEventDispatcher.FightWindowAttack.AddListener((vobContainer, _) => ChangeTrail(vobContainer, true));
             
             GlobalEventDispatcher.FightHit.AddListener(EmitBlood);
         }

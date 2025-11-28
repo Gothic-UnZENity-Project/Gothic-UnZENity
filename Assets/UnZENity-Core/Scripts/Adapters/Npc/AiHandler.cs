@@ -52,6 +52,12 @@ namespace GUZ.Core.Adapters.Npc
         /// </summary>
         private void Update()
         {
+            // If NPC/Monster is dead, stop any further process logic.
+            if (Properties.BodyState == VmGothicEnums.BodyState.BsDead)
+            {
+                enabled = false;
+            }
+            
             ExecuteActivePerceptions();
             ExecuteStates();
 

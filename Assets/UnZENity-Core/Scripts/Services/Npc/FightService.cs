@@ -1,13 +1,12 @@
-using GUZ.Core.Adapters.Vob.Item;
 using GUZ.Core.Domain.Npc.Actions.AnimationActions;
-using GUZ.Core.Logging;
 using GUZ.Core.Manager;
 using GUZ.Core.Models.Container;
 using GUZ.Core.Models.Vm;
 using GUZ.Core.Services.Vm;
+using GUZ.Core.Services.World;
 using Reflex.Attributes;
 using UnityEngine;
-using Logger = GUZ.Core.Logging.Logger;
+using ZenKit.Daedalus;
 
 namespace GUZ.Core.Services.Npc
 {
@@ -16,22 +15,63 @@ namespace GUZ.Core.Services.Npc
         [Inject] private AudioService _audioService;
         [Inject] private VmService _vmService;
         [Inject] private AnimationService _animationService;
+        [Inject] private PhysicsService _physicsService;
 
         public void Init()
         {
             GlobalEventDispatcher.FightHit.AddListener(OnHit);
         }
         
-        public void OnHit(NpcContainer target, VobContainer _, Vector3 __)
+        public void OnHit(NpcContainer target, VobContainer weapon, Vector3 __)
         {
-            Logger.LogEditor("Attack started!", LogCat.Fight);
+            if (OnHitUpdateHealth(target, weapon))
+            {
+                target.Props.BodyState = VmGothicEnums.BodyState.BsDead;
+                OnDyingChangeAnimation(target);
+            }
+            else
+            {
+                OnHitChangeAnimation(target);
+                OnHitPlaySound(target);
+            }
+        }
 
+        /// <summary>
+        /// Handles health changes.
+        /// Returns true if Npc/Monster is dead.
+        /// </summary>
+        private bool OnHitUpdateHealth(NpcContainer target, VobContainer weapon)
+        {
+            // FIXME - We need to handle this via power and skill level of attacker, not weapon alone.
+            var hitPoints = target.Vob.GetAttribute((int)NpcAttribute.HitPoints);
+            hitPoints -= weapon.GetItemInstance()!.DamageTotal;
+            
+            target.Vob.SetAttribute((int)NpcAttribute.HitPoints, hitPoints);
+
+            return hitPoints <= 0;
+        }
+        
+        private void OnDyingChangeAnimation(NpcContainer target)
+        {
+            // Stop current (attack) animation.
+            target.Props.CurrentAction.StopImmediately();
+            _physicsService.DisablePhysicsForNpc(target.PrefabProps);
+            
+            var animName = _animationService.GetAnimationName(VmGothicEnums.AnimationType.DeadB, target);
+            target.Props.AnimationQueue.Enqueue(new PlayAni(new(animName), target));
+        }
+
+        private void OnHitChangeAnimation(NpcContainer target)
+        {
             // Stop current (attack) animation.
             target.Props.CurrentAction.StopImmediately();
 
             var animName = _animationService.GetAnimationName(VmGothicEnums.AnimationType.StumbleA, target);
             target.Props.AnimationQueue.Enqueue(new PlayAni(new(animName), target));
+        }
 
+        private void OnHitPlaySound(NpcContainer target)
+        {
             // In G1, Humans needs to have stumble sound called via Aargh svm.
             var clip = _audioService.GetRandomSoundClip($"SVM_{target.Instance.Voice}_AARGH");
 
