@@ -29,7 +29,7 @@ namespace GUZ.VR.Adapters.Context
             // We need to set our VR service now, as the Player.scene loading time (basically this Awake() call) is the first time,
             // when we can set our VR service. But the [Inject] resolves are done already at frame 0 at Bootstrap.scene.
             // Therefore, we need to set the VR service via new() and as proxy implementation.
-            _contextInteractionService.SetImpl(new VRContextInteractionService().Inject());
+            _contextInteractionService.SetImpl(new VRContextInteractionService());
             _contextMenuService.SetImpl(new VRContextMenuService().Inject());
             _contextDialogService.SetImpl(new VRContextDialogService().Inject());
 #else

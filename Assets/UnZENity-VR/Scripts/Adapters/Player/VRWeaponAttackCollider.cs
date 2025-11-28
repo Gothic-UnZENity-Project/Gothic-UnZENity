@@ -14,7 +14,6 @@ namespace GUZ.VR.Adapters.Player
     {
         [Inject] private readonly VRWeaponService _vrWeaponService;
         [Inject] private readonly AnimationService _animationService;
-        [Inject] private readonly FightService _fightService;
 
         private NpcContainer _npcContainer;
         
@@ -30,15 +29,15 @@ namespace GUZ.VR.Adapters.Player
 
             var vobContainer = other.GetComponentInParent<VobLoader>()?.Container;
 
+            // DEBUG
+            var hitPosition0 = other.ClosestPoint(transform.position);
+            GlobalEventDispatcher.FightHit.Invoke(_npcContainer, vobContainer, hitPosition0);
+            
             if (!_vrWeaponService.IsWeaponInAttackWindow(vobContainer))
                 return;
 
             var hitPosition = other.ClosestPoint(transform.position);
-            GlobalEventDispatcher.FightHit.Invoke(_npcContainer, hitPosition);
- 
-            // FIXME - Move to event too.
-            _fightService.ExecuteHit(_npcContainer);
-            _vrWeaponService.HitDone(vobContainer);
+            GlobalEventDispatcher.FightHit.Invoke(_npcContainer, vobContainer, hitPosition);
         }
     }
 }

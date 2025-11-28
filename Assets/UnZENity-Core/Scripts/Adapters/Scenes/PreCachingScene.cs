@@ -114,7 +114,7 @@ namespace GUZ.Core.Adapters.Scenes
                 // Sleeper temple music (similar to installation music)
                 // FIXME - Find music for G2 to play in here
                 if (_contextGameVersionService.Version == GameVersion.Gothic1)
-                    _audioService.Play("KAT_DAY_STD");
+                    _audioService.PlayMusic("KAT_DAY_STD");
                 
                 _contextInteractionService.DisableMenus();
                 _loadingBarHandler.LevelCount = worldsToLoad.Count;

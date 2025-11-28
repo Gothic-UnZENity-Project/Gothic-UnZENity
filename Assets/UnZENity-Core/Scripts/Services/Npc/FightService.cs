@@ -17,7 +17,12 @@ namespace GUZ.Core.Services.Npc
         [Inject] private VmService _vmService;
         [Inject] private AnimationService _animationService;
 
-        public void ExecuteHit(NpcContainer target)
+        public void Init()
+        {
+            GlobalEventDispatcher.FightHit.AddListener(OnHit);
+        }
+        
+        public void OnHit(NpcContainer target, VobContainer _, Vector3 __)
         {
             Logger.LogEditor("Attack started!", LogCat.Fight);
 
@@ -27,9 +32,14 @@ namespace GUZ.Core.Services.Npc
             var animName = _animationService.GetAnimationName(VmGothicEnums.AnimationType.StumbleA, target);
             target.Props.AnimationQueue.Enqueue(new PlayAni(new(animName), target));
 
-            // In G1, Humans needs to have stumble sound called via Aargh svm. Monsters will have their stumble sound inside animations itself.
-            var randomId = Random.Range(0, _vmService.NpcVoiceVariationMax);
-            _audioService.Play($"SVM_{target.Instance.Voice}_AARGH_{randomId}");
+            // In G1, Humans needs to have stumble sound called via Aargh svm.
+            var clip = _audioService.GetRandomSoundClip($"SVM_{target.Instance.Voice}_AARGH");
+
+            // Monsters will have their stumble sound inside animations itself.
+            if (clip == null)
+                return;
+
+            target.PrefabProps.NpcSound.PlayOneShot(clip);
         }
     }
 }

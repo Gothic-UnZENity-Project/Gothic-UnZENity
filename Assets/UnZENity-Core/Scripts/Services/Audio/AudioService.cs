@@ -52,19 +52,19 @@ namespace GUZ.Core.Manager
             });
         }
 
-        public void Play(string musicInstanceName)
+        public void PlayMusic(string musicInstanceName)
         {
             _musicDomain.Play(musicInstanceName);
         }
 
         private void OnMainMenuLoaded()
         {
-            Play("SYS_MENU");
+            PlayMusic("SYS_MENU");
         }
 
         private void OnLoadingSceneLoaded()
         {
-            Play("SYS_LOADING");
+            PlayMusic("SYS_LOADING");
         }
 
 
@@ -90,7 +90,7 @@ namespace GUZ.Core.Manager
         
         /// <summary>
         /// Hint: If you want to fetch sounds randomly, do not cache them on e.g., MonoBehavior, but fetch them each time you want to run it.
-        ///       The AudioClips itself are cached by this method automatically. No performance penalty when re-running this method.
+        ///       This method caches the AudioClips itself automatically. No performance penalty when re-running this method.
         /// </summary>
         public AudioClip GetRandomSoundClip(string soundName)
         {
@@ -115,7 +115,7 @@ namespace GUZ.Core.Manager
                     return null;
 
                 // Instead of decoding nosound.wav which might be decoded incorrectly, just return null.
-                if (sfxContainer.GetFirstSound().File.EqualsIgnoreCase(NoSoundName))
+                if (sfxContainer.GetFirstSound() == null || sfxContainer.GetFirstSound()!.File.EqualsIgnoreCase(NoSoundName))
                     return null;
 
                 clip = CreateAudioClip(sfxContainer.GetRandomSound());

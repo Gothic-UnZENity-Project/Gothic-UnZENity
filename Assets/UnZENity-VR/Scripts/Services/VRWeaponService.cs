@@ -1,10 +1,11 @@
 #if GUZ_HVR_INSTALLED
-using GUZ.Core.Adapters.Vob;
+using GUZ.Core;
 using GUZ.Core.Extensions;
 using GUZ.Core.Models.Container;
 using GUZ.VR.Domain.Player;
 using GUZ.VR.Models.Vob;
 using HurricaneVR.Framework.Shared;
+using UnityEngine;
 
 namespace GUZ.VR.Services
 {
@@ -18,6 +19,11 @@ namespace GUZ.VR.Services
         private readonly VrWeaponAttackDomain _firstAttackDomain = new VrWeaponAttackDomain().Inject();
         private readonly VrWeaponAttackDomain _secondAttackDomain = new VrWeaponAttackDomain().Inject();
 
+        public void Init()
+        {
+            GlobalEventDispatcher.FightHit.AddListener(OnHit);
+        }
+        
 
         public void OnGrabbed(HVRHandSide handSide, VobContainer vobContainer, WeaponPhysicsConfig weaponConfig)
         {
@@ -53,7 +59,7 @@ namespace GUZ.VR.Services
                 return false;
         }
 
-        public void HitDone(VobContainer vobContainer)
+        private void OnHit(NpcContainer _, VobContainer vobContainer, Vector3 __)
         {
             if (vobContainer == _firstAttackDomain.WeaponVobContainer)
                 _firstAttackDomain.AdvanceStateAfterAttack();

@@ -25,6 +25,7 @@ namespace GUZ.VR.Services.Context
     {
         [Inject] private readonly ConfigService _configService;
         [Inject] private readonly ResourceCacheService _resourceCacheService;
+        [Inject] private readonly VRWeaponService _vrWeaponService;
 
         private const string _contextName = "VR";
 
@@ -32,6 +33,10 @@ namespace GUZ.VR.Services.Context
 
         public VRContextInteractionService()
         {
+            this.Inject();
+
+            _vrWeaponService.Init();
+            
             GlobalEventDispatcher.LoadingSceneLoaded.AddListener(OnLoadingSceneLoaded);
             GlobalEventDispatcher.GothicInisInitialized.AddListener(() =>
             {

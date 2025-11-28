@@ -24,7 +24,7 @@ namespace GUZ.Lab.Handler
 
         public void MusicPlayClick()
         {
-            _audioService.Play(FileSelector.options[FileSelector.value].text);
+            _audioService.PlayMusic(FileSelector.options[FileSelector.value].text);
         }
     }
 }

@@ -16,7 +16,7 @@ namespace GUZ.Core.Services.Meshes
             GlobalEventDispatcher.FightWindowInitial.AddListener((vobContainer, _) => ChangeTrail(vobContainer, true));
             GlobalEventDispatcher.FightWindowAttack.AddListener((vobContainer, _) => ChangeTrail(vobContainer, false));
             
-            GlobalEventDispatcher.FightHit.AddListener((npcContainer, position) => EmitBlood(npcContainer, position));
+            GlobalEventDispatcher.FightHit.AddListener(EmitBlood);
         }
 
         private void ChangeTrail(VobContainer vobContainer, bool enable)
@@ -27,7 +27,7 @@ namespace GUZ.Core.Services.Meshes
                 vobContainer.Go.GetComponentInChildren<WeaponAdapter>()?.EndTrail();
         }
         
-        private void EmitBlood(NpcContainer npcContainer, Vector3 position)
+        private void EmitBlood(NpcContainer npcContainer, VobContainer _, Vector3 position)
         {
             if (npcContainer == null || npcContainer.Instance == null)
                 return;

@@ -1,7 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using GUZ.Core.Const;
+using GUZ.Core.Extensions;
 using GUZ.Core.Services;
+using JetBrains.Annotations;
 using MyBox;
 using Reflex.Attributes;
 using ZenKit.Daedalus;
@@ -25,31 +28,48 @@ namespace GUZ.Core.Models.Audio
         
         public SfxModel(string preparedKey)
         {
+            this.Inject();
             soundKey = preparedKey;
         }
 
+        [CanBeNull]
         public SoundEffectInstance GetFirstSound()
         {
             if (_soundEffects == null)
                 LoadSoundEffects();
 
-            return _soundEffects[0];
+            return _soundEffects!.FirstOrDefault();
         }
         
+        [CanBeNull]
         public SoundEffectInstance GetRandomSound()
         {
             if (_soundEffects == null)
                 LoadSoundEffects();
-            
-            return _soundEffects.Length == 1 ? GetFirstSound() : _soundEffects.GetRandom();
+
+            if (_soundEffects.IsEmpty())
+                return null;
+            else if (_soundEffects!.Length == 1)
+                return _soundEffects.First();
+            else
+                return _soundEffects.GetRandom();
         }
 
         private void LoadSoundEffects()
         {
             var sounds = new List<SoundEffectInstance>();
-            
-            var firstSound = _gameStateService.SfxVm.InitInstance<SoundEffectInstance>(soundKey);
-            sounds.Add(firstSound);
+
+            try
+            {
+                var firstSound = _gameStateService.SfxVm.InitInstance<SoundEffectInstance>(soundKey);
+                sounds.Add(firstSound);
+            }
+            catch (Exception e)
+            {
+                // If the key itself doesn't exist, then we don't need to look further.
+                _soundEffects = Array.Empty<SoundEffectInstance>();
+                return;
+            }
 
             // Check if we have additional sounds which will be picked randomly at runtime.
             var randomIndex = 1;
