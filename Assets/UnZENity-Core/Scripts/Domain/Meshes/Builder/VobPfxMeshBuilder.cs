@@ -6,6 +6,7 @@ using GUZ.Core.Logging;
 using GUZ.Core.Models.Caches;
 using GUZ.Core.Services.Caches;
 using GUZ.Core.Services.Meshes;
+using MyBox;
 using Reflex.Attributes;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -69,15 +70,71 @@ namespace GUZ.Core.Domain.Meshes.Builder
                 mainModule.startLifetime = new ParticleSystem.MinMaxCurve(minLifeTime, maxLifeTime);
                 mainModule.loop = Convert.ToBoolean(pfx.PpsIsLooping);
 
-                var minSpeed = (pfx.VelAvg - pfx.VelVar) / 1000;
-                var maxSpeed = (pfx.VelAvg + pfx.VelVar) / 1000;
+                // Velocity in Gothic PFX seems already in a small unit (samples use 0.1). Do not divide by 1000.
+                var minSpeed = Mathf.Max(0f, (pfx.VelAvg - pfx.VelVar));
+                var maxSpeed = Mathf.Max(0f, (pfx.VelAvg + pfx.VelVar));
                 mainModule.startSpeed = new ParticleSystem.MinMaxCurve(minSpeed, maxSpeed);
+    
+                // Always disable Unity's built-in gravity - use Force over Lifetime instead
+                mainModule.gravityModifier = 0f;
+
+                // Simulation space from FOR switches (prefer dir FOR if present)
+                var simFor = (pfx.DirForS ?? pfx.ShpForS)?.ToUpperInvariant();
+                if (simFor == "WORLD")
+                    mainModule.simulationSpace = ParticleSystemSimulationSpace.World;
+                else
+                    mainModule.simulationSpace = ParticleSystemSimulationSpace.Local;
+
+                // Start size from visSizeStart (cm->m). Allow end scale via Size over Lifetime below.
+                if (!string.IsNullOrEmpty(pfx.VisSizeStartS) && pfx.VisSizeStartS != "=")
+                {
+                    var sizeTokens = pfx.VisSizeStartS.Split();
+                    if (sizeTokens.Length >= 1 && float.TryParse(sizeTokens[0], out var sx))
+                    {
+                        // Billboard uses uniform size; take X as base.
+                        mainModule.startSize = Mathf.Max(0.001f, sx / 100f);
+                    }
+                }
             }
 
             // Emission module
             {
                 var emissionModule = particleSystem.emission;
-                emissionModule.rateOverTime = new ParticleSystem.MinMaxCurve(pfx.PpsValue);
+                // Use ppsScaleKeys to modulate emission over normalized time [0..1]
+                if (pfx.PpsScaleKeysS.NotNullOrEmpty() && pfx.PpsScaleKeysS != "=")
+                {
+                    var keys = pfx.PpsScaleKeysS.Split(new[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
+                    if (keys.Length > 0)
+                    {
+                        var curve = new AnimationCurve();
+                        for (var i = 0; i < keys.Length; i++)
+                        {
+                            if (!float.TryParse(keys[i], out var k)) k = 1f;
+                            var t = keys.Length == 1 ? 0f : (float)i / (keys.Length - 1);
+                            curve.AddKey(new Keyframe(t, k));
+                        }
+
+                        // Optional smoothing
+                        if (Convert.ToBoolean(pfx.PpsIsSmooth))
+                        {
+                            for (var i = 0; i < curve.keys.Length; i++)
+                            {
+                                curve.SmoothTangents(i, 0f);
+                            }
+                        }
+
+                        // Apply with base multiplier ppsValue
+                        emissionModule.rateOverTime = new ParticleSystem.MinMaxCurve(pfx.PpsValue, curve);
+                    }
+                    else
+                    {
+                        emissionModule.rateOverTime = new ParticleSystem.MinMaxCurve(pfx.PpsValue);
+                    }
+                }
+                else
+                {
+                    emissionModule.rateOverTime = new ParticleSystem.MinMaxCurve(pfx.PpsValue);
+                }
             }
 
             // Force over Lifetime module
@@ -118,24 +175,25 @@ namespace GUZ.Core.Domain.Meshes.Builder
                 colorOverTime.color = gradient;
             }
 
-            // Size over lifetime module
+            // Size over lifetime module (from vis size)
             {
                 var sizeOverTime = particleSystem.sizeOverLifetime;
-                sizeOverTime.enabled = true;
+                sizeOverTime.enabled = false;
 
-                var curve = new AnimationCurve();
-                var shapeScaleKeys = pfx.ShpScaleKeysS.Split();
-                if (shapeScaleKeys.Length > 1 && !pfx.ShpScaleKeysS.IsEmpty())
+                // Gothic uses visSizeStart_S as base size and visSizeEndScale as multiplier over life
+                var endScale = pfx.VisSizeEndScale;
+                if (endScale > 0f && Math.Abs(endScale - 1f) > 0.001f)
                 {
-                    var curveTime = 0f;
-
-                    foreach (var key in shapeScaleKeys)
-                    {
-                        curve.AddKey(curveTime, float.Parse(key) / 100 * float.Parse(pfx.ShpDimS));
-                        curveTime += 1f / shapeScaleKeys.Length;
-                    }
-
+                    var curve = new AnimationCurve();
+                    curve.AddKey(0f, 1f);
+                    curve.AddKey(1f, endScale);
+                    sizeOverTime.enabled = true;
                     sizeOverTime.size = new ParticleSystem.MinMaxCurve(1f, curve);
+                }
+                else if (pfx.ShpScaleKeysS.NotNullOrEmpty() && pfx.ShpScaleKeysS != "=")
+                {
+                    // We do not support animating emitter shape scale yet; log once
+                    Logger.LogWarning($"shpScaleKeys_S currently not applied to the emitter shape (Unity API limitation without custom script).", LogCat.Mesh);
                 }
             }
 
@@ -180,6 +238,13 @@ namespace GUZ.Core.Domain.Meshes.Builder
                         Logger.LogWarning($"visOrientation {pfx.VisOrientationS} not yet handled.", LogCat.Mesh);
                         break;
                 }
+
+                // Billboard vs Mesh (quad poly)
+                // 1 => quad billboard (default). 0 => tri mesh (not supported directly) -> keep billboard and warn.
+                if (pfx.VisTexIsQuadPoly == 0)
+                {
+                    Logger.LogWarning("visTexIsQuadPoly=0 (triMesh) is not supported; using billboard quad.", LogCat.Mesh);
+                }
             }
 
             // Shape module
@@ -193,8 +258,21 @@ namespace GUZ.Core.Domain.Meshes.Builder
                     case "CIRCLE":
                         shapeModule.shapeType = ParticleSystemShapeType.Circle;
                         break;
+                    case "BOX":
+                        shapeModule.shapeType = ParticleSystemShapeType.Box;
+                        break;
                     case "MESH":
                         shapeModule.shapeType = ParticleSystemShapeType.Mesh;
+                        break;
+                    case "POINT":
+                        shapeModule.shapeType = ParticleSystemShapeType.Sphere;
+                        shapeModule.radius = 0f;
+                        break;
+                    case "LINE":
+                        // Use circle with very small radius and arc to approximate a line, or leave as point with radiusThickness
+                        shapeModule.shapeType = ParticleSystemShapeType.Cone;
+                        shapeModule.radius = 0f;
+                        shapeModule.angle = 0f;
                         break;
                     default:
                         Logger.LogWarning($"Particle ShapeType {pfx.ShpTypeS} not yet handled.", LogCat.Mesh);
@@ -208,12 +286,44 @@ namespace GUZ.Core.Domain.Meshes.Builder
                         // cm in m
                         shapeModule.radius = float.Parse(shapeDimensions[0]) / 100;
                         break;
+                    case 2:
+                        // e.g. circle radius (x) and thickness (y) not supported separately. Use x as radius
+                        if (float.TryParse(shapeDimensions[0], out var r))
+                            shapeModule.radius = r / 100f;
+                        break;
+                    case 3:
+                        // Box or sphere scale in cm -> m
+                        if (float.TryParse(shapeDimensions[0], out var sx) &&
+                            float.TryParse(shapeDimensions[1], out var sy) &&
+                            float.TryParse(shapeDimensions[2], out var sz))
+                        {
+                            shapeModule.scale = new Vector3(sx / 100f, sy / 100f, sz / 100f);
+                        }
+                        break;
                     default:
                         Logger.LogWarning($"shpDim >{pfx.ShpDimS}< not yet handled", LogCat.Mesh);
                         break;
                 }
 
-                shapeModule.rotation = new Vector3(pfx.DirAngleElev, 0, 0);
+                // Apply direction mode and angle variations
+                if (pfx.DirModeS.EqualsIgnoreCase("RAND"))
+                {
+                    // For random direction, we use a cone emitter
+                    // The angle variance creates the cone spread
+                    var maxAngle = Mathf.Max(pfx.DirAngleHeadVar, pfx.DirAngleElevVar);
+                    shapeModule.angle = maxAngle;
+                    
+                    // Randomize direction within the cone
+                    shapeModule.randomDirectionAmount = 1f;
+                }
+                else if (pfx.DirModeS.EqualsIgnoreCase("DIR"))
+                {
+                    // Fixed direction using head/elev angles
+                    shapeModule.angle = 0f;
+                    shapeModule.randomDirectionAmount = 0f;
+                }
+
+                shapeModule.rotation = new Vector3(pfx.DirAngleElev, pfx.DirAngleHead, 0);
 
                 var shapeOffsetVec = pfx.ShpOffsetVecS.Split();
                 if (float.TryParse(shapeOffsetVec[0], out var x) && float.TryParse(shapeOffsetVec[1], out var y) &&
@@ -225,6 +335,89 @@ namespace GUZ.Core.Domain.Meshes.Builder
                 shapeModule.alignToDirection = true;
 
                 shapeModule.radiusThickness = Convert.ToBoolean(pfx.ShpIsVolume) ? 1f : 0f;
+            }
+
+            // Velocity over Lifetime module (for directional spread and TARGET)
+            {
+                var velocityModule = particleSystem.velocityOverLifetime;
+                
+                if (pfx.DirModeS.ToUpper() == "RAND" && (pfx.DirAngleHeadVar > 0 || pfx.DirAngleElevVar > 0))
+                {
+                    velocityModule.enabled = true;
+                    velocityModule.space = ParticleSystemSimulationSpace.Local;
+                    
+                    // Create randomized velocity based on angle variations
+                    // This adds the spread pattern you see in the image
+                    var headVariance = pfx.DirAngleHeadVar / 180f; // Normalize to 0-1
+                    var elevVariance = pfx.DirAngleElevVar / 180f;
+                    
+                    velocityModule.x = new ParticleSystem.MinMaxCurve(-headVariance, headVariance);
+                    velocityModule.y = new ParticleSystem.MinMaxCurve(-elevVariance, elevVariance);
+                    velocityModule.z = new ParticleSystem.MinMaxCurve(-headVariance, headVariance);
+                }
+                else if (pfx.DirModeS.ToUpper() == "TARGET" && !string.IsNullOrEmpty(pfx.DirModeTargetPosS) && pfx.DirModeTargetPosS != "=")
+                {
+                    // Direct particles towards a fixed target position; we override main.startSpeed
+                    var posTokens = pfx.DirModeTargetPosS.Split();
+                    if (posTokens.Length >= 3 &&
+                        float.TryParse(posTokens[0], out var tx) &&
+                        float.TryParse(posTokens[1], out var ty) &&
+                        float.TryParse(posTokens[2], out var tz))
+                    {
+                        var target = new Vector3(tx / 100f, ty / 100f, tz / 100f);
+                        var origin = Vector3.zero; // assuming emitter origin in Local space by default
+                        var dir = (target - origin).normalized;
+
+                        // Use average speed
+                        var speed = Mathf.Max(0f, pfx.VelAvg);
+                        velocityModule.enabled = true;
+                        velocityModule.space = ParticleSystemSimulationSpace.Local;
+                        velocityModule.x = new ParticleSystem.MinMaxCurve(dir.x * speed);
+                        velocityModule.y = new ParticleSystem.MinMaxCurve(dir.y * speed);
+                        velocityModule.z = new ParticleSystem.MinMaxCurve(dir.z * speed);
+
+                        // Ensure start speed does not add extra magnitude
+                        var mainModule = particleSystem.main;
+                        mainModule.startSpeed = 0f;
+                    }
+                }
+            }
+
+            // Collision module
+            {
+                var collision = particleSystem.collision;
+                // ZenKit naming uses FlyCollisionDetectionB
+                if (pfx.FlyCollisionDetectionB > 0)
+                {
+                    collision.enabled = true;
+                    collision.type = ParticleSystemCollisionType.World;
+                    collision.mode = ParticleSystemCollisionMode.Collision3D;
+                    collision.collidesWith = ~0; // everything
+                    collision.bounce = 0f;
+                    collision.lifetimeLoss = 0f;
+                }
+            }
+
+            // Trails module (basic)
+            {
+                var trails = particleSystem.trails;
+                var wantTrail = pfx.TrlWidth > 0f || (!string.IsNullOrEmpty(pfx.TrlTextureS) && pfx.TrlTextureS != "=");
+                if (wantTrail)
+                {
+                    trails.enabled = true;
+                    trails.ratio = 1f;
+                    trails.lifetime = 0.25f;
+                    trails.widthOverTrail = pfx.TrlWidth > 0 ? new ParticleSystem.MinMaxCurve(pfx.TrlWidth / 100f) : new ParticleSystem.MinMaxCurve(0.1f);
+
+                    // Assign trail material if texture provided
+                    if (!string.IsNullOrEmpty(pfx.TrlTextureS) && pfx.TrlTextureS != "=")
+                    {
+                        var trailMat = new Material(Constants.ShaderUnlitParticles);
+                        _textureService.SetTexture(pfx.TrlTextureS, trailMat);
+                        var renderer = pfxGo.GetComponent<ParticleSystemRenderer>();
+                        renderer.trailMaterial = trailMat;
+                    }
+                }
             }
 
             particleSystem.Play();
