@@ -40,6 +40,8 @@ namespace GUZ.Lab.Handler
 
         public void SpawnGoblinClick(int amount)
         {
+            // GreenGobboClub - more strafe movement
+            // BlackGobboMace - more attack combos
             StartCoroutine(SpawnMonster(amount, "GreenGobboClub"));
         }
 
