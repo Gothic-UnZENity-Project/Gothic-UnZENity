@@ -40,7 +40,7 @@ namespace GUZ.Lab.Handler
 
         public void SpawnGoblinClick(int amount)
         {
-            StartCoroutine(SpawnMonster(amount, "BlackGobboMace"));
+            StartCoroutine(SpawnMonster(amount, "GreenGobboClub"));
         }
 
         public void SpawnZombieClick(int amount)

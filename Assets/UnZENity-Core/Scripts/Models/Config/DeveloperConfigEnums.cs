@@ -60,7 +60,36 @@ namespace GUZ.Core.Models.Config
             Meatbug				= 34,
             Zombie				= 35
         }
+        
+        public enum DebugChannel {
+            PD_TA_FRAME = 1,
+            PD_TA_LOOP = 2,
+            PD_TA_CHECK = 3,
+            PD_TA_DETAIL = 4,
 
+            PD_ZS_FRAME = 6,
+            PD_ZS_LOOP = 7,
+            PD_ZS_CHECK = 8,
+            PD_ZS_DETAIL = 9,
+
+            // MST - Monster
+            PD_MST_FRAME = 11,
+            PD_MST_LOOP = 12,
+            PD_MST_CHECK = 13,
+            PD_MST_DETAIL = 14,
+
+            PD_ORC_FRAME = 16,
+            PD_ORC_LOOP = 17,
+            PD_ORC_CHECK = 18,
+            PD_ORC_DETAIL = 19,
+
+            PD_MISSION = 21,
+            PD_CUTSCENE = 22,
+            PD_SPELL = 23,
+            PD_ITEM_MOBSI = 24,
+            PD_MAGIC = 25
+        }
+    
         [NonSerialized]
         public static Dictionary<WorldToSpawn, string> WorldMappings = new()
         {

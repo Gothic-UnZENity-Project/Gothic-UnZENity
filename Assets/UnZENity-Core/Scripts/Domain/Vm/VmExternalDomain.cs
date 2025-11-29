@@ -12,6 +12,7 @@ using GUZ.Core.Services.Config;
 using GUZ.Core.Services.Npc;
 using GUZ.Core.Services.Vobs;
 using GUZ.Core.Services.World;
+using MyBox;
 using Reflex.Attributes;
 using ZenKit;
 using ZenKit.Daedalus;
@@ -51,8 +52,12 @@ namespace GUZ.Core.Domain.Vm
         public void RegisterExternals()
         {
             _enableZSpyLogs = _configService.Dev.EnableZSpyLogs;
-            _zSpyChannel = _configService.Dev.ZSpyChannel;
 
+            if (_configService.Dev.AllDebugChannels)
+                _zSpyChannel = int.MaxValue;
+            else
+                // zSpyChannel are bitwise checks. Therefore, we calculate the bit operation like (1 << PD_TA_FRAME(1) - 1)==1000
+                _zSpyChannel = _configService.Dev.ZSpyChannels.Value.Sum(i => 1 << ((int)i - 1));
 
             var vm = _gameStateService.GothicVm;
             vm.RegisterExternalDefault(DefaultExternal);
@@ -546,9 +551,7 @@ namespace GUZ.Core.Domain.Vm
         public void PrintDebug(string message)
         {
             if (!_configService.Dev.EnableZSpyLogs)
-            {
                 return;
-            }
 
             Logger.Log($"[zspy]: {message}", LogCat.ZSpy);
         }
@@ -556,10 +559,8 @@ namespace GUZ.Core.Domain.Vm
 
         public void PrintDebugCh(int channel, string message)
         {
-            if (!_configService.Dev.EnableZSpyLogs)
-            {
+            if (!_enableZSpyLogs || (_zSpyChannel & (1 << (channel - 1))) == 0)
                 return;
-            }
 
             Logger.Log($"[zspy,{channel}]: {message}", LogCat.ZSpy);
         }
@@ -568,9 +569,7 @@ namespace GUZ.Core.Domain.Vm
         public void PrintDebugInst(string message)
         {
             if (!_configService.Dev.EnableZSpyLogs)
-            {
                 return;
-            }
 
             Logger.Log($"[zspy]: {message}", LogCat.ZSpy);
         }
@@ -578,10 +577,8 @@ namespace GUZ.Core.Domain.Vm
 
         public void PrintDebugInstCh(int channel, string message)
         {
-            if (!_enableZSpyLogs || channel > _zSpyChannel)
-            {
+            if (!_enableZSpyLogs || (_zSpyChannel & (1 << (channel - 1))) == 0)
                 return;
-            }
 
             Logger.Log($"[zspy,{channel}]: {message}", LogCat.ZSpy);
         }

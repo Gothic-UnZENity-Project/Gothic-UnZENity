@@ -32,6 +32,9 @@ namespace GUZ.Core.Models.Config
         [Serializable]
         public class MonsterTypesCollection : CollectionWrapper<MonsterId> { }
 
+        [Serializable]
+        public class DebugChannelTypesCollection : CollectionWrapper<DebugChannel> { }
+
 
         /**
          * ##########
@@ -70,8 +73,11 @@ namespace GUZ.Core.Models.Config
         [OverrideLabel("Enable ZSpy Logs")]
         public bool EnableZSpyLogs;
         [ConditionalField(fieldToCheck: nameof(EnableZSpyLogs))]
-        [Tooltip("0-9 where 9 will log every message.")]
-        public int ZSpyChannel = 9;
+        [Tooltip("Overrules specific channel settings")]
+        public bool AllDebugChannels;
+        [ConditionalField(fieldToCheck: new []{nameof(EnableZSpyLogs), nameof(AllDebugChannels)}, inverse: new[]{false, true})]
+        [Tooltip("PrintDebug channels from 1-25.")]
+        public DebugChannelTypesCollection ZSpyChannels = new();
 
         [OverrideLabel("DirectMusic Log Level")]
         public DirectMusic.LogLevel DirectMusicLogLevel = DirectMusic.LogLevel.Warning;
