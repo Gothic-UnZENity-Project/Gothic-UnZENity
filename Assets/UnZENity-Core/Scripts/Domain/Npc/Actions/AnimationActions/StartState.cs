@@ -33,6 +33,7 @@ namespace GUZ.Core.Domain.Npc.Actions.AnimationActions
 
             Props.IsStateTimeActive = true;
             Props.StateTime = 0;
+            Props.Perceptions.Clear();
 
             GameStateService.GothicVm.GlobalOther = _other;
             GameStateService.GothicVm.GlobalVictim = _victim;
