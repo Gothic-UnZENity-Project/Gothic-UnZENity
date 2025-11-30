@@ -675,44 +675,51 @@ namespace GUZ.Core.Domain.Vm
         public void Npc_SetTalentValue(NpcInstance npc, int talent, int level)
         {
             _npcService.ExtNpcSetTalentValue(npc, (VmGothicEnums.Talent)talent, level);
+            LogInstantExternal(nameof(Npc_ChangeAttribute), npc, talent, level);
         }
 
         public void Npc_ChangeAttribute(NpcInstance npc, int attributeId, int value)
         {
             _npcService.ExtNpcChangeAttribute(npc, attributeId, value);
+            LogInstantExternal(nameof(Npc_ChangeAttribute), npc, attributeId, value);
         }
 
         public void CreateInvItem(NpcInstance npc, int itemId)
         {
             _npcInventoryService.ExtCreateInvItems(npc, itemId, 1);
+            LogInstantExternal(nameof(CreateInvItem), npc, itemId);
         }
-
 
         public void CreateInvItems(NpcInstance npc, int itemId, int amount)
         {
             _npcInventoryService.ExtCreateInvItems(npc, itemId, amount);
+            LogInstantExternal(nameof(CreateInvItem), npc, itemId, amount);
         }
         
         public void Npc_RemoveInvItem(NpcInstance npc, int itemId)
         {
             _npcInventoryService.ExtRemoveInvItems(npc, itemId, 1);
+            LogInstantExternal(nameof(Npc_RemoveInvItem), npc, itemId);
         }
         
         public void Npc_RemoveInvItems(NpcInstance npc, int itemId, int amount)
         {
             _npcInventoryService.ExtRemoveInvItems(npc, itemId, amount);
+            LogInstantExternal(nameof(Npc_RemoveInvItems), npc, itemId, amount);
         }
 
 
         public void Npc_PercEnable(NpcInstance npc, int perception, int function)
         {
             _npcAiService.ExtNpcPerceptionEnable(npc, (VmGothicEnums.PerceptionType)perception, function);
+            LogInstantExternal(nameof(Npc_PercEnable), perception, function);
         }
 
 
         public void Npc_SetPercTime(NpcInstance npc, float time)
         {
             _npcAiService.ExtNpcSetPerceptionTime(npc, time);
+            LogInstantExternal(nameof(Npc_SetPercTime), npc, time);
         }
 
         public int Npc_GetPermAttitude(NpcInstance self, NpcInstance other)
@@ -867,6 +874,7 @@ namespace GUZ.Core.Domain.Vm
         public void Npc_PercDisable(NpcInstance npc, int perception)
         {
             _npcAiService.ExtNpcPerceptionDisable(npc, (VmGothicEnums.PerceptionType)perception);
+            LogInstantExternal(nameof(Npc_PercDisable), npc, perception);
         }
 
         public int Npc_CanSeeNpc(NpcInstance npc, NpcInstance target)
@@ -884,11 +892,13 @@ namespace GUZ.Core.Domain.Vm
         public void Npc_ClearAiQueue(NpcInstance npc)
         {
             _npcAiService.ExtNpcClearAiQueue(npc);
+            LogInstantExternal(nameof(Npc_ClearAiQueue), npc);
         }
 
         public void Npc_ClearInventory(NpcInstance npc)
         {
             _npcInventoryService.ExtNpcClearInventory(npc);
+            LogInstantExternal(nameof(Npc_ClearInventory), npc);
         }
 
         public string Npc_GetNextWp(NpcInstance npc)
@@ -936,11 +946,13 @@ namespace GUZ.Core.Domain.Vm
         public void Npc_SetToFistMode(NpcInstance npc)
         {
             _npcService.ExtNpcSetToFistMode(npc);
+            LogInstantExternal(nameof(Npc_SetToFistMode), npc);
         }
 
         public void Npc_SetToFightMode(NpcInstance npc, int itemIndex)
         {
             _npcService.ExtNpcSetToFightMode(npc, itemIndex);
+            LogInstantExternal(nameof(Npc_SetToFightMode), npc, itemIndex);
         }
 
         public int Npc_IsInFightMode(NpcInstance npc, int fightMode)
@@ -970,11 +982,13 @@ namespace GUZ.Core.Domain.Vm
         public void Npc_SetTarget(NpcInstance npc, NpcInstance target)
         {
             _npcAiService.ExtSetTarget(npc, target);
+            LogInstantExternal(nameof(Npc_SetTarget), npc, target);
         }
 
-        public void Npc_SendPassivePerc(NpcInstance npc, int perc,NpcInstance victim, NpcInstance other)
+        public void Npc_SendPassivePerc(NpcInstance npc, int perc, NpcInstance victim, NpcInstance other)
         {
             _npcAiService.Npc_SendPassivePerc(npc, (VmGothicEnums.PerceptionType)perc, victim, other);
+            LogInstantExternal(nameof(Npc_SetTarget), npc, perc, victim, other);
         }
 
         public int Npc_SetTrueGuild(NpcInstance npc, int guild)
