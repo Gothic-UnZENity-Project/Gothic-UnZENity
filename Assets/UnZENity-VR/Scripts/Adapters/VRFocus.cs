@@ -39,6 +39,7 @@ namespace GUZ.VR.Adapters
         [SerializeField] private GameObject _nameCanvas;
 
         private bool _isHovered;
+        private Renderer _cachedObjectRenderer;
 
 
         private void Start()
@@ -58,16 +59,15 @@ namespace GUZ.VR.Adapters
                 _featureBrightenUp = _configService.Dev.BrightenUpHoveredVOBs;
                 _featureShowName = _configService.Dev.ShowNamesOnHoveredVOBs;
             }
+            
+            if (_cachedObjectRenderer == null)
+                _cachedObjectRenderer = GetComponentInChildren<Renderer>();
 
             if (_featureBrightenUp)
-            {
                 _dynamicMaterialService.SetDynamicValue(gameObject, Constants.ShaderPropertyFocusBrightness, Constants.ShaderPropertyFocusBrightnessValue);
-            }
 
             if (_featureShowName)
-            {
                 SetFocusName();
-            }
 
             _isHovered = true;
         }
@@ -86,15 +86,20 @@ namespace GUZ.VR.Adapters
         private void LateUpdate()
         {
             if (!_isHovered)
-            {
                 return;
-            }
 
-            if (_featureShowName)
-            {
-                _nameCanvas.transform.LookAt(_mainCamera.transform);
-                _nameCanvas.transform.Rotate(0, 180, 0);
-            }
+            // Calculate direction from parent object to camera
+            var directionToCamera = (_mainCamera.transform.position - transform.position).normalized;
+            
+            // Position canvas at the top of bounds, shifted toward camera
+            _nameCanvas.transform.position = new Vector3(
+                _cachedObjectRenderer.bounds.center.x,
+                _cachedObjectRenderer.bounds.max.y,
+                _cachedObjectRenderer.bounds.center.z
+            );
+        
+            // Rotate to face camera
+            _nameCanvas.transform.rotation = Quaternion.LookRotation(-directionToCamera);
         }
 
         /// <summary>
