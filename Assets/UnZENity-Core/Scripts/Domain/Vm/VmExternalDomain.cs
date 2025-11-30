@@ -39,10 +39,17 @@ namespace GUZ.Core.Domain.Vm
         [Inject] private readonly VobService _vobService;
         [Inject] private readonly GameStateService _gameStateService;
 
+        // (optional) Some messages from Daedalus are quite spammy. Ignore them.
+        private static readonly string[] _spammyMessages = new[]
+        {
+            "-> bodystate",
+            "Npc_GetBodyState(slf)"
+        };
 
         private bool _enableZSpyLogs;
         private int _zSpyChannel;
         private bool _zSpyInstantLogging;
+        private bool _ignoreSpammyMessages;
 
 
         public VmExternalDomain()
@@ -54,6 +61,7 @@ namespace GUZ.Core.Domain.Vm
         {
             _enableZSpyLogs = _configService.Dev.EnableZSpyLogs;
             _zSpyInstantLogging = _configService.Dev.EnableZSpyInstantLogs;
+            _ignoreSpammyMessages = _configService.Dev.IgnoreSpammyZSpyLogs;
 
             if (_configService.Dev.AllDebugChannels)
                 _zSpyChannel = int.MaxValue;
@@ -617,7 +625,6 @@ namespace GUZ.Core.Domain.Vm
             Logger.Log($"[zspy]: {message}", LogCat.ZSpy);
         }
 
-
         public void PrintDebugCh(int channel, string message)
         {
             if (!_enableZSpyLogs || (_zSpyChannel & (1 << (channel - 1))) == 0)
@@ -625,7 +632,6 @@ namespace GUZ.Core.Domain.Vm
 
             Logger.Log($"[zspy,{channel}]: {message}", LogCat.ZSpy);
         }
-
 
         public void PrintDebugInst(string message)
         {
@@ -635,10 +641,12 @@ namespace GUZ.Core.Domain.Vm
             Logger.Log($"[zspy]: {message}", LogCat.ZSpy);
         }
 
-
         public void PrintDebugInstCh(int channel, string message)
         {
             if (!_enableZSpyLogs || (_zSpyChannel & (1 << (channel - 1))) == 0)
+                return;
+            
+            if (_ignoreSpammyMessages && _spammyMessages.Any(spammy => message.Contains(spammy)))
                 return;
 
             Logger.Log($"[zspy,{channel}]: {message}", LogCat.ZSpy);
@@ -746,8 +754,7 @@ namespace GUZ.Core.Domain.Vm
 
         public int Npc_GetBodyState(NpcInstance npc)
         {
-            var ret = (int)_npcAiService.ExtGetBodyState(npc);
-            return LogInstantExternal(nameof(Npc_GetBodyState), ret, npc);
+            return (int)_npcAiService.ExtGetBodyState(npc);
         }
 
 

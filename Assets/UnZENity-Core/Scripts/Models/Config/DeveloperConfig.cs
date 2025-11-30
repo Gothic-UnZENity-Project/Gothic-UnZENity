@@ -79,7 +79,10 @@ namespace GUZ.Core.Models.Config
         [Tooltip("Additional logs for instant Daedalus calls like Npc_IsOnFP()")]
         [OverrideLabel("Enable ZSpy Instant Logs")]
         public bool EnableZSpyInstantLogs;
-
+        [ConditionalField(fieldToCheck: nameof(EnableZSpyLogs))]
+        [OverrideLabel("Ignore spammy ZSpy Logs like >[zspy,9]: ... -> bodystate&(...)<")]
+        public bool IgnoreSpammyZSpyLogs = true;
+        
         [Separator("ZenKit")]
         [OverrideLabel("ZenKit Log Level")]
         public LogLevel ZenKitLogLevel = LogLevel.Warning;
