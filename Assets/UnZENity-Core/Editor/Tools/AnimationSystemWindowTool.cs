@@ -286,7 +286,7 @@ namespace GUZ.Core.Editor.Tools
             EditorGUILayout.LabelField("-");
             foreach (var trackInstance in _targetAnimationSystem.DebugTrackInstances)
             {
-                EditorGUILayout.LabelField(trackInstance.Track.Name);
+                EditorGUILayout.LabelField(trackInstance.Track.AliasName ?? trackInstance.Track.Name);
             }
             EditorGUILayout.EndHorizontal();
 
