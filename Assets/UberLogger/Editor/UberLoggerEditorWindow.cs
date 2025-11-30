@@ -493,7 +493,7 @@ public class UberLoggerEditorWindow : EditorWindow, UberLoggerEditor.ILoggerWind
 
         if(!String.IsNullOrEmpty(FilterRegex))
         {
-            filterRegex = new Regex(FilterRegex);
+            filterRegex = new Regex(FilterRegex, RegexOptions.IgnoreCase);
         }
 
         var collapseBadgeStyle = EditorStyles.miniButton;

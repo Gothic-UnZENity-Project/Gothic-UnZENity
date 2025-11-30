@@ -262,7 +262,7 @@ public class UberLoggerAppWindow : MonoBehaviour, UberLogger.ILogger
 
         if(!String.IsNullOrEmpty(FilterRegex))
         {
-            filterRegex = new System.Text.RegularExpressions.Regex(FilterRegex);
+            filterRegex = new System.Text.RegularExpressions.Regex(FilterRegex, RegexOptions.IgnoreCase);
         }
 
         int drawnButtons = 0;
