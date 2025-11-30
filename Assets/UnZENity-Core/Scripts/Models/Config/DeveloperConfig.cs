@@ -65,10 +65,7 @@ namespace GUZ.Core.Models.Config
          */
 
         [Foldout("Logging", true)]
-        [Separator("Logging")]
-        [OverrideLabel("ZenKit Log Level")]
-        public LogLevel ZenKitLogLevel = LogLevel.Warning;
-
+        [Separator("ZSpy")]
         [Tooltip("Enable Daedalus logs inside .d scripts.")]
         [OverrideLabel("Enable ZSpy Logs")]
         public bool EnableZSpyLogs;
@@ -78,7 +75,14 @@ namespace GUZ.Core.Models.Config
         [ConditionalField(fieldToCheck: new []{nameof(EnableZSpyLogs), nameof(AllDebugChannels)}, inverse: new[]{false, true})]
         [Tooltip("PrintDebug channels from 1-25.")]
         public DebugChannelTypesCollection ZSpyChannels = new();
+        [ConditionalField(fieldToCheck: nameof(EnableZSpyLogs))]
+        [Tooltip("Additional logs for instant Daedalus calls like Npc_IsOnFP()")]
+        [OverrideLabel("Enable ZSpy Instant Logs")]
+        public bool EnableZSpyInstantLogs;
 
+        [Separator("ZenKit")]
+        [OverrideLabel("ZenKit Log Level")]
+        public LogLevel ZenKitLogLevel = LogLevel.Warning;
         [OverrideLabel("DirectMusic Log Level")]
         public DirectMusic.LogLevel DirectMusicLogLevel = DirectMusic.LogLevel.Warning;
         
