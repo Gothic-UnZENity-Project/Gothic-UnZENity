@@ -1501,7 +1501,6 @@ MonoBehaviour:
       m_Calls: []
   _grabBag: {fileID: 0}
   GrabBags: []
-  _allowGrabbing: 0
   GrabControl: 0
   GrabDetectionType: 1
   CheckHandOverlap: 0
@@ -2090,7 +2089,6 @@ MonoBehaviour:
       m_Calls: []
   _grabBag: {fileID: 0}
   GrabBags: []
-  _allowGrabbing: 0
   GrabControl: 0
   GrabDetectionType: 1
   CheckHandOverlap: 0
@@ -2220,7 +2218,6 @@ MonoBehaviour:
       m_Calls: []
   _grabBag: {fileID: 0}
   GrabBags: []
-  _allowGrabbing: 0
   GrabControl: 0
   GrabDetectionType: 1
   CheckHandOverlap: 0
@@ -2656,6 +2653,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 3469872688271879209}
     m_Modifications:
+    - target: {fileID: 1174396645238234420, guid: 204a93fafa363374c9d1e232e7d87070, type: 3}
+      propertyPath: _isPlayer
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6545134584407578383, guid: 204a93fafa363374c9d1e232e7d87070, type: 3}
       propertyPath: m_PresetInfoIsWorld
       value: 1

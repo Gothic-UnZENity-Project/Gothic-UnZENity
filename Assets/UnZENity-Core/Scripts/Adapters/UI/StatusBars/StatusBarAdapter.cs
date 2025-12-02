@@ -11,6 +11,7 @@ namespace GUZ.Core.Adapters.UI.StatusBars
     public class StatusBarAdapter : MonoBehaviour
     {
         [SerializeField] private StatusType _statusType;
+        [SerializeField] private bool _isPlayer;
         [SerializeField] private Image _background;
         [SerializeField] private Image _statusValue;
 
@@ -27,10 +28,15 @@ namespace GUZ.Core.Adapters.UI.StatusBars
         private void Start()
         {
             DisableBar();
-            GlobalEventDispatcher.ZenKitBootstrapped.AddListener(StartDelayed);
+
+            // Player is spawned before ZenKit (with Gothic version) is bootstrapped.
+            if (_isPlayer)
+                GlobalEventDispatcher.ZenKitBootstrapped.AddListener(StartInternal);
+            else
+                StartInternal();
         }
 
-        private void StartDelayed()
+        private void StartInternal()
         {
             _background.material = _textureService.StatusBarBackgroundMaterial;
 
@@ -73,7 +79,7 @@ namespace GUZ.Core.Adapters.UI.StatusBars
 
                 yield return null;
             }
-            // ReSharper disable once FunctionNeverReturns
+            // ReSharper disable once IteratorNeverReturns
         }
 
         public void DisableBar()
