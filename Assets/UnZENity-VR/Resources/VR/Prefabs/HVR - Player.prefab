@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 1143932948381034444}
   - component: {fileID: 835721320089557483}
   - component: {fileID: 5818744495225174809}
-  m_Layer: 1
+  m_Layer: 0
   m_Name: Mouth
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1501,6 +1501,7 @@ MonoBehaviour:
       m_Calls: []
   _grabBag: {fileID: 0}
   GrabBags: []
+  _allowGrabbing: 0
   GrabControl: 0
   GrabDetectionType: 1
   CheckHandOverlap: 0
@@ -2089,6 +2090,7 @@ MonoBehaviour:
       m_Calls: []
   _grabBag: {fileID: 0}
   GrabBags: []
+  _allowGrabbing: 0
   GrabControl: 0
   GrabDetectionType: 1
   CheckHandOverlap: 0
@@ -2218,6 +2220,7 @@ MonoBehaviour:
       m_Calls: []
   _grabBag: {fileID: 0}
   GrabBags: []
+  _allowGrabbing: 0
   GrabControl: 0
   GrabDetectionType: 1
   CheckHandOverlap: 0
