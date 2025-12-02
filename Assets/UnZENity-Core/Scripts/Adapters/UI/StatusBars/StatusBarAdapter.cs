@@ -73,13 +73,18 @@ namespace GUZ.Core.Adapters.UI.StatusBars
                 }
                 else
                 {
-                    _statusValue.fillAmount = _playerService.CurrentAir / _playerService.MaxAir;
+                    SetFillAmount(_playerService.CurrentAir, _playerService.MaxAir);
                     EnableBar();
                 }
 
                 yield return null;
             }
             // ReSharper disable once IteratorNeverReturns
+        }
+
+        public void SetFillAmount(float max, float current)
+        {
+            _statusValue.fillAmount = current / max;
         }
 
         public void DisableBar()

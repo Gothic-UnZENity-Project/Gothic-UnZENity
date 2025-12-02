@@ -1,3 +1,4 @@
+using GUZ.Core.Adapters.UI.StatusBars;
 using GUZ.Core.Domain.Npc.Actions.AnimationActions;
 using GUZ.Core.Manager;
 using GUZ.Core.Models.Container;
@@ -47,6 +48,8 @@ namespace GUZ.Core.Services.Npc
             hitPoints -= weapon.GetItemInstance()!.DamageTotal;
             
             target.Vob.SetAttribute((int)NpcAttribute.HitPoints, hitPoints);
+
+            target.Go.GetComponentInChildren<StatusBarAdapter>().SetFillAmount(hitPoints, target.Vob.GetAttribute((int)NpcAttribute.HitPointsMax));
 
             return hitPoints <= 0;
         }
