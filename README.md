@@ -9,8 +9,10 @@
 
 <p align="center">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="./Docs/Gothic-UnZENity-logo.png">
-    <source media="(prefers-color-scheme: light)" srcset="./Docs/Gothic-UnZENity-logo-inverse.png">
+    <source media="(prefers-color-scheme: dark)" srcset="./Docs/Gothic-UnZENity-logo-inverse.png">
+    <img alt="May the sleeper protect you!" src="./Docs/Gothic-UnZENity-logo.png">
+
+<source media="(prefers-color-scheme: light)" srcset="">
   </picture>
 </p>
 Community rebuild of classical Gothic 1 and 2 in Unity engine. Currently focusing on a native VR implementation.
