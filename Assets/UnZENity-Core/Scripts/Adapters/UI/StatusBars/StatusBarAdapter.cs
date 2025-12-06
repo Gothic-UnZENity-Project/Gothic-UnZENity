@@ -25,7 +25,7 @@ namespace GUZ.Core.Adapters.UI.StatusBars
             Misc
         }
 
-        private void Start()
+        private void Awake()
         {
             DisableBar();
 
@@ -68,14 +68,16 @@ namespace GUZ.Core.Adapters.UI.StatusBars
         {
             while (true)
             {
-                if (!_playerService.IsDiving)
+                if (!_playerService.IsDiving && _statusValue.enabled)
                 {
                     DisableBar();
                 }
-                else
+                else if (_playerService.IsDiving)
                 {
                     SetFillAmount(_playerService.CurrentAir, _playerService.MaxAir);
-                    EnableBar();
+                    
+                    if (!_statusValue.enabled)
+                        EnableBar();
                 }
 
                 yield return null;
