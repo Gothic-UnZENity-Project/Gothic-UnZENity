@@ -40,6 +40,7 @@ namespace GUZ.Core.Adapters.UI.StatusBars
         {
             _background.material = _textureService.StatusBarBackgroundMaterial;
 
+            // FIXME - Set fill amount based on current value when NPC/Monster is spawned.
             _statusValue.fillAmount = 1f;
             _statusValue.material = _statusType switch
             {
@@ -82,7 +83,7 @@ namespace GUZ.Core.Adapters.UI.StatusBars
             // ReSharper disable once IteratorNeverReturns
         }
 
-        public void SetFillAmount(float max, float current)
+        public void SetFillAmount(float current, float max)
         {
             _statusValue.fillAmount = current / max;
         }

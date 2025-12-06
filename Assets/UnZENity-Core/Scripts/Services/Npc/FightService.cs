@@ -49,7 +49,7 @@ namespace GUZ.Core.Services.Npc
             
             target.Vob.SetAttribute((int)NpcAttribute.HitPoints, hitPoints);
 
-            target.Go.GetComponentInChildren<StatusBarAdapter>().SetFillAmount(hitPoints, target.Vob.GetAttribute((int)NpcAttribute.HitPointsMax));
+            target.Go.GetComponentInChildren<StatusBarAdapter>(true)?.SetFillAmount(hitPoints, target.Vob.GetAttribute((int)NpcAttribute.HitPointsMax));
 
             return hitPoints <= 0;
         }
