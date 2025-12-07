@@ -41,13 +41,29 @@ namespace GUZ.VR.Adapters
         private bool _isHovered;
         private Renderer _cachedObjectRenderer;
 
+        private void Awake()
+        {
+            // DEBUG - Use this to enable brightening up all rendered objects if you want to check the attack window.
+            {
+                // GlobalEventDispatcher.FightWindowInitial.AddListener((_, __) => OnHoverEnter(1f));
+                // GlobalEventDispatcher.FightWindowAttack.AddListener((_, __) => OnHoverEnter(10f));
+                // GlobalEventDispatcher.FightWindowWaitingForCombo.AddListener((_, __) => OnHoverEnter(50f));
+                // GlobalEventDispatcher.FightWindowCombo.AddListener((_, __) => OnHoverEnter(100f));
+                // GlobalEventDispatcher.FightWindowComboFailed.AddListener((_, __) => OnHoverEnter(0.5f));
+            }
+        }
 
         private void Start()
         {
             _nameCanvas.SetActive(false);
         }
 
-        public void OnHoverEnter(HVRGrabberBase grabber, HVRGrabbable grabbable)
+        public void OnHoverEnter(HVRGrabberBase _, HVRGrabbable __)
+        {
+            OnHoverEnter(Constants.ShaderPropertyFocusBrightnessValue);
+        }
+
+        public void OnHoverEnter(float shaderPropertyFocusBrightnessValue)
         {
             // GameObjects are loaded while Loading.scene is active (different Camera), but not the General.scene.
             // We therefore need to set the camera at this time earliest.
@@ -59,12 +75,12 @@ namespace GUZ.VR.Adapters
                 _featureBrightenUp = _configService.Dev.BrightenUpHoveredVOBs;
                 _featureShowName = _configService.Dev.ShowNamesOnHoveredVOBs;
             }
-            
+
             if (_cachedObjectRenderer == null)
                 _cachedObjectRenderer = GetComponentInChildren<Renderer>();
 
             if (_featureBrightenUp)
-                _dynamicMaterialService.SetDynamicValue(gameObject, Constants.ShaderPropertyFocusBrightness, Constants.ShaderPropertyFocusBrightnessValue);
+                _dynamicMaterialService.SetDynamicValue(gameObject, Constants.ShaderPropertyFocusBrightness, shaderPropertyFocusBrightnessValue);
 
             if (_featureShowName)
                 SetFocusName();
@@ -72,7 +88,7 @@ namespace GUZ.VR.Adapters
             _isHovered = true;
         }
 
-        public void OnHoverExit(HVRGrabberBase grabber, HVRGrabbable grabbable)
+        public void OnHoverExit(HVRGrabberBase _, HVRGrabbable __)
         {
             if (_featureBrightenUp)
             {
