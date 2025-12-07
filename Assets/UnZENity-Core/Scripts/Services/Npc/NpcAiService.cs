@@ -134,6 +134,9 @@ namespace GUZ.Core.Services.Npc
 
             var hasLineOfSightCollisions = Physics.Linecast(selfRealHeadPosition, otherRealHeadPosition, _raycastLayersToUse);
 
+            // DEBUG - collision detection and fetching the object which is blocking LoS.
+            // var hasLineOfSightCollisionsDebug = Physics.Linecast(selfRealHeadPosition, otherRealHeadPosition, out var hit, _raycastLayersToUse);
+
             // Calculate horizontal direction only (ignore Y axis for FOV check), basically a Gobbo is only using x+z for FOV and hero standing in front of it will work correctly. 
             var directionToTarget = new Vector3(
                 otherGroundPosition.x - selfGroundPosition.x,
