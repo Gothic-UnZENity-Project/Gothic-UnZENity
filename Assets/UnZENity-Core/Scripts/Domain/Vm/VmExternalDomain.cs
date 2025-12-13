@@ -60,10 +60,12 @@ namespace GUZ.Core.Domain.Vm
         public void RegisterExternals()
         {
             _enableZSpyLogs = _configService.Dev.EnableZSpyLogs;
-            _zSpyInstantLogging = _configService.Dev.EnableZSpyInstantLogs;
+            _zSpyInstantLogging = _enableZSpyLogs && _configService.Dev.EnableZSpyInstantLogs;
             _ignoreSpammyMessages = _configService.Dev.IgnoreSpammyZSpyLogs;
 
-            if (_configService.Dev.AllDebugChannels)
+            if (!_enableZSpyLogs)
+                _zSpyChannel = -1;
+            else if (_configService.Dev.AllDebugChannels)
                 _zSpyChannel = int.MaxValue;
             else
                 // zSpyChannel are bitwise checks. Therefore, we calculate the bit operation like (1 << PD_TA_FRAME(1) - 1)==1000
