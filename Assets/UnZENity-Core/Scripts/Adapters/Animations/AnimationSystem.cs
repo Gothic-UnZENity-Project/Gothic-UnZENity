@@ -34,6 +34,7 @@ namespace GUZ.Core.Adapters.Adnimations
 
         public bool DebugPauseAtPlayAnimation;
         public bool DebugPauseAtStopAnimation;
+        public string DebugPlayAnimation;
 #endif
 
         [Inject] private readonly AnimationService _animationService;
@@ -75,6 +76,14 @@ namespace GUZ.Core.Adapters.Adnimations
             _initialMeshBonePos = _bones.Select(i => i.transform.localPosition).ToArray();
             _initialMeshBoneRot = _bones.Select(i => i.transform.localRotation).ToArray();
         }
+
+#if UNITY_EDITOR
+        private void OnValidate()
+        {
+            if (DebugPlayAnimation.NotNullOrEmpty())
+                PlayAnimation(DebugPlayAnimation);
+        }
+#endif
 
         public void DisableObject()
         {
