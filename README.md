@@ -1,4 +1,4 @@
-# Gothic-UnZENity
+# Gothic-UnZENity (VR)
 
 [![Discord](https://img.shields.io/badge/Discord-%235865F2.svg?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/nvnaWwEu5Y)
 [![YouTube](https://img.shields.io/badge/YouTube-red?style=for-the-badge&logo=youtube&logoColor=white)](https://www.youtube.com/@Gothic-UnZENity)
