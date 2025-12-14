@@ -3,6 +3,7 @@ using GUZ.Core.Models.Container;
 using MyBox;
 using Reflex.Attributes;
 using UnityEngine;
+using ZenKit;
 
 namespace GUZ.Core.Services.Meshes
 {
@@ -19,6 +20,11 @@ namespace GUZ.Core.Services.Meshes
             GlobalEventDispatcher.FightHit.AddListener(EmitBlood);
         }
 
+        public void CreateParticleEvent(IEventParticleEffect pfx, Transform transform)
+        {
+            _meshService.CreateVobPfx(pfx.Name, transform.position, transform.rotation, transform.gameObject, true);
+        }
+        
         private void ChangeTrail(VobContainer vobContainer, bool enable)
         {
             if (enable)

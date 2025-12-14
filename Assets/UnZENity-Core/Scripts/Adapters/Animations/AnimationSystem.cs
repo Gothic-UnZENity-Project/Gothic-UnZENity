@@ -9,6 +9,7 @@ using GUZ.Core.Logging;
 using GUZ.Core.Manager;
 using GUZ.Core.Models.Animations;
 using GUZ.Core.Models.Vm;
+using GUZ.Core.Services.Meshes;
 using GUZ.Core.Services.Npc;
 using GUZ.Core.Services.Vobs;
 using MyBox;
@@ -41,6 +42,7 @@ namespace GUZ.Core.Adapters.Adnimations
         [Inject] private readonly AudioService _audioService;
         [Inject] private readonly VobService _vobService;
         [Inject] private readonly NpcService _npcService;
+        [Inject] private readonly ParticleService _particleService;
 
 
 
@@ -562,7 +564,7 @@ namespace GUZ.Core.Adapters.Adnimations
 
             foreach (var pfx in pfxEvents)
             {
-                Logger.LogWarning($"Particle Effects are not yet supported. {pfx.Name}", LogCat.Animation);
+                _particleService.CreateParticleEvent(pfx, PrefabProps.Bip01.transform);
             }
         }
 
