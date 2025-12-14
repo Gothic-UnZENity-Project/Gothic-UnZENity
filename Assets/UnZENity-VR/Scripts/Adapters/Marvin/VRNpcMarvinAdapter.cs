@@ -27,6 +27,9 @@ namespace GUZ.VR.Adapters.Marvin
         
         public void OnGrabbed(HVRGrabberBase grabber, HVRGrabbable grabbable)
         {
+            // Safety return, until we have proper Marvin feature handling implemented (active = true/false)
+            return;
+            
             var remainingHitPoints = _npcData.Vob.GetAttribute((int)NpcAttribute.HitPoints);
             var anyWeapon = _multiTypeCacheService.VobCache.First(container => container.Vob.Type == VirtualObjectType.oCItem);
             var origDamage = anyWeapon.GetItemInstance().DamageTotal;
