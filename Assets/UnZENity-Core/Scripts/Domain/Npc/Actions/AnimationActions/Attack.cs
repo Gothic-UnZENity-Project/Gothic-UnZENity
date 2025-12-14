@@ -1,4 +1,5 @@
 using System;
+using System.Numerics;
 using GUZ.Core.Const;
 using GUZ.Core.Extensions;
 using GUZ.Core.Logging;
@@ -20,6 +21,10 @@ namespace GUZ.Core.Domain.Npc.Actions.AnimationActions
         
         private FightAiMove _move;
         
+        // e.g., when a Zombie is spawned away, it won't fight, but instead start to walk again. We need to say to the game: you're about 30cm closer than the center of NPC/Monster/Hero.
+        // TODO - We might need a more mature alternative in the future if other monsters need different distances.
+        private const float _npcMonsterVolumina = 0.3f;
+
         
         public Attack(AnimationAction action, NpcContainer npcData) : base(action, npcData)
         {
@@ -113,7 +118,7 @@ namespace GUZ.Core.Domain.Npc.Actions.AnimationActions
 
         private float GetDistance()
         {
-            return Vector3.Distance(NpcGo.transform.position, _enemy.GetUserData()!.Go.transform.position);
+            return Vector3.Distance(NpcGo.transform.position, _enemy.GetUserData()!.Go.transform.position) - _npcMonsterVolumina;
         }
 
         /// Fight range is calculated by base range + weapon attack range.
