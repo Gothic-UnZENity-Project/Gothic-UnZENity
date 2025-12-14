@@ -23,7 +23,7 @@ namespace GUZ.Core.Services.Npc
             GlobalEventDispatcher.FightHit.AddListener(OnHit);
         }
         
-        public void OnHit(NpcContainer target, VobContainer weapon, Vector3 __)
+        private void OnHit(NpcContainer target, VobContainer weapon, Vector3 __)
         {
             if (OnHitUpdateHealth(target, weapon))
             {

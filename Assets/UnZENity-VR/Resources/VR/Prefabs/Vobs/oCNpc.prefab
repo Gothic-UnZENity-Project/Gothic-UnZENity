@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 383060561904739675}
   - component: {fileID: 4148423720954529152}
   - component: {fileID: 3792221975768868209}
+  - component: {fileID: 7657019000195239257}
   - component: {fileID: 6519483080425844375}
   m_Layer: 0
   m_Name: oCNpc
@@ -122,7 +123,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   DebugPauseAtPlayAnimation: 0
   DebugPauseAtStopAnimation: 0
+  DebugPlayAnimation: 
   RootBone: {fileID: 8679908380237941234}
+--- !u!114 &7657019000195239257
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2202926895728732233}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fb058209c9b54419b363bf41434cb551, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &6519483080425844375
 MonoBehaviour:
   m_ObjectHideFlags: 0
