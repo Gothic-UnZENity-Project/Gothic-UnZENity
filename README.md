@@ -8,7 +8,10 @@
 [![Release](https://img.shields.io/github/release-pre/Gothic-UnZENity-Project/Gothic-UnZENity)](https://github.com/Gothic-UnZENity-Project/Gothic-UnZENity/releases/latest)
 
 <p align="center">
-  <img src="./Docs/Gothic-UnZENity-logo.png" width="300" alt="Gothic-UnZENity logo" />
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="./Docs/Gothic-UnZENity-logo-inverse-transparent.png" width="300">
+    <img alt="May the sleeper protect you!" src="./Docs/Gothic-UnZENity-logo-transparent.png" width="300">
+  </picture>
 </p>
 Community rebuild of classical Gothic 1 and 2 in Unity engine. Currently focusing on a native VR implementation.
 
