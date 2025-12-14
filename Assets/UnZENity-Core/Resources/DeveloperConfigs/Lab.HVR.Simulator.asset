@@ -68,5 +68,6 @@ MonoBehaviour:
   EnableBarrierVisual: 0
   CompressStaticCacheFiles: 1
   AlwaysRecreateCache: 0
+  OnlyCreateCacheForWorld: 
   EnableDecalVisuals: 0
   EnableParticleEffects: 0

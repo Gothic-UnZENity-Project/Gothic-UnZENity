@@ -21,6 +21,8 @@ namespace GUZ.Core.Services.Npc
         [Inject] private readonly MultiTypeCacheService _multiTypeCacheService;
 
 
+        private static int _raycastLayersToUse = (1 << Constants.DefaultLayer);
+        
         public void ExtNpcPerceptionEnable(NpcInstance npc, VmGothicEnums.PerceptionType perception, int function)
         {
             npc.GetUserData().Props.Perceptions[perception] = function;
@@ -130,8 +132,10 @@ namespace GUZ.Core.Services.Npc
             var distanceToNpc = Vector3.Distance(selfRealHeadPosition, otherRealHeadPosition);
             var inSightRange = distanceToNpc <= self.SensesRange;
 
-            var layersToIgnore = Constants.HandLayer | Constants.GrabbableLayer | Constants.VobItemLayer | Constants.VobItemNoWorldCollision | Constants.UILayer;
-            var hasLineOfSightCollisions = Physics.Linecast(selfRealHeadPosition, otherRealHeadPosition, layersToIgnore);
+            var hasLineOfSightCollisions = Physics.Linecast(selfRealHeadPosition, otherRealHeadPosition, _raycastLayersToUse);
+
+            // DEBUG - collision detection and fetching the object which is blocking LoS.
+            // var hasLineOfSightCollisionsDebug = Physics.Linecast(selfRealHeadPosition, otherRealHeadPosition, out var hit, _raycastLayersToUse);
 
             // Calculate horizontal direction only (ignore Y axis for FOV check), basically a Gobbo is only using x+z for FOV and hero standing in front of it will work correctly. 
             var directionToTarget = new Vector3(
@@ -190,6 +194,13 @@ namespace GUZ.Core.Services.Npc
         public void ExtAiPlayAni(NpcInstance npc, string name)
         {
             npc.GetUserData().Props.AnimationQueue.Enqueue(new PlayAni(new AnimationAction(name), npc.GetUserData()));
+        }
+
+        public void PlayAttackAni(NpcInstance npc, string name, FightAiMove move, NpcInstance moveTarget)
+        {
+            npc.GetUserData().Props.AnimationQueue.Enqueue(new AttackPlayAni(
+                new AnimationAction(name, int0: (int)move, instance0: moveTarget),
+                npc.GetUserData()));
         }
 
         public void ExtAiStartState(NpcInstance npc, int action, bool stopCurrentState, string wayPointName)

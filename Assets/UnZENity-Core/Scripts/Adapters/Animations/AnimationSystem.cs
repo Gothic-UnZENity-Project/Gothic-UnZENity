@@ -34,6 +34,7 @@ namespace GUZ.Core.Adapters.Adnimations
 
         public bool DebugPauseAtPlayAnimation;
         public bool DebugPauseAtStopAnimation;
+        public string DebugPlayAnimation;
 #endif
 
         [Inject] private readonly AnimationService _animationService;
@@ -75,6 +76,14 @@ namespace GUZ.Core.Adapters.Adnimations
             _initialMeshBonePos = _bones.Select(i => i.transform.localPosition).ToArray();
             _initialMeshBoneRot = _bones.Select(i => i.transform.localRotation).ToArray();
         }
+
+#if UNITY_EDITOR
+        private void OnValidate()
+        {
+            if (DebugPlayAnimation.NotNullOrEmpty())
+                PlayAnimation(DebugPlayAnimation);
+        }
+#endif
 
         public void DisableObject()
         {
@@ -121,7 +130,7 @@ namespace GUZ.Core.Adapters.Adnimations
 
             // FIXME - Now we need to handle animation flags: M - Move and R - Rotate.
             //         Then S_ROTATEL will work properly and stop once rotated enough.
-            Logger.LogEditor($"Playing animation: {newTrack.Name}, alias: {newTrack.AliasName} by: {RootBone.parent.parent.name}", LogCat.Animation);
+            Logger.LogEditor($"Playing animation: {newTrack.Name}, alias: {newTrack.AliasName ?? "-"} by: {RootBone.parent.parent.name}", LogCat.Animation);
 
             if (IsAlreadyPlaying(newTrack))
                 return true;
@@ -169,7 +178,14 @@ namespace GUZ.Core.Adapters.Adnimations
             for (var i = 0; i < _trackInstances.Count; i++)
             {
                 if (newTrack.IsSameAnimation(_trackInstances[i].Track))
-                    return true;
+                {
+                    // e.g., t_warn might be called in parallel, when one warning is currently fading out.
+                    if (_trackInstances[i].State == AnimationState.Play ||
+                        _trackInstances[i].State == AnimationState.BlendIn)
+                    {
+                        return true;
+                    }
+                }
             }
 
             return false;

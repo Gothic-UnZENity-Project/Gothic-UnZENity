@@ -19,6 +19,9 @@ namespace GUZ.Core.Domain.Npc.Actions.AnimationActions
 
         public override void Start()
         {
+            // e.g., ZS_AssessWarn is triggering itself and resets the StateTime counter. We need to block this by checking
+            // if we're already in this state and leave the StateTime intact.
+
             var ai = PrefabProps.AiHandler;
 
             Vob.NextStateIndex = _action;
@@ -30,6 +33,7 @@ namespace GUZ.Core.Domain.Npc.Actions.AnimationActions
 
             Props.IsStateTimeActive = true;
             Props.StateTime = 0;
+            Props.Perceptions.Clear();
 
             GameStateService.GothicVm.GlobalOther = _other;
             GameStateService.GothicVm.GlobalVictim = _victim;

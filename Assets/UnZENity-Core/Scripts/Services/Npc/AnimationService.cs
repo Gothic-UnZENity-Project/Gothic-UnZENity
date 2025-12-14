@@ -271,6 +271,8 @@ namespace GUZ.Core.Services.Npc
                 VmGothicEnums.AnimationType.RotL => $"T_{weaponStateString}{walkModeString}TurnL",
                 VmGothicEnums.AnimationType.RotR => $"T_{weaponStateString}{walkModeString}TurnR",
                 VmGothicEnums.AnimationType.StumbleA => "T_Stumble",
+                VmGothicEnums.AnimationType.DeadA => "T_Dead",
+                VmGothicEnums.AnimationType.DeadB => "T_DeadB",
                 VmGothicEnums.AnimationType.StumbleB or
                 VmGothicEnums.AnimationType.NoAnim or
                 VmGothicEnums.AnimationType.MoveBack or
@@ -290,8 +292,6 @@ namespace GUZ.Core.Services.Npc
                 VmGothicEnums.AnimationType.FallenB or
                 VmGothicEnums.AnimationType.SlideA or
                 VmGothicEnums.AnimationType.SlideB or
-                VmGothicEnums.AnimationType.DeadA or
-                VmGothicEnums.AnimationType.DeadB or
                 VmGothicEnums.AnimationType.UnconsciousA or
                 VmGothicEnums.AnimationType.UnconsciousB or
                 VmGothicEnums.AnimationType.InteractIn or

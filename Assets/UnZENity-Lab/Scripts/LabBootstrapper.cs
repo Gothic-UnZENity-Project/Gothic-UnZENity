@@ -18,6 +18,7 @@ using GUZ.Core.Services.StaticCache;
 using GUZ.Core.Services.Vobs;
 using GUZ.Core.Services.World;
 using GUZ.Lab.Handler;
+using GUZ.VR.Services;
 using Reflex.Attributes;
 using UnityEngine;
 using ZenKit;
@@ -66,6 +67,9 @@ namespace GUZ.Lab
         [Inject] private readonly UnityMonoService _unityMonoService;
         [Inject] private readonly SkyService _skyService;
         [Inject] private readonly PlayerService _playerService;
+        [Inject] private readonly FightService _fightService;
+        [Inject] private readonly VRWeaponService _vrWeaponService;
+        [Inject] private readonly ParticleService _particleService;
 
         private BootstrapDomain _bootstrapDomain;
 
@@ -119,6 +123,9 @@ namespace GUZ.Lab
             _textureService.Init();
             _npcService.Init();
             _vobService.Init();
+            _fightService.Init();
+            _vrWeaponService.Init();
+            _particleService.Init();
 
             _videoService.InitVideos();
             _saveGameService.LoadNewGame();

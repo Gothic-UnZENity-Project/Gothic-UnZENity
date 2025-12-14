@@ -204,18 +204,14 @@ namespace GUZ.Core.Services.Npc
 
         public VmGothicEnums.Attitude GetPersonAttitude(NpcContainer self, NpcContainer other)
         {
-            if (!self.PrefabProps.IsHero() && !other.PrefabProps.IsHero())
-                return GetGuildAttitude(self.Vob.GuildTrue, other.Vob.Guild);
+            // If an NCP is checked against the player, use the temp attitude (e.g., because Hero stole something)
+            if (other.PrefabProps.IsHero() && self.Vob.Attitude != self.Vob.AttitudeTemp)
+                return (VmGothicEnums.Attitude)self.Vob.AttitudeTemp;
 
-            var npc = self.PrefabProps.IsHero() ? other : self;
-            
-            if(npc.Vob.AttitudeTemp != npc.Vob.Attitude)
-                return (VmGothicEnums.Attitude)npc.Vob.AttitudeTemp;
-            else
-                return (VmGothicEnums.Attitude)npc.Vob.Attitude;
+            return GetGuildAttitude(self.Vob.Attitude, other.Vob.Attitude);
         }
 
-        public VmGothicEnums.Attitude GetGuildAttitude(int selfGuild, int otherGuild)
+        private VmGothicEnums.Attitude GetGuildAttitude(int selfGuild, int otherGuild)
         {
             return (VmGothicEnums.Attitude)_gameStateService.GuildAttitudes[selfGuild * _gameStateService.GuildCount + otherGuild];
         }

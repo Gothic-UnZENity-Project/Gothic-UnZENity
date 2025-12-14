@@ -1,12 +1,12 @@
-using System.Collections.Generic;
+using System.Collections;
 using System.Linq;
 using GUZ.Core.Adapters.Npc;
 using GUZ.Core.Extensions;
 using GUZ.Core.Models.Adapter.Vobs;
 using GUZ.Core.Models.Container;
-using GUZ.Core.Models.Vm;
 using GUZ.Core.Services.Caches;
 using GUZ.Core.Services.Npc;
+using HurricaneVR.Framework.Core.Utils;
 using Reflex.Attributes;
 using TMPro;
 using UnityEngine;
@@ -22,77 +22,82 @@ namespace GUZ.Lab.Handler
         [Inject] private readonly MultiTypeCacheService _multiTypeCacheService;
         [Inject] private readonly NpcService _npcService;
 
-        private List<NpcLoader> _usableMonsters = new();
-
-
         public override void Bootstrap()
         {
             var allNames = GameStateService.GothicVm.GetInstanceSymbols("C_Npc").Select(i => i.Name).ToList();
-
-            foreach (var instanceName in allNames)
-            {
-                var instance = GameStateService.GothicVm.AllocInstance<NpcInstance>(instanceName);
-
-                var monsterLoadingGo = new GameObject(instanceName);
-                monsterLoadingGo.SetParent(_spawnPoint);
-                var loaderGoComp = monsterLoadingGo.AddComponent<NpcLoader>();
-                loaderGoComp.Npc = instance;
-
-                var npcData = new NpcContainer
-                {
-                    Instance = instance,
-                    Vob =  new NpcAdapter(instance.Index),
-                    Props = new()
-                };
-                
-                instance.UserData = npcData;
-
-                _multiTypeCacheService.NpcCache.Add(npcData);
-                GameStateService.GothicVm.InitInstance(instance);
-                npcData.Vob.CopyFromInstanceData(instance); // e.g., copy Instance.FightTactics -> Vob.FightTactics
-                
-                // Only NPCs have an ID && Monsters have no voice.
-                if (instance.Id != 0 || instance.Voice != 0)
-                    continue;
-
-                _usableMonsters.Add(loaderGoComp);
-            }
-
-            _monsterSelector.options = _usableMonsters.Select(i => new TMP_Dropdown.OptionData(i.gameObject.name)).ToList();
+            _monsterSelector.options = allNames.Select(i => new TMP_Dropdown.OptionData(i)).ToList();
         }
 
-        public void MonsterSpawnClick()
+        public void SpawnMonsterClick(int amount)
         {
-            var monsterLoaderComp = _usableMonsters[_monsterSelector.value];
-
-            _npcService.InitNpc(monsterLoaderComp.gameObject, true);
+            StartCoroutine(SpawnMonster(amount));
         }
 
-        public void SpawnMoleratClick()
+        public void SpawnMoleratClick(int amount)
         {
-            var loaderComp = _usableMonsters.FirstOrDefault(i => i.Container.Instance.Guild == (int)VmGothicEnums.Guild.GIL_MOLERAT);
-
-            _npcService.InitNpc(loaderComp.gameObject, true);
+            StartCoroutine(SpawnMonster(amount, "Molerat"));
         }
 
-        public void SpawnGoblinClick()
+        public void SpawnGoblinClick(int amount)
         {
-            var loaderComp = _usableMonsters.FirstOrDefault(i => i.Container.Instance.Guild == (int)VmGothicEnums.Guild.GIL_GOBBO);
-
-            _npcService.InitNpc(loaderComp.gameObject, true);
+            // GreenGobboClub - more strafe movement
+            // BlackGobboMace - more attack combos
+            StartCoroutine(SpawnMonster(amount, "GreenGobboClub"));
         }
 
-        public void SpawnZombieClick()
+        public void SpawnZombieClick(int amount)
         {
-            var loaderComp = _usableMonsters.FirstOrDefault(i => i.Container.Instance.Guild == (int)VmGothicEnums.Guild.GIL_ZOMBIE);
-
-            _npcService.InitNpc(loaderComp.gameObject, true);
+            StartCoroutine(SpawnMonster(amount, "ZOMBIE"));
         }
         
         public void MonsterDestroyClick()
         {
-            // TODO -> Destroy the monster
-            Debug.Log("Reset clicked");
+            for (var i = 0; i < _spawnPoint.transform.childCount; i++)
+            {
+                Destroy(_spawnPoint.transform.GetChild(i).gameObject);
+            }
+        }
+
+        private IEnumerator SpawnMonster(int amount, string instanceName = null)
+        {
+            if (instanceName.IsNullOrWhiteSpace())
+                instanceName = _monsterSelector.options[_monsterSelector.value].text;
+            
+            while (amount-- > 0)
+            {
+                var monsterGo = CreateMonserLoader(instanceName);
+                _npcService.InitNpc(monsterGo, true);
+                yield return null;
+            }
+        }
+        
+        private GameObject CreateMonserLoader(string instanceName)
+        {
+            var instance = GameStateService.GothicVm.AllocInstance<NpcInstance>(instanceName);
+
+            var monsterLoadingGo = new GameObject(instanceName);
+            monsterLoadingGo.SetParent(_spawnPoint);
+            var loaderGoComp = monsterLoadingGo.AddComponent<NpcLoader>();
+            loaderGoComp.Npc = instance;
+
+            var npcData = new NpcContainer
+            {
+                Instance = instance,
+                Vob =  new NpcAdapter(instance.Index),
+                Props = new()
+            };
+            
+            instance.UserData = npcData;
+
+            _multiTypeCacheService.NpcCache.Add(npcData);
+            GameStateService.GothicVm.InitInstance(instance);
+            npcData.Vob.CopyFromInstanceData(instance); // e.g., copy Instance.FightTactics -> Vob.FightTactics
+            
+            // Only NPCs have an ID && Monsters have no voice.
+            if (instance.Id != 0 || instance.Voice != 0)
+                return null;
+            else
+                return monsterLoadingGo;
         }
     }
 }

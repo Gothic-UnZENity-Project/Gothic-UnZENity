@@ -4,7 +4,6 @@ using GUZ.Core.Extensions;
 using GUZ.Core.Logging;
 using GUZ.Core.Models.Container;
 using GUZ.Core.Models.Vm;
-using GUZ.Core.Services;
 using GUZ.Core.Services.Npc;
 using Reflex.Attributes;
 using ZenKit.Daedalus;
@@ -15,11 +14,9 @@ namespace GUZ.Core.Domain.Npc.Actions.AnimationActions
 {
     public class Attack : AbstractAnimationAction
     {
-        [Inject] private readonly AnimationService _animationService;
         [Inject] private readonly NpcAiService _npcAiService;
-        [Inject] private readonly GameStateService _gameStateService;
 
-        private NpcInstance _enemy => (NpcInstance)_gameStateService.GothicVm.GlobalVictim;
+        private NpcInstance _enemy => (NpcInstance)GameStateService.GothicVm.GlobalVictim;
         
         private FightAiMove _move;
         
@@ -75,16 +72,16 @@ namespace GUZ.Core.Domain.Npc.Actions.AnimationActions
                     _npcAiService.ExtAiWait(NpcInstance, 0.2f);
                     break;
                 case FightAiMove.Attack:
-                    _npcAiService.ExtAiPlayAni(NpcInstance, GetAnimName(VmGothicEnums.AnimationType.Attack));
+                    _npcAiService.PlayAttackAni(NpcInstance, GetAnimName(VmGothicEnums.AnimationType.Attack), _move, _enemy);
                     break;
                 case FightAiMove.Strafe:
                     if (Random.Range(0, 2) == 0)
-                        _npcAiService.ExtAiPlayAni(NpcInstance, GetAnimName(VmGothicEnums.AnimationType.MoveL));
+                        _npcAiService.PlayAttackAni(NpcInstance, GetAnimName(VmGothicEnums.AnimationType.MoveL), _move, _enemy);
                     else
-                        _npcAiService.ExtAiPlayAni(NpcInstance, GetAnimName(VmGothicEnums.AnimationType.MoveR));
+                        _npcAiService.PlayAttackAni(NpcInstance, GetAnimName(VmGothicEnums.AnimationType.MoveR), _move, _enemy);
                     break;
                 case FightAiMove.Run:
-                    _npcAiService.ExtAiPlayAni(NpcInstance, GetAnimName(VmGothicEnums.AnimationType.Move));
+                    _npcAiService.PlayAttackAni(NpcInstance, GetAnimName(VmGothicEnums.AnimationType.Move), _move, _enemy);
                     break;
                 case FightAiMove.Turn:
                     _npcAiService.ExtAiTurnToNpc(NpcInstance, _enemy);
@@ -122,10 +119,10 @@ namespace GUZ.Core.Domain.Npc.Actions.AnimationActions
         /// Fight range is calculated by base range + weapon attack range.
         private float GetAttackRange()
         {
-            var baseRange = _gameStateService.GuildValues.GetFightRangeBase(Vob.GuildTrue);
+            var baseRange = GameStateService.GuildValues.GetFightRangeBase(Vob.GuildTrue);
 
             // By default, use Fist range.
-            float weaponRange = _gameStateService.GuildValues.GetFightRangeFist(Vob.GuildTrue);;
+            float weaponRange = GameStateService.GuildValues.GetFightRangeFist(Vob.GuildTrue);;
 
             // If NPC has a weapon equipped, then use it's length in G1 (as FIGHT_RANGE_1HA and FIGHT_RANGE_1HS aren't set. Same for 2H).
             // FIXME - Check how G2 is handling ranges. Also via weapon range or guild values?
@@ -140,14 +137,14 @@ namespace GUZ.Core.Domain.Npc.Actions.AnimationActions
                 {
                     case VmGothicEnums.WeaponState.NoWeapon:
                     case VmGothicEnums.WeaponState.Fist:
-                        weaponRange = _gameStateService.GuildValues.GetFightRangeFist(Vob.GuildTrue);
+                        weaponRange = GameStateService.GuildValues.GetFightRangeFist(Vob.GuildTrue);
                         break;
                     case VmGothicEnums.WeaponState.W1H:
                     case VmGothicEnums.WeaponState.W2H:
                     case VmGothicEnums.WeaponState.Bow:
                     case VmGothicEnums.WeaponState.CBow:
                     case VmGothicEnums.WeaponState.Mage:
-                        weaponRange = _gameStateService.GuildValues.GetFightRangeFist(Vob.GuildTrue);
+                        weaponRange = GameStateService.GuildValues.GetFightRangeFist(Vob.GuildTrue);
                         Logger.LogWarning($"WeaponState attackrange not yet handled for {(VmGothicEnums.WeaponState)Vob.FightMode}. Assuming fist range.", LogCat.Npc);
                         break;
                     default:
@@ -163,7 +160,7 @@ namespace GUZ.Core.Domain.Npc.Actions.AnimationActions
         /// </summary>
         private string GetAnimName(VmGothicEnums.AnimationType type)
         {
-            return _animationService.GetAnimationName(type, NpcContainer);
+            return AnimationService.GetAnimationName(type, NpcContainer);
         }
     }
 }

@@ -128,14 +128,7 @@ namespace GUZ.Core.Services.Caches
             }
 
             SfxModel newData = null;
-            try
-            {
-                newData = new SfxModel(preparedKey).Inject();
-            }
-            catch (Exception)
-            {
-                // ignored
-            }
+            newData = new SfxModel(preparedKey);
 
             _sfxDataCache[preparedKey] = newData;
 

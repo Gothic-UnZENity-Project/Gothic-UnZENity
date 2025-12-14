@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using GUZ.Core.Adapters.Npc;
+using GUZ.Core;
 using GUZ.Core.Const;
 using GUZ.Core.Extensions;
 using GUZ.Core.Logging;
@@ -54,10 +54,21 @@ namespace GUZ.VR.Domain.Player
 
         public VobContainer WeaponVobContainer { get; private set; }
         private Rigidbody _weaponRigidbody;
-        private Collider[] _weaponColliders;
 
         private bool _handlesLeftHand;
         private bool _handlesRightHand;
+        private GlobalEventDispatcher.HandSide _handValue
+        {
+            get
+            {
+                if (_handlesLeftHand && _handlesRightHand)
+                    return GlobalEventDispatcher.HandSide.Both;
+                else if (_handlesLeftHand)
+                    return GlobalEventDispatcher.HandSide.Left;
+                else
+                    return GlobalEventDispatcher.HandSide.Right;
+            }
+        }
 
         private float _attackVelocityThreshold;
         private float _velocityDropPercentage;
@@ -102,12 +113,6 @@ namespace GUZ.VR.Domain.Player
             Combo
         }
         
-        // Events for external systems
-        public Action OnAttackTriggered;
-        public Action OnComboTriggered;
-        public Action OnAttackMissed;
-
-
         /// <summary>
         /// TRUE, when:
         ///   1. No weapon used by this handler so far
@@ -126,7 +131,6 @@ namespace GUZ.VR.Domain.Player
             {
                 WeaponVobContainer = vobContainer;
                 _weaponRigidbody = vobContainer.Go.GetComponentInChildren<Rigidbody>();
-                _weaponColliders = _weaponRigidbody.GetComponentsInChildren<Collider>();
 
                 _attackVelocityThreshold =  weaponConfig.WeaponVelocityThreshold;
                 _velocityDropPercentage = weaponConfig.WeaponVelocityDropPercentage;
@@ -198,11 +202,14 @@ namespace GUZ.VR.Domain.Player
 
         private void FullStopHandling()
         {
+            // We need to execute it before we clear values.
+            GlobalEventDispatcher.FightWindowInitial.Invoke(WeaponVobContainer, _handValue);
+
             WeaponVobContainer = null;
             _weaponRigidbody = null;
-            _weaponColliders = null;
             _handlesLeftHand = false;
             _handlesRightHand = false;
+            _currentWindow = TimeWindow.Initial;
         }
 
         /// <summary>
@@ -290,7 +297,7 @@ namespace GUZ.VR.Domain.Player
             }
 
             _comboWindowStart = hitWindows[0] / attackAnim.Fps;
-            _comboWindowTime = hitWindows[1] - hitWindows[0] / attackAnim.Fps;
+            _comboWindowTime = (hitWindows[1] - hitWindows[0]) / attackAnim.Fps;
         }
 
         private void CalculateAttackSound(IAnimation attackAnim)
@@ -385,7 +392,10 @@ namespace GUZ.VR.Domain.Player
                 case TimeWindow.ComboFailed:
                     // Simply wait until the whole "animation" is over and then start again.
                     if (_overallFlowTime >= _comboWindowTime)
+                    {
                         _currentWindow = TimeWindow.Initial;
+                        GlobalEventDispatcher.FightWindowInitial.Invoke(WeaponVobContainer, _handValue);
+                    }
                     break;
                 case TimeWindow.WaitingForCombo:
                     HandleWaitingForComboWindow();
@@ -418,41 +428,18 @@ namespace GUZ.VR.Domain.Player
             if (CheckIfComboWindowFailed())
                 return;
 
-            CheckHitCollider();
-
             if (_overallFlowTime >= _attackWindowTime)
-                _currentWindow = TimeWindow.WaitingForCombo;
-        }
-
-        private void CheckHitCollider()
-        {
-            var overlappingColliders = new List<Collider>();
-
-            foreach (var weaponCollider in _weaponColliders)
             {
-                // Handle different collider types
-                switch (weaponCollider)
-                {
-                    case BoxCollider boxCollider:
-                        overlappingColliders.AddRange(CheckBoxColliderOverlap(boxCollider));
-                        break;
-                    case CapsuleCollider capsuleCollider:
-                        overlappingColliders.AddRange(CheckCapsuleColliderOverlap(capsuleCollider));
-                        break;
-                    default:
-                        Logger.LogError($"Unsupported collider type for weapon hit detection: {weaponCollider.GetType().Name}", LogCat.VR);
-                        continue;
-                }
+                _currentWindow = TimeWindow.WaitingForCombo;
+                GlobalEventDispatcher.FightWindowWaitingForCombo.Invoke(WeaponVobContainer, _handValue);
             }
-
-            ProcessWeaponHits(overlappingColliders);
         }
 
         private Collider[] CheckBoxColliderOverlap(BoxCollider boxCollider)
         {
             CalculateBoxColliderOverlap(boxCollider, out var center, out var size, out var rotation);;
 
-            var colliders = Physics.OverlapBox(center, size / 2, rotation, 1 << Constants.VobNpcOrMonster);
+            var colliders = Physics.OverlapBox(center, size / 2, rotation, 1 << Constants.VobNpcOrMonsterLayer);
 
             return colliders;
         }
@@ -470,7 +457,7 @@ namespace GUZ.VR.Domain.Player
         {
             CalculateCapsuleOverlap(capsuleCollider, out var point0, out var point1, out var radius);
 
-            var colliders = Physics.OverlapCapsule(point0, point1, radius, 1 << Constants.VobNpcOrMonster);
+            var colliders = Physics.OverlapCapsule(point0, point1, radius, 1 << Constants.VobNpcOrMonsterLayer);
 
             return colliders;
         }
@@ -498,37 +485,6 @@ namespace GUZ.VR.Domain.Player
             point1 = center - direction * halfHeight;
         }
 
-        private void ProcessWeaponHits(List<Collider> hitColliders)
-        {
-            foreach (var hitCollider in hitColliders)
-            {
-                if (_alreadyHitCollidersForThisAttack.Contains(hitCollider))
-                    continue;
-                else
-                    _alreadyHitCollidersForThisAttack.Add(hitCollider);
-
-                var npcContainer = hitCollider.GetComponentInParent<NpcLoader>().Container;
-                
-
-                Logger.Log($"Weapon hit detected on: {hitCollider.gameObject.name}", LogCat.VR);
-
-                // Here you can add your hit processing logic, such as:
-                // - Damage calculation
-                // - Hit effects
-                // - Sound effects
-                // - Haptic feedback
-                // - etc.
-
-                // Example: Get the hit target component and process damage
-                // var npcComponent = hitCollider.GetComponentInParent<INpc>();
-                // if (npcComponent != null)
-                // {
-                //     npcComponent.TakeDamage(calculateDamage());
-                // }
-            }
-        }
-
-
         private void HandleWaitingForComboWindow()
         {
             HandleSound();
@@ -553,6 +509,8 @@ namespace GUZ.VR.Domain.Player
                 _hasReturnedToThreshold = true;
                 // Combo failed - velocity dropped and returned during attack window
                 _currentWindow = TimeWindow.ComboFailed;
+                GlobalEventDispatcher.FightWindowComboFailed.Invoke(WeaponVobContainer, _handValue);
+                
                 return true;
             }
 
@@ -584,8 +542,8 @@ namespace GUZ.VR.Domain.Player
             if (_overallFlowTime >= _comboWindowTime)
             {
                 // Missed combo window
-                OnAttackMissed?.Invoke();
                 _currentWindow = TimeWindow.Initial;
+                GlobalEventDispatcher.FightWindowInitial.Invoke(WeaponVobContainer, _handValue);
             }
         }
         
@@ -593,7 +551,7 @@ namespace GUZ.VR.Domain.Player
         {
             _currentWindow = TimeWindow.Attack;
             _overallFlowTime = 0f; // Restart timer
-
+            
             // Restart failure checks.
             _hasDroppedBelowThreshold = false;
             _hasReturnedToThreshold = false;
@@ -602,8 +560,7 @@ namespace GUZ.VR.Domain.Player
             // If no sound is set, ignore playing it and mark it as "played".
             _soundPlayed = _swingSwordSound == null;
             
-            // Trigger attack
-            OnAttackTriggered?.Invoke();
+            GlobalEventDispatcher.FightWindowAttack.Invoke(WeaponVobContainer, _handValue);
         }
         
         // FIXME - DEBUG values. Need to be adjustable via MarvinMode Inspector...
@@ -618,16 +575,8 @@ namespace GUZ.VR.Domain.Player
             // We restart velocity check now. It's expected, that the player changes velocity within this time window now!
             _hasDroppedBelowThreshold = false;
             _hasReturnedToThreshold = false;
-
-            if (_handlesLeftHand)
-                _vrPlayerService.GetHand(HVRHandSide.Left).Vibrate(_amplitude, _duration, _frequency);
-            if (_handlesRightHand)
-                _vrPlayerService.GetHand(HVRHandSide.Right).Vibrate(_amplitude, _duration, _frequency);
-        }
-        
-        private void ExecuteCombo()
-        {
-            OnComboTriggered?.Invoke();
+            
+            GlobalEventDispatcher.FightWindowCombo.Invoke(WeaponVobContainer, _handValue);
         }
         
         // Public methods for external systems
@@ -664,6 +613,8 @@ namespace GUZ.VR.Domain.Player
         public void AdvanceStateAfterAttack()
         {
             _currentWindow = TimeWindow.WaitingForCombo;
+            
+            GlobalEventDispatcher.FightWindowWaitingForCombo.Invoke(WeaponVobContainer, _handValue);
         }
     }
 }

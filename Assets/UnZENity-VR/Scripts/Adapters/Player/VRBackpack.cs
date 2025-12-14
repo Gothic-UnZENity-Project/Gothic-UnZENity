@@ -46,6 +46,7 @@ namespace GUZ.VR.Adapters.Player
         [Inject] private readonly VobMeshCullingService _vobMeshCullingService;
         [Inject] private readonly SaveGameService _saveGameService;
         [Inject] private readonly VmService _vmService;
+        [Inject] private readonly VRWeaponService _vrWeaponService;
 
         
         private void Start()
@@ -212,16 +213,18 @@ namespace GUZ.VR.Adapters.Player
         {
             yield return null;
 
-            // While we re-stack items into slots, we need to ignore their events. Otherwise we create a loop.
+            // While we re-stack items into slots, we need to ignore their events. Otherwise, we create a loop.
             _tempIgnoreSocketing = true;
+            _vrWeaponService.DrawSoundsActive = false;
             
             ClearSockets();
-            yield return null; // Releasing and destroying objects takes until next frame.
+            yield return null; // Releasing and destroying objects takes until the next frame.
 
             RefillSockets(inventory);
             yield return null;
 
             _tempIgnoreSocketing = false;
+            _vrWeaponService.DrawSoundsActive = true;
         }
 
         private void ClearSockets()

@@ -24,6 +24,7 @@ namespace GUZ.Core.Domain.Npc.Actions.AnimationActions
     {
         public readonly AnimationAction Action;
 
+        [Inject] protected readonly AnimationService AnimationService;
         [Inject] protected readonly VmCacheService VmCacheService;
         [Inject] protected readonly PhysicsService PhysicsService;
         [Inject] protected readonly WayNetService WayNetService;

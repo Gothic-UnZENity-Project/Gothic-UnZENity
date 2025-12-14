@@ -9,9 +9,6 @@ namespace GUZ.Core.Domain.Npc.Actions.AnimationActions
 {
     public abstract class AbstractRotateAnimationAction : AbstractAnimationAction
     {
-        [Inject] private readonly AnimationService _animationService;
-        [Inject] private readonly GameStateService _gameStateService;
-
         // Can be used to rotate without animation.
         protected bool PlayAnimation = true;
 
@@ -62,7 +59,7 @@ namespace GUZ.Core.Domain.Npc.Actions.AnimationActions
 
             if (PlayAnimation)
             {
-                _rotationAnimationName = _animationService.GetAnimationName(
+                _rotationAnimationName = AnimationService.GetAnimationName(
                     _isRotateLeft ? VmGothicEnums.AnimationType.RotL : VmGothicEnums.AnimationType.RotR,
                     NpcContainer);
                 PrefabProps.AnimationSystem.PlayAnimation(_rotationAnimationName);
@@ -85,7 +82,10 @@ namespace GUZ.Core.Domain.Npc.Actions.AnimationActions
         /// </summary>
         private void HandleRotation(Transform npcTransform)
         {
-            var turnSpeed = _gameStateService.GuildValues.GetTurnSpeed((int)VmGothicEnums.Guild.GIL_HUMAN);
+            // For rotation speed, we use the guild value for human if any type of human or the monster guild itself.
+            var guild = NpcInstance.Guild <= (int)VmGothicEnums.Guild.GIL_SEPERATOR_HUM ? (int)VmGothicEnums.Guild.GIL_HUMAN : NpcInstance.Guild;
+
+            var turnSpeed = GameStateService.GuildValues.GetTurnSpeed(guild);
             var currentRotation =
                 Quaternion.RotateTowards(npcTransform.rotation, _finalRotation, Time.deltaTime * turnSpeed);
 

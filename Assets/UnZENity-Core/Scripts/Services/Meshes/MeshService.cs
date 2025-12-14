@@ -182,13 +182,14 @@ namespace GUZ.Core.Services.Meshes
             return CreateVobPfx(vob.Visual!.Name, position, rotation, parent);
         }
 
-        public GameObject CreateVobPfx(string pfxName, Vector3 position = default, Quaternion rotation = default, GameObject parent = null)
+        public GameObject CreateVobPfx(string pfxName, Vector3 position = default, Quaternion rotation = default, GameObject parent = null, bool destroyAfterPlay = false)
         {
             var vobPfxBuilder = new VobPfxMeshBuilder().Inject();
             vobPfxBuilder.SetGameObject(null, pfxName);
             vobPfxBuilder.SetParent(parent);
             vobPfxBuilder.SetRootPosAndRot(position, rotation);
             vobPfxBuilder.SetPfxData(pfxName);
+            vobPfxBuilder.SetDestroyAfterPlay(destroyAfterPlay);
 
             return vobPfxBuilder.Build();
         }

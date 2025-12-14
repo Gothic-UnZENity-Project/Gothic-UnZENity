@@ -11,6 +11,7 @@ namespace GUZ.Core.Adapters.UI.StatusBars
     public class StatusBarAdapter : MonoBehaviour
     {
         [SerializeField] private StatusType _statusType;
+        [SerializeField] private bool _isPlayer;
         [SerializeField] private Image _background;
         [SerializeField] private Image _statusValue;
 
@@ -24,16 +25,22 @@ namespace GUZ.Core.Adapters.UI.StatusBars
             Misc
         }
 
-        private void Start()
+        private void Awake()
         {
             DisableBar();
-            GlobalEventDispatcher.ZenKitBootstrapped.AddListener(StartDelayed);
+
+            // Player is spawned before ZenKit (with Gothic version) is bootstrapped.
+            if (_isPlayer)
+                GlobalEventDispatcher.ZenKitBootstrapped.AddListener(StartInternal);
+            else
+                StartInternal();
         }
 
-        private void StartDelayed()
+        private void StartInternal()
         {
             _background.material = _textureService.StatusBarBackgroundMaterial;
 
+            // FIXME - Set fill amount based on current value when NPC/Monster is spawned.
             _statusValue.fillAmount = 1f;
             _statusValue.material = _statusType switch
             {
@@ -61,19 +68,26 @@ namespace GUZ.Core.Adapters.UI.StatusBars
         {
             while (true)
             {
-                if (!_playerService.IsDiving)
+                if (!_playerService.IsDiving && _statusValue.enabled)
                 {
                     DisableBar();
                 }
-                else
+                else if (_playerService.IsDiving)
                 {
-                    _statusValue.fillAmount = _playerService.CurrentAir / _playerService.MaxAir;
-                    EnableBar();
+                    SetFillAmount(_playerService.CurrentAir, _playerService.MaxAir);
+                    
+                    if (!_statusValue.enabled)
+                        EnableBar();
                 }
 
                 yield return null;
             }
-            // ReSharper disable once FunctionNeverReturns
+            // ReSharper disable once IteratorNeverReturns
+        }
+
+        public void SetFillAmount(float current, float max)
+        {
+            _statusValue.fillAmount = current / max;
         }
 
         public void DisableBar()

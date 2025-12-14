@@ -66,7 +66,7 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 0.5
+  m_Radius: 2
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!82 &5818744495225174809
 AudioSource:
@@ -1951,8 +1951,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 99f0a46232384db0a4a79f2b55bacf2e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _mass2HOneHanded: 15
-  _mass1HAnyHand2HTwoHanded: 2
+  _mass2HOneHanded: 5
+  _mass1HAnyHand2HTwoHanded: 1
   _linearDamping2HOneHanded: 0
   _linearDamping1HAnyHand2HTwoHanded: 0
   _angularDamping2HOneHanded: 0
@@ -2653,6 +2653,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 3469872688271879209}
     m_Modifications:
+    - target: {fileID: 1174396645238234420, guid: 204a93fafa363374c9d1e232e7d87070, type: 3}
+      propertyPath: _isPlayer
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6545134584407578383, guid: 204a93fafa363374c9d1e232e7d87070, type: 3}
       propertyPath: m_PresetInfoIsWorld
       value: 1

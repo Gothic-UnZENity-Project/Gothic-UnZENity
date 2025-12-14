@@ -52,6 +52,8 @@ namespace GUZ.Core.Services
         [Inject] private readonly ConfigService _configService;
         [Inject] private readonly NpcService _npcService;
         [Inject] private readonly RoutineService _routineService;
+        [Inject] private readonly FightService _fightService;
+        [Inject] private readonly ParticleService _particleService;
         
         [Inject] private readonly MultiTypeCacheService _multiTypeCacheService;
         [Inject] private readonly StaticCacheService _staticCacheService;
@@ -100,6 +102,8 @@ namespace GUZ.Core.Services
             _vobSoundCullingService.Init();
             _gameTimeService.Init();
             _routineService.Init();
+            _fightService.Init();
+            _particleService.Init();
         }
 
         /// <summary>

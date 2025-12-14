@@ -263,7 +263,7 @@ namespace UberLogger
             Application.RegisterLogCallback(UnityLogHandler);
 #endif
             StartTick = DateTime.Now.Ticks;
-            UnityMessageRegex = new Regex(@"^([^\(]*)\((\d+)[^\)]*\)");
+            UnityMessageRegex = new Regex(@"^([^\(]*)\((\d+)[^\)]*\)", RegexOptions.IgnoreCase);
         }
 
         /// <summary>

@@ -313,6 +313,17 @@ namespace GUZ.Core.Models.Vm
             AwakeDoAiOnly = 2
         }
 
+        public enum ItemMaterial
+        {
+            Wood    = 0,
+            Stone   = 1,
+            Metal   = 2,
+            Leather = 3,
+            Clay    = 4,
+            Glass   = 5,
+            Cound   = 6,
+        }
+
         // FIXME - These are G1 guilds. Once we implement G2, we need to outsource this enum to their respective Unity modules for G1/G2.
         public enum Guild
         {

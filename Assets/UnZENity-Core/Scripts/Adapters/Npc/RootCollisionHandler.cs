@@ -1,3 +1,4 @@
+using GUZ.Core.Const;
 using UnityEngine;
 
 namespace GUZ.Core.Adapters.Npc
@@ -9,7 +10,10 @@ namespace GUZ.Core.Adapters.Npc
         [SerializeField] private CapsuleCollider _weaponAttackTriggerCollider;
 
         private SkinnedMeshRenderer[] _meshRenderers;
-
+        
+        private const float _pushbackDistance = 0.3f;
+        
+        
         protected override void Awake()
         {
             base.Awake();
@@ -25,16 +29,12 @@ namespace GUZ.Core.Adapters.Npc
         private void Update()
         {
             if (_meshRenderers == null)
-            {
                 _meshRenderers = Go.GetComponentsInChildren<SkinnedMeshRenderer>();
-            }
 
             var bbox = new Bounds();
 
             foreach (var rend in _meshRenderers)
-            {
                 bbox.Encapsulate(rend.localBounds);
-            }
 
             // We only want to move the Collider to the center of the body in vertical orientation. A slight move left/right can be ignored.
             _capsuleCollider.center = new Vector3(0, bbox.center.y, 0);
@@ -58,6 +58,52 @@ namespace GUZ.Core.Adapters.Npc
 
             // Empty physics based diff. Next frame physics will be recalculated.
             transform.localPosition = Vector3.zero;
+        }
+
+        private void OnCollisionEnter(Collision collision)
+        {
+            // As we already use these layers for Monsters+NPCs+Hero, we will simply reuse it instead of using a Tag.
+            // PERC_MOVENPC is only relevant for hero + NPCs in G1.
+            if (collision.gameObject.layer.Equals(Constants.PlayerLayer))
+            {
+                PrefabProps.AiHandler.HeroCollisionDetected();
+                
+                PushMonsterAwayFromPlayer();
+            }
+            else
+            {
+                // Nothing relevant collided with.
+                return;
+            }
+        }
+
+        /// <summary>
+        /// Pushes the monster away from the player when collision occurs in VR.
+        /// Prevents the monster from glitching through and ending up below the player.
+        /// Alternatives would be:
+        /// 1. In G1 itself, the hit animation of the player is slightly moving him backward.
+        /// 2. But in VR, this could cause nausea.
+        ///
+        /// TODO - This will also cause monsters to spawn away from us, when we move into them.
+        ///        Let's see if this causes glitches in a normal VR gameplay session.
+        /// </summary>
+        private void PushMonsterAwayFromPlayer()
+        {
+            var playerPosition = Camera.main != null ? Camera.main.transform.position : Vector3.zero;
+            var monsterPosition = Go.transform.position;
+
+            // Calculate the pushback direction (away from player, on horizontal plane only)
+            var directionAwayFromPlayer = new Vector3(
+                monsterPosition.x - playerPosition.x,
+                0f, // Don't push up/down
+                monsterPosition.z - playerPosition.z
+            ).normalized;
+
+            // Push monster back by a small amount (30cm)
+            var pushbackOffset = directionAwayFromPlayer * _pushbackDistance;
+
+            // Apply the pushback to the root position
+            Go.transform.position += pushbackOffset;
         }
     }
 }

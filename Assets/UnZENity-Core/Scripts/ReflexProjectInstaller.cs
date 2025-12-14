@@ -1,6 +1,7 @@
 using GUZ.Core.Creator;
 using GUZ.Core.Domain.Vobs;
 using GUZ.Core.Manager;
+using GUZ.Core.Models.Container;
 using GUZ.Core.Services;
 using GUZ.Core.Services.Caches;
 using GUZ.Core.Services.Config;
@@ -71,6 +72,10 @@ namespace GUZ.Core
             containerBuilder.AddSingleton(typeof(MeshService));
             containerBuilder.AddSingleton(typeof(AnimationService));
 
+            // Vob
+            containerBuilder.AddSingleton(typeof(VobService));
+            containerBuilder.AddSingleton(typeof(ParticleService));
+            
             // Player
             containerBuilder.AddSingleton(typeof(DialogService));
             containerBuilder.AddSingleton(typeof(PlayerService));
@@ -82,6 +87,7 @@ namespace GUZ.Core
             containerBuilder.AddSingleton(typeof(RoutineService));
             containerBuilder.AddSingleton(typeof(NpcRoutineService));
             containerBuilder.AddSingleton(typeof(NpcInventoryService));
+            containerBuilder.AddSingleton(typeof(FightService));
 
             // Caches
             containerBuilder.AddSingleton(typeof(ResourceCacheService));
@@ -118,7 +124,6 @@ namespace GUZ.Core
 
             // FIXME - Need to be migrated to a Service!
             containerBuilder.AddSingleton(typeof(VobInitializerDomain));
-            containerBuilder.AddSingleton(typeof(VobService));
             containerBuilder.AddSingleton(typeof(StationaryLightsService));
             containerBuilder.AddSingleton(typeof(SkyService));
             containerBuilder.AddSingleton(typeof(BarrierService));

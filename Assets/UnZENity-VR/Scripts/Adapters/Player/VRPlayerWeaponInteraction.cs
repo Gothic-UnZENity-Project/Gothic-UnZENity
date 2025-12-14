@@ -20,8 +20,8 @@ namespace GUZ.VR.Adapters.Player
 
         // FIXME - All of these values will be dynamic in the future. Based on skill level and weapon type.
         [Header("Weapon weight")]
-        [SerializeField] private float _mass2HOneHanded = 15f;
-        [SerializeField] private float _mass1HAnyHand2HTwoHanded = 2f;
+        [SerializeField] private float _mass2HOneHanded = 5f;
+        [SerializeField] private float _mass1HAnyHand2HTwoHanded = 1f;
         [SerializeField] private float _linearDamping2HOneHanded = 0f;
         [SerializeField] private float _linearDamping1HAnyHand2HTwoHanded = 0f;
         [SerializeField] private float _angularDamping2HOneHanded = 0f;
@@ -128,12 +128,12 @@ namespace GUZ.VR.Adapters.Player
                     "Mass one handed",
                     () => _mass2HOneHanded,
                     value => _mass2HOneHanded = value,
-                    0f, 50f),
+                    0f, 15f),
                 new MarvinProperty<float>(
                     "Mass two handed",
                     () => _mass1HAnyHand2HTwoHanded,
                     value => _mass1HAnyHand2HTwoHanded = value,
-                    0f, 50f),
+                    0f, 5f),
                 new MarvinProperty<float>(
                     "Move damping one handed",
                     () => _linearDamping2HOneHanded,

@@ -11,6 +11,7 @@ namespace GUZ.Core.Logging
         Animation,
         Dialog,
         Npc,
+        Fight,
 
         // Visuals
         Mesh,

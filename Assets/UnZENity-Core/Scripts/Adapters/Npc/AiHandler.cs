@@ -52,6 +52,12 @@ namespace GUZ.Core.Adapters.Npc
         /// </summary>
         private void Update()
         {
+            // If NPC/Monster is dead, stop any further process logic.
+            if (Properties.BodyState == VmGothicEnums.BodyState.BsDead)
+            {
+                enabled = false;
+            }
+            
             ExecuteActivePerceptions();
             ExecuteStates();
 
@@ -402,6 +408,11 @@ namespace GUZ.Core.Adapters.Npc
             {
                 Properties.CurrentFreePoint.IsLocked = false;
             }
+        }
+
+        public void HeroCollisionDetected()
+        {
+            _npcAiService.ExecutePerception(VmGothicEnums.PerceptionType.MoveNpc, Properties, NpcInstance, null, (NpcInstance)_gameStateService.GothicVm.GlobalHero);
         }
     }
 }
