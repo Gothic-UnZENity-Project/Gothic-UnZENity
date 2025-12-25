@@ -208,7 +208,7 @@ namespace GUZ.Core.Services.Npc
             if (other.PrefabProps.IsHero() && self.Vob.Attitude != self.Vob.AttitudeTemp)
                 return (VmGothicEnums.Attitude)self.Vob.AttitudeTemp;
 
-            return GetGuildAttitude(self.Vob.Attitude, other.Vob.Attitude);
+            return GetGuildAttitude(self.Vob.Guild, other.Vob.Guild);
         }
 
         private VmGothicEnums.Attitude GetGuildAttitude(int selfGuild, int otherGuild)

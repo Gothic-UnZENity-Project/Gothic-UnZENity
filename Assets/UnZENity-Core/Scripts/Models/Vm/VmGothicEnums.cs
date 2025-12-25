@@ -106,6 +106,7 @@ namespace GUZ.Core.Models.Vm
 
         public enum Attitude
         {
+            Null     = -1, // Unset by default
             Hostile  = 0,
             Angry    = 1,
             Neutral  = 2,
