@@ -71,6 +71,8 @@ namespace GUZ.Core
         public static readonly UnityEvent<VobContainer, HandSide> FightWindowAttack = new();
         public static readonly UnityEvent<VobContainer, HandSide> FightWindowWaitingForCombo = new();
         public static readonly UnityEvent<VobContainer, HandSide> FightWindowCombo = new();
+
+        public static readonly UnityEvent<NpcContainer, NpcContainer> SetHeroAsTarget = new();
         
         /// <summary>
         /// NpcContainer - who got hit
