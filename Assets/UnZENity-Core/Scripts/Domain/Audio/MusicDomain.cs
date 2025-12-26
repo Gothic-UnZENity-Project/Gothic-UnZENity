@@ -18,16 +18,21 @@ namespace GUZ.Core.Domain.Audio
 {
     public class MusicDomain
     {
-        [Flags]
-        public enum SegmentTags : byte
+        public enum MusicTagsTime
         {
-            Day = 0,
-            Ngt = 1 << 0,
-
-            Std = 0,
-            Fgt = 1 << 1,
-            Thr = 1 << 2
+            Day,
+            Night
         }
+
+        public enum MusicTagsMode
+        {
+            Standard,
+            Thrill,
+            Fight
+        }
+
+        public MusicTagsTime TimeTag = MusicTagsTime.Day;
+        public MusicTagsMode ModeTag = MusicTagsMode.Standard;
 
         [Inject] private ConfigService _configService;
         [Inject] private readonly MultiTypeCacheService _multiTypeCacheService;
@@ -70,42 +75,68 @@ namespace GUZ.Core.Domain.Audio
             InitializeDxMusic();
         }
 
+        /// <summary>
+        /// Play active music zone theme with segment tags like NGT + FGT
+        /// </summary>
+        public void Play()
+        {
+            PlayInternal();
+        }
+
+        /// <summary>
+        /// Play a specific music theme without using musicZones and modes.
+        /// e.g., for MainMenu music.
+        /// </summary>
         public void Play(string musicInstanceName)
         {
-            var music = _themes[musicInstanceName];
-            Play(music);
+            PlayInternal(musicInstanceName);
         }
-
-        public void Play(SegmentTags tags)
+        
+        /// <summary>
+        /// Play active theme with segment tags like NGT + FGT
+        /// </summary>
+        private void PlayInternal()
         {
-            var zoneName = _musicZones
-                .OrderByDescending(i => i.GetComponentInParent<VobLoader>().Container.VobAs<IZoneMusic>().Priority)
-                .FirstOrDefault()?
-                .GetComponentInParent<VobLoader>().Container.VobAs<IZoneMusic>().Name;
+            var zone = _musicZones
+                .Select(i => i.GetComponentInParent<VobLoader>().Container.VobAs<IZoneMusic>())
+                .OrderByDescending(i => i.Priority)
+                .FirstOrDefault();
 
-            if (zoneName == null)
+            if (zone == null)
                 return;
 
-            var isDay = (tags & SegmentTags.Ngt) == 0;
-            var result = zoneName.Substring(zoneName.IndexOf("_") + 1);
-            var musicTag = "STD";
+            // e.g., Towerdungeon_TD => TD is needed only
+            var formattedZoneName = zone.Name.Substring(zone.Name.IndexOf("_") + 1);
 
-            if ((tags & SegmentTags.Fgt) != 0)
+            var timeTag = TimeTag switch
             {
-                musicTag = "FGT";
-            }
+                MusicTagsTime.Day => "DAY",
+                MusicTagsTime.Night => "NGT",
+                _ => throw new ArgumentOutOfRangeException()
+            };
 
-            if ((tags & SegmentTags.Thr) != 0)
+            var modeTag = ModeTag switch
             {
-                musicTag = "THR";
-            }
+                MusicTagsMode.Standard => "STD",
+                MusicTagsMode.Thrill => "THR",
+                MusicTagsMode.Fight => "FGT",
+                _ => throw new ArgumentOutOfRangeException()
+            };
 
-            var musicThemeInstanceName = $"{result}_{(isDay ? "DAY" : "NGT")}_{musicTag}";
+            var musicThemeInstanceName = $"{formattedZoneName}_{timeTag}_{modeTag}";
 
-            Play(musicThemeInstanceName);
+            PlayInternal(musicThemeInstanceName);
+        }
+        
+        private void PlayInternal(string musicInstanceName)
+        {
+            if (!_themes.TryGetValue(musicInstanceName, out var music))
+                return;
+            
+            PlayInternal(music);
         }
 
-        public void Play(MusicThemeInstance theme)
+        private void PlayInternal(MusicThemeInstance theme)
         {
             // Do not restart the current theme if already playing.
             // Multiple MusicThemeInstances can reference the same audio. Therefore, checking actual files only.
@@ -195,14 +226,14 @@ namespace GUZ.Core.Domain.Audio
         public void MusicZoneExited(GameObject go)
         {
             RemoveMusicZone(go);
-            Play(SegmentTags.Std);
+            Play();
 
         }
 
         public void MusicZoneEntered(GameObject go)
         {
             AddMusicZone(go);
-            Play(SegmentTags.Std);
+            Play();
         }
 
         public void AddMusicZone(GameObject newMusicZoneGo)
@@ -247,7 +278,7 @@ namespace GUZ.Core.Domain.Audio
                 }
             }
 
-            Play(SegmentTags.Std);
+            Play();
         }
     }
 }

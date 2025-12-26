@@ -59,6 +59,8 @@ namespace GUZ.Core.Models.Adapter.Vobs
             };
             EventManager = new EventManager();
             ModelScale = Vector3.One;
+            Attitude = (int)VmGothicEnums.Attitude.Null;
+            AttitudeTemp = (int)VmGothicEnums.Attitude.Null;
             
             AddSlot().Name = Constants.SlotRightHand;
             AddSlot().Name = Constants.SlotLeftHand;

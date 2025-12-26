@@ -1,5 +1,6 @@
 using GUZ.Core.Domain.Audio;
 using GUZ.Core.Extensions;
+using GUZ.Core.Models.Vm;
 using GUZ.Core.Services.Caches;
 using GUZ.Core.Services.Config;
 using JetBrains.Annotations;
@@ -21,7 +22,6 @@ namespace GUZ.Core.Manager
 
         public SoundEffectInstance InvOpen => _vmCacheService.TryGetSfxData("INV_OPEN").GetFirstSound();
         public SoundEffectInstance InvClose => _vmCacheService.TryGetSfxData("INV_CLOSE").GetFirstSound();
-
         
         //
         // Music
@@ -49,6 +49,12 @@ namespace GUZ.Core.Manager
                 {
                     _musicDomain.UpdateMusicValuesFromIni();
                 }
+            });
+            
+            GlobalEventDispatcher.SetHeroAsTarget.AddListener((enemy, hero) =>
+            {
+                _musicDomain.ModeTag = hero.Vob.FightMode == (int)VmGothicEnums.WeaponState.NoWeapon ? MusicDomain.MusicTagsMode.Thrill : MusicDomain.MusicTagsMode.Fight;
+                _musicDomain.Play();
             });
         }
 
