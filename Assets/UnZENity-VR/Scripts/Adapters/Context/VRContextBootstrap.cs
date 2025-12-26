@@ -1,5 +1,4 @@
 #if GUZ_HVR_INSTALLED
-using GUZ.Core;
 using GUZ.Core.Adapters.Context;
 using GUZ.Core.Extensions;
 using GUZ.Core.Models.Context;

@@ -1,3 +1,4 @@
+#if GUZ_HVR_INSTALLED
 using GUZ.Core;
 using GUZ.Core.Adapters.Npc;
 using GUZ.Core.Adapters.Vob;
@@ -8,7 +9,7 @@ using GUZ.VR.Services;
 using Reflex.Attributes;
 using UnityEngine;
 
-namespace GUZ.VR.Adapters.Player
+namespace GUZ.VR.Adapters.Npc
 {
     public class VRWeaponAttackCollider : MonoBehaviour
     {
@@ -22,6 +23,12 @@ namespace GUZ.VR.Adapters.Player
             _npcContainer = GetComponentInParent<NpcLoader>().Container;
         }
 
+        /// <summary>
+        /// TODO - Need to be updated to support fist collider from monsters and player as well
+        /// Is the other who's hitting me?:
+        /// 1. A VobItem (aka weapon)
+        /// 2. Is the attacker in attack window state
+        /// </summary>
         private void OnTriggerEnter(Collider other)
         {
             if (other.gameObject.layer != Constants.VobItemLayer)
@@ -37,3 +44,4 @@ namespace GUZ.VR.Adapters.Player
         }
     }
 }
+#endif
