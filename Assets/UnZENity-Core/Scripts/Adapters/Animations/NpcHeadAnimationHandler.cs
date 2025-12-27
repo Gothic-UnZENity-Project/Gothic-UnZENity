@@ -46,6 +46,9 @@ namespace GUZ.Core.Animations
         /// </summary>
         private void LateUpdate()
         {
+            // FIXME - Currently disabled as the Troll is doing a really awkward head rotation! Fix it first.
+            return;
+            
             // 1.
             if (!_doLookAtNpc)
             {
