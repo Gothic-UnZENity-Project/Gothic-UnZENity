@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using GUZ.Core.Adapters.Npc;
 using GUZ.Core.Logging;
 using GUZ.Core.Models.Vm;
 using GUZ.Core.Services.Caches;
@@ -28,6 +29,26 @@ namespace GUZ.Core.Domain.Meshes.Builder
             BuildViaMdmAndMdh();
 
             return RootGo;
+        }
+
+        protected override GameObject[] BuildViaMdmAndMdh()
+        {
+            var nodeObjects = base.BuildViaMdmAndMdh();
+
+            AddFistCollider(nodeObjects);
+
+            return nodeObjects;
+        }
+
+        private void AddFistCollider(GameObject[] nodeObjects)
+        {
+            foreach (var nodeObject in nodeObjects)
+            {
+                if (nodeObject.name == "BIP01 L HAND" || nodeObject.name == "BIP01 R HAND")
+                {
+                    var capsuleCollider = nodeObject.AddComponent<FistFightAdapter>();
+                }
+            }
         }
 
         /// <summary>
