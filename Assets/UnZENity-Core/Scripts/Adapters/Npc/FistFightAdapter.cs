@@ -19,6 +19,8 @@ namespace GUZ.Core.Adapters.Npc
         private void Awake()
         {
             _sphereCollider = GetComponent<SphereCollider>();
+            _sphereCollider.isTrigger = true;
+
             GetAllChildrenRecursively(transform);
         }
 
