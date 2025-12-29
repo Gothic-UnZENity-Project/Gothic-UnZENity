@@ -3,7 +3,7 @@ using GUZ.Core.Adapters.Adnimations;
 using GUZ.Core.Adapters.Npc;
 using GUZ.Core.Animations;
 using GUZ.Core.Extensions;
-using GUZ.Core.Models.Adapter.Vobs;
+using GUZ.Core.Models.Proxy;
 using GUZ.Core.Models.Container;
 using GUZ.Core.Services.Caches;
 using GUZ.Core.Services.Npc;
@@ -147,7 +147,7 @@ namespace GUZ.Lab.Handler
             {
                 Instance = _bloodwynInstance,
                 Props = new(),
-                Vob = new NpcAdapter(npcSymbol.Index)
+                Vob = new NpcProxy(npcSymbol.Index)
             };
 
             _bloodwynInstance.UserData = npcData;

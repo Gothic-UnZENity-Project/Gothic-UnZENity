@@ -1,6 +1,6 @@
 ﻿using GUZ.Core.Adapters.Npc;
 using GUZ.Core.Adapters.Properties;
-using GUZ.Core.Models.Adapter.Vobs;
+using GUZ.Core.Models.Proxy;
 using UnityEngine;
 using ZenKit.Daedalus;
 
@@ -155,7 +155,7 @@ namespace GUZ.Core.Models.Container
     {
         // ZenKit data
         public NpcInstance Instance;
-        public NpcAdapter Vob;
+        public NpcProxy Vob;
 
         // Unity Data
         public GameObject Go;

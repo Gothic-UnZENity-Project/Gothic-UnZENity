@@ -1,17 +1,16 @@
 using System.Collections.Generic;
-using GUZ.Core.Const;
 using GUZ.Core.Extensions;
 using GUZ.Core.Services.Vm;
 using MyBox;
 using Reflex.Attributes;
 using ZenKit.Daedalus;
 
-namespace GUZ.Core.Models.Adapter
+namespace GUZ.Core.Models.Proxy
 {
     /// <summary>
     /// Pre-Cache FightAiMoves for better debug capabilities. Otherwise, it needs to be fetched at each AI_Attack() call.
     /// </summary>
-    public class FightAiAdapter
+    public class FightAiProxy
     {
         [Inject] private readonly VmService _vmService;
         
@@ -27,7 +26,7 @@ namespace GUZ.Core.Models.Adapter
                 return Moves.GetRandom();
         }
 
-        public FightAiAdapter(FightAiInstance fightAiInstance)
+        public FightAiProxy(FightAiInstance fightAiInstance)
         {
             this.Inject();
 

@@ -1,6 +1,6 @@
 ﻿using System;
 using GUZ.Core.Adapters.Properties;
-using GUZ.Core.Models.Adapter.Vobs;
+using GUZ.Core.Models.Proxy;
 using GUZ.Core.Models.Container;
 using GUZ.Core.Extensions;
 using UnityEngine;
@@ -13,7 +13,7 @@ namespace GUZ.Core.Adapters.Npc
         [NonSerialized] public NpcContainer NpcData;
 
         public NpcInstance NpcInstance => NpcData.Instance;
-        public NpcAdapter Vob => NpcData.Vob;
+        public NpcProxy Vob => NpcData.Vob;
         public GameObject Go => NpcData.Go;
         public NpcProperties Properties => NpcData.Props;
         public NpcPrefabProperties PrefabProps => NpcData.PrefabProps;

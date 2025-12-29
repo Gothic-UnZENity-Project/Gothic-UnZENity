@@ -7,7 +7,7 @@ using GUZ.Core.Logging;
 using GUZ.Core.Creator;
 using GUZ.Core.Extensions;
 using GUZ.Core.Manager;
-using GUZ.Core.Models.Adapter.Vobs;
+using GUZ.Core.Models.Proxy;
 using GUZ.Core.Models.Caches;
 using GUZ.Core.Models.Container;
 using GUZ.Core.Models.Vm;
@@ -104,7 +104,7 @@ namespace GUZ.Core.Domain.Npc
         {
             var symbol = _gameStateService.GothicVm.GetSymbolByName(vobNpc.Name)!;
             var userDataObject = AllocZkInstance(symbol.Index);
-            userDataObject.Vob = (NpcAdapter)vobNpc;
+            userDataObject.Vob = (NpcProxy)vobNpc;
             
             return userDataObject;
         }
@@ -117,7 +117,7 @@ namespace GUZ.Core.Domain.Npc
             var userDataObject = new NpcContainer
             {
                 Instance = npcInstance,
-                Vob = new NpcAdapter(npcIndex),
+                Vob = new NpcProxy(npcIndex),
                 Props = new()
             };
             

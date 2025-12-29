@@ -3,7 +3,7 @@ using System.Linq;
 using GUZ.Core.Adapters.Npc;
 using GUZ.Core.Adapters.Properties;
 using GUZ.Core.Creator;
-using GUZ.Core.Models.Adapter.Vobs;
+using GUZ.Core.Models.Proxy;
 using GUZ.Core.Models.Container;
 using GUZ.Core.Extensions;
 using GUZ.Core.Manager;
@@ -37,7 +37,7 @@ namespace GUZ.Core.Domain.Npc.Actions.AnimationActions
         protected readonly NpcInstance NpcInstance;
         protected readonly GameObject NpcGo;
         protected readonly NpcProperties Props;
-        protected readonly NpcAdapter Vob;
+        protected readonly NpcProxy Vob;
         protected readonly NpcPrefabProperties PrefabProps;
 
         protected float ActionTime;

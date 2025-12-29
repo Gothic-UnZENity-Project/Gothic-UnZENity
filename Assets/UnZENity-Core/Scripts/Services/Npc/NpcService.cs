@@ -9,7 +9,7 @@ using GUZ.Core.Creator;
 using GUZ.Core.Domain.Npc;
 using GUZ.Core.Extensions;
 using GUZ.Core.Manager;
-using GUZ.Core.Models.Adapter.Vobs;
+using GUZ.Core.Models.Proxy;
 using GUZ.Core.Models.Config;
 using GUZ.Core.Models.Container;
 using GUZ.Core.Models.Npc;
@@ -282,7 +282,7 @@ namespace GUZ.Core.Services.Npc
             var heroInstance = _gameStateService.GothicVm.AllocInstance<NpcInstance>(_configService.GothicGame.Player);
             var heroDaedalusInstance = _gameStateService.GothicVm.GetSymbolByName(_configService.GothicGame.Player)!;
 
-            var vobNpc = new NpcAdapter(heroDaedalusInstance.Index)
+            var vobNpc = new NpcProxy(heroDaedalusInstance.Index)
             {
                 Player = true
             };
