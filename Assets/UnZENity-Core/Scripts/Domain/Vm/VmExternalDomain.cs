@@ -1137,15 +1137,25 @@ namespace GUZ.Core.Domain.Vm
 
         public void Wld_ExchangeGuildAttitudes(string name)
         {
-            var guilds = _gameStateService.GothicVm.GetSymbolByName(name);
+            var humanGguildAttitudes = _gameStateService.GothicVm.GetSymbolByName(name);
 
-            if (guilds == null)
+            if (humanGguildAttitudes == null)
                 return;
 
-            for (double i = 0, count = _gameStateService.GuildTableSize; i < count; ++i)
+            
+            // The guild attitudes are in a matrix. Where a row is the first guild and columns are the second one to check against.
+            // The first part of this matrix is human guilds. e.g. 16x16 based on the full matrix e.g., 42x42
+            // We therefore need to loop through the humanGuilds but fill the values inside allGuilds matrix first area top-left.
+            var humanGuildCount = _gameStateService.GuildHumanCount;
+            var allGuildCount = _gameStateService.GuildCount;
+            for (var row = 0; row < humanGuildCount; ++row)
             {
-                for (var j = 0; j < count; ++j)
-                    _gameStateService.GuildAttitudes[(int)(i * count + j)] = guilds.GetInt((ushort)(i * count + j));
+                for (var column = 0; column < humanGuildCount; ++column)
+                {
+                    var humanAttitudeIndex = row * humanGuildCount + column;
+                    var allGuildAttitudeIndex = row * allGuildCount + column;
+                    _gameStateService.GuildAttitudes[allGuildAttitudeIndex] = humanGguildAttitudes.GetInt((ushort)humanAttitudeIndex);
+                }
             }
         }
 

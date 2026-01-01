@@ -1,7 +1,7 @@
 using System;
 using System.Globalization;
 using System.Linq;
-using GUZ.Core.Models.Vm;
+using GUZ.Core.Const;
 using GUZ.Core.Services;
 using GUZ.Core.Services.Caches;
 using GUZ.Core.Services.Context;
@@ -145,22 +145,31 @@ namespace GUZ.Core.Domain
 
         private void LoadGuildData()
         {
-            var guildMax = _gameStateService.GothicVm.GetSymbolByName("GIL_MAX");
+            var guildMax = _gameStateService.GothicVm.GetSymbolByName(DaedalusConst.GuildMaxValue);
 
             _gameStateService.GuildCount = guildMax?.GetInt(0) ?? 0;
 
-            var tablesize = _gameStateService.GothicVm.GetSymbolByName("TAB_ANZAHL");
-            _gameStateService.GuildTableSize = (int)(tablesize != null ? Math.Sqrt(tablesize.GetInt(0)) : 0);
+            var tablesize = _gameStateService.GothicVm.GetSymbolByName(DaedalusConst.GuildHumanAttitudesSize);
+            _gameStateService.GuildHumanCount = (int)(tablesize != null ? Math.Sqrt(tablesize.GetInt(0)) : 0);
 
             _gameStateService.GuildAttitudes = new int[_gameStateService.GuildCount * _gameStateService.GuildCount];
 
-            var id = _gameStateService.GothicVm.GetSymbolByName("GIL_Values");
+            var id = _gameStateService.GothicVm.GetSymbolByName(DaedalusConst.GuildValuesInstance);
             if (id == null)
             {
                 return;
             }
 
             _gameStateService.GuildValues = _gameStateService.GothicVm.InitInstance<GuildValuesInstance>(id);
+
+            if (_contextGameVersionService.IsGothic2())
+            {
+                // In G2, the Daedalus way of setting Human attitudes between each others is commented out with:
+                // >>> func void B_InitGuildAttitudes ()
+                // >>> ***NICHT machen!***
+                // We therefore set these values now.
+                _vmExternalService.ExchangeGuildAttitudes(DaedalusConst.GuildHumanAttitudesArray);
+            }
             
             // TODO - Can be removed? -> When Gil_Values is instanciated inside G1 Daedalus, all values are already filled. No need to copy Human values into it.
             // for (var i = 0; i < (int)VmGothicEnums.Guild.GIL_PUBLIC; ++i)

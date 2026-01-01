@@ -34,7 +34,7 @@ namespace GUZ.Core.Services
         // [IInteractiveObject] => VisualScheme (aka vob.Visual.Name.SubString("_");
         public readonly Dictionary<string, List<VobContainer>> VobsInteractable = new();
 
-        public int GuildTableSize;
+        public int GuildHumanCount;
         public int GuildCount;
         public int[] GuildAttitudes;
 
