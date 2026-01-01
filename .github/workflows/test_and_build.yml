@@ -101,6 +101,12 @@ jobs:
           targetPlatform: ${{ matrix.targetPlatform }}
           allowDirtyBuild: true
           buildMethod: GUZ.VR.Editor.VRBuilderActions.Perform${{ matrix.targetDevice }}Build
+          # Conditional Android Keystore settings
+          androidKeystoreName: ${{ matrix.targetPlatform == 'Android' && 'user' || '' }}
+          androidKeystoreBase64: ${{ matrix.targetPlatform == 'Android' && secrets.ANDROID_KEYSTORE_BASE64 || '' }}
+          androidKeystorePass: ${{ matrix.targetPlatform == 'Android' && secrets.ANDROID_KEYSTORE_PASS || '' }}
+          androidKeyaliasName: ${{ matrix.targetPlatform == 'Android' && secrets.ANDROID_KEYALIAS_NAME || '' }}
+          androidKeyaliasPass: ${{ matrix.targetPlatform == 'Android' && secrets.ANDROID_KEYALIAS_PASS || '' }}
 
       - uses: actions/upload-artifact@v4
         with:
