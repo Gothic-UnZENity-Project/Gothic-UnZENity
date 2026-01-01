@@ -2,7 +2,7 @@ using System.Collections;
 using System.Linq;
 using GUZ.Core.Adapters.Npc;
 using GUZ.Core.Extensions;
-using GUZ.Core.Models.Adapter.Vobs;
+using GUZ.Core.Models.Proxy;
 using GUZ.Core.Models.Container;
 using GUZ.Core.Services.Caches;
 using GUZ.Core.Services.Npc;
@@ -83,7 +83,7 @@ namespace GUZ.Lab.Handler
             var npcData = new NpcContainer
             {
                 Instance = instance,
-                Vob =  new NpcAdapter(instance.Index),
+                Vob =  new NpcProxy(instance.Index),
                 Props = new()
             };
             

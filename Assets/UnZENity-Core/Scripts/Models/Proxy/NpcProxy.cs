@@ -10,9 +10,9 @@ using Reflex.Attributes;
 using ZenKit.Daedalus;
 using ZenKit.Vobs;
 
-namespace GUZ.Core.Models.Adapter.Vobs
+namespace GUZ.Core.Models.Proxy
 {
-    public class NpcAdapter : VirtualObjectAdapter, INpc
+    public class NpcProxy : VirtualObjectProxy, INpc
     {
         [Inject] private readonly GameStateService _gameStateService;
         [Inject] private readonly VmService _vmService;
@@ -23,7 +23,7 @@ namespace GUZ.Core.Models.Adapter.Vobs
         /// <summary>
         /// New Npc. Initialized when world is entered for the first time.
         /// </summary>
-        public NpcAdapter(int index) : base(new ZenKit.Vobs.Npc())
+        public NpcProxy(int index) : base(new ZenKit.Vobs.Npc())
         {
             this.Inject();
             
@@ -34,7 +34,7 @@ namespace GUZ.Core.Models.Adapter.Vobs
         /// <summary>
         /// Wrap existing object
         /// </summary>
-        public NpcAdapter(IVirtualObject vob) : base(vob)
+        public NpcProxy(IVirtualObject vob) : base(vob)
         {
             this.Inject();
                 
@@ -59,6 +59,8 @@ namespace GUZ.Core.Models.Adapter.Vobs
             };
             EventManager = new EventManager();
             ModelScale = Vector3.One;
+            Attitude = (int)VmGothicEnums.Attitude.Null;
+            AttitudeTemp = (int)VmGothicEnums.Attitude.Null;
             
             AddSlot().Name = Constants.SlotRightHand;
             AddSlot().Name = Constants.SlotLeftHand;

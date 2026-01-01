@@ -27,13 +27,23 @@ namespace GUZ.Core.Adapters.UI.StatusBars
 
         private void Awake()
         {
-            DisableBar();
-
             // Player is spawned before ZenKit (with Gothic version) is bootstrapped.
             if (_isPlayer)
+            {
+                // TODO - Keep health bar always active as in G1, potentially only enabling it when a weapon is drawn in the future (immersion update).
+                if (_statusType != StatusType .Health)
+                {
+                    DisableBar();
+                }
+
+                // If we load it for the player, ZenKit is initialized later therefore, we need to delay the startup execution.
                 GlobalEventDispatcher.ZenKitBootstrapped.AddListener(StartInternal);
+            }
             else
+            {
+                DisableBar();
                 StartInternal();
+            }
         }
 
         private void StartInternal()

@@ -5,13 +5,13 @@ using ZenKit;
 using ZenKit.Util;
 using ZenKit.Vobs;
 
-namespace GUZ.Core.Models.Adapter.Vobs
+namespace GUZ.Core.Models.Proxy
 {
-    public class VirtualObjectAdapter : IVirtualObject
+    public class VirtualObjectProxy : IVirtualObject
     {
         protected IVirtualObject Vob;
 
-        public VirtualObjectAdapter(IVirtualObject vob)
+        public VirtualObjectProxy(IVirtualObject vob)
         {
             Vob = vob;
         }

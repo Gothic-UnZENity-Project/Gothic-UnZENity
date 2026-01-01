@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using GUZ.Core.Models.Adapter;
+using GUZ.Core.Models.Proxy;
 using GUZ.Core.Const;
 using GUZ.Core.Extensions;
 using GUZ.Core.Models.Audio;
@@ -16,7 +16,7 @@ namespace GUZ.Core.Services.Caches
         [Inject] private readonly GameStateService _gameStateService;
         
         private readonly Dictionary<string, ItemInstance> _itemDataCache = new();
-        private readonly Dictionary<string, FightAiAdapter> _fightAiDataCache = new();
+        private readonly Dictionary<string, FightAiProxy> _fightAiDataCache = new();
         private readonly Dictionary<int, SvmInstance> _svmDataCache = new();
         private readonly Dictionary<string, SfxModel> _sfxDataCache = new();
         private readonly Dictionary<string, ParticleEffectInstance> _pfxDataCache = new();
@@ -65,17 +65,17 @@ namespace GUZ.Core.Services.Caches
             return newData;
         }
 
-        public FightAiAdapter TryGetFightAiData(string nameTemplate, int instanceId)
+        public FightAiProxy TryGetFightAiData(string nameTemplate, int instanceId)
         {
             var preparedKey = GetPreparedKey(string.Format(nameTemplate, instanceId));
             
             if (_fightAiDataCache.TryGetValue(preparedKey, out var data))
                 return data;
 
-            FightAiAdapter newData = null;
+            FightAiProxy newData = null;
             try
             {
-                newData = new FightAiAdapter(_gameStateService.FightVm.InitInstance<FightAiInstance>(preparedKey));
+                newData = new FightAiProxy(_gameStateService.FightVm.InitInstance<FightAiInstance>(preparedKey));
             }
             catch (Exception)
             {

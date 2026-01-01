@@ -5,7 +5,7 @@ using System.Linq;
 using GUZ.Core.Const;
 using GUZ.Core.Logging;
 using GUZ.Core.Extensions;
-using GUZ.Core.Models.Adapter.Vobs;
+using GUZ.Core.Models.Proxy;
 using GUZ.Core.Models.Container;
 using GUZ.Core.Services.Caches;
 using GUZ.Core.Services.Context;
@@ -338,9 +338,9 @@ namespace GUZ.Core.Services.World
             container.SaveGameWorld.RootObjects = UnwrapVobs(allVobs);
         }
 
-        private List<NpcAdapter> WrapVobs(List<ZenKit.Vobs.Npc> npcs)
+        private List<NpcProxy> WrapVobs(List<ZenKit.Vobs.Npc> npcs)
         {
-            return npcs.Select(i => new NpcAdapter(i)).ToList();
+            return npcs.Select(i => new NpcProxy(i)).ToList();
         }
         
         /// <summary>
@@ -355,7 +355,7 @@ namespace GUZ.Core.Services.World
                 
                 wrappedVobs.Add(vob.Type switch
                 {
-                    VirtualObjectType.oCNpc => new NpcAdapter(vob),
+                    VirtualObjectType.oCNpc => new NpcProxy(vob),
                     _ => vob
                 });
             }
@@ -374,7 +374,7 @@ namespace GUZ.Core.Services.World
             {
                 unwrappedVobs.Add(vob.Type switch
                 {
-                    VirtualObjectType.oCNpc => ((NpcAdapter)vob).GetVob(),
+                    VirtualObjectType.oCNpc => ((NpcProxy)vob).GetVob(),
                     _ => vob
                 });
             }

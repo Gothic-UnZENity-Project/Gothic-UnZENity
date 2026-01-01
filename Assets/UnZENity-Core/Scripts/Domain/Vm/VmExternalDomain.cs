@@ -992,6 +992,13 @@ namespace GUZ.Core.Domain.Vm
         {
             _npcAiService.ExtSetTarget(npc, target);
             LogInstantExternal(nameof(Npc_SetTarget), npc, target);
+
+            if (target == null)
+                return;
+            
+            // FIXME - Also implement, that we unset our hero as target. Otherwise it will always play fight music!
+            if (target.GetUserData()!.PrefabProps.IsHero())
+                GlobalEventDispatcher.SetHeroAsTarget.Invoke(npc.GetUserData(), target.GetUserData());
         }
 
         public void Npc_SendPassivePerc(NpcInstance npc, int perc, NpcInstance victim, NpcInstance other)
