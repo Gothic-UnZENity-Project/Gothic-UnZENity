@@ -102,7 +102,7 @@ jobs:
           allowDirtyBuild: true
           buildMethod: GUZ.VR.Editor.VRBuilderActions.Perform${{ matrix.targetDevice }}Build
           # Conditional Android Keystore settings
-          androidKeystoreName: ${{ matrix.targetPlatform == 'Android' && 'user' || '' }}
+          androidKeystoreName: ${{ matrix.targetPlatform == 'Android' && 'GUZ' || '' }}
           androidKeystoreBase64: ${{ matrix.targetPlatform == 'Android' && secrets.ANDROID_KEYSTORE_BASE64 || '' }}
           androidKeystorePass: ${{ matrix.targetPlatform == 'Android' && secrets.ANDROID_KEYSTORE_PASS || '' }}
           androidKeyaliasName: ${{ matrix.targetPlatform == 'Android' && secrets.ANDROID_KEYALIAS_NAME || '' }}
