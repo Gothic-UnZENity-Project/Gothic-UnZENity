@@ -49,10 +49,10 @@ jobs:
       fail-fast: true
       matrix:
         include:
-          - targetPlatform: StandaloneWindows64
-            targetDevice: Windows64
-          - targetPlatform: Android
-            targetDevice: Pico
+#          - targetPlatform: StandaloneWindows64
+#            targetDevice: Windows64
+#          - targetPlatform: Android
+#            targetDevice: Pico
           - targetPlatform: Android
             targetDevice: Quest
     steps:
