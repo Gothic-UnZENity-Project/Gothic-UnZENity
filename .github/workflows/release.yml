@@ -83,11 +83,12 @@ jobs:
           allowDirtyBuild: true
           buildMethod: GUZ.VR.Editor.VRBuilderActions.Perform${{ matrix.targetDevice }}Build
           # Android Keystore settings
-          androidKeystoreName: user.keystore
           androidKeystoreBase64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
-          androidKeystorePass: ${{ secrets.ANDROID_KEYSTORE_PASS }}
-          androidKeyaliasName: ${{ secrets.ANDROID_KEYALIAS_NAME }}
-          androidKeyaliasPass: ${{ secrets.ANDROID_KEYALIAS_PASS }}
+          customParameters: >
+            -keystoreName "GUZ.keystore"
+            -keystorePass "${{ secrets.ANDROID_KEYSTORE_PASS }}"
+            -keyaliasName "${{ secrets.ANDROID_KEYALIAS_NAME }}"
+            -keyaliasPass "${{ secrets.ANDROID_KEYALIAS_PASS }}"
 
       # Zip into workspace folder (overcoming permission errors)
       - name: zip

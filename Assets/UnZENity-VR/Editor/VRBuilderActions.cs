@@ -72,6 +72,7 @@ namespace GUZ.VR.Editor
         {
             var args = Environment.GetCommandLineArgs();
 
+            var keystoreName = GetArg(args, "-keystoreName");
             var keystorePass = GetArg(args, "-keystorePass");
             var keyaliasName = GetArg(args, "-keyaliasName");
             var keyaliasPass = GetArg(args, "-keyaliasPass");
@@ -81,7 +82,7 @@ namespace GUZ.VR.Editor
                 return;
             
             PlayerSettings.Android.useCustomKeystore = true;
-            PlayerSettings.Android.keystoreName = "user.keystore";
+            PlayerSettings.Android.keystoreName = keystoreName;
             PlayerSettings.Android.keystorePass = keystorePass;
             PlayerSettings.Android.keyaliasName = keyaliasName;
             PlayerSettings.Android.keyaliasPass = keyaliasPass;
