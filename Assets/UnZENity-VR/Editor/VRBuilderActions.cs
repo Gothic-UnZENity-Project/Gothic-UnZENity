@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Unity.XR.OpenXR.Features.PICOSupport;
 using UnityEditor;
@@ -23,9 +24,7 @@ namespace GUZ.VR.Editor
 
             SetWindows64Settings();
             
-            GenericBuild(_scenes, targetPath, BuildTargetGroup.Standalone, BuildTarget.StandaloneWindows64,
-
-                BuildOptions.None);
+            GenericBuild(_scenes, targetPath, BuildTargetGroup.Standalone, BuildTarget.StandaloneWindows64, BuildOptions.None);
         }
 
         [MenuItem("UnZENity/Build/Pico", priority = 21)]
@@ -60,8 +59,44 @@ namespace GUZ.VR.Editor
                 options = buildOptions
             };
 
+            if (buildTarget == BuildTarget.Android)
+            {
+                SetKeystoreInformation();
+            }
+
             // Build the project
             BuildPipeline.BuildPlayer(options);
+        }
+
+        private static void SetKeystoreInformation()
+        {
+            var args = Environment.GetCommandLineArgs();
+
+            var keystorePass = GetArg(args, "-keystorePass");
+            var keyaliasName = GetArg(args, "-keyaliasName");
+            var keyaliasPass = GetArg(args, "-keyaliasPass");
+
+            // If nothing's set, it's a local build. Keep everything as it is.
+            if (keystorePass == null && keyaliasName == null && keyaliasPass == null)
+                return;
+            
+            PlayerSettings.Android.useCustomKeystore = true;
+            PlayerSettings.Android.keystoreName = "user.keystore";
+            PlayerSettings.Android.keystorePass = keystorePass;
+            PlayerSettings.Android.keyaliasName = keyaliasName;
+            PlayerSettings.Android.keyaliasPass = keyaliasPass;
+        }
+        
+        private static string GetArg(string[] args, string name)
+        {
+            for (var i = 0; i < args.Length; i++)
+            {
+                if (args[i] == name && i + 1 < args.Length)
+                {
+                    return args[i + 1];
+                }
+            }
+            return null;
         }
 
         private static string[] FindEnabledEditorScenes()
