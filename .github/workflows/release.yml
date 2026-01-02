@@ -84,6 +84,7 @@ jobs:
           buildMethod: GUZ.VR.Editor.VRBuilderActions.Perform${{ matrix.targetDevice }}Build
           # Android Keystore settings
           androidKeystoreBase64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          androidKeystoreName: GUZ.keystore
           customParameters: >
             -keystoreName "GUZ.keystore"
             -keystorePass "${{ secrets.ANDROID_KEYSTORE_PASS }}"
