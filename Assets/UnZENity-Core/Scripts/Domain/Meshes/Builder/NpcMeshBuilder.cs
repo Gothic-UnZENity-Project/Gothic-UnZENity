@@ -35,20 +35,7 @@ namespace GUZ.Core.Domain.Meshes.Builder
         {
             var nodeObjects = base.BuildViaMdmAndMdh();
 
-            AddFistCollider(nodeObjects);
-
             return nodeObjects;
-        }
-
-        private void AddFistCollider(GameObject[] nodeObjects)
-        {
-            foreach (var nodeObject in nodeObjects)
-            {
-                if (nodeObject.name == "BIP01 L HAND" || nodeObject.name == "BIP01 R HAND")
-                {
-                    var capsuleCollider = nodeObject.AddComponent<FistFightAdapter>();
-                }
-            }
         }
 
         /// <summary>
