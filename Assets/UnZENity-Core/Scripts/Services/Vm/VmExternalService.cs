@@ -14,5 +14,13 @@ namespace GUZ.Core.Services.Vm
         {
             _domain.RegisterExternals();
         }
+
+        /// <summary>
+        /// Gothic2 isn't calling this external function in NotR within Daedalus. Therefore, we set it here.
+        /// </summary>
+        public void ExchangeGuildAttitudes(string name)
+        {
+            _domain.Wld_ExchangeGuildAttitudes(name);
+        }
     }
 }

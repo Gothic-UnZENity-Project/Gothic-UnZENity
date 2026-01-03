@@ -4,10 +4,10 @@ namespace GUZ.Core.Editor
 {
     public class UnityShortcuts
     {
-        [MenuItem("UnZENity/Unity/Build Settings", priority = 700)]
+        [MenuItem("UnZENity/Unity/Build Profiles", priority = 700)]
         public static void ShowBuildSettingsWindow()
         {
-            EditorApplication.ExecuteMenuItem("File/Build Settings...");
+            EditorApplication.ExecuteMenuItem("File/Build Profiles");
         }
         
         [MenuItem("UnZENity/Unity/Build And Run", priority = 710)]

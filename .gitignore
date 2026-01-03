@@ -94,6 +94,10 @@ ProjectSettings/Packages/com.unity.testtools.codecoverage/Settings.json
 *CullingData.asset
 *CullingData.asset.meta
 
+# APK signing
+GUZ.keystore
+*.keystore
+
 # Ignore paid assets from repository
 Assets/HurricaneVR/
 

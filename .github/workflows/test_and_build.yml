@@ -101,6 +101,14 @@ jobs:
           targetPlatform: ${{ matrix.targetPlatform }}
           allowDirtyBuild: true
           buildMethod: GUZ.VR.Editor.VRBuilderActions.Perform${{ matrix.targetDevice }}Build
+          # Android Keystore settings
+          androidKeystoreBase64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          androidKeystoreName: GUZ.keystore
+          customParameters: >
+            -keystoreName "GUZ.keystore"
+            -keystorePass "${{ secrets.ANDROID_KEYSTORE_PASS }}"
+            -keyaliasName "${{ secrets.ANDROID_KEYALIAS_NAME }}"
+            -keyaliasPass "${{ secrets.ANDROID_KEYALIAS_PASS }}"
 
       - uses: actions/upload-artifact@v4
         with:
