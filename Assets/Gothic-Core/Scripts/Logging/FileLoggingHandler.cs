@@ -1,12 +1,9 @@
 using Gothic.Core.Models.Config;
 #if !UNITY_EDITOR
 using System;
-using System.IO;
 using System.Linq;
 using UberLogger;
 using UnityEngine;
-using ILogger = UberLogger.ILogger;
-using Object = UnityEngine.Object;
 #endif
 
 namespace Gothic.Core.Logging
@@ -106,82 +103,6 @@ namespace Gothic.Core.Logging
             _logger = null;
         }
 
-
-        private class FileLoggingLogger : ILogger
-        {
-            private readonly StreamWriter _logFileWriter;
-            private readonly bool _includeCallStacks;
-
-            public FileLoggingLogger(string fileLogPath, bool includeCallStacks)
-            {
-                _includeCallStacks = includeCallStacks;
-                _logFileWriter = new StreamWriter(fileLogPath, false);
-                _logFileWriter.AutoFlush = true;
-            }
-
-            public void Log(LogInfo logInfo)
-            {
-                lock(this)
-                {
-                    // RFC 5424: <timestamp> <severity> [<category>] <message>
-                    var fullMessage = string.Format("{0} {1} [{2}] {3}",
-                        logInfo.GetRelativeTimeStampAsString(),
-                        logInfo.Severity,
-                        logInfo.Channel,
-                        logInfo.Message
-                    );
-
-                    _logFileWriter.WriteLine(fullMessage);
-
-                    if(_includeCallStacks && logInfo.Callstack.Count>0)
-                    {
-                        foreach(var frame in logInfo.Callstack)
-                        {
-                            _logFileWriter.WriteLine(frame.GetFormattedMethodNameWithFileName());
-                        }
-                        _logFileWriter.WriteLine();
-                    }
-                }
-            }
-
-            /// <summary>
-            /// Write a single line without additional formatting or checks.
-            /// </summary>
-            public void WriteLine(string message)
-            {
-                lock(this)
-                {
-                    _logFileWriter.WriteLine(message);
-                }
-            }
-
-            ~FileLoggingLogger()
-            {
-                lock (this)
-                {
-                    _logFileWriter.Close();
-                }
-            }
-        }
-
-        private class FileLoggingFilter : IFilter
-        {
-            private readonly LogSeverity _logLevel;
-            private readonly string[] _logCategories;
-
-
-            public FileLoggingFilter(LogSeverity logLevel, string[] logCategories)
-            {
-                _logLevel = logLevel;
-                _logCategories = logCategories;
-            }
-
-            public bool ApplyFilter(string channel, Object source, LogSeverity severity, object message, params object[] par)
-            {
-                return severity >= _logLevel
-                       && (_logCategories.Length == 0 || _logCategories.Contains(channel));
-            }
-        }
 #endif
     }
 }

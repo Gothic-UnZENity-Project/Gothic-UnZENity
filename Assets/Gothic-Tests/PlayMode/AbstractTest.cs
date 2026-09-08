@@ -11,9 +11,12 @@ namespace Gothic.Tests.PlayMode
 {
     public abstract class AbstractTest
     {
+        protected const string ConfigResourceFolder = "DeveloperConfigs";
+
         protected Scene MainScene => SceneManager.GetActiveScene();
 
-        // FIXME - Needs to be VRPlayer or FlatPlayer.
+        // Both the VR and the Flat player scene are named "Player"; which one loads is driven by
+        // DeveloperConfig.GameControls.
         protected Scene GeneralScene => SceneManager.GetSceneByName(Constants.ScenePlayer);
         
         private readonly InputTestFixture _inputSimulator = new ();
@@ -21,12 +24,22 @@ namespace Gothic.Tests.PlayMode
         protected Mouse Mouse { get; private set; }
 
         /// <summary>
-        /// Unity seems to cache loading of Scriptable Objects. We therefore load it before entering Bootstrap scene and updating it.
-        /// Bootstrap.GameManager.Config will then leverage the same _altered_ GameConfiguration we load in here.
+        /// Read a committed DeveloperConfig, e.g. to assert against the values a session was supposed to boot with.
+        ///
+        /// Read-only on purpose: Resources.Load hands out the shared asset instance, so writing to it dirties a
+        /// tracked file on the developer's machine. Tests select their config by name instead. (ADR-0001 D5)
         /// </summary>
-        protected DeveloperConfig GetConfiguration()
+        protected DeveloperConfig GetConfiguration(string name)
         {
-            return Resources.Load<DeveloperConfig>("GameConfigurations/Production");
+            var config = Resources.Load<DeveloperConfig>($"{ConfigResourceFolder}/{name}");
+
+            if (config == null)
+            {
+                throw new ArgumentException($"DeveloperConfig >{name}< not found at " +
+                                            $">Resources/{ConfigResourceFolder}/{name}<.");
+            }
+
+            return config;
         }
 
         protected IEnumerator PrepareTest()
@@ -41,15 +54,26 @@ namespace Gothic.Tests.PlayMode
             yield return null;
         }
 
-        protected IEnumerator WaitForSceneLoaded(string sceneName)
+        /// <summary>
+        /// Removes the synthetic input devices again. Without it they pile up across fixtures within one Editor session.
+        /// </summary>
+        protected void CleanupTest()
         {
-            var timeout = 30f;
+            _inputSimulator.TearDown();
+            Keyboard = null;
+            Mouse = null;
+        }
+
+        protected IEnumerator WaitForSceneLoaded(string sceneName, float timeoutSeconds = 30f)
+        {
+            var timeout = timeoutSeconds;
             while (!SceneManager.GetSceneByName(sceneName).IsValid())
             {
                 timeout -= Time.deltaTime;
                 if (timeout < 0)
                 {
-                    throw new TimeoutException("Loading the scene took to long. Are you stuck in a wrong scene?");
+                    throw new TimeoutException(
+                        $"Loading scene >{sceneName}< took longer than {timeoutSeconds}s. Are you stuck in a wrong scene?");
                 }
 
                 yield return null;

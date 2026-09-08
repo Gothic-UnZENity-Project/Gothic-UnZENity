@@ -14,17 +14,19 @@ Groups are listed in dependency order; within a group, items are roughly ordered
 
 ## Prerequisites — existing code (§7)
 
-- [ ] 🔴 Fix `AbstractTest.GetConfiguration()` — it loads `Resources.Load<DeveloperConfig>("GameConfigurations/Production")`
+- [x] 🔴 Fix `AbstractTest.GetConfiguration()` — it loads `Resources.Load<DeveloperConfig>("GameConfigurations/Production")`
       but the asset lives at `Resources/DeveloperConfigs/Production.asset`. Returns `null`, next line throws.
-- [ ] 🔴 Add a `-gothicTestConfig <name>` command-line / env override, resolved in `BootstrapService.AwakeUnity()`,
+- [x] 🔴 Add a `-gothicTestConfig <name>` command-line / env override, resolved in `BootstrapService.AwakeUnity()`,
       so tests select a config instead of mutating the shared `Production.asset` (§D5).
-- [ ] ⚪ Commit `Assets/Gothic-Core/Resources/DeveloperConfigs/FunctionalTest.asset` — simulator on, main menu off,
+- [x] ⚪ Commit `Assets/Gothic-Core/Resources/DeveloperConfigs/FunctionalTest.asset` — simulator on, main menu off,
       NPCs on, deterministic start time, `SpeedUpLoading` on.
-- [ ] 🟡 Extract `FileLoggingLogger` out of the `#if !UNITY_EDITOR` block in `FileLoggingHandler.cs` into its own
+- [x] 🟡 Extract `FileLoggingLogger` out of the `#if !UNITY_EDITOR` block in `FileLoggingHandler.cs` into its own
       file, so the Editor lane can reuse the shipping log format (§3.3, one class per file).
-- [ ] 🟡 Move the `VRGameTest._alreadySetUp` guard into a shared `FunctionalTest` base class with explicit
+- [x] 🟡 Move the `VRGameTest._alreadySetUp` guard into a shared `FunctionalTest` base class with explicit
       session semantics (§D4).
-- [ ] ❓ Decide: VR + simulator, or Flat controls, as the functional target. Recommendation in the ADR: VR + simulator.
+- [x] ✅ Decided: **VR + simulator**, per the ADR's recommendation — it is what ships, and Flat is incomplete.
+      Encoded in `FunctionalTest.asset` (`GameControls = VR`, `EnableVRDeviceSimulator = true`). Both player scenes
+      are named `Player`, so `Constants.ScenePlayer` stays correct if Flat is ever added as a second target.
 
 ## Harness — `Assets/Gothic-Testing/Runtime` (§3.1, §3.2, §3.9)
 
@@ -183,7 +185,7 @@ Groups are listed in dependency order; within a group, items are roughly ordered
 
 ## Docs
 
-- [ ] ⚪ Fix the stale `GameConfigurations/` path in `CLAUDE.md` (it is `DeveloperConfigs/`).
+- [x] ⚪ Fix the stale `GameConfigurations/` path in `CLAUDE.md` (it is `DeveloperConfigs/`).
 - [ ] ⚪ Correct `com.gothic.core.binaries/Dependencies/README.md` — it still calls the Linux `.so` "not used",
       which the enabled `linux_x86/` plugin settings contradict.
 - [ ] ⚪ Fix the `Hlp_Random` off-by-one in `VmExternalDomain.cs:506` — `Random.Range(0, n0 - 1)` should be

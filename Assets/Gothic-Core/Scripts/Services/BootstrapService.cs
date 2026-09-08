@@ -3,6 +3,7 @@ using System.Globalization;
 using Gothic.Core.Adapters.Scenes;
 using Gothic.Core.Const;
 using Gothic.Core.Domain;
+using Gothic.Core.Domain.Config;
 using Gothic.Core.Logging;
 using Gothic.Core.Manager;
 using Gothic.Core.Models.Config;
@@ -66,6 +67,9 @@ namespace Gothic.Core.Services
             // We need to set culture to this, otherwise e.g. polish numbers aren't parsed correct.
             CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;
             CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.InvariantCulture;
+
+            // Automated runs pick their config by name instead of editing the asset wired into the scene. (ADR-0001 D5)
+            config = DeveloperConfigLoader.Load(config);
 
             _configService.LoadRootJson();
             _configService.SetDeveloperConfig(config);

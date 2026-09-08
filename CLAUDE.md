@@ -12,7 +12,7 @@ Data flow: Unity → ZenKit.dll (.NET Standard 2.1) → libzenkitcapi (native) �
 
 1. Place `GameSettings.dev.json` in `Assets/StreamingAssets/` (git-ignored) pointing to your local Gothic installation directory.
 2. Open and play the **Bootstrap scene** in the Unity Editor to start the game.
-3. Create a `GameConfiguration` ScriptableObject via `Right-click > Create > ScriptableObjects > GameConfiguration` in `Gothic-Core/Resources/GameConfigurations/` and assign it to `GameManager`'s Config slot if you need a custom config. A Production config exists by default.
+3. Create a `DeveloperConfig` ScriptableObject via `Right-click > Create > Gothic > ScriptableObjects > DeveloperConfiguration` in `Gothic-Core/Resources/DeveloperConfigs/` and assign it to `GameManager`'s Config slot if you need a custom config. A Production config exists by default. Automated runs pick a config by name instead, via `-gothicTestConfig <name>` on the command line or the `GOTHIC_TEST_CONFIG` environment variable.
 4. Configuration is accessed at runtime via `GameGlobals.Config`, which exposes Gothic.ini, GothicGame.ini, GameSettings.json, and DeveloperConfig settings.
 
 **Without HurricaneVR** (paid asset): Remove `GOTHIC_HVR_INSTALLED` from Project Settings scripting defines, then set `GameManager.DeveloperConfig → Controls.GameControls` to `Flat`.
