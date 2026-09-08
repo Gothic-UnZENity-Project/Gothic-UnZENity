@@ -44,6 +44,72 @@ Groups are listed in dependency order; within a group, items are roughly ordered
       independence, not replay determinism (§3.5).
 - [ ] 🔴 **V0** Seed `Random.InitState(seed)` per session and record the seed in `manifest.json` (§3.9, D13).
 
+## Interaction gate — first end-to-end scenario (§3.2)
+
+> Runs as soon as the first driver verbs exist, before the rest of the vocabulary is built out. Its job is
+> not coverage — it is to prove that simulated **hand movement and button interaction** actually drive the
+> game. That is the riskiest assumption in this ADR: locomotion through the WASD path is the easy half, and
+> nothing in `VRPlayerInputs` covers hands. **If this gate cannot be made to pass, stop and reassess the
+> approach before building anything further.**
+
+- [ ] 🔴 **V0** `Gate.NewGameToDiegoDialog` — one scenario, five steps: main menu appears → click a menu
+      entry to start a new game → world finishes loading → look up → open dialog with Diego and select `END`.
+- [ ] 🔴 **V0** `InputDriver` hand control — pose the simulated VR hands via `HVRHandsSimulator`. The
+      `UseWASD` branches in `VRPlayerInputs` drive locomotion only; hands are a separate input surface.
+- [ ] 🔴 **V0** `InputDriver` head control — look direction via `HVRBodySimulator`, for the "look up" step.
+- [ ] 🔴 **V0** `Driver.PointAt(target)` + `Driver.Trigger(HandSide)` — the hover-then-trigger pair that both
+      the main menu and `VRDialog` depend on (`UIEvents` hover enter, not a screen-space click).
+- [ ] ⚪ **V0** `Driver.ClickMenuEntry(label)` — resolve a menu entry by its `TMP_Text`, point, trigger.
+- [ ] ⚪ **V0** `Driver.SelectDialogOption(text)` — same mechanism against `VRDialog`'s dialog items.
+- [ ] ⚪ Commit a second config (e.g. `FunctionalTestMenu.asset`) with `EnableMainMenu = true` and
+      `EnableNpcs = true` — the smoke config deliberately skips the menu, and this gate needs it.
+- [ ] ⚪ Assert on state, not pixels: `VRDialog.CurrentDialogOptionTexts` for what is on screen,
+      `GameStateService.Dialogs.CurrentOptions` for VM state, `WorldSceneLoaded` for the load step (D12).
+- [ ] ❓ Confirm the NPC and start waypoint. Diego at the Gothic 1 opening is the obvious candidate — he is
+      scripted to approach the player, so the gate needs no walking to reach him.
+- [ ] 🟡 Measure the gate's end-to-end duration; it sets the floor for every later scenario timeout and for
+      the Lane 2 budget (§4.1).
+
+## Actuator & observation catalogue (§3.11)
+
+> Built in the build order §3.11 gives, which is not the order the catalogue tables list. Semantic verbs are
+> implemented on top of state observations, so these are one workstream, not two.
+
+- [ ] ⚪ **V0** Lifecycle observations — make `PlayerSceneLoaded`, `WorldSceneLoaded`, `MainMenuSceneLoaded`,
+      `ZenKitBootstrapped` and `LoadGameStart` awaitable. Free: D7's reflection binding already covers them.
+- [ ] 🔴 **V0** State observations, minimal — player pose, HP, active scene, loaded world; queryable every
+      frame. The first `WaitUntil` in the first scenario cannot be written without it.
+- [ ] ⚪ **V0** Raw and physical actuators — delivered by the interaction gate above.
+- [ ] ⚪ **V2** Gameplay observations — `FightHit`, `FightWindow*`, `SetHeroAsTarget`, `LockPickCombo*`,
+      `MusicZone*`, `LevelChangeTriggered`, `CreateNpc`, the `GameTime*` callbacks.
+- [ ] ⚪ **V2** State observations, in full — nearby NPCs with distance / AI state / HP / hostility, inventory,
+      current animation, game time. Read by `WaitUntil` predicates and by ADR-0002's trace tier.
+- [ ] ⚪ **V2** Semantic actuators — resolve targets through state observations, never world coordinates.
+      Enforce in review: scenarios use semantic verbs unless the physicality is what is under test.
+- [ ] ⚪ **V2** Guards — continuous per-frame invariants: no unbaselined error, player Y within world bounds,
+      no `NaN` in a player/NPC transform, frame time under budget.
+- [ ] 🟡 Diagnostics observations — performance counters (frame time, GC, draw calls) into the trace, so the
+      raw-input perf-regression case has something to compare against.
+
+### Arrange actuators (§3.11)
+
+- [ ] ⚪ **V2** `SetGameTime` / `AdvanceGameTime` on top of `GameTimeService` and
+      `DeveloperConfig.StartTimeHour` — NPC daily routines are untestable without it.
+- [ ] ⚪ **V2** `SetSeed`, `LoadSaveSlot`, `SpawnAt(waypoint)`, `GiveItem`, `SetHealth`.
+- [ ] 🔴 **V2** Phase enforcement — arrange verbs are reachable only during the fixture's arrange phase and
+      throw once the act phase has begun. This is an API gate, not a documented convention: without it a
+      scenario will reach for `SetHealth` mid-act and quietly stop testing anything.
+
+### Daedalus observations — deferred (§3.11)
+
+> Deferred out of the initial scope by decision. Nothing before the first combat or AI-routine scenario
+> needs it, and it is the most expensive item in the catalogue. Left here so the design notes survive.
+
+- [ ] ⚪ Introduce a local `Register<…>(name, handler)` helper in `VmExternalDomain` that wraps each handler
+      in a trace call, then mechanically rewrite the 142 `vm.RegisterExternal<…>` call sites.
+- [ ] ⚪ Emit the high-value externals first behind a `LogCat` filter (`AI_Output`, `AI_StartState`,
+      `Ai_Attack`, perception and target calls). Tracing all 142 unfiltered drowns the trace.
+
 ## Recording & artifacts (§3.3–§3.5, §3.7, §3.9, §3.10)
 
 - [ ] ⚪ **V0** `LogRecorder` — `UberLogger.ILogger` sink writing `log.txt` and `errors.txt`.
@@ -77,12 +143,14 @@ Groups are listed in dependency order; within a group, items are roughly ordered
 
 - [ ] ⚪ `Gothic.Tests.Functional.asmdef` (`UNITY_INCLUDE_TESTS`), referencing `Gothic.Testing`.
 - [ ] ⚪ `FunctionalTest` base fixture — session setup, config override, teardown artifact flush.
+- [ ] ⚪ `Gate.NewGameToDiegoDialog` — already built as the interaction gate above; move it into this
+      assembly once the gate passes, and keep it in the Lane 2 suite as the interaction regression.
 - [ ] ⚪ **V0** `Smoke.BootAndWalk` — boot → new game → world loaded → walk 5 m → no new errors. The Lane 2 payload.
 - [ ] ⚪ **V2** `MovementScenario` — walk, turn, jump, sprint, crouch; assert against waypoint positions.
 - [ ] ⚪ **V2** `CombatScenario` — draw weapon, swing, assert `FightHit` fires (exercises the `DEF_OPT_FRAME` window).
 - [ ] ⚪ **V2** `WorldLoadingScenario` — load each shipped world, assert no new errors and a plausible VOB count.
 - [ ] ⚪ **V2** `SaveLoadScenario` — save to a slot, reload, assert player state round-trips.
-- [ ] ⚪ **V2** `DialogScenario` — once dialog is stable enough to assert on.
+- [ ] ⚪ **V2** `DialogScenario` — broaden beyond the gate: multiple topics, nested options, aborting mid-dialog.
 - [ ] ⚪ **Seed sweeps** Nightly seed-sweep runner — one scenario × ~20 fixed seeds, one `manifest.json` per
       seed; a seed that fails reproduces locally from its recorded value (§3.9, D14).
 

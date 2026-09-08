@@ -490,6 +490,107 @@ does going forward — a human presses `W`, the recorder must emit `Driver.WalkF
 are derived from one shared mapping table so the recorder and the driver cannot drift apart; adding a verb
 means adding one table row, not two independent switch statements.
 
+### 3.11 Actuator and observation catalogue
+
+The driver vocabulary (D10) is built from two separate catalogues, not one list of "inputs and sensors".
+**Actuators** are what a scenario *does*; **observations** are what it *sees*. They are kept apart because
+their consumers differ: the V1 recorder transcribes actuators and merely annotates observations (§3.10);
+ADR-0002's oracle reads observations and never touches actuators; and the two need different plumbing —
+actuators need hold/release timing and an inverse mapping, observations need timestamping and a
+push-versus-pull contract.
+
+Both catalogues are named rather than numbered. The names are the vocabulary the team will actually use in
+review ("that should be a semantic verb, not a physical one"), and the build order below carries the
+sequence that numbering would otherwise imply.
+
+#### Actuators — what a scenario can do
+
+Grouped by *fidelity*, not by device, because fidelity is what determines whether a scenario survives a
+UI change.
+
+| Level | Examples | Used by |
+|---|---|---|
+| **Raw** | key down/up, mouse delta, hand transform set, controller button state | `InputDriver` internals and the recorder. **Never a scenario.** |
+| **Physical** | `WalkForward`, `Turn`, `LookUp`, `MoveHandTo(pose)`, `Trigger(hand)`, `Grip(hand)` | Scenarios, only where the physicality is the thing under test |
+| **Semantic** | `ClickMenuEntry(label)`, `SelectDialogOption(text)`, `DrawWeapon`, `Attack`, `Interact(vob)`, `Teleport(waypoint)` | The default for scenarios |
+| **Arrange** | `SetGameTime`, `SetSeed`, `LoadSaveSlot`, `SpawnAt(waypoint)`, `GiveItem`, `SetHealth` | The arrange phase only — **never the act phase** |
+
+**Prefer semantic verbs; drop to physical only when the physical interaction is what is being tested.**
+`PointAt(worldPos)` plus `Trigger` breaks the moment a dialog panel moves five centimetres;
+`SelectDialogOption("END")` does not. The interaction gate is the deliberate exception: it is written at the
+physical level precisely to prove that level works, and every scenario after it is written at the semantic
+level.
+
+**Arrange verbs exist because arranging state by cheating is legitimate and acting by cheating is not.**
+The distinction has to be enforced by the API rather than by convention — a scenario that reaches for
+`SetHealth` mid-act because it is convenient has quietly stopped testing anything, and no reviewer will
+reliably catch it. Arrange verbs are therefore reachable only from the fixture's arrange phase and throw if
+called once the act phase has begun.
+
+Game time earns its place in this group for a Gothic-specific reason: NPC behaviour is driven by daily
+routines, so an NPC-behaviour scenario is untestable without controlling the clock.
+`DeveloperConfig.StartTimeHour` / `TimeSpeedMultiplier` and `GameTimeService` are the existing seams.
+
+#### Observations — what a scenario can see
+
+The primary split is **push** (events, ordered, timestamped, must be subscribed before they fire) versus
+**pull** (state, queryable at any frame). Both are needed for different jobs: an assertion that `FightHit`
+fired needs push; a `WaitUntil` predicate needs pull. Daedalus and engine sources appear in both, so the
+source is a *label* on an observation rather than a tier of its own.
+
+| Tier | Kind | Source | Status |
+|---|---|---|---|
+| **Lifecycle** | push | `GlobalEventDispatcher`: `PlayerSceneLoaded`, `ZenKitBootstrapped`, `MainMenuSceneLoaded`, `LoadingSceneLoaded`, `WorldSceneLoaded`, `LoadGameStart` | exists |
+| **Gameplay** | push | `GlobalEventDispatcher`: `FightHit`, `FightWindow*`, `SetHeroAsTarget`, `LockPickCombo*`, `MusicZone*`, `LevelChangeTriggered`, `CreateNpc`, `GameTime*ChangeCallback` | exists |
+| **State** | pull | player pose / HP / walk mode / equipped weapon; nearby NPCs with distance, AI state, HP, hostility; inventory; current animation; game time; active scene and world | partial |
+| **Frame** | pull | `ScreenshotRecorder` readback, plus cheap derived signals (mean luminance, frozen-frame). Consumed mainly by ADR-0002 | V0 |
+| **Diagnostics** | both | UberLogger lines by severity and `LogCat`; performance counters (frame time, GC, draw calls) | partial |
+| **Daedalus** | push | `VmExternalDomain` externals: `AI_Output`, `AI_StartState`, `Ai_Attack`, `AI_GotoNpc`, `AI_ProcessInfos`, perception and target calls | **deferred** |
+
+**The Daedalus tier is deferred out of this ADR's initial scope.** It is the only tier that does not exist
+at all, it is the most expensive to build, and nothing before the first combat or AI-routine scenario
+actually needs it. Revisit when such a scenario is written.
+
+The implementation is recorded here so the deferral does not lose it:
+`VmExternalDomain.RegisterExternals()` makes 142 direct `vm.RegisterExternal<…>(name, handler)` calls plus
+one `RegisterExternalDefault(DefaultExternal)`. There is no single chokepoint today — but introducing one
+local `Register<…>(name, handler)` helper that wraps the handler in a trace call, then mechanically
+rewriting those 142 call sites, instruments the entire Daedalus surface in a single change.
+`LogInstantExternal` and `DeveloperConfig.EnableZSpyInstantLogs` are partial precedents for the same seam.
+When it is built, emit the high-value subset first behind a `LogCat` filter — `AI_Output`, `AI_StartState`,
+`Ai_Attack` and the perception/target calls — because tracing all 142 unfiltered would drown the trace.
+
+#### Guards — continuous invariants
+
+Distinct from both catalogues: assertions that run every frame for the whole session, independent of what
+any scenario asserts.
+
+- no error logged that is not in the baseline (§3.3)
+- player Y position within world bounds — catches fall-through-world deterministically
+- no `NaN` in a player or NPC transform
+- frame time under budget, so a performance cliff fails loudly instead of silently
+
+Guards are cheap, always on, and are the deterministic counterpart to ADR-0002's oracle: whatever a guard
+can catch should never be delegated to a model.
+
+#### Build order
+
+The catalogues are not independent — **semantic verbs are implemented on top of state observations**
+(resolving "the entry labelled New Game" means reading the menu first), so they cannot be built as parallel
+workstreams.
+
+| # | Item | Why here |
+|---|---|---|
+| 1 | Lifecycle + minimal State (player pose, active scene) | The first `WaitUntil` in the first scenario needs both |
+| 2 | Raw + Physical actuators | The interaction gate |
+| 3 | Gameplay observations | Free — already on the bus, and D7's reflection binding picks them up wholesale |
+| 4 | State, in full | Prerequisite for the next row |
+| 5 | Semantic actuators | Depends on State to resolve targets |
+| 6 | Guards + Diagnostics | Cheap, and they raise the value of every scenario already written |
+| 7 | Arrange actuators | Needed once scenarios stop starting from a fresh world |
+
+The Daedalus tier follows only when a scenario requires it.
+
 ---
 
 ## 4. CI pipeline
