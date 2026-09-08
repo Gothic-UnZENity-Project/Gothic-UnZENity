@@ -1,0 +1,130 @@
+# ADR-0001 — Task checklist
+
+Companion to [`0001-headless-functional-test-suite.md`](./0001-headless-functional-test-suite.md).
+Section references (§) point into that ADR. Where useful, items are also tagged with the delivery
+iteration from D9: **V0** (harness, recorders, seeded RNG, one smoke scenario) → **V2** (the driver
+vocabulary / DSL) → **Seed sweeps** → **V1** (the Editor recorder).
+
+**Legend:** 🔴 blocker — nothing downstream works until it is done · 🟡 degrades a feature · ⚪ plain work
+· ❓ needs a decision before it can be started.
+
+Groups are listed in dependency order; within a group, items are roughly ordered too.
+
+---
+
+## Prerequisites — existing code (§7)
+
+- [ ] 🔴 Fix `AbstractTest.GetConfiguration()` — it loads `Resources.Load<DeveloperConfig>("GameConfigurations/Production")`
+      but the asset lives at `Resources/DeveloperConfigs/Production.asset`. Returns `null`, next line throws.
+- [ ] 🔴 Add a `-gothicTestConfig <name>` command-line / env override, resolved in `BootstrapService.AwakeUnity()`,
+      so tests select a config instead of mutating the shared `Production.asset` (§D5).
+- [ ] ⚪ Commit `Assets/Gothic-Core/Resources/DeveloperConfigs/FunctionalTest.asset` — simulator on, main menu off,
+      NPCs on, deterministic start time, `SpeedUpLoading` on.
+- [ ] 🟡 Extract `FileLoggingLogger` out of the `#if !UNITY_EDITOR` block in `FileLoggingHandler.cs` into its own
+      file, so the Editor lane can reuse the shipping log format (§3.3, one class per file).
+- [ ] 🟡 Move the `VRGameTest._alreadySetUp` guard into a shared `FunctionalTest` base class with explicit
+      session semantics (§D4).
+- [ ] ❓ Decide: VR + simulator, or Flat controls, as the functional target. Recommendation in the ADR: VR + simulator.
+
+## Harness — `Assets/Gothic-Testing/Runtime` (§3.1, §3.2, §3.9)
+
+- [ ] ⚪ **V0** Create `Gothic.Testing.asmdef` (references `Gothic.Core` only; gated by `GOTHIC_FUNCTIONAL_TESTS`)
+      and `Gothic.Testing.Editor.asmdef`.
+- [ ] ⚪ **V0** `TestSession` — owns the run directory, the shared clock, `Step(name)` returning `IDisposable`.
+- [ ] ⚪ **V0** `InputDriver` — wraps `InputTestFixture`; press/hold/release with frame-accurate timing.
+- [ ] ⚪ **V0** `GameDriver` — minimal verb set for the smoke scenario: `WalkForward`, `Turn`, `WaitForScene`,
+      `WaitUntil(predicate, timeout, because)`.
+- [ ] ⚪ **V2** `GameDriver` — complete the verb set: `WalkBack/Strafe`, `Jump`, `Sprint`, `Crouch`, `OpenMenu`,
+      `GrabWithBothHands`, `DrawWeapon`, `Attack`, `Interact`, `WaitForEvent(UnityEvent, timeout)` (§3.2, D10).
+      `WaitUntil` stays the only wait primitive — no fixed-delay verb is added (D11).
+- [ ] ⚪ **V2** `Teleport(waypoint)` shortcut so scenarios don't spend a minute walking (§3.2).
+- [ ] 🔴 **V0** `Watchdog` — fail the step cleanly when no bus event and no player movement occur for N seconds,
+      instead of letting the CLI timeout kill the process and the artifacts with it (§3.6).
+- [ ] ⚪ **V0** Set `Time.captureDeltaTime = 1f/30f` per session — capture pacing and CI-machine-speed
+      independence, not replay determinism (§3.5).
+- [ ] 🔴 **V0** Seed `Random.InitState(seed)` per session and record the seed in `manifest.json` (§3.9, D13).
+
+## Recording & artifacts (§3.3–§3.5, §3.7, §3.9, §3.10)
+
+- [ ] ⚪ **V0** `LogRecorder` — `UberLogger.ILogger` sink writing `log.txt` and `errors.txt`.
+- [ ] ⚪ **V0** Subscribe `Application.logMessageReceivedThreaded` for engine-side errors that bypass UberLogger.
+- [ ] ⚪ **V0** Attach both log files to the NUnit XML via `TestContext.AddTestAttachment`.
+- [ ] 🔴 **V0** Error baseline: `known-issues/functional-tests-baseline.txt`, signature normalisation, and delta
+      reporting in both directions. Without this every run is red (§3.3).
+- [ ] ⚪ **V0** `ScreenshotRecorder` — camera → fixed 1280×720 RenderTexture → readback at end of frame.
+- [ ] ⚪ **V0** Screenshot triggers: first error per step (rate-limited), test failure in `[UnityTearDown]`, step
+      boundaries, watchdog trip, explicit call.
+- [ ] ⚪ **V0** `TraceRecorder` — JSONL writer with the shared sequence/frame/time header.
+- [ ] ⚪ **V0** `TraceEventBinder` — reflect over `GlobalEventDispatcher`'s static `UnityEvent` fields and bind a
+      listener to each (§D7).
+- [ ] ⚪ **V0** Player state sampler — position, rotation, HP, walk mode, current animation every 10 fixed frames.
+- [ ] ⚪ **V0** `manifest.json` — git SHA, Unity version, config name, Gothic install fingerprint, seed, machine.
+- [ ] ⚪ **V0** `summary.md` generator — step-by-step pass/fail with inline screenshot links.
+- [ ] ⚪ **V0** `FrameRingBuffer` — ~30 s at 640×360 / 10 fps in memory, flushed to PNGs on failure only (§D8).
+- [ ] ⚪ **V0** ffmpeg step to turn a flushed buffer into `replay.mp4`.
+- [ ] ⚪ Optional full-session capture via `com.unity.recorder` for the nightly lane.
+- [ ] ⚪ Retain the raw input stream for two narrow uses only — crash reproduction and performance-regression
+      frame-time comparison — now that general replay is out of scope (§3.5, D16).
+- [ ] ⚪ **V1** `ScenarioRecorder` — Editor record/play/stop/save feature emitting a draft `FunctionalTest`
+      subclass as V2 C# source, never a binary/opaque input blob (§3.10, D15).
+- [ ] ⚪ **V1** Assertion-candidate capture — while recording, reuse `TraceEventBinder` to listen to
+      `GlobalEventDispatcher` and emit observed events as commented suggestions next to the call that
+      plausibly caused them, e.g. `// observed @ +0.4s: FightHit(...)` (§3.10).
+- [ ] ⚪ **V1** Input→verb map — one shared table driving both `ScenarioRecorder`'s key-to-verb translation
+      and `InputDriver`'s verb-to-key translation, so the two cannot drift apart (§3.10).
+
+## Tests — `Assets/Gothic-Tests/Functional` (§3.2, §3.9)
+
+- [ ] ⚪ `Gothic.Tests.Functional.asmdef` (`UNITY_INCLUDE_TESTS`), referencing `Gothic.Testing`.
+- [ ] ⚪ `FunctionalTest` base fixture — session setup, config override, teardown artifact flush.
+- [ ] ⚪ **V0** `Smoke.BootAndWalk` — boot → new game → world loaded → walk 5 m → no new errors. The Lane 2 payload.
+- [ ] ⚪ **V2** `MovementScenario` — walk, turn, jump, sprint, crouch; assert against waypoint positions.
+- [ ] ⚪ **V2** `CombatScenario` — draw weapon, swing, assert `FightHit` fires (exercises the `DEF_OPT_FRAME` window).
+- [ ] ⚪ **V2** `WorldLoadingScenario` — load each shipped world, assert no new errors and a plausible VOB count.
+- [ ] ⚪ **V2** `SaveLoadScenario` — save to a slot, reload, assert player state round-trips.
+- [ ] ⚪ **V2** `DialogScenario` — once dialog is stable enough to assert on.
+- [ ] ⚪ **Seed sweeps** Nightly seed-sweep runner — one scenario × ~20 fixed seeds, one `manifest.json` per
+      seed; a seed that fails reproduces locally from its recorded value (§3.9, D14).
+
+## Runner — infrastructure (§3.8, §6)
+
+- [ ] ❓ Decide who hosts the self-hosted runner, and confirm the team accepts PR-triggered jobs on it.
+- [ ] 🔴 Provision the runner: Unity 6000.3.13f1, the `unity` CLI, HVR licence, Gothic 1 (and 2) installations.
+- [ ] 🔴 Give the runner a graphics device — do **not** use `-nographics`. Hardware-accelerated session preferred
+      (a real desktop session on Windows, a real X session on Linux); software rasterisation is the fallback
+      for the smoke lane only (§3.8).
+- [ ] 🟡 On a non-FHS Linux distribution, wrap the Editor and the `unity` binary (FHS env or dynamic-loader shim).
+- [ ] 🔴 Verify a Gothic installation loads from a case-sensitive filesystem; if not, mount it case-insensitively.
+      Test this on day one — cheap now, expensive later.
+- [ ] ⚪ If the runner is containerised, pass `/dev/dri` through, or it silently drops to software rendering.
+- [ ] ⚪ Unity licence activation on a headless machine (`unity auth login` or the existing CI secrets).
+- [ ] 🔴 Security: same-repo head guard, maintainer-applied label, no `pull_request_target`, ephemeral job isolation.
+- [ ] ⚪ Runner labels agreed and applied (`gothic-data`, `rendering`, …) so `runs-on` stays declarative.
+- [ ] ⚪ Persist and key the static cache (`{persistentDataPath}/Cache/{GameVersion}/`) between runs.
+
+## CI — workflows (§4)
+
+- [ ] ⚪ Lane 1: extend the existing PR workflow with EditMode tests via `unity test --mode EditMode`.
+- [ ] ⚪ Lane 2: `functional_test.yml` — smoke suite on PR to `main` or on label, artifacts uploaded on `always()`.
+- [ ] ⚪ Lane 3: nightly full suite, `--shard`, Gothic 1 and 2, video enabled, plus the seed-sweep pass (§3.9).
+- [ ] ⚪ Lane 4: Lane B standalone-player run via `unity run -- -runTests -testPlatform …` at release time.
+- [ ] ⚪ Add a `StandaloneLinux64` build method to `VRBuilderActions` if Lane B is to run on Linux.
+- [ ] ⚪ Map CLI exit codes to job status (0 pass / 8 failed / 6 no verdict / 2 usage) and stop parsing logs.
+- [ ] ⚪ Publish the JUnit report as a PR check; keep the artifact bundle for 14 days.
+- [ ] ⚪ Evaluate replacing `game-ci/unity-builder` with `unity build` in the existing build workflow.
+
+## Docs
+
+- [ ] ⚪ Fix the stale `GameConfigurations/` path in `CLAUDE.md` (it is `DeveloperConfigs/`).
+- [ ] ⚪ Correct `com.gothic.core.binaries/Dependencies/README.md` — it still calls the Linux `.so` "not used",
+      which the enabled `linux_x86/` plugin settings contradict.
+- [ ] ⚪ Fix the `Hlp_Random` off-by-one in `VmExternalDomain.cs:506` — `Random.Range(0, n0 - 1)` should be
+      `Random.Range(0, n0)`; the top option of every random Daedalus choice currently never fires. A real bug,
+      unrelated to this ADR, found while writing §3.9.
+- [ ] ⚪ Cross-link ADR-0002 (AI-assisted review of these artifacts) from this ADR's "Related" line, and from
+      ADR-0002 back to this one.
+- [ ] ⚪ Wiki → *Resources & Tools → Build Pipelines*: link this ADR and describe the four lanes.
+- [ ] ⚪ Wiki → *Get Started → Developer Setup*: how to run a functional scenario locally in the Test Runner.
+- [ ] ⚪ Write down how to read a failure bundle: `summary.md` first, then `errors.txt`, then `trace.jsonl`.
+- [ ] ⚪ Document the error-baseline workflow — when to add a signature, when to remove one.
+- [ ] ⚪ Set this ADR's status to Accepted once the runner decision is made.
